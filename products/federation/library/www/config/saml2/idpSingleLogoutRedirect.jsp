@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutRedirect.jsp,v 1.3 2006-12-21 19:49:17 weisun2 Exp $
+   $Id: idpSingleLogoutRedirect.jsp,v 1.4 2007-07-26 21:58:17 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -30,6 +30,7 @@
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
+<%@ page import="com.sun.identity.saml2.profile.IDPCache" %>
 <%@ page import="com.sun.identity.saml2.profile.IDPSingleLogout" %>
 <%@ page import="java.util.Map" %>
 
@@ -65,6 +66,12 @@
     //- SAMLResponse - the LogoutResponse
 
     String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
+    if (relayState != null) {
+        String tmpRs = (String) IDPCache.relayStateCache.remove(relayState);
+        if (tmpRs != null) {
+            relayState = tmpRs;
+        }
+    }
 
     String samlResponse = request.getParameter(SAML2Constants.SAML_RESPONSE);
     if (samlResponse != null) {
@@ -100,7 +107,13 @@
 
         if (!doRelayState) {
             if (relayState != null) {
-                response.sendRedirect(relayState);
+                if (relayState.indexOf("?") != -1) {
+                    response.sendRedirect(relayState 
+                        + "&logoutStatus=logoutSuccess");
+                } else {
+                    response.sendRedirect(relayState 
+                        + "?logoutStatus=logoutSuccess");
+                }
             } else {
                 %>
                 <jsp:forward page="/saml2/jsp/default.jsp?message=idpSloSuccess" />

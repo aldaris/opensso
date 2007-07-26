@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.4 2007-07-03 22:06:26 qcheng Exp $
+ * $Id: LogoutUtil.java,v 1.5 2007-07-26 21:57:42 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -305,10 +305,18 @@ public class LogoutUtil {
                                   .append(SAML2Constants.EQUAL)
                                   .append(encodedXML);
         
-        if (relayState != null && relayState.length() > 0 
-                         && relayState.getBytes("UTF-8").length <= 80) {
+        // spec states that the relay state MUST NOT exceed 80
+        // chanracters, need to have some means to pass it when it
+        // exceeds 80 chars
+        if ((relayState != null) && (relayState.length() > 0)) {
+            String tmp = SAML2Utils.generateID();
+            if (hostEntityRole.equals(SAML2Constants.IDP_ROLE)) {
+                IDPCache.relayStateCache.put(tmp, relayState);
+            } else {
+                SPCache.relayStateHash.put(tmp, new CacheObject(relayState));
+            }
             queryString.append("&").append(SAML2Constants.RELAY_STATE)
-                           .append("=").append(URLEncDec.encode(relayState));
+                           .append("=").append(tmp);
         }
         
         boolean needToSign = false; 

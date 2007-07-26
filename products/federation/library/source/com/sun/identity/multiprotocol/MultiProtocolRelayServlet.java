@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolRelayServlet.java,v 1.1 2007-07-03 22:06:25 qcheng Exp $
+ * $Id: MultiProtocolRelayServlet.java,v 1.2 2007-07-26 21:57:18 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,12 +66,13 @@ public class MultiProtocolRelayServlet extends HttpServlet {
                 ", status int value =" + currentStatus);
         }
         try {
+           
             int retStatus = manager.doIDPSingleLogout(null, null, request, 
                 response, false, true, null, null, null, null, handler, 
                 null, null, currentStatus);
             if (retStatus != SingleLogoutManager.LOGOUT_REDIRECTED_STATUS) {
                 SingleLogoutManager.getInstance().sendLogoutResponse(
-                    response, handler);
+                    request, response, handler);
             }
         } catch (Exception ex) {
             SingleLogoutManager.debug.error(

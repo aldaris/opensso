@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutResponse.java,v 1.2 2006-10-31 03:58:23 qcheng Exp $
+ * $Id: FSLogoutResponse.java,v 1.3 2007-07-26 21:56:08 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -584,60 +584,64 @@ public class FSLogoutResponse extends AbstractResponse {
             throw new FSMsgException("nullProviderIdWResponseId",args);
         }
         
-        if ((responseID != null) && (inResponseTo != null)){
-            xml.append(IFSConstants.LEFT_ANGLE)
-            .append(prefixLIB)
-            .append(IFSConstants.LOGOUT_RESPONSE)
-            .append(uriLIB);
-            
-            if (minorVersion == IFSConstants.FF_11_PROTOCOL_MINOR_VERSION &&
-                    id != null && !(id.length() == 0)) {
-                xml.append(IFSConstants.SPACE)
-                .append(IFSConstants.ID)
-                .append(IFSConstants.EQUAL_TO)
-                .append(IFSConstants.QUOTE)
-                .append(id)
-                .append(IFSConstants.QUOTE)
-                .append(IFSConstants.SPACE);
-            }
-            
-            xml.append(IFSConstants.SPACE)
-            .append(IFSConstants.RESPONSE_ID)
+        xml.append(IFSConstants.LEFT_ANGLE)
+        .append(prefixLIB)
+        .append(IFSConstants.LOGOUT_RESPONSE)
+        .append(uriLIB)
+        .append(IFSConstants.SPACE);
+        
+        if (minorVersion == IFSConstants.FF_11_PROTOCOL_MINOR_VERSION &&
+                id != null && !(id.length() == 0)) {
+            xml.append(IFSConstants.ID)
+            .append(IFSConstants.EQUAL_TO)
+            .append(IFSConstants.QUOTE)
+            .append(id)
+            .append(IFSConstants.QUOTE)
+            .append(IFSConstants.SPACE)
+            .append(IFSConstants.SPACE);
+        }
+        
+        if (responseID != null) {
+            xml.append(IFSConstants.RESPONSE_ID)
             .append(IFSConstants.EQUAL_TO)
             .append(IFSConstants.QUOTE)
             .append(responseID)
             .append(IFSConstants.QUOTE)
             .append(IFSConstants.SPACE)
-            .append(IFSConstants.SPACE)
-            .append(IFSConstants.IN_RESPONSE_TO)
+            .append(IFSConstants.SPACE);
+        }
+        
+        if (inResponseTo != null) {
+            xml.append(IFSConstants.IN_RESPONSE_TO)
             .append(IFSConstants.EQUAL_TO)
             .append(IFSConstants.QUOTE)
             .append(inResponseTo)
             .append(IFSConstants.QUOTE)
             .append(IFSConstants.SPACE)
-            .append(IFSConstants.SPACE)
-            .append(IFSConstants.MAJOR_VERSION)
-            .append(IFSConstants.EQUAL_TO)
-            .append(IFSConstants.QUOTE)
-            .append(majorVersion)
-            .append(IFSConstants.QUOTE)
-            .append(IFSConstants.SPACE)
-            .append(IFSConstants.SPACE)
-            .append(IFSConstants.MINOR_VERSION)
-            .append(IFSConstants.EQUAL_TO)
-            .append(IFSConstants.QUOTE)
-            .append(minorVersion)
-            .append(IFSConstants.QUOTE)
-            .append(IFSConstants.SPACE)
-            .append(IFSConstants.SPACE)
-            .append(IFSConstants.ISSUE_INSTANT)
-            .append(IFSConstants.EQUAL_TO)
-            .append(IFSConstants.QUOTE)
-            .append(instantString)
-            .append(IFSConstants.QUOTE)
-            .append(IFSConstants.RIGHT_ANGLE);
+            .append(IFSConstants.SPACE);
         }
         
+        xml.append(IFSConstants.MAJOR_VERSION)
+        .append(IFSConstants.EQUAL_TO)
+        .append(IFSConstants.QUOTE)
+        .append(majorVersion)
+        .append(IFSConstants.QUOTE)
+        .append(IFSConstants.SPACE)
+        .append(IFSConstants.SPACE)
+        .append(IFSConstants.MINOR_VERSION)
+        .append(IFSConstants.EQUAL_TO)
+        .append(IFSConstants.QUOTE)
+        .append(minorVersion)
+        .append(IFSConstants.QUOTE)
+        .append(IFSConstants.SPACE)
+        .append(IFSConstants.SPACE)
+        .append(IFSConstants.ISSUE_INSTANT)
+        .append(IFSConstants.EQUAL_TO)
+        .append(IFSConstants.QUOTE)
+        .append(instantString)
+        .append(IFSConstants.QUOTE)
+        .append(IFSConstants.RIGHT_ANGLE);
+
         if (signed) {
             if (signatureString != null) {
                 xml.append(signatureString);

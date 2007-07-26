@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.5 2007-07-03 22:06:24 qcheng Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.6 2007-07-26 21:56:36 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.federation.services.logout;
 
 import com.sun.identity.multiprotocol.MultiProtocolUtils;
+import com.sun.identity.plugin.session.SessionException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.cert.X509Certificate;
@@ -34,7 +35,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
-import com.sun.identity.federation.accountmgmt.FSAccountManager;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.common.LogUtil;
 import com.sun.identity.federation.common.FSUtils;
@@ -54,6 +54,8 @@ import com.sun.identity.federation.services.FSSOAPService;
 import com.sun.identity.federation.services.util.FSServiceUtils;
 import com.sun.identity.federation.services.util.FSSignatureUtil;
 import com.sun.identity.liberty.ws.meta.jaxb.ProviderDescriptorType;
+import com.sun.identity.multiprotocol.SingleLogoutManager;
+import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLResponderException;
@@ -61,6 +63,8 @@ import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml.protocol.Status;
 import com.sun.identity.saml.protocol.StatusCode;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPMessage;
@@ -175,6 +179,7 @@ public class FSSingleLogoutHandler {
         }
         this.ssoToken = ssoToken;
         String strProfile = getProfileToCommunicateLogout();
+        singleLogoutProtocol = strProfile;
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("Communicating logout with provider " +
                 remoteEntityId + " using profile " + strProfile);
@@ -182,10 +187,20 @@ public class FSSingleLogoutHandler {
         
         FSUtils.debug.message("FSSingleLogoutHandler, in case 1");
         FSLogoutStatus bLogoutStatus = null;
+        
         if (strProfile.equals(IFSConstants.LOGOUT_SP_REDIRECT_PROFILE) ||
             strProfile.equals(IFSConstants.LOGOUT_IDP_REDIRECT_PROFILE)) 
         {
             FSUtils.debug.message("In redirect profile");
+            try {
+                String[] values = new String[]{"false"};
+                SessionManager.getProvider().setProperty(ssoToken, 
+                    IFSConstants.IS_SOAP_PROFILE, values);
+            } catch (UnsupportedOperationException ex) {
+                // ignore
+            } catch (SessionException ex) {
+                // ignore
+            }
             bLogoutStatus = doHttpRedirect(remoteEntityId);
         } else if (strProfile.equals(IFSConstants.LOGOUT_IDP_SOAP_PROFILE) ||
             strProfile.equals(IFSConstants.LOGOUT_SP_SOAP_PROFILE)) 
@@ -193,6 +208,15 @@ public class FSSingleLogoutHandler {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("In SOAP profile, current partner IDP? "
                     + isCurrentProviderIDPRole);
+            }
+            try {
+                String[] values = new String[]{"true"};
+                SessionManager.getProvider().setProperty(ssoToken, 
+                    IFSConstants.IS_SOAP_PROFILE, values);
+            } catch (UnsupportedOperationException ex) {
+                // ignore
+            } catch (SessionException ex) {
+                // ignore
             }
             // This func should take care of initiating next
             // provider also as it has control
@@ -471,7 +495,7 @@ public class FSSingleLogoutHandler {
         try {            
             String returnProviderId = "";
             String relayState = "";
-            String logoutStatus = "";
+            String logoutStatusString = "";
             String inResponseTo = "";
             FSReturnSessionManager mngInst =
                 FSReturnSessionManager.getInstance(hostedEntityId);
@@ -484,10 +508,11 @@ public class FSSingleLogoutHandler {
                     (String) providerMap.get(IFSConstants.PROVIDER);
                 relayState =
                     (String) providerMap.get(IFSConstants.LOGOUT_RELAY_STATE);
-                logoutStatus =
+                logoutStatusString =
                     (String) providerMap.get(IFSConstants.LOGOUT_STATUS);
-                if (logoutStatus == null || logoutStatus.length() == 0) {
-                    logoutStatus = IFSConstants.SAML_SUCCESS;
+                if (logoutStatusString == null || 
+                    logoutStatusString.length() == 0) {
+                    logoutStatusString = IFSConstants.SAML_SUCCESS;
                 }
                 inResponseTo =
                     (String) providerMap.get(IFSConstants.RESPONSE_TO);
@@ -514,14 +539,39 @@ public class FSSingleLogoutHandler {
                     responseLogout.setResponseTo(inResponseTo);
                     responseLogout.setRelayState(relayState);
                     responseLogout.setProviderId(hostedEntityId);
-                    responseLogout.setStatus(logoutStatus);
+                    responseLogout.setStatus(logoutStatusString);
                     responseLogout.setID(IFSConstants.LOGOUTID);
                     responseLogout.setMinorVersion(
                         getMinorVersion(descriptor));
-
+                    responseLogout.setResponseID(FSUtils.generateID());
+                    
                     // Call SP Adapter postSingleLogoutSuccess for SP/HTTP
                     callPostSingleLogoutSuccess(responseLogout,
                         IFSConstants.LOGOUT_IDP_REDIRECT_PROFILE);
+                    
+                    // call multi-federation protocol processing
+                    if (MultiProtocolUtils.isMultipleProtocolSession(request,
+                            SingleLogoutManager.IDFF) &&
+                        hostedRole.equalsIgnoreCase(IFSConstants.IDP) &&
+                        !MultiProtocolUtils.isMultiProtocolRelayState(
+                            relayState)) {
+                        int retStatus = handleMultiProtocolLogout(false, 
+                            responseLogout.toXMLString(true, true), 
+                            returnProviderId);
+                        if (retStatus == 
+                                SingleLogoutManager.LOGOUT_REDIRECTED_STATUS) {
+                            return;
+                        } else {
+                            if ((retStatus == 
+                                    SingleLogoutManager.LOGOUT_FAILED_STATUS) ||
+                                (retStatus == 
+                                    SingleLogoutManager.LOGOUT_PARTIAL_STATUS)){
+                                responseLogout.setStatus(
+                                    IFSConstants.SAML_RESPONDER);
+                            }
+                        }
+                    }
+
                     String urlEncodedResponse =
                         responseLogout.toURLEncodedQueryString();
                     // Sign the request querystring
@@ -580,10 +630,40 @@ public class FSSingleLogoutHandler {
                             + " this is multiProto for IDP initiated SOAP");
                     }
                     return;
-                } 
-                FSServiceUtils.returnLocallyAfterOperation(
-                    response, LOGOUT_DONE_URL, true,
-                    IFSConstants.LOGOUT_SUCCESS, IFSConstants.LOGOUT_FAILURE);
+                }
+
+                // call multi-federation protocol processing
+                if (MultiProtocolUtils.isMultipleProtocolSession(request,
+                    SingleLogoutManager.IDFF) &&
+                    hostedRole.equalsIgnoreCase(IFSConstants.IDP) &&
+                    !MultiProtocolUtils.isMultiProtocolRelayState(relayState)) {
+                    boolean isSOAPInitiated = false;
+                    if ((singleLogoutProtocol.equals(
+                            IFSConstants.LOGOUT_IDP_SOAP_PROFILE)) ||
+                        (singleLogoutProtocol.equals(
+                            IFSConstants.LOGOUT_SP_SOAP_PROFILE))) {
+                        isSOAPInitiated = true;
+                    }
+                    int retStatus = handleMultiProtocolLogout(isSOAPInitiated, 
+                            null, remoteEntityId);
+                    if (retStatus == 
+                        SingleLogoutManager.LOGOUT_REDIRECTED_STATUS) {
+                        return;
+                    } else {
+                        if ((retStatus == 
+                                SingleLogoutManager.LOGOUT_FAILED_STATUS) ||
+                            (retStatus ==
+                                SingleLogoutManager.LOGOUT_PARTIAL_STATUS)) {
+                             logoutStatus = false;           
+                        }
+                    }
+                }
+                if (logoutStatus) {
+                    FSServiceUtils.returnLocallyAfterOperation(
+                        response, LOGOUT_DONE_URL, true,
+                        IFSConstants.LOGOUT_SUCCESS, 
+                        IFSConstants.LOGOUT_FAILURE);
+                }
                 return;
             }
         } catch (IDFFMetaException e){
@@ -838,8 +918,10 @@ public class FSSingleLogoutHandler {
      * @param logout status.
      */
     private FSLogoutStatus doIDPSoapProfile(String providerId) {
-        FSUtils.debug.message(
-            "Entered FSSingleLogoutHandler::doIDPSoapProfile");
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message("FSSLOHandler.doIDPSoapProfile : providerId="
+                + providerId);
+        }
         FSLogoutStatus bSoapStatus = doSoapProfile(providerId);
         if (bSoapStatus.getStatus().equalsIgnoreCase(IFSConstants.SAML_SUCCESS))
         {
@@ -861,6 +943,23 @@ public class FSSingleLogoutHandler {
         if (!isHttpRedirect && (logoutStatus || !isCurrentProviderIDPRole)) {
             continueLogout(logoutStatus);
         }
+        
+        if (!isHttpRedirect) {
+            FSUtils.debug.message("FSSLOHandler.doIDPSoapProfile: call MP/SOAP");
+            try {
+                // call Multi-Federation protocol single logout
+                if ((SessionManager.getProvider().isValid(ssoToken)) &&
+                    (MultiProtocolUtils.isMultipleProtocolSession(ssoToken, 
+                        SingleLogoutManager.IDFF))) {
+                    int retStatus = handleMultiProtocolLogout(true, null, 
+                        remoteEntityId);
+                    logoutStatus = updateLogoutStatus(logoutStatus, retStatus);
+                }
+            } catch (SessionException ex) {
+                //ignore;
+                FSUtils.debug.message("FSSLOHandler.doIDPSoapProfile2", ex);
+            }
+        }
         if (!logoutStatus) {
             return new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
         } else {
@@ -872,6 +971,20 @@ public class FSSingleLogoutHandler {
         }
     }
     
+    private boolean updateLogoutStatus(boolean logoutStatus, int retStatus) {
+        boolean status = logoutStatus;
+        switch (retStatus) {
+            case SingleLogoutManager.LOGOUT_FAILED_STATUS:
+                status = false;
+                break;
+            case SingleLogoutManager.LOGOUT_PARTIAL_STATUS:
+                status = false;
+                break;
+            default:
+                break;
+        }
+        return status;
+    }
     
     /**
      * Initiates SOAP proifle logout.
@@ -961,7 +1074,7 @@ public class FSSingleLogoutHandler {
                                             "signature verification failed");
                                     }
                                     FSServiceUtils.returnLocallyAfterOperation(
-                                        response, LOGOUT_DONE_URL,false,
+                                        response, LOGOUT_DONE_URL, false,
                                         IFSConstants.LOGOUT_SUCCESS,
                                         IFSConstants.LOGOUT_FAILURE);
                                     return new FSLogoutStatus(
@@ -1179,7 +1292,6 @@ public class FSSingleLogoutHandler {
         return retProfileType;
     }
 
-
     /**
      * Processes the logout request received through http.
      * @param response the HttpServletResponse object
@@ -1350,14 +1462,35 @@ public class FSSingleLogoutHandler {
             FSUtils.debug.message("FSLogoutNotification formed really well");
             if (currentSessionProvider == null) {
                 FSUtils.debug.message(
-                    "currentSessionProvider is null. destroy and return");
+                    "currentSessionProvider is null. destroy and return");           
+                // get ssoToken corresponding to the session index
+                Vector sessionObjList = FSLogoutUtil.getSessionObjectList(
+                    userID, hostedEntityId, sessionIndex);
+                if ((sessionObjList != null) && !sessionObjList.isEmpty()) {
+                    String sessid = 
+                        ((FSSession) sessionObjList.get(0)).getSessionID();
+                    try {
+                        ssoToken = 
+                            SessionManager.getProvider().getSession(sessid);
+                    } catch (SessionException ex) {
+                        // ignore;
+                    }
+                }
                 FSLogoutUtil.destroyPrincipalSession(
                     userID, 
                     hostedEntityId,
                     reqLogout.getSessionIndex(),
                     request,
                     response);
-                return new FSLogoutStatus(IFSConstants.SAML_SUCCESS);
+                // call multi-federation protocol processing
+                int retStatus = handleMultiProtocolLogout(true,null,
+                    sourceEntityId);
+                if ((retStatus == SingleLogoutManager.LOGOUT_FAILED_STATUS) ||
+                    (retStatus == SingleLogoutManager.LOGOUT_PARTIAL_STATUS)) {
+                    return new FSLogoutStatus(IFSConstants.LOGOUT_FAILURE);
+                } else {
+                    return new FSLogoutStatus(IFSConstants.SAML_SUCCESS);
+                }
             } else {
                 // Check if any of the connections use HTTP GET/Redirect
                 String currentEntityId = currentSessionProvider.getPartner();
@@ -1534,6 +1667,61 @@ public class FSSingleLogoutHandler {
                 }
             }
         }
+    }
+    
+    private int handleMultiProtocolLogout(boolean isSOAPInited, 
+        String responseXML, String remoteSPId) {
+        
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message("FSSLOHandler.handleMultiProtocolLogout: "
+                + "isSOAP initiated = " + isSOAPInited + ", response XML="
+                + responseXML);
+        }
+        if (ssoToken == null) {
+            try {
+                // this is HTTP based protocol, get from HTTP servlet request
+                ssoToken = SessionManager.getProvider().getSession(request);
+            } catch (SessionException ex) {
+                FSUtils.debug.message("FSSLOHandler.handleMPLogout: null", ex);
+                return SingleLogoutManager.LOGOUT_NO_ACTION_STATUS;
+            }
+        }
+        try {
+            if (!SessionManager.getProvider().isValid(ssoToken)) {
+                return SingleLogoutManager.LOGOUT_NO_ACTION_STATUS;
+            }
+        } catch (SessionException ex) {
+            FSUtils.debug.message("FSSLOHandler.handleMPLogout: invalid",  ex);
+                return SingleLogoutManager.LOGOUT_NO_ACTION_STATUS;
+        }
+        Set set = new HashSet();
+        set.add(ssoToken);
+        int currentStatus = (logoutStatus) ?
+            SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS :
+            SingleLogoutManager.LOGOUT_FAILED_STATUS;
+        int retStatus = SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+        try {
+            String requestXML = (requestLogout == null) ?
+                null : requestLogout.toXMLString(true, true);
+            String finalRelayState = relayState;
+            if ((finalRelayState == null) || (finalRelayState.length() == 0)) {
+                finalRelayState = LOGOUT_DONE_URL;
+            }
+            retStatus = SingleLogoutManager.getInstance().
+                doIDPSingleLogout(set, userID, request, response, isSOAPInited,
+                    FSLogoutUtil.isIDPInitiatedProfile(singleLogoutProtocol),
+                    SingleLogoutManager.IDFF, "/", hostedEntityId,
+                    remoteSPId, finalRelayState, requestXML, responseXML, 
+                    currentStatus);
+        } catch (Exception e) {
+            FSUtils.debug.error("FSSLOHandler.doIDPProfile: MP/SOAP", e);
+            retStatus = SingleLogoutManager.LOGOUT_FAILED_STATUS;
+        }
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message("FSSLOHandler.handleMultiProtocolLogout: "
+                    + "return status = " + retStatus);
+        }
+        return retStatus;
     }
 }
 

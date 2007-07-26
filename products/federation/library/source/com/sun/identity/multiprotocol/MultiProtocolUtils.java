@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolUtils.java,v 1.1 2007-07-03 22:06:25 qcheng Exp $
+ * $Id: MultiProtocolUtils.java,v 1.2 2007-07-26 21:57:19 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.multiprotocol;
 
+import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -210,9 +211,13 @@ public class MultiProtocolUtils {
             SessionProvider provider = SessionManager.getProvider();
             String[] vals = provider.getProperty(session, 
                 SingleLogoutManager.FEDERATION_PROTOCOLS);
-            if (SingleLogoutManager.debug.messageEnabled()) {
+            if ((vals != null) && SingleLogoutManager.debug.messageEnabled()) {
                 SingleLogoutManager.debug.message(
-                    "MultiProtocolUtils.isMPSession: protocols=" + vals);
+                         "MultiProtocolUtils.isMPSession: size=" + vals.length);
+                for (int i = 0; i < vals.length; i++) {
+                    SingleLogoutManager.debug.message(
+                        "MultiProtocolUtils.isMPSession: protocols=" + vals[i]);
+                }
             }
             if ((vals == null) || (vals.length == 0)) {
                 return false;
@@ -319,4 +324,28 @@ public class MultiProtocolUtils {
         }
     }
 
+    /**
+     * Returns logout status in string form.
+     * @param status Single Logout Status. Possible values:
+     *         <code>LOGOUT_SUCCEEDED_STATUS</code> - single logout succeeded.
+     *         <code>LOGOUT_FAILED_STATUS</code>    - single logout failed.
+     *         <code>LOGOUT_PARTIAL_STATUS</code>   - single logout partially 
+     *                                                succeeded.
+     *         <code>LOGOUT_REDIRECTED_STATUS</code> - single logout request 
+     *                                                redirected.
+     *         <code>LOGOUT_NO_ACTION_STATUS</code>  - single loglout not
+     *                                                 performed.
+     * @return single logout status in string form. Possible values:
+     *         <code>IFSConstants.LOGOUT_SUCCESS<code>,
+     *         <code>IFSConstants.LOGOUT_FAILURE</code>
+     */
+    public static String getLogoutStatus(int status) {
+        switch (status) {
+            case SingleLogoutManager.LOGOUT_FAILED_STATUS:
+            case SingleLogoutManager.LOGOUT_PARTIAL_STATUS:
+                return IFSConstants.LOGOUT_FAILURE;
+            default:
+                return IFSConstants.LOGOUT_SUCCESS;
+        }
+    }
 }

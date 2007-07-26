@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SingleLogoutHandler.java,v 1.2 2007-07-03 22:06:25 qcheng Exp $
+ * $Id: SingleLogoutHandler.java,v 1.3 2007-07-26 21:57:19 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,10 +81,11 @@ public interface SingleLogoutHandler {
      * @param spEntityID <code>EntityID</code> of the remote service provider
      *      in the original Single Logout request.
      * @param relayState A state information to be relayed back in response. 
-     * @param singleLogoutRequestXML Original single logout request in XML 
-     *      string.
      * @param singleLogoutRequestXML Original single logout request in XML
      *      string.
+     * @param singleLoogutResponseXML Logout response to be sent back to SP.
+     *      This only apply to the case of SP initiated Single Logout, it will
+     *      be null in case of IDP initiated single logout.
      * @param currentStatus Current logout status, this is the accumulative
      *      single logout status for all protocols processed so far.
      *      Possible values:

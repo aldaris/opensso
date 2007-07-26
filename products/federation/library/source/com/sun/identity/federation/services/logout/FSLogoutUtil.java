@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutUtil.java,v 1.4 2007-07-03 22:06:24 qcheng Exp $
+ * $Id: FSLogoutUtil.java,v 1.5 2007-07-26 21:56:09 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1085,5 +1085,26 @@ public class FSLogoutUtil {
         FSLogoutUtil.cleanSessionMapPartnerList(
             userID, remoteEntityId, hostedEntityId, session);
     }
+  
+    /**
+     * Returns true if this is IDP initiated profiles, false otherwise.
+     * @param profile profile to be checked.
+     * @return true if specified profile is IDP initiated, false otherwise.
+     */
+    public static boolean isIDPInitiatedProfile(String profile) {
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message("FSLogoutUtil.isIDPInitiatedProfile: proto="
+                    + profile);
+        }
+        if ((profile != null)  &&
+            ((profile.equals(IFSConstants.LOGOUT_IDP_REDIRECT_PROFILE) ||
+            (profile.equals(IFSConstants.LOGOUT_IDP_SOAP_PROFILE)) ||
+            (profile.equals(IFSConstants.LOGOUT_IDP_GET_PROFILE))))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
 

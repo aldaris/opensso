@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.3 2007-03-09 05:51:04 veiming Exp $
+ * $Id: SPCache.java,v 1.4 2007-07-26 21:57:43 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,7 @@ public class SPCache {
      * Key  : a String the relayStateID 
      * Value: a String the RelayState Value 
      */
-    protected static Hashtable relayStateHash= new Hashtable(); 
+    public static Hashtable relayStateHash= new Hashtable(); 
 
     /**
      * Hashtable stores information required for LogoutRequest consumption.

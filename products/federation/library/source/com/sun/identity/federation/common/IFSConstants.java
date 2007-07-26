@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.6 2007-07-11 21:58:55 hengming Exp $
+ * $Id: IFSConstants.java,v 1.7 2007-07-26 21:56:08 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2385,5 +2385,10 @@ public interface IFSConstants {
      */
     public String SP_DEFAULT_RELAY_STATE =
         "/samples/idff/sp/index.jsp";
+    
+    /**
+     * boolean to indicate if this is SOAP profile
+     */
+    public String IS_SOAP_PROFILE = "isSOAPProfile";
 }
 

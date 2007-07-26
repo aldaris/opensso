@@ -18,23 +18,38 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SingleLogoutManager.java,v 1.2 2007-07-03 22:06:25 qcheng Exp $
+ * $Id: SingleLogoutManager.java,v 1.3 2007-07-26 21:57:19 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.multiprotocol;
 
+import com.sun.identity.federation.common.FSUtils;
+import com.sun.identity.federation.common.IFSConstants;
+import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
+import com.sun.identity.federation.message.FSLogoutResponse;
+import com.sun.identity.federation.message.common.FSMsgException;
+import com.sun.identity.federation.meta.IDFFMetaException;
+import com.sun.identity.federation.meta.IDFFMetaManager;
+import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.services.util.FSServiceUtils;
+import com.sun.identity.federation.services.util.FSSignatureUtil;
+import com.sun.identity.liberty.ws.meta.jaxb.ProviderDescriptorType;
 import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.plugin.configuration.ConfigurationInstance;
 import com.sun.identity.plugin.configuration.ConfigurationManager;
+import com.sun.identity.saml.common.SAMLException;
+import com.sun.identity.saml.common.SAMLResponderException;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.profile.LogoutUtil;
 import com.sun.identity.saml2.protocol.LogoutResponse;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.saml.protocol.Status;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.w3c.dom.Element;
 
 /**
  * The <code>SingleLogoutManager</code> class provides methods to perform
@@ -119,6 +135,7 @@ public class SingleLogoutManager {
     private static String MULTI_PROTOCOL_CONFIG_NAME = "MULTI_PROTOCOL";
     private static String EMPTY_STRING = "";   
     private static String DELIMITOR = "|";
+    private static String LOCAL_HOST_URL = "http://localhost/idp";
  
     /**
      * Map to hold the protocol to SingleLogouthandler impl class mapping
@@ -307,10 +324,11 @@ public class SingleLogoutManager {
      * @param spEntityID <code>EntityID</code> of the remote service provider
      *      in the original Single Logout request.
      * @param relayState A state information to be relayed back in response.
-     * @param singleLogoutRequestXML Original single logout request in XML 
-     *      string.
      * @param singleLogoutRequestXML Original single logout request in XML
      *      string.
+     * @param singleLoogutResponseXML Logout response to be sent back to SP.
+     *      This only apply to the case of SP initiated Single Logout, it will
+     *      be null in case of IDP initiated single logout.
      * @param currentStatus Current logout status, this is the single logout 
      *      status for the federation protocol just processed.
      *      Possible values:
@@ -418,14 +436,21 @@ public class SingleLogoutManager {
                     (String) sloRequestXMLMap.get(tmpRelayState);
                 currentStatus = ((Integer) currentStatusMap.get(
                     tmpRelayState)).intValue();
-                int status = handler.doIDPSingleLogout(userSession,
-                    userID, request, response, isSOAPInitiated,
-                    isIDPInitiated, protocol, realm, idpEntityID,
-                    spEntityID, relayState, singleLogoutRequestXML,
-                    singleLogoutResponseXML, currentStatus);
-                if (debug.messageEnabled()) {
-                    debug.message("SingleLogoutManager.doIDPSingleLogout: "
-                        + " logout status = " + status + " for " + proto);
+                int status = SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+                try {
+                    status = handler.doIDPSingleLogout(userSession, userID, 
+                        request, response, isSOAPInitiated, isIDPInitiated, 
+                        protocol, realm, idpEntityID, spEntityID, relayState, 
+                        singleLogoutRequestXML, singleLogoutResponseXML, 
+                        currentStatus);
+                    if (debug.messageEnabled()) {
+                        debug.message("SingleLogoutManager.doIDPSingleLogout: "
+                            + " logout status = " + status + " for " + proto);
+                    }
+                } catch (Exception ex) {
+                    debug.error("SingleLogoutManager.doIDPSingleLogout: error"
+                        + " for protocol " + proto, ex);
+                    status = SingleLogoutManager.LOGOUT_FAILED_STATUS;
                 }
                 if (status == LOGOUT_REDIRECTED_STATUS) {
                     return status;
@@ -573,7 +598,8 @@ public class SingleLogoutManager {
      *    relaystate.
      * 2. SP initiated HTTP logout, need to send LogoutResponse back to SP.
      */ 
-    void sendLogoutResponse(HttpServletResponse response, String relayState)
+    void sendLogoutResponse(HttpServletRequest request,
+            HttpServletResponse response, String relayState)
         throws IOException {
         if (debug.messageEnabled()) {
             debug.message("SingleLogoutManager.sendLogoutResponse: relaystate="
@@ -583,29 +609,48 @@ public class SingleLogoutManager {
         if (logoutResponseXML == null) {
             // first case, just redirect to original relayState
             String origRelayState = (String) relayStateMap.get(relayState);
-            if (origRelayState == null) {
+            int logoutStatus = 
+                ((Integer) currentStatusMap.get(relayState)).intValue();
+            String statusString = 
+                MultiProtocolUtils.getLogoutStatus(logoutStatus);
+            if ((origRelayState == null) || (origRelayState.length() == 0)) {
                 // TODO : get default single logout URL for each protocol
-                response.getWriter().print("Logout DONE");
+                response.getWriter().print("Logout DONE. Status = " 
+                    + statusString);
             } else {
-                // todo : include logout status
-                response.sendRedirect(origRelayState);
+                // include logout status
+                if (origRelayState.indexOf("?") == -1) {
+                    response.sendRedirect(origRelayState + "?" + 
+                        SingleLogoutManager.STATUS_PARAM + "=" + statusString);
+                } else {
+                    response.sendRedirect(origRelayState + "&" + 
+                        SingleLogoutManager.STATUS_PARAM + "=" + statusString);
+                }
             }
         } else {
             String protocol = (String) origProtocolMap.get(relayState);
+            String spEntityID = (String) spEntityIDMap.get(relayState);
+            String origRelayState = (String) relayStateMap.get(relayState);
+            String realm = (String) realmMap.get(relayState);
+            String idpEntityID = (String) idpEntityIDMap.get(relayState);
+            int currentStatus = 
+                ((Integer) currentStatusMap.get(relayState)).intValue();
             if (protocol.equals(SingleLogoutManager.SAML2)) {
                 try {
                     LogoutResponse logResp = ProtocolFactory.getInstance().
                         createLogoutResponse(logoutResponseXML);
                     String location = logResp.getDestination();
-                    String origRelayState = 
-                        (String) relayStateMap.get(relayState);
-                    String realm = (String) realmMap.get(relayState);
-                    String idpEntityID = 
-                        (String) idpEntityIDMap.get(relayState);
-                    String spEntityID = (String) spEntityIDMap.get(relayState);
+                    String statusVal = 
+                        logResp.getStatus().getStatusCode().getValue();
+                    String newVal = getNewStatusCode(currentStatus, statusVal);
+                    if (!statusVal.equals(newVal)) {
+                        logResp.getStatus().getStatusCode().setValue(statusVal);
+                    }
                     if (debug.messageEnabled()) {
                        debug.message("SingleLogoutManager.sendLogoutRes:" +
-                           " location=" + location + 
+                           "(SAML2) location=" + location + 
+                           " orig status=" + statusVal + 
+                           ", new status=" + newVal +
                            ", orig relay=" + origRelayState +
                            ", realm=" + realm +
                            ", idpEntityID=" + idpEntityID +
@@ -615,13 +660,97 @@ public class SingleLogoutManager {
                         origRelayState, realm, idpEntityID, 
                         SAML2Constants.IDP_ROLE, spEntityID);
                 } catch (SAML2Exception ex) {
-                    debug.error("SingleLogoutManager.sebdLogoutResponse:saml2",
+                    debug.error("SingleLogoutManager.sendLogoutResponse:saml2",
                         ex);
                     throw new IOException(ex.getMessage());
                 }             
             } else if (protocol.equals(SingleLogoutManager.IDFF)) {
-                debug.message("SingleLogoutManager.sendLogoutResponse: IDFF");
-                // TODO : process IDFF
+                boolean failed = false;
+                String logoutDoneURL = null;
+                try {
+                    debug.message("SingleLogoutManager.sendLogoutResp: IDFF");
+                    IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
+                    ProviderDescriptorType descriptor =
+                        metaManager.getSPDescriptor(spEntityID);
+                    String retURL = descriptor.getSingleLogoutServiceReturnURL();
+                    Element elem = XMLUtils.toDOMDocument(logoutResponseXML,
+                        SingleLogoutManager.debug).getDocumentElement();
+                    FSLogoutResponse responseLogout = new FSLogoutResponse(elem);
+                    BaseConfigType hostedConfig =
+                        metaManager.getIDPDescriptorConfig(idpEntityID);
+                    logoutDoneURL = FSServiceUtils.getLogoutDonePageURL(request,
+                        hostedConfig, null);
+                    Status status = responseLogout.getStatus();
+                    String statusVal = status.getStatusCode().getValue();
+                    String newVal = getNewStatusCode(currentStatus, statusVal);
+                    if (!statusVal.equals(newVal)) {
+                        com.sun.identity.saml.protocol.StatusCode statCode =
+                            new com.sun.identity.saml.protocol.StatusCode(newVal);
+                        com.sun.identity.saml.protocol.Status stat =
+                            new com.sun.identity.saml.protocol.Status(statCode);
+                        responseLogout.setStatus(stat);
+                    }
+                    if (debug.messageEnabled()) {
+                        debug.message("SingleLogoutManager.sendLogoutRes:" +
+                            "(IDFF) orig status=" + statusVal +
+                            ", new status=" + newVal +
+                            ", orig relay=" + origRelayState +
+                            ", logout done URL=" + logoutDoneURL +
+                            ", realm=" + realm +
+                            ", idpEntityID=" + idpEntityID +
+                            ", spEntityID=" + spEntityID);
+                    }
+                    String urlEncodedResponse =
+                        responseLogout.toURLEncodedQueryString();
+                    // Sign the request querystring
+                    if (FSServiceUtils.isSigningOn()) {
+                        String certAlias =
+                                IDFFMetaUtils.getFirstAttributeValueFromConfig(
+                                hostedConfig, IFSConstants.SIGNING_CERT_ALIAS);
+                        if (certAlias == null || certAlias.length() == 0) {
+                            if (debug.messageEnabled()) {
+                                debug.message("SingleLogoutManager.sendLogoutRes:"
+                                        + "signSAMLRequest couldn't obtain cert alias.");
+                            }
+                            throw new SAMLResponderException(
+                                FSUtils.bundle.getString(IFSConstants.NO_CERT_ALIAS));
+                        } else {
+                            urlEncodedResponse = FSSignatureUtil.signAndReturnQueryString(
+                                    urlEncodedResponse, certAlias);
+                        }
+                    }
+                    StringBuffer redirectURL = new StringBuffer();
+                    redirectURL.append(retURL);
+                    if (retURL.indexOf(IFSConstants.QUESTION_MARK) == -1) {
+                        redirectURL.append(IFSConstants.QUESTION_MARK);
+                    } else {
+                        redirectURL.append(IFSConstants.AMPERSAND);
+                    }
+                    redirectURL.append(urlEncodedResponse);
+                    if (FSUtils.debug.messageEnabled()) {
+                        FSUtils.debug.message("SingleLogoutManager.sendResponse "
+                                + "for IDFF, url = " + redirectURL.toString());
+                    }
+                    response.sendRedirect(redirectURL.toString());
+                } catch (FSMsgException ex) {
+                    debug.error("SingleLogoutManager.sendLogoutRes", ex);
+                    failed = true;
+                } catch (SAMLException ex) {
+                    debug.error("SingleLogoutManager.sendLogoutRes", ex);
+                    failed = true;;
+                } catch (IDFFMetaException ex) {
+                    debug.error("SingleLogoutManager.sendLogoutRes", ex);
+                    failed = true;
+                } catch (IOException ex) {
+                    debug.error("SingleLogoutManager.sendLogoutRes", ex);
+                    failed = true;
+                }
+                if (failed) {
+                    FSServiceUtils.returnLocallyAfterOperation(
+                        response, logoutDoneURL, false,
+                        IFSConstants.LOGOUT_SUCCESS, 
+                        IFSConstants.LOGOUT_FAILURE);
+                }
             } else if (protocol.equals(SingleLogoutManager.WS_FED)) {
                 // TODO : process WS_FED
                 debug.message("SingleLogoutManager.sendLogoutResponse: WSFED");
@@ -663,12 +792,32 @@ public class SingleLogoutManager {
             currentStatusMap.put(relayState, new Integer(currentStatus));
         }
     }
+  
+    /**
+     * Returns new logout status code based on current status and old status
+     * code.
+     */
+    private String getNewStatusCode(int currentStatus, String statusCode) {
+        switch (currentStatus) {
+            case LOGOUT_SUCCEEDED_STATUS:
+                return statusCode;
+            case LOGOUT_FAILED_STATUS:
+            case LOGOUT_PARTIAL_STATUS:
+                return IFSConstants.SAML_RESPONDER;
+            default:
+                return statusCode;
+        }
+    }
     
     /**
      * Returns relay state
      */
     private String getRelayStateURL(HttpServletRequest request, 
             String handler) {
+        if (request == null) {
+            // this is SOAP case
+            return LOCAL_HOST_URL + RELAY_SERVLET_URI + handler;
+        }
         String baseURL = MultiProtocolUtils.geServerBaseURL(request);
         return baseURL + RELAY_SERVLET_URI + handler;
     }

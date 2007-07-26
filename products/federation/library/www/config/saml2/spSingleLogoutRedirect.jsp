@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutRedirect.jsp,v 1.2 2006-12-05 21:55:53 weisun2 Exp $
+   $Id: spSingleLogoutRedirect.jsp,v 1.3 2007-07-26 21:58:17 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -30,6 +30,8 @@
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
+<%@ page import="com.sun.identity.saml2.profile.CacheObject" %>
+<%@ page import="com.sun.identity.saml2.profile.SPCache" %>
 <%@ page import="com.sun.identity.saml2.profile.SPSingleLogout" %>
 <%@ page import="java.util.Map" %>
 
@@ -65,7 +67,14 @@
     //- SAMLResponse - the LogoutResponse
 
     String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
-
+    if (relayState != null) {
+        CacheObject tmpRs= 
+            (CacheObject) SPCache.relayStateHash.remove(relayState);
+        if ((tmpRs != null)) {
+            relayState = (String) tmpRs.getObject();
+        }
+    }
+    
     String samlResponse = request.getParameter(SAML2Constants.SAML_RESPONSE);
     if (samlResponse != null) {
         try {
