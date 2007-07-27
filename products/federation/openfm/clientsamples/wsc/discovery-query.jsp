@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-query.jsp,v 1.2 2006-11-01 07:03:46 hengming Exp $
+   $Id: discovery-query.jsp,v 1.3 2007-07-27 22:02:23 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -152,7 +152,8 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
                                 .replace(':','_');
                             String entryID = offer.getEntryID();
                             String resOffFN = System.getProperty(
-                                "java.io.tmpdir") + "RO_"+ fnSuffix + "_" + i;
+                                "java.io.tmpdir") + File.separator + 
+                                "RO_"+ fnSuffix + "_" + i;
                             String secAssertion = null;
                             try {
                                 FileWriter resOffWriter = 
