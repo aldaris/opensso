@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustDescriptor.java,v 1.3 2007-05-22 21:53:43 qcheng Exp $
+ * $Id: CircleOfTrustDescriptor.java,v 1.4 2007-07-27 23:13:14 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -216,7 +216,7 @@ public class CircleOfTrustDescriptor {
         if (idffReaderServiceURL != null) {
             return idffReaderServiceURL;
         } else if ((circleOfTrustType != null) && 
-            circleOfTrustType.equals(COTConstants.IDFF)) { 
+            circleOfTrustType.equalsIgnoreCase(COTConstants.IDFF)) { 
             // handle legacy case
             return readerServiceURL;
         } else {
@@ -233,7 +233,7 @@ public class CircleOfTrustDescriptor {
         if (saml2ReaderServiceURL != null) {
             return saml2ReaderServiceURL;
         } else if ((circleOfTrustType != null) && 
-            circleOfTrustType.equals(COTConstants.SAML2)) { 
+            circleOfTrustType.equalsIgnoreCase(COTConstants.SAML2)) { 
             // handle legacy case
             return readerServiceURL;
         } else {
@@ -250,7 +250,7 @@ public class CircleOfTrustDescriptor {
         if (idffWriterServiceURL != null) {
             return idffWriterServiceURL;
         } else if ((circleOfTrustType != null) && 
-            circleOfTrustType.equals(COTConstants.IDFF)) { 
+            circleOfTrustType.equalsIgnoreCase(COTConstants.IDFF)) { 
             // handle legacy case
             return writerServiceURL;
         } else {
@@ -267,7 +267,7 @@ public class CircleOfTrustDescriptor {
         if (saml2WriterServiceURL != null) {
             return saml2WriterServiceURL;
         } else if ((circleOfTrustType != null) && 
-            circleOfTrustType.equals(COTConstants.SAML2)) { 
+            circleOfTrustType.equalsIgnoreCase(COTConstants.SAML2)) { 
             // handle legacy case
             return writerServiceURL;
         } else {
@@ -482,7 +482,7 @@ public class CircleOfTrustDescriptor {
             if (tmp != null) {
                 // handle legacy case
                 if ((circleOfTrustType == null) 
-                    || circleOfTrustType.equals(protocol)) {
+                    || circleOfTrustType.equalsIgnoreCase(protocol)) {
                     Set ret = new HashSet();
                     ret.addAll(tmp);
                     return ret;

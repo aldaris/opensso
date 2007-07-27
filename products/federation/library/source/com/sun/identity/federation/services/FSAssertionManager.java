@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManager.java,v 1.2 2006-12-09 06:21:15 veiming Exp $
+ * $Id: FSAssertionManager.java,v 1.3 2007-07-27 23:13:15 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -567,7 +567,7 @@ public final class FSAssertionManager {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message(
                         "FSAssertionManager.createAssertion(id): "
-                        + "AtrifactTimeOut configuration not found in FSConfig."
+                        + "ArtifactTimeOut configuration not found in FSConfig."
                         + " Using Default");
                 }
                 artifactTimeout = null;
