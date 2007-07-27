@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSmokeTest.java,v 1.4 2007-07-17 23:42:47 mrudulahg Exp $
+ * $Id: IDFFSmokeTest.java,v 1.5 2007-07-27 18:20:56 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -302,7 +302,7 @@ public class IDFFSmokeTest extends IDFFCommon {
                     "Running: testSPInitFederation");
             getWebClient();
             log(Level.FINE, "testSPInitFederation", "Login to SP with " + 
-                    TestConstants.KEY_SP_USER);
+                    configMap.get(TestConstants.KEY_SP_USER));
             consoleLogin(webClient, spurl, 
                     configMap.get(TestConstants.KEY_SP_USER),
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
@@ -413,6 +413,9 @@ public class IDFFSmokeTest extends IDFFCommon {
             log(Level.SEVERE, "testSPInitTerminate", e.getMessage(), null);
             e.printStackTrace();
             throw e;
+        } finally {
+            consoleLogout(webClient, spurl + "/UI/Logout");
+            consoleLogout(webClient, idpurl + "/UI/Logout");
         }
         exiting("testSPInitTerminate");
     }
@@ -496,6 +499,9 @@ public class IDFFSmokeTest extends IDFFCommon {
             log(Level.SEVERE, "testIDPInitTerminate", e.getMessage(), null);
             e.printStackTrace();
             throw e;
+        } finally {
+            consoleLogout(webClient, spurl + "/UI/Logout");
+            consoleLogout(webClient, idpurl + "/UI/Logout");
         }
         exiting("testIDPInitTerminate");
     }

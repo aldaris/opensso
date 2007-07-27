@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFAutoFederationTests.java,v 1.2 2007-07-27 18:20:56 mrudulahg Exp $
+ * $Id: IDFFNameIDPolicyTests.java,v 1.1 2007-07-27 18:20:56 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,13 +46,11 @@ import org.testng.annotations.Test;
 
 /**
  * This class tests the following: 
- * 1. First it sets the autofederation attribute to true. 
- * Sets the autofederation attribute & attribute map in the sp & idp extended 
- * metadata. It creates the users with same mail address. 
- * 2. Tests cover sp init SSO with NameIDPolicy set to federated 
+ * 1. It sets the nameIDPolicy attribute to none, onetime. 
+ * 2. Tests cover sp init SSO with NameIDPolicy set to none 
  * 3. Tests cover sp init SSO with NameIDPolicy set to onetime 
  */
-public class IDFFAutoFederationTests extends IDFFCommon {
+public class IDFFNameIDPolicyTests extends IDFFCommon {
     
     public WebClient webClient;
     private DefaultTaskHandler task;
@@ -62,46 +60,11 @@ public class IDFFAutoFederationTests extends IDFFCommon {
     ArrayList idpuserlist = new ArrayList();
     private String  baseDir;
     private HtmlPage page;
-    private URL url;
     private String spmetadata;
-    private String idpmetadata;
     private String spurl;
     private String idpurl;
     private FederationManager fmSP;
     private FederationManager fmIDP;
-    private String AUTO_FED_ENABLED_FALSE = "<Attribute name=\""
-            + "enableAutoFederation" + "\">\n"
-            + "            <Value>false</Value>\n"
-            + "        </Attribute>\n";
-    private  String AUTO_FED_ENABLED_TRUE = "<Attribute name=\""
-            + "enableAutoFederation" + "\">\n"
-            + "            <Value>true</Value>\n"
-            + "        </Attribute>\n";
-    
-    private String AUTO_FED_ATTRIB_DEFAULT = "<Attribute name=\""
-            + "autoFederationAttribute\">\n"
-            + "            <Value/>\n"
-            + "        </Attribute>";
-    private String AUTO_FED_ATTRIB_VALUE = "<Attribute name=\""
-            + "autoFederationAttribute\">\n"
-            + "            <Value>mail</Value>\n"
-            + "        </Attribute>";
-    private String IDP_ATTRIB_MAP_DEFAULT = "<Attribute name=\""
-            + "idpAttributeMap\">\n"
-            + "            <Value/>\n"
-            + "        </Attribute>";
-    private String IDP_ATTRIB_MAP_VALUE = "<Attribute name=\""
-            + "idpAttributeMap\">\n"
-            + "            <Value>mail=mail</Value>\n"
-            + "        </Attribute>";
-    private String SP_ATTRIB_MAP_DEFAULT = "<Attribute name=\""
-            + "spAttributeMap\">\n"
-            + "            <Value/>\n"
-            + "        </Attribute>";
-    private String SP_ATTRIB_MAP_VALUE = "<Attribute name=\""
-            + "spAttributeMap\">\n"
-            + "            <Value>mail=mail</Value>\n"
-            + "        </Attribute>";
     private String NAME_ID_POLICY_FEDERATED = "        <Attribute name=" +
             "\"nameIDPolicy\">\n" +
             "            <Value>federated</Value>\n" +
@@ -110,10 +73,18 @@ public class IDFFAutoFederationTests extends IDFFCommon {
             "\"nameIDPolicy\">\n" +
             "            <Value>onetime</Value>\n" +
             "        </Attribute>";
+    private String NAME_ID_POLICY_ANY = "        <Attribute name=" +
+            "\"nameIDPolicy\">\n" +
+            "            <Value>any</Value>\n" +
+            "        </Attribute>";
+    private String NAME_ID_POLICY_NONE = "        <Attribute name=" +
+            "\"nameIDPolicy\">\n" +
+            "            <Value>none</Value>\n" +
+            "        </Attribute>";
     
-    /** Creates a new instance of IDFFAutoFederationTests */
-    public IDFFAutoFederationTests() {
-        super("IDFFAutoFederationTests");
+    /** Creates a new instance of IDFFNameIDPolicyTests */
+    public IDFFNameIDPolicyTests() {
+        super("IDFFNameIDPolicyTests");
     }
     
     /**
@@ -174,7 +145,7 @@ public class IDFFAutoFederationTests extends IDFFCommon {
             fmIDP = new FederationManager(idpurl);
             
             usersMap = new HashMap<String, String>();
-            usersMap = getMapFromResourceBundle("idffAutoFederationTests");
+            usersMap = getMapFromResourceBundle("IDFFNameIDPolicyTests");
             log(Level.FINEST, "setup", "Users Map is " + usersMap);
             Integer totalUsers = new Integer(
                     (String)usersMap.get("totalUsers"));
@@ -220,12 +191,6 @@ public class IDFFAutoFederationTests extends IDFFCommon {
                     (String)configMap.get(TestConstants.KEY_SP_REALM),
                     false, false, true, "idff");
             spmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
-            HtmlPage idpmetaPage = fmIDP.exportEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM), false, 
-                    false, true, "idff");
-            idpmetadata = MultiProtocolCommon.getExtMetadataFromPage(
-                    idpmetaPage);
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -238,12 +203,11 @@ public class IDFFAutoFederationTests extends IDFFCommon {
     }
     
     /**
-     * Change IDFF ext metadata on SP & IDP side to configure autofederation
-     * based on mail attribute
+     * Change IDFF ext metadata on SP & IDP side to configure nameIDPolicy
      */
-    public void autoFedSetup(WebClient webClient, String spmetadata, String 
-            idpmetadata, FederationManager fmSP, FederationManager fmIDP, Map 
-            configMap, String nameIDPolicy)
+    public void nameIDPolicySetup(WebClient webClient, String spmetadata, 
+            FederationManager fmSP, FederationManager fmIDP, Map configMap, 
+            String nameIDPolicy)
     throws Exception {
         try {
             consoleLogin(webClient, spurl,
@@ -254,113 +218,122 @@ public class IDFFAutoFederationTests extends IDFFCommon {
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     (String)configMap.get(TestConstants.
                     KEY_IDP_AMADMIN_PASSWORD));
-            String spmetadataMod = spmetadata.replaceAll(AUTO_FED_ENABLED_FALSE,
-                    AUTO_FED_ENABLED_TRUE);
-            spmetadataMod = spmetadataMod.replaceAll(AUTO_FED_ATTRIB_DEFAULT,
-                    AUTO_FED_ATTRIB_VALUE);
-            spmetadataMod = spmetadataMod.replaceAll(SP_ATTRIB_MAP_DEFAULT,
-                    SP_ATTRIB_MAP_VALUE);
+            String spmetadataMod = spmetadata;
             if (nameIDPolicy.equals("onetime")) {
-                spmetadataMod = spmetadataMod.replaceAll(
+                spmetadataMod = spmetadata.replaceAll(
                         NAME_ID_POLICY_FEDERATED,
                         NAME_ID_POLICY_ONETIME);
-            } 
-            log(Level.FINEST, "autoFedSetup: Modified metadata:",
+            } else if (nameIDPolicy.equals("none")) {
+                spmetadataMod = spmetadata.replaceAll(
+                        NAME_ID_POLICY_FEDERATED,
+                        NAME_ID_POLICY_NONE);
+            } else if (nameIDPolicy.equals("any")) {
+                spmetadataMod = spmetadata.replaceAll(
+                        NAME_ID_POLICY_FEDERATED,
+                        NAME_ID_POLICY_ANY);
+            }
+            log(Level.FINEST, "nameIDPolicySetup: Modified metadata:",
                     spmetadataMod);
 
             assert (loadSPMetadata(null, spmetadataMod, fmSP, fmIDP, 
                     configMap, webClient, true));
-             
-            String idpmetadataMod = idpmetadata.replaceAll(
-                    AUTO_FED_ENABLED_FALSE, AUTO_FED_ENABLED_TRUE);
-            idpmetadataMod = idpmetadataMod.replaceAll(
-                    AUTO_FED_ATTRIB_DEFAULT, AUTO_FED_ATTRIB_VALUE);
-            idpmetadataMod = idpmetadataMod.replaceAll(IDP_ATTRIB_MAP_DEFAULT,
-                    IDP_ATTRIB_MAP_VALUE);
-            log(Level.FINEST, "autoFedSetup: Modified metadata:",
-                    idpmetadataMod);
-
-            assert (loadIDPMetadata(null, idpmetadataMod, fmSP, fmIDP, 
-                    configMap, webClient, true));
         } catch (Exception e) {
-            log(Level.SEVERE, "autoFedSetup", e.getMessage());
+            log(Level.SEVERE, "nameIDPolicySetup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
             consoleLogout(webClient, spurl + "/UI/Logout");
             consoleLogout(webClient, idpurl + "/UI/Logout");
         }
-        exiting("autoFedSetup");
+        exiting("nameIDPolicySetup");
     }
     
     /**
-     * Run SP initiated auto federation with NameIDPolicy set to federated
-     * @DocTest: IDFF | SP initiated Autofederation with NameIDPolicy set to 
-     * federated.
+     * Run SP initiated SSO with NameIDPolicy set to none
+     * @DocTest: IDFF| SP initiated SSO with NameIDPolicy set to none.
+     * Testcase ID: AccessManager_Liberty_47
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void IDFFautoFedSPInitFederated()
+    public void nameIDPolicyNone()
     throws Exception {
-        entering("IDFFautoFedSPInitFederated", null);
+        entering("nameIDPolicyNone", null);
         try {
-            //Setup autofederation with default NameIDPolicy
-            autoFedSetup(webClient, spmetadata, idpmetadata, fmSP, fmIDP, 
-                    configMap, "federated");
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 1));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
                     usersMap.get(TestConstants.KEY_SP_USER_PASSWORD + 1));
-            configMap.put(TestConstants.KEY_IDP_USER, usersMap.
-                    get(TestConstants.KEY_IDP_USER + 1));
+            configMap.put(TestConstants.KEY_IDP_USER,
+                    usersMap.get(TestConstants.KEY_IDP_USER + 1));
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD,
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 1));
-
             //Now perform SSO
-            String[] arrActions = {"idffautofedidplogin", 
-                    "idffautofedspinit_ssoinit", 
-                    "idffautofedspinit_slo", "idffautofedidplogin",
-                    "idffautofedspinit_ssoinit",
-                    "idffautofedspinit_reg", "idffautofedspinit_term"};
-            String idpxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlIDPLogin(idpxmlfile, configMap);
-            String xmlfile = baseDir + arrActions[1] + ".xml";
-            getxmlSPIDFFFederate(xmlfile, configMap, false);
+            String[] arrActions = {"nameIDPolicyNone_splogin", 
+                    "nameIDPolicyNone_ssoinit", 
+                    "nameIDPolicyNone_slo"};
+            String spxmlfile = baseDir + arrActions[0] + ".xml";
+            SAMLv2Common.getxmlSPLogin(spxmlfile, configMap);
+            String fedxmlfile = baseDir + arrActions[1] + ".xml";
+            getxmlSPIDFFFederate(fedxmlfile, configMap, true);
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             getxmlSPIDFFLogout(sloxmlfile, configMap);
-            String regxmlfile = baseDir + arrActions[5] + ".xml";
-            getxmlSPIDFFNameReg(regxmlfile, configMap);
-            String termxmlfile = baseDir + arrActions[6] + ".xml";
-            getxmlSPIDFFTerminate(termxmlfile, configMap);
-
+            log(Level.FINE, "nameIDPolicyNone", "First establish the " +
+                    "federation & then set the NameIDPolicy to none");
+            
             for (int i = 0; i < arrActions.length; i++) {
-                log(Level.FINE, "IDFFautoFedSPInitFederated",
+                log(Level.FINE, "nameIDPolicyNone",
                         "Executing xml: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i]
                         + ".xml");
                 page = task.execute(webClient);
             }
+            
+            log(Level.FINE, "nameIDPolicyNone", "Set the NameIDPolicy to none");
+            nameIDPolicySetup(webClient, spmetadata, fmSP, fmIDP, 
+                    configMap, "none");
+            String[] arrActionsNone = {"nameIDPolicyNone_idplogin", 
+                    "nameIDPolicyNone_sso", "nameIDPolicyNone_reg", 
+                    "nameIDPolicyNone_slo", "nameIDPolicyNone_idplogin",
+                    "nameIDPolicyNone_sso", 
+                    "nameIDPolicyNone_term"};
+            String idpxmlfile = baseDir + arrActionsNone[0] + ".xml";
+            SAMLv2Common.getxmlIDPLogin(idpxmlfile, configMap);
+            String ssoxmlfile = baseDir + arrActionsNone[1] + ".xml";
+            getxmlSPIDFFSSO(ssoxmlfile, configMap);
+            String regxmlfile = baseDir + arrActionsNone[2] + ".xml";
+            getxmlSPIDFFNameReg(regxmlfile, configMap);
+            String termxmlfile = baseDir + arrActionsNone[6] + ".xml";
+            getxmlSPIDFFTerminate(termxmlfile, configMap);
+            for (int i = 0; i < arrActionsNone.length; i++) {
+                log(Level.FINE, "nameIDPolicyNone",
+                        "Executing xml: " + arrActionsNone[i]);
+                task = new DefaultTaskHandler(baseDir + arrActionsNone[i]
+                        + ".xml");
+                page = task.execute(webClient);
+            }
         } catch (Exception e) {
-            log(Level.SEVERE, "IDFFautoFedSPInitFederated", e.getMessage());
+            log(Level.SEVERE, "nameIDPolicyNone", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
             consoleLogout(webClient, spurl + "/UI/Logout");
             consoleLogout(webClient, idpurl + "/UI/Logout");
         }
-        exiting("IDFFautoFedSPInitFederated");
+        exiting("nameIDPolicyNone");
     }
-    
+
     /**
-     * Run SP initiated auto federation with NameIDPolicy set to onetime
-     * @DocTest: SAML2| IDP initiated Autofederation with NameIDPolicy set to 
+     * Run SP initiated federation with NameIDPolicy set to onetime
+     * @DocTest: IDFF| SP initiated federation with NameIDPolicy set to 
      * onetime.
+     * Testcase ID: AccessManager_Liberty_46
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void IDFFautoFedSPInitOneTime()
+    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"}, 
+    dependsOnMethods={"nameIDPolicyNone"})
+    public void nameIDPolicyOneTime()
     throws Exception {
-        entering("IDFFautoFedSPInitOneTime", null);
+        entering("nameIDPolicyOneTime", null);
         try {
-            autoFedSetup(webClient, spmetadata, idpmetadata, fmSP, fmIDP, 
+            nameIDPolicySetup(webClient, spmetadata, fmSP, fmIDP, 
                     configMap, "onetime");
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 2));
@@ -371,39 +344,33 @@ public class IDFFAutoFederationTests extends IDFFCommon {
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD,
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 2));
             //Now perform SSO
-            String[] arrActions = {"idffautofedidplogin", 
-                    "idffautofedspinitonetime_ssoinit", 
-                    "idffautofedspinitonetime_reg",
-                    "idffautofedspinitonetime_slo", "idffautofedidplogin", 
-                    "idffautofedspinitonetime_ssoinit", 
-                    "idffautofedspinitonetime_slo"};
+            String[] arrActions = {"nameIDPolicyOneTime_splogin", 
+                    "nameIDPolicyOneTime_ssoinit", 
+                    "nameIDPolicyOneTime_slo", "nameIDPolicyOneTime_splogin", 
+                    "nameIDPolicyOneTime_ssoinit", 
+                    "nameIDPolicyOneTime_slo"};
             String xmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlIDPLogin(xmlfile, configMap);
+            SAMLv2Common.getxmlSPLogin(xmlfile, configMap);
             xmlfile = baseDir + arrActions[1] + ".xml";
-            getxmlSPIDFFFederate(xmlfile, configMap, false);
-            String regxmlfile = baseDir + arrActions[2] + ".xml";
-            getxmlSPIDFFNameReg(regxmlfile, configMap);
-            String sloxmlfile = baseDir + arrActions[3] + ".xml";
+            getxmlSPIDFFFederate(xmlfile, configMap, true);
+            String sloxmlfile = baseDir + arrActions[2] + ".xml";
             getxmlSPIDFFLogout(sloxmlfile, configMap);
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(Level.FINE, "IDFFautoFedSPInitOneTime",
+                log(Level.FINE, "nameIDPolicyOneTime",
                         "Executing xml: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i]
                         + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "IDFFautoFedSPInitOneTime", e.getMessage());
+            log(Level.SEVERE, "nameIDPolicyOneTime", e.getMessage());
             e.printStackTrace();
             throw e;
-        } finally {
-            consoleLogout(webClient, spurl + "/UI/Logout");
-            consoleLogout(webClient, idpurl + "/UI/Logout");
         }
-        exiting("IDFFautoFedSPInitOneTime");
+        exiting("nameIDPolicyOneTime");
     }
-        
+
     /**
      * This methods deletes all the users as part of cleanup
      * It also restores the original metadata. 
@@ -431,13 +398,12 @@ public class IDFFAutoFederationTests extends IDFFCommon {
             fmIDP.deleteIdentities(webClient, configMap.get(
                     TestConstants.KEY_IDP_REALM),
                     idpuserlist, "User");
-            assert (loadIDPMetadata(null, idpmetadata, fmSP, fmIDP, 
-                    configMap, webClient, true));
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
+            log(Level.FINEST, "cleanup", "Logging out of SP & IDP");
             consoleLogout(webClient, spurl + "/UI/Logout");
             consoleLogout(webClient, idpurl + "/UI/Logout");
         }
