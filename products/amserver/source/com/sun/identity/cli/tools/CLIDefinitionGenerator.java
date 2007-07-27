@@ -17,13 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionGenerator.java,v 1.7 2007-02-23 22:37:05 veiming Exp $
+ * $Id: CLIDefinitionGenerator.java,v 1.8 2007-07-27 05:56:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli.tools;
-
 
 import com.sun.identity.cli.annotation.DefinitionClassInfo;
 import com.sun.identity.cli.annotation.Macro;
@@ -195,6 +194,14 @@ public class CLIDefinitionGenerator {
             String option = (String)i.next();
             String opt = option.substring(0, option.indexOf('|'));
             String description = option.substring(option.lastIndexOf('|') +1);
+            String webDescription = null;
+            int idxWeb = description.indexOf("<web>");
+            if (idxWeb != -1) {
+                rbOut.println(prefix + "__web__-" + opt + "="
+                    + description.substring(idxWeb + 5));
+                description = description.substring(0, idxWeb);
+            }
+
             rbOut.println(prefix + opt + "=" + description);
         }
     }

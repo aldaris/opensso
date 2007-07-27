@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommand.java,v 1.7 2007-06-25 19:40:06 veiming Exp $
+ * $Id: SubCommand.java,v 1.8 2007-07-27 05:56:19 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -466,7 +467,32 @@ public class SubCommand {
      * @return the description of an argument/option.
      */
     public String getOptionDescription(String name) {
-        return rb.getString(
+        return getOptionDescription(name, false);
+    }
+
+    /**
+     * Returns the description of an argument/option.
+     *
+     * @param name Name of the argument/option.
+     * @param isWeb <code>true</code> if CLI is accessed via browser.
+     * @return the description of an argument/option.
+     */
+    public String getOptionDescription(String name, boolean isWeb) {
+        String desc = null;
+        if (isWeb) {
+            try {
+                desc = rb.getString(
+                    CLIConstants.PREFIX_SUBCMD_RES + this.name + "-" +
+                        CLIConstants.WEB_RES_MARKER + "-" + name);
+            } catch (MissingResourceException e) {
+                /*
+                 * ignore. this happens if there are no special description
+                 * for web interface
+                 */
+            }
+        }
+
+        return (desc != null) ? desc : rb.getString(
             CLIConstants.PREFIX_SUBCMD_RES + this.name + "-" + name);
     }
 

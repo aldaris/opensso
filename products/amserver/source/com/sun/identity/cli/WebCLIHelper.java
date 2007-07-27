@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.7 2007-06-26 21:56:14 veiming Exp $
+ * $Id: WebCLIHelper.java,v 1.8 2007-07-27 05:56:19 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -267,7 +267,7 @@ public class WebCLIHelper {
                     .append("</script>");
             }
             buff.append("<br />")
-                .append(cmd.getOptionDescription(opt))
+                .append(cmd.getOptionDescription(opt, true))
                 .append("<br /><br />")
                 .append("</td></tr>");
         }

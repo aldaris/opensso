@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.18 2007-07-23 23:06:43 veiming Exp $
+ * $Id: FederationManager.java,v 1.19 2007-07-27 05:56:20 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,8 +97,8 @@ public class FederationManager {
         macro="authentication",
         optionalOptions={
             "realm|e|s|Realm where entity resides.",
-            "metadata|m|s|t|Specify file name for the standard metadata to be imported.",
-            "extended|x|s|t|Specify file name for the extended entity configuration to be imported.",
+            "metadata|m|s|t|Specify file name for the standard metadata to be imported.<web>Standard metadata to be imported.",
+            "extended|x|s|t|Specify file name for the extended entity configuration to be imported.<web>Extended entity configuration to be imported.",
             "cot|t|s|Specify name of the Circle of Trust this entity belongs.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={

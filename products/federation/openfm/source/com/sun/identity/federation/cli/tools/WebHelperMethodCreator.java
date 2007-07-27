@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebHelperMethodCreator.java,v 1.1 2007-07-25 07:02:03 veiming Exp $
+ * $Id: WebHelperMethodCreator.java,v 1.2 2007-07-27 05:56:20 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,7 +98,12 @@ public class WebHelperMethodCreator {
             }
             
             String description = t.nextToken();
-            nameToDescription.put(name, description);
+            int idxWeb = description.indexOf("<web>");
+            if (idxWeb != -1) {
+                nameToDescription.put(name, description.substring(idxWeb +5));
+            } else {
+                nameToDescription.put(name, description);
+            }
             nameToShortName.put(name, shortName);
             if (unary) {
                 unaryOptionNames.add(name);
