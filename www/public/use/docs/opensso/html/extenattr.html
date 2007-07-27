@@ -56,9 +56,10 @@ For this article, we define the following schema for an attribute named <tt>cred
 <pre>dn: cn=schema
 changetype: modify
 add: attributeTypes
-attributeTypes: ( creditcard-oid NAME 'creditcard' DESC 'Sample CreditCard' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 X-ORIGIN 'Sun Java System Identity Management'
-)
-objectClasses: ( extensionPPService-oid NAME 'extensionPPService' DESC 'PP Extensions OC' SUP top AUXILIARY MAY ( creditcard )  X-ORIGIN 'Sun Java System Identity Management' )</pre>
+attributeTypes: ( creditcard-oid NAME 'creditcard' DESC 'Sample CreditCard' <br>
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 X-ORIGIN 'Sun Java System Identity Management')
+objectClasses: ( extensionPPService-oid NAME 'extensionPPService' DESC 'PP Extensions OC' <br>
+SUP top AUXILIARY MAY ( creditcard )  X-ORIGIN 'Sun Java System Identity Management' )</pre>
 
 <P></P>
 
