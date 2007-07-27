@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.31 2007-07-24 20:39:33 veiming Exp $
+ * $Id: AccessManager.java,v 1.32 2007-07-27 17:23:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -340,8 +340,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-attr-values-of-realm-succeed=Attribute values is returned.",
-            "get-attr-values-of-realm-no-values=There are no attribute values.",
+            "get-attr-values-of-realm-succeed={0} has the following attribute values.",
+            "get-attr-values-of-realm-no-values={0} has no attributes.",
             "get-attr-values-of-realm-result={0}={1}"})
     private String get_realm;
     
