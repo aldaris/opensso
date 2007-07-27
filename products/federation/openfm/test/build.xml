@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2007-04-06 19:48:41 veiming Exp $
+   $Id: build.xml,v 1.5 2007-07-27 22:00:28 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -91,9 +91,9 @@
             <fileset dir="${openfm.unittest.dir}/www/css" />
         </copy>
 
-        <zip destfile="${fm.dist.dir}/openfm-server-test.zip"
+        <zip destfile="${fm.dist.dir}/fam-server-test.zip"
             basedir="${test.package.dir}" />
-        <checksum file="${fm.dist.dir}/openfm-server-test.zip" algorithm="SHA" fileext=".sha" /> 
+        <checksum file="${fm.dist.dir}/fam-server-test.zip" algorithm="SHA" fileext=".sha" /> 
     </target>
 
     <target name="preparebuild">

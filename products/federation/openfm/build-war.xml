@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.16 2007-07-23 23:06:40 veiming Exp $
+   $Id: build-war.xml,v 1.17 2007-07-27 22:00:26 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -67,8 +67,8 @@
             tofile="${war.package.dir}/WEB-INF/lib/openfedlib.jar" />
         <copy file="${fm.dist.dir}/console.jar"
             tofile="${war.package.dir}/WEB-INF/lib/console.jar" />
-        <copy file="${fm.dist.dir}/openfm.jar"
-            tofile="${war.package.dir}/WEB-INF/lib/openfm.jar" />
+        <copy file="${fm.dist.dir}/fam.jar"
+            tofile="${war.package.dir}/WEB-INF/lib/fam.jar" />
 
         <copy todir="${war.package.dir}/config/auth/default">
             <fileset dir="${openfm.xml.dir}" 
@@ -281,12 +281,12 @@
 
         <mkdir dir="${war.packageweb.dir}" />
         <move file="${war.package.dir}/WEB-INF/web.xml" tofile="${war.packageweb.dir}/web.xml" />
-        <war destfile="${fm.dist.dir}/openfm.war" webxml="${war.packageweb.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/fam.war" webxml="${war.packageweb.dir}/web.xml">
             <zipfileset dir="${war.package.dir}" />
         </war>
         <move file="${war.packageweb.dir}/web.xml" tofile="${war.package.dir}/WEB-INF/web.xml" />
         <delete dir="${war.packageweb.dir}" />
-        <checksum file="${fm.dist.dir}/openfm.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/fam.war" algorithm="SHA" fileext=".sha" />
 
     </target>
 

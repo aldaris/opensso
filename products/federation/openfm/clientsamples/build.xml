@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2007-02-15 21:47:41 qcheng Exp $
+   $Id: build.xml,v 1.5 2007-07-27 22:00:26 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,7 +41,7 @@
 
     <target name="all" depends="preparebuild">
         <delete dir="${clientsamples.packages.dir}" />
-        <unjar src="${fm.dist.dir}/openfm.war" dest="${clientsamples.packages.dir}">
+        <unjar src="${fm.dist.dir}/fam.war" dest="${clientsamples.packages.dir}">
             <patternset>
                 <include name="com_sun_web_ui/css/css_ns6up.css"/>
                 <include name="com_sun_web_ui/images/other/javalogo.gif"/>
@@ -54,7 +54,7 @@
         </unjar>
         <mkdir dir="${clientsamples.packages.dir}/WEB-INF/lib" />
         <copy todir="${clientsamples.packages.dir}/WEB-INF/lib"
-              file="${fm.dist.dir}/fmclientsdk.jar"/>
+              file="${fm.dist.dir}/famclientsdk.jar"/>
         <copy todir="${clientsamples.packages.dir}/WEB-INF/lib">
             <fileset dir="${extlib.dir}" includes="jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xmlsec.jar,xsdlib.jar" />
             <fileset dir="${openfm.extlib.dir}" includes="amclientsdk.jar" />
@@ -66,12 +66,12 @@
         <delete dir="META-INF" />
 	<mkdir dir="${clientsamples.packages.temp.dir}" />
 	<move file="${clientsamples.packages.dir}/WEB-INF/web.xml" tofile="${clientsamples.packages.temp.dir}/web.xml" />
-        <war destfile="${fm.dist.dir}/openfm-clientsamples.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/fam-clientsamples.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
             <zipfileset dir="${clientsamples.packages.dir}" />
         </war>
 	<move file="${clientsamples.packages.temp.dir}/web.xml" tofile="${clientsamples.packages.dir}/WEB-INF/web.xml" />
 	<delete dir="${clientsamples.packages.temp.dir}" />
-        <checksum file="${fm.dist.dir}/openfm-clientsamples.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/fam-clientsamples.war" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2007-07-25 07:02:47 veiming Exp $
+   $Id: build.xml,v 1.16 2007-07-27 22:00:26 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -142,7 +142,7 @@
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
 
-        <jar destfile="${fm.dist.dir}/openfm.jar">
+        <jar destfile="${fm.dist.dir}/fam.jar">
             <manifest>
                 <attribute name="Version" value="${version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -168,7 +168,7 @@
                 includes="com/sun/identity/console/**" />
         </jar>
 
-        <checksum file="${fm.dist.dir}/openfm.jar" 
+        <checksum file="${fm.dist.dir}/fam.jar" 
             algorithm="SHA" fileext=".sha" />
     </target>
 

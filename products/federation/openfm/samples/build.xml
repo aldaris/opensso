@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-11-02 01:05:06 veiming Exp $
+   $Id: build.xml,v 1.3 2007-07-27 22:00:28 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,7 +44,7 @@
 
     <target name="all" depends="preparebuild">
         <delete dir="${samples.packages.dir}" />
-        <unjar src="${fm.dist.dir}/openfm.war" dest="${samples.packages.dir}" />
+        <unjar src="${fm.dist.dir}/fam.war" dest="${samples.packages.dir}" />
         <mkdir dir="${samples.packages.dir}/samples" />
         <copy todir="${samples.packages.dir}/samples">
             <fileset dir="${openfm.samples.dir}/war"
@@ -53,12 +53,12 @@
         <delete dir="META-INF" />
         <mkdir dir="${samples.packages.temp.dir}" />
         <move file="${samples.packages.dir}/WEB-INF/web.xml" tofile="${samples.packages.temp.dir}/web.xml" />
-        <war destfile="${fm.dist.dir}/openfm-samples.war" webxml="${samples.packages.temp.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/fam-samples.war" webxml="${samples.packages.temp.dir}/web.xml">
             <zipfileset dir="${samples.packages.dir}" />
         </war>
         <move file="${samples.packages.temp.dir}/web.xml" tofile="${samples.packages.dir}/WEB-INF/web.xml" />
         <delete dir="${samples.packages.temp.dir}" />
-        <checksum file="${fm.dist.dir}/openfm-samples.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/fam-samples.war" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">

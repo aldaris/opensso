@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: README,v 1.1 2006-10-30 23:18:09 qcheng Exp $
+   $Id: README,v 1.2 2007-07-27 22:00:28 qcheng Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,10 +27,10 @@ OpenSSO - Server based Unit test.
 
 Steps:
  1. Install Open Federation server
-     - deploy the openfm.war and configure it
+     - deploy the fam.war and configure it
  2. Setup the test
-     - unzip openfm/built/test/dist/openfm-server-test.zip to a directory
-       in the same machine where openfm.war is deployed.
+     - unzip openfm/built/test/dist/fam-server-test.zip to a directory
+       in the same machine where fam.war is deployed.
      - copy the AMConfig.properties and FederationConfig.properties that was
        generated in Step One to the test <directory>/classes directory
  3. Run the test

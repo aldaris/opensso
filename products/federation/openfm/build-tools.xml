@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.5 2007-07-23 23:06:40 veiming Exp $
+   $Id: build-tools.xml,v 1.6 2007-07-27 22:00:25 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -55,7 +55,7 @@
             tofile="${tools.temp.dir}/README.famadm" />
 
         <copy todir="${tools.temp.dir}/lib">
-            <fileset file="${fm.dist.dir}/openfm.jar" />
+            <fileset file="${fm.dist.dir}/fam.jar" />
             <fileset file="${fedlibrary.dist.dir}/openfedlib.jar" />
             <fileset dir="${extlib.dir}" includes="FastInfoset.jar, jaxb-xjc.jar, jsr173_api.jar, relaxngDatatype.jar, xmlsec.jar, xsdlib.jar" />
         </copy>

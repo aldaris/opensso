@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2007-03-28 05:41:08 veiming Exp $
+   $Id: build.xml,v 1.3 2007-07-27 22:00:27 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,7 +41,7 @@
 
     <target name="all" depends="preparebuild">
         <delete dir="${idpdiscovery.packages.dir}" />
-        <unjar src="${fm.dist.dir}/openfm.war" dest="${idpdiscovery.packages.dir}">
+        <unjar src="${fm.dist.dir}/fam.war" dest="${idpdiscovery.packages.dir}">
             <patternset>
                 <include name="com_sun_web_ui/css/css_ns6up.css"/>
                 <include name="com_sun_web_ui/images/other/javalogo.gif"/>
@@ -69,12 +69,12 @@
         <delete dir="META-INF" />
 	<mkdir dir="${idpdiscovery.packages.temp.dir}" />
 	<move file="${idpdiscovery.packages.dir}/WEB-INF/web.xml" tofile="${idpdiscovery.packages.temp.dir}/web.xml" />
-        <war destfile="${fm.dist.dir}/openfm-idpdiscovery.war" webxml="${idpdiscovery.packages.temp.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/fam-idpdiscovery.war" webxml="${idpdiscovery.packages.temp.dir}/web.xml">
             <zipfileset dir="${idpdiscovery.packages.dir}" />
         </war>
 	<move file="${idpdiscovery.packages.temp.dir}/web.xml" tofile="${idpdiscovery.packages.dir}/WEB-INF/web.xml" />
 	<delete dir="${idpdiscovery.packages.temp.dir}" />
-        <checksum file="${fm.dist.dir}/openfm-idpdiscovery.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/fam-idpdiscovery.war" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
