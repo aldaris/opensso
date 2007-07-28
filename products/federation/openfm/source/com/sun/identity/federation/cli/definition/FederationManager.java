@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.19 2007-07-27 05:56:20 veiming Exp $
+ * $Id: FederationManager.java,v 1.20 2007-07-28 01:34:55 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -197,7 +197,7 @@ public class FederationManager {
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListCircleOfTrusts",
-        description="List circle of trusts.",
+        description="List circles of trust.",
         webSupport="true",
         mandatoryOptions={},
         optionAliases={},
@@ -205,9 +205,9 @@ public class FederationManager {
         optionalOptions={
             "realm|e|s|Realm where circle of trusts reside"},
         resourceStrings={
-            "list-circle-of-trust-no-members=There are no circle of trusts.",
-            "list-circle-of-trust-members=List of circle of trusts:"})
-    private String list_circle_of_trusts;
+            "list-circles-of-trust-no-members=There are no circles of trust.",
+            "list-circles-of-trust-members=Followings are the circles of trust."})
+    private String list_circles_of_trust;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListCircleOfTrustMembers",

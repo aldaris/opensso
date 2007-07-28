@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Test.java,v 1.5 2007-07-23 23:06:44 veiming Exp $
+ * $Id: SAML2Test.java,v 1.6 2007-07-28 01:34:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -234,7 +234,7 @@ public class SAML2Test extends TestBase {
         throws CLIException, SAML2MetaException {
         entering("listCircleOfTrusts", null);
         String[] args = {
-            "list-circle-of-trusts",
+            "list-circles-of-trust",
             CLIConstants.PREFIX_ARGUMENT_LONG +
                 FedCLIConstants.SPECIFICATION_VERSION,
             FedCLIConstants.SAML2_SPECIFICATION

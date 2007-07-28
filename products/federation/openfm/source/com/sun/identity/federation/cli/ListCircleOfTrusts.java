@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListCircleOfTrusts.java,v 1.3 2007-05-17 19:32:01 qcheng Exp $
+ * $Id: ListCircleOfTrusts.java,v 1.4 2007-07-28 01:34:55 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,12 +66,12 @@ public class ListCircleOfTrusts extends AuthenticatedCommand {
                 Object[] obj = {realm};
                 outputWriter.printlnMessage(MessageFormat.format(
                     getResourceString(
-                        "list-circle-of-trust-no-members"), obj));
+                        "list-circles-of-trust-no-members"), obj));
             } else {
                 Object[] obj = {realm};
                 outputWriter.printlnMessage(MessageFormat.format(
                     getResourceString(
-                        "list-circle-of-trust-members"), obj));
+                        "list-circles-of-trust-members"), obj));
                 for (Iterator i = members.iterator(); i.hasNext();) {
                      String cot = (String)i.next();
                      outputWriter.printlnMessage("  " + cot);
