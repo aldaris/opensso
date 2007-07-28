@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceProviderEdit.xml,v 1.4 2007-07-25 19:13:17 veiming Exp $
+   $Id: propertyWebServiceProviderEdit.xml,v 1.5 2007-07-28 01:38:04 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -152,6 +152,20 @@
             <attribute name="label" value="label.Yes" />
         </cc>
     </property>
+
+    <property>
+        <label name="lblrecipientPublicKey"
+            defaultValue="web.services.provider.profile.recipientPublicKey"
+            labelFor="recipientPublicKey" />
+        <cc name="recipientPublicKey"
+            tagclass="com.sun.web.ui.taglib.html.CCTextAreaTag">
+            <attribute name="rows" value="20" />
+            <attribute name="cols" value="60" />
+            <attribute name="localizeDisplayFieldValue" value="false" />
+        </cc>
+        <fieldhelp name="helprecipientPublicKey" defaultValue="web.services.provider.profile.recipientPublicKey.help" />
+    </property>
+
 
     <property>
         <label name="lblusedefaultkeystore"

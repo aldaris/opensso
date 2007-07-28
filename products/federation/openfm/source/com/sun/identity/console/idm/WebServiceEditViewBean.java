@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceEditViewBean.java,v 1.3 2007-06-25 19:37:46 veiming Exp $
+ * $Id: WebServiceEditViewBean.java,v 1.4 2007-07-28 01:38:03 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -161,16 +161,8 @@ public abstract class WebServiceEditViewBean
         for (Iterator i = extUIs.iterator(); i.hasNext(); 
         ) {
             WebServiceUIElement elm = (WebServiceUIElement)i.next();
-
-            if (elm.attrType.equals(WebServiceUIElement.TYPE_BOOL)){
-                setBooleanValue(getAttributeFromSet(values,
-                    elm.attrName), elm.childName);
-            } else if (elm.attrType.equals(
-                WebServiceUIElement.TYPE_TEXT)
-            ) {
-                setBooleanValue(getAttributeFromSet(values,
-                    elm.attrName), elm.childName);
-            }
+            setExternalizedUIValue(getAttributeFromSet(values, elm.attrName),
+                elm.childName);
         }
     }
     
@@ -264,7 +256,7 @@ public abstract class WebServiceEditViewBean
         }
     }
     
-    protected void setBooleanValue(String value, String childName) {
+    protected void setExternalizedUIValue(String value, String childName) {
         if ((value != null) && (value.length() > 0)) {
             propertySheetModel.setValue(childName, value); 
         }
