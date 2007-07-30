@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityMembershipConditionTest.java,v 1.2 2007-07-30 18:11:42 dillidorai Exp $
+ * $Id: Issue619Test.java,v 1.1 2007-07-30 18:11:42 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import com.sun.identity.policy.client.PolicyEvaluator;
 import com.sun.identity.policy.client.PolicyEvaluatorFactory;
 import com.sun.identity.policy.TokenUtils;
 
+import com.sun.identity.policy.interfaces.Condition;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.HashSet;
@@ -43,19 +45,24 @@ import java.util.logging.Level;
 import org.testng.annotations.Test;
 import org.testng.annotations.Parameters;
 
-public class AMIdentityMembershipConditionTest extends UnitTestBase {
 
-    public AMIdentityMembershipConditionTest() {
-        super("OpenSSO-AMIdentityMembershipConditionTest");
+/**
+ * Test to verify fix for 
+ * Issue 619 unable to set the relam qualified auth level in policy env map
+ */
+public class Issue619Test extends UnitTestBase {
+
+    public Issue619Test() {
+        super("OpenSSO-client Issue619Test");
     }
 
     @Test(groups={"policy-client"})
     @Parameters({"orgName", "userName", "password", "serviceName",
-            "resourceName", "actionName", "invocatorUuid"})
+            "resourceName", "actionName"})
     public void testGetPolicyDecision(String orgName, 
             String userName, String password, 
-            String serviceName, String resourceName, String actionName, 
-            String invocatorUuid) throws Exception {
+            String serviceName, String resourceName, String actionName) 
+            throws Exception {
         entering("testGetPolicyDecision()", null);
         log(Level.INFO, "orgName:", orgName);
         log(Level.INFO, "userName:", userName);
@@ -63,7 +70,6 @@ public class AMIdentityMembershipConditionTest extends UnitTestBase {
         log(Level.INFO, "serviceName:", serviceName);
         log(Level.INFO, "resourceName:", resourceName);
         log(Level.INFO, "actionName:", actionName);
-        log(Level.INFO, "invocatorUuid:", invocatorUuid);
         SSOToken token = TokenUtils.getSessionToken(orgName, 
                 userName, password);
         log(Level.INFO, "Created ssoToken", "\n");
@@ -73,8 +79,12 @@ public class AMIdentityMembershipConditionTest extends UnitTestBase {
 
         Map env = new HashMap();
         Set attrSet = new HashSet();
-        attrSet.add(invocatorUuid);
-        env.put("invocatorPrincipalUuid", attrSet);
+        //attrSet.add(invocatorUuid);
+        log(Level.INFO, "set auth level in envMap as a set containing "
+                + "/:1, /:2", "\n");
+        attrSet.add("/:1");
+        attrSet.add("/:2");
+        env.put(Condition.REQUEST_AUTH_LEVEL, attrSet);
         log(Level.INFO, "env Map:" + env, "\n");
 
         Set actions = new HashSet();
@@ -84,6 +94,7 @@ public class AMIdentityMembershipConditionTest extends UnitTestBase {
         log(Level.INFO, "PolicyDecision XML:", pd.toXML());
         entering("testGetPolicyDecision()", null);
     }
+
 
 }
 

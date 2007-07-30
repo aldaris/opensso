@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: policy-testng.xml,v 1.1 2007-05-01 19:22:22 dillidorai Exp $
+   $Id: policy-testng.xml,v 1.2 2007-07-30 18:11:43 dillidorai Exp $
  
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -30,20 +30,27 @@
 
     <parameter name="orgName" value="/"/>
     <parameter name="userName" value="amadmin"/>
-    <parameter name="password" value="admin123"/>
+    <parameter name="password" value="secret12"/>
     <parameter name="serviceName" value="iPlanetAMWebAgentService"/>
-    <parameter name="resourceName" value="http://test.sample.com:80/banner.html"/>
-    <parameter name="action" value="GET"/>
+    <parameter name="resourceName" value="http://realm1.red.iplanet.com:80/banner.html"/>
+    <parameter name="actionName" value="GET"/>
     <parameter name="invocatorUuid" value="id=user1,ou=user,dc=opensso,dc=java,dc=net"/>
 
-    <test name="policy">
-        <groups>
-            <run>
-                <include name="client-policy" />
-            </run>
-        </groups>
+    <test name="policy1" parallel="false">
+        <classes>
+            <class name="com.sun.identity.policy.client.PolicyEvaluatorTest"/>
+        </classes>
+    </test>
+
+    <test name="policy2" parallel="false">
         <classes>
             <class name="com.sun.identity.policy.client.AMIdentityMembershipConditionTest"/>
+        </classes>
+    </test>
+
+    <test name="policy3" parallel="false">
+        <classes>
+            <class name="com.sun.identity.policy.client.Issue619Test"/>
         </classes>
     </test>
 

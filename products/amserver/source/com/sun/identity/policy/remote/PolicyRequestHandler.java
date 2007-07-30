@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRequestHandler.java,v 1.5 2007-01-10 02:25:47 dillidorai Exp $
+ * $Id: PolicyRequestHandler.java,v 1.6 2007-07-30 18:11:42 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -587,29 +587,6 @@ public class PolicyRequestHandler implements RequestHandler {
     {
         if ((envParams == null) || (envParams.size() == 0)) {
             return;
-        }
-
-        // convert REQUEST_AUTH_LEVEL from a set to an Integer
-        try {
-            Set reqAuthLevelSet = (Set)envParams.get(REQUEST_AUTH_LEVEL);
-            Integer reqAuthLevel = null;
-            if (reqAuthLevelSet != null) {
-                if (reqAuthLevelSet.size() != 0) {
-                    Iterator items = reqAuthLevelSet.iterator();
-                    String reqAuthLevelStr = (String)items.next();
-                    reqAuthLevel = new Integer(reqAuthLevelStr);
-                    envParams.put(REQUEST_AUTH_LEVEL, reqAuthLevel);
-                } else {
-                    envParams.put(REQUEST_AUTH_LEVEL, null);
-                }
-            }
-            if (debug.messageEnabled()) {
-                debug.message("PolicyRequestHandler.convertEnvParams(): " +
-                    REQUEST_AUTH_LEVEL + " is " + reqAuthLevel);
-            }
-        } catch (Exception e) {
-            throw new PolicyException(ResBundleUtils.rbName, 
-                "invalid_auth_level_in_request", null, e);
         }
 
         // convert REQUEST_IP from a set to a String
