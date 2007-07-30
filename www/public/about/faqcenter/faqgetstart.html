@@ -21,9 +21,27 @@
 <p>You can browse the source code without a java.net account by going to the <a href="https://opensso.dev.java.net/source/browse/opensso/">Source - CVS page</a>.</p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="download"></a> How do I download the OpenSSO source code?</b></b></p>
-
-
-<p>You can check out the source code for testing using a CVS client. You need not be a registered user. Instructions on how to do this can be found at <a href="https://opensso.dev.java.net/servlets/ProjectSource">https://opensso.dev.java.net/servlets/ProjectSource</a>.</p></td></tr>
+<p>
+You can download the source code for the most recent nightly build from 
+<a href="http://download.java.net/general/opensso/nightly/">http://download.java.net/general/opensso/nightly/</a> - select a module (for
+example, '<a href="http://download.java.net/general/opensso/nightly/amserver">Access Manager</a>'), select 'latest', then download the source JAR
+file - in this case, opensso-src.jar.
+</p>
+<p>
+You can also checkout the source code using a CVS client. You need not be 
+a registered user - you can use 'guest' (without the quotes) as your 
+username and password using the following command:
+</p>
+<p>
+<code>cvs -d :pserver:guest:guest@cvs.dev.java.net:/cvs checkout opensso<code>
+</p>
+<p>
+Note that you cannot commit changes back to CVS as guest!
+</p>
+<p>To checkout the project source using your dev.java.net 
+username see <a href="https://opensso.dev.java.net/servlets/ProjectSource">https://opensso.dev.java.net/servlets/ProjectSource</a>. You will be able to commit back changes if you have the <b>Committer</b> role in OpenSSO (see <a href="https://opensso.dev.java.net/public/about/governance/index.html">governance</a> for more details on OpenSSO project roles).
+</p>
+</td></tr>
 
 <tr><td><p><b>Q:<b><a name="allowed"></a> What am I allowed to do with the OpenSSO source code?</b></b></p>
 
