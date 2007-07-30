@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.32 2007-07-27 17:23:54 veiming Exp $
+ * $Id: AccessManager.java,v 1.33 2007-07-30 18:01:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1121,9 +1121,9 @@ public class AccessManager {
         optionalOptions={
             "attributenames|a|m|Attribute name(s). All attribute values shall be returned if the option is not provided."},
         resourceStrings={
-            "idrepo-get-attributes-succeed=Attribute values of identity, {2} of type, {1} in realm, {0} is printed.",
+            "idrepo-get-attributes-succeed={0} has the following attribute values.",
             "idrepo-attribute-result={0}={1}",
-            "idrepo-no-attributes=There are no attribute values."})
+            "idrepo-no-attributes={0} has no attributes."})
     private String get_identity;
 
     @SubCommandInfo(

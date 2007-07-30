@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAttributes.java,v 1.3 2007-02-02 18:05:33 veiming Exp $
+ * $Id: GetAttributes.java,v 1.4 2007-07-30 18:01:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,8 +81,12 @@ public class GetAttributes extends IdentityCommand {
             } else {
                 values = amid.getAttributes();
             }
+            Object[] args = {idName};
 
             if ((values != null) && !values.isEmpty()) {
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("idrepo-get-attributes-succeed"), args));
+                outputWriter.printlnMessage("");
                 String msg = getResourceString("idrepo-attribute-result");
                 String[] arg = {"", ""};
                 for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
@@ -94,12 +98,9 @@ public class GetAttributes extends IdentityCommand {
                         (Object[])arg));
                 }
             } else {
-                outputWriter.printlnMessage(getResourceString(
-                    "idrepo-no-attributes"));
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("idrepo-no-attributes"), args));
             }
-            outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("idrepo-get-attributes-succeed"), 
-                (Object[])params));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_IDREPO_GET_ATTRIBUTES", params);
         } catch (IdRepoException e) {
