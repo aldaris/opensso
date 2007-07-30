@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAllowedIdOperations.java,v 1.1 2006-05-31 21:49:50 veiming Exp $
+ * $Id: GetAllowedIdOperations.java,v 1.2 2007-07-30 20:33:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,14 +71,23 @@ public class GetAllowedIdOperations extends IdentityCommand {
             Set ops = amir.getAllowedIdOperations(idType);
             String msg = getResourceString("allowed-ops-result");
             String[] arg = {""};
-            for (Iterator i = ops.iterator(); i.hasNext(); ) {
-                arg[0] = ((IdOperation)i.next()).getName();
-                outputWriter.printlnMessage(
-                    MessageFormat.format(msg, (Object[])arg));
+
+            if ((ops != null) && !ops.isEmpty()) {
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("get-allowed-ops-succeed"),
+                        (Object[])params));
+                outputWriter.printlnMessage("");
+                for (Iterator i = ops.iterator(); i.hasNext(); ) {
+                    arg[0] = ((IdOperation)i.next()).getName();
+                    outputWriter.printlnMessage(
+                        MessageFormat.format(msg, (Object[])arg));
+                }
+            } else {
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("get-allowed-ops-no-ops"),
+                        (Object[])params));
             }
-            outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("get-allowed-ops-succeed"),
-                    (Object[])params));
+
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
                 "SUCCEED_GET_ALLOWED_OPS", params);
         } catch (IdRepoException e) {

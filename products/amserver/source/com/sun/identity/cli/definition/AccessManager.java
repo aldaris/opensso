@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.33 2007-07-30 18:01:24 veiming Exp $
+ * $Id: AccessManager.java,v 1.34 2007-07-30 20:33:49 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1036,7 +1036,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-allowed-ops-succeed=Allowed operations of {1} in realm, {0} is printed.",
+            "get-allowed-ops-succeed=The following operations are allowed for {1} under {0}.",
+            "get-allowed-ops-no-ops=No operations are allowed for {1} under {0}.",
             "allowed-ops-result={0}"})
     private String show_identity_operations;
 
