@@ -17,6 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: LibertyAuthnResponseHelper.java,v 1.2 2007-07-30 20:34:47 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,20 +86,20 @@ public class LibertyAuthnResponseHelper extends SurrogateBase
      * Validates the AuthnResponse to verify the authenticity. The response is 
      * examined to determine if it corresponds to the specified requestID
      *
+     * @param authnResponse Authentication Response.
      * @param requestID the Liberty AuthnRequest's requestID
      * @param trustedIDProvider the identity provider URL (Identity Server Login
      * URL which when configured for CDSSO will be the CDC Servlet URL)
      * @param serviceProvider the service provider URL which is the URL of the
      * agent protected application.
-     * 
      * @throws AgentException if the validation fails.   
      */
-    private void validate(Response authnResponse, 
-                          String requestID, 
-                          List trustedIDProviders, 
-                          String serviceProvider) 
-        throws AgentException 
-    {
+    private void validate(
+        Response authnResponse, 
+        String requestID, 
+        List trustedIDProviders, 
+        String serviceProvider
+    ) throws AgentException {
         // Check if the reponse corresponds to the request made
         String responseID = authnResponse.getInResponseTo();
         if (!requestID.equals(responseID)) {
@@ -208,23 +209,23 @@ public class LibertyAuthnResponseHelper extends SurrogateBase
      * 
      * <p> This method first validates the AuthnResponse to verify its 
      * authenticity. The verification process includes validating the requestID,
-     * the response status, issuer's authenticity and the assertion conditions.      
+     * the response status, issuer's authenticity and the assertion conditions.
      *
+     * @param encodedAuthnResponse Encoded Authentication Response.
      * @param requestID the Liberty AuthnRequest's requestID
      * @param trustedIDProvider the identity provider URL (Access Manager) 
      * Server Login URL which when configured for CDSSO will be the CDC Servlet 
      * URL)
      * @param serviceProvider the service provider URL which is the URL of the
      * agent protected application.
-     * 
      * @throws AgentException if the validation fails.   
      */    
-    public String getSSOTokenString(String encodedAuthnResponse,
-                                    String requestID, 
-                                    List trustedIDProviders, 
-                                    String serviceProvider)
-        throws AgentException 
-    {
+    public String getSSOTokenString(
+        String encodedAuthnResponse,
+        String requestID, 
+        List trustedIDProviders, 
+        String serviceProvider
+    ) throws AgentException {
         Response authnResponse = getDecodedAuthnResponse(encodedAuthnResponse);
         
         validate(authnResponse, requestID, trustedIDProviders, serviceProvider);

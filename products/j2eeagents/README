@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.6 2007-04-19 22:14:04 madan_ranganath Exp $
+$Id: README,v 1.7 2007-07-30 20:34:46 veiming Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -126,17 +126,17 @@ directory is appserver/v9/extlib.
 
 %% 2.3 Obtaining OpenFM ClientSDK library
 
-2.3.1 The OpenFM ClientSDK library fmclientsdk.jar can be obtained from 
+2.3.1 The OpenFM ClientSDK library famclientsdk.jar can be obtained from 
 the OpenSSO nightly build.
 
 Follow these steps to obtain the library:
-2.3.1.1 download fmclientsdk.jar from:
+2.3.1.1 download famclientsdk.jar from:
     http://download.java.net/general/opensso/nightly/openfm/latest/
-2.3.1.2 Copy the downloaded fmclientsdk.jar into extlib directory of 
+2.3.1.2 Copy the downloaded famclientsdk.jar into extlib directory of 
 the specific J2EE Container directory in this workspace. For Sun Application 
 Server 8.1/8.2/9.0/9.1, the directory is appserver/v9/extlib.
 
-2.3.2 Alternatively the OpenFM ClientSDK library fmclientsdk.jar can be
+2.3.2 Alternatively the OpenFM ClientSDK library famclientsdk.jar can be
 built from the OpenSSO workspace.
 
 Follow these steps to obtain the library:
@@ -144,7 +144,7 @@ Follow these steps to obtain the library:
 2.3.2.2 Set JAVA_HOME to the location of JDK 1.5.
 2.3.2.3 At the root of the workspace (under opensso/products/federation/openfm), 
 run: ant clientsdk 
-2.3.2.4 Copy the library fmclientsdk.jar from the built/dist of
+2.3.2.4 Copy the library famclientsdk.jar from the built/dist of
 the OpenSSO workspace into extlib directory of the specific J2EE Container
 directory in this workspace. For Sun Application Server 8.1/8.2/9.0/9.1, the 
 directory is appserver/v9/extlib.
