@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff-idff-testng.xml,v 1.7 2007-07-27 18:19:15 mrudulahg Exp $
+ $Id: ff-idff-testng.xml,v 1.8 2007-07-31 20:56:22 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,7 +35,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idff.ConfigureIDFF"/>
-            <class name="com.sun.identity.qatest.idff.UnconfigureIDFF"/> 
+            <class name="com.sun.identity.qatest.idff.UnconfigureIDFF"/>  
         </classes>
     </test> 
     <test name="IDFFTestWithDefaultProfiles">
@@ -54,6 +54,7 @@
             <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/> 
             <class name="com.sun.identity.qatest.idff.IDFFForceAuthNTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFNameIDPolicyTests"/>
+            <class name="com.sun.identity.qatest.idff.IDFFIsPassiveTests"/>
         </classes>
     </test> 
     <test name="IDFFTestSSOWithPostProfile">
@@ -72,6 +73,7 @@
             <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFForceAuthNTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFNameIDPolicyTests"/>
+            <class name="com.sun.identity.qatest.idff.IDFFIsPassiveTests"/>
         </classes>
     </test>
     <test name="IDFFTestSLOWithSOAPProfile">
@@ -170,4 +172,4 @@
             <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
     </test> 
- </suite>
+</suite>

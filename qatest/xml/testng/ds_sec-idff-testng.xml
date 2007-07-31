@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_sec-idff-testng.xml,v 1.7 2007-07-27 18:19:15 mrudulahg Exp $
+ $Id: ds_sec-idff-testng.xml,v 1.8 2007-07-31 20:56:22 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -54,6 +54,7 @@
             <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFForceAuthNTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFNameIDPolicyTests"/>
+            <class name="com.sun.identity.qatest.idff.IDFFIsPassiveTests"/>
         </classes>
     </test> 
     <test name="IDFFTestSSOWithPostProfile">
@@ -72,6 +73,7 @@
             <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFForceAuthNTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFNameIDPolicyTests"/>
+            <class name="com.sun.identity.qatest.idff.IDFFIsPassiveTests"/>
         </classes>
     </test>
     <test name="IDFFTestSLOWithSOAPProfile">

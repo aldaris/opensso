@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCommon.java,v 1.5 2007-07-17 23:41:58 mrudulahg Exp $
+ * $Id: IDFFCommon.java,v 1.6 2007-07-31 20:55:43 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,6 +100,52 @@ public class IDFFCommon extends TestCommon {
         } else {
             out.write("<form>");
         }
+        out.write(System.getProperty("line.separator"));
+        out.write("<result text=\"" + strResult + "\" />");
+        out.write(System.getProperty("line.separator"));
+        out.write("</form>");
+        out.write(System.getProperty("line.separator"));
+        out.write("</url>");
+        out.write(System.getProperty("line.separator"));
+        out.close();
+    }
+
+    /**
+     * This method overrides getxmlSPIDFFFederate method 
+     * Here during federation initiation SP & IDP sessions are already present. 
+     * The flow is as follows
+     * 1. Go to Federate.jsp on sp side. Click on select provider button. 
+     * 2. Success federation msg is displayed.
+     * @param xmlFileName is the file to be created.
+     * @param Map m contains all the data for xml generation
+     */
+    public static void getxmlSPIDFFFederate(String xmlFileName, Map m)
+    throws Exception {
+        FileWriter fstream = new FileWriter(xmlFileName);
+        BufferedWriter out = new BufferedWriter(fstream);
+        String spProto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
+        String spPort = (String)m.get(TestConstants.KEY_SP_PORT);
+        String spHost = (String)m.get(TestConstants.KEY_SP_HOST);
+        String spDeploymentURI = (String)m.get(
+                TestConstants.KEY_SP_DEPLOYMENT_URI);
+        String spMetaalias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
+        String idpEntityName = (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME);
+        String spUser = (String)m.get(TestConstants.KEY_SP_USER);
+        String spUserpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
+        String idpUser = (String)m.get(TestConstants.KEY_IDP_USER);
+        String idpUserpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
+        String strResult;
+        strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
+        
+        out.write("<url href=\"" + spProto +"://" + spHost + ":"
+                + spPort + spDeploymentURI
+                + "/config/federation/default/Federate.jsp?metaAlias=/"
+                + spMetaalias + "&amp;idpEntityID=" + idpEntityName );
+        out.write("\">");
+        out.write(System.getProperty("line.separator"));
+        out.write("<form name=\"form1\" buttonName=\"button\" />");
+        out.write(System.getProperty("line.separator"));
+        out.write("<form>");
         out.write(System.getProperty("line.separator"));
         out.write("<result text=\"" + strResult + "\" />");
         out.write(System.getProperty("line.separator"));
