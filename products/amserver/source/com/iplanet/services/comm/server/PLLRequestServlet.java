@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLRequestServlet.java,v 1.4 2007-01-09 19:45:17 manish_rustagi Exp $
+ * $Id: PLLRequestServlet.java,v 1.5 2007-07-31 18:57:18 pluo Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -151,7 +151,7 @@ public class PLLRequestServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, java.io.IOException {
         ServletOutputStream out = res.getOutputStream();
-        out.print("Webtop 2.5 Platform Low Level request servlet");
+        out.print("Sun Java System Federated Access Manager");
         out.flush();
     }
 

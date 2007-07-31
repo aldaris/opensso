@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLNotificationServlet.java,v 1.2 2006-08-25 21:19:49 veiming Exp $
+ * $Id: PLLNotificationServlet.java,v 1.3 2007-07-31 18:57:18 pluo Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,7 +116,7 @@ public class PLLNotificationServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, java.io.IOException {
         ServletOutputStream out = response.getOutputStream();
-        out.print("Webtop 2.5 Platform Low Level notification servlet");
+        out.print("Sun Java System Federated Access Manager");
         out.flush();
     }
 
