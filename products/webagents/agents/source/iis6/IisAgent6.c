@@ -721,6 +721,10 @@ DWORD process_original_url(EXTENSION_CONTROL_BLOCK *pECB,
         am_web_log_error("process_original_url(): Error %d occurred setting "
 			 "I/O completion.\r\n", GetLastError());
 
+        if (execUrlInfo->pUserInfo != NULL) {
+            free(execUrlInfo->pUserInfo);
+            execUrlInfo->pUserInfo = NULL;
+        }
         return HSE_STATUS_ERROR;
     }
 
@@ -737,6 +741,10 @@ DWORD process_original_url(EXTENSION_CONTROL_BLOCK *pECB,
         am_web_log_error("process_original_url(): Error %d occurred calling "
 	                 "HSE_REQ_EXEC_URL.\r\n", GetLastError() );
 
+        if (execUrlInfo->pUserInfo != NULL) {
+            free(execUrlInfo->pUserInfo);
+            execUrlInfo->pUserInfo = NULL;
+        }
         return HSE_STATUS_ERROR;
     }
 
@@ -744,6 +752,10 @@ DWORD process_original_url(EXTENSION_CONTROL_BLOCK *pECB,
     // Return pending and let the completion clean up.
     //
 
+    if (execUrlInfo->pUserInfo != NULL) {
+        free(execUrlInfo->pUserInfo);
+        execUrlInfo->pUserInfo = NULL;
+    }
     return HSE_STATUS_PENDING;
 }
 
@@ -1235,13 +1247,17 @@ am_status_t set_request_headers(EXTENSION_CONTROL_BLOCK *pECB, void** args)
 
 void OphResourcesFree(tOphResources* pOphResources)
 {
-    free(pOphResources->cookies);
-    pOphResources->cookies   = NULL;
-    pOphResources->cbCookies    = 0;
+    if (pOphResources->cookies != NULL) {
+        free(pOphResources->cookies);
+        pOphResources->cookies   = NULL;
+        pOphResources->cbCookies    = 0;
+    }
 
-    free(pOphResources->url);
-    pOphResources->url       = NULL;
-    pOphResources->cbUrl        = 0;
+    if (pOphResources->url != NULL) {
+        free(pOphResources->url);
+        pOphResources->url       = NULL;
+        pOphResources->cbUrl        = 0;
+    } 
 
     am_web_clear_attributes_map(&pOphResources->result);
     am_policy_result_destroy(&pOphResources->result);
@@ -1313,6 +1329,7 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
           if (pECB->cbTotalBytes > 0) {
              data =  pECB->lpbData;
              am_web_handle_notification(data, pECB->cbTotalBytes);
+             OphResourcesFree(pOphResources);
              return HSE_STATUS_SUCCESS_AND_KEEP_CONN;
           }
     }

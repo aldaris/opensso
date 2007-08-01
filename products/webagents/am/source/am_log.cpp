@@ -17,9 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
+
+
 #include "am_log.h"
 
 #include "internal_macros.h"
@@ -46,10 +48,10 @@ extern "C" am_status_t am_log_init(const am_properties_t properties)
         status = AM_INVALID_ARGUMENT;
     }
     else {
-	const Properties *prop = 
+	const Properties *prop =
 		reinterpret_cast<const Properties *>(properties);
 	try {
-	    base_init(*prop);
+	    base_init(*prop, B_TRUE);
 	}
 	catch (InternalException& ex) {
 	    status = ex.getStatusCode();
@@ -94,11 +96,11 @@ extern "C" am_status_t am_log_add_module(const char *name,
     }
     else {
 	*idPtr = Log::addModule(name);
-	if (idPtr == NULL) 
+	if (idPtr == NULL)
 	    status = AM_FAILURE;
-	else 
+	else
 	    status = AM_SUCCESS;
-    } 
+    }
 
     return status;
 }
@@ -133,7 +135,7 @@ am_log_set_levels_from_string(const char *moduleLevelString)
 	if (moduleLevelString) {
 	    Log::setLevelsFromString(moduleLevelString);
 	    status = AM_SUCCESS;
-	} 
+	}
     }
     return status;
 }
@@ -159,7 +161,7 @@ extern "C" boolean_t am_log_log(am_log_module_id_t moduleID,
     if (Log::isInitialized()) {
 	std::va_list args;
 	va_start(args, format);
-	Log::vlog(moduleID, 
+	Log::vlog(moduleID,
 		  static_cast<Log::Level>(static_cast<int>(level)),
 		  format, args);
 	retVal = B_TRUE;
@@ -172,11 +174,11 @@ extern "C" boolean_t am_log_log(am_log_module_id_t moduleID,
 extern "C" boolean_t am_log_vlog(am_log_module_id_t moduleID,
 				       am_log_level_t level,
 				       const char *format,
-				       va_list args) 
+				       va_list args)
 {
     boolean_t retVal = B_FALSE;
     if (Log::isInitialized()) {
-	Log::vlog(moduleID, 
+	Log::vlog(moduleID,
 		  static_cast<Log::Level>(static_cast<int>(level)),
 		  format, args);
 	retVal = B_TRUE;
@@ -200,7 +202,7 @@ extern "C" am_status_t am_log_set_remote_info(const char *rem_log_url,
     else {
 	try {
 	    SSOToken ssoToken = SSOToken(sso_token_id);
-	    const Properties *prop = 
+	    const Properties *prop =
 			reinterpret_cast<const Properties *>(properties);
 	    LogService *newLogSvc =
 		new LogService(ServiceInfo(rem_log_url),
@@ -330,7 +332,7 @@ extern "C" am_status_t am_log_record_set_log_level(
 	am_log_record_t record, am_log_record_log_level_t log_level)
 {
     am_status_t retVal = AM_FAILURE;
-    if(record != NULL && log_level >= AM_LOG_LEVEL_FINEST && 
+    if(record != NULL && log_level >= AM_LOG_LEVEL_FINEST &&
 	    log_level <= AM_LOG_LEVEL_SEVERE) {
 	LogRecord &logRecord = reinterpret_cast<LogRecord &>(*record);
 	LogRecord::Level level =
@@ -380,7 +382,7 @@ extern "C" am_status_t am_log_flush_remote_log()
     return retVal;
 }
 
-extern "C" 
+extern "C"
 am_status_t am_log_set_logger(const am_log_logger_func_t logger_func,
 	                      am_log_logger_func_t *old_logger_func)
 {

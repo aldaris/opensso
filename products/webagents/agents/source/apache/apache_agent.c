@@ -17,14 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
  */
+
 #include <limits.h>
 #include <signal.h>
 #include <errno.h>
 
-#if defined(X86_64)
+#if defined(LINUX)
 #include <dlfcn.h>
 #endif
 #include <httpd.h>
@@ -136,7 +137,7 @@ static void init_dsame(server_rec *server_ptr, pool *pool_ptr)
 #endif
 #endif
 
-#if defined(X86_64)
+#if defined(LINUX) && defined(APACHE2)
     lib_handle = dlopen("libamapc2.so", RTLD_LAZY);
 	if (!lib_handle) {
 		fprintf(stderr, "Error during dlopen(): %s\n", dlerror());
@@ -255,7 +256,6 @@ render_result(void **args, am_web_result_t http_result, char *data)
     int *apache_ret = NULL;
     am_status_t sts = AM_SUCCESS;
     core_dir_config *conf;
-	char buf[50];
 	int len = 0;
 
     char *am_rev_number = am_web_get_am_revision_number();
@@ -278,13 +278,13 @@ render_result(void **args, am_web_result_t http_result, char *data)
 	    if ((am_rev_number != NULL) && (!strcmp(am_rev_number, "7.0")) && data && ((len = strlen(data)) > 0))
 	    if (data && ((len = strlen(data)) > 0))
 		{
-			buf[0] = '\0';
-			sprintf(buf, "%d", len);
-
-			ap_table_unset(r->headers_out, "Content-Length");
-			ap_table_unset(r->headers_out, "Content-Type");
-			ap_table_add(r->headers_out, "Content-Type", "text/html");
-			ap_table_add(r->headers_out, "Content-Length", buf);
+#if defined(APACHE2)
+                        ap_set_content_type(r, "text/html");
+#else
+                        r->content_type="text/html";
+                        ap_send_http_header(r);
+#endif
+                        ap_set_content_length(r, len);
 			ap_rwrite(data, len, r);
             ap_rflush(r);
             *apache_ret = HTTP_FORBIDDEN;
@@ -581,6 +581,48 @@ get_method_num(request_rec *r)
 	break;
     case M_POST:
 	method_num = AM_WEB_REQUEST_POST;
+	break;
+    case M_PUT:
+	method_num = AM_WEB_REQUEST_PUT;
+	break;
+    case M_DELETE:
+	method_num = AM_WEB_REQUEST_DELETE;
+	break;
+    case M_TRACE:
+	method_num = AM_WEB_REQUEST_TRACE;
+	break;
+    case M_OPTIONS:
+	method_num = AM_WEB_REQUEST_OPTIONS;
+	break;
+    case M_CONNECT:
+	method_num = AM_WEB_REQUEST_CONNECT;
+	break;
+    case M_COPY:
+	method_num = AM_WEB_REQUEST_COPY;
+	break;
+    case M_INVALID:
+	method_num = AM_WEB_REQUEST_INVALID;
+	break;
+    case M_LOCK:
+	method_num = AM_WEB_REQUEST_LOCK;
+	break;
+    case M_UNLOCK:
+	method_num = AM_WEB_REQUEST_UNLOCK;
+	break;
+    case M_MOVE:
+	method_num = AM_WEB_REQUEST_MOVE;
+	break;
+    case M_MKCOL:
+	method_num = AM_WEB_REQUEST_MKCOL;
+	break;
+    case M_PATCH:
+	method_num = AM_WEB_REQUEST_PATCH;
+	break;
+    case M_PROPFIND:
+	method_num = AM_WEB_REQUEST_PROPFIND;
+	break;
+    case M_PROPPATCH:
+	method_num = AM_WEB_REQUEST_PROPPATCH;
 	break;
     default:
 	method_num = AM_WEB_REQUEST_UNKNOWN;

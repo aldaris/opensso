@@ -17,9 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
  */
+
 #include <cerrno>
 #include <cstdlib>
 #include <stdexcept>
@@ -329,7 +330,7 @@ am_status_t Properties::load(const std::string& fileName)
 		    status = AM_NSPR_ERROR;
 		}
                
-                delete buffer;
+                delete[] buffer;
 	    } catch (const std::bad_alloc&) {
 		status = AM_NO_MEMORY;
 	    }
@@ -528,8 +529,6 @@ const char* Properties::get_old_property_name(const std::string& key) const
 	   return AM_AUTH_ORGANIZATION_NAME_PROPERTY_OLD;
         if (key == AM_AUTH_SERVICE_URLS_PROPERTY)
 	   return AM_AUTH_SERVICE_URLS_PROPERTY_OLD;
-		if (key == AM_POLICY_LOGIN_URL_PROPERTY)
-	   return AM_POLICY_LOGIN_URL_PROPERTY_OLD;
         
         return NULL;
 }
@@ -550,12 +549,12 @@ const char* Properties::get_new_property_name(const std::string& key) const
 const std::string& Properties::get(const std::string& key) const
 {
     char tmpProp[100] = {'\0'};
-	const_iterator iter = find(key);
+    const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
-		strcpy(tmpProp,prop_name);
+	    strcpy(tmpProp,prop_name);
 	    const std::string old_property_name(tmpProp);	
     	    iter = find(old_property_name);
 	    if (iter == end()) {
@@ -574,7 +573,7 @@ const std::string& Properties::get(const std::string& key,
 				   bool terse) const
 {
     char tmpProp[100] = {'\0'};
-	const_iterator iter = find(key);
+    const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
@@ -662,13 +661,13 @@ unsigned long Properties::getPositiveNumber(const std::string& key,
 unsigned long Properties::getUnsigned(const std::string& key) const
 {
     char tmpProp[100] = {'\0'};
-	const_iterator iter = find(key);
+    const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
 	    strcpy(tmpProp,prop_name);
-	    const std::string old_property_name(tmpProp);
+	    const std::string old_property_name(tmpProp);	
     	    iter = find(old_property_name);
 	    if (iter == end()) {
 		throw std::invalid_argument(key + " not found");
@@ -686,7 +685,7 @@ unsigned long Properties::getUnsigned(const std::string& key,
 				      bool terse) const
 {
     unsigned long result;
-	char tmpProp[100] = {'\0'};
+    char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
 
     if (iter == end()) {
@@ -753,13 +752,13 @@ long Properties::parseSigned(const std::string& key,
 long Properties::getSigned(const std::string& key) const
 {
     char tmpProp[100] = {'\0'};
-	const_iterator iter = find(key);
+    const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
 	    strcpy(tmpProp,prop_name);
-	    const std::string old_property_name(tmpProp);
+	    const std::string old_property_name(tmpProp);	
     	    iter = find(old_property_name);
 	    if (iter == end()) {
 		throw std::invalid_argument(key + " not found");
@@ -776,7 +775,7 @@ long Properties::getSigned(const std::string& key, long defaultValue,
 						   bool terse) const
 {
     long result;
-	char tmpProp[100] = {'\0'};
+    char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
 
     if (iter == end()) {
@@ -847,13 +846,13 @@ bool Properties::parseBool(const std::string& key,
 bool Properties::getBool(const std::string& key) const
 {
     char tmpProp[100] = {'\0'};
-	const_iterator iter = find(key);
+    const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
 	    strcpy(tmpProp,prop_name);
-	    const std::string old_property_name(tmpProp);
+	    const std::string old_property_name(tmpProp);	
     	    iter = find(old_property_name);
 	    if (iter == end()) {
 		throw std::invalid_argument(key + " not found");
@@ -870,7 +869,7 @@ bool Properties::getBool(const std::string& key, bool defaultValue,
 						 bool terse) const
 {
     bool result;
-	char tmpProp[100] = {'\0'};
+    char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
 
     if (iter == end()) {

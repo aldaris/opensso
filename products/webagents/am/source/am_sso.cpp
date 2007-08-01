@@ -17,9 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
  */
+
 #include <stdexcept>
 #include <am_sso.h>
 #include "internal_macros.h"
@@ -30,13 +31,15 @@
 #include "properties.h"
 #include "am_properties.h"
 #include "internal_exception.h"
+#include "http.h"
 
 
 BEGIN_PRIVATE_NAMESPACE
 static SSOTokenService *SSOTokenSvc = NULL;
 static Log::ModuleId ssoHdlModule;
+boolean_t initializeLog = B_TRUE;
 DEFINE_BASE_INIT;
-void sso_cleanup(); 
+void sso_cleanup();
 END_PRIVATE_NAMESPACE
 
 USING_PRIVATE_NAMESPACE
@@ -59,19 +62,19 @@ am_sso_init(am_properties_t sso_config_params) {
 
 	try {
 	    if(SSOTokenSvc == NULL) {
-		base_init(propertiesRef);
-		SSOTokenSvc = new SSOTokenService(SESSION_SERVICE_NAME, 
+		base_init(propertiesRef, initializeLog);
+		SSOTokenSvc = new SSOTokenService(SESSION_SERVICE_NAME,
                                                   propertiesRef);
 	    } else {
 		Log::log(ssoHdlModule, Log::LOG_WARNING,
 			 "am_sso_init() : Session service "
 			 "previously initialized.");
 	    }
-	} 
+	}
         catch (InternalException& exc) {
 	    status = exc.getStatusCode();
 	    Log::log(ssoHdlModule, Log::LOG_ERROR, exc);
-	} 
+	}
         catch (const std::bad_alloc& exb) {
             status = AM_NO_MEMORY;
 	    Log::log(ssoHdlModule, Log::LOG_ERROR, exb);
@@ -94,11 +97,16 @@ am_sso_init(am_properties_t sso_config_params) {
     return status;
 }
 
+extern "C"
+void am_sso_set_initializeLog(boolean_t value) {
+	initializeLog = value;
+}
+
 /**
- * cleanup sso module. 
+ * cleanup sso module.
  * Throws: InternalException
  */
-void PRIVATE_NAMESPACE_NAME::sso_cleanup() 
+void PRIVATE_NAMESPACE_NAME::sso_cleanup()
 {
     if (SSOTokenSvc)
 	    delete(SSOTokenSvc);
@@ -110,7 +118,7 @@ extern "C"
 am_status_t
 am_sso_create_sso_token_handle(am_sso_token_handle_t *sso_token_handle,
 			       const char *sso_token_id,
-			       boolean_t reset_idle_timer) 
+			       boolean_t reset_idle_timer)
 {
     am_status_t retVal = AM_SUCCESS;
 
@@ -148,13 +156,13 @@ am_sso_create_sso_token_handle(am_sso_token_handle_t *sso_token_handle,
 		delete session;
 		Log::log(ssoHdlModule, Log::LOG_ERROR,
 			 "am_sso_create_sso_token_handle(): "
-			 "Create session for sso token ID %s failed with %d.", 
+			 "Create session for sso token ID %s failed with %d.",
                          sso_token_id, retVal);
 	    } else {
 		*sso_token_handle =
 		    reinterpret_cast<am_sso_token_handle_t>(session);
 	    }
-        } 
+        }
         catch(std::bad_alloc &be) {
 	    Log::log(ssoHdlModule, Log::LOG_ERROR,
 		     "am_sso_create_sso_token_handle(): "
@@ -178,7 +186,7 @@ am_sso_create_sso_token_handle(am_sso_token_handle_t *sso_token_handle,
 
 extern "C"
 am_status_t
-am_sso_destroy_sso_token_handle(am_sso_token_handle_t sso_token_handle) 
+am_sso_destroy_sso_token_handle(am_sso_token_handle_t sso_token_handle)
 {
     am_status_t retVal = AM_FAILURE;
 
@@ -224,7 +232,7 @@ am_sso_invalidate_token(const am_sso_token_handle_t sso_token_handle)
     }
     else {
 	try {
-	    SessionInfo *sessionInfo = 
+	    SessionInfo *sessionInfo =
                 (reinterpret_cast<SessionInfo *>(sso_token_handle));
 	    sts = SSOTokenSvc->destroySession(ServiceInfo(),
 					      *sessionInfo);
@@ -245,7 +253,7 @@ am_sso_invalidate_token(const am_sso_token_handle_t sso_token_handle)
 
 extern "C"
 unsigned long
-am_sso_get_auth_level(const am_sso_token_handle_t sso_token_handle) 
+am_sso_get_auth_level(const am_sso_token_handle_t sso_token_handle)
 {
     unsigned long retVal = ULONG_MAX;
 
@@ -273,7 +281,7 @@ am_sso_get_auth_level(const am_sso_token_handle_t sso_token_handle)
 
 extern "C"
 const char *
-am_sso_get_auth_type(const am_sso_token_handle_t sso_token_handle) 
+am_sso_get_auth_type(const am_sso_token_handle_t sso_token_handle)
 {
     const char * retVal = NULL;
     if(sso_token_handle != NULL) {
@@ -300,7 +308,7 @@ am_sso_get_auth_type(const am_sso_token_handle_t sso_token_handle)
 
 extern "C"
 const char *
-am_sso_get_host(const am_sso_token_handle_t sso_token_handle) 
+am_sso_get_host(const am_sso_token_handle_t sso_token_handle)
 {
     const char * retVal = NULL;
     if(sso_token_handle != NULL) {
@@ -328,7 +336,7 @@ am_sso_get_host(const am_sso_token_handle_t sso_token_handle)
 
 extern "C"
 const char *
-am_sso_get_principal(const am_sso_token_handle_t sso_token_handle) 
+am_sso_get_principal(const am_sso_token_handle_t sso_token_handle)
 {
     const char * retVal = NULL;
     if(sso_token_handle != NULL) {
@@ -355,12 +363,12 @@ am_sso_get_principal(const am_sso_token_handle_t sso_token_handle)
 
 /*
  * This routine is not exposed in public api.
- * 
- * Parses a string expected to be a set of strings seperated by the 
- * given character and returns the set of strings in a am_string_set. 
- * white space is ignored. 
  *
- * Parameters 
+ * Parses a string expected to be a set of strings seperated by the
+ * given character and returns the set of strings in a am_string_set.
+ * white space is ignored.
+ *
+ * Parameters
  *     str
  *        string that is a set of strings seperated by a char such as '|'
  *     sep
@@ -368,11 +376,11 @@ am_sso_get_principal(const am_sso_token_handle_t sso_token_handle)
  *
  * Returns:
  *     a am_string_set_t from parsing.
- * 
- * Examples: 
+ *
+ * Examples:
  *     "A|B|C" results in a set of strings "A", "B", "C".
  *     "A|B|" results in a set of strings "A", "B", "".
- * 
+ *
  */
 extern "C"
 am_string_set_t * am_get_char_seperated_string_set(const char *str, char sep)
@@ -387,13 +395,13 @@ am_string_set_t * am_get_char_seperated_string_set(const char *str, char sep)
     /* find # of strings in the char seperated set */
     ptr = str;
     while ((c = *ptr++)) {
-	if (c == sep) 
+	if (c == sep)
 	    n_sep++;
     }
     n_sep++;
 
     ret = am_string_set_allocate(n_sep);
-    
+
     /* fill set */
     ptr = str;
     beg = str;
@@ -431,7 +439,7 @@ am_sso_get_principal_set(const am_sso_token_handle_t sso_token_handle)
 		             "am_sso_get_principal_set(): "
 		             "empty string principal set for token ID %s.",
                              sessionInfo.getSSOToken().getString().c_str());
-                } 
+                }
                 else {
                     retVal = am_get_char_seperated_string_set(value, '|');
 		    Log::log(ssoHdlModule, Log::LOG_DEBUG,
@@ -464,17 +472,17 @@ am_sso_get_principal_set(const am_sso_token_handle_t sso_token_handle)
 
 extern "C"
 time_t
-am_sso_get_max_idle_time(const am_sso_token_handle_t sso_token_handle) 
+am_sso_get_max_idle_time(const am_sso_token_handle_t sso_token_handle)
 {
     time_t retVal = (time_t)-1;
     if(sso_token_handle != NULL) {
 	try {
 	    const SessionInfo &sessionInfo = *(reinterpret_cast<const SessionInfo *>(sso_token_handle));
 	    if(sessionInfo.isValid()) {
-                // server returned this in minutes, so convert it to seconds 
-		// to be consistent with other interfaces that return time, 
+                // server returned this in minutes, so convert it to seconds
+		// to be consistent with other interfaces that return time,
 		// and with definition of time_t.
-		retVal = (time_t)(sessionInfo.getMaxIdleTime()*60);  
+		retVal = (time_t)(sessionInfo.getMaxIdleTime()*60);
 	    }
 	} catch(...) {
 	    Log::log(ssoHdlModule, Log::LOG_ERROR,
@@ -498,10 +506,10 @@ am_sso_get_max_session_time(const am_sso_token_handle_t sso_token_handle) {
 	try {
 	    const SessionInfo &sessionInfo = *(reinterpret_cast<const SessionInfo *>(sso_token_handle));
 	    if(sessionInfo.isValid()) {
-                // server returned this in minutes, so convert it to seconds 
-		// to be consistent with other interfaces that return time, 
+                // server returned this in minutes, so convert it to seconds
+		// to be consistent with other interfaces that return time,
 		// and with definition of time_t.
-		retVal = (time_t)(sessionInfo.getMaxSessionTime()*60); 
+		retVal = (time_t)(sessionInfo.getMaxSessionTime()*60);
 	    }
 	} catch(...) {
 	    Log::log(ssoHdlModule, Log::LOG_ERROR,
@@ -520,8 +528,8 @@ am_sso_get_max_session_time(const am_sso_token_handle_t sso_token_handle) {
 extern "C"
 const char *
 am_sso_get_property(const am_sso_token_handle_t sso_token_handle,
-		    const char *property_key, 
-		    boolean_t check_if_session_valid) 
+		    const char *property_key,
+		    boolean_t check_if_session_valid)
 {
     const char * retVal = NULL;
     if(sso_token_handle != NULL && property_key != NULL) {
@@ -534,14 +542,14 @@ am_sso_get_property(const am_sso_token_handle_t sso_token_handle,
 	    }
 	} catch(...) {
 	    Log::log(ssoHdlModule, Log::LOG_ERROR,
-		     "am_sso_get_property(): property name - %s"
-		     "-Unknown exception thrown.", property_key);
+		     "am_sso_get_property(): Key %s not found in property.", 
+                     property_key);
 	}
     } else {
 	retVal = 0;
 	Log::log(ssoHdlModule, Log::LOG_ERROR,
-		 "am_sso_get_property(): Key %s not found in property.",
-		 property_key);
+		 "am_sso_get_property(): "
+		 "One or more input parameters has an invalid value.");
     }
     return retVal;
 }
@@ -549,7 +557,7 @@ am_sso_get_property(const am_sso_token_handle_t sso_token_handle,
 
 extern "C"
 const char *
-am_sso_get_sso_token_id(const am_sso_token_handle_t sso_token_handle) 
+am_sso_get_sso_token_id(const am_sso_token_handle_t sso_token_handle)
 {
     const char * retVal = NULL;
     if(sso_token_handle != NULL) {
@@ -562,7 +570,7 @@ am_sso_get_sso_token_id(const am_sso_token_handle_t sso_token_handle)
 	try {
 	    const SessionInfo &sessionInfo = *(reinterpret_cast<const SessionInfo *>(sso_token_handle));
             const SSOToken& ssoTok = sessionInfo.getSSOToken();
-  
+
 	    retVal = ssoTok.getString().c_str();
 	} catch(...) {
 	    Log::log(ssoHdlModule, Log::LOG_ERROR,
@@ -577,8 +585,8 @@ am_sso_get_sso_token_id(const am_sso_token_handle_t sso_token_handle)
     return retVal;
 }
 
-/* 
- * just returns local state of token handle. 
+/*
+ * just returns local state of token handle.
  * does not call server.
  */
 extern "C"
@@ -587,7 +595,7 @@ am_sso_is_valid_token(const am_sso_token_handle_t sso_token_handle)
 {
     boolean_t retVal = B_FALSE;
     if (NULL==sso_token_handle) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_is_valid_token(): "
                  "One or more input parameters is NULL or invalid.");
     }
@@ -599,7 +607,7 @@ am_sso_is_valid_token(const am_sso_token_handle_t sso_token_handle)
 }
 
 /*
- * will get session from server and 
+ * will get session from server and
  * return session state as provided by server.
  * also renews the session in the local cache.
  */
@@ -611,12 +619,12 @@ am_sso_validate_token(const am_sso_token_handle_t sso_token_handle)
     am_status_t sts = AM_FAILURE;
 
     if (NULL==SSOTokenSvc) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "%s: SSO is not initialized.", thisfunc);
         sts = AM_SERVICE_NOT_INITIALIZED;
     }
     else if (NULL==sso_token_handle) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "%s: One or more input parameters is NULL or invalid.",
 		 thisfunc);
         sts = AM_INVALID_ARGUMENT;
@@ -625,25 +633,25 @@ am_sso_validate_token(const am_sso_token_handle_t sso_token_handle)
 	try {
 	    SessionInfo *sessionInfo=
 			    reinterpret_cast<SessionInfo *>(sso_token_handle);
-	    Http::CookieList cookieList;
-	    string ssoTokenId = sessionInfo->getSSOToken().getString(); 
+            Http::CookieList cookieList;
+	    string ssoTokenId = sessionInfo->getSSOToken().getString();
 	    sts = SSOTokenSvc->getSessionInfo(ServiceInfo(),
 					      ssoTokenId,
 					      cookieList,
-					      true,
-					      *sessionInfo, 
+					      false,
+					      *sessionInfo,
 					      true);
 	    if (sts == AM_SUCCESS) {
 		sts = sessionInfo->isValid() ? AM_SUCCESS : AM_INVALID_SESSION;
 	    }
 	    else {
-		Log::log(ssoHdlModule, Log::LOG_ERROR, 
+		Log::log(ssoHdlModule, Log::LOG_ERROR,
 			 "%s: Internal error while validating SSO token ID %s.",
 			 thisfunc, ssoTokenId.c_str());
 	    }
 	}
 	catch (InternalException& ex) {
-	    Log::log(ssoHdlModule, Log::LOG_ERROR, ex); 
+	    Log::log(ssoHdlModule, Log::LOG_ERROR, ex);
 	    sts = AM_FAILURE;
 	}
 	catch (std::bad_alloc& exb) {
@@ -655,7 +663,7 @@ am_sso_validate_token(const am_sso_token_handle_t sso_token_handle)
 	    sts = AM_FAILURE;
 	}
 	catch (...) {
-	    Log::log(ssoHdlModule, Log::LOG_ERROR, 
+	    Log::log(ssoHdlModule, Log::LOG_ERROR,
 		     "%s: Unknown exception encountered.");
 	    sts = AM_FAILURE;
 	}
@@ -665,7 +673,7 @@ am_sso_validate_token(const am_sso_token_handle_t sso_token_handle)
 
 
 /*
- * will get session from server and 
+ * will get session from server and
  * return session state as provided by server.
  * also renews the session in the local cache.
  */
@@ -677,13 +685,13 @@ am_sso_refresh_token(const am_sso_token_handle_t sso_token_handle)
     am_status_t sts = AM_FAILURE;
 
     if (NULL==SSOTokenSvc) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_refresh_token(): "
                  "SSO is not initialized.");
         sts = AM_SERVICE_NOT_INITIALIZED;
     }
     else if (NULL==sso_token_handle) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_refresh_token(): "
                  "One or more input parameters is NULL or invalid.");
         sts = AM_INVALID_ARGUMENT;
@@ -692,19 +700,19 @@ am_sso_refresh_token(const am_sso_token_handle_t sso_token_handle)
 	try {
 	    SessionInfo *sessionInfo=
 		reinterpret_cast<SessionInfo *>(sso_token_handle);
-	    Http::CookieList cookieList;
-	    string ssoTokenId = sessionInfo->getSSOToken().getString(); 
+            Http::CookieList cookieList;
+	    string ssoTokenId = sessionInfo->getSSOToken().getString();
 	    sts = SSOTokenSvc->getSessionInfo(ServiceInfo(),
 					      ssoTokenId,
 					      cookieList,
 					      true,
-					      *sessionInfo, 
+					      *sessionInfo,
 					      true);
 	    if (sts == AM_SUCCESS) {
 		sts = sessionInfo->isValid() ? AM_SUCCESS : AM_INVALID_SESSION;
 	    }
 	    else {
-		Log::log(ssoHdlModule, Log::LOG_ERROR, 
+		Log::log(ssoHdlModule, Log::LOG_ERROR,
 			 "%s: Internal error while validating SSO token ID %s.",
 			 thisfunc, ssoTokenId.c_str());
 	    }
@@ -713,13 +721,13 @@ am_sso_refresh_token(const am_sso_token_handle_t sso_token_handle)
 	    sts = ex.getStatusCode();
 	}
 	catch (std::exception& exs) {
-	    Log::log(ssoHdlModule, Log::LOG_ERROR, 
-		     "%s: Unexpected exception [%s] encountered. ", 
+	    Log::log(ssoHdlModule, Log::LOG_ERROR,
+		     "%s: Unexpected exception [%s] encountered. ",
 		     thisfunc, exs.what());
 	    sts = AM_FAILURE;
 	}
 	catch (...) {
-	    Log::log(ssoHdlModule, Log::LOG_ERROR, 
+	    Log::log(ssoHdlModule, Log::LOG_ERROR,
 		     "%s: Unknown exception encountered", thisfunc);
 	    sts = AM_FAILURE;
 	}
@@ -730,7 +738,7 @@ am_sso_refresh_token(const am_sso_token_handle_t sso_token_handle)
 
 /*
  * returns -1 on any kind of error.
- * returns time left in the sso token handle. 
+ * returns time left in the sso token handle.
  * does not call server.
  */
 extern "C"
@@ -761,7 +769,7 @@ am_sso_get_time_left(const am_sso_token_handle_t sso_token_handle)
 
 /*
  * returns -1 on any kind of error.
- * returns idle time in the sso token handle. 
+ * returns idle time in the sso token handle.
  * does not call server.
  */
 extern "C"
@@ -810,9 +818,9 @@ am_sso_set_property(am_sso_token_handle_t sso_token_handle,
     }
     else {
 	try {
-	    SessionInfo &sessionInfo = 
+	    SessionInfo &sessionInfo =
 		 *(reinterpret_cast<SessionInfo *>(sso_token_handle));
-	    sts = SSOTokenSvc->setProperty(ServiceInfo(), 
+	    sts = SSOTokenSvc->setProperty(ServiceInfo(),
 					   sessionInfo,
 					   name,
 					   value);
@@ -835,13 +843,13 @@ am_sso_add_listener(const am_sso_token_listener_func_t listener,
     am_status_t sts = AM_FAILURE;
 
     if (NULL==SSOTokenSvc) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_add_listener(): "
                  "SSO is not initialized.");
         sts = AM_SERVICE_NOT_INITIALIZED;
     }
     else if (NULL==listener) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_add_listener(): "
                  "One or more input parameters is NULL or invalid.");
         sts = AM_INVALID_ARGUMENT;
@@ -853,20 +861,20 @@ am_sso_add_listener(const am_sso_token_listener_func_t listener,
 					      dispatch_in_sep_thread);
         }
         catch (InternalException& exc) {
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_add_listener(): "
                      "Internal Exception encountered: %s",
 		     exc.getMessage());
             sts = exc.getStatusCode();
         }
         catch (std::exception& exc) {
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_add_listener(): "
-                     "Unexpected exception encountered: %s", 
+                     "Unexpected exception encountered: %s",
 		     exc.what());
         }
 	catch (...) {
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_add_listener(): "
                      "Unknown exception encountered.");
 	}
@@ -885,20 +893,20 @@ am_sso_add_sso_token_listener(am_sso_token_handle_t sso_token_handle,
     am_status_t sts = AM_FAILURE;
 
     if (NULL==SSOTokenSvc) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_add_sso_token_listener(): "
                  "SSO is not initialized.");
         sts = AM_SERVICE_NOT_INITIALIZED;
     }
     else if (NULL==sso_token_handle || NULL==listener) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_add_sso_token_listener(): "
                  "One or more input parameters is NULL or invalid.");
         sts = AM_INVALID_ARGUMENT;
     }
     else {
         try {
-	    SessionInfo *sessionInfoPtr = 
+	    SessionInfo *sessionInfoPtr =
                   reinterpret_cast<SessionInfo *>(sso_token_handle);
             sts = SSOTokenSvc->addSSOTokenListener(ServiceInfo(),
                                                    sessionInfoPtr,
@@ -908,20 +916,20 @@ am_sso_add_sso_token_listener(am_sso_token_handle_t sso_token_handle,
 						   dispatch_to_sep_thread);
         }
         catch (InternalException& exc) {
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_add_sso_token_listener(): "
-                     "Internal Exception encountered: %s", 
+                     "Internal Exception encountered: %s",
 		     exc.getMessage());
             sts = exc.getStatusCode();
         }
         catch (std::exception& exc) {
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_add_sso_token_listener(): "
                      "Unexpected exception encountered: %s", exc.what());
 	    sts = AM_SESSION_FAILURE;
         }
         catch (...) {
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_add_sso_token_listener(): "
                      "Unknown exception encountered");
 	    sts = AM_SESSION_FAILURE;
@@ -941,9 +949,9 @@ am_status_t
 am_sso_handle_notification(const std::string& notifData)
 {
     am_status_t sts = AM_FAILURE;
-    
+
     if (NULL==SSOTokenSvc) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_handle_notification(): service not initialized.");
         sts = AM_SERVICE_NOT_INITIALIZED;
     }
@@ -959,30 +967,30 @@ am_sso_handle_notification(const std::string& notifData)
         }
         catch (InternalException& exc) {
             sts = exc.getStatusCode();
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_handle_notification(): "
                      "Internal Exception encountered: %s",
                      exc.getMessage());
         }
         catch (NSPRException& exc) {
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_handle_notification(): "
                      "NSPR Exception encountered: "
-		     "Throwing method: %s, NSPR method: %s, NSPR error %s.", 
-		     exc.getThrowingMethod(), 
+		     "Throwing method: %s, NSPR method: %s, NSPR error %s.",
+		     exc.getThrowingMethod(),
 		     exc.getNsprMethod(),
-		     PR_ErrorToString(exc.getErrorCode(), 
+		     PR_ErrorToString(exc.getErrorCode(),
 				      PR_LANGUAGE_I_DEFAULT));
             sts = AM_NSPR_ERROR;
         }
         catch (std::exception& exc) {
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_handle_notification(): "
                      "Unexpected exception encountered: %s",
 		     exc.what());
         }
         catch (...) {
-            Log::log(ssoHdlModule, Log::LOG_ERROR, 
+            Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_handle_notification(): "
                      "Unknown exception encountered.");
         }
@@ -993,46 +1001,46 @@ am_sso_handle_notification(const std::string& notifData)
 extern "C"
 am_status_t
 am_sso_remove_sso_token_listener(
-	const am_sso_token_handle_t sso_token_handle, 
+	const am_sso_token_handle_t sso_token_handle,
         const am_sso_token_listener_func_t listener)
 {
     am_status_t sts = AM_FAILURE;
 
     if (NULL==SSOTokenSvc) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_remove_sso_token_listener(): "
                  "SSO is not initialized.");
         sts = AM_SERVICE_NOT_INITIALIZED;
     }
     else if (NULL==sso_token_handle || NULL==listener) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_remove_sso_token_listener(): "
                  "One or more input parameters is NULL or invalid.");
         sts = AM_INVALID_ARGUMENT;
     }
     else {
 	try {
-	    SessionInfo &sessionInfo = 
+	    SessionInfo &sessionInfo =
 		*(reinterpret_cast<SessionInfo *>(sso_token_handle));
             SSOToken& ssoTok = sessionInfo.getSSOToken();
             const std::string& sso_token_id = ssoTok.getString();
             if (sso_token_id.size() <= 0) {
-                Log::log(ssoHdlModule, Log::LOG_ERROR, 
+                Log::log(ssoHdlModule, Log::LOG_ERROR,
                      "am_sso_remove_sso_token_listener(): "
                      "One or more input parameters is NULL or invalid.");
                 sts = AM_INVALID_ARGUMENT;
             }
             else {
-	        sts = SSOTokenSvc->removeSSOTokenListener(sso_token_id, 
+	        sts = SSOTokenSvc->removeSSOTokenListener(sso_token_id,
 							  listener);
 	        if (sts == AM_SUCCESS) {
-		    Log::log(ssoHdlModule, Log::LOG_DEBUG, 
+		    Log::log(ssoHdlModule, Log::LOG_DEBUG,
 			 "am_sso_remove_sso_token_listener(): "
 			 "listener for SSO Token ID %s successfully removed.",
 			 sso_token_id.c_str());
 	        }
 	        else {
-		    Log::log(ssoHdlModule, Log::LOG_ERROR, 
+		    Log::log(ssoHdlModule, Log::LOG_ERROR,
 		             "am_sso_remove_sso_token_listener(): "
 		             "Could not remove sso token listener for "
                              "token id %s. Error %d.",
@@ -1041,14 +1049,14 @@ am_sso_remove_sso_token_listener(
             }
         }
         catch (std::exception& ex) {
-	    Log::log(ssoHdlModule, Log::LOG_ERROR, 
+	    Log::log(ssoHdlModule, Log::LOG_ERROR,
 		     "am_sso_remove_sso_token_listener(): "
 		     "Unexpected error when remove sso token listener."
                      "Error mesg: '%s'", ex.what());
             sts = AM_FAILURE;
         }
         catch (...) {
-	    Log::log(ssoHdlModule, Log::LOG_ERROR, 
+	    Log::log(ssoHdlModule, Log::LOG_ERROR,
 		     "am_sso_remove_sso_token_listener(): "
 		     "Unknown error when remove sso token listener.");
             sts = AM_FAILURE;
@@ -1065,13 +1073,13 @@ am_sso_remove_listener(const am_sso_token_listener_func_t listener_func)
     am_status_t sts = AM_FAILURE;
 
     if (NULL==SSOTokenSvc) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_remove_listener(): "
                  "SSO is not initialized.");
         sts = AM_SERVICE_NOT_INITIALIZED;
     }
     else if (NULL==listener_func) {
-        Log::log(ssoHdlModule, Log::LOG_ERROR, 
+        Log::log(ssoHdlModule, Log::LOG_ERROR,
                  "am_sso_remove_listener(): "
                  "One or more input paramters is NULL.");
         sts = AM_INVALID_ARGUMENT;
@@ -1080,28 +1088,28 @@ am_sso_remove_listener(const am_sso_token_listener_func_t listener_func)
 	try {
 	    sts = SSOTokenSvc->removeSSOListener(listener_func);
 	    if (sts == AM_SUCCESS) {
-		Log::log(ssoHdlModule, Log::LOG_DEBUG, 
+		Log::log(ssoHdlModule, Log::LOG_DEBUG,
 		     "am_sso_remove_listener(): "
 		     "listener 0x%x removed.", listener_func);
 	    }
 	    else {
-		Log::log(ssoHdlModule, Log::LOG_ERROR, 
+		Log::log(ssoHdlModule, Log::LOG_ERROR,
 			 "am_sso_remove_listener(): "
-			 "Could not remove sso listener 0x%x, status %d.", 
+			 "Could not remove sso listener 0x%x, status %d.",
 			 listener_func, sts);
 	    }
         }
         catch (std::exception& ex) {
-	    Log::log(ssoHdlModule, Log::LOG_ERROR, 
+	    Log::log(ssoHdlModule, Log::LOG_ERROR,
 		     "am_sso_remove_listener(): "
 		     "Unexpected error when removing sso listener, 0x%x."
                      "Error message: %s", listener_func, ex.what());
             sts = AM_FAILURE;
         }
         catch (...) {
-	    Log::log(ssoHdlModule, Log::LOG_ERROR, 
+	    Log::log(ssoHdlModule, Log::LOG_ERROR,
 		     "am_sso_remove_listener(): "
-		     "Unknown error when removing listener 0x%x.", 
+		     "Unknown error when removing listener 0x%x.",
 		     listener_func);
             sts = AM_FAILURE;
         }

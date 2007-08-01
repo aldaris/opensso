@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.4 2007-07-09 21:03:35 subbae Exp $
+ * $Id: iws_agent.c,v 1.5 2007-08-01 20:52:43 robertis Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -1035,5 +1035,17 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     am_web_log_max_debug("validate_session_policy(): "
 			 "Completed handling request with status: %s.",
 			 am_status_to_string(status));
+
+    if(response != NULL)
+    {
+        free(response);
+        response = NULL;
+    }
+	
+    if(clf_req != NULL)
+    {
+        free(clf_req);
+        clf_req = NULL;
+    }
     return requestResult;
 }

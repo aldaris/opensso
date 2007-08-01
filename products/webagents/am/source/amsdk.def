@@ -83,6 +83,8 @@ EXPORTS
 	encode_base64;
 	decode_base64;
 
+	
+
 
 	DllMain;
 	am_web_cleanup;
@@ -130,7 +132,6 @@ EXPORTS
 	am_web_clear_attributes_map;
 
 
-
 	am_auth_init;
 	am_auth_create_auth_context;
 	am_auth_destroy_auth_context;
@@ -148,6 +149,7 @@ EXPORTS
 
 
 	am_sso_init;
+	am_sso_set_initializeLog;
 	am_sso_create_sso_token_handle;
 	am_sso_destroy_sso_token_handle;
 	am_sso_get_auth_level;

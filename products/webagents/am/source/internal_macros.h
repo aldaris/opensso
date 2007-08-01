@@ -17,12 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
- *
- * Abstract:
- *
- * A collection of macros used internally in the implementation of the
- * Remote Policy library.
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
  */
 
@@ -193,7 +188,7 @@ namespace std {
 #endif
 
 #define DEFINE_BASE_INIT  \
-void base_init(const PRIVATE_NAMESPACE_NAME::Properties &) 
+void base_init(const PRIVATE_NAMESPACE_NAME::Properties &, boolean_t initializeLog)
 extern "C" void encode_base64(const char *, std::size_t, char *);
 
 

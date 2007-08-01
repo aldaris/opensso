@@ -17,9 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
  */
+
 #ifndef AM_WEB_H
 #define AM_WEB_H
 
@@ -145,6 +146,7 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_DENY_ON_LOG_FAILURE AM_WEB_PROPERTY_PREFIX "deny_on_log_failure"
 #define AM_WEB_DENY_ON_LOG_FAILURE_OLD AM_WEB_PROPERTY_PREFIX_OLD "denyOnLogFailure"
 #define AM_WEB_CONVERT_MBYTE_ENABLE AM_WEB_PROPERTY_PREFIX  "convert_mbyte.enable"
+#define AM_WEB_ENCODE_URL_SPECIAL_CHARS AM_WEB_PROPERTY_PREFIX  "encode_url_special_chars.enable"
 #define AM_WEB_CONVERT_MBYTE_ENABLE_OLD AM_WEB_PROPERTY_PREFIX_OLD  "convertMbyteEnabled"
 #define AM_WEB_OVERRIDE_PROTOCOL AM_WEB_PROPERTY_PREFIX  "override_protocol"
 #define AM_WEB_OVERRIDE_PROTOCOL_OLD AM_WEB_PROPERTY_PREFIX_OLD  "overrideProtocol"
@@ -154,7 +156,6 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_OVERRIDE_PORT_OLD AM_WEB_PROPERTY_PREFIX_OLD  "overridePort"
 #define AM_WEB_OVERRIDE_NOTIFICATION_URL AM_WEB_PROPERTY_PREFIX  "override_notification.url"
 #define AM_WEB_OVERRIDE_NOTIFICATION_URL_OLD AM_WEB_PROPERTY_PREFIX_OLD  "overrideNotificationUrl"
-#define AM_WEB_ENCODE_URL_SPECIAL_CHARS AM_WEB_PROPERTY_PREFIX  "encode_url_special_chars.enable"
 
 #define AM_COMMON_IGNORE_PATH_INFO    AM_WEB_PROPERTY_PREFIX "ignore_path_info"
 #define AM_COMMON_CLIENT_IP_CHECK_ENABLED_PROPERTY   AM_WEB_PROPERTY_PREFIX "client.ip.check.enable"
@@ -197,7 +198,6 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_OWA_ENABLED AM_WEB_PROPERTY_PREFIX  "iis.owa_enabled"
 #define AM_WEB_OWA_ENABLED_CHANGE_PROTOCOL AM_WEB_PROPERTY_PREFIX  "iis.owa_enabled_change_protocol"
 #define AM_WEB_OWA_ENABLED_SESSION_TIMEOUT_URL AM_WEB_PROPERTY_PREFIX  "iis.owa_enabled_session_timeout_url"
-
 
 /*
  * Enough space to hold PRTime key in a string
@@ -243,7 +243,17 @@ typedef enum {
     AM_WEB_REQUEST_PUT,
     AM_WEB_REQUEST_DELETE,
     AM_WEB_REQUEST_TRACE,
-    AM_WEB_REQUEST_OPTIONS
+    AM_WEB_REQUEST_OPTIONS,
+    AM_WEB_REQUEST_CONNECT,
+    AM_WEB_REQUEST_COPY,
+    AM_WEB_REQUEST_INVALID,
+    AM_WEB_REQUEST_LOCK,
+    AM_WEB_REQUEST_UNLOCK,
+    AM_WEB_REQUEST_MOVE,
+    AM_WEB_REQUEST_MKCOL,
+    AM_WEB_REQUEST_PATCH,
+    AM_WEB_REQUEST_PROPFIND,
+    AM_WEB_REQUEST_PROPPATCH
 } am_web_req_method_t;
 
 typedef enum {
@@ -272,9 +282,9 @@ typedef struct {
 
 /**
  * Get post data.
- * The post data returned must be null terminated and will be freed by 
- * calling the free_post_data function. 
- * Should return AM_SUCCESS on success, any other error will result in 
+ * The post data returned must be null terminated and will be freed by
+ * calling the free_post_data function.
+ * Should return AM_SUCCESS on success, any other error will result in
  * HTTP internal error result.
  */
 typedef am_status_t (*am_web_get_post_data_func_t)(void **args, char **data);
@@ -285,7 +295,7 @@ typedef struct {
 
 /**
  * Free the post data in get_post_data. Can be null if not needed.
- * Should return AM_SUCCESS if successful. If not status will be 
+ * Should return AM_SUCCESS if successful. If not status will be
  * logged as warning but ignored.
  */
 typedef am_status_t (*am_web_free_post_data_func_t)(void **args, char *data);
@@ -296,7 +306,7 @@ typedef struct {
 
 /**
  * Set (and check) user
- * Should return AM_SUCCESS on success, any other error will result in 
+ * Should return AM_SUCCESS on success, any other error will result in
  * HTTP forbidden result.
  */
 typedef am_status_t (*am_web_set_user_func_t)(void **args, const char *user);
@@ -308,10 +318,10 @@ typedef struct {
 /**
  * Set the request method.
  * Required and used in CDSSO mode to set/modify the request method.
- * Should return AM_SUCCESS on success, any other error will result in 
+ * Should return AM_SUCCESS on success, any other error will result in
  * HTTP internal error result.
  *
- * Arguments: 
+ * Arguments:
  *
  * args - agent defined arguments to pass in.
  * method - the request method to set.
@@ -324,15 +334,15 @@ typedef struct {
     void **args;
 } am_web_set_method_t;
 
-/** 
- * Render the http result, one of am_web_result_t. 
- * For AM_WEB_RESULT_OK_DONE, agent should return a HTTP respons code 200 OK 
- * and the body of the HTTP response should be set to the string in the 
- * data argument. 
- * For AM_WEB_RESSULT_REDIRECT, agent should return a HTTP response code 302, 
+/**
+ * Render the http result, one of am_web_result_t.
+ * For AM_WEB_RESULT_OK_DONE, agent should return a HTTP respons code 200 OK
+ * and the body of the HTTP response should be set to the string in the
+ * data argument.
+ * For AM_WEB_RESSULT_REDIRECT, agent should return a HTTP response code 302,
  * and Location header should be set to the redirect url in the data argument.
  */
-typedef am_status_t (*am_web_render_result_func_t)(void **args, 
+typedef am_status_t (*am_web_render_result_func_t)(void **args,
 			am_web_result_t http_result, char *data);
 typedef struct {
     am_web_render_result_func_t func;
@@ -340,20 +350,20 @@ typedef struct {
 } am_web_render_result_t;
 
 /**
- * Set a header in the request. 
- * If a header of the same name already exists it should be replaced 
+ * Set a header in the request.
+ * If a header of the same name already exists it should be replaced
  * with another header of the same name.
  *
- * Arguments: 
+ * Arguments:
  *
  * args - agent defined arguments to pass in.
- * name - the header name 
- * val - the header value 
+ * name - the header name
+ * val - the header value
  *
- * Return: 
+ * Return:
  *
- * This function should return AM_SUCCESS if the header was successfully set 
- * and appropriate am_status_t code otherwise. 
+ * This function should return AM_SUCCESS if the header was successfully set
+ * and appropriate am_status_t code otherwise.
  */
 typedef am_status_t (*am_web_set_header_in_request_func_t)(
 			void **args, const char *name, const char *val);
@@ -364,19 +374,19 @@ typedef struct {
 
 /**
  * Set(Add) a header in response.
- * The header should be added to the response even if another header 
+ * The header should be added to the response even if another header
  * of the same name already exists.
  *
- * Arguments: 
+ * Arguments:
  *
  * args - agent defined arguments to pass in.
- * name - the header name 
+ * name - the header name
  * val - the header value
  *
- * Return: 
+ * Return:
  *
- * This function should return AM_SUCCESS if the header was successfully set 
- * and appropriate am_status_t code otherwise. 
+ * This function should return AM_SUCCESS if the header was successfully set
+ * and appropriate am_status_t code otherwise.
  */
 typedef am_status_t (*am_web_add_header_in_response_func_t)(
 			void **args, const char *name, const char *val);
@@ -403,7 +413,7 @@ typedef struct {
     // set method
     am_web_set_method_t set_method;
 
-    // set a request header 
+    // set a request header
     am_web_set_header_in_request_t set_header_in_request;
 
     // add a response header
@@ -412,7 +422,7 @@ typedef struct {
     // render http result
     am_web_render_result_t render_result;
 
-} am_web_request_func_t; 
+} am_web_request_func_t;
 
 
 /**
@@ -564,8 +574,8 @@ AM_WEB_EXPORT am_status_t am_web_get_url_to_redirect(am_status_t status,
  */
 typedef am_status_t (*am_web_result_set_header_func_t)(
                          const char *key,
-                         const char *attrValues, 
-                         void **args); 
+                         const char *attrValues,
+                         void **args);
 
 /*
  * This function sets the LDAP attributes in header through cookie in response.
@@ -582,7 +592,7 @@ typedef am_status_t (*am_web_result_set_header_func_t)(
  */
 typedef am_status_t (*am_web_result_set_header_attr_in_response_func_t)(
                          const char *cookieValues,
-                         void **args); 
+                         void **args);
 
 /*
  * This function sets the LDAP attributes in header through cookie in request.
@@ -599,7 +609,7 @@ typedef am_status_t (*am_web_result_set_header_attr_in_response_func_t)(
  */
 typedef am_status_t (*am_web_result_set_header_attr_in_request_func_t)(
                          const char *cookieValues,
-                         void **args); 
+                         void **args);
 
 /*
  * This function at present is DUMMY. will be needed for cookie synchronization.
@@ -608,7 +618,7 @@ typedef am_status_t (*am_web_result_set_header_attr_in_request_func_t)(
  * Parameters:
  *   cookieName     Name of the cookie to be synchronized with.
  *
- *   dproCookie     
+ *   dproCookie
  *
  *   args           container specific argument containing request.
  *
@@ -619,23 +629,23 @@ typedef am_status_t (*am_web_result_set_header_attr_in_request_func_t)(
 typedef am_status_t (*am_web_get_cookie_sync_func_t)(
                          const char *cookieName,
                          char **dproCookie,
-                         void **args); 
+                         void **args);
 
 /*
- * NOTE - This function replaces am_web_do_result_attr_map_set() in the 
- * previous version of the library. The old interface is still provided 
- * in the library but deprecated. Users need to explicity declare it as 
- * follows to use it. 
+ * NOTE - This function replaces am_web_do_result_attr_map_set() in the
+ * previous version of the library. The old interface is still provided
+ * in the library but deprecated. Users need to explicity declare it as
+ * follows to use it.
  *         am_status_t am_web_do_result_attr_map_set(
  *                              am_policy_result *result,
  *                              am_status_t (*setFunc)(const char *,
- *                                                     const char *,	
+ *                                                     const char *,
  *                                                     void **),
  *                              void **args);
  *
  * This function processes attr_response_map of am_policy_result_t
- * and performs the appropriate set action that is passed in. 
- * 
+ * and performs the appropriate set action that is passed in.
+ *
  */
 AM_WEB_EXPORT am_status_t
 am_web_result_attr_map_set(
@@ -657,14 +667,14 @@ am_web_do_cookies_reset(am_status_t (*setFunc)(const char *, void **),
 
 
 /*
- * This function sets the iPlanetDirectoryPro cookie for each domain 
+ * This function sets the iPlanetDirectoryPro cookie for each domain
  * configured in the com.sun.am.policy.agents.cookieDomainList property.
- * It builds the set-cookie header for each domain specified in the 
- * property, and calls the callback function 'setFunc' in the first 
+ * It builds the set-cookie header for each domain specified in the
+ * property, and calls the callback function 'setFunc' in the first
  * argument to actually set the cookie.
- * This function is called by am_web_check_cookie_in_query() and 
- * am_web_check_cookie_in_post() which are called in CDSSO mode 
- * to set the iPlanetDirectoryPro cookie in the cdsso response. 
+ * This function is called by am_web_check_cookie_in_query() and
+ * am_web_check_cookie_in_post() which are called in CDSSO mode
+ * to set the iPlanetDirectoryPro cookie in the cdsso response.
  */
 AM_WEB_EXPORT am_status_t
 am_web_do_cookie_domain_set(am_status_t (*setFunc)(const char *, void **),
@@ -689,8 +699,8 @@ AM_WEB_EXPORT boolean_t
 am_web_is_cdsso_enabled();
 
 AM_WEB_EXPORT am_status_t am_web_check_cookie_in_post(
-		void ** args, char ** dpro_cookie, 
-		char ** request_url, 
+		void ** args, char ** dpro_cookie,
+		char ** request_url,
 		char **orig_req, char *method,
 		char *response,
 		boolean_t responseIsCookie,
@@ -699,7 +709,7 @@ AM_WEB_EXPORT am_status_t am_web_check_cookie_in_post(
 		);
 AM_WEB_EXPORT am_status_t am_web_check_cookie_in_query(
 		void **args, char **dpro_cookie,
-		const char *query, char **request_url, 
+		const char *query, char **request_url,
 		char ** orig_req, char *method,
 		am_status_t (*set_cookie)(const char *, void **),
 		void (*set_method)(void **, char *)
@@ -707,7 +717,7 @@ AM_WEB_EXPORT am_status_t am_web_check_cookie_in_query(
 
 
 
-		
+
 /*
  * Free memory previously allocated by a am_web_* routine.
  */
@@ -939,12 +949,12 @@ AM_WEB_EXPORT char * am_web_create_post_page(const char *key,
  *     2,1,0 or -1 as defined above
  *
  */
-AM_WEB_EXPORT int am_web_is_cookie_present(const char *cookie, 
+AM_WEB_EXPORT int am_web_is_cookie_present(const char *cookie,
                                                  const char *value,
                                                  char **new_cookie);
 
-/* 
- * Resets the cookie configured to be reset on logout. 
+/*
+ * Resets the cookie configured to be reset on logout.
  * The reset function passed in is called for each cookie that is configured.
  * If the function failed for any cookie, the last failed status is returned.
  */
@@ -971,9 +981,9 @@ AM_WEB_EXPORT boolean_t am_web_is_logout_url(const char *url);
  *    inpString: Request URL that was recieved after authentication
  *               containing Liberty attributes.
  *    outString: Address of output string where all the Liberty
- *               attributes are cleaned up. Must be pre-allocated 
+ *               attributes are cleaned up. Must be pre-allocated
  *               by caller with same size as inpString.
- *                
+ *
  *
  * Returns:
  *  am_status_t:
@@ -985,10 +995,10 @@ am_web_remove_authnrequest(char *inpString, char **outString);
 
 
 /**
- * Processes a request access check and returns a HTTP result to be 
- * rendered by the agent. Result can be OK, OK-done, 
+ * Processes a request access check and returns a HTTP result to be
+ * rendered by the agent. Result can be OK, OK-done,
  * forbidden, error, or redirect with a redirect URL.
- * The render status is returned in the render_sts argument. 
+ * The render status is returned in the render_sts argument.
  * See am_web_request_func_t for description of each function.
  */
 AM_WEB_EXPORT am_web_result_t
@@ -1015,26 +1025,26 @@ am_web_method_str_to_num(const char *method_str);
 /**
  * Returns the name of a am_web_result_t as a string.
  * For example, AM_WEB_RESULT_OK returns "AM_WEB_RESULT_OK".
- * If the result code passed is unrecognized, "Unknown result code" 
+ * If the result code passed is unrecognized, "Unknown result code"
  * is returned.
  */
 AM_WEB_EXPORT const char *
 am_web_result_num_to_str(am_web_result_t result);
 
 /**
- * Sets the given cookie in the cookie header in the request. 
- * Arguments: 
+ * Sets the given cookie in the cookie header in the request.
+ * Arguments:
  * cookie header - the cookie header in the request
- * set_cookie_value - the cookie name and value in set-cookie response 
- *		      header form. this should be the same argument as 
- *		      the cookieValues argument of the 
+ * set_cookie_value - the cookie name and value in set-cookie response
+ *		      header form. this should be the same argument as
+ *		      the cookieValues argument of the
  *		      am_web_result_set_header_attr_in_request_func_t function.
- * new_cookie_header - contains either null, or the original cookie_header, or 
- *		       a new point containing the new cookie header value which 
+ * new_cookie_header - contains either null, or the original cookie_header, or
+ *		       a new point containing the new cookie header value which
  *		       needs to be freed by the caller.
  */
 AM_WEB_EXPORT am_status_t
-am_web_set_cookie(char *cookie_header, const char *set_cookie_value, 
+am_web_set_cookie(char *cookie_header, const char *set_cookie_value,
 		  char **new_cookie_header);
 
 
@@ -1043,10 +1053,10 @@ am_web_build_advice_response(const am_policy_result_t *policy_result,
                              const char *redirect_url,
                              char **advice_response);
 
-/*	 
- * Method to determine if the auth-type value "dsame"	 
- * in the IIS6 agent should be replaced by "Basic"	 
- */	 
+/*
+ * Method to determine if the auth-type value "dsame"
+ * in the IIS6 agent should be replaced by "Basic"
+ */
 AM_WEB_EXPORT const char *am_web_get_authType();
 
 /**
@@ -1086,7 +1096,7 @@ am_web_get_request_url(const char *host_hdr, const char *protocol,
 AM_WEB_EXPORT boolean_t am_web_is_proxy_override_host_port_set();
 
 /*
- * Method to determine the version number of AM with which the agent is 
+ * Method to determine the version number of AM with which the agent is
  * interacting
  */
 AM_WEB_EXPORT char * am_web_get_am_revision_number();
@@ -1095,13 +1105,12 @@ AM_WEB_EXPORT char * am_web_get_am_revision_number();
  * Method to get the value of user id param
  */
 AM_WEB_EXPORT const char * am_web_get_user_id_param();
-
 AM_WEB_EXPORT void am_web_clear_attributes_map(am_policy_result_t *result);
 
 AM_WEB_EXPORT boolean_t am_web_is_owa_enabled();
 AM_WEB_EXPORT boolean_t am_web_is_owa_enabled_change_protocol();
 AM_WEB_EXPORT const char * am_web_is_owa_enabled_session_timeout_url();
 
-AM_END_EXTERN_C 
+AM_END_EXTERN_C
 
 #endif	/* not AM_WEB_H */

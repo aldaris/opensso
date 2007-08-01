@@ -17,9 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
+
 #include <vector>
 #include <am_auth.h>
 #include "internal_macros.h"
@@ -29,7 +30,7 @@
 BEGIN_PRIVATE_NAMESPACE
 static AuthService *authSvc = NULL;
 DEFINE_BASE_INIT;
-void auth_cleanup(); 
+void auth_cleanup();
 END_PRIVATE_NAMESPACE
 
 USING_PRIVATE_NAMESPACE
@@ -47,7 +48,7 @@ am_auth_init(const am_properties_t auth_config_params) {
                 *reinterpret_cast<Properties *>(auth_config_params);
 
             if(authSvc == NULL) {
-                base_init(propertiesRef);
+                base_init(propertiesRef, B_TRUE);
                 authSvc = new AuthService(propertiesRef);
                 Log::log(amAuthLogID, Log::LOG_INFO,
                          "am_auth_init(): Authentication "
@@ -85,7 +86,7 @@ am_auth_init(const am_properties_t auth_config_params) {
     return retVal;
 }
 
-void PRIVATE_NAMESPACE_NAME::auth_cleanup() 
+void PRIVATE_NAMESPACE_NAME::auth_cleanup()
 {
     if (authSvc) {
 	delete (authSvc);
@@ -285,7 +286,7 @@ am_auth_abort(am_auth_context_t auth_ctx) {
 }
 
 extern "C" am_status_t
-am_auth_get_module_instance_names(am_auth_context_t auth_ctx, 
+am_auth_get_module_instance_names(am_auth_context_t auth_ctx,
                                   am_string_set_t** module_inst_names_ptr ) {
     am_status_t retVal = AM_FAILURE;
     Log::ModuleId authCtxModule = Log::addModule(AM_AUTH_MODULE);
@@ -294,7 +295,7 @@ am_auth_get_module_instance_names(am_auth_context_t auth_ctx,
             try {
                 AuthContext &authContext =
                     reinterpret_cast<AuthContext &>(*auth_ctx);
-                authSvc->getModuleInstanceNames(authContext, 
+                authSvc->getModuleInstanceNames(authContext,
 						module_inst_names_ptr);
                 retVal = AM_SUCCESS;
             } catch(InternalException &iex) {
@@ -316,7 +317,7 @@ am_auth_get_module_instance_names(am_auth_context_t auth_ctx,
 		retVal = AM_INVALID_ARGUMENT;
         }
     } else {
-        Log::log(authCtxModule, Log::LOG_ERROR, 
+        Log::log(authCtxModule, Log::LOG_ERROR,
                  "am_auth_get_module_instance_names() ",
                  "Auth context not initialized.");
 	retVal = AM_SERVICE_NOT_INITIALIZED;
@@ -332,7 +333,7 @@ am_auth_has_more_requirements(am_auth_context_t auth_ctx) {
         try {
             AuthContext &authContext =
                 reinterpret_cast<AuthContext &>(*auth_ctx);
-            
+
             retVal = authContext.hasMoreRequirements() ? B_TRUE : B_FALSE;
         } catch(InternalException &iex) {
             Log::log(amAuthLogID, Log::LOG_ERROR, iex);

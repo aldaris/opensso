@@ -66,6 +66,7 @@ typedef enum{
 
 const CHAR agentDescription[] = "Authentication filter for IIS 6.0 Sun Policy Agent 2.2";
 BOOL filterInitialized = FALSE;
+CRITICAL_SECTION initLock;
 CHAR debugMsg[2048] = "";
 
 // actually const. But API prototypes don't alow.
@@ -160,12 +161,14 @@ BOOL WINAPI GetFilterVersion(HTTP_FILTER_VERSION *pVer)
                      SF_NOTIFY_END_OF_REQUEST);
 	
     sprintf(pVer->lpszFilterDesc, agentDescription);
+	InitializeCriticalSection(&initLock);
     return TRUE;
 }
 
 BOOL WINAPI TerminateFilter(DWORD dwFlags)
 {
     am_web_cleanup();
+    DeleteCriticalSection(&initLock);
     return TRUE;
 }
 
@@ -266,15 +269,19 @@ DWORD OnPreprocHeaders(HTTP_FILTER_CONTEXT *pfc,
     const char *userIdParam = NULL;
 		
     if (!filterInitialized) {
+		EnterCriticalSection(&initLock);
         // Initialize the filter and the amsdk
-        if (init_filter(pfc) == FAILED) {
-            sprintf(debugMsg,"%s: ERROR - init_filter() failed. "
-                    "Filter is not active", thisfunc);
-            logMessage(debugMsg);
-            status = FAILED;
-         } else {
-            filterInitialized = TRUE;
-         }
+		if (!filterInitialized) {
+			if (init_filter(pfc) == FAILED) {
+				sprintf(debugMsg,"%s: ERROR - init_filter() failed. "
+						"Filter is not active", thisfunc);
+				logMessage(debugMsg);
+				status = FAILED;
+			} else {
+				filterInitialized = TRUE;
+			}
+		}
+		LeaveCriticalSection(&initLock);
     }
 
     if (status == SUCCESS) {
@@ -1086,8 +1093,8 @@ static DWORD do_redirect(HTTP_FILTER_CONTEXT *pfc,
                strcat(local_redirect_url, original_url);
             } 
             am_web_log_debug("%s:sessionTimeout is true, value of "
-			     "local_redirect_url => %s", thisfunc,
-			     local_redirect_url);
+                 "local_redirect_url => %s", thisfunc,
+                 local_redirect_url);
         }
     }
 
@@ -1100,32 +1107,34 @@ static DWORD do_redirect(HTTP_FILTER_CONTEXT *pfc,
         case AM_INVALID_FQDN_ACCESS:
         if (ret == AM_SUCCESS && ((redirect_url != NULL) || 
             local_redirect_url != NULL)) {
-             if (sessionTimeout && (local_redirect_url != NULL)) {
-                 redirect_hdr_len = sizeof(REDIRECT_TEMPLATE) + 
+            if (sessionTimeout && (local_redirect_url != NULL)) {
+                redirect_hdr_len = sizeof(REDIRECT_TEMPLATE) + 
                                     strlen(local_redirect_url);
-             } else {
-                 redirect_hdr_len = sizeof(REDIRECT_TEMPLATE) + 
+            } 
+            else {
+                redirect_hdr_len = sizeof(REDIRECT_TEMPLATE) + 
                                     strlen(redirect_url);
-             }
-             redirect_header =(char *) malloc(redirect_hdr_len);
-             if (redirect_header != NULL) {
+            }
+            redirect_header =(char *) malloc(redirect_hdr_len);
+            if (redirect_header != NULL) {
                 redirect_status = httpRedirect;
                 if (sessionTimeout) {
                     _snprintf(redirect_header, redirect_hdr_len, 
                               REDIRECT_TEMPLATE, local_redirect_url);
-                } else {
+                } 
+                else {
                     _snprintf(redirect_header, redirect_hdr_len, 
                               REDIRECT_TEMPLATE, redirect_url);
                 }
-             } else {
+            } else {
                 am_web_log_error("%s: Unable to allocate %u bytes",
                                  thisfunc, redirect_hdr_len);
-             }
-         } else {
-             if (status == AM_ACCESS_DENIED) {
-                 redirect_status = httpForbidden;
-             }
-             am_web_log_error("%s:  Error while calling "
+            }
+        } else {
+            if (status == AM_ACCESS_DENIED) {
+                redirect_status = httpForbidden;
+            }
+            am_web_log_error("%s:  Error while calling "
                               "am_web_get_url_to_redirect(): "
                               "status = %s", thisfunc, 
                               am_status_to_string(ret));
@@ -1135,42 +1144,47 @@ static DWORD do_redirect(HTTP_FILTER_CONTEXT *pfc,
         default:
         // All the default values are set to send 500 code.
         break;
-	}
+    }
 
-	if (redirect_status == httpRedirect &&
-	   pfc->ServerSupportFunction(pfc, SF_REQ_SEND_RESPONSE_HEADER,
-	                    redirect_status, (DWORD) redirect_header, 0)) {
-		if (redirect_header != NULL) {
-			am_web_log_debug("%s: ServerSupportFunction"
-			     "succeed: Attempted status = %s ",
-			     thisfunc, redirect_status);
-		} else {
+    if (redirect_status == httpRedirect &&
+       pfc->ServerSupportFunction(pfc, SF_REQ_SEND_RESPONSE_HEADER,
+                        redirect_status, (DWORD) redirect_header, 0)) {
+        if (redirect_header != NULL) {
+            am_web_log_debug("%s: ServerSupportFunction"
+                 "succeed: Attempted status = %s ",
+                 thisfunc, redirect_status);
+        } else {
                    am_web_log_error("%s: ServerSupportFunction did not "
-			     "reply with status message = %s "
-			     "and extra headers = %s",
-			     thisfunc, redirect_status, redirect_header);
-		}
-	} else {
-		size_t data_len = sizeof(FORBIDDEN_MSG) - 1;
-		const char *data = FORBIDDEN_MSG;
-		if(redirect_status == httpServerError) {
-			data = INTERNAL_SERVER_ERROR_MSG;
-			data_len = sizeof(INTERNAL_SERVER_ERROR_MSG) - 1;
-		}
-		if(pfc->WriteClient(pfc, (LPVOID)data,
-		       (LPDWORD)&data_len, (DWORD) 0)) {
-			am_web_log_error("%s: WriteClient did not "
-			             "succeed: Attempted message = %s ",
-			             thisfunc, data);
-		}
-	}
+                       "reply with status message = %s "
+                       "and extra headers = %s",
+                 thisfunc, redirect_status, redirect_header);
+        }
+    } else {
+        size_t data_len = sizeof(FORBIDDEN_MSG) - 1;
+        const char *data = FORBIDDEN_MSG;
+        if(redirect_status == httpServerError) {
+            data = INTERNAL_SERVER_ERROR_MSG;
+            data_len = sizeof(INTERNAL_SERVER_ERROR_MSG) - 1;
+        }
+        if(pfc->WriteClient(pfc, (LPVOID)data,
+               (LPDWORD)&data_len, (DWORD) 0)) {
+            am_web_log_error("%s: WriteClient did not "
+                         "succeed: Attempted message = %s ",
+                         thisfunc, data);
+        }
+    }
 	
-	if (redirect_header != NULL) {
-		free(redirect_header);
-		redirect_header = NULL;
-	}
+    if (redirect_header != NULL) {
+        free(redirect_header);
+        redirect_header = NULL;
+    }
 
-	return SF_STATUS_REQ_FINISHED_KEEP_CONN;
+    if (redirect_url != NULL) {
+        free(redirect_url);
+        redirect_url = NULL;
+    }
+
+    return SF_STATUS_REQ_FINISHED_KEEP_CONN;
 }
 
 void logMessage(CHAR* message)

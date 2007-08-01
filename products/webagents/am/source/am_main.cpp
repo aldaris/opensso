@@ -17,9 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
+
+
 #include <string>
 
 #include <prinit.h>
@@ -44,7 +46,7 @@ using std::string;
 namespace {
     bool initialized;
 }
-    
+
 
 
 BEGIN_PRIVATE_NAMESPACE
@@ -76,7 +78,7 @@ void log_version_info() {
 	versionStr.append(Version::getEscalationId());
 	PUSH_BACK_CHAR(versionStr, ')');
     }
-   
+
     Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS, "%s",
 	     versionStr.c_str());
 
@@ -89,9 +91,9 @@ void log_version_info() {
 }
 
 /**
- * Throws: InternalException upon error 
+ * Throws: InternalException upon error
  */
-void PRIVATE_NAMESPACE_NAME::base_init(const Properties &propertiesRef) 
+void PRIVATE_NAMESPACE_NAME::base_init(const Properties &propertiesRef, boolean_t initializeLog)
 {
     am_status_t status = AM_SUCCESS;
 
@@ -100,16 +102,18 @@ void PRIVATE_NAMESPACE_NAME::base_init(const Properties &propertiesRef)
 
 	try {
 
-	    // NOTE - The dependency here is 
+	    // NOTE - The dependency here is
 	    // - connection::initialize depends on Log::initialize
 	    //   for the local log.
-	    // - remote log depends on XMLTree::initialize and 
+	    // - remote log depends on XMLTree::initialize and
 	    //   connection::initialize and Log::initialize for local log
-	    // Ideally dependencies are taken care of in the classes 
+	    // Ideally dependencies are taken care of in the classes
  	    // themselves.
 
-	    Log::initialize(propertiesRef);
-	    log_version_info();
+	    if (initializeLog) {
+	    	Log::initialize(propertiesRef);
+	    	log_version_info();
+		}
 
 	    XMLTree::initialize();
 
@@ -128,7 +132,7 @@ void PRIVATE_NAMESPACE_NAME::base_init(const Properties &propertiesRef)
 	    Log::log(Log::ALL_MODULES, Log::LOG_ERROR, exc);
 	    status = AM_NO_MEMORY;
 	} catch (const std::exception& exc) {
-	    Log::log(Log::ALL_MODULES, Log::LOG_ERROR, 
+	    Log::log(Log::ALL_MODULES, Log::LOG_ERROR,
                      "Unknown exception during base_init: %s",
 		     exc.what());
 	    Log::log(Log::ALL_MODULES, Log::LOG_ERROR, exc);
@@ -186,7 +190,7 @@ am_status_t am_cleanup(void)
 	    Log::log(logID, Log::LOG_ERROR, exc);
 	    status = AM_FAILURE;
 	} catch (...) {
-	    Log::log(logID, Log::LOG_ERROR, 
+	    Log::log(logID, Log::LOG_ERROR,
 			"am_cleanup(): Unknown exception encountered");
 	    status = AM_FAILURE;
 	}
@@ -335,7 +339,7 @@ void get_status_info(am_status_t status, const char ** name, const char ** msg)
     return;
 }
 
-extern "C" 
+extern "C"
 const char *am_status_to_string(am_status_t status)
 {
     const char *name, *msg;
@@ -356,20 +360,20 @@ const char *am_status_to_name(am_status_t status)
     return name;
 }
 
-extern am_status_t 
+extern am_status_t
 am_policy_handle_notification(am_policy_t hdl, const std::string& data);
-extern am_status_t 
+extern am_status_t
 am_sso_handle_notification(const std::string& data);
 
 //
-// returns AM_SUCCESS if both sso and policy notifications succeeded 
+// returns AM_SUCCESS if both sso and policy notifications succeeded
 // or not called at all.
 // returns AM_INVALID_ARGUMENT if there was an error in the XML Tree.
-// returns AM_SESSION_FAILURE if sso notification failed, 
-// AM_POLICY_FAILURE if policy notification failed, 
+// returns AM_SESSION_FAILURE if sso notification failed,
+// AM_POLICY_FAILURE if policy notification failed,
 // AM_FAILURE if both notifications failed.
 // Actual failure status's are logged.
-am_status_t 
+am_status_t
 am_handle_notification(const std::string& data, am_policy_t policy_handle)
 {
     Log::ModuleId logID = Log::addModule("am_handle_notification");
@@ -385,54 +389,54 @@ am_handle_notification(const std::string& data, am_policy_t policy_handle)
 	std::string nodeName;
 
 	rootElement.getName(nodeName);
-	Log::log(logID, Log::LOG_DEBUG, 
+	Log::log(logID, Log::LOG_DEBUG,
 		 "%s notification received", nodeName.c_str());
 	// Session service notification.
 	if(rootElement.isNamed(SESSION_NOTIFICATION)) {
-	    Log::log(logID, Log::LOG_DEBUG, 
+	    Log::log(logID, Log::LOG_DEBUG,
 		     "Passing notification to sso");
             sso_notif_status = am_sso_handle_notification(data);
 	}
         // *Note*
-        // Right now, always pass notification data to policy, 
-        // whether it's session or policy notification. 
+        // Right now, always pass notification data to policy,
+        // whether it's session or policy notification.
         // Later, when policy uses the sso api, pass only policy notifications
         // to policy.
         if (policy_handle) {
-	    Log::log(logID, Log::LOG_DEBUG, 
+	    Log::log(logID, Log::LOG_DEBUG,
 		     "Passing notification to policy");
-            policy_notif_status = 
+            policy_notif_status =
                 am_policy_handle_notification(policy_handle, data);
         }
 
 	if (sso_notif_status != AM_SUCCESS) {
-	    Log::log(logID, Log::LOG_ERROR, 
+	    Log::log(logID, Log::LOG_ERROR,
 		     "sso notification failed with status %s.",
 		     am_status_to_string(sso_notif_status));
 	    status = sso_notif_status;
 	}
 	if (policy_notif_status != AM_SUCCESS) {
-	    Log::log(logID, Log::LOG_ERROR, 
+	    Log::log(logID, Log::LOG_ERROR,
 		     "policy notification failed with status %s.",
 		     am_status_to_string(policy_notif_status));
 	    if (status != AM_SUCCESS)
 		status = policy_notif_status;
 	}
-    } 
+    }
     catch(XMLTree::ParseException &ex) {
-	Log::log(logID, Log::LOG_ERROR, 
-                 "XML Tree exception '%s' encountered.", 
+	Log::log(logID, Log::LOG_ERROR,
+                 "XML Tree exception '%s' encountered.",
                  ex.getMessage().c_str());
         status = AM_INVALID_ARGUMENT;
     }
     catch (std::exception &exs) {
-	Log::log(logID, Log::LOG_ERROR, 
-                 "am_handle_notification(): exception encountered: %s", 
+	Log::log(logID, Log::LOG_ERROR,
+                 "am_handle_notification(): exception encountered: %s",
                  exs.what());
 	status = AM_INVALID_ARGUMENT;
     }
     catch (...) {
-	Log::log(logID, Log::LOG_ERROR, 
+	Log::log(logID, Log::LOG_ERROR,
                  "am_handle_notification(): Unknown exception encountered.");
 	status = AM_FAILURE;
     }
@@ -440,14 +444,14 @@ am_handle_notification(const std::string& data, am_policy_t policy_handle)
 }
 
 extern "C"
-am_status_t 
+am_status_t
 am_notify(const char *data, am_policy_t policy_handle)
 {
     Log::ModuleId logID = Log::addModule("am_notify()");
     am_status_t sts = AM_FAILURE;
 
     if (NULL==data || '\0'==*data) {
-        Log::log(logID, Log::LOG_ERROR, 
+        Log::log(logID, Log::LOG_ERROR,
                  "Notification data is NULL or empty string.");
         sts = AM_INVALID_ARGUMENT;
     }
@@ -461,17 +465,17 @@ am_notify(const char *data, am_policy_t policy_handle)
 		std::string notifID;
 
 		if(element.getAttributeValue(VERSION, version) &&
-		    std::strcmp(version.c_str(), 
+		    std::strcmp(version.c_str(),
 			        NOTIFICATION_SET_VERSION) == 0) {
 		    std::string notificationData;
 		    for(element = element.getFirstSubElement();
 			element.isNamed(NOTIFICATION); element.nextSibling()) {
 			if(element.getValue(notificationData)) {
-			    Log::log(logID, Log::LOG_DEBUG, 
+			    Log::log(logID, Log::LOG_DEBUG,
 				     "Handling notification.");
-			    sts = am_handle_notification(notificationData, 
+			    sts = am_handle_notification(notificationData,
 							 policy_handle);
-			    Log::log(logID, Log::LOG_DEBUG, 
+			    Log::log(logID, Log::LOG_DEBUG,
 				     "handled notification with sts %d.", sts);
 			} else {
 			    std::string nodeName;
@@ -503,7 +507,7 @@ am_notify(const char *data, am_policy_t policy_handle)
 	    sts = ex.getStatusCode();
 	    Log::log(logID, Log::LOG_ERROR,
 		     "am_notify(): "
-		     "Internal error occurred, error code %d, message: %s", 
+		     "Internal error occurred, error code %d, message: %s",
 		     sts, ex.getMessage());
 	}
 	catch (std::exception &exc) {
