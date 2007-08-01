@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.1 2007-06-21 23:01:39 superpat7 Exp $
+ * $Id: SPCache.java,v 1.2 2007-08-01 21:04:41 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import netscape.ldap.util.DN;
 
 /**
  * This class provides the memory store for
- * SAML request and response information on Service Provider side.
+ * WS-Federation request and response information on Service Provider side.
  *
  */
 

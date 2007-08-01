@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAuthenticationMethodMapper.java,v 1.1 2007-06-21 23:01:30 superpat7 Exp $
+ * $Id: DefaultIDPAuthenticationMethodMapper.java,v 1.2 2007-08-01 21:04:04 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,7 @@ public class DefaultIDPAuthenticationMethodMapper
      * @param idpEntityID the Entity ID of the Identity Provider
      * @param realm the realm to which the Identity Provider belongs
      * @return an <code>IDPAuthenticationTypeInfo</code> object
-     * @throws SAML2Exception if an error occurs.
+     * @throws WSFederationException if an error occurs.
      */
     public IDPAuthenticationTypeInfo getIDPAuthnContextInfo(
         String authenticationType,
@@ -84,13 +84,13 @@ public class DefaultIDPAuthenticationMethodMapper
         String classRef = null;
 
         try {
-            IDPSSOConfigElement config = WSFederationMetaManager.getIDPSSOConfig(
-                                          realm, idpEntityID);
+            IDPSSOConfigElement config = 
+                WSFederationMetaManager.getIDPSSOConfig(realm, idpEntityID);
             attrs = WSFederationMetaUtils.getAttributes(config);
         } catch (WSFederationMetaException sme) {
             debug.error(classMethod +
                    "get IDPSSOConfig failed:", sme);
-            throw new WSFederationException(sme.getMessage());
+            throw new WSFederationException(sme);
         }
         List values = (List) attrs.get(
                     SAML2Constants.IDP_AUTHNCONTEXT_CLASSREF_MAPPING);

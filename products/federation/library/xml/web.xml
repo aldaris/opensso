@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.4 2007-07-03 22:06:26 qcheng Exp $
+   $Id: web.xml,v 1.5 2007-08-01 21:04:46 superpat7 Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -249,6 +249,10 @@
             <servlet-name>RealmSelection</servlet-name>
             <jsp-file>/wsfederation/jsp/realmSelection.jsp</jsp-file>
         </servlet>
+        <servlet>
+            <servlet-name>LoggedOut</servlet-name>
+            <jsp-file>/wsfederation/jsp/loggedOut.jsp</jsp-file>
+        </servlet>
 
         <servlet-mapping>
             <servlet-name>SPMniSoap</servlet-name>
@@ -460,7 +464,11 @@
         </servlet-mapping>
         <servlet-mapping>
             <servlet-name>RealmSelection</servlet-name>
-            <url-pattern>/RealmSelection</url-pattern>
+            <url-pattern>/RealmSelection/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>LoggedOut</servlet-name>
+            <url-pattern>/LoggedOut/*</url-pattern>
         </servlet-mapping>
 </web-app>
 

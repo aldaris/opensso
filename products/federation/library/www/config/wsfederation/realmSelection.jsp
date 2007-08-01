@@ -1,27 +1,59 @@
+<%--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: realmSelection.jsp,v 1.3 2007-08-01 21:04:47 superpat7 Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+--%>
+
 <%@page
     import="java.util.*"
-    import="com.sun.identity.saml2.meta.SAML2MetaUtils"
     import="com.sun.identity.shared.debug.Debug"
     import="com.sun.identity.wsfederation.common.WSFederationConstants"
     import="com.sun.identity.wsfederation.common.WSFederationUtils"
     import="com.sun.identity.wsfederation.meta.WSFederationMetaManager"
     import="com.sun.identity.wsfederation.meta.WSFederationMetaUtils"
     import="com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement"
+    import="com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement"
 %>
 <% 
     Debug debug = WSFederationUtils.debug;
     String jspFile = "realmSelection.jsp: ";
     String wreply = (String)request.getParameter("wreply");
-    String wtrealm = (String)request.getParameter("wtrealm");
     String wctx = (String)request.getParameter("wctx");
     
     if (debug.messageEnabled()) {
         debug.message(jspFile + "wreply: "+wreply);
     }
 
+    String spMetaAlias = WSFederationMetaUtils.getMetaAliasByUri(
+                                        request.getRequestURI());
+    if ( spMetaAlias==null || spMetaAlias.length()==0) {
+        response.sendError(response.SC_BAD_REQUEST, "Null metaAlias"
+                /* TODO SAML2Utils.bundle.getString("nullSPEntityID") */);
+        return;
+    }
+    
     String spEntityId = 
-        WSFederationMetaManager.getEntityByMetaAlias(wtrealm);
-    String spRealm = SAML2MetaUtils.getRealmByMetaAlias(wtrealm);
+        WSFederationMetaManager.getEntityByMetaAlias(spMetaAlias);
+    String spRealm = WSFederationMetaUtils.getRealmByMetaAlias(spMetaAlias);
     Map<String,List<String>> spConfig = 
         WSFederationMetaUtils.getAttributes(
         WSFederationMetaManager.getSPSSOConfig(spRealm,spEntityId));
@@ -37,8 +69,6 @@
         StringBuffer url = new StringBuffer(wreply);
         url.append("?whr=");
         url.append(selectedRealm);
-        url.append("&wtrealm=");
-        url.append(wtrealm);
         if (wctx != null) {
             url.append("&wctx=");
             url.append(wctx);
@@ -181,7 +211,6 @@
 <!-- -->
 
 <input type="hidden" name="wreply" value="<%=wreply%>" />
-<input type="hidden" name="wtrealm" value="<%=wtrealm%>" />
 <%
     if ( wctx != null && wctx.length() > 0 ) {
 %>
@@ -207,23 +236,28 @@
             accountRealmCookieValue);
     }
 
-    for (String key : 
-        WSFederationMetaManager.getAllRemoteIdentityProviderEntities("/"))
+    for (String idpEntityId : 
+        WSFederationMetaManager.getAllRemoteIdentityProviderEntities(spRealm))
     { 
+        FederationElement idp = 
+            WSFederationMetaManager.getEntityDescriptor(spRealm, idpEntityId);
         IDPSSOConfigElement idpconfig = 
-            WSFederationMetaManager.getIDPSSOConfig(null, key);
+            WSFederationMetaManager.getIDPSSOConfig(spRealm, idpEntityId);
+            
+        String issuerName = WSFederationMetaManager.
+            getTokenIssuerName(idp);
 
         String displayName = 
             WSFederationMetaUtils.getAttribute(idpconfig,
             WSFederationConstants.DISPLAY_NAME);
 
         if (debug.messageEnabled()) {
-            debug.message(jspFile + "account realm key: " + key + 
+            debug.message(jspFile + "account realm key: " + issuerName + 
                 " display name: " + displayName);
         }
 %>
-        <option value="<%=key%>" <%=((accountRealmCookieValue != null) && 
-            (accountRealmCookieValue.equals(key))?"selected":"")%>>
+        <option value="<%=issuerName%>" <%=((accountRealmCookieValue != null) && 
+            (accountRealmCookieValue.equals(issuerName))?"selected":"")%>>
             <%=displayName%>
         </option>
 <%

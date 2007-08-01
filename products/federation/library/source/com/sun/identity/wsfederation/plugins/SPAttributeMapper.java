@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPAttributeMapper.java,v 1.1 2007-06-21 23:01:29 superpat7 Exp $
+ * $Id: SPAttributeMapper.java,v 1.2 2007-08-01 21:04:02 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,9 +38,10 @@ import com.sun.identity.wsfederation.common.WSFederationException;
  * this interface will be used by the SAML2 framework to expose
  * through the single sign-on token to the application. 
  * Also, the implementation of this mapper may need to consider the deployment
- * of the SAML v2 plugin base platform for example <code>AccessManager</code>
+ * of the WS-Federation implementation base platform for example 
+ * <code>AccessManager</code>
  * or the <code>FederationManager</code>.
- * @see com.sun.identity.saml2.plugins.IDPAttributeMapper
+ * @see com.sun.identity.wsfederation.plugins.IDPAttributeMapper
  *
  * @supported.all.api
  */
@@ -59,7 +60,7 @@ public interface SPAttributeMapper {
      * @param remoteEntityID <code>EntityID</code> of the remote provider.  
      * @return map of <code>AttributeValuePair</code>s for the given
      *        SAML <code>Attribute</code> list. 
-     * @exception SAML2Exception if any failure.
+     * @exception WSFederationException if any failure.
      */
     public java.util.Map getAttributes(
         java.util.List attributes,

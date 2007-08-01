@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationAction.java,v 1.1 2007-06-21 23:01:33 superpat7 Exp $
+ * $Id: WSFederationAction.java,v 1.2 2007-08-01 21:04:43 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,20 +28,29 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sun.identity.wsfederation.common.WSFederationException;
+
 /**
- *
- * @author pat
+ * This is the base class for WS-Federation request and response handling.
  */
 public abstract class WSFederationAction {
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     
-    /** Creates a new instance of WSFederationAction */
+    /**
+     * Creates a new instance of WSFederationAction
+     * @param request HTTPServletRequest for this interaction
+     * @param response HTTPServletResponse for this interaction
+     */
     public WSFederationAction(HttpServletRequest request,
         HttpServletResponse response) {
         this.request = request;
         this.response = response;
     }
     
-    abstract public void process() throws IOException;
+    /**
+     * Processes the sign-out request, returning a response via the 
+     * HttpServletResponse passed to the constructor.
+     */
+    abstract public void process() throws IOException, WSFederationException;
 }

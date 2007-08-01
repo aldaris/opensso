@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.1 2007-06-21 23:01:40 superpat7 Exp $
+ * $Id: LogUtil.java,v 1.2 2007-08-01 21:04:49 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ import com.sun.identity.wsfederation.common.WSFederationUtils;
 
 /**
  * The <code>LogUtil</code> class defines methods which are used by
- * WS-Federation compoment to write logs.
+ * <code>WS-Federation</code> component to write logs.
  */
 public abstract class LogUtil {
     private static Debug debug = WSFederationUtils.debug;
@@ -131,6 +131,12 @@ public abstract class LogUtil {
         "CONFIG_ERROR_GET_ALL_ENTITIES";
     public static final String GOT_ALL_ENTITIES =
         "GOT_ALL_ENTITIES";                                
+    public static final String NO_ACS_URL = 
+        "NO_ACS_URL";
+    public static final String SLO_SUCCESSFUL =
+        "SLO_SUCCESSFUL";
+    public static final String ERROR_PROCESSING_MESSAGE =
+        "ERROR_PROCESSING_MESSAGE";
           
     private static final String WSFEDERATION_LOG = "WSFederation";
     private static Logger logger = null;

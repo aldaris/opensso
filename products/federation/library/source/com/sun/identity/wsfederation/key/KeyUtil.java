@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.1 2007-06-21 23:01:43 superpat7 Exp $
+ * $Id: KeyUtil.java,v 1.2 2007-08-01 21:04:52 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,14 +28,10 @@ package com.sun.identity.wsfederation.key;
 import java.util.Map;
 import java.util.List;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateFactory;
-import java.security.PublicKey;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-
-import com.sun.org.apache.xml.internal.security.encryption.XMLCipher;
 
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.saml2.common.SAML2Constants;
@@ -45,13 +41,8 @@ import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
-import com.sun.identity.wsfederation.jaxb.wsfederation.TokenKeyInfoType;
-import com.sun.identity.wsfederation.jaxb.wsfederation.TokenSigningKeyInfoElement;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
-import org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.SecurityTokenReferenceType;
-import org.w3._2000._09.xmldsig_.X509Data;
-import org.w3._2000._09.xmldsig_.X509DataType;
 
 /**
  * The <code>KeyUtil</code> provides methods to obtain

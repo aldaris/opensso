@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninResponse.java,v 1.1 2007-06-21 23:01:33 superpat7 Exp $
+ * $Id: RPSigninResponse.java,v 1.2 2007-08-01 21:04:43 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,34 +27,31 @@ package com.sun.identity.wsfederation.servlet;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
-import com.sun.identity.saml.assertion.Assertion;
-import com.sun.identity.saml.assertion.Statement;
-import com.sun.identity.saml.assertion.Subject;
-import com.sun.identity.saml.assertion.SubjectStatement;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.profile.SPACSUtils;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.common.WSFederationException;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.wsfederation.logging.LogUtil;
-import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
-import com.sun.identity.wsfederation.plugins.PartnerAccountMapper;
+import com.sun.identity.wsfederation.plugins.SPAccountMapper;
+import com.sun.identity.wsfederation.plugins.SPAttributeMapper;
 import com.sun.identity.wsfederation.profile.RequestSecurityTokenResponse;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author pat
+ * This class handles the sign-in response from the identity provider
  */
 public class RPSigninResponse extends WSFederationAction {
     private static Debug debug = WSFederationUtils.debug;
@@ -75,7 +72,12 @@ public class RPSigninResponse extends WSFederationAction {
         this.wctx = wctx;
     }
     
-    public void process() throws IOException {
+    /**
+     * Processes the sign-in response, redirecting the browser wreply URL 
+     * supplied in the sign-in request via the HttpServletResponse passed to 
+     * the constructor.
+     */
+    public void process() throws WSFederationException, IOException {
         String classMethod = "RPSigninResponse.process: ";
         
         if ((wresult == null) || (wresult.length() == 0)) {
@@ -84,8 +86,8 @@ public class RPSigninResponse extends WSFederationAction {
                     LogUtil.MISSING_WRESULT,
                     data,
                     null);
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
+            throw new WSFederationException(WSFederationUtils.bundle.
+                getString("nullWresult"));
         }
         
         // Validate context
@@ -95,23 +97,21 @@ public class RPSigninResponse extends WSFederationAction {
                     LogUtil.MISSING_WCTX,
                     data,
                     null);
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
+            throw new WSFederationException(WSFederationUtils.bundle.
+                getString("nullWctx"));
         }
-        
-        String target = WSFederationUtils.removeReplyURL(wctx);
         
         RequestSecurityTokenResponse rstr = null;
         try {
             rstr = RequestSecurityTokenResponse.parseXML(wresult);
-        } catch (WSFederationException se) {
+        } catch (WSFederationException wsfe) {
             String[] data = {wresult};
             LogUtil.error(Level.INFO,
                     LogUtil.INVALID_WRESULT,
                     data,
                     null);
-            response.sendError(response.SC_FORBIDDEN);
-            return;
+            throw new WSFederationException(WSFederationUtils.bundle.
+                getString("invalidWresult"));
         }
         
         if ( debug.messageEnabled() ) {
@@ -119,7 +119,6 @@ public class RPSigninResponse extends WSFederationAction {
                     + rstr.toString());
         }
         
-        Map attributeMap = null;
         String realm = null;
         
         String requestURL = request.getRequestURL().toString();
@@ -127,89 +126,77 @@ public class RPSigninResponse extends WSFederationAction {
         String metaAlias = 
             WSFederationMetaUtils.getMetaAliasByUri(requestURL);
         realm = WSFederationMetaUtils.getRealmByMetaAlias(metaAlias);
-        String hostEntityId = null;
+        String spEntityId = null;
         try {
-            hostEntityId = 
+            spEntityId = 
                 WSFederationMetaManager.getEntityByMetaAlias(metaAlias);
-        } catch (WSFederationException wsfex) {
-            String[] data = {wsfex.getLocalizedMessage(), metaAlias, realm};
+        } catch (WSFederationException wsfe) {
+            String[] data = {wsfe.getLocalizedMessage(), metaAlias, realm};
             LogUtil.error(Level.INFO,
                     LogUtil.CONFIG_ERROR_GET_ENTITY_CONFIG,
                     data,
                     null);
-            response.sendError(response.SC_FORBIDDEN);
-            return;
+            throw new WSFederationException(WSFederationUtils.bundle.
+                getString("invalidMetaAlias"));
         }
         
         if (realm == null || realm.length() == 0) {
             realm = "/";
         }
         
+        SPSSOConfigElement spssoconfig =
+                WSFederationMetaManager.getSPSSOConfig(realm, spEntityId);
+
+        int timeskew = SAML2Constants.ASSERTION_TIME_SKEW_DEFAULT;
+        String timeskewStr = WSFederationMetaUtils.getAttribute(spssoconfig,
+                SAML2Constants.ASSERTION_TIME_SKEW);
+        if (timeskewStr != null && timeskewStr.trim().length() > 0) {
+            timeskew = Integer.parseInt(timeskewStr);
+            if (timeskew < 0) {
+                timeskew = SAML2Constants.ASSERTION_TIME_SKEW_DEFAULT;
+            }
+        }
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "timeskew = " + timeskew);
+        }
+
         // check Assertion and get back a Map of relevant data including,
         // Subject, SOAPEntry for the partner and the List of Assertions.
         if ( debug.messageEnabled() ) {
             debug.message(classMethod +" - verifying assertion");
         }
-        try {
-            attributeMap = 
-                verifySAML11Assertion(rstr, realm, hostEntityId, target);
-        } catch (WSFederationException wsfex) {
-            // verifySAML11Assertion will log the error
-            response.sendError(response.SC_FORBIDDEN);
-            return;
+        
+        // verifyToken will throw an exception, rather than return null, so we
+        // need not test the return value
+        Map<String,Object> smap = 
+            rstr.getRequestedSecurityToken().verifyToken(realm, spEntityId, 
+            timeskew);
+        
+        assert smap != null;
+        
+        Map attributes = WSFederationMetaUtils.getAttributes(spssoconfig);
+
+        SPAccountMapper acctMapper = getSPAccountMapper(attributes);        
+        SPAttributeMapper attrMapper = getSPAttributeMapper(attributes);
+        
+        String userName = acctMapper.getIdentity(rstr, spEntityId, realm);
+        if ( userName == null ) {
+            throw new WSFederationException(WSFederationUtils.bundle.
+                getString("nullUserID"));
+        }        
+
+        String idpEntityId = WSFederationMetaManager.getEntityByTokenIssuerName(
+            realm, rstr.getRequestedSecurityToken().getIssuer());
+        List attrs = rstr.getRequestedSecurityToken().getAttributes();
+
+        Map attrMap = null;
+        if (attrs != null) {
+            attrMap = attrMapper.getAttributes(attrs, userName,
+               spEntityId, idpEntityId, realm);
         }
         
-        if (attributeMap == null) {
-            // verifySAML11Assertion will log the error
-            response.sendError(response.SC_FORBIDDEN);
-            return;
-        }
-        
-        // Quick hack for now... Need to do proper mapping
-        String mapperClassName = 
-            "com.sun.identity.wsfederation.plugins.DefaultADFSPartnerAccountMapper";
-        Class mapperClass = null;
-        try {
-            mapperClass = 
-                Class.forName(mapperClassName);
-        } catch (ClassNotFoundException cnfe) {
-            String[] data = {cnfe.getLocalizedMessage(), mapperClassName};
-            LogUtil.error(Level.INFO,
-                    LogUtil.CANT_FIND_SP_ACCOUNT_MAPPER,
-                    data,
-                    null);
-            response.sendError(response.SC_FORBIDDEN);
-            return;
-        }
-        PartnerAccountMapper mapper = null;
-        try {
-            mapper = (PartnerAccountMapper)mapperClass.newInstance();
-        }
-        catch ( InstantiationException ie )
-        {
-            String[] data = {ie.getLocalizedMessage(), mapperClassName};
-            LogUtil.error(Level.INFO,
-                    LogUtil.CANT_CREATE_SP_ACCOUNT_MAPPER,
-                    data,
-                    null);
-            response.sendError(response.SC_FORBIDDEN);
-            return;
-        }
-        catch ( IllegalAccessException iae )
-        {
-            String[] data = {iae.getLocalizedMessage(), mapperClassName};
-            LogUtil.error(Level.INFO,
-                    LogUtil.CANT_CREATE_SP_ACCOUNT_MAPPER,
-                    data,
-                    null);
-            response.sendError(response.SC_FORBIDDEN);
-            return;
-        }
-        Map accountMap = mapper.getUser(
-            (List)attributeMap.get(SAML2Constants.ASSERTIONS), null, null);
-        String userName = (String) accountMap.get(PartnerAccountMapper.NAME);
         String authLevel = 
-            attributeMap.get(SAML2Constants.AUTH_LEVEL).toString();
+            smap.get(SAML2Constants.AUTH_LEVEL).toString();
         
         // Set up Attributes for session creation
         Map sessionInfoMap = new HashMap();
@@ -223,21 +210,26 @@ public class RPSigninResponse extends WSFederationAction {
             SessionProvider sessionProvider = SessionManager.getProvider();
             session = sessionProvider.createSession(sessionInfoMap,
                     request, response, null);
-            // Much work to do on mapping!
-            // SPACSUtils.setAttrMapInSession(sessionProvider, attributeMap, 
-            //    session);
+            SPACSUtils.setAttrMapInSession(sessionProvider, attrMap, 
+                session);
+
+            String[] idpArray = {idpEntityId};
+            sessionProvider.setProperty(session, 
+                WSFederationConstants.SESSION_IDP, idpArray);
         } catch (SessionException se) {
-            String[] data = {se.getLocalizedMessage(),realm, userName, authLevel};
+            String[] data = {se.getLocalizedMessage(),realm, userName, 
+                authLevel};
             LogUtil.error(Level.INFO,
                     LogUtil.CANT_CREATE_SESSION,
                     data,
                     null);
-            response.sendError(response.SC_FORBIDDEN);
-            return;
+            throw new WSFederationException(se);
         }
         
+        String target = WSFederationUtils.removeReplyURL(wctx);
+        
         String[] data = {wctx, LogUtil.isErrorLoggable(Level.FINER)? wresult : 
-                rstr.getAssertion().get(0).getAssertionID(), 
+                rstr.getRequestedSecurityToken().getTokenId(), 
                 realm,
                 userName,
                 authLevel,
@@ -250,144 +242,90 @@ public class RPSigninResponse extends WSFederationAction {
         response.sendRedirect(target);
     }
     
-    // check Assertion and get back a Map of relevant data including,
-    // Subject, SOAPEntry for the partner and the List of Assertions.
-    private Map verifySAML11Assertion(RequestSecurityTokenResponse response, 
-        String realm, String hostEntityId, String target) 
-        throws WSFederationMetaException {
-        String classMethod = "RPSigninResponse.verifySAML11Assertion";
-        
-        Subject assertionSubject = null;
-        Assertion assertion = null;
-        
-        SPSSOConfigElement spConfig = null;
-        spConfig = WSFederationMetaManager.getSPSSOConfig(realm, hostEntityId);
-        
-        int timeskew = SAML2Constants.ASSERTION_TIME_SKEW_DEFAULT;
-        String timeskewStr = WSFederationMetaUtils.getAttribute(spConfig,
-                SAML2Constants.ASSERTION_TIME_SKEW);
-        if (timeskewStr != null && timeskewStr.trim().length() > 0) {
-            timeskew = Integer.parseInt(timeskewStr);
-            if (timeskew < 0) {
-                timeskew = SAML2Constants.ASSERTION_TIME_SKEW_DEFAULT;
+    private static SPAccountMapper getSPAccountMapper(
+        Map attributes) throws WSFederationException {        
+        SPAccountMapper acctMapper = null;
+        List acctMapperList = (List)attributes.get(
+            SAML2Constants.SP_ACCOUNT_MAPPER);
+        if (acctMapperList != null) {
+            try {
+                acctMapper = (SPAccountMapper)
+                    (Class.forName((String)acctMapperList.get(0)).
+                     newInstance());
+                if (debug.messageEnabled()) {
+                    debug.message(
+                        "RPSigninResponse.getSPAccountMapper: mapper = " +
+                        (String)acctMapperList.get(0));
+                }
+            } catch (ClassNotFoundException cfe) {
+                throw new WSFederationException(cfe);
+            } catch (InstantiationException ie) {
+                throw new WSFederationException(ie);
+            } catch (IllegalAccessException iae) {
+                throw new WSFederationException(iae);
             }
         }
-        if (debug.messageEnabled()) {
-            debug.message(classMethod + "timeskew = " + timeskew);
+        if (acctMapper == null) {
+            throw new WSFederationException(
+                WSFederationUtils.bundle.getString("failedAcctMapper"));
         }
+        return acctMapper;
+    }
 
-        List assertions = response.getAssertion();
-        Iterator iter = assertions.iterator();
-        
-        // We only check first assertion in the response
-        if (iter.hasNext()) {
-            assertion = (Assertion) iter.next();
-            
-            // check issuer of the assertions
-            String issuer = assertion.getIssuer();
-            if (! WSFederationMetaManager.isTrustedProvider(
-                            realm, hostEntityId, issuer)) {
-                String[] data = 
-                    {LogUtil.isErrorLoggable(Level.FINER)? response.toString() : 
-                    response.getAssertion().get(0).getAssertionID(), 
-                    realm, hostEntityId, target};
-                LogUtil.error(Level.INFO,
-                        LogUtil.UNTRUSTED_ISSUER,
-                        data,
-                        null);
-                return null;
+    private SPAttributeMapper getSPAttributeMapper(Map attributes) 
+        throws WSFederationException {
+        SPAttributeMapper attrMapper = null;
+        List attrMapperList = (List)attributes.get(
+            SAML2Constants.SP_ATTRIBUTE_MAPPER);
+        if (attrMapperList != null) {
+            try {
+                attrMapper = (SPAttributeMapper)
+                    (Class.forName((String)attrMapperList.get(0)).
+                     newInstance());
+            } catch (ClassNotFoundException cfe) {
+                throw new WSFederationException(cfe);
+            } catch (InstantiationException ie) {
+                throw new WSFederationException(ie);
+            } catch (IllegalAccessException iae) {
+                throw new WSFederationException(iae);
             }
-            
-            if (!WSFederationUtils.isSignatureValid(assertion, realm, issuer)) {
-                // isSignatureValid will log the error
-                return null;
-            }
-            
-            // must be valid (timewise)
-            if (!WSFederationUtils.isTimeValid(assertion, timeskew)) {
-                // isTimeValid will log the error
-                return null;
-            }
-            
-            // TODO: IssuerInstant of the assertion is within a few minutes
-            // This is a MAY in spec. Which number to use for the few minutes?
-            
-            // TODO: check AudienceRestrictionCondition
-            
-            //for each assertion, loop to check each statement
-            Iterator stmtIter = assertion.getStatement().iterator();
-            while (stmtIter.hasNext()) {
-                Statement statement = (Statement) stmtIter.next();
-                int stmtType = statement.getStatementType();
-                if ((stmtType == Statement.AUTHENTICATION_STATEMENT) ||
-                        (stmtType == Statement.ATTRIBUTE_STATEMENT) ||
-                        (stmtType == 
-                        Statement.AUTHORIZATION_DECISION_STATEMENT)) {
-                    Subject subject = 
-                        ((SubjectStatement)statement).getSubject();
-                    
-                    if (stmtType == Statement.AUTHENTICATION_STATEMENT) {
-                        //TODO: if it has SubjectLocality,its IP must == sender
-                        // browser IP. This is a MAY item in the spec.
-                        if (assertionSubject == null) {
-                            assertionSubject = subject;
-                        }
-                    }
+        }
+        if (attrMapper == null) {
+            throw new WSFederationException(
+                WSFederationUtils.bundle.getString("failedAttrMapper"));
+        }
+        return attrMapper;
+    }
+    
+    /** Sets the attribute map in the session
+     *
+     *  @param sessionProvider Session provider
+     *  @param attrMap the Attribute Map
+     *  @param session the valid session object
+     *  @throws com.sun.identity.plugin.session.SessionException 
+     */
+    public static void setAttrMapInSession(
+        SessionProvider sessionProvider,
+        Map attrMap, Object session)
+        throws SessionException {
+        if (attrMap != null && !attrMap.isEmpty()) {
+            Set entrySet = attrMap.entrySet();
+            for(Iterator iter = entrySet.iterator(); iter.hasNext();) {
+                Map.Entry entry = (Map.Entry)iter.next();
+                String attrName = (String)entry.getKey();
+                Set attrValues = (Set)entry.getValue();
+                if(attrValues != null && !attrValues.isEmpty()) {
+                   sessionProvider.setProperty(
+                       session, attrName,
+                       (String[]) attrValues.toArray(
+                       new String[attrValues.size()]));
+                   if (WSFederationUtils.debug.messageEnabled()) {
+                       WSFederationUtils.debug.message(
+                           "SPACSUtils.setAttrMapInSession: AttrMap:" +
+                           attrName + " , " + attrValues);
+                   }
                 }
             }
         }
-        
-        // must have at least one SSO assertion
-        if ( assertionSubject == null ) {
-            String[] data = 
-                {LogUtil.isErrorLoggable(Level.FINER)? response.toString() : 
-                response.getAssertion().get(0).getAssertionID()};
-            LogUtil.error(Level.INFO,
-                    LogUtil.MISSING_SUBJECT,
-                    data,
-                    null);
-            return null;
-        }
-
-        /* TODO - need to think about authn context mapping
-        String mapperClass = WSFederationMetaUtils.getAttribute(spConfig, 
-            SAML2Constants.SP_AUTHCONTEXT_MAPPER);
-        SPAuthnContextMapper mapper = getSPAuthnContextMapper(orgName,
-                hostEntityId,mapperClass);
-        RequestedAuthnContext reqContext = null;
-        int authLevel = mapper.getAuthLevel(reqContext,
-                authnStmt.getAuthnContext(),
-                orgName,
-                hostEntityId,
-                idpEntityId);
-        */
-        int authLevel = 0;
-
-        Map attrMap = new HashMap();
-        
-        attrMap.put(SAML2Constants.SUBJECT, assertionSubject);
-        attrMap.put(SAML2Constants.POST_ASSERTION, assertion);
-        attrMap.put(SAML2Constants.ASSERTIONS, assertions);
-
-        if (authLevel >= 0) {
-            attrMap.put(SAML2Constants.AUTH_LEVEL, new Integer(authLevel));
-        }
-        
-        Date sessionNotOnOrAfter = assertion.getConditions().getNotOnorAfter();
-        // SessionNotOnOrAfter
-        if (sessionNotOnOrAfter != null) {
-            long maxSessionTime = (sessionNotOnOrAfter.getTime() -
-                    System.currentTimeMillis()) / 60000;
-            if (maxSessionTime > 0) {
-                attrMap.put(SAML2Constants.MAX_SESSION_TIME,
-                        new Long(maxSessionTime));
-            }
-        }
-        
-        if ( debug.messageEnabled() ) {
-            debug.message(classMethod +" Attribute Map : " + attrMap);
-        }
-        
-        return attrMap;
     }
 }

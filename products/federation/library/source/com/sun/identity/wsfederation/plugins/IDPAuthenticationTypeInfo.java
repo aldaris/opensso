@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAuthenticationTypeInfo.java,v 1.1 2007-06-21 23:01:30 superpat7 Exp $
+ * $Id: IDPAuthenticationTypeInfo.java,v 1.2 2007-08-01 21:04:04 superpat7 Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 

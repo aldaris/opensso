@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAttributeMapper.java,v 1.1 2007-06-21 23:01:31 superpat7 Exp $
+ * $Id: DefaultIDPAttributeMapper.java,v 1.2 2007-08-01 21:04:06 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,7 +67,7 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
      * @param hostEntityID <code>EntityID</code> of the hosted entity.
      * @param remoteEntityID <code>EntityID</code> of the remote entity.
      * @param realm name of the realm.
-     * @exception SAML2Exception if any failure.
+     * @exception WSFederationException if any failure.
      */
     public List getAttributes(
         Object session,
@@ -83,7 +83,7 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
 
         if(realm == null) {
            throw new WSFederationException(bundle.getString(
-                 "nullHostEntityID"));
+                 "nullRealm"));
         }
        
         if(session == null) {
@@ -181,7 +181,7 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
      * Returns the SAML <code>Attribute</code> object.
      * @param name attribute name.
      * @param values attribute values.
-     * @exception SAML2Exception if any failure.
+     * @exception WSFederationException if any failure.
      */
     protected Attribute getSAMLAttribute(String name, String[] values)
       throws WSFederationException {
@@ -194,8 +194,7 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
         List list = new ArrayList();
         if(values != null) {
             for (int i=0; i<values.length; i++) {
-                list.add(XMLUtils.escapeSpecialCharacters(
-                    values[i]));
+                list.add(XMLUtils.escapeSpecialCharacters(values[i]));
             }
         }
         Attribute attribute = null;

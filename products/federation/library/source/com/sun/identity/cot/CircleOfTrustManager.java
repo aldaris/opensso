@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.6 2007-07-02 18:05:33 veiming Exp $
+ * $Id: CircleOfTrustManager.java,v 1.7 2007-08-01 21:04:49 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,8 +133,8 @@ public class CircleOfTrustManager {
                 (Set) tpMap.get(COTConstants.SAML2));
             updateEntityConfig(realm, name, COTConstants.IDFF, 
                 (Set) tpMap.get(COTConstants.IDFF));
-            //updateEntityConfig(realm, name, COTConstants.WS_FED, 
-            //    (Set) tpMap.get(COTConstants.WS_FED));
+            updateEntityConfig(realm, name, COTConstants.WS_FED, 
+                (Set) tpMap.get(COTConstants.WS_FED));
         }
         
         // create the cot node
@@ -351,6 +351,8 @@ public class CircleOfTrustManager {
             updateIDFFEntityConfig(realm,cotName,trustedProviders);
         } else if (protocolType.equalsIgnoreCase(COTConstants.SAML2)) {
             updateSAML2EntityConfig(realm,cotName,trustedProviders);
+        } else if (protocolType.equalsIgnoreCase(COTConstants.WS_FED)) {
+            updateWSFedEntityConfig(realm,cotName,trustedProviders);
         } else {
             String[] args = { protocolType };
             throw new COTException("invalidProtocolType",args);
@@ -524,6 +526,45 @@ public class CircleOfTrustManager {
                     LogUtil.error(Level.INFO,
                             LogUtil.CONFIG_ERROR_CREATE_COT_DESCRIPTOR,
                             data);
+                    throw new COTException(e);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Updates the SAML2 Entity Configuration.
+     *
+     * @param realm the realm name.
+     * @param cotName the circle of trust name.
+     * @param trustedProviders set of trusted provider names.
+     * @throws COTException if there is an error updating the configuration.
+     */
+    void updateWSFedEntityConfig(String realm,String cotName,
+            Set trustedProviders) throws COTException {
+        String classMethod = "COTManager:updateWSFedEntityConfig";
+        Method updateEntity = null;
+        String entityId = null;
+            try {
+                Class clazz = Class.forName(
+                    "com.sun.identity.wsfederation.meta.WSFederationCOTUtils");
+                Class[] formalParams = {String.class, String.class,
+                    String.class};
+                updateEntity = clazz.getDeclaredMethod("updateEntityConfig", 
+                    formalParams);
+            } catch (NoSuchMethodException e) {
+                throw new COTException(e);
+            } catch (ClassNotFoundException e) {
+                throw new COTException(e);
+            }
+        if (trustedProviders != null && !trustedProviders.isEmpty()) {
+            for (Iterator iter = trustedProviders.iterator();
+            iter.hasNext();) {
+                entityId = (String) iter.next();
+                try {
+                    Object[] params = {realm, cotName, entityId};
+                    updateEntity.invoke(null, params);
+                } catch (Exception e) {
                     throw new COTException(e);
                 }
             }

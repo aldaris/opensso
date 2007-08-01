@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAccountMapper.java,v 1.1 2007-06-21 23:01:30 superpat7 Exp $
+ * $Id: IDPAccountMapper.java,v 1.2 2007-08-01 21:04:05 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,9 +41,10 @@ import com.sun.identity.wsfederation.common.WSFederationException;
  * SAML protocol objects such as <code>Assertion</code> and also to
  * find out the corresponding user account for the given SAML requests.
  * The implementation of this interface may need to consider the
- * deployment of the SAMLv2 plugin for example the <code>AccessManger</code>
+ * deployment of the WS-Federation implementation for example the 
+ * <code>AccessManger</code>
  * platform or the <code>FederationManager</code> platform.
- * @see com.sun.identity.saml2.plugins.SPAccountMapper
+ * @see com.sun.identity.wsfederation.plugins.SPAccountMapper
  *
  * @supported.all.api
  */
@@ -56,12 +57,13 @@ public interface IDPAccountMapper {
      * @param hostEntityID <code>EntityID</code> of the hosted provider.
      * @param remoteEntityID <code>EntityID</code> of the remote provider.
      * @return the <code>NameID</code> corresponding to the authenticated user.
-     * @exception SAML2Exception if any failure.
+     * @exception WSFederationException if any failure.
      */
     public NameIdentifier getNameID(
         Object session,
-        java.lang.String hostEntityID,
-        java.lang.String remoteEntityID
+        String realm,
+        String hostEntityID,
+        String remoteEntityID
     ) throws WSFederationException;
 
 
@@ -77,7 +79,7 @@ public interface IDPAccountMapper {
      * @param realm realm or the organization name that may be used to find
      *        the user information.
      * @return user's disntinguished name or the universal ID.
-     * @exception SAML2Exception if any failure.
+     * @exception WSFederationException if any failure.
      */
     /*
     public java.lang.String getIdentity(

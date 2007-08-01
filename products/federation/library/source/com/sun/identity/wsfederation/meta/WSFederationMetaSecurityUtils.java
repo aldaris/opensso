@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaSecurityUtils.java,v 1.1 2007-06-21 23:01:32 superpat7 Exp $
+ * $Id: WSFederationMetaSecurityUtils.java,v 1.2 2007-08-01 21:04:39 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,6 @@ package com.sun.identity.wsfederation.meta;
 import java.security.KeyStore;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -48,24 +46,20 @@ import com.sun.org.apache.xml.internal.security.utils.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
-import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
 
-import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml.xmlsig.JKSKeyProvider;
 import com.sun.identity.saml.xmlsig.KeyProvider;
-import com.sun.identity.saml.xmlsig.XMLSignatureException;
-import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 
 import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
-import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.key.KeyUtil;
+import com.sun.identity.wsfederation.common.WSFederationUtils;
 
 /**
  * The <code>WSFederationMetaUtils</code> provides metadata security related 
- * util methods.
+ * utility methods.
  */
 public final class WSFederationMetaSecurityUtils {
 
@@ -86,8 +80,10 @@ public final class WSFederationMetaSecurityUtils {
     public static final String ATTR_USE = "use";
     public static final String ATTR_ID = "ID";
 
+    /*
+     * Private constructor ensure that no instance is ever created
+     */
     private WSFederationMetaSecurityUtils() {
-
     }
 
     private static void initializeKeyStore() {
@@ -241,7 +237,7 @@ public final class WSFederationMetaSecurityUtils {
                     XPathAPI.selectNodeList(doc, "//ds:Signature", nscontext);
         } catch (Exception ex) {
             debug.error(classMethod, ex);
-            throw new WSFederationMetaException(ex.getMessage());
+            throw new WSFederationMetaException(ex);
         }
         int numSigs = sigElements.getLength();
         if (debug.messageEnabled()) {
@@ -344,7 +340,7 @@ public final class WSFederationMetaSecurityUtils {
             } catch (Exception ex) {
                 debug.error(classMethod, ex);
                 throw new WSFederationMetaException(
-                    Locale.getString(WSFederationMetaUtils.resourceBundle,
+                    Locale.getString(WSFederationUtils.bundle,
                     "verify_fail", objs) + "\n" + ex.getMessage());
             }
         }
@@ -405,6 +401,11 @@ public final class WSFederationMetaSecurityUtils {
         return sb.toString();
     }
 
+    /**
+     * Base64 encodes a certificate from the key store.
+     * @param certAlias alias of certificate to be encoded.
+     * @return Base64 encoded certificate
+     */
     public static String buildX509Certificate(String certAlias)
         throws WSFederationMetaException
     {

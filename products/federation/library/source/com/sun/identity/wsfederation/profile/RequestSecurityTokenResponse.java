@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestSecurityTokenResponse.java,v 1.1 2007-06-21 23:01:39 superpat7 Exp $
+ * $Id: RequestSecurityTokenResponse.java,v 1.2 2007-08-01 21:04:41 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,77 +26,55 @@ package com.sun.identity.wsfederation.profile;
 
 import com.sun.identity.shared.xml.XMLUtils;
 
-import com.sun.identity.saml.assertion.Assertion;
-import com.sun.identity.saml.common.SAMLConstants;
-import com.sun.identity.saml.common.SAMLException;
-import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.wsfederation.common.WSFederationConstants;
-
-import com.sun.identity.wsfederation.common.WSFederationRequesterException;
 import com.sun.identity.wsfederation.common.WSFederationException;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- *
+ * This class encapsulates the WS-Trust &lt;RequestSecurityTokenResponse&gt; 
+ * element
  */
 public class RequestSecurityTokenResponse {
     private static Debug debug = WSFederationUtils.debug;
     
-    protected boolean	signed		= false;
-    protected boolean	valid		= true;
-    protected String	recipient	= null;
-    protected boolean validationDone    = true;
+    protected boolean valid = true;
+    protected String  recipient	= null;
+    protected boolean validationDone = true;
     
-    protected String	xmlString	= null;
     protected String appliesTo = null; 
     protected String issuer = null; 
-    protected List<Assertion> assertions = Collections.EMPTY_LIST;
+    protected RequestedSecurityToken token = null;
     
-    /** Creates a new instance of RequestSecurityTokenResponse */
-    public RequestSecurityTokenResponse() {
-    }
-    
-    /**
-     * Returns RequestSecurityTokenResponse object based on the XML document 
-     * received from server. This method is used primarily at the client side. 
-     * The schema of the XML document is describe above.
-     *
-     * @param xml The RequestSecurityTokenResponse XML document String.
-     * @return RequestSecurityTokenResponse object based on the XML document 
-     * received from server.
-     * @exception WSFederationException if XML parsing failed
+    /** 
+     * Creates a new instance of RequestSecurityTokenResponse (RSTR).
+     * @param token the &lt;RequestedSecurityToken&gt; for the RSTR
+     * @param appliesTo the consumer of the RSTR
      */
-    public static RequestSecurityTokenResponse parseXML(String xml) 
-        throws WSFederationException {
-	// parse the xml string
-	Document doc = XMLUtils.toDOMDocument(xml, debug);
-	Element root = doc.getDocumentElement();
-
-	return new RequestSecurityTokenResponse(root);
+    public RequestSecurityTokenResponse(RequestedSecurityToken token, 
+        String appliesTo) {
+        this.token = token;
+        this.appliesTo = appliesTo;
     }
     
-    public static RequestSecurityTokenResponse parseXML(InputStream is) 
-        throws WSFederationException {
-	Document doc = XMLUtils.toDOMDocument(is, debug);
-	Element root = doc.getDocumentElement();
-
-	return new RequestSecurityTokenResponse(root);
+    /** 
+     * Creates a new instance of RequestSecurityTokenResponse (RSTR).
+     * @param token the &lt;RequestedSecurityToken&gt; for the RSTR
+     */
+    public RequestSecurityTokenResponse(RequestedSecurityToken token) {
+        this(token,null);
     }
     
     /**
-     * Constructor.
-     *
-     * @param root <code>RequestSecurityTokenResponse</code> element
-     * @throws WSFederationException if error occurs.
+     * Creates a new instance of RequestSecurityTokenResponse (RSTR) from a DOM 
+     * Element
+     * @param root &lt;RequestedSecurityToken&gt; element
+     * @throws WSFederationException if an error occurs.
      */
     public RequestSecurityTokenResponse(Element root) 
         throws WSFederationException {
@@ -107,17 +85,17 @@ public class RequestSecurityTokenResponse {
             if ( debug.messageEnabled() ) {
                 debug.message(classMethod + "null input.");
             }
-	    throw new WSFederationRequesterException(
-		SAMLUtils.bundle.getString("nullInput"));
+	    throw new WSFederationException(
+		WSFederationUtils.bundle.getString("nullInput"));
 	}
 	String tag = null;
 	if (((tag = root.getLocalName()) == null) ||
-	    (!tag.equals("RequestSecurityTokenResponse"))) {
+	    (!tag.equals(WSFederationConstants.RSTR_TAG_NAME))) {
             if ( debug.messageEnabled() ) {
                 debug.message(classMethod + "wrong input.");
             }
-	    throw new WSFederationRequesterException(
-		SAMLUtils.bundle.getString("wrongInput"));
+	    throw new WSFederationException(
+		WSFederationUtils.bundle.getString("wrongInput"));
 	}
 
         if ( debug.messageEnabled() ) {
@@ -134,11 +112,12 @@ public class RequestSecurityTokenResponse {
                 debug.message(classMethod + "examining:"+name);
             }
             
-            if ( name.equals("AppliesTo"))
+            if ( name.equals(WSFederationConstants.APPLIESTO_TAG_NAME))
             {
                 NodeList nodes = 
                     ((Element)child).getElementsByTagNameNS(
-                    WSFederationConstants.WS_ADDRESSING_URI, "Address");
+                    WSFederationConstants.WS_ADDRESSING_URI, 
+                    WSFederationConstants.ADDRESS_TAG_NAME);
                 // ASSUME exactly one address 
                 String appliesTo = nodes.item(0).getTextContent();
                 
@@ -146,116 +125,90 @@ public class RequestSecurityTokenResponse {
                     debug.message(classMethod + "found AppliesTo:" + appliesTo);
                 }
             }
-            else if ( name.equals("RequestedSecurityToken"))
+            else if ( name.equals(WSFederationConstants.RST_TAG_NAME))
             {
                 if ( debug.messageEnabled() ) {
                     debug.message(classMethod + "found RequestedSecurityToken");
-                }
+                }                
                 
-                NodeList nodes = ((Element)child).getElementsByTagNameNS(
-                    SAMLConstants.assertionSAMLNameSpaceURI,"Assertion");
-                
-                // ASSUME exactly one RequestedSecurityToken
-                Element ae = (Element)nodes.item(0);
-                Assertion a = null;
-                try {
-                    a = new Assertion(ae);
-                }
-                catch (SAMLException se)
-                {
-                    if ( debug.messageEnabled() ) {
-                        debug.message("Caught SAMLException, " + 
-                            "rethrowing",se);
-                    }
-                    throw new WSFederationException(se.getMessage());
-                }
-                issuer = a.getIssuer();
-                
-                if ( debug.messageEnabled() ) {
-                    debug.message(classMethod + "found Assertion with issuer:" +
-                        issuer);
-                }
-                
-                if (assertions == Collections.EMPTY_LIST) {
-                    assertions = new ArrayList<Assertion>();
-                }
-                assertions.add(a);
-                
-                List signs = XMLUtils.getElementsByTagNameNS1(ae,
-                    SAMLConstants.XMLSIG_NAMESPACE_URI,
-                    SAMLConstants.XMLSIG_ELEMENT_NAME);
-                int signsSize = signs.size();
-                if (signsSize == 1) {
-                    xmlString = XMLUtils.print(ae);
-                    signed = true;
-                    if ( debug.messageEnabled() ) {
-                        debug.message(classMethod + "found signature");
-                    }
-                } else if (signsSize != 0) {
-                    if ( debug.messageEnabled() ) {
-                        debug.message(classMethod + 
-                            "included more than one Signature element.");
-                    }
-                    throw new WSFederationException(
-                        SAMLUtils.bundle.getString("moreElement"));
-                }
+                token = RequestedSecurityTokenFactory.createToken(child);
             }
-        }
-        
-        if ( assertions.size() != 1 )
-        {
-            if ( debug.messageEnabled() ) {
-                debug.message(classMethod + "missing element <Assertion>.");
-            }
-	    throw new WSFederationRequesterException(
-		SAMLUtils.bundle.getString("missingAssertion"));
-        }
+        }        
     }
     
     /**
-     * Gets the recipient of the Response.
+     * Returns RequestSecurityTokenResponse object based on the XML document 
+     * received from server. This method is used primarily at the client side. 
+     * The schema of the XML document is defined in WS-Trust.
      *
-     * @return The Recipient.
+     * @param xml The RequestSecurityTokenResponse XML document String.
+     * @return RequestSecurityTokenResponse object based on the XML document 
+     * received from server.
+     * @exception WSFederationException if XML parsing failed
      */
-    public String getRecipient() {
-	return recipient;
-    }
+    public static RequestSecurityTokenResponse parseXML(String xml) 
+        throws WSFederationException {
+	// parse the xml string
+	Document doc = XMLUtils.toDOMDocument(xml, debug);
+	Element root = doc.getDocumentElement();
 
+	return new RequestSecurityTokenResponse(root);
+    }
+    
     /**
-     * Set the Recipient attribute of the Response.
+     * Returns RequestSecurityTokenResponse object based on the data in the 
+     * input stream. This method is used primarily at the client side. 
+     * The schema of the XML document is defined in WS-Trust.
      *
-     * @param recipient A String representing the Recipient attribute of the
-     *	      Response.
-     * @return true if the operation is successful;
+     * @param is an InputStream
+     * @return RequestSecurityTokenResponse object based on the XML document 
+     * received from server.
+     * @exception WSFederationException if XML parsing failed
      */
-    public boolean setRecipient(String recipient) {
-	if (signed) {
-	    return false;
-	}
-	if ((recipient == null) || (recipient.length() == 0)) {
-	     return false;
-	}
-	this.recipient = recipient;
-	return true;
-    }
+    public static RequestSecurityTokenResponse parseXML(InputStream is) 
+        throws WSFederationException {
+	Document doc = XMLUtils.toDOMDocument(is, debug);
+	Element root = doc.getDocumentElement();
 
-    /**
-     * Return whether the object is signed or not.
-     * @return true if the object is signed; false otherwise.
-     */
-    public boolean isSigned() {
-	return signed;
+	return new RequestSecurityTokenResponse(root);
     }
     
     /** 
-     * This method returns the set of Assertions that is the content of
-     * the response.
-     * @return The set of Assertions that is the content of the response.
-     *		It could be Collections.EMPTY_LIST when there is no Assertion
-     *		in the response.
+     * This method returns the component RequestedSecurityToken
+     * @return The RequestedSecurityToken contained in the RSTR.
      */
-    public List<Assertion> getAssertion() {
-	return assertions;
+    public RequestedSecurityToken getRequestedSecurityToken() {
+	return token;
     }
 
+    /** 
+     * This method returns the intended consumer of the RSTR
+     * @return The intended consumer of the RSTR.
+     */
+    public String getAppliesTo() {
+	return appliesTo;
+    }
+
+    /** 
+     * This method marshalls the RSTR, returning a String comprising the textual 
+     * XML representation.
+     * @return The textual XML representation of the RSTR.
+     */
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append("<wst:RequestSecurityTokenResponse "+
+            "xmlns:wst=\"http://schemas.xmlsoap.org/ws/2005/02/trust\">")
+        .append(token.toString())
+        .append("<wsp:AppliesTo ")
+        .append("xmlns:wsp=\"http://schemas.xmlsoap.org/ws/2004/09/policy\">")
+        .append("<wsa:EndpointReference xmlns:")
+        .append("wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">")
+        .append("<wsa:Address>" + appliesTo + "</wsa:Address>")
+        .append("</wsa:EndpointReference>")
+        .append("</wsp:AppliesTo>")
+        .append("</wst:RequestSecurityTokenResponse>");
+
+        return buffer.toString();
+    }
 }

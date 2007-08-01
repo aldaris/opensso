@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2007-07-27 22:00:26 qcheng Exp $
+   $Id: build.xml,v 1.17 2007-08-01 21:04:50 superpat7 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -68,7 +68,6 @@
             includes="com/sun/identity/federation/cli/definition/FederationManager.java">
             <classpath refid="build.class.path"/>
             <compilerarg value="-Xlint:deprecation" />
-            <compilerarg value="-Xlint:unchecked" />
         </javac>
         <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
             <classpath refid="build.class.path"/>
@@ -97,7 +96,6 @@
             includes="${one_dot_five_targets}">
             <classpath refid="build.class.path"/>
             <compilerarg value="-Xlint:deprecation" />
-            <compilerarg value="-Xlint:unchecked" />
         </javac>
     </target>
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationException.java,v 1.1 2007-06-21 23:01:35 superpat7 Exp $
+ * $Id: WSFederationException.java,v 1.2 2007-08-01 21:04:46 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,8 +27,10 @@ package com.sun.identity.wsfederation.common;
 import com.sun.identity.shared.locale.L10NMessageImpl;
 
 /**
+ * This class is an extension point for all WS-Federation related exceptions.
+ * It also handles message localization in WS-Federation exceptions.
  *
- * @author ap102904
+ * @supported.all.api
  */
 public class WSFederationException extends L10NMessageImpl {
     /**

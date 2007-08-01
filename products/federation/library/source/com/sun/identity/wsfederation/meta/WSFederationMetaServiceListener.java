@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaServiceListener.java,v 1.1 2007-06-21 23:01:32 superpat7 Exp $
+ * $Id: WSFederationMetaServiceListener.java,v 1.2 2007-08-01 21:04:39 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import com.sun.identity.plugin.configuration.ConfigurationListener;
 import com.sun.identity.plugin.configuration.ConfigurationActionEvent;
 
 /**
- * The <code>SAML2MetaServiceListener</code> implements
+ * The <code>WSFederationMetaServiceListener</code> implements
  * <code>ConfigurationListener</code> interface and is
  * used for maintaining the metadata cache.
  */

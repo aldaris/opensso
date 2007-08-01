@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.5 2007-06-21 23:01:38 superpat7 Exp $
+ * $Id: ImportMetaData.java,v 1.6 2007-08-01 21:04:48 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,7 @@ import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
@@ -427,7 +428,7 @@ public class ImportMetaData extends AuthenticatedCommand {
                 federationID = federation.getFederationID();
                 if ( federationID == null )
                 {
-                    federationID = WSFederationMetaManager.DEFAULT_FEDERATION_ID;
+                    federationID = WSFederationConstants.DEFAULT_FEDERATION_ID;
                 }
                 // WSFederationMetaSecurityUtils.verifySignature(doc);
                 WSFederationMetaManager.createFederation(realm, federation);

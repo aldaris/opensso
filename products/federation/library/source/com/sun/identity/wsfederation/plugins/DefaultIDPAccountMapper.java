@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.1 2007-06-21 23:01:30 superpat7 Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.2 2007-08-01 21:04:05 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,29 +28,28 @@ package com.sun.identity.wsfederation.plugins;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml2.profile.IDPSSOUtil;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.ResourceBundle;
 
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.plugin.datastore.DataStoreProviderException;
-import com.sun.identity.plugin.datastore.DataStoreProvider;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
 
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Utils;
-import com.sun.identity.saml2.common.NameIDInfo;
-import com.sun.identity.saml2.common.AccountUtils;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
+
 
 import com.sun.identity.wsfederation.common.WSFederationException;
+import com.sun.identity.wsfederation.common.WSFederationUtils;
+import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 
 /**
  * This class <code>DefaultIDPAccountMapper</code> is the default
  * implementation of the <code>IDPAccountMapper</code> that is used
  * to map the <code>SAML</code> protocol objects to the user accounts.
- * at the <code>IdentityProvider</code> side of SAML v2 plugin.
+ * at the <code>IdentityProvider</code> side of the WS-Federation 
+ * implementation.
  * Custom implementations may extend from this class to override some
  * of these implementations if they choose to do so.
  */
@@ -73,45 +72,43 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
      * @return the <code>NameID</code> corresponding to the authenticated user.
      *         null if the authenticated user does not container account
      *              federation information.
-     * @exception SAML2Exception if any failure.
+     * @exception WSFederationException if any failure.
      */
     public NameIdentifier getNameID(
         Object session,
+        String realm,
         String hostEntityID,
         String remoteEntityID
     ) throws WSFederationException {
         String userID = null;
-        String nameIDFormat = null;
         try {
             SessionProvider sessionProv = SessionManager.getProvider();
-            userID = sessionProv.getPrincipalName(session);
-            String[] values = sessionProv.getProperty(session, 
-                IDPSSOUtil.NAMEID_FORMAT);
+            String[] values = sessionProv.getProperty(session,"UserId");
             if ((values != null) && (values.length > 0)) {
-                nameIDFormat = values[0]; 
+                userID = values[0]; 
             }
         } catch (SessionException se) {
-            throw new WSFederationException(SAML2Utils.bundle.getString(
+            throw new WSFederationException(WSFederationUtils.bundle.getString(
                    "invalidSSOToken")); 
         }
         
-        String nameIDValue = null;
-        if (nameIDFormat != null &&
-            nameIDFormat.equals(SAML2Constants.X509_SUBJECT_NAME)) {
-            nameIDValue = userID;
-        } else {
-            nameIDValue = SAML2Utils.createNameIdentifier();
-        }
-        
         NameIdentifier nameID = null;
-        try {
-            nameID = new NameIdentifier(nameIDValue,hostEntityID,
-                nameIDFormat);
+        try {        
+            IDPSSOConfigElement idpConfig = 
+                WSFederationMetaManager.getIDPSSOConfig(realm, hostEntityID);
+
+            // Need to check that this is safe in e.g. LDAP case!
+            String upn = userID + "@" 
+                + WSFederationMetaUtils.getAttribute(idpConfig,
+                WSFederationConstants.UPN_DOMAIN);
+
+            nameID = new NameIdentifier(upn, null, 
+                WSFederationConstants.CLAIMS_UPN_URI);
         }
         catch (SAMLException se){
             throw new WSFederationException(se);
         }
-        
+
         return nameID;
     }
 }

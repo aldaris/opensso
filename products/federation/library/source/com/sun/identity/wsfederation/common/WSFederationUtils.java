@@ -17,18 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationUtils.java,v 1.1 2007-06-21 23:01:34 superpat7 Exp $
+ * $Id: WSFederationUtils.java,v 1.2 2007-08-01 21:04:45 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wsfederation.common;
 
+import com.sun.identity.plugin.datastore.DataStoreProvider;
+import com.sun.identity.plugin.datastore.DataStoreProviderException;
+import com.sun.identity.plugin.datastore.DataStoreProviderManager;
+import com.sun.identity.plugin.session.SessionException;
+import com.sun.identity.plugin.session.SessionManager;
+import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import java.util.logging.Level;
 
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.Locale;
 
 import com.sun.identity.saml.assertion.Assertion;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager; 
@@ -41,27 +48,67 @@ import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.ResourceBundle;
 
 /**
- *
+ * Utility methods for WS-Federation implementation.
  */
-public class WSFederationUtils {
-    public static String AM_WSFEDERATION = "amWSFederation";
+public class WSFederationUtils {    
+    /**
+     * <code>Debug</code> instance for use by WS-Federation implementation.
+     */
+    public static Debug debug = 
+        Debug.getInstance(WSFederationConstants.AM_WSFEDERATION);
+    /**
+     * Resource bundle for the WS-Federation implementation.
+     */
+    public static ResourceBundle bundle = Locale.
+        getInstallResourceBundle(WSFederationConstants.BUNDLE_NAME);    
+    /*
+     * Map from reply URL to wctx parameter.
+     */
+    private static HashMap wctxMap = new HashMap();
     
-    public static Debug debug = null;
+    public static DataStoreProvider dsProvider;
     
-    private static HashMap wctxMap = null;
+    public static SessionProvider sessionProvider = null;
     
     static {
-        debug = Debug.getInstance(AM_WSFEDERATION);
+        String classMethod = "WSFederationUtils static initializer: ";
+        try {
+            DataStoreProviderManager dsManager =
+                    DataStoreProviderManager.getInstance();
+            dsProvider = dsManager.getDataStoreProvider(
+                WSFederationConstants.WSFEDERATION);
+        } catch (DataStoreProviderException dse) {
+            debug.error(classMethod + "DataStoreProviderException : ", dse);
+            throw new ExceptionInInitializerError(dse);
+        }
 
-        wctxMap = new HashMap();
+        try {
+            sessionProvider = SessionManager.getProvider();
+        } catch (SessionException se) {
+            debug.error( classMethod + "Error getting SessionProvider.", se);
+            throw new ExceptionInInitializerError(se);
+        }                   
     }
     
+    /*
+     * Private constructor ensure that no instance is ever created
+     */
     private WSFederationUtils() {
     }
-    
+
+    /**
+     * Extracts the home account realm from the user agent HTTP header.
+     * @param uaHeader user agent HTTP header. User agent header must be 
+     * semi-colon separated, of the form <code>Mozilla/4.0 (compatible; 
+     * MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; InfoPath.1; 
+     * amWSFederationAccountRealm:Adatum Corp)</code>.
+     * @param accountRealmCookieName identifier with which to search user agent
+     * HTTP header.
+     * @return the home account realm name.
+     */
     public static String accountRealmFromUserAgent( String uaHeader, 
         String accountRealmCookieName )
     {
@@ -71,8 +118,7 @@ public class WSFederationUtils {
         // 5.1; SV1; .NET CLR 1.1.4322; InfoPath.1; 
         // amWSFederationAccountRealm:Adatum Corp)"
         int leftBracket = uaHeader.indexOf('(');
-        if ( leftBracket == -1 )
-        {
+        if ( leftBracket == -1 ) {
             if (debug.warningEnabled()) {
                 debug.warning(classMethod + "Can't find left bracket");
             }
@@ -80,8 +126,7 @@ public class WSFederationUtils {
         }
         
         int rightBracket = uaHeader.lastIndexOf(')');
-        if ( rightBracket == -1 || rightBracket < leftBracket )
-        {
+        if ( rightBracket == -1 || rightBracket < leftBracket ) {
             if (debug.warningEnabled()) {
                 debug.warning(classMethod + "Can't find right bracket");
             }
@@ -89,8 +134,7 @@ public class WSFederationUtils {
         }
         
         String insideBrackets = uaHeader.substring(leftBracket+1,rightBracket);
-        if ( insideBrackets.length() == 0 )
-        {
+        if ( insideBrackets.length() == 0 ) {
             if (debug.warningEnabled()) {
                 debug.warning(classMethod + "zero length between brackets");
             }
@@ -104,8 +148,7 @@ public class WSFederationUtils {
         // Split string on matches of any amount of whitespace surrounding a 
         // semicolon
         String uaFields[] = insideBrackets.split("[\\s]*;[\\s]*");
-        if ( uaFields == null )
-        {
+        if ( uaFields == null ) {
             if (debug.warningEnabled()) {
                 debug.warning(classMethod + "zero length between brackets");
             }
@@ -116,15 +159,12 @@ public class WSFederationUtils {
         // "SV1", ".NET CLR 1.1.4322", "InfoPath.1", 
         // "amWSFederationAccountRealm:Adatum Corp"}
         
-        for ( int i = 0; i < uaFields.length; i++ )
-        {
-            if ( uaFields[i].indexOf(accountRealmCookieName) != -1 )
-            {
+        for ( int i = 0; i < uaFields.length; i++ ) {
+            if ( uaFields[i].indexOf(accountRealmCookieName) != -1 ) {
                 // Split this field on matches of any amount of whitespace 
                 // surrounding a colon
                 String keyValue[] = uaFields[i].split("[\\s]*:[\\s]*");
-                if ( keyValue.length < 2 )
-                {
+                if ( keyValue.length < 2 ) {
                     if (debug.warningEnabled()) {
                         debug.warning(classMethod + 
                             "can't see accountRealm in " + uaFields[i]);
@@ -132,8 +172,7 @@ public class WSFederationUtils {
                     return null;
                 }
                 
-                if ( ! keyValue[0].equals(accountRealmCookieName))
-                {
+                if ( ! keyValue[0].equals(accountRealmCookieName)) {
                     if (debug.warningEnabled()) {
                         debug.warning(classMethod + "can't understand " + 
                             uaFields[i]);
@@ -148,6 +187,11 @@ public class WSFederationUtils {
         return null;
     }
 
+    /**
+     * Put a reply URL in the wctx-&gt;wreply map.
+     * @param wreply reply URL
+     * @return value for WS-Federation context parameter (wctx).
+     */
     public static String putReplyURL(String wreply) {
         String wctx = SAML2Utils.generateID();
         synchronized (wctxMap)
@@ -157,6 +201,11 @@ public class WSFederationUtils {
         return wctx;
     }
 
+    /**
+     * Remove and return a reply URL from the wctx-&gt;wreply map.
+     * @param wctx WS-Federation context parameter
+     * @return reply URL
+     */
     public static String removeReplyURL(String wctx) {
         String wreply = null;
         synchronized (wctxMap)
@@ -167,10 +216,11 @@ public class WSFederationUtils {
     }
 
     /**
-     * Return whether the signature on the object is valid or not.
+     * Determine the validity of the signature on the <code>Assertion</code>
      * @param assertion SAML 1.1 Assertion
      * @param realm Realm for the issuer
-     * @param issuer Assertion issuer
+     * @param issuer Assertion issuer - used to retrieve certificate for 
+     * signature validation.
      * @return true if the signature on the object is valid; false otherwise.
      */
     public static boolean isSignatureValid(Assertion assertion, String realm, 
@@ -210,6 +260,7 @@ public class WSFederationUtils {
     }
     
     /**
+     * Determines the timeliness of the assertion.
      * @param assertion SAML 1.1 Assertion
      * @param timeskew in seconds
      * @return true if the current time is after the Assertion's notBefore time
@@ -235,7 +286,7 @@ public class WSFederationUtils {
             String[] data = {LogUtil.isErrorLoggable(Level.FINER) ? 
                 assertion.toString(true,true) : assertionID,
                 notOnOrAfter.toString(), 
-                (new Integer(timeskew)).toString(),
+                Integer.toString(timeskew),
                 (new Date(timeNow)).toString()};
             LogUtil.error(Level.INFO,
                     LogUtil.ASSERTION_EXPIRED,
@@ -256,7 +307,7 @@ public class WSFederationUtils {
             String[] data = {LogUtil.isErrorLoggable(Level.FINER) ? 
                 assertion.toString(true,true) : assertionID,
                 notBefore.toString(), 
-                (new Integer(timeskew)).toString(),
+                Integer.toString(timeskew),
                 (new Date(timeNow)).toString()};
             LogUtil.error(Level.INFO,
                     LogUtil.ASSERTION_NOT_YET_VALID,

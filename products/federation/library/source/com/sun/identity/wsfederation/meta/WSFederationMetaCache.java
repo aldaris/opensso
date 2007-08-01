@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaCache.java,v 1.1 2007-06-21 23:01:32 superpat7 Exp $
+ * $Id: WSFederationMetaCache.java,v 1.2 2007-08-01 21:04:39 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,15 +34,18 @@ import com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 
 /**
- * The <code>WSFederationMetaCache</code> provides metadata cache.
+ * The <code>WSFederationMetaCache</code> provides a metadata cache for the
+ * WS-Federation implementation.
  */
 class WSFederationMetaCache
 {
     private static Debug debug = WSFederationUtils.debug;
-
     private static Hashtable federationCache = new Hashtable();
     private static Hashtable configCache = new Hashtable();
 
+    /*
+     * Private constructor ensure that no instance is ever created
+     */
     private WSFederationMetaCache() {
     }
 

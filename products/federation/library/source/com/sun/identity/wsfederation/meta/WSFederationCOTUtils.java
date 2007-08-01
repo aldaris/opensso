@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationCOTUtils.java,v 1.1 2007-06-21 23:01:31 superpat7 Exp $
+ * $Id: WSFederationCOTUtils.java,v 1.2 2007-08-01 21:04:38 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,7 @@ import com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 
 /**
- * The <code>WSFederationCOTUtils</code> provides utility methods to update
+ * <code>WSFederationCOTUtils</code> provides utility methods to update
  * the WS-Federation Entity Configuration <code>cotlist</code> attributes
  * in the Service and Identity Provider configurations.
  */
@@ -45,15 +45,15 @@ public class WSFederationCOTUtils {
     
     private static Debug debug = WSFederationMetaUtils.debug;
     
-    /**
-     * Default Constructor.
+    /*
+     * Private constructor ensure that no instance is ever created
      */
-    public WSFederationCOTUtils()  {
+    private WSFederationCOTUtils()  {
         
     }
     
     /**
-     * Updates the entity config to add the circle of turst name to the
+     * Updates the entity config to add the circle of trust name to the
      * <code>cotlist</code> attribute. The Service Provider and Identity
      * Provider Configuration are updated.
      *
@@ -65,7 +65,6 @@ public class WSFederationCOTUtils {
      * @throws JAXBException is there is an error updating the entity
      *          configuration.
      */
-    
     public static void updateEntityConfig(String realm, String name, 
         String entityId)
     throws WSFederationMetaException, JAXBException {
@@ -110,10 +109,10 @@ public class WSFederationCOTUtils {
         } else {
             List elist = eConfig.
                     getIDPSSOConfigOrSPSSOConfig();
-            boolean foundCOT = false;
             for (Iterator iter = elist.iterator(); iter.hasNext();) {
                 BaseConfigType bConfig = (BaseConfigType)iter.next();
                 List list = bConfig.getAttribute();
+                boolean foundCOT = false;
                 for (Iterator iter2 = list.iterator(); iter2.hasNext();) {
                     AttributeType avp = (AttributeType)iter2.next();
                     if (avp.getName().trim().equalsIgnoreCase(
@@ -150,7 +149,7 @@ public class WSFederationCOTUtils {
     }
     
     /**
-     * Removes the circle trust name passed from the <code>cotlist</code>
+     * Removes the circle of trust name passed from the <code>cotlist</code>
      * attribute in the Entity Config. The Service Provider and Identity
      * Provider Entity Configuration are updated.
      *
@@ -161,7 +160,6 @@ public class WSFederationCOTUtils {
      * entity config.
      * @throws JAXBException if there is an error updating the entity config.
      */
-    
     public static void removeFromEntityConfig(String realm, String name,
         String entityId)
     throws WSFederationMetaException, JAXBException {

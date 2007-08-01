@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaException.java,v 1.1 2007-06-21 23:01:32 superpat7 Exp $
+ * $Id: WSFederationMetaException.java,v 1.2 2007-08-01 21:04:38 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,12 +25,15 @@
 
 package com.sun.identity.wsfederation.meta;
 
+import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.common.WSFederationException;
 
 
 /**
- * This class is an extension point for all SAML2 Meta related exceptions.
- * This class also handles message localization in SAML2 Meta exceptions.
+ * This class is an extension point for all WS-Federation metadata related 
+ * exceptions.
+ * This class also handles message localization in WS-Federation metadata 
+ * related exceptions.
  */
 public class WSFederationMetaException extends WSFederationException {
     
@@ -47,7 +50,7 @@ public class WSFederationMetaException extends WSFederationException {
      * as null
      */
     public WSFederationMetaException(String errorCode, Object[] args) {
-        super(WSFederationMetaUtils.RESOURCE_BUNDLE_NAME, errorCode, args);
+        super(WSFederationConstants.BUNDLE_NAME, errorCode, args);
     }
 
     /**

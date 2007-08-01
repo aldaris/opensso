@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAuthenticationMethodMapper.java,v 1.1 2007-06-21 23:01:31 superpat7 Exp $
+ * $Id: IDPAuthenticationMethodMapper.java,v 1.2 2007-08-01 21:04:06 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,7 @@ public interface IDPAuthenticationMethodMapper {
      * @param idpEntityID the Entity ID of the Identity Provider
      * @param realm the realm to which the Identity Provider belongs
      * @return an <code>IDPAuthenticationTypeInfo</code> object
-     * @throws SAML2Exception if an error occurs.
+     * @throws WSFederationException if an error occurs.
      */
     public IDPAuthenticationTypeInfo getIDPAuthnContextInfo(
         String authenticationType,

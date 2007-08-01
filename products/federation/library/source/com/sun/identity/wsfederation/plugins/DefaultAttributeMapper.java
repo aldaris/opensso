@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAttributeMapper.java,v 1.1 2007-06-21 23:01:30 superpat7 Exp $
+ * $Id: DefaultAttributeMapper.java,v 1.2 2007-08-01 21:04:03 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,10 +28,9 @@ package com.sun.identity.wsfederation.plugins;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 
-import com.sun.identity.saml2.assertion.Attribute;
-import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.wsfederation.common.WSFederationException;
+import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
@@ -40,8 +39,6 @@ import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Iterator;
@@ -55,20 +52,13 @@ import java.util.Collections;
  */
 public class DefaultAttributeMapper {
 
-    protected static Debug debug = SAML2Utils.debug;
-    protected static ResourceBundle bundle = SAML2Utils.bundle;
-    protected static DataStoreProvider dsProvider = null;
+    protected static Debug debug = WSFederationUtils.debug;
+    protected static ResourceBundle bundle = WSFederationUtils.bundle;
+    protected static DataStoreProvider dsProvider = 
+        WSFederationUtils.dsProvider;
     protected static final String IDP = "IDP";
     protected static final String SP = "SP";
     protected String role = null;
-
-    static {
-        try {
-            dsProvider = SAML2Utils.getDataStoreProvider();
-        } catch (Exception ex) {
-            debug.error("DefaultAttributeMapper.static init failed.", ex);
-        }
-    }
 
     /**
      * Constructor.
@@ -83,7 +73,7 @@ public class DefaultAttributeMapper {
      * @return a map of local attributes configuration map.
      *        This map will have a key as the SAML attribute name and the value
      *        is the local attribute. 
-     * @exception <code>SAML2Exception</code> if any failured.
+     * @exception <code>WSFederationException</code> if any failured.
      */
     public Map getConfigAttributeMap(
          String realm, String hostEntityID) throws WSFederationException {
@@ -101,9 +91,11 @@ public class DefaultAttributeMapper {
         try {
             BaseConfigType config = null;
             if(role.equals(SP)) {
-               config = WSFederationMetaManager.getSPSSOConfig(realm, hostEntityID);
+               config = WSFederationMetaManager.getSPSSOConfig(realm, 
+                   hostEntityID);
             } else {
-               config = WSFederationMetaManager.getIDPSSOConfig(realm, hostEntityID);
+               config = WSFederationMetaManager.getIDPSSOConfig(realm, 
+                   hostEntityID);
             }
 
 
@@ -147,7 +139,7 @@ public class DefaultAttributeMapper {
         } catch(WSFederationMetaException sme) {
             debug.error("DefaultAttributeMapper.getConfigAttributeMap: " +
             "Meta Exception", sme);
-            throw new WSFederationException(sme.getMessage());
+            throw new WSFederationException(sme);
 
         }
     }

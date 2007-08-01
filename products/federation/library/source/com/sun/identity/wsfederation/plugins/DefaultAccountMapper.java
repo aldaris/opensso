@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAccountMapper.java,v 1.1 2007-06-21 23:01:30 superpat7 Exp $
+ * $Id: DefaultAccountMapper.java,v 1.2 2007-08-01 21:04:03 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,27 +26,22 @@
 package com.sun.identity.wsfederation.plugins;
 
 import com.sun.identity.saml.assertion.NameIdentifier;
-import com.sun.identity.saml2.common.AccountUtils;
 import com.sun.identity.saml2.common.NameIDInfoKey;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
-import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.wsfederation.key.KeyUtil;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
+import com.sun.identity.wsfederation.common.AccountUtils;
 import java.util.ResourceBundle;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.security.PrivateKey;
 
 import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 
 import com.sun.identity.saml.xmlsig.KeyProvider;
@@ -55,28 +50,30 @@ import com.sun.identity.wsfederation.common.WSFederationException;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
 
 /**
- * This class <code>DefaultAccountMapper</code> is a base class that the
- * <code>DefaultSPAccountMapper</code> and <code>DefaultIDPAccountMapper</code>
- * shall extend from this class. This class implements the common interface
+ * This class <code>DefaultAccountMapper</code> is a base class extended by 
+ * <code>DefaultSPAccountMapper</code> and <code>DefaultIDPAccountMapper</code>.
+ * This class implements the common interface
  * methods that are required for the SP and IDP account mappers and also
- * provide some utility classes that can be shared between these mappers.
+ * provide some utility classes that can be shared between those mappers.
  */
 public class DefaultAccountMapper {
 
      protected static Debug debug = WSFederationUtils.debug;
-     protected static ResourceBundle bundle = SAML2Utils.bundle;
+     protected static ResourceBundle bundle = WSFederationUtils.bundle;
      protected static DataStoreProvider dsProvider = null;
      protected static final String IDP = SAML2Constants.IDP_ROLE;
      protected static final String SP = SAML2Constants.SP_ROLE;
      protected String role = null; 
-     protected static KeyProvider keyProvider = KeyUtil.getKeyProviderInstance(); 
+     protected static KeyProvider keyProvider = 
+         KeyUtil.getKeyProviderInstance(); 
 
      static {
          try {
-             dsProvider = SAML2Utils.getDataStoreProvider(); 
+             dsProvider = WSFederationUtils.dsProvider; 
          } catch (Exception se) {
              debug.error("DefaultAccountMapper.static intialization " +
              "failed", se);
+             throw new ExceptionInInitializerError(se);
          }
      }
 
@@ -95,7 +92,7 @@ public class DefaultAccountMapper {
      * @param remoteEntityID remote <code>EntityID</code>.
      * @exception <code>WSFederationException</code> if any failure.
      */
-    protected Map getNameIDKeyMap(NameIdentifier nameID, 
+    protected Map getSearchParameters(NameIdentifier nameID, 
          String hostEntityID, String remoteEntityID) 
          throws WSFederationException {
 

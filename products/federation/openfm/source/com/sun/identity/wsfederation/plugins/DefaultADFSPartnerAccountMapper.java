@@ -17,173 +17,113 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultADFSPartnerAccountMapper.java,v 1.1 2007-06-21 23:01:42 superpat7 Exp $
+ * $Id: DefaultADFSPartnerAccountMapper.java,v 1.2 2007-08-01 21:04:51 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wsfederation.plugins;
 
-import com.sun.identity.shared.debug.Debug;
-
-import com.sun.identity.saml.assertion.Assertion;
-import com.sun.identity.saml.assertion.Subject;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.authentication.service.AuthD;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.saml.assertion.NameIdentifier;
-import com.sun.identity.saml.assertion.Statement;
-import com.sun.identity.saml.assertion.SubjectStatement;
-import com.sun.identity.saml.common.SAMLUtils;
-import com.sun.identity.wsfederation.plugins.PartnerAccountMapper;
-import com.sun.identity.saml.protocol.SubjectQuery;
-import com.sun.identity.sm.SMSEntry;
-import com.sun.identity.wsfederation.common.WSFederationUtils;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
- *
- * @author ap102904
+ * This default <code>PartnerAccountMapper</code> for ADFS simply extracts
+ * the username portion of an incoming UPN and matches it to the uid attribute
+ * in the repository.
  */
-public class DefaultADFSPartnerAccountMapper implements PartnerAccountMapper {
-    private static Debug debug = WSFederationUtils.debug;
-    
-    /** Creates a new instance of DefaultADFSPartnerAccountMapper */
+public class DefaultADFSPartnerAccountMapper 
+    extends DefaultLibrarySPAccountMapper {
+    private String UID = "uid";
+
+     /**
+      * Default constructor
+      */
     public DefaultADFSPartnerAccountMapper() {
+        super();
+        debug.message("DefaultADFSPartnerAccountMapper.constructor: ");
     }
-
+    
     /**
-     * Returns user account in Sun Java System Access Manager to which the
-     * subject in the assertion is mapped. This method will be called in POST
-     * profile, ARTIFACT profile, AttributeQuery and AuthorizationDecisionQuery.
-     *
-     * @param assertions a list of authentication assertions returned from
-     *                   partner side, this will contains user's identity in
-     *                   the partner side. The object in the list will be
-     *                   <code>com.sun.identity.saml.assertion.Assertion</code>
-     * @param sourceID source ID for the site from which the subject
-     *                 originated.
-     * @param targetURL value for TARGET query parameter when the user
-     *                  accessing the SAML aware servlet or post profile
-     *                  servlet
-     * @return Map which contains NAME, ORG and ATTRIBUTE keys, value of the
-     *             NAME key is the user DN, value of the ORG is the user
-     *             organization  DN, value of the ATTRIBUTE is a Map
-     *             containing key/value pairs which will be set as properties
-     *             on the Access manager SSO token, the key is the SSO
-     *             property name, the value is a String value of the property.
-     *             Returns empty map if the mapped user could not be obtained
-     *             from the subject.
+     * This method simply extracts the username portion of the UPN and returns
+     * a Map with a single entry: "uid" => {username}
+     * @param nameID NameIdentifier for the subject
+     * @param hostEntityID entity ID of the identity provider
+     * @param remoteEntityID entity ID of the service provider
      */
-    public Map getUser(List assertions, String sourceID, String targetURL) {
-        String classMethod = "DefaultADFSPartnerAccountMapper:getUser(List) ";
-        if ( debug.messageEnabled() )
-        {
-            debug.message(classMethod + "targetURL = " + targetURL);
-        }
-
-        Map map = new HashMap();
-        Subject subject = null;
-        Assertion assertion = (Assertion)assertions.get(0);
-        Iterator iter = assertion.getStatement().iterator();
-        while (iter.hasNext()) {
-            Statement statement = (Statement)iter.next();
-            if (statement.getStatementType() !=
-                Statement.AUTHENTICATION_STATEMENT) {
-                continue;
-            }
-
-            subject = ((SubjectStatement)statement).getSubject();
-	}
-
-        if (subject != null) {
-            getUser(subject, sourceID, map);
-            Map attrMap = new HashMap();
-            SAMLUtils.addEnvParamsFromAssertion(attrMap, assertion, subject);
-            if (!attrMap.isEmpty()) {
-                map.put(ATTRIBUTE, attrMap);
-            }
-	}
-
-        return map;
-    }
-
-    /**
-     * Returns user account in Sun Java System Access Manager to which the
-     * subject in the query is mapped. This method will be called in
-     * AttributeQuery.The returned Map is subject to changes per SAML
-     * specification.
-     *
-     * @param subjectQuery subject query returned from partner side,
-     *                  this will contains user's identity in the partner side.
-     * @param sourceID source ID for the site from which the subject
-     *                 originated.
-     * @return Map which contains NAME and ORG keys, value of the
-     *             NAME key is the user DN, value of the ORG is the user
-     *             organization  DN. Returns empty map if the mapped user
-     *             could not be obtained from the subject.
-     */
-    public Map getUser(SubjectQuery subjectQuery,
-                       String sourceID)
+    protected Map getSearchParameters(NameIdentifier nameID, 
+        String hostEntityID, String remoteEntityID) 
     {
         String classMethod = 
-            "DefaultADFSPartnerAccountMapper:getUser(SubjectQuery) ";
+            "DefaultADFSPartnerAccountMapper.getSearchParameters";
+        Map keyMap = new HashMap();  
 
-        if ( debug.messageEnabled() )
-        {
-            debug.message(classMethod + "entered");
+        // name comes as a upn of form login@domain, where login is windows 
+        // login name - e.g. alansh, and domain is windows domain - 
+        // e.g. adatum.com
+        String upn = nameID.getName();
+        if (upn != null && upn.length() > 0 ) {
+            int atSign = upn.indexOf('@');
+            if ( atSign == -1 )
+            {
+                debug.error(classMethod + "No @ in name");
+            }
+            else
+            {
+                String name = upn.substring(0,atSign);
+                String domain = upn.substring(atSign+1);
+
+                if ( debug.messageEnabled() )
+                {
+                    debug.message(classMethod + "name is "+name);
+                    debug.message(classMethod + "domain is "+domain);
+                }
+                HashSet set = new HashSet();
+                set.add(name);
+                
+                keyMap.put(UID, set); 
+            }
+        } else {
+            debug.error(classMethod + "name is null");
         }
-
-        Map map = new HashMap();
-        getUser(subjectQuery.getSubject(), sourceID, map);
-        return map;
+        return keyMap;
     }
 
-    private void getUser(Subject subject, String sourceID, Map map) {
-        String classMethod = 
-            "DefaultADFSPartnerAccountMapper:getUser(Subject) ";
-        
-        // No need to check SSO in SubjectConfirmation here
-        // since AssertionManager will handle it without calling account mapper
-        NameIdentifier nameIdentifier = subject.getNameIdentifier();
-        if (nameIdentifier != null) {
-            // name comes as a upn of form login@domain, where login is windows 
-            // login name - e.g. alansh, and domain is windows domain - 
-            // e.g. adatum.com
-            //
-            // TODO - Need to search for an entry with configured attributes 
-            // equal to login and domain rather than just create a DN!
-            String upn = nameIdentifier.getName();
-            // String rootSuffix = SystemPropertiesManager.get(
-            // SAMLConstants.DEFAULT_ORG);
-            String rootSuffix = SMSEntry.getRootSuffix();    
-            if (upn != null && upn.length() > 0 ) {
-                int atSign = upn.indexOf('@');
-                if ( atSign == -1 )
-                {
-                    debug.error(classMethod + "No @ in name");
-                }
-                else
-                {
-                    String name = upn.substring(0,atSign);
-                    String domain = upn.substring(atSign+1);
-                    
-                    // TODO - What to do with domain???
-                    
-                    if ( debug.messageEnabled() )
-                    {
-                        debug.message(classMethod + "name is "+name);
-                    }
-                    map.put(NAME, name); 
-                }
+    /**
+     * Checks if dynamical profile creation or ignore profile is enabled.
+     * @param realm realm to check the dynamical profile creation attributes.
+     * @return true if dynamical profile creation or ignore profile is enabled,
+     * false otherwise.
+     */
+    protected boolean isDynamicalOrIgnoredProfile(String realm) {
+        try {
+            OrganizationConfigManager orgConfigMgr = AuthD.getAuth().
+                getOrgConfigManager(realm);
+            ServiceConfig svcConfig = orgConfigMgr.getServiceConfig(
+                ISAuthConstants.AUTH_SERVICE_NAME);
+            Map attrs = svcConfig.getAttributes();
+            String tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.DYNAMIC_PROFILE);
+            if (debug.messageEnabled()) {
+                debug.message("dynamicalCreationEnabled, attr=" + tmp);
+            }
+            if (tmp != null && (tmp.equalsIgnoreCase("createAlias")
+                || tmp.equalsIgnoreCase("true")
+                || tmp.equalsIgnoreCase("ignore"))) {
+                return true;
             } else {
-                debug.error(classMethod + "name is null");
+                return false;
             }
-            if ( debug.messageEnabled() )
-            {
-                debug.message(classMethod + "org is "+rootSuffix);
-            }
-            map.put(ORG, rootSuffix); 
+        } catch (Exception e) {
+            debug.error("dynamicalCreationEnabled, unable to get attribute", e);
+            return false;
         }
-    } 
+    }
 }

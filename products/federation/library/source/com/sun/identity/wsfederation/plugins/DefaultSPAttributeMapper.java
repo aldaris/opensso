@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAttributeMapper.java,v 1.1 2007-06-21 23:01:30 superpat7 Exp $
+ * $Id: DefaultSPAttributeMapper.java,v 1.2 2007-08-01 21:04:04 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,15 +25,9 @@
 
 package com.sun.identity.wsfederation.plugins;
 
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.saml2.assertion.Attribute;
-import com.sun.identity.saml2.common.SAML2Utils;
-import com.sun.identity.saml2.common.SAML2Constants;
-import com.sun.identity.saml2.meta.SAML2MetaManager;
-import com.sun.identity.saml2.meta.SAML2MetaUtils;
-import com.sun.identity.saml2.meta.SAML2MetaException;
-import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
-
+import com.sun.identity.saml.assertion.Attribute;
+import com.sun.identity.saml.common.SAMLException;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.wsfederation.common.WSFederationException;
 
 import java.util.List;
@@ -41,9 +35,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.Iterator;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 
 /**
@@ -72,7 +66,7 @@ public class DefaultSPAttributeMapper extends DefaultAttributeMapper
      * @param realm realm name.
      * @return a map of mapped attribute value pair. This map has the
      *         key as the attribute name and the value as the attribute value
-     * @exception SAML2Exception if any failure.
+     * @exception WSFederationException if any failure.
      */ 
     public Map getAttributes(
         List attributes,
@@ -97,24 +91,40 @@ public class DefaultSPAttributeMapper extends DefaultAttributeMapper
                  "nullRealm"));
         }
  
-        Map map = new HashMap();
+        Map<String,Set<String>> map = new HashMap<String,Set<String>>();
         Map configMap = getConfigAttributeMap(realm, hostEntityID);
 
         for(Iterator iter = attributes.iterator(); iter.hasNext();) {
 
             Attribute attribute = (Attribute)iter.next();
-            Set values = new HashSet(); 
-            values.addAll(attribute.getAttributeValueString());
-            String attributeName = attribute.getName();
+            Set<String> values = new HashSet(); 
+            try {
+                List attrValues = attribute.getAttributeValue();
+                for(Iterator iter2 = attrValues.iterator(); iter2.hasNext();) {
+                    Element attrValue = (Element)iter2.next();
+                    values.add(XMLUtils.getElementValue(attrValue));
+                }
+            } catch (SAMLException se) {
+                throw new WSFederationException(se);
+            }
+            String attributeName = attribute.getAttributeName();
 
             String localAttribute = (String)configMap.get(attributeName);
-            if(localAttribute != null && localAttribute.length() > 0) {
-               map.put(localAttribute, values);  
-            } else {
-               map.put(attributeName, values); 
+            if(localAttribute == null || localAttribute.length()== 0) {
+                localAttribute = attributeName;
             }
-         }
-         return map;
+
+            Set<String> existingValues = map.get(localAttribute);
+            if ( existingValues != null )
+            {
+                existingValues.addAll(values);
+            }
+            else
+            {
+                map.put(localAttribute, values);  
+            }
+        }
+        return map;
     }
 
 }

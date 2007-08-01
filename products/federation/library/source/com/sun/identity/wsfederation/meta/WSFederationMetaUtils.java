@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaUtils.java,v 1.1 2007-06-21 23:01:32 superpat7 Exp $
+ * $Id: WSFederationMetaUtils.java,v 1.2 2007-08-01 21:04:38 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -48,18 +47,16 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Node;
 
 import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
+import com.sun.identity.wsfederation.common.WSFederationUtils;
+import com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement;
 
 /**
- * The <code>WSFederationMetaUtils</code> provides metadata related util 
+ * The <code>WSFederationMetaUtils</code> provides metadata related utility
  * methods.
  */
-// TODO - pull out common methods such as convertStringToJAXB to a new class
 public final class WSFederationMetaUtils {
-    protected static final String RESOURCE_BUNDLE_NAME = "libSAML2Meta";
-    protected static ResourceBundle resourceBundle =
-        Locale.getInstallResourceBundle(RESOURCE_BUNDLE_NAME);
-    public static Debug debug = Debug.getInstance("libSAML2Meta");
+    public static Debug debug = WSFederationUtils.debug;
     
     // Need to explicitly list xmldsig, otherwise JAXB doesn't see it, since
     // dsig elements are buried in 'any' elements. Grrr...
@@ -86,6 +83,9 @@ public final class WSFederationMetaUtils {
         }
     }
 
+    /*
+     * Private constructor ensure that no instance is ever created
+     */
     private WSFederationMetaUtils() {
     }
 
@@ -215,6 +215,44 @@ public final class WSFederationMetaUtils {
         return attrMap;
     }
     
+    /**
+     * Sets attribute value pairs in <code>BaseConfigType</code>. NOTE - 
+     * existing AVPs are discarded! The key is 
+     * @param config the <code>BaseConfigType</code> object
+     * @param map mapping from attribute names to <code>List</code>s of 
+     * attribute values;
+     */
+    public static void setAttributes(BaseConfigType config, 
+        Map<String,List<String>> map) 
+        throws JAXBException
+    {
+        JAXBContext jc = WSFederationMetaUtils.getMetaJAXBContext();
+        com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
+            objFactory = 
+            new com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory();
+
+        List attributeList = config.getAttribute();
+
+        attributeList.clear();
+
+        // add the new content
+        for (String key : map.keySet())
+        {
+            AttributeElement
+                avp = objFactory.createAttributeElement();
+            avp.setName(key);
+            avp.getValue().addAll(map.get(key));
+            
+            attributeList.add(avp);
+        }
+    }
+    
+    /**
+     * Gets a single attribute value from <code>BaseConfigType</code>
+     * @param config the <code>BaseConfigType</code> object
+     * @param key attribute key.
+     * @return the attribute value
+     */
     public static String getAttribute(BaseConfigType config, String key)
     {
         List list = config.getAttribute();
@@ -231,8 +269,8 @@ public final class WSFederationMetaUtils {
     /**
      * Returns the realm by parsing the metaAlias. MetaAlias format is
      * <pre>
-     * &lt;realm>/&lt;any string without '/'> for non-root realm or
-     * /&lt;any string without '/'> for root realm.
+     * &lt;realm&gt;/&lt;any string without '/'&gt; for non-root realm or
+     * /&lt;any string without '/'&gt; for root realm.
      * </pre>
      * @param metaAlias The metaAlias.
      * @return the realm associated with the metaAlias.
@@ -260,7 +298,7 @@ public final class WSFederationMetaUtils {
             return null;
         }
 
-        int index = uri.indexOf(WSFederationMetaManager.NAME_META_ALIAS_IN_URI);
+        int index = uri.indexOf(WSFederationConstants.NAME_META_ALIAS_IN_URI);
         if (index == -1 || index + 9 == uri.length()) {
             return null;
         }

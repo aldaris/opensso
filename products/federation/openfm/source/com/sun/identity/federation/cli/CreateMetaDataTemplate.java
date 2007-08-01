@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.11 2007-06-22 23:56:43 bina Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.12 2007-08-01 21:04:48 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,12 +146,14 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     
     private void handleWSFedRequest(RequestContext rc)
     throws CLIException {
+        String url =  protocol + "://" + host + ":" + port + deploymentURI;
+
         if (!isWebBased || (extendedData != null)) {
-            buildWSFedConfigTemplate();
+            buildWSFedConfigTemplate(url);
         }
 
         if (!isWebBased || (metadata != null)) {
-            buildWSFedDescriptorTemplate();
+            buildWSFedDescriptorTemplate(url);
         }
     }
     
@@ -1296,10 +1298,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 );
     }
     
-    private void buildWSFedDescriptorTemplate()
+    private void buildWSFedDescriptorTemplate(String url)
     throws CLIException {
-        String url =  protocol + "://" + host + ":" + port + deploymentURI;
-        
         Writer pw = null;
         try {
             if (!isWebBased && (metadata != null) && (metadata.length() > 0)) {
@@ -1440,7 +1440,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         fed.getAny().add(ssne);
     }
 
-    private void buildWSFedConfigTemplate()
+    private void buildWSFedConfigTemplate(String url)
     throws CLIException {
         JAXBContext jc = WSFederationMetaUtils.getMetaJAXBContext();
         com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
@@ -1464,10 +1464,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             fedConfig.setHosted(true);
 
             if (idpAlias != null) {
-                buildWSFedIDPConfigTemplate(objFactory, fedConfig);
+                buildWSFedIDPConfigTemplate(objFactory, fedConfig, url);
             }
             if (spAlias != null) {
-                buildWSFedSPConfigTemplate(objFactory, fedConfig);
+                buildWSFedSPConfigTemplate(objFactory, fedConfig, url);
             }
 
             Marshaller m = jc.createMarshaller();
@@ -1501,14 +1501,16 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
 
     private void buildWSFedIDPConfigTemplate(
         com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
-        objFactory, FederationConfigElement fedConfig)
+        objFactory, FederationConfigElement fedConfig, String url)
         throws JAXBException
     {
         String[][] configDefaults = { 
             { WSFederationConstants.DISPLAY_NAME, idpAlias },
+            { WSFederationConstants.UPN_DOMAIN, "" },
             { SAML2Constants.SIGNING_CERT_ALIAS, idpSCertAlias },
             { SAML2Constants.AUTO_FED_ENABLED, "false" },
             { SAML2Constants.AUTO_FED_ATTRIBUTE, "" },
+            { SAML2Constants.ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE, "600" },
             { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
             { SAML2Constants.IDP_AUTHNCONTEXT_MAPPER_CLASS, 
                   "com.sun.identity.wsfederation.plugins.DefaultIDPAuthenticationMethodMapper" 
@@ -1541,11 +1543,18 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
 
     private void buildWSFedSPConfigTemplate(
         com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
-        objFactory, FederationConfigElement fedConfig)
+        objFactory, FederationConfigElement fedConfig, String url)
     throws JAXBException
     {
+        String maStr = buildMetaAliasInURI(spAlias);
+
         String[][] configDefaults = { 
             { WSFederationConstants.DISPLAY_NAME, spAlias },
+            { WSFederationConstants.ACCOUNT_REALM_SELECTION, "cookie" },
+            { WSFederationConstants.ACCOUNT_REALM_COOKIE_NAME, 
+                  "amWSFederationAccountRealm" },
+            { WSFederationConstants.HOME_REALM_DISCOVERY_SERVICE, 
+                  url + "/RealmSelection" + maStr },
             { SAML2Constants.SIGNING_CERT_ALIAS, 
                   ( idpSCertAlias.length() > 0 ) ? idpSCertAlias : "" },
             { SAML2Constants.AUTO_FED_ENABLED, "false" },
