@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.12 2007-08-01 21:04:48 superpat7 Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.13 2007-08-01 23:15:28 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -523,8 +523,49 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         String maStr = buildMetaAliasInURI(pdpAlias);
         pw.write(
             "    <XACMLPDPDescriptor " + 
-            "protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n" +
-            "         <XACMLAuthzService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"" +
+            "protocolSupportEnumeration=" +
+            "\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
+
+        String pdpSX509Cert  = SAML2MetaSecurityUtils.buildX509Certificate(
+                pdpSCertAlias);
+        String pdpEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+                pdpECertAlias);
+
+        if (pdpSX509Cert != null) {
+            pw.write(
+                    "        <KeyDescriptor use=\"signing\">\n" +
+                    "            <KeyInfo xmlns=\"" + 
+                                    SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                    "                <X509Data>\n" +
+                    "                    <X509Certificate>\n" + pdpSX509Cert +
+                    "                    </X509Certificate>\n" +
+                    "                </X509Data>\n" +
+                    "            </KeyInfo>\n" +
+                    "        </KeyDescriptor>\n");
+        }
+
+        if (pdpEX509Cert != null) {
+            pw.write(
+                    "        <KeyDescriptor use=\"encryption\">\n" +
+                    "            <KeyInfo xmlns=\"" +
+                                    SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                    "                <X509Data>\n" +
+                    "                    <X509Certif5icate>\n" + pdpEX509Cert +
+                    "                    </X509Certificate>\n" +
+                    "                </X509Data>\n" +
+                    "            </KeyInfo>\n" +
+                    "            <EncryptionMethod Algorithm=" +
+                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
+                    "                <KeySize xmlns=\"" + 
+                                    SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
+                    "128</KeySize>\n" +
+                    "            </EncryptionMethod>\n" +
+                    "        </KeyDescriptor>\n");
+        }
+
+       pw.write(
+            "         <XACMLAuthzService " +
+                       "Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"" +
             " Location=\"" + url + "/saml2query" + maStr + "\"/>\n" +
             "    </XACMLPDPDescriptor>\n");
     }
@@ -532,8 +573,47 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private void addPEPTemplate(Writer pw, String url)
         throws IOException, SAML2MetaException {
         pw.write("    <XACMLAuthzDecisionQueryDescriptor " +
-            "wantAssertionSigned=\"true\" " +
-            "protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"/>\n");
+            "WantAssertionsSigned=\"true\" " +
+            "protocolSupportEnumeration=" +
+            "\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
+        
+        String pepSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+                pepSCertAlias);
+        String pepEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+                pepECertAlias);
+
+        if (pepSX509Cert != null) {
+            pw.write(
+                    "        <KeyDescriptor use=\"signing\">\n" +
+                    "            <KeyInfo xmlns=\"" +
+                                    SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                    "                <X509Data>\n" +
+                    "                    <X509Certificate>\n" + pepSX509Cert +
+                    "                    </X509Certificate>\n" +
+                    "                </X509Data>\n" +
+                    "            </KeyInfo>\n" +
+                    "        </KeyDescriptor>\n");
+        }
+
+        if (pepEX509Cert != null) {
+            pw.write(
+                    "        <KeyDescriptor use=\"encryption\">\n" +
+                    "            <KeyInfo xmlns=\"" + 
+                                    SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                    "                <X509Data>\n" +
+                    "                    <X509Certificate>\n" + pepEX509Cert +
+                    "                    </X509Certificate>\n" +
+                    "                </X509Data>\n" +
+                    "            </KeyInfo>\n" +
+                    "            <EncryptionMethod Algorithm=" +
+                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
+                    "                <KeySize xmlns=\"" + 
+                                    SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
+                    "128</KeySize>\n" +
+                    "            </EncryptionMethod>\n" +
+                    "        </KeyDescriptor>\n");
+        }
+        pw.write("    </XACMLAuthzDecisionQueryDescriptor>\n");
     }
     
     private static String buildMetaAliasInURI(String alias) {
@@ -553,7 +633,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             }
             
             pw.write(
-                    "<EntityConfig xmlns=\"urn:sun:fm:SAML:2.0:entityconfig\"\n" +
+                    "<EntityConfig xmlns=\"urn:sun:fm:SAML:2.0:entityconfig\"\n"+
                     "    xmlns:fm=\"urn:sun:fm:SAML:2.0:entityconfig\"\n" +
                     "    hosted=\"1\"\n" +
                     "    entityID=\"" + entityID + "\">\n\n");
@@ -805,9 +885,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED +  "\">\n" +
                 "            <Value>false</Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_RESPONSED_SIGNED +  "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
                 "        <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
                 "        </Attribute>\n" +
                 "   </XACMLPDPConfig>\n");
@@ -832,10 +909,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_PASSWD +  "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED +  "\">\n" +
+                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_RESPONSED_SIGNED +  "\">\n" +
                 "            <Value>false</Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_RESPONSED_SIGNED +  "\">\n" +
+                "        <Attribute name=\"" +
+                            SAML2Constants.WANT_ASSERTION_ENCRYPTED +  "\">\n" +
                 "            <Value>false</Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
