@@ -45,7 +45,7 @@ public class FederationManager {
 
     public FederationManager(String url) {
         amUrl = url;
-        amadmUrl = url + "/fmadm.jsp?cmd=";
+        amadmUrl = url + "/famadm.jsp?cmd=";
     }
 
 
@@ -4000,16 +4000,16 @@ public class FederationManager {
     }
 
     /**
-     * List circle of trusts.
+     * List circles of trust.
      *
      * @param webClient HTML Unit Web Client object.
-     * @param realm Realm where circle of trusts reside
+     * @param realm Realm where circles of trust reside
      */
     public HtmlPage listCircleOfTrusts(
         WebClient webClient,
         String realm
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "list-circle-of-trusts");
+        URL cmdUrl = new URL(amadmUrl + "list-circles-of-trust");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
