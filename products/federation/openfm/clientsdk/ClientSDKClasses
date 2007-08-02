@@ -502,6 +502,7 @@ com/sun/identity/saml2/xmlsig/FMSigProvider.class
 com/sun/identity/saml2/xmlsig/SigManager.class
 com/sun/identity/saml2/xmlsig/SigProvider.class
 com/sun/identity/saml2/common/SAML2Utils.class
+com/sun/identity/saml2/soapbinding/QueryClient.class
 com/sun/identity/shared/configuration/ConfigurationFileLocator.class
 com/sun/identity/shared/configuration/ISystemProperties.class
 com/sun/identity/shared/configuration/SystemPropertiesManager.class
