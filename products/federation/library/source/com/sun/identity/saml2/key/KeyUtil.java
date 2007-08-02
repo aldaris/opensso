@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.1 2006-10-30 23:16:19 qcheng Exp $
+ * $Id: KeyUtil.java,v 1.2 2007-08-02 18:18:42 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,8 @@ import com.sun.identity.saml2.jaxb.xmlenc.*;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml.xmlsig.KeyProvider;
+import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzDecisionQueryDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
 
 /**
  * The <code>KeyUtil</code> provides methods to obtain
@@ -386,4 +388,268 @@ public class KeyUtil {
         }
         return retCert;
     }        
+    
+    /**
+     * Returns the partner entity's signature verification certificate.
+     *
+     * @param pepDesc <code>XACMLAuthzDecisionQueryDescriptorElement</code>
+     * for the partner entity
+     * @param entityID Policy Enforcement Point (PEP) entity identifier.
+     * @return <code>X509Certificate</code> for verifying the partner
+     * entity's signature
+     */
+    public static X509Certificate getPEPVerificationCert(
+        XACMLAuthzDecisionQueryDescriptorElement pepDesc,String entityID) { 
+
+        String classMethod = "KeyUtil.getPEPVerificationCert: ";
+        String role = SAML2Constants.PEP_ROLE;
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(classMethod +"Entering... \nEntityID=" +
+                entityID + "\nRole="+role
+            );
+        }
+        // first try to get it from cache
+        String index = entityID.trim()+"|"+ role;
+        X509Certificate cert = (X509Certificate)sigHash.get(index);
+        if (cert != null) {
+            return cert;
+        }
+        // else get it from meta
+        if (pepDesc == null) {
+            SAML2Utils.debug.error(
+                classMethod+
+                "Null DescriptorType input for entityID=" +
+                entityID + " in "+role+" role."
+            );
+            return null;
+        }
+        List kdlist = pepDesc.getKeyDescriptor();
+        KeyDescriptorType kd = getKeyDescriptor(kdlist,SAML2Constants.SIGNING);
+
+        if (kd == null) {
+            SAML2Utils.debug.error(
+                classMethod+
+                "No signing KeyDescriptor for entityID=" +
+                entityID + " in "+role+" role."
+            );
+            return null;
+        }
+        cert = getCert(kd);
+        if (cert == null) {
+            SAML2Utils.debug.error(
+                classMethod +
+                "No signing cert for entityID=" +
+                entityID + " in "+role+" role."
+            );
+            return null;
+        }
+        sigHash.put(index, cert);
+        return cert;
+    }
+    
+    
+    /**
+     * Returns <code>KeyDescriptorType</code> object.
+     * 
+     * @param kdList List containing  <code>KeyDescriptor</code>s.
+     * @param usage type of the <code>KeyDescriptorType</code> to be retrieved.
+     *               Value can be "encryption" or "signing".
+     * @return <code>KeyDescriptorType</code> in
+     *         <code>XACMLAuthzDecisionQueryDescriptorElement</code> 
+     *         that matched the usage type.
+     */
+    public static KeyDescriptorType getKeyDescriptor(List kdList,String usage) {
+        
+        KeyDescriptorType noUsageKD = null;
+        if (kdList != null && !kdList.isEmpty() ) {
+            Iterator iter = kdList.iterator();
+            KeyDescriptorType kd = null;
+            String use = null;
+            while (iter.hasNext()) {
+                kd = (KeyDescriptorType)iter.next();
+                use = kd.getUse();
+                if ((use == null) || (use.trim().length() == 0)) {
+                    if (noUsageKD == null) {
+                        noUsageKD = kd;
+                        continue;
+                    }
+                }
+                if (use.trim().toLowerCase().equals(usage)) {
+                    break;
+                } else {
+                    kd = null;
+                }
+            }
+            if (kd != null) {
+                return kd;
+            } else {
+                return noUsageKD;
+            }
+        }
+        return noUsageKD;
+    }
+    
+    
+    /**
+     * Returns the encryption information which will be used in
+     * encrypting messages intended for the partner entity.
+     *
+     * @param pepDesc <code>XACMLAuthzDecisionQueryDescriptorElement</code> 
+     * for the partner entity
+     * @param pepEntityID partner entity's ID
+     * @return <code>EncInfo</code> which includes partner entity's
+     * public key for wrapping the secret key, data encryption algorithm,
+     * and data encryption strength 
+     */        
+    public static EncInfo getPEPEncInfo(
+       XACMLAuthzDecisionQueryDescriptorElement pepDesc,String pepEntityID) {
+
+        String classMethod = "KeyUtil.getEncInfo: ";
+        String role=SAML2Constants.PEP_ROLE;
+        
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(
+                classMethod +
+                "Entering... \nEntityID=" +
+                pepEntityID + "\nRole="+role
+            );
+        }
+        // first try to get it from cache
+        String index = pepEntityID.trim()+"|"+role;
+        EncInfo encInfo = (EncInfo)encHash.get(index);
+        if (encInfo != null) {
+            return encInfo;
+        }
+        // else get it from meta
+        if (pepDesc == null) {
+            SAML2Utils.debug.error(
+                classMethod+
+                "Null PEP Descriptor input for entityID=" +
+                pepEntityID + " in "+role+" role."
+            );
+            return null;
+        }
+        List kdList = pepDesc.getKeyDescriptor();
+        KeyDescriptorType kd = 
+            getKeyDescriptor(kdList,SAML2Constants.ENCRYPTION);
+        if (kd == null) {
+            SAML2Utils.debug.error(
+                classMethod+
+                "No encryption KeyDescriptor for entityID=" +
+                pepEntityID + " in "+role+" role."
+            );
+            return null;
+        }
+        return  getEncryptionInfo(kd,pepEntityID,role);
+    }
+    
+    /**
+     * Returns the <code>EncInfo</code> from the <code>KeyDescriptor</code>.
+     *
+     * @param kd the M<code>KeyDescriptor</code> object.
+     * @param pentityID the entity identfier 
+     * @param role the role of the entity . Value can be PEP or PDP.
+     * @return <code>EncInfo</code> the encryption info.
+     */
+    private static EncInfo getEncryptionInfo(KeyDescriptorType kd,
+                                             String entityID, String role) {
+        String classMethod = "KeyUtil:getEncryptionInfo:";
+        java.security.cert.X509Certificate cert = getCert(kd);
+        if (cert == null) {
+            SAML2Utils.debug.error(
+                classMethod +
+                "No encryption cert for entityID=" +
+                entityID + " in "+role+" role."
+            );
+            return null;
+        }
+        List emList = kd.getEncryptionMethod();
+        EncryptionMethodType em = null;
+        String algorithm = null;
+        int keySize = 0;
+        if (emList != null && !emList.isEmpty()) {            
+            em = (EncryptionMethodType)emList.get(0);
+            if (em != null) {
+                algorithm = em.getAlgorithm();
+                List cList = em.getContent();
+                if (cList != null) {
+                    keySize =
+                        ((EncryptionMethodType.KeySize)(cList.get(0))).
+                        getValue().intValue();
+                }
+            }
+        }
+        if (algorithm == null || algorithm.length() == 0) {
+            algorithm = XMLCipher.AES_128;
+            keySize = 128;
+        }
+        PublicKey pk = cert.getPublicKey();
+        EncInfo encInfo = null;
+        if (pk != null) {
+            encInfo = new EncInfo(pk, algorithm, keySize);
+        }
+        String index = entityID.trim()+"|"+role;
+        if (encInfo != null) {
+            encHash.put(index, encInfo);
+        }
+        return encInfo;
+    }
+    
+    /**
+     * Returns the partner entity's signature verification certificate.
+     *
+     * @param pdpDesc <code>XACMLPDPDescriptorElement</code> of  partner entity
+     * @param entityID partner entity's ID
+     * @return <code>X509Certificate</code> for verifying the partner
+     * entity's signature
+     */
+    public static X509Certificate getPDPVerificationCert(
+        XACMLPDPDescriptorElement pdpDesc,String entityID) { 
+        String classMethod = "KeyUtil.getPDPVerificationCert: ";
+        String role = SAML2Constants.PDP_ROLE;
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(
+                classMethod +
+                "Entering... \nEntityID=" +
+                entityID + "\nRole="+role
+            );
+        }
+        // first try to get it from cache
+        String index = entityID.trim()+"|"+ role;
+        X509Certificate cert = (X509Certificate)sigHash.get(index);
+        if (cert != null) {
+            return cert;
+        }
+        // else get it from meta
+        if (pdpDesc == null) {
+            SAML2Utils.debug.error(
+                classMethod+
+                "Null DescriptorType input for entityID=" +
+                entityID + " in "+role+" role."
+            );
+            return null;
+        }
+        List kdList = pdpDesc.getKeyDescriptor();
+        KeyDescriptorType kd = getKeyDescriptor(kdList, SAML2Constants.SIGNING);
+
+        if (kd == null) {
+            SAML2Utils.debug.error(
+                classMethod+
+                "No signing KeyDescriptor for entityID=" +
+                entityID + " in "+role+" role."
+            );
+            return null;
+        }
+        cert = getCert(kd);
+        if (cert == null) {
+            SAML2Utils.debug.error(
+                classMethod +
+                "No signing cert for entityID=" +
+                entityID + " in "+role+" role."
+            );
+            return null;
+        }
+        sigHash.put(index, cert);
+        return cert;
+    }
 } 

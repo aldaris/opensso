@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.7 2007-05-17 19:31:58 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.8 2007-08-02 18:18:42 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,6 +73,8 @@ import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.XACMLPDPConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
@@ -108,9 +110,11 @@ import javax.xml.soap.Detail;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
@@ -393,7 +397,7 @@ public class SAML2Utils extends SAML2SDKUtils {
                 }
                 if (!assertion.isSigned() || !assertion.isSignatureValid(cert)){
                     debug.error(method +
-                            "Assertion is not signed or signature is not valid.");
+                        "Assertion is not signed or signature is not valid.");
                     String[] data = {assertionID};
                     LogUtil.error(Level.INFO,
                             LogUtil.INVALID_SIGNATURE_ASSERTION,
@@ -1370,29 +1374,14 @@ public class SAML2Utils extends SAML2SDKUtils {
                 debug.message("SAML2Utils.createSOAPMessage: xmlstr = " +
                         xmlString);
             }
-            
-            StringBuffer sb = new StringBuffer(500);
-            sb.append("<").append(SAMLConstants.SOAP_ENV_PREFIX).
-                    append(":Envelope").append(SAMLConstants.SPACE).
-                    append("xmlns:").append(SAMLConstants.SOAP_ENV_PREFIX).
-                    append("=\"").append(SAMLConstants.SOAP_URI).append("\">").
-                    append("<").
-                    append(SAMLConstants.SOAP_ENV_PREFIX).append(":Body>").
-                    append(xmlString).
-                    append(SAMLConstants.START_END_ELEMENT).
-                    append(SAMLConstants.SOAP_ENV_PREFIX).
-                    append(":Body>").
-                    append(SAMLConstants.START_END_ELEMENT).
-                    append(SAMLConstants.SOAP_ENV_PREFIX).
-                    append(":Envelope>").append(SAMLConstants.NL);
+            String soapMsgStr = createSOAPMessageString(xmlString);
             
             if (debug.messageEnabled()) {
                 debug.message("SAML2Utils.createSOAPMessage: soap message = " +
-                        sb.toString());
+                        soapMsgStr);
             }
-            
             msg = mf.createMessage(mimeHeaders, new ByteArrayInputStream(
-                    sb.toString().getBytes(SAML2Constants.DEFAULT_ENCODING)));
+                    soapMsgStr.getBytes(SAML2Constants.DEFAULT_ENCODING)));
         } catch (IOException io) {
             debug.error("SAML2Utils.createSOAPMessage: IOE", io);
             throw new SAML2Exception(io.getMessage());
@@ -1628,7 +1617,9 @@ public class SAML2Utils extends SAML2SDKUtils {
             envelope = msg.getSOAPPart().getEnvelope();
             body = envelope.getBody();
             sf = body.addFault();
-            sf.setFaultCode(faultCode);
+            Name qName = envelope.createName(faultCode,null,
+                            SOAPConstants.URI_NS_SOAP_ENVELOPE);
+            sf.setFaultCode(qName);
             sf.setFaultString(SAML2Utils.bundle.getString(faultString));
             if ((detail != null) && !(detail.length() == 0)) {
                 Detail det = sf.addDetail();
@@ -2093,69 +2084,6 @@ public class SAML2Utils extends SAML2SDKUtils {
     }
     
     /**
-     * Fills in basic auth user and password inside the location URL
-     * if configuration is done properly
-     * @param config Either an SPSSOConfigElement object or an
-     *               IDPSSOConfigElement object.
-     * @param locationURL The original location URL which is to be
-     *                    inserted with user:password@ before the
-     *                    hostname part and after //
-     * @return The modified location URL with the basic auth user
-     *         and password if configured properly
-     */
-    public static String fillInBasicAuthInfo(
-            BaseConfigType config,
-            String locationURL) {
-        
-        if (config == null) {
-            return locationURL;
-        }
-        Map map = SAML2MetaUtils.getAttributes(config);
-        List baoList = (List)map.get(
-                SAML2Constants.BASIC_AUTH_ON);
-        if (baoList == null || baoList.isEmpty()) {
-            return locationURL;
-        }
-        String on = (String)baoList.get(0);
-        if (on == null) {
-            return locationURL;
-        }
-        on = on.trim();
-        if (on.length() == 0 || !on.equalsIgnoreCase("true")) {
-            return locationURL;
-        }
-        List ul =  (List)map.get(
-                SAML2Constants.BASIC_AUTH_USER);
-        if (ul == null || ul.isEmpty()) {
-            return locationURL;
-        }
-        String u = (String) ul.get(0);
-        if (u == null) {
-            return locationURL;
-        }
-        u = u.trim();
-        if (u.length() == 0) {
-            return locationURL;
-        }
-        List pl = (List)map.get(
-                SAML2Constants.BASIC_AUTH_PASSWD);
-        String p = null;
-        if (pl != null && !pl.isEmpty()) {
-            p = (String) pl.get(0);
-        }
-        if (p == null) {
-            p = "";
-        }
-        
-        String dp = SAMLUtilsCommon.decodePassword(p);
-        
-        int index = locationURL.indexOf("//");
-        return locationURL.substring(0, index+2) +
-                u + ":" + dp + "@" +
-                locationURL.substring(index+2);
-    }
-    
-    /**
      * Sign Query string.
      *
      * @param queryString URL query string that will be signed.
@@ -2310,7 +2238,7 @@ public class SAML2Utils extends SAML2SDKUtils {
             }
         } catch (Exception e) {
             debug.message("createNameIdentifier:"
-                    + " Exception during proccessing request " +  e.getMessage());
+                    + " Exception during proccessing request" + e.getMessage());
         }
         
         return handle;
@@ -2736,4 +2664,87 @@ public class SAML2Utils extends SAML2SDKUtils {
             (destination != null) && (destination.length() != 0) &&
             (location.equalsIgnoreCase(destination)));  
     }    
+    
+    /**
+     * Returns the value of attribute from entity configuration.
+     *
+     * @param realm the realm of the entity.
+     * @param entityrole  role of the entity (PEP or PDP).
+     * @param entityID identity of the entity.
+     * @param attrName  name of attribute whose value is to be retreived.
+     * @return value of the attribute.
+     */
+
+    public static String getAttributeValueFromXACMLConfig(
+            String realm,String entityRole,String entityID,String attrName) {
+      String method = "SAML2Utils:getAttributeValueFromXACMLConfig : ";
+      if (debug.messageEnabled()) {
+            debug.message(method + "realm - " + realm);
+            debug.message(method + "EntityId - " +entityID);
+            debug.message(method + "entityRole - " + entityRole);
+            debug.message(method + "attrName - " + attrName);
+        }
+        String result = null;
+        try {
+            XACMLAuthzDecisionQueryConfigElement pepConfig = null;
+            XACMLPDPConfigElement pdpConfig = null;
+            Map attrs = null;
+            if (entityRole.equalsIgnoreCase(SAML2Constants.PEP_ROLE)) {
+                pepConfig = saml2MetaManager.getPolicyEnforcementPointConfig(
+                        realm,entityID);
+                if (pepConfig != null) {  
+                    attrs = SAML2MetaUtils.getAttributes(pepConfig);
+                }
+            } else {
+                pdpConfig =
+                        saml2MetaManager.getPolicyDecisionPointConfig(realm,
+                        entityID);
+                if (pdpConfig != null) {
+                    attrs = SAML2MetaUtils.getAttributes(pdpConfig);
+                }
+            }
+            
+            if (attrs != null) {
+                List value = (List) attrs.get(attrName);
+                if (value != null && value.size() != 0) {
+                    result = (String) value.get(0);
+                }
+            }
+        } catch (SAML2MetaException e) {
+            debug.message("Retreiving XACML Config failed:", e);
+        }
+        if (debug.messageEnabled()) {
+            debug.message("Attribute value is : " + result);
+        }
+        return result;
+    }
+    
+    /**
+     * Returns true if wantArtifactResponseSigned has <code>String</code> true.
+     *
+     * @param realm realm of hosted entity.
+     * @param hostEntityId name of hosted entity.
+     * @param entityRole role of hosted entity.
+     * @return true if wantArtifactResponseSigned has <code>String</code> true.
+     */
+    public static boolean getWantXACMLAuthzDecisionQuerySigned(String realm,
+            String entityID,
+            String entityRole) {
+        if (debug.messageEnabled()) {
+            String method = "getWantArtifactResponseSigned : ";
+            debug.message(method + "realm - " + realm);
+            debug.message(method + "entityID - " + entityID);
+            debug.message(method + "entityRole - " + entityRole);
+        }
+        String wantSigned =
+                getAttributeValueFromXACMLConfig(realm, entityID, entityRole,
+                SAML2Constants.WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED);
+        if (wantSigned == null) {
+            wantSigned = "false";
+        }
+        
+        return wantSigned.equalsIgnoreCase("true") ? true : false;
+    }
+    
+    
 }

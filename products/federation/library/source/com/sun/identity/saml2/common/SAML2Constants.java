@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.10 2007-06-22 23:55:39 bina Exp $
+ * $Id: SAML2Constants.java,v 1.11 2007-08-02 18:18:42 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -674,6 +674,16 @@ public interface SAML2Constants {
 
     public static final String ENC_PROVIDER =
     "com.sun.identity.saml2.xmlenc.EncryptionProvider";
+    
+    /**
+     * Signing  
+     */
+    public static final String SIGNING = "signing";
+    
+    /**
+     * Encryption  
+     */
+    public static final String ENCRYPTION = "encryption";
     
     // Delimiter used to separate multiple NameIDKey values.
     public String SECOND_DELIM = ";";

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.7 2007-07-02 17:48:57 weisun2 Exp $
+ * $Id: SAML2MetaManager.java,v 1.8 2007-08-02 18:18:43 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1320,6 +1320,43 @@ public class SAML2MetaManager {
         return false;   
     }    
    
+    /**
+     * Determines whether two entities are in the same circle of trust
+     * under the realm. Returns true if entities are in same 
+     * circle of trust. The entity can be a PDP or a PEP. If an entity
+     * role other then PEP or PDP is specified then a false will be 
+     * returned.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param entityId the hosted entity Identifier (PEP or PDP).
+     * @param trustedEntityId the remote entity identifier (PEP or PDP).
+     * @param role the role of the hosted entity.
+     * @throws SAML2MetaException if unable to determine the trusted
+     *         relationship.
+     */
+    public boolean isTrustedXACMLProvider(String realm, String entityId, 
+                                         String trustedEntityId,String role) 
+        throws SAML2MetaException {
+       
+        boolean result=false;  
+       
+        if (role != null) {
+            if (role.equals(SAML2Constants.PDP_ROLE)) {
+                XACMLPDPConfigElement pdpConfig = 
+                        getPolicyDecisionPointConfig(realm,entityId);
+                if (pdpConfig != null) {
+                    result = isSameCircleOfTrust(pdpConfig,realm,
+                                                 trustedEntityId);
+                }
+            } else if (role.equals(SAML2Constants.PEP_ROLE)) {
+                 XACMLAuthzDecisionQueryConfigElement pepConfig = 
+                                getPolicyEnforcementPointConfig(realm,entityId);
+                 result = isSameCircleOfTrust(pepConfig,realm,trustedEntityId);
+            }
+        }
+        return result;
+    }
+    
     private boolean isSameCircleOfTrust(BaseConfigType config, String realm,
                  String trustedEntityId) {
         try {

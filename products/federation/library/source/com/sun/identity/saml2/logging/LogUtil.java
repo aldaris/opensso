@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.1 2006-10-30 23:16:20 qcheng Exp $
+ * $Id: LogUtil.java,v 1.2 2007-08-02 18:18:43 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -261,16 +261,31 @@ public abstract class LogUtil {
     public static final String CONFIG_ERROR_GET_ALL_ENTITIES =
                                 "CONFIG_ERROR_GET_ALL_ENTITIES";
     public static final String GOT_ALL_ENTITIES =
-                                "GOT_ALL_ENTITIES";                                
+                                "GOT_ALL_ENTITIES";                
+    public static final String INVALID_PEP_ID="INVALID_PEP_ID";
+    public static final String INVALID_PDP_ID="INVALID_PDP_ID";
+    
+    //LogConstants for SAMLv2 SOAPBinding 
+    public static final String REQUEST_MESSAGE="REQUEST_MESSAGE";
+    public static final String NULL_PDP_SIGN_CERT_ALIAS =
+            "NULL_PDP_SIGN_CERT_ALIAS";
+    public static final String NULL_PEP_SIGN_CERT_ALIAS =
+            "NULL_PEP_SIGN_CERT_ALIAS";
+    public static final String INVALID_SIGNATURE_QUERY=
+            "INVALID_SIGNATURE_QUERY";
+    public static final String VALID_SIGNATURE_QUERY="VALID_SIGNATURE_QUERY";
+    public static final String PEP_METADATA_ERROR="PEP_METADATA_ERROR";
+    public static final String PDP_METADATA_ERROR="PDP_METADATA_ERROR";
                                           
     private static final String SAML2_LOG = "SAML2";
     private static Logger logger = null;
+
     
     static {
         try {
             logger = LogManager.getLogger(SAML2_LOG);
         } catch (LogException le) {
-            SAML2Utils.debug.error("LogUtil.static: Error getting logger: ", le);
+            SAML2Utils.debug.error("LogUtil.static: Error getting logger:", le);
         }
     }
     
@@ -323,7 +338,7 @@ public abstract class LogUtil {
             try {
                 logger.access(level, msgid, data, session);
             } catch (LogException le) {
-                SAML2Utils.debug.error("LogUtil.access: Couldn't write log:", le);
+                SAML2Utils.debug.error("LogUtil.access:Couldn't write log:",le);
             }
         }
     }
@@ -377,7 +392,7 @@ public abstract class LogUtil {
             try {
                 logger.error(level, msgid, data, session);
             } catch (LogException le) {
-                SAML2Utils.debug.error("LogUtil.error: Couldn't write log:", le);
+                SAML2Utils.debug.error("LogUtil.error:Couldn't write log:",le);
             }
         } 
     }

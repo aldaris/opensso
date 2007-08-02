@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SDKUtils.java,v 1.2 2007-04-23 03:35:04 hengming Exp $
+ * $Id: SAML2SDKUtils.java,v 1.3 2007-08-02 18:18:42 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,10 @@ import com.sun.identity.liberty.ws.disco.ResourceOffering;
 import com.sun.identity.liberty.ws.security.SecurityAssertion;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
+import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml.common.SAMLUtilsCommon;
+import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
+import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
@@ -41,11 +45,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import javax.xml.soap.SOAPException;
 
 /**
  * The <code>SAML2SDKUtils</code> contains utility methods for SAML 2.0
@@ -58,9 +62,9 @@ public class SAML2SDKUtils {
     // This utility class will be run on client side as well,
     // so DO NOT add any static block which will not run on client side.
     //
-
+    
     private static boolean isFM = true;
-
+    
     // The deugging instance
     public static Debug debug = Debug.getInstance("libSAML2");
     //  SAML2 Resource bundle
@@ -651,5 +655,106 @@ public class SAML2SDKUtils {
             debug.error("SAML2Utils.getDiscoveryBootStrapCredentials: ", ex);
             return null;
         }
+    }
+
+    /**
+     * Creates <code>SOAPMessage</code> with the input XML String
+     * as message body.
+     * @param xmlString XML string to be put into <code>SOAPMessage</code> body.
+     * @return newly created <code>SOAPMessage</code>.
+     * @exception SOAPException if it cannot create the
+     *            <code>SOAPMessage</code>.
+     */
+    public static String createSOAPMessageString(String xmlString)
+    throws SOAPException, SAML2Exception {
+            StringBuffer sb = new StringBuffer(500);
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.createSOAPMessage: xmlstr = " +
+                        xmlString);
+            }
+            sb.append("<").append(SAMLConstants.SOAP_ENV_PREFIX).
+                    append(":Envelope").append(SAMLConstants.SPACE).
+                    append("xmlns:").append(SAMLConstants.SOAP_ENV_PREFIX).
+                    append("=\"").append(SAMLConstants.SOAP_URI).append("\">").
+                    append("<").
+                    append(SAMLConstants.SOAP_ENV_PREFIX).append(":Body>").
+                    append(xmlString).
+                    append(SAMLConstants.START_END_ELEMENT).
+                    append(SAMLConstants.SOAP_ENV_PREFIX).
+                    append(":Body>").
+                    append(SAMLConstants.START_END_ELEMENT).
+                    append(SAMLConstants.SOAP_ENV_PREFIX).
+                    append(":Envelope>").append(SAMLConstants.NL);
+
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.createSOAPMessage: soap message = " +
+                        sb.toString());
+            }
+        return sb.toString();
+     }
+    
+    
+    /**
+     * Fills in basic auth user and password inside the location URL
+     * if configuration is done properly
+     * @param config Either an SPSSOConfigElement object , an
+     *               IDPSSOConfigElement object or PEPConfigElement.
+     * @param locationURL The original location URL which is to be
+     *                    inserted with user:password@ before the
+     *                    hostname part and after //
+     * @return The modified location URL with the basic auth user
+     *         and password if configured properly
+     */
+    public static String fillInBasicAuthInfo(
+            BaseConfigType config,
+            String locationURL) {
+
+        if (config == null) {
+            return locationURL;
+        }
+        Map map = SAML2MetaUtils.getAttributes(config);
+        List baoList = (List)map.get(
+                SAML2Constants.BASIC_AUTH_ON);
+        if (baoList == null || baoList.isEmpty()) {
+            return locationURL;
+        }
+        String on = (String)baoList.get(0);
+        if (on == null) {
+            return locationURL;
+        }
+        on = on.trim();
+        if (on.length() == 0 || !on.equalsIgnoreCase("true")) {
+            return locationURL;
+        }
+        List ul =  (List)map.get(
+                SAML2Constants.BASIC_AUTH_USER);
+  
+        if (ul == null || ul.isEmpty()) {
+            return locationURL;
+        }
+        String u = (String) ul.get(0);
+        if (u == null) {
+            return locationURL;
+        }
+        u = u.trim();
+        if (u.length() == 0) {
+            return locationURL;
+        }
+        List pl = (List)map.get(
+                SAML2Constants.BASIC_AUTH_PASSWD);
+        String p = null;
+        if (pl != null && !pl.isEmpty()) {
+            p = (String) pl.get(0);
+        }
+        if (p == null) {
+            p = "";
+        }
+
+        String dp = SAMLUtilsCommon.decodePassword(p);
+
+        int index = locationURL.indexOf("//");
+        return locationURL.substring(0, index+2) +
+                u + ":" + dp + "@" +
+                locationURL.substring(index+2);
     }
 }
