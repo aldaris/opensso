@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.6 2007-07-24 21:52:53 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.7 2007-08-02 16:48:35 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -644,6 +644,23 @@ public class FederationManagerCLI extends CLIUtility
         return (executeCommand(commandTimeout));             
     }        
     
+    /**
+     * Execute the command specified by the subcommand and teh argument list
+     * @param subcommand - the CLI subcommand to be executed
+     * @param argList - a String containing a list of arguments separated by 
+     * semicolons (';').
+     * @return the exit status of the CLI command
+     */
+    public int executeCommand(String subcommand, String argList)
+    throws Exception {
+        setSubcommand(subcommand);
+        String [] args = argList.split(";");
+        for (String arg: args) {
+            addArgument(arg);
+        }
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
     
     /**
      * Iterate through a list containing attribute values and add the 
@@ -960,7 +977,7 @@ public class FederationManagerCLI extends CLIUtility
     }
 
    /**
-     * Check to see if an identity exists using the "famadm list-identities" 
+     * Check to see if an identity exists using the "famadm show-members" 
      * command.
      * @param startRealm - the realm in which to find identities
      * @param filter - the filter that will be applied in the search
@@ -969,8 +986,8 @@ public class FederationManagerCLI extends CLIUtility
      * @param membersToFind - the member identity or identities to find in the 
      * output of "famadm show-members".  Multiple identities should be separated 
      * by a semicolon (';').
-     * @return a boolean value of true if the identity(ies) is(are) found and 
-     * false if one or more identities is not found.
+     * @return a boolean value of true if the member(s) is(are) found and 
+     * false if one or more members is not found.
      */
     public boolean findMembers(String startRealm, String idName, String idType,
             String memberType, String membersToFind)
@@ -1037,4 +1054,88 @@ public class FederationManagerCLI extends CLIUtility
         }
         return membersFound;
     }    
+
+    /**
+     * Check to see if an identity exists using the "famadm show-memberships" 
+     * command.
+     * @param startRealm - the realm in which to find identities.
+     * @param idName - the name of the identity for which memberships
+     * should be found.
+     * @param idType - the type of the identity (User) for which memberships
+     * should be found.
+     * @param membershipType - the types of memberships (Group, Role) which
+     * should be found.
+     * @param membershipsToFind - the memberships which are expected to be 
+     * found in the output of "famadm show-memberships".  Multiple 
+     * memberships should be separated by a semicolon (';').
+     * @return a boolean value of true if the membership(s) is(are) found and 
+     * false if one or more memberships is not found.
+     */
+    public boolean findMemberships(String startRealm, String idName,
+            String idType, String membershipType, String membershipsToFind)
+    throws Exception {
+        boolean membershipsFound = true;
+
+        if ((membershipsToFind != null) && (membershipsToFind.length() > 0)) {
+            if (showMemberships(startRealm, membershipType, idName, 
+                    idType) == 0) {
+                String [] memberships = membershipsToFind.split(";");
+                for (int i=0; i < memberships.length; i++) {
+                    String rootDN = "";
+                    if (memberships[i] != null) {
+                        if (startRealm.equals(TestCommon.realm)) {
+                            rootDN = TestCommon.basedn; 
+                        } else {
+                            String [] realms = startRealm.split("/");
+                            StringBuffer realmBuffer = new StringBuffer();
+                            for (int j = realms.length-1; j >= 0; j--) {
+                                if (realms[j].length() > 0) {
+                                    realmBuffer.append("o=" + realms[j] + ",");
+                                }
+                            }
+                            realmBuffer.append("ou=services,").
+                                    append(TestCommon.basedn);
+                            rootDN = realmBuffer.toString();
+                        }
+                        if (memberships[i].length() > 0) {
+                            StringBuffer idBuffer = 
+                                    new StringBuffer(memberships[i]);
+                            idBuffer.append(" (id=").append(memberships[i]).
+                                    append(",ou=").
+                                    append(membershipType.toLowerCase()).
+                                    append(",").append(rootDN).append(")");
+                            if (!findStringInOutput(idBuffer.toString())) {
+                                log(Level.FINEST, "findMemberships", 
+                                        "String \'" + idBuffer.toString() + 
+                                        "\' was not found.");
+                                membershipsFound = false;
+                            } else {
+                                log(Level.FINEST, "findMemberships", 
+                                        membershipType + " identity " + 
+                                        memberships[i] + " was found.");
+                            }
+                        } else {
+                            log(Level.SEVERE, "findMemberships", 
+                                    "The membership to find is empty.");
+                            membershipsFound = false;
+                        }
+                    } else {
+                        log(Level.SEVERE, "findMemberships", 
+                                "Identity in membersToFind is null.");
+                        membershipsFound = false;
+                    }
+                }
+            } else {
+                log(Level.SEVERE, "findMemberships", 
+                        "famadm show-memberships command failed");
+                membershipsFound = false;
+            }
+            logCommand("findMemberships");
+        } else {
+            log(Level.SEVERE, "findMemberships", 
+                    "membersToFind is null or empty");
+            membershipsFound = false;
+        }
+        return membershipsFound;
+    }
 }
