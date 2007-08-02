@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.5 2007-08-01 21:04:46 superpat7 Exp $
+   $Id: web.xml,v 1.6 2007-08-02 19:37:40 bina Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -160,6 +160,10 @@
         <servlet>
             <servlet-name>saml2reader</servlet-name>
             <servlet-class>com.sun.identity.saml2.idpdiscovery.CookieReaderServlet</servlet-class>
+        </servlet>
+        <servlet>
+            <servlet-name>saml2query</servlet-name>
+            <servlet-class>com.sun.identity.saml2.soapbinding.QueryHandlerServlet</servlet-class>
         </servlet>
         <servlet>
             <servlet-name>ArtifactResolver</servlet-name>
@@ -469,6 +473,10 @@
         <servlet-mapping>
             <servlet-name>LoggedOut</servlet-name>
             <url-pattern>/LoggedOut/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>saml2query</servlet-name>
+            <url-pattern>/saml2query/*</url-pattern>
         </servlet-mapping>
 </web-app>
 
