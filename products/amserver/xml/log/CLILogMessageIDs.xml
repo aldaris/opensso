@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.6 2007-04-18 23:45:23 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.7 2007-08-02 17:23:00 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -743,7 +743,7 @@
     </logmessage>
     <logmessage name="SUCCEED_MODIFY_SERVICE_REALM" id="2081"
         loglevel="LL_INFO"
-        description="Attribute of realm is removed.">
+        description="Attribute of realm is modified.">
         <datainfo>
             <item>name of realm</item>
             <item>name of service</item>
@@ -4032,5 +4032,84 @@
         </actions>
     </logmessage>
 
+    <logmessage name="ATTEMPT_REALM_REMOVE_SERVICE_ATTR_VALUES" id="3020"
+        loglevel="LL_INFO"
+        description="Attempt to remove service attribute values of realm.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove service attribute values of realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_REALM_REMOVE_SERVICE_ATTR_VALUES" id="3021"
+        loglevel="LL_INFO"
+        description="Service attribute values of realm are removed.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove service attribute values of realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_REALM_REMOVE_SERVICE_ATTR_VALUES" id="3022"
+        loglevel="LL_INFO"
+        description="Unable to remove service attribute values of realm.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of service</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove service attribute values of realm Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_REALM_ADD_SERVICE_ATTR_VALUES" id="3030"
+        loglevel="LL_INFO"
+        description="Attempt to add service attribute values of realm.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add service attribute values of realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_REALM_ADD_SERVICE_ATTR_VALUES" id="3031"
+        loglevel="LL_INFO"
+        description="Service attribute values of realm are added.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add service attribute values of realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_REALM_ADD_SERVICE_ATTR_VALUES" id="3032"
+        loglevel="LL_INFO"
+        description="Unable to add service attribute values of realm.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of service</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add service attribute values of realm Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
 </logmessages>
 

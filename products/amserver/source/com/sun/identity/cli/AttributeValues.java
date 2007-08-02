@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValues.java,v 1.4 2007-02-23 22:36:55 veiming Exp $
+ * $Id: AttributeValues.java,v 1.5 2007-08-02 17:22:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -199,6 +199,36 @@ public class AttributeValues {
             }
         }
         return values;
+    }
+    
+    /**
+     * Merage two attribute values map.
+     *
+     * @param map1 Map of String of Set of String.
+     * @param map2 Map of String of Set of String.
+     * @param bAdd <code>true</code> to add the values of <code>map2</code>
+     *        <code>map1</code>. <code>false</code> to remove values of
+     *        <code>map2</code> from <code>map1</code>.
+     * @return <code>true</code. is <code>map1</code> is altered.
+     */
+    public static boolean mergeAttributeValues(
+        Map map1, 
+        Map map2,
+        boolean bAdd
+    ) {
+        boolean modified = false;
+        for (Iterator i = map2.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            Set orig = (Set)map1.get(key);
+            if ((orig != null) && !orig.isEmpty()) {
+                modified = (bAdd) ? orig.addAll((Set)map2.get(key)) :
+                    orig.removeAll((Set)map2.get(key));
+            } else if (bAdd) {
+                map1.put(key, (Set)map2.get(key));
+                modified = true;
+            }
+        }
+        return modified;
     }
 
     public static CLIException createIncorrectFormatException(

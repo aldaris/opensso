@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.34 2007-07-30 20:33:49 veiming Exp $
+ * $Id: AccessManager.java,v 1.35 2007-08-02 17:22:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -391,6 +391,41 @@ public class AccessManager {
             "modify-service-of-realm-succeed=Service, {0} under {1} is modified.",
             "modify-service-of-realm-not-assigned=Service, {1} is not modified because it is not added to {0}."})
     private String set_service_attributes;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.realm.RealmRemoveServiceAttributes",
+        description="Remove service attribute values in a realm.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "servicename|s|s|Name of service."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|Attribute values to be removed e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains attribute values to be removed."},
+        resourceStrings={
+            "realm-remove-service-attributes-succeed=The following attributes were removed.",
+            "realm-remove-service-attributes-not-assigned=Service, {1} is not modified because it is not added to {0}."})
+    private String remove_service_attributes;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.realm.RealmAddServiceAttributes",
+        description="Add service attribute values in a realm.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "servicename|s|s|Name of service."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|Attribute values to be added e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains attribute values to be added."},
+        resourceStrings={
+            "realm-add-service-attributes-succeed=The following attributes were added.",
+            "realm-add-service-attributes-not-assigned=Service, {1} is not modified because it is not added to {0}."})
+    private String add_service_attributes;
+
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmAddAttributeValues",
