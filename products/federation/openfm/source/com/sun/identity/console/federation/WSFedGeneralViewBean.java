@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedGeneralViewBean.java,v 1.2 2007-08-03 22:29:03 jonnelson Exp $
+ * $Id: WSFedGeneralViewBean.java,v 1.3 2007-08-03 23:36:43 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,7 @@ public class WSFedGeneralViewBean extends WSFedGeneralBase {
         }
     }
     
-    protected void createPropertyModel(String name) {
+    protected void createPropertyModel() {
         psModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(
             "com/sun/identity/console/propertyWSFedGeneralView.xml"));
