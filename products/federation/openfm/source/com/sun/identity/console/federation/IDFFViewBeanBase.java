@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFViewBeanBase.java,v 1.1 2007-08-01 22:14:51 asyhuang Exp $
+ * $Id: IDFFViewBeanBase.java,v 1.2 2007-08-03 22:29:02 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,94 +46,22 @@ import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.base.model.AMModelBase;
+import com.sun.identity.console.federation.model.EntityModel;
 import com.sun.identity.console.federation.model.IDFFEntityModel;
 import com.sun.identity.console.federation.model.IDFFEntityModelImpl;
 
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class IDFFViewBeanBase
-    extends AMPrimaryMastHeadViewBean 
+    extends EntityPropertiesBase 
 {
-    //PROFILE_TAB is the name of the tabset defined in amConsoleConfig.xml
-    private static final String PROFILE_TAB = "entities";
-    private static final String PAGE_TITLE = "pgtitle";
-    protected static final String PROPERTY_ATTRIBUTES = "propertyAttributes";
-    protected static final String ENTITY_NANE = "entityName";
-    protected static final String ENTITY_LOCATION = "entityLocation";
-    protected static final String ENTITY_ROLE = "entityRole";
     protected static final String TF_NAME = "tfName";
     protected static final String TXT_TYPE = "txtType";
     protected static final String TF_DESCRIPTION = "tfDescription";
-    protected CCPageTitleModel ptModel = null;
-    protected AMPropertySheetModel psModel = null;   
-    private boolean initialized = false;
+
     
     public IDFFViewBeanBase(String name) {
         super(name);
-    }
-    
-    protected void registerChildren() {
-        registerChild(PROPERTY_ATTRIBUTES, AMPropertySheet.class);
-        psModel.registerChildren(this);
-        ptModel.registerChildren(this);
-        registerChild(TAB_COMMON, CCTabs.class);
-        super.registerChildren();
-    }
-    
-    protected View createChild(String name) {
-        View view = null;
-        
-        if (name.equals(PAGE_TITLE)) {
-            view = new CCPageTitle(this, ptModel, name);
-        } else if (name.equals(PROPERTY_ATTRIBUTES)) {
-            view = new AMPropertySheet(this, psModel, name);
-        } else if (psModel.isChildSupported(name)) {
-            view = psModel.createChild(this, name);
-        } else if (ptModel.isChildSupported(name)) {
-            view = ptModel.createChild(this, name);
-        } else {
-            view = super.createChild(name);
-        }
-        
-        return view;
-    }
-    
-    protected void initialize() {
-        if (!initialized) {
-            
-            // get the type of entity selected, and name
-            String name = (String)getPageSessionAttribute("entityName");
-            
-            if (name != null) {
-                super.initialize();
-                initialized = true;
-                createPageTitleModel();
-                createPropertyModel(name);
-                registerChildren();
-            }
-        }
-    }
-    
-    protected void setPageTitle(String title) {
-        ptModel.setPageTitleText(title);
-    }    
-    
-    protected void createPageTitleModel() {
-        ptModel = new CCPageTitleModel(
-            getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/threeBtnsPageTitle.xml"));
-        ptModel.setValue("button1", "button.save");
-        ptModel.setValue("button2", "button.reset");
-        ptModel.setValue("button3", "button.back");
-    }
-    
-    protected void createTabModel() {
-        if (tabModel == null) {
-            AMViewConfig amconfig = AMViewConfig.getInstance();
-            
-            tabModel = amconfig.getTabsModel(PROFILE_TAB, "/",
-                getRequestContext().getRequest());
-        }
     }
     
     protected AMModel getModelInternal() {
@@ -141,43 +69,9 @@ public abstract class IDFFViewBeanBase
         return new IDFFEntityModelImpl(req, getPageSessionAttributes());
     }
     
-    protected abstract void createPropertyModel(String name);
+    protected String getProfileName() {
+        return EntityModel.IDFF;
+    }        
     
-    /************************************************************************
-     *
-     * Event Handlers for the following events:
-     * tab selection, save button, reset button, back button.
-     *
-     ************************************************************************/
-    public void nodeClicked(RequestInvocationEvent event, int nodeID) {
-        try {
-            // get the entity tab that was selected and forward the
-            // request to that vb
-            AMViewBeanBase vb = getTabNodeAssociatedViewBean(
-                PROFILE_TAB, nodeID);
-            
-            passPgSessionMap(vb);
-            vb.forwardTo(getRequestContext());
-        } catch (AMConsoleException e) {
-            forwardTo();
-        }
-    }
-    
-    public void handleButton1Request(RequestInvocationEvent event)
-        throws ModelControlException 
-    {
-        forwardTo();
-    }
-    
-    public void handleButton2Request(RequestInvocationEvent event) {
-        forwardTo();
-    }
-    
-    public void handleButton3Request(RequestInvocationEvent event) {
-        
-        FederationViewBean vb = (FederationViewBean)
-        getViewBean(FederationViewBean.class);
-        passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());
-    }
+    protected abstract void createPropertyModel();
 }

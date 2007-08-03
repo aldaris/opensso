@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFIDPViewBean.java,v 1.1 2007-08-01 22:14:50 asyhuang Exp $
+ * $Id: IDFFIDPViewBean.java,v 1.2 2007-08-03 22:29:02 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,10 +44,7 @@ public class IDFFIDPViewBean
 {
     public static final String DEFAULT_DISPLAY_URL =
         "/console/federation/IDFFIDP.jsp";
-    private static final String STANDARD_META_TABLE = "standardMetaTable";
-    private static final String EXTENDED_META_TABLE = "extendedMetaTable";
-    private boolean initialized = false;
-    
+
     public IDFFIDPViewBean() {
         super("IDFFIDP");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
@@ -57,23 +54,15 @@ public class IDFFIDPViewBean
         throws ModelControlException 
     {
         super.beginDisplay(event);
-        String name = (String)getPageSessionAttribute(ENTITY_NANE);
-         IDFFEntityProviderModel model =
-            (IDFFEntityProviderModel)getModelInternal();
-        String pageTitle = name + " - " + 
-            model.getLocalizedString("identityProvider");
-        setPageTitle(pageTitle);
-        psModel.setValue(IDFFEntityProviderModel.ATTR_PROVIDER_TYPE,
-            (String)getPageSessionAttribute(ENTITY_LOCATION));
-        populateValue(name);
-    }
-    
-    private void populateValue(String name) {
         IDFFEntityProviderModel model =
             (IDFFEntityProviderModel)getModelInternal();       
-        Map values = model.getEntityIDPDescriptor(name);
-        values.putAll(model.getEntityConfig(name,
+
+        // get all the values for the IDP and push to the property sheet model.
+        Map values = model.getEntityIDPDescriptor(entityName);
+        values.putAll(model.getEntityConfig(entityName,
             IFSConstants.IDP, IFSConstants.PROVIDER_HOSTED));
+        values.put(IDFFEntityProviderModel.ATTR_PROVIDER_TYPE, location);
+        
         AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
         ps.setAttributeValues(values, model);         
     }
@@ -83,9 +72,9 @@ public class IDFFIDPViewBean
         return new IDFFEntityProviderModelImpl(req, getPageSessionAttributes());
     }
     
-    protected void createPropertyModel(String name) {
-        String location = (String)getPageSessionAttribute(ENTITY_LOCATION);
-        if (location.equals("Hosted")) {
+    protected void createPropertyModel() {
+        retrieveCommonProperties();
+        if (isHosted()) {
             psModel = new AMPropertySheetModel(
                 getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/propertyIDFFIDPHosted.xml"));
@@ -98,32 +87,33 @@ public class IDFFIDPViewBean
     }
     
     /**
-     * Handles save
+     * Handles save 
      *
      * @param event Request invocation event
      */
     public void handleButton1Request(RequestInvocationEvent event)
         throws ModelControlException 
     {     
-        String name = (String)getPageSessionAttribute(ENTITY_NANE);       
+        retrieveCommonProperties();
         IDFFEntityProviderModel model = (IDFFEntityProviderModel)getModel();
         
-        try{
+        try {
             AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
             
             // update standard metadata
-            Map origStdMeta =  model.getEntityIDPDescriptor(name);
+            Map origStdMeta =  model.getEntityIDPDescriptor(entityName);
             Map stdValues = ps.getAttributeValues(origStdMeta, false, model);
-            model.updateEntityDescriptor(name, IFSConstants.IDP, stdValues);
+            model.updateEntityDescriptor(entityName, IFSConstants.IDP, stdValues);
             
             //update extended metadata
-            Map origExtMeta = model.getEntityConfig(name,
+            Map origExtMeta = model.getEntityConfig(entityName,
                 IFSConstants.IDP, IFSConstants.PROVIDER_HOSTED);
             Map extValues = ps.getAttributeValues(origExtMeta, false, model);
-            model.updateEntityConfig(name, IFSConstants.IDP, extValues);
+            model.updateEntityConfig(entityName, IFSConstants.IDP, extValues);
             
             setInlineAlertMessage(CCAlert.TYPE_INFO,
-                "message.information","idff.entityDescriptor.provider.idp.updated");
+                "message.information",
+                "idff.entityDescriptor.provider.idp.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());

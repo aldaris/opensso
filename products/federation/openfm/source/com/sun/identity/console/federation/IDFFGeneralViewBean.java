@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFGeneralViewBean.java,v 1.1 2007-08-01 22:14:50 asyhuang Exp $
+ * $Id: IDFFGeneralViewBean.java,v 1.2 2007-08-03 22:29:02 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,11 +50,10 @@ public class IDFFGeneralViewBean
         throws ModelControlException 
     {
         super.beginDisplay(event);        
-        setPageTitle("idff.entityDescriptor.general.title");
-        String name = (String)getPageSessionAttribute(ENTITY_NANE);    
-        psModel.setValue(TF_NAME, name);
+  
+        psModel.setValue(TF_NAME, entityName);
         psModel.setValue(TXT_TYPE, "idff.entityDescriptor.type.provider.label");
-        populateValue(name);
+        populateValue(entityName);
     }
     
     private void populateValue(String name) {
@@ -69,7 +68,7 @@ public class IDFFGeneralViewBean
         }        
     }
     
-    protected void createPropertyModel(String name) {
+    protected void createPropertyModel() {
         psModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(
             "com/sun/identity/console/propertyIDFFGeneral.xml"));
@@ -84,16 +83,17 @@ public class IDFFGeneralViewBean
     public void handleButton1Request(RequestInvocationEvent event)
        throws ModelControlException 
     {        
-        String name = (String)getPageSessionAttribute(ENTITY_NANE);
+        retrieveCommonProperties();
         IDFFEntityModel model = (IDFFEntityModel)getModel();
         
         try {
-            Map orig = model.getCommonAttributeValues(name);
+            Map orig = model.getCommonAttributeValues(entityName);
             AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
             Map values = ps.getAttributeValues(orig, false, model);
-            model.modifyEntityProfile(name, values);
+            model.modifyEntityProfile(entityName, values);
             setInlineAlertMessage(CCAlert.TYPE_INFO,
-                "message.information","idff.entityDescriptor.provider.general.updated");
+                "message.information",
+                "idff.entityDescriptor.provider.general.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());          

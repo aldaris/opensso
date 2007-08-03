@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.5 2007-07-10 09:56:07 asyhuang Exp $
+ * $Id: FederationViewBean.java,v 1.6 2007-08-03 22:29:02 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.console.base.AMPipeDelimitAttrTokenizer;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
+import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
@@ -93,6 +94,7 @@ public  class FederationViewBean
     private static final String ENTITY_PROTOCOL_VALUE = "protocolValue";
     private static final String ENTITY_ROLE_VALUE = "roleValue";
     private static final String ENTITY_LOCATION_VALUE = "locationValue";
+    private static final String ENTITY_REALM_VALUE = "realmValue";
     
     // SAML Configuration table
     private static final String SAML_TABLE = "samlTable";
@@ -167,13 +169,11 @@ public  class FederationViewBean
         populateEntityTable ();
         populateSAMLTable ();
         
-// TBD Enable this to display 'success' messages in the page
-// after and on object was created (entity provider, COT, SAML)
-//        String msg = (String)removePageSessionAttribute(MESSAGE_TEXT);
-//        if (msg != null) {
-//            setInlineAlertMessage(
-//                CCAlert.TYPE_INFO, "message.information", msg);
-//        }
+        String msg = (String)removePageSessionAttribute(MESSAGE_TEXT);
+        if (msg != null) {
+            setInlineAlertMessage(
+                CCAlert.TYPE_INFO, "message.information", msg);
+        }
     }
     
     protected AMModel getModelInternal () {
@@ -304,28 +304,32 @@ public  class FederationViewBean
             return;
         }
         
-        List entityList = new ArrayList (entities.size ()*2);
+        List entityList = new ArrayList (entities.size() *2);
         boolean firstRow = true;
-        for (Iterator i = entities.keySet ().iterator (); i.hasNext ();) {
+        for (Iterator i = entities.keySet().iterator(); i.hasNext(); ) {
             if (!firstRow) {
-                tableModel.appendRow ();
+                tableModel.appendRow();
             } else {
                 firstRow = false;
             }
-            String name = (String)i.next ();
+
+            String name = (String)i.next();                     
+            Map data = (Map)entities.get(name);
+            String protocol = (String)data.get(EntityModel.PROTOCOL);
+            String realm = (String)data.get(EntityModel.REALM);
+            String location = (String)data.get(eModel.LOCATION);
+            String completeValue = name+"|"+protocol+"|"+realm+"|"+location;
             
-            tableModel.setValue (ENTITY_NAME_HREF, name);
-            tableModel.setValue (ENTITY_NAME_VALUE, name);
+            tableModel.setValue(ENTITY_NAME_HREF, completeValue);
+            tableModel.setValue(ENTITY_NAME_VALUE, name);
+            tableModel.setValue(ENTITY_REALM_VALUE, realm);
+            tableModel.setValue(ENTITY_PROTOCOL_VALUE, protocol);
+            tableModel.setValue(ENTITY_LOCATION_VALUE, location+".label");                                              
+            tableModel.setValue(ENTITY_ROLE_VALUE, 
+                (String)data.get(eModel.ROLE)); 
             
-            Map data = (Map)entities.get (name);
-            String protocol = (String)data.get (EntityModel.PROTOCOL);
-            tableModel.setValue (ENTITY_PROTOCOL_VALUE, protocol);
-            tableModel.setValue (
-                ENTITY_ROLE_VALUE, (String)data.get (eModel.ROLE));
-            tableModel.setValue (
-                ENTITY_LOCATION_VALUE, (String)data.get (eModel.LOCATION));
-            
-            entityList.add (name+"|"+protocol);
+            // name|protocol|realm needed while deleting/exporting entities
+            entityList.add(completeValue);
         }
         
         // set the instances in the page session so when a request comes in
@@ -335,52 +339,54 @@ public  class FederationViewBean
     
     private void populateCOTTable () {
         tablePopulated=true;
-        FSAuthDomainsModel model = (FSAuthDomainsModel)getModel ();
-        Set CircleOfTrustDescriptors = model.getCircleOfTrustDescriptors ();
+        FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();
+        Set circleOfTrustDescriptors = model.getCircleOfTrustDescriptors();
         
         CCActionTableModel tableModel = (CCActionTableModel)
         propertySheetModel.getModel (COT_TABLE);
         tableModel.clearAll ();
         
-        SerializedField szCache = (SerializedField)getChild (SZ_CACHE);
+        SerializedField szCache = (SerializedField)getChild(SZ_CACHE);
         
-        if ((CircleOfTrustDescriptors != null)
-        && (!CircleOfTrustDescriptors.isEmpty ())) {
-            List cache = new ArrayList (CircleOfTrustDescriptors.size ());
+        if ((circleOfTrustDescriptors != null)
+            && (!circleOfTrustDescriptors.isEmpty ())) 
+        {
+            List cache = new ArrayList(circleOfTrustDescriptors.size());
             boolean first = true;
-            for (Iterator iter = CircleOfTrustDescriptors.iterator ();
-            iter.hasNext (); ) {
+            for (Iterator iter = circleOfTrustDescriptors.iterator();
+                iter.hasNext (); ) 
+            {
                 if (first) {
                     first = false;
                 } else {
-                    tableModel.appendRow ();
+                    tableModel.appendRow();
                 }
                 CircleOfTrustDescriptor desc =
-                    (CircleOfTrustDescriptor)iter.next ();
-                String name = desc.getCircleOfTrustName ();
-                tableModel.setValue (COT_NAME_VALUE, name);
-                tableModel.setValue (COT_NAME_HREF, name);
+                    (CircleOfTrustDescriptor)iter.next();
+                String name = desc.getCircleOfTrustName();
+                tableModel.setValue(COT_NAME_VALUE, name);
+                tableModel.setValue(COT_NAME_HREF, name);
                 
                 // get entity/provider name
-                Set entitySet = desc.getTrustedProviders ();
-                if ((entitySet != null) && (!entitySet.isEmpty ())) {
-                    Iterator it = entitySet.iterator ();
-                    StringBuffer sb = new StringBuffer ();
-                    while (it.hasNext ()) {
-                        String entity = (String) it.next ();
-                        sb.append (entity).append ("<br>");
+                Set entitySet = desc.getTrustedProviders();
+                if ((entitySet != null) && (!entitySet.isEmpty())) {
+                    Iterator it = entitySet.iterator();
+                    StringBuffer sb = new StringBuffer();
+                    while (it.hasNext()) {
+                        String entity = (String)it.next();
+                        sb.append (entity).append("<br>");
                     }
-                    tableModel.setValue (COT_ENTITY_VALUE, sb.toString ());
+                    tableModel.setValue(COT_ENTITY_VALUE, sb.toString());
                 } else {
-                    tableModel.setValue (COT_ENTITY_VALUE, "");
+                    tableModel.setValue(COT_ENTITY_VALUE, "");
                 }
                 
                 // get realm name
-                String realm = desc.getCircleOfTrustRealm ();
-                tableModel.setValue (COT_REALM_VALUE, getPath (realm));
+                String realm = desc.getCircleOfTrustRealm();
+                tableModel.setValue(COT_REALM_VALUE, getPath(realm));
                 
                 // get cot status
-                String status = desc.getCircleOfTrustStatus ();
+                String status = desc.getCircleOfTrustStatus();
                 tableModel.setValue (COT_STATUS_VALUE, status);
                 cache.add (name + "|" + realm);
             }
@@ -392,7 +398,7 @@ public  class FederationViewBean
     
     private void createPropertyModel () {
         propertySheetModel = new AMPropertySheetModel (
-            getClass ().getClassLoader ().getResourceAsStream (
+            getClass().getClassLoader().getResourceAsStream (
             "com/sun/identity/console/propertyFederationView.xml"));
         propertySheetModel.clear ();
     }
@@ -419,27 +425,29 @@ public  class FederationViewBean
      * Responsible for creating the entity table.
      */
     private void createEntityTable () {
-        CCActionTableModel tableModel = new CCActionTableModel (
-            getClass ().getClassLoader ().getResourceAsStream (
+        CCActionTableModel tableModel = new CCActionTableModel(
+            getClass().getClassLoader().getResourceAsStream(
             "com/sun/identity/console/entityTable.xml"));
         
-        tableModel.setMaxRows (getModel ().getPageSize ());
-        tableModel.setTitleLabel ("label.items");
-        tableModel.setActionValue (
+        tableModel.setMaxRows(getModel().getPageSize());
+        tableModel.setTitleLabel("label.items");
+        tableModel.setActionValue(
             "addEntityButton", "entity.new.button");
-        tableModel.setActionValue (
+        tableModel.setActionValue(
             "deleteEntityButton", "entity.delete.button");
-        tableModel.setActionValue (
+        tableModel.setActionValue(
             "importEntityButton", "entity.import.button");
-        tableModel.setActionValue (
+        tableModel.setActionValue(
             "entityNameColumn", "entity.name.column.label");
-        tableModel.setActionValue (
+        tableModel.setActionValue(
             "roleColumn", "entity.role.column.label");
-        tableModel.setActionValue (
+        tableModel.setActionValue(
             "protocolColumn", "entity.protocol.column.label");
-        tableModel.setActionValue (
+        tableModel.setActionValue(
             "locationColumn", "entity.location.column.label");
-        propertySheetModel.setModel (ENTITY_TABLE, tableModel);
+        tableModel.setActionValue(
+            "realmColumn", "entity.realm.column.label");
+        propertySheetModel.setModel(ENTITY_TABLE, tableModel);
     }
     
     /*
@@ -699,17 +707,55 @@ public  class FederationViewBean
         forwardTo ();
     }
     
-    public void handleEntityNameHrefRequest (RequestInvocationEvent event) {
-//        EntityPropertiesViewBean vb = (EntityPropertiesViewBean)
-//            getViewBean(EntityPropertiesViewBean.class);
-//
-//        String entity = (String)getDisplayFieldValue(ENTITY_NAME_HREF);
-//        setPageSessionAttribute("entityName", entity);
-//        unlockPageTrail();
-//        passPgSessionMap(vb);
-//        vb.forwardTo(getRequestContext());
-        forwardTo ();
-    }
+    public void handleEntityNameHrefRequest(RequestInvocationEvent event) {  
+        // store the current selected tab in the page session
+        String id = (String)getPageSessionAttribute(getTrackingTabIDName());
+        setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID, id);        
+               
+        String tmp = (String)getDisplayFieldValue(ENTITY_NAME_HREF);
+        int index = tmp.lastIndexOf("|");
+        
+        String location = tmp.substring(index+1);  
+
+        tmp = tmp.substring(0, index);        
+        index = tmp.lastIndexOf("|");
+        
+        String realm = tmp.substring(index+1);        
+        tmp = tmp.substring(0, index);        
+        index = tmp.indexOf("|");
+        
+        String protocol = tmp.substring(index + 1);
+        String name = tmp.substring(0,index);                   
+        
+        EntityPropertiesBase vb = null;
+        if (protocol.equals(EntityModel.SAMLV2)) {
+            vb = (SAMLv2GeneralViewBean)
+                getViewBean(SAMLv2GeneralViewBean.class);
+        } else if (protocol.equals(EntityModel.IDFF)) {
+            vb = (IDFFGeneralViewBean)
+                getViewBean(IDFFGeneralViewBean.class);
+        } else if (protocol.equals(EntityModel.WSFED)) {
+            vb = (WSFedGeneralViewBean)
+                getViewBean(WSFedGeneralViewBean.class);
+        }
+
+        if (vb != null) { 
+            setPageSessionAttribute(getTrackingTabIDName(), "1"); 
+            setPageSessionAttribute(EntityPropertiesBase.ENTITY_NAME, name);        
+            setPageSessionAttribute(EntityPropertiesBase.ENTITY_REALM, realm);
+            setPageSessionAttribute(
+                EntityPropertiesBase.ENTITY_LOCATION, location);
+            
+            unlockPageTrail();
+            passPgSessionMap(vb);
+            vb.forwardTo(getRequestContext());  
+        } else {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, 
+                getModel().getLocalizedString("unknown.object.type.title"),
+                getModel().getLocalizedString("unknown.object.type"));
+            forwardTo();
+        }       
+    }    
     
     /*
      * This handler is called when the dropdown menu is invoked in the

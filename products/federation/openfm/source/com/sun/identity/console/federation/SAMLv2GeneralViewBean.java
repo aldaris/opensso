@@ -15,43 +15,54 @@
  * If applicable, add the following below the CDDL Header,
  * with the fields enclosed by brackets [] replaced by
  * your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]
+ * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFedGeneralBase.java,v 1.2 2007-08-03 22:29:03 jonnelson Exp $
+ * $Id: SAMLv2GeneralViewBean.java,v 1.1 2007-08-03 22:29:03 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.federation;
 
+import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.base.model.AMModel;
+import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.federation.model.EntityModel;
-import com.sun.identity.console.federation.model.WSFedPropertiesModel;
-import com.sun.identity.console.federation.model.WSFedPropertiesModelImpl;
+import com.sun.identity.console.federation.model.EntityModelImpl;
+import com.sun.web.ui.view.alert.CCAlert;
 import javax.servlet.http.HttpServletRequest;
 
-public abstract class WSFedGeneralBase extends EntityPropertiesBase {
+public class SAMLv2GeneralViewBean extends SAMLv2Base {
     
-    public WSFedGeneralBase(String name) {
-        super(name);
-    }    
+    public static final String DEFAULT_DISPLAY_URL =
+	"/console/federation/SAMLv2General.jsp";
 
-    protected AMModel getModelInternal() {
-        HttpServletRequest req = getRequestContext().getRequest();
-        return new WSFedPropertiesModelImpl(req, getPageSessionAttributes());
+    public SAMLv2GeneralViewBean() {
+	super("SAMLv2General");
+	setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
     }
-        
+
     public void beginDisplay(DisplayEvent event)
-        throws ModelControlException 
+	throws ModelControlException
     {
-        super.beginDisplay(event);
+	super.beginDisplay(event);
     }
-        
-    protected String getProfileName() {
-        return EntityModel.WSFED;
-    }   
+
+    protected void createPropertyModel() {
+            psModel = new AMPropertySheetModel(
+                getClass().getClassLoader().getResourceAsStream(
+                    "com/sun/identity/console/propertySAMLv2General.xml"));
+
+	psModel.clear();
+    }
+     
+    public void handleButton1Request(RequestInvocationEvent event)
+	throws ModelControlException
+    {            
+        forwardTo();
+    }
     
-    protected abstract void createPropertyModel();
+
 }

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.17 2007-07-27 22:00:26 qcheng Exp $
+   $Id: build-war.xml,v 1.18 2007-08-03 22:29:01 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -177,7 +177,7 @@
 	<!-- update amConsoleConfig with federation tabs -->
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
-            <arg value="&lt;tab id=\&quot;3\&quot;.+?/tab&gt;" />
+            <arg value="&lt;tab id=\&quot;2\&quot;.+?/tab&gt;" />
             <arg value="${openfm.dir}/xml/console/fmConsoleConfiguration.xml" />
             <arg value="${war.webinf.classes.dir}/amConsoleConfig.xml" />
             <arg value="&lt;tab id=\&quot;4\&quot;" />
@@ -186,11 +186,26 @@
         <!-- entities profile tabs -->
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
-            <arg value="&lt;profile id=\&quot;entities\&quot;&gt;.+?&lt;/profile&gt;" />
+            <arg value="&lt;profile id=\&quot;samlv2\&quot;&gt;.+?&lt;/profile&gt;" />
             <arg value="${openfm.dir}/xml/console/fmConsoleConfiguration.xml" />
             <arg value="${war.webinf.classes.dir}/amConsoleConfig.xml" />
             <arg value="&lt;/profiletabs&gt;" />
         </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;profile id=\&quot;wsfed\&quot;&gt;.+?&lt;/profile&gt;" />
+            <arg value="${openfm.dir}/xml/console/fmConsoleConfiguration.xml" />
+            <arg value="${war.webinf.classes.dir}/amConsoleConfig.xml" />
+            <arg value="&lt;/profiletabs&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;profile id=\&quot;idff\&quot;&gt;.+?&lt;/profile&gt;" />
+            <arg value="${openfm.dir}/xml/console/fmConsoleConfiguration.xml" />
+            <arg value="${war.webinf.classes.dir}/amConsoleConfig.xml" />
+            <arg value="&lt;/profiletabs&gt;" />
+        </java>
+        
         
 	<!-- update web.xml with fed servlet info -->
         <java classname="com.sun.identity.setup.InsertContent" fork="true">

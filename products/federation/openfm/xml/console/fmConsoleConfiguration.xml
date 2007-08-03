@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fmConsoleConfiguration.xml,v 1.3 2007-06-29 19:51:13 jonnelson Exp $
+   $Id: fmConsoleConfiguration.xml,v 1.4 2007-08-03 22:29:04 jonnelson Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -75,11 +75,13 @@
             accesslevel="globalconfig"/>
     </tab>
 </tabs>
-
-<profile id="entities">
-    <tab id="1" viewbean="com.sun.identity.console.federation.EntityPropertiesViewBean" url="../federation/EntityProperties" label="General" tooltip="user.general.tooltip" status="user.general.status" permissions="iPlanetAMProviderConfigService"/>
-    <tab id="2" viewbean="com.sun.identity.console.federation.EntitySPViewBean" url="../federation/EntitySP" label="Service Provider" tooltip="user.roles.tooltip" status="user.roles.status" permissions="iPlanetAMProviderConfigService"/>
-    <tab id="3" viewbean="com.sun.identity.console.federation.EntityIDPViewBean" url="../federation/EntityIDP" label="Identity Provider" tooltip="user.groups.tooltip" status="user.groups.status" permissions="iPlanetAMProviderConfigService"/>
+<
+<profile id="samlv2">
+    <tab id="1" viewbean="com.sun.identity.console.federation.SAMLv2PropertiesViewBean" url="../federation/SAMLv2Properties" label="General" tooltip="user.general.tooltip" status="user.general.status" permissions="iPlanetAMProviderConfigService"/>
+</profile>   
+<profile id="wsfed">
+	<tab id="2" viewbean="com.sun.identity.console.federation.WSFedPropertiesViewBean" url="../federation/WSFedProperties" label="General" tooltip="user.roles.tooltip" status="user.roles.status" permissions="iPlanetAMProviderConfigService"/>
+</profile> 
+<profile id="idff">
+	<tab id="3" viewbean="com.sun.identity.console.federationIDFFPropertiesViewBean" url="../federation/IDFFProperties" label="General" tooltip="user.roles.tooltip" status="user.roles.status" permissions="iPlanetAMProviderConfigService"/>
 </profile>
-
-</consoleconfig>

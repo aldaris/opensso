@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedGeneralBase.java,v 1.2 2007-08-03 22:29:03 jonnelson Exp $
+ * $Id: SAMLv2Base.java,v 1.1 2007-08-03 22:29:02 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,21 +28,16 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.federation.model.EntityModel;
-import com.sun.identity.console.federation.model.WSFedPropertiesModel;
-import com.sun.identity.console.federation.model.WSFedPropertiesModelImpl;
+import com.sun.identity.console.federation.model.EntityModelImpl;
+
 import javax.servlet.http.HttpServletRequest;
 
-public abstract class WSFedGeneralBase extends EntityPropertiesBase {
+public abstract class SAMLv2Base extends EntityPropertiesBase {
     
-    public WSFedGeneralBase(String name) {
+    public SAMLv2Base(String name) {
         super(name);
     }    
-
-    protected AMModel getModelInternal() {
-        HttpServletRequest req = getRequestContext().getRequest();
-        return new WSFedPropertiesModelImpl(req, getPageSessionAttributes());
-    }
-        
+    
     public void beginDisplay(DisplayEvent event)
         throws ModelControlException 
     {
@@ -50,8 +45,13 @@ public abstract class WSFedGeneralBase extends EntityPropertiesBase {
     }
         
     protected String getProfileName() {
-        return EntityModel.WSFED;
+        return EntityModel.SAMLV2;
     }   
+    
+    protected AMModel getModelInternal() {
+        HttpServletRequest req = getRequestContext().getRequest();
+        return new EntityModelImpl(req, getPageSessionAttributes());
+    }
     
     protected abstract void createPropertyModel();
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityViewBean.java,v 1.1 2007-06-29 19:50:19 jonnelson Exp $
+ * $Id: ImportEntityViewBean.java,v 1.2 2007-08-03 22:29:02 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,8 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
-import com.sun.identity.console.federation.ImportEntityModel;
+import com.sun.identity.console.federation.model.ImportEntityModel;
+import com.sun.identity.console.federation.model.ImportEntityModelImpl;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;

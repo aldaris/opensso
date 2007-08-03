@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSPViewBean.java,v 1.1 2007-08-01 22:14:50 asyhuang Exp $
+ * $Id: IDFFSPViewBean.java,v 1.2 2007-08-03 22:29:02 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,8 +45,7 @@ public class IDFFSPViewBean
 {
     public static final String DEFAULT_DISPLAY_URL =
         "/console/federation/IDFFSP.jsp";
-    
-    
+     
     public IDFFSPViewBean() {
         super("IDFFSP");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
@@ -56,17 +55,14 @@ public class IDFFSPViewBean
         throws ModelControlException 
     {
         super.beginDisplay(event);
-        String name = (String)getPageSessionAttribute(ENTITY_NANE);
-         IDFFEntityProviderModel model =
+
+        IDFFEntityProviderModel model =
             (IDFFEntityProviderModel)getModelInternal();
-        String pageTitle = name + " - " +  
-            model.getLocalizedString("serviceProvider");
-        setPageTitle(pageTitle);
+
         psModel.setValue(IDFFEntityProviderModel.ATTR_PROVIDER_TYPE,
             (String)getPageSessionAttribute(ENTITY_LOCATION));
-        populateValue(name);
+        populateValue(entityName);
     }
-    
     
     private void populateValue(String name) {
         IDFFEntityProviderModel model =
@@ -83,13 +79,14 @@ public class IDFFSPViewBean
         return new IDFFEntityProviderModelImpl(req, getPageSessionAttributes());
     }
     
-    protected void createPropertyModel(String name) {
-        String location = (String)getPageSessionAttribute(ENTITY_LOCATION);
-        if(location.equals("Hosted")){
+    protected void createPropertyModel() {
+        retrieveCommonProperties();
+        
+        if (isHosted()) {
             psModel = new AMPropertySheetModel(
                 getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/propertyIDFFSPHosted.xml"));
-        }else{                       
+        } else {                       
             psModel = new AMPropertySheetModel(
                 getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/propertyIDFFSPRemote.xml"));
@@ -105,25 +102,25 @@ public class IDFFSPViewBean
     public void handleButton1Request(RequestInvocationEvent event)
         throws ModelControlException 
     {    
-        String name = (String)getPageSessionAttribute(ENTITY_NANE);        
-        IDFFEntityProviderModel model = (IDFFEntityProviderModel)getModel();
-        
-        try{
-            AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
-            
-            //update standard metadata
-            Map origStdMeta =  model.getEntitySPDescriptor(name);
+        retrieveCommonProperties();
+        try {                      
+            IDFFEntityProviderModel model = (IDFFEntityProviderModel)getModel();
+            AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);            
+
+            // update standard metadata       
+            Map origStdMeta =  model.getEntitySPDescriptor(entityName);            
             Map stdValues = ps.getAttributeValues(origStdMeta, false, model);
-            model.updateEntityDescriptor(name, IFSConstants.SP, stdValues);
+            model.updateEntityDescriptor(entityName, IFSConstants.SP, stdValues);
             
             //update extended metadata
-            Map origExtMeta = model.getEntityConfig(name,
+            Map origExtMeta = model.getEntityConfig(entityName,
                 IFSConstants.SP, IFSConstants.PROVIDER_HOSTED);
             Map extValues = ps.getAttributeValues(origExtMeta, false, model);
-            model.updateEntityConfig(name, IFSConstants.SP, extValues);
+            model.updateEntityConfig(entityName, IFSConstants.SP, extValues);
             
             setInlineAlertMessage(CCAlert.TYPE_INFO,
-                "message.information","idff.entityDescriptor.provider.sp.updated");
+                "message.information",
+                "idff.entityDescriptor.provider.sp.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());

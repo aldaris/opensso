@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedSPViewBean.java,v 1.1 2007-07-26 22:11:30 babysunil Exp $
+ * $Id: WSFedSPViewBean.java,v 1.2 2007-08-03 22:29:03 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,27 +25,20 @@
 package com.sun.identity.console.federation;
 
 import com.iplanet.jato.model.ModelControlException;
-import com.sun.identity.console.base.model.AMConsoleException;
-import com.sun.web.ui.view.alert.CCAlert;
 import com.iplanet.jato.view.event.DisplayEvent;
-import com.sun.web.ui.model.CCAddRemoveModel;
-import com.sun.web.ui.view.addremove.CCAddRemove;
-import com.sun.identity.console.federation.model.WSFedPropertiesModel;
-import com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
+import com.sun.identity.console.federation.model.WSFedPropertiesModel;
+import com.sun.web.ui.view.alert.CCAlert;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collection;
 
 public class WSFedSPViewBean extends WSFedGeneralBase {
     public static final String DEFAULT_DISPLAY_URL =
             "/console/federation/WSFedSP.jsp";
-    public static String TAB_TOSAVE ="tabtosave";
-    private static final String PROPERTY_ATTRIBUTES = "propertyAttributes";
     
     public WSFedSPViewBean() {
         super("WSFedSP");
@@ -53,20 +46,14 @@ public class WSFedSPViewBean extends WSFedGeneralBase {
     }
     
     public void beginDisplay(DisplayEvent event)
-    throws ModelControlException {
-        
-        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-        String ent_name = (String)getPageSessionAttribute
-            ("WSFedPropertiesModel.TF_NAME");
+        throws ModelControlException 
+    {
         super.beginDisplay(event);
-        setPageTitle("wsfedsp.attribute.page.title");
-        try{
-            String realm = model.getRealm(ent_name);
-            
-            //TBD-hardcoded value will be removed later on when console allows
-            //import of wsfed entity
-            String fedid = "http://priya.red.iplanet.com";
-            Map attributes = model.getServiceProviderAttributes(realm,fedid);
+        
+        try {                    
+            WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
+            Map attributes = model.getServiceProviderAttributes(
+                realm, entityName);
             Iterator it = attributes.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry entry = (Map.Entry)it.next();
@@ -74,15 +61,15 @@ public class WSFedSPViewBean extends WSFedGeneralBase {
                 List vallist = (List)entry.getValue();
                 if (key.equals("attributeMap")) {
                     setDisplayFieldValue(
-                            WSFedPropertiesModel.TFSPATTR_MAP, vallist);
+                        WSFedPropertiesModel.TFSPATTR_MAP, vallist);
                 }
                 for (Iterator itlist = vallist.iterator(); itlist.hasNext(); ) {
                     Object element = itlist.next();
                     if (key.equals("spAuthncontextComparisonType")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFAUTHCONT_COMPARTYPE,
-                                element);
-                    }else if (key.equals("assertionTimeSkew")) {
+                            element);
+                    } else if (key.equals("assertionTimeSkew")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFASSERT_TIMESKEW, element);
                     } else if (key.equals("wantArtifactResponseSigned")) {
@@ -91,28 +78,28 @@ public class WSFedSPViewBean extends WSFedGeneralBase {
                     } else if (key.equals("spAccountMapper")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFSPACCT_MAPPER, element);
-                    }else if (key.equals("defaultRelayState")) {
+                    } else if (key.equals("defaultRelayState")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFRELAY_STATE, element);
                     } else if (key.equals("spAuthncontextClassrefMapping")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFAUTHCONTCLASS_REFMAPPING,
-                                element);
-                    }else if (key.equals("spAuthncontextMapper")) {
+                            element);
+                    } else if (key.equals("spAuthncontextMapper")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFSPAUTHCONT_MAPPER,
-                                element);
-                    }else if (key.equals("autofedEnabled")) {
+                            element);
+                    } else if (key.equals("autofedEnabled")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFSPAUTOFED_ENABLED,
-                                element);
-                    }else if (key.equals("spAttributeMapper")) {
+                            element);
+                    } else if (key.equals("spAttributeMapper")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFSPATTR_MAPPER, element);
-                    }else if (key.equals("autofedAttribute")) {
+                    } else if (key.equals("autofedAttribute")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFSPAUTOFED_ATTR, element);
-                    }else if (key.equals("assertionEffectiveTime")) {
+                    } else if (key.equals("assertionEffectiveTime")) {
                         setDisplayFieldValue(
                             WSFedPropertiesModel.TFASSERTEFFECT_TIME, element);
                     }
@@ -124,35 +111,31 @@ public class WSFedSPViewBean extends WSFedGeneralBase {
         }
     }
     
-    protected void createPropertyModel(String name) {
+    protected void createPropertyModel() {
         psModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/propertyWSFedSPView.xml"));
         psModel.clear();
     }
     
-   public void handleButton1Request(RequestInvocationEvent event)
-    throws ModelControlException {
-         try {
-             WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-            //String ent_name = (String)getPageSessionAttribute
-            //   ("WSFedPropertiesModel.TF_NAME");
-            //TBD-hardcoded value will be removed later on when console allows
-            //to import wsfed entity
-            String fedId = "http://bbsunil.red.iplanet.com";
-            String realm = model.getRealm(fedId);
+    public void handleButton1Request(RequestInvocationEvent event)
+        throws ModelControlException 
+    {
+        retrieveCommonProperties();
+        try {    
+            WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
             AMPropertySheet ps = 
                 (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES); 
             Map values =
-                    ps.getAttributeValues(model.getGenDataMap(), false,model);
-            TAB_TOSAVE = "wsfed.sp.property.updated";
-            model.setAttributeValues(realm, fedId, values);
+                ps.getAttributeValues(model.getGenDataMap(), false, model);
+            model.setAttributeValues(realm, entityName, values);
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                    TAB_TOSAVE);
-         } catch (AMConsoleException e) {
+                "wsfed.sp.property.updated");
+        } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                    e.getMessage());
-         }
-         forwardTo();
+                e.getMessage());
+        }
+        forwardTo();
     }
+
 }

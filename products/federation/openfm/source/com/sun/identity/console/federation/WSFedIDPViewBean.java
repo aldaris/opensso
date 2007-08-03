@@ -17,35 +17,29 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedIDPViewBean.java,v 1.1 2007-07-26 22:11:14 babysunil Exp $
+ * $Id: WSFedIDPViewBean.java,v 1.2 2007-08-03 22:29:03 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.console.federation;
 
 import com.iplanet.jato.model.ModelControlException;
-import com.sun.identity.console.base.model.AMConsoleException;
-import com.sun.web.ui.view.alert.CCAlert;
 import com.iplanet.jato.view.event.DisplayEvent;
-import com.sun.identity.console.base.AMPropertySheet;
-import com.sun.identity.console.federation.model.WSFedPropertiesModel;
-import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
-import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
-import com.sun.identity.wsfederation.meta.WSFederationMetaException;
-import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.sun.identity.console.base.AMPropertySheet;
+import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
-import java.util.Map;
+import com.sun.identity.console.federation.model.WSFedPropertiesModel;
+import com.sun.web.ui.view.alert.CCAlert;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collection;
+import java.util.Map;
 
 public class WSFedIDPViewBean extends WSFedGeneralBase {
     public static final String DEFAULT_DISPLAY_URL =
         "/console/federation/WSFedIDP.jsp";
-    public static String TAB_TOSAVE ="tabtosave";
-    private static final String PROPERTY_ATTRIBUTES = "propertyAttributes";
         
     public WSFedIDPViewBean() {
         super("WSFedIDP");
@@ -53,19 +47,15 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
     }
     
     public void beginDisplay(DisplayEvent event)
-    throws ModelControlException {
-        
-        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-        String ent_name = (String)getPageSessionAttribute
-            ("WSFedPropertiesModel.TF_NAME");
-        try {
-            String realm = model.getRealm(ent_name);
-            
-            //TBD-hardcoded value will be removed later on when console allows
-            //to import wsfed entity
-            String fedid = "http://amy.red.iplanet.com";
-            Map attributes = model.getIdentityProviderAttributes(realm,fedid);
+        throws ModelControlException 
+    {    
+        super.beginDisplay(event);
+        try {           
+            WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();         
+            Map attributes = model.getIdentityProviderAttributes(
+                realm, entityName);
             Iterator it = attributes.entrySet().iterator();
+
             while (it.hasNext()) {
                 Map.Entry entry = (Map.Entry)it.next();
                 Object key = entry.getKey();
@@ -102,18 +92,15 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
                          setDisplayFieldValue
                             (WSFedPropertiesModel.TFIDPATTR_MAPPER, element);
                     }
-                    }
                 }
- 
+            }
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage() );
         }
-        super.beginDisplay(event);
-        setPageTitle("wsfedidp.attribute.page.title");
     }
     
-    protected void createPropertyModel(String name) {
+    protected void createPropertyModel() {
         psModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/propertyWSFedIDPView.xml"));
@@ -121,27 +108,22 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
     }
     
     public void handleButton1Request(RequestInvocationEvent event)
-    throws ModelControlException {
-       try {
-           WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-            //String ent_name = (String)getPageSessionAttribute
-            //   ("WSFedPropertiesModel.TF_NAME");
-            //TBD-hardcoded value will be removed later on when console allows
-            //to import wsfed entity
-            String fedId = "http://bbsunil.red.iplanet.com";
-            String realm = model.getRealm(fedId);
+        throws ModelControlException 
+    {
+        retrieveCommonProperties();
+        try {
+            WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
             AMPropertySheet ps = 
                 (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES); 
             Map values =
-                    ps.getAttributeValues(model.getGenDataMap(), false,model);
-            TAB_TOSAVE = "wsfed.idp.property.updated";
-            model.setAttributeValues(realm, fedId, values);
+                ps.getAttributeValues(model.getGenDataMap(), false, model);
+            model.setAttributeValues(realm, entityName, values);
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                    TAB_TOSAVE);
+                "wsfed.idp.property.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                    e.getMessage());
+                e.getMessage());
         }
         forwardTo();
-    }
+    }     
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewConfig.java,v 1.2 2007-06-29 19:47:19 jonnelson Exp $
+ * $Id: AMViewConfig.java,v 1.3 2007-08-03 22:29:49 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -213,7 +213,7 @@ public class AMViewConfig {
      * @param parentID for the parent tab
      * @param List of subtabs to add to the parent
      */
-    public void setTabViews(int parentID, List items) {
+public void setTabViews(int parentID, List items) {
         AMTabEntry parent = null;
         try {
             parent = getTabEntry(parentID);
@@ -226,20 +226,24 @@ public class AMViewConfig {
         int id = 1;
         for (Iterator i = items.iterator(); i.hasNext(); ) {
             Map tab = (Map)i.next();
-            String label = (String)tab.get("label");
-            String tooltip = (String)tab.get("tooltip");
-            String status = (String)tab.get("status");
-            String url = (String)tab.get("url");
-            String permissions = (String)tab.get("permissions");
-            String viewbean = (String)tab.get("viewbean");
-
-            AMTabEntry child = new AMTabEntry(
-                id, label, tooltip, status, url,
-                AMAdminUtils.getDelimitedValues(permissions, ","), viewbean);
-            parent.addChild(child);
-
+            parent.addChild(createTabEntry(id, tab));
             id++;
         }
+    }
+    
+    private AMTabEntry createTabEntry(int id, Map data) {
+        String label = (String)data.get("label");
+        String tooltip = (String)data.get("tooltip");
+        String status = (String)data.get("status");
+        String url = (String)data.get("url");
+        String permissions = (String)data.get("permissions");
+        String viewbean = (String)data.get("viewbean");
+
+        AMTabEntry child = new AMTabEntry(
+            id, label, tooltip, status, url,
+            AMAdminUtils.getDelimitedValues(permissions, ","), viewbean);
+        
+        return child;
     }
 
     public String getDefaultViewBeanURL(
@@ -675,5 +679,25 @@ public class AMViewConfig {
             tmp = (List)profileTabs.get(type);
         }
         return tmp;
+    }
+    
+    public void addTabEntries(String type, List entries, boolean newSet) {
+        List tabList = null;
+
+        // pull the existing tabs if we are just updating the current list.
+        if (!newSet) {
+            tabList = getTabList(type);
+        } else {                    
+            tabList = new ArrayList(entries.size()*2);
+        }
+        
+        int id = tabList.size() + 1;
+        for (Iterator i = entries.iterator(); i.hasNext(); ) { 
+            Map entry = (Map)i.next();
+            tabList.add(createTabEntry(id++ ,entry));
+        }
+        
+        // store the new tabs for this type
+        profileTabs.put(type, tabList);
     }
 }
