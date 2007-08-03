@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityModelImpl.java,v 1.1 2007-08-01 22:13:15 asyhuang Exp $
+ * $Id: IDFFEntityModelImpl.java,v 1.2 2007-08-03 23:12:25 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -250,7 +250,7 @@ public class IDFFEntityModelImpl
         try{
             if(contactPerson==null){
                 ObjectFactory obj = getObjectFactoryInstance();
-                contactPerson = (ContactType) obj.createContactType();
+                contactPerson = (ContactType)obj.createContactType();
             }
             String givenName = (String)AMAdminUtils.getValue(
                 (Set)map.get(ATTR_CP_GIVENNAME));
@@ -267,7 +267,7 @@ public class IDFFEntityModelImpl
                 (surName.trim().length() > 0) ||
                 (company.trim().length() > 0) ||
                 (principalId.trim().length() > 0)
-                ) {
+            ) {
                 contactPerson.setGivenName(givenName);
                 contactPerson.setSurName(surName);
                 contactPerson.setContactType(cpType);
@@ -275,9 +275,9 @@ public class IDFFEntityModelImpl
                 contactPerson.setLibertyPrincipalIdentifier(principalId);
             }
             
-            Set emails =(Set)map.get(ATTR_CP_EMAILS);
+            Set emails = (Set)map.get(ATTR_CP_EMAILS);
             contactPerson.getEmailAddress().clear();
-            if(!emails.isEmpty()){
+            if (!emails.isEmpty()){
                 for (Iterator iter = emails.iterator(); iter.hasNext(); ) {
                     contactPerson.getEmailAddress().add(iter.next());
                 }

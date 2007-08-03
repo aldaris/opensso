@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityModel.java,v 1.1 2007-06-29 20:23:23 jonnelson Exp $
+ * $Id: ImportEntityModel.java,v 1.2 2007-08-03 23:12:25 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.console.federation;
+package com.sun.identity.console.federation.model;
 
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;

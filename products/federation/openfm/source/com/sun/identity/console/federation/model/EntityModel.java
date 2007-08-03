@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModel.java,v 1.1 2007-06-29 20:23:22 jonnelson Exp $
+ * $Id: EntityModel.java,v 1.2 2007-08-03 23:12:25 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;
 import java.util.Set;
 import java.util.Map;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 /* - NEED NOT LOG - */
@@ -38,8 +39,13 @@ public interface EntityModel
     public static final String LOCATION = "location";
     public static final String ROLE = "role";
     public static final String PROTOCOL = "protocol";
+    public static final String REALM = "realm";
+    public static final String WSFED = "WSFed";
+    public static final String SAMLV2 = "SAMLv2";
+    public static final String IDFF = "IDFF";
         
     public Map getEntities() throws AMConsoleException;
     public void deleteEntities(Map entities) throws AMConsoleException;
     public void createEntity(Map data) throws AMConsoleException;
+    public List getTabMenu(String protocol, String name, String realm);
 }
