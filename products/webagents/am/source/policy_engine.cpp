@@ -281,10 +281,7 @@ PolicyEngine::policy_notification_handler(Service *serviceEntry,
 		    // Only if there is a state attribute
 		    if(sessionElem.getAttributeValue(SESSION_STATE_ATTRIBUTE,
 						     state)) {
-			if(strcasecmp(state.c_str(),
-				      SESSION_STATE_VALUE_VALID) != 0) {
-			    serviceEntry->sso_notify(sessionID);
-			}
+                        serviceEntry->sso_notify(sessionID);
 		    }
 		}
 		
