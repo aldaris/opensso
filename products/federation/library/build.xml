@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.11 2007-08-01 21:04:50 superpat7 Exp $
+   $Id: build.xml,v 1.12 2007-08-07 20:16:54 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -110,6 +110,7 @@
 
     <target name="nightly">
         <antcall target="unittest" />
+        <antcall target="clientsdk" />
         <filter token="DATE" value="${nightly.date}" />
         <copy file="${library.docs.dir}/nightly.html" tofile="${fedlibrary.dist.dir}/index.html" filtering="true" />
     </target>
@@ -224,6 +225,14 @@
         <concat destfile="${libtracker}" append="true">library.jaxrpc.done=true&#10;</concat>
     </target>
 
+    <target name="clientsdk" depends="build">
+        <ant antfile="${fedlibrary.clientsdkbase.dir}/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="clientsdk-clean">
+        <ant antfile="${fedlibrary.clientsdkbase.dir}/build.xml"
+            inheritRefs="true" target="clean"/>
+    </target>
 
     <target name="doc" depends="preparebuild">
         <javadoc maxmemory="512m" destdir="${library.built.apidocs.dir}" 
@@ -284,7 +293,7 @@
         <mkdir dir="${library.built.publicapidocs.dir}"/>
     </target>
 
-    <target name="clean" depends="unittest-clean">
+    <target name="clean" depends="unittest-clean,clientsdk-clean">
         <delete dir="${jaxb.liberty.authnsvc}"/>
         <delete dir="${jaxb.liberty.common}"/>
         <delete dir="${jaxb.liberty.disco.plugins}"/>
@@ -342,10 +351,12 @@
         <echo message=" "/>
         <echo message=" nightly    : generates nightly build binaries"/>
         <echo message=" build      : compiles the sources"/>
+        <echo message=" clientsdk  : creates client SDK jar file"/>
         <echo message=" unittest   : generates unit test zip file"/>
         <echo message=" publicdoc  : creates javadocs for publicly supported API"/>
         <echo message=" doc        : creates javadocs"/>
         <echo message=" clean      : deletes the generated files"/>
+        <echo message=" clientsdk-clean : deletes the generated client SDK jar file"/>
         <echo message=" unittest-clean : deletes the generated unit test resources"/>
         <echo message=" extlib-clean   : deletes shared library under extlib"/>
         <echo message=" usage          : displays this usage message"/>

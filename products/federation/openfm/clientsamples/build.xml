@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2007-07-27 22:00:26 qcheng Exp $
+   $Id: build.xml,v 1.6 2007-08-07 20:16:55 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -57,7 +57,6 @@
               file="${fm.dist.dir}/famclientsdk.jar"/>
         <copy todir="${clientsamples.packages.dir}/WEB-INF/lib">
             <fileset dir="${extlib.dir}" includes="jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xmlsec.jar,xsdlib.jar" />
-            <fileset dir="${openfm.extlib.dir}" includes="amclientsdk.jar" />
         </copy>
         <copy todir="${clientsamples.packages.dir}">
             <fileset dir="${openfm.clientsamples.dir}"

@@ -18,68 +18,57 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2007-08-07 20:16:56 veiming Exp $
+   $Id: build.xml,v 1.1 2007-08-07 20:16:54 veiming Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<project name="openfm-clientsdk" default="package-clientsdk">
+<project name="fedlibrary-clientsdk" default="package-clientsdk">
                 
-    <description>OpenSSO Federation Client SDK</description>
+    <description>OpenSSO Federation Library Client SDK</description>
 
     <!-- enforce invocation via top level build only -->
     <fail message="*** clientsdk may be built from top level only ***">
         <condition>
             <or>
-                <not><isset property="openfm.clientsdkbase.dir"/></not>
+                <not><isset property="fedlibrary.clientsdkbase.dir"/></not>
             </or>
         </condition>
     </fail>
 
     <!-- properties for clientsdk -->
-    <property name="clientsdk.name" value="openfm_client_sdk"/>
-    <property name="clientsdk.version" value="${openfm.version}"/>
+    <property name="clientsdk.name" value="fedlibrary_client_sdk"/>
+    <property name="clientsdk.version" value="${library.version}"/>
     <tstamp>
         <format property="pstamp" pattern="yyyy-MMMM-d hh:mm"/>
     </tstamp>
     <property name="clientsdk.stamp" 
         value="${clientsdk.version}_${DSTAMP}${TSTAMP}"/>
 
-    <!-- clientsdk class path -->
-    <path id="build.class.path">
-        <path refid="build.class.path"/>
-    </path>
-
     <target name="package-clientsdk" depends="preparebuild">
-        <echo message="Building clientSDK"/>
+        <echo message="Building federation library client sdk"/>
 
         <tstamp>
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
 
-        <jar destfile="${fm.dist.dir}/famclientsdk.jar">
+        <jar destfile="${fedlibrary.dist.dir}/openfedclientsdk.jar">
             <manifest>
-                <attribute name="Version" value="${openfm.version}"/>
+                <attribute name="Version" value="${clientsdk.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
 
             <fileset dir="${library.classes.dir}">
                 <includesfile name="${fedlibrary.clientsdkbase.dir}/ClientSDKClasses"/>
             </fileset>
-            <fileset dir="${openfm.classes.dir}">
-                <includesfile name="${openfm.clientsdkbase.dir}/ClientSDKClasses"/>
-            </fileset>
             <fileset dir="${library.res.i18n.dir}">
                 <includesfile name="${fedlibrary.clientsdkbase.dir}/ClientSDKProperties"/>
-            </fileset>
-            <fileset dir="${openfm.res.i18n.dir}">
-                <includesfile name="${openfm.clientsdkbase.dir}/ClientSDKProperties"/>
             </fileset>
             <manifest>
                <attribute name="Created-On" value="${pstamp}" />
                 <section name="com.sun.identity">
                     <attribute name="Specification-Title"
-                        value="Federated Access Manager Client SDK"/>
+                        value="OpenSSO Federation Library Client SDK"/>
                     <attribute name="Specification-Version"
                         value="${clientsdk.version}"/>
                     <attribute name="Specification-Vendor"
@@ -94,26 +83,16 @@
             </manifest>
         </jar>
 
-        <jar destfile="${fm.dist.dir}/famclientsdkcopy.jar"
-             filesetmanifest="merge">
-                <zipfileset src="${library.extlib.dir}/opensso-sharedlib.jar" includes="**/*.class"/>
-                <zipfileset src="${fm.dist.dir}/famclientsdk.jar"/>
-                <zipfileset src="${openfm.extlib.dir}/amclientsdk.jar" includes="**/*.*"/>
-        </jar>
-
-        <copy file="${fm.dist.dir}/famclientsdkcopy.jar" 
-            tofile="${fm.dist.dir}/famclientsdk.jar"/>
-        <delete file="${fm.dist.dir}/famclientsdkcopy.jar"/>
-        <checksum file="${fm.dist.dir}/famclientsdk.jar"
+        <checksum file="${fedlibrary.dist.dir}/openfedclientsdk.jar"
             algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
-        <mkdir dir="${fm.dist.dir}"/>
+        <mkdir dir="${fedlibrary.dist.dir}"/>
     </target>
 
     <target name="clean">
-        <delete dir="${fm.dist.dir}"/>
+        <delete dir="${fedlibrary.dist.dir}"/>
     </target>
    
 </project>
