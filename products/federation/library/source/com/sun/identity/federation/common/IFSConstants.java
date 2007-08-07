@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.7 2007-07-26 21:56:08 qcheng Exp $
+ * $Id: IFSConstants.java,v 1.8 2007-08-07 17:12:06 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2185,7 +2185,7 @@ public interface IFSConstants {
     /**
      * Responds with 
      */ 
-    public String RESPONDS_WITH = "responsdWith";
+    public String RESPONDS_WITH = "respondsWith";
 
     /**
      * Name Identifier Implementation Class 
