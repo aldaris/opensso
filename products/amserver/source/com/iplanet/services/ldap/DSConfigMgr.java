@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.6 2007-04-09 23:27:12 goodearth Exp $
+ * $Id: DSConfigMgr.java,v 1.7 2007-08-07 22:31:52 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.security.ServerInstanceAction;
 import com.sun.identity.shared.debug.Debug;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessController;
@@ -151,6 +152,15 @@ public class DSConfigMgr {
                             + SystemProperties.CONFIG_FILE_NAME;
                     is = new FileInputStream(configFile);
                 }
+            } catch (FileNotFoundException fnfex) {                
+                
+                if (debugger.warningEnabled()) {
+                    debugger.warning("DSConfigMgr.getDSConfigMgr: " 
+                            + "serverconfig.xml file not found. May be " 
+                            + "running in client mode  ", fnfex);
+                }
+                throw new LDAPServiceException(
+                    LDAPServiceException.FILE_NOT_FOUND, fnfex.getMessage());
             } catch (IOException ex) {                
                 
                 if (debugger.warningEnabled()) {
