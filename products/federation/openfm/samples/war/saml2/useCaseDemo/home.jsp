@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: home.jsp,v 1.2 2007-03-23 22:24:24 bina Exp $
+   $Id: home.jsp,v 1.3 2007-08-07 17:17:39 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,18 +28,40 @@
 <%@ include file="init.jspf" %>
 
 <html>
-<head><title>Book Flight With Great Air</title>
+<head>
+<title>Book Flight With Great Air</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
+</head>
 <body>
+
+<%@ include file="header.jsp" %>
+
+<p>&nbsp;</p>
+&lt; <a href="Readme.html">SAML2 Sample Page</a>
+<p>&nbsp;</p>                                                                                
     <h3><center><%= myTitle%> 
             appreciates your business<%= userLoggedIn ? ", " + userLabel : ""%></center></h3>
     <hr/>
     <table cellpadding="2" cellspacing="2" border="0" width="100%">
-
-        <tr>
-
-            <!-- Login/Logout prompt -->
-            <td valign="top" align="left">
-                <% if(!userLoggedIn) { %>   <!-- user not logged in -->
+    <tr>
+    <td valign="top" align="left">
+    <% if(iAmIdp) { %>  
+    Followings are the tasks that can be performed on the Identity Provider:
+    <% } else { %>  
+    Followings are the tasks that can be performed on the Service Provider:
+    <% } %>
+    </td>
+    </tr>
+    <tr>
+    <td valign="top" align="left">  </td>
+    </tr>
+    <tr>
+    <!-- Login/Logout prompt -->
+    <td valign="top" align="left">
+      <ul>
+        <li>
+        <% if(!userLoggedIn) { %>   <!-- user not logged in -->
                     <% if(iAmIdp) { %>      <!-- not logged in, i am idp -->
                             <a href="<%= localLoginUrl %>?goto=<%= thisUrl %>">
                                 Login</a>
@@ -56,107 +78,86 @@
                                 Logout</a>
                     <% } %>
                 <%  } %>
-            </td>
+            </li>
 
             <!-- Federate/Defederate prompt only if user is logged in -->
-            <td valign="top" align="right">
                 <% if(userLoggedIn) { %>             <!-- user logged in -->
                     <% if(federatedWithPartner) { %> <!-- federated -->
                         <% if(iAmIdp) { %>           <!-- federated, i am idp -->
+            <li>
                                 <a href="<%= appBase %>IDPMniInit?metaAlias=<%= myMetaAlias %>&spEntityID=<%= partnerEntityID %>&requestType=Terminate&RelayState=<%= thisUrl %>">
                                     Terminate Federation with <%= partnerTitle %></a>
+            </li>
                         <% } else { %>               <!-- federated, i am sp -->
+            <li>
                                 <a href="<%= appBase %>SPMniInit?metaAlias=<%= myMetaAlias %>&idpEntityID=<%= partnerEntityID %>&requestType=Terminate&RelayState=<%= thisUrl %>">
                                     Terminate Federation with <%= partnerTitle %></a>
+            </li>
                         <% } %>
                 <%  } else if(iAmIdp) { %>           <!-- not federated, i am idp -->
+            <li>
                                 <a href="<%= appBase %>idpssoinit?metaAlias=<%= myMetaAlias %>&spEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=<%= SAML2Constants.HTTP_ARTIFACT %>&RelayState=<%= thisUrl %>">
                                     Federate with <%= partnerTitle %></a>
+            </li>
                         <% } else { %>               <!-- not federated, i am sp -->
+            <li>
                                 <a href="<%= appBase %>spssoinit?metaAlias=<%= myMetaAlias %>&idpEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=HTTP-Artifact&RelayState=<%= thisUrl %>">
                                     Federate with <%= partnerTitle %></a>
+            </li>
                         <% } %>
                 <%  } %>
-
-            </td>
-
-        </tr>
-
-        <tr>
-            <td colspan="2">&nbsp;</td>
-        </tr>
-
 
         <!-- links to hosted pages and pages hosted by partner -->
         <% if (userLoggedIn) { %>   <!-- user logged in -->
             <% if (iAmIdp) { %>     <!-- logged in, i am idp -->
-                <tr>
-                    <td align="center" colspan="2">
+            <li>
                         <a href="reserveFlight.jsp">
                             Reserve Flight with us, <%= myTitle %>
                         </a>
-                    </td>
-                </tr>
-                <tr align="right">
-                    <td align="center" colspan="2">
+            </li>
+            <li>
                         <a href="<%= appBase %>idpssoinit?metaAlias=<%= myMetaAlias %>&spEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=<%= SAML2Constants.HTTP_ARTIFACT %>&RelayState=<%= reserveCarWithPartnerUrl %>">
                             Reserve Car with our assosciate, <%= partnerTitle %>
                         </a>
-                    </td>
-                </tr>
+            </li>
             <% } else {%>           <!-- logged in, i am sp -->
-                <tr>
-                    <td align="center" colspan="2">
+            <li>
                         <a href="<%= reserveCarUrl %>">
                             Reserve Car with us, <%= myTitle %>
                         </a>
-                    </td>
-                </tr>
+            </li>
             <% } %>
         <% } else { %>              <!-- user not logged in -->
             <% if (iAmIdp) { %>     <!-- not logged in, i am idp -->
-                <tr>
-                    <td align="center" colspan="2">
+            <li>
                         <a href="<%= localLoginUrl %>?goto=<%= reserveFlightUrl %>">
                             Reserve Flight with us, <%= myTitle %>
                         </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td align="center" colspan="2">
+            </li>
+            <li>
                         <a href="<%= appBase %>idpssoinit?metaAlias=<%= myMetaAlias %>&spEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=<%= SAML2Constants.HTTP_ARTIFACT %>&RelayState=<%= reserveCarWithPartnerUrl %>">
                             Reserve Car with our assosciate, <%= partnerTitle %>
                         </a>
-                    </td>
-                </tr>
+            </li>
             <% } else {%>           <!-- not logged in, i am sp -->
-                <tr>
-                    <td align="center" colspan="2">
+            <li>
                         <a href="reserveCar.jsp">
                             <a href="<%= appBase %>spssoinit?metaAlias=<%= myMetaAlias %>&idpEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=HTTP-Artifact&RelayState=<%= reserveCarUrl %>">
                                 Reserve Car with us, <%= myTitle %>
                             </a>
-                    </td>
-                </tr>
+            </li>
             <% } %>
         <% } %>
 
-    </table>
-
-    <hr/>
-
     <!-- show link to partner sample home -->
-    <table>
-        <% if (partnerSampleHomeUrl != null) { %> 
-            <tr>
-                <td align="left">
-                </td>
-                <td width="100%" align="right">
+    <% if (partnerSampleHomeUrl != null) { %> 
+            <li>
                     <a href="<%= partnerSampleHomeUrl %>">
                             <%= partnerTitle %> Sample Home</a> 
-                </td>
-            </tr>
-        <% } %>
+            </li>
+    <% } %>
+        </td>
+      </tr>
     </table>
 
 </body>

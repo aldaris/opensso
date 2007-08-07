@@ -20,12 +20,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: init.jspf,v 1.1 2007-01-30 21:23:34 bina Exp $
+   $Id: init.jspf,v 1.2 2007-08-07 17:17:39 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <%-- imports --%>
+<%@ page import="com.sun.identity.common.SystemConfigurationUtil" %>
 <%@ page import="com.sun.identity.saml2.common.AccountUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
@@ -50,6 +51,11 @@
 %>
 
 <% 
+    String deployuri = SystemConfigurationUtil.getProperty(
+        "com.iplanet.am.services.deploymentDescriptor");
+    if ((deployuri == null) || (deployuri.length() == 0)) {
+        deployuri = "../../..";
+    }
 
     String utf8 = "UTF-8";
 

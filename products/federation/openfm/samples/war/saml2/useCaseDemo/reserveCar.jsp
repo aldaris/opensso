@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: reserveCar.jsp,v 1.1 2007-01-30 21:23:35 bina Exp $
+   $Id: reserveCar.jsp,v 1.2 2007-08-07 17:17:39 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,8 +33,16 @@
 %>
 
 <html>
-<head><title>Reserve Car</title>
+<head>
+<title>Reserve Car</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
+</head>
+
 <body>
+
+<%@ include file="header.jsp" %>
+
 <h3 align="center"> <%= myTitle %> appreciates your business, <%= userLabel %> </h3>
 
 <hr/>
