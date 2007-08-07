@@ -17,16 +17,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMResourceMapper.java,v 1.1 2007-04-19 19:18:47 dillidorai Exp $
+ * $Id: FMResourceMapper.java,v 1.2 2007-08-07 23:33:52 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.xacml2.plugins;
+
+import com.sun.identity.xacml2.common.XACML2Constants;
+import com.sun.identity.xacml2.context.Attribute;
 import com.sun.identity.xacml2.context.Resource;
+
+import com.sun.identity.shared.xml.XMLUtils;
+
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.spi.ResourceMapper;
+
+import java.net.URI;
+
+import java.util.List;
 import java.util.Map;
+
+import org.w3c.dom.Element;
 
 /**
  * This class implements ResourceMapper to map between XACML context 
@@ -84,7 +96,36 @@ public class FMResourceMapper implements ResourceMapper {
      */
     public String[] mapToNativeResource(Resource xacmlContextResource) 
             throws XACML2Exception {
-        return null;
+        String[] resourceService = new String[2];
+        String resourceName = null;
+        String serviceName = null;
+        List attributes = xacmlContextResource.getAttributes();
+        if (attributes != null) {
+            for (int count = 0; count < attributes.size(); count++) {
+                Attribute attr = (Attribute) attributes.get(count);
+                if (attr != null) {
+                    URI tmpURI = attr.getAttributeID();
+                    if (tmpURI.toString().equals(XACML2Constants.
+                        RESOURCE_ID)) {
+                        tmpURI = attr.getDataType();
+                        if (tmpURI.toString().equals(XACML2Constants.XS_STRING)) {
+                            Element element = (Element)attr.getAttributeValues().get(0);
+                            resourceName = XMLUtils.getElementValue(element);
+                        }
+                    } else if (tmpURI.toString().equals(XACML2Constants.TARGET_SERVICE)) {
+                        tmpURI = attr.getDataType();
+                        if (tmpURI.toString().equals(XACML2Constants.XS_STRING)) {
+                            Element element = (Element)attr.getAttributeValues().get(0);
+                            serviceName = XMLUtils.getElementValue(element);
+                        }
+
+                    }
+                }
+            }
+        }
+        resourceService[0] = resourceName;
+        resourceService[1] = serviceName;
+        return resourceService;
     }
 
     /**

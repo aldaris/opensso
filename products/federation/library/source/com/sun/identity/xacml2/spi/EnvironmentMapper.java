@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EnvironmentMapper.java,v 1.1 2007-03-24 01:26:04 dillidorai Exp $
+ * $Id: EnvironmentMapper.java,v 1.2 2007-08-07 23:33:51 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,8 @@ package com.sun.identity.xacml2.spi;
 import com.sun.identity.xacml2.context.Environment;
 import com.sun.identity.xacml2.context.Subject;
 import com.sun.identity.xacml2.common.XACML2Exception;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,12 +51,12 @@ public interface EnvironmentMapper {
     /**
      * Returns native environment
      * @param xacmlContextEnvironment XACML  context Environment
-     * @param xacmlContextSubject XACML context Subject
+     * @param xacmlContextSubjects XACML context Subject(s)
      * @return native environment map
      * @exception XACML2Exception if can not map to native environment
      */
     public Map mapToNativeEnvironment(Environment xacmlContextEnvironment, 
-            Subject xacmlContextSubject) 
+            List xacmlContextSubjects) 
             throws XACML2Exception;
 
 }

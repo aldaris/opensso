@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestImpl.java,v 1.4 2007-05-18 20:44:25 veiming Exp $
+ * $Id: RequestImpl.java,v 1.5 2007-08-07 23:33:51 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,7 @@ public class RequestImpl implements Request {
     static {
         supportedSubjectCategory.add(XACML2Constants.ACCESS_SUBJECT);
         supportedSubjectCategory.add(XACML2Constants.
-            SUBJECT_CATEGORY_INTERMEDIARY);
+            INTERMEDIARY_SUBJECT);
     };
    /** 
     * Default constructor
@@ -424,8 +424,7 @@ public class RequestImpl implements Request {
             nsDeclaration = XACML2Constants.CONTEXT_PREFIX;
         }
         sb.append("\n<").append(nsDeclaration).append(XACML2Constants.REQUEST).
-            append(namespaceBuffer);
-        sb.append(">");
+            append(namespaceBuffer).append(">\n");
         int length = 0;
         if (subjects != null && !subjects.isEmpty()) {
             length = subjects.size();

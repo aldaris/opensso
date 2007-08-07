@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeImpl.java,v 1.2 2007-04-19 19:14:28 dillidorai Exp $
+ * $Id: AttributeImpl.java,v 1.3 2007-08-07 23:33:51 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -395,14 +395,14 @@ public class AttributeImpl implements Attribute {
         sb.append("<").append(appendNS).append(XACML2Constants.ATTRIBUTE)
                 .append(NS);
         sb.append(XACML2Constants.SPACE);
-        if (type != null) {
-            sb.append(XACML2Constants.DATATYPE).append("=").append("\"").
-                    append(type.toString());
-            sb.append("\"").append(XACML2Constants.SPACE);
-        }
         if (id != null) {
             sb.append(XACML2Constants.ATTRIBUTE_ID).append("=").append("\"").
                     append(id.toString());
+            sb.append("\"").append(XACML2Constants.SPACE);
+        }
+        if (type != null) {
+            sb.append(XACML2Constants.DATATYPE).append("=").append("\"").
+                    append(type.toString());
             sb.append("\"").append(XACML2Constants.SPACE);
         }
         if (issuer != null) {

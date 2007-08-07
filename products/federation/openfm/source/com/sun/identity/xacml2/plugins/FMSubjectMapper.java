@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSubjectMapper.java,v 1.2 2007-05-17 22:42:23 pawand Exp $
+ * $Id: FMSubjectMapper.java,v 1.3 2007-08-07 23:33:52 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.shared.xml.XMLUtils;
 
 import java.net.URI;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -87,7 +88,7 @@ public class FMSubjectMapper implements SubjectMapper {
      *         Subject did not match
      * @exception XACML2Exception if can not map to native subject
      */
-    public Object mapToNativeSubject(Subject[] xacmlContextSubjects) 
+    public Object mapToNativeSubject(List xacmlContextSubjects) 
             throws XACML2Exception {
 
         // Method curently supports only 
@@ -100,8 +101,10 @@ public class FMSubjectMapper implements SubjectMapper {
             return null;
         }
         String sid = null;
-        for (int subCount=0;subCount<xacmlContextSubjects.length;subCount++) {
-            Subject subject = xacmlContextSubjects[subCount];
+        //for (int subCount=0;subCount<xacmlContextSubjects.length;subCount++) {
+        for (Iterator iter = xacmlContextSubjects.iterator(); iter.hasNext(); ) {
+            //Subject subject = xacmlContextSubjects[subCount];
+            Subject subject = (Subject)iter.next();
             if (subject == null) {
                 continue;
             }

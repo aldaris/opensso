@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACML2Constants.java,v 1.6 2007-05-17 22:41:34 pawand Exp $
+ * $Id: XACML2Constants.java,v 1.7 2007-08-07 23:33:50 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,6 +117,13 @@ public class  XACML2Constants {
      */
     public static String ACCESS_SUBJECT =
         "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject";
+
+    /**
+     * The URI for the intermediary subject category value
+     */
+    public static String INTERMEDIARY_SUBJECT =
+        "urn:oasis:names:tc:xacml:1.0:subject-category:intermediary-subject";
+
    /**
     * The URI for the subject-id value
     */
@@ -124,16 +131,35 @@ public class  XACML2Constants {
       "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
 
    /**
+    * The URI for the resource-id value
+    */
+   public static String RESOURCE_ID =
+      "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
+
+   /**
+    * The URI for the target-service value
+    */
+   public static String TARGET_SERVICE =
+      "urn:sun:names:xacml:2.0:resource:target-service";
+
+   /**
+    * The URI for the action-id value
+    */
+   public static String ACTION_ID =
+      "urn:oasis:names:tc:xacml:1.0:action:action-id";
+
+   /**
     * The URI for the opensso-session-id value
     */
    public static String OPENSSO_SESSION_ID =
       "urn:sun:names:xacml:2.0:data-type:opensso-session-id";
 
-    /**
-     * The URI for the intermediary subject category value
-     */
-    public static String SUBJECT_CATEGORY_INTERMEDIARY =
-        "urn:oasis:names:tc:xacml:1.0:subject-category:intermediary-subject";
+   /**
+    * The URI for XMLSchema#string datatype
+    */
+   public static String XS_STRING =
+      "http://www.w3.org/2001/XMLSchema#string";
+
 
     /**
      * XML name space URI
@@ -298,7 +324,7 @@ public class  XACML2Constants {
      * constant for xsi:type
      */
     public final static String XSI_TYPE_XACML_AUTHZ_DECISION_STATEMENT
-            = " xsi:type=\"xacml-saml:XAMLAuthzDecisionStatement\"";
+            = " xsi:type=\"xacml-saml:XACMLAuthzDecisionStatement\"";
 
     /**
      * constant for xsi name space delcaration
@@ -385,5 +411,29 @@ public class  XACML2Constants {
      * constant for NotApplicable
      */
     public static final String NOT_APPLICABLE = "NotApplicable";
+
+    /**
+     * constant for status code: ok
+     */
+    public static final String STATUS_CODE_OK 
+            = "urn:oasis:names:tc:xacml:1.0:status:ok";
+
+    /**
+     * constant for status code: missing attribute
+     */
+    public static final String STATUS_CODE_MISSING_ATTRIBUTE 
+            = "urn:oasis:names:tc:xacml:1.0:status:missing-attribute";
+    
+    /**
+     * constant for status code: syntax error
+     */
+    public static final String STATUS_CODE_SYNTAX_ERROR 
+            = "urn:oasis:names:tc:xacml:1.0:status:syntax-error";
+
+    /**
+     * constant for status code: processing error
+     */
+    public static final String STATUS_CODE_PROCESSING_ERROR 
+            = "urn:oasis:names:tc:xacml:1.0:status:processing-error";
 
 }

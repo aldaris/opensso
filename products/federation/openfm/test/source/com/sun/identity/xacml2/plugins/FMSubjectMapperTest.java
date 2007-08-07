@@ -87,8 +87,10 @@ public class FMSubjectMapperTest extends UnitTestBase {
         attributeList.add(attribute);
         subject1.setAttributes(attributeList);
         Subject subjects[] = {subject1};
+        List subjectsList = new ArrayList();
+        subjectsList.add(subject1);
         
-        SSOToken retSSOToken = (SSOToken) subjectMapper.mapToNativeSubject(subjects);
+        SSOToken retSSOToken = (SSOToken) subjectMapper.mapToNativeSubject(subjectsList);
         String retSid = retSSOToken.getTokenID().toString();
         log(Level.INFO,"testMapToNativeSubject():\n"," return sid = "+retSid);
         

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACML2RequestProcessor.java,v 1.1 2007-04-19 19:14:26 dillidorai Exp $
+ * $Id: XACML2RequestProcessor.java,v 1.2 2007-08-07 23:33:50 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,6 @@ import com.sun.identity.xacml2.context.Resource;
 import com.sun.identity.xacml2.context.Subject;
 import com.sun.identity.xacml2.context.Action;
 import com.sun.identity.xacml2.context.Environment;
-//import com.sun.identity.xacml2.plugins.XACMLAuthzDecisionQueryHandler; //Temporary
 import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionQuery;
 import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionStatement;
 
@@ -131,7 +130,7 @@ public class XACML2RequestProcessor {
             = new XACMLAuthzDecisionQueryHandler();
         */
 
-        //Temporay, until saml2 QueryClient is available
+        //TODO:, use saml2 QueryClient after it is available
         RequestHandler xacmlQueryHandler = null;
         try {
             xacmlQueryHandler = (RequestHandler)(Class.forName(
@@ -144,8 +143,8 @@ public class XACML2RequestProcessor {
         } catch (IllegalAccessException ie) {
             ie.printStackTrace();
         }
-        //--Temporay, until saml2 QueryClient is available
 
+        //TODO:, use saml2 QueryClient after it is available
         com.sun.identity.saml2.protocol.Response samlpResponse 
                 = xacmlQueryHandler.handleQuery(pdpEntityId, pepEntityId, 
                 samlpQuery, null);

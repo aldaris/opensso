@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: xacml2-test.xml,v 1.1 2007-04-19 19:18:48 dillidorai Exp $
+   $Id: xacml2-test.xml,v 1.2 2007-08-07 23:33:52 dillidorai Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,39 +28,46 @@
 
     <property name="opensso.home" location="../../../.."/>
 
-    <property name="fedlib.test.src.dir" 
-        location="${opensso.home}/products/federation/library/test/source"/>
-
-    <property name="fedlib.test.classes.dir" 
-        location="${opensso.home}/products/federation/library/built/test/classes"/>
-    <property name="fedlib.resources.dir" 
-        location="${opensso.home}/products/federation/library/resources"/>
-    <property name="fedlib.classes.dir" 
-        location="${opensso.home}/products/federation/library/built/classes"/>
-    <property name="shared.classes.dir" 
-        location="${opensso.home}/products/shared/built/classes"/>
-
     <!--fed lib dir includes testng jars --> 
-    <property name="fedlib.lib.dir" 
-        location="${opensso.home}/products/federation/library/extlib"/>
     <property name="shared.lib.dir" 
         location="${opensso.home}/products/shared/extlib"/>
+    <property name="fedlib.lib.dir" 
+        location="${opensso.home}/products/federation/library/extlib"/>
+    <property name="amserver.lib.dir" 
+        location="${opensso.home}/products/amserver/extlib"/>
 
-    <property name="openfm.test.src.dir" 
-        location="${opensso.home}/products/federation/openfm/test/source"/>
+    <property name="shared.classes.dir" 
+        location="${opensso.home}/products/shared/built/classes"/>
+    <property name="amserver.classes.dir" 
+        location="${opensso.home}/products/amserver/built/classes"/>
+
+    <property name="amserver.resources.dir" 
+        location="${opensso.home}/products/amserver/resources"/>
+    <property name="amserver.resources.locale.dir" 
+        location="${amserver.resources.dir}/locale"/>
+
+    <property name="fedlib.resources.dir" 
+        location="${opensso.home}/products/federation/library/resources"/>
+    <property name="fedlib.resources.locale.dir" 
+        location="${fedlib.resources.dir}/locale"/>
+
+    <property name="fedlib.src.dir" 
+        location="${opensso.home}/products/federation/library/source"/>
+    <property name="fedlib.classes.dir" 
+        location="${opensso.home}/products/federation/library/built/classes"/>
 
     <property name="openfm.src.dir" 
         location="${opensso.home}/products/federation/openfm/source"/>
     <property name="openfm.classes.dir" 
         location="${opensso.home}/products/federation/openfm/built/classes"/>
+
+    <property name="openfm.test.src.dir" 
+        location="${opensso.home}/products/federation/openfm/test/source"/>
     <property name="openfm.test.classes.dir" 
         location="${opensso.home}/products/federation/openfm/built/test/classes"/>
-    <property name="fedlib.resources.dir" 
-        location="${opensso.home}/products/federation/openfm/resources"/>
-    <property name="fedlib.classes.dir" 
-        location="${opensso.home}/products/federation/openfm/built/classes"/>
-    <property name="shared.classes.dir" 
-        location="${opensso.home}/products/shared/built/classes"/>
+
+    <property name="openfmclient.test.config.dir" 
+        location="${opensso.home}/products/federation/openfm/test/clientconfig"/>
 
     <property name="output.dir" location="output"/>
     <property name="logs.dir" location="logs"/>
@@ -72,25 +79,41 @@
     <property name="log.level" value="ALL"/>
 
     <path id="test.class.path">
+        <pathelement location="${openfmclient.test.config.dir}"/>
+        <pathelement location="${shared.classes.dir}"/>
+        <pathelement location="${amserver.classes.dir}"/>
+        <pathelement location="${amserver.resources.locale.dir}"/>
         <pathelement location="${fedlib.classes.dir}"/>
+        <pathelement location="${fedlib.resources.locale.dir}"/>
         <pathelement location="${openfm.classes.dir}"/>
         <pathelement location="${fedlib.test.classes.dir}"/>
         <pathelement location="${openfm.test.classes.dir}"/>
-        <pathelement location="${shared.classes.dir}"/>
-        <fileset dir="${fedlib.lib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
         <fileset dir="${shared.lib.dir}">
             <include name="**/*.jar"/>
         </fileset>
-        <pathelement location="${fedlib.resources.dir}"/>
+        <fileset dir="${fedlib.lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
     </path>
 
+    <target name="compile-context">
+        <echo message="fedlib.src.dir=${fedlib.src.dir}" />
+        <echo message="fedlib.classes.dir=${fedlib.classes.dir}" />
+        <mkdir dir="${fedlib.classes.dir}"/>
+        <javac 
+                debug = "true"
+                debuglevel = "lines,vars,source"
+                fork="yes"
+                classpathref="test.class.path"
+                srcdir="${fedlib.src.dir}"
+                destdir="${fedlib.classes.dir}">
+            <include name="com/sun/identity/xacml2/**" />
+        </javac>
+    </target>
 
-    <target name="compile-plugins">
-        <echo message="openfm.classes.dir=${openfm.classes.dir}" />
+    <target name="compile-plugins" depends="compile-context">
         <echo message="openfm.src.dir=${openfm.src.dir}" />
-        <delete dir="${openfm.classes.dir}"/>
+        <echo message="openfm.classes.dir=${openfm.classes.dir}" />
         <mkdir dir="${openfm.classes.dir}"/>
         <javac 
                 debug = "true"
@@ -103,10 +126,9 @@
         </javac>
     </target>
 
-    <target name="compile-test">
-        <echo message="${openfm.classes.dir}" />
+    <target name="compile-test" depends="compile-plugins">
+        <echo message="${openfm.test.src.dir}" />
         <echo message="${openfm.test.classes.dir}" />
-        <delete dir="${openfm.test.classes.dir}"/>
         <mkdir dir="${openfm.test.classes.dir}"/>
         <javac 
                 debug = "true"
@@ -119,7 +141,7 @@
         </javac>
     </target>
 
-    <target name="run-test">
+    <target name="run-test" depends="compile-test">
         <delete dir="${output.dir}" />
         <mkdir dir="${output.dir}" />
         <delete dir="${logs.dir}" /> 
@@ -152,8 +174,11 @@
 
     <target name="clean">
         <delete dir="${output.dir}" />
+        <delete dir="${logs.dir}" />
         <delete dir="${report.dir}" />
-        <delete dir="${report.dir}" />
+        <delete dir="${fedlib.classes.dir}/com/sun/identity/xacml2" />
+        <delete dir="${openfm.classes.dir}/com/sun/identity/xacml2" />
+        <delete dir="${openfm.test.classes.dir}/com/sun/identity/xacml2" />
     </target>
 
     <target name="usage">

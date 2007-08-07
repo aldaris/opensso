@@ -17,16 +17,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMActionMapper.java,v 1.1 2007-04-19 19:18:46 dillidorai Exp $
+ * $Id: FMActionMapper.java,v 1.2 2007-08-07 23:33:52 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.xacml2.plugins;
+
+import com.sun.identity.shared.xml.XMLUtils;
+
+import com.sun.identity.xacml2.common.XACML2Constants;
+
 import com.sun.identity.xacml2.context.Action;
+import com.sun.identity.xacml2.context.Attribute;
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.spi.ActionMapper;
+
+import java.net.URI;
+
+import java.util.List;
 import java.util.Map;
+
+import org.w3c.dom.Element;
 
 /**
  * This class implements ActionMapper to map between XACML context 
@@ -66,7 +78,23 @@ public class FMActionMapper implements ActionMapper {
      */
     public String mapToNativeAction(Action xacmlContextAction, 
             String serviceName) throws XACML2Exception {
-        return null;
+        String nativeAction = null;
+        List attributes = xacmlContextAction.getAttributes();
+        if (attributes != null && !attributes.isEmpty()) {
+                Attribute attr = (Attribute) attributes.get(0);
+                if (attr != null) {
+                    URI tmpURI = attr.getAttributeID();
+                    if (tmpURI.toString().equals(XACML2Constants.
+                        ACTION_ID)) {
+                        tmpURI = attr.getDataType();
+                        if (tmpURI.toString().equals(XACML2Constants.XS_STRING)) {
+                            Element element = (Element)attr.getAttributeValues().get(0);
+                            nativeAction = XMLUtils.getElementValue(element);
+                        }
+                    }
+                }
+        }
+        return nativeAction;
     }
 
     /**

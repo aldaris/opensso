@@ -17,19 +17,32 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.1 2007-04-19 19:18:47 dillidorai Exp $
+ * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.2 2007-08-07 23:33:52 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 
 package com.sun.identity.xacml2.plugins;
+
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+
+//import com.sun.identity.policy.PolicyEvaluator;
+import com.sun.identity.policy.PolicyException;
+import com.sun.identity.policy.ResourceResult;
+
+import com.sun.identity.policy.client.PolicyEvaluator;
+import com.sun.identity.policy.client.PolicyEvaluatorFactory;
+
 import com.sun.identity.saml2.common.SAML2Exception;
 //import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.RequestAbstract;
 import com.sun.identity.saml2.soapbinding.RequestHandler;
+import com.sun.identity.xacml2.common.XACML2Constants;
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.context.Request;
+import com.sun.identity.xacml2.context.Resource;
 import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionQuery;
 import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionStatement;
 
@@ -48,6 +61,7 @@ import com.sun.identity.shared.xml.XMLUtils;
 
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.common.XACML2SDKUtils;
+import com.sun.identity.xacml2.context.Attribute;
 import com.sun.identity.xacml2.context.ContextFactory;
 import com.sun.identity.xacml2.context.Decision;
 import com.sun.identity.xacml2.context.Request;
@@ -58,9 +72,20 @@ import com.sun.identity.xacml2.context.StatusCode;
 import com.sun.identity.xacml2.context.StatusMessage;
 import com.sun.identity.xacml2.context.StatusDetail;
 
+import com.sun.identity.xacml2.spi.ActionMapper;
+import com.sun.identity.xacml2.spi.EnvironmentMapper;
+import com.sun.identity.xacml2.spi.ResourceMapper;
+import com.sun.identity.xacml2.spi.ResultMapper;
+import com.sun.identity.xacml2.spi.SubjectMapper;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import java.util.logging.Level;
 
@@ -76,6 +101,12 @@ import org.w3c.dom.Element;
  * @supported.all.api
  */
 public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
+
+    private SubjectMapper subjectMapper;
+    private ResourceMapper resourceMapper;
+    private ActionMapper actionMapper;
+    private EnvironmentMapper environmentMapper;
+    private ResultMapper resultMapper;
     
     
     /**
@@ -84,6 +115,11 @@ public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
      * 
      */
     public XACMLAuthzDecisionQueryHandler() {
+        subjectMapper = new FMSubjectMapper();
+        resourceMapper = new FMResourceMapper();
+        actionMapper = new FMActionMapper();
+        environmentMapper = new FMEnvironmentMapper();
+        resultMapper = new FMResultMapper();
     }
     
     /**
@@ -111,38 +147,145 @@ public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
                         true, true)
                     + ":soapMessage=\n" + soapMessage);
         }
-        com.sun.identity.saml2.protocol.Response samlpResponse 
-                = createSampleSaml2Response(samlpRequest);
+
+        Request xacmlRequest 
+                = ((XACMLAuthzDecisionQuery)samlpRequest).getRequest();
+        boolean returnContext 
+                = ((XACMLAuthzDecisionQuery)samlpRequest).getReturnContext();
+
+
+        //get native sso token
+        SSOToken ssoToken =
+                (SSOToken)subjectMapper.mapToNativeSubject(
+                xacmlRequest.getSubjects()); 
+
+        //get native service name, resource name 
+        List resources = xacmlRequest.getResources();
+        Resource resource = null;
+        if (!resources.isEmpty()) {
+            //We deal with only one resource for now
+            resource = (Resource)resources.get(0);
+        }
+
+        String resourceName = null;
+        String serviceName = null;
+
+        if (resource != null) {
+            String[] resourceService = resourceMapper.mapToNativeResource(
+                    resource);
+            if (resourceService != null) {
+                if (resourceService.length > 0) {
+                    resourceName = resourceService[0];
+                }
+                if (resourceService.length > 1) {
+                    serviceName = resourceService[1];
+                }
+            }
+        }
+
+        //get native action name
+        String actionName = null;
+        if (serviceName != null) {
+            actionName = actionMapper.mapToNativeAction(
+                    xacmlRequest.getAction(), serviceName);
+        }
+
+        //get environment map
+        Map environment = environmentMapper.mapToNativeEnvironment(
+                xacmlRequest.getEnvironment(), 
+                xacmlRequest.getSubjects());
+
+
+        //get native policy deicison using native policy evaluator
+        boolean booleanDecision = false;
+        boolean evaluationFailed = false;
+        try {
+            //PolicyEvaluator pe = new PolicyEvaluator(serviceName);
+            PolicyEvaluator pe = PolicyEvaluatorFactory.getInstance()
+                    .getPolicyEvaluator(serviceName);
+            booleanDecision = pe.isAllowed(ssoToken, resourceName,
+                    actionName, environment);
+        } catch (SSOException ssoe) {
+            evaluationFailed = true;
+        } catch (PolicyException pe) {
+            evaluationFailed = true;
+        }
+
+        //decision: Indeterminate, Deny, Permit, NotApplicable
+        //status code: missing_attribute, syntax_error, processing_error, ok
+
+        Decision decision = ContextFactory.getInstance().createDecision();
+        Status status = ContextFactory.getInstance().createStatus();
+        StatusCode code = ContextFactory.getInstance().createStatusCode();
+        StatusMessage message 
+                = ContextFactory.getInstance().createStatusMessage();
+        StatusDetail detail 
+                = ContextFactory.getInstance().createStatusDetail();
+        detail.getElement().insertBefore(detail.getElement().cloneNode(true), 
+                null);
+        if (evaluationFailed) {
+            decision.setValue(XACML2Constants.INDETERMINATE);
+            code.setValue(XACML2Constants.STATUS_CODE_PROCESSING_ERROR);
+            //code.setValue(XACML2Constants.STATUS_CODE_MISSING_ATTRIBUTE);
+            message.setValue("processing_eorror"); //TODO: i18n
+        } else if (booleanDecision) {
+            decision.setValue(XACML2Constants.PERMIT);
+            code.setValue(XACML2Constants.STATUS_CODE_OK);
+            message.setValue("ok"); //TODO: i18n
+        } else {
+            decision.setValue(XACML2Constants.DENY);
+            code.setValue(XACML2Constants.STATUS_CODE_OK);
+            message.setValue("ok"); //TODO: i18n
+        }
+
+        Result result = ContextFactory.getInstance().createResult();
+        String resourceId = resourceName; //TODO: find resourceId from Resource
+        result.setResourceId(resourceId);
+        result.setDecision(decision);
+
+        status.setStatusCode(code);
+        status.setStatusMessage(message);
+        status.setStatusDetail(detail);
+        result.setStatus(status);
+
+        Response response = ContextFactory.getInstance().createResponse();
+        response.addResult(result);
+
+        XACMLAuthzDecisionStatement statement = ContextFactory.getInstance()
+                .createXACMLAuthzDecisionStatement();
+        statement.setResponse(response);
+        if (returnContext) {
+            statement.setRequest(xacmlRequest);
+        }
+
+        com.sun.identity.saml2.protocol.Response samlpResponse
+                = createSamlpResponse(statement, 
+                status.getStatusCode().getValue());
+
         if (XACML2SDKUtils.debug.messageEnabled()) {
             XACML2SDKUtils.debug.message(
                     "XACMLAuthzDecisionQueryHandler.handleQuery(), returning"
                     + ":samlResponse=\n" 
                     + samlpResponse.toXMLString(true, true));
         }
+
         return samlpResponse;
     }
 
 
-    private com.sun.identity.saml2.protocol.Response createSampleSaml2Response(
-            RequestAbstract samlpRequest) 
+    private com.sun.identity.saml2.protocol.Response createSamlpResponse(
+            XACMLAuthzDecisionStatement statement, String statusCodeValue) 
             throws XACML2Exception, SAML2Exception {
 
-        Response xacmlResponse = createSampleXacml2Response();
-        Request xacmlRequest 
-                = ((XACMLAuthzDecisionQuery)samlpRequest).getRequest();
-
-        XACMLAuthzDecisionStatement statement 
-                = createSampleXacmlAuthzDecisionStatement(
-                xacmlResponse, xacmlRequest);
-        
         com.sun.identity.saml2.protocol.Response samlpResponse
                 = ProtocolFactory.getInstance().createResponse();
         samlpResponse.setID("response-id:1");
         samlpResponse.setVersion("2.0");
         samlpResponse.setIssueInstant(new Date());
+
         com.sun.identity.saml2.protocol.StatusCode samlStatusCode
                 = ProtocolFactory.getInstance().createStatusCode();
-        samlStatusCode.setValue("stausCode");
+        samlStatusCode.setValue(statusCodeValue);
         com.sun.identity.saml2.protocol.Status samlStatus
                 = ProtocolFactory.getInstance().createStatus();
         samlStatus.setStatusCode(samlStatusCode);
@@ -163,45 +306,6 @@ public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
         assertions.add(assertion);
         samlpResponse.setAssertion(assertions);
         return samlpResponse;
-    }
-
-    private Response createSampleXacml2Response() 
-            throws XACML2Exception {
-        StatusCode code = ContextFactory.getInstance().createStatusCode();
-        code.setValue("10");
-        code.setMinorCodeValue("5");
-        StatusMessage message 
-                = ContextFactory.getInstance().createStatusMessage();
-        message.setValue("success");
-        StatusDetail detail 
-                = ContextFactory.getInstance().createStatusDetail();
-        detail.getElement().insertBefore(detail.getElement().cloneNode(true)
-                , null);
-        Status status = ContextFactory.getInstance().createStatus();
-        status.setStatusCode(code);
-        status.setStatusMessage(message);
-        status.setStatusDetail(detail);
-        Decision decision = ContextFactory.getInstance().createDecision();
-        decision.setValue("Permit");
-        Result result = ContextFactory.getInstance().createResult();
-        result.setResourceId("http://insat.red.iplanet.com/banner.html");
-        result.setDecision(decision);
-        result.setStatus(status);
-        Response response = ContextFactory.getInstance().createResponse();
-        response.addResult(result);
-        return response;
-        
-    }
-
-    private XACMLAuthzDecisionStatement createSampleXacmlAuthzDecisionStatement(
-            Response xacmlResponse, Request xacmlRequest) 
-            throws XACML2Exception {
-        XACMLAuthzDecisionStatement statement = ContextFactory.getInstance()
-                .createXACMLAuthzDecisionStatement();
-        statement.setResponse(xacmlResponse);
-        statement.setRequest(xacmlRequest);
-        return statement;
-        
     }
 
 }

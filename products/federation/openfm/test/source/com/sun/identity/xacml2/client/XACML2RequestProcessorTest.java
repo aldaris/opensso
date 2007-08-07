@@ -1,10 +1,13 @@
 package com.sun.identity.xacml2.client;
 
+import com.iplanet.sso.SSOToken;
+
 import com.sun.identity.shared.test.UnitTestBase;
 
 import com.sun.identity.saml2.common.SAML2Exception;
 
 import com.sun.identity.xacml2.client.XACML2RequestProcessor;
+import com.sun.identity.xacml2.common.XACML2Constants;
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.context.ContextFactory;
 import com.sun.identity.xacml2.context.Action;
@@ -23,15 +26,16 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.testng.annotations.Test;
+import org.testng.annotations.Parameters;
 
 public class XACML2RequestProcessorTest extends UnitTestBase {
 
     public XACML2RequestProcessorTest() {
-        super("OpenFed-xacml2-XACMLReuestProcessorTest");
+        super("OpenFed-xacml2-XACMLRequestProcessorTest");
     }
 
     //@Test(groups={"xacml2"}, expectedExceptions={XACML2Exception.class})
-    @Test(groups={"xacml2"})
+    //@Test(groups={"xacml2"})
     public void testGetInstance() throws XACML2Exception {
         entering("testGetInstance()", null);
         log(Level.INFO,"testGetInstance()","\n");
@@ -41,125 +45,189 @@ public class XACML2RequestProcessorTest extends UnitTestBase {
     }
 
     @Test(groups={"xacml2"})
-    public void processRequest() 
-            throws XACML2Exception, SAML2Exception, URISyntaxException {
-        Request xacmlRequest = createSampleXacmlRequest();
-        log(Level.INFO,"processRequest():xacmlRequest:\n",
+    @Parameters({"login.id", "login.password",
+            "subject.id", "subject.id.datatype", "subject.category", 
+            "resource.id", "resource.id.datatype",
+            "resource.servicename", 
+            "action.id", "action.id.datatype"})
+    public void testProcessRequest(String loginId, String loginPassword,
+            String subjectId, String subjectIdType,
+            String subjectCategory,
+            String resourceId, String resourceIdType,
+            String serviceName,
+            String actionId, String actionIdType) 
+            throws XACML2Exception, SAML2Exception, 
+            URISyntaxException, Exception {
+
+        SSOToken ssoToken 
+                = TokenUtils.getSessionToken("/", loginId, loginPassword);
+        String tokenId = ssoToken.getTokenID().toString();
+
+        Request xacmlRequest = createSampleXacmlRequest(
+            tokenId, XACML2Constants.OPENSSO_SESSION_ID,
+            XACML2Constants.ACCESS_SUBJECT,
+            resourceId, resourceIdType,
+            serviceName,
+            actionId, actionIdType); 
+
+        log(Level.INFO,"testProcessRequest():xacmlRequest:\n",
                 xacmlRequest.toXMLString(true, true));
+
         Response xacmlResponse = XACML2RequestProcessor.getInstance()
                 .processRequest(xacmlRequest, null, null);
-        log(Level.INFO,"processRequest():xacmlResponse:\n",
+
+        log(Level.INFO,"testProcessRequest():xacmlResponse:\n",
                 xacmlResponse.toXMLString(true, true));
     }
 
-    //temporay for testing
-    private Request createSampleXacmlRequest()
+    private Request createSampleXacmlRequest(
+            String subjectId, String subjectIdType,
+            String subjectCategory,
+            String resourceId, String resourceIdType,
+            String serviceName, 
+            String actionId, String actionIdType) 
             throws XACML2Exception, URISyntaxException {
         Request request = ContextFactory.getInstance().createRequest();
 
+        //Subject1, access-subject
         Subject subject1 = ContextFactory.getInstance().createSubject();
 
         //supported category for id
         //urn:oasis:names:tc:xacml:1.0:subject-category:access-subject
         subject1.setSubjectCategory(
-            new URI("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"));
+            new URI(XACML2Constants.ACCESS_SUBJECT));
 
         Attribute attribute = ContextFactory.getInstance().createAttribute();
-        attribute.setIssuer("sampleIssuer1");
 
         //key attribute id
         //urn:oasis:names:tc:xacml:1.0:subject:subject-id
         attribute.setAttributeID(
-            new URI("urn:oasis:names:tc:xacml:1.0:subject:subject-id"));
+            new URI(XACML2Constants.SUBJECT_ID));
 
         //supported data type for id
         //urn:oasis:names:tc:xacml:1.0:data-type:x500Name
         //urn:sun:names:xacml:2.0:data-type:opensso-session-id
         //urn:sun:names:xacml:2.0:data-type:openfm-sp-nameid
-        attribute.setDataType(
-            new URI("urn:opensso:names:xacml:2.0:data-type:opensso-session-id"));
+        attribute.setDataType(new URI(subjectIdType));
 
+        attribute.setIssuer("sampleIssuer1");
+
+        //set values
         List valueList = new ArrayList();
-        valueList.add("sessionId1");
-        valueList.add("sessionId2");
+        valueList.add(subjectId);
         attribute.setAttributeStringValues(valueList);
         List attributeList = new ArrayList();
         attributeList.add(attribute);
         subject1.setAttributes(attributeList);
 
+        //Subject2, intermediary-subject
         Subject subject2 = ContextFactory.getInstance().createSubject();
+
         subject2.setSubjectCategory(
-            new URI("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"));
+            new URI(XACML2Constants.INTERMEDIARY_SUBJECT));
+
         attribute = ContextFactory.getInstance().createAttribute();
-        attribute.setIssuer("sampleIssuer2");
+
         attribute.setAttributeID(
-            new URI("urn:oasis:names:tc:xacml:1.0:subject:subject-id"));
-        attribute.setDataType(
-            new URI("urn:sun:names:xacml:2.0:data-type:openfm-sp-nameid"));
+            new URI(XACML2Constants.SUBJECT_ID));
+
+        //supported data type for id
+        //urn:oasis:names:tc:xacml:1.0:data-type:x500Name
+        //urn:sun:names:xacml:2.0:data-type:opensso-session-id
+        //urn:sun:names:xacml:2.0:data-type:openfm-sp-nameid
+        attribute.setDataType(new URI(subjectIdType)); 
+
+        attribute.setIssuer("sampleIssuer2");
+
+        //set values
         valueList = new ArrayList();
-        valueList.add("openfm-sp-nameid1");
+        valueList.add(subjectId);
         attribute.setAttributeStringValues(valueList);
         attributeList = new ArrayList();
         attributeList.add(attribute);
         subject2.setAttributes(attributeList);
 
-        List subjects = new ArrayList();
-        subjects.add(subject1);
-        subjects.add(subject2);
-        request.setSubjects(subjects);
+        //set subjects in request
+        List subjectList = new ArrayList();
+        subjectList.add(subject1);
+        subjectList.add(subject2);
+        request.setSubjects(subjectList);
 
+        //Resource
         Resource resource = ContextFactory.getInstance().createResource();
+
+        //resoruce-id attribute
         attribute = ContextFactory.getInstance().createAttribute();
-        attribute.setIssuer("sampleIssuer3");
 
         //key attribute id
         //urn:oasis:names:tc:xacml:1.0:resource:resource-id
-        //additional attribute id
-        //urn:opensso:names:xacml:2.0:resource:target-service
         attribute.setAttributeID(
-            new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"));
+            new URI(XACML2Constants.RESOURCE_ID));
 
         //supported data type
         //http://www.w3.org/2001/XMLSchema#string
         attribute.setDataType(
-            new URI("http://www.w3.org/2001/XMLSchema#string"));
+            new URI(XACML2Constants.XS_STRING));
+
+        attribute.setIssuer("sampleIssuer3");
+
+
+        //set values
         valueList = new ArrayList();
-        valueList.add("http://insat.red.iplanet.com/banner.html");
+        valueList.add(resourceId);
         attribute.setAttributeStringValues(valueList);
+
         attributeList = new ArrayList();
         attributeList.add(attribute);
 
+        //serviceName attribute
         attribute = ContextFactory.getInstance().createAttribute();
-        attribute.setIssuer("sampleIssuer4");
+
+        //additional attribute id
+        //urn:sun:names:xacml:2.0:resource:target-service
         attribute.setAttributeID(
-            new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"));
+            new URI(XACML2Constants.TARGET_SERVICE));
+
+        //supported data type
+        //http://www.w3.org/2001/XMLSchema#string
         attribute.setDataType(
-            new URI("http://www.w3.org/2001/XMLSchema#string"));
+            new URI(XACML2Constants.XS_STRING));
+
+        attribute.setIssuer("sampleIssuer3");
+
+
+        //set values
         valueList = new ArrayList();
-        valueList.add("http://insat.red.iplanet.com/banner.html");
+        valueList.add(serviceName);
         attribute.setAttributeStringValues(valueList);
+
         attributeList.add(attribute);
 
         resource.setAttributes(attributeList);
+
         List resourceList = new ArrayList();
         resourceList.add(resource);
         request.setResources(resourceList);
 
+        //Action
         Action action = ContextFactory.getInstance().createAction();
+
         attribute = ContextFactory.getInstance().createAttribute();
-        attribute.setIssuer("sampleIssuer5");
 
         //key attribute id
         //urn:oasis:names:tc:xacml:1.0:action:action-id
         attribute.setAttributeID(
-            new URI("urn:oasis:names:tc:xacml:1.0:action:action-id"));
+            new URI(XACML2Constants.ACTION_ID));
 
         //supported data type
         //http://www.w3.org/2001/XMLSchema#string
         attribute.setDataType(
-            new URI("http://www.w3.org/2001/XMLSchema#string"));
+            new URI(XACML2Constants.XS_STRING));
+
+        attribute.setIssuer("sampleIssuer5");
+
         valueList = new ArrayList();
-        valueList.add("GET");
+        valueList.add(actionId);
         attribute.setAttributeStringValues(valueList);
         attributeList = new ArrayList();
         attributeList.add(attribute);
@@ -168,6 +236,7 @@ public class XACML2RequestProcessorTest extends UnitTestBase {
 
         request.setAction(action);
 
+        //Enviornment
         Environment environment = ContextFactory.getInstance().createEnvironment();
         request.setEnvironment(environment);
         return request;

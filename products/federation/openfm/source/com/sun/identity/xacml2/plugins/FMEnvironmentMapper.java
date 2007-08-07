@@ -17,16 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMEnvironmentMapper.java,v 1.1 2007-04-19 19:18:46 dillidorai Exp $
+ * $Id: FMEnvironmentMapper.java,v 1.2 2007-08-07 23:33:52 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.xacml2.plugins;
+
 import com.sun.identity.xacml2.context.Environment;
 import com.sun.identity.xacml2.context.Subject;
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.spi.EnvironmentMapper;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,12 +58,12 @@ public class FMEnvironmentMapper implements EnvironmentMapper {
     /**
      * Returns native environment
      * @param xacmlContextEnvironment XACML  context Environment
-     * @param xacmlContextSubject XACML context Subject
+     * @param xacmlContextSubjects XACML context Subject(s)
      * @return native environment map
      * @exception XACML2Exception if can not map to native environment
      */
     public Map mapToNativeEnvironment(Environment xacmlContextEnvironment, 
-            Subject xacmlContextSubject) 
+            List xacmlContextSubjects) //List xacmlContextSubject) 
             throws XACML2Exception {
         return null;
     }

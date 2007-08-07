@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectMapper.java,v 1.3 2007-04-19 19:14:30 dillidorai Exp $
+ * $Id: SubjectMapper.java,v 1.4 2007-08-07 23:33:51 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.xacml2.spi;
 import com.sun.identity.xacml2.context.Subject;
 import com.sun.identity.xacml2.common.XACML2Exception;
+import java.util.List;
 import java.util.Map;
 
     /**
@@ -69,8 +70,9 @@ public interface SubjectMapper {
      * If the mapping fails, <code>null<code> would be returned
      * @exception XACML2Exception if an error conditions occurs.
      */
-    public Object mapToNativeSubject(Subject[] xacmlContextSubjects) 
+    public Object mapToNativeSubject(List xacmlContextSubjects) 
             throws XACML2Exception;
+            //TODO: pass List instead of Subject[]
 
 }
 
