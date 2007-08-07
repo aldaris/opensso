@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SDKUtils.java,v 1.3 2007-08-02 18:18:42 bina Exp $
+ * $Id: SAML2SDKUtils.java,v 1.4 2007-08-07 17:16:50 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,9 +62,6 @@ public class SAML2SDKUtils {
     // This utility class will be run on client side as well,
     // so DO NOT add any static block which will not run on client side.
     //
-    
-    private static boolean isFM = true;
-    
     // The deugging instance
     public static Debug debug = Debug.getInstance("libSAML2");
     //  SAML2 Resource bundle
@@ -180,13 +177,6 @@ public class SAML2SDKUtils {
     private static Class[] elementParam = new Class[] {Element.class};
 
     static {
-        String am_or_fm =
-            SystemPropertiesManager.get(SAML2Constants.AM_OR_FM);
-        if (am_or_fm != null &&
-            am_or_fm.trim().equalsIgnoreCase("am")) {
-            isFM = false;
-        }
-
         // initialize class mapper
         int len = interfactNames.length;
         for (int i = 0; i < len; i++) {
@@ -339,15 +329,6 @@ public class SAML2SDKUtils {
                 ite);
         } 
         return null;
-    }
-
-    /**
-     * Returns whether the existing installation is FM or AM.
-     * @return true if the existing installation is FM, false
-     * if the installation is AM
-     */
-    public static boolean isFM() {
-        return isFM;
     }
 
     /**

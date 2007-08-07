@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceUtils.java,v 1.3 2007-01-16 20:14:23 exu Exp $
+ * $Id: FSServiceUtils.java,v 1.4 2007-08-07 17:16:03 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,9 +88,6 @@ import com.sun.identity.shared.search.FileLookup;
  */
 public class FSServiceUtils {
     
-    private static String installDir =
-        SystemConfigurationUtil.getProperty(
-            "com.iplanet.am.install.basedir");
     private static IDFFMetaManager metaManager = null;
     private static MessageFactory fac = null;
     private static List cookieList = null;

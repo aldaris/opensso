@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteAwareInteractionConfig.java,v 1.1 2007-06-23 05:07:04 dillidorai Exp $
+ * $Id: SiteAwareInteractionConfig.java,v 1.2 2007-08-07 17:18:32 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.liberty.ws.interaction;
 
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
@@ -50,10 +50,13 @@ public class SiteAwareInteractionConfig extends InteractionConfig {
         debug.message("SiteAwareInteractionConfig.initialise(): called");
         super.initialize();
 
-        String protocol = SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
-        String host = SystemProperties.get(Constants.AM_SERVER_HOST);
-        String port = SystemProperties.get(Constants.AM_SERVER_PORT);
-        String contextPath = SystemProperties.get(
+        String protocol = SystemConfigurationUtil.getProperty(
+            Constants.AM_SERVER_PROTOCOL);
+        String host = SystemConfigurationUtil.getProperty(
+            Constants.AM_SERVER_HOST);
+        String port = SystemConfigurationUtil.getProperty(
+            Constants.AM_SERVER_PORT);
+        String contextPath = SystemConfigurationUtil.getProperty(
                 Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
 
         if (debug.messageEnabled()) {

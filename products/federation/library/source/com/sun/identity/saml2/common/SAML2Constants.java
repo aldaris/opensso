@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.11 2007-08-02 18:18:42 bina Exp $
+ * $Id: SAML2Constants.java,v 1.12 2007-08-07 17:16:50 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -666,8 +666,6 @@ public interface SAML2Constants {
      * The entity role
      */
     public static final String ROLE = "role";
-
-    public static final String AM_OR_FM = "com.sun.identity.saml2.am_or_fm";
 
     public static final String SIG_PROVIDER =
     "com.sun.identity.saml2.xmlsig.SignatureProvider";

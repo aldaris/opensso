@@ -17,19 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.1 2006-12-05 21:59:12 veiming Exp $
+ * $Id: CDCServlet.java,v 1.2 2007-08-07 17:18:17 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.cdc;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.service.SessionService;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.federation.common.FSException;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.common.IFSConstants;
@@ -165,18 +165,19 @@ public class CDCServlet extends HttpServlet {
             sessionService = SessionService.getSessionService();
             spValidator = new LdapSPValidator();
             
-            DNSAddress = com.iplanet.am.util.SystemProperties.get(
+            DNSAddress = SystemConfigurationUtil.getProperty(
                 Constants.AM_SERVER_HOST);
             IPAddress = InetAddress.getByName(DNSAddress).getHostAddress();
-            authURLCookieName = SystemProperties.get(
+            authURLCookieName = SystemConfigurationUtil.getProperty(
                 Constants.AUTH_UNIQUE_COOKIE_NAME, UNIQUE_COOKIE_NAME);
-            authURLCookieDomain = SystemProperties.get(
+            authURLCookieDomain = SystemConfigurationUtil.getProperty(
                 Constants.AUTH_UNIQUE_COOKIE_DOMAIN, "");
-            deployDescriptor = SystemProperties.get(
+            deployDescriptor = SystemConfigurationUtil.getProperty(
                 Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR, DEFAULT_DEPLOY_URI);
             
             // Check if CDC needs to generate restricted SSO Tokens
-            uniqueCookieEnabled = Boolean.valueOf(SystemProperties.get(
+            uniqueCookieEnabled = Boolean.valueOf(
+                SystemConfigurationUtil.getProperty(
                 Constants.IS_ENABLE_UNIQUE_COOKIE, "false")).booleanValue();
             
             if (debug.messageEnabled()) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenMechanismHandler.java,v 1.1 2007-03-23 00:01:48 mallas Exp $
+ * $Id: SSOTokenMechanismHandler.java,v 1.2 2007-08-07 17:18:17 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,6 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import org.w3c.dom.Element;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -39,14 +38,14 @@ import com.sun.identity.liberty.ws.authnsvc.AuthnSvcUtils;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLRequest;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLResponse;
 import com.sun.identity.liberty.ws.soapbinding.Message;
+import com.sun.identity.sm.SMSEntry;
 
 /**
  * The <code>SSOTokenMechanismHandler</code> is a handler for 'SSOTOKEN'
  * mechanism.
  */
 public class SSOTokenMechanismHandler implements MechanismHandler {
-    private static String defaultOrg =
-                          SystemProperties.get("com.iplanet.am.defaultOrg");
+    private static String defaultOrg = SMSEntry.getRootSuffix();
     private static String MECHANISM_SSOTOKEN = "SSOTOKEN";
 
 
