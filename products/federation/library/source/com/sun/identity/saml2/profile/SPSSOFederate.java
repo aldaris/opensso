@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.5 2007-04-02 23:34:25 veiming Exp $
+ * $Id: SPSSOFederate.java,v 1.6 2007-08-07 23:39:07 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,9 @@ import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.plugins.SPAuthnContextMapper;
+import com.sun.identity.saml2.protocol.Scoping; 
+import com.sun.identity.saml2.protocol.IDPEntry;
+import com.sun.identity.saml2.protocol.IDPList;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.util.logging.Level;
@@ -58,6 +61,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -421,8 +425,52 @@ public class SPSSOFederate {
         authnReq.setID(requestID);
         authnReq.setVersion(SAML2Constants.VERSION_2_0);
         authnReq.setIssueInstant(new Date());
+        //IDP Proxy 
+        Boolean enableIDPProxy = 
+            getAttrValueFromMap(spConfigMap, 
+            SAML2Constants.ENABLE_IDP_PROXY); 
+        if ((enableIDPProxy != null) && enableIDPProxy.booleanValue()) 
+        {
+            Scoping scoping = 
+                ProtocolFactory.getInstance().createScoping();
+            scoping.setProxyCount(new Integer(
+                getParameter(spConfigMap, SAML2Constants.IDP_PROXY_COUNT)));
+            List proxyIDPs = (List) spConfigMap.get(
+                SAML2Constants.IDP_PROXY_LIST);
+            if (proxyIDPs != null && !proxyIDPs.isEmpty()) {
+                Iterator iter = proxyIDPs.iterator();
+                ArrayList list = new ArrayList();
+                while(iter.hasNext()) {
+                    IDPEntry entry = ProtocolFactory.getInstance().
+                        createIDPEntry(); 
+                    entry.setProviderID((String)iter.next());
+                    list.add(entry);
+                }
+                IDPList idpList = ProtocolFactory.getInstance().
+                    createIDPList();
+                idpList.setIDPEntries(list);
+                scoping.setIDPList(idpList);
+             }
+             authnReq.setScoping(scoping);
+         }
+ 
         return authnReq;        
     }
+
+    /* Returns value of parameter in the SP SSO Config */
+    public static Boolean getAttrValueFromMap(Map attrMap,String attrName) {
+        Boolean boolVal = null;
+        if (attrMap!=null && attrMap.size()> 0) {
+            String attrVal = getParameter(attrMap,attrName);
+            if ((attrVal != null) 
+                && ( (attrVal.equals(SAML2Constants.TRUE)) 
+                || (attrVal.equals(SAML2Constants.FALSE)))) {
+                boolVal = new Boolean(attrVal);
+            }
+          }
+          return boolVal;
+     }
+
 
     /* Returns the SingleSignOnService URL */
     static String getSSOURL(List ssoServiceList) {
@@ -448,21 +496,7 @@ public class SPSSOFederate {
          }
          return ssoURL;
     }
-            
-    /* Returns value of parameter in the SP SSO Config */
-    private static Boolean getAttrValueFromMap(Map attrMap,String attrName) {
-        Boolean boolVal = null;
-        if (attrMap!=null && attrMap.size()> 0) {
-            String attrVal = getParameter(attrMap,attrName);
-            if ((attrVal != null) 
-                && ( (attrVal.equals(SAML2Constants.TRUE)) 
-                || (attrVal.equals(SAML2Constants.FALSE)))) {
-                    boolVal = new Boolean(attrVal);
-            }
-        }
-        return boolVal;
-    }
-
+          
     /**
      * Returns an Ordered Set containing the AssertionConsumerServiceURL
      * and AssertionConsumerServiceIndex.
@@ -588,7 +622,7 @@ public class SPSSOFederate {
     }
   
     /* Returns the query parameter value for the param specified */
-    private static String getParameter(Map paramsMap,String attrName) {
+    public static String getParameter(Map paramsMap,String attrName) {
         String attrVal = null;
         if ((paramsMap != null) && (!paramsMap.isEmpty())) { 
             List attrValList = (List)paramsMap.get(attrName);
@@ -631,7 +665,7 @@ public class SPSSOFederate {
     }
 
 
-    private static String getRelayStateID(String relayState,
+    public static String getRelayStateID(String relayState,
                                           String requestID) {
         String relayStateID = null;
         
@@ -699,7 +733,7 @@ public class SPSSOFederate {
    /** 
     * Signs the query string.
     */
-   private static String signQueryString(String queryString,String certAlias)
+   public static String signQueryString(String queryString,String certAlias)
         throws SAML2Exception {
         if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("SPSSOFederate:queryString:" 

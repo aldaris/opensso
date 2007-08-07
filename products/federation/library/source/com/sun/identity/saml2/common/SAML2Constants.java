@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.12 2007-08-07 17:16:50 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.13 2007-08-07 23:39:05 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -954,4 +954,43 @@ public interface SAML2Constants {
     
     public static final String NS_XSI = 
             "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
-}
+            
+    /**
+     * Enable IDP Proxy
+     */
+    public String ENABLE_IDP_PROXY = "enableIDPProxy";
+ 
+    /**
+     *IDP Proxy Name List
+     */
+    public String IDP_PROXY_LIST = "idpProxyList";
+ 
+    /**
+     * IDP Proxy Count
+     */
+    public String IDP_PROXY_COUNT = "idpProxyCount";
+ 
+    /**
+     * Use Introduction for IDP Proxy
+     */
+    public String USE_INTRODUCTION_FOR_IDP_PROXY =
+        "useIntroductionForIDPProxy";      
+
+    /**
+     * Idp finder URL
+     */
+    public static final String IDP_FINDER_URL ="/idpfinder";
+    
+    /**
+     * IDP Proxy finder name
+     */
+    public static final String IDP_PROXY_FINDER_NAME = 
+         "com.sun.identity.saml2.idpproxy"; 
+         
+    /**
+     * Default class name of IDP Proxy finder   
+     */     
+    public static final String   DEFAULT_IDP_PROXY_FINDER = 
+        "com.sun.identity.saml2.plugins.SAML2IDPProxyImpl"; 
+        
+} 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ScopingImpl.java,v 1.1 2006-10-30 23:16:51 qcheng Exp $
+ * $Id: ScopingImpl.java,v 1.2 2007-08-07 23:39:07 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,7 +228,7 @@ public class ScopingImpl implements Scoping {
 	    }
 
 
-	    if (!requesterIDList.isEmpty()) {
+	    if ((requesterIDList != null) && !requesterIDList.isEmpty()) {
 		Iterator it = requesterIDList.iterator();
 		while (it.hasNext()) {
 		    RequesterID reqID = (RequesterID) it.next();

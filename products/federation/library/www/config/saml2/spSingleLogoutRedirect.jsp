@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutRedirect.jsp,v 1.3 2007-07-26 21:58:17 qcheng Exp $
+   $Id: spSingleLogoutRedirect.jsp,v 1.4 2007-08-07 23:38:25 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -33,6 +33,12 @@
 <%@ page import="com.sun.identity.saml2.profile.CacheObject" %>
 <%@ page import="com.sun.identity.saml2.profile.SPCache" %>
 <%@ page import="com.sun.identity.saml2.profile.SPSingleLogout" %>
+<%@ page import="com.sun.identity.saml2.profile.IDPCache" %>
+<%@ page import="com.sun.identity.saml2.profile.IDPSingleLogout" %>
+<%@ page import="com.sun.identity.saml2.protocol.LogoutRequest" %>
+<%@ page import="com.sun.identity.saml2.assertion.Issuer" %>
+<%@ page import="com.sun.identity.saml2.profile.IDPProxyUtil" %>
+<%@ page import="com.sun.identity.saml2.protocol.ProtocolFactory" %>
 <%@ page import="java.util.Map" %>
 
 <%--
@@ -92,8 +98,23 @@
          * @throws SAML2Exception if error processing
          *          <code>LogoutResponse</code>.
          */
-        SPSingleLogout.processLogoutResponse(request,response,samlResponse,
-            relayState);
+          Map infoMap = 
+              SPSingleLogout.processLogoutResponse(request,response,
+              samlResponse, relayState);
+          String inRes = (String) infoMap.get("inResponseTo"); 
+          String origLogoutRequest = (String) 
+              IDPCache.proxySPLogoutReqCache.get(inRes); 
+          if (origLogoutRequest != null && !origLogoutRequest.equals("")) {
+              IDPCache.proxySPLogoutReqCache.remove(inRes);
+              String decodedStr =
+              SAML2Utils.decodeFromRedirect(origLogoutRequest);
+              LogoutRequest logoutReq =
+                  ProtocolFactory.getInstance().createLogoutRequest(
+                  decodedStr);
+              IDPProxyUtil.sendProxyLogoutResponse(response,logoutReq.getID(),
+                  infoMap, logoutReq.getIssuer().getValue()); 
+              return;        
+          }          
         } catch (SAML2Exception sse) {
             SAML2Utils.debug.error("Error processing LogoutResponse :", sse);
             response.sendError(response.SC_BAD_REQUEST,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.5 2007-07-26 21:57:42 qcheng Exp $
+ * $Id: LogoutUtil.java,v 1.6 2007-08-07 23:39:06 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1064,11 +1064,11 @@ public class LogoutUtil {
             if (debug.messageEnabled()) {
                 debug.message("redirectURL :" + redirectURL);
             }
-            response.sendRedirect(redirectURL);
-
             String[] data = {sloURL};
-            LogUtil.access(Level.INFO,LogUtil.REDIRECT_TO_SP,data, 
+            LogUtil.access(Level.INFO,LogUtil.REDIRECT_TO_SP,data,
                            null);
+
+            response.sendRedirect(redirectURL);
         } catch (Exception e) {
             debug.error("Exception :",e);
             throw new SAML2Exception(SAML2Utils.bundle.getString(

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSession.java,v 1.1 2006-10-30 23:16:35 qcheng Exp $
+ * $Id: IDPSession.java,v 1.2 2007-08-07 23:39:06 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,8 @@ package com.sun.identity.saml2.profile;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Iterator;
+import com.sun.identity.saml2.common.SAML2Utils;
 /**
  * This class represents a session in the identity provider side.
  * It keeps track of information that is needed for single sign on
@@ -41,7 +42,10 @@ public class IDPSession {
     private String pendingLogoutRequestID = null; 
     private String originatingLogoutRequestID = null;
     private String originatingLogoutSPEntityID = null;
-    private boolean doLogoutAll = false;   
+    private boolean doLogoutAll = false;  
+    private List sessionPartners = null;
+    private String authnContext = null;
+  
     /**
      * Constructor for a <code>IDPSession</code>.
      *
@@ -51,6 +55,7 @@ public class IDPSession {
     public IDPSession(Object session) {
         this.session = session;
         nameIDandSPpairs = new ArrayList();
+        sessionPartners = new ArrayList(); 
     }
     
     /**
@@ -143,5 +148,78 @@ public class IDPSession {
      */ 
     public boolean getLogoutAll() {
         return doLogoutAll;
+    }
+       
+    // Handle IDP Proxy case              
+    /**
+     * Returns list of session partners.
+     * @return list of session partners
+     */
+    public List getSessionPartners() {
+        return sessionPartners;
+    }
+    
+    /**
+     * Adds a session partner.
+     * @param sessionPartner session partner to be added
+     */
+    public void addSessionPartner(SAML2SessionPartner sessionPartner) {
+        Iterator i = sessionPartners.iterator();
+        while (i.hasNext()) {
+            if (((SAML2SessionPartner)i.next()).equals(sessionPartner)){
+                return;
+            }
+        }
+        sessionPartners.add(sessionPartner);
+    }
+    
+    /**
+     * Returns the first session partner of the list of session partners.
+     * @return the first session partner of the list
+     */
+    public SAML2SessionPartner getCurrentSessionPartner() {
+        Iterator i = sessionPartners.iterator();
+        if (i.hasNext()) {
+            return (SAML2SessionPartner)i.next();
+        }
+        return null;
+    }
+    
+    /**
+     * Removes a session partner.
+     * @param sessionPartner session partner to be removed
+     */
+    public void removeSessionPartner(String sessionPartner) {
+        Iterator i = sessionPartners.iterator();
+        while (i.hasNext()) {
+            SAML2SessionPartner oldSessionPartner =
+                (SAML2SessionPartner)i.next();
+            if (oldSessionPartner.isEquals(sessionPartner)) {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(
+                        "SAML2Session.removeSessionPartner : Removing " 
+                        + sessionPartner);
+                }
+                i.remove();
+            }
+        }
+    }
+    // end of handling IDP Proxy case
+    /**
+     * Returns authentication context.
+     * @return authentication context
+     * @see #setAuthnContext(String)
+     */
+    public String getAuthnContext() {
+        return authnContext;
+    }
+
+    /**
+     * Sets authentication context.
+     * @param authnContext authentication context to be set
+     * @see #getAuthnContext()
+     */
+    public void setAuthnContext(String authnContext) {
+        this.authnContext = authnContext;
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.2 2006-12-13 19:03:21 weisun2 Exp $
+ * $Id: IDPCache.java,v 1.3 2007-08-07 23:39:05 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,4 +133,53 @@ public class IDPCache {
      * value  : IDPSession object.
      */
     public static Hashtable oldIDPSessionCache = new Hashtable();
+    
+    /**
+      * Cache saves the SP descriptor coming to proxy IDP 
+      * key   : requestID (String)
+      * value : SP descriptor 
+      */
+    public static Hashtable proxySPDescCache = new Hashtable(); 
+     
+    /**
+      * Cache saves the original AuthnRequest coming from SP to IDP proxy
+      * key   : requestID (String) 
+      * value : AuthnRequest 
+      */ 
+    public static Hashtable proxySPAuthnReqCache = new Hashtable();      
+  
+    /** 
+      * Cache saves the preferred IDP id 
+      * key   : requestID (String) 
+      * value : preferred IDP id 
+      */
+    public static Hashtable idDestnCache = new Hashtable();     
+    
+    /** 
+      * Cache saves the SAML2SessionPartner  
+      * key   : sessionId (String) 
+      * value : SAML2SessionPartner
+      */
+    public static Hashtable idpSessionsBySessionID = new Hashtable(); 
+    
+    /** 
+      * Cache saves the original LogoutRequest coming from SP to IDP proxy
+      * key   : requestID (String) 
+      * value : LogoutRequest
+      */
+    public static Hashtable proxySPLogoutReqCache = new Hashtable(); 
+    
+    /** 
+      * Cache saves the original HttpServletRequest coming from SP to IDP proxy
+      * key   : requestID (String) 
+      * value : HttpServletRequest
+      */
+    public static Hashtable proxySPHttpRequest = new Hashtable(); 
+    
+    /** 
+      * Cache saves the original HttpServletResponse coming from SP to IDP proxy
+      * key   : requestID (String) 
+      * value : HttpServletResponse
+      */
+    public static Hashtable proxySPHttpResponse = new Hashtable(); 
 }

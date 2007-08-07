@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.5 2007-07-03 22:06:26 qcheng Exp $
+ * $Id: IDPSingleLogout.java,v 1.6 2007-08-07 23:39:06 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 
 package com.sun.identity.saml2.profile;
 
+import com.sun.identity.saml2.common.NameIDInfoKey;
+import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.multiprotocol.MultiProtocolUtils;
 import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.net.ssl.internal.ssl.Provider;
@@ -33,9 +35,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -62,6 +64,8 @@ import com.sun.identity.saml2.protocol.Status;
 import com.sun.identity.saml2.protocol.StatusCode;
 import java.util.HashSet;
 import java.util.Set;
+import com.sun.identity.saml2.common.AccountUtils;
+
 
 /**
  * This class reads the required data from HttpServletRequest and
@@ -73,7 +77,6 @@ public class IDPSingleLogout {
     static SAML2MetaManager sm = null;
     static Debug debug = SAML2Utils.debug;
     static SessionProvider sessionProvider = null;
-    
     static {
         try {
             sm = new SAML2MetaManager();
@@ -506,9 +509,11 @@ public class IDPSingleLogout {
         // this is SP initiated HTTP based single logout
         boolean isMultiProtocolSession = false;
         int retStatus = SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+        Object session=null;
+        SessionProvider provider = null;
         try {
-            SessionProvider provider = SessionManager.getProvider();
-            Object session = provider.getSession(request);
+            provider = SessionManager.getProvider();
+            session = provider.getSession(request);
             if ((session != null) && (provider.isValid(session))
                 && MultiProtocolUtils.isMultipleProtocolSession(session,
                     SingleLogoutManager.SAML2)) {
@@ -536,16 +541,25 @@ public class IDPSingleLogout {
         if (!isMultiProtocolSession || 
             (retStatus != SingleLogoutManager.LOGOUT_REDIRECTED_STATUS)) {
             logoutRes = updateLogoutResponse(logoutRes, retStatus);
-            LogoutUtil.sendSLOResponse(response, logoutRes, location, 
-                relayState, realm, idpEntityID, SAML2Constants.IDP_ROLE, 
-                spEntityID);
+            //Wei 
+            
+            List partners = IDPProxyUtil.getSessionPartners(request);
+            if (partners != null &&  !partners.isEmpty()) {
+                IDPProxyUtil.sendProxyLogoutRequest(request, response,
+                   samlRequest, partners);
+            } else {
+                LogoutUtil.sendSLOResponse(response, logoutRes, location, 
+                    relayState, realm, idpEntityID,
+                    SAML2Constants.IDP_ROLE, spEntityID);
+            }    
         }
     }
+
 
     /**
      * Returns single logout location for the service provider.
      */
-    private static String getSingleLogoutLocation(String spEntityID,
+    public static String getSingleLogoutLocation(String spEntityID,
         String realm) throws SAML2Exception {
         SPSSODescriptorElement spsso = sm.getSPSSODescriptor(realm,spEntityID);
 
@@ -1045,6 +1059,8 @@ public class IDPSingleLogout {
                         "NameIDandSPpair for " + sessionIndex + " is " + list +
                         ", size=" + n);
                 }
+
+                
                 NameIDandSPpair pair = null;
                 // remove sending SP from the list
                 String spIssuer = logoutReq.getIssuer().getValue();
@@ -1059,6 +1075,7 @@ public class IDPSingleLogout {
                 if (n == 0) {
                     // this is the case where there is no other
                     // session participant
+                      
                     status = destroyTokenAndGenerateStatus(
                         sessionIndex, idpSession.getSession(),
                         request, response);
@@ -1104,7 +1121,7 @@ public class IDPSingleLogout {
                     String metaAlias = SAML2MetaUtils.getMetaAliasByUri(uri);
                     HashMap paramsMap = new HashMap();
                     paramsMap.put(SAML2Constants.ROLE, SAML2Constants.IDP_ROLE);
-                    StringBuffer requestID = null;
+                    StringBuffer requestID = null; 
                     try {
                         requestID = LogoutUtil.doLogout(metaAlias,
                             spEntityID, slosList, null, binding, relayState,
@@ -1241,8 +1258,12 @@ public class IDPSingleLogout {
         Status status = null;
         if (session != null) {
             try {
-                MultiProtocolUtils.invalidateSession(session, request,
+                List partners = IDPProxyUtil.getSessionPartners(request);
+                if (partners == null ||  partners.isEmpty()) { 
+                    MultiProtocolUtils.invalidateSession(session, request,
                         response, SingleLogoutManager.SAML2);
+                }
+                        
                 if (debug.messageEnabled()) {
                     debug.message("IDPLogoutUtil.destroyTAGR: "
                         + "Local session destroyed.");

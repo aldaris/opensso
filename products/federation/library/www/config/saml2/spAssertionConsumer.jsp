@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.4 2007-03-23 22:25:25 bina Exp $
+   $Id: spAssertionConsumer.jsp,v 1.5 2007-08-07 23:38:24 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -39,6 +39,7 @@ com.sun.identity.saml2.meta.SAML2MetaManager,
 com.sun.identity.saml2.meta.SAML2MetaUtils,
 com.sun.identity.saml2.profile.ResponseInfo,
 com.sun.identity.saml2.profile.SPACSUtils,
+com.sun.identity.saml2.profile.IDPProxyUtil,
 com.sun.identity.saml2.protocol.Response,
 com.sun.identity.plugin.session.SessionManager,
 com.sun.identity.plugin.session.SessionProvider,
@@ -131,6 +132,7 @@ com.sun.identity.plugin.session.SessionException
     // federate flag
     String federate = request.getParameter(SAML2Constants.FEDERATE);
     SessionProvider sessionProvider = null;
+    ResponseInfo respInfo = null; 
     try {
         sessionProvider = SessionManager.getProvider();
     } catch (SessionException se) {
@@ -139,7 +141,7 @@ com.sun.identity.plugin.session.SessionException
             se.getMessage());
         return;
     }
-    ResponseInfo respInfo = SPACSUtils.getResponse(
+    respInfo = SPACSUtils.getResponse(
         request, response, orgName, hostEntityId, metaManager);
     Object token = null;
     try {
@@ -196,7 +198,16 @@ com.sun.identity.plugin.session.SessionException
         return;
     }
     SAML2Utils.debug.message("SSO SUCCESS");
-
+    Response saml2Resp = respInfo.getResponse();
+    String requestID = saml2Resp.getInResponseTo();
+    boolean isProxyOn = IDPProxyUtil.isIDPProxyEnabled(requestID);
+    if (isProxyOn) { 
+    try { 
+        IDPProxyUtil.generateProxyResponse(request, response, metaAlias,
+             respInfo,newSession);
+    } catch (SAML2Exception se) {
+         SAML2Utils.debug.message("Failed sending proxy response"); 
+    } } 
     // redirect to relay state
     String finalUrl = SPACSUtils.getRelayState(
         relayState, orgName, hostEntityId, metaManager);
@@ -237,9 +248,13 @@ com.sun.identity.plugin.session.SessionException
         realRedirectUrl = finalUrl;
     }
     if (realRedirectUrl == null || (realRedirectUrl.trim().length() == 0)) {
-        %>
-        <jsp:forward page="/saml2/jsp/default.jsp?message=ssoSuccess" />
-        <%
+        if (isProxyOn) {
+           return; 
+        } else {
+           %>
+            <jsp:forward page="/saml2/jsp/default.jsp?message=ssoSuccess" />
+          <% 
+        }  
     } else {
         // log it
         response.sendRedirect(realRedirectUrl);

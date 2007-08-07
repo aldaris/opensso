@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.8 2007-07-03 22:06:26 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.9 2007-08-07 23:39:06 weisun2 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import com.sun.identity.saml2.protocol.Scoping;
 /**
  * The utility class is used by the identity provider to process 
  * the authentication request from a service provider and send back
@@ -154,7 +154,8 @@ public class IDPSSOUtil {
                                         String spEntityID,
                                         String idpMetaAlias,
                                         String nameIDFormat,
-                                        String relayState) 
+                                        String relayState, 
+                                        Object newSession) 
         throws SAML2Exception {
    
         String classMethod = "IDPSSOUtil.doSSOFederate: ";
@@ -222,7 +223,9 @@ public class IDPSSOUtil {
                 SAML2Utils.debug.warning(
                     classMethod + "No session yet.");
             }            
-            session = null;
+            // IDP proxy case
+            //session = null;
+            session = newSession;  
         }
         if ((authnReq == null) && (session == null)) {
             // idp initiated and not logged in yet, need to authenticate
@@ -266,7 +269,7 @@ public class IDPSSOUtil {
 
         // generate a response for the authn request
         Response res = IDPSSOUtil.getResponse(session, authnReq, 
-                 spEntityID, idpEntityID, realm, nameIDFormat, acsURL);
+                 spEntityID, idpEntityID,  realm, nameIDFormat, acsURL);
      
         if (res == null) {
             SAML2Utils.debug.error(classMethod + "response is null");
@@ -304,8 +307,11 @@ public class IDPSSOUtil {
             }
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message(classMethod +
-                    "Doesn't set COT cookie.");
-            }
+                    "Doesn't set COT cookie.");           
+                SAML2Utils.debug.message(classMethod +
+                    "Response is:  " + 
+                     res.toXMLString());
+            }       
             sendResponse(response, acsBinding, spEntityID, idpEntityID,
                       idpMetaAlias, realm, relayState, acsURL, res);
         } else {
@@ -669,7 +675,6 @@ public class IDPSSOUtil {
         NewBoolean isNewSessionIndex = new NewBoolean();
         AuthnStatement authnStatement = getAuthnStatement(
             session, isNewSessionIndex, authnReq, idpEntityID, realm);
-    
         if (authnStatement == null) {
             return null;
         }
@@ -893,15 +898,17 @@ public class IDPSSOUtil {
             SAML2Utils.debug.message(classMethod +
                 "SessionIndex (in AuthnStatement) =" + sessionIndex);
         }
-        Set authContextSet = (HashSet)
+        if (sessionIndex != null) {
+            Set authContextSet = (HashSet)
             IDPCache.authnContextCache.get(sessionIndex);
-        if (authContextSet == null || authContextSet.isEmpty()) {
+            if (authContextSet == null || authContextSet.isEmpty()) {
                 authContextSet = new HashSet();
+            }
+            authContextSet.add(authnContext);
+            // cache the AuthContext to use in the case of session upgrade.
+            IDPCache.authnContextCache.put(sessionIndex,authContextSet);
+            authnStatement.setSessionIndex(sessionIndex);
         }
-        authContextSet.add(authnContext);
-        // cache the AuthContext to use in the case of session upgrade.
-        IDPCache.authnContextCache.put(sessionIndex,authContextSet);
-        authnStatement.setSessionIndex(sessionIndex);
         return authnStatement;
     }
 

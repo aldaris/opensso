@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.7 2007-07-02 17:48:57 weisun2 Exp $
+ * $Id: SPACSUtils.java,v 1.8 2007-08-07 23:39:06 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1081,6 +1081,22 @@ public class SPACSUtils {
                 SPCache.fedSessionListsByNameIDInfoKey.put(
                     infoKeyString, fedSessions);
             }
+            //IDP Proxy 
+            IDPSession idpSess = (IDPSession)
+                IDPCache.idpSessionsBySessionID.get(
+                tokenID);
+            if (idpSess == null) {
+                idpSess = new IDPSession(session);
+                IDPCache.idpSessionsBySessionID.put(
+                    tokenID, idpSess);
+            }
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("Add Session Partner: " +
+                    info.getRemoteEntityID());
+            } 
+            idpSess.addSessionPartner(new SAML2SessionPartner(
+                info.getRemoteEntityID(), true));
+             // end of IDP Proxy        
         } else {
             synchronized (fedSessions) {
                 Iterator iter = fedSessions.iterator();

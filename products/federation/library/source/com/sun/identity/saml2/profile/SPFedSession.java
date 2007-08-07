@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPFedSession.java,v 1.1 2006-10-30 23:16:38 qcheng Exp $
+ * $Id: SPFedSession.java,v 1.2 2007-08-07 23:39:07 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,11 @@
 package com.sun.identity.saml2.profile;
 
 import com.sun.identity.saml2.common.NameIDInfo;
+import java.util.List; 
+import java.util.ArrayList; 
+import java.util.Iterator;
+import com.sun.identity.saml2.common.SAML2Utils;
+
 /**
  * This class provides the memory store for
  * SAML request and response information on Service Provider side.
@@ -33,7 +38,7 @@ import com.sun.identity.saml2.common.NameIDInfo;
  */
 
 public class SPFedSession {
-    
+    List sessionPartners;
     /**
      * <code>SessionIndex</code> from IDP.
      */
@@ -63,5 +68,6 @@ public class SPFedSession {
         this.idpSessionIndex = idpSessionIndex;
         this.spTokenID = sessionID;
         this.info = info;
+        this. sessionPartners = new ArrayList();
     }
 }

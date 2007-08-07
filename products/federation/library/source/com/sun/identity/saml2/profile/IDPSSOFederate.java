@@ -17,11 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.5 2007-07-03 22:06:26 qcheng Exp $
+ * $Id: IDPSSOFederate.java,v 1.6 2007-08-07 23:39:06 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
-
 
 package com.sun.identity.saml2.profile;
 
@@ -69,7 +68,7 @@ import javax.servlet.http.HttpServletResponse;
 public class IDPSSOFederate {
 
     private static final String REQ_ID = "ReqID";
-
+  
     private IDPSSOFederate() {
     }
  
@@ -86,7 +85,7 @@ public class IDPSSOFederate {
 
         String classMethod = "IDPSSOFederate.doSSOFederate: ";
         Object session = null;
-   
+        SPSSODescriptorElement spSSODescriptor = null;
         try { 
         String idpMetaAlias = request.getParameter(
                               SAML2MetaManager.NAME_META_ALIAS_IN_URI);
@@ -198,34 +197,35 @@ public class IDPSSOFederate {
                 response.sendError(response.SC_INTERNAL_SERVER_ERROR,
                     SAML2Utils.bundle.getString("metaDataError"));
                 return;
+            } 
+            String spEntityID = authnReq.getIssuer().getValue();
+            try {
+                 spSSODescriptor = IDPSSOUtil.metaManager.
+                     getSPSSODescriptor(realm, spEntityID);
+            } catch (SAML2MetaException sme) {
+                 SAML2Utils.debug.error(classMethod, sme);
+                 spSSODescriptor = null;
             }
             if (idpSSODescriptor.isWantAuthnRequestsSigned()) {
                 // need to verify the query string containing authnRequest
-                String spEntityID = authnReq.getIssuer().getValue();
                 if ((spEntityID == null) || 
                     (spEntityID.trim().length() == 0)) {
                     response.sendError(response.SC_INTERNAL_SERVER_ERROR,
                         SAML2Utils.bundle.getString("InvalidSAMLRequest"));
                     return;
                 }
-                SPSSODescriptorElement spSSODescriptor = null;
-                try {
-                    spSSODescriptor = IDPSSOUtil.metaManager.
-                              getSPSSODescriptor(realm, spEntityID);
-                } catch (SAML2MetaException sme) {
-                    SAML2Utils.debug.error(classMethod, sme);
-                    spSSODescriptor = null;
-                }
+                
                 if (spSSODescriptor == null) {
                     SAML2Utils.debug.error(classMethod +
                         "Unable to get SP SSO Descriptor from meta.");
                     response.sendError(response.SC_INTERNAL_SERVER_ERROR,
                         SAML2Utils.bundle.getString("metaDataError"));
                     return;
-                }
+                }            
                 X509Certificate spCert = KeyUtil.getVerificationCert(
                     spSSODescriptor, spEntityID, false);
-                String queryString = request.getQueryString();
+         
+                String queryString = request.getQueryString();         
                 try {
                     if (!QuerySignatureUtil.verify(queryString, spCert)) {
                         SAML2Utils.debug.error(classMethod +
@@ -317,6 +317,42 @@ public class IDPSSOFederate {
                 // retrieved later when the user successfully authenticates
                 if (relayState != null && relayState.trim().length() != 0) {
                     IDPCache.relayStateCache.put(reqID, relayState);
+                }
+     
+                //Initiate proxying
+                try {
+                    boolean isProxy = IDPProxyUtil.isIDPProxyEnabled(
+                        authnReq, realm);
+                    if (isProxy) { 
+                        String preferredIDP = IDPProxyUtil.getPreferredIDP(
+                            authnReq,idpEntityID, realm, request, response);
+                        if (preferredIDP != null) {
+                            if (SAML2Utils.debug.messageEnabled()) {
+                                SAML2Utils.debug.message(
+                                classMethod +
+                                "IDP to be proxied" + 
+                                preferredIDP);
+                            }
+                            String tmp = 
+                                IDPProxyUtil.sendProxyAuthnRequest(
+                                authnReq, preferredIDP,
+                                spSSODescriptor, idpEntityID, request,
+                                response, realm, relayState);
+                            response.sendRedirect(tmp);
+                            return;
+                        }  
+                     }
+                     //else continue for the local authentication.    
+                 } catch (SAML2Exception re) {
+                     if (SAML2Utils.debug.messageEnabled()) {
+                         SAML2Utils.debug.message(
+			     classMethod +
+                             "Redirecting for the proxy handling error: "
+                             + re.getMessage());
+                     }
+                     response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                         SAML2Utils.bundle.getString(
+                         "UnableToRedirectToPreferredIDP"));
                 }
    
                 // redirect to the authentication service
@@ -487,7 +523,8 @@ public class IDPSSOFederate {
         }
         try {
             IDPSSOUtil.doSSOFederate(request, response, authnReq, 
-                  spEntityID, idpMetaAlias, nameIDFormat, relayState); 
+                  spEntityID, idpMetaAlias, nameIDFormat, 
+                  relayState, null); 
         } catch (SAML2Exception se) {
             SAML2Utils.debug.error(classMethod +
                 "Unable to do sso or federation.", se);

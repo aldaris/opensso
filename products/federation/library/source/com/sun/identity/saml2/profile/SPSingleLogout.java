@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.6 2007-07-02 17:48:57 weisun2 Exp $
+ * $Id: SPSingleLogout.java,v 1.7 2007-08-07 23:39:07 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,6 +57,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.HashMap; 
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,7 +79,8 @@ public class SPSingleLogout {
             SAML2Utils.generateStatus(SAML2Constants.RESPONDER_ERROR,
                                 SAML2Utils.bundle.getString("partialLogout"));
     static SessionProvider sessionProvider = null;
-   
+    static String origLogoutRequest = null; 
+    
     static {
         try {
             sm = new SAML2MetaManager();
@@ -111,7 +113,9 @@ public class SPSingleLogout {
      *                   String objects.
      * @throws SAML2Exception if error initiating request to IDP.
      */
-    public static void initiateLogoutRequest(HttpServletRequest request,
+    public static void initiateLogoutRequest(
+        boolean fff, 
+        HttpServletRequest request,
         HttpServletResponse response,
         String binding,
         Map paramsMap)
@@ -214,12 +218,12 @@ public class SPSingleLogout {
                 while (st.hasMoreTokens()) {
                     String tmpInfoKeyString = (String)st.nextToken();
                     prepareForLogout(realm,tokenID,metaAlias,extensionsList,
-                        binding,relayState,response,
+                        binding,relayState,request, response,
                         paramsMap,tmpInfoKeyString);
                 }
             }
             // local log out
-            sessionProvider.invalidateSession(session, request, response);
+            sessionProvider.invalidateSession(session, request, response);   
         } catch (SAML2MetaException sme) {
             debug.error("Error retreiving metadata",sme);
             throw new SAML2Exception(
@@ -237,6 +241,7 @@ public class SPSingleLogout {
         List extensionsList,
         String binding,
         String relayState,
+        HttpServletRequest request,
         HttpServletResponse response,
         Map paramsMap,
         String infoKeyString) throws SAML2Exception, SessionException {
@@ -321,11 +326,15 @@ public class SPSingleLogout {
                 "\nSPSLO.requestIDStr = " + requestIDStr +
                 "\nbinding = " + binding);
         }
-
+         
         if (requestIDStr != null &&
             requestIDStr.length() != 0 &&
             binding.equals(SAML2Constants.HTTP_REDIRECT)) {
             SPCache.logoutRequestIDs.add(requestIDStr);
+            if (origLogoutRequest != null) {
+               IDPCache.proxySPLogoutReqCache.put(requestIDStr,
+                   origLogoutRequest);
+            }   
         }
     }
 
@@ -345,12 +354,12 @@ public class SPSingleLogout {
      * @throws SessionException if error processing
      *          <code>LogoutResponse</code>.
      */
-    public static void processLogoutResponse(
+    public static Map processLogoutResponse(
         HttpServletRequest request,
         HttpServletResponse response,
         String samlResponse,
         String relayState) throws SAML2Exception, SessionException  {
-        String method = "processLogoutResponse : ";
+        String method = "SPSingleLogout:processLogoutResponse : ";
         if (debug.messageEnabled()) {
             debug.message(method + "samlResponse : " + samlResponse);
             debug.message(method + "relayState : " + relayState);
@@ -385,7 +394,9 @@ public class SPSingleLogout {
             debug.message(method + "idpEntityID : " + idpEntityID);
             debug.message(method + "spEntityID : " + spEntityID);
         }
-        
+        Map infoMap = new HashMap(); 
+        infoMap.put("entityid", spEntityID);  
+ 
         if (needToVerify == true) {
             String queryString = request.getQueryString();
             boolean valid = SAML2Utils.verifyQueryString(queryString, realm,
@@ -433,18 +444,21 @@ public class SPSingleLogout {
                 SAML2Utils.bundle.getString(
                 "LogoutRequestIDandInResponseToDoNotMatch"));
         }
-
+        
         // if relay state is present, redirect to
-        // relay state
-        if (relayState != null && relayState.length() != 0) {
+        // relay state --Wei 
+      /*  if (relayState != null && relayState.length() != 0) {
             try {
-                response.sendRedirect(relayState);
+                 response.sendRedirect(relayState);
             } catch (java.io.IOException ioe) {
                 debug.message(
                     "Exception when redirecting to " +
                     relayState, ioe);
             }
-        }
+        } */
+        
+        infoMap.put("inResponseTo" , inResponseTo); 
+        return infoMap; 
     }
 
     /**
@@ -939,6 +953,10 @@ public class SPSingleLogout {
             }
         }
         return location;
+    }
+    
+    public static void setLogoutRequest(String logoutRequest) {
+        origLogoutRequest = logoutRequest;
     }
 }
 
