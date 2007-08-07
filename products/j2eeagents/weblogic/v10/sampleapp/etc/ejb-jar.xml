@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+ $Id: ejb-jar.xml,v 1.1 2007-08-07 01:47:39 sean_brydon Exp $
+
+ Copyright (c) 2007 Sun Microsystems, Inc. All rights reserved.
+ Use is subject to license terms.
+-->
+
+<!DOCTYPE ejb-jar PUBLIC 
+'-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN' 
+'http://java.sun.com/dtd/ejb-jar_2_0.dtd'>
+
+<ejb-jar id="ejb-jar_ID"> 
+    <enterprise-beans>
+        <session id="Session_ProtectedEJB">
+            <ejb-name>ProtectedEJB</ejb-name>
+            <home>com.sun.identity.agents.sample.ProtectedEJBHome</home>
+            <remote>com.sun.identity.agents.sample.ProtectedEJB</remote>
+            <ejb-class>com.sun.identity.agents.sample.ProtectedEJBImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
+        <session id="Session_SecurityAwareEJB">
+            <ejb-name>SecurityAwareEJB</ejb-name>
+            <home>com.sun.identity.agents.sample.SecurityAwareEJBHome</home>
+            <remote>com.sun.identity.agents.sample.SecurityAwareEJB</remote>
+            <ejb-class>com.sun.identity.agents.sample.SecurityAwareEJBImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+            <security-role-ref>
+                <role-name>MANAGER_ROLE</role-name>
+                <role-link>MANAGER_ROLE</role-link>
+            </security-role-ref>
+            <security-role-ref>
+                <role-name>EMPLOYEE_ROLE</role-name>
+                <role-link>EMPLOYEE_ROLE</role-link>
+            </security-role-ref>
+        </session>
+    </enterprise-beans>
+
+    <assembly-descriptor>      
+        <security-role id="SR_MANAGER_ROLE">
+            <role-name>MANAGER_ROLE</role-name>
+        </security-role>
+        <security-role id="SR_EMPLOYEE_ROLE">
+            <role-name>EMPLOYEE_ROLE</role-name>
+        </security-role>
+        <method-permission>
+            <role-name>EMPLOYEE_ROLE</role-name>
+            <method>
+                <ejb-name>ProtectedEJB</ejb-name>
+                <method-name>*</method-name>
+            </method>
+        </method-permission>
+    </assembly-descriptor>
+</ejb-jar>

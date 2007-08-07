@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+
+ $Id: weblogic-ejb-jar.xml,v 1.1 2007-08-07 01:47:40 sean_brydon Exp $
+
+ Copyright (c) 2007 Sun Microsystems, Inc. All rights reserved.
+ 
+ U.S. Government Rights - Commercial software. Government users are
+ subject to the Sun Microsystems, Inc. standard license agreement and
+ applicable provisions of the FAR and its supplements. Use is subject to
+ license terms. Sun, Sun Microsystems, the Sun logo and Sun ONE are
+ trademarks or registered trademarks of Sun Microsystems, Inc. in the
+ U.S. and other countries.
+ 
+-->
+
+<!DOCTYPE weblogic-ejb-jar PUBLIC '-//BEA Systems, Inc.//DTD WebLogic 6.0.0 EJB//EN' 'http://www.bea.com/servers/wls6000/dtd/weblogic-ejb-jar.dtd'>
+
+<weblogic-ejb-jar>
+   <weblogic-enterprise-bean>
+          <ejb-name>ProtectedEJB</ejb-name>
+          <jndi-name>ProtectedEJB</jndi-name>
+   </weblogic-enterprise-bean>
+
+   <weblogic-enterprise-bean>
+          <ejb-name>SecurityAwareEJB</ejb-name>
+          <jndi-name>SecurityAwareEJB</jndi-name>
+   </weblogic-enterprise-bean>
+
+   <security-role-assignment>
+      <role-name>MANAGER_ROLE</role-name>
+      <principal-name>am_manager_role</principal-name>
+   </security-role-assignment>
+   <security-role-assignment>
+      <role-name>EMPLOYEE_ROLE</role-name>
+      <principal-name>am_employee_role</principal-name>
+   </security-role-assignment>
+</weblogic-ejb-jar>

@@ -1,0 +1,65 @@
+\@echo off
+
+\@rem $Id: setAgentEnv.cmd.template,v 1.1 2007-08-07 01:47:26 sean_brydon Exp $
+\@rem
+\@rem Copyright © 2005 Sun Microsystems, Inc. All rights reserved.
+\@rem
+\@rem Sun Microsystems, Inc. has intellectual property rights relating to
+\@rem technology embodied in the product that is described in this document.
+\@rem In particular, and without limitation, these intellectual property rights
+\@rem may include one or more of the U.S. patents listed at
+\@rem http://www.sun.com/patents and one or more additional patents or pending
+\@rem patent applications in the U.S. and in other countries.
+\@rem
+\@rem U.S. Government Rights - Commercial software. Government users are subject
+\@rem to the Sun Microsystems, Inc. standard license agreement and applicable
+\@rem provisions of the FAR and its supplements.
+\@rem
+\@rem Use is subject to license terms.
+\@rem
+\@rem This distribution may include materials developed by third parties. Sun,
+\@rem Sun Microsystems, the Sun logo, Java and Sun[tm] ONE are trademarks or
+\@rem registered trademarks of Sun Microsystems, Inc. in the U.S. and other
+\@rem countries.
+\@rem
+\@rem Copyright © 2005 Sun Microsystems, Inc. Tous droits réservés. Sun
+\@rem Microsystems, Inc. détient les droits de propriété intellectuels relatifs
+\@rem à la technologie incorporée dans le produit qui est décrit dans ce document.
+\@rem En particulier, et ce sans limitation, ces droits de propriété
+\@rem intellectuelle peuvent inclure un ou plus des brevets américains listés
+\@rem à l'adresse http://www.sun.com/patents et un ou les brevets supplémentaires
+\@rem ou les applications de brevet en attente aux Etats - Unis et dans les
+\@rem autres pays.
+\@rem
+\@rem L'utilisation est soumise aux termes du contrat de licence.
+\@rem
+\@rem Cette distribution peut comprendre des composants développés par des
+\@rem tierces parties.
+\@rem
+\@rem Sun, Sun Microsystems, le logo Sun, Java et Sun[tm] ONE sont des marques
+\@rem de fabrique ou des marques déposées de Sun Microsystems, Inc. aux
+\@rem Etats-Unis et dans d'autres pays.
+\@rem
+
+\@rem *************************************************************************
+\@rem This script is used to set up your environment for SJS Access Manager 
+\@rem WebLogic 10.0 policy agent. 
+\@rem Copy the server startup script to a server specific script. 
+\@rem e.g startWeblogic.sh
+\@rem Include this file in the server startup script after the 
+\@rem setDomainEnv.sh script inclusion. 
+\@rem Append AGENT_CLASSPATH and AGENT_JAVA_OPTIONS to the WebLogic server in 
+\@rem the startup script
+\@rem Please read 2.2 WebLogic 10.0 J2EE Agent Guide - Post-installation steps 
+\@rem for detailed instructions.
+\@rem *************************************************************************
+
+\@rem Append AGENT_CLASSPATH to the WebLogic server classpath
+set AGENT_CLASSPATH=@AGENT_CLASSPATH@
+set CLASSPATH=%CLASSPATH%;%AGENT_CLASSPATH%
+
+\@rem Append AGENT_JAVA_OPTIONS to the WebLogic server JAVA_OPTIONS in the 
+\@rem WebLogic server startup script
+set AGENT_JAVA_OPTIONS=@AGENT_JAVA_OPTIONS@
+set JAVA_OPTIONS=%JAVA_OPTIONS% %AGENT_JAVA_OPTIONS%
+

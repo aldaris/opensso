@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+ $Id: weblogic.xml,v 1.1 2007-08-07 01:47:40 sean_brydon Exp $
+
+ Copyright (c) 2007 Sun Microsystems, Inc. All rights reserved.
+ 
+ U.S. Government Rights - Commercial software. Government users are
+ subject to the Sun Microsystems, Inc. standard license agreement and
+ applicable provisions of the FAR and its supplements. Use is subject to
+ license terms. Sun, Sun Microsystems, the Sun logo and Sun ONE are
+ trademarks or registered trademarks of Sun Microsystems, Inc. in the
+ U.S. and other countries.
+ 
+-->
+
+<!DOCTYPE weblogic-web-app PUBLIC "-//BEA Systems, Inc.//DTD Web Application 6.0//EN" "http://www.bea.com/servers/wls600/dtd/weblogic-web-jar.dtd">
+
+<weblogic-web-app>
+   <description>WebLogic Descriptor</description>
+   <security-role-assignment>
+      <role-name>MANAGER_ROLE</role-name>
+      <principal-name>am_manager_role</principal-name>
+   </security-role-assignment>
+   <security-role-assignment>
+      <role-name>EMPLOYEE_ROLE</role-name>
+      <principal-name>am_employee_role</principal-name>
+   </security-role-assignment>
+</weblogic-web-app>

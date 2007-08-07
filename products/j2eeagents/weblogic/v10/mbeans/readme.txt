@@ -1,0 +1,71 @@
+<!--
+    Copyright (c) 2007 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+need to use JAVA_HOME JDK1.5 or above.
+
+
+replace these properties in the ant file build.xml
+    REPLACE_WEB_LOGIC_10_SERVER_LIB  set it to your installation of \bea\wlserver_10.0\server\lib
+    and 
+    REPLACE_JAVA_HOME_LIB  set to something like \bea\jdk150_06\lib
+
+Run 'ant'. 
+The default target is "build" which will generate an amauthprovider.jar
+
+There is another target called "rebuild" which does the build target plus copies into the ..\etc directory. So you can choose to copy existing ..\etc amauthprovider.jar or generate a new one for each weblogic 10 agent build
+
+
+**********************************************************************
+
+OPTIONAL STUFF BELOW
+If you want to generate the amauthprovider.jar at the command line, 
+and not use ant, then follow the instructions below.
+
+**********************************************************************
+
+
+C:\workspace\test3-bea10\bea\wlserver_10.0\server\lib
+C:\workspace\test3-bea10\bea\jdk150_06
+
+0) download and install BEA 10 or have some of the libraries and artifacts available
+
+1)change to this directory ...
+  opensso\products\j2eeagents\weblogic\v10\mbeans
+
+
+2) set to JDK1.5 or above, note there is jdk in bea 10 downloads so consider using
+JAVA_HOME=C:\workspace\test3-bea10\bea\jdk150_06
+
+3) make a dist directory inside current directory
+for example
+ opensso\products\j2eeagents\weblogic\v10\mbeans\dist
+
+3) make a build\ directory inside current directory
+for example
+ opensso\products\j2eeagents\weblogic\v10\mbeans\build
+
+4) copy these two files into the build directory
+AgentAuthenticator.xml(found in current directory)  
+commo.dtd (found in weblogic 10 server\lib directory such as  
+                     C:\workspace\test3-bea10\bea\wlserver_10.0\server\lib) 
+
+4) run this java command
+java -classpath
+C:\workspace\test3-bea10\bea\wlserver_10.0\server\lib\weblogic.jar;
+C:\workspace\test3-bea10\bea\jdk150_06\lib\tools.jar;
+.\build  
+ weblogic.management.commo.WebLogicMBeanMaker -files build 
+ -MDF build\AgentAuthenticator.xml -createStubs -verbose
+
+5)  run this java command
+java -classpath
+C:\workspace\test3-bea10\bea\wlserver_10.0\server\lib\weblogic.jar;
+C:\workspace\test3-bea10\bea\jdk150_06\lib\tools.jar;
+.\build 
+ weblogic.management.commo.WebLogicMBeanMaker -files build 
+ -MJF dist\amauthprovider.jar -createStubs -verbose
+
+
+

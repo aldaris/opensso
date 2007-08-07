@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2007-07-30 20:34:47 veiming Exp $
+   $Id: build.xml,v 1.9 2007-08-07 01:44:19 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -51,8 +51,14 @@
         <property name="containerversion" value="v9"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
     </target>
+    
+    <target name="clean_weblogic_v10">
+        <property name="containername" value="weblogic"/>
+        <property name="containerversion" value="v10"/>
+        <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
+    </target>
 
-    <target name="clean" depends="clean_appserver_v9">
+    <target name="clean" depends="clean_appserver_v9, clean_weblogic_v10">
         <delete dir="${j2eeagents.dist.dir}"/>
         <delete dir="${j2eeagents.built.dir}"/>
     </target>
@@ -65,6 +71,13 @@
         <echo message="Dispatch to appserver_v9"/>
         <property name="containername" value="appserver"/>
         <property name="containerversion" value="v9"/>
+        <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
+    </target>
+
+    <target name="weblogic_v10" depends="preparebuild">
+        <echo message="Dispatch to weblogic_v10"/>
+        <property name="containername" value="weblogic"/>
+        <property name="containerversion" value="v10"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
     </target>
 
@@ -100,8 +113,10 @@
         <echo message=" "/>
         <echo message=" all                 : builds all the J2EE agents"/>
         <echo message=" clean               : deletes all the generated files"/>
-        <echo message=" appserver_v9       : builds the Sun Appserver 8.1/8.2/9.0/9.1 agent"/>
-        <echo message=" clean_appserver_v9 : deletes the generated files for appserver_v9 agent"/>
+        <echo message=" appserver_v9        : builds the Sun Appserver 8.1/8.2/9.0/9.1 agent"/>
+        <echo message=" clean_appserver_v9  : deletes the generated files for appserver_v9 agent"/>
+        <echo message=" weblogic_v10        : builds the BEA WebLogic 10.0 agent"/>
+        <echo message=" clean_weblogic_v10  : deletes the generated files for weblogic_v10 agent"/>
         <echo message=" usage               : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>

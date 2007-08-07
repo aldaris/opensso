@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<configure>
+    <class-prefix>
+        <package type="system" name="com.sun.identity.install.tools.configurator"/>
+        <package type="common" name="com.sun.identity.agents.tools.weblogic"/>
+        <package type="custom" name="com.sun.identity.agents.tools.weblogic.v10"/>
+        <package type="agentsdk" name="com.sun.identity.agents.install.configurator"/>
+    </class-prefix>
+    <welcome-message>
+        <i18n key="WELCOME_MESSAGE" group="wl9Tools"/>
+    </welcome-message>
+    <exit-message>
+        <i18n key="EXIT_MESSAGE" group="wl9Tools"/>
+    </exit-message>
+    <instance-finder>	
+        <home-dir-locator>
+            <class name="HomeDirLocator" type="custom"/>
+        </home-dir-locator>
+        <instance-finder-interactions>
+            <interaction lookupkey="STARTUP_SCR">
+                <i18n key="INT_STARTUP_SCR" group="wl9Tools"/>
+                <default-value-finder>
+                    <class name="StartupScriptFinder" type="custom"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="FILE_VALID">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="FILE_READABLE">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="VALID_WL_STARTUP_SCRIPT">
+                        <class name="StartupScriptValidator" type="custom"/>
+                    </validation>
+                </validations>
+                <value-normalizer>
+                    <class name="PathNormalizer" type="system"/>
+                </value-normalizer>
+            </interaction>
+            <interaction lookupkey="SERVER_NAME">
+                <i18n key="INT_SERVER_NAME" group="wl9Tools"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="myserver"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_STRING">
+                        <class name="StringValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+        </instance-finder-interactions>
+    </instance-finder>	
+    <install>
+        <common-interactions>
+            <interaction lookupkey="AM_SERVICES_HOST">
+                <i18n key="INT_AM_SERVICES_HOST" group="amToolsMessages"/>
+                <validations>			
+                    <validation name="VALID_FULLY_QUALIFIED_HOST">
+                        <class name="NetworkValidator" type="system"/>
+                    </validation>
+                    <validation name="VALID_HOST">
+                        <class name="NetworkValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AM_SERVICES_PORT">
+                <i18n key="INT_AM_SERVICES_PORT" group="amToolsMessages"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="80"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_PORT">
+                        <class name="NetworkValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AM_SERVICES_PROTO">
+                <i18n key="INT_AM_SERVICES_PROTO" group="amToolsMessages"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="http"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_CHOICE">
+                        <class name="ChoiceValidator" type="system"/>
+                        <property name="value1" value="http"/>
+                        <property name="value2" value="https"/>
+                        <property name="ignorecase" value="false"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AM_SERVICES_DEPLOY_URI">
+                <i18n key="INT_AM_SERVICES_DEPLOY_URI" group="amToolsMessages"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="/amserver"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_URI">
+                        <class name="NetworkValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_HOST">
+                <i18n key="INT_AGENT_HOST" group="amToolsMessages"/>
+                <validations>	
+                    <validation name="VALID_FULLY_QUALIFIED_HOST">
+                        <class name="NetworkValidator" type="system"/>
+                    </validation>
+                    <validation name="VALID_HOST">
+                        <class name="NetworkValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>	
+            <interaction lookupkey="WEBLOGIC_HOME_DIR">
+                <i18n key="INT_WEBLOGIC_HOME_DIR" group="wl9Tools"/>
+                <default-value-finder>
+                    <class name="WeblogicHomeDirFinder" type="custom"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="DIR_EXISTS">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="DIR_READ_WRITE">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="VALID_WL_HOME_DIR">
+                        <class name="WeblogicHomeDirValidator" type="custom"/>
+                    </validation>
+                    <validation name="VALID_WL_VERSION">
+                        <class name="WeblogicHomeDirValidator" type="custom"/>
+                    </validation>		
+                </validations>
+                <value-normalizer>
+                    <class name="PathNormalizer" type="system"/>
+                </value-normalizer>
+            </interaction>
+            <interaction lookupkey="DOMAIN_IS_PORTAL">
+                <i18n key="INT_DOMAIN_IS_PORTAL" group="wl9Tools"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="false"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_CHOICE">
+                        <class name="ChoiceValidator" type="system"/>
+                        <property name="value1" value="true"/>
+                        <property name="value2" value="false"/>
+                        <property name="ignorecase" value="true"/>
+                    </validation>
+                    <validation name="VALID_WL_DOMAIN">
+                        <class name="WeblogicHomeDirValidator" type="custom"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="PORTAL_CONTEXT_URI">
+                <skipIf key="DOMAIN_IS_PORTAL" ignorecase="true">
+                    <value>false</value>
+                </skipIf>
+                <i18n key="INT_PORTAL_CONTEXT_URI" group="wl9Tools"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="/"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_URI">
+                        <class name="NetworkValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+        </common-interactions>
+        <instance-interactions>
+            <interaction lookupkey="AGENT_PREF_PORT">
+                <i18n key="INT_AGENT_PREF_PORT" group="amToolsMessages"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="80"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_PORT">
+                        <class name="NetworkValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_PREF_PROTO">
+                <i18n key="INT_AGENT_PREF_PROTO" group="amToolsMessages"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="http"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_CHOICE">
+                        <class name="ChoiceValidator" type="system"/>
+                        <property name="value1" value="http"/>
+                        <property name="value2" value="https"/>
+                        <property name="ignorecase" value="false"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_APP_URI">
+                <i18n key="INT_AGENT_APP_URI" group="amToolsMessages"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="/agentapp"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_URI">
+                        <class name="NetworkValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_ENCRYPT_KEY" persistent="false">
+                <i18n key="INT_AGENT_ENCRYPT_KEY" group="amToolsMessages"/>
+                <default-value-finder>
+                    <class name="RandomKeyGenerator" type="system"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_STRING">
+                        <class name="StringValidator" type="system"/>
+                    </validation>
+                    <validation name="VALID_KEY">
+                        <class name="StringValidator" type="system"/>
+                        <property name="minLen" value="12"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_PROFILE_NAME">
+                <i18n key="INT_AGENT_PROFILE_NAME" group="amToolsMessages"/>
+                <validations>
+                    <validation name="VALID_STRING">
+                        <class name="StringValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_PASSWORD_FILE" persistent="false">
+                <i18n key="INT_AGENT_PASSWORD_FILE" group="amToolsMessages"/>
+                <validations>
+                    <validation name="FILE_VALID">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="FILE_READABLE">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="VALID_PASSWORD">
+                        <class name="PasswordValidator" type="system"/>
+                        <property name="minLen" value="1"/>
+                        <property name="maxLen" value="256"/>
+                    </validation>
+                </validations>
+                <value-normalizer>
+                    <class name="PathNormalizer" type="system"/>
+                </value-normalizer>
+            </interaction>
+            <interaction lookupkey="AM_COEXIST">
+                <i18n key="INT_AM_COEXIST" group="amToolsMessages"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="false"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_CHOICE">
+                        <class name="ChoiceValidator" type="system"/>
+                        <property name="value1" value="true"/>
+                        <property name="value2" value="false"/>
+                        <property name="ignorecase" value="true"/>
+                    </validation>
+                </validations>
+            </interaction>
+        </instance-interactions>
+        <common-tasks>
+            <task name="COPY_MBEANS_JAR">
+                <class name="CopyMbeansTask" type="custom"/>
+            </task>
+        </common-tasks>
+        <instance-tasks>
+            <task name="CREATE_LAYOUT">
+                <class name="CreateLayoutTask" type="system"/>
+            </task>
+            <task name="ENCRYPT_DATA">
+                <class name="EncryptTask" type="agentsdk"/>
+                <property name="DATA_FILE_LOOKUP_KEY" 
+          value="AGENT_PASSWORD_FILE"/>
+                <property name="ENCRYPTION_KEY_LOOKUP_KEY" 
+                          value="AGENT_ENCRYPT_KEY"/>
+                <property name="ENCRYPTED_VALUE_KEY_LOOKUP_KEY" 
+                          value="AGENT_ENCRYPTED_PASSWORD"/>
+            </task>
+            <task name="GENERATE_AUDIT_LOGFILE_NAME">
+           		<class name="AuditLogFileNameTask" type="system"/>
+           		<property name="HOSTNAME_LOOKUP_KEY"
+           				  value="AGENT_HOST"/>
+           	    <property name="PORT_LOOKUP_KEY"
+           	    		  value="AGENT_PREF_PORT"/>
+           	    <property name="LOGFILE_NAME_OUTPUT_KEY"
+           	    		  value="AUDIT_LOG_FILENAME"/>
+           	</task>
+            <task name="CONFIGURE_AGENT_PROPS">
+            	<class name="ConfigurePropertiesTask" type="system"/>    
+            	<property name="CONFIG_FILENAME_TEMPLATE"
+        				  value="AMAgent.template"/>
+                <property name="CONFIG_FILENAME"
+                          value="AMAgent.properties"/>            	                          
+            </task>
+            <task name="CONFIGURE_STARTUP_SCRIPT">
+                <class name="ConfigureStartupScriptTask" type="custom"/>
+            </task>
+            <task name="CONFIGURE_WEBLOGIC_PROPERTIES">
+                <class name="ConfigureWeblogicProperties" type="custom"/>
+            </task>
+        </instance-tasks>
+    </install>
+    <uninstall>
+        <common-interactions/>
+        <instance-interactions/>
+        <common-tasks>
+            <task name="REMOVE_MBEANS_JAR">
+                <class name="RemoveMbeansTask" type="custom"/>
+            </task>
+        </common-tasks>
+        <instance-tasks>
+            <task name="DELETE_LAYOUT">
+                <class name="DeleteLayoutTask" type="system"/>
+            </task>
+            <task name="UNCONFIGURE_STARTUP_SCRIPT">
+                <class name="UnconfigureStartupScriptTask" type="custom"/>
+            </task>
+        </instance-tasks>
+    </uninstall>	
+</configure>

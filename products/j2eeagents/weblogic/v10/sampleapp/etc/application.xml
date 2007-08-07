@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ $Id: application.xml,v 1.1 2007-08-07 01:47:38 sean_brydon Exp $
+
+ Copyright (c) 2007 Sun Microsystems, Inc. All rights reserved.
+ Use is subject to license terms.
+-->
+
+<!DOCTYPE application PUBLIC 
+   '-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN' 
+   'http://java.sun.com/dtd/application_1_3.dtd'>
+
+<application id="Application_ID">
+    <display-name>SampleApplication</display-name>
+    <description>
+        Sun Java(TM) System Access Manager J2EE Policy Agent Sample Application
+    </description>
+    <module id="EjbModule_agentsample">
+        <ejb>agentejb.jar</ejb>
+    </module>
+   
+    <module id="WebModule_TestSuite">
+        <web>
+            <web-uri>agentservlets.war</web-uri>
+            <context-root>agentsample</context-root>
+        </web>
+    </module>
+   
+   
+    <security-role id="SR_MANAGER_ROLE">
+        <role-name>MANAGER_ROLE</role-name>
+    </security-role>
+   
+    <security-role id="SR_EMPLOYEE_ROLE">
+        <role-name>EMPLOYEE_ROLE</role-name>
+    </security-role>  
+
+</application>
