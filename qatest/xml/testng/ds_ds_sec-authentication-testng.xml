@@ -20,18 +20,18 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: client-authentication-testng.xml,v 1.5 2007-06-22 19:10:43 sridharev Exp $
+ $Id: ds_ds_sec-authentication-testng.xml,v 1.1 2007-08-07 23:35:29 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="client-authentication" verbose="1">
+<suite name="ds_ds_sec-authentication" verbose="1">
     <test name="AuthTestLDAPUser">
         <parameter name="testModule" value="ldap"/>
         <parameter name="testMode" value="user"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -43,7 +43,7 @@
         <parameter name="testMode" value="module"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -55,7 +55,7 @@
         <parameter name="testMode" value="service"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -67,7 +67,7 @@
         <parameter name="testMode" value="role"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -79,7 +79,7 @@
         <parameter name="testMode" value="authlevel"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -91,7 +91,7 @@
         <parameter name="testMode" value="user"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -103,7 +103,7 @@
         <parameter name="testMode" value="module"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -115,7 +115,7 @@
         <parameter name="testMode" value="service"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -127,7 +127,7 @@
         <parameter name="testMode" value="role"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -139,7 +139,7 @@
         <parameter name="testMode" value="authlevel"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -151,7 +151,7 @@
         <parameter name="testMode" value="user"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -163,7 +163,7 @@
         <parameter name="testMode" value="module"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -175,7 +175,7 @@
         <parameter name="testMode" value="service"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -187,7 +187,7 @@
         <parameter name="testMode" value="role"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -199,7 +199,7 @@
         <parameter name="testMode" value="authlevel"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -211,7 +211,7 @@
         <parameter name="testMode" value="user"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -223,7 +223,7 @@
         <parameter name="testMode" value="module"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -235,7 +235,7 @@
         <parameter name="testMode" value="service"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -247,7 +247,7 @@
         <parameter name="testMode" value="role"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -259,7 +259,7 @@
         <parameter name="testMode" value="authlevel"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -271,7 +271,7 @@
         <parameter name="testMode" value="user"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -283,7 +283,7 @@
         <parameter name="testMode" value="module"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -295,7 +295,7 @@
         <parameter name="testMode" value="service"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -307,7 +307,7 @@
         <parameter name="testMode" value="role"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -319,7 +319,7 @@
         <parameter name="testMode" value="authlevel"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -329,7 +329,7 @@
     <test name="ChainTest">
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -339,7 +339,7 @@
     <test name="RedirectTest">
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -350,7 +350,7 @@
         <parameter name="testProfile" value="required"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -361,7 +361,7 @@
         <parameter name="testProfile" value="dynamic"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -372,7 +372,7 @@
         <parameter name="testProfile" value="ignored"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -382,7 +382,7 @@
 <test name="AccountLockoutTest">
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>

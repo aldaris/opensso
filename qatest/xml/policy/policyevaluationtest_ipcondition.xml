@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyevaluationtest_ipcondition.xml,v 1.1 2007-05-16 16:54:18 arunav Exp $
+   $Id: policyevaluationtest_ipcondition.xml,v 1.2 2007-08-07 23:35:26 rmisra Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,7 +50,7 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
                      includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
                     <Value>id=ipuser0,ou=user,
-                    dc=opensso,dc=java,dc=net</Value>
+                    dc=red,dc=iplanet,dc=com</Value>
                 </AttributeValuePair>
             </Subject>            
         </Subjects>
@@ -90,7 +90,7 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="user user1" type="AMIdentitySubject" 
                      includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                    <Value>id=ipuser1, ou=user,dc=opensso,dc=java,dc=net</Value>
+                    <Value>id=ipuser1, ou=user,dc=red,dc=iplanet,dc=com</Value>
                 </AttributeValuePair>
             </Subject>            
         </Subjects>
@@ -131,8 +131,8 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="user user1" type="AMIdentitySubject" 
                      includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                    <Value>id=ipdnsuser1, ou=user,dc=opensso,
-                    dc=java,dc=net</Value>
+                    <Value>id=ipdnsuser1, ou=user,dc=red,
+                    dc=iplanet,dc=com</Value>
                 </AttributeValuePair>
             </Subject>            
         </Subjects>

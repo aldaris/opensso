@@ -20,25 +20,24 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_sec-idff-testng.xml,v 1.8 2007-07-31 20:56:22 mrudulahg Exp $
+ $Id: ff_ds-idff-testng.xml,v 1.1 2007-08-07 23:35:31 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-
-<suite name="ff_sec-idff" verbose="1">
-     <parameter name="groupName" value="ff_sec"/>
+<suite name="ff_ds-idff" verbose="1">
+     <parameter name="groupName" value="ff_ds"/>
      <test name="ConfigurationUnconfigurationIDFF">
         <groups>
             <run>
-                <include name="ff_sec"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idff.ConfigureIDFF"/>
-            <class name="com.sun.identity.qatest.idff.UnconfigureIDFF"/>
+            <class name="com.sun.identity.qatest.idff.UnconfigureIDFF"/>  
         </classes>
-    </test>
+    </test> 
     <test name="IDFFTestWithDefaultProfiles">
         <parameter name="ssoprofile" value="artifact"/>
         <parameter name="sloprofile" value="http"/>
@@ -46,13 +45,13 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ff_sec"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
-            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
-            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/> 
+            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/> 
             <class name="com.sun.identity.qatest.idff.IDFFForceAuthNTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFNameIDPolicyTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFIsPassiveTests"/>
@@ -65,7 +64,7 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ff_sec"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
@@ -84,7 +83,7 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ff_sec"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
@@ -100,7 +99,7 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ff_sec"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
@@ -116,7 +115,7 @@
         <parameter name="registrationprofile" value="soap"/>
         <groups>
             <run>
-                <include name="ff_sec"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
@@ -132,7 +131,7 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ff_sec"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
@@ -148,7 +147,7 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ff_sec"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
@@ -164,7 +163,7 @@
         <parameter name="registrationprofile" value="soap"/>
         <groups>
             <run>
-                <include name="ff_sec"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
@@ -174,4 +173,3 @@
         </classes>
     </test> 
 </suite>
-

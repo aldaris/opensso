@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.2 2007-05-22 23:54:21 rmisra Exp $
+ * $Id: ChainTest.java,v 1.3 2007-08-07 23:35:19 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,7 @@ public class ChainTest extends TestCommon{
      * class is instantiated by the <code>Factory</code> implementation in
      * testNg framework
      */
-    @BeforeClass(groups = {"client"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(){
         entering("setup", null);
         chainModules = testResources.getString("am-auth-test-" + 
@@ -156,7 +156,7 @@ public class ChainTest extends TestCommon{
      * performs the positive test validation by calling
      * <code>ChainTestValidation</code> and its appropriate method.
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void validatePositiveTests() throws Exception {
         entering("validatePositiveTests", null);
         Map executeMap;
@@ -181,7 +181,7 @@ public class ChainTest extends TestCommon{
      * performs the Negative test validation by calling
      * <code>ChainTestValidation</code> and its appropriate method.
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void validateNegativeTests() throws Exception {
         entering("validateNegativeTests", null);
         Map executeMap;
@@ -210,7 +210,7 @@ public class ChainTest extends TestCommon{
      * 2. Delete the modules involved in that service/chain
      * 3. Delete the users involved/create for this chain.
      */
-    @AfterClass(groups={"client"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
         throws Exception {
         entering("cleanup", null);

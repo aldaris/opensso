@@ -20,17 +20,17 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ldapv3_sec-idff-testng.xml,v 1.8 2007-07-31 20:56:23 mrudulahg Exp $
+ $Id: ds_ds_sec-idff-testng.xml,v 1.1 2007-08-07 23:35:29 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="ldapv3_sec-idff" verbose="1">
-      <parameter name="groupName" value="ldapv3_sec"/>
+<suite name="ds_ds_sec-idff" verbose="1">
+     <parameter name="groupName" value="ds_ds_sec"/>
      <test name="ConfigurationUnconfigurationIDFF">
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -45,12 +45,12 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
-            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/> 
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
             <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFForceAuthNTests"/>
             <class name="com.sun.identity.qatest.idff.IDFFNameIDPolicyTests"/>
@@ -64,7 +64,7 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -83,7 +83,7 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -99,14 +99,14 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
             <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
-        </classes>
+       </classes>
     </test>
     <test name="IDFFTestRegistrationWithSOAPProfile">
         <parameter name="ssoprofile" value="artifact"/>
@@ -115,7 +115,7 @@
         <parameter name="registrationprofile" value="soap"/>
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -131,7 +131,7 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -147,7 +147,7 @@
         <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -163,7 +163,7 @@
         <parameter name="registrationprofile" value="soap"/>
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -171,5 +171,6 @@
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
             <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
-    </test>
+    </test>  
 </suite>
+

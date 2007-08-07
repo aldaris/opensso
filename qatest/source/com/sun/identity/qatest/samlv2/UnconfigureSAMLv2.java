@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2.java,v 1.3 2007-07-11 18:14:42 mrudulahg Exp $
+ * $Id: UnconfigureSAMLv2.java,v 1.4 2007-08-07 23:35:25 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
      * Configure sp & idp
      * @DocTest: SAML2|Unconfigure SP & IDP by deleting entities & COT's 
      */
-    @AfterSuite (groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterSuite (groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void UnconfigureSAMLv2()
     throws Exception {
         entering ("UnconfigureSAMLv2", null);

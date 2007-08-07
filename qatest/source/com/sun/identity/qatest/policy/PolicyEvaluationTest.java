@@ -85,7 +85,7 @@ public class PolicyEvaluationTest extends TestCommon {
      * the first time
      * @param none
      */
-    @BeforeClass(groups={"client"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup()
     throws Exception {
         entering("setup", null);
@@ -119,7 +119,7 @@ public class PolicyEvaluationTest extends TestCommon {
      * Evaluates the policy with token, resource and env parameters and asserts
      * the decision
      */
-    @Test(groups={"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void evaluatePolicy()
     throws Exception {
         entering("evaluatePolicy", null);
@@ -177,7 +177,7 @@ public class PolicyEvaluationTest extends TestCommon {
      * Deletes the Identities and policy if it is the last test
      * in the scenario
      */
-    @AfterClass(groups={"client"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

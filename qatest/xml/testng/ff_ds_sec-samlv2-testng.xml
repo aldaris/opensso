@@ -20,17 +20,17 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ldapv3_sec-samlv2-testng.xml,v 1.7 2007-07-11 18:17:44 mrudulahg Exp $
+ $Id: ff_ds_sec-samlv2-testng.xml,v 1.1 2007-08-07 23:35:32 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="ldapv3_sec-samlv2" verbose="1">
-    <parameter name="groupName" value="ldapv3_sec"/>
+<suite name="ff_ds_sec-samlv2" verbose="1">
+    <parameter name="groupName" value="ff_ds_sec"/>
     <test name="SAMLv2ConfigureUnconfigure">
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -41,26 +41,26 @@
     <test name="SAMLv2SmokeTest">
         <groups>
             <run>
-                <include name="ldapv3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2SmokeTest"/>
-            <class name="com.sun.identity.qatest.samlv2.SAMLv2ScenarioTests"/> 
-            <class name="com.sun.identity.qatest.samlv2.SAMLv2RelayStateTests"/>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2ScenarioTests"/>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2RelayStateTests"/> 
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFederationTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2TransientUserTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFedTransientUserTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFedDynUserCreationTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2ForceAuthNTests"/>
         </classes>
-    </test>
+    </test> 
     <test name="SAMLv2WantAuthnRequestsSigned">
     <parameter name="attribute" value="WantAuthnRequestsSigned"/>
     <parameter name="metadata" value="both"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -72,7 +72,7 @@
     <parameter name="metadata" value="idp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -84,7 +84,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -96,7 +96,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -108,7 +108,7 @@
     <parameter name="metadata" value="both"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -120,7 +120,7 @@
     <parameter name="metadata" value="idp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -132,7 +132,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -144,7 +144,7 @@
     <parameter name="metadata" value="both"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -156,7 +156,7 @@
     <parameter name="metadata" value="idp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -168,7 +168,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -180,7 +180,7 @@
     <parameter name="metadata" value="both"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -192,7 +192,7 @@
     <parameter name="metadata" value="idp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -204,7 +204,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -216,7 +216,7 @@
     <parameter name="metadata" value="both"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -228,7 +228,7 @@
     <parameter name="metadata" value="idp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -240,7 +240,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -252,7 +252,7 @@
     <parameter name="metadata" value="both"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -264,7 +264,7 @@
     <parameter name="metadata" value="idp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -276,7 +276,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -288,7 +288,7 @@
     <parameter name="metadata" value="idp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -300,7 +300,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -312,7 +312,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -324,7 +324,7 @@
     <parameter name="metadata" value="sp"/>
         <groups>
             <run>
-                <include name="ldap3_sec"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>

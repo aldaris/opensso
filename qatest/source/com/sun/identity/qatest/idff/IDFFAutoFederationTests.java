@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFAutoFederationTests.java,v 1.2 2007-07-27 18:20:56 mrudulahg Exp $
+ * $Id: IDFFAutoFederationTests.java,v 1.3 2007-08-07 23:35:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -119,8 +119,7 @@ public class IDFFAutoFederationTests extends IDFFCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -135,8 +134,7 @@ public class IDFFAutoFederationTests extends IDFFCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup() 
     throws Exception {
         List<String> list;
@@ -298,7 +296,7 @@ public class IDFFAutoFederationTests extends IDFFCommon {
      * @DocTest: IDFF | SP initiated Autofederation with NameIDPolicy set to 
      * federated.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void IDFFautoFedSPInitFederated()
     throws Exception {
         entering("IDFFautoFedSPInitFederated", null);
@@ -355,7 +353,7 @@ public class IDFFAutoFederationTests extends IDFFCommon {
      * @DocTest: SAML2| IDP initiated Autofederation with NameIDPolicy set to 
      * onetime.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void IDFFautoFedSPInitOneTime()
     throws Exception {
         entering("IDFFautoFedSPInitOneTime", null);
@@ -408,7 +406,7 @@ public class IDFFAutoFederationTests extends IDFFCommon {
      * This methods deletes all the users as part of cleanup
      * It also restores the original metadata. 
      */
-    @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

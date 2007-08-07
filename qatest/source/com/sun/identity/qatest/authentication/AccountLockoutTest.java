@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccountLockoutTest.java,v 1.1 2007-06-22 19:14:21 sridharev Exp $
+ * $Id: AccountLockoutTest.java,v 1.2 2007-08-07 23:35:19 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,7 +101,7 @@ public class AccountLockoutTest extends TestCommon {
      * - Sets the lockout attributes
      * - Create Users , If needed
      */
-    @BeforeClass(groups = {"client"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup()
     throws Exception {
         entering("setup", null);
@@ -162,7 +162,7 @@ public class AccountLockoutTest extends TestCommon {
     /*
      * Validate the Account Lockout tests
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void validateAccountLockTest()
     throws Exception {
         entering("validateAccountLockTest", null);
@@ -182,7 +182,7 @@ public class AccountLockoutTest extends TestCommon {
     /**
      * Validate the warning tests
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void validateWarningTest()
     throws Exception {
         entering("validateWarningTest", null);
@@ -202,7 +202,7 @@ public class AccountLockoutTest extends TestCommon {
     /**
      * performs cleanup after tests are done.
      */
-    @AfterClass(groups={"client"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

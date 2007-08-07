@@ -51,14 +51,14 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             includeType="inclusive">
                 <AttributeValuePair>
                     <Attribute name="Values"/>
-                    <Value>id=authtestuser0,ou=user,dc=opensso,
-                    dc=java,dc=net</Value>
+                    <Value>id=authtestuser0,ou=user,dc=red,
+                    dc=iplanet,dc=com</Value>
                 </AttributeValuePair>
             </Subject>
             <Subject name="AmidUser" type="AMIdentitySubject" 
             includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/><Value>id=user0,
-                    ou=user,dc=opensso,dc=java,dc=net</Value>
+                    ou=user,dc=red,dc=iplanet,dc=com</Value>
                 </AttributeValuePair>
             </Subject>
             
@@ -106,8 +106,8 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             includeType="inclusive">
                 <AttributeValuePair>
                     <Attribute name="Values"/>
-                    <Value>id=authtestuser1,ou=user,dc=opensso,
-                    dc=java,dc=net</Value>
+                    <Value>id=authtestuser1,ou=user,dc=red,
+                    dc=iplanet,dc=com</Value>
                 </AttributeValuePair>
             </Subject>
             
@@ -154,8 +154,8 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             includeType="inclusive">
                 <AttributeValuePair>
                     <Attribute name="Values"/>
-                    <Value>id=authtestuser2,ou=user,dc=opensso,
-                    dc=java,dc=net</Value>
+                    <Value>id=authtestuser2,ou=user,dc=red,
+                    dc=iplanet,dc=com</Value>
                 </AttributeValuePair>
             </Subject>
             

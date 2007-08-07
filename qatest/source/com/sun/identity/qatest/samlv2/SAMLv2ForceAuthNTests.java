@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ForceAuthNTests.java,v 1.3 2007-07-11 18:12:55 mrudulahg Exp $
+ * $Id: SAMLv2ForceAuthNTests.java,v 1.4 2007-08-07 23:35:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,8 +75,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     /**
      * This setup method creates required users.
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup() 
     throws Exception {
         URL url;
@@ -155,8 +154,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     /**
      * Create the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void getWebClient() 
     throws Exception {
         try {
@@ -171,7 +169,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     /**
      * @DocTest: SAML2|Perform SP initiated sso with ForceAuthn=true.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testforceAuthNtrueArt()
     throws Exception {
         entering("testforceAuthNtrueArt", null);
@@ -220,7 +218,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     /**
      * @DocTest: SAML2|Perform SP init sso with ForceAuthn=true, with post profile
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void testforceAuthNtruePost()
     throws Exception {
         entering("testforceAuthNtruePost", null);
@@ -269,7 +267,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     /**
      * @DocTest: SAML2|Perform SP initiated sso with ForceAuthn=false.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testforceAuthNfalseArt()
     throws Exception {
         entering("testforceAuthNfalseArt", null);
@@ -316,7 +314,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     /**
      * @DocTest: SAML2|Perform SP init sso with ForceAuthn=false, with post profile
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void testforceAuthNfalsePost()
     throws Exception {
         entering("testforceAuthNfalsePost", null);
@@ -364,7 +362,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     /**
      * Cleanup methods deletes all the users which were created in setup
      */
-    @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.3 2007-07-24 21:54:09 cmwesley Exp $
+ * $Id: CreateIdentityTest.java,v 1.4 2007-08-07 23:35:20 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,7 +97,7 @@ public class CreateIdentityTest extends TestCommon {
      * CreateIdentityTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -187,7 +187,7 @@ public class CreateIdentityTest extends TestCommon {
      * This method is used to execute tests involving "famadm create-identities"
      * using input data from the CreateIdentityTest.properties file.
      */
-    @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testIdentityCreation() 
     throws Exception {
         entering("testIdentityCreation", null);
@@ -314,7 +314,7 @@ public class CreateIdentityTest extends TestCommon {
      * the setup and testIdentityCreation methods using "famadm delete-realm" 
      * and "famadm delete-identities".
      */
-    @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
     throws Exception {
         int exitStatus = -1;

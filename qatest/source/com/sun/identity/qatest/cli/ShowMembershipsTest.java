@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowMembershipsTest.java,v 1.1 2007-08-02 16:47:40 cmwesley Exp $
+ * $Id: ShowMembershipsTest.java,v 1.2 2007-08-07 23:35:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,7 @@ public class ShowMembershipsTest extends TestCommon {
      * members in the setup-members in the ShowMembershipsTest.properties file.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -264,7 +264,7 @@ public class ShowMembershipsTest extends TestCommon {
      * This method is used to execute tests involving "famadm show-memberships"
      * using input data from the ShowMembershipsTest.properties file.
      */
-    @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testMembershipSearch() 
     throws Exception {
         entering("testMembershipSearch", null);
@@ -422,7 +422,7 @@ public class ShowMembershipsTest extends TestCommon {
      * "famadm remove-members", "famadm delete-identities", and 
      * "famadm delete-realm".
      */
-    @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
     throws Exception {
         int exitStatus = -1;

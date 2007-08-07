@@ -20,17 +20,17 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff-samlv2-testng.xml,v 1.8 2007-07-11 18:17:44 mrudulahg Exp $
+ $Id: ff_ds-samlv2-testng.xml,v 1.1 2007-08-07 23:35:31 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="ff-samlv2" verbose="1">
-    <parameter name="groupName" value="ff"/>
+<suite name="ff_ds-samlv2" verbose="1">
+    <parameter name="groupName" value="ff_ds"/>
     <test name="SAMLv2ConfigureUnconfigure">
         <groups>
             <run>
-                <include name="ff"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
@@ -41,7 +41,7 @@
     <test name="SAMLv2SmokeTest">
         <groups>
             <run>
-                <include name="ff"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>

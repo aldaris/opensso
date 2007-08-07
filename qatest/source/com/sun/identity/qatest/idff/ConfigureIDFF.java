@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFF.java,v 1.2 2007-06-19 22:54:18 mrudulahg Exp $
+ * $Id: ConfigureIDFF.java,v 1.3 2007-08-07 23:35:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,7 @@ public class ConfigureIDFF extends TestCommon {
      * @DocTest: IDFF|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeSuite(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @BeforeSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void ConfigureIDFF(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};

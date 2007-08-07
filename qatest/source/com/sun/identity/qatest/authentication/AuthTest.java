@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.4 2007-05-22 23:54:20 rmisra Exp $
+ * $Id: AuthTest.java,v 1.5 2007-08-07 23:35:19 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,7 @@ public class AuthTest extends TestCommon {
      * This is called only once per auth module.
      */
     @Parameters({"testModule","testMode"})
-    @BeforeClass(groups={"client"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String testModule, String testMode)
     throws Exception {
         Object[] params = {testModule, testMode};
@@ -208,7 +208,7 @@ public class AuthTest extends TestCommon {
      * Tests for successful login into the system using correct
      * credentials
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testLoginPositive()
     throws Exception {
         entering("testLoginPositive", null);
@@ -241,7 +241,7 @@ public class AuthTest extends TestCommon {
      * Tests for unsuccessful login into the system using incorrect
      * credentials
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testLoginNegative()
     throws Exception {
         entering("testLoginNegative", null);
@@ -277,7 +277,7 @@ public class AuthTest extends TestCommon {
      * (3) Delete all users and roles
      * This is called only once per auth module.
      */
-    @AfterClass(groups={"client"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

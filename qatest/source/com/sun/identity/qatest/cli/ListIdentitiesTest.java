@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListIdentitiesTest.java,v 1.2 2007-07-24 21:54:09 cmwesley Exp $
+ * $Id: ListIdentitiesTest.java,v 1.3 2007-08-07 23:35:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,7 +95,7 @@ public class ListIdentitiesTest extends TestCommon {
      * DeleteIdentitiesTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -204,7 +204,7 @@ public class ListIdentitiesTest extends TestCommon {
      * This method is used to execute tests involving "famadm list-identities"
      * using input data from the ListIdentitiesTest.properties file.
      */
-    @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testIdentitySearch() 
     throws Exception {
         entering("testIdentitySearch", null);
@@ -354,7 +354,7 @@ public class ListIdentitiesTest extends TestCommon {
      * This method remove any realms that were created during the setup and
      * testIdentitySearch methods using "famadm list-identities".
      */
-    @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
     throws Exception {
         int exitStatus = -1;

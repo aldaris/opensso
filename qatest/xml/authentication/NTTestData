@@ -1,4 +1,3 @@
 iplanet-am-auth-nt-domain=ISQA
 iplanet-am-auth-nt-host=blue16
 iplanet-am-auth-nt-auth-level=30
-iplanet-am-auth-samba-config-file-name=/openfm/openfm/bin/smbclient

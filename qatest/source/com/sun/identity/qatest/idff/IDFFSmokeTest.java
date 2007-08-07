@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSmokeTest.java,v 1.5 2007-07-27 18:20:56 mrudulahg Exp $
+ * $Id: IDFFSmokeTest.java,v 1.6 2007-08-07 23:35:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,8 +98,7 @@ public class IDFFSmokeTest extends IDFFCommon {
      */
     @Parameters({"ssoprofile", "sloprofile", "terminationprofile", 
     "registrationprofile"})
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", 
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String strSSOProfile, String strSLOProfile, 
             String strTermProfile, String strRegProfile)
     throws Exception {
@@ -293,7 +292,7 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated federation.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testSPInitFederation()
     throws Exception {
         entering("testSPInitFederation", null);
@@ -322,7 +321,7 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated SLO.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
     dependsOnMethods={"testSPInitFederation"})
     public void testSPInitSLO()
     throws Exception {
@@ -345,7 +344,7 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated SSO.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
     dependsOnMethods={"testSPInitSLO"})
     public void testSPInitSSO()
     throws Exception {
@@ -373,7 +372,7 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated Name registration.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
     dependsOnMethods={"testSPInitSSO"})
     public void testSPInitNameReg()
     throws Exception {
@@ -396,7 +395,7 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated Termination.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
     dependsOnMethods={"testSPInitNameReg"})
     public void testSPInitTerminate()
     throws Exception {
@@ -423,7 +422,7 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform IDP initiated SLO.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
     dependsOnMethods={"testSPInitTerminate"})
     public void testIDPInitSLO()
     throws Exception {
@@ -455,7 +454,7 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform IDP initiated Name registration.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
     dependsOnMethods={"testIDPInitSLO"})
     public void testIDPInitNameReg()
     throws Exception {
@@ -482,7 +481,7 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform IDP initiated Termination.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
     dependsOnMethods={"testIDPInitNameReg"})
     public void testIDPInitTerminate()
     throws Exception {
@@ -511,7 +510,7 @@ public class IDFFSmokeTest extends IDFFCommon {
      */
     @Parameters({"ssoprofile", "sloprofile", "terminationprofile", 
     "registrationprofile"})
-    @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup(String strSSOProfile, String strSLOProfile, 
             String strTermProfile, String strRegProfile)
     throws Exception {

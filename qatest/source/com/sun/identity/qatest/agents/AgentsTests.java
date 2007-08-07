@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsTests.java,v 1.1 2007-06-19 21:59:09 rmisra Exp $
+ * $Id: AgentsTests.java,v 1.2 2007-08-07 23:35:19 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ public class AgentsTests extends TestCommon {
                 ".executeAgainstOpenSSO")).booleanValue();
     }
     
-    @BeforeSuite(groups={"client"})
+    @BeforeSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void createAgentProfile() 
     throws Exception {
         entering("createAgentProfile", null);
@@ -103,7 +103,7 @@ public class AgentsTests extends TestCommon {
     }
 
     @Parameters({"policyIdx","evaluationIdx","setup","cleanup"})
-    @BeforeClass(groups={"client"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup
             , String cleanup)
     throws Exception {
@@ -131,7 +131,7 @@ public class AgentsTests extends TestCommon {
         exiting("setup");
     }
     
-    @Test(groups={"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void evaluatePolicyAgents()
     throws Exception {
         entering("evaluatePolicyAgents", null);
@@ -157,7 +157,7 @@ public class AgentsTests extends TestCommon {
         exiting("evaluatePolicyAgents");
     }
 
-    @AfterClass(groups={"client"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -177,7 +177,7 @@ public class AgentsTests extends TestCommon {
         exiting("cleanup");
     }
 
-    @AfterSuite(groups={"client"})
+    @AfterSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void deleteAgentProfile()
     throws Exception {
         entering("deleteAgentProfile", null);

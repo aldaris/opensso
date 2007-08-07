@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFederationTests.java,v 1.2 2007-07-11 18:12:55 mrudulahg Exp $
+ * $Id: SAMLv2AutoFederationTests.java,v 1.3 2007-08-07 23:35:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,8 +104,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -120,8 +119,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup() 
     throws Exception {
         List<String> list;
@@ -220,8 +218,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
      * Change SAMLv2 ext metadata on SP & IDP side to configure autofederation
      * based on mail attribute
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void autoFedSetup()
     throws Exception {
         entering("autoFedSetup", null);
@@ -349,7 +346,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
      * Run SP initiated auto federation
      * @DocTest: SAML2| SP initiated Autofederation.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void autoFedSPInitArt()
     throws Exception {
         entering("autoFedSPInitArt", null);
@@ -389,7 +386,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
      * Run IDP initiated auto federation
      * @DocTest: SAML2| IDP initiated Autofederation.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void autoFedIDPInitArt()
     throws Exception {
         entering("autoFedIDPInitArt", null);
@@ -432,7 +429,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
      * Run SP initiated auto federation
      * @DocTest: SAML2| SP initiated Autofederation.
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void autoFedSPInitPost()
     throws Exception {
         entering("autoFedSPInitPost", null);
@@ -472,7 +469,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
      * Run IDP initiated auto federation
      * @DocTest: SAML2| IDP initiated Autofederation.
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void autoFedIDPInitPost()
     throws Exception {
         entering("autoFedIDPInitPost", null);
@@ -513,7 +510,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericCLITest.java,v 1.1 2007-08-02 16:47:40 cmwesley Exp $
+ * $Id: GenericCLITest.java,v 1.2 2007-08-07 23:35:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,7 @@ public class GenericCLITest extends TestCommon {
      * Creates a <code>FederationManagerCLI</code> object. 
      */
     @Parameters({"testName", "propFile"})
-    @BeforeClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String testName, String propFile) 
     throws Exception {
         Object[] params = {testName, propFile};
@@ -125,7 +125,7 @@ public class GenericCLITest extends TestCommon {
      * This method is used to execute tests with the subcommand and arguments
      * from the GenericCLITest_*.properties file.
      */
-    @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testGenericCLICommand() 
     throws Exception {
         entering("testGenericCLICommand", null);
@@ -206,7 +206,7 @@ public class GenericCLITest extends TestCommon {
     /**
      * This method is a placeholder.  Does not perform any cleanup activities.
      */
-    @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() {
         entering("cleanup", null);
         exiting("cleanup");

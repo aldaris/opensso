@@ -20,12 +20,12 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: client-agents-testng.xml,v 1.1 2007-06-19 21:59:10 rmisra Exp $: 
+ $Id: ds_ds_sec-agents-testng.xml,v 1.1 2007-08-07 23:35:29 rmisra Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="client-agents" verbose="1">
+<suite name="ds_ds_sec-agents" verbose="1">
     <test name="AgentsSubjectTests 1">
         <parameter name="policyIdx" value="0"/>
         <parameter name="evaluationIdx" value="0"/>
@@ -33,7 +33,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -47,7 +47,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -61,7 +61,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -75,7 +75,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -89,7 +89,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -103,7 +103,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -117,7 +117,7 @@
         <parameter name="cleanup" value="true"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -131,7 +131,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -145,7 +145,7 @@
         <parameter name="cleanup" value="true"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -159,7 +159,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -173,7 +173,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -187,7 +187,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -201,7 +201,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -215,7 +215,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -229,7 +229,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -243,7 +243,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -257,7 +257,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -271,7 +271,7 @@
         <parameter name="cleanup" value="true"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -285,7 +285,7 @@
         <parameter name="cleanup" value="true"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -299,7 +299,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -313,7 +313,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -327,7 +327,7 @@
         <parameter name="cleanup" value="false"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -341,7 +341,7 @@
         <parameter name="cleanup" value="true"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>

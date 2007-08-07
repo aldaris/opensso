@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyTests.java,v 1.1 2007-07-06 21:45:29 arunav Exp $
+ * $Id: PolicyTests.java,v 1.2 2007-08-07 23:35:23 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ public class PolicyTests extends TestCommon {
      * creates the policies in the server
      */
     @Parameters({"policyIdx", "evaluationIdx", "setup", "cleanup"})
-    @BeforeClass(groups={"client"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup
             , String cleanup)
             throws Exception {
@@ -99,7 +99,7 @@ public class PolicyTests extends TestCommon {
      * This method evaluates the policies using the client policy evalaution API
      * Policy_sub, Policy_ldapFilter, Policy_sub_exclude, Policy_Wildcard
      */
-    @Test(groups={"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void evaluatePolicyAPI()
     throws Exception {
         entering("evaluatePolicyAPI", null);
@@ -135,7 +135,7 @@ public class PolicyTests extends TestCommon {
     /**
      * This method cleans all the identities and policies  that were setup
      */
-    @AfterClass(groups={"client"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

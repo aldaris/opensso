@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFIsPassiveTests.java,v 1.1 2007-07-31 20:55:34 mrudulahg Exp $
+ * $Id: IDFFIsPassiveTests.java,v 1.2 2007-08-07 23:35:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,8 +82,7 @@ public class IDFFIsPassiveTests extends IDFFCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -98,8 +97,7 @@ public class IDFFIsPassiveTests extends IDFFCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup() 
     throws Exception {
         List<String> list;
@@ -208,7 +206,7 @@ public class IDFFIsPassiveTests extends IDFFCommon {
      * @DocTest: IDFF| SP initiated SSO with NameIDPolicy set to none.
      * Testcase ID: AccessManager_Liberty_48
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void isPassiveTrue()
     throws Exception {
         entering("isPassiveTrue", null);
@@ -274,7 +272,7 @@ public class IDFFIsPassiveTests extends IDFFCommon {
      * This methods deletes all the users as part of cleanup
      * It also restores the original metadata. 
      */
-    @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

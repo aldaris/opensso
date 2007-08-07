@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveMemberTest.java,v 1.2 2007-07-25 13:42:04 cmwesley Exp $
+ * $Id: RemoveMemberTest.java,v 1.3 2007-08-07 23:35:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,7 +92,7 @@ public class RemoveMemberTest extends TestCommon {
      * members in the setup-members in the RemoveMemberTest.properties file.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -269,7 +269,7 @@ public class RemoveMemberTest extends TestCommon {
      * This method is used to execute tests involving "famadm remove-member"
      * using input data from the RemoveMemberTest.properties file.
      */
-    @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void testMemberRemoval() 
     throws Exception {
         entering("testMemberRemoval", null);
@@ -491,7 +491,7 @@ public class RemoveMemberTest extends TestCommon {
      * "famadm remove-member", "famadm delete-identities", and 
      * "famadm delete-realm".
      */
-    @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
     throws Exception {
         int exitStatus = -1;

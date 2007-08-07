@@ -20,17 +20,17 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds-local-cli-testng.xml,v 1.7 2007-08-02 16:50:46 cmwesley Exp $
+ $Id: ds_ds_sec-cli-testng.xml,v 1.1 2007-08-07 23:35:29 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="ds-local-cli" verbose="1">
+<suite name="ds_ds_sec-cli" verbose="1">
     <test name="CLI_create-realm01">
         <parameter name="testName" value="createrealm-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -41,7 +41,7 @@
         <parameter name="testName" value="createrealm-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -52,7 +52,7 @@
         <parameter name="testName" value="createrealm-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -63,7 +63,7 @@
         <parameter name="testName" value="createrealm-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -74,7 +74,7 @@
         <parameter name="testName" value="createrealm-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -85,7 +85,7 @@
         <parameter name="testName" value="createrealm-test9"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -96,7 +96,7 @@
         <parameter name="testName" value="createrealm-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -107,7 +107,7 @@
         <parameter name="testName" value="createrealm-test11"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -118,7 +118,7 @@
         <parameter name="testName" value="createrealm-test12"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -129,7 +129,7 @@
         <parameter name="testName" value="createrealm-test13"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -140,7 +140,7 @@
         <parameter name="testName" value="createrealm-test14"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -151,7 +151,7 @@
         <parameter name="testName" value="createrealm-test15"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -162,7 +162,7 @@
         <parameter name="testName" value="createrealm-test16"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -173,7 +173,7 @@
         <parameter name="testName" value="deleterealm-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -184,7 +184,7 @@
         <parameter name="testName" value="deleterealm-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -195,7 +195,7 @@
         <parameter name="testName" value="deleterealm-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -206,7 +206,7 @@
         <parameter name="testName" value="deleterealm-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -217,7 +217,7 @@
         <parameter name="testName" value="deleterealm-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -228,7 +228,7 @@
         <parameter name="testName" value="deleterealm-test6"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -239,7 +239,7 @@
         <parameter name="testName" value="deleterealm-test7"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -250,7 +250,7 @@
         <parameter name="testName" value="deleterealm-test8"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -261,7 +261,7 @@
         <parameter name="testName" value="deleterealm-test9"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -272,7 +272,7 @@
         <parameter name="testName" value="deleterealm-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -283,7 +283,7 @@
         <parameter name="testName" value="listrealms-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -294,7 +294,7 @@
         <parameter name="testName" value="listrealms-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -305,7 +305,7 @@
         <parameter name="testName" value="listrealms-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -316,7 +316,7 @@
         <parameter name="testName" value="listrealms-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -327,7 +327,7 @@
         <parameter name="testName" value="listrealms-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -338,7 +338,7 @@
         <parameter name="testName" value="listrealms-test6"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -349,7 +349,7 @@
         <parameter name="testName" value="listrealms-test7"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -360,7 +360,7 @@
         <parameter name="testName" value="listrealms-test8"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -371,7 +371,7 @@
         <parameter name="testName" value="listrealms-test9"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -382,7 +382,7 @@
         <parameter name="testName" value="listrealms-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -393,7 +393,7 @@
         <parameter name="testName" value="listrealms-test11"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -404,7 +404,7 @@
         <parameter name="testName" value="listrealms-test12"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -415,18 +415,18 @@
         <parameter name="testName" value="listrealms-test13"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
-    </test>
+    </test> 
     <test name="CLI_create-identity01">
         <parameter name="testName" value="createidentity-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -437,7 +437,7 @@
         <parameter name="testName" value="createidentity-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -448,7 +448,7 @@
         <parameter name="testName" value="createidentity-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -459,7 +459,7 @@
         <parameter name="testName" value="createidentity-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -470,18 +470,18 @@
         <parameter name="testName" value="createidentity-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CLI_create-identity32">
-        <parameter name="testName" value="createidentity-test32"/>
+    <test name="CLI_create-identity06">
+        <parameter name="testName" value="createidentity-test6"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -492,7 +492,7 @@
         <parameter name="testName" value="createidentity-test7"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -503,7 +503,7 @@
         <parameter name="testName" value="createidentity-test8"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -514,7 +514,7 @@
         <parameter name="testName" value="createidentity-test9"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -525,7 +525,7 @@
         <parameter name="testName" value="createidentity-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -536,18 +536,18 @@
         <parameter name="testName" value="createidentity-test11"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CLI_create-identity33">
-        <parameter name="testName" value="createidentity-test33"/>
+    <test name="CLI_create-identity12">
+        <parameter name="testName" value="createidentity-test12"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -558,7 +558,7 @@
         <parameter name="testName" value="createidentity-test13"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -569,7 +569,7 @@
         <parameter name="testName" value="createidentity-test14"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -580,7 +580,7 @@
         <parameter name="testName" value="createidentity-test15"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -591,7 +591,7 @@
         <parameter name="testName" value="createidentity-test16"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -602,18 +602,18 @@
         <parameter name="testName" value="createidentity-test17"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CLI_create-identity34">
-        <parameter name="testName" value="createidentity-test34"/>
+    <test name="CLI_create-identity18">
+        <parameter name="testName" value="createidentity-test18"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -624,7 +624,7 @@
         <parameter name="testName" value="createidentity-test19"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -635,7 +635,7 @@
         <parameter name="testName" value="createidentity-test20"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -646,7 +646,7 @@
         <parameter name="testName" value="createidentity-test21"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -657,7 +657,7 @@
         <parameter name="testName" value="createidentity-test22"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -668,7 +668,7 @@
         <parameter name="testName" value="createidentity-test23"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -679,7 +679,7 @@
         <parameter name="testName" value="createidentity-test24"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -690,7 +690,7 @@
         <parameter name="testName" value="createidentity-test25"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -701,7 +701,7 @@
         <parameter name="testName" value="createidentity-test27"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -712,7 +712,7 @@
         <parameter name="testName" value="createidentity-test28"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -723,7 +723,7 @@
         <parameter name="testName" value="createidentity-test29"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -734,7 +734,7 @@
         <parameter name="testName" value="createidentity-test30"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -745,18 +745,18 @@
         <parameter name="testName" value="createidentity-test31"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
-    </test>  
+    </test> 
     <test name="CLI_delete-identities01">
         <parameter name="testName" value="deleteidentities-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -767,7 +767,7 @@
         <parameter name="testName" value="deleteidentities-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -778,7 +778,7 @@
         <parameter name="testName" value="deleteidentities-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -789,7 +789,7 @@
         <parameter name="testName" value="deleteidentities-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -800,7 +800,7 @@
         <parameter name="testName" value="deleteidentities-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -811,7 +811,7 @@
         <parameter name="testName" value="deleteidentities-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -822,7 +822,7 @@
         <parameter name="testName" value="deleteidentities-test11"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -833,7 +833,7 @@
         <parameter name="testName" value="deleteidentities-test12"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -844,7 +844,7 @@
         <parameter name="testName" value="deleteidentities-test13"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -855,7 +855,7 @@
         <parameter name="testName" value="deleteidentities-test14"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -866,7 +866,7 @@
         <parameter name="testName" value="deleteidentities-test15"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -877,7 +877,7 @@
         <parameter name="testName" value="deleteidentities-test16"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -888,18 +888,18 @@
         <parameter name="testName" value="deleteidentities-test17"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
         </classes>
-    </test>
+    </test>  
     <test name="CLI_delete-identities22">
         <parameter name="testName" value="deleteidentities-test22"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -910,7 +910,7 @@
         <parameter name="testName" value="deleteidentities-test23"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -921,7 +921,7 @@
         <parameter name="testName" value="deleteidentities-test24"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -932,7 +932,7 @@
         <parameter name="testName" value="deleteidentities-test25"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -943,7 +943,7 @@
         <parameter name="testName" value="deleteidentities-test26"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -954,7 +954,7 @@
         <parameter name="testName" value="deleteidentities-test27"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -965,7 +965,7 @@
         <parameter name="testName" value="deleteidentities-test28"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -976,51 +976,7 @@
         <parameter name="testName" value="deleteidentities-test29"/>
         <groups>
             <run>
-                <include name="ds-local"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
-        </classes>
-    </test>
-    <test name="CLI_delete-identities30">
-        <parameter name="testName" value="deleteidentities-test30"/>
-        <groups>
-            <run>
-                <include name="ds-local"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
-        </classes>
-    </test>
-    <test name="CLI_delete-identities31">
-        <parameter name="testName" value="deleteidentities-test31"/>
-        <groups>
-            <run>
-                <include name="ds-local"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
-        </classes>
-    </test>
-    <test name="CLI_delete-identities32">
-        <parameter name="testName" value="deleteidentities-test32"/>
-        <groups>
-            <run>
-                <include name="ds-local"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
-        </classes>
-    </test>
-    <test name="CLI_delete-identities33">
-        <parameter name="testName" value="deleteidentities-test33"/>
-        <groups>
-            <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1031,18 +987,18 @@
         <parameter name="testName" value="deleteidentities-test34"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
         </classes>
-    </test>
+    </test>    
     <test name="CLI_delete-identities35">
         <parameter name="testName" value="deleteidentities-test35"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1053,7 +1009,7 @@
         <parameter name="testName" value="deleteidentities-test36"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1064,29 +1020,29 @@
         <parameter name="testName" value="deleteidentities-test37"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
         </classes>
-    </test>
-    <test name="CLI_delete-identities38">
+    </test> 
+   <test name="CLI_delete-identities38">
         <parameter name="testName" value="deleteidentities-test38"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
         </classes>
-    </test>
-    <test name="CLI_delete-identities39">
+    </test>     
+   <test name="CLI_delete-identities39">
         <parameter name="testName" value="deleteidentities-test39"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1097,7 +1053,7 @@
         <parameter name="testName" value="listidentities-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1108,7 +1064,7 @@
         <parameter name="testName" value="listidentities-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1119,7 +1075,7 @@
         <parameter name="testName" value="listidentities-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1130,7 +1086,7 @@
         <parameter name="testName" value="listidentities-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1141,7 +1097,7 @@
         <parameter name="testName" value="listidentities-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1152,7 +1108,7 @@
         <parameter name="testName" value="listidentities-test6"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1163,7 +1119,7 @@
         <parameter name="testName" value="listidentities-test7"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1174,18 +1130,18 @@
         <parameter name="testName" value="listidentities-test8"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
         </classes>
-    </test>  
+    </test>
     <test name="CLI_list-identities09">
         <parameter name="testName" value="listidentities-test9"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1196,7 +1152,7 @@
         <parameter name="testName" value="listidentities-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1207,7 +1163,7 @@
         <parameter name="testName" value="listidentities-test11"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1218,7 +1174,7 @@
         <parameter name="testName" value="listidentities-test12"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1229,7 +1185,7 @@
         <parameter name="testName" value="listidentities-test13"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1240,7 +1196,7 @@
         <parameter name="testName" value="listidentities-test14"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1251,7 +1207,7 @@
         <parameter name="testName" value="listidentities-test15"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1262,7 +1218,7 @@
         <parameter name="testName" value="listidentities-test16"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1273,7 +1229,7 @@
         <parameter name="testName" value="listidentities-test17"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1284,7 +1240,7 @@
         <parameter name="testName" value="listidentities-test17"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1295,7 +1251,7 @@
         <parameter name="testName" value="listidentities-test17"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1306,7 +1262,7 @@
         <parameter name="testName" value="listidentities-test22"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1317,7 +1273,7 @@
         <parameter name="testName" value="listidentities-test23"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1328,7 +1284,7 @@
         <parameter name="testName" value="listidentities-test22"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1339,7 +1295,7 @@
         <parameter name="testName" value="listidentities-test23"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1350,7 +1306,7 @@
         <parameter name="testName" value="listidentities-test24"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1361,7 +1317,7 @@
         <parameter name="testName" value="listidentities-test25"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1372,7 +1328,7 @@
         <parameter name="testName" value="listidentities-test26"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1383,7 +1339,7 @@
         <parameter name="testName" value="listidentities-test27"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1394,7 +1350,7 @@
         <parameter name="testName" value="listidentities-test28"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1405,7 +1361,7 @@
         <parameter name="testName" value="listidentities-test29"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1416,7 +1372,7 @@
         <parameter name="testName" value="listidentities-test30"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1427,18 +1383,18 @@
         <parameter name="testName" value="listidentities-test31"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
         </classes>
-    </test>
+    </test>  
     <test name="CLI_add-member01">
         <parameter name="testName" value="addmember-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1449,7 +1405,7 @@
         <parameter name="testName" value="addmember-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1460,7 +1416,7 @@
         <parameter name="testName" value="addmember-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1471,7 +1427,7 @@
         <parameter name="testName" value="addmember-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1482,7 +1438,7 @@
         <parameter name="testName" value="addmember-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1493,7 +1449,7 @@
         <parameter name="testName" value="addmember-test6"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1504,7 +1460,7 @@
         <parameter name="testName" value="addmember-test7"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1515,7 +1471,7 @@
         <parameter name="testName" value="addmember-test8"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1526,7 +1482,7 @@
         <parameter name="testName" value="addmember-test9"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1537,7 +1493,7 @@
         <parameter name="testName" value="addmember-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1548,7 +1504,7 @@
         <parameter name="testName" value="addmember-test11"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1559,7 +1515,7 @@
         <parameter name="testName" value="addmember-test12"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1570,7 +1526,7 @@
         <parameter name="testName" value="addmember-test13"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1581,7 +1537,7 @@
         <parameter name="testName" value="addmember-test14"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1592,7 +1548,7 @@
         <parameter name="testName" value="addmember-test15"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1603,7 +1559,7 @@
         <parameter name="testName" value="addmember-test16"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1614,7 +1570,7 @@
         <parameter name="testName" value="removemember-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1625,7 +1581,7 @@
         <parameter name="testName" value="removemember-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1636,7 +1592,7 @@
         <parameter name="testName" value="removemember-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1647,7 +1603,7 @@
         <parameter name="testName" value="removemember-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1658,7 +1614,7 @@
         <parameter name="testName" value="removemember-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1669,7 +1625,7 @@
         <parameter name="testName" value="removemember-test6"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1680,7 +1636,7 @@
         <parameter name="testName" value="removemember-test7"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1691,7 +1647,7 @@
         <parameter name="testName" value="removemember-test8"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1702,7 +1658,7 @@
         <parameter name="testName" value="removemember-test9"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1713,7 +1669,7 @@
         <parameter name="testName" value="removemember-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1724,7 +1680,7 @@
         <parameter name="testName" value="removemember-test11"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1735,7 +1691,7 @@
         <parameter name="testName" value="removemember-test12"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1746,7 +1702,7 @@
         <parameter name="testName" value="removemember-test13"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1757,7 +1713,7 @@
         <parameter name="testName" value="removemember-test14"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1768,7 +1724,7 @@
         <parameter name="testName" value="removemember-test15"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1779,7 +1735,7 @@
         <parameter name="testName" value="removemember-test16"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1790,7 +1746,7 @@
         <parameter name="testName" value="showmembers-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1801,7 +1757,7 @@
         <parameter name="testName" value="showmembers-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1812,7 +1768,7 @@
         <parameter name="testName" value="showmembers-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1823,7 +1779,7 @@
         <parameter name="testName" value="showmembers-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1834,7 +1790,7 @@
         <parameter name="testName" value="showmembers-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1845,7 +1801,7 @@
         <parameter name="testName" value="showmembers-test6"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1856,7 +1812,7 @@
         <parameter name="testName" value="showmembers-test7"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1867,7 +1823,7 @@
         <parameter name="testName" value="showmembers-test8"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1878,7 +1834,7 @@
         <parameter name="testName" value="showmembers-test9"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1889,7 +1845,7 @@
         <parameter name="testName" value="showmembers-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1900,7 +1856,7 @@
         <parameter name="testName" value="showmembers-test11"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1911,7 +1867,7 @@
         <parameter name="testName" value="showmembers-test12"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1922,7 +1878,7 @@
         <parameter name="testName" value="showmembers-test13"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1933,7 +1889,7 @@
         <parameter name="testName" value="showmembers-test14"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1944,7 +1900,7 @@
         <parameter name="testName" value="showmembers-test15"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1955,18 +1911,18 @@
         <parameter name="testName" value="showmembers-test16"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
         </classes>
-    </test> 
+    </test>
     <test name="CLI_show-memberships01">
         <parameter name="testName" value="showmemberships-test1"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1977,7 +1933,7 @@
         <parameter name="testName" value="showmemberships-test2"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1988,7 +1944,7 @@
         <parameter name="testName" value="showmemberships-test3"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -1999,7 +1955,7 @@
         <parameter name="testName" value="showmemberships-test4"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2010,7 +1966,7 @@
         <parameter name="testName" value="showmemberships-test5"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2021,7 +1977,7 @@
         <parameter name="testName" value="showmemberships-test6"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2032,7 +1988,7 @@
         <parameter name="testName" value="showmemberships-test7"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2043,7 +1999,7 @@
         <parameter name="testName" value="showmemberships-test8"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2054,7 +2010,7 @@
         <parameter name="testName" value="showmemberships-test9"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2065,31 +2021,31 @@
         <parameter name="testName" value="showmemberships-test10"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.ShowMembershipsTest"/>
         </classes>
     </test>
-    <test name="CLI_show-identity-types03">
-        <parameter name="testName" value="showidentitytypes-test3"/>
+    <test name="CLI_show-identity-types01">
+        <parameter name="testName" value="showidentitytypes-test1"/>
         <parameter name="propFile" value="GenericCLITest_ShowIdentityTypesTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.GenericCLITest"/>
         </classes>
     </test>
-    <test name="CLI_show-identity-types04">
-        <parameter name="testName" value="showidentitytypes-test4"/>
+    <test name="CLI_show-identity-types02">
+        <parameter name="testName" value="showidentitytypes-test2"/>
         <parameter name="propFile" value="GenericCLITest_ShowIdentityTypesTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2101,7 +2057,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2113,7 +2069,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2125,7 +2081,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2137,7 +2093,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2149,7 +2105,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2161,7 +2117,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2173,7 +2129,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2185,7 +2141,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2197,7 +2153,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2209,7 +2165,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2221,7 +2177,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2233,7 +2189,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2245,7 +2201,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2257,7 +2213,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2269,7 +2225,7 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2281,11 +2237,11 @@
         <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
-                <include name="ds-local"/>
+                <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.GenericCLITest"/>
         </classes>
-    </test>        
+    </test>    
 </suite>

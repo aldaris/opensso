@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SigningEncryptionTests.java,v 1.1 2007-07-11 18:12:55 mrudulahg Exp $
+ * $Id: SAMLv2SigningEncryptionTests.java,v 1.2 2007-08-07 23:35:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -167,7 +167,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @BeforeMethod(groups={"ds_ds_sec","ff_ds_sec"})
     private void getWebClient()
     throws Exception {
         try {
@@ -184,7 +184,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
      * It also changes the metadata attribute based on the passed parameter
      */
     @Parameters({"attribute", "metadata"})
-    @BeforeClass(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds_sec","ff_ds_sec"})
     public void setup(String strAttribute, String strMetadata)
     throws Exception {
         Object[] params = {strAttribute, strMetadata};
@@ -272,7 +272,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
      * Run SP init SSO, SLO, Termination
      * @DocTest: SAML2|Perform SP initiated SSO, SLO & Termination.
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void SignEncryptSPSSOSLOTermArt()
     throws Exception {
         entering("SignEncryptSPSSOSLOTermArt", null);
@@ -321,7 +321,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
      * Run IDP initiated SSO, SLO & Termination
      * @DocTest: SAML2|Perform IDP initiated SSO, SLO & Termination.
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void SignEncryptIDPSSOSLOTermArt()
     throws Exception {
         entering("SignEncryptIDPSSOSLOTermArt", null);
@@ -373,7 +373,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
      * Run Perform SP init SSO, SLO, Term with post/soap binding
      * @DocTest: SAML2|Perform SP init SSO, SLO, Term with post/soap binding
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void SignEncryptSPSSOSLOTermPost()
     throws Exception {
         entering("SignEncryptSPSSOSLOTermPost", null);
@@ -421,7 +421,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
      * Run IDP Init SSO, SLO, Term with Post/SOAP binding
      * @DocTest: SAML2|IDP Init SSO, SLO, Term with Post/SOAP binding.
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void SignEncryptIDPSSOSLOTermPost()
     throws Exception {
         entering("SignEncryptIDPSSOSLOTermPost", null);
@@ -471,7 +471,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterClass(groups={"ds_ds_sec","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.1 2007-07-06 19:26:29 mrudulahg Exp $
+ * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.2 2007-08-07 23:35:23 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,8 +100,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -116,8 +115,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup() 
     throws Exception {
         List<String> list;
@@ -183,8 +181,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * This is setup method. It enables auto federation. 
      * It also sets Dynamic user creation to true in iplanetAMAuthService.
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3",
-    "ff_sec", "ds_sec", "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void autoFedDynamicUserCreationSetup()
     throws Exception {
         entering("autoFedDynamicUserCreationSetup", null);
@@ -336,8 +333,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * @DocTest: SAML2| SP initiated SSO with Dynamic user creation.
      * TestCase ID: SAMLv2_usecase_8_1
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec",
-    "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void SSOWithDynUserSPInit()
     throws Exception {
         entering("SSOWithDynUserSPInit", null);
@@ -378,8 +374,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * @DocTest: SAML2| IDP initiated SSO with Dynamic user creation at SP.
      * TestCase ID: SAMLv2_usecase_8_2
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec",
-    "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void SSOWithDynUserIDPInit()
     throws Exception {
         entering("SSOWithDynUserIDPInit", null);
@@ -425,7 +420,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * @DocTest: SAML2| SP initiated SSO with dynamic user creation Post/SOAP Profile
      * TestCase ID: SAMLv2_usecase_8_3
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void SSOWithDynUserSPInitPost()
     throws Exception {
         entering("SSOWithDynUserSPInitPost", null);
@@ -468,7 +463,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * Post/SOAP Profile.
      * TestCase ID: SAMLv2_usecase_8_4
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void SSOWithDynUserIDPInitPost()
     throws Exception {
         entering("SSOWithDynUserIDPInitPost", null);
@@ -510,7 +505,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

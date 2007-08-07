@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.1 2007-05-25 21:59:02 sridharev Exp $
+ * $Id: RedirectTest.java,v 1.2 2007-08-07 23:35:20 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,7 +116,7 @@ public class RedirectTest extends TestCommon {
      * - Create realm
      * - Create Users , If needed
      */
-    @BeforeClass(groups = {"client"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(){
         entering("setup", null);
         moduleOnSuccess = testResources.getString("am-auth-test-" +
@@ -185,7 +185,7 @@ public class RedirectTest extends TestCommon {
      * Validate the module based authentication for the module
      * under test for correct user and password behaviour
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void validateModuleTestsPositive()
     throws Exception {
         entering("validateModuleTestsPositive", null);
@@ -206,7 +206,7 @@ public class RedirectTest extends TestCommon {
      * Validate the module based authentication for the module
      * under test for incorrect user and password behaviour
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void validateModuleTestsNegative()
     throws Exception {
         entering("validateModuleTestsNegative", null);
@@ -227,7 +227,7 @@ public class RedirectTest extends TestCommon {
      * Validate the module based authentication for the module
      * under test for "goto" param when auth success behaviour
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void validateGotoTests()
     throws Exception {
         entering("validateGotoTests", null);
@@ -251,7 +251,7 @@ public class RedirectTest extends TestCommon {
      * under test for "GotoOnfail" param with unsuccessful authentication
      * behaviour
      */
-    @Test(groups = {"client"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void validateGotoOnFailTests()
     throws Exception {
         entering("validateGotoOnFailTests", null);
@@ -279,7 +279,7 @@ public class RedirectTest extends TestCommon {
      * 2. Delete the realm involved only if it is not root realm
      * 3. Delete the users involved/created for this test if any.
      */
-    @AfterClass(groups={"client"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

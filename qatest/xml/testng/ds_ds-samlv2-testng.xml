@@ -20,17 +20,17 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ldapv3-samlv2-testng.xml,v 1.7 2007-07-11 18:17:44 mrudulahg Exp $
+ $Id: ds_ds-samlv2-testng.xml,v 1.1 2007-08-07 23:35:29 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="ldapv3-samlv2" verbose="1">
-    <parameter name="groupName" value="ldapv3"/>
+<suite name="ds_ds-samlv2" verbose="1">
+    <parameter name="groupName" value="ds_ds"/>
     <test name="SAMLv2ConfigureUnconfigure">
         <groups>
             <run>
-                <include name="ldapv3"/>
+                <include name="ds_ds"/>
             </run>
         </groups>
         <classes>
@@ -41,7 +41,7 @@
     <test name="SAMLv2SmokeTest">
         <groups>
             <run>
-                <include name="ldapv3"/>
+                <include name="ds_ds"/>
             </run>
         </groups>
         <classes>

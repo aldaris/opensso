@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: policyevaluationtest_spcondition.xml,v 1.1 2007-06-26 18:36:04 arunav Exp $: 
+   $Id: policyevaluationtest_spcondition.xml,v 1.2 2007-08-07 23:35:26 rmisra Exp $: 
  
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -52,20 +52,20 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="AmidUser" type="AMIdentitySubject" 
                      includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                    <Value>id=spuser0,ou=user,dc=opensso,dc=java,dc=net</Value>                    
+                    <Value>id=spuser0,ou=user,dc=red,dc=iplanet,dc=com</Value>                    
                 </AttributeValuePair>
             </Subject>
             <Subject name="AmidGroup" type="AMIdentitySubject" 
                      includeType="inclusive">    
                 <AttributeValuePair><Attribute name="Values"/>
-                    <Value>id=spgroup1,ou=group,dc=opensso,
-                    dc=java,dc=net</Value>
+                    <Value>id=spgroup1,ou=group,dc=red,
+                    dc=iplanet,dc=com</Value>
                 </AttributeValuePair>
             </Subject>
             <Subject name="AmidRole" type="AMIdentitySubject" 
                      includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                    <Value>id=sprole1, ou=role,dc=opensso,dc=java,dc=net</Value>
+                    <Value>id=sprole1, ou=role,dc=red,dc=iplanet,dc=com</Value>
                 </AttributeValuePair>
             </Subject>
         </Subjects>
@@ -103,13 +103,13 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="AmidUser" type="AMIdentitySubject" 
                      includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                    <Value>id=spuser1,ou=user,dc=opensso,dc=java,dc=net</Value>                    
+                    <Value>id=spuser1,ou=user,dc=red,dc=iplanet,dc=com</Value>                    
                 </AttributeValuePair>
             </Subject>
             <Subject name="AmidUser2" type="AMIdentitySubject" 
                      includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                    <Value>id=spuser2,ou=user,dc=opensso,dc=java,dc=net</Value>                    
+                    <Value>id=spuser2,ou=user,dc=red,dc=iplanet,dc=com</Value>                    
                 </AttributeValuePair>
             </Subject>
         </Subjects>
@@ -154,7 +154,7 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="AmidUser2" type="AMIdentitySubject" 
                      includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                    <Value>id=spuser3,ou=user,dc=opensso,dc=java,dc=net</Value>                    
+                    <Value>id=spuser3,ou=user,dc=red,dc=iplanet,dc=com</Value>                    
                 </AttributeValuePair>
             </Subject>
         </Subjects>
@@ -198,7 +198,7 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="AmidUser" type="AMIdentitySubject" 
                      includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                    <Value>id=spuser4,ou=user,dc=opensso,dc=java,dc=net</Value>                    
+                    <Value>id=spuser4,ou=user,dc=red,dc=iplanet,dc=com</Value>                    
                 </AttributeValuePair>
             </Subject>
         </Subjects>

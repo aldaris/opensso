@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2TransientUserTests.java,v 1.1 2007-05-31 19:40:16 mrudulahg Exp $
+ * $Id: SAMLv2TransientUserTests.java,v 1.2 2007-08-07 23:35:25 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,8 +89,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", 
-    "ldapv3_sec"})
+    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -105,8 +104,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
     /**
      * This is setup method. It creates required users for tests
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", 
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup() 
     throws Exception {
         List<String> list;
@@ -172,8 +170,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
     /**
      * Change saml2 ext metadata to set transient user to anonymous
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", 
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void transientUserSetup()
     throws Exception {
         entering("transientUserSetup", null);
@@ -293,7 +290,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
      * Run SP initiated federation with transient user
      * @DocTest: SAML2|SP initiated SSO with no SP account.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void SSONoSPAccSPInit()
     throws Exception {
         entering("SSONoSPAccSPInit", null);
@@ -334,7 +331,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
      * Run IDP initiated federation with transient user
      * @DocTest: SAML2|IDP initiated SSO with no SP account.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void SSONoSPAccIDPInit()
     throws Exception {
         entering("SSONoSPAccIDPInit", null);
@@ -378,7 +375,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
      * Run SP initiated federation with transient user
      * @DocTest: SAML2|SP initiated SSO with no SP account with post/soap prof
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void SSONoSPAccSPInitPost()
     throws Exception {
         entering("SSONoSPAccSPInitPost", null);
@@ -419,7 +416,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
      * Run IDP initiated federation with transient user
      * @DocTest: SAML2|IDP initiated SSO with no SP account with post/soap prof
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void SSONoSPAccIDPInitPost()
     throws Exception {
         entering("autoFedIDPInit", null);
@@ -461,7 +458,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

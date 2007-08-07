@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ScenarioTests.java,v 1.4 2007-05-22 23:54:23 rmisra Exp $
+ * $Id: SAMLv2ScenarioTests.java,v 1.5 2007-08-07 23:35:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,8 +79,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -95,8 +94,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
-    "ldapv3_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup() 
     throws Exception {
         List<String> list;
@@ -180,7 +178,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 1
      * @DocTest: SAML2|Perform SP initiated SSO, SLO & Termination.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void samlv2Scenario1()
     throws Exception {
         entering("samlv2Scenario1", null);
@@ -226,7 +224,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 2
      * @DocTest: SAML2|Perform IDP initiated SSO, SLO & Termination.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void samlv2Scenario2()
     throws Exception {
         entering("samlv2Scenario2", null);
@@ -274,7 +272,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 3
      * @DocTest: SAML2|Perform SP init SSO, SLO, Term with post/soap binding
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void samlv2Scenario3()
     throws Exception {
         entering("samlv2Scenario3", null);
@@ -318,7 +316,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 4
      * @DocTest: SAML2|IDP Init SSO, SLO, Term with Post/SOAP binding.
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void samlv2Scenario4()
     throws Exception {
         entering("samlv2Scenario4", null);
@@ -364,7 +362,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 5
      * @DocTest: SAML2|Perform SP Init SSO & SLO with transient federation.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void samlv2Scenario5()
     throws Exception {
         entering("samlv2Scenario5", null);
@@ -408,7 +406,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 6
      * @DocTest: SAML2|SP Init SSO, SLO with transient fed with POST/SOAP
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void samlv2Scenario6()
     throws Exception {
         entering("samlv2Scenario6", null);
@@ -452,7 +450,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 7
      * @DocTest: SAML2| IDP initiated SSO, SLO with transient federation.
      */
-    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void samlv2Scenario7()
     throws Exception {
         entering("samlv2Scenario7", null);
@@ -499,7 +497,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 8
      * @DocTest: SAML2|IDP Init SSO, SLO with transient fed POST/SOAP binding
      */
-    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
+    @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void samlv2Scenario8()
     throws Exception {
         entering("samlv2Scenario8", null);
@@ -545,7 +543,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
