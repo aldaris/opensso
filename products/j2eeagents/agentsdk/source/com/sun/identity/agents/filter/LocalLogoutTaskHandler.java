@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LocalLogoutTaskHandler.java,v 1.1 2006-09-28 23:34:13 huacui Exp $
+ * $Id: LocalLogoutTaskHandler.java,v 1.2 2007-08-08 01:24:23 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,7 +95,12 @@ implements ILocalLogoutTaskHandler {
     public AmFilterResult process(AmFilterRequestContext ctx)
         throws AgentException
     {
-        AmFilterResult result = null;
+        AmFilterResult result = null;        
+        //For new feature to allow session data to not be destroyed when a user 
+        //authenticates to AM server and new session is created. RFE issue #763         
+        if (!isSessionBindingEnabled()) {
+            return result;
+        }
         HttpServletRequest request = ctx.getHttpServletRequest();
         HttpServletResponse response = ctx.getHttpServletResponse();
         IJ2EELogoutHandler logoutHandler = getLogoutHandler(

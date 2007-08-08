@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFilterConfigurationConstants.java,v 1.2 2007-01-25 20:46:20 madan_ranganath Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.3 2007-08-08 01:24:23 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -150,6 +150,13 @@ public interface IFilterConfigurationConstants {
     /** Field CONFIG_COOKE_RESET_PATH_MAP **/
     public static final String CONFIG_COOKE_RESET_PATH_MAP =
         "cookie.reset.path";     
+   /**
+     * For new feature to allow session data to not be destroyed when a user 
+     * authenticates to AM server and new session is created.
+     * For RFE issue #763
+     */
+    public static final String CONFIG_HTTPSESSION_BINDING =
+        "httpsession.binding";
     
     public static final String CONFIG_LOGOUT_HANDLER_MAP = "logout.handler";
     

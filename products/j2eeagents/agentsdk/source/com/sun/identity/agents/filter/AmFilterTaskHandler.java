@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterTaskHandler.java,v 1.1 2006-09-28 23:30:06 huacui Exp $
+ * $Id: AmFilterTaskHandler.java,v 1.2 2007-08-08 01:24:22 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,15 @@ IAmFilterTaskHandler
      */
     public AmFilterTaskHandler(Manager manager) {
         super(manager);
+    }
+    
+    /**
+     * For new feature to allow session data to not be destroyed when a user 
+     * authenticates to AM server and new session is created.
+     * For RFE issue #763
+     */
+    public boolean isSessionBindingEnabled() {
+        return getConfigurationBoolean(CONFIG_HTTPSESSION_BINDING, true);
     }
     
 }

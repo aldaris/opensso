@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterRequestContext.java,v 1.3 2007-07-31 00:55:35 sean_brydon Exp $
+ * $Id: AmFilterRequestContext.java,v 1.4 2007-08-08 01:24:22 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -718,7 +718,7 @@ public class AmFilterRequestContext implements IUtilConstants {
     public void setGotoFormLoginURL(String url) throws AgentException {
         try {
             URL u = new URL(url);
-            _gotoFormLoginURL = getBaseURL() + u.getPath();
+            _gotoFormLoginURL = getBaseURL() + u.getFile();
         } catch (MalformedURLException me) {
             throw new AgentException("Invalid form login url" + url, me);
         }

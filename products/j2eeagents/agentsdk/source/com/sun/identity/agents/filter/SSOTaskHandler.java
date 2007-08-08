@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTaskHandler.java,v 1.1 2006-09-28 23:35:09 huacui Exp $
+ * $Id: SSOTaskHandler.java,v 1.2 2007-08-08 01:24:24 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -144,10 +144,17 @@ implements ISSOTaskHandler {
         HttpServletRequest request = ctx.getHttpServletRequest();
         HttpServletResponse response = ctx.getHttpServletResponse();
         
-        //First destroy the local session if it exists
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
+        /**
+        * For new feature to allow session data to not be destroyed when a user 
+        * authenticates to AM server and new session is created. So added a new check
+        * to test if session binding is enabled before destroying.For RFE issue #763
+        */
+        if (isSessionBindingEnabled()) {
+            //First destroy the local session if it exists
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
         }
         if(getSSOContext().getLoginAttemptLimit() > 0) {
             int loginAttempt = getSSOContext().getLoginAttemptValue(ctx);

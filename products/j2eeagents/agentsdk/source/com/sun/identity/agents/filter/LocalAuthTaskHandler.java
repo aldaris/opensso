@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LocalAuthTaskHandler.java,v 1.1 2006-09-28 23:34:08 huacui Exp $
+ * $Id: LocalAuthTaskHandler.java,v 1.2 2007-08-08 01:24:23 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,10 +61,7 @@ implements ILocalAuthTaskHandler {
     public void initialize(ISSOContext context, AmFilterMode mode) 
     throws AgentException {
         super.initialize(context, mode);
-
-        initSessionBindingFlag();
         setGlobalAuthenticationHandler();
-
     }
 
     /**
@@ -356,19 +353,6 @@ implements ILocalAuthTaskHandler {
         return authResult;
     }
 
-    private boolean isSessionBindingEnabled() {
-        return _sessionBindingFlag;
-    }
-
-    private void initSessionBindingFlag() {
-        setSessionBindingFlag(getResolver().getSessionBindingFlag());
-    }
-
-    private void setSessionBindingFlag(boolean flag) {
-        _sessionBindingFlag = flag;
-    }
-
-    private boolean _sessionBindingFlag;
     private IJ2EEAuthenticationHandler      _globalAuthenticationHandler;
     private Hashtable _authenticationHandlers = new Hashtable();
 
