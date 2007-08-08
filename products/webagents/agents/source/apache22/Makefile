@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.1 2007-04-30 17:29:24 subbae Exp $
+# $Id: Makefile,v 1.2 2007-08-08 00:39:46 subbae Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -34,12 +34,23 @@ APACHE22_LIB_NAME := libamapc22
 APACHE22_LIB := $(APACHE22_LIB_NAME)$(SO_EXT)
 APACHE22_INCLUDE_FLAGS := -I$(DEST_INC_DIR) -I../common
 APACHE22_CFLAGS += -DAPACHE2 -DEAPI -DUSE_EXPAT -DXP_WIN32 -DAM_STATIC_LIB $(PIC_FLAG) -DCORE_PRIVATE $(APACHE22_INCLUDE_FLAGS) -I$(APACHE22_INC_DIR)
-LDFLAGS := ../../../am/source/am_web.res -L$(APACHE22_LIB_DIR) -L$(DEST_LIB_DIR) -L$(NSS_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) -L../../built/WINNT/lib
+ifdef   OS_IS_CYGWIN
+LDFLAGS := ../../../am/source/am_web.res -LIBPATH:$(APACHE22_LIB_DIR) -LIBPATH:$(DEST_LIB_DIR) -LIBPATH:$(NSS_LIB_DIR) -LIBPATH:$(NSPR_LIB_DIR) -LIBPATH:$(LIBXML_LIB_DIR)
+LDLIBS := libapr-1.lib libapriconv-1.lib libhttpd.lib amsdk.lib libnspr4.lib nss3.lib ssl3.lib libplc4.lib libxml2.lib user32.lib
+else
+LDFLAGS := ../../../am/source/am_web.res -L$(APACHE22_LIB_DIR) -L$(DEST_LIB_DIR) -L$(NSS_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) 
 LDLIBS := -llibapr-1 -llibapriconv-1 -llibhttpd -lamsdk_static -llibnspr4 -lnss3 -lssl3 -llibplc4 -llibxml2 -luser32
+endif
 
 SRCS := apache_agent.c
+ifdef   OS_IS_CYGWIN
+$(APACHE22_LIB_NAME).o: apache_agent.c
+	$(COMPILE.c) $(APACHE22_CFLAGS) -Fo$@ $<
+else
 $(APACHE22_LIB_NAME).o: apache_agent.c
 	$(COMPILE.c) $(APACHE22_CFLAGS) $< $(OUTPUT_OPTION)
+endif
+
 APACHE22_OBJS := $(patsubst %.c, $(APACHE22_LIB_NAME).o, $(SRCS))
 EXPORTED_LIBS := $(APACHE22_LIB)
 OBJS := $(APACHE22_OBJS)
@@ -51,6 +62,7 @@ all: $(APACHE22_LIB)
 
 clean: clean_libs clean_objs
 	$(RM) $(APACHE22_LIB_NAME).o $(APACHE22_LIB_NAME).dll $(APACHE22_LIB_NAME).lib $(APACHE22_LIB_NAME).exp
+	$(RM) *.pdb
 
 else
 APACHE22_LIB_NAME := libamapc22

@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.1 2007-06-05 19:36:42 subbae Exp $
+# $Id: Makefile,v 1.2 2007-08-08 00:39:46 subbae Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -42,8 +42,13 @@ EXPORTED_OBJS := IisAgent6.o  Iis6auth.o
 
 INCLUDE_FLAGS += -I$(DEST_INC_DIR) -I$(NSS_INC_DIR) -I$(NSPR_INC_DIR) -I$(IIS6_INC_DIR)/include
 CFLAGS += -DXP_WIN32 -DAM_STATIC_LIB
+ifdef   OS_IS_CYGWIN
+LDFLAGS += ../../../am/source/am_web.res -LIBPATH:$(DEST_LIB_DIR) -LIBPATH:$(NSPR_LIB_DIR) -LIBPATH:$(LIBXML_LIB_DIR) -LIBPATH:$(NSS_LIB_DIR)
+LDLIBS += amsdk.lib advapi32.lib libnspr4.lib libplc4.lib libxml2.lib user32.lib nss3.lib ssl3.lib
+else
 LDFLAGS += ../../../am/source/am_web.res -L$(DEST_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) -L$(NSS_LIB_DIR)
 LDLIBS += -lamsdk -ladvapi32 -llibnspr4 -llibplc4 -llibxml2 -luser32 -lnss3 -lssl3
+endif
 
 all: export_libs
 
@@ -58,6 +63,7 @@ all: $(DEST_PACKAGE_SCRATCH_DIR) $(IIS6_LIB)
 
 clean: clean_libs clean_objs
 	$(RM) $(EXPORTED_LIBS:%$(SO_EXT)=%*) $(EXPORTED_OBJS)
+	$(RM) *.pdb
 
 else
 all clean:

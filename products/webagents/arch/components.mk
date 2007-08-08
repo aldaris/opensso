@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.8 2007-06-05 19:36:43 subbae Exp $
+# $Id: components.mk,v 1.9 2007-08-08 00:39:48 subbae Exp $
 # 
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -85,9 +85,14 @@ LIBXML_DIR := $(EXTERNAL_DIR)/libxml2_64
 endif
 LIBXML_INC_DIR := $(LIBXML_DIR)/include/libxml2
 LIBXML_LIB_DIR := $(LIBXML_DIR)/lib
+
 ifndef LIBXML_LIBS
 ifeq ($(OS_ARCH), WINNT)
+ifdef OS_IS_CYGWIN
+LIBXML_LIBS := libxml2.lib
+else
 LIBXML_LIBS := -llibxml2
+endif
 else
 LIBXML_LIBS := -lxml2
 endif
@@ -107,7 +112,11 @@ NSPR_LIB_DIR := $(NSPR_DIR)/lib
 
 ifndef	NSPR_LIBS
 ifeq ($(OS_ARCH), WINNT)
+ifdef OS_IS_CYGWIN
+NSPR_LIBS := libplc4.lib libplds4.lib libnspr4.lib
+else
 NSPR_LIBS := -llibplc4 -llibplds4 -llibnspr4
+endif
 else
 NSPR_LIBS := -lplc4 -lplds4 -lnspr4
 endif
@@ -124,7 +133,16 @@ endif
 NSS_BIN_DIR := $(NSS_DIR)/bin
 NSS_INC_DIR := $(NSS_DIR)/include
 NSS_LIB_DIR := $(NSS_DIR)/lib
+
+ifeq ($(OS_ARCH), WINNT)
+ifdef OS_IS_CYGWIN
+NSS_DYNAMIC_LIBS := ssl3.lib nss3.lib 
+else
 NSS_DYNAMIC_LIBS := -lssl3 -lnss3 
+endif
+else
+NSS_DYNAMIC_LIBS := -lssl3 -lnss3 
+endif
 NSS_LIBS := $(NSS_DYNAMIC_LIBS)
 
 endif

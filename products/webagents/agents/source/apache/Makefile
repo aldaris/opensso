@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.2 2006-10-06 18:27:26 subbae Exp $
+# $Id: Makefile,v 1.3 2007-08-08 00:39:46 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -34,12 +34,21 @@ APACHE25_LIB_NAME := libamapc2
 APACHE25_LIB := $(APACHE25_LIB_NAME)$(SO_EXT)
 APACHE25_INCLUDE_FLAGS := -I$(DEST_INC_DIR) -I../common
 APACHE25_CFLAGS += -DAPACHE2 -DEAPI -DUSE_EXPAT -DXP_WIN32 -DAM_STATIC_LIB $(PIC_FLAG) -DCORE_PRIVATE $(APACHE25_INCLUDE_FLAGS) -I$(APACHE_INC_DIR)
+ifdef   OS_IS_CYGWIN
+LDFLAGS := ../../../am/source/am_web.res -LIBPATH:$(APACHE_LIB_DIR) -LIBPATH:$(DEST_LIB_DIR) -LIBPATH:$(NSS_LIB_DIR) -LIBPATH:$(NSPR_LIB_DIR) -LIBPATH:$(LIBXML_LIB_DIR)
+LDLIBS := libapr.lib libapriconv.lib libhttpd.lib amsdk.lib libnspr4.lib nss3.lib ssl3.lib libplc4.lib libxml2.lib user32.lib
+else
 LDFLAGS := ../../../am/source/am_web.res -L$(APACHE_LIB_DIR) -L$(DEST_LIB_DIR) -L$(NSS_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) -L../../built/WINNT/lib
 LDLIBS := -llibapr -llibapriconv -llibhttpd -lamsdk_static -llibnspr4 -lnss3 -lssl3 -llibplc4 -llibxml2 -luser32
+endif
 
 SRCS := apache_agent.c
 $(APACHE25_LIB_NAME).o: apache_agent.c
+ifdef   OS_IS_CYGWIN
+	$(COMPILE.c) $(APACHE25_CFLAGS) -Fo$@ $< 
+else
 	$(COMPILE.c) $(APACHE25_CFLAGS) $< $(OUTPUT_OPTION)
+endif
 $(APACHE25_LIB): APACHE_VERSION:=$(APACHE_25_VERSION)
 APACHE25_OBJS := $(patsubst %.c, $(APACHE25_LIB_NAME).o, $(SRCS))
 EXPORTED_LIBS := $(APACHE25_LIB)
@@ -52,6 +61,7 @@ all: $(APACHE25_LIB)
 
 clean: clean_libs clean_objs
 	$(RM) $(APACHE25_LIB_NAME).o $(APACHE25_LIB_NAME).dll $(APACHE25_LIB_NAME).lib $(APACHE25_LIB_NAME).exp
+	$(RM) *.pdb
 
 else
 APACHE2_LIB_NAME := libamapc2

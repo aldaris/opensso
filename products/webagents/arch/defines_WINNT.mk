@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines_WINNT.mk,v 1.2 2006-10-06 18:27:28 subbae Exp $
+# $Id: defines_WINNT.mk,v 1.3 2007-08-08 00:39:48 subbae Exp $
 # 
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -39,8 +39,17 @@ RELTOOLS_SUFFIX_ARG := -suf .zip
 CCG := $(USERX_ROOT)/arch/compiler.ccg
 export CCG
 COMPILERS_DIR :=
+
+ifdef	OS_IS_CYGWIN
+CC := cl
+CXX := cl
+else
 CC := cc
 CXX := cc
+endif
+
+LINK := link
+
 EXE_EXT := .exe
 MAPFILE_EXT := .def
 NM := nm
@@ -54,9 +63,19 @@ SO_EXT := .dll
 LIB_EXT := .lib
 
 CFLAGS += -DWINNT -DWIN32
+ifdef	OS_IS_CYGWIN
+CXXFLAGS += -DWINNT -DWIN32 -EHsc -W3 -nologo -GF -Gy -GT -G5
+else
 CXXFLAGS += -DWINNT -DWIN32
+endif
+
 LD_FILTER_SYMS_FLAG = -def:$(filter %$(MAPFILE_EXT),$^)
+ifdef	OS_IS_CYGWIN
+LD_MAKE_SHARED_LIB_FLAG := -DLL
+else
 LD_MAKE_SHARED_LIB_FLAG := -dll
+endif
+
 # XXX - The following needs be set to the appropriate value.
 LD_VERSION_LIB_FLAG :=
 PLATFORM_SHARED_OBJS=$(filter %.res, $^)
@@ -64,14 +83,32 @@ PLATFORM_SHARED_OBJS=$(filter %.res, $^)
 #
 # Give DEBUG_FLAGS a default setting based on the build type
 #
+#CYGWIN change
 ifeq ($(BUILD_DEBUG), full)
+ifdef	OS_IS_CYGWIN
+    DEBUG_FLAGS := -Zi -DDEBUG -Od -MDd
+    LINK_DEBUG_FLAGS := -DEBUG
+else
     DEBUG_FLAGS := -g -DDEBUG
 endif
+endif
+
 ifeq ($(BUILD_DEBUG), optimize)
+ifdef	OS_IS_CYGWIN
+    DEBUG_FLAGS := -Zi -O2 -DNDEBUG -MD
+    LINK_DEBUG_FLAGS := -DEBUG -opt:ref
+else
     DEBUG_FLAGS := -O -DNDEBUG
 endif
+endif
+
 ifndef DEBUG_FLAGS
+ifdef	OS_IS_CYGWIN
+    DEBUG_FLAGS := -Zi -DDEBUG -Od -MDd
+    LINK_DEBUG_FLAGS := -DEBUG
+else
     DEBUG_FLAGS := -g -DDEBUG
+endif
 endif
 
 SHELL_EXEC_EXTENSION := .bat
@@ -91,4 +128,17 @@ endif
 
 MSDEV_BUILD_CONFIG := "All - $(MSDEV_BUILD_TYPE)"
 
+#CYGWIN change
+
+ifdef	OS_IS_CYGWIN
 MAKE_STATIC_LIB = LIB -nodefaultlib -nologo $(filter %.o, $^) -OUT:$@
+else
+MAKE_STATIC_LIB = LIB -nodefaultlib -nologo $(filter %.o, $^) -OUT:$@
+endif
+
+ifdef	OS_IS_CYGWIN
+MAKE_SHARED_LIB = $(LINK) $(LD_MAKE_SHARED_LIB_FLAG) -nologo -SUBSYSTEM:WINDOWS  $(LINK_DEBUG_FLAGS) \
+	$(LD_ORIGIN_FLAG) $(LDFLAGS) \
+	$(LD_VERSION_LIB_FLAG) $(LD_FILTER_SYMS_FLAG) \
+	$(filter %.o, $^) $(PLATFORM_SHARED_OBJS) $(LDLIBS) -OUT:$@
+endif

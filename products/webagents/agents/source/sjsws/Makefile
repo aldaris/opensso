@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.2 2007-03-29 22:53:20 subbae Exp $
+# $Id: Makefile,v 1.3 2007-08-08 00:39:46 subbae Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -39,8 +39,13 @@ CFLAGS += -DAM_STATIC_LIB
 ifeq ($(OS_ARCH), WINNT)
 CFLAGS += -DXP_WIN32
 ES6_CFLAGS += -I$(SJSWS_INC_DIR)
+ifdef   OS_IS_CYGWIN
+LDFLAGS += -LIBPATH:$(SJSWS_LIB_DIR) -LIBPATH:$(NSPR_LIB_DIR) -LIBPATH:$(NSS_LIB_DIR) -LIBPATH:$(LIBXML_LIB_DIR)
+LDLIBS += user32.lib amsdk.lib ns-httpd40.lib libnspr4.lib libplds4.lib libplc4.lib nss3.lib ssl3.lib libxml2.lib
+else
 LDFLAGS += -L$(SJSWS_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(NSS_LIB_DIR) -L$(LIBXML_LIB_DIR)
 LDLIBS += -luser32 -lamsdk_static -lns-httpd40 -llibnspr4 -llibplds4 -llibplc4 -lnss3 -lssl3 -llibxml2
+endif
 endif
 
 ifeq ($(OS_ARCH), SunOS)
@@ -77,6 +82,13 @@ EXPORTED_LIBS := $(ES6_LIB)
 %_$(ES6_LIB_NAME).o: %.c
 	$(COMPILE.c) $(ES6_CFLAGS) $< $(OUTPUT_OPTION)
 
+ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+%_$(ES6_LIB_NAME).o: %.c
+	$(COMPILE.c) $(ES6_CFLAGS) -Fo$@ $< 
+endif
+endif
+
 SRCS := iws_agent.c
 ES6_OBJS := $(patsubst %.c, %_$(ES6_LIB_NAME).o, $(SRCS))
 OBJS := $(ES6_OBJS)
@@ -90,6 +102,12 @@ endif
 INCLUDE_FLAGS += -I$(DEST_INC_DIR)
 
 LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG) -L$(DEST_LIB_DIR)
+
+ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG) -LIBPATH:$(DEST_LIB_DIR)
+endif
+endif
 
 all: export_libs
 
@@ -118,6 +136,7 @@ clean: clean_libs clean_objs
 
 ifeq ($(OS_ARCH),WINNT)
 	$(RM) $(EXPORTED_LIBS:.dll=.exp) $(EXPORTED_LIBS:.dll=.lib)
+	$(RM) *.pdb
 endif
 
 include $(USERX_ROOT)/arch/rules.mk

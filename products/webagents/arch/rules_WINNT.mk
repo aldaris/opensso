@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: rules_WINNT.mk,v 1.2 2006-10-06 18:27:28 subbae Exp $
+# $Id: rules_WINNT.mk,v 1.3 2007-08-08 00:39:48 subbae Exp $
 # 
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -34,8 +34,15 @@
 
 %.cpp %.d:
 
+ifdef   OS_IS_CYGWIN
+%.o: %.cpp
+	$(COMPILE.cc) -Fo$@ $< 
+%.o: %.c
+	$(COMPILE.cc) -Fo$@ $< 
+else
 %.o: %.cpp
 	$(COMPILE.cc) $< $(OUTPUT_OPTION)
+endif
 
 %.res: %.rc
 	$(RC) -fo$@ $<

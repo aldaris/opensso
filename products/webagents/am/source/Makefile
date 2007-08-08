@@ -166,10 +166,21 @@ INCLUDE_FLAGS := -I$(REAL_SRC_DIR) -I$(NSPR_INC_DIR) -I$(NSS_INC_DIR) -I$(LIBXML
 LDFLAGS += -L$(NSS_LIB_DIR) -L$(NSPR_LIB_DIR) \
 	-L$(LIBXML_LIB_DIR)
 
+ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+LDFLAGS += -LIBPATH:$(NSS_LIB_DIR) -LIBPATH:$(NSPR_LIB_DIR) \
+	-LIBPATH:$(LIBXML_LIB_DIR)
+endif
+endif
+
 $(STD_LIB)_LDLIBS := $(NSS_DYNAMIC_LIBS) $(NSPR_LIBS)
 
 ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+$(STD_LIB)_LDLIBS += user32.lib
+else
 $(STD_LIB)_LDLIBS += -luser32
+endif
 endif
 
 $(TEST_LIB)_LDLIBS := $($(STD_LIB)_LDLIBS)
@@ -232,15 +243,22 @@ clean: clean_headers clean_libs clean_objs clean_subdirs
 	$(RM) $(DEST_LIB_DIR)/$(STD_LIB_NAME)$(STATIC_EXT)
 ifeq ($(OS_ARCH), WINNT)
 	$(RM) $(STD_LIB_NAME).exp $(TEST_LIB_NAME).exp $(TEST_LIB_NAME).lib
+	$(RM) *.pdb
+	$(RM) crypt_util_program.o
 endif
 
 $(DEST_BIN_DIR)/$(CRYPT_EXE): $(DEST_BIN_DIR)
 ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+	$(CC) -DWINNT -Fe$(CRYPT_EXE) -Focrypt_util_program.o crypt_util.c
+else
 	$(CC) -DWINNT -c crypt_util.c -o crypt_util_program.o
+	$(CC) -o $(CRYPT_EXE) crypt_util_program.o
+endif
 else
 	$(CC) -c crypt_util.c -o crypt_util_program.o
-endif
 	$(CC) -o $(CRYPT_EXE) crypt_util_program.o
+endif
 	$(CP) $(CRYPT_EXE) $(DEST_BIN_DIR)
 
 

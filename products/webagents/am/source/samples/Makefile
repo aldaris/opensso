@@ -40,9 +40,22 @@ AM_DIR := ..
 
 LIBS = -L$(DEST_LIB_DIR) -L$(LIBXML_LIB_DIR) -L$(NSS_LIB_DIR) -L$(NSPR_LIB_DIR) -lamsdk $(LIBXML_LIBS) $(NSPR_LIBS) $(NSS_LIBS)
 
-MAKE_C_PROGRAM = $(LINK.c) $(OUTPUT_OPTION) $^ $(LIBS)
+ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+LIBS = -LIBPATH:$(DEST_LIB_DIR) -LIBPATH:$(LIBXML_LIB_DIR) -LIBPATH:$(NSS_LIB_DIR) -LIBPATH:$(NSPR_LIB_DIR) amsdk.lib $(LIBXML_LIBS) $(NSPR_LIBS) $(NSS_LIBS)
+endif
+endif
 
+MAKE_C_PROGRAM = $(LINK.c) $(OUTPUT_OPTION) $^ $(LIBS)
 MAKE_CXX_PROGRAM = $(LINK.cc) $(OUTPUT_OPTION) $^
+
+ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+MAKE_C_PROGRAM = $(LINK) $^ $(LIBS)
+MAKE_CXX_PROGRAM = $(LINK) $^
+endif
+endif
+
 ifeq ($(OS_ARCH),  SunOS)
     MAKE_CXX_PROGRAM += '-R$$ORIGIN/$(AM_DIR)'
 endif
@@ -100,4 +113,6 @@ am_web_agent_test$(EXE_EXT): $(am_web_agent_test_OBJS)
 
 clean: clean_objs clean_samples
 	$(RM) $(PROGRAMS)
-
+ifeq ($(OS_ARCH), WINNT)
+	$(RM) $(OBJS)
+endif

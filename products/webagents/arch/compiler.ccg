@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: compiler.ccg,v 1.2 2007-03-30 01:25:18 subbae Exp $
+# $Id: compiler.ccg,v 1.3 2007-08-08 00:39:48 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -82,6 +82,9 @@ do
 		coptions |= "-Zi";
 		ldoptions |= "-debug";
 		LibCName = "msvcrt.lib msvcprt.lib";
+	elif (i == "-O")
+		coptions |= "-Zi";
+		ldoptions |= "-debug -opt:ref";
 	elif (i == "-S")		# assembler listing
 		coptions |= "/FAs";
 	elif (substr(i,1,11) == "-subsystem:")

@@ -39,12 +39,25 @@ vpath %.c $(REAL_SRC_DIR)
 vpath %.cpp $(REAL_SRC_DIR)
 
 AM_DIR := ..
-
 LIBS = -L$(DEST_LIB_DIR) -L$(LIBXML_LIB_DIR) $(LIBXML_LIBS) -L$(NSS_LIB_DIR) $(NSS_LIBS) -L$(NSPR_LIB_DIR) $(NSPR_LIBS)
 
-MAKE_C_PROGRAM = $(LINK.c) $(OUTPUT_OPTION) $^ $(LIBS) -lamsdk
+ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+LIBS = -LIBPATH:$(DEST_LIB_DIR) -LIBPATH:$(LIBXML_LIB_DIR) -LIBPATH:$(NSS_LIB_DIR) -LIBPATH:$(NSPR_LIB_DIR) $(LIBXML_LIBS) $(NSPR_LIBS) $(NSS_LIBS)
+endif
+endif
 
+MAKE_C_PROGRAM = $(LINK.c) $(OUTPUT_OPTION) $^ $(LIBS) -lamsdk
 MAKE_CXX_PROGRAM = $(LINK.cc) $(OUTPUT_OPTION) $^
+MAKE_CXX_PROGRAM += -L$(AM_DIR) $(LIBS) -lamsdk_test
+
+ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+MAKE_C_PROGRAM = $(LINK) $^ $(LIBS) amsdk.lib
+MAKE_CXX_PROGRAM = $(LINK) $^ $(LIBS) -LIBPATH:$(AM_DIR) amsdk_test.lib
+endif
+endif
+
 ifeq ($(OS_ARCH),  SunOS)
     MAKE_CXX_PROGRAM += '-R$$ORIGIN/$(AM_DIR)'
 endif
@@ -54,7 +67,6 @@ ifeq ($(OS_ARCH), Linux)
 	LIBS += -lgcc_s  
     endif
 endif
-MAKE_CXX_PROGRAM += -L$(AM_DIR) $(LIBS) -lamsdk_test
 
 INCLUDE_FLAGS += -I$(REAL_AM_DIR) -I$(NSPR_INC_DIR)
 
@@ -131,5 +143,7 @@ utils_test$(EXE_EXT): $(utils_test_OBJS)
 
 clean: clean_objs 
 	$(RM) $(PROGRAMS)
-
+ifeq ($(OS_ARCH), WINNT)
+	$(RM) $(OBJS)
+endif
 

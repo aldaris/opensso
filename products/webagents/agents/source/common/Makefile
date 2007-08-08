@@ -73,11 +73,19 @@ EXTRA_PACKAGE_FILES += \
 	THIRD_PARTY_LICENSE.TXT
 
 ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+EXTRA_PACKAGE_FILES += \
+	$(patsubst %.lib, $(NSPR_LIB_DIR)/%$(SO_EXT), $(NSPR_LIBS)) \
+	$(patsubst %.lib, $(NSPR_LIB_DIR)/%$(LIB_EXT), $(NSPR_LIBS)) \
+	$(patsubst %.lib, $(NSS_LIB_DIR)/%$(SO_EXT), $(NSS_DYNAMIC_LIBS)) \
+	$(patsubst %.lib, $(NSS_LIB_DIR)/%$(LIB_EXT), $(NSS_DYNAMIC_LIBS))
+else
 EXTRA_PACKAGE_FILES += \
 	$(patsubst -l%, $(NSPR_LIB_DIR)/%$(SO_EXT), $(NSPR_LIBS)) \
 	$(patsubst -l%, $(NSPR_LIB_DIR)/%$(LIB_EXT), $(NSPR_LIBS)) \
 	$(patsubst -l%, $(NSS_LIB_DIR)/%$(SO_EXT), $(NSS_DYNAMIC_LIBS)) \
 	$(patsubst -l%, $(NSS_LIB_DIR)/%$(LIB_EXT), $(NSS_DYNAMIC_LIBS))
+endif
 else
 ifneq ($(OS_ARCH), SunOS)
 EXTRA_PACKAGE_FILES += \
