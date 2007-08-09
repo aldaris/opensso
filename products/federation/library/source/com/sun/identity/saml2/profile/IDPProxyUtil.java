@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.1 2007-08-07 23:39:06 weisun2 Exp $
+ * $Id: IDPProxyUtil.java,v 1.2 2007-08-09 21:18:16 weisun2 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -385,12 +385,12 @@ public class IDPProxyUtil {
      * @return true if the proxying is enabled.
      */
     public static boolean isIDPProxyEnabled(String requestID) {
-        // get the SP descriptor from IDPCache
-        SPSSODescriptorElement spSSODescriptor = null; 
-        spSSODescriptor =
-            (SPSSODescriptorElement)
-            IDPCache.proxySPDescCache.get(requestID);
-        return (spSSODescriptor != null);      
+        if (IDPCache.proxySPDescCache != null && 
+            (!IDPCache.proxySPDescCache.isEmpty())) {
+            return IDPCache.proxySPDescCache.containsKey(requestID);
+        }  else  {
+            return false;
+        }
     }
  
     /**

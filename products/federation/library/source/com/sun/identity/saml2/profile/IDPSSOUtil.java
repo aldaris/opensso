@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.9 2007-08-07 23:39:06 weisun2 Exp $
+ * $Id: IDPSSOUtil.java,v 1.10 2007-08-09 21:18:17 weisun2 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,7 +134,6 @@ public class IDPSSOUtil {
         }                   
     }
 
-
     /**
      * Does SSO with existing federation or new federation
      *
@@ -146,6 +145,32 @@ public class IDPSSOUtil {
      * @param nameIDFormat the <code>NameIDFormat</code>
      * @param relayState the relay state 
      * 
+     * @exception SAML2Exception if the operation is not successful
+     */
+    public static void doSSOFederate(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        AuthnRequest authnReq,
+                                        String spEntityID,
+                                        String idpMetaAlias,
+                                        String nameIDFormat,
+                                        String relayState) 
+        throws SAML2Exception {
+        doSSOFederate(request, response, authnReq,
+            spEntityID, idpMetaAlias, nameIDFormat,
+            relayState, null);
+    }               
+
+    /**
+     * Does SSO with existing federation or new federation
+     *
+     * @param request the <code>HttpServletRequest</code> object
+     * @param response the <code>HttpServletResponse</code> object
+     * @param authnReq the <code>AuthnRequest</code> object
+     * @param spEntityID the entity id of the service provider
+     * @param idpMetaAlias the meta alias of the identity provider
+     * @param nameIDFormat the <code>NameIDFormat</code>
+     * @param relayState the relay state 
+     * @param newSession Session used in IDP Proxy Case
      * @exception SAML2Exception if the operation is not successful
      */
     public static void doSSOFederate(HttpServletRequest request,
