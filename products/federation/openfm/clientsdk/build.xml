@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2007-08-07 20:16:56 veiming Exp $
+   $Id: build.xml,v 1.6 2007-08-09 07:14:34 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -57,7 +57,7 @@
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
 
-        <jar destfile="${fm.dist.dir}/famclientsdk.jar">
+        <jar destfile="${fm.dist.dir}/famclientsdk.jar" duplicate="preserve">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -92,18 +92,10 @@
                         value="Sun Microsystems, Inc."/>
                 </section>
             </manifest>
+             <zipfileset src="${library.extlib.dir}/opensso-sharedlib.jar" includes="**/*.class"/>
+             <zipfileset src="${openfm.extlib.dir}/amclientsdk.jar" includes="**/*.*"/>
         </jar>
 
-        <jar destfile="${fm.dist.dir}/famclientsdkcopy.jar"
-             filesetmanifest="merge">
-                <zipfileset src="${library.extlib.dir}/opensso-sharedlib.jar" includes="**/*.class"/>
-                <zipfileset src="${fm.dist.dir}/famclientsdk.jar"/>
-                <zipfileset src="${openfm.extlib.dir}/amclientsdk.jar" includes="**/*.*"/>
-        </jar>
-
-        <copy file="${fm.dist.dir}/famclientsdkcopy.jar" 
-            tofile="${fm.dist.dir}/famclientsdk.jar"/>
-        <delete file="${fm.dist.dir}/famclientsdkcopy.jar"/>
         <checksum file="${fm.dist.dir}/famclientsdk.jar"
             algorithm="SHA" fileext=".sha" />
     </target>
