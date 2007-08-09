@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.3 2007-08-08 18:59:26 sean_brydon Exp $
+   $Id: build_agent.xml,v 1.4 2007-08-09 00:38:56 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,9 +41,7 @@
     <property name="container.j2ee_agent.bin.dir" location="${container.j2ee_agent.dir}/bin"/>   
     <property name="container.j2ee_agent.config.dir" location="${container.j2ee_agent.dir}/config"/>   
     <property name="container.j2ee_agent.data.dir" location="${container.j2ee_agent.dir}/data"/>   
-    <property name="container.j2ee_agent.etc.dir" location="${container.j2ee_agent.dir}/etc"/>   
-    <property name="container.j2ee_agent.jce.dir" location="${container.j2ee_agent.dir}/jce"/>   
-    <property name="container.j2ee_agent.jsse.dir" location="${container.j2ee_agent.dir}/jsse"/>   
+    <property name="container.j2ee_agent.etc.dir" location="${container.j2ee_agent.dir}/etc"/>      
     <property name="container.j2ee_agent.lib.dir" location="${container.j2ee_agent.dir}/lib"/>   
     <property name="container.j2ee_agent.locale.dir" location="${container.j2ee_agent.dir}/locale"/>   
     <property name="container.j2ee_agent.logs.dir" location="${container.j2ee_agent.dir}/logs"/>   
@@ -79,8 +77,6 @@
         <mkdir dir="${container.j2ee_agent.config.dir}"/>
         <mkdir dir="${container.j2ee_agent.data.dir}"/>
         <mkdir dir="${container.j2ee_agent.etc.dir}"/>
-        <mkdir dir="${container.j2ee_agent.jce.dir}"/>
-        <mkdir dir="${container.j2ee_agent.jsse.dir}"/>
         <mkdir dir="${container.j2ee_agent.lib.dir}"/>
         <mkdir dir="${container.j2ee_agent.locale.dir}"/>
         <mkdir dir="${container.j2ee_agent.logs.dir}"/>
@@ -113,8 +109,6 @@
         <delete dir="${container.j2ee_agent.config.dir}"/>
         <delete dir="${container.j2ee_agent.data.dir}"/>
         <delete dir="${container.j2ee_agent.etc.dir}"/>
-        <delete dir="${container.j2ee_agent.jce.dir}"/>
-        <delete dir="${container.j2ee_agent.jsse.dir}"/>
         <delete dir="${container.j2ee_agent.lib.dir}"/>
         <delete dir="${container.j2ee_agent.locale.dir}"/>
         <delete dir="${container.j2ee_agent.logs.dir}"/>
