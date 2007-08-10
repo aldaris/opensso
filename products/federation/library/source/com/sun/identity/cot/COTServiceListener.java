@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COTServiceListener.java,v 1.1 2006-10-30 23:13:58 qcheng Exp $
+ * $Id: COTServiceListener.java,v 1.2 2007-08-10 00:48:46 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,8 +35,6 @@ import com.sun.identity.plugin.configuration.ConfigurationActionEvent;
  */
 public class COTServiceListener implements ConfigurationListener {
     
-    private static final String CONFIG_NAME = COTConstants.COT_CONFIG_NAME;
-    
     /**
      * Constructor.
      */
@@ -45,15 +43,9 @@ public class COTServiceListener implements ConfigurationListener {
     
     
     public void configChanged(ConfigurationActionEvent e) {
-        String configName = e.getConfigurationName();
-        
-        if (configName == null || configName.equals(CONFIG_NAME) ||
-                configName.equals(CONFIG_NAME)) {
-            
-            if (COTUtils.debug.messageEnabled()) {
-                COTUtils.debug.message("COTServiceListener.configChanged:");
-            }
-            COTCache.clear();
+        if (COTUtils.debug.messageEnabled()) {
+            COTUtils.debug.message("COTServiceListener.configChanged:");
         }
+        COTCache.clear();
     }
 }
