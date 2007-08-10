@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.15 2007-07-24 19:50:46 rmisra Exp $
+ * $Id: TestCommon.java,v 1.16 2007-08-10 19:43:27 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -250,7 +250,7 @@ public class TestCommon implements TestConstants {
      */
     protected String getBaseDir()
     throws Exception {
-        log(Level.INFO, "getBaseDir", "Inside getBaseDir");
+        log(Level.FINE, "getBaseDir", "Inside getBaseDir");
         String strCD =  System.getProperty("user.dir");
         log(Level.FINEST, "getBaseDir", "Current Directory:" + strCD);
         return (strCD);
@@ -595,7 +595,7 @@ public class TestCommon implements TestConstants {
             String valueString = entry.getValue().toString();
             buff.append(entry.getKey())
             .append("=")
-            .append(valueString)
+            .append(valueString.substring(1, valueString.length()-1))
             .append("\n");
         }
         

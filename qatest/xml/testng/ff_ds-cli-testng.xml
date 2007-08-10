@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-cli-testng.xml,v 1.2 2007-08-08 18:30:07 rmisra Exp $
+ $Id: ff_ds-cli-testng.xml,v 1.3 2007-08-10 19:47:33 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -478,17 +478,6 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CLI_create-identity32">
-        <parameter name="testName" value="createidentity-test32"/>
-        <groups>
-            <run>
-                <include name="ff_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
-        </classes>
-    </test>
     <test name="CLI_create-identity07">
         <parameter name="testName" value="createidentity-test7"/>
         <groups>
@@ -544,17 +533,6 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CLI_create-identity33">
-        <parameter name="testName" value="createidentity-test33"/>
-        <groups>
-            <run>
-                <include name="ff_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
-        </classes>
-    </test>
     <test name="CLI_create-identity13">
         <parameter name="testName" value="createidentity-test13"/>
         <groups>
@@ -601,17 +579,6 @@
     </test>
     <test name="CLI_create-identity17">
         <parameter name="testName" value="createidentity-test17"/>
-        <groups>
-            <run>
-                <include name="ff_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
-        </classes>
-    </test>
-    <test name="CLI_create-identity34">
-        <parameter name="testName" value="createidentity-test34"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -2071,30 +2038,6 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.ShowMembershipsTest"/>
-        </classes>
-    </test>
-    <test name="CLI_show-identity-types03">
-        <parameter name="testName" value="showidentitytypes-test3"/>
-        <parameter name="propFile" value="GenericCLITest_ShowIdentityTypesTest"/>
-        <groups>
-            <run>
-                <include name="ff_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.GenericCLITest"/>
-        </classes>
-    </test>
-    <test name="CLI_show-identity-types04">
-        <parameter name="testName" value="showidentitytypes-test4"/>
-        <parameter name="propFile" value="GenericCLITest_ShowIdentityTypesTest"/>
-        <groups>
-            <run>
-                <include name="ff_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.GenericCLITest"/>
         </classes>
     </test>
     <test name="CLI_show-identity-operations01">
