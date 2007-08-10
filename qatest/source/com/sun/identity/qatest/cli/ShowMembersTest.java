@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowMembersTest.java,v 1.2 2007-08-07 23:35:21 rmisra Exp $
+ * $Id: ShowMembersTest.java,v 1.3 2007-08-10 20:44:28 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -332,7 +332,7 @@ public class ShowMembersTest extends TestCommon {
             String msg = (String) rb.getString(locTestName + 
                     "-message-to-find");  
             if (expectedExitCode.equals("0")) {
-                Object[] params = {searchRealm, idName, idType}; 
+                Object[] params = {searchRealm, idName, memberType}; 
                 if (msg.equals("")) {           
                     if (!useVerboseOption) {
                         String successString = 
