@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.6 2007-08-07 23:35:23 rmisra Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.7 2007-08-10 19:54:19 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
@@ -110,7 +111,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             
             url = new URL(spurl);
             page = (HtmlPage)spWebClient.getPage(url);
-            getSPConfigurationMap(spConfigMap, configMap);
+            spConfigMap = MultiProtocolCommon.getSPConfigurationMap(configMap);
             boolean spConfigResult = configureProduct(spConfigMap);
             if (spConfigResult) {
                 log(logLevel, "configureSAMLv2", spurl + "is configured" +
@@ -124,7 +125,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             
             url = new URL(idpurl);
             page = (HtmlPage)idpWebClient.getPage(url);
-            getIDPConfigurationMap(idpConfigMap, configMap);
+            idpConfigMap = MultiProtocolCommon.getIDPConfigurationMap(configMap);
             boolean idpConfigResult = configureProduct(idpConfigMap);
             if (idpConfigResult) {
                 log(logLevel, "configureSAMLv2", idpurl + "is configured" +
