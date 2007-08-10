@@ -20,14 +20,14 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-samlv2-testng.xml,v 1.1 2007-08-07 23:35:29 rmisra Exp $
+ $Id: ds_ds-samlv2-testng.xml,v 1.2 2007-08-10 23:31:55 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ds_ds-samlv2" verbose="1">
     <parameter name="groupName" value="ds_ds"/>
-    <test name="SAMLv2ConfigureUnconfigure">
+    <test name="SAMLv2SmokeTests">
         <groups>
             <run>
                 <include name="ds_ds"/>
@@ -35,24 +35,25 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.samlv2.ConfigureSAMLv2"/>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SmokeTest"/>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2ScenarioTests"/> 
             <class name="com.sun.identity.qatest.samlv2.UnconfigureSAMLv2"/> 
         </classes>
     </test>
-    <test name="SAMLv2SmokeTest">
+    <test name="SAMLv2FeatureTests">
         <groups>
             <run>
                 <include name="ds_ds"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.samlv2.SAMLv2SmokeTest"/>
-            <class name="com.sun.identity.qatest.samlv2.SAMLv2ScenarioTests"/> 
             <class name="com.sun.identity.qatest.samlv2.SAMLv2RelayStateTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFederationTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2TransientUserTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFedTransientUserTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFedDynUserCreationTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2ForceAuthNTests"/>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2DefaultRelayStateSPTests"/>
         </classes>
     </test>
 </suite>
