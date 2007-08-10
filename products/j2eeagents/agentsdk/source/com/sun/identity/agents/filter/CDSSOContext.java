@@ -48,18 +48,18 @@ import com.sun.identity.agents.util.SAMLUtils;
 
 
 /**
- * A <code>CDSSOContext</code> encapsulates all the configuration and 
+ * A <code>CDSSOContext</code> encapsulates all the configuration and
  * intializations, when the AmFilter is being operated in CDSSO mode.
  */
 public class CDSSOContext extends SSOContext implements ICDSSOContext {
-    
+
     public CDSSOContext(Manager manager) {
         super(manager);
     }
-    
+
     public void initialize(AmFilterMode filterMode) throws AgentException {
         super.initialize(filterMode);
-        setCryptUtil();      
+        setCryptUtil();
         setCDSSORedirectURI(getConfigurationString(CONFIG_CDSSO_REDIRECT_URI));
         setCDSSOCookieName(getConfigurationString(
                 CONFIG_CDSSO_COOKIE_NAME, DEFAULT_CDSSO_COOKIE_NAME));
@@ -67,20 +67,20 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
             CONFIG_CDSSO_TRUSTED_ID_PROVIDER));
         CommonFactory cf = new CommonFactory(getModule());
         initCDCServletURLFailoverHelper(cf);
-        
+
         initAuthnResponseHelper(cf);
         if (isLogMessageEnabled()) {
-            logMessage("CDSSOContext: initialized. CDSSO is enabled.");                    
+            logMessage("CDSSOContext: initialized. CDSSO is enabled.");
         }
     }
-        
-    public AmFilterResult getRedirectResult(AmFilterRequestContext cxt, 
+
+    public AmFilterResult getRedirectResult(AmFilterRequestContext cxt,
                                                AmWebPolicyResult policyResult,
                                                String authnRequestID)
-        throws AgentException 
-    {           
+        throws AgentException
+    {
         StringBuffer buff = new StringBuffer();
-        
+
         String cdcServletURL = getCDCServletURL();
         buff.append(cdcServletURL);
 
@@ -89,34 +89,34 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
         } else {
             buff.append("?");
         }
-               
-        buff.append(cxt.getGotoParameterName());        
+
+        buff.append(cxt.getGotoParameterName());
         buff.append("=");
         String encodedCDSSORedirectURL = URLEncoder.encode(
-            getCDSSORedirectURL(cxt.getHttpServletRequest()));        
+            cxt.getBaseURL() + getCDSSORedirectURI());
         buff.append(encodedCDSSORedirectURL);
-        
+
         // Now add the Policy Advice Query parameters
         buff = addPolicyQueryParams(buff, policyResult);
-        buff = addCDSSOQueryParams(buff, cxt, encodedCDSSORedirectURL, 
+        buff = addCDSSOQueryParams(buff, cxt, encodedCDSSORedirectURL,
             authnRequestID);
         String redirectURL = buff.toString();
 
         if(isLogMessageEnabled()) {
             logMessage("CDSSOContext: the CDSSO redirectURL :" + redirectURL);
         }
-        
+
         return new AmFilterResult(AmFilterResultStatus.STATUS_REDIRECT,
-            redirectURL);        
+            redirectURL);
     }
-    
+
     public List getTrustedProviderIDs() {
         return _cdssoTrustedProviderIDs;
-    }    
-    
-    private StringBuffer addPolicyQueryParams(StringBuffer buff, 
+    }
+
+    private StringBuffer addPolicyQueryParams(StringBuffer buff,
                                               AmWebPolicyResult policyResult) {
-        
+
         if ((policyResult != null) && policyResult.hasNameValuePairs()) {
             NameValuePair[] nvp = policyResult.getNameValuePairs();
 
@@ -132,74 +132,74 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
                 }
             }
         }
-        
+
         return buff;
-    }    
-    
+    }
+
     private StringBuffer addCDSSOQueryParams(StringBuffer buff,
                                              AmFilterRequestContext cxt,
-                                             String encodedCDSSORedirectURL, 
-                                             String authnRequestID) 
+                                             String encodedCDSSORedirectURL,
+                                             String authnRequestID)
     {
         HttpServletRequest request = cxt.getHttpServletRequest();
 
         buff.append("&").append(CDSSO_REFERER_SERVLET_IDENTIFIER);
         buff.append("=");
         buff.append(encodedCDSSORedirectURL);
-                
+
         buff.append("&");
-        buff.append(CDSSO_LIBERTY_MAJOR_VERSION_IDENTIFIER); 
+        buff.append(CDSSO_LIBERTY_MAJOR_VERSION_IDENTIFIER);
         buff.append("=").append(CDSSO_LIBERTY_MAJOR_VERSION_VALUE);
-        
+
         buff.append("&");
-        buff.append(CDSSO_LIBERTY_MINOR_VERSION_IDENTIFIER); 
+        buff.append(CDSSO_LIBERTY_MINOR_VERSION_IDENTIFIER);
         buff.append("=").append(CDSSO_LIBERTY_MINOR_VERSION_VALUE);
-        
-        buff.append("&");        
+
+        buff.append("&");
         buff.append(CDSSO_AUTHNREQUEST_REQUEST_ID_IDENTIFIER);
         buff.append("=").append(URLEncoder.encode(authnRequestID));
 
-        String providerIDParameter = URLEncoder.encode(getProviderID(cxt));        
+        String providerIDParameter = URLEncoder.encode(getProviderID(cxt));
         buff.append("&");
         buff.append(CDSSO_AUTHNREQUEST_PROVIDER_ID_IDENTIFIER);
         buff.append("=").append(providerIDParameter);
-        
+
         buff.append("&");
         buff.append(CDSSO_AUTHNREQUEST_ISSUE_INSTANT_IDENTIFIER);
         buff.append("=").append(URLEncoder.encode(getIssueInstant()));
-        
+
         buff.append("&");
         buff.append(CDSSO_AUTHNREQUEST_FORCE_AUTHN_IDENTIFIER);
         buff.append("=");
         buff.append(CDSSO_AUTHNREQUEST_FORCE_AUTHN_VALUE);
-                
+
         buff.append("&");
         buff.append(CDSSO_AUTHNREQUEST_IS_PASSIVE_IDENTIFIER);
         buff.append("=");
-        buff.append(CDSSO_AUTHNREQUEST_IS_PASSIVE_VALUE);         
+        buff.append(CDSSO_AUTHNREQUEST_IS_PASSIVE_VALUE);
 
         buff.append("&");
         buff.append(CDSSO_AUTHNREQUEST_FEDERATE_IDENTIFIER);
         buff.append("=");
-        buff.append(CDSSO_AUTHNREQUEST_FEDERATE_VALUE);                     
-        
+        buff.append(CDSSO_AUTHNREQUEST_FEDERATE_VALUE);
+
         return buff;
-    } 
-    
+    }
+
     public String getProviderID(AmFilterRequestContext ctx) {
-        String providerID = ctx.getBaseURL() + "/?" 
+        String providerID = ctx.getBaseURL() + "/?"
         + CDSSO_AUTHNREQUEST_PROVIDER_ID_REALM_PARAMETER
         + "="
         + URLEncoder.encode(AgentConfiguration.getOrganizationName());
-        
+
         if (isLogMessageEnabled()) {
             logMessage("CDSSOContext: ProviderID is : " + providerID);
         }
-        
+
         return providerID;
     }
-    
-    private String getIssueInstant() {        
+
+    private String getIssueInstant() {
         String issueInstant = "yyyy-MM-dd'T'HH:mm:ss'Z'";
         try {
             issueInstant = getSAMLHelper().dateToUTCString(new Date());
@@ -210,37 +210,37 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
             }
         }
         return issueInstant;
-    }  
-    
-    public Cookie createCDSSOCookie(String gotoURL, 
-                                     String accessMethod, 
+    }
+
+    public Cookie createCDSSOCookie(String gotoURL,
+                                     String accessMethod,
                                      String authnRequestID) throws AgentException
-    {        
-        // To keep track of the request and responses, we add the 
-        // authn requestID to the the cookie 
+    {
+        // To keep track of the request and responses, we add the
+        // authn requestID to the the cookie
         StringBuffer sb = new StringBuffer();
         sb.append(gotoURL).append("|").append(accessMethod);
-        sb.append("|").append(authnRequestID);   
+        sb.append("|").append(authnRequestID);
         String value = getCryptUtil().encrypt(sb.toString());
-        
+
         Cookie cookie = new Cookie(getCDSSOCookieName(), value);
-        cookie.setPath(IUtilConstants.DEFAULT_COOKIE_PATH);      
-        
+        cookie.setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
+
         return cookie;
     }
-    
+
     public Cookie getRemoveCDSSOCookie() {
         Cookie cookie = new Cookie(getCDSSOCookieName(), "reset");
         cookie.setMaxAge(0);
         cookie.setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
         return cookie;
     }
-    
-    public String[] parseCDSSOCookieValue(String cdssoCookie) 
-        throws AgentException 
+
+    public String[] parseCDSSOCookieValue(String cdssoCookie)
+        throws AgentException
     {
         String cdssoTokens[] = null;
-        StringTokenizer st = 
+        StringTokenizer st =
             new StringTokenizer(getCryptUtil().decrypt(cdssoCookie), "|");
         if (st.countTokens() == 3) {
             cdssoTokens = new String[3];
@@ -248,25 +248,25 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
             cdssoTokens[INDEX_ACCESS_METHOD] =  st.nextToken();
             cdssoTokens[INDEX_AUTHN_REQUEST_ID] = st.nextToken();
         } else {
-            throw new AgentException("Invalid CDSSO Cookie value: " + 
+            throw new AgentException("Invalid CDSSO Cookie value: " +
                 cdssoCookie);
         }
         return cdssoTokens;
     }
-    
-    public String getAuthnRequestID(AmFilterRequestContext cxt) 
-        throws AgentException 
+
+    public String getAuthnRequestID(AmFilterRequestContext cxt)
+        throws AgentException
     {
         String cdssoCookie = cxt.getRequestCookieValue(getCDSSOCookieName());
         String cdssoTokens[] = parseCDSSOCookieValue(cdssoCookie);
-        
+
         return cdssoTokens[INDEX_AUTHN_REQUEST_ID];
     }
-        
+
     public String getCDCServletURL() throws AgentException {
         return getCDCServletURLFailoverHelper().getAvailableURL();
-    }  
-    
+    }
+
     private void setCDSSOCookieName(String name) throws AgentException {
         if (name == null || name.trim().length() == 0) {
             throw new AgentException("Invalid CDSSO cookie name specified");
@@ -277,16 +277,16 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
     public String getCDSSOCookieName() {
         return _cdssoCookieName;
     }
-    
+
     public void setAuthnResponseFlag(boolean flag) {
-        _authnResponseFlag = flag;   
+        _authnResponseFlag = flag;
     }
-    
+
     public boolean isAuthnResponseEnabled() {
         return _authnResponseFlag;
     }
-    
-    private void initAuthnResponseHelper(CommonFactory cf) throws AgentException 
+
+    private void initAuthnResponseHelper(CommonFactory cf) throws AgentException
     {
         setSAMLHelper(new SAMLUtils());
         setAuthnResponseHelper(
@@ -294,7 +294,7 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
                 getConfigurationInt(
                         CONFIG_CDSSO_CLOCK_SKEW, DEFAULT_CDSSO_CLOCK_SKEW)));
     }
-    
+
     private void setAuthnResponseHelper(ILibertyAuthnResponseHelper helper) {
         _authnResponseHelper = helper;
         if (isLogMessageEnabled()) {
@@ -302,7 +302,7 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
                     + _authnResponseHelper);
         }
     }
-    
+
     public ILibertyAuthnResponseHelper getAuthnResponseHelper() {
         return _authnResponseHelper;
     }
@@ -313,25 +313,25 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
             for(int i = 0; i < providerIDs.length; i++) {
                 list.add(providerIDs[i]);
             }
-        }        
+        }
         _cdssoTrustedProviderIDs = list;
     }
 
-    
-    
+
+
     private void setSAMLHelper(SAMLUtils samlHelper) {
-        _samlHelper = samlHelper;     
+        _samlHelper = samlHelper;
         if (isLogMessageEnabled()) {
             logMessage("CDSSOContext: SAML Helper set to: " + _samlHelper);
         }
     }
-    
-    public SAMLUtils getSAMLHelper() {     
+
+    public SAMLUtils getSAMLHelper() {
         return _samlHelper;
     }
-    
-    private void initCDCServletURLFailoverHelper(CommonFactory cf) 
-    throws AgentException 
+
+    private void initCDCServletURLFailoverHelper(CommonFactory cf)
+    throws AgentException
     {
         boolean isPrioritized = getConfigurationBoolean(
                 CONFIG_LOGIN_URL_PRIORITIZED);
@@ -340,16 +340,16 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
         long    timeout = getConfigurationLong(
                 CONFIG_LOGIN_URL_PROBE_TIMEOUT, 2000);
         setCDCServletURLFailoverHelper(cf.newURLFailoverHelper(
-                probeEnabled, 
+                probeEnabled,
                 isPrioritized,
                 timeout,
                 getConfigurationStrings(CONFIG_CDSSO_CDC_SERVLET_URL)));
     }
-            
+
     private void setCDCServletURLFailoverHelper(IURLFailoverHelper helper) {
         _cdcServletURLFailoverHelper = helper;
         if (isLogMessageEnabled()) {
-            logMessage("CDSSOContext: cdc servlet url failover helper: " 
+            logMessage("CDSSOContext: cdc servlet url failover helper: "
                     + _cdcServletURLFailoverHelper);
         }
     }
@@ -357,18 +357,18 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
     public IURLFailoverHelper getCDCServletURLFailoverHelper() {
         return _cdcServletURLFailoverHelper;
     }
-    
-    
+
+
     public String getCDSSORedirectURL(HttpServletRequest request) {
         return request.getScheme() + "://"
             + request.getServerName() + ":" + request.getServerPort()
             + getCDSSORedirectURI();
     }
-    
+
     public String getCDSSORedirectURI() {
         return _cdssoRedirectURI;
     }
-    
+
     private void setCDSSORedirectURI(String uri) throws AgentException {
         _cdssoRedirectURI = uri;
         if (_cdssoRedirectURI == null || _cdssoRedirectURI.trim().length() == 0)
@@ -376,7 +376,7 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
             throw new AgentException("Invalid CDSSO redirect URI");
         }
         if (isLogMessageEnabled()) {
-            logMessage("CDSSOContext: cdsso redirect uri: " 
+            logMessage("CDSSOContext: cdsso redirect uri: "
                     + _cdssoRedirectURI);
         }
     }
@@ -388,9 +388,9 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
     private void setCryptUtil() throws AgentException {
         _crypt = ServiceFactory.getCryptProvider();
     }
-    
+
     private boolean _authnResponseFlag;
-    
+
     private SAMLUtils _samlHelper;
     private String _cdssoRedirectURI;
     private String _cdssoCookieName;

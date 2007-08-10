@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgent.template,v 1.3 2007-04-19 22:29:50 huacui Exp $
+# $Id: AMAgent.template,v 1.4 2007-08-10 23:23:11 dknab Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -474,6 +474,13 @@ com.sun.identity.agents.config.cookie.reset.path[] =
 #     Server/ID providers that should be trusted by the agent, when evaluating
 #     the CDC Liberty Responses. Used when a Load Balancer/Firewall is between 
 #     the agent & server.
+#   - cdsso.domain: This property specifies the domains for which cookies have
+#     to be set in a CDSSO scenario. If this property is left blank then the 
+#     fully qualified cookie domain for the agent server will be used for 
+#     setting the cookie domain. In such case it is a host cookie instead of 
+#     a domain cookie.
+#     Example:
+#        com.sun.identity.agents.config.cdsso.domain[0] = .sun.com
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.cdsso.enable = false
@@ -481,6 +488,7 @@ com.sun.identity.agents.config.cdsso.redirect.uri = @AGENT_APP_URI@/sunwCDSSORed
 com.sun.identity.agents.config.cdsso.cdcservlet.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
 com.sun.identity.agents.config.cdsso.clock.skew = 0
 com.sun.identity.agents.config.cdsso.trusted.id.provider[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
+#com.sun.identity.agents.config.cdsso.domain[0] =
 
 # 
 # LOGOUT PROCESSING PROPERTIES

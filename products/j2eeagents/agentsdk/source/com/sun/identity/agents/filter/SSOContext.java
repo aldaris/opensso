@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOContext.java,v 1.1 2006-09-28 23:35:04 huacui Exp $
+ * $Id: SSOContext.java,v 1.2 2007-08-10 23:22:07 dknab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,11 +47,11 @@ import com.sun.identity.agents.arch.ICrypt;
  */
 public class SSOContext extends AgentBase
         implements IFilterConfigurationConstants, ISSOContext {
-    
+
     public SSOContext(Manager manager) {
         super(manager);
     }
-    
+
     public void initialize(AmFilterMode filterMode) throws AgentException {
         setCryptUtil();
         setSSOTokenName(AgentConfiguration.getSSOTokenName());
@@ -68,29 +68,29 @@ public class SSOContext extends AgentBase
         setURLDecodeSSOTokenFlag(
                 getConfigurationBoolean(
                 ISharedConfigurationKeyConstants.CONFIG_SSO_DECODE_FLAG));
-        
+
         initSSOCacheEnabledFlag(filterMode);
         if (isLogMessageEnabled()) {
             logMessage("SSOContext: initialized.");
         }
     }
-    
+
     public int getLoginAttemptValue(AmFilterRequestContext ctx) {
-        
+
         int result = 0;
-        
+
         String value = ctx.getRequestCookieValue(getLoginCounterCookieName());
-        
+
         if(value != null && value.trim().length() > 0) {
             try {
                 String innerValue = getCryptUtil().decrypt(value);
                 if((innerValue != null) && (innerValue.trim().length() > 0)) {
                     int suffixPosition = innerValue.indexOf(':');
-                    
+
                     if(suffixPosition != -1) {
                         result = Integer.parseInt(innerValue.substring(0,
                                 suffixPosition));
-                        
+
                         if(isLogMessageEnabled()) {
                             logMessage("SSOTaskHandler: Login attempt number: "
                                     + result);
@@ -111,7 +111,7 @@ public class SSOContext extends AgentBase
                 } else {
                     if (isLogMessageEnabled()) {
                         logMessage(
-                            "SSOTaskHandler: Ignoring reset value of " 
+                            "SSOTaskHandler: Ignoring reset value of "
                                 + "counter cookie");
                     }
                 }
@@ -121,13 +121,13 @@ public class SSOContext extends AgentBase
                 logMessage("SSOTaskHandler: no counter token found in request");
             }
         }
-        
+
         return result;
     }
-    
+
     public Cookie getNextLoginAttemptCookie(int currentValue)
     throws AgentException {
-        
+
         String counterCookienName = getLoginCounterCookieName();
         String value =
                 getCryptUtil().encrypt(String.valueOf(currentValue + 1) + ":"
@@ -136,24 +136,41 @@ public class SSOContext extends AgentBase
         nextLoginAttemptCookie.setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
         return nextLoginAttemptCookie;
     }
-    
+
     /**
      * creates and returns a new SSOToken cookie.
      * @param tokenValue - a URL decoded value.
      * @return a SSO Tokem Cookie
      */
-    public Cookie createSSOTokenCookie(String tokenValue) {
+    public Cookie[] createSSOTokenCookie(String tokenValue) {
         if (getURLDecodeSSOTokenFlag()) {
             // We are getting a decoded value here, So encode it if needs to be
             // decoded by the SSOToken validator.
             tokenValue = URLEncoder.encode(tokenValue);
         }
-        Cookie cookie = new Cookie(AgentConfiguration.getSSOTokenName(),
+        Cookie[] cookies;
+        String[] domains = getConfigurationStrings(CONFIG_CDSSO_DOMAIN);
+        int nbDomains = 0;
+        if (domains != null && domains.length > 0) {
+            nbDomains = domains.length;
+        }
+        if (nbDomains == 0) {
+            cookies = new Cookie[1];
+            cookies[0] = new Cookie(AgentConfiguration.getSSOTokenName(),
                 tokenValue);
-        cookie.setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
-        return cookie;
+            cookies[0].setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
+        } else {
+            cookies = new Cookie[nbDomains];
+            for(int i = 0; i < nbDomains; i++) {
+                cookies[i] = new Cookie(AgentConfiguration.getSSOTokenName(),
+                    tokenValue);
+                cookies[i].setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
+                cookies[i].setDomain(domains[i]);
+            }
+        }
+        return cookies;
     }
-    
+
     public Cookie getRemoveSSOTokenCookie() {
         Cookie cookie = new Cookie(AgentConfiguration.getSSOTokenName(),
                 IUtilConstants.COOKIE_RESET_STRING);
@@ -161,15 +178,15 @@ public class SSOContext extends AgentBase
         cookie.setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
         return cookie;
     }
-    
+
     public boolean isSSOCacheEnabled() {
         return _ssoCacheEnabled;
     }
-    
+
     public int getLoginAttemptLimit() {
         return _loginAttemptLimit;
     }
-    
+
     private void initSSOCacheEnabledFlag(AmFilterMode filterMode) {
         boolean cacheEnabled = false;
         if (filterMode.equals(AmFilterMode.MODE_J2EE_POLICY)
@@ -180,7 +197,7 @@ public class SSOContext extends AgentBase
         }
         setSSOCacheEnabledFlag(cacheEnabled);
     }
-    
+
     private void setSSOCacheEnabledFlag(boolean flag) {
         _ssoCacheEnabled = flag;
         if (isLogMessageEnabled()) {
@@ -188,7 +205,7 @@ public class SSOContext extends AgentBase
                     "SSOContext: active cache of sso is: " + _ssoCacheEnabled);
         }
     }
-    
+
     private void setURLDecodeSSOTokenFlag(boolean flag) {
         _urlDecodeSSOTokenFlag = flag;
         if (isLogMessageEnabled()) {
@@ -196,25 +213,25 @@ public class SSOContext extends AgentBase
                     + _urlDecodeSSOTokenFlag);
         }
     }
-    
+
     public boolean getURLDecodeSSOTokenFlag() {
         return _urlDecodeSSOTokenFlag;
     }
-    
+
     private void initCookieResetHelper(CommonFactory cf) throws AgentException {
         CookieResetInitializer cookieResetInitializer =
                 new CookieResetInitializer(getManager());
         setCookieResetHelper(cf.newCookieResetHelper(cookieResetInitializer));
     }
-    
+
     private void setCookieResetHelper(ICookieResetHelper cookieHelper){
         _cookieResetHelper = cookieHelper;
     }
-    
+
     public ICookieResetHelper getCookieResetHelper(){
         return _cookieResetHelper;
     }
-    
+
     private void setSSOTokenValidator(ISSOTokenValidator validator) {
         _ssoTokenValidator = validator;
         if (isLogMessageEnabled()) {
@@ -222,19 +239,19 @@ public class SSOContext extends AgentBase
                     + _ssoTokenValidator);
         }
     }
-    
+
     public ISSOTokenValidator getSSOTokenValidator() {
         return _ssoTokenValidator;
     }
-    
+
     public String getLoginCounterCookieName() {
         return _loginCounterCookieName;
     }
-    
+
     private void setLoginCounterCookieName(String cookieName) {
         _loginCounterCookieName = cookieName;
     }
-    
+
     private void setLoginAttemptLimit(int limit) {
         if (limit > 0) {
             _loginAttemptLimit = limit;
@@ -244,27 +261,27 @@ public class SSOContext extends AgentBase
                     + _loginAttemptLimit);
         }
     }
-    
+
     private void setSSOTokenName(String name) {
         _ssoTokenName = name;
         if (isLogMessageEnabled()) {
             logMessage("SSOContext: SSO Token name set to: " + _ssoTokenName);
         }
     }
-    
+
     private String getSSOTokenName() {
         return _ssoTokenName;
     }
-    
+
     protected ICrypt getCryptUtil() {
         return _crypt;
     }
-    
+
     private void setCryptUtil() throws AgentException {
         _crypt = ServiceFactory.getCryptProvider();
     }
-    
-    
+
+
     private int _loginAttemptLimit;
     private String _loginCounterCookieName;
     private boolean _urlDecodeSSOTokenFlag;
@@ -273,5 +290,5 @@ public class SSOContext extends AgentBase
     private boolean _ssoCacheEnabled;
     private String _ssoTokenName;
     private ICrypt _crypt;
-    
+
 }

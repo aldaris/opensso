@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISSOContext.java,v 1.1 2006-09-28 23:33:23 huacui Exp $
+ * $Id: ISSOContext.java,v 1.2 2007-08-10 23:22:06 dknab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ import com.sun.identity.agents.common.ICookieResetHelper;
 import com.sun.identity.agents.common.ISSOTokenValidator;
 
 /**
- * The interface for <code>SSOContext</code>. It encapsulates all the 
+ * The interface for <code>SSOContext</code>. It encapsulates all the
  * configuration and intializations of agent filter.
  */
 public interface ISSOContext {
@@ -43,11 +43,11 @@ public interface ISSOContext {
     public abstract Cookie getNextLoginAttemptCookie(int currentValue) throws AgentException;
 
     /**
-     * creates and returns a new SSOToken cookie. 
+     * creates and returns a new SSOToken cookie.
      * @param tokenValue - a URL decoded value.
      * @return a SSO Tokem Cookie
      */
-    public abstract Cookie createSSOTokenCookie(String tokenValue);
+    public abstract Cookie[] createSSOTokenCookie(String tokenValue);
 
     public abstract Cookie getRemoveSSOTokenCookie();
 
@@ -60,6 +60,6 @@ public interface ISSOContext {
     public abstract ICookieResetHelper getCookieResetHelper();
 
     public abstract String getLoginCounterCookieName();
-    
+
     public abstract ISSOTokenValidator getSSOTokenValidator();
 }

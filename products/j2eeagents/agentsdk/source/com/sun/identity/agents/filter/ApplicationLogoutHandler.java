@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationLogoutHandler.java,v 1.2 2007-03-06 00:26:40 leiming Exp $
+ * $Id: ApplicationLogoutHandler.java,v 1.3 2007-08-10 23:22:06 dknab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,14 +42,14 @@ import com.sun.identity.agents.common.ICookieResetHelper;
  * incoming request.
  * </p>
  */
-public class ApplicationLogoutHandler extends AmFilterTaskHandler 
+public class ApplicationLogoutHandler extends AmFilterTaskHandler
 implements IApplicationLogoutHandler {
 
     public ApplicationLogoutHandler(Manager manager){
         super(manager);
     }
-    
-    public void initialize(ISSOContext context, AmFilterMode mode) 
+
+    public void initialize(ISSOContext context, AmFilterMode mode)
     throws AgentException {
         super.initialize(context, mode);
         setIntroSpectRequestAllowedFlag(getConfigurationBoolean(
@@ -61,16 +61,16 @@ implements IApplicationLogoutHandler {
     /**
      * Checks to see if the incoming request is for a logout event and take the
      * necessary steps if a logout event is detected.
-     * 
+     *
      * @param ctx
      *            the <code>AmFilterRequestContext</code> that carries
      *            information about the incoming request and response objects.
-     * 
+     *
      * @return <code>AmFilterResult</code> if the processing of this task
      *         resulted in a particular action to be taken for the incoming
      *         request. The return could be <code>null</code> if no action is
      *         necessary for this request.
-     * 
+     *
      * @throws AgentException
      *             if the processing resulted in an unrecoverable error
      *             condition
@@ -107,7 +107,7 @@ implements IApplicationLogoutHandler {
             doCookiesReset(ctx);
             String logoutURL = getLogoutURL(ctx);
             result = new AmFilterResult(
-                    AmFilterResultStatus.STATUS_REDIRECT, 
+                    AmFilterResultStatus.STATUS_REDIRECT,
                     logoutURL);
         }
 
@@ -116,15 +116,15 @@ implements IApplicationLogoutHandler {
 
     /**
      * Method declaration
-     * 
-     * 
+     *
+     *
      * @param ctx
      *            the <code>AmFilterRequestContext</code> that carries
      *            information about the incoming request and response objects.
-     * 
-     * @return 
+     *
+     * @return
      * @throws AgentException
-     * 
+     *
      * @see
      */
     private boolean invokeApplicationLogoutHandler(AmFilterRequestContext ctx)
@@ -133,9 +133,9 @@ implements IApplicationLogoutHandler {
         boolean result = false;
 
         try {
-            String appName = getApplicationName(ctx.getHttpServletRequest()); 
+            String appName = getApplicationName(ctx.getHttpServletRequest());
 
-            IJ2EELogoutHandler localAuthHandler = 
+            IJ2EELogoutHandler localAuthHandler =
                     getApplicationLogoutHandler(appName);
 
             if (localAuthHandler != null) {
@@ -157,7 +157,7 @@ implements IApplicationLogoutHandler {
 
         return result;
     }
-    
+
     private String getApplicationEntryURL(AmFilterRequestContext ctx) {
         HttpServletRequest request = ctx.getHttpServletRequest();
         String entryURI = getApplicationEntryURI(request);
@@ -171,15 +171,15 @@ implements IApplicationLogoutHandler {
         String appName = getApplicationName(request);
         String result = (String) getEntryURIs().get(appName);
         if (result == null) {
-            Map entryMap = getConfigurationMap(CONFIG_ENTRY_URI_MAP);
+            Map entryMap = getConfigurationMap(CONFIG_LOGOUT_ENTRY_URI_MAP);
             result = (String) entryMap.get(appName);
             if (result == null) {
                 if (isLogMessageEnabled()) {
                     logMessage("ApplicationLogoutHandler: no entry URI "
-                            + "specified for app: " + appName 
+                            + "specified for app: " + appName
                             + ". Using appcontext URI");
                 }
-                result = request.getContextPath();                
+                result = request.getContextPath();
             }
             getEntryURIs().put(appName, result);
         }
@@ -188,21 +188,21 @@ implements IApplicationLogoutHandler {
 
     /**
      * Method getApplicationLogoutHandler
-     * 
+     *
      * @param appName
      *            Application Name
      *  @ return IJ2EELogoutHandler Mapped Local Logout Handler
-     * 
+     *
      * @see Returns the Application Logout Handler for the context URI. If the
      *      application does not have an entry in the configuration.
-     *  
+     *
      */
     private IJ2EELogoutHandler getApplicationLogoutHandler(String appName)
             throws AgentException {
         IJ2EELogoutHandler localLogoutHandlerClass = null;
 
         if ((appName != null) && (appName.length() > 0)) {
-            localLogoutHandlerClass = 
+            localLogoutHandlerClass =
                     (IJ2EELogoutHandler) getApplicationLogoutHandlers()
                     .get(appName);
 
@@ -244,8 +244,8 @@ implements IApplicationLogoutHandler {
 
     /**
      * Method getApplicationLogoutHandlers
-     * 
-     * @return  
+     *
+     * @return
      */
     private Hashtable getApplicationLogoutHandlers() {
         return _localLogoutHandlers;
@@ -284,10 +284,10 @@ implements IApplicationLogoutHandler {
     }
 
     /**
-     * 
+     *
      * Returns a boolean value indicating if a match for logout parameter was
      * found
-     * 
+     *
      * @param request
      * @param appName
      * @return boolean true or false
@@ -340,10 +340,10 @@ implements IApplicationLogoutHandler {
     }
 
     /**
-     * 
+     *
      * Returns a boolean value if logout param is in query string, try the two
      * variations ?param_name=, &param_name=
-     * 
+     *
      * @param logoutParam
      * @param queryString
      * @param appName
@@ -375,9 +375,9 @@ implements IApplicationLogoutHandler {
     }
 
     /**
-     * 
+     *
      * Returns a boolean value indicating if a match for logout URI was found
-     * 
+     *
      * @param request
      * @param appName
      * @return boolean true or false
@@ -415,7 +415,7 @@ implements IApplicationLogoutHandler {
 
     /**
      * Caches the isActive flag
-     * 
+     *
      * @return
      */
     private void setIsActiveFlag() {
@@ -433,7 +433,7 @@ implements IApplicationLogoutHandler {
 
     /**
      * Returns the cached the isActive flag
-     * 
+     *
      * @return
      */
     private boolean getIsActiveFlag() {
@@ -442,7 +442,7 @@ implements IApplicationLogoutHandler {
 
     /**
      * Detects if the handler is active or not
-     * 
+     *
      * @return boolean true if active, false if inactive
      */
     public boolean isActive() {
@@ -451,7 +451,7 @@ implements IApplicationLogoutHandler {
 
     /**
      * Returns a String that can be used to identify this task handler
-     * 
+     *
      * @return the name of this task handler
      */
     public String getHandlerName() {
@@ -460,18 +460,38 @@ implements IApplicationLogoutHandler {
 
     /**
      * Returns the logout URL.
-     * 
+     *
      * @param request
      * @return
      */
-    private String getLogoutURL(AmFilterRequestContext ctx) 
+    private String getLogoutURL(AmFilterRequestContext ctx)
     throws AgentException {
         String result = null;
-        StringBuffer buff = new StringBuffer(
-                    ctx.getAuthRedirectURL(getApplicationEntryURL(ctx)));
-        buff.append('&').append(ARG_NEW_SESSION_PARAMETER);
+        String loginURL = ctx.getAuthRedirectURL(getApplicationEntryURL(ctx));
+        StringBuffer buff = null;
+        String loginStr = "Login";
+        String logoutStr = "Logout";
 
-        result = buff.toString();
+        // Replace "Login" by "Logout" in the redirection url
+        // to the entry_uri page
+        int iEnd = loginURL.indexOf("?");
+        if (iEnd > -1) {
+            int iStart = iEnd-loginStr.length();
+            if (loginStr.compareToIgnoreCase(loginURL.substring(iStart,iEnd)) == 0) {
+                buff= new StringBuffer(loginURL.substring(0,iStart));
+                buff.append(logoutStr).append(loginURL.substring(iEnd));
+                result = buff.toString();
+            }
+        }
+        if (result == null) {
+            if (isLogWarningEnabled()) {
+                logWarning("ApplicationLogoutHandler: Could not get logout url. "
+                + "Redirecting to login page");
+            }
+            buff = new StringBuffer(loginURL);
+            buff.append('&').append(ARG_NEW_SESSION_PARAMETER);
+            result = buff.toString();
+        }
         if (isLogMessageEnabled()) {
             logMessage("ApplicationLogoutHandler: Logout URL is: " + result);
         }
@@ -479,11 +499,12 @@ implements IApplicationLogoutHandler {
         return result;
     }
 
+
     /**
      * Method declaration
-     * 
-     * 
-     * @return 
+     *
+     *
+     * @return
      * @see
      */
     private boolean getIntroSpectRequestAllowedFlag() {
@@ -492,9 +513,9 @@ implements IApplicationLogoutHandler {
 
     /**
      * Method declaration
-     * 
-     * 
-     * @return 
+     *
+     *
+     * @return
      * @see
      */
     private void setIntroSpectRequestAllowedFlag(boolean allowed) {
@@ -504,8 +525,8 @@ implements IApplicationLogoutHandler {
                     + allowed);
         }
     }
-    
-    
+
+
     private void setEntryURL(String url) {
         _entryURL = url;
         if (url == null || url.trim().length() == 0) {
