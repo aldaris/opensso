@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.2 2007-08-02 18:18:43 bina Exp $
+ * $Id: LogUtil.java,v 1.3 2007-08-11 00:00:40 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -276,6 +276,18 @@ public abstract class LogUtil {
     public static final String VALID_SIGNATURE_QUERY="VALID_SIGNATURE_QUERY";
     public static final String PEP_METADATA_ERROR="PEP_METADATA_ERROR";
     public static final String PDP_METADATA_ERROR="PDP_METADATA_ERROR";
+    public static final String INVALID_ISSUER_IN_PEP_REQUEST=
+            "INVALID_ISSUER_IN_PEP_REQUEST";
+    public static final String ASSERTION_FROM_PDP_NOT_ENCRYPTED=
+            "ASSERTION_FROM_PDP_NOT_ENCRYPTED";
+    public static final String MISSING_ASSERTION_IN_PDP_RESPONSE=
+            "MISSING_ASSERTION_IN_PDP_RESPONSE";
+    public static final String INVALID_ISSUER_IN_ASSERTION_FROM_PDP=
+            "INVALID_ISSUER_IN_ASSERTION_FROM_PDP";
+    public static final String MISMATCH_ISSUER_IN_ASSERTION_FROM_PDP=
+            "MISMATCH_ISSUER_IN_ASSERTION_FROM_PDP";
+    public static final String INVALID_SIGNATURE_ASSERTION_FROM_PDP=
+            "INVALID_SIGNATURE_ASSERTION_FROM_PDP";
                                           
     private static final String SAML2_LOG = "SAML2";
     private static Logger logger = null;

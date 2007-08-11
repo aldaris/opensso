@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SAML2LogMessageIDs.xml,v 1.1 2006-10-30 23:17:27 qcheng Exp $
+   $Id: SAML2LogMessageIDs.xml,v 1.2 2007-08-10 23:56:33 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1651,6 +1651,244 @@
         </datainfo>
         <triggers>
             <item>Get all entities.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="INVALID_PEP_ID" id="127"
+         loglevel="LL_INFO"
+         description="Invalid Policy Enforcement Point (PEP) Identifier.">
+        <datainfo>
+            <item>PEP Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Cannot retrieve PEP Metadata</item>
+        </triggers>
+        <actions>
+            <item>Provide valid PEP Identifier and retry.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="INVALID_PDP_ID" id="128"
+         loglevel="LL_INFO"
+         description="Invalid Policy Decision Point (PDP) Identifier.">
+        <datainfo>
+            <item>PDP Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Cannot retrieve PDP Metadata</item>
+        </triggers>
+        <actions>
+            <item>Provide valid PDP Identifier and retry.</item>
+        </actions>
+    </logmessage>
+     <logmessage name="NULL_PDP_SIGN_CERT_ALIAS" id="129"
+        loglevel="LL_INFO"
+        description="Certificate Alias is null, cannot sign the message. ">
+        <datainfo>
+            <item>The realm from which the metadata was retreived.</item>
+            <item>Entity Identifier for the Policy Decision Point.</item>
+        </datainfo>
+        <triggers>
+            <item>Cannot sign the message.</item>
+        </triggers>
+        <actions>
+            <item>
+                Check the entity's metadata to verify the certificate
+                alias is correct.
+            </item>
+        </actions>
+    </logmessage>
+    <logmessage name="NULL_PEP_SIGN_CERT_ALIAS" id="130"
+        loglevel="LL_INFO"
+        description="Certificate Alias is null,cannot retreive the 
+                    certificate."
+     >
+        <datainfo>
+            <item>The realm from which the metadata was retreived.</item>
+            <item>Entity Identifier for the Policy Enforcement Point.</item>
+        </datainfo>
+        <triggers>
+            <item>Cannot validate the signature in the request message.</item>
+        </triggers>
+        <actions>
+            <item>
+                Check the entity's metadata to verify the certificate
+                alias is correct.
+            </item>
+        </actions>
+    </logmessage>
+     <logmessage name="INVALID_SIGNATURE_QUERY" id="131"
+        loglevel="LL_INFO"
+        description="Invalid Signature in Query Request. ">
+        <datainfo>
+            <item>The realm from which the metadata was retreived.</item>
+            <item>Entity Identifier for the Policy Decision Point.</item>
+            <item>Cert Alias used to retrieve certificate from keystore.</item>
+        </datainfo>
+        <triggers>
+            <item>Cannot process the request, server will send back error
+                to the Requester.
+            </item>
+        </triggers>
+        <actions>
+            <item>
+                Check the entity's metadata to verify the certificate
+                alias is correct.
+            </item>
+            <item>
+                Check the certificate in the keystore for its existance 
+                and validity.
+            </item>
+        </actions>
+    </logmessage>
+     <logmessage name="INVALID_ISSUER_IN_PEP_REQUEST" id="132"
+        loglevel="LL_INFO"
+        description="Issuer in Request is invalid.">
+        <datainfo>
+            <item>Name of Realm or organization</item>
+            <item>Identity of the Issuer</item>
+            <item>Hosted Entity Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Issuer in Request is not configured or not trusted by the 
+                  hosted provider therefore Query will fail.</item>
+        </triggers>
+        <actions>
+            <item>Check the hosted entity configuration attribute cotlist to 
+                  make sure the issuer identifier is in the list.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="PEP_METADATA_ERROR" id="133"
+        loglevel="LL_INFO"
+        description="Unable to retreive Policy Enforcement Point (PEP) Metadata.">
+        <datainfo>
+            <item>PEP Provider Entity Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Cannot retrieve PEP Provider Metadata</item>
+        </triggers>
+        <actions>
+            <item>Check the Data Store is accessible .</item> 
+            <item>Check the PEP Provider Entity Identifier.</item> 
+        </actions>
+    </logmessage>
+    <logmessage name="PDP_METADATA_ERROR" id="134"
+        loglevel="LL_INFO"
+        description="Unable to retrieve Policy Decision Point (PDP) Metadata.">
+        <datainfo>
+            <item>PDP Provider Entity Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Cannot retreive PDP Provider Metadata</item>
+        </triggers>
+        <actions>
+            <item>Check the Data Store is accessible .</item> 
+            <item>Check the PDP Provider Entity Identifier.</item> 
+        </actions>
+    </logmessage>
+    <logmessage name="ASSERTION_FROM_PDP_NOT_ENCRYPTED" id="135"
+        loglevel="LL_INFO"
+        description="Assertion in Response not encrypted.">
+        <datainfo>
+            <item>Identity of the Issuer</item>
+            <item>Response ID</item>
+        </datainfo>
+        <triggers>
+            <item>Policy Enforcement Point (PEP) Provider requested the 
+                  assertion in Response to be encrypted, but it received a 
+                  Response with unencrypted assertion(s).</item>
+        </triggers>
+        <actions>
+            <item>Check PEP metadata published to the PDP. Notify 
+                  Policy Decision Point (PDP) Provider regarding the 
+                  requirement.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="MISSING_ASSERTION_IN_PDP_RESPONSE" id="136"
+        loglevel="LL_INFO"
+        description="Response has no Assertion.">
+        <datainfo>
+            <item>Identity of Issuer</item>
+            <item>Response ID</item>
+        </datainfo>
+        <triggers>
+            <item>Policy Enforcement Point (PEP) Provider received a Response 
+                  with no Assertion.</item>
+        </triggers>
+        <actions>
+            <item>Check error code of the Response. Notify 
+                Policy Decision Point (PDP) Provider to check for errors or 
+                possible misconfiguration.</item>
+        </actions>
+    </logmessage>
+        <logmessage name="INVALID_ISSUER_IN_ASSERTION_FROM_PDP" id="137"
+        loglevel="LL_INFO"
+        description="Issuer in Assertion is not valid.">
+        <datainfo>
+            <item>Assertion Issuer</item>
+            <item>Assertion ID</item>
+        </datainfo>
+        <triggers>
+            <item>Issuer in Assertion  was not configured 
+                  at Policy Enforcement Point (PEP) provider, 
+                  or not trusted by the PEP provider.</item>
+        </triggers>
+        <actions>
+            <item>Check the configuration.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="MISMATCH_ISSUER_IN_ASSERTION_FROM_PDP" id="138"
+        loglevel="LL_INFO"
+        description="Issuer in Assertion doesn't match the Issuer in Response.">
+        <datainfo>
+            <item>Issuer Identifier in the Resposnse</item>
+            <item>Issuer Identity in the Assertion</item>
+        </datainfo>
+        <triggers>
+            <item>Error condition, Response will not be accepted.</item>
+        </triggers>
+        <actions>
+            <item>Check the Policy Decision Point instance  
+                  to debug the cause of the problem.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="INVALID_SIGNATURE_ASSERTION_FROM_PDP" id="139"
+        loglevel="LL_INFO"
+        description="Assertion is not signed or signature is not valid.">
+        <datainfo>
+            <item>Issuer Identity in the Assertion</item>
+            <item>Assertion ID</item>
+        </datainfo>
+        <triggers>
+            <item>Policy Enforcement Point (PEP) provider requested the Assertion to be signed but the assertion received was not; or the signature on the Assertion received was not valid.</item>
+        </triggers>
+        <actions>
+            <item>Check PEP metadata configuration.</item>
+            <item>Check debug for more detailed error message.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="REQUEST_MESSAGE" id="140"
+                loglevel="LL_FINE"
+                description="Request message from Query Requester">
+        <datainfo>
+            <item>policy decision point entity descriptor</item>
+            <item>SAMLv2 Query Request Message</item>
+        </datainfo>
+        <triggers>
+            <item>SAMLv2 SOAP Query</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    
+    <logmessage name="VALID_SIGNATURE_QUERY" id="141"
+        loglevel="LL_INFO"
+        description="Valid Signature in Query Request. ">
+        <datainfo>
+            <item>The realm from which the metadata was retreived.</item>
+            <item>Entity Identifier for the Policy Decision Point.</item>
+            <item>Cert Alias used to retrieve certificate from keystore.</item>
+        </datainfo>
+        <triggers>
+            <item>The Request will be processed.</item>
         </triggers>
         <actions/>
     </logmessage>
