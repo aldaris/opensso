@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryHandlerServlet.java,v 1.1 2007-08-02 18:18:43 bina Exp $
+ * $Id: QueryHandlerServlet.java,v 1.2 2007-08-11 08:53:32 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -299,7 +299,8 @@ public class QueryHandlerServlet extends HttpServlet {
                                 "Issuer in Request is not valid."+ pepEntityID);
                     }
                     String[] args = { realm, pepEntityID, pdpEntityID};
-                    LogUtil.error(Level.INFO,LogUtil.INVALID_ISSUER_REQUEST,
+                    LogUtil.error(Level.INFO,
+                            LogUtil.INVALID_ISSUER_IN_PEP_REQUEST,
                                   args);
                     throw new SAML2Exception("invalidIssuerInRequest");
                 }

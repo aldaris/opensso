@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryClient.java,v 1.2 2007-08-02 18:18:43 bina Exp $
+ * $Id: QueryClient.java,v 1.3 2007-08-11 08:53:31 bina Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,7 +71,6 @@ import org.w3c.dom.NodeList;
  * The <code>QueryClient</code> class provides Query Requester clients with
  * a method to send requests using SOAP connection to SOAP endpoint.
  *
- * TODO: Test with remote metadata since this uses SAML2MetaManager methods.
  */
 
 public class QueryClient {
@@ -159,7 +158,7 @@ public class QueryClient {
                     // create SOAP message
                     try {
                         String soapMessage =
-                            SAML2SDKUtils.createSOAPMessageString(xmlString);
+                                SAML2SDKUtils.createSOAPMessageString(xmlString);
                         
                         endPoint =
                                 SAML2SDKUtils.fillInBasicAuthInfo(
@@ -204,7 +203,7 @@ public class QueryClient {
                             String[] args = {realm, pepEntityID, pdpEntityID};
                             
                             LogUtil.error(Level.INFO,
-                                    LogUtil.INVALID_ISSUER_REQUEST,
+                                    LogUtil.INVALID_ISSUER_IN_PEP_REQUEST,
                                     args);
                             throw new SAML2Exception("invalidIssuerInRequest");
                         }
@@ -495,7 +494,7 @@ public class QueryClient {
                 String[] args = {realm, pepEntityID, issuerID};
                 
                 LogUtil.error(Level.INFO,
-                        LogUtil.INVALID_ISSUER_REQUEST,
+                        LogUtil.INVALID_ISSUER_IN_PEP_REQUEST,
                         args);
                 throw new SAML2Exception(
                         SAML2SDKUtils.BUNDLE_NAME,"invalidIssuer",args);
@@ -520,7 +519,8 @@ public class QueryClient {
                 if (wantAssertionEncrypted &&  (assertions != null
                         && (assertions.size() != 0))) {
                     String[] data = { issuerID , respID  };
-                    LogUtil.error(Level.INFO,LogUtil.ASSERTION_NOT_ENCRYPTED,
+                    LogUtil.error(Level.INFO,
+                            LogUtil.ASSERTION_FROM_PDP_NOT_ENCRYPTED,
                             data);
                     throw new SAML2Exception(
                             SAML2SDKUtils.bundle.getString(
@@ -551,7 +551,8 @@ public class QueryClient {
                                 "no assertion in the Response.");
                     }
                     String[] data = {issuerID , respID};
-                    LogUtil.error(Level.INFO,LogUtil.MISSING_ASSERTION,data);
+                    LogUtil.error(Level.INFO,
+                            LogUtil.MISSING_ASSERTION_IN_PDP_RESPONSE,data);
                     throw new SAML2Exception(
                             SAML2SDKUtils.bundle.getString("missingAssertion"));
                 }
@@ -580,7 +581,7 @@ public class QueryClient {
                                 "Assertion's source site is not valid.");
                         String[] data = {assertionIssuer,assertionID};
                         LogUtil.error(Level.INFO,
-                                LogUtil.INVALID_ISSUER_ASSERTION,data);
+                            LogUtil.INVALID_ISSUER_IN_ASSERTION_FROM_PDP,data);
                         throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
                                 "invalidIssuerInAssertion"));
                     }
@@ -595,7 +596,7 @@ public class QueryClient {
                         }
                         String[] data = {pdpEntityID , assertionIssuer};
                         LogUtil.error(Level.INFO,
-                                LogUtil.MISMATCH_ISSUER_ASSERTION,data);
+                            LogUtil.MISMATCH_ISSUER_IN_ASSERTION_FROM_PDP,data);
                         throw new SAML2Exception(
                             SAML2SDKUtils.bundle.getString("mismatchIssuer"));
                     }
@@ -611,8 +612,8 @@ public class QueryClient {
                                     "is not valid.");
                             String[] data = {assertionIssuer , assertionID};
                             LogUtil.error(Level.INFO,
-                                    LogUtil.INVALID_SIGNATURE_ASSERTION,
-                                    data);
+                                LogUtil.INVALID_SIGNATURE_ASSERTION_FROM_PDP,
+                                data);
                             throw new SAML2Exception(
                                     SAML2SDKUtils.bundle.getString(
                                     "invalidSignatureOnAssertion"));
