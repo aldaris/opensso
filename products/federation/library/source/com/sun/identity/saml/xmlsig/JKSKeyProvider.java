@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JKSKeyProvider.java,v 1.1 2006-10-30 23:15:53 qcheng Exp $
+ * $Id: JKSKeyProvider.java,v 1.2 2007-08-11 11:25:39 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,7 @@ public class JKSKeyProvider implements KeyProvider {
     private String privateKeyPass = null;
     private String keystorePass   = ""; 
     private String keystoreFile = "";
+    private String keystoreType = "JKS";
     HashMap keyTable = new HashMap();
 
     private void initialize() {
@@ -71,7 +72,13 @@ public class JKSKeyProvider implements KeyProvider {
 
         String kspfile = SystemConfigurationUtil.getProperty(
             "com.sun.identity.saml.xmlsig.storepass");
-           
+
+        String tmp_ksType = SystemConfigurationUtil.getProperty(
+            "com.sun.identity.saml.xmlsig.storetype");
+        if ( null != tmp_ksType ) {
+            keystoreType = tmp_ksType.trim();
+        }
+        
         if (kspfile != null) {
             try {
                 fis = new FileInputStream(kspfile);
@@ -114,7 +121,6 @@ public class JKSKeyProvider implements KeyProvider {
      */
     public JKSKeyProvider() {
         initialize(); 
-        String keystoreType = "JKS";
         try {
             ks = KeyStore.getInstance(keystoreType);
             FileInputStream fis = new FileInputStream(keystoreFile);
