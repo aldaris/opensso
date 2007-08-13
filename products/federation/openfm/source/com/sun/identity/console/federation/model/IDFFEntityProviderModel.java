@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityProviderModel.java,v 1.1 2007-08-01 22:13:16 asyhuang Exp $
+ * $Id: IDFFEntityProviderModel.java,v 1.2 2007-08-13 19:09:48 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,16 +34,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
 public interface IDFFEntityProviderModel
-    extends AMModel 
-{
+    extends AMModel {
     
     public static final String ATTR_PROVIDER_ALIAS = "tfAlias";
-    public static final String ATTR_PROVIDER_TYPE = "tfProviderType";  
-        
+    public static final String ATTR_PROVIDER_TYPE = "tfProviderType";
+    
     public static final String ATTR_SERVER_NAME_IDENTIFIER_MAPPING =
         "elistServerNameIdentifierMapping";
     
-    // standard meta data    
+    // standard meta data
     public static final String ATTR_XMLNS = "xmlns";
     public static final String ATTR_PROVIDER_ID = "providerID";
     public static final String ATTR_PROTOCOL_SUPPORT_ENUMERATION =
@@ -62,17 +61,17 @@ public interface IDFFEntityProviderModel
         "tfFederationTerminationReturnURL";
     public static final String ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_URL =
         "tfNameRegistrationServiceURL";
-    public static final 
+    public static final
         String ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL =
         "tfNameRegistrationReturnURL";
     
     // communication profiles
-    public static final String 
+    public static final String
         ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE =
         "singleChoiceFederationTerminationProfile";
     public static final String ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE =
         "singleChoiceSingleLogoutProfile";
-    public static final 
+    public static final
         String ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE =
         "singleChoiceNameRegistrationProfile";
     public static final String ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE =
@@ -216,27 +215,27 @@ public interface IDFFEntityProviderModel
     public SPDescriptorType getServiceProvider(String name);
     
     
-    public Map getEntityIDPDescriptor(String entityDescriptorName);
-    public Map getEntitySPDescriptor(String entityDescriptorName);
+    public Map getEntityIDPDescriptor(String entityName);
+    public Map getEntitySPDescriptor(String entityName);
     
     /**
      * Returns attributes values of provider.
      *
-     * @param entityDescriptorName Name of Entity Descriptor.
+     * @param entityName Name of Entity Descriptor.
      * @param role Role of provider.
-     * @param type Type of provider such as Hosted or Remote.
+     * @param location Location of provider such as Hosted or Remote.
      * @return attributes values of provider.
      */
     public Map getEntityConfig(
-        String entityDescriptorName,
+        String entityName,
         String role,
-        String type);
+        String location);
     
     /**
      * updateEntityDescriptor
      * Modifies a provider's standard metadata.
      *
-     * @param entityDescriptorName Name of Entity Descriptor.
+     * @param entityName Name of Entity Descriptor.
      * @param role Role of provider. (SP or IDP)
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
@@ -251,7 +250,7 @@ public interface IDFFEntityProviderModel
      * updateEntityConfig
      * Modifies a provider's extended metadata.
      *
-     * @param entityDescriptorName Name of Entity Descriptor.
+     * @param entityName Name of Entity Descriptor.
      * @param role Role of provider. (SP or IDP)
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
@@ -262,4 +261,9 @@ public interface IDFFEntityProviderModel
         Map attrValues)
         throws AMConsoleException, JAXBException;
     
+    public void createEntityConfig(
+        String entityName,
+        String role,
+        String location
+        ) throws AMConsoleException, JAXBException;
 }

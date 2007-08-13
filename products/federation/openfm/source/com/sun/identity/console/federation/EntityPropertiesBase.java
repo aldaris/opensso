@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityPropertiesBase.java,v 1.1 2007-08-03 22:29:01 jonnelson Exp $
+ * $Id: EntityPropertiesBase.java,v 1.2 2007-08-13 19:10:26 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,20 +95,8 @@ public abstract class EntityPropertiesBase
 	throws ModelControlException
     {
 	super.beginDisplay(event);       
-        retrieveCommonProperties();
-        debug.error("location = " + location);
-        if (isHosted()) {
-            setPageTitle(entityName);
-        } else {
-            // TBD : temporary workaround to prevent Remote providers 
-            // from being accessed
-            setPageSessionAttribute(FederationViewBean.MESSAGE_TEXT, 
-                "Remote properties are not available");
-            FederationViewBean vb = (FederationViewBean)            
-                getViewBean(FederationViewBean.class);
-            passPgSessionMap(vb);
-            vb.forwardTo(getRequestContext());                               
-        }
+        retrieveCommonProperties();       
+        setPageTitle(entityName);    
     }
    
     protected void registerChildren() {

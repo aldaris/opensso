@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityProviderModelImpl.java,v 1.1 2007-08-01 22:13:16 asyhuang Exp $
+ * $Id: IDFFEntityProviderModelImpl.java,v 1.2 2007-08-13 19:09:48 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,11 +51,116 @@ import javax.xml.bind.JAXBException;
 
 public class IDFFEntityProviderModelImpl
     extends AMModelBase
-    implements IDFFEntityProviderModel 
-{
+    implements IDFFEntityProviderModel {
     
     private IDFFMetaManager metaManager;
+    private static Map extendedMetaMap = new HashMap(24);
+    private static Map extendedMetaIdpMap = new HashMap(9);
+    private static Map extendedMetaSpMap = new HashMap(13);
     
+    // BOTH idp AND SP extended metadata
+    static{
+        extendedMetaMap.put(ATTR_DO_FEDERATION_PAGE_URL,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_ATTRIBUTE_MAPPER_CLASS,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_ENABLE_AUTO_FEDERATION,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_REGISTERATION_DONE_URL,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_COT_LIST,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_RESPONSD_WITH,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_ENABLE_NAME_ID_ENCRYPTION,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_SSO_FAILURE_REDIRECT_URL,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_LIST_OF_COTS_PAGE_URL,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_DEFAULT_AUTHN_CONTEXT,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_SIGNING_CERT_ALIAS,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_REALM_NAME,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_USER_PROVIDER_CLASS,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_NAME_ID_IMPLEMENETATION_CLASS,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_FEDERATION_DONE_URL,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_AUTH_TYPE,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_ENCRYPTION_CERT_ALIAS,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_TERMINATION_DONE_URL,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_AUTO_FEDERATION_ATTRIBUTE,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_ERROR_PAGE_URL,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_PROVIDER_STATUS,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_PROVIDER_DESCRIPTION,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_LOGOUT_DONE_URL,
+            Collections.EMPTY_LIST);
+        extendedMetaMap.put(ATTR_PROVIDER_HOME_PAGE_URL,
+            Collections.EMPTY_LIST);
+    }
+    
+    // IDP extend meta attribute ONLY IDP
+    static {
+        extendedMetaIdpMap.put(ATTR_ASSERTION_LIMIT,
+            Collections.EMPTY_LIST);
+        extendedMetaIdpMap.put(ATTR_ATTRIBUTE_PLUG_IN,
+            Collections.EMPTY_LIST);
+        extendedMetaIdpMap.put(ATTR_IDP_ATTRIBUTE_MAP,
+            Collections.EMPTY_LIST);
+        extendedMetaIdpMap.put(ATTR_ASSERTION_ISSUER,
+            Collections.EMPTY_LIST);
+        extendedMetaIdpMap.put(ATTR_CLEANUP_INTERVAL,
+            Collections.EMPTY_LIST);
+        extendedMetaIdpMap.put(ATTR_IDP_AUTHN_CONTEXT_MAPPING,
+            Collections.EMPTY_LIST);
+        extendedMetaIdpMap.put(ATTR_GERNERATE_BOOT_STRAPPING,
+            Collections.EMPTY_LIST);
+        extendedMetaIdpMap.put(ATTR_ARTIFACT_TIMEOUT,
+            Collections.EMPTY_LIST);
+        extendedMetaIdpMap.put(ATTR_ASSERTION_INTERVAL,
+            Collections.EMPTY_LIST);
+    }
+    
+    // SP extend meta attribute.. ONLY SP
+    static {
+        extendedMetaSpMap.put(ATTR_IS_PASSIVE,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_SP_ATTRIBUTE_MAP,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_SP_AUTHN_CONTEXT_MAPPING,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_IDP_PROXY_LIST,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_ENABLE_IDP_PROXY,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_NAME_ID_POLICY,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_FEDERATION_SP_ADAPTER_ENV,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_ENABLE_AFFILIATION,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_FORCE_AUTHN,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_IDP_PROXY_COUNT,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_FEDERATION_SP_ADAPTER,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_USE_INTRODUCTION_FOR_IDP_PROXY,
+            Collections.EMPTY_LIST);
+        extendedMetaSpMap.put(ATTR_SUPPORTED_SSO_PROFILE,
+            Collections.EMPTY_LIST);
+    }
     /**
      * Creates a simple model using default resource bundle.
      *
@@ -124,15 +229,16 @@ public class IDFFEntityProviderModelImpl
         }
         return pdesc;
     }
+    
     /**
      * Returns a map of IDP key/value pairs
      *
      * @param name of Entity Descriptor.
      * @return map of IDP key/value pairs
      */
-    public Map getEntityIDPDescriptor(String entityDescriptorName) {
+    public Map getEntityIDPDescriptor(String entityName) {
         Map map = new HashMap();
-        IDPDescriptorType  pDesc = getIdentityProvider(entityDescriptorName);
+        IDPDescriptorType  pDesc = getIdentityProvider(entityName);
         
         // common attributes
         map.put(ATTR_PROTOCOL_SUPPORT_ENUMERATION,
@@ -181,9 +287,9 @@ public class IDFFEntityProviderModelImpl
      * @param name of Entity Descriptor.
      * @return map of SP key/value pairs
      */
-    public Map getEntitySPDescriptor(String entityDescriptorName) {
+    public Map getEntitySPDescriptor(String entityName) {
         Map map = new HashMap();
-        SPDescriptorType  pDesc = getServiceProvider(entityDescriptorName);
+        SPDescriptorType  pDesc = getServiceProvider(entityName);
         
         // common attributes
         map.put(ATTR_PROTOCOL_SUPPORT_ENUMERATION,
@@ -220,7 +326,7 @@ public class IDFFEntityProviderModelImpl
             convertListToSet(pDesc.getRegisterNameIdentifierProtocolProfile()));
         
         // only for Service Provider
-        com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType.AssertionConsumerServiceURLType 
+        com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType.AssertionConsumerServiceURLType
             assertionType =
             (com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType.AssertionConsumerServiceURLType)
             ((List) pDesc.getAssertionConsumerServiceURL()).get(0);
@@ -248,16 +354,15 @@ public class IDFFEntityProviderModelImpl
     /**
      * Returns attributes values in extended metadata.
      *
-     * @param entityDescriptorName Name of Entity Descriptor.
+     * @param entityName Name of Entity Descriptor.
      * @param role Role of provider. (idp or sp)
-     * @param type Type of provider such as Hosted or Remote.
+     * @param location Location of provider such as Hosted or Remote.
      * @return attributes values of provider.
      */
-    public Map getEntityConfig (
-        String entityDescriptorName,
+    public Map getEntityConfig(
+        String entityName,
         String role,
-        String type) 
-    {
+        String location) {
         IDFFMetaManager manager;
         Map map = new HashMap();
         Map tmpMap = new HashMap();
@@ -266,18 +371,26 @@ public class IDFFEntityProviderModelImpl
             String metaAlias = null;
             if (role.equals(IFSConstants.IDP)) {
                 IDPDescriptorType  pDesc =
-                    getIdentityProvider(entityDescriptorName);
+                    getIdentityProvider(entityName);
                 BaseConfigType  idpConfig=
-                    manager.getIDPDescriptorConfig(entityDescriptorName);
-                map = IDFFMetaUtils.getAttributes(idpConfig) ;
-                metaAlias = idpConfig.getMetaAlias();
+                    manager.getIDPDescriptorConfig(entityName);
+                if (idpConfig != null){
+                    map = IDFFMetaUtils.getAttributes(idpConfig) ;
+                    metaAlias = idpConfig.getMetaAlias();
+                } else {
+                    createEntityConfig(entityName, role, location);
+                }
             } else if (role.equals(IFSConstants.SP)) {
                 SPDescriptorType  pDesc =
-                    getServiceProvider(entityDescriptorName);
+                    getServiceProvider(entityName);
                 BaseConfigType spConfig =
-                    manager.getSPDescriptorConfig(entityDescriptorName);
-                map = IDFFMetaUtils.getAttributes(spConfig) ;
-                metaAlias = spConfig.getMetaAlias();
+                    manager.getSPDescriptorConfig(entityName);
+                if (spConfig != null) {
+                    map = IDFFMetaUtils.getAttributes(spConfig) ;
+                    metaAlias = spConfig.getMetaAlias();
+                } else {
+                    createEntityConfig(entityName, role, location);
+                }
             }
             
             Set entries = map.entrySet();
@@ -292,28 +405,28 @@ public class IDFFEntityProviderModelImpl
                 returnEmptySetIfValueIsNull(metaAlias));
         } catch (IDFFMetaException e) {
             debug.error("IDFFEntityProviderModelImpl",e);
+        } catch (AMConsoleException e) {
+            debug.error("IDFFEntityProviderModelImpl",e);
+        } catch (JAXBException e) {
+            debug.error("IDFFEntityProviderModelImpl",e);
         }
         return tmpMap;
     }
-    
     
     /**
      * updateEntityDescriptor
      * Modifies a provider's standard metadata.
      *
-     * @param entityDescriptorName Name of Entity Descriptor.
+     * @param entityName Name of Entity Descriptor.
      * @param role Role of provider. (SP or IDP)
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
      */
-    
-    
-    public void updateEntityDescriptor (
+    public void updateEntityDescriptor(
         String entityName,
         String role,
         Map attrValues
-        ) throws AMConsoleException 
-    {
+        ) throws AMConsoleException {
         if (role.equals(IFSConstants.SP)) {
             updateEntitySPDescriptor(entityName, attrValues);
         } else {
@@ -321,11 +434,10 @@ public class IDFFEntityProviderModelImpl
         }
     }
     
-    private void updateEntitySPDescriptor (
+    private void updateEntitySPDescriptor(
         String entityName,
         Map attrValues
-        ) throws AMConsoleException 
-    {
+        ) throws AMConsoleException {
         try{
             IDFFMetaManager idffManager = getIDFFMetaManager();
             EntityDescriptorElement entityDescriptor =
@@ -413,14 +525,12 @@ public class IDFFEntityProviderModelImpl
         } catch (JAXBException e){
             debug.error("JAXBException, updateEntitySPDescriptor");
         }
-        
     }
     
-    private void updateEntityIDPDescriptor (
+    private void updateEntityIDPDescriptor(
         String entityName,
         Map attrValues
-        ) throws AMConsoleException 
-    {
+        ) throws AMConsoleException {
         try{
             IDFFMetaManager idffManager = getIDFFMetaManager();
             EntityDescriptorElement entityDescriptor =
@@ -481,17 +591,17 @@ public class IDFFEntityProviderModelImpl
             entityDescriptor.getIDPDescriptor().add(pDesc);
             idffManager.setEntityDescriptor(entityDescriptor);
         } catch (IDFFMetaException e) {
-            debug.error("IDFFMetaException , updateEntityIDPDescriptor");
+            debug.error("IDFFMetaException , updateEntityIDPDescriptor" + e);
         }
-        
     }
     
-    private void updateAttrInConfig(List configList,Map values,
+    private void updateAttrInConfig(
+        List configList,
+        Map values,
         EntityConfigElement entityConfig,
         ObjectFactory objFactory,
         IDFFMetaManager idffMetaMgr)
-        throws AMConsoleException 
-    {
+        throws AMConsoleException {
         try{
             for (Iterator iter = configList.iterator(); iter.hasNext();) {
                 BaseConfigType bConfig = (BaseConfigType)iter.next();
@@ -519,73 +629,40 @@ public class IDFFEntityProviderModelImpl
      * updateEntityConfig
      * Modifies a provider's extended metadata.
      *
-     * @param entityDescriptorName Name of Entity Descriptor.
+     * @param entityName Name of Entity Descriptor.
      * @param role Role of provider. (SP or IDP)
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
      */
-    
     public void updateEntityConfig(
-        String entityID,
+        String name,
         String role,
         Map attrValues)
-        throws AMConsoleException, JAXBException 
-    {
+        throws AMConsoleException, JAXBException {
         String classMethod = "IDFFEntityProviderModelImpl.updateEntityConfig:";
         Map values = convertSetToListInMap(attrValues);
+        //printMap(values,"in updateEntityConfig.. XXXXX");
         try {
+            
             IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
             ObjectFactory objFactory = new ObjectFactory();
             // Check whether the entity id existed in the DS
             EntityDescriptorElement entityDesc =
-                idffMetaMgr.getEntityDescriptor(entityID);
+                idffMetaMgr.getEntityDescriptor(name);
             
             if (entityDesc == null) {
-                debug.error(classMethod +" No such entity: " + entityID);
-                //String[] data = {entityID};
-                throw new AMConsoleException("invalidEntityID");
+                throw new AMConsoleException(classMethod +
+                    "invalid Entity Name :" +
+                    name);
             }
+            
             EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(entityID);
+                idffMetaMgr.getEntityConfig(name);
+            
             if (entityConfig == null) {
-                // TBD: create extended metadata object (entityConfig)
-                // for new remote entity.
-                // create entity config and add the attributes
-                BaseConfigType baseCfgType = null;
-
-                // add to entityConfig
-                entityConfig = objFactory.createEntityConfigElement();
-                entityConfig.setEntityID(entityID);
-                entityConfig.setHosted(false);
-
-                // Decide which role EntityDescriptorElement includes
-                // It could have one sp and one idp.
-                if ((role.equals(IFSConstants.SP)) &&
-                    (IDFFMetaUtils.getSPDescriptor(entityDesc) != null)) {
-                    baseCfgType = objFactory.createSPDescriptorConfigElement();
-                    //add attribute
-                    for (Iterator iter = values.keySet().iterator(); iter.hasNext(); ) {
-                        AttributeType atype = objFactory.createAttributeType();
-                        String key = (String)iter.next();
-                        atype.setName(key);
-                        atype.getValue().addAll((List)values.get(key));
-                        baseCfgType.getAttribute().add(atype);
-                    }
-                    entityConfig.getSPDescriptorConfig().add(baseCfgType);
-                } else if ((role.equals(IFSConstants.IDP)) &&
-                    (IDFFMetaUtils.getIDPDescriptor(entityDesc) != null)) {
-                    baseCfgType = objFactory.createIDPDescriptorConfigElement();
-                    //add attribute
-                    for (Iterator iter = values.keySet().iterator(); iter.hasNext(); ) {
-                        AttributeType atype = objFactory.createAttributeType();
-                        String key = (String)iter.next();
-                        atype.setName(key);
-                        atype.getValue().addAll((List)values.get(key));
-                        baseCfgType.getAttribute().add(atype);
-                    }
-                    entityConfig.getIDPDescriptorConfig().add(baseCfgType);
-                }
-                idffMetaMgr.setEntityConfig(entityConfig);                
+                throw new AMConsoleException(classMethod +
+                    "invalid EntityConfigElement : " +
+                    name);
             } else {
                 // update the sp and idp entity config
                 if (role.equals(IFSConstants.SP)) {
@@ -604,16 +681,108 @@ public class IDFFEntityProviderModelImpl
                         entityConfig,
                         objFactory,
                         idffMetaMgr);
+                } else {
+                    debug.error("updateEntityConfig()," +
+                        "never get here, neither idp nor sp");
                 }
             }
+            
         } catch (IDFFMetaException e) {
             throw new AMConsoleException(classMethod + getErrorString(e));
         }
     }
     
+    public void createEntityConfig(
+        String entityName,
+        String role,
+        String location
+        ) throws AMConsoleException, JAXBException {
+        String classMethod = "IDFFEntityProviderModelImpl.createEntityConfig: ";
+        
+        try {
+            IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
+            ObjectFactory objFactory = new ObjectFactory();
+            // Check whether the entity id existed in the DS
+            EntityDescriptorElement entityDesc =
+                idffMetaMgr.getEntityDescriptor(entityName);
+            
+            if (entityDesc == null) {
+                throw new AMConsoleException(classMethod +
+                    "invalid EntityName : " +
+                    entityName);
+            }
+            EntityConfigElement entityConfig =
+                idffMetaMgr.getEntityConfig(entityName);
+            if (entityConfig == null) {
+                entityConfig =
+                    objFactory.createEntityConfigElement();
+                // add to entityConfig
+                entityConfig.setEntityID(entityName);
+                if (location.equals("remote")) {
+                    entityConfig.setHosted(false);
+                } else {
+                    entityConfig.setHosted(true);
+                }
+            }
+            
+            // create entity config and add the attribute
+            BaseConfigType baseCfgType = null;
+            
+            // Decide which role EntityDescriptorElement includes
+            // It could have one sp and one idp.
+            if ((role.equals(IFSConstants.SP)) &&
+                (IDFFMetaUtils.getSPDescriptor(entityDesc) != null)) {
+                baseCfgType = objFactory.createSPDescriptorConfigElement();
+                
+                for (Iterator iter = extendedMetaMap.keySet().iterator();
+                iter.hasNext(); ) {
+                    AttributeType atype = objFactory.createAttributeType();
+                    String key = (String)iter.next();
+                    atype.setName(key);
+                    atype.getValue().addAll((List)extendedMetaMap.get(key));
+                    baseCfgType.getAttribute().add(atype);
+                }
+                
+                for (Iterator iter = extendedMetaSpMap.keySet().iterator();
+                iter.hasNext(); ) {
+                    AttributeType atype = objFactory.createAttributeType();
+                    String key = (String)iter.next();
+                    atype.setName(key);
+                    atype.getValue().addAll((List)extendedMetaSpMap.get(key));
+                    baseCfgType.getAttribute().add(atype);
+                }
+                entityConfig.getSPDescriptorConfig().add(baseCfgType);
+            } else if ((role.equals(IFSConstants.IDP)) &&
+                (IDFFMetaUtils.getIDPDescriptor(entityDesc) != null)) {
+                baseCfgType = objFactory.createIDPDescriptorConfigElement();
+                
+                for (Iterator iter = extendedMetaMap.keySet().iterator();
+                iter.hasNext(); ) {
+                    AttributeType atype = objFactory.createAttributeType();
+                    String key = (String)iter.next();
+                    atype.setName(key);
+                    atype.getValue().addAll((List)extendedMetaMap.get(key));
+                    baseCfgType.getAttribute().add(atype);
+                }
+                
+                for (Iterator iter = extendedMetaIdpMap.keySet().iterator();
+                iter.hasNext(); ) {
+                    AttributeType atype = objFactory.createAttributeType();
+                    String key = (String)iter.next();
+                    atype.setName(key);
+                    atype.getValue().addAll((List)extendedMetaIdpMap.get(key));
+                    baseCfgType.getAttribute().add(atype);
+                }
+                entityConfig.getIDPDescriptorConfig().add(baseCfgType);
+            }
+            idffMetaMgr.setEntityConfig(entityConfig);
+        } catch (IDFFMetaException e){
+            debug.error("Exception in" + classMethod);
+        }
+    }    
+    
     protected IDFFMetaManager getIDFFMetaManager()
-        throws IDFFMetaException 
-    {
+    throws IDFFMetaException {
         if (metaManager == null) {
             metaManager = new IDFFMetaManager(getUserSSOToken());
         }
@@ -652,7 +821,7 @@ public class IDFFEntityProviderModelImpl
         return (list != null) ? list : Collections.EMPTY_LIST;
     }
     
-    public Set convertListToSet(List list) {
+    private Set convertListToSet(List list) {
         Set s = new HashSet();
         Iterator it = list.iterator();
         while (it.hasNext()) {
@@ -661,7 +830,7 @@ public class IDFFEntityProviderModelImpl
         return s;
     }
     
-    public List convertSetToList(Set set) {
+    private List convertSetToList(Set set) {
         List list = new ArrayList();
         Iterator it = set.iterator();
         while (it.hasNext()) {
@@ -670,7 +839,7 @@ public class IDFFEntityProviderModelImpl
         return list;
     }
     
-    public Map convertSetToListInMap(Map map){
+    private Map convertSetToListInMap(Map map){
         Map tmpMap = new HashMap();
         Set entries = map.entrySet();
         Iterator iterator = entries.iterator();

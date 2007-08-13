@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSPViewBean.java,v 1.2 2007-08-03 22:29:02 jonnelson Exp $
+ * $Id: IDFFSPViewBean.java,v 1.3 2007-08-13 19:10:27 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,7 +45,7 @@ public class IDFFSPViewBean
 {
     public static final String DEFAULT_DISPLAY_URL =
         "/console/federation/IDFFSP.jsp";
-     
+    
     public IDFFSPViewBean() {
         super("IDFFSP");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
@@ -55,10 +55,10 @@ public class IDFFSPViewBean
         throws ModelControlException 
     {
         super.beginDisplay(event);
-
+        
         IDFFEntityProviderModel model =
             (IDFFEntityProviderModel)getModelInternal();
-
+        
         psModel.setValue(IDFFEntityProviderModel.ATTR_PROVIDER_TYPE,
             (String)getPageSessionAttribute(ENTITY_LOCATION));
         populateValue(entityName);
@@ -66,10 +66,10 @@ public class IDFFSPViewBean
     
     private void populateValue(String name) {
         IDFFEntityProviderModel model =
-            (IDFFEntityProviderModel)getModelInternal();     
-        Map values = model.getEntitySPDescriptor(name);
+            (IDFFEntityProviderModel)getModelInternal();      
+        Map values = model.getEntitySPDescriptor(name);             
         values.putAll(model.getEntityConfig(name,
-            IFSConstants.SP, IFSConstants.PROVIDER_HOSTED));
+            IFSConstants.SP, location));
         AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
         ps.setAttributeValues(values, model);       
     }
@@ -82,11 +82,11 @@ public class IDFFSPViewBean
     protected void createPropertyModel() {
         retrieveCommonProperties();
         
-        if (isHosted()) {
+        if (isHosted()) {            
             psModel = new AMPropertySheetModel(
                 getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/propertyIDFFSPHosted.xml"));
-        } else {                       
+        } else {           
             psModel = new AMPropertySheetModel(
                 getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/propertyIDFFSPRemote.xml"));
@@ -101,20 +101,23 @@ public class IDFFSPViewBean
      */
     public void handleButton1Request(RequestInvocationEvent event)
         throws ModelControlException 
-    {    
+    {
         retrieveCommonProperties();
-        try {                      
-            IDFFEntityProviderModel model = (IDFFEntityProviderModel)getModel();
-            AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);            
-
-            // update standard metadata       
-            Map origStdMeta =  model.getEntitySPDescriptor(entityName);            
+        try {
+            IDFFEntityProviderModel model = 
+                (IDFFEntityProviderModel)getModel();
+            AMPropertySheet ps = 
+                (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+            
+            // update standard metadata
+            Map origStdMeta =  model.getEntitySPDescriptor(entityName);
             Map stdValues = ps.getAttributeValues(origStdMeta, false, model);
-            model.updateEntityDescriptor(entityName, IFSConstants.SP, stdValues);
+            model.updateEntityDescriptor(entityName,
+                IFSConstants.SP, stdValues);
             
             //update extended metadata
             Map origExtMeta = model.getEntityConfig(entityName,
-                IFSConstants.SP, IFSConstants.PROVIDER_HOSTED);
+                IFSConstants.SP, location);
             Map extValues = ps.getAttributeValues(origExtMeta, false, model);
             model.updateEntityConfig(entityName, IFSConstants.SP, extValues);
             

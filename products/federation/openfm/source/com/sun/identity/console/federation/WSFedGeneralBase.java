@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedGeneralBase.java,v 1.2 2007-08-03 22:29:03 jonnelson Exp $
+ * $Id: WSFedGeneralBase.java,v 1.3 2007-08-13 19:10:27 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,18 @@ public abstract class WSFedGeneralBase extends EntityPropertiesBase {
         throws ModelControlException 
     {
         super.beginDisplay(event);
+        if (isHosted()) {
+            setPageTitle(entityName);
+        } else {
+            // TBD : temporary workaround to prevent Remote providers 
+            // from being accessed
+            setPageSessionAttribute(FederationViewBean.MESSAGE_TEXT, 
+                "Remote properties are not available");
+            FederationViewBean vb = (FederationViewBean)            
+                getViewBean(FederationViewBean.class);
+            passPgSessionMap(vb);
+            vb.forwardTo(getRequestContext());                               
+        }
     }
         
     protected String getProfileName() {
