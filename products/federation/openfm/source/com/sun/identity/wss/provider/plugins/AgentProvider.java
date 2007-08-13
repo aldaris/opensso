@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.5 2007-07-11 06:12:43 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.6 2007-08-13 19:18:24 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,6 +76,8 @@ public class AgentProvider extends ProviderConfig {
      private static final String RESPONSE_ENCRYPT = "isResponseEncrypt";
      private static final String REQUEST_SIGN = "isRequestSign";     
      private static final String REQUEST_ENCRYPT = "isRequestEncrypt";
+     private static final String REQUEST_HEADER_ENCRYPT = 
+         "isRequestHeaderEncrypt";
      private static final String KEY_ALIAS = "keyAlias";
      private static final String TRUST_AUTHORITY = "TrustAuthority";
      private static final String PROPERTY = "Property:";
@@ -188,6 +190,8 @@ public class AgentProvider extends ProviderConfig {
            this.isRequestSigned = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(REQUEST_ENCRYPT)) {
            this.isRequestEncrypted = Boolean.valueOf(value).booleanValue();
+        } else if(attr.equals(REQUEST_HEADER_ENCRYPT)) {
+           this.isRequestHeaderEncrypted = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(KEY_ALIAS)) {
            this.keyAlias = value;
         } else if(attr.equals(SERVICE_TYPE)) {
@@ -300,6 +304,8 @@ public class AgentProvider extends ProviderConfig {
                             Boolean.toString(isRequestSigned)));
         set.add(getKeyValue(REQUEST_ENCRYPT, 
                             Boolean.toString(isRequestEncrypted)));
+        set.add(getKeyValue(REQUEST_HEADER_ENCRYPT,
+                            Boolean.toString(isRequestHeaderEncrypted)));
         set.add(getKeyValue(USE_DEFAULT_KEYSTORE, 
                        Boolean.toString(isDefaultKeyStore)));
         set.add(getKeyValue(FORCE_AUTHENTICATION,

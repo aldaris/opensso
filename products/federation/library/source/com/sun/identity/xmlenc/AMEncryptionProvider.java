@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEncryptionProvider.java,v 1.2 2007-07-11 06:17:00 mrudul_uchil Exp $
+ * $Id: AMEncryptionProvider.java,v 1.3 2007-08-13 19:17:02 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
@@ -55,8 +62,6 @@ import java.security.cert.X509Certificate;
 import com.sun.org.apache.xml.internal.serialize.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -382,7 +387,7 @@ public class AMEncryptionProvider implements EncryptionProvider {
     /**
      * Encrypts the given WSS XML element in a given XML Context document.
      * @param doc the context XML Document.
-     * @param element Element to be encrypted.
+     * @param elmMap Map of (Element, wsu_id) to be encrypted.
      * @param encDataEncAlg Encryption Key Algorithm.
      * @param encDataEncAlgStrength Encryption Key Strength.
      * @param certAlias Key Encryption Key cert alias.
@@ -392,9 +397,9 @@ public class AMEncryptionProvider implements EncryptionProvider {
      * @return org.w3c.dom.Document XML Document replaced with encrypted data
      *         for a given XML element.
      */
-    public org.w3c.dom.Document encryptAndReplaceWSSBody(
+    public org.w3c.dom.Document encryptAndReplaceWSSElements(
         org.w3c.dom.Document doc,
-        org.w3c.dom.Element element,
+        java.util.Map elmMap,
         java.lang.String encDataEncAlg,
         int encDataEncAlgStrength,
         String certAlias,
@@ -443,6 +448,9 @@ public class AMEncryptionProvider implements EncryptionProvider {
         
         Key encryptionKey = null;
         Document decryptedDoc = null;
+        EncryptedKey encryptedKey = null;
+        Element encryptedElementNext = null;
+        XMLCipher cipher = null;
 
         NodeList nodes = encryptedDoc.getElementsByTagNameNS(
             EncryptionConstants.ENC_XML_NS, "EncryptedData");
@@ -456,63 +464,91 @@ public class AMEncryptionProvider implements EncryptionProvider {
          * if found, use that symmetric key for the decryption., otherwise
          * check if there's one in the encrypted data.
          */
-         Element encryptedElem = (Element)encryptedDoc.getElementsByTagNameNS(
-          EncryptionConstants.ENC_XML_NS, "EncryptedKey").item(0);
-          
+        Element encryptedElem = (Element)encryptedDoc.getElementsByTagNameNS(
+            EncryptionConstants.ENC_XML_NS, "EncryptedKey").item(0);
+         
+        try {
+            cipher = XMLCipher.getInstance();
+            cipher.init(XMLCipher.DECRYPT_MODE, null);
+        } catch (Exception xe) {
+            EncryptionUtils.debug.error("AMEncryptionProvider.decrypt" +
+                "AndReplace: XML Decryption error for XMLCipher init :"
+                 , xe);
+            throw new EncryptionException(xe);
+        }
 
-        for (int i=0; i < length; i++) {
-           try {
-               Element encryptedElement = (Element)nodes.item(i);
-               XMLCipher cipher = XMLCipher.getInstance();
-               cipher.init(XMLCipher.DECRYPT_MODE, null);
+        int i=0 ;
+        Element encryptedElement = (Element)nodes.item(i);
 
-               EncryptedData encryptedData = 
+        while (i < length) {
+            try {
+                if(EncryptionUtils.debug.messageEnabled()) {
+                    EncryptionUtils.debug.message("AMEncryptionProvider.decrypt" +
+                        "AndReplace: encrypted element (" + i + ") = " 
+                        + XMLUtils.print(encryptedElement));
+                }
+
+                EncryptedData encryptedData = 
                     cipher.loadEncryptedData(encryptedDoc, encryptedElement);
-              
-               EncryptedKey encryptedKey = 
-                    cipher.loadEncryptedKey(encryptedDoc, encryptedElem);
-               if(encryptedKey == null) {
-                  encryptedKey = 
-                     encryptedData.getKeyInfo().itemEncryptedKey(0);
-               }
+               
+                if(encryptedKey == null) {
+                    encryptedKey = 
+                        cipher.loadEncryptedKey(encryptedDoc, encryptedElem);
+                    if(encryptedKey == null) {
+                        encryptedKey = 
+                            encryptedData.getKeyInfo().itemEncryptedKey(0);
+                    }
+                }
 
-               if(EncryptionUtils.debug.messageEnabled()) {
-                   EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
-                   + "AndReplace: Encrypted key = " + toString(cipher.martial(
-                   encryptedDoc, encryptedKey)));
-               }
+                if(EncryptionUtils.debug.messageEnabled()) {
+                    EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
+                        + "AndReplace: Encrypted key = " + toString(cipher.martial(
+                        encryptedDoc, encryptedKey)));
+                    
+                    EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
+                        + "AndReplace: Encrypted Data (" + i + ") = " 
+                        + toString(cipher.martial(encryptedDoc, encryptedData)));
+                }
 
-               if(EncryptionUtils.debug.messageEnabled()) {
-                   EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
-                   + "AndReplace: Encrypted Data = " + toString(cipher.martial(
-                   encryptedDoc, encryptedData)));
-               }
+                if(encryptedKey != null) {
+                    XMLCipher keyCipher = XMLCipher.getInstance();
+                    if (privKey == null) {
+                        privKey = getPrivateKey(encryptedKey.getKeyInfo());
+                    }
+                    keyCipher.init(XMLCipher.UNWRAP_MODE, privKey);
+                    encryptionKey = keyCipher.decryptKey(encryptedKey, 
+                    encryptedData.getEncryptionMethod().getAlgorithm());
+                }
+               
+                cipher = XMLCipher.getInstance();
+                cipher.init(XMLCipher.DECRYPT_MODE, encryptionKey);
 
-               if(encryptedKey != null) {
-                  XMLCipher keyCipher = XMLCipher.getInstance();
-                  if (privKey == null) {
-                      privKey = getPrivateKey(encryptedKey.getKeyInfo());
-                  }
-                  keyCipher.init(XMLCipher.UNWRAP_MODE, privKey);
-                  encryptionKey = keyCipher.decryptKey(encryptedKey, 
-                  encryptedData.getEncryptionMethod().getAlgorithm());
-               }
+                i = i+1;
+                if (i < length) {
+                    encryptedElementNext = (Element)nodes.item(i);
+                }
 
-               cipher = XMLCipher.getInstance();
-               cipher.init(XMLCipher.DECRYPT_MODE, encryptionKey);
-               decryptedDoc = cipher.doFinal(encryptedDoc, encryptedElement);
+                decryptedDoc = cipher.doFinal(encryptedDoc, encryptedElement);
 
-               if(EncryptionUtils.debug.messageEnabled()) {
-                   EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
-                   + "AndReplace: decryptedDoc = " + 
-                   XMLUtils.print(decryptedDoc));
-               }
+                encryptedElement = encryptedElementNext;
 
-           } catch (Exception xe) {
-               EncryptionUtils.debug.error("AMEncryptionProvider.decrypt" +
-               "AndReplace: XML Decryption error.", xe);
-               throw new EncryptionException(xe);
-           }
+                if(EncryptionUtils.debug.messageEnabled()) {
+                    EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
+                        + "AndReplace: decryptedDoc (" + (i-1) + ") = " + 
+                        XMLUtils.print(decryptedDoc));
+                }
+
+            } catch (Exception xe) {
+                EncryptionUtils.debug.error("AMEncryptionProvider.decrypt" +
+                "AndReplace: XML Decryption error.", xe);
+                throw new EncryptionException(xe);
+            }
+        }
+
+        if(EncryptionUtils.debug.messageEnabled()) {
+            EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
+                + "AndReplace: FINAL decryptedDoc = " + 
+                XMLUtils.print(decryptedDoc));
         }
         return decryptedDoc;
 

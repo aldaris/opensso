@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.5 2007-07-11 06:12:42 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.6 2007-08-13 19:18:24 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,6 +82,7 @@ public abstract class ProviderConfig {
      protected boolean isResponseEncrypted = false;
      protected boolean isRequestSigned = true;
      protected boolean isRequestEncrypted = false;
+     protected boolean isRequestHeaderEncrypted = false;
      protected List trustAuthorities = null;
      protected String ksPasswd = null;
      protected String keyPasswd = null;
@@ -432,6 +433,24 @@ public abstract class ProviderConfig {
      */
     public void setRequestEncryptEnabled(boolean enable) {
          isRequestEncrypted = enable;
+    }
+
+    /**
+     * Checks if the request header needs to be encrypted or not.
+     *
+     * @return true if the request header needs to be encrypted.
+     */
+    public boolean isRequestHeaderEncryptEnabled() {
+        return isRequestHeaderEncrypted;
+    }
+
+    /**
+     * Sets the request header encrypt enable flag.
+     *
+     * @param enable enables the request header encryption.
+     */
+    public void setRequestHeaderEncryptEnabled(boolean enable) {
+        isRequestHeaderEncrypted = enable;
     }
     
     /**

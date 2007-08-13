@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.5 2007-07-11 06:12:44 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.6 2007-08-13 19:18:25 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -191,16 +191,27 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         SecureSOAPMessage secureMsg = 
                            new SecureSOAPMessage(soapRequest, false);
-        SecurityMechanism securityMechanism = secureMsg.getSecurityMechanism();
+
+        if((config.isRequestEncryptEnabled()) || 
+           (config.isRequestHeaderEncryptEnabled())) {
+            secureMsg.decrypt((config.isRequestEncryptEnabled()),
+                              (config.isRequestHeaderEncryptEnabled()));
+            soapRequest = secureMsg.getSOAPMessage();
+        }
+
+        secureMsg.parseSecurityHeader(
+            (Node)(secureMsg.getSecurityHeaderElement()));
+        SecurityMechanism securityMechanism = 
+            secureMsg.getSecurityMechanism();
+        String uri = securityMechanism.getURI();
 
         List list = config.getSecurityMechanisms();
-        String uri = securityMechanism.getURI();
 
         if(debug.messageEnabled()) {
             debug.message("List of getSecurityMechanisms : " + list);
             debug.message("current uri : " + uri);
         }
-
+        
         if(!list.contains(uri)) {
            if( (!list.contains(
                 SecurityMechanism.WSS_NULL_ANONYMOUS_URI)) &&
@@ -209,29 +220,23 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                (!list.contains(
                 SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI))) {
                throw new SecurityException(
-                     bundle.getString("unsupportedSecurityMechanism"));
+                   bundle.getString("unsupportedSecurityMechanism"));
            } else {
               if(debug.messageEnabled()) {
                  debug.message("SOAPRequestHandler.validateRequest:: " +
-                  "provider is not configured for the message " +
-                  " security but allows anonymous");
+                  "provider is not configured for the incoming message " +
+                  " level type but allows anonymous");
               }
               return subject;
            }
- 
         }
 
         if(SecurityMechanism.WSS_NULL_ANONYMOUS_URI.equals(uri) ||
            (SecurityMechanism.WSS_TLS_ANONYMOUS_URI.equals(uri)) ||
            (SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI.equals(uri))) {
-            return subject;
-        }        
-
-        if(config.isRequestEncryptEnabled()) {
-            secureMsg.decrypt();
-            soapRequest = secureMsg.getSOAPMessage();
+           return subject;
         }
-
+        
         if(config.isRequestSignEnabled()) {
             if(!secureMsg.verifySignature()) {
                 debug.error("SOAPRequestHandler.validateRequest:: Signature " +
@@ -245,8 +250,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                secureMsg.getSecurityMechanism(),
                secureMsg.getSecurityToken(),
                config, secureMsg, false);
+
         removeValidatedHeaders(config, soapRequest);
-        return subject;       
+
+        return subject;
     }
 
     /**
@@ -312,7 +319,9 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
         
         if(config.isResponseEncryptEnabled()) {            
-            secureMessage.encrypt(keyAlias);
+            secureMessage.encrypt(keyAlias,
+                                  (config.isResponseEncryptEnabled()),
+                                  false);
         }
         
         soapMessage = secureMessage.getSOAPMessage();
@@ -399,8 +408,11 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             secureMessage.sign(keyAlias);
         }        
         
-        if(config.isRequestEncryptEnabled()) {            
-            secureMessage.encrypt(keyAlias);
+        if((config.isRequestEncryptEnabled()) || 
+           (config.isRequestHeaderEncryptEnabled())) {            
+            secureMessage.encrypt(keyAlias,
+                                  (config.isRequestEncryptEnabled()),
+                                  (config.isRequestHeaderEncryptEnabled()));
         }
 
         soapMessage = secureMessage.getSOAPMessage();
@@ -447,10 +459,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             new SecureSOAPMessage(soapMessage, false);
         
         if(config.isResponseEncryptEnabled()) {
-            secureMessage.decrypt();
+            secureMessage.decrypt((config.isResponseEncryptEnabled()), false);
             soapMessage = secureMessage.getSOAPMessage();
         }
         
+        secureMessage.parseSecurityHeader(
+            (Node)(secureMessage.getSecurityHeaderElement()));
+
         if(config.isResponseSignEnabled()) {           
            if(!secureMessage.verifySignature()) {
               debug.error("SOAPRequestHandler.validateResponse:: Signature" +
@@ -459,7 +474,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                     bundle.getString("signatureValidationFailed"));
            }
         }
-        
+
         removeValidatedHeaders(config, soapMessage);
     }
 

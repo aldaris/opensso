@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptionProvider.java,v 1.2 2007-07-11 06:17:01 mrudul_uchil Exp $
+ * $Id: EncryptionProvider.java,v 1.3 2007-08-13 19:17:02 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,7 +149,7 @@ public interface EncryptionProvider{
     /**
      * Encrypts the given WSS XML element in a given XML Context document.
      * @param doc the context XML Document.
-     * @param element Element to be encrypted.
+     * @param elmMap Map of (Element, wsu_id) to be encrypted.
      * @param encDataEncAlg Encryption Key Algorithm.
      * @param encDataEncAlgStrength Encryption Key Strength.
      * @param certAlias Key Encryption Key cert alias.
@@ -159,9 +159,9 @@ public interface EncryptionProvider{
      * @return org.w3c.dom.Document XML Document replaced with encrypted data
      *         for a given XML element.
      */
-    public org.w3c.dom.Document encryptAndReplaceWSSBody(
+    public org.w3c.dom.Document encryptAndReplaceWSSElements(
         org.w3c.dom.Document doc,
-        org.w3c.dom.Element element,
+        java.util.Map elmMap,
         java.lang.String encDataEncAlg,
         int encDataEncAlgStrength,
         String certAlias,

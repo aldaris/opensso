@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.5 2007-07-25 19:06:38 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.6 2007-08-13 19:18:25 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
@@ -142,6 +144,15 @@ public class SecureSOAPMessage {
      }
 
      /**
+      * Returns the Security Header Element.
+      *
+      * @return the Security Header Element.
+      */
+     public Element getSecurityHeaderElement() {
+         return this.wsseHeader;
+     }
+
+     /**
       * Returns the secured SOAP message.
       *
       * @return the secured SOAP message.
@@ -194,7 +205,7 @@ public class SecureSOAPMessage {
                        currentNode.getLocalName())) &&
                     (WSSConstants.WSSE_NS.equals(
                        currentNode.getNamespaceURI()))) {
-                    parseSecurityHeader(currentNode);
+                    wsseHeader = (Element) currentNode;
                  }
              }
              if(securityToken == null) {
@@ -217,106 +228,111 @@ public class SecureSOAPMessage {
       *
       * @exception SecurityException if there is any error occured.
       */
-     private void parseSecurityHeader(Node node) throws SecurityException {
+     public void parseSecurityHeader(Node node) throws SecurityException {
+         if (node != null) {
+             NodeList securityHeaders = node.getChildNodes();
+             for(int i=0; i < securityHeaders.getLength(); i++) {
+                 Node currentNode =  securityHeaders.item(i);
+                 if(currentNode.getNodeType() != Node.ELEMENT_NODE) {
+                     continue;
+                 }
+                 String localName =  currentNode.getLocalName();
+                 String nameSpace = currentNode.getNamespaceURI();
 
-         NodeList securityHeaders = node.getChildNodes();
-         for(int i=0; i < securityHeaders.getLength(); i++) {
-             Node currentNode =  securityHeaders.item(i);
-             if(currentNode.getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-             }
-             String localName =  currentNode.getLocalName();
-             String nameSpace = currentNode.getNamespaceURI();
+                 if( (SAMLConstants.TAG_ASSERTION.equals(localName)) &&
+                     (SAMLConstants.assertionSAMLNameSpaceURI.equals(
+                         nameSpace)) ) {
 
-             if( (SAMLConstants.TAG_ASSERTION.equals(localName)) &&
-                 (SAMLConstants.assertionSAMLNameSpaceURI.equals(nameSpace)) ) {
-
-                if(debug.messageEnabled()) {
-                   debug.message("SecureSOAPMessage.parseSecurityHeader:: " +
-                   "Assertion token found in the security header.");
-                }
-                try {
-                    securityToken = new AssertionToken((Element)currentNode);
-                    AssertionToken assertionToken = 
-                               (AssertionToken)securityToken;
-                    if(assertionToken.isSenderVouches()) {
-                       securityMechanism = 
-                                  SecurityMechanism.WSS_NULL_SAML_SV;
-                    } else {
-                       securityMechanism = 
-                                  SecurityMechanism.WSS_NULL_SAML_HK;
-                    }
-                    messageCertificate = 
-                           WSSUtils.getCertificate(assertionToken);
-                } catch (SAMLException se) {
-                    debug.error("SecureSOAPMessage.parseSecurity" +
-                    "Header: unable to parse the token", se);
-                    throw new SecurityException(se.getMessage());
-                }
+                     if(debug.messageEnabled()) {
+                         debug.message("SecureSOAPMessage.parseSecurityHeader:: "
+                             + "Assertion token found in the security header.");
+                     }
+                     try {
+                         securityToken = 
+                             new AssertionToken((Element)currentNode);
+                         AssertionToken assertionToken = 
+                             (AssertionToken)securityToken;
+                         if(assertionToken.isSenderVouches()) {
+                             securityMechanism = 
+                                 SecurityMechanism.WSS_NULL_SAML_SV;
+                         } else {
+                             securityMechanism = 
+                                 SecurityMechanism.WSS_NULL_SAML_HK;
+                         }
+                         messageCertificate = 
+                             WSSUtils.getCertificate(assertionToken);
+                     } catch (SAMLException se) {
+                         debug.error("SecureSOAPMessage.parseSecurity" +
+                             "Header: unable to parse the token", se);
+                         throw new SecurityException(se.getMessage());
+                     }
                 
-             } else if( (SAMLConstants.TAG_ASSERTION.equals(localName)) &&
-                 (SAML2Constants.ASSERTION_NAMESPACE_URI.equals(nameSpace)) ) {
+                 } else if( (SAMLConstants.TAG_ASSERTION.equals(localName)) &&
+                     (SAML2Constants.ASSERTION_NAMESPACE_URI.equals(
+                         nameSpace)) ) {
 
-                if(debug.messageEnabled()) {
-                   debug.message("SecureSOAPMessage.parseSecurityHeader:: " +
-                   "SAML2 token found in the security header.");
-                }
-                try {
-                    securityToken = new SAML2Token((Element)currentNode);
-                    SAML2Token saml2Token = 
-                               (SAML2Token)securityToken;
-                    if(saml2Token.isSenderVouches()) {
-                       securityMechanism = 
-                                  SecurityMechanism.WSS_NULL_SAML2_SV;
-                    } else {
-                       securityMechanism = 
-                                  SecurityMechanism.WSS_NULL_SAML2_HK;
-                    }
-                    messageCertificate = 
-                           SAML2TokenUtils.getCertificate(saml2Token);
-                } catch (SAML2Exception se) {
-                    debug.error("SecureSOAPMessage.parseSecurity" +
-                    "Header: unable to parse the token", se);
-                    throw new SecurityException(se.getMessage());
-                }
+                     if(debug.messageEnabled()) {
+                         debug.message("SecureSOAPMessage.parseSecurityHeader:: "
+                             + "SAML2 token found in the security header.");
+                     }
+                     try {
+                         securityToken = new SAML2Token((Element)currentNode);
+                         SAML2Token saml2Token = (SAML2Token)securityToken;
+                         if(saml2Token.isSenderVouches()) {
+                             securityMechanism = 
+                                 SecurityMechanism.WSS_NULL_SAML2_SV;
+                         } else {
+                             securityMechanism = 
+                                 SecurityMechanism.WSS_NULL_SAML2_HK;
+                         }
+                         messageCertificate = 
+                             SAML2TokenUtils.getCertificate(saml2Token);
+                     } catch (SAML2Exception se) {
+                         debug.error("SecureSOAPMessage.parseSecurity" +
+                             "Header: unable to parse the token", se);
+                         throw new SecurityException(se.getMessage());
+                     }
 
-             } else if( (WSSConstants.TAG_BINARY_SECURITY_TOKEN.
+                 } else if( (WSSConstants.TAG_BINARY_SECURITY_TOKEN.
                          equals(localName)) && 
                         (WSSConstants.WSSE_NS.equals(nameSpace)) ) {
 
-                 if(debug.messageEnabled()) {
-                    debug.message("SecureSOAPMessage.parseSecurityHeader:: " +
-                    "binary token found in the security header.");
-                 }
-                 securityToken = new BinarySecurityToken((Element)currentNode);
-                 securityMechanism = SecurityMechanism.WSS_NULL_X509_TOKEN;
-                 messageCertificate = WSSUtils.getCertificate(securityToken);
+                     if(debug.messageEnabled()) {
+                         debug.message("SecureSOAPMessage.parseSecurityHeader:: "
+                             + "binary token found in the security header.");
+                     }
+                     securityToken = 
+                         new BinarySecurityToken((Element)currentNode);
+                     securityMechanism = SecurityMechanism.WSS_NULL_X509_TOKEN;
+                     messageCertificate = 
+                         WSSUtils.getCertificate(securityToken);
 
-             } else if( (WSSConstants.TAG_USERNAME_TOKEN.equals(localName)) &&
+                 } else if( (WSSConstants.TAG_USERNAME_TOKEN.equals(localName)) &&
                         (WSSConstants.WSSE_NS.equals(nameSpace)) ) {
 
-                 if(debug.messageEnabled()) {
-                    debug.message("SecureSOAPMessage.parseSecurityHeader:: " +
-                    "username token found in the security header.");
-                 }
-                 securityToken = new UserNameToken((Element)currentNode);
-                 UserNameToken usernameToken = (UserNameToken)securityToken;
-                 String passwordType = usernameToken.getPasswordType(); 
-                 if (passwordType != null) {
-                     if (passwordType.equals(
-                             WSSConstants.PASSWORD_DIGEST_TYPE)) {
-                         securityMechanism = 
-                             SecurityMechanism.WSS_NULL_USERNAME_TOKEN;
-                     } else if 
-                         (passwordType.equals(
-                             WSSConstants.PASSWORD_PLAIN_TYPE)) {
-                         securityMechanism = 
-                             SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN;
+                     if(debug.messageEnabled()) {
+                         debug.message("SecureSOAPMessage.parseSecurityHeader:: "
+                             + "username token found in the security header.");
                      }
-                 }
+                     securityToken = new UserNameToken((Element)currentNode);
+                     UserNameToken usernameToken = (UserNameToken)securityToken;
+                     String passwordType = usernameToken.getPasswordType(); 
+                     if (passwordType != null) {
+                         if (passwordType.equals(
+                             WSSConstants.PASSWORD_DIGEST_TYPE)) {
+                             securityMechanism = 
+                                 SecurityMechanism.WSS_NULL_USERNAME_TOKEN;
+                         } else if 
+                             (passwordType.equals(
+                             WSSConstants.PASSWORD_PLAIN_TYPE)) {
+                             securityMechanism = 
+                                 SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN;
+                         }
+                     }
 
+                 }
              }
-          }
+         }
      }
 
      /**
@@ -708,24 +724,71 @@ public class SecureSOAPMessage {
      * Encrypts the <code>SOAPMessage</code> for the given security profile.
      *
      * @param certAlias the certificate alias
+     * @param encryptBody boolean flag to encrypt Body
+     * @param encryptHeader boolean flag to encrypt Security header
      *
      * @exception SecurityException if there is any failure in encryption.
      */
-     public void encrypt(String certAlias) throws SecurityException {
+     public void encrypt(String certAlias, boolean encryptBody, 
+                         boolean encryptHeader) 
+         throws SecurityException {
 
-         Document doc = toDocument();         
+         Document doc = toDocument();
          String tokenType = securityToken.getTokenType();
-         
-         Document encryptedDoc = null; 
-         try {             
-             Element bodyElement = (Element) doc.getDocumentElement().
-                 getElementsByTagNameNS(SAMLConstants.SOAP_URI, 
-                 "Body").item(0);             
+         Map elmMap = new HashMap();
+         Document encryptedDoc = null;
+         String searchType = null;
+
+         try {
+             if (encryptBody) {
+                 Element bodyElement = (Element) doc.getDocumentElement().
+                     getElementsByTagNameNS(SAMLConstants.SOAP_URI, 
+                     WSSConstants.BODY_LNAME).item(0);
+                 String bodyId  = bodyElement.getAttribute(WSSConstants.WSU_ID);
+                 Node firstNodeInsideBody = bodyElement.getFirstChild();
+                 elmMap.put((Element)firstNodeInsideBody, bodyId);
+             }
+
+             if (encryptHeader) {
+                 String tokenId = null;
+
+                 if (SecurityToken.WSS_X509_TOKEN.equals(tokenType)) {
+                     searchType = SAMLConstants.BINARYSECURITYTOKEN;
+                 } else if (SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)) {
+                     searchType = WSSConstants.TAG_USERNAME_TOKEN;
+                 } else if (SecurityToken.WSS_SAML_TOKEN.equals(tokenType)) {
+                     searchType = SAMLConstants.TAG_ASSERTION;
+                     AssertionToken assertionToken = 
+                         (AssertionToken)securityToken;
+                     tokenId = assertionToken.getAssertion().getAssertionID();
+                 }
+
+                 Element secHeaderElement = (Element) doc.getDocumentElement().
+                     getElementsByTagNameNS(WSSConstants.WSSE_NS,
+                     WSSConstants.WSSE_SECURITY_LNAME).item(0);
+
+                 if(debug.messageEnabled()) {
+                     debug.message("SecureSOAPMessage.encrypt:: Security " + 
+                         "Header : " + WSSUtils.print(secHeaderElement));
+                 }
+                 if (secHeaderElement != null) {
+                     Element token = 
+                         (Element)secHeaderElement.getElementsByTagNameNS(
+                         WSSConstants.WSSE_NS,searchType).item(0);
+                     
+                     if ((token != null) && (tokenId == null)) {        
+                         tokenId = token.getAttributeNS(WSSConstants.WSU_NS,
+                             SAMLConstants.TAG_ID);     
+                     }
+                     elmMap.put(token, tokenId);
+                 }
+             }
+
              XMLEncryptionManager encManager = 
-                 WSSUtils.getXMLEncryptionManager();
-             encryptedDoc = encManager.encryptAndReplaceWSSBody(
+                 XMLEncryptionManager.getInstance();
+             encryptedDoc = encManager.encryptAndReplaceWSSElements(
                  doc, 
-                 bodyElement,
+                 elmMap,
                  EncryptionConstants.TRIPLEDES,
                  0,
                  certAlias,
@@ -749,41 +812,70 @@ public class SecureSOAPMessage {
              Element encryptedKeyElem = 
                  (Element)encryptedDoc.getElementsByTagNameNS(
                  EncryptionConstants.ENC_XML_NS, "EncryptedKey").item(0);
-             
-             Element encryptedDataElem = 
-                 (Element)encryptedDoc.getElementsByTagNameNS(
-                 EncryptionConstants.ENC_XML_NS, "EncryptedData").item(0);
-         
              if(debug.messageEnabled()) {
                  debug.message("SecureSOAPMessage.encrypt:EncryptedKey DOC : " 
-                               + WSSUtils.print(encryptedKeyElem)); 
-                 debug.message("SecureSOAPMessage.encrypt:EncryptedData DOC : " 
-                               + WSSUtils.print(encryptedDataElem));
+                     + WSSUtils.print(encryptedKeyElem)); 
              }
-         
              // Append EncryptedKey element in the Security header
              Node encKeyNode = 
                  (soapMessage.getSOAPPart()).importNode(encryptedKeyElem, 
                                                         true);
-             wsseHeader.appendChild(encKeyNode); 
-         
-             // Replace first child of Body element with the 
-             // EncryptedData element 
-             Node encDataNode = 
-                 (soapMessage.getSOAPPart()).importNode(encryptedDataElem, 
-                                                        true);
-             Node firstNodeInsideBody = 
-                 soapMessage.getSOAPPart().getEnvelope().getBody().
-                 getFirstChild();
-             soapMessage.getSOAPPart().getEnvelope().getBody().
-                 replaceChild(encDataNode, firstNodeInsideBody);
+             wsseHeader.appendChild(encKeyNode);
+
+             if(debug.messageEnabled()) {
+                 debug.message("SecureSOAPMessage.encrypt:: wsseHeader: " 
+                     + "after Encrypt : " + WSSUtils.print(wsseHeader));
+             }
+             // EncryptedData elements
+             NodeList nodes = encryptedDoc.getElementsByTagNameNS(
+                 EncryptionConstants.ENC_XML_NS, "EncryptedData");
+             int length = nodes.getLength();
+
+             for (int i=0; i < length; i++) {
+                 Element encryptedDataElem = (Element)nodes.item(i);
              
+                 if(debug.messageEnabled()) {
+                     debug.message("SecureSOAPMessage.encrypt:" + 
+                                   "EncryptedData DOC (" + i + ") : " 
+                                   + WSSUtils.print(encryptedDataElem));
+                 }
+                 // Replace first child of Body element or Security
+                 // header element with the EncryptedData element 
+                 Node encDataNode = (soapMessage.getSOAPPart()).
+                     importNode(encryptedDataElem,true);
+                 
+                 if( (WSSConstants.BODY_LNAME.equals(
+                     ((Node)encryptedDataElem).getParentNode().getLocalName()))) {
+                     Node firstNodeInsideBody = 
+                         soapMessage.getSOAPPart().getEnvelope().getBody().
+                             getFirstChild();
+                     soapMessage.getSOAPPart().getEnvelope().getBody().
+                         replaceChild(encDataNode, firstNodeInsideBody);
+                 } else if (encryptHeader) {
+                     Element token = 
+                         (Element)wsseHeader.getElementsByTagNameNS(
+                         WSSConstants.WSSE_NS,searchType).item(0);
+
+                     if(debug.messageEnabled()) {
+                         debug.message("SecureSOAPMessage.encrypt:: wsseHeader: " 
+                             + "token element : " + WSSUtils.print(token));
+                     }
+                     
+                     if (token != null) {
+                         wsseHeader.removeChild(encKeyNode);
+                         wsseHeader.insertBefore(encKeyNode,(Node)token);
+
+                         wsseHeader.replaceChild(encDataNode, (Node)token);
+                     }                      
+                 }
+             }
+
              soapMessage =  
                  WSSUtils.toSOAPMessage((Document) soapMessage.getSOAPPart());
              this.soapMessage.saveChanges();
 
              if(debug.messageEnabled()) {
-                 debug.message("**************SOAP PART **************"); 
+                 debug.message("SecureSOAPMessage.encrypt:*** SOAP PART ***"); 
                  debug.message(WSSUtils.print(soapMessage.getSOAPPart()));
              }
          } catch (Exception ex) {
@@ -799,10 +891,14 @@ public class SecureSOAPMessage {
      * Decrypts the <code>SOAPMessage</code> for the given security profile.
      *
      * @param certAlias the certificate alias
+     * @param decryptBody boolean flag to decrypt Body
+     * @param decryptHeader boolean flag to decrypt Security header
      *
      * @exception SecurityException if there is any failure in decryption.
      */
-     public void decrypt() throws SecurityException {
+     public void decrypt(boolean decryptBody, boolean decryptHeader) 
+         throws SecurityException {
+
          Document decryptedDoc = null; 
          try {
              Document doc = toDocument();
@@ -817,9 +913,9 @@ public class SecureSOAPMessage {
              }
 
              XMLSignatureManager sigManager = 
-                 WSSUtils.getXMLSignatureManager();
+                 XMLSignatureManager.getInstance();
              XMLEncryptionManager encManager = 
-                 WSSUtils.getXMLEncryptionManager();
+                 XMLEncryptionManager.getInstance();
              String certAlias = null;
              if(messageCertificate != null) {
                  certAlias = sigManager.getKeyProvider().
@@ -839,45 +935,119 @@ public class SecureSOAPMessage {
          }
 
          try {
-             Element decryptedBodyElem = 
-                 (Element)decryptedDoc.getElementsByTagNameNS(
-                 SAMLConstants.SOAP_URI, "Body").item(0);
+             if (decryptBody) {
+                 // Decrypted Body element replacement
+                 Element decryptedBodyElem = 
+                     (Element)decryptedDoc.getElementsByTagNameNS(
+                     SAMLConstants.SOAP_URI, WSSConstants.BODY_LNAME).item(0);
              
-             Element bodyElement = 
-                 (Element)soapMessage.getSOAPPart().getEnvelope().getBody();
+                 Element bodyElement = 
+                     (Element)soapMessage.getSOAPPart().getEnvelope().getBody();
 
-             if(debug.messageEnabled()) {
-                 debug.message("Decrypt : decrypted body doc : " 
-                               + WSSUtils.print(decryptedBodyElem));
-                 debug.message("SOAP BODY DOC : " 
-                               + WSSUtils.print(bodyElement));
-             }
+                 if(debug.messageEnabled()) {
+                     debug.message("SecureSOAPMessage.decrypt::decrypted " + 
+                         "Body element : " + WSSUtils.print(decryptedBodyElem));
+                     debug.message("SecureSOAPMessage.decrypt::SOAP " + 
+                         "Body element : " + WSSUtils.print(bodyElement));
+                 }
          
-             // Replace first child of Body element with the 
-             // first child of Decrypted Body element
-             Node decDataNode = 
-                 (soapMessage.getSOAPPart()).importNode(decryptedBodyElem, 
+                 // Replace first child of Body element with the 
+                 // first child of Decrypted Body element
+                 Node decDataNode = 
+                     (soapMessage.getSOAPPart()).importNode(decryptedBodyElem, 
                                                         true);
-             Node firstNodeInsideBody = 
+                 Node firstNodeInsideBody = 
+                     soapMessage.getSOAPPart().getEnvelope().getBody().
+                     getFirstChild();
                  soapMessage.getSOAPPart().getEnvelope().getBody().
-                 getFirstChild();
-             soapMessage.getSOAPPart().getEnvelope().getBody().
-                 replaceChild(decDataNode.getFirstChild(),firstNodeInsideBody);
+                     replaceChild(decDataNode.getFirstChild(),firstNodeInsideBody);
+             }
+
+             // Decrypted Security token element replacement
+             if (decryptHeader) {
+                 Element decryptedSecHeaderElement = (Element) decryptedDoc.
+                     getElementsByTagNameNS(WSSConstants.WSSE_NS,
+                         WSSConstants.WSSE_SECURITY_LNAME).item(0);
+                 Node decSecHeaderDataNode = 
+                     (soapMessage.getSOAPPart()).importNode(
+                         decryptedSecHeaderElement, true);
+
+                 Node tokenNode = getTokenNode(decSecHeaderDataNode);
+                 Element token = (Element)wsseHeader.getElementsByTagNameNS(
+                     EncryptionConstants.ENC_XML_NS, "EncryptedData").item(0);
+
+                 if(debug.messageEnabled()) {
+                     debug.message("SecureSOAPMessage.decrypt: decrypted " + 
+                         "Security Header doc : " + 
+                         WSSUtils.print(decryptedSecHeaderElement));
+                     debug.message("SecureSOAPMessage.decrypt: " + 
+                         "SOAP HEADER DOC : " + WSSUtils.print(wsseHeader));
+                     debug.message("SecureSOAPMessage.decrypt: tokenNode " + 
+                         "from decrypted Security header doc: " + 
+                         WSSUtils.print(tokenNode));
+                     debug.message("SecureSOAPMessage.decrypt: token " + 
+                         "from current SOAP wsseHeader : " + 
+                         WSSUtils.print(token));
+                 }
+
+                 if (token != null) {
+                     Element encKey = (Element)wsseHeader.getElementsByTagNameNS(
+                         EncryptionConstants.ENC_XML_NS, "EncryptedKey").item(0);
+                     wsseHeader.removeChild((Node) encKey);
+                     wsseHeader.appendChild((Node) encKey);
+
+                     wsseHeader.replaceChild(tokenNode, (Node) token);
+                 }
+
+             }
 
              soapMessage =  
                  WSSUtils.toSOAPMessage((Document) soapMessage.getSOAPPart());
              this.soapMessage.saveChanges();
 
              if(debug.messageEnabled()) {
-                 debug.message("**************SOAP PART **************"); 
+                 debug.message("SecureSOAPMessage.decrypt:*** SOAP PART ***"); 
                  debug.message(WSSUtils.print(soapMessage.getSOAPPart()));
              }
          } catch (Exception ex) {
-             debug.error("SecureSOAPMessage.encrypt:: " +
-                 "encryption failed : ", ex);
+             debug.error("SecureSOAPMessage.decrypt:: " +
+                 "decryption failed : ", ex);
              throw new SecurityException(
                  bundle.getString("unabletoGetFinalSoapMessage"));
          }
          
      }
+
+
+     /**
+      * Returns the token Node for corresponding Security token.
+      */
+     private Node getTokenNode(Node secHeaderNode) throws Exception {
+         Node tokenNode = null;
+         String searchType = null;
+         NodeList securityHeaders = secHeaderNode.getChildNodes();
+         for(int i=0; i < securityHeaders.getLength(); i++) {
+             Node currentNode =  securityHeaders.item(i);
+             String localName =  currentNode.getLocalName();
+             String nameSpace = currentNode.getNamespaceURI();
+
+             if( (SAMLConstants.TAG_ASSERTION.equals(localName)) &&
+                 (SAMLConstants.assertionSAMLNameSpaceURI.equals(nameSpace))) {
+                 searchType = SAMLConstants.TAG_ASSERTION;
+             } else if( (WSSConstants.TAG_BINARY_SECURITY_TOKEN.
+                         equals(localName)) && 
+                        (WSSConstants.WSSE_NS.equals(nameSpace)) ) {
+                 searchType = SAMLConstants.BINARYSECURITYTOKEN;
+             } else if( (WSSConstants.TAG_USERNAME_TOKEN.equals(localName)) &&
+                        (WSSConstants.WSSE_NS.equals(nameSpace)) ) {
+                 searchType = WSSConstants.TAG_USERNAME_TOKEN;
+             }
+             if (searchType != null) {
+                 tokenNode = currentNode;
+                 break;
+             }
+         }
+         return tokenNode;
+     }
+
 }

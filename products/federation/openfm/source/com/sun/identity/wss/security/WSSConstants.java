@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.3 2007-07-11 06:12:44 mrudul_uchil Exp $
+ * $Id: WSSConstants.java,v 1.4 2007-08-13 19:18:25 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,8 @@ package com.sun.identity.wss.security;
 public class WSSConstants {
 
      public static final String WSSE_SECURITY_LNAME = "Security";
+
+     public static final String BODY_LNAME = "Body";
 
      public static final String WSSE_NS = "http://docs.oasis-open.org/wss" +
                  "/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"; 

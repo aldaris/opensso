@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSEncryptionProvider.java,v 1.1 2007-07-11 06:12:45 mrudul_uchil Exp $
+ * $Id: WSSEncryptionProvider.java,v 1.2 2007-08-13 19:18:25 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
@@ -59,8 +66,6 @@ import com.sun.identity.xmlenc.EncryptionConstants;
 import java.security.cert.X509Certificate;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
 import com.sun.identity.wss.security.WSSConstants;
 import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.wss.security.SecurityToken;
@@ -94,7 +99,7 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
     /**
      * Encrypts the given WSS XML element in a given XML Context document.
      * @param doc the context XML Document.
-     * @param element Element to be encrypted.
+     * @param elmMap Map of (Element, wsu_id) to be encrypted.
      * @param encDataEncAlg Encryption Key Algorithm.
      * @param encDataEncAlgStrength Encryption Key Strength.
      * @param certAlias Key Encryption Key cert alias.
@@ -104,9 +109,9 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
      * @return org.w3c.dom.Document XML Document replaced with encrypted data
      *         for a given XML element.
      */
-    public org.w3c.dom.Document encryptAndReplaceWSSBody(
+    public org.w3c.dom.Document encryptAndReplaceWSSElements(
         org.w3c.dom.Document doc,
-        org.w3c.dom.Element element,
+        java.util.Map elmMap,
         java.lang.String encDataEncAlg,
         int encDataEncAlgStrength,
         String certAlias,
@@ -118,16 +123,16 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
         
         java.security.Key kek = keyProvider.getPublicKey(certAlias);
         
-        if(doc == null || element == null || kek == null) { 
+        if(doc == null || elmMap == null || kek == null) { 
            EncryptionUtils.debug.error("WSSEncryptionProvider.encryptAnd" +
-           "ReplaceWSSBody: Null values for doc or element or public key");
+           "ReplaceWSSElements: Null values for doc or elements map or public key");
            throw new EncryptionException(EncryptionUtils.bundle.getString(
             "nullValues"));
         }
 
         if(EncryptionUtils.debug.messageEnabled()) {
             EncryptionUtils.debug.message("WSSEncryptionProvider.encrypt" +
-                "AndReplaceWSSBody: DOC input = " 
+                "AndReplaceWSSElements: DOC input = " 
                 + WSSUtils.print(doc));
         }
 
@@ -154,10 +159,7 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
            throw new EncryptionException(EncryptionUtils.bundle.getString(
            "generateKeyError"));
         }
-
-        // Get SOAP Body id
-        String bodyId  = element.getAttribute(WSSConstants.WSU_ID);
-        
+       
         try {
             XMLCipher cipher = null;
             
@@ -230,11 +232,13 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
             }
             Element bsf = (Element)root.getElementsByTagNameNS(
                 WSSConstants.WSSE_NS,searchType).item(0);
+
+            String tokenId = null;
             if (bsf != null) {        
-                String certId = bsf.getAttributeNS(WSSConstants.WSU_NS,
+                tokenId = bsf.getAttributeNS(WSSConstants.WSU_NS,
                     SAMLConstants.TAG_ID);                
                 reference.setAttributeNS(null, SAMLConstants.TAG_URI,"#"
-                                         +certId);
+                                         +tokenId);
             }
             
             securityTokenRef.appendChild(reference);
@@ -243,8 +247,19 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
             ReferenceList refList = 
                 cipher.createReferenceList(ReferenceList.DATA_REFERENCE);
             if (refList != null) {
-                Reference dataRef = refList.newDataReference("#" + bodyId);
-                refList.add(dataRef);
+                Reference dataRef = null;
+                Collection wsu_ids = elmMap.values();
+                Set wsu_ids_set = 
+                    (wsu_ids != null) ? new HashSet(wsu_ids) : Collections.EMPTY_SET;
+
+                if (wsu_ids_set != null) {
+                    for (Iterator it = wsu_ids_set.iterator(); it.hasNext(); ) {
+	                String wsu_id = (String)it.next();
+                        dataRef = refList.newDataReference("#" + wsu_id);
+                        refList.add(dataRef);
+                    }
+                }
+
                 encryptedKey.setReferenceList(refList);
             }            
             	    
@@ -254,40 +269,43 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
             // ENCRYPTED DATA
             String encAlgorithm = 
                   getEncryptionAlgorithm(encDataEncAlg, encDataEncAlgStrength);
-            cipher = XMLCipher.getInstance(encAlgorithm);            
-            cipher.init(XMLCipher.ENCRYPT_MODE, secretKeyEncData);
-
-            EncryptedData builder = cipher.getEncryptedData();            
-            builder.setId(bodyId);
             
-            EncryptionMethod encMethod = 
-                cipher.createEncryptionMethod(encAlgorithm);
-            builder.setEncryptionMethod(encMethod);
+            for (Iterator elmIter = elmMap.entrySet().iterator();
+                 elmIter.hasNext();) {
+                Map.Entry me = (Map.Entry)elmIter.next();
+                Element elm = (Element) me.getKey();
+                String id = (String) me.getValue();
 
-            Node firstNodeInsideBody = element.getFirstChild();
-                
+                cipher = XMLCipher.getInstance(encAlgorithm);            
+                cipher.init(XMLCipher.ENCRYPT_MODE, secretKeyEncData);
+
+                EncryptedData builder = cipher.getEncryptedData();            
+                builder.setId(id);
+            
+                EncryptionMethod encMethod = 
+                    cipher.createEncryptionMethod(encAlgorithm);
+                builder.setEncryptionMethod(encMethod);
+                doc = cipher.doFinal(doc, elm);
+            }
             // ENCRYPTED DATA END
-            
-            resultDoc = cipher.doFinal(doc, (Element) firstNodeInsideBody);
-            
+
             root.appendChild(cipher.martial(doc, encryptedKey));
+            resultDoc = doc;
            
             if(EncryptionUtils.debug.messageEnabled()) {
                 EncryptionUtils.debug.message("WSSEncryptionProvider.encrypt" +
-                    "AndReplaceWSSBody: Encrypted DOC = " 
+                    "AndReplaceWSSElements: Encrypted DOC = " 
                     + WSSUtils.print(resultDoc));
             }
 	    	    
         } catch (Exception xe) {
             EncryptionUtils.debug.error("WSSEncryptionProvider.encryptAnd" +
-            "ReplaceWSSBody: XML Encryption error : ", xe); 
+            "ReplaceWSSElements: XML Encryption error : ", xe); 
             throw new EncryptionException(xe);
         }
         
         return resultDoc;
     }
     
-}
-
-
+}  
 
