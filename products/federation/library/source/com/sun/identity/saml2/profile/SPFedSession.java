@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPFedSession.java,v 1.2 2007-08-07 23:39:07 weisun2 Exp $
+ * $Id: SPFedSession.java,v 1.3 2007-08-14 18:19:37 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,6 @@ import com.sun.identity.saml2.common.SAML2Utils;
  */
 
 public class SPFedSession {
-    List sessionPartners;
     /**
      * <code>SessionIndex</code> from IDP.
      */
@@ -68,6 +67,5 @@ public class SPFedSession {
         this.idpSessionIndex = idpSessionIndex;
         this.spTokenID = sessionID;
         this.info = info;
-        this. sessionPartners = new ArrayList();
     }
 }

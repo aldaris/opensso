@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.6 2007-08-07 23:39:06 weisun2 Exp $
+ * $Id: IDPSSOFederate.java,v 1.7 2007-08-14 18:19:36 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -524,7 +524,7 @@ public class IDPSSOFederate {
         try {
             IDPSSOUtil.doSSOFederate(request, response, authnReq, 
                   spEntityID, idpMetaAlias, nameIDFormat, 
-                  relayState, null); 
+                  relayState); 
         } catch (SAML2Exception se) {
             SAML2Utils.debug.error(classMethod +
                 "Unable to do sso or federation.", se);

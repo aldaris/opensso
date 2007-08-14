@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAttributeMapper.java,v 1.2 2006-12-05 21:56:16 weisun2 Exp $
+ * $Id: DefaultIDPAttributeMapper.java,v 1.3 2007-08-14 18:19:36 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,17 +141,19 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
                          + " user profile does not have value for " + 
                          localAttribute + " but is going to check ssotoken:");
                       }
-                      localAttributeValues = SessionManager.
-                          getProvider().getProperty(session, localAttribute);
-                        if (localAttributeValues != null &&
-                          localAttributeValues.length == 0) {
-                          localAttributeValues = null;
-                      }
                    } else {
                       localAttributeValues = (String[])
                           values.toArray(new String[values.size()]);
                    }
-                } 
+                }
+                if (localAttributeValues == null) {
+                    localAttributeValues = SessionManager.
+                        getProvider().getProperty(session, localAttribute);
+                    if (localAttributeValues != null &&
+                        localAttributeValues.length == 0) {
+                        localAttributeValues = null;
+                    }
+                }
 
                 if(localAttributeValues == null) {
                    if(debug.messageEnabled()) {
