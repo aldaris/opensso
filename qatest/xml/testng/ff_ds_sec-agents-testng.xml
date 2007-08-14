@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-agents-testng.xml,v 1.2 2007-08-14 20:17:13 rmisra Exp $: 
+ $Id: ff_ds_sec-agents-testng.xml,v 1.3 2007-08-14 23:31:41 rmisra Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,7 +31,7 @@
         <parameter name="resourceIdx" value="21"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
