@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.16 2007-08-10 19:43:27 cmwesley Exp $
+ * $Id: TestCommon.java,v 1.17 2007-08-14 23:41:39 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -381,13 +381,15 @@ public class TestCommon implements TestConstants {
         HtmlPage page = null;
         try {
             page = (HtmlPage)webclient.getPage(url);
-        } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e) {
+        } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
+        {
             log(Level.INFO, "configureProduct", strURL + " cannot be reached.");
             return false;
         }
         
         if (getHtmlPageStringIndex(page, "Not Found") != -1) {
-            log(Level.INFO, "configureProduct", "Product Configuration was not" +
+            log(Level.INFO, "configureProduct",
+                    "Product Configuration was not" +
                     " successfull." + strURL + "was not found." +
                     " Please check if war is deployed properly.");
             exiting("configureProduct");
@@ -423,12 +425,15 @@ public class TestCommon implements TestConstants {
 
             HtmlTextInput txtEncryptionKey =
                     (HtmlTextInput)form.getInputByName("AM_ENC_KEY");
-            String strEncryptKey = (String)map.get(TestConstants.KEY_ATT_AM_ENC_KEY);
+            String strEncryptKey = (String)map.get(
+                    TestConstants.KEY_ATT_AM_ENC_KEY);
             if (!(strEncryptKey.equals(null)) && !(strEncryptKey.equals("")))
                 txtEncryptionKey.setValueAttribute(strEncryptKey);
 
-            String strConfigStore = (String)map.get(TestConstants.KEY_ATT_CONFIG_DATASTORE);
-            log(Level.INFO, "configureProduct", "Config store is:" + strConfigStore);
+            String strConfigStore = (String)map.get(
+                    TestConstants.KEY_ATT_CONFIG_DATASTORE);
+            log(Level.INFO, "configureProduct", "Config store is:" +
+                    strConfigStore);
 
             HtmlRadioButtonInput rbDataStore =
                     (HtmlRadioButtonInput)form.getInputByName("DATA_STORE");
@@ -493,7 +498,8 @@ public class TestCommon implements TestConstants {
             }
             try {
                 page = (HtmlPage)form.submit();
-                log(Level.FINEST, "configureProduct", "Returned Page:" + page.asXml());
+                log(Level.FINEST, "configureProduct", "Returned Page:" +
+                        page.asXml());
             } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
                 log(Level.SEVERE, "configureProduct", e.getMessage(), null);
                 e.printStackTrace();
@@ -506,7 +512,8 @@ public class TestCommon implements TestConstants {
             page = (HtmlPage)webclient.getPage(url);
             if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
                     (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
-                log(Level.INFO, "configureProduct", "Product Configuration was" +
+                log(Level.INFO, "configureProduct",
+                        "Product Configuration was" +
                         " not successfull. Configuration failed.");
                 strURL = (String)map.get("serverurl") +
                         (String)map.get("serveruri") + "/UI/Logout";
@@ -514,7 +521,8 @@ public class TestCommon implements TestConstants {
                 exiting("configureProduct");
                 return false;
             } else {
-                log(Level.INFO, "configureProduct", "Product Configuration was" +
+                log(Level.INFO, "configureProduct",
+                        "Product Configuration was" +
                         " successfull. New bits were successfully configured.");
                 exiting("configureProduct");
                 return true;
@@ -569,7 +577,10 @@ public class TestCommon implements TestConstants {
     throws Exception {
         entering("getHtmlPageStringIndex", null);
         String strPage = page.asXml();
-        log(Level.FINEST, "getHtmlPageStringIndex", "Search string:" + searchStr);
+        log(Level.FINEST, "getHtmlPageStringIndex", "Search string:" +
+                searchStr);
+        log(Level.FINEST, "getHtmlPageStringIndex", "Search page\n:" +
+                strPage);
         int iIdx = strPage.indexOf(searchStr);
         if (iIdx != -1)
             log(Level.FINEST, "getHtmlPageStringIndex",
@@ -743,5 +754,25 @@ public class TestCommon implements TestConstants {
             attList.add(stk.nextToken());
         }
         return (attList);
+    }
+
+    /**
+     * Takes a token separated string and returns each individual
+     * token as part of a Map.
+     */
+    public Map getAttributeMap(String strList, String token)
+    throws Exception {
+        StringTokenizer stk = new StringTokenizer(strList, token);
+        Map map = new HashMap();
+        int idx;
+        String strToken;
+        while (stk.hasMoreTokens()) {
+            strToken = stk.nextToken();
+            idx = strToken.indexOf("=");
+            map.put(strToken.substring(0, idx-1), strToken.substring(idx,
+                    strToken.length()));
+        }
+        log(Level.FINEST, "getAttributeMap", map);
+        return (map);
     }
 }
