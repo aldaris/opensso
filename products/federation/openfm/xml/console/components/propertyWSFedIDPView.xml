@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWSFedIDPView.xml,v 1.1 2007-07-26 22:03:46 babysunil Exp $
+   $Id: propertyWSFedIDPView.xml,v 1.2 2007-08-14 21:58:35 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,9 +29,9 @@
     <section name="WSFedIDP" defaultValue="">
         <property>
             <label name="lblSigncertAlias"
-                defaultValue="wsfedidp.attribute.label.signcertAlias"
-                    labelFor="tfSigncertAlias" />
-            <cc name="tfSigncertAlias" 
+                   defaultValue="wsfedidp.attribute.label.signcertAlias"
+                   labelFor="signingCertAlias" />
+            <cc name="signingCertAlias" 
                 tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
                 <attribute name="onChange" value="switchView1('actionMenu')" />
                 <option label="wsfed.actions.label" value="ignore" />
@@ -40,36 +40,39 @@
                 <option label="wsfed.idp.label3" value="3" />
             </cc>
         </property>
-        <property>
-            <label name="lblIDPClaimTypesOffered"
-                   defaultValue="wsfedidp.attribute.label.idpclaimTypesOffered"
-                   labelFor="tfIDPClaimTypesOffered" />
-            <ccgroup>
-                <property>
-                    <cc name="tfIDPClaimTypesOffered" 
+        <subsection name="claimTypesOfferedListSection" defaultValue="" >
+            <property>
+                <label name="lblIDPClaimTypesOffered"
+                       defaultValue=
+                           "wsfedidp.attribute.label.idpclaimTypesOffered"
+                       labelFor="UriNamedClaimTypesOffered" />
+                <ccgroup>
+                    <property>
+                        <cc name="UriNamedClaimTypesOffered" 
                         tagclass=
                         "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
-                        <attribute name="name" value="list" />
-                        <attribute name="listboxLabel" 
-                                   value="label.current.value" />
-                        <attribute name="textboxLabel"
-                                   value="label.new.value" />
-                    </cc>
-                </property>
-            </ccgroup>
-        </property>
+                            <attribute name="name" value="list" />
+                            <attribute name="listboxLabel" 
+                                       value="label.current.value" />
+                            <attribute name="textboxLabel"
+                                       value="label.new.value" />
+                        </cc>
+                    </property>
+                </ccgroup>
+            </property>
+        </subsection>
         <property>
             <label name="lblIDPAutofedEnabled"
                    defaultValue="wsfedidp.attribute.label.idpautofedEnabled"
-                   labelFor="tfIDPAutofedEnabled" />
-            <cc name="tfIDPAutofedEnabled" 
+                   labelFor="autofedEnabled" />
+            <cc name="autofedEnabled" 
                 tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
         </property>
         <property>
             <label name="lblIDPAutofedAttribute"
-                defaultValue="wsfedidp.attribute.label.idpautofedAttribute"
-                    labelFor="tfIDPAutofedAttribute" />
-            <cc name="tfIDPAutofedAttribute" 
+                   defaultValue="wsfedidp.attribute.label.idpautofedAttribute"
+                   labelFor="autofedAttribute" />
+            <cc name="autofedAttribute" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -78,10 +81,10 @@
         </property>
         <property>
             <label name="lblIDPAssertionEffectiveTime"
-                defaultValue=
-                    "wsfedidp.attribute.label.idpassertionEffectiveTime"
-                        labelFor="tfIDPAssertionEffectiveTime" />
-            <cc name="tfIDPAssertionEffectiveTime" 
+                   defaultValue=
+                   "wsfedidp.attribute.label.idpassertionEffectiveTime"
+                   labelFor="assertionEffectiveTime" />
+            <cc name="assertionEffectiveTime" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="5" />
                 <attribute name="autoSubmit" value="false" />
@@ -90,9 +93,9 @@
         </property> 
         <property>
             <label name="lblIdpAuthncontextMapper"
-                defaultValue="wsfedidp.attribute.label.idpAuthncontextMapper"
-                    labelFor="tfIdpAuthncontextMapper" />
-            <cc name="tfIdpAuthncontextMapper" 
+                   defaultValue="wsfedidp.attribute.label.idpAuthncontextMapper"
+                   labelFor="idpAuthncontextMapper" />
+            <cc name="idpAuthncontextMapper" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -101,9 +104,9 @@
         </property>
         <property>
             <label name="lblIdpAccountMapper"
-                defaultValue="wsfedidp.attribute.label.idpAccountMapper"
-                    labelFor="tfIdpAccountMapper" />
-            <cc name="tfIdpAccountMapper" 
+                   defaultValue="wsfedidp.attribute.label.idpAccountMapper"
+                   labelFor="idpAccountMapper" />
+            <cc name="idpAccountMapper" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -112,9 +115,9 @@
         </property>
         <property>
             <label name="lblIdpAttributeMapper"
-                defaultValue="wsfedidp.attribute.label.idpAttributeMapper"
-                    labelFor="tfIdpAttributeMapper" />
-            <cc name="tfIdpAttributeMapper" 
+                   defaultValue="wsfedidp.attribute.label.idpAttributeMapper"
+                   labelFor="idpAttributeMapper" />
+            <cc name="idpAttributeMapper" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -122,22 +125,22 @@
             </cc>
         </property>
         
-       <property>
+        <property>
             <label name="lblIDPAttributeMap"
-                defaultValue="wsfedidp.attribute.label.idpattributeMap"
-                             labelFor="TFIDPATTR_MAP" />
+                   defaultValue="wsfedidp.attribute.label.idpattributeMap"
+                   labelFor="attributeMap" />
             <ccgroup>
                 <property>
-                    <cc name="TFIDPATTR_MAP"
+                    <cc name="attributeMap"
                         tagclass=
                         "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
                         <attribute name="name" value="list" />
                         <attribute name="listboxLabel" 
-                            value="label.current.value" />
+                                   value="label.current.value" />
                         <attribute name="textboxLabel"
-                            value="label.new.value" />
-                     </cc>
-                     
+                                   value="label.new.value" />
+                    </cc>
+                    
                 </property>
             </ccgroup>
         </property> 
