@@ -20,12 +20,25 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-agents-testng.xml,v 1.1 2007-08-07 23:35:31 rmisra Exp $: 
+ $Id: ff_ds_sec-agents-testng.xml,v 1.2 2007-08-14 20:17:13 rmisra Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ff_ds_sec-agents" verbose="1">
+    <test name="HeaderAttributeTests">
+        <parameter name="policyIdx" value="0"/>
+        <parameter name="resourceIdx" value="21"/>
+        <groups>
+            <run>
+                <include name="client"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.agents.ConfigureUnconfigure"/>
+            <class name="com.sun.identity.qatest.agents.HeaderAttributeTests"/>
+        </classes>
+    </test>
     <test name="AgentsSubjectTests 1">
         <parameter name="policyIdx" value="0"/>
         <parameter name="evaluationIdx" value="0"/>
