@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedSPViewBean.java,v 1.2 2007-08-03 22:29:03 jonnelson Exp $
+ * $Id: WSFedSPViewBean.java,v 1.3 2007-08-14 21:55:14 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,104 +31,67 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.federation.model.WSFedPropertiesModel;
+import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class WSFedSPViewBean extends WSFedGeneralBase {
     public static final String DEFAULT_DISPLAY_URL =
             "/console/federation/WSFedSP.jsp";
-    
+        
     public WSFedSPViewBean() {
         super("WSFedSP");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
     }
     
     public void beginDisplay(DisplayEvent event)
-        throws ModelControlException 
-    {
+        throws ModelControlException {
         super.beginDisplay(event);
+        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
+        AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
         
-        try {                    
-            WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-            Map attributes = model.getServiceProviderAttributes(
-                realm, entityName);
-            Iterator it = attributes.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry entry = (Map.Entry)it.next();
-                Object key = entry.getKey();
-                List vallist = (List)entry.getValue();
-                if (key.equals("attributeMap")) {
-                    setDisplayFieldValue(
-                        WSFedPropertiesModel.TFSPATTR_MAP, vallist);
-                }
-                for (Iterator itlist = vallist.iterator(); itlist.hasNext(); ) {
-                    Object element = itlist.next();
-                    if (key.equals("spAuthncontextComparisonType")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFAUTHCONT_COMPARTYPE,
-                            element);
-                    } else if (key.equals("assertionTimeSkew")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFASSERT_TIMESKEW, element);
-                    } else if (key.equals("wantArtifactResponseSigned")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFARTI_SIGNED, element);
-                    } else if (key.equals("spAccountMapper")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFSPACCT_MAPPER, element);
-                    } else if (key.equals("defaultRelayState")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFRELAY_STATE, element);
-                    } else if (key.equals("spAuthncontextClassrefMapping")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFAUTHCONTCLASS_REFMAPPING,
-                            element);
-                    } else if (key.equals("spAuthncontextMapper")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFSPAUTHCONT_MAPPER,
-                            element);
-                    } else if (key.equals("autofedEnabled")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFSPAUTOFED_ENABLED,
-                            element);
-                    } else if (key.equals("spAttributeMapper")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFSPATTR_MAPPER, element);
-                    } else if (key.equals("autofedAttribute")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFSPAUTOFED_ATTR, element);
-                    } else if (key.equals("assertionEffectiveTime")) {
-                        setDisplayFieldValue(
-                            WSFedPropertiesModel.TFASSERTEFFECT_TIME, element);
-                    }
-                }
-            }
-        } catch (AMConsoleException e) {
-            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage() );
-        }
+        // set extended meta data values for the SP
+        ps.setAttributeValues(getExtendedValues(), model);
+        
+        //TBD- once api for SingleSignOutNotification is available
+        //set standard meta data values for the SP   
+        ps.setAttributeValues(getStandardValues(), model);
     }
     
     protected void createPropertyModel() {
         psModel = new AMPropertySheetModel(
-            getClass().getClassLoader().getResourceAsStream(
+                getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/propertyWSFedSPView.xml"));
         psModel.clear();
     }
     
     public void handleButton1Request(RequestInvocationEvent event)
-        throws ModelControlException 
-    {
+        throws ModelControlException {
         retrieveCommonProperties();
-        try {    
+        try {
             WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-            AMPropertySheet ps = 
-                (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES); 
-            Map values =
-                ps.getAttributeValues(model.getGenDataMap(), false, model);
-            model.setAttributeValues(realm, entityName, values);
+            AMPropertySheet ps =
+                (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+            
+            //retrieve all the extended metadata values from the property sheet
+            Map spExtValues =
+                ps.getAttributeValues(model.getSPEXDataMap(), false, model);
+            
+            //save the extended metadata values for the SP
+            model.setSPExtAttributeValues(realm, entityName, spExtValues);
+            
+            //retrieve all the standard metadata values from the property sheet
+            Map spStdValues =
+                ps.getAttributeValues(model.getSPSTDDataMap(), false, model);
+            
+            //save the standard metadata values for the SP
+            model.setSPSTDAttributeValues(realm, entityName, spStdValues);
+            
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                 "wsfed.sp.property.updated");
         } catch (AMConsoleException e) {
@@ -137,5 +100,52 @@ public class WSFedSPViewBean extends WSFedGeneralBase {
         }
         forwardTo();
     }
-
+    
+    private Map getExtendedValues() {
+        Map map = new HashMap();
+        Map tmpMap = new HashMap();
+        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
+        try {
+            
+            //gets extended metadata values
+            map = model.getServiceProviderAttributes(realm, entityName);
+            Set entries = map.entrySet();
+            Iterator iterator = entries.iterator();
+            
+            //the list of values is converted to a set
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry)iterator.next();
+                tmpMap.put((String)entry.getKey(),
+                    returnEmptySetIfValueIsNull(
+                        convertListToSet((List)entry.getValue())));
+            }
+            
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage() );
+        }
+        return tmpMap;
+    }
+    
+    private Map getStandardValues() {
+        Map tmpMap = new HashMap(2);
+        Set claimSet = new HashSet();
+        String ssoEndPoint = null;
+        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
+        try {
+            //fedElem is the std metadata federation element under the realm.
+            FederationElement fedElem =
+                model.getEntityDesc(realm, entityName);
+            
+            //TBD-- value currently hardcoded in the method
+            ssoEndPoint = model.getSingleSignoutNotificationEndPoint(fedElem);
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                e.getMessage() );
+        }
+        claimSet.add(ssoEndPoint);
+        tmpMap.put(WSFedPropertiesModel.TFSSO_NOTIFENDPT, 
+            returnEmptySetIfValueIsNull(claimSet));
+        return tmpMap;
+    }
 }

@@ -17,10 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedIDPViewBean.java,v 1.2 2007-08-03 22:29:03 jonnelson Exp $
+ * $Id: WSFedIDPViewBean.java,v 1.3 2007-08-14 21:54:58 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
+
 package com.sun.identity.console.federation;
 
 import com.iplanet.jato.model.ModelControlException;
@@ -30,76 +31,37 @@ import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.federation.model.WSFedPropertiesModel;
+import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 import com.sun.web.ui.view.alert.CCAlert;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 public class WSFedIDPViewBean extends WSFedGeneralBase {
     public static final String DEFAULT_DISPLAY_URL =
-        "/console/federation/WSFedIDP.jsp";
-        
+        "/console/federation/WSFedIDP.jsp";   
+    
     public WSFedIDPViewBean() {
         super("WSFedIDP");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
     }
     
     public void beginDisplay(DisplayEvent event)
-        throws ModelControlException 
-    {    
+    throws ModelControlException {
         super.beginDisplay(event);
-        try {           
-            WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();         
-            Map attributes = model.getIdentityProviderAttributes(
-                realm, entityName);
-            Iterator it = attributes.entrySet().iterator();
-
-            while (it.hasNext()) {
-                Map.Entry entry = (Map.Entry)it.next();
-                Object key = entry.getKey();
-                List vallist = (List)entry.getValue();  
-                if (key.equals("attributeMap")) {
-                    setDisplayFieldValue
-                        (WSFedPropertiesModel.TFIDPATTR_MAP, vallist);
-                }
-                for (Iterator itlist = vallist.iterator(); itlist.hasNext(); ) {
-                    Object element = itlist.next();
-                    if (key.equals("signingCertAlias")) {
-                        setDisplayFieldValue
-                            (WSFedPropertiesModel.TFSIGNCERT_ALIAS, element);
-                    } else if (key.equals("claimTypesOffered")) {
-                         setDisplayFieldValue
-                            (WSFedPropertiesModel.TFCLAIM_TYPES, element);
-                    } else if (key.equals("autofedEnabled")) {
-                         setDisplayFieldValue
-                            (WSFedPropertiesModel.TFAUTOFED_ENABLED, element);
-                    } else if (key.equals("autofedAttribute")) {
-                         setDisplayFieldValue
-                            (WSFedPropertiesModel.TFIDPAUTOFED_ATTR, element);
-                    } else if (key.equals("assertionEffectiveTime")) {
-                         setDisplayFieldValue
-                            (WSFedPropertiesModel.TFIDPASSERT_TIME, element);
-                    } else if (key.equals("idpAuthncontextMapper")) {
-                         setDisplayFieldValue
-                            (WSFedPropertiesModel.TFIDPAUTH_CONTMAPPER, 
-                                 element);
-                    } else if (key.equals("idpAccountMapper")) {
-                         setDisplayFieldValue
-                            (WSFedPropertiesModel.TFIDPACCT_MAPPER, element);
-                    } else if (key.equals("idpAttributeMapper")) {
-                         setDisplayFieldValue
-                            (WSFedPropertiesModel.TFIDPATTR_MAPPER, element);
-                    }
-                }
-            }
-        } catch (AMConsoleException e) {
-            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage() );
-        }
+        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();        
+        AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+        
+        //sets the extended meta data values for the Idp        
+        ps.setAttributeValues(getExtendedValues(), model);
+        
+        //sets the standard meta data values for the Idp
+        ps.setAttributeValues(getStandardValues(), model);
     }
-    
+     
     protected void createPropertyModel() {
         psModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(
@@ -108,22 +70,82 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
     }
     
     public void handleButton1Request(RequestInvocationEvent event)
-        throws ModelControlException 
-    {
+    throws ModelControlException {
         retrieveCommonProperties();
         try {
             WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-            AMPropertySheet ps = 
-                (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES); 
-            Map values =
-                ps.getAttributeValues(model.getGenDataMap(), false, model);
-            model.setAttributeValues(realm, entityName, values);
+            AMPropertySheet ps =
+                (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+            
+            //retrieve all the extended metadata values from the property sheet
+            Map idpExtValues =
+                ps.getAttributeValues(model.getIDPEXDataMap(), false, model);
+            
+            //retrieve all the standard metadata values from the property sheet
+            Map idpStdValues =
+                ps.getAttributeValues(model.getIDPSTDDataMap(), false, model);
+            
+            //save the extended metadata values for the Idp 
+            model.setIDPExtAttributeValues(realm, entityName, idpExtValues);
+            
+            //save the standard metadata vlaues for the Idp
+            //TBD--claimtype and signing certificate alias saving
+            //model.setGenAttributeValues(realm, entityName, idpStdValues);
+            
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                 "wsfed.idp.property.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
+                    e.getMessage());
         }
         forwardTo();
-    }     
-}
+    }
+    
+    private Map getExtendedValues() {
+        Map map = new HashMap();
+        Map tmpMap = new HashMap();
+        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
+        try {
+            
+            //gets extended metadata values
+            map = model.getIdentityProviderAttributes(realm, entityName);     
+            Set entries = map.entrySet();
+            Iterator iterator = entries.iterator();
+            
+            //the list of values is converted to a set
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry)iterator.next();
+                tmpMap.put((String)entry.getKey(),
+                    returnEmptySetIfValueIsNull(
+                    convertListToSet((List)entry.getValue())));
+            }
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage() );
+        }          
+        return tmpMap;
+    }
+    
+    private Map getStandardValues() {
+        Map tmpMap = new HashMap(2);        
+        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
+        try {
+            
+            //TBD- once format of display is fixed.
+            //To get the value of standard meta data attributes
+            FederationElement fedElem =
+                model.getEntityDesc(realm, entityName);
+            Set claimSet = returnEmptySetIfValueIsNull (
+                convertListToSet(model.getClaimType(fedElem)));
+            tmpMap.put(WSFedPropertiesModel.TFCLAIM_TYPES, claimSet);
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage() );
+        }
+        
+        // to get the signing certificate alais
+        //TBD - once the format is decided as to how to display certificates
+        //byte [] signCert = model.getSignCert(fedElem);
+        return tmpMap;
+    }
+  }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedGeneralBase.java,v 1.3 2007-08-13 19:10:27 asyhuang Exp $
+ * $Id: WSFedGeneralBase.java,v 1.4 2007-08-14 21:54:04 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,11 @@ import com.sun.identity.console.federation.model.EntityModel;
 import com.sun.identity.console.federation.model.WSFedPropertiesModel;
 import com.sun.identity.console.federation.model.WSFedPropertiesModelImpl;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Collections;
 
 public abstract class WSFedGeneralBase extends EntityPropertiesBase {
     
@@ -44,8 +49,7 @@ public abstract class WSFedGeneralBase extends EntityPropertiesBase {
     }
         
     public void beginDisplay(DisplayEvent event)
-        throws ModelControlException 
-    {
+    throws ModelControlException {
         super.beginDisplay(event);
         if (isHosted()) {
             setPageTitle(entityName);
@@ -66,4 +70,29 @@ public abstract class WSFedGeneralBase extends EntityPropertiesBase {
     }   
     
     protected abstract void createPropertyModel();
+    
+    /**
+     * Converts the List to Set.
+     *     
+     * @param list the list to be converted.
+     * @return the corresponding Set.
+     */
+     protected Set convertListToSet(List list) {
+        Set s = new HashSet();
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            s.add(it.next());
+        }
+        return s;
+    }
+    
+     /**
+     * Return empty set if value is null
+     *     
+     * @param set the set to be checked for null.
+     * @return the EMPTY_SET if value is null.
+     */
+    protected Set returnEmptySetIfValueIsNull(Set set) {
+        return (set != null) ? set : Collections.EMPTY_SET;
+    }
 }
