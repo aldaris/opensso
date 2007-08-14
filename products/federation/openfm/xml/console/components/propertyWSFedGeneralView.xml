@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWSFedGeneralView.xml,v 1.1 2007-07-26 22:03:25 babysunil Exp $
+   $Id: propertyWSFedGeneralView.xml,v 1.2 2007-08-14 21:57:22 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,16 +29,16 @@
     <section name="WSFedGeneral" defaultValue="">
         <property>
             <label name="lblName" 
-                defaultValue="wsfedgen.attribute.label.name" 
-                    labelFor="tfName" />
+                   defaultValue="wsfedgen.attribute.label.name" 
+                   labelFor="tfName" />
             <cc name="tfName" 
                 tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
         </property>
         <property>
             <label name="lblName" 
-                defaultValue="wsfedsp.attribute.label.dispname" 
-                    labelFor="tfName" />
-            <cc name="tfName" 
+                   defaultValue="wsfedsp.attribute.label.dispname" 
+                   labelFor="tfDispName" />
+            <cc name="tfDispName" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75"/>
                 <attribute name="autoSubmit" value="false"/>
@@ -46,33 +46,27 @@
         </property>        
         <property>
             <label name="lblEntDescription" 
-                defaultValue="wsfedgen.attribute.label.description" 
-                    labelFor="tfEntDescription"/>
+                   defaultValue="wsfedgen.attribute.label.description" 
+                   labelFor="tfEntDescription"/>
             <cc name="tfEntDescription" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
                 <attribute name="size" value="75"/>
                 <attribute name="autoSubmit" value="false"/>
             </cc>
         </property>
-        <property>
-            <label name="lblEntProtocol" 
-                defaultValue="wsfedgen.attribute.label.protocol" 
-                labelFor="tfEntProtocol"/>
-            <cc name="tfEntProtocol" 
-                tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
-        </property>
+        
         <property>
             <label name="lblEntRealm" 
-                defaultValue="wsfedgen.attribute.label.realm" 
-                    labelFor="tfEntRealm"/>
+                   defaultValue="wsfedgen.attribute.label.realm" 
+                   labelFor="tfEntRealm"/>
             <cc name="tfEntRealm" 
                 tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
         </property>
         <property>
             <label name="lblTokenIssuerName" 
-                defaultValue="wsfed.attribute.label.tokenIssuerName" 
-                    labelFor="tfTokenIssuerName" />
-            <cc name="tfTokenIssuerName" 
+                   defaultValue="wsfed.attribute.label.tokenIssuerName" 
+                   labelFor="TokenIssuerName" />
+            <cc name="TokenIssuerName" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75"/>
                 <attribute name="autoSubmit" value="false"/>
@@ -80,9 +74,9 @@
         </property>
         <property>
             <label name="lblTokenIssuerEndpoint"
-                defaultValue="wsfed.attribute.label.tokenIssuerEndpoint"
-                    labelFor="tfTokenIssuerEndpoint" />
-            <cc name="tfTokenIssuerEndpoint" 
+                   defaultValue="wsfed.attribute.label.tokenIssuerEndpoint"
+                   labelFor="TokenIssuerEndpoint" />
+            <cc name="TokenIssuerEndpoint" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
