@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.1 2007-05-10 17:21:22 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.2 2007-08-15 22:46:32 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,11 +52,11 @@ public class SetupProduct extends TestCommon {
     {
         super("SetupProduct");
         if ((serverName2.indexOf("SERVER_NAME2")) != -1) {
-            log(logLevel, "SetupProduct", "Initiating setup for " +
+            log(Level.FINE, "SetupProduct", "Initiating setup for " +
                     serverName1);
             initiateProductSetup(testDir, serverName1);
         } else {
-            log(logLevel, "SetupProduct", "Multi serever initiation handled" +
+            log(Level.FINE, "SetupProduct", "Multi serever initiation handled" +
                     " in respective modules");
         }
     }
@@ -70,14 +70,11 @@ public class SetupProduct extends TestCommon {
     public void initiateProductSetup(String testDir, String serverName) {
         entering("initiateProductSetup", null);
         try {
-            PropertyResourceBundle clientDef = new PropertyResourceBundle(
-                    new FileInputStream(testDir + fileseparator + "resources" +
-                    fileseparator + FILE_CLIENT_PROPERTIES));
+            log(Level.FINE, "initiateProductSetup", serverName);
 
-            log(logLevel, "initiateProductSetup", serverName);
             if (!configureProduct(getConfigurationMap("Configurator-" +
                     serverName))) {
-                log(logLevel, "initiateProductSetup", "Product configuration failed.");
+                log(Level.FINE, "initiateProductSetup", "Product configuration failed.");
                 Set set = new HashSet();
                 set.add((String)TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT);
                 properties = getMapFromResourceBundle("AMConfig", set);
