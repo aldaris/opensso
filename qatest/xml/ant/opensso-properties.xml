@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-properties.xml,v 1.3 2007-05-10 17:21:22 rmisra Exp $
+ $Id: opensso-properties.xml,v 1.4 2007-08-15 22:45:30 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,17 +38,9 @@
         <property name="base.report.dir" value="./${SERVER_DIR}/docs/reports/${EXECUTION_MODE}/${date}"/>
         <property name="built.classes.dir" value="./${SERVER_DIR}/built/classes"/>
         <property name="debug.dir" value="./${SERVER_DIR}/debug"/>
-        <property name="testng.classpath" value="./lib/testng-5.1-jdk15.jar"/>
-        <property name="servlet.classpath" value="./lib/servlet.jar"/>
-        <property name="amclientsdk.classpath" value="./lib/amclientsdk.jar"/>
-        <property name="fmclientsdk.classpath" value="./lib/fmclientsdk.jar"/>
         <path id="client.classpath">
-            <pathelement location="${amclientsdk.classpath}"/>
-            <pathelement location="${fmclientsdk.classpath}"/>
             <pathelement location="${built.classes.dir}"/>
-	    <pathelement location="${testng.classpath}"/>
-	    <pathelement location="${servlet.classpath}"/>
-	    <fileset dir="./lib/htmlunit">
+	    <fileset dir="./lib">
 		    <include name="**/*.jar"/>
 	    </fileset>
         </path>

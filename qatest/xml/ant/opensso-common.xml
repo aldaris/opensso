@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.3 2007-05-10 17:21:22 rmisra Exp $
+ $Id: opensso-common.xml,v 1.4 2007-08-15 22:45:30 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -209,7 +209,7 @@
         <copy file="./resources/AMConfig.properties" tofile="${built.classes.dir}/AMConfig.properties"/>
 
         <taskdef name="testng" classname="com.beust.testng.TestNGAntTask"
-        classpath="${testng.classpath}"/>
+        classpathref="client.classpath"/>
         <testng classpathref="client.classpath" outputdir="${base.report.dir}">
             <xmlfileset dir="./xml/testng" includes="${EXECUTION_MODE}-*-testng.xml"/>
         </testng>
@@ -255,7 +255,7 @@
 
         <copy file="./resources/AMConfig.properties" tofile="${built.classes.dir}/AMConfig.properties"/>
 
-        <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpath="${testng.classpath}"/>
+        <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpathref="client.classpath"/>
         <testng classpathref="client.classpath" outputdir="${base.report.dir}">
             <xmlfileset dir="./xml/testng" includes="${EXECUTION_MODE}-${TEST_MODULE}-testng.xml"/>
         </testng>
