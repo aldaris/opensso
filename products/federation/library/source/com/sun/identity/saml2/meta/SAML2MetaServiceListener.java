@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaServiceListener.java,v 1.1 2006-10-30 23:16:26 qcheng Exp $
+ * $Id: SAML2MetaServiceListener.java,v 1.2 2007-08-15 01:34:10 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,21 +49,16 @@ class SAML2MetaServiceListener implements ConfigurationListener
      * @param e the configuaration action event
      */
     public void configChanged(ConfigurationActionEvent e) {
-	String configName = e.getConfigurationName();
-	
-	if (configName == null || configName.equals("SAML2") ||
-	    configName.equals("SAML2COT")) {
-	    
-	    if (debug.messageEnabled()) {
-		debug.message(
-                    "SAML2MetaServiceListener.configChanged:");
-	    }
-	    SAML2MetaCache.clear();
-	    if (e.getRealm() == null) {
-		SPCache.clear();
-	    } else {
-		SPCache.clear(e.getRealm());
-	    }
-	}
+        if (debug.messageEnabled()) {
+            debug.message("SAML2MetaServiceListener.configChanged: config=" + 
+                e.getConfigurationName() + ", component=" + 
+                e.getComponentName());
+        }
+        SAML2MetaCache.clear();
+        if (e.getRealm() == null) {
+            SPCache.clear();
+        } else {
+            SPCache.clear(e.getRealm());
+        }
     }
 }
