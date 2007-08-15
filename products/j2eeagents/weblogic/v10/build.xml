@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2007-08-07 01:45:20 sean_brydon Exp $
+   $Id: build.xml,v 1.2 2007-08-15 19:01:30 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -71,11 +71,10 @@
 
         <copy todir="${container.j2ee_agent.locale.dir}">
             <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/resources">
-                <include name="wl9Tools.properties"/>
+                <include name="wl10Tools.properties"/>
             </fileset>
         </copy>
 
-   <!-- NOT SURE IF NEED THIS amclientsdk63.jar is in weblogic agent etc/ dist bundle, where it comes from?, is it needed?? -->
         <copy todir="${container.j2ee_agent.etc.dir}">
             <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/etc">
                 <include name="agentapp.war"/>

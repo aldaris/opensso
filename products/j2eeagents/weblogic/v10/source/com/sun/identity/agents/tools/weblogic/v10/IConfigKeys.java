@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigKeys.java,v 1.1 2007-08-07 01:47:45 sean_brydon Exp $
+ * $Id: IConfigKeys.java,v 1.2 2007-08-15 19:01:31 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,7 +73,7 @@ public interface IConfigKeys {
             "AGENT_ENV_FILE_PATH";
     
     /** Field STR_AS_GROUP **/
-    public static String STR_WL_GROUP = "wl9Tools";
+    public static String STR_WL_GROUP = "wl10Tools";
     
     /** Field STR_MBEANS_JAR_FILE **/
     public static String STR_MBEANS_JAR_FILE = "amauthprovider.jar";
@@ -87,10 +87,7 @@ public interface IConfigKeys {
     /** Field version prefix for WL **/
     public static final String  STR_VERSION_PREFIX = "WebLogic Server ";
     
-    /** Valid major version for WL **/
-    public static final String STR_WEBLOGIC_9_VERSION = "9.2";
-    
-       /** Valid major version for WL 10 -Sean added**/
+    /** Valid major version for WL 10 **/
     public static final String STR_WEBLOGIC_10_VERSION = "10.0";
     
     /** key for WL 92 major version **/

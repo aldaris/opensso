@@ -8,10 +8,10 @@
         <package type="agentsdk" name="com.sun.identity.agents.install.configurator"/>
     </class-prefix>
     <welcome-message>
-        <i18n key="WELCOME_MESSAGE" group="wl9Tools"/>
+        <i18n key="WELCOME_MESSAGE" group="wl10Tools"/>
     </welcome-message>
     <exit-message>
-        <i18n key="EXIT_MESSAGE" group="wl9Tools"/>
+        <i18n key="EXIT_MESSAGE" group="wl10Tools"/>
     </exit-message>
     <instance-finder>	
         <home-dir-locator>
@@ -19,7 +19,7 @@
         </home-dir-locator>
         <instance-finder-interactions>
             <interaction lookupkey="STARTUP_SCR">
-                <i18n key="INT_STARTUP_SCR" group="wl9Tools"/>
+                <i18n key="INT_STARTUP_SCR" group="wl10Tools"/>
                 <default-value-finder>
                     <class name="StartupScriptFinder" type="custom"/>
                 </default-value-finder>
@@ -39,7 +39,7 @@
                 </value-normalizer>
             </interaction>
             <interaction lookupkey="SERVER_NAME">
-                <i18n key="INT_SERVER_NAME" group="wl9Tools"/>
+                <i18n key="INT_SERVER_NAME" group="wl10Tools"/>
                 <default-value-finder>
                     <class name="StaticDefaultValueFinder" type="system"/>
                     <static value="myserver"/>
@@ -116,7 +116,7 @@
                 </validations>
             </interaction>	
             <interaction lookupkey="WEBLOGIC_HOME_DIR">
-                <i18n key="INT_WEBLOGIC_HOME_DIR" group="wl9Tools"/>
+                <i18n key="INT_WEBLOGIC_HOME_DIR" group="wl10Tools"/>
                 <default-value-finder>
                     <class name="WeblogicHomeDirFinder" type="custom"/>
                 </default-value-finder>
@@ -139,7 +139,7 @@
                 </value-normalizer>
             </interaction>
             <interaction lookupkey="DOMAIN_IS_PORTAL">
-                <i18n key="INT_DOMAIN_IS_PORTAL" group="wl9Tools"/>
+                <i18n key="INT_DOMAIN_IS_PORTAL" group="wl10Tools"/>
                 <default-value-finder>
                     <class name="StaticDefaultValueFinder" type="system"/>
                     <static value="false"/>
@@ -160,7 +160,7 @@
                 <skipIf key="DOMAIN_IS_PORTAL" ignorecase="true">
                     <value>false</value>
                 </skipIf>
-                <i18n key="INT_PORTAL_CONTEXT_URI" group="wl9Tools"/>
+                <i18n key="INT_PORTAL_CONTEXT_URI" group="wl10Tools"/>
                 <default-value-finder>
                     <class name="StaticDefaultValueFinder" type="system"/>
                     <static value="/"/>

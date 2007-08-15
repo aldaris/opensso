@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WeblogicHomeDirValidator.java,v 1.1 2007-08-07 01:47:48 sean_brydon Exp $
+ * $Id: WeblogicHomeDirValidator.java,v 1.2 2007-08-15 19:01:32 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,10 +122,6 @@ public class WeblogicHomeDirValidator extends ValidatorBase
         Debug.log("WeblogicHomeDirValidator: WebLogic Version = " +
                 majorVersion);
         
-        //Sean commented out, added string for version 10
-        //if ((majorVersion != null) &&
-        //        (majorVersion.length() > 0) &&
-        //        (majorVersion.equals(STR_WEBLOGIC_9_VERSION))) 
         if ((majorVersion != null) &&
                 (majorVersion.length() > 0) &&
                 (majorVersion.equals(STR_WEBLOGIC_10_VERSION))) 
@@ -208,15 +204,13 @@ public class WeblogicHomeDirValidator extends ValidatorBase
             Debug.log("WeblogicHomeDirValidator.getWeblogicVersion() command " +
                     "returned version name =" + temp);
             if (temp != null) {
-                // major version
-                majorVersion ="10.0";
-                        //Sean -comment out logic for now, hard code
-                        //temp.substring(STR_VERSION_PREFIX.length()+1,
-                        //STR_VERSION_PREFIX.length()+4);
-                // @todo minor version - there no minor version for 9.2,
+                //majorVersion ="10.0";
+                majorVersion =
+                        temp.substring(STR_VERSION_PREFIX.length()+1,
+                        STR_VERSION_PREFIX.length()+5);
+                // minor version - there no minor version for 10.0,
                 // still keep this info for future.
-                minorVersion = "0";
-                         //Sean -comment out logic for now, hard code
+                minorVersion = "0";                       
                         //temp.substring(STR_VERSION_PREFIX.length()+7,
                         //STR_VERSION_PREFIX.length()+8);
                 
