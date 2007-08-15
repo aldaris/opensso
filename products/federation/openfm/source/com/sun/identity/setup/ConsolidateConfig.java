@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveDuplicateConfig.java,v 1.1 2007-03-27 06:03:34 veiming Exp $
+ * $Id: ConsolidateConfig.java,v 1.1 2007-08-15 20:08:19 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,89 +25,48 @@
 package com.sun.identity.setup;
 
 import com.sun.identity.common.SystemConfigurationUtil;
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 
 /**
- * Remove duplicate property from one configuration properties file
- * comparing it against another one (base properties file).
+ * Consolidate properties from two files into one.
  */
-public class RemoveDuplicateConfig {
+public class ConsolidateConfig {
     
-    private RemoveDuplicateConfig() {
+    private ConsolidateConfig() {
     }
     
     public static void main(String[] args) {
         try {
-            Map map = getPropertyMap(args[0]);
+            Map map1 = getPropertyMap(args[0]);
+            Map map2 = getPropertyMap(args[1]);
             /*
              * in federation, we have com.sun.identity.common.serverMode
              * in amserver, we have com.iplanet.am.serverMode
              * they are referring to the same thing. Hence we need to
              * remove com.sun.identity.common.serverMode.
              */
-            map.put(SystemConfigurationUtil.PROP_SERVER_MODE, "true"); 
+            map2.remove(SystemConfigurationUtil.PROP_SERVER_MODE); 
+            
+            for (Iterator i = map2.keySet().iterator(); i.hasNext(); ) {
+                String key = (String)i.next();
+                if (!map1.containsKey(key)) {
+                    map1.put(key, map2.get(key));
+                }
+                
+            }
 
-            String result = removeDuplicates(args[1], map);
-            writeToFile(result, args[2]);
+            writeToFile(map1, args[2]);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
-    }
-    
-    private static String removeDuplicates(String filename, Map map)
-        throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
-        String line = reader.readLine();
-        StringBuffer commentBlock = new StringBuffer();
-        StringBuffer buff = new StringBuffer();
-        
-        while (line != null) {
-            line = line.trim();
-            if (line.startsWith("#")) { // copyrights - keep
-                buff.append(line).append("\n");
-            } else if (line.length() == 0) {
-                //spacer - discard
-            } else if (line.startsWith("/*")) { //start comment - track
-                // write out previous comments
-                if (commentBlock.length() > 0) {
-                    buff.append("\n").append(commentBlock.toString());
-                    commentBlock = new StringBuffer();
-                }
-                commentBlock.append(line).append("\n");
-            } else if (line.startsWith("*")) { //comment - track
-                commentBlock.append(" ").append(line).append("\n");
-            } else if (line.endsWith("*/")) { //end comment - track
-                commentBlock.append(" ").append(line).append("\n");
-            } else {
-                int idx = line.indexOf('=');
-                if (idx == -1) {
-                    buff.append(line).append("\n");
-                } else {
-                    String key = line.substring(0, idx);
-                    if (!map.containsKey(key)) {
-                        if (commentBlock.length() > 0) {
-                            buff.append("\n").append(commentBlock.toString());
-                            commentBlock = new StringBuffer();
-                        }
-                        buff.append(line).append("\n");
-                    } else if (commentBlock.length() > 0) {
-                        commentBlock = new StringBuffer();
-                    }
-                }
-            }
-            line = reader.readLine();
-        }
-        return buff.toString();
     }
     
     private static Map getPropertyMap(String filename)
@@ -133,13 +92,22 @@ public class RemoveDuplicateConfig {
         return map;
     }
 
-    private static void writeToFile(String content, String filename)
+    private static void writeToFile(Map map, String filename)
         throws FileNotFoundException, IOException
     {
         FileOutputStream fout = null;
+        StringBuffer buff = new StringBuffer();
+        
+        for (Iterator i = map.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry entry = (Map.Entry)i.next();
+            buff.append(entry.getKey())
+                .append("=")
+                .append(entry.getValue())
+                .append("\n");
+        }
         try {
             fout = new FileOutputStream(filename);
-            fout.write(content.getBytes());
+            fout.write(buff.toString().getBytes());
         } finally {
             if (fout != null) {
                 try {

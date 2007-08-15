@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.18 2007-08-03 22:29:01 jonnelson Exp $
+   $Id: build-war.xml,v 1.19 2007-08-15 20:08:19 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -167,11 +167,11 @@
             remove duplicate entries in FederationConfig.properties against
             AMConfig.properties
         -->
-        <java classname="com.sun.identity.setup.RemoveDuplicateConfig" fork="true">
+        <java classname="com.sun.identity.setup.ConsolidateConfig" fork="true">
             <classpath refid="build.class.path"/>
             <arg value="${war.package.dir}/WEB-INF/classes/AMConfig.properties" />
             <arg value="${library.res.dir}/FederationConfig.properties" />
-            <arg value="${war.package.dir}/WEB-INF/classes/FederationConfig.properties" />
+            <arg value="${war.package.dir}/WEB-INF/classes/AMConfig.properties" />
         </java>
 
 	<!-- update amConsoleConfig with federation tabs -->
