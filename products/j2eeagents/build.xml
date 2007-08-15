@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2007-08-07 01:44:19 sean_brydon Exp $
+   $Id: build.xml,v 1.10 2007-08-15 01:08:02 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -65,6 +65,7 @@
 
     <target name="all">
         <antcall target="appserver_v9" />
+        <antcall target="weblogic_v10" />
     </target>
 
     <target name="appserver_v9" depends="preparebuild">
@@ -88,6 +89,18 @@
 
     <target name="prenightly">
         <copy todir="${j2eeagents.basedir}/appserver/v9/extlib" >
+            <fileset dir="${prd.nightly.dist.dir}/amserver/${nightly.date}">
+                <include name="amclientsdk.jar" />
+            </fileset>
+            <fileset dir="${prd.nightly.dist.dir}/openfm/${nightly.date}">
+                <include name="famclientsdk.jar" />
+            </fileset>
+            <fileset dir="${installtools.dist.dir}">
+                <include name="opensso-installtools.jar" />
+                <include name="opensso-installtools-launcher.jar" />
+            </fileset>
+        </copy>
+        <copy todir="${j2eeagents.basedir}/weblogic/v10/extlib" >
             <fileset dir="${prd.nightly.dist.dir}/amserver/${nightly.date}">
                 <include name="amclientsdk.jar" />
             </fileset>
