@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtility.java,v 1.3 2007-07-24 21:52:52 cmwesley Exp $
+ * $Id: CLIUtility.java,v 1.4 2007-08-16 17:44:30 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -193,6 +193,8 @@ public class CLIUtility extends TestCommon {
      */
     protected int executeCommand(long timeout) 
     throws Exception {
+        log(Level.FINEST, "executeCommand", "WorkingDir: " + 
+                workingDir.getAbsolutePath());
         command = new CLICommand(workingDir, argList, timeout);
         try {
             synchronized(command) {
@@ -288,7 +290,7 @@ public class CLIUtility extends TestCommon {
                     searchToken + "\' in command output.");
             if (!findStringInOutput(searchToken)) {
                 stringsFound = false;
-                log(Level.FINEST, "findStringsInOutput", "Could not find string '"
+                log(Level.FINE, "findStringsInOutput", "Could not find string '"
                         + searchToken + "'" + " in the command output.");
             } else {
                 log(Level.FINEST, "findStringsInOutput", "Found the string '" + 
@@ -318,7 +320,7 @@ public class CLIUtility extends TestCommon {
                     searchToken + "\' in command output.");      
             if (!findStringInError(searchToken)) {
                 stringsFound = false;
-                log(Level.FINEST, "findStringsInError", "Could not find string '" 
+                log(Level.FINE, "findStringsInError", "Could not find string '" 
                         + searchToken + "'" + " in the command error.");
             } else {
                 log(Level.FINEST, "findStringsInError", "Found the string '" + 

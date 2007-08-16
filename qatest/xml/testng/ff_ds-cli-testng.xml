@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-cli-testng.xml,v 1.3 2007-08-10 19:47:33 cmwesley Exp $
+ $Id: ff_ds-cli-testng.xml,v 1.4 2007-08-16 17:48:14 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -719,7 +719,51 @@
         <classes>
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
-    </test>  
+    </test>
+    <test name="CLI_create-identity36">
+        <parameter name="testName" value="createidentity-test36"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>      
+    <test name="CLI_create-identity37">
+        <parameter name="testName" value="createidentity-test37"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>      
+    <test name="CLI_create-identity38">
+        <parameter name="testName" value="createidentity-test38"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>      
+    <test name="CLI_create-identity39">
+        <parameter name="testName" value="createidentity-test39"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
     <test name="CLI_delete-identities01">
         <parameter name="testName" value="deleteidentities-test1"/>
         <groups>
@@ -2231,5 +2275,467 @@
         <classes>
             <class name="com.sun.identity.qatest.cli.GenericCLITest"/>
         </classes>
-    </test>        
+    </test>
+   <test name="CLI_add-realm-attributes01">
+        <parameter name="testName" value="addrealmattributes-test1"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-realm-attributes02">
+        <parameter name="testName" value="addrealmattributes-test2"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-realm-attributes03">
+        <parameter name="testName" value="addrealmattributes-test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-realm-attributes04">
+        <parameter name="testName" value="addrealmattributes-test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-realm-attributes05">
+        <parameter name="testName" value="addrealmattributes-test5"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-realm-attributes06">
+        <parameter name="testName" value="addrealmattributes-test6"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-realm-attributes07">
+        <parameter name="testName" value="addrealmattributes-test7"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddRealmAttributesTest"/>
+        </classes>
+    </test>
+     <test name="CLI_add-realm-attributes08">
+        <parameter name="testName" value="addrealmattributes-test8"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity01">
+        <parameter name="testName" value="getidentity-test1"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity02">
+        <parameter name="testName" value="getidentity-test2"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity03">
+        <parameter name="testName" value="getidentity-test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity04">
+        <parameter name="testName" value="getidentity-test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity05">
+        <parameter name="testName" value="getidentity-test5"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity06">
+        <parameter name="testName" value="getidentity-test6"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity07">
+        <parameter name="testName" value="getidentity-test7"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity08">
+        <parameter name="testName" value="getidentity-test8"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity09">
+        <parameter name="testName" value="getidentity-test9"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity10">
+        <parameter name="testName" value="getidentity-test10"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity11">
+        <parameter name="testName" value="getidentity-test11"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity12">
+        <parameter name="testName" value="getidentity-test12"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity13">
+        <parameter name="testName" value="getidentity-test13"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity14">
+        <parameter name="testName" value="getidentity-test14"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity21">
+        <parameter name="testName" value="getidentity-test21"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity22">
+        <parameter name="testName" value="getidentity-test22"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity23">
+        <parameter name="testName" value="getidentity-test23"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-identity24">
+        <parameter name="testName" value="getidentity-test24"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes01">
+        <parameter name="testName" value="setrealmattributes-test1"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes02">
+        <parameter name="testName" value="setrealmattributes-test2"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes03">
+        <parameter name="testName" value="setrealmattributes-test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes04">
+        <parameter name="testName" value="setrealmattributes-test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes05">
+        <parameter name="testName" value="setrealmattributes-test5"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes06">
+        <parameter name="testName" value="setrealmattributes-test6"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-realm01">
+        <parameter name="testName" value="setrealmattributes-test1"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes02">
+        <parameter name="testName" value="setrealmattributes-test2"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes03">
+        <parameter name="testName" value="setrealmattributes-test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes04">
+        <parameter name="testName" value="setrealmattributes-test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_set-realm-attributes05">
+        <parameter name="testName" value="setrealmattributes-test5"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.SetRealmAttributesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-realm01">
+        <parameter name="testName" value="getrealm-test1"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetRealmTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-realm02">
+        <parameter name="testName" value="getrealm-test2"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetRealmTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-realm03">
+        <parameter name="testName" value="getrealm-test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetRealmTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-realm04">
+        <parameter name="testName" value="getrealm-test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetRealmTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-realm05">
+        <parameter name="testName" value="getrealm-test5"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GetRealmTest"/>
+        </classes>
+    </test>    
 </suite>

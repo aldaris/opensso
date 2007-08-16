@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.7 2007-08-02 16:48:35 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.8 2007-08-16 17:43:56 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,9 @@ import com.sun.identity.qatest.cli.FederationManagerCLIConstants;
 import com.sun.identity.qatest.cli.GlobalConstants;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,7 +52,7 @@ import java.util.logging.Level;
  */
 public class FederationManagerCLI extends CLIUtility 
         implements CLIConstants, FederationManagerCLIConstants, 
-        GlobalConstants {
+        GlobalConstants, CLIExitCodes {
 
     private String passwdFile;
     private boolean usePasswdFile;
@@ -75,7 +77,11 @@ public class FederationManagerCLI extends CLIUtility
     public FederationManagerCLI(boolean useDebug, boolean useVerbose, 
             boolean useLongOpts)
     throws Exception {
-        super(cliPath + System.getProperty("file.separator") + "famadm");    
+        super(new StringBuffer(cliPath).
+                append(System.getProperty("file.separator")).append(uri).
+                append(System.getProperty("file.separator")).append("bin").
+                append(System.getProperty("file.separator")).append("famadm").
+                toString());    
         useLongOptions = useLongOpts;
         try {
             addAdminUserArgs();
@@ -88,6 +94,19 @@ public class FederationManagerCLI extends CLIUtility
             e.printStackTrace();
             throw e;         
         }        
+    }
+    
+    /**
+     * Get the absolute path to the famadm CLI.
+     *
+     * @return - the absolute path to famadm.
+     */
+    public String getCliPath() {
+        return(new StringBuffer(cliPath).
+                append(System.getProperty("file.separator")).append(uri).
+                append(System.getProperty("file.separator")).append("bin").
+                append(System.getProperty("file.separator")).append("famadm").
+                toString());
     }
      
     /**
@@ -304,6 +323,8 @@ public class FederationManagerCLI extends CLIUtility
     /**
      * Adds the "--membershipidtype" and membership identity type arguments to 
      * the argument list.
+     *
+     * @param type - the identity type for the member
      */
     private void addMembershipIdtypeArguments(String type) {
         String idtypeArg;
@@ -315,7 +336,116 @@ public class FederationManagerCLI extends CLIUtility
         }
         addArgument(idtypeArg);
         addArgument(type);        
+    }  
+    
+    /**
+     * Adds the "--servicename" and the servicename arguments to the argument 
+     * list.
+     *
+     * @param name - the name of the service
+     */
+    private void addServiceNameArguments(String name) {
+        String serviceNameArg;
+        if (useLongOptions) {
+            serviceNameArg = PREFIX_ARGUMENT_LONG + SERVICENAME_ARGUMENT;
+        } else {
+            serviceNameArg = PREFIX_ARGUMENT_SHORT + SHORT_SERVICENAME_ARGUMENT;
+        }
+        addArgument(serviceNameArg);
+        addArgument(name);
+    }
+    
+    /**  
+     * Add the "--attributename" and the attribute name arguments to the 
+     * argument list.
+     *
+     * @param name - the attribute name
+     */
+    private void addAttributeNameArguments(String name) {
+        String attrNameArg;
+        if (useLongOptions) {
+            attrNameArg = PREFIX_ARGUMENT_LONG + ATTRIBUTE_NAME_ARGUMENT;
+        } else {
+            attrNameArg = PREFIX_ARGUMENT_SHORT + SHORT_ATTRIBUTE_NAMES_ARGUMENT;
+        }
+        addArgument(attrNameArg);
+        addArgument(name);
+    }
+    
+    /**
+     * Add the "--authtype" and the authentication type arguments to the 
+     * argument list.
+     *
+     * @param type - the authentication type
+     */
+    private void addAuthtypeArguments(String type) {
+        String authTypeArg;
+        if (useLongOptions) {
+            authTypeArg = PREFIX_ARGUMENT_LONG + AUTHTYPE_ARGUMENT;
+        } else {
+            authTypeArg = PREFIX_ARGUMENT_SHORT + SHORT_AUTHTYPE_ARGUMENT;
+        }
+        addArgument(authTypeArg);
+        addArgument(type);
+    }
+    
+    
+    /**  
+     * Add the "--attributenames" and the attribute name arguments to the 
+     * argument list.
+     *
+     * @param names - a semi-colon delimited list of attribute names
+     */
+    private void addAttributeNamesArguments(String names) {
+        String attrNameArg;
+        if (useLongOptions) {
+            attrNameArg = PREFIX_ARGUMENT_LONG + ATTRIBUTE_NAMES_ARGUMENT;
+        } else {
+            attrNameArg = PREFIX_ARGUMENT_SHORT + SHORT_ATTRIBUTE_NAMES_ARGUMENT;
+        }
+        addArgument(attrNameArg);
+        String[] nameList = names.split(";");
+        for (int i=0; i < nameList.length; i++) {
+            addArgument(nameList[i]);
+        }
+    }
+ 
+    /**
+     * Add the "--name" and the auth instance name arguments to the argument
+     * list.
+     *
+     * @param name - the auth instance name
+     */
+    private void addNameArguments(String name) {
+        String nameArg;
+        if (useLongOptions) {
+            nameArg = PREFIX_ARGUMENT_LONG + NAME_ARGUMENT;
+        } else {
+            nameArg = PREFIX_ARGUMENT_SHORT + SHORT_NAMES_ARGUMENT;
+        }
+        addArgument(nameArg);
+        addArgument(name);
     }    
+    
+    /**
+     * Add the "--names" and the auth instance name arguments to the argument
+     * list.
+     *
+     * @param names - a semi-colon delimited list of auth instance names
+     */
+    private void addNamesArguments(String names) {
+        String namesArg;
+        if (useLongOptions) {
+            namesArg = PREFIX_ARGUMENT_LONG + NAMES_ARGUMENT;
+        } else {
+            namesArg = PREFIX_ARGUMENT_SHORT + SHORT_NAMES_ARGUMENT;
+        }
+        addArgument(namesArg);
+        String[] nameList = names.split(";");
+        for (String name: nameList) {
+            addArgument(name);
+        }
+    }
     
     /**
      * Create a new realm.
@@ -330,6 +460,45 @@ public class FederationManagerCLI extends CLIUtility
         addGlobalOptions();
         return (executeCommand(commandTimeout));
     }
+    
+    /**
+     * Create multiple realms from a list of realms.
+     *
+     * @param realmList - a list of realms to create separated by semi-colons.
+     * @return a boolean indicating whether all the realms are created 
+     * successfully.
+     */
+    public boolean createRealms(String realmList)
+    throws Exception {
+        boolean allRealmsCreated = true;
+        
+        if (realmList != null) {
+            if (realmList.length() > 0) {
+                String [] realms = realmList.split(";");
+                for (int i=0; i < realms.length; i++) {
+                    log(Level.FINE, "createRealms", "Creating realm " + 
+                            realms[i]);
+                    int exitStatus = createRealm(realms[i]);
+                    logCommand("createRealms");
+                    resetArgList();
+                    if (exitStatus != SUCCESS_STATUS) {
+                        allRealmsCreated = false;
+                        log(Level.SEVERE, "createRealms", "The realm " + 
+                                realms[i] + " failed to be created.");
+                    }
+                }
+            } else {
+                allRealmsCreated = false;
+                log(Level.SEVERE, "createRealms", 
+                        "The list of realms is empty.");
+            }
+        } else {
+            allRealmsCreated = false;
+            log(Level.SEVERE, "createRealms", "The list of realms is null.");
+        }
+        return (allRealmsCreated);
+    }
+   
     
     /**
      * Delete a realm.
@@ -510,7 +679,75 @@ public class FederationManagerCLI extends CLIUtility
     throws Exception {
         String emptyString = null;
         return (createIdentity(realm, name, type, emptyString, false, false));
-    }    
+    }
+    
+    /**
+     * Create multiple identities from a list of identities.
+     *
+     * @param idList - a list of identities to create separated by semi-colons.
+     * @return a boolean indicating whether all the realms are created 
+     * successfully.
+     */
+    public boolean createIdentities(String idList)
+    throws Exception {
+        boolean allIdsCreated = true;
+        String setupID = null;
+        
+        if (idList != null) {
+            if (idList.length() > 0) {
+                String [] ids = idList.split("\\|");
+                for (int i=0; i < ids.length; i++) {
+                    log(Level.FINE, "createIdentities", "Creating id " + 
+                            ids[i]);
+                    String [] idArgs = ids[i].split("\\,");
+                    if (idArgs.length >= 3) {
+                        String idRealm = idArgs[0];
+                        String idName = idArgs[1];
+                        String idType = idArgs[2];
+                        log(Level.FINEST, "createIdentities", "Realm for id: " +
+                                idRealm);
+                        log(Level.FINEST, "createIdentities", "Name for id: " + 
+                                idName);
+                        log(Level.FINEST, "createIdentities", "Type for id: " + 
+                                idType);                            
+                        String idAttributes = null;
+                        int exitStatus = -1;
+                        if (idArgs.length > 3) {
+                            idAttributes = idArgs[3];
+                            exitStatus = createIdentity(idRealm, idName, idType,
+                                    idAttributes);
+                        } else {                                
+                            exitStatus = createIdentity(idRealm, idName, 
+                                    idType);
+                        }
+                        logCommand("createIdentities");
+                        resetArgList();
+                        if (exitStatus != SUCCESS_STATUS) {
+                            allIdsCreated = false;
+                            log(Level.SEVERE, "createIdentities", 
+                                    "The creation of " + idName + 
+                                    " failed with exit status " + exitStatus + 
+                                    ".");
+                        }
+                    } else {
+                        allIdsCreated = false;
+                        log(Level.SEVERE, "createIdentities", 
+                                "The identity " + ids[i] + 
+                                " must have a realm, an identity name, and an " 
+                                + "identity type");
+                    }
+                }
+            } else {
+                allIdsCreated = false;
+                log(Level.SEVERE, "createIdentities", 
+                        "The identity list is empty.");
+            }
+        } else {
+            allIdsCreated = false;
+            log(Level.SEVERE, "createIdentities", "The identity list is null.");
+        }
+        return(allIdsCreated);
+    }
     
     /**
      * Delete one or more identities in a realm
@@ -547,6 +784,32 @@ public class FederationManagerCLI extends CLIUtility
         return (executeCommand(commandTimeout));
     }
     
+    /**
+     * Get the attributes of an identity.
+     *
+     * @param realm - the realm in which the identity exists.
+     * @param idName - the name of the identity for which the attributes should 
+     * be retrieved.
+     * @param idType - the type of the identity for which the attributes should 
+     * be retrieved.
+     * @param attributeNames - the name or names of the attributes that should 
+     * be retrieved.
+     * @return the exit status of the "get-identity" command.
+     */
+    public int getIdentity(String realm, String idName, String idType, 
+            String attributeNames)
+    throws Exception {
+        setSubcommand(GET_IDENTITY_SUBCOMMAND);
+        addRealmArguments(realm);
+        addIdnameArguments(idName);
+        addIdtypeArguments(idType);
+        if (attributeNames.length() > 0) {
+            addAttributeNamesArguments(attributeNames);
+        }
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+            
     /**
      * Add an identity as a member of another identity.
      * @param realm - the realm in which the member identity should be added.
@@ -642,6 +905,202 @@ public class FederationManagerCLI extends CLIUtility
         addIdtypeArguments(idType);
         addGlobalOptions();
         return (executeCommand(commandTimeout));             
+    }
+    
+    /**
+     * Add an attribute to a realm.
+     * @param realm - the realm in which the identity exists.
+     * @param serviceName - the name of the service in which to add the 
+     * attribute.
+     * @param attributeValues - a semi-colon delimited string containing the 
+     * attribute values for the identity to be created.
+     * @param useDatafile - a boolean indicating whether a datafile should be 
+     * used.  If true, a datafile will be created and the "--datafile" argument
+     * will be used.  If false, the "--attributevalues" argument and a list of 
+     * attribute name/value pairs will be used.
+     * @return the exit status of the "add-realm-attributes" command.
+     */
+    public int addRealmAttributes(String realm, String serviceName, 
+            String attributeValues, boolean useDatafile)
+    throws Exception {
+        setSubcommand(ADD_REALM_ATTRIBUTES_SUBCOMMAND);
+        addRealmArguments(realm);
+        addServiceNameArguments(serviceName);
+        
+        if (!useDatafile) {
+            addAttributevaluesArguments(attributeValues);
+        } else {
+            addDatafileArguments(attributeValues, "attr", ".txt");
+        }
+    
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Delete an attribute from a realm.
+     *
+     * @param realm - the realm in which the identity exists.
+     * @param serviceName - the name of the service in which to add the 
+     * attribute.
+     * @param attributeName - the name of the attribute to be deleted.
+     * @return the exit status of the "delete-realm-attribute" command.
+     */
+    public int deleteRealmAttribute(String realm, String serviceName, 
+            String attributeName)
+    throws Exception {
+        setSubcommand(DELETE_REALM_ATTRIBUTE_SUBCOMMAND);
+        addRealmArguments(realm);
+        addServiceNameArguments(serviceName);
+        addAttributeNameArguments(attributeName);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Set an attribute in a realm.
+     * @param realm - the realm in which the identity exists.
+     * @param serviceName - the name of the service in which to add the 
+     * attribute.
+     * @param attributeValues - a semi-colon delimited string containing the 
+     * attribute values for the identity to be created.
+     * @param useDatafile - a boolean indicating whether a datafile should be 
+     * used.  If true, a datafile will be created and the "--datafile" argument
+     * will be used.  If false, the "--attributevalues" argument and a list of 
+     * attribute name/value pairs will be used.
+     * @return the exit status of the "set-realm-attributes" command.
+     */
+    public int setRealmAttributes(String realm, String serviceName, 
+            String attributeValues, boolean useDatafile)
+    throws Exception {
+        setSubcommand(SET_REALM_ATTRIBUTES_SUBCOMMAND);
+        addRealmArguments(realm);
+        addServiceNameArguments(serviceName); 
+        
+        if (!useDatafile) {
+            addAttributevaluesArguments(attributeValues);
+        } else {
+            addDatafileArguments(attributeValues, "attr", ".txt");
+        }
+    
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));        
+    }
+    
+    /**
+     * Retrive the attributes of a realm.
+     *
+     * @param realm - the realm in which the identity exists.
+     * @param serviceName - the name of the service in which to add the 
+     * attribute.
+     * @return the exit status of the "get-realm" command.
+     */
+    public int getRealm(String realm, String serviceName) 
+    throws Exception {
+        setSubcommand(GET_REALM_SUBCOMMAND);
+        addRealmArguments(realm);
+        addServiceNameArguments(serviceName);
+        
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));         
+    }
+    
+    /**
+     * Create an authentication instance.
+     * 
+     * @param realm - the realm in which the authentication instance should be 
+     * created.
+     * @param name - the name of the authentication instance to be created.
+     * @param type - the type of the authentication instance to be created.
+     * @return the exit status of the "create-auth-instance" command.
+     */
+    public int createAuthInstance(String realm, String name, String type)
+    throws Exception {
+        setSubcommand(CREATE_AUTH_INSTANCE_SUBCOMMAND);
+        addRealmArguments(realm);
+        addNameArguments(name);
+        addAuthtypeArguments(type);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Delete one or more authentication instances.
+     *
+     * @param realm - the realm in which the authentication instance should be
+     * deleted.
+     * @param names - the name(s) of the authentication instance(s) to be
+     * deleted.
+     * @return the exit status of the "delete-auth-instance" command.
+     */
+    public int deleteAuthInstances(String realm, String names)
+    throws Exception {
+        setSubcommand(DELETE_AUTH_INSTANCES_SUBCOMMAND);
+        addRealmArguments(realm);
+        addNamesArguments(names);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Get the attribute values for an authentication instance.
+     * 
+     * @param realm - the realm in which the authentication instance exists.
+     * @param name - the name of the authentication instance for which the 
+     * instance should be retrieved.
+     * @return the exit status of the "get-auth-instance" command.
+     */
+    public int getAuthInstance(String realm, String name) 
+    throws Exception {
+        setSubcommand(GET_AUTH_INSTANCE_SUBCOMMAND);
+        addRealmArguments(realm);
+        addNameArguments(name);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * List the authentication instances for a realm.
+     *
+     * @param realm - the realm in which the authentication instances should be
+     * displayed.
+     * @return the exit status of the "list-auth-instances" command.
+     */
+    public int listAuthInstances(String realm)
+    throws Exception {
+        setSubcommand(LIST_AUTH_INSTANCES_SUBCOMMAND);
+        addRealmArguments(realm);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Update attribute values in an authentication instance.
+     *
+     * @param realm - the realm which contains the authentication instance to be
+     * updated.
+     * @param name - the name of the authentication instance which should be 
+     * updated.
+     * @param attributevalues - a semi-colon (';') delimited list of attribute
+     * name / value pairs.
+     * @param useDatafile - a boolean value indicating whether the datafile 
+     * option should be used.
+     * @return the exit status of the "update-auth-instance" command.
+     */
+    public int updateAuthInstance(String realm, String name, 
+            String attributeValues, boolean useDatafile)
+    throws Exception {
+        setSubcommand(UPDATE_AUTH_INSTANCE_SUBCOMMAND);
+        addRealmArguments(realm);
+        addNameArguments(name);
+        if (!useDatafile) {
+            addAttributevaluesArguments(attributeValues);
+        } else {
+            addDatafileArguments(attributeValues, "attr", ".txt");
+        }
+    
+        addGlobalOptions();
+        return(executeCommand(commandTimeout));
     }        
     
     /**
@@ -751,7 +1210,15 @@ public class FederationManagerCLI extends CLIUtility
                 fileseparator;
         String attFile = attFileDir + filePrefix + 
                 (new Integer(new Random().nextInt())).toString() + fileSuffix;
-        createFileFromMap(attributeMap, attFile);
+        String[] valueArray = values.split(";");
+        StringBuffer buff = new StringBuffer();
+        for (String value: valueArray) {
+            buff.append(value + newline);
+        }
+        buff.append(newline);
+        BufferedWriter out = new BufferedWriter(new FileWriter(attFile));
+        out.write(buff.toString());
+        out.close();
         String dataFileArg;
         if (useLongOptions) {
             dataFileArg = PREFIX_ARGUMENT_LONG + DATA_FILE_ARGUMENT;
@@ -781,25 +1248,6 @@ public class FederationManagerCLI extends CLIUtility
         }
     }
        
-    /**
-     * Retrieve the supported identity types for a particular realm
-     * @param realm - the realm for which the supported identity types should be
-     * retrieved
-     * @return an array String containing the identity types that were returned
-     * or null if the show-identity-types command times out or returns a 
-     * non-zero exit status
-     */
-    public String[] showIdentityTypes(String realm) 
-    throws Exception {
-        setSubcommand(SHOW_IDENTITY_TYPES_SUBCOMMAND);
-        addRealmArguments(realm);
-        if (executeCommand(commandTimeout) == 0) {
-            return ((String [])tokenizeOutputBuffer().toArray());
-        } else {
-            return null;
-        }
-    }
-    
     /**
      * Sets the sub-command in the second argument of the argument list
      * @param command - the sub-command value to be stored
@@ -849,7 +1297,8 @@ public class FederationManagerCLI extends CLIUtility
         boolean realmsFound = true;
         
         if ((realmsToFind != null) && (realmsToFind.length() > 0)) {
-            if (listRealms(startRealm, filter, recursiveSearch) == 0) {                    
+            if (listRealms(startRealm, filter, recursiveSearch) == 
+                    SUCCESS_STATUS) {                    
                 StringTokenizer tokenizer = new StringTokenizer(realmsToFind, 
                         ";");
                 while (tokenizer.hasMoreTokens()) {
@@ -921,7 +1370,7 @@ public class FederationManagerCLI extends CLIUtility
         boolean idsFound = true;
         
         if ((idsToFind != null) && (idsToFind.length() > 0)) {
-            if (listIdentities(startRealm, filter, type) == 0) {
+            if (listIdentities(startRealm, filter, type) == SUCCESS_STATUS) {
                 String [] ids = idsToFind.split(";");
                 for (int i=0; i < ids.length; i++) {
                     String token = ids[i];
@@ -995,7 +1444,8 @@ public class FederationManagerCLI extends CLIUtility
         boolean membersFound = true;
         
         if ((membersToFind != null) && (membersToFind.length() > 0)) {
-            if (showMembers(startRealm, memberType, idName, idType) == 0) {
+            if (showMembers(startRealm, memberType, idName, idType) == 
+                    SUCCESS_STATUS) {
                 String [] members = membersToFind.split(";");
                 for (int i=0; i < members.length; i++) {
                     String rootDN = "";
@@ -1056,18 +1506,15 @@ public class FederationManagerCLI extends CLIUtility
     }    
 
     /**
-     * Check to see if an identity exists using the "famadm show-memberships" 
+     * Check to see if a member exists using the "famadm show-memberships" 
      * command.
-     * @param startRealm - the realm in which to find identities.
-     * @param idName - the name of the identity for which memberships
-     * should be found.
-     * @param idType - the type of the identity (User) for which memberships
-     * should be found.
-     * @param membershipType - the types of memberships (Group, Role) which
-     * should be found.
-     * @param membershipsToFind - the memberships which are expected to be 
-     * found in the output of "famadm show-memberships".  Multiple 
-     * memberships should be separated by a semicolon (';').
+     * @param startRealm - the realm in which to find identities
+     * @param filter - the filter that will be applied in the search
+     * @param type - the type of identities (User, Group, Role) for which the 
+     * search will be performed
+     * @param membersToFind - the member identity or identities to find in the 
+     * output of "famadm show-memberships".  Multiple memberships should be 
+     * separated by a semicolon (';').
      * @return a boolean value of true if the membership(s) is(are) found and 
      * false if one or more memberships is not found.
      */
@@ -1077,8 +1524,8 @@ public class FederationManagerCLI extends CLIUtility
         boolean membershipsFound = true;
 
         if ((membershipsToFind != null) && (membershipsToFind.length() > 0)) {
-            if (showMemberships(startRealm, membershipType, idName, 
-                    idType) == 0) {
+            if (showMemberships(startRealm, membershipType, idName, idType) == 
+                    SUCCESS_STATUS) {
                 String [] memberships = membershipsToFind.split(";");
                 for (int i=0; i < memberships.length; i++) {
                     String rootDN = "";
@@ -1138,4 +1585,107 @@ public class FederationManagerCLI extends CLIUtility
         }
         return membershipsFound;
     }
+    
+    /**
+     * Search through the attributes of a realm to verify that certain list of
+     * attributes name/value pairs are present.
+     *
+     * @param realm - the realm for which the attributes should be retrieved.
+     * @param serviceName - the name of service for which the attributes should 
+     * be retrieved.
+     * @param attributeValues - a semi-colon delimited list of attribute 
+     * name/value pairs.
+     * @return a boolean flag indicating whether all of the attribute name/value
+     * pairs are found in the output of the "famadm get-realm" command.
+     */
+    public boolean findRealmAttributes(String realm, String serviceName, 
+            String attributeValues)
+    throws Exception {
+        boolean attributesFound = true;
+        int commandStatus = -1;
+        
+        if (realm != null && !realm.equals("")) {
+            if (serviceName != null && !serviceName.equals("")) {
+                if (attributeValues != null && !attributeValues.equals("")) {
+                    commandStatus = getRealm(realm, serviceName);
+                    if (commandStatus == SUCCESS_STATUS) {
+                        attributesFound = findStringsInOutput(attributeValues, 
+                                ";");
+                    } else {
+                        log(Level.SEVERE, "findRealmAttributes", 
+                                "The famadm get-realm command returned " + 
+                                commandStatus + " as an exit status");
+                        attributesFound = false;
+                    }
+                } else {
+                    log(Level.SEVERE, "findRealmAttributes", 
+                            "The attribute value list is not valid");
+                    attributesFound = false;
+                }
+            } else {
+                log(Level.SEVERE, "findRealmAttributes", 
+                        "The service name is not valid");
+                attributesFound = false;
+            }
+        } else {
+            log(Level.SEVERE, "findRealmAttributes", 
+                    "The realm name is not valid");
+            attributesFound = false;
+        }
+        return attributesFound;
+    }
+    
+    /**
+     * Search through the attributes of a realm to verify that certain list of
+     * attributes name/value pairs are present.
+     *
+     * @param realm - the realm in which the identity exists.
+     * @param idName - the name of the identity for which the attributes should 
+     * be retrieved.
+     * @param idType - the type of the identity for which the attributes should 
+     * be retrieved.
+     * @param attributeNames - the name or names of the attributes that should 
+     * be retrieved.
+     * @param attributeValues - the attribute name/value pair or pairs which 
+     * should be found.
+     * @return a boolean flag indicating whether all of the attribute name/value
+     * pairs are found in the output of the "famadm get-identity" command.
+     */
+    public boolean findIdentityAttributes(String realm, String idName, 
+            String idType, String attributeNames, String attributeValues)
+    throws Exception {
+        boolean attributesFound = true;
+        int commandStatus = -1;
+        
+        if (realm != null && !realm.equals("")) {
+            if (idName != null && !idName.equals("")) {
+                if (idType != null && !idType.equals("")) {
+                    commandStatus = getIdentity(realm, idName, idType, 
+                            attributeNames);
+                    if (commandStatus == SUCCESS_STATUS) {
+                        attributesFound = findStringsInOutput(attributeValues, 
+                                ";");
+                    } else {
+                        log(Level.SEVERE, "findIdentityAttributes", 
+                                "The famadm get-realm command returned " + 
+                                commandStatus + " as an exit status");
+                        attributesFound = false;
+                    }
+                } else {
+                    log(Level.SEVERE, "findIdentityAttributes", 
+                            "The attribute value list is not valid");
+                    attributesFound = false;
+                }
+            } else {
+                log(Level.SEVERE, "findIdentityAttributes", 
+                        "The service name is not valid");
+                attributesFound = false;
+            }
+        } else {
+            log(Level.SEVERE, "findIdentityAttributes", 
+                    "The realm name is not valid");
+            attributesFound = false;
+        }
+        return attributesFound;
+    }    
 }
