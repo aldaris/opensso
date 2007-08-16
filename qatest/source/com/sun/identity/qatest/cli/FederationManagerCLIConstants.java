@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.5 2007-07-24 21:54:09 cmwesley Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.6 2007-08-16 19:05:19 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -164,4 +164,44 @@ public interface FederationManagerCLIConstants {
      * Short membershipidtype argument/option
      */
     String SHORT_MEMBERSHIP_ID_TYPE_ARGUMENT = "m";
+    
+    /**
+     * Servicename argument/option
+     */
+    String SERVICENAME_ARGUMENT = "servicename";
+    
+    /**
+     * Short servicename argument/option
+     */
+    String SHORT_SERVICENAME_ARGUMENT = "s";
+    
+    /**
+     * Attributename argument/option
+     */
+    String ATTRIBUTE_NAME_ARGUMENT = "attributename"; 
+    
+    /**
+     * Authtype argument/option
+     */
+    String AUTHTYPE_ARGUMENT = "authtype";
+    
+    /**
+     * Short authtype argument/option
+     */
+    String SHORT_AUTHTYPE_ARGUMENT = "t";
+    
+    /**
+     * Name argument/option
+     */
+    String NAME_ARGUMENT = "name";
+    
+    /**
+     * Names argument/option
+     */
+    String NAMES_ARGUMENT = "names";
+    
+    /**
+     * Short names argument/option
+     */
+    String SHORT_NAMES_ARGUMENT = "m";
 }

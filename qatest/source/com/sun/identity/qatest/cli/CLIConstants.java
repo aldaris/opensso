@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.2 2007-07-24 21:54:09 cmwesley Exp $
+ * $Id: CLIConstants.java,v 1.3 2007-08-16 19:06:40 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -181,5 +181,95 @@ public interface CLIConstants {
      * String for the "show-identity-types" sub-command
      */
     public static final String SHOW_IDENTITY_TYPES_SUBCOMMAND = 
-            "show-identity-types";    
+            "show-identity-types";   
+    
+    /**
+     * String for the "delete-realm-attribute" sub-command
+     */
+    public static final String DELETE_REALM_ATTRIBUTE_SUBCOMMAND = 
+            "delete-realm-attribute";
+    
+    /**
+     * String for the "get-realm" sub-command
+     */
+    public static final String GET_REALM_SUBCOMMAND = "get-realm";
+    
+    /**
+     * String for the "set-realm-attributes" sub-command
+     */
+    public static final String SET_REALM_ATTRIBUTES_SUBCOMMAND = 
+            "set-realm-attributes";
+    
+    /**
+     * String for the "get-identity" sub-command
+     */
+    public static final String GET_IDENTITY_SUBCOMMAND = "get-identity";
+    
+    /**
+     * String for the "delete-policies" sub-command
+     */
+    public static final String DELETE_POLICIES_SUBCOMMAND = "delete-policies";
+    
+    /**
+     * String for the "list-policies" sub-command
+     */
+    public static final String LIST_POLICIES_SUBCOMMAND = "list-policies";
+    
+    /**
+     * String for the "delete-auth-instances" sub-command
+     */
+    public static final String DELETE_AUTH_INSTANCES_SUBCOMMAND = 
+            "delete-auth-instances";
+    
+    /**
+     * String for the "get-auth-instance" sub-command
+     */
+    public static final String GET_AUTH_INSTANCE_SUBCOMMAND = 
+            "get-auth-instance";
+    
+    /**
+     * String for the "list-auth-instances" sub-command
+     */
+    public static final String LIST_AUTH_INSTANCES_SUBCOMMAND =
+            "list-auth-instances";
+    
+    /**
+     * String for the "update-auth-instance" sub-command
+     */
+    public static final String UPDATE_AUTH_INSTANCE_SUBCOMMAND =
+            "update-auth-instance";
+    
+    /**
+     * String for the "add-privileges" sub-command
+     */
+    public static final String ADD_PRIVILEGES_SUBCOMMAND = "add-privileges";
+    
+    /**
+     * String for the "remove-privileges" sub-command
+     */
+    public static final String REMOVE_PRIVILEGES_SUBCOMMAND = 
+            "remove-privileges";
+    
+    /**
+     * String for the "show-privileges" sub-command
+     */
+    public static final String SHOW_PRIVILEGES_SUBCOMMAND = "show-privileges";
+    
+    /**
+     * String for the "delete-datastores" sub-command
+     */
+    public static final String DELETE_DATASTORES_SUBCOMMAND = 
+            "delete-datatores";
+
+    /**
+     * String for the "list-datastores" sub-command
+     */
+    public static final String LIST_DATASTORES_SUBCOMMAND = 
+            "list-datatores";
+    
+    /**
+     * String for the "update-datastores" sub-command
+     */
+    public static final String UPDATE_DATASTORES_SUBCOMMAND = 
+            "update-datatores";    
 }
