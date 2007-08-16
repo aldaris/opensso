@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.16 2007-06-01 17:34:44 kenwho Exp $
+ * $Id: AMSDKRepo.java,v 1.17 2007-08-16 21:42:45 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1121,6 +1121,9 @@ public class AMSDKRepo extends IdRepo {
                 foundBin = true;
                 binAttrMap.put(tmpAttrName, attrMap.get(tmpAttrName));
                 strAttrMap.remove(tmpAttrName);
+            } else {
+                strAttrMap = new HashMap(attrMap);
+                binAttrMap = new HashMap();
             }
         }
         try {
