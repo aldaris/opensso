@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2007-08-07 01:47:27 sean_brydon Exp $
+   $Id: build.xml,v 1.2 2007-08-16 23:47:02 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,15 +29,11 @@
     update these properties to relevenat directories
     REPLACE_WEB_LOGIC_10_SERVER_LIB  set it to your installation of \bea\wlserver_10.0\server\lib
     and 
-    REPLACE_JAVA_HOME_LIB  set to something like \bea\jdk150_06\lib
+    REPLACE_JAVA_HOME_LIB  set to something to your installation of \bea\jdk150_06\lib
     -->
 
-   <!--
     <property name="weblogic.lib.dir" value="REPLACE_WEB_LOGIC_10_SERVER_LIB"/>
     <property name="java.lib" value="REPLACE_JAVA_HOME_LIB" />
-   -->
-    <property name="weblogic.lib.dir" value="C:\workspace\test3-bea10\bea\wlserver_10.0\server\lib"/>
-    <property name="java.lib" value="C:\workspace\test3-bea10\bea\jdk150_06\lib" />
 
     <property name="mbeans.build.dir" value="build"/>
     <property name="mbeans.dist.dir" value="dist"/>
