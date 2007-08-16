@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericCLITest.java,v 1.2 2007-08-07 23:35:21 rmisra Exp $
+ * $Id: GenericCLITest.java,v 1.3 2007-08-16 19:41:00 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
 
+import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
@@ -58,7 +59,7 @@ import org.testng.Reporter;
  * CLI_show-identity-operations09, CLI_show-identity-operations10,
  */
 
-public class GenericCLITest extends TestCommon {
+public class GenericCLITest extends TestCommon implements CLIExitCodes {
     
     private String locTestName;
     private ResourceBundle rb;
@@ -184,7 +185,8 @@ public class GenericCLITest extends TestCommon {
             stringsFound = cli.findStringsInOutput(expectedMessage, ";");
             log(Level.FINEST, "testGenericCLICommand", 
                         "Output Messages Found: " + stringsFound);
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound;
             } else {

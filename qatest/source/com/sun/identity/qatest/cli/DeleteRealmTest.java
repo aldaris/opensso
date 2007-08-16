@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmTest.java,v 1.7 2007-08-07 23:35:21 rmisra Exp $
+ * $Id: DeleteRealmTest.java,v 1.8 2007-08-16 19:39:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@
 
 package com.sun.identity.qatest.cli;
 
+import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
@@ -51,7 +52,7 @@ import org.testng.Reporter;
  * properties file <code>DeleteRealmTest.properties</code> contains the input 
  * values which are read by this class.
  */
-public class DeleteRealmTest extends TestCommon {
+public class DeleteRealmTest extends TestCommon implements CLIExitCodes {
     
     private String locTestName;
     private ResourceBundle rb;
@@ -112,17 +113,11 @@ public class DeleteRealmTest extends TestCommon {
             cli = new FederationManagerCLI(useDebugOption, useVerboseOption,
                     useLongOptions);
             
-            if (setupRealms != null) {
-                if (setupRealms.length() > 0) {
-                    String [] realms = setupRealms.split(";");
-                    for (int i=0; i < realms.length; i++) {
-                        int exitStatus = cli.createRealm(realms[i]);
-                        cli.logCommand("setup");
-                        cli.resetArgList();
-                        if (exitStatus != 0) {
-                            assert false;
-                        }
-                    }
+            if (setupRealms != null && !setupRealms.equals("")) {
+                if (!cli.createRealms(setupRealms)) {
+                    log(Level.SEVERE, "setup", 
+                            "All the realms failed to be created.");
+                    assert false;
                 }
             }
             exiting("setup");
@@ -193,15 +188,16 @@ public class DeleteRealmTest extends TestCommon {
                     useRecursiveOption);
             cli.logCommand("testRealmDeletion");
 
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
                 log(Level.FINEST, "testRealmDeletion", 
                         "Output Messages Found: " + stringsFound);
             } else {
-                if (expectedExitCode.equals("11")) {
+                if (expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
                     String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", 
-                        "famadm ");
+                        cli.getCliPath(), "famadm ");
                     Object[] params = {argString};
                     String usageError = 
                             MessageFormat.format(expectedMessage, params);
@@ -229,7 +225,8 @@ public class DeleteRealmTest extends TestCommon {
                 existingRealmsFound = listCLI.findRealms(realmsExisting);
             }            
                          
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound &&
                         !removedRealmsFound && existingRealmsFound;
@@ -277,7 +274,7 @@ public class DeleteRealmTest extends TestCommon {
                         int exitStatus = cli.deleteRealm(realms[i], true); 
                         cli.logCommand("cleanup");
                         cli.resetArgList();
-                        if (exitStatus != 0) {
+                        if (exitStatus != SUCCESS_STATUS) {
                             log(Level.INFO, "cleanup", "Realm " + realms[i] + 
                                     " could not be removed.");
                             assert false;

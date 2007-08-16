@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListRealmsTest.java,v 1.4 2007-08-07 23:35:21 rmisra Exp $
+ * $Id: ListRealmsTest.java,v 1.5 2007-08-16 19:40:08 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@
 
 package com.sun.identity.qatest.cli;
 
+import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
@@ -55,7 +56,7 @@ import org.testng.Reporter;
  * <code>ListRealmsTest.properties</code> contains the input values which are
  * read by this class.
  */
-public class ListRealmsTest extends TestCommon {
+public class ListRealmsTest extends TestCommon implements CLIExitCodes {
     
     private String locTestName;
     private ResourceBundle rb;
@@ -263,7 +264,8 @@ public class ListRealmsTest extends TestCommon {
             log(logLevel, "testRealmSearch", "Unexpected realms Found: " + 
                     otherRealmsListed);
 
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
                 log(logLevel, "testRealmSearch", "Output Messages Found: " + 
                         stringsFound);
@@ -271,13 +273,13 @@ public class ListRealmsTest extends TestCommon {
                     new Integer(expectedExitCode).intValue()) && stringsFound &&
                         realmsFound && !otherRealmsListed;
             } else {
-                if (!expectedExitCode.equals("11")) {
+                if (!expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
                     stringsFound = 
 			cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath() + fileseparator + "famadm",
-                            "famadm ");
+                            cli.getCliPath(), "famadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage,
                             params);

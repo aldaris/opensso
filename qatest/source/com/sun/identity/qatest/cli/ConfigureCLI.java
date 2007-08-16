@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureCLI.java,v 1.1 2007-08-08 18:30:06 rmisra Exp $
+ * $Id: ConfigureCLI.java,v 1.2 2007-08-16 19:39:19 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,20 +26,27 @@ package com.sun.identity.qatest.cli;
 
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
+import com.sun.identity.qatest.common.cli.CLIUtility;
+import java.io.File;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import java.util.Map;
 import org.testng.Reporter;
 import org.testng.annotations.BeforeSuite;
 
 /**
  * This class verifies that the CLI can be executed on this host.
  */
-public class ConfigureCLI extends TestCommon {
+public class ConfigureCLI extends CLIUtility {
+    
+    ResourceBundle rb_amconfig = ResourceBundle.getBundle(
+                    TestConstants.TEST_PROPERTY_AMCONFIG); 
     
     /** Creates a new instance of ConfigureCLI */
     public ConfigureCLI() {
-        super("ConfigureCLI");
+        super(cliPath + System.getProperty("file.separator") + "setup");
     }
        
     /**
@@ -52,8 +59,6 @@ public class ConfigureCLI extends TestCommon {
     throws Exception {
         entering("configureCLI", null);
         try {
-            ResourceBundle rb_amconfig = ResourceBundle.getBundle(
-                    TestConstants.TEST_PROPERTY_AMCONFIG); 
             String amconfigHost = 
                     rb_amconfig.getString(TestConstants.KEY_AMC_HOST);
             log(Level.FINEST, "configureCLI", "Value of " + 
@@ -73,7 +78,32 @@ public class ConfigureCLI extends TestCommon {
                     Reporter.log("ERROR: The CLI tests must be run on the same host " +
                             "on which Federated Access Manager is deployed.");
                     assert false;
-                } 
+                }
+                
+                ResourceBundle rb_cli = ResourceBundle.getBundle("cliTest");
+                File cliDir = new File(rb_cli.getString("cli-path"));
+                String cliAbsPath = cliDir.getAbsolutePath();
+                File binDir = new File(new StringBuffer(cliAbsPath).
+                        append(fileseparator).append(uri).append(fileseparator).
+                        append("bin").toString());
+                if (!binDir.exists()) {
+                    if (cliDir.exists() && cliDir.isDirectory()) {
+                        configureTools();
+                        log(Level.FINE, "configureCLI", 
+                                "Sleeping for 30 seconds to create utilities");
+                        Thread.sleep(30000);
+                        if (!binDir.exists()) {
+                            log(Level.SEVERE, "configureCLI", 
+                                    "The setup script failed to create " + 
+                                    binDir.getAbsolutePath());
+                            assert false;
+                        }
+                    } else {
+                        log(Level.SEVERE, "configureCLI", "The directory " + 
+                                cliAbsPath + " is not a directory.");
+                        assert false;
+                    }
+                }
             } else {
                 log(Level.SEVERE, "configureCLI", "ERROR: Unable to get host " +
                         "name from " + amconfigHost + ".");
@@ -88,4 +118,16 @@ public class ConfigureCLI extends TestCommon {
         }
         exiting("configureCLI");
     } 
+    
+    /**
+     * Execute the setup script to configure the administration utilities.
+     */
+    private void configureTools() 
+    throws Exception {
+        clearArguments(2);
+        setArgument(1, "-p");
+        setArgument(2, rb_amconfig.getString(TestConstants.KEY_ATT_CONFIG_DIR));
+        executeCommand(60);
+        logCommand("configureTools");
+    }
 }

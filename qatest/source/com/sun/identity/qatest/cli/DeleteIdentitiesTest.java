@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentitiesTest.java,v 1.4 2007-08-07 23:35:20 rmisra Exp $
+ * $Id: DeleteIdentitiesTest.java,v 1.5 2007-08-16 19:39:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@
 
 package com.sun.identity.qatest.cli;
 
+import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
@@ -67,7 +68,7 @@ import org.testng.Reporter;
  * The properties file <code>DeleteIdentitiesTest.properties</code> contains 
  * the input values which are read by this class.
  */
-public class DeleteIdentitiesTest extends TestCommon {
+public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
     
     private String locTestName;
     private ResourceBundle rb;
@@ -135,21 +136,11 @@ public class DeleteIdentitiesTest extends TestCommon {
                     useLongOptions);
 
             int exitStatus = -1;
-            if (setupRealms != null) {
-                if (setupRealms.length() > 0) {
-                    StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
-                            ";");
-                    while (tokenizer.hasMoreTokens()) {
-                        String setupRealm = tokenizer.nextToken();
-                        exitStatus = cli.createRealm(setupRealm);
-                        cli.logCommand("setup");
-                        cli.resetArgList();
-                        if (exitStatus != 0) {
-                            assert false;
-                            log(Level.SEVERE, "setup", "The realm " + setupRealm
-                                    + " failed to be created.");
-                        }
-                    }
+            if (setupRealms != null && !setupRealms.equals("")) {
+                if (!cli.createRealms(setupRealms)) {
+                    log(Level.SEVERE, "setup", 
+                            "All the realms failed to be created.");
+                    assert false;
                 }
             }
             
@@ -182,7 +173,7 @@ public class DeleteIdentitiesTest extends TestCommon {
                             }
                             cli.logCommand("setup");
                             cli.resetArgList();
-                            if (exitStatus != 0) {
+                            if (exitStatus != SUCCESS_STATUS) {
                                 assert false;
                                 log(Level.SEVERE, "setup", "The identity " + 
                                         idName + " failed to be created.");
@@ -263,12 +254,14 @@ public class DeleteIdentitiesTest extends TestCommon {
             int commandStatus = cli.deleteIdentities(realmForId, 
                     idNamesToDelete, idTypeToDelete);
             cli.logCommand("testIdentityDeletion");
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";" + 
                         newline);
-            } else if (expectedExitCode.equals("11")) {
+            } else if (expectedExitCode.equals(
+                    new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
+                        cli.getCliPath(), "famadm ");
                 Object[] params = {argString};
                 String usageError = MessageFormat.format(expectedMessage, 
                         params);
@@ -299,7 +292,8 @@ public class DeleteIdentitiesTest extends TestCommon {
                 log(Level.FINEST, "setup", "idsNotDeleted: " + idsNotDeleted);
             }
 
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 for (Iterator i = idsNotDeleted.iterator(); i.hasNext(); ) {
                     FederationManagerCLI listCLI = 
                             new FederationManagerCLI(useDebugOption, 

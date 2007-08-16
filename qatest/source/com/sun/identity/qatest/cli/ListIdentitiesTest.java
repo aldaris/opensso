@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListIdentitiesTest.java,v 1.3 2007-08-07 23:35:21 rmisra Exp $
+ * $Id: ListIdentitiesTest.java,v 1.4 2007-08-16 19:39:19 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
 
-import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
+import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
@@ -62,7 +62,7 @@ import org.testng.Reporter;
  * CLI_list-identities28, CLI_list-identities29, CLI_list-identities30,
  * CLI_list-identities31, CLI_list-identities32.
  */
-public class ListIdentitiesTest extends TestCommon {
+public class ListIdentitiesTest extends TestCommon implements CLIExitCodes {
     
     private String locTestName;
     private ResourceBundle rb;
@@ -132,20 +132,11 @@ public class ListIdentitiesTest extends TestCommon {
                     useLongOptions);
 
             int exitStatus = -1;
-            if (setupRealms != null) {
-                if (setupRealms.length() > 0) {
-                    String [] realms = setupRealms.split(";");
-                    for (int i=0; i < realms.length; i++) {
-                        log(Level.FINEST, "setup", "Setup realms:" + realms[i]);
-                        exitStatus = cli.createRealm(realms[i]);
-                        cli.logCommand("setup");
-                        cli.resetArgList();
-                        if (exitStatus != 0) {
-                            assert false;
-                            log(Level.SEVERE, "setup", "The realm " + realms[i]
-                                    + " failed to be created.");
-                        }
-                    }
+            if (setupRealms != null && !setupRealms.equals("")) {
+                if (!cli.createRealms(setupRealms)) {
+                    log(Level.SEVERE, "setup", 
+                            "All the realms failed to be created.");
+                    assert false;
                 }
             }
             
@@ -177,7 +168,7 @@ public class ListIdentitiesTest extends TestCommon {
                             }
                             cli.logCommand("setup");
                             cli.resetArgList();
-                            if (exitStatus != 0) {
+                            if (exitStatus != SUCCESS_STATUS) {
                                 assert false;
                                 log(Level.SEVERE, "setup", "The creation of " + 
                                         idName + " failed with exit status " +
@@ -230,34 +221,6 @@ public class ListIdentitiesTest extends TestCommon {
             Reporter.log("SearchRealm: " + searchRealm);            
             Reporter.log("IdTypeToSearch: " + idTypeToSearch);
 
-            String msg = (String) rb.getString(locTestName + 
-                    "-message-to-find");  
-            if (expectedExitCode.equals("0")) {
-                Object[] params = {searchRealm, idTypeToSearch}; 
-                if (msg.equals("")) {           
-                    if (!useVerboseOption) {
-                        String successString = 
-                                (String) rb.getString("success-message");
-                        expectedMessage = 
-                                MessageFormat.format(successString, params);
-                    } else {
-                        String verboseSuccessString = 
-                                (String) rb.getString(
-                                "verbose-success-message");
-                        expectedMessage = 
-                                MessageFormat.format(verboseSuccessString,
-                                params);
-                    }
-                } else {
-                    expectedMessage = 
-                            MessageFormat.format(msg, params);
-                }
-            } else if (expectedExitCode.equals("11")) {
-                expectedMessage = (String) rb.getString("usage");
-            } else {
-                expectedMessage = msg;                
-            }
-
             searchFilter = (String) rb.getString(locTestName + 
                     "-search-filter");                    
             idNamesToFind = (String) rb.getString(locTestName + 
@@ -292,9 +255,31 @@ public class ListIdentitiesTest extends TestCommon {
             commandStatus = cli.listIdentities(searchRealm, searchFilter, 
                     idTypeToSearch);
             cli.logCommand("testIdentitySearch");
-            
-            if (expectedExitCode.equals("0")) {
+
+            String msg = (String) rb.getString(locTestName + 
+                    "-message-to-find");  
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 cli.resetArgList();
+                Object[] params = {searchRealm, idTypeToSearch}; 
+                if (msg.equals("")) {           
+                    if (!useVerboseOption) {
+                        String successString = 
+                                (String) rb.getString("success-message");
+                        expectedMessage = 
+                                MessageFormat.format(successString, params);
+                    } else {
+                        String verboseSuccessString = 
+                                (String) rb.getString(
+                                "verbose-success-message");
+                        expectedMessage = 
+                                MessageFormat.format(verboseSuccessString,
+                                params);
+                    }
+                } else {
+                    expectedMessage = 
+                            MessageFormat.format(msg, params);
+                }                
                 if (!idNamesToFind.equals("")) {
                     idsFound = cli.findIdentities(searchRealm, searchFilter,
                         idTypeToSearch, idNamesToFind); 
@@ -303,9 +288,11 @@ public class ListIdentitiesTest extends TestCommon {
                 }
                 cli.logCommand("testIdentitySearch");
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
-            } else if (expectedExitCode.equals("11")) {
+            } else if (expectedExitCode.equals(
+                    new Integer(INVALID_OPTION_STATUS).toString())) {
+                expectedMessage = (String) rb.getString("usage");                
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
+                        cli.getCliPath(), "famadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -313,13 +300,15 @@ public class ListIdentitiesTest extends TestCommon {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");                
                 errorFound = cli.findStringsInError(usageError, ";");
             } else {
+                expectedMessage = msg;      
                 errorFound = cli.findStringsInError(expectedMessage, ";");
             }
             cli.resetArgList();
                    
             log(Level.FINEST, "testIdentitySearch", "Exit status: " + 
                     commandStatus);
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 log(Level.FINEST, "testIdentitySearch", 
                         "Output Messages Found: " + stringsFound);
                 log(Level.FINEST, "testIdentitySearch", "Identities Found: " + 
@@ -330,7 +319,8 @@ public class ListIdentitiesTest extends TestCommon {
             } else {
                 log(Level.FINEST, "testIdentitySearch", "Error Messages Found: "
                         + errorFound);
-                if (expectedExitCode.equals("11")) {
+                if (expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
                     log(Level.FINEST, "testIdentitySearch", 
                             "Output Messages Found: " + stringsFound); 
                     assert (commandStatus == 
@@ -392,7 +382,7 @@ public class ListIdentitiesTest extends TestCommon {
                                     cli.deleteIdentities(idRealm, idName, 
                                     idType);
                             cli.resetArgList();
-                            if (exitStatus != 0) {
+                            if (exitStatus != SUCCESS_STATUS) {
                                 assert false;
                             }
                         } else {
@@ -413,7 +403,7 @@ public class ListIdentitiesTest extends TestCommon {
                     exitStatus = cli.deleteRealm(realms[i], true); 
                     cli.logCommand("cleanup");
                     cli.resetArgList();
-                    if (exitStatus != 0) {
+                    if (exitStatus != SUCCESS_STATUS) {
                         assert false;
                     }
                 } 

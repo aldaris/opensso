@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowMembersTest.java,v 1.3 2007-08-10 20:44:28 cmwesley Exp $
+ * $Id: ShowMembersTest.java,v 1.4 2007-08-16 19:39:19 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
 
+import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
@@ -59,7 +60,7 @@ import org.testng.Reporter;
  * CLI_show-members19, CLI_show-members20, CLI_show-members21, 
  * CLI_show-members22, CLI_show-members23, CLI_show-members24
  */
-public class ShowMembersTest extends TestCommon {
+public class ShowMembersTest extends TestCommon implements CLIExitCodes {
     
     private String locTestName;
     private ResourceBundle rb;
@@ -138,20 +139,11 @@ public class ShowMembersTest extends TestCommon {
                     useLongOptions);
             
             int exitStatus = -1;
-            if (setupRealms != null) {
-                if (setupRealms.length() > 0) {
-                    String [] realms = setupRealms.split(";");
-                    for (int i=0; i < realms.length; i++) {
-                        log(Level.FINE, "setup", "Creating realm " + realms[i]);
-                        exitStatus = cli.createRealm(realms[i]);
-                        cli.logCommand("setup");
-                        cli.resetArgList();
-                        if (exitStatus != 0) {
-                            assert false;
-                            log(Level.SEVERE, "setup", "The realm " + realms[i]
-                                    + " failed to be created.");
-                        }
-                    }
+            if (setupRealms != null && !setupRealms.equals("")) {
+                if (!cli.createRealms(setupRealms)) {
+                    log(Level.SEVERE, "setup", 
+                            "All the realms failed to be created.");
+                    assert false;
                 }
             }
             
@@ -183,7 +175,7 @@ public class ShowMembersTest extends TestCommon {
                             }
                             cli.logCommand("setup");
                             cli.resetArgList();
-                            if (exitStatus != 0) {
+                            if (exitStatus != SUCCESS_STATUS) {
                                 assert false;
                                 log(Level.SEVERE, "setup", "The creation of " + 
                                         idName + " failed with exit status " +
@@ -235,7 +227,7 @@ public class ShowMembersTest extends TestCommon {
                                         setupIdName, setupIdType);
                                 cli.logCommand("setup");
                                 cli.resetArgList();
-                                if (exitStatus != 0) {
+                                if (exitStatus != SUCCESS_STATUS) {
                                     log(Level.SEVERE, "setup", "The addition of " + 
                                             setupMemberName + " as a member in " + 
                                             setupIdName + 
@@ -331,7 +323,8 @@ public class ShowMembersTest extends TestCommon {
             
             String msg = (String) rb.getString(locTestName + 
                     "-message-to-find");  
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 Object[] params = {searchRealm, idName, memberType}; 
                 if (msg.equals("")) {           
                     if (!useVerboseOption) {
@@ -351,7 +344,8 @@ public class ShowMembersTest extends TestCommon {
                     expectedMessage = 
                             MessageFormat.format(msg, params);
                 }
-            } else if (expectedExitCode.equals("11")) {
+            } else if (expectedExitCode.equals(
+                    new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");
             } else {
                 expectedMessage = msg;                
@@ -362,7 +356,8 @@ public class ShowMembersTest extends TestCommon {
             cli.logCommand("testIdentitySearch");
             cli.resetArgList();
             
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 cli.resetArgList();
                 if (!membersToFind.equals("")) {
                     membersFound = cli.findMembers(searchRealm, idName, idType,
@@ -372,9 +367,10 @@ public class ShowMembersTest extends TestCommon {
                 }
                 cli.logCommand("testIdentitySearch");
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
-            } else if (expectedExitCode.equals("11")) {
+            } else if (expectedExitCode.equals(
+                    new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
+                        cli.getCliPath(), "famadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -388,7 +384,8 @@ public class ShowMembersTest extends TestCommon {
                    
             log(Level.FINEST, "testIdentitySearch", "Exit status: " + 
                     commandStatus);
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 log(Level.FINEST, "testIdentitySearch", 
                         "Output Messages Found: " + stringsFound);
                 log(Level.FINEST, "testIdentitySearch", "Members Found: " + 
@@ -399,7 +396,8 @@ public class ShowMembersTest extends TestCommon {
             } else {
                 log(Level.FINEST, "testIdentitySearch", "Error Messages Found: "
                         + errorFound);
-                if (expectedExitCode.equals("11")) {
+                if (expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
                     log(Level.FINEST, "testIdentitySearch", 
                             "Output Messages Found: " + stringsFound); 
                     assert (commandStatus == 
@@ -479,7 +477,7 @@ public class ShowMembersTest extends TestCommon {
                             remainingIdName, remainingIdType);
                     cli.logCommand("cleanup");
                     cli.resetArgList();
-                    if (exitStatus != 0) {
+                    if (exitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup", 
                                 "ERROR: The member " + remainingMemberName + 
                                 " was not removed from " + remainingIdName + 
@@ -525,7 +523,7 @@ public class ShowMembersTest extends TestCommon {
                                     idType);
                             cli.logCommand("cleanup");
                             cli.resetArgList();
-                            if (exitStatus != 0) {
+                            if (exitStatus != SUCCESS_STATUS) {
                                 log(Level.SEVERE, "cleanup", 
                                         "Removal of identity " + idName + 
                                         " failed with exit status " + 
@@ -550,7 +548,7 @@ public class ShowMembersTest extends TestCommon {
                     exitStatus = cli.deleteRealm(realms[i], true); 
                     cli.logCommand("cleanup");
                     cli.resetArgList();
-                    if (exitStatus != 0) {
+                    if (exitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup", "The removal of realm " + 
                                 realms[i] + " failed with exit status " + 
                                 exitStatus);

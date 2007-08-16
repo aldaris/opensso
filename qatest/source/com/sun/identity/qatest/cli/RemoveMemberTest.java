@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveMemberTest.java,v 1.3 2007-08-07 23:35:21 rmisra Exp $
+ * $Id: RemoveMemberTest.java,v 1.4 2007-08-16 19:39:19 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
 
+import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
@@ -57,7 +58,7 @@ import org.testng.Reporter;
  * CLI_remove-member13, CLI_remove-member14, CLI_remove-member15, 
  * CLI_remove-member16
  */
-public class RemoveMemberTest extends TestCommon {
+public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
     
     private String locTestName;
     private ResourceBundle rb;
@@ -137,20 +138,11 @@ public class RemoveMemberTest extends TestCommon {
                     useLongOptions);
             
             int exitStatus = -1;
-            if (setupRealms != null) {
-                if (setupRealms.length() > 0) {
-                    String [] realms = setupRealms.split(";");
-                    for (int i=0; i < realms.length; i++) {
-                        log(Level.FINE, "setup", "Creating realm " + realms[i]);
-                        exitStatus = cli.createRealm(realms[i]);
-                        cli.logCommand("setup");
-                        cli.resetArgList();
-                        if (exitStatus != 0) {
-                            assert false;
-                            log(Level.SEVERE, "setup", "The realm " + realms[i]
-                                    + " failed to be created.");
-                        }
-                    }
+            if (setupRealms != null && !setupRealms.equals("")) {
+                if (!cli.createRealms(setupRealms)) {
+                    log(Level.SEVERE, "setup", 
+                            "All the realms failed to be created.");
+                    assert false;
                 }
             }
             
@@ -182,7 +174,7 @@ public class RemoveMemberTest extends TestCommon {
                             }
                             cli.logCommand("setup");
                             cli.resetArgList();
-                            if (exitStatus != 0) {
+                            if (exitStatus != SUCCESS_STATUS) {
                                 assert false;
                                 log(Level.SEVERE, "setup", "The creation of " + 
                                         idName + " failed with exit status " +
@@ -234,7 +226,7 @@ public class RemoveMemberTest extends TestCommon {
                                     setupIdName, setupIdType);
                             cli.logCommand("setup");
                             cli.resetArgList();
-                            if (exitStatus != 0) {
+                            if (exitStatus != SUCCESS_STATUS) {
                                 log(Level.SEVERE, "setup", "The addition of " + 
                                         setupMemberName + " as a member in " + 
                                         setupIdName + 
@@ -337,7 +329,8 @@ public class RemoveMemberTest extends TestCommon {
 
             String msg = (String) rb.getString(locTestName + 
                     "-message-to-find");  
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 StringBuffer removeIdBuffer = new StringBuffer(realmForId).
                         append(",").append(memberIdNameToDelete).append(",").
                         append(memberIdTypeToDelete).append(",").append(idName).
@@ -366,9 +359,10 @@ public class RemoveMemberTest extends TestCommon {
                     expectedMessage = MessageFormat.format(msg, params);
                 }
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
-            } else if (expectedExitCode.equals("11")) {
+            } else if (expectedExitCode.equals(
+                    new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
+                        cli.getCliPath(), "famadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -381,7 +375,8 @@ public class RemoveMemberTest extends TestCommon {
             }
             cli.resetArgList();
             
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 for (Iterator i = membersNotRemoved.iterator(); i.hasNext(); ) {                
                     FederationManagerCLI listCLI = 
                             new FederationManagerCLI(useDebugOption, 
@@ -424,7 +419,8 @@ public class RemoveMemberTest extends TestCommon {
                             remainingMemberRemoved = true;
                             log(Level.SEVERE, "testMemberRemoval", 
                                     "ERROR: The member " + remainingMemberName + 
-                                    " was removed from " + remainingIdName + ".");
+                                    " was removed from " + 
+                                    remainingIdName + ".");
                         } else {
                             log(Level.FINEST, "testMemberRemoval", 
                                     "The member identity " + remainingMemberName
@@ -463,7 +459,8 @@ public class RemoveMemberTest extends TestCommon {
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound &&
                         !remainingMemberRemoved && !memberRemovedFound;
-            } else if (expectedExitCode.equals("11")) {
+            } else if (expectedExitCode.equals(
+                    new Integer(INVALID_OPTION_STATUS).toString())) {
                  log(Level.FINEST, "testMemberRemoval", 
                         "Output Messages Found: " + stringsFound);   
                  log(Level.FINEST, "testMemberRemoval", 
@@ -542,7 +539,7 @@ public class RemoveMemberTest extends TestCommon {
                     exitStatus = cli.removeMember(remainingIdRealm, 
                             remainingMemberName, remainingMemberType, 
                             remainingIdName, remainingIdType);
-                    if (exitStatus != 0) {
+                    if (exitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup", 
                                 "ERROR: The member " + remainingMemberName + 
                                 " was not removed from " + remainingIdName + 
@@ -587,7 +584,7 @@ public class RemoveMemberTest extends TestCommon {
                                     cli.deleteIdentities(idRealm, idName, 
                                     idType);
                             cli.resetArgList();
-                            if (exitStatus != 0) {
+                            if (exitStatus != SUCCESS_STATUS) {
                                 log(Level.SEVERE, "cleanup", 
                                         "Removal of identity " + idName + 
                                         "failed with exit status " + 
@@ -612,7 +609,7 @@ public class RemoveMemberTest extends TestCommon {
                     exitStatus = cli.deleteRealm(realms[i], true); 
                     cli.logCommand("cleanup");
                     cli.resetArgList();
-                    if (exitStatus != 0) {
+                    if (exitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup", "The removal of realm " + 
                                 realms[i] + " failed with exit status " + 
                                 exitStatus);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.4 2007-08-07 23:35:20 rmisra Exp $
+ * $Id: CreateIdentityTest.java,v 1.5 2007-08-16 19:39:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,11 +35,13 @@
  * CLI_create-identity25, CLI_create-identity26, CLI_create-identity27,
  * CLI_create-identity28, CLI_create-identity29, CLI_create-identity30, 
  * CLI_create-identity31, CLI_create-identity32, CLI_create-identity33, 
- * CLI_create-identity34, and CLI_create-identity35.
+ * CLI_create-identity34, CLI_create-identity35, CLI_create-identity36,
+ * CLI_create-identity37, CLI_create-identity38, CLI_create-identity39.
  */
 
 package com.sun.identity.qatest.cli;
 
+import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
@@ -63,7 +65,7 @@ import org.testng.Reporter;
  * <code>CreateIdentityTest.properties</code> contains the input values which 
  * are read by this class.
  */
-public class CreateIdentityTest extends TestCommon {
+public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
     
     private String locTestName;
     private ResourceBundle rb;
@@ -132,15 +134,11 @@ public class CreateIdentityTest extends TestCommon {
             cli = new FederationManagerCLI(useDebugOption, useVerboseOption, 
                     useLongOptions);
             
-            if (setupRealms != null) {
-                if (setupRealms.length() > 0) {
-                    StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
-                            ";");
-                    while (tokenizer.hasMoreTokens()) {
-                        cli.createRealm(tokenizer.nextToken());
-                        cli.logCommand("setup");
-                        cli.resetArgList();
-                    }
+            if (setupRealms != null && !setupRealms.equals("")) {
+                if (!cli.createRealms(setupRealms)) {
+                    log(Level.SEVERE, "setup", 
+                            "All the realms failed to be created.");
+                    assert false;
                 }
             }
             
@@ -258,16 +256,17 @@ public class CreateIdentityTest extends TestCommon {
                     useDatafileOption);
             cli.logCommand("testIdentityCreation");
 
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
             } else {
-                if (!expectedExitCode.equals("11")) {
+                if (!expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
                     stringsFound = 
 			cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath() + fileseparator + "famadm",
-                            "famadm ");
+                            cli.getCliPath(), "famadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage,
                             params);
@@ -287,7 +286,8 @@ public class CreateIdentityTest extends TestCommon {
                         "identity " + idNameToCreate + " Found: " + idFound);
             }
 
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 log(logLevel, "testIdentityCreation", "Output Messages Found: "
                         + stringsFound);
                 log(logLevel, "testIdentityCreation", "ID Found: " + 
@@ -362,7 +362,7 @@ public class CreateIdentityTest extends TestCommon {
                                     cli.deleteIdentities(idRealm, idName, 
                                     idType);
                             cli.resetArgList();
-                            if (exitStatus != 0) {
+                            if (exitStatus != SUCCESS_STATUS) {
                                 assert false;
                             }
                         } else {
@@ -383,7 +383,7 @@ public class CreateIdentityTest extends TestCommon {
                     exitStatus = cli.deleteRealm(realms[i], true); 
                     cli.logCommand("cleanup");
                     cli.resetArgList();
-                    if (exitStatus != 0) {
+                    if (exitStatus != SUCCESS_STATUS) {
                         assert false;
                     }
                 } 

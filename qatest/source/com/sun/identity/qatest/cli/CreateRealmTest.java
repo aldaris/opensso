@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealmTest.java,v 1.6 2007-08-07 23:35:20 rmisra Exp $
+ * $Id: CreateRealmTest.java,v 1.7 2007-08-16 19:39:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@
 
 package com.sun.identity.qatest.cli;
 
+import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
@@ -54,7 +55,7 @@ import org.testng.Reporter;
  * <code>CreateRealmTest.properties</code> contains the input values which are 
  * read by this class.
  */
-public class CreateRealmTest extends TestCommon {
+public class CreateRealmTest extends TestCommon implements CLIExitCodes {
     
     private String locTestName;
     private ResourceBundle rb;
@@ -112,17 +113,11 @@ public class CreateRealmTest extends TestCommon {
             cli = new FederationManagerCLI(useDebugOption, useVerboseOption, 
                     useLongOptions);
             
-            if (setupRealms != null) {
-                if (setupRealms.length() > 0) {
-                    String [] realms = setupRealms.split(";");
-                    for (int i=0; i < realms.length; i++) {
-                        int exitStatus = cli.createRealm(realms[i]);
-                        cli.logCommand("setup");
-                        cli.resetArgList();
-                        if (exitStatus != 0) {
-                            assert false;
-                        }
-                    }
+            if (setupRealms != null && !setupRealms.equals("")) {
+                if (!cli.createRealms(setupRealms)) {
+                    log(Level.SEVERE, "setup", 
+                            "All the realms failed to be created.");
+                    assert false;
                 }
             }
             exiting("setup");
@@ -189,7 +184,8 @@ public class CreateRealmTest extends TestCommon {
                         realmToCreate + " Found: " + realmFound);
             }
 
-            if (expectedExitCode.equals("0")) {
+            if (expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
                 log(Level.FINEST, "testRealmCreation", 
                         "Output Messages Found: " + stringsFound);
@@ -197,13 +193,13 @@ public class CreateRealmTest extends TestCommon {
                     new Integer(expectedExitCode).intValue()) && 
 			stringsFound && realmFound;
             } else {
-                if (!expectedExitCode.equals("11")) {
+                if (!expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
                     stringsFound = 
 			cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath() + fileseparator + "famadm", 
-                            "famadm ");
+                            cli.getCliPath(), "famadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage, 
                             params);
@@ -261,7 +257,7 @@ public class CreateRealmTest extends TestCommon {
                         int exitStatus = cli.deleteRealm(realms[i], true); 
                         cli.logCommand("cleanup");
                         cli.resetArgList();
-                        if (exitStatus != 0) {
+                        if (exitStatus != SUCCESS_STATUS) {
                             assert false;
                         }
                     }
