@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2007-08-09 07:14:34 veiming Exp $
+   $Id: build.xml,v 1.7 2007-08-17 17:18:32 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -57,12 +57,18 @@
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
 
+        <mkdir dir="${openfm.classes.dir}/com/sun/identity/log/messageid"/>
+        <copy todir="${openfm.classes.dir}/com/sun/identity/log/messageid">
+            <fileset dir="${library.xmllog.dir}">
+                <include name="SAML2LogMessageIDs.xml"/>
+                <include name="COTLogMessageIDs.xml"/>
+            </fileset>
+        </copy>
         <jar destfile="${fm.dist.dir}/famclientsdk.jar" duplicate="preserve">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
-
             <fileset dir="${library.classes.dir}">
                 <includesfile name="${fedlibrary.clientsdkbase.dir}/ClientSDKClasses"/>
             </fileset>
@@ -74,6 +80,15 @@
             </fileset>
             <fileset dir="${openfm.res.i18n.dir}">
                 <includesfile name="${openfm.clientsdkbase.dir}/ClientSDKProperties"/>
+            </fileset>
+            <fileset dir="${amserver.classes.dir}">
+                <filename name="com/sun/identity/log/messageid/*.*"/>
+                <not>
+                    <filename name="com/sun/identity/log/messageid/*.xml"/>
+                </not>
+            </fileset>
+            <fileset dir="${openfm.classes.dir}">
+                 <filename name="com/sun/identity/log/messageid/*.xml"/>
             </fileset>
             <manifest>
                <attribute name="Created-On" value="${pstamp}" />
@@ -106,6 +121,7 @@
 
     <target name="clean">
         <delete dir="${fm.dist.dir}"/>
+        <delete dir="${openfm.classes.dir}/com/sun/identity/log/messageid"/>
     </target>
    
 </project>

@@ -1,5 +1,6 @@
 com/sun/identity/common/SystemConfigurationException.class
 com/sun/identity/common/SystemConfigurationUtil.class
+com/sun/identity/cot/*.class
 com/sun/identity/configuration/FedLibSystemProperties.class
 com/sun/identity/federation/common/FSException.class
 com/sun/identity/federation/common/FSUtils.class
@@ -425,6 +426,7 @@ com/sun/identity/saml2/common/SAML2Exception.class
 com/sun/identity/saml2/common/SAML2SDKUtils.class
 com/sun/identity/saml2/key/EncInfo.class
 com/sun/identity/saml2/key/KeyUtil.class
+com/sun/identity/saml2/logging/LogUtil.class
 com/sun/identity/saml2/meta/NamespacePrefixMapperImpl.class
 com/sun/identity/saml2/meta/SAML2COTUtils.class
 com/sun/identity/saml2/meta/SAML2MetaCache.class
@@ -493,8 +495,9 @@ com/sun/identity/saml2/xmlenc/FMEncProvider.class
 com/sun/identity/saml2/xmlsig/FMSigProvider.class
 com/sun/identity/saml2/xmlsig/SigManager.class
 com/sun/identity/saml2/xmlsig/SigProvider.class
-com/sun/identity/saml2/common/SAML2Utils.class
 com/sun/identity/saml2/soapbinding/QueryClient.class
+com/sun/identity/wsfederation/common/WSFederationException.class
+com/sun/identity/wsfederation/meta/WSFederationMetaException.class
 com/sun/liberty/INameIdentifier.class
 com/sun/liberty/jaxrpc/LibertyClientSSOTokenListener.class
 com/sun/liberty/jaxrpc/LibertyManagerClient.class
@@ -523,4 +526,3 @@ com/sun/identity/liberty/ws/idpp/jaxb/**/*.*
 com/sun/identity/liberty/ws/paos/jaxb/**/*.*
 com/sun/identity/saml2/jaxb/**/*.*
 com/sun/identity/xmlenc/**/*.*
-

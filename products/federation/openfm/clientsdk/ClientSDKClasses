@@ -3,6 +3,7 @@ com/sun/identity/liberty/ws/soapbinding/WebServiceAuthenticatorImpl.class
 com/sun/identity/plugin/configuration/impl/ConfigurationActionEventImpl.class
 com/sun/identity/plugin/configuration/impl/ConfigurationInstanceImpl.class
 com/sun/identity/plugin/configuration/impl/ServiceListenerImpl.class
+com/sun/identity/plugin/log/impl/LogProvider.class
 com/sun/identity/plugin/session/impl/FMSessionProvider.class
 com/sun/identity/plugin/session/impl/FMSessionProvider$SSOTokenListenerImpl.class
 com/sun/identity/saml/xmlsig/FMPasswordDecoder.class
