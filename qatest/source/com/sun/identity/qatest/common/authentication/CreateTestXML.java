@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateTestXML.java,v 1.3 2007-06-22 21:48:37 sridharev Exp $
+ * $Id: CreateTestXML.java,v 1.4 2007-08-17 20:06:20 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -186,6 +186,7 @@ public class CreateTestXML {
             fileName = baseDirectory + strIdentifier + "-goto.xml";
         } else {
             fileName = baseDirectory  + strIdentifier + "-gotofail.xml";
+			password = password + "tofail";
         }
         PrintWriter out = new PrintWriter(new BufferedWriter
                 (new FileWriter(fileName)));
