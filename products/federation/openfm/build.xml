@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.17 2007-08-01 21:04:50 superpat7 Exp $
+   $Id: build.xml,v 1.18 2007-08-17 22:22:33 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -117,6 +117,7 @@
     <target name="nightly">
         <antcall target="war" />
         <antcall target="tools" />
+        <antcall target="zip" />
         <antcall target="unittest" />
         <antcall target="clientsdk" />
         <antcall target="samples" />
@@ -127,6 +128,10 @@
         <copy file="${openfm.docs.dir}/nightly.html" tofile="${fm.dist.dir}/index.html" filtering="true" />
     </target>
 
+    <target name="zip" depends="war tools">
+        <ant antfile="${openfm.dir}/build-zip.xml" inheritRefs="true"/>
+    </target>
+    
     <target name="war" depends="jars">
         <ant antfile="${openfm.dir}/build-war.xml" inheritRefs="true"/>
     </target>
@@ -287,6 +292,7 @@
         <echo message=" idpdiscovery        : generates IDP discovery service war file"/>
         <echo message=" war                 : creates WAR for deployment"/>
         <echo message=" tools               : creates tools zip"/>
+        <echo message=" zip                 : creates zip file"/>
         <echo message=" clientsdk           : creates client SDK jar file"/>
         <echo message=" doc                 : creates javadocs"/>
         <echo message=" clean               : deletes the generated files"/>

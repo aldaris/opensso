@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build-zip.xml,v 1.1 2007-08-17 22:22:33 kevinserwin Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="openfmzip" default="all" basedir=".">
+    <description>Open Federation: fam.zip Creation</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** zip may be built from top level only ***">
+        <condition>
+            <not><isset property="openfm.built.dir"/></not>
+        </condition>
+    </fail>
+
+    <property name="zip.temp.dir" value="${openfm.built.dir}/.zip" />
+
+    <target name="all">
+        <delete dir="${zip.temp.dir}" />
+        <mkdir dir="${zip.temp.dir}" />
+
+        <copy file="${openfm.dir}/license.txt"
+            tofile="${zip.temp.dir}/license.txt" />
+        <copy file="${openfm.dir}/docs/README.famzip"
+            tofile="${zip.temp.dir}/README" />
+            
+        <copy file="${openfm.dir}/deployable-war/distauth.list"
+            tofile="${zip.temp.dir}/deployable-war/distauth.list" />
+        <copy file="${openfm.dir}/deployable-war/famconsole.list"
+            tofile="${zip.temp.dir}/deployable-war/famconsole.list" />
+        <copy file="${fm.dist.dir}/fam.war"
+            tofile="${zip.temp.dir}/deployable-war/fam.war" />
+            
+        <copy file="${openfm.dir}/docs/README"
+            tofile="${zip.temp.dir}/docs/README" />
+        <copy file="${openfm.dir}/ldif/README"
+            tofile="${zip.temp.dir}/ldif/README" />
+        <copy todir="${zip.temp.dir}/ldif">
+            <fileset dir="${openfm.dir}/ldif" includes="**/*.ldif"/>
+        </copy>            
+        <copy todir="${zip.temp.dir}/libraries/jars">
+            <fileset file="${fm.dist.dir}/famclient.jar" />
+            <fileset dir="${extlib.dir}" includes="jsr173_api.jar" />
+        </copy>
+
+        <zip destfile="${fm.dist.dir}/fam.zip" whenempty="create">
+            <zipfileset dir="${zip.temp.dir}" filemode="755">
+                <include name="setup"/>
+            </zipfileset>
+            <zipfileset dir="${zip.temp.dir}">
+                <exclude name="setup"/>
+            </zipfileset>
+        </zip>
+
+        <checksum file="${fm.dist.dir}/fam.zip"
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${tools.temp.dir}" />
+    </target>
+</project>
