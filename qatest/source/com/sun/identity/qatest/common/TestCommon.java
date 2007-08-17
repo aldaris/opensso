@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.17 2007-08-14 23:41:39 rmisra Exp $
+ * $Id: TestCommon.java,v 1.18 2007-08-17 22:46:27 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -774,5 +774,41 @@ public class TestCommon implements TestConstants {
         }
         log(Level.FINEST, "getAttributeMap", map);
         return (map);
+    }
+
+    /**
+     * Returns set of string. This is a convenient method for adding multipe set
+     * of string into a map. The value contains the multiple string sepearete by
+     * token string.
+     */
+    protected static Set<String> putSetIntoMap(
+            String key,
+            Map<String, Set<String>> map,
+            String value,
+            String token
+            )
+    throws Exception {
+        StringTokenizer stk = new StringTokenizer(value, token);
+        Set<String> setValue = new HashSet<String>();
+        while (stk.hasMoreTokens()) {
+            setValue.add(stk.nextToken());
+        }
+        map.put(key, setValue);
+        return setValue;
+    }
+
+    /**
+     * Concatenates second set to a first set
+     * @param set1 first set
+     * @param set2 second set to be concatenated with the first set
+     */
+    protected static void concatSet(Set set1, Set set2)
+    throws Exception {
+        Iterator keyIter = set2.iterator();
+        String item;
+        while (keyIter.hasNext()) {
+            item = (String)keyIter.next();
+            set1.add(item);
+        }
     }
 }
