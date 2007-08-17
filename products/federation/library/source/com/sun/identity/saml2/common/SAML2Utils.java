@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.8 2007-08-02 18:18:42 bina Exp $
+ * $Id: SAML2Utils.java,v 1.9 2007-08-17 22:48:10 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,6 +95,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -2664,6 +2665,191 @@ public class SAML2Utils extends SAML2SDKUtils {
             (destination != null) && (destination.length() != 0) &&
             (location.equalsIgnoreCase(destination)));  
     }    
+
+    /**
+     * Retrieves SAE related attributes from exended metadata.
+     * @param realm realm the FM provider is in
+     * @param entityId the entity ID of the FM provider
+     * @param role Role of the FM provider
+     * @param appUrl application url
+     * @return Map containing SAE parameters or null in case of error.
+     */
+    public static Map getSAEAttrs(
+        String realm, String entityId, String role, String appUrl)
+    {
+        if (appUrl == null || appUrl.length() == 0) {
+            return null;
+        }
+        try {
+            IDPSSOConfigElement idpConfig = null;
+            SPSSOConfigElement spConfig = null;
+            Map attrs = null;
+
+            if (role.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
+                spConfig =
+                    saml2MetaManager.getSPSSOConfig(realm, entityId);
+                if (spConfig == null) {
+                    return null;
+                }
+                attrs = SAML2MetaUtils.getAttributes(spConfig);
+            } else {
+                idpConfig =
+                    saml2MetaManager.getIDPSSOConfig(realm, entityId);
+                if (idpConfig == null) {
+                    debug.message("SAML2Utils.getSAEAttrs: idpconfig is null");
+                    return null;
+                }
+                attrs = SAML2MetaUtils.getAttributes(idpConfig);
+            }
+
+            if (attrs == null) {
+                debug.message("SAML2Utils.getSAEAttrs: no extended attrs");
+                return null;
+            }
+            List values = (List) attrs.get(SAML2Constants.SAE_APP_SECRET_LIST);
+            if (values != null && values.size() != 0) {
+                Iterator iter = values.iterator();
+                while (iter.hasNext()) {
+                    String value = (String) iter.next();
+                    if (debug.messageEnabled()) {
+                        debug.message("SAML2Utils.getSAEAttrs: value="+ value);
+                    }
+
+                    StringTokenizer st = new StringTokenizer(value,"|");
+                    HashMap hp = null;
+                    while (st.hasMoreTokens()) {
+                        String tok = (String) st.nextToken();
+                        int idx = tok.indexOf("=");
+                        String name = tok.substring(0, idx);
+                        String val = tok.substring(idx+1, tok.length());
+                        if (debug.messageEnabled()) {
+                            debug.message("SAML2Utils.getSAEAttrs: tok:name="
+                                           +name+" val="+val);;
+                        }
+                        if (SAML2Constants.SAE_XMETA_URL.equals(name) ) {
+                            if (appUrl.startsWith(val)) {
+                                hp = new HashMap();
+                            } else {
+                                break;
+                            }
+                        } else if (SAML2Constants.SAE_XMETA_SECRET.equals(name))
+                        {
+                            val = SAMLUtilsCommon.decodePassword(val);
+                        }
+                        hp.put(name, val);
+                    }
+                    if (hp != null) {
+                        String alias = SAML2Utils.getSigningCertAlias(
+                            realm, entityId, role);
+                        if (alias != null)
+                            hp.put(SAML2Constants.SAE_XMETA_PKEY_ALIAS, alias);
+                        if (debug.messageEnabled()) {
+                            debug.message(
+                                "SAML2Utils.getSAEAttrs: PKEY="+alias+":");
+                        }
+                        return hp;
+                    }
+                }
+            }
+        } catch (SAML2MetaException e) {
+            debug.message("get SSOConfig failed:", e);
+        }
+        return null;
+    }
+
+    /**
+     * Obtains the value of NameID from Response.
+     * @param response <code>Response</code> object
+     * @return value of the NameID from the first Assertion in the response.
+     *    null if the response is null, or no assertion in the response, or
+     *    no NameID in the assertion.
+     */
+    public static String getNameIDStringFromResponse(Response response) {
+        if (response != null) {
+            List assertions = response.getAssertion();
+            if ((assertions != null) && (assertions.size() > 0)) {
+                Assertion assertion = (Assertion) assertions.get(0);
+                Subject subject = assertion.getSubject();
+                if (subject != null) {
+                    NameID nameID = subject.getNameID();
+                    if (nameID != null) {
+                        return nameID.getValue();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Writes  a log record in SAML2 access log.
+     * (fmSAML2.access)
+     * @param level indicating log level
+     * @param msgid Message id
+     * @param data string array of dynamic data only known during run time
+     * @param tok Session of authenticated user
+     * @param props log record columns - used if tok is not available
+     *        to specify log record columns such as ip address, realm, etc
+     */
+
+    public static void logAccess(Level lvl, String msgid,
+                   String[] data, Object tok,
+                   String ipaddr, String userid,
+                   String org, String module, Map props)
+    {
+        Map accProps = accumulateLogProps(
+                                      ipaddr, userid, org, module, props);
+        LogUtil.access(lvl, msgid, data, tok, accProps);
+    }
+
+    /**
+     * Writes error occurred in SAML2 component into a log
+     * (fmSAML2.error)
+     * @param level indicating log level
+     * @param msgid Message id
+     * @param data string array of dynamic data only known during run time
+     * @param tok Session of authenticated user
+     * @param props log record columns - used if tok is not available
+     *        to specify log record columns such as ip address, realm, etc
+     */
+    public static void logError(Level lvl, String msgid,
+                   String[] data,
+                   Object tok,
+                   String ipaddr,
+                   String userid,
+                   String org,
+                   String module,
+                   Map props)
+    {
+        Map accProps = accumulateLogProps(
+            ipaddr, userid, org, module, props);
+        LogUtil.error(lvl, msgid, data, tok, accProps);
+    }
+
+    private static Map accumulateLogProps(
+                          String ipaddr,
+                          String userid,
+                          String org,
+                          String module,
+                          Map props)
+    {
+        if (props == null) {
+            props = new HashMap();
+        }
+        if (ipaddr != null) {
+            props.put(LogUtil.IP_ADDR, ipaddr);
+        }
+        if (userid != null) {
+            props.put(LogUtil.LOGIN_ID, userid);
+        }
+        if (org != null) {
+            props.put(LogUtil.DOMAIN, org);
+        }
+        if (module != null) {
+            props.put(LogUtil.MODULE_NAME, module);
+        }
+        return props;
+    }
     
     /**
      * Returns the value of attribute from entity configuration.

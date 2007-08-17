@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.3 2007-04-12 16:07:21 qcheng Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.4 2007-08-17 22:48:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -254,7 +254,7 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
         DefaultSPAttributeMapper attributeMapper = 
                    new DefaultSPAttributeMapper();
         Map attributeMap = attributeMapper.getConfigAttributeMap(
-                   realm, entityID);
+                   realm, entityID, SP);
         if(attributeMap == null && attributeMap.isEmpty()) {
            if(debug.messageEnabled()) {
               debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +

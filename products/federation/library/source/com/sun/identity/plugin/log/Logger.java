@@ -18,13 +18,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.1 2006-10-30 23:15:29 qcheng Exp $
+ * $Id: Logger.java,v 1.2 2007-08-17 22:48:09 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.plugin.log;
 
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -74,6 +75,23 @@ public interface Logger {
     
     
     /**
+     * Writes access to a component into a log.
+     * @param level indicating log level
+     * @param msgid Message id
+     * @param data string array of dynamic data only known during run time
+     * @param session Session object (it could be null)
+     * @param props representing log record columns
+     * @exception LogException if there is an error.
+     */
+    public abstract void access(
+        Level level,
+        String msgid,
+        String data[],
+        Object session,
+        Map props) throws LogException;
+ 
+
+    /**
      * Logs error messages to the error logs.
      *
      * @param level the log level , these are based on those
@@ -96,6 +114,22 @@ public interface Logger {
     public void error(Level level,String messageId,String data[],
                       Object session) throws LogException;
     
+    /**
+     * Writes error occurred in a component into a log.
+     * @param level indicating log level
+     * @param msgid Message id
+     * @param data string array of dynamic data only known during run time
+     * @param session Session object (it could be null)
+     * @param props log record columns
+     * @exception LogException if there is an error.
+     */
+    public abstract void error(
+      Level level,
+      String msgid,
+      String data[],
+      Object session,
+      Map props) throws LogException;
+
     /**
      * Checks if the logging is enabled.
      *

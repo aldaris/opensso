@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.6 2007-08-02 19:37:40 bina Exp $
+   $Id: web.xml,v 1.7 2007-08-17 22:48:08 exu Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -242,6 +242,14 @@
             <jsp-file>/saml2/jsp/idpArtifactResolution.jsp</jsp-file>
         </servlet>
         <servlet>
+            <servlet-name>idpsaehandler</servlet-name>
+            <jsp-file>/saml2/jsp/SA_IDP.jsp</jsp-file>
+        </servlet>
+        <servlet>
+            <servlet-name>spsaehandler</servlet-name>
+            <jsp-file>/saml2/jsp/SA_SP.jsp</jsp-file>
+        </servlet>
+        <servlet>
             <servlet-name>MultiProtocolRelayServlet</servlet-name>
             <servlet-class>com.sun.identity.multiprotocol.MultiProtocolRelayServlet</servlet-class>
         </servlet>
@@ -333,6 +341,14 @@
         <servlet-mapping>
             <servlet-name>idpArtifactResolution</servlet-name>
             <url-pattern>/idpArtifactResolution/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>idpsaehandler</servlet-name>
+            <url-pattern>/idpsaehandler/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+           <servlet-name>spsaehandler</servlet-name>
+            <url-pattern>/spsaehandler/*</url-pattern>
         </servlet-mapping>
         <servlet-mapping>
             <servlet-name>IDPFinderService</servlet-name>

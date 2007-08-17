@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.3 2007-08-07 23:39:05 weisun2 Exp $
+ * $Id: IDPCache.java,v 1.4 2007-08-17 22:48:12 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,7 +105,7 @@ public class IDPCache {
     /**
      * Cache saves information needed after coming back from COT cookie setting.
      * key --- cachedResID (String)
-     * value --- Response Information List (ArrayList of size 8)
+     * value --- Response Information List (ArrayList of size 9)
      * IDP: used in SingleSignOnService and ArtifactResolutionService
      */
     public static Hashtable responseCache = new Hashtable();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.8 2007-08-07 23:39:06 weisun2 Exp $
+ * $Id: SPACSUtils.java,v 1.9 2007-08-17 22:48:12 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -915,6 +915,11 @@ public class SPACSUtils {
         Map sessionInfoMap = new HashMap();
         sessionInfoMap.put(SessionProvider.REALM, realm);
         sessionInfoMap.put(SessionProvider.PRINCIPAL_NAME, userName);
+        // set client info. always use client IP address to prevent
+        // reverse host lookup
+        String clientAddr = request.getRemoteAddr();
+        sessionInfoMap.put(SessionProvider.HOST, clientAddr);
+        sessionInfoMap.put(SessionProvider.HOST_NAME, clientAddr);
         //TODO: sessionInfoMap.put(SessionProvider.AUTH_LEVEL, "0");
         try {
             session = sessionProvider.createSession(
@@ -937,14 +942,19 @@ public class SPACSUtils {
         NameIDInfo info = new NameIDInfo(
             hostEntityId, remoteHostId, nameId,
             SAML2Constants.SP_ROLE, true);
+        Map props = new HashMap();
+        String nameIDValueString = info.getNameIDValue();
+        props.put(LogUtil.NAME_ID, info.getNameIDValue());
+        try {
+            userName = sessionProvider.getPrincipalName(session);
+        } catch (SessionException se) {
+            throw new SAML2Exception(se);
+        }
+        String[] data1 = {userName, nameIDValueString};
+        LogUtil.access(Level.INFO, LogUtil.SUCCESS_FED_SSO, data1, session,
+            props);
         // write fed info into data store
         if (writeFedInfo) {
-            try {
-                userName = sessionProvider.
-                    getPrincipalName(session);
-            } catch (SessionException se) {
-                throw new SAML2Exception(se);
-            }
             AccountUtils.setAccountFederation(info, userName);
             String[] data = {userName, ""};
             if (LogUtil.isAccessLoggable(Level.FINE)) {
@@ -953,7 +963,8 @@ public class SPACSUtils {
             LogUtil.access(Level.INFO,
                            LogUtil.FED_INFO_WRITTEN,
                            data,
-                           null);
+                           session,
+                           props);
         }
         // save info in memory for logout
         saveInfoInMemory(

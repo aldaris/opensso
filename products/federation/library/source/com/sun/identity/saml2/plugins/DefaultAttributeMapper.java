@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAttributeMapper.java,v 1.1 2006-10-30 23:16:29 qcheng Exp $
+ * $Id: DefaultAttributeMapper.java,v 1.2 2007-08-17 22:48:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,9 +59,8 @@ public class DefaultAttributeMapper {
     protected static Debug debug = SAML2Utils.debug;
     protected static ResourceBundle bundle = SAML2Utils.bundle;
     protected static DataStoreProvider dsProvider = null;
-    protected static final String IDP = "IDP";
-    protected static final String SP = "SP";
-    protected String role = null;
+    protected static final String IDP = SAML2Constants.IDP_ROLE;
+    protected static final String SP = SAML2Constants.SP_ROLE;
 
     static {
         try {
@@ -88,7 +87,7 @@ public class DefaultAttributeMapper {
      * @exception <code>SAML2Exception</code> if any failured.
      */
     public Map getConfigAttributeMap(
-         String realm, String hostEntityID) throws SAML2Exception {
+         String realm, String hostEntityID, String role) throws SAML2Exception {
 
         if(realm == null) {
            throw new SAML2Exception(bundle.getString(
@@ -100,6 +99,10 @@ public class DefaultAttributeMapper {
              "nullHostEntityID"));
         }
 
+        if (debug.messageEnabled()) {
+            debug.message("DefaultAttrMapper: relam=" + realm + ", entity id="
+                + hostEntityID + ", role=" + role);
+        }
         try {
             BaseConfigType config = null;
             if(role.equals(SP)) {

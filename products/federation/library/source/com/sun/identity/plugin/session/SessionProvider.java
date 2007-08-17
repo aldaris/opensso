@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionProvider.java,v 1.3 2007-07-05 22:42:27 qcheng Exp $
+ * $Id: SessionProvider.java,v 1.4 2007-08-17 22:48:09 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,6 +69,18 @@ public interface SessionProvider {
      */
     String AUTH_INSTANT = "authInstant";
   
+    /**
+     * This constant string is used as a property name to indicate
+     * the client host.
+     */
+    String HOST = "Host";
+
+    /**
+     * This constant string is used as a property name to indicate
+     * the client hostname.
+     */
+    String HOST_NAME = "HostName";
+
     /** 
      * Meaningful only for Service Provider side, the implementation of this
      * method will create a local session for the local user identified by

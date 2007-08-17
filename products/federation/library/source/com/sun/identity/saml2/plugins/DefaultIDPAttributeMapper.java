@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAttributeMapper.java,v 1.3 2007-08-14 18:19:36 weisun2 Exp $
+ * $Id: DefaultIDPAttributeMapper.java,v 1.4 2007-08-17 22:48:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,6 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
      */
     public DefaultIDPAttributeMapper() {
         debug.message("DefaultIDPAttributeMapper.Constructor");
-        role = IDP;
     }
 
     /**
@@ -100,14 +99,24 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
                }
                return null;
             }
-
-            Map configMap = getConfigAttributeMap(realm, hostEntityID);
-            if(configMap == null || configMap.isEmpty()) {
-               if(debug.messageEnabled()) {
-                  debug.message("DefaultIDPAttributeMapper.getAttributes:" +
-                  "Configuration map is not defined.");
+            Map configMap = getConfigAttributeMap(realm, remoteEntityID, SP);
+            if (debug.messageEnabled()) {
+                debug.message("DefaultIDPAttributeMapper.getAttr:" +
+                    "remote SP attribute map = " + configMap);
+            }
+            if (configMap == null || configMap.isEmpty()) {
+                configMap = getConfigAttributeMap(realm, hostEntityID, IDP);
+                if (configMap == null || configMap.isEmpty()) {
+                    if (debug.messageEnabled()) {
+                        debug.message("DefaultIDPAttributeMapper.getAttr:" +
+                            "Configuration map is not defined.");
+                    }
+                    return null;
+                }
+                if (debug.messageEnabled()) {
+                    debug.message("DefaultIDPAttributeMapper.getAttributes:" +
+                        "hosted IDP attribute map=" + configMap);
                }
-               return null;
             }
 
             List attributes = new ArrayList();
@@ -145,22 +154,20 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
                       localAttributeValues = (String[])
                           values.toArray(new String[values.size()]);
                    }
-                }
+                } 
                 if (localAttributeValues == null) {
                     localAttributeValues = SessionManager.
                         getProvider().getProperty(session, localAttribute);
-                    if (localAttributeValues != null &&
-                        localAttributeValues.length == 0) {
-                        localAttributeValues = null;
-                    }
                 }
 
-                if(localAttributeValues == null) {
-                   if(debug.messageEnabled()) {
-                      debug.message("DefaultIDPAttributeMapper.getAttribute:"
-                      + " user does not have " + localAttribute);
-                   }
-                   continue;
+                if ((localAttributeValues == null) ||
+                    (localAttributeValues.length == 0))
+                {
+                    if (debug.messageEnabled()) {
+                        debug.message("DefaultIDPAttributeMapper.getAttribute:"
+                            + " user does not have " + localAttribute);
+                    }
+                    continue;
                 }
 
                 attributes.add(

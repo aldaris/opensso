@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.3 2007-08-11 00:00:40 bina Exp $
+ * $Id: LogUtil.java,v 1.4 2007-08-17 22:48:10 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 
 package com.sun.identity.saml2.logging;
 
+import java.util.Map;
 import java.util.logging.Level;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.log.LogException;
@@ -36,7 +37,7 @@ import com.sun.identity.saml2.common.SAML2Utils;
  * The <code>LogUtil</code> class defines methods which are used by
  * SAML2 compoment to write logs.
  */
-public abstract class LogUtil {
+public class LogUtil {
 
     /* Log Constants */
     public static final String INVALID_SP="INVALID_SP";
@@ -96,6 +97,7 @@ public abstract class LogUtil {
                                 "CANNOT_DECODE_REQUEST";
     public static final String GOT_RESPONSE_FROM_POST =
                                 "GOT_RESPONSE_FROM_POST";
+    public static final String SUCCESS_FED_SSO = "SUCCESS_FED_SSO";
     public static final String FED_INFO_WRITTEN = "FED_INFO_WRITTEN";
     public static final String INVALID_INRESPONSETO_RESPONSE =
                                 "INVALID_INRESPONSETO_RESPONSE";
@@ -260,8 +262,24 @@ public abstract class LogUtil {
                                 "INVALID_REALM_GET_ALL_ENTITIES";
     public static final String CONFIG_ERROR_GET_ALL_ENTITIES =
                                 "CONFIG_ERROR_GET_ALL_ENTITIES";
-    public static final String GOT_ALL_ENTITIES =
-                                "GOT_ALL_ENTITIES";                
+    public static final String GOT_ALL_ENTITIES = "GOT_ALL_ENTITIES";                                
+    public static final String NAME_ID = "NameID";
+
+    // Log constants (message id) for SAE
+    public static final String SAE_IDP_SUCCESS = "SAE_IDP_SUCCESS";
+    public static final String SAE_IDP_ERROR = "SAE_IDP_ERROR";
+    public static final String SAE_IDP_ERROR_NODATA = "SAE_IDP_ERROR_NODATA";
+    public static final String SAE_IDP_AUTH = "SAE_IDP_AUTH";
+/*
+    public static final String SAE_IDP_LOGOUT_SUCCESS = 
+        "SAE_IDP_LOGOUT_SUCCESS";
+    public static final String SAE_IDP_LOGOUT_ERROR = "SAE_IDP_LOGOUT_ERROR";
+*/
+    public static final String SAE_SP_SUCCESS = "SAE_SP_SUCCESS";
+    public static final String SAE_SP_ERROR = "SAE_SP_ERROR";
+    //public static final String SAE_SP_LOGOUT_SUCCESS = "SAE_SP_LOGOUT_SUCCESS";
+    //public static final String SAE_SP_LOGOUT_ERROR = "SAE_SP_LOGOUT_ERROR";
+    
     public static final String INVALID_PEP_ID="INVALID_PEP_ID";
     public static final String INVALID_PDP_ID="INVALID_PDP_ID";
     
@@ -276,6 +294,28 @@ public abstract class LogUtil {
     public static final String VALID_SIGNATURE_QUERY="VALID_SIGNATURE_QUERY";
     public static final String PEP_METADATA_ERROR="PEP_METADATA_ERROR";
     public static final String PDP_METADATA_ERROR="PDP_METADATA_ERROR";
+
+    /**
+     * The Domain field. The Domain pertaining to the log record's
+     * Data field.
+     */
+    public static final String DOMAIN = "Domain";
+    /**
+     * The LoginID field. The Login ID pertaining to the log record's
+     * Data field.
+     */
+    public static final String LOGIN_ID = "LoginID";
+    /**
+     * The IPAddr field. The IP Address pertaining to the log record's
+     * Data field.
+     */
+    public static final String IP_ADDR = "IPAddr";
+    /**
+     * The ModuleName field. The Module pertaining to the log record's
+     * Data field.
+     */
+    public static final String MODULE_NAME = "ModuleName";
+
     public static final String INVALID_ISSUER_IN_PEP_REQUEST=
             "INVALID_ISSUER_IN_PEP_REQUEST";
     public static final String ASSERTION_FROM_PDP_NOT_ENCRYPTED=
@@ -302,7 +342,7 @@ public abstract class LogUtil {
     }
     
     /**
-     * Logs message to ID-FF access logs.
+     * Logs message to SAML2 access logs.
      *
      * @param level the log level , these are based on those
      *          defined in java.util.logging.Level, the values for
@@ -321,11 +361,11 @@ public abstract class LogUtil {
      * @param session the User's session object
      */
     public static void access(Level level, String msgid, String data[]) {
-        access(level, msgid, data, null);
+        access(level, msgid, data, null, null);
     }
 
     /**
-     * Logs message to ID-FF access logs.
+     * Logs message to SAML2 access logs.
      *
      * @param level the log level , these are based on those
      *          defined in java.util.logging.Level, the values for
@@ -346,17 +386,45 @@ public abstract class LogUtil {
     public static void access(
         Level level, String msgid, String data[], Object session) 
     {
+        access(level, msgid, data, session, null);
+    }
+
+    /**
+     * Logs message to SAML2 access logs.
+     *
+     * @param level the log level , these are based on those
+     *          defined in java.util.logging.Level, the values for
+     *          level can be any one of the following : <br>
+     *          <ul>
+     *          <li>SEVERE (highest value) <br>
+     *          <li>WARNING <br>
+     *          <li>INFO <br>
+     *          <li>CONFIG <br>
+     *          <li>FINE <br>
+     *          <li>FINER <br>
+     *          <li>FINEST (lowest value) <br>
+     *          </ul>
+     * @param msgid the message or a message identifier.
+     * @param data string array of dynamic data to be replaced in the message.
+     * @param session the User's session object
+     * @param props extra log fields
+     */
+    public static void access(
+        Level level, String msgid, String data[],
+        Object session, Map props) 
+    {
         if (logger != null) {
             try {
-                logger.access(level, msgid, data, session);
+                logger.access(level, msgid, data, session, props);
             } catch (LogException le) {
-                SAML2Utils.debug.error("LogUtil.access:Couldn't write log:",le);
+                SAML2Utils.debug.error(
+                    "LogUtil.access: Couldn't write log:", le);
             }
         }
     }
     
     /**
-     * Logs error messages to ID-FF error log.
+     * Logs error messages to SAML2 error log.
      *
      * @param level the log level , these are based on those
      *          defined in java.util.logging.Level, the values for
@@ -375,11 +443,11 @@ public abstract class LogUtil {
      * @param session the User's Session object.
      */
      public static void error(Level level, String msgid, String data[]) {
-         error(level,msgid,data,null);
+         error(level,msgid,data,null, null);
      }
 
      /** 
-     * Logs error messages to ID-FF error log.
+     * Logs error messages to SAML2 error log.
      *
      * @param level the log level , these are based on those
      *          defined in java.util.logging.Level, the values for
@@ -400,9 +468,37 @@ public abstract class LogUtil {
     public static void error(
         Level level, String msgid, String data[], Object session) 
     {
+        error(level, msgid, data, session, null);
+    }
+
+
+     /** 
+     * Logs error messages to SAML2 error log.
+     *
+     * @param level the log level , these are based on those
+     *          defined in java.util.logging.Level, the values for
+     *          level can be any one of the following : <br>
+     *          <ul>
+     *          <li>SEVERE (highest value) <br>
+     *          <li>WARNING <br>
+     *          <li>INFO <br>
+     *          <li>CONFIG <br>
+     *          <li>FINE <br>
+     *          <li>FINER <br>
+     *          <li>FINEST (lowest value) <br>
+     *          </ul>
+     * @param messageId the message or a message identifier.
+     * @param data string array of dynamic data to be replaced in the message.
+     * @param session the User's Session object.
+     * @param props extra log fields
+      */
+    public static void error(
+        Level level, String msgid, String data[],
+        Object session, Map props) 
+    {
         if (logger != null) {
             try {
-                logger.error(level, msgid, data, session);
+                logger.error(level, msgid, data, session, props);
             } catch (LogException le) {
                 SAML2Utils.debug.error("LogUtil.error:Couldn't write log:",le);
             }
@@ -449,8 +545,3 @@ public abstract class LogUtil {
         }
     }
 }
-
-
-
-
-

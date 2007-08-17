@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAttributeMapper.java,v 1.1 2006-10-30 23:16:31 qcheng Exp $
+ * $Id: DefaultSPAttributeMapper.java,v 1.2 2007-08-17 22:48:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,6 @@ public class DefaultSPAttributeMapper extends DefaultAttributeMapper
      */
     public DefaultSPAttributeMapper() { 
         debug.message("DefaultSPAttributeMapper.constructor");
-        role = SP;
     }
 
     /**
@@ -97,8 +96,20 @@ public class DefaultSPAttributeMapper extends DefaultAttributeMapper
         }
  
         try {
+            Map configMap = getConfigAttributeMap(realm, hostEntityID, SP);
+            if (configMap == null || configMap.isEmpty()) {
+                if (debug.messageEnabled()) {
+                    debug.message("DefaultIDPAttributeMapper.getAttr:" +
+                        "Configuration map is not defined.");
+                }
+                return null;
+            }
+            if (debug.messageEnabled()) {
+                debug.message("DefaultIDPAttributeMapper.getAttr:" +
+                    "hosted SP attribute map = " + configMap);
+            }
+
             Map map = new HashMap();
-            Map configMap = getConfigAttributeMap(realm, hostEntityID);
 
             for(Iterator iter = attributes.iterator(); iter.hasNext();) {
 
@@ -110,8 +121,6 @@ public class DefaultSPAttributeMapper extends DefaultAttributeMapper
                 String localAttribute = (String)configMap.get(attributeName);
                 if(localAttribute != null && localAttribute.length() > 0) {
                    map.put(localAttribute, values);  
-                } else {
-                   map.put(attributeName, values); 
                 }
              }
              return map;

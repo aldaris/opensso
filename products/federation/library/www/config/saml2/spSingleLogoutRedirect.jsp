@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutRedirect.jsp,v 1.4 2007-08-07 23:38:25 weisun2 Exp $
+   $Id: spSingleLogoutRedirect.jsp,v 1.5 2007-08-17 22:48:13 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -27,9 +27,13 @@
 
 
 <%@ page import="com.sun.identity.shared.debug.Debug" %>
+<%@ page import="com.sun.identity.sae.api.SecureAttrs" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
+<%@ page import="com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement" %>
+<%@ page import="com.sun.identity.saml2.meta.SAML2MetaUtils" %>
+<%@ page import="com.sun.identity.saml2.meta.SAML2MetaManager" %>
 <%@ page import="com.sun.identity.saml2.profile.CacheObject" %>
 <%@ page import="com.sun.identity.saml2.profile.SPCache" %>
 <%@ page import="com.sun.identity.saml2.profile.SPSingleLogout" %>
@@ -39,6 +43,7 @@
 <%@ page import="com.sun.identity.saml2.assertion.Issuer" %>
 <%@ page import="com.sun.identity.saml2.profile.IDPProxyUtil" %>
 <%@ page import="com.sun.identity.saml2.protocol.ProtocolFactory" %>
+<%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
 
 <%--
@@ -135,9 +140,16 @@
     } else {
         String samlRequest = request.getParameter(SAML2Constants.SAML_REQUEST);
         if (samlRequest != null) {
+            // Logout SP app via SAE first. App is obligated to redirect back
+            // to complete this SLO request.
+            if (processSAELogout(request, response)) {
+                return;
+            }
+
             try {
             /**
-             * Gets and processes the Single <code>LogoutRequest</code> from IDP.
+             * Gets and processes the Single <code>LogoutRequest</code> from 
+             * IDP.
              *
              * @param request the HttpServletRequest.
              * @param response the HttpServletResponse.
@@ -167,3 +179,89 @@
 
 </body>
 </html>
+<%!
+boolean processSAELogout(
+    HttpServletRequest request, HttpServletResponse response)
+{
+    String saeData = request.getParameter(SecureAttrs.SAE_PARAM_APPRETURN);
+    if (saeData != null) { // App returned back.
+        return false;
+    }
+
+    try {
+        String metaAlias =
+            SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+        SAML2MetaManager mm = SAML2Utils.getSAML2MetaManager();
+        String entityId = mm.getEntityByMetaAlias(metaAlias);
+        SPSSOConfigElement spConfig = mm.getSPSSOConfig(realm, entityId);
+        String appSLOUrlStr = null;
+        if (spConfig != null) {
+            appSLOUrlStr = SAML2Utils.getAttributeValueFromSPSSOConfig(
+                spConfig, SAML2Constants.SAE_SP_LOGOUT_URL);
+        }
+        if (appSLOUrlStr == null) {
+            SAML2Utils.debug.message(
+                "spSLORedir:SAE:appSLOUrl not configured.");
+            return false;
+        }
+
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(
+                "spSLORedir:SAE:processing App SLO"+ appSLOUrlStr);
+        }
+        StringBuffer appSLOUrl = new StringBuffer(appSLOUrlStr);
+        Map hp = SAML2Utils.getSAEAttrs(
+            realm, entityId, SAML2Constants.SP_ROLE, appSLOUrlStr);
+        if (hp == null) {
+            SAML2Utils.debug.error(
+                "spSLORedir:SAE:processing App SLO: getSAEAttrs returned null");
+            return false;
+        }
+        String cryptoType = (String) hp.get(SecureAttrs.SAE_CRYPTO_TYPE);
+        String secret = null;
+        if (SecureAttrs.SAE_CRYPTO_TYPE_SYM.equals(cryptoType)) {
+            // Shared secret between FM-IDP and IDPApp
+            secret = (String) hp.get(SecureAttrs.SAE_CONFIG_SHARED_SECRET );
+        } else {
+            // IDPApp's public key
+            secret = (String) hp.get(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS);
+        }
+        if (secret == null || secret.length() == 0) {
+            SAML2Utils.debug.error(
+                "spSLORedir:SAE:processing App SLO:getSAEAttrs no secret/key");
+            return false;
+        }
+
+        String returnURL = request.getRequestURL()+
+                            "?"+request.getQueryString()+"&"+
+                             SecureAttrs.SAE_PARAM_APPRETURN+"=true";
+        HashMap map = new HashMap();
+        map.put(SecureAttrs.SAE_PARAM_CMD, SecureAttrs.SAE_CMD_LOGOUT);
+        map.put(SecureAttrs.SAE_PARAM_APPSLORETURNURL, returnURL);
+        String encodedString = SecureAttrs.getInstance(cryptoType)
+                                          .getEncodedString(map, secret);
+        if (encodedString != null) {
+            if (appSLOUrl.indexOf("?") > 0) {
+                appSLOUrl.append("&").append(SecureAttrs.SAE_PARAM_DATA)
+                         .append("=").append(encodedString);
+            } else {
+                appSLOUrl.append("?").append(SecureAttrs.SAE_PARAM_DATA)
+                         .append("=").append(encodedString);
+            }
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("spSLORedir:SAE:about to redirect"+
+                                       appSLOUrl);
+            }
+            response.sendRedirect(appSLOUrl.toString());
+            return true;
+        } else {
+           SAML2Utils.debug.error(
+               "spSLORedir:SAE:SecureAttrs.getEncodedStr failed");
+        }
+    } catch (Exception ex) {
+        SAML2Utils.debug.error("spSLORedir:SAE:SecureAttrs.Fatal:",ex);
+    }
+    return false;
+}
+%>
