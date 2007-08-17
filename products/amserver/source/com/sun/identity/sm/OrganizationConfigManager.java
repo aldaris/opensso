@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.14 2007-06-29 22:30:22 goodearth Exp $
+ * $Id: OrganizationConfigManager.java,v 1.15 2007-08-17 17:45:02 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -787,6 +787,19 @@ public class OrganizationConfigManager {
                     throw (new SMSException(SMSEntry.bundle
                             .getString("sms-SMSSchema_service_notfound"),
                             "sms-SMSSchema_service_notfound"));
+                }
+
+                AttributeSchema as = ss.getAttributeSchema(SUNORG_STATUS);
+                AttributeSchema.Type type = as.getType();
+                if ((type != null) && 
+                    (type.equals(AttributeSchema.Type.SINGLE_CHOICE))) {
+                    SMSEntry.debug.error("OrganizationConfigManager. "
+                        + "addAttributeValues():Unable to add Attribute "
+                        + "Values. Add operation is attempted for "
+                        + "SINGLE_CHOICE attribute type for " +attrName); 
+                    Object args[] = { attrName };
+                    throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                        "sms-attributeschema-attributetype-violation", args));
                 }
                 Map map = new HashMap(2);
                 map.put(attrName, values);
