@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.2 2007-08-02 18:18:42 bina Exp $
+ * $Id: KeyUtil.java,v 1.3 2007-08-17 17:17:34 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,7 @@ import java.security.cert.X509Certificate;
 import com.sun.org.apache.xml.internal.security.encryption.XMLCipher;
 
 import com.sun.identity.common.SystemConfigurationUtil;
-import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
@@ -76,19 +76,19 @@ public class KeyUtil {
             kp = (KeyProvider)Class.forName(SystemConfigurationUtil.getProperty(
                 SAMLConstants.KEY_PROVIDER_IMPL_CLASS)).newInstance();
         } catch (ClassNotFoundException cnfe) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 "KeyUtil static block:" +
                 " Couldn't find the class.",
                 cnfe);
             kp = null;
         } catch (InstantiationException ie) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 "KeyUtil static block:" +
                 " Couldn't instantiate the key provider instance.",
                 ie);
             kp = null;
         } catch (IllegalAccessException iae) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 "KeyUtil static block:" +
                 " Couldn't access the default constructor.",
                 iae);
@@ -162,8 +162,8 @@ public class KeyUtil {
         
         String classMethod = "KeyUtil.getVerificationCert: ";
         String role = (isIDP) ? "idp":"sp";        
-        if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message(
+        if (SAML2SDKUtils.debug.messageEnabled()) {
+            SAML2SDKUtils.debug.message(
                 classMethod +
                 "Entering... \nEntityID=" +
                 entityID + "\nRole="+role
@@ -177,7 +177,7 @@ public class KeyUtil {
         }
         // else get it from meta
         if (ssod == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "Null SSODescriptorType input for entityID=" +
                 entityID + " in "+role+" role."
@@ -187,7 +187,7 @@ public class KeyUtil {
         KeyDescriptorType kd =
             getKeyDescriptor(ssod, "signing");
         if (kd == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "No signing KeyDescriptor for entityID=" +
                 entityID + " in "+role+" role."
@@ -196,7 +196,7 @@ public class KeyUtil {
         }
         cert = getCert(kd);
         if (cert == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod +
                 "No signing cert for entityID=" +
                 entityID + " in "+role+" role."
@@ -225,8 +225,8 @@ public class KeyUtil {
 
         String classMethod = "KeyUtil.getEncInfo: ";
         String role = (isIDP) ? "idp":"sp";                
-        if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message(
+        if (SAML2SDKUtils.debug.messageEnabled()) {
+            SAML2SDKUtils.debug.message(
                 classMethod +
                 "Entering... \nEntityID=" +
                 entityID + "\nRole="+role
@@ -240,7 +240,7 @@ public class KeyUtil {
         }
         // else get it from meta
         if (ssod == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "Null SSODescriptorType input for entityID=" +
                 entityID + " in "+role+" role."
@@ -250,7 +250,7 @@ public class KeyUtil {
         KeyDescriptorType kd =
             getKeyDescriptor(ssod, "encryption");
         if (kd == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "No encryption KeyDescriptor for entityID=" +
                 entityID + " in "+role+" role."
@@ -259,7 +259,7 @@ public class KeyUtil {
         }
         java.security.cert.X509Certificate cert = getCert(kd);
         if (cert == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod +
                 "No encryption cert for entityID=" +
                 entityID + " in "+role+" role."
@@ -352,7 +352,7 @@ public class KeyUtil {
         String classMethod = "KeyUtil.getCert: ";
         KeyInfoType ki = kd.getKeyInfo();
         if (ki == null) {
-            SAML2Utils.debug.error(classMethod +
+            SAML2SDKUtils.debug.error(classMethod +
                                    "No KeyInfo.");
             
             return null;
@@ -366,7 +366,7 @@ public class KeyUtil {
         try {
             cf = CertificateFactory.getInstance("X.509");
         } catch (java.security.cert.CertificateException ce) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod +
                 "Unable to get CertificateFactory "+
                 "for X.509 type", ce);
@@ -380,7 +380,7 @@ public class KeyUtil {
                     cf.generateCertificate(bais);
             }
         } catch (java.security.cert.CertificateException ce) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod +
                 "Unable to generate certificate from byte "+
                 "array input stream.", ce);
@@ -403,8 +403,8 @@ public class KeyUtil {
 
         String classMethod = "KeyUtil.getPEPVerificationCert: ";
         String role = SAML2Constants.PEP_ROLE;
-        if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message(classMethod +"Entering... \nEntityID=" +
+        if (SAML2SDKUtils.debug.messageEnabled()) {
+            SAML2SDKUtils.debug.message(classMethod +"Entering... \nEntityID=" +
                 entityID + "\nRole="+role
             );
         }
@@ -416,7 +416,7 @@ public class KeyUtil {
         }
         // else get it from meta
         if (pepDesc == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "Null DescriptorType input for entityID=" +
                 entityID + " in "+role+" role."
@@ -427,7 +427,7 @@ public class KeyUtil {
         KeyDescriptorType kd = getKeyDescriptor(kdlist,SAML2Constants.SIGNING);
 
         if (kd == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "No signing KeyDescriptor for entityID=" +
                 entityID + " in "+role+" role."
@@ -436,7 +436,7 @@ public class KeyUtil {
         }
         cert = getCert(kd);
         if (cert == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod +
                 "No signing cert for entityID=" +
                 entityID + " in "+role+" role."
@@ -507,8 +507,8 @@ public class KeyUtil {
         String classMethod = "KeyUtil.getEncInfo: ";
         String role=SAML2Constants.PEP_ROLE;
         
-        if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message(
+        if (SAML2SDKUtils.debug.messageEnabled()) {
+            SAML2SDKUtils.debug.message(
                 classMethod +
                 "Entering... \nEntityID=" +
                 pepEntityID + "\nRole="+role
@@ -522,7 +522,7 @@ public class KeyUtil {
         }
         // else get it from meta
         if (pepDesc == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "Null PEP Descriptor input for entityID=" +
                 pepEntityID + " in "+role+" role."
@@ -533,7 +533,7 @@ public class KeyUtil {
         KeyDescriptorType kd = 
             getKeyDescriptor(kdList,SAML2Constants.ENCRYPTION);
         if (kd == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "No encryption KeyDescriptor for entityID=" +
                 pepEntityID + " in "+role+" role."
@@ -556,7 +556,7 @@ public class KeyUtil {
         String classMethod = "KeyUtil:getEncryptionInfo:";
         java.security.cert.X509Certificate cert = getCert(kd);
         if (cert == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod +
                 "No encryption cert for entityID=" +
                 entityID + " in "+role+" role."
@@ -607,8 +607,8 @@ public class KeyUtil {
         XACMLPDPDescriptorElement pdpDesc,String entityID) { 
         String classMethod = "KeyUtil.getPDPVerificationCert: ";
         String role = SAML2Constants.PDP_ROLE;
-        if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message(
+        if (SAML2SDKUtils.debug.messageEnabled()) {
+            SAML2SDKUtils.debug.message(
                 classMethod +
                 "Entering... \nEntityID=" +
                 entityID + "\nRole="+role
@@ -622,7 +622,7 @@ public class KeyUtil {
         }
         // else get it from meta
         if (pdpDesc == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "Null DescriptorType input for entityID=" +
                 entityID + " in "+role+" role."
@@ -633,7 +633,7 @@ public class KeyUtil {
         KeyDescriptorType kd = getKeyDescriptor(kdList, SAML2Constants.SIGNING);
 
         if (kd == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod+
                 "No signing KeyDescriptor for entityID=" +
                 entityID + " in "+role+" role."
@@ -642,7 +642,7 @@ public class KeyUtil {
         }
         cert = getCert(kd);
         if (cert == null) {
-            SAML2Utils.debug.error(
+            SAML2SDKUtils.debug.error(
                 classMethod +
                 "No signing cert for entityID=" +
                 entityID + " in "+role+" role."
