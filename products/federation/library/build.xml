@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.12 2007-08-07 20:16:54 veiming Exp $
+   $Id: build.xml,v 1.13 2007-08-17 22:53:18 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,6 +38,8 @@
     <!-- overridable properties -->
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
+
+    <property name="fedlibrary.clientsdkbase.dir" value="${library.basedir}/clientsdk"/>
 
     <!-- build class path -->
     <path id="build.class.path">
@@ -244,6 +246,7 @@
                 <include name="com/sun/identity/plugin/**"/>
                 <include name="com/sun/identity/saml/**"/>
                 <include name="com/sun/identity/saml2/**"/>
+                <include name="com/sun/identity/sae/**"/>
                 <include name="com/sun/identity/wsfederation/**"/>
                 <include name="com/sun/identity/multiprotocol/**"/>
                 <include name="com/sun/liberty/**"/>
@@ -263,6 +266,7 @@
                 <include name="com/sun/identity/plugin/**"/>
                 <include name="com/sun/identity/saml/**"/>
                 <include name="com/sun/identity/saml2/**"/>
+                <include name="com/sun/identity/sae/**"/>
                 <include name="com/sun/identity/wsfederation/**"/>
                 <include name="com/sun/liberty/**"/>
             </packageset>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.13 2007-08-01 23:15:28 bina Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.14 2007-08-17 22:51:57 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -623,6 +623,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private void buildConfigTemplate()
         throws CLIException {
         Writer pw = null;
+        String url =  protocol + "://" + host + ":" + port + deploymentURI;
         try {
             if (!isWebBased && (extendedData != null) &&
                 (extendedData.length() > 0)
@@ -639,10 +640,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     "    entityID=\"" + entityID + "\">\n\n");
             
             if (idpAlias != null) {
-                buildIDPConfigTemplate(pw);
+                buildIDPConfigTemplate(pw, url);
             }
             if (spAlias != null) {
-                buildSPConfigTemplate(pw);
+                buildSPConfigTemplate(pw, url);
             }
             if (pdpAlias != null) {
                 buildPDPConfigTemplate(pw);
@@ -675,7 +676,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
     }
     
-    private void buildIDPConfigTemplate(Writer pw)
+    private void buildIDPConfigTemplate(Writer pw, String url)
         throws IOException {
         pw.write(
                 "    <IDPSSOConfig metaAlias=\"" + idpAlias + "\">\n" +
@@ -756,13 +757,18 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        </Attribute>\n" +
                 "        <Attribute name=\""+SAML2Constants.ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE
              + "\">\n" +
-                "           <Value>600</Value>\n" +
-                "       </Attribute>\n" +
+                "            <Value>600</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\""+SAML2Constants.SAE_APP_SECRET_LIST+"\">\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\""+SAML2Constants.SA_IDP_URL+"\">\n" +
+                "            <Value>" + url + "/idpsaehandler/metaAlias" + idpAlias + "</Value>\n" +
+                "        </Attribute>\n" +
                 "    </IDPSSOConfig>\n"
                 );
     }
     
-    private void buildSPConfigTemplate(Writer pw)
+    private void buildSPConfigTemplate(Writer pw, String url)
         throws IOException {
         pw.write(
                 "    <SPSSOConfig metaAlias=\"" + spAlias + "\">\n" +
@@ -859,6 +865,13 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "           <Value></Value>\n" +
                 "       </Attribute>\n" +
                 "       <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
+                "       </Attribute>\n" +
+                "       <Attribute name=\""+SAML2Constants.SAE_APP_SECRET_LIST+"\">\n" +
+                "       </Attribute>\n" +
+                "       <Attribute name=\""+SAML2Constants.SA_SP_URL+"\">\n" +
+                "           <Value>" + url + "/spsaehandler/metaAlias" + spAlias + "</Value>\n" +
+                "       </Attribute>\n" +
+                "       <Attribute name=\""+SAML2Constants.SA_SP_LOGOUT_URL+"\">\n" +
                 "       </Attribute>\n" +
                 "    </SPSSOConfig>\n");
     }

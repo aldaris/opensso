@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogProvider.java,v 1.2 2007-04-06 21:06:41 veiming Exp $
+ * $Id: LogProvider.java,v 1.3 2007-08-17 22:51:58 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,8 @@
 package com.sun.identity.plugin.log.impl;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.util.Map;
 import java.util.logging.Level;
 import java.security.AccessController;
 import java.text.MessageFormat;
@@ -39,6 +41,7 @@ import com.iplanet.sso.SSOTokenManager;
 
 import com.sun.identity.authentication.internal.AuthPrincipal;
 
+import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.Logger;
 import com.sun.identity.log.LogRecord;
 import com.sun.identity.log.messageid.LogMessageProvider;
@@ -103,35 +106,40 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
      *		<li>FINER</li>
      *		<li>FINEST (lowest value)</li>
      *          </ul>
-     * @param messageID the message or a message identifier.
+     * @param messageId the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
      * @param session the User's session object
      * @exception LogException if there is an error.
      */
     public void access(Level level,
-        String messageID,
+        String messageId,
         String data[],
         Object session
     ) throws LogException {
+        access(level, messageId, data, session, null);
+    }
+
+    /**
+     * Writes access to a component into a log.
+     * @param level indicating log level
+     * @param messageId Message id
+     * @param data string array of dynamic data only known during run time
+     * @param session Session object (it could be null)
+     * @param props representing log record columns
+     * @exception LogException if there is an error.
+     */
+    public void access(
+        Level level,
+        String messageId,
+        String data[],
+        Object session,
+        Map props) throws LogException
+    {
         if (isAccessLoggable(level)) {
-            SSOToken ssoToken = null;
-            if (session != null) {
-                try {
-                    String sid = SessionManager.getProvider().getSessionID(
-                        session);
-                    ssoToken = 
-                            SSOTokenManager.getInstance().createSSOToken(sid);
-                } catch (SessionException se) {
-                    debug.message("Error getting session provider: " , se);
-                } catch (SSOException soe) {
-                    debug.message("Error creating SSOToken: " , soe);
-                }
-            }
             SSOToken authSSOToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-            SSOToken realToken = (ssoToken != null) ? ssoToken : authSSOToken;
-            LogRecord lr = msgProvider.createLogRecord(
-                messageID, data, realToken);
+            LogRecord lr = getLogRecord(
+                messageId, data, session, props, authSSOToken);
             if (lr != null) {
                 accessLogger.log(lr, authSSOToken);
             }
@@ -139,6 +147,78 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
    }
     
     
+    private LogRecord getLogRecord(
+        String messageId, String data[], Object session, Map properties,
+        SSOToken authSSOToken)
+    {
+        SSOToken ssoToken = null;
+        if (session != null) {
+            try {
+                String sid = SessionManager.getProvider().getSessionID(
+                    session);
+                ssoToken = SSOTokenManager.getInstance().createSSOToken(sid);
+            } catch (SessionException se) {
+                debug.message("Error getting session provider: " , se);
+            } catch (SSOException soe) {
+                debug.message("Error creating SSOToken: " , soe);
+            }
+        }
+        SSOToken realToken = (ssoToken != null) ? ssoToken : authSSOToken;
+        LogRecord lr = msgProvider.createLogRecord(messageId, data, realToken);
+        if ((properties != null) && (lr != null)) {
+            String nameIDValue = (String) properties.get(LogConstants.NAME_ID);
+            if ((nameIDValue != null) && (nameIDValue.length() > 0)) {
+                lr.addLogInfo(LogConstants.NAME_ID, nameIDValue);
+            }
+            if (ssoToken == null) {
+                String clientDomain = 
+                    (String)properties.get(LogConstants.DOMAIN);
+                if (clientDomain != null) {
+                    lr.addLogInfo(LogConstants.DOMAIN, clientDomain);
+                }
+                String clientID = (String)properties.get(LogConstants.LOGIN_ID);
+                if (clientID != null) {
+                    lr.addLogInfo(LogConstants.LOGIN_ID, clientID);
+                }
+                String ipAddress = (String)properties.get(LogConstants.IP_ADDR);
+                if (ipAddress != null) {
+                    String hostName = ipAddress;
+                    try {
+                        if (Logger.resolveHostNameEnabled()) {
+                            hostName = InetAddress.getByName(ipAddress).
+                                getHostName();
+                        }
+                    } catch (Exception e) {
+                        if (debug.messageEnabled()) {
+                            debug.message(
+                                "LogProvider:Unable to get Host for:"
+                                + ipAddress);
+                        }
+                        hostName = ipAddress;
+                    }
+                    lr.addLogInfo(LogConstants.IP_ADDR, hostName);
+                }
+
+                String loginIDSid = 
+                    (String)properties.get(LogConstants.LOGIN_ID_SID);
+                if (loginIDSid != null) {
+                    lr.addLogInfo(LogConstants.LOGIN_ID_SID, loginIDSid);
+                }
+                String moduleName = 
+                    (String)properties.get(LogConstants.MODULE_NAME);
+                if (moduleName != null) {
+                    lr.addLogInfo(LogConstants.MODULE_NAME, moduleName);
+                }
+                String contextID  = 
+                    (String)properties.get(LogConstants.CONTEXT_ID);
+                if (contextID != null) {
+                    lr.addLogInfo(LogConstants.CONTEXT_ID, contextID);
+                }
+            }
+        }
+        return lr;
+    }
+
     /**
      * Logs error messages to the error logs.
      *
@@ -161,26 +241,30 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
      */
     public void error(Level level, String messageId, String data[],
             Object session) throws LogException {
-        
+        error(level, messageId, data, session, null);
+    }
+
+    /**
+     * Writes error occurred in a component into a log.
+     * @param level indicating log level
+     * @param messageId Message id
+     * @param data string array of dynamic data only known during run time
+     * @param session Session object (it could be null)
+     * @param props log record columns
+     * @exception LogException if there is an error.
+     */
+    public void error(
+      Level level,
+      String messageId,
+      String data[],
+      Object session,
+      Map props) throws LogException
+    {
         if (isErrorLoggable(level)) {
-            SSOToken ssoToken = null;
-            if (session != null) {
-                try {
-                    String sid = SessionManager.getProvider().getSessionID(
-                        session);
-                    ssoToken = 
-                            SSOTokenManager.getInstance().createSSOToken(sid);
-                } catch (SessionException se) {
-                    debug.message("Error getting session provider :" , se);
-                } catch (SSOException soe) {
-                    debug.message("Error creating SSOToken :" , soe);
-                }
-            }
             SSOToken authSSOToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-            SSOToken realToken = (ssoToken != null) ? ssoToken : authSSOToken;
-            LogRecord lr = msgProvider.createLogRecord(
-                messageId, data, realToken);
+            LogRecord lr = getLogRecord(
+                messageId, data, session, props, authSSOToken);
             if (lr != null) {
                 errorLogger.log(lr, authSSOToken);
             }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationPlugin.java,v 1.3 2007-03-27 06:03:02 veiming Exp $
+ * $Id: FederationPlugin.java,v 1.4 2007-08-17 22:51:58 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,6 +149,8 @@ public class FederationPlugin implements ConfiguratorPlugin {
             Set modules = (Set)values.get("iplanet-am-auth-authenticators");
             modules.add(
                "com.sun.identity.authentication.modules.federation.Federation");
+            modules.add(
+               "com.sun.identity.authentication.modules.sae.SAE");
             ss.setAttributeDefaults(values);
         } catch (SSOException e) {
             e.printStackTrace();
