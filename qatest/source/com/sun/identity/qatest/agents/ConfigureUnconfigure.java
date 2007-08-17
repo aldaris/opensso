@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.1 2007-08-17 17:16:00 rmisra Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.2 2007-08-17 17:28:23 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.agents;
 
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IdmCommon;
 import com.sun.identity.qatest.common.TestCommon;
@@ -38,6 +39,7 @@ import org.testng.annotations.BeforeSuite;
 
 public class ConfigureUnconfigure extends TestCommon {
     
+    private SSOToken admintoken;
     private ResourceBundle rbg;
     private IdmCommon idmc;
     private String agentId;
