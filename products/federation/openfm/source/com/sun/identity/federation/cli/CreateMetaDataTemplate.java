@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.14 2007-08-17 22:51:57 exu Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.15 2007-08-17 23:17:19 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -761,7 +761,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        </Attribute>\n" +
                 "        <Attribute name=\""+SAML2Constants.SAE_APP_SECRET_LIST+"\">\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\""+SAML2Constants.SA_IDP_URL+"\">\n" +
+                "        <Attribute name=\""+SAML2Constants.SAE_IDP_URL+"\">\n" +
                 "            <Value>" + url + "/idpsaehandler/metaAlias" + idpAlias + "</Value>\n" +
                 "        </Attribute>\n" +
                 "    </IDPSSOConfig>\n"
@@ -868,10 +868,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "       </Attribute>\n" +
                 "       <Attribute name=\""+SAML2Constants.SAE_APP_SECRET_LIST+"\">\n" +
                 "       </Attribute>\n" +
-                "       <Attribute name=\""+SAML2Constants.SA_SP_URL+"\">\n" +
+                "       <Attribute name=\""+SAML2Constants.SAE_SP_URL+"\">\n" +
                 "           <Value>" + url + "/spsaehandler/metaAlias" + spAlias + "</Value>\n" +
                 "       </Attribute>\n" +
-                "       <Attribute name=\""+SAML2Constants.SA_SP_LOGOUT_URL+"\">\n" +
+                "       <Attribute name=\""+SAML2Constants.SAE_SP_LOGOUT_URL+"\">\n" +
                 "       </Attribute>\n" +
                 "    </SPSSOConfig>\n");
     }
