@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssocHandle.java,v 1.2 2007-04-30 05:36:12 pbryan Exp $
+ * $Id: AssocHandle.java,v 1.3 2007-08-20 14:33:51 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -44,9 +44,6 @@ import javax.crypto.SecretKey;
  */
 public class AssocHandle implements Serializable
 {
-    /** Handle to return for invalid decodes. */
-    private static final AssocHandle INVALID = new AssocHandle();
-
     /** Determines if handle created in associate request or because of invalid supplied handle. */
     public enum Type { ASSOCIATED, STATELESS };
 
@@ -107,7 +104,8 @@ public class AssocHandle implements Serializable
      *
      * @return encrypted, Base64-encoded association handle.
      */
-    private String generateValue() {
+    private String generateValue()
+    {
         return Crypt.encrypt(type + " " +
          Codec.encodeLong(expiry) + " " + Codec.encodeSecretKey(secret));
     }
@@ -126,26 +124,32 @@ public class AssocHandle implements Serializable
             return null;
         }
 
+        // handle starts in invalid state
+        AssocHandle handle = new AssocHandle();
+
+        // handle string value is always available, even if invalid
+        handle.value = value;
+
         String cleartext = Crypt.decrypt(value);
 
+        // could not decode ciphertext; invalid handle
         if (cleartext == null) {
-            return INVALID;
+            return handle;
         }
 
         String[] split = cleartext.split(" ");
 
+        // cleartext not three space-delimited fields; invalid handle
         if (split.length != 3) {
-            return INVALID;
+            return handle;
         }
-
-        AssocHandle handle = new AssocHandle();
 
         try {
             handle.type = Type.valueOf(split[0]);
         }
 
         catch (IllegalArgumentException iae) {
-            return INVALID;
+            return handle;
         }
 
         try {
@@ -153,7 +157,7 @@ public class AssocHandle implements Serializable
         }
 
         catch (DecodeException de) {
-            return INVALID;
+            return handle;
         }
 
         try {
@@ -161,9 +165,10 @@ public class AssocHandle implements Serializable
         }
 
         catch (DecodeException de) {
-            return INVALID;
+            return handle;
         }
 
+        // association handle parsed correctly
         handle.valid = true;
 
         return handle;
