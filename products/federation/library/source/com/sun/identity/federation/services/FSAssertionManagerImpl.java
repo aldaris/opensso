@@ -17,19 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerImpl.java,v 1.1 2006-10-30 23:14:20 qcheng Exp $
+ * $Id: FSAssertionManagerImpl.java,v 1.2 2007-08-20 07:25:57 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.services;
 
+import com.sun.identity.federation.common.FSException;
 import com.sun.identity.federation.common.FSRemoteException;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.message.FSAssertion;
 import com.sun.identity.federation.message.FSAssertionArtifact;
+import com.sun.identity.federation.message.common.FSMsgException;
 import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.saml.protocol.AssertionArtifact;
+import com.sun.identity.saml.protocol.Status;
 import com.sun.identity.shared.encode.Base64;
+
 import java.util.List;
 
 /**
@@ -147,6 +152,33 @@ public class FSAssertionManagerImpl implements FSAssertionManagerIF {
             }
             throw new FSRemoteException(e.getMessage());
         }
+    }
+
+    public String getErrorStatus( String hostedEntityId, String artifact) 
+        throws FSRemoteException{
+        try {
+            if (FSUtils.debug.messageEnabled()) {
+                FSUtils.debug.message("FSAssertionManagerImpl.getErrStatus(" 
+                        + hostedEntityId + ", " + artifact );
+            }
+            AssertionArtifact aa = new FSAssertionArtifact(artifact);
+            Status s = FSAssertionManager.getInstance( hostedEntityId )
+                .getErrorStatus( aa );
+            if ( null != s )
+                return s.toString( true, true );
+        } catch (FSMsgException e) {
+            FSUtils.debug.error( "getErrStatus: FSMsgException:" 
+                    + e.getMessage() );
+            throw new FSRemoteException(e.getMessage());
+        } catch (FSException e) {
+            FSUtils.debug.error( "getErrStatus: FSException:" 
+                    + e.getMessage() );
+            throw new FSRemoteException(e.getMessage());
+        }
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message( "getErrStatus: returning null" );
+        }
+        return null;
     }
 
 }

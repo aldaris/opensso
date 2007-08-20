@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOBrowserArtifactProfileHandler.java,v 1.2 2006-11-07 00:51:45 exu Exp $
+ * $Id: FSSSOBrowserArtifactProfileHandler.java,v 1.3 2007-08-20 07:25:58 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 package com.sun.identity.federation.services.fednsso;
 
 import com.sun.identity.federation.services.FSAssertionManager;
+import com.sun.identity.federation.services.FSSession;
+import com.sun.identity.federation.services.FSSessionManager;
 import com.sun.identity.federation.services.util.FSServiceUtils;
 import com.sun.identity.federation.message.FSResponse;
 import com.sun.identity.federation.message.FSSAMLRequest;
@@ -43,6 +45,7 @@ import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
+import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import com.sun.identity.saml.assertion.Assertion;
 import com.sun.identity.saml.assertion.NameIdentifier;
@@ -380,8 +383,9 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                             */
                             status = new Status( 
                                 new StatusCode("samlp:Requester", 
-                                    new StatusCode(
-                                        "lib:FederationDoesNotExist",null)),
+                                  new StatusCode(
+                                    IFSConstants.FEDERATION_NOT_EXISTS_STATUS,
+                                    null)),
                                 message,
                                 null);
                             retResponse =  
@@ -439,12 +443,23 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                          * Need a second level status for the federation
                          * does not exist. 
                          */
-                        status = new Status( 
-                            new StatusCode("samlp:Requester", 
-                                new StatusCode(
-                                    "lib:FederationDoesNotExist",null)),
-                            message,
-                            null);
+                        /**
+                         * First, let's check we haven't recorded a status
+                         * beforehand (by another call) related to this
+                         * artifact. If so, use it.
+                         */
+                        Status sorig = am.getErrorStatus( art );
+                        if ( sorig != null ) {
+                            status = sorig;
+                        } else {
+                            status = new Status( 
+                                new StatusCode("samlp:Requester", 
+                                  new StatusCode(
+                                    IFSConstants.FEDERATION_NOT_EXISTS_STATUS,
+                                    null)),
+                                message,
+                                null);
+                        }
                         retResponse = new FSResponse(
                             respID,inResponseTo, status, contents);
                         retResponse.setMinorVersion(
@@ -890,7 +905,7 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                     .append("=")
                     .append(URLEncDec.encode(relayURL));
             }
-            response.setStatus(response.SC_MOVED_TEMPORARILY);
+            response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
             String redirecto = tmp.toString();
             response.setContentType("text/html");
             response.setHeader("Location", redirecto);
@@ -934,6 +949,9 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                 handle.getBytes(IFSConstants.SOURCEID_ENCODING));
             List artis = new ArrayList();
             artis.add(art.getAssertionArtifact());
+            FSAssertionManager am = 
+                FSAssertionManager.getInstance( hostedEntityId );
+            am.setErrStatus( art, noFedStatus );
             return artis;
         } catch(Exception e) {
             FSUtils.debug.error(

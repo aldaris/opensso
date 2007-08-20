@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerClient.java,v 1.2 2006-12-14 18:40:18 beomsuk Exp $
+ * $Id: FSAssertionManagerClient.java,v 1.3 2007-08-20 07:25:57 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,12 +34,15 @@ import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml.protocol.AssertionArtifact;
+import com.sun.identity.saml.protocol.Status;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.net.InetAddress;
 import java.net.URL;
 import java.rmi.RemoteException;
+
+import org.w3c.dom.Document;
 
 /**
  * The class <code>FSAssertionManagerClient</code> is a <code>final</code> class
@@ -309,5 +312,52 @@ public final class FSAssertionManagerClient {
             }
             throw (new FSException(re.getMessage()));
         }
+    }
+    protected Status getErrorStatus( AssertionArtifact artifact )
+        throws FSException
+    {
+        String status = null;
+        try {
+            Object[] obj = {hostedEntityId, artifact.getAssertionArtifact()};
+            status = (String) stub.send("getErrorStatus", obj, null, null); 
+            if (status == null && FSUtils.debug.messageEnabled()) {
+                if (FSUtils.debug.messageEnabled()) {
+                    FSUtils.debug.message("AMC:getErrorStatus(" + artifact + 
+                         "): Server returned NULL");
+                }
+            } else {
+                if (FSUtils.debug.messageEnabled()) {
+                    FSUtils.debug.message("AMC:getErrorStatus: status:" + 
+                        status );
+                }
+            }
+            if ( null != status ) {
+                Document doc = XMLUtils.toDOMDocument( status, FSUtils.debug );
+                if ( null != doc ) {
+                    return new Status( doc.getDocumentElement() );
+                }
+            }
+        } catch (RemoteException re) {
+            if (FSUtils.debug.warningEnabled()) {
+                FSUtils.debug.warning("AMC:getErrorStatus: " + artifact, re);
+            }
+            throw (new FSException(re.getMessage()));
+        } catch (FSRemoteException re) {
+            if (FSUtils.debug.warningEnabled()) {
+                FSUtils.debug.warning("AMC:getErrorStatus: " + artifact, re);
+            }
+            throw (new FSException(re.getMessage()));
+        } catch (SAMLException re) {
+            if (FSUtils.debug.warningEnabled()) {
+                FSUtils.debug.warning("AMC:getErrorStatus: " + artifact, re);
+            }
+            throw (new FSException(re.getMessage()));
+        } catch (Exception re) {
+            if (FSUtils.debug.warningEnabled()) {
+                FSUtils.debug.warning("AMC:getErrorStatus: " + artifact, re);
+            }
+            throw (new FSException(re.getMessage()));
+        }
+        return null;
     }
 }

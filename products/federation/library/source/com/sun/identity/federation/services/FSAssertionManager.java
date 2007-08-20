@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManager.java,v 1.3 2007-07-27 23:13:15 qcheng Exp $
+ * $Id: FSAssertionManager.java,v 1.4 2007-08-20 07:25:57 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,7 @@ import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml.common.SAMLServiceManager;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml.protocol.AssertionArtifact;
+import com.sun.identity.saml.protocol.Status;
 import com.sun.identity.shared.stats.Stats;
 import com.sun.identity.shared.DateUtils;
 import java.net.InetAddress;
@@ -1155,5 +1156,78 @@ public final class FSAssertionManager {
             }
         }
         return result;
+    }
+    
+    /**
+     * Specific assertion class containing date and status.
+     * This is used to store information about a fault artifact.
+     */
+    class ErrorAssertion extends Assertion {
+        private Status _status;
+        public ErrorAssertion( java.util.Date issue, Status status ) {
+            _issueInstant = issue;
+            _status = status;
+        }
+        public Status getStatus() {
+            return _status;
+        }
+        
+    }
+    
+    /**
+     * Store the status of a given artifact (original error)
+     * @param aa reference artifact
+     * @param s stored status
+     */
+    public void setErrStatus( AssertionArtifact aa, Status s ) {
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message("setErrStatus( " + aa + ", " + s + " )" );
+        }
+        
+        String artString = aa.getAssertionArtifact();
+        Assertion assertion = new ErrorAssertion( new java.util.Date(), s );
+        Entry e = new Entry( assertion, null, artString, null );
+        synchronized (idEntryMap) {
+            idEntryMap.put( artString, e );
+        }
+    }
+    /**
+     * Retrieve the original status of a reference artifact.
+     * @param aa reference artifact
+     * @return The status as originally recorded.
+     */
+    public Status getErrorStatus( AssertionArtifact aa ) {
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message("getErrorStatus( " + aa + " )" );
+        }
+        Entry e = null;
+        Status s = null;
+        String remoteUrl = SAMLUtils.getServerURL(
+                aa.getAssertionHandle());
+        if (remoteUrl != null) { // not this server
+            // call AssertionManagerClient.getAssertion
+            if (FSUtils.debug.messageEnabled()) {
+                FSUtils.debug.message("AssertionManager.getAssertion(art, " 
+                        + "destid: calling another server in lb site:" 
+                        + remoteUrl);
+            }
+            try {
+                FSAssertionManagerClient amc = new FSAssertionManagerClient(
+                    hostEntityId, getFullServiceURL(remoteUrl));
+                s = amc.getErrorStatus( aa );
+            } catch ( FSException fse ) {
+                FSUtils.debug.error( fse.getMessage() );
+            }
+        } else { 
+            e = (Entry) idEntryMap.get( aa.getAssertionArtifact() );
+            if ( null != e ) {
+                Assertion assertion = e.getAssertion();
+                if ( assertion instanceof ErrorAssertion ) {
+                    ErrorAssertion eassert = (ErrorAssertion) assertion;
+                    s = eassert.getStatus();
+                }
+            }
+        }
+        return s;
     }
 }

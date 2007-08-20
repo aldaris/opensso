@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerIF.java,v 1.1 2006-10-30 23:14:19 qcheng Exp $
+ * $Id: FSAssertionManagerIF.java,v 1.2 2007-08-20 07:25:57 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,4 +70,11 @@ public interface FSAssertionManagerIF extends Remote {
     public boolean isUserExists(String userDN, String hostedProviderId)
         throws FSRemoteException, RemoteException;
 
+    /**
+     * Returns the error status of a given artifact
+     * @param artifact
+     * @return status encoded in XML
+     */
+    public String getErrorStatus( String hostedEntityId, String artifact )
+        throws FSRemoteException, RemoteException;
 }
