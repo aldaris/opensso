@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.15 2007-08-17 23:17:19 exu Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.16 2007-08-21 23:38:40 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1611,7 +1611,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             { SAML2Constants.IDP_ATTRIBUTE_MAPPER, 
                   "com.sun.identity.wsfederation.plugins.DefaultIDPAttributeMapper" },
             { SAML2Constants.ATTRIBUTE_MAP, "" },
-            { COTConstants.COT_LIST, "" },
+            { COTConstants.COT_LIST, null },
         };
 
         com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement 
@@ -1624,7 +1624,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement 
                 attribute = objFactory.createAttributeElement();
             attribute.setName(configDefaults[i][0]);
-            attribute.getValue().add(configDefaults[i][1]);
+            if (configDefaults[i][1] != null) {
+                attribute.getValue().add(configDefaults[i][1]);
+            }
 
             idpSSOConfig.getAttribute().add(attribute);
         }
@@ -1652,7 +1654,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             { SAML2Constants.AUTO_FED_ATTRIBUTE, "" },
             { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
             { SAML2Constants.SP_ACCOUNT_MAPPER, 
-                  "com.sun.identity.wsfederation.plugins.DefaultSPAccountMapper" },
+                  "com.sun.identity.wsfederation.plugins.DefaultADFSPartnerAccountMapper" },
             { SAML2Constants.SP_ATTRIBUTE_MAPPER, 
                   "com.sun.identity.wsfederation.plugins.DefaultSPAttributeMapper" },
             { SAML2Constants.SP_AUTHCONTEXT_MAPPER, 
@@ -1666,20 +1668,22 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             { SAML2Constants.DEFAULT_RELAY_STATE, "" },
             { SAML2Constants.ASSERTION_TIME_SKEW, "300" },
             { SAML2Constants.WANT_ARTIFACT_RESPONSE_SIGNED, "true" },
-            { COTConstants.COT_LIST, "" },
+            { COTConstants.COT_LIST, null },
         };
 
         com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement 
             spSSOConfig = objFactory.createSPSSOConfigElement();
 
-        spSSOConfig.setMetaAlias(idpAlias);
+        spSSOConfig.setMetaAlias(spAlias);
 
         for ( int i = 0; i < configDefaults.length; i++ )
         {
             com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement 
                 attribute = objFactory.createAttributeElement();
             attribute.setName(configDefaults[i][0]);
-            attribute.getValue().add(configDefaults[i][1]);
+            if (configDefaults[i][1] != null) {
+                attribute.getValue().add(configDefaults[i][1]);
+            }
 
             spSSOConfig.getAttribute().add(attribute);
         }
