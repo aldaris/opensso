@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: lib-arch-metadata.xsd,v 1.1 2006-10-30 23:17:30 qcheng Exp $
+   $Id: lib-arch-metadata.xsd,v 1.2 2007-08-21 18:38:21 asyhuang Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -216,7 +216,7 @@ https://www.projectliberty.org/specs/idff_copyrights.html
   </xs:complexType>
   <xs:complexType name="affiliationDescriptorType">
     <xs:sequence>
-      <xs:element name="AffiliateMember" type="entityIDType" maxOccurs="unbounded"/>
+      <xs:element name="AffiliateMember" type="entityIDType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element ref="Extension" minOccurs="0"/>
       <xs:element name="KeyDescriptor" type="keyDescriptorType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element ref="ds:Signature" minOccurs="0"/>
