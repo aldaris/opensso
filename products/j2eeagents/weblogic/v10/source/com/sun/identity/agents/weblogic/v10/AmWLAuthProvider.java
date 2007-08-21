@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmWLAuthProvider.java,v 1.1 2007-08-07 01:47:49 sean_brydon Exp $
+ * $Id: AmWLAuthProvider.java,v 1.2 2007-08-21 06:30:16 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,9 +31,9 @@ import javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
 
 import weblogic.management.security.ProviderMBean;
 import weblogic.security.provider.PrincipalValidatorImpl;
-import weblogic.security.spi.IdentityAsserter;
+import weblogic.security.spi.IdentityAsserterV2;
 import weblogic.security.spi.PrincipalValidator;
-import weblogic.security.spi.AuthenticationProvider;
+import weblogic.security.spi.AuthenticationProviderV2;
 import weblogic.security.spi.SecurityServices;
 
 import com.sun.identity.agents.realm.AmRealmManager;
@@ -43,15 +43,11 @@ import com.sun.identity.agents.arch.IModuleAccess;
  * This class serves as an customized Authenication provider for WebLogic.
  *
  */
-public class AmWLAuthProvider implements AuthenticationProvider {
+public class AmWLAuthProvider implements AuthenticationProviderV2 {
 
     
     /**
-     * Method declaration
-     *
-     * @param mbean 
-     * @param services
-     *
+     * @see weblogic.security.spi.SecurityProvider
      */
     public void initialize(ProviderMBean mbean, SecurityServices services) {
         IModuleAccess modAccess = AmRealmManager.getModuleAccess();
@@ -67,20 +63,14 @@ public class AmWLAuthProvider implements AuthenticationProvider {
     }
     
     /**
-     * Method declaration
-     *
-     * @return
-     *
-     * @see
+     * @see weblogic.security.spi.SecurityProvider
      */
     public String getDescription() {
         return "Agent Authentication Provider";
     }
     
     /**
-     * Method declaration
-     *
-     * @see
+     * @see weblogic.security.spi.SecurityProvider
      */
     public void shutdown() {
         IModuleAccess modAccess = AmRealmManager.getModuleAccess();
@@ -91,35 +81,34 @@ public class AmWLAuthProvider implements AuthenticationProvider {
     }
     
     /**
-     * Method declaration
+     * @return the JAAS configuration specific to this Authentication provider
+     *         that is needed to properly execute login authentication in 
+     *         this security realm.
      *
-     * @return
-     *
-     * @see
+     * @see weblogic.security.spi.AuthenticationProviderV2
      */
     public AppConfigurationEntry getLoginModuleConfiguration() {
         return getAppConfigurationEntry();
     }
     
     /**
-     * Method declaration
      *
-     * @return
+     * @return the JAAS configuration specific to an Identity Assertion 
+     *         provider that is needed to properly execute identity 
+     *         assertion in this security realm.
      *
-     * @see
+     * @see weblogic.security.spi.AuthenticationProviderV2
      */
     public AppConfigurationEntry getAssertionModuleConfiguration() {
         return getAppConfigurationEntry();
     }
     
     /**
-     * Method declaration
+     * @return the Authentication provider's associated Identity Assertion provider.
      *
-     * @return
-     *
-     * @see
+     * @see weblogic.security.spi.AuthenticationProviderV2
      */
-    public IdentityAsserter getIdentityAsserter() {
+    public IdentityAsserterV2 getIdentityAsserter() {
         return null;
     }
     
@@ -128,21 +117,15 @@ public class AmWLAuthProvider implements AuthenticationProvider {
      * Since we use the default WebLogic impl of the JAAS security principal,
      * we need to use the WebLogic impl of the principal validator
      *
-     * @return
+     * @return  this Authentication provider's associated Principal Validation provider.
      *
-     * @see
+     * @see weblogic.security.spi.AuthenticationProviderV2
      */
     public PrincipalValidator getPrincipalValidator() {
         return new PrincipalValidatorImpl();
     }
     
-    /**
-     * Method declaration
-     *
-     * @return
-     *
-     * @see
-     */
+
     private AppConfigurationEntry getAppConfigurationEntry() {
         AppConfigurationEntry entry =
                 new AppConfigurationEntry(
@@ -152,9 +135,9 @@ public class AmWLAuthProvider implements AuthenticationProvider {
         return entry;
     }
     
-    private String		   description;
-    private LoginModuleControlFlag controlFlag;
-    private static String _agentType = "weblogic92";
+    private String		        description;
+    private LoginModuleControlFlag      controlFlag;
+    private static String _agentType = "weblogic10";
 }
 
 
