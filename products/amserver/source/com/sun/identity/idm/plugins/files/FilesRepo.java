@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.17 2007-06-01 17:34:01 kenwho Exp $
+ * $Id: FilesRepo.java,v 1.18 2007-08-21 00:24:35 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -764,10 +764,15 @@ public class FilesRepo extends IdRepo {
         Set roles = getMemberships(token, type, name, IdType.ROLE);
         for (Iterator items = roles.iterator(); items.hasNext();) {
             String role = (String) items.next();
-            Map roleAttrs = (isString ?
-                getAttributes(token, IdType.ROLE, role, attrNames)
-                : getBinaryAttributes(token, IdType.ROLE,
-                    role, attrNames));
+            Map roleAttrs = Collections.EMPTY_MAP;
+            try {
+                roleAttrs = (isString ?
+                    getAttributes(token, IdType.ROLE, role, attrNames)
+                    : getBinaryAttributes(token, IdType.ROLE,
+                        role, attrNames));
+            } catch (FilesRepoEntryNotFoundException fnf) {
+                roleAttrs = Collections.EMPTY_MAP; 
+            }
             // Add the attributes to results
             for (Iterator ris = roleAttrs.keySet().iterator(); ris.hasNext();) {
                 Object roleAttrName = ris.next();
@@ -1726,9 +1731,15 @@ public class FilesRepo extends IdRepo {
                             identityCache.remove(fileName);
                             repo.identityTimeCache.remove(fileName);
                             // Send notification
-                            repo.repoListener.objectChanged(file.getName(),
-                                AMEvent.OBJECT_CHANGED,
-                                repo.repoListener.getConfigMap());
+                            if (file.exists()) {
+                                repo.repoListener.objectChanged(file.getName(),
+                                    AMEvent.OBJECT_CHANGED,
+                                    repo.repoListener.getConfigMap());
+                            } else {
+                                repo.repoListener.objectChanged(file.getName(),
+                                    AMEvent.OBJECT_REMOVED,
+                                    repo.repoListener.getConfigMap());
+                            }
                             if (debug.messageEnabled()) {
                                 debug.message("CacheUpdateThread: " +
                                     "Notification Sent: " + fileName);
