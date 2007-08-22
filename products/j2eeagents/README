@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.8 2007-08-07 01:44:18 sean_brydon Exp $
+$Id: README,v 1.9 2007-08-22 20:40:48 sean_brydon Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -90,17 +90,18 @@ conditions.
 
 The OpenSSO Agents Common installer libraries opensso-installtools.jar and 
 opensso-installtools-launcher.jar can be built from the OpenSSO Agents Common 
-Installer workspace, for example in opensso\products\installtools.
+Installer workspace, for example in opensso/products/installtools.
 
 Follow these steps to obtain the libraries:
 2.1.1 Check out the OpenSSO Agents Common installer workspace.
 2.1.2 Set JAVA_HOME to the location of JDK 1.5.
-2.1.3 At the root of the workspace, run: ant
+2.1.3 At the root of the workspace, at opensso/products/installtools/, run: ant
 2.1.4 Copy the libraries opensso-installtools.jar, and opensso-installtools-launcher.jar 
-from the dist directory of the OpenSSO Agents Common installer workspace
-into extlib directory of the specific J2EE Container directory in this 
-workspace. For Sun Application Server 8.1/8.2/9.0/9.1, the directory is 
-appserver/v9/extlib.
+from the dist directory(opensso/products/installtools/built/dist) of the OpenSSO Agents 
+Common installer workspace into extlib directory of the specific J2EE Container 
+directory in this workspace. For Sun Application Server 8.1/8.2/9.0/9.1, the directory is 
+appserver/v9/extlib. For BEA WebLogic 10 agent, the directory is 
+opensso/products/j2eeagents/weblogic/v10/extlib.
 
 %% 2.2 Obtaining OpenSSO ClientSDK library
 
@@ -108,11 +109,13 @@ appserver/v9/extlib.
 the OpenSSO nightly build.
 
 Follow these steps to obtain the library:
-2.2.1.1 download amclientsdk.jar from:
-    http://download.java.net/general/opensso/nightly/amserver/latest/
+2.2.1.1 download the latest amclientsdk.jar from:
+    http://download.java.net/general/opensso/nightly/amserver/
 2.2.1.2 Copy the downloaded amclientsdk.jar into extlib directory of 
 the specific J2EE Container directory in this workspace. For Sun Application 
-Server 8.1/8.2/9.0/9.1, the directory is appserver/v9/extlib.
+Server 8.1/8.2/9.0/9.1, the directory is appserver/v9/extlib. For BEA 
+WebLogic 10 agent, the directory is opensso/products/j2eeagents/weblogic/v10/extlib.
+
 
 2.2.2 Alternatively the OpenSSO ClientSDK library amclientsdk.jar can be
 built from the OpenSSO workspace.
@@ -124,7 +127,9 @@ Follow these steps to obtain the library:
 2.2.2.4 Copy the library amclientsdk.jar from the built/dist of
 the OpenSSO workspace into extlib directory of the specific J2EE Container
 directory in this workspace. For Sun Application Server 8.1/8.2/9.0/9.1, the 
-directory is appserver/v9/extlib.
+directory is appserver/v9/extlib. For BEA WebLogic 10 agent, the directory 
+is opensso/products/j2eeagents/weblogic/v10/extlib.
+
 
 %% 2.3 Obtaining OpenFM ClientSDK library
 
@@ -132,11 +137,12 @@ directory is appserver/v9/extlib.
 the OpenSSO nightly build.
 
 Follow these steps to obtain the library:
-2.3.1.1 download famclientsdk.jar from:
+2.3.1.1 download the latest famclientsdk.jar from:
     http://download.java.net/general/opensso/nightly/openfm/
 2.3.1.2 Copy the downloaded famclientsdk.jar into extlib directory of 
 the specific J2EE Container directory in this workspace. For Sun Application 
-Server 8.1/8.2/9.0/9.1, the directory is appserver/v9/extlib.
+Server 8.1/8.2/9.0/9.1, the directory is appserver/v9/extlib. For BEA 
+WebLogic 10 agent, the directory is opensso/products/j2eeagents/weblogic/v10/extlib.
 
 2.3.2 Alternatively the OpenFM ClientSDK library famclientsdk.jar can be
 built from the OpenSSO workspace.
@@ -149,7 +155,8 @@ run: ant clientsdk
 2.3.2.4 Copy the library famclientsdk.jar from the built/dist of
 the OpenSSO workspace into extlib directory of the specific J2EE Container
 directory in this workspace. For Sun Application Server 8.1/8.2/9.0/9.1, the 
-directory is appserver/v9/extlib.
+directory is appserver/v9/extlib. For BEA WebLogic 10 agent, the directory 
+is opensso/products/j2eeagents/weblogic/v10/extlib.
 
 %% 2.4 Obtaining J2EE container specific libraries
 The J2EE Container specific libraries can be obtained from the J2EE 
