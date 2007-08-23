@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSigProvider.java,v 1.1 2006-10-30 23:16:55 qcheng Exp $
+ * $Id: FMSigProvider.java,v 1.2 2007-08-23 00:33:01 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -151,7 +151,7 @@ public final class FMSigProvider implements SigProvider {
 	}   
 	IdResolver.registerElementById(root, idValue);
 	try {
-	    if (sigAlg == null) {
+	    if ((sigAlg == null) || (sigAlg.trim().length() == 0)) {
 	       if (privateKey.getAlgorithm().equalsIgnoreCase(
 			SAML2Constants.DSA)) {
 	           sigAlg = 
