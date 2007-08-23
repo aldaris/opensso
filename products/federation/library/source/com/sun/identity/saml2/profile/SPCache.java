@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.4 2007-07-26 21:57:43 qcheng Exp $
+ * $Id: SPCache.java,v 1.5 2007-08-23 18:45:16 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,15 +104,6 @@ public class SPCache {
      *              is authLevel.
      */
     public static Hashtable authContextHash = new Hashtable();
-
-    /**
-     * Hashtable saves the Request Parameters before redirecting
-     * to IDP Discovery Service to retreive the preferred IDP.
-     * Key: requestID a String
-     * Value : Request Parameters Map , a Map
-     */
-    public static Hashtable reqParamHash = new Hashtable();
-
 
     /**
      * Cache saves the sp account mapper.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.7 2007-08-01 21:04:49 superpat7 Exp $
+ * $Id: CircleOfTrustManager.java,v 1.8 2007-08-23 18:45:16 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -928,7 +928,7 @@ public class CircleOfTrustManager {
      * @throws <code>COTException</code> if the circle of trust name is invalid.
      */
     boolean isValidCOTName(String realm,String name) throws COTException {
-        String classMethod = "COTManager:isValidCOTName";
+        String classMethod = "COTManager.isValidCOTName: ";
         if ((name == null) || (name.trim().length() == 0) ||
                 !getAllCirclesOfTrust(realm).contains(name)) {
             
