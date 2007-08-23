@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: isAlive.jsp,v 1.2 2006-01-30 20:58:52 veiming Exp $
+   $Id: isAlive.jsp,v 1.3 2007-08-23 19:35:57 jonnelson Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,7 @@
 <html>
 
 <head>
-    <title>Access Manager</title>
+    <title>Sun Java(TM) System Federated Access Manager</title>
 </head>
 
 <body>

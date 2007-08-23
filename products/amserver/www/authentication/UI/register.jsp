@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: register.jsp,v 1.2 2006-01-30 20:58:47 veiming Exp $
+   $Id: register.jsp,v 1.3 2007-08-23 19:35:50 jonnelson Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -111,8 +111,8 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
           <tr>
             <td width="260"><img src="<%= ServiceURI %>/images/dot.gif" width="260" height="245" alt="" /></td>
             <td width="415" bgcolor="#ffffff" valign="top"><img name="Login.productLogo" 
-            src="<%= ServiceURI %>/images/PrimaryProductName.png" alt="Sun Java(TM) System Access Manager" 
-            border="0" height="40" width="300" />
+            src="<%= ServiceURI %>/images/PrimaryProductName.png" alt="<auth:resBundle bundleName="amAuthUI" resourceKey="basic_realm" />" 
+            border="0" />
               <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td colspan="2">

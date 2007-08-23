@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: PWResetInvalidURL.jsp,v 1.1 2007-02-09 22:14:34 veiming Exp $
+   $Id: PWResetInvalidURL.jsp,v 1.2 2007-08-23 19:34:48 jonnelson Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -63,8 +63,8 @@
           <tr>
             <td width="260"><img src="<%= passwordUrl %>/images/dot.gif" width="260" height="245" alt="" /></td>
             <td width="415" bgcolor="#ffffff" valign="top"><img name="Login.productLogo" 
-            src="<%= passwordUrl %>/images/PrimaryProductName.png" alt="Sun Java System Access Manager" 
-            border="0" height="40" width="300" />
+            src="<%= passwordUrl %>/images/PrimaryProductName.png" alt="<%= productName %>" 
+            border="0" />
               <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td colspan="2">

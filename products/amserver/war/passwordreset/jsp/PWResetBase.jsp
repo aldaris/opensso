@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: PWResetBase.jsp,v 1.1 2007-02-09 22:14:33 veiming Exp $
+   $Id: PWResetBase.jsp,v 1.2 2007-08-23 19:34:48 jonnelson Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -26,4 +26,5 @@
 <% 
     String passwordUrl = "../password";
     String passwordImages = passwordUrl + "/images"; 
+    String productName = "Sun Java(TM) System Federated Access Manager";
 %>
