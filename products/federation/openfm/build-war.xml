@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.20 2007-08-17 22:50:47 exu Exp $
+   $Id: build-war.xml,v 1.21 2007-08-23 22:05:52 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -48,6 +48,18 @@
         <delete dir="META-INF" />
 
         <mkdir dir="${war.package.dir}/WEB-INF/template/openfm"/>
+        <mkdir dir="${war.package.dir}/WEB-INF/wsdl"/>
+        <mkdir dir="${war.package.dir}/WEB-INF/classes/META-INF"/>
+        <mkdir dir="${war.package.dir}/WEB-INF/classes/META-INF/services"/>
+        
+        <copy todir="${war.package.dir}/WEB-INF/wsdl">
+            <fileset dir="${openfm.dir}/wsdl" includes="*"/>
+        </copy>
+        
+        <copy todir="${war.package.dir}/WEB-INF/classes/META-INF/services">
+            <fileset dir="${openfm.dir}/resources/META-INF/services" includes="*"/>
+        </copy>
+        
         <copy todir="${war.package.dir}/WEB-INF/template/openfm">
             <fileset dir="${openfm.ldif.dir}" includes="*.ldif"/>
         </copy>
@@ -226,6 +238,29 @@
             <classpath refid="build.class.path"/>
             <arg value="&lt;servlet-mapping&gt;.+?&lt;/servlet-mapping&gt;" />
             <arg value="${openfm.dir}/xml/console/web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- servlet mapping --&gt;" />
+        </java>
+        
+	<!-- update web.xml with FAM STS info -->
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;listener&gt;.+?&lt;/listener&gt;" />
+            <arg value="${openfm.dir}/xml/wss/web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- listener --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet&gt;.+?&lt;/servlet&gt;" />
+            <arg value="${openfm.dir}/xml/wss/web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- servlet declaration --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet-mapping&gt;.+?&lt;/servlet-mapping&gt;" />
+            <arg value="${openfm.dir}/xml/wss/web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- servlet mapping --&gt;" />
         </java>
