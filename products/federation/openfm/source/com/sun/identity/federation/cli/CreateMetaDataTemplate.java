@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.16 2007-08-21 23:38:40 qcheng Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.17 2007-08-23 20:49:32 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -573,7 +573,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private void addPEPTemplate(Writer pw, String url)
         throws IOException, SAML2MetaException {
         pw.write("    <XACMLAuthzDecisionQueryDescriptor " +
-            "WantAssertionsSigned=\"true\" " +
+            "WantAssertionsSigned=\"false\" " +
             "protocolSupportEnumeration=" +
             "\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
         
