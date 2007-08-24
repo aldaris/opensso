@@ -920,7 +920,7 @@ If a value is set for <code>signingCertAlias</code> in <i>extended_metadata</i> 
 <P></P>
 <li>For a hosted service provider, run the following command:
 <p></p>
- <code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+ <code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 </li> 
 <P></P>You may modify the extended metadata attributes (for example, <code>providerHomePageURL</code>) as needed.</li>
 </ul> 
@@ -956,7 +956,7 @@ If none exists, get the updated standard metadata XML file from the remote provi
 <p></p>
 <li>Run the following command to import the updated remote provider metadata (retrieved from the remote provider machine) to the hosted provider machine.
 <p></p>
-<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>new_remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>new_remote_standard_metadata</i> -t <i>circle-of-trust_name</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 where
 <p></P>
