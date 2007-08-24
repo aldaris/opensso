@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2007-08-17 22:53:18 exu Exp $
+   $Id: build.xml,v 1.14 2007-08-24 16:48:20 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -138,14 +138,6 @@
         <antcall target="jaxb.properties" />
 
         <antcall target="jaxrpc" />
-
-        <mkdir dir="${library.classes.dir}/com/sun/identity/log/messageid" />
-        <copy todir="${library.classes.dir}/com/sun/identity/log/messageid">
-              <fileset dir="${library.xml.dir}/log">
-                <include name="*.xml" />
-                <include name="*.dtd" />
-              </fileset>
-        </copy>
 
         <tstamp>
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
