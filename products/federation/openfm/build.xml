@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.21 2007-08-23 22:05:52 mrudul_uchil Exp $
+   $Id: build.xml,v 1.22 2007-08-24 16:45:20 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -61,6 +61,13 @@
     </path>
 
     <target name="build" depends="preparebuild">
+        <mkdir dir="${openfm.classes.dir}/com/sun/identity/log/messageid" />
+        <copy todir="${openfm.classes.dir}/com/sun/identity/log/messageid">
+            <fileset dir="${openfm.xml.dir}/log">
+                <include name="*.xml" />
+            </fileset>
+        </copy>
+
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
             destdir="${openfm.classes.dir}" source="1.5" target="1.5" 
             srcdir="${openfm.src.dir}"
@@ -153,8 +160,7 @@
             <fileset dir=".">
                 <include name="license.txt" />
             </fileset>
-            <fileset dir="${openfm.xml.dir}" includes="*.xml"
-                excludes="SAML.xml,Federation.xml,SAE.xml" />
+            <fileset dir="${openfm.services.xml.dir}" includes="*.xml" />
             <zipfileset dir="${openfm.classes.dir}"
                 excludes="com/sun/identity/console/**" />
         </jar>

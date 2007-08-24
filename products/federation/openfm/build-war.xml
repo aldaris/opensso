@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.21 2007-08-23 22:05:52 mrudul_uchil Exp $
+   $Id: build-war.xml,v 1.22 2007-08-24 16:45:20 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -83,13 +83,11 @@
             tofile="${war.package.dir}/WEB-INF/lib/fam.jar" />
 
         <copy todir="${war.package.dir}/config/auth/default">
-            <fileset dir="${openfm.xml.dir}" 
-                includes="SAML.xml,Federation.xml,SAE.xml" />
+            <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
         </copy>
 
         <copy todir="${war.package.dir}/config/auth/default_en">
-            <fileset dir="${openfm.xml.dir}" 
-                includes="SAML.xml,Federation.xml,SAE.xml" />
+            <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
         </copy>
 
         <copy file="${openfm.dir}/www/jsp/famadm.jsp" todir="${war.package.dir}" />
