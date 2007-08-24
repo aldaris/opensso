@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2007-08-17 17:18:32 bina Exp $
+   $Id: build.xml,v 1.8 2007-08-24 22:08:53 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -59,7 +59,7 @@
 
         <mkdir dir="${openfm.classes.dir}/com/sun/identity/log/messageid"/>
         <copy todir="${openfm.classes.dir}/com/sun/identity/log/messageid">
-            <fileset dir="${library.xmllog.dir}">
+            <fileset dir="${openfm.log.xml.dir}">
                 <include name="SAML2LogMessageIDs.xml"/>
                 <include name="COTLogMessageIDs.xml"/>
             </fileset>
