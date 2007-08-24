@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModel.java,v 1.2 2007-08-03 23:12:25 jonnelson Exp $
+ * $Id: EntityModel.java,v 1.3 2007-08-24 18:17:11 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,4 +48,5 @@ public interface EntityModel
     public void deleteEntities(Map entities) throws AMConsoleException;
     public void createEntity(Map data) throws AMConsoleException;
     public List getTabMenu(String protocol, String name, String realm);
+    public boolean isAffiliate(String name) throws AMConsoleException;
 }

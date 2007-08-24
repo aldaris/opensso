@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFGeneralViewBean.java,v 1.2 2007-08-03 22:29:02 jonnelson Exp $
+ * $Id: IDFFGeneralViewBean.java,v 1.3 2007-08-24 18:16:55 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,8 +51,19 @@ public class IDFFGeneralViewBean
     {
         super.beginDisplay(event);        
   
-        psModel.setValue(TF_NAME, entityName);
-        psModel.setValue(TXT_TYPE, "idff.entityDescriptor.type.provider.label");
+        psModel.setValue(TF_NAME, entityName);        
+        IDFFEntityModel model = (IDFFEntityModel)getModel();
+        try {
+            if (model.isAffiliate(entityName)) {
+                psModel.setValue(TXT_TYPE, 
+                    "idff.entityDescriptor.type.affiliate.label");
+            } else {
+                psModel.setValue(TXT_TYPE, 
+                    "idff.entityDescriptor.type.provider.label");
+            }
+        } catch (AMConsoleException e) {
+             debug.error ("IDFFGeneralViewBean.beginDisplay", e);
+        }
         populateValue(entityName);
     }
     

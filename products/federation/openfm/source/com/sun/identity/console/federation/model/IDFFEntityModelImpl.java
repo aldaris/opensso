@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityModelImpl.java,v 1.2 2007-08-03 23:12:25 jonnelson Exp $
+ * $Id: IDFFEntityModelImpl.java,v 1.3 2007-08-24 18:17:11 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -366,6 +366,29 @@ public class IDFFEntityModelImpl
              throw new AMConsoleException(getErrorString(e));            
         }
         desc.setOrganization(org);
+    }
+    
+     /**
+     * Returns true if entity descriptor is an affiliate.
+     *
+     * @param name Name of entity descriptor.
+     * @return true if entity descriptor is an affiliate.
+     */
+    public boolean isAffiliate(String name) throws AMConsoleException {
+        boolean isAffiliate = false;
+        try {
+            IDFFMetaManager idffManager =getIDFFMetaManager();
+            AffiliationDescriptorType ad = (AffiliationDescriptorType)
+            idffManager.getAffiliationDescriptor(name);
+            if (ad != null) {
+                isAffiliate = true;
+            }
+        } catch (IDFFMetaException  e) {            
+            debug.warning("IDFFEntityModel.isAffiliate", e);
+            throw new AMConsoleException(getErrorString(e));
+        }
+        
+        return isAffiliate;
     }
     
     private Set returnEmptySetIfValueIsNull(String str) {

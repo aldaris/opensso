@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityModel.java,v 1.1 2007-08-01 22:13:15 asyhuang Exp $
+ * $Id: IDFFEntityModel.java,v 1.2 2007-08-24 18:17:11 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -166,5 +166,14 @@ public interface IDFFEntityModel
      */
     public void modifyEntityProfile(String name, Map map)
         throws AMConsoleException;
+    
+    
+     /**
+     * Returns true if entity descriptor is an affiliate.
+     *
+     * @param name Name of entity descriptor.
+     * @return true if entity descriptor is an affiliate.
+     */
+    public boolean isAffiliate(String name) throws AMConsoleException;
 }
 

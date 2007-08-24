@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.2 2007-08-03 23:12:25 jonnelson Exp $
+ * $Id: EntityModelImpl.java,v 1.3 2007-08-24 18:17:11 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,22 +34,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
+
+import com.sun.identity.federation.meta.IDFFMetaManager;
+import com.sun.identity.federation.meta.IDFFMetaException;
+import com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType;
+import com.sun.identity.liberty.ws.meta.jaxb.ObjectFactory;
+
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
-import com.sun.identity.federation.meta.IDFFMetaManager;
-import com.sun.identity.federation.meta.IDFFMetaException;
+import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
+
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
-
-import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 
 public class EntityModelImpl extends AMModelBase implements EntityModel {
     
     private Set realms = null;
     
     public EntityModelImpl(HttpServletRequest req, Map map) {
-	super(req, map);
+        super(req, map);
         try {
             realms = getRealmNames(getStartDN(), "*");
         } catch (AMConsoleException a) {
@@ -57,13 +61,13 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             realms = Collections.EMPTY_SET;
         }
     }
-        
+    
     public Map getEntities()
         throws AMConsoleException 
-    {  
+    {
         Map allEntities = getSAMLv2Entities();
         allEntities.putAll(getIDFFEntities());
-        allEntities.putAll(getWSFedEntities());   
+        allEntities.putAll(getWSFedEntities());
         
         return allEntities;
     }
@@ -72,31 +76,30 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
      * Returns a map of all the samlv2 entities including data about
      * what realm, the roles, and location of each entity.
      */
-    private Map getSAMLv2Entities() 
+    private Map getSAMLv2Entities()
         throws AMConsoleException 
     {
         Map samlv2Map = new HashMap();
         
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();   
+            SAML2MetaManager samlManager = new SAML2MetaManager();
             for (Iterator i = realms.iterator(); i.hasNext(); ) {
                 String realmName = (String)i.next();
                 
-                Set samlEntities = samlManager.getAllEntities(realmName);   
-                List hostedEntities = 
-                    samlManager.getAllHostedEntities(realmName);        
+                Set samlEntities = samlManager.getAllEntities(realmName);
+                List hostedEntities =
+                    samlManager.getAllHostedEntities(realmName);
                 for (Iterator j = samlEntities.iterator(); j.hasNext();) {
                     String entityName = (String)j.next();
-
+                    
                     Map data = new HashMap(8);
                     data.put(REALM, realmName);
                     // get the roles this entity is acting in
-                    data.put(ROLE, 
+                    data.put(ROLE,
                         listToString(getSAMLv2Roles(entityName, realmName)));
-                                                  
+                    
                     data.put(PROTOCOL, SAMLV2);
-                      
-
+                                        
                     if ((hostedEntities != null) &&
                         hostedEntities.contains(entityName)) 
                     {
@@ -104,12 +107,12 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                     } else {
                         data.put(LOCATION, "remote");
                     }
-
-                    samlv2Map.put(entityName, (HashMap)data);                               
+                    
+                    samlv2Map.put(entityName, (HashMap)data);
                 }
             }
         } catch (SAML2MetaException e) {
-            debug.error("EntityModel.getSAMLv2Entities", e);     
+            debug.error("EntityModel.getSAMLv2Entities", e);
             throw new AMConsoleException(e.getMessage());
         }
         
@@ -121,37 +124,37 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
      * what realm, the roles, and location of each entity.
      */
     private Map getIDFFEntities()
-        throws AMConsoleException
+        throws AMConsoleException 
     {
         Map idffMap = new HashMap();
         try {
             IDFFMetaManager idffManager = new IDFFMetaManager(
-                getUserSSOToken());  
-
+                getUserSSOToken());
+            
             for (Iterator j = realms.iterator(); j.hasNext(); ) {
                 String realm = (String)j.next();
-
+                
 // TBD pass the realm when support is added from api
-                Set entities = idffManager.getAllEntities(); 
+                Set entities = idffManager.getAllEntities();
                 List hostedEntities = idffManager.getAllHostedEntities();
-
+                
                 for (Iterator i = entities.iterator(); i.hasNext();) {
                     String name = (String)i.next();
-
+                    
                     Map data = new HashMap(8);
-
+                    
 // TBD Uncomment when realm support is added in the api
 // default to root realm for now.
                     data.put(REALM, realm);
                     
-                    data.put(PROTOCOL, IDFF);                                
+                    data.put(PROTOCOL, IDFF);
                     data.put(ROLE, listToString(getIDFFRoles(name, realm)));
                     if (hostedEntities.contains(name)) {
                         data.put(LOCATION, "hosted");
                     } else {
                         data.put(LOCATION, "remote");
                     }
-
+                    
                     idffMap.put(name, (HashMap)data);
                 }
             }
@@ -162,56 +165,56 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         
         return (idffMap != null) ? idffMap : Collections.EMPTY_MAP;
     }
-
+    
     /*
      * Returns a map of all the idff entities including data about
      * what realm, the roles, and location of each entity.
      */
-    private Map getWSFedEntities() 
-        throws AMConsoleException
+    private Map getWSFedEntities()
+        throws AMConsoleException 
     {
         Map wsfedMap = new HashMap();
         for (Iterator i = realms.iterator(); i.hasNext(); ) {
             String realm = (String)i.next();
-        
+            
             try {
-                Set wsfedEntities = 
+                Set wsfedEntities =
                     WSFederationMetaManager.getAllEntities(realm);
-                List hosted = 
+                List hosted =
                     WSFederationMetaManager.getAllHostedEntities(realm);
-
-                for (Iterator j = wsfedEntities.iterator(); j.hasNext(); ) {               
+                
+                for (Iterator j = wsfedEntities.iterator(); j.hasNext(); ) {
                     String entity = (String)j.next();
                     Map data = new HashMap(8);
-                    data.put(REALM, realm);                    
-                    data.put(PROTOCOL, WSFED);                    
-                    data.put(ROLE, listToString(getWSFedRoles(entity, realm)));                    
-                    if ((hosted != null) && (hosted.contains(entity))) {                   
+                    data.put(REALM, realm);
+                    data.put(PROTOCOL, WSFED);
+                    data.put(ROLE, listToString(getWSFedRoles(entity, realm)));
+                    if ((hosted != null) && (hosted.contains(entity))) {
                         data.put(LOCATION, "hosted");
                     } else {
                         data.put(LOCATION, "remote");
                     }
-
-                    wsfedMap.put(entity, (HashMap)data);                               
+                    
+                    wsfedMap.put(entity, (HashMap)data);
                 }
             } catch (WSFederationMetaException e) {
-                debug.error("EntityModel.getWSFedEntities", e); 
+                debug.error("EntityModel.getWSFedEntities", e);
                 throw new AMConsoleException(e.getMessage());
             }
         }
-       
-        return (wsfedMap != null) ? 
+        
+        return (wsfedMap != null) ?
             wsfedMap : Collections.EMPTY_MAP;
     }
     
     /**
-     * This is a convenience routine that can be used 
+     * This is a convenience routine that can be used
      * to convert a List of String objects to a single String in the format of
      *     "one; two; three"
      */
     private String listToString(List roleNames) {
         StringBuffer sb = new StringBuffer();
-        for (Iterator i = roleNames.iterator(); i.hasNext(); ) {                    
+        for (Iterator i = roleNames.iterator(); i.hasNext(); ) {
             String role = (String)i.next();
             if (sb.length() > 0) {
                 sb.append("; ");
@@ -226,31 +229,31 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         if (protocol.equals(SAMLV2)) {
             createSAMLv2Provider(data);
         } else if (protocol.equals(WSFED)) {
-            createWSFedProvider(data);             
+            createWSFedProvider(data);
         } else if (protocol.equals(IDFF)) {
             createIDFFProvider(data);
-        }        
+        }
     }
     
     /*
-     * TBD what is the best approach for creating a new provider with 
+     * TBD what is the best approach for creating a new provider with
      * minimal input from the user
      *
      */
     
-    private void createSAMLv2Provider(Map data) throws AMConsoleException {        
-         throw new AMConsoleException("create SAML not implemented yet");       
+    private void createSAMLv2Provider(Map data) throws AMConsoleException {
+        throw new AMConsoleException("create SAML not implemented yet");
     }
     
     private void createWSFedProvider(Map data) throws AMConsoleException {
         throw new AMConsoleException("create WSFed not implemented yet");
     }
-        
+    
     private void createIDFFProvider(Map data) throws AMConsoleException {
         throw new AMConsoleException("create IDFF not implemented yet");
     }
     
-    public void deleteEntities(Map data) 
+    public void deleteEntities(Map data)
         throws AMConsoleException 
     {
         if (data == null || data.isEmpty()) {
@@ -259,13 +262,15 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         
         Set entities = data.keySet();
         for (Iterator i = entities.iterator(); i.hasNext();) {
-            String name = (String)i.next();
-            String type = (String)data.get(name);
-              
+            String name = (String)i.next();           
+            String s = (String)data.get(name);
+            int pos = s.indexOf("|");
+            String type = s.substring(0, pos);
+            
             if (type.equals("IDFF")) {
                 deleteIDFFEntity(name);
             } else if (type.equals("WSFED")) {
-                deleteWSFedEntity(name);           
+                deleteWSFedEntity(name);
             } else {
                 deleteSAMLv2Entity(name);
             }
@@ -273,62 +278,65 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
     }
     
     private void deleteSAMLv2Entity(String entityID)
-        throws AMConsoleException
+        throws AMConsoleException 
     {
         //
         // TBD the realm should be pulled from the entity descriptor element
         //
         String realm = "/";
         try {
-            SAML2MetaManager metaManager = new SAML2MetaManager();          
-            metaManager.deleteEntityDescriptor(realm, entityID);           
+            SAML2MetaManager metaManager = new SAML2MetaManager();
+            metaManager.deleteEntityDescriptor(realm, entityID);
         } catch (SAML2MetaException e) {
             throw new AMConsoleException("delete.entity.exists.error");
         }
     }
     
     private void deleteIDFFEntity(String entityID)
-        throws AMConsoleException
+        throws AMConsoleException 
     {
         try {
             IDFFMetaManager metaManager = new IDFFMetaManager(
                 getUserSSOToken());
-
-                metaManager.deleteEntityDescriptor(entityID);
+            
+            metaManager.deleteEntityDescriptor(entityID);
             
         } catch (IDFFMetaException e) {
             throw new AMConsoleException(e.getMessage());
         }
     }
     
-    private void deleteWSFedEntity(String entityID) 
+    private void deleteWSFedEntity(String entityID)
         throws AMConsoleException 
     {
         throw new AMConsoleException("TBD");
     }
-   
+    
     /*
      * This is used to determine what 'roles' a particular entity is
-     * acting as. It will producs a list of role names which can then 
+     * acting as. It will producs a list of role names which can then
      * be used by the calling routine for whatever purpose it needs.
      */
     private List getIDFFRoles(String entity, String realm) {
-        List roles = new ArrayList(6); 
-
+        List roles = new ArrayList(6);
+        
         try {
             IDFFMetaManager idffManager = new IDFFMetaManager(
-                getUserSSOToken());  
-                                
+                getUserSSOToken());
+            
             // find out what role this dude is playing
             if (idffManager.getIDPDescriptor(entity) != null) {
                 roles.add("IDP");
             }
             if (idffManager.getSPDescriptor(entity) != null) {
                 roles.add("SP");
-            }                                    
+            }
+            if(idffManager.getAffiliationDescriptor(entity) != null) {
+                roles.add("Affiliate");
+            }
         } catch (IDFFMetaException s) {
             if (debug.warningEnabled()) {
-                debug.warning("EntityModel.getIDFFRoles() - " + 
+                debug.warning("EntityModel.getIDFFRoles() - " +
                     "Couldn't get SAMLMetaManager");
             }
         }
@@ -346,7 +354,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 roles.add("SP");
             }
         } catch (WSFederationMetaException w) {
-            debug.warning("EntityModel.getWSFEdRoles", w);            
+            debug.warning("EntityModel.getWSFEdRoles", w);
         }
         return (roles != null) ?
             roles : Collections.EMPTY_LIST;
@@ -354,18 +362,18 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
     
     /*
      * This is used to determine what 'roles' a particular entity is
-     * acting as. It will producs a list of role names which can then 
+     * acting as. It will producs a list of role names which can then
      * be used by the calling routine for whatever purpose it needs.
      */
-    private List getSAMLv2Roles(String entity, String realm) {          
-        List roles = new ArrayList(); 
-      
+    private List getSAMLv2Roles(String entity, String realm) {
+        List roles = new ArrayList();
+        
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();        
+            SAML2MetaManager samlManager = new SAML2MetaManager();
             EntityDescriptorElement d =
-                samlManager.getEntityDescriptor(realm, entity);  
+                samlManager.getEntityDescriptor(realm, entity);
             
-            if (d != null) {           
+            if (d != null) {
                 // find out what role this dude is playing
                 StringBuffer role = new StringBuffer(32);
                 if (SAML2MetaUtils.getSPSSODescriptor(d) != null) {
@@ -379,11 +387,11 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 }
                 if (SAML2MetaUtils.getPolicyEnforcementPointDescriptor(d) != null) {
                     roles.add("PEP");
-                }                        
-            }        
+                }
+            }
         } catch (SAML2MetaException s) {
             if (debug.warningEnabled()) {
-                debug.warning("EntityModel.getSAMLv2Roles() - " + 
+                debug.warning("EntityModel.getSAMLv2Roles() - " +
                     "Couldn't get SAMLMetaManager");
             }
         }
@@ -403,7 +411,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         
         return tab;
     }
-
+    
     /*
      * Creates a list of tab entries dynamically based on the roles supported
      * for an entity.
@@ -411,9 +419,9 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
     public List getTabMenu(String protocol, String entity, String realm) {
         List entries = new ArrayList();
         List roles = new ArrayList();
-             
+        
         // do not localize General. Its the name of a class file.
-        roles.add("General");    
+        roles.add("General");
         
         if (protocol.equals(SAMLV2)) {
             roles.addAll(getSAMLv2Roles(entity, realm));
@@ -431,5 +439,27 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         
         return entries;
     }
-
+    
+    /**
+     * Returns true if entity descriptor is an affiliate.
+     *
+     * @param name Name of entity descriptor.
+     * @return true if entity descriptor is an affiliate.
+     */
+    public boolean isAffiliate(String name) throws AMConsoleException {
+        boolean isAffiliate = false;
+        try {
+            IDFFMetaManager idffManager = new IDFFMetaManager(
+                getUserSSOToken());
+            AffiliationDescriptorType ad = (AffiliationDescriptorType)
+            idffManager.getAffiliationDescriptor(name);
+            if (ad != null) {
+                isAffiliate = true;
+            }
+        } catch (IDFFMetaException  e) {           
+            debug.warning("EntityModelImpl.isAffiliate", e);
+            throw new AMConsoleException(getErrorString(e));
+        }
+        return isAffiliate;
+    }
 }

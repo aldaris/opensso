@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityProviderModelImpl.java,v 1.2 2007-08-13 19:09:48 asyhuang Exp $
+ * $Id: IDFFEntityProviderModelImpl.java,v 1.3 2007-08-24 18:17:12 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType;
 import com.sun.identity.federation.jaxb.entityconfig.AttributeType;
 import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement;
@@ -191,7 +192,7 @@ public class IDFFEntityProviderModelImpl
                 }
             }
         } catch (IDFFMetaException e) {
-            debug.error("IDFFEntityProviderModelImpl.getProviderType", e);
+            debug.error("IDFFEntityProviderModel.getProviderType", e);
         }
         return type;
     }
@@ -208,7 +209,7 @@ public class IDFFEntityProviderModelImpl
             IDFFMetaManager mgr = getIDFFMetaManager();
             pdesc = mgr.getIDPDescriptor(name);
         } catch (IDFFMetaException e) {
-            debug.error("IDFFEntityProviderModelImpl.getIdentityProvider", e);
+            debug.error("IDFFEntityProviderModel.getIdentityProvider", e);
         }
         return pdesc;
     }
@@ -225,7 +226,7 @@ public class IDFFEntityProviderModelImpl
             IDFFMetaManager mgr = getIDFFMetaManager();
             pdesc = mgr.getSPDescriptor(name);
         } catch (IDFFMetaException e) {
-            debug.error("IDFFEntityProviderModelImpl.getServiceProvider", e);
+            debug.error("IDFFEntityProviderModel.getServiceProvider", e);
         }
         return pdesc;
     }
@@ -639,9 +640,9 @@ public class IDFFEntityProviderModelImpl
         String role,
         Map attrValues)
         throws AMConsoleException, JAXBException {
-        String classMethod = "IDFFEntityProviderModelImpl.updateEntityConfig:";
+        String classMethod = "IDFFEntityProviderModel.updateEntityConfig:";
         Map values = convertSetToListInMap(attrValues);
-        //printMap(values,"in updateEntityConfig.. XXXXX");
+       
         try {
             
             IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
@@ -697,7 +698,7 @@ public class IDFFEntityProviderModelImpl
         String role,
         String location
         ) throws AMConsoleException, JAXBException {
-        String classMethod = "IDFFEntityProviderModelImpl.createEntityConfig: ";
+        String classMethod = "IDFFEntityProviderModel.createEntityConfig: ";
         
         try {
             IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
@@ -779,7 +780,7 @@ public class IDFFEntityProviderModelImpl
         } catch (IDFFMetaException e){
             debug.error("Exception in" + classMethod);
         }
-    }    
+    }
     
     protected IDFFMetaManager getIDFFMetaManager()
     throws IDFFMetaException {
@@ -787,6 +788,188 @@ public class IDFFEntityProviderModelImpl
             metaManager = new IDFFMetaManager(getUserSSOToken());
         }
         return metaManager;
+    }
+    /**
+     * Returns true if entity descriptor is an affiliate.
+     *
+     * @param name Name of entity descriptor.
+     * @return true if entity descriptor is an affiliate.
+     */
+    public boolean isAffiliate(String name) throws AMConsoleException {
+        boolean isAffiliate = false;
+        try {
+            IDFFMetaManager idffManager =getIDFFMetaManager();
+            AffiliationDescriptorType ad = (AffiliationDescriptorType)
+            idffManager.getAffiliationDescriptor(name);
+            if (ad != null) {
+                isAffiliate = true;
+            }
+        } catch (IDFFMetaException  e) {            
+            debug.warning("IDFFEntityProviderModel.isAffiliate", e);
+            throw new AMConsoleException(getErrorString(e));
+        }
+        
+        return isAffiliate;
+    }
+    
+    /**
+     * Returns affiliate profile attribute values.
+     *
+     * @param name Name of Entity Descriptor.
+     * @return affiliate profile attribute values.
+     * @throws AMConsoleException if attribute values cannot be obtained.
+     */
+    public Map getAffiliateProfileAttributeValues(String name)
+    throws AMConsoleException{
+        Map values = new HashMap();
+        try {          
+            IDFFMetaManager idffManager = getIDFFMetaManager();
+            AffiliationDescriptorType aDesc = (AffiliationDescriptorType)
+                idffManager.getAffiliationDescriptor(name);
+            
+            if (aDesc != null) {
+                values.put(ATTR_AFFILIATE_ID,
+                    returnEmptySetIfValueIsNull(aDesc.getAffiliationID()));
+                
+                values.put(ATTR_AFFILIATE_OWNER_ID,
+                    returnEmptySetIfValueIsNull(aDesc.getAffiliationOwnerID()));
+                
+                //TBD : common attributes which may be added here later
+                /*ATTR_AFFILIATE_VALID_UNTIL,
+                  ATTR_AFFILIATE_CACHE_DURATION
+                  ATTR_AFFILIATE_SIGNING_KEY_ALIAS
+                  ATTR_AFFILIATE_ENCRYPTION_KEY_ALIAS
+                  ATTR_AFFILIATE_ENCRYPTION_KEY_SIZE
+                  ATTR_AFFILIATE_ENCRYPTION_KEY_METHOD
+                 */                
+                
+            } else {
+                values.put(ATTR_AFFILIATE_ID, Collections.EMPTY_SET);
+                values.put(ATTR_AFFILIATE_OWNER_ID, Collections.EMPTY_SET);
+                values.put(ATTR_AFFILIATE_VALID_UNTIL, Collections.EMPTY_SET);
+                values.put(ATTR_AFFILIATE_CACHE_DURATION,
+                    Collections.EMPTY_SET);
+                values.put(ATTR_AFFILIATE_SIGNING_KEY_ALIAS, Collections.EMPTY_SET);
+                values.put(ATTR_AFFILIATE_ENCRYPTION_KEY_ALIAS, Collections.EMPTY_SET);
+                values.put(ATTR_AFFILIATE_ENCRYPTION_KEY_SIZE, Collections.EMPTY_SET);
+                values.put(ATTR_AFFILIATE_ENCRYPTION_KEY_METHOD, Collections.EMPTY_SET);                
+            }         
+        } catch (IDFFMetaException e) {
+            debug.warning("IDFFEntityProviderModel.getAffiliateProfileAttributeValues", e);
+            throw new AMConsoleException(e.getMessage());
+        }                
+        return (values != null) ? values : Collections.EMPTY_MAP;
+    }
+    
+    /**
+     * Modifies affiliate profile.
+     *
+     * @param name Name of entity descriptor.
+     * @param values Map of attribute name/value pairs.
+     * @param members Set of affiliate members
+     * @throws AMConsoleException if profile cannot be modified.
+     */
+    public void updateAffiliateProfile(String name, Map values, Set members)
+    throws AMConsoleException{
+        try {
+            IDFFMetaManager idffManager = getIDFFMetaManager();
+            EntityDescriptorElement entityDescriptor =
+                idffManager.getEntityDescriptor(name) ;
+            AffiliationDescriptorType aDesc =
+                entityDescriptor.getAffiliationDescriptor();
+            
+            aDesc.setAffiliationID(
+                (String)AMAdminUtils.getValue((Set)values.get(
+                ATTR_AFFILIATE_ID)));
+            
+            aDesc.setAffiliationOwnerID(
+                (String)AMAdminUtils.getValue((Set)values.get(
+                ATTR_AFFILIATE_OWNER_ID)));
+            
+            //TBD : common attributes which may be added here later
+            /*ATTR_AFFILIATE_VALID_UNTIL,
+             ATTR_AFFILIATE_CACHE_DURATION
+             ATTR_AFFILIATE_SIGNING_KEY_ALIAS
+             ATTR_AFFILIATE_ENCRYPTION_KEY_ALIAS
+             ATTR_AFFILIATE_ENCRYPTION_KEY_SIZE
+             ATTR_AFFILIATE_ENCRYPTION_KEY_METHOD
+             */
+            
+            // add affilliate members
+            Iterator it = members.iterator();
+            while (it.hasNext()){
+                String newMember = (String) it.next();
+                aDesc.getAffiliateMember().add(newMember);
+            }
+            
+            entityDescriptor.setAffiliationDescriptor(aDesc);
+            idffManager.setEntityDescriptor(entityDescriptor);
+            
+        } catch (IDFFMetaException e) {
+            debug.warning("IDFFEntityProviderModel.updateAffiliateProfile", e);
+            throw new AMConsoleException(e.getMessage());
+        }
+    }
+    
+     /*
+      * Returns a Set of all the idff entities
+      */
+    public  Set getAllEntityDescriptorNames()
+    throws AMConsoleException {
+        Set entitySet = new HashSet();
+        try {
+            IDFFMetaManager idffManager = getIDFFMetaManager();
+            entitySet = idffManager.getAllEntities();
+        } catch (IDFFMetaException e) {
+            debug.warning("IDFFEntityProviderModel.getAllEntityDescriptorNames", e);
+            throw new AMConsoleException(e.getMessage());
+        }        
+        return (entitySet != null) ? entitySet : Collections.EMPTY_SET;
+    }
+        
+     /*
+      * Returns a Set of all the idff Affiliate entities
+      */
+    public  Set getAllAffiliateEntityDescriptorNames()
+    throws AMConsoleException {
+        Set entitySet = new HashSet();
+        try {
+            IDFFMetaManager idffManager = getIDFFMetaManager();
+            Set allEntities = idffManager.getAllEntities();
+            Iterator it = allEntities.iterator();
+            while (it.hasNext()) {
+                String name = (String) it.next();
+                if (isAffiliate(name)) {
+                    entitySet.add(name);
+                }
+            }
+        } catch (IDFFMetaException e) {
+            debug.warning("IDFFEntityProviderModel.getAllAffiliateEntityDescriptorNames", e);
+            throw new AMConsoleException(e.getMessage());
+        }
+        return (entitySet != null) ? entitySet : Collections.EMPTY_SET;
+    }
+    
+    /*
+     * Returns a Set of all the affiliate members
+     *
+     * @param name Name of Entity Descriptor.
+     * @throws AMConsoleException if values cannot be obtained.
+     */
+    public Set getAllAffiliateMembers(String entityID)
+    throws AMConsoleException {
+        Set memberSet = new HashSet();
+        try {
+            IDFFMetaManager idffManager = getIDFFMetaManager();
+            AffiliationDescriptorType aDesc = (AffiliationDescriptorType)
+            idffManager.getAffiliationDescriptor(entityID);
+            memberSet = convertListToSet(aDesc.getAffiliateMember());
+        } catch (IDFFMetaException e) {
+            debug.warning("IDFFEntityProviderModel.getAllAffiliateMembers", e);
+            throw new AMConsoleException(e.getMessage());
+        }
+        
+        return (memberSet != null) ? memberSet : Collections.EMPTY_SET;
     }
     
     private Set returnEmptySetIfValueIsNull(boolean b) {

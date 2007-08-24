@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityProviderModel.java,v 1.2 2007-08-13 19:09:48 asyhuang Exp $
+ * $Id: IDFFEntityProviderModel.java,v 1.3 2007-08-24 18:17:12 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -203,6 +203,60 @@ public interface IDFFEntityProviderModel
     
     
     /**
+     * Attribute name of affiliate ID.
+     */
+    public static final String ATTR_AFFILIATE_ID =
+        "tfAffiliateID";
+    
+    /**
+     * Attribute name of affiliate Owner ID.
+     */
+    public static final String ATTR_AFFILIATE_OWNER_ID =
+        "tfAffiliateOwnerID";
+    
+    /**
+     * Attribute name of affiliate's Valid Until.
+     */
+    public static final String ATTR_AFFILIATE_VALID_UNTIL =
+        "tfAffiliateValidUntil";
+    
+    /**
+     * Attribute name of affiliate's Cache Duration.
+     */
+    public static final String ATTR_AFFILIATE_CACHE_DURATION =
+        "tfAffiliateCacheDuration";
+    
+    /**
+     * Attribute name of Signing Key's Key Alias.
+     */
+    public static final String ATTR_AFFILIATE_SIGNING_KEY_ALIAS =
+        "tfSigningKeyAlias";
+    
+    /**
+     * Attribute name of Encryption Key's Key Alias.
+     */
+    public static final String ATTR_AFFILIATE_ENCRYPTION_KEY_ALIAS =
+        "tfEncryptionKeyAlias";
+    
+    /**
+     * Attribute name of Encryption Key's Key Size.
+     */
+    public static final String ATTR_AFFILIATE_ENCRYPTION_KEY_SIZE =
+        "tfEncryptionKeySize";
+    
+    /**
+     * Attribute name of Encryption Key's Key Method.
+     */
+    public static final String ATTR_AFFILIATE_ENCRYPTION_KEY_METHOD =
+        "tfEncryptionMethod";
+    
+    /**
+     * Attribute name of Affiliate Members.
+     */
+    public static final String ATTR_AFFILIATE_MEMBERS =
+        "arlistAffiliateMembers";
+    
+    /**
      * Returns the type of a provider such as hosted or remote.
      *
      * @param name of Entity Descriptor.
@@ -266,4 +320,58 @@ public interface IDFFEntityProviderModel
         String role,
         String location
         ) throws AMConsoleException, JAXBException;
+    
+    /**
+     * Returns true if entity descriptor is an affiliate.
+     *
+     * @param name Name of entity descriptor.
+     * @return true if entity descriptor is an affiliate.
+     */
+    public boolean isAffiliate(String name) throws AMConsoleException;
+    
+    /**
+     * Returns affiliate profile attribute values.
+     *
+     * @param name Name of Entity Descriptor.
+     * @return affiliate profile attribute values.
+     * @throws AMConsoleException if attribute values cannot be obtained.
+     */
+    public Map getAffiliateProfileAttributeValues(String name)
+    throws AMConsoleException;
+    
+    /**
+     * Modifies affiliate profile.
+     *
+     * @param name Name of entity descriptor.
+     * @param values Map of attribute name/value pairs.
+     * @param members Set of Affiliate memebers
+     * @throws AMConsoleException if profile cannot be modified.
+     */
+    public void updateAffiliateProfile(String name, Map values, Set members)
+    throws AMConsoleException;
+    
+    /*
+     * Returns a Set of all the idff entities
+     *
+     * @throws AMConsoleException if value cannot be obtained.
+     */
+    public  Set getAllEntityDescriptorNames()
+    throws AMConsoleException;
+    
+     /*
+      * Returns a Set of all the affiliate entity name
+      *
+      * @throws AMConsoleException if value cannot be obtained.
+      */
+    public  Set getAllAffiliateEntityDescriptorNames()
+    throws AMConsoleException ;
+    
+    /*
+     * Returns a Set of all the affiliate members
+     *
+     * @param name Name of Entity Descriptor.
+     * @throws AMConsoleException if values cannot be obtained.
+     */
+    public Set getAllAffiliateMembers(String entityID)
+    throws AMConsoleException ;
 }

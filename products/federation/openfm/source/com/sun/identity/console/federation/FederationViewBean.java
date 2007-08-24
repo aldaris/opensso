@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.6 2007-08-03 22:29:02 jonnelson Exp $
+ * $Id: FederationViewBean.java,v 1.7 2007-08-24 18:16:55 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -323,10 +323,22 @@ public  class FederationViewBean
             tableModel.setValue(ENTITY_NAME_HREF, completeValue);
             tableModel.setValue(ENTITY_NAME_VALUE, name);
             tableModel.setValue(ENTITY_REALM_VALUE, realm);
-            tableModel.setValue(ENTITY_PROTOCOL_VALUE, protocol);
-            tableModel.setValue(ENTITY_LOCATION_VALUE, location+".label");                                              
-            tableModel.setValue(ENTITY_ROLE_VALUE, 
-                (String)data.get(eModel.ROLE)); 
+            tableModel.setValue(ENTITY_PROTOCOL_VALUE, protocol);         
+            
+            try {
+                if(eModel.isAffiliate(name)){               
+                    tableModel.setValue(ENTITY_LOCATION_VALUE, "");               
+                    tableModel.setValue(ENTITY_ROLE_VALUE, 
+                        "affiliate" );
+                } else {               
+                    tableModel.setValue(ENTITY_LOCATION_VALUE, 
+                        location+".label");   
+                    tableModel.setValue(ENTITY_ROLE_VALUE,
+                        (String)data.get(eModel.ROLE));
+                }
+            } catch (AMConsoleException e) { 
+                 debug.error ("FederationViewBean.populateEntityTable", e);                 
+            }
             
             // name|protocol|realm needed while deleting/exporting entities
             entityList.add(completeValue);
