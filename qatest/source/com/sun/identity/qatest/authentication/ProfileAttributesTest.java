@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.2 2007-08-07 23:35:20 rmisra Exp $
+ * $Id: ProfileAttributesTest.java,v 1.3 2007-08-25 02:22:03 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,7 @@ public class ProfileAttributesTest extends TestCommon {
      * - Create Users , If needed
      */
     @Parameters({"testProfile"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ds_ds","ds_ds_sec"})
     public void setup(String testProfile)
     throws Exception {
         Object[] params = {testProfile};
@@ -141,7 +141,7 @@ public class ProfileAttributesTest extends TestCommon {
     /*
      * Validate the profile tests
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ds_ds","ds_ds_sec"})
     public void testProfile()
     throws Exception {
         entering("testProfile", null);
@@ -160,7 +160,7 @@ public class ProfileAttributesTest extends TestCommon {
     /**
      * performs cleanup after tests are done.
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
