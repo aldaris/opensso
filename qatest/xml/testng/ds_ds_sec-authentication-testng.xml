@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-authentication-testng.xml,v 1.1 2007-08-07 23:35:29 rmisra Exp $
+ $Id: ds_ds_sec-authentication-testng.xml,v 1.2 2007-08-25 02:19:33 sridharev Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -346,7 +346,7 @@
             <class name="com.sun.identity.qatest.authentication.RedirectTestFactory"/>
         </classes>
     </test>
-<test name="ProfileAttributesTest">
+    <test name="ProfileAttributesRequiredTest">
         <parameter name="testProfile" value="required"/>
         <groups>
             <run>
@@ -357,7 +357,7 @@
             <class name="com.sun.identity.qatest.authentication.ProfileAttributesTest"/>
         </classes>
     </test>
-    <test name="ProfileAttributesTest">
+    <test name="ProfileAttributesDynamicTest">
         <parameter name="testProfile" value="dynamic"/>
         <groups>
             <run>
@@ -368,7 +368,7 @@
             <class name="com.sun.identity.qatest.authentication.ProfileAttributesTest"/>
         </classes>
     </test>
-    <test name="ProfileAttributesTest">
+    <test name="ProfileAttributesIgnoredTest">
         <parameter name="testProfile" value="ignored"/>
         <groups>
             <run>
@@ -387,6 +387,16 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.authentication.AccountLockoutTest"/>
+        </classes>
+    </test>
+    <test name="AccountLockoutTest">
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
 </suite>

@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-authentication-testng.xml,v 1.1 2007-08-07 23:35:31 rmisra Exp $
+ $Id: ff_ds-authentication-testng.xml,v 1.2 2007-08-25 02:20:03 sridharev Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -344,49 +344,6 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.authentication.RedirectTestFactory"/>
-        </classes>
-    </test>
-<test name="ProfileAttributesTest">
-        <parameter name="testProfile" value="required"/>
-        <groups>
-            <run>
-                <include name="ff_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.ProfileAttributesTest"/>
-        </classes>
-    </test>
-    <test name="ProfileAttributesTest">
-        <parameter name="testProfile" value="dynamic"/>
-        <groups>
-            <run>
-                <include name="ff_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.ProfileAttributesTest"/>
-        </classes>
-    </test>
-    <test name="ProfileAttributesTest">
-        <parameter name="testProfile" value="ignored"/>
-        <groups>
-            <run>
-                <include name="ff_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.ProfileAttributesTest"/>
-        </classes>
-    </test>
-<test name="AccountLockoutTest">
-        <groups>
-            <run>
-                <include name="ff_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.AccountLockoutTest"/>
         </classes>
     </test>
 </suite>
