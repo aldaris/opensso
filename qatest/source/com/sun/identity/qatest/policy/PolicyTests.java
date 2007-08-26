@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyTests.java,v 1.2 2007-08-07 23:35:23 rmisra Exp $
+ * $Id: PolicyTests.java,v 1.3 2007-08-26 13:08:01 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@ package com.sun.identity.qatest.policy;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.AgentsCommon;
+import com.sun.identity.qatest.common.PolicyCommon;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
@@ -40,69 +40,105 @@ import java.util.Map;
  * This class has the methods to create and evaluate policies using client
  * policy evaluation API
  */
+
 public class PolicyTests extends TestCommon {
     
     private int polIdx;
     private int evalIdx;
     private String strSetup;
     private String strCleanup;
-    private AgentsCommon mpc;
+    private String strPeAtOrg;
+    private String strDynamic;
+    private String strDynamicRefValue;
+    private PolicyCommon mpc;
     private ResourceBundle rbg;
     private ResourceBundle rbp;
+    private ResourceBundle rbr;
+    private String strReferringOrg;
     private String strLocRB = "PolicyTests";
     private String strGblRB = "PolicyGlobal";
-    
+    private String strRefRB = "PolicyReferral";
+   
     /**
      * Class constructor. No arguments
-     */
-    
-    public PolicyTests()
+     */  
+    public PolicyTests() 
     throws Exception {
         super("PolicyTests");
-        mpc = new AgentsCommon();
+        mpc = new PolicyCommon();
         rbg = ResourceBundle.getBundle(strGblRB);
         rbp = ResourceBundle.getBundle(strLocRB);
+        rbr = ResourceBundle.getBundle(strRefRB);
     }
     
-    /**
-     * This method sets up all the required identities, generates the xmls and
-     * creates the policies in the server
-     */
-    @Parameters({"policyIdx", "evaluationIdx", "setup", "cleanup"})
+   /**
+    * This method sets up all the required identities, generates the xmls and
+    * creates the policies in the server
+    */
+    @Parameters({"policyIdx","evaluationIdx","setup","cleanup", "peAtOrg", 
+    "dynamic"})
     @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup
-            , String cleanup)
-            throws Exception {
-        Object[] params = {policyIdx, evaluationIdx, setup, cleanup};
+            , String cleanup, String peAtOrg, String dynamic)
+    throws Exception {
+        Object[] params = {policyIdx, evaluationIdx, setup, cleanup, dynamic,
+        peAtOrg};
         entering("setup", params);
         try {
             polIdx = new Integer(policyIdx).intValue();
             evalIdx = new Integer(evaluationIdx).intValue();
             strSetup = setup;
             strCleanup = cleanup;
+            strPeAtOrg = peAtOrg;
+            strDynamic = dynamic;           
             if (strSetup.equals("true")) {
-                mpc.createIdentities(strLocRB, polIdx);
-                mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
-                        ".xml");
-                mpc.createPolicy(strLocRB + ".xml");
-                Thread.sleep(75000);
+                if (strPeAtOrg.equals(realm)) {
+                    mpc.createIdentities(strLocRB, polIdx,  strPeAtOrg );
+                    mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
+                        ".xml", strPeAtOrg);
+                    mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
+                    Thread.sleep(75000);
+                } else { 
+                    mpc.createRealm("/" + strPeAtOrg);
+                    mpc.createIdentities(strLocRB, polIdx, strPeAtOrg);
+                    
+                    if (strDynamic.equals("false")) {
+                        mpc.createReferralPolicyXML(strGblRB, strRefRB, 
+                                strLocRB, polIdx, strRefRB +  ".xml");
+                        strReferringOrg = rbr.getString(strLocRB + polIdx + 
+                             ".referringOrg");
+                        mpc.createPolicy(strRefRB + ".xml", strReferringOrg );
+                    } else {
+                        strDynamicRefValue = "true";
+                        mpc.setDynamicReferral(strDynamicRefValue);
+                        mpc.createDynamicReferral(strGblRB, strRefRB, strLocRB,  
+                                polIdx, strPeAtOrg);
+                    }   
+                    mpc.createPolicyXML(strGblRB, strLocRB, polIdx, 
+                        strLocRB + ".xml", strPeAtOrg);
+                    mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
+                    Thread.sleep(75000);                                      
+                } 
             }
-        }catch (Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+        } catch (Exception e) {
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
         exiting("setup");
     }
-    
-    /**
-     * This method evaluates the policies using the client policy evalaution API
-     * Policy_sub, Policy_ldapFilter, Policy_sub_exclude, Policy_Wildcard
-     */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void evaluatePolicyAPI()
+         
+   /**
+    * This method evaluates the policies using the client policy evaluation API
+    * Policy_sub, Policy_ldapFilter, Policy_sub_exclude, Policy_Wildcard, Subre
+    * alm, Combination policies, policy response attributes
+    */
+    @Parameters({ "peAtOrg"}) 
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})      
+    public void evaluatePolicyAPI(String peAtOrg)
     throws Exception {
-        entering("evaluatePolicyAPI", null);
+        Object[] params = {peAtOrg};
+        entering("evaluatePolicyAPI", params);
         String strEvalIdx = strLocRB + polIdx + ".evaluation" + evalIdx;
         String resource = rbg.getString(rbp.getString(strEvalIdx +
                 ".resource"));
@@ -124,28 +160,35 @@ public class PolicyTests extends TestCommon {
         Reporter.log("Env Param: " + map);
         Reporter.log("Expected Result: " + expResult);
         
-        SSOToken userToken = getToken(username, password, realm);
+        SSOToken userToken = getToken(username, password, peAtOrg);
         mpc.setProperty(strLocRB, userToken, polIdx, idIdx);
         mpc.evaluatePolicyThroughAPI(resource, userToken, action, map,
                 expResult, idIdx);
-        
         exiting("evaluatePolicyAPI");
     }
     
-    /**
-     * This method cleans all the identities and policies  that were setup
-     */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void cleanup()
+   /**
+    * This method cleans all the identities and policies  that were setup
+    */
+    @Parameters({"peAtOrg"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})    
+    public void cleanup(String peAtOrg)
     throws Exception {
-        entering("cleanup", null);
+        Object[] params = {peAtOrg};
+        entering("cleanup", params);
         try {
             if (strCleanup.equals("true")) {
-                mpc.deleteIdentities(strLocRB, polIdx);
-                mpc.deletePolicies(strLocRB, polIdx);
+                if (peAtOrg.equals(realm)) {
+                    mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
+                    mpc.deletePolicies(strLocRB, polIdx, peAtOrg);
+                } else {
+                    mpc.deleteReferralPolicies(strLocRB, strRefRB, polIdx);
+                    mpc.deleteIdentities(strLocRB, polIdx, peAtOrg); 
+		    mpc.deleteRealm(peAtOrg); 
+                }
             }
-        }catch (Exception e) {
-            log(Level.SEVERE, "cleanup", e.getMessage(), null);
+        } catch (Exception e) {
+            log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         }

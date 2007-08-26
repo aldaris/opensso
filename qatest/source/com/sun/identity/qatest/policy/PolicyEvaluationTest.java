@@ -69,7 +69,8 @@ public class PolicyEvaluationTest extends TestCommon {
      * @param map, map, map, map, int, int
      */
     public PolicyEvaluationTest(Map mI, Map mSC, Map mE, Map mEP, int j,
-            int i) {
+            int i) 
+    throws Exception {
         super("PolicyEvaluationTest");
         mapIdentity = mI;
         mapExecute = mE;
