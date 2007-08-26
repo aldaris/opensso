@@ -20,13 +20,13 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-policy-testng.xml,v 1.1 2007-08-07 23:35:29 rmisra Exp $: 
+ $Id: ds_ds_sec-policy-testng.xml,v 1.2 2007-08-26 13:24:46 arunav Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ds_ds_sec-policy" verbose="1">
-<test name="PolicyTest">
+    <test name="PolicyTest">
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -46,11 +46,13 @@
             <class name="com.sun.identity.qatest.policy.PolicyEvaluationTimeTest"/>
         </classes>
     </test>    
-   <test name="PolicyLDAPSubjectsTest_P0_E0 ">
+    <test name="PolicyLDAPSubjectsTest_P0_E0 ">
         <parameter name="policyIdx" value="0"/>
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -65,6 +67,8 @@
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -79,6 +83,8 @@
         <parameter name="evaluationIdx" value="2"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -93,6 +99,8 @@
         <parameter name="evaluationIdx" value="3"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -107,6 +115,8 @@
         <parameter name="evaluationIdx" value="4"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -121,6 +131,8 @@
         <parameter name="evaluationIdx" value="5"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -135,6 +147,8 @@
         <parameter name="evaluationIdx" value="6"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -149,6 +163,8 @@
         <parameter name="evaluationIdx" value="7"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -163,6 +179,8 @@
         <parameter name="evaluationIdx" value="8"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -172,11 +190,13 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>      
-   <test name="PolicyLDAPFilterTest_P1_E0 ">
+    <test name="PolicyLDAPFilterTest_P1_E0 ">
         <parameter name="policyIdx" value="1"/>
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -191,6 +211,8 @@
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -205,6 +227,8 @@
         <parameter name="evaluationIdx" value="2"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -219,6 +243,8 @@
         <parameter name="evaluationIdx" value="3"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -233,6 +259,8 @@
         <parameter name="evaluationIdx" value="4"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -247,6 +275,8 @@
         <parameter name="evaluationIdx" value="5"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -261,6 +291,8 @@
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -276,6 +308,8 @@
         <parameter name="evaluationIdx" value="5"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -290,6 +324,8 @@
         <parameter name="evaluationIdx" value="6"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -299,11 +335,13 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
- <test name="PolicyAuthConditionTest_P2_E7">
+    <test name="PolicyAuthConditionTest_P2_E7">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="7"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -313,11 +351,13 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
- <test name="PolicyAuthConditionTest_P2_E8">
+    <test name="PolicyAuthConditionTest_P2_E8">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="8"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -332,6 +372,8 @@
         <parameter name="evaluationIdx" value="9"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -346,6 +388,8 @@
         <parameter name="evaluationIdx" value="10"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -360,6 +404,8 @@
         <parameter name="evaluationIdx" value="11"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -374,6 +420,8 @@
         <parameter name="evaluationIdx" value="12"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -388,6 +436,8 @@
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -402,6 +452,8 @@
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -416,6 +468,8 @@
         <parameter name="evaluationIdx" value="2"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -430,6 +484,8 @@
         <parameter name="evaluationIdx" value="3"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -439,11 +495,13 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-     <test name="PolicysubjectExcludeTest_P3_E4">
+    <test name="PolicysubjectExcludeTest_P3_E4">
         <parameter name="policyIdx" value="3"/>
         <parameter name="evaluationIdx" value="4"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -453,11 +511,13 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-     <test name="PolicysubjectExcludeTest_P3_E5">
+    <test name="PolicysubjectExcludeTest_P3_E5">
         <parameter name="policyIdx" value="3"/>
         <parameter name="evaluationIdx" value="5"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -473,6 +533,8 @@
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -487,6 +549,8 @@
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -501,6 +565,8 @@
         <parameter name="evaluationIdx" value="2"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -515,6 +581,8 @@
         <parameter name="evaluationIdx" value="3"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -523,7 +591,5 @@
         <classes>
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
-    </test>  
-   
-   
-   </suite>
+    </test>     
+</suite>
