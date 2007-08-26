@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-policy-testng.xml,v 1.2 2007-08-12 13:57:13 arunav Exp $: 
+ $Id: ff_ds-policy-testng.xml,v 1.3 2007-08-26 13:19:53 arunav Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -51,6 +51,8 @@
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -66,6 +68,8 @@
         <parameter name="evaluationIdx" value="5"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -80,6 +84,8 @@
         <parameter name="evaluationIdx" value="6"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -94,6 +100,8 @@
         <parameter name="evaluationIdx" value="7"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -108,6 +116,8 @@
         <parameter name="evaluationIdx" value="8"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -122,6 +132,8 @@
         <parameter name="evaluationIdx" value="9"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -136,6 +148,8 @@
         <parameter name="evaluationIdx" value="10"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -150,6 +164,8 @@
         <parameter name="evaluationIdx" value="11"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -164,6 +180,8 @@
         <parameter name="evaluationIdx" value="12"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -178,6 +196,8 @@
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -192,6 +212,8 @@
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -206,6 +228,8 @@
         <parameter name="evaluationIdx" value="2"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -220,6 +244,8 @@
         <parameter name="evaluationIdx" value="3"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -234,6 +260,8 @@
         <parameter name="evaluationIdx" value="4"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -248,6 +276,8 @@
         <parameter name="evaluationIdx" value="5"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -263,6 +293,8 @@
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -277,6 +309,8 @@
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -291,6 +325,8 @@
         <parameter name="evaluationIdx" value="2"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -305,6 +341,8 @@
         <parameter name="evaluationIdx" value="3"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -314,6 +352,4 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>  
-   
-   
-   </suite>
+</suite>
