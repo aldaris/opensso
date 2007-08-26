@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluationTimeTest.java,v 1.2 2007-08-07 23:35:23 rmisra Exp $:
+ * $Id: PolicyEvaluationTimeTest.java,v 1.3 2007-08-26 13:10:39 arunav Exp $:
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * from resource bundle and adds the testcount to the map
      * @param none
      */
-    public PolicyEvaluationTimeTest(){
+    public PolicyEvaluationTimeTest() 
+    throws Exception {
         super("PolicyEvaluationTimeTest");
         pc = new PolicyCommon();
         mapIdentity = new HashMap();
@@ -83,7 +84,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * @param none
      */
     @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void setup() throws Exception {
+    public void setup() 
+    throws Exception {
         entering("setup", null);
         log(logLevel, "setup",  mapIdentity);
         Reporter.log( "setup"  + mapIdentity);
@@ -815,7 +817,7 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      */
     public void createPolicyXmlMultiTime( Map idMap, Map policyMap,
             int tcId)
-            throws IOException {
+    throws IOException {
         entering("createPolicyXmlMultiTime", null);
         try{
             int testCaseId = tcId;
