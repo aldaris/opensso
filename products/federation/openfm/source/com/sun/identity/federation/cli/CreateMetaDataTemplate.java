@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.17 2007-08-23 20:49:32 bina Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.18 2007-08-27 23:45:11 mchlbgs Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1027,19 +1027,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + IFSConstants.LOGOUT_DONE_URL + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.FEDERATION_DONE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.DOFEDERATE_PAGE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.LISTOFCOTS_PAGE_URL + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.ERROR_PAGE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.SSO_FAILURE_REDIRECT_URL + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.PROVIDER_HOME_PAGE_URL + "\">\n" +
