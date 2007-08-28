@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: logout.jsp,v 1.1 2007-08-01 21:04:48 superpat7 Exp $
+   $Id: logout.jsp,v 1.2 2007-08-28 00:37:57 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -26,6 +26,10 @@
 <%@page
     import="com.sun.identity.wsfederation.common.WSFederationConstants"
     import="java.util.Map"
+    import="com.sun.identity.plugin.session.SessionManager"
+    import="com.sun.identity.multiprotocol.MultiProtocolUtils"
+    import="com.sun.identity.multiprotocol.SingleLogoutManager"
+    import="com.sun.identity.wsfederation.common.WSFederationUtils"
 %>
 <%
     String displayName = 
@@ -57,6 +61,20 @@
     <p>Signing out from <%=providerList.get(url)%></p>
     <iframe width="500" src="<%=url%>"></iframe>
   <%
+    }
+
+    // handle multi-federation protocol case
+    Object uSession = null;
+    try {
+        uSession = SessionManager.getProvider().getSession(request);
+    } catch (Exception e) {
+        // ignore
+    }
+    if ((uSession != null) && SessionManager.getProvider().isValid(uSession) &&
+        MultiProtocolUtils.isMultipleProtocolSession(uSession, 
+            SingleLogoutManager.WS_FED)) {
+        WSFederationUtils.processMultiProtocolLogout(request, 
+            response, uSession);
     }
   %>
   </body>

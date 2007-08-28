@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaServiceListener.java,v 1.2 2007-08-01 21:04:39 superpat7 Exp $
+ * $Id: WSFederationMetaServiceListener.java,v 1.3 2007-08-28 00:37:59 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,21 +51,16 @@ class WSFederationMetaServiceListener implements ConfigurationListener
      * @param e the configuaration action event
      */
     public void configChanged(ConfigurationActionEvent e) {
-	String configName = e.getConfigurationName();
-	
-	if (configName == null || configName.equals("WS-Federation") ||
-	    configName.equals("WS-FederationCOT")) {
-	    
-	    if (debug.messageEnabled()) {
-		debug.message(
-                    "WSFederationMetaServiceListener.configChanged:");
-	    }
-	    WSFederationMetaCache.clear();
-	    if (e.getRealm() == null) {
-		SPCache.clear();
-	    } else {
-		SPCache.clear(e.getRealm());
-	    }
-	}
+        if (debug.messageEnabled()) {
+            debug.message("WSFederationMetaServiceListener.configChanged: "
+                + "component=" + e.getComponentName() + ", config="
+                + e.getConfigurationName());
+        }
+        WSFederationMetaCache.clear();
+        if (e.getRealm() == null) {
+            SPCache.clear();
+        } else {
+            SPCache.clear(e.getRealm());
+        }
     }
 }

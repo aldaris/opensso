@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Readme.html,v 1.1 2007-08-07 17:16:51 qcheng Exp $
+   $Id: Readme.html,v 1.2 2007-08-28 00:38:19 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -82,14 +82,14 @@ Please correct the URLs used in the following text to reflect your&nbsp; actual
 installation URLs.&nbsp; 
 <br>
 <br>
-You also need to create one user on each instance to be used as demo user for each protocol. For example, "idpuser" on the IDP instance, "saml2spuser" on the SAMLv2 SP instance, "idffspuser" on the ID-FF SP instance, "wsfedspuser" in the WS-Federation SP instance.
+You also need to create one user on each instance to be used as demo user for each protocol. For example, "idpuser" on the IDP instance, "saml2spuser" on the SAMLv2 SP instance, "idffspuser" on the ID-FF SP instance, "idpuser" on the WS-Federation SP instance (<b>Note</b> : demo user id on the IDP and the WS-Federation SP must be the same unless a non-default SP account mapper is provided on the WS-Federation side).
 <br>
 <br>
 <h3>SAMLv2 Service Provider initiated Single Sign-on and Single Logout</h3>
 <ul>
   <li>Point your browser at
 <a class="named" href="home.jsp">http://saml2-sp-host/sp/samples/multiprotocol/demo/home.jsp</a>.</li>
-  <li>Click on link&nbsp; "Login, provided by SAMLv2 Identity Provider (Multi-Federation Protocol Identity Provider)". This link would initiate Single Singon Request to the IDP. </li>
+  <li>Click on link&nbsp; "Login, provided by SAMLv2 Identity Provider (Multi-Federation Protocol Identity Provider)". This link would initiate Single Sign-on Request to the IDP. </li>
   <li>IDP would prompt you to authenticate. Enter your user name (e.g. "idpuser") and password.</li>
   <li>SP would prompt you to login locally if you have&nbsp; not yet federated accounts at IDP and SP. Enter your user name (e.g. "saml2spuser") and password.</li>
   <li>SP would then automatically log you in based on the Assertion from
@@ -114,7 +114,7 @@ The pages would show you "Login" link.</li>
        <li>This time, click the "Federate with ID-FF Identity Provider (Multi-Federation Protocol Identity Provider)" link.</li>
        <li>You will be presented with IDP side login page. Enter your user name (e.g. "idpuser") and password. Click "Login In" again, this will complete the federation process.</li>
     </ul> 
-  <li>If federation is done already, click on link&nbsp; "Login, provided by ID-FF Identity Provider (Multi-Federation Protocol Identity Provider)". This link would initiate Single Singon Request to the IDP. </li>
+  <li>If federation is done already, click on link&nbsp; "Login, provided by ID-FF Identity Provider (Multi-Federation Protocol Identity Provider)". This link would initiate Single Sign-on Request to the IDP. </li>
   <li>IDP would prompt you to authenticate. Enter your user name (e.g. "idpuser") and password.</li>
   <li>SP would then automatically log you in based on the Assertion from
 IDP and you would be shown the sample demo page by SP.</li>
@@ -128,7 +128,19 @@ that you are logged out by visiting demo home page at the IDP and each every SP.
 <br>
 <h3>WS-Federation Service Provider Initiated Single Sign-on and Single Logout</h3>
 <ul>
-<li>TBD</li>
+  <li>Point your browser at
+<a class="named" href="home.jsp">http://wsfed-sp-host/sp/samples/multiprotocol/demo/home.jsp</a>.</li>
+  <li>Click on link&nbsp; " Login provided by WS-Federation Identity Provider (Multi-Federation Protocol Identity Provider)". This link would initiate Single Sign-on Request to the IDP. </li>
+  <li>IDP would prompt you to authenticate. Enter your user name (e.g. "idpuser") and password.</li>
+  <li>SP would complete the single sign-on process, and automatically log you in based on the Assertion from IDP and you would be shown the sample demo page by SP. This completes the SP initiated Single Sign-on process.</li>
+  <li>You would see links allowing you to Logout.</li>
+  <li>Click on "Logout" link. 
+  <li>SP&nbsp; would&nbsp; initiate a Single Log
+Out&nbsp; and&nbsp; log you out WS-Federation SP, IDP and any other service provider sessions which share the same IDP session. <br>You could verify
+that you are logged out by visiting demo home page at the IDP and each every SP.
+The pages would show you "Login" link.<br>
+<b>Note:</b> you will see a framed JSP page showing that you have signed out WS-Federation, SAMLv2 and ID-FF service providers, you must click the link which is displayed as "Click here to continue". This is needed until issue 804 is fixed. 
+  </li>
 </ul>
 <br>
 <br>

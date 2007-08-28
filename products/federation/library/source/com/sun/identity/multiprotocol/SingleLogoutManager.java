@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SingleLogoutManager.java,v 1.3 2007-07-26 21:57:19 qcheng Exp $
+ * $Id: SingleLogoutManager.java,v 1.4 2007-08-28 00:37:58 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -752,8 +752,12 @@ public class SingleLogoutManager {
                         IFSConstants.LOGOUT_FAILURE);
                 }
             } else if (protocol.equals(SingleLogoutManager.WS_FED)) {
-                // TODO : process WS_FED
                 debug.message("SingleLogoutManager.sendLogoutResponse: WSFED");
+                if (origRelayState != null) {
+                    response.sendRedirect(origRelayState);
+                } else {
+                    response.getWriter().print("Logout DONE."); 
+                }
             } else {
                 // should never come here
                 debug.error("SingleLogoutManager.sendLogoutResponse: invalid"

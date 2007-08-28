@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPRPSignoutRequest.java,v 1.1 2007-08-01 21:04:43 superpat7 Exp $
+ * $Id: IPRPSignoutRequest.java,v 1.2 2007-08-28 00:37:59 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 package com.sun.identity.wsfederation.servlet;
 
 import com.sun.identity.plugin.session.SessionException;
+import com.sun.identity.multiprotocol.MultiProtocolUtils;
+import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.common.WSFederationException;
@@ -126,6 +128,9 @@ public class IPRPSignoutRequest extends WSFederationAction {
                 displayName);
             request.setAttribute(WSFederationConstants.LOGOUT_WREPLY, 
                 wreply);
+            request.setAttribute(WSFederationConstants.REALM_PARAM, realm);
+            request.setAttribute(WSFederationConstants.ENTITYID_PARAM, 
+                entityId);
 
             LinkedHashMap<String, String> providerList = 
                 new LinkedHashMap<String, String>();
@@ -206,8 +211,8 @@ public class IPRPSignoutRequest extends WSFederationAction {
                         + "destroying session " + session);
                 }
 
-                WSFederationUtils.sessionProvider.invalidateSession(session, 
-                    request, response);
+                MultiProtocolUtils.invalidateSession(session, 
+                    request, response, SingleLogoutManager.WS_FED);
             }
 
             request.setAttribute(WSFederationConstants.LOGOUT_PROVIDER_LIST, 

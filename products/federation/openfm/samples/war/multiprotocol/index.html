@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.1 2007-08-07 17:16:51 qcheng Exp $
+   $Id: index.html,v 1.2 2007-08-28 00:38:19 qcheng Exp $ 
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -78,7 +78,17 @@ To run and test the sample, you need four Federated Access Manager instances: <b
   <li>one instance configured as WS-Federation Service Provider. </li>
 </ul>
 <br>
-You must run the configuration starting from the Service Provider instances. Once the service provider side configuration is done, the service provider configuration will show a link to redirect you to the IDP side configuration page. After the configuration on identity provider side is completed, you will be redirected back to the service provider page.<br><br>
+To configure this sample:
+<ol>
+<li>You must start the configuration from a Service Provider instance. Access the configure.jsp under the Service Provider instance, e.g. http://&lt;sp-host&gt;:&lt;port&gt;/&lt;uri&gt;/samples/multiprotocol/sp/configure.jsp. </li>
+<li>Enter the remote Identity Provider information, including Federation Protocol, HTTP protocol, host name, port and deployment URI. Click "Configure" button to setup service provider side metadata.</li>
+<li>Once the service provider side configuration is done, a link will be shown to redirect you to the IDP side configuration page. Click the "here" link in the message "Click here to configure remote Identity Provider", you will be redirected to Identity Provider side to setup corresponding metadata.</li>
+<li>If you have not login to the Identity Provider yet, you will be prompted with a link to authenticate to the Identity Provider.</li> 
+<li>Identity Provider will setup the required metadata information to establish the trust between the SP and IDP</li>
+<li>After the configuration on identity provider side is completed, you will be redirected back to the service provider page.</li>
+<li>Repeat step 1-6 on remaining two Service Provider instances by selecting different Federation protocol (e.g. SAMLv2, ID-FF and WS-Federation) at step 2.
+</ol>
+<br>
 The configuration performs following tasks:
 <ul>
 <li>On service provider side, loads the meta data of the hosted service provider and remote identity provider.</li>

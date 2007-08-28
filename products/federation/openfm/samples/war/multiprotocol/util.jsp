@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: util.jsp,v 1.1 2007-08-07 17:16:51 qcheng Exp $
+   $Id: util.jsp,v 1.2 2007-08-28 00:38:19 qcheng Exp $ 
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -48,6 +48,8 @@ import="java.io.IOException,
         com.sun.identity.cot.CircleOfTrustManager,
         com.sun.identity.cot.COTConstants,
         com.sun.identity.cot.COTException,
+        com.sun.identity.wsfederation.meta.WSFederationMetaManager,
+        com.sun.identity.wsfederation.meta.WSFederationMetaUtils,
         java.net.URL,
         java.util.HashSet,
         java.util.List,
@@ -146,7 +148,16 @@ import="java.io.IOException,
             throw new Exception("An ID-FF Service Provider " + entityID + " had already been configured in this instance.");
         }
         
-        // TODO : handle WS-Fed
+        // handle WS-Fed
+        entityID = hostedSPEntitySuffix + SingleLogoutManager.WS_FED
+            + SP_SUFFIX;
+        spEntityList = 
+            WSFederationMetaManager.getAllHostedServiceProviderEntities(defaultRealm);
+        spExists = ((spEntityList != null && !spEntityList.isEmpty()) 
+              && spEntityList.contains(entityID)) ;
+        if (spExists) {
+            throw new Exception("A WS-Federation Service Provider " + entityID + " had already been configured in this instance.");
+        }
     }
     
     public void configureSAML2ServiceProvider(String remoteIDPEntityID,
@@ -215,8 +226,6 @@ import="java.io.IOException,
             // [END] Parse the output of CLI to get extended data XML
        
             // [START] Import these XMLs
-System.out.println("Standard SP XML: " + metaXML);
-System.out.println("extended SP XML: " + extendedXML);
             com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement 
                 descriptor = (com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement)
                 SAML2MetaUtils.convertStringToJAXB(metaXML);
@@ -269,7 +278,6 @@ System.out.println("extended SP XML: " + extendedXML);
             metaManager.createEntityDescriptor(defaultRealm, idpDescriptor);
             // [END] Swap protocol, host, port and deployment URI
             //       to form IDP metadata XML and import it
-System.out.println("Standard remote IDP XML: " + idpMetaXML);
         } 
 
         // [START] Create Circle of Trust
@@ -342,8 +350,6 @@ System.out.println("Standard remote IDP XML: " + idpMetaXML);
                 extendedXML.substring(exValueIdx + 7);
             // [END] modify extended config to set providerHomePageURL
 
-System.out.println("Standard IDFF XML : " + metaXML);        
-System.out.println("extended IDFF XML : " + extendedXML);        
             // [START] Import these XMLs
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement
                 descriptor = (com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement)
@@ -400,7 +406,6 @@ System.out.println("extended IDFF XML : " + extendedXML);
             metaManager.createEntityDescriptor(idpDescriptor);
             // [END] Swap protocol, host, port and deployment URI
             //       to form IDP metadata XML and import it
-System.out.println("Standard remote IDFF iDP XML : " + idpMetaXML);        
         }
         
         createCircleOfTrust(SAMPLE_COT_NAME, remoteIDPEntityID,
@@ -409,8 +414,144 @@ System.out.println("Standard remote IDFF iDP XML : " + idpMetaXML);
     
     public void configureWSFedServiceProvider(String remoteIDPEntityID,
         String hostedSPEntityID, HttpServletRequest request) throws Exception {
-        // TODO
-        throw new Exception("WS-Federation protocol not supported.");
+
+        // [START] create an instance of CommandManager
+        StringOutputWriter outputWriter = new StringOutputWriter();
+        Map env = new HashMap();
+        env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, outputWriter);
+        env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
+        env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
+            "com.sun.identity.federation.cli.FederationManager");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
+        CommandManager cmdManager = new CommandManager(env);
+        // [END] create an instance of CommandManager
+
+        URL url = new URL(remoteIDPEntityID);
+        String proto = url.getProtocol();
+        String host = url.getHost();
+        String port = "" + url.getPort();
+        String deploymenturi = getDeploymentUri(url);
+
+        List spEntityList = WSFederationMetaManager.getAllHostedServiceProviderEntities(defaultRealm);
+        boolean spExists = ((spEntityList != null && !spEntityList.isEmpty()) 
+              && spEntityList.contains(hostedSPEntityID)) ;
+        if (!spExists) {
+            // [START] Make a call to CLI to get the meta data template
+            String[] args = {"create-metadata-template",
+                "--spec", "wsfed",
+                "--entityid", hostedSPEntityID,
+                "--serviceprovider", "/multiprotowsfedsp"};
+            CLIRequest req = new CLIRequest(null, args, ssoToken);
+            cmdManager.addToRequestQueue(req);
+            cmdManager.serviceRequestQueue();
+            String result = outputWriter.getMessages();
+            // [END] Make a call to CLI to get the meta data template
+              
+            // [START] Parse the output of CLI to get metadata XML
+            String endEntityDescriptorTag = "</Federation>";
+            int metaStartIdx = result.indexOf("<Federation ");
+            int metaEndIdx = result.indexOf(endEntityDescriptorTag,
+                metaStartIdx);
+            String metaXML = result.substring(metaStartIdx, metaEndIdx +
+                endEntityDescriptorTag.length() +1);
+            // [END] Parse the output of CLI to get metadata XML
+            
+            // [START] Parse the output of CLI to get extended data XML
+            String endEntityConfigTag = "</FederationConfig>";
+            int extendStartIdx = result.indexOf("<FederationConfig ");
+            int extendEndIdx = result.indexOf(endEntityConfigTag,
+                extendStartIdx);
+            String extendedXML = result.substring(extendStartIdx,
+                extendEndIdx + endEntityConfigTag.length() + 1);
+            // [END] Parse the output of CLI to get extended data XML
+        
+            // [START] modify extended config to set defaultRelayState 
+            int exStartIdx = extendedXML.indexOf(
+                "<Attribute name=\"defaultRelayState\">");
+            int exValueIdx = extendedXML.indexOf("<Value/>",
+                exStartIdx);
+            extendedXML = extendedXML.substring(0, exValueIdx) + "<Value>" +
+                baseURL + "/samples/multiprotocol/demo/home.jsp</Value>" +
+                extendedXML.substring(exValueIdx + 8);
+            // [END] modify extended config to set defaultRelayState 
+
+            // [START] Import these XMLs
+            com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement
+                descriptor = (com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement)
+                WSFederationMetaUtils.convertStringToJAXB(metaXML);
+            WSFederationMetaManager.createFederation(defaultRealm, descriptor);
+        
+            com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement
+                extendConfigElm = (com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement)
+                WSFederationMetaUtils.convertStringToJAXB(extendedXML);
+            WSFederationMetaManager.createEntityConfig(defaultRealm, extendConfigElm);
+            // [END] Import these XMLs
+        }
+        
+        List idpEntityList = 
+            WSFederationMetaManager.getAllRemoteIdentityProviderEntities(defaultRealm);
+        boolean idpExists = ((idpEntityList != null && !idpEntityList.isEmpty())
+              && idpEntityList.contains(remoteIDPEntityID)) ;
+        if (!idpExists) {
+            // [START] Make a call to CLI to get IDP meta data template
+            String[] args2 = {"create-metadata-template",
+                "--spec", "wsfed",
+                "--entityid", remoteIDPEntityID,
+                "--identityprovider", "/multiprotowsfedidp"};
+            outputWriter = new StringOutputWriter();
+            env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER,
+                outputWriter);
+            cmdManager = new CommandManager(env);
+            CLIRequest req = new CLIRequest(null, args2, ssoToken);
+            cmdManager.addToRequestQueue(req);
+            cmdManager.serviceRequestQueue();
+            String result = outputWriter.getMessages();
+            // [END] Make a call to CLI to get the meta data template       
+        
+            // [START] Parse the output of CLI to get metadata XML
+            String endEntityDescriptorTag = "</Federation>";
+            int metaStartIdx = result.indexOf("<Federation ");
+            int metaEndIdx = result.indexOf(endEntityDescriptorTag,
+                metaStartIdx);
+            String metaXML = result.substring(metaStartIdx,
+                metaEndIdx + endEntityDescriptorTag.length() +1);
+            // [END] Parse the output of CLI to get metadata XML
+        
+            // [START] Swap protocol, host, port and deployment URI
+            //         to form IDP metadata XML and import it
+            String idpMetaXML = metaXML.replaceAll(localProto, proto);
+            idpMetaXML = idpMetaXML.replaceAll(localHost, host);
+            idpMetaXML = idpMetaXML.replaceAll(localPort, port);
+            idpMetaXML = idpMetaXML.replaceAll(localDeploymentURI,
+                deploymenturi);
+            // [END] Swap protocol, host, port and deployment URI
+            //         to form IDP metadata XML and import it
+
+            // [START] Construct a dummy IDP metadata with null cotlist
+            String extendedXML = "<FederationConfig FederationID=\"" + 
+                 remoteIDPEntityID + "\" hosted=\"false\" xmlns=\"urn:sun:fm:wsfederation:1.0:federationconfig\">" + "\n" + "    <IDPSSOConfig>\n" +
+                 "        <Attribute name=\"cotlist\">\n" +
+                 "        </Attribute>\n" +  
+                 "    </IDPSSOConfig>\n" +
+                 "</FederationConfig>\n";
+            // [END] Construct a dummy IDP metadata
+
+            // [START] Import these XMLs
+            com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement
+                descriptor = (com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement)
+                WSFederationMetaUtils.convertStringToJAXB(idpMetaXML);
+            WSFederationMetaManager.createFederation(defaultRealm, descriptor);
+
+            com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement
+                extendConfigElm2 = (com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement)
+                WSFederationMetaUtils.convertStringToJAXB(extendedXML);
+
+            WSFederationMetaManager.createEntityConfig(defaultRealm, extendConfigElm2);
+            // [END] importing XMLs
+        }
+
+        createCircleOfTrust(SAMPLE_COT_NAME, remoteIDPEntityID,
+            hostedSPEntityID, SingleLogoutManager.WS_FED);
     }
     
     private String getDeploymentUri(URL url) {
@@ -488,9 +629,6 @@ System.out.println("Standard remote IDFF iDP XML : " + idpMetaXML);
             // [END] Parse the output of CLI to get extended data XML
             
             
-System.out.println("Standard IDP XML: " + metaXML);
-System.out.println("extended IDP XML: " + extendedXML);
-
             // [START] Import these XMLs
             EntityDescriptorElement descriptor =
                     (EntityDescriptorElement)
@@ -545,7 +683,6 @@ System.out.println("extended IDP XML: " + extendedXML);
             metaManager.createEntityDescriptor(defaultRealm, spDescriptor);
             // [END] Swap protocol, host, port and deployment URI
             //       to form IDP metadata XML and import it
-System.out.println("Standard remote SP XML: " + spMetaXML);
         }
         // [START] Create Circle of Trust
         createCircleOfTrust(SAMPLE_COT_NAME, hostedIDPEntityID,
@@ -617,9 +754,6 @@ System.out.println("Standard remote SP XML: " + spMetaXML);
                     extendedXML.substring(exValueIdx + 7);
             // [END] modify extended config to set providerHomePageURL
            
-System.out.println("Standard IDP XML: " + metaXML);
-System.out.println("extended IDP XML: " + extendedXML);
- 
             // [START] Import these XMLs
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement 
                 descriptor = (com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement)
@@ -673,7 +807,6 @@ System.out.println("extended IDP XML: " + extendedXML);
             metaManager.createEntityDescriptor(spDescriptor);
             // [END] Swap protocol, host, port and deployment URI
             //       to form IDP metadata XML and import it
-System.out.println("Standard remote SP XML: " + spMetaXML);
         }
         
         // [START] Create Circle of Trust
@@ -682,10 +815,135 @@ System.out.println("Standard remote SP XML: " + spMetaXML);
         // [END] Create Circle of Trust
     }
     
-    public void configureWSFedIdentityProvider(String remoteIDPEntityID,
-        String hostedSPEntityID, HttpServletRequest request) throws Exception {
-        // TODO
-        throw new Exception("WS-Federation protocol not supported yet.");
+    public void configureWSFedIdentityProvider(String hostedIDPEntityID,
+        String remoteSPEntityID, HttpServletRequest request) throws Exception {
+        // [START] create an instance of CommandManager
+        StringOutputWriter outputWriter = new StringOutputWriter();
+        Map env = new HashMap();
+        env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, outputWriter);
+        env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
+        env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
+            "com.sun.identity.federation.cli.FederationManager");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
+        CommandManager cmdManager = new CommandManager(env);
+        // [END] create an instance of CommandManager
+
+        URL url = new URL(remoteSPEntityID);
+        String proto = url.getProtocol();
+        String host = url.getHost();
+        String port = "" + url.getPort();
+        String deploymenturi = getDeploymentUri(url);
+
+        List idpEntityList = 
+            WSFederationMetaManager.getAllHostedIdentityProviderEntities(defaultRealm);
+        boolean idpExists = ((idpEntityList != null && !idpEntityList.isEmpty())
+              && idpEntityList.contains(hostedIDPEntityID)) ;
+        if (!idpExists) {
+            // [START] Make a call to CLI to get the meta data template
+            String[] args = {"create-metadata-template",
+                "--spec", "wsfed",
+                "--entityid", hostedIDPEntityID,
+                "--identityprovider", "/multiprotowsfedidp"};
+            CLIRequest req = new CLIRequest(null, args, ssoToken);
+            cmdManager.addToRequestQueue(req);
+            cmdManager.serviceRequestQueue();
+            String result = outputWriter.getMessages();
+            // [END] Make a call to CLI to get the meta data template
+              
+            // [START] Parse the output of CLI to get metadata XML
+            String endEntityDescriptorTag = "</Federation>";
+            int metaStartIdx = result.indexOf("<Federation ");
+            int metaEndIdx = result.indexOf(endEntityDescriptorTag,
+                metaStartIdx);
+            String metaXML = result.substring(metaStartIdx, metaEndIdx +
+                endEntityDescriptorTag.length() +1);
+            // [END] Parse the output of CLI to get metadata XML
+            
+            // [START] Parse the output of CLI to get extended data XML
+            String endEntityConfigTag = "</FederationConfig>";
+            int extendStartIdx = result.indexOf("<FederationConfig ");
+            int extendEndIdx = result.indexOf(endEntityConfigTag,
+                extendStartIdx);
+            String extendedXML = result.substring(extendStartIdx,
+                extendEndIdx + endEntityConfigTag.length() + 1);
+            // [END] Parse the output of CLI to get extended data XML
+        
+            // [START] Import these XMLs
+            com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement
+                descriptor = (com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement)
+                WSFederationMetaUtils.convertStringToJAXB(metaXML);
+            WSFederationMetaManager.createFederation(defaultRealm, descriptor);
+        
+            com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement
+                extendConfigElm = (com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement)
+                WSFederationMetaUtils.convertStringToJAXB(extendedXML);
+            WSFederationMetaManager.createEntityConfig(defaultRealm, extendConfigElm);
+            // [END] Import these XMLs
+        }
+        
+        List spEntityList = WSFederationMetaManager.getAllRemoteServiceProviderEntities(defaultRealm);
+        boolean spExists = ((spEntityList != null && !spEntityList.isEmpty()) 
+              && spEntityList.contains(remoteSPEntityID)) ;
+        if (!spExists) {
+            // [START] Make a call to CLI to get IDP meta data template
+            String[] args2 = {"create-metadata-template",
+                "--spec", "wsfed",
+                "--entityid", remoteSPEntityID,
+                "--serviceprovider", "/multiprotowsfedsp"};
+            outputWriter = new StringOutputWriter();
+            env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER,
+                outputWriter);
+            cmdManager = new CommandManager(env);
+            CLIRequest req = new CLIRequest(null, args2, ssoToken);
+            cmdManager.addToRequestQueue(req);
+            cmdManager.serviceRequestQueue();
+            String result = outputWriter.getMessages();
+            // [END] Make a call to CLI to get the meta data template       
+        
+            // [START] Parse the output of CLI to get metadata XML
+            String endEntityDescriptorTag = "</Federation>";
+            int metaStartIdx = result.indexOf("<Federation ");
+            int metaEndIdx = result.indexOf(endEntityDescriptorTag,
+                metaStartIdx);
+            String metaXML = result.substring(metaStartIdx,
+                metaEndIdx + endEntityDescriptorTag.length() +1);
+            // [END] Parse the output of CLI to get metadata XML
+        
+            // [START] Swap protocol, host, port and deployment URI
+            //         to form IDP metadata XML and import it
+            String spMetaXML = metaXML.replaceAll(localProto, proto);
+            spMetaXML = spMetaXML.replaceAll(localHost, host);
+            spMetaXML = spMetaXML.replaceAll(localPort, port);
+            spMetaXML = spMetaXML.replaceAll(localDeploymentURI,
+                deploymenturi);
+            // [END] Swap protocol, host, port and deployment URI
+            //         to form IDP metadata XML and import it
+
+            // [START] Construct a dummy IDP metadata with null cotlist
+            String extendedXML = "<FederationConfig FederationID=\"" + 
+                 remoteSPEntityID + "\" hosted=\"false\" xmlns=\"urn:sun:fm:wsfederation:1.0:federationconfig\">" + "\n" + "    <SPSSOConfig>\n" +
+                 "        <Attribute name=\"cotlist\">\n" +
+                 "        </Attribute>\n" +  
+                 "    </SPSSOConfig>\n" +
+                 "</FederationConfig>\n";
+            // [END] Construct a dummy IDP metadata
+
+            // [START] Import these XMLs
+            com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement
+                descriptor = (com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement)
+                WSFederationMetaUtils.convertStringToJAXB(spMetaXML);
+            WSFederationMetaManager.createFederation(defaultRealm, descriptor);
+
+            com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement
+                extendConfigElm2 = (com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement)
+                WSFederationMetaUtils.convertStringToJAXB(extendedXML);
+
+            WSFederationMetaManager.createEntityConfig(defaultRealm, extendConfigElm2);
+            // [END] importing XMLs
+        }
+
+        createCircleOfTrust(SAMPLE_COT_NAME, hostedIDPEntityID,
+            remoteSPEntityID, SingleLogoutManager.WS_FED);
     }
 %>
 

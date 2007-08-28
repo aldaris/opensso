@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSingleLogoutHandler.java,v 1.1 2007-07-03 22:06:25 qcheng Exp $
+ * $Id: IDFFSingleLogoutHandler.java,v 1.2 2007-08-28 00:37:57 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -271,12 +271,13 @@ public class IDFFSingleLogoutHandler implements SingleLogoutHandler {
                     // check if this cot contains all entities
                     Set providers = cotManager.listCircleOfTrustMember(realm,
                             cotName, SingleLogoutManager.IDFF);
-                    if (!providers.contains(idpId)) {
+                    if ((providers == null) || !providers.contains(idpId)) {
                         continue;
                     }
                     providers = cotManager.listCircleOfTrustMember(realm,
                             cotName, protocol);
-                    if (!providers.contains(idpEntityID)) {
+                    if ((providers == null) || 
+                        !providers.contains(idpEntityID)) {
                         continue;
                     }
                     if ((spEntityID != null) &&

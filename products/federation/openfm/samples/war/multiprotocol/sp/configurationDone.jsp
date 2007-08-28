@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurationDone.jsp,v 1.1 2007-08-07 17:16:52 qcheng Exp $
+   $Id: configurationDone.jsp,v 1.2 2007-08-28 00:38:20 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -68,6 +68,51 @@
 %>
     IDP configuration succeeded. Please click <a href="../demo/home.jsp">here</a>
     for sample home page.
+
+    <br>
+    <p>
+    If this is for WS-Federation protocol, following manual steps is needed until OpenSSO issue 803 is fixed.<br>
+<b>Note:</b> following are NOT needed for ID-FF and SAMLv2 protocol.<br>
+
+    <br>
+    <ol>
+        <li>Following document to setup XML signing on the IDP instance.</li>
+        <li>Export existing IDP metadata using famadm export-entity subcommand.</li>
+        <li>Edit the standard metadata XML file, add the IDP signing Certificate to the metadata as <it>&lt;TokenSigningKeyInfo&gt;</it> element. e.g. 
+<pre>
+&lt;Federation FederationID="idp2" xmlns="http://schemas.xmlsoap.org/ws/2006/12/federation"&gt;
+    &lt;TokenSigningKeyInfo&gt;
+        &lt;ns1:SecurityTokenReference ns1:Usage="" xmlns:ns1="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"&gt;
+            &lt;ns2:X509Data xmlns:ns2="http://www.w3.org/2000/09/xmldsig#"&gt;
+                &lt;ns2:X509Certificate&gt;
+MIICojCCAgugAwIBAgIBMjANBgkqhkiG9w0BAQQFADBzMQswCQYDVQQGEwJVUzETMBEGA1UECBMK
+Q2FsaWZvcm5pYTEUMBIGA1UEBxMLc2FudGEgY2xhcmExDDAKBgNVBAoTA3N1bjENMAsGA1UECxME
+...
+2oQ7tPCURs7sdllhk5COIhD1bfdPXtATcWos3y/CX4Go5QRuDRdBiSUT+ujqCeQY5/dvLgtKcsZ4
+FJwG83VfWrBO0sg9HBNqsqDFTzTwIJoxgApHaxVuLWPPaCrg3iizi9B6cHSMLaYP+pj+
+                &lt;/ns2:X509Certificate&gt;
+            &lt;/ns2:X509Data&gt;
+        &lt;/ns1:SecurityTokenReference&gt;
+    &lt;/TokenSigningKeyInfo&gt;
+    &lt;TokenIssuerName&gt;idp2&lt;/TokenIssuerName&gt;
+    &lt;TokenIssuerEndpoint&gt;
+        &lt;ns3:Address xmlns:ns3="http://www.w3.org/2005/08/addressing"&gt;http://moonriver.red.iplanet.com:58080/idp2/WSFederationServlet/metaAlias/wsfedidp&lt;/ns3:Address&gt;
+    &lt;/TokenIssuerEndpoint&gt;
+    &lt;TokenTypesOffered&gt;
+        &lt;TokenType Uri="urn:oasis:names:tc:SAML:1.1"/&gt;
+    &lt;/TokenTypesOffered&gt;
+    &lt;UriNamedClaimTypesOffered&gt;
+        &lt;ClaimType Uri="http://schemas.xmlsoap.org/claims/UPN"&gt;
+            &lt;DisplayName&gt;User Principal Name&lt;/DisplayName&gt;
+        &lt;/ClaimType&gt;
+    &lt;/UriNamedClaimTypesOffered&gt;
+&lt;/Federation&gt;
+</pre> 
+        </li>
+        <li>Delete the exisiting IDP metadata using famadm delete-entity subcommand, and reload the new XML using famadm import-entity subcommand.</li>
+        <li>Goto the SP machine, and export the remote IDP metadata using famadm command.</li>
+        <li>Delete the existing IDP metadata on SP machine, and load the new IDP metadata with the signing Certificate using famadm</li>
+    <ol>
 <%
     } else {
 %>

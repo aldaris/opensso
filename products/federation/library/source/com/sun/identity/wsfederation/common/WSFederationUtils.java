@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationUtils.java,v 1.2 2007-08-01 21:04:45 superpat7 Exp $
+ * $Id: WSFederationUtils.java,v 1.3 2007-08-28 00:37:59 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wsfederation.common;
 
+import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.plugin.datastore.DataStoreProviderManager;
@@ -32,6 +33,7 @@ import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import java.io.IOException;
 import java.util.logging.Level;
 
 import com.sun.identity.shared.debug.Debug;
@@ -48,7 +50,11 @@ import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Utility methods for WS-Federation implementation.
@@ -316,5 +322,45 @@ public class WSFederationUtils {
             return false;
         }
         return true;
+    }
+
+
+    /**
+     * Processes Single Logout cross multiple federation protocols
+     * @param request HttpServletRequest object.
+     * @param response HttpServletResponse object
+     */
+    public static void processMultiProtocolLogout(HttpServletRequest request,
+        HttpServletResponse response, Object userSession) {
+        debug.message("WSFederationUtils.processMPSingleLogout");
+        try {
+            String wreply = (String)
+                request.getAttribute(WSFederationConstants.LOGOUT_WREPLY);
+            String realm = (String)
+                request.getAttribute(WSFederationConstants.REALM_PARAM);
+            String idpEntityId = (String)
+                request.getAttribute(WSFederationConstants.ENTITYID_PARAM);
+            Set sessSet = new HashSet();
+            sessSet.add(userSession);
+            String sessUser = 
+                SessionManager.getProvider().getPrincipalName(userSession); 
+            // assume WS-Federation logout always succeed as there is not
+            // logout status from the specification
+            SingleLogoutManager manager = SingleLogoutManager.getInstance();
+            // TODO : find out spEntityID/logout request if any
+            int status = manager.doIDPSingleLogout(sessSet, sessUser,
+                request, response, false, true, SingleLogoutManager.WS_FED, 
+                realm, idpEntityId, null, wreply, null, null, 
+                SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS);
+            if (status != SingleLogoutManager.LOGOUT_REDIRECTED_STATUS) {
+                response.sendRedirect(wreply);
+            }
+        } catch (SessionException ex) {
+            // ignore;
+        } catch (IOException ex) {
+            // ignore;
+        } catch (Exception ex) {
+            // ignore;
+        }
     }
 }

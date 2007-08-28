@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationServlet.java,v 1.2 2007-08-01 21:04:43 superpat7 Exp $
+ * $Id: WSFederationServlet.java,v 1.3 2007-08-28 00:38:00 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,6 +69,9 @@ public class WSFederationServlet extends HttpServlet {
         try {
             action.process();
         } catch (WSFederationException wsfe ) {
+            if (debug.messageEnabled()) {
+                debug.message("WSFedServlet.doGet: Can't process action", wsfe);
+            }
             response.sendError(response.SC_FORBIDDEN);
             return;
         }
@@ -99,6 +102,9 @@ public class WSFederationServlet extends HttpServlet {
         try {
             action.process();
         } catch (WSFederationException wsfe ) {
+            if (debug.messageEnabled()) {
+                debug.message("WSFedServlet.doPost:Can't process action", wsfe);
+            }
             response.sendError(response.SC_FORBIDDEN);
             return;
         }

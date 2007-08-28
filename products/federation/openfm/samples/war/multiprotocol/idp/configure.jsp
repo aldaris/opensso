@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.1 2007-08-07 17:16:52 qcheng Exp $
+   $Id: configure.jsp,v 1.2 2007-08-28 00:38:20 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -235,8 +235,31 @@
         }
         
         Set wsfedProviders = cot.getTrustedProviders(SingleLogoutManager.WS_FED);
-        // TODO : handle WS-Federation protocol
+        if ((wsfedProviders != null) && !wsfedProviders.isEmpty()) {
+            Iterator it = wsfedProviders.iterator();
+            while (it.hasNext()) {
+                String entityID = (String) it.next();
+                com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement
+                    config3 = WSFederationMetaManager.getEntityConfig(defaultRealm, entityID);
+                com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement
+                        idpConfig = WSFederationMetaManager.getIDPSSOConfig(defaultRealm, entityID);
+                com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement
+                        spConfig = WSFederationMetaManager.getSPSSOConfig(defaultRealm, entityID);
+                if (config3.isHosted()) {
+                    // hosted provider
+                    if (idpConfig != null) {
+                        wsfedIDPEntityID = config3.getFederationID();
+                    }
+                } else {
+                    // remote provider
+                    if (spConfig != null) {
+                        wsfedSPEntityIDs.add(config3.getFederationID());
+                    }
+                }
+            }
+        }
     }
+
     if ((saml2IDPEntityID != null) || (idffIDPEntityID != null) ||
         (wsfedIDPEntityID != null)) { 
 %>

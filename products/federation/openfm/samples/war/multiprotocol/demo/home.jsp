@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: home.jsp,v 1.1 2007-08-07 17:16:51 qcheng Exp $
+   $Id: home.jsp,v 1.2 2007-08-28 00:38:19 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -40,6 +40,7 @@
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
 <%@ page import="com.sun.identity.saml2.meta.SAML2MetaManager" %>
+<%@ page import="com.sun.identity.wsfederation.meta.WSFederationMetaManager" %>
 <%@ page import="java.util.*, java.net.URLEncoder" %>
 
 <%
@@ -82,7 +83,7 @@
     String idffIDPMetaAlias = null;
     String idffIDPEntityID = null;
     String wsfedIDPMetaAlias = null;
-    String wsfedIDPetEntityID = null;
+    String wsfedIDPEntityID = null;
 
     String thisUrl = request.getRequestURL().toString();
     String appBase = thisUrl.substring(0, thisUrl.lastIndexOf("/samples") + 1);
@@ -179,7 +180,38 @@
         }
         
         Set wsfedProviders = cot.getTrustedProviders(SingleLogoutManager.WS_FED);
-        // TODO : handle WS-Federation protocol
+        if ((wsfedProviders != null) && !wsfedProviders.isEmpty()) {
+            Iterator it = wsfedProviders.iterator();
+            while (it.hasNext()) {
+                String entityID = (String) it.next();
+                com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement
+                    config3 = WSFederationMetaManager.getEntityConfig(REALM, entityID);
+                com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement
+                        idpConfig = WSFederationMetaManager.getIDPSSOConfig(REALM, entityID);
+                com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement
+                        spConfig = WSFederationMetaManager.getSPSSOConfig(REALM, entityID);
+                if (config3.isHosted()) {
+                    // hosted provider
+                    if (idpConfig != null) {
+                        iAmIDP = true;
+                        wsfedIDPEntityID = config3.getFederationID();
+                        wsfedIDPMetaAlias = idpConfig.getMetaAlias();
+                    } else if (spConfig != null) {
+                        iAmWSFedSP = true;
+                        wsfedSPEntityID = config3.getFederationID();
+                        wsfedSPMetaAlias = spConfig.getMetaAlias();
+                        spProtocol = WSFED_PROTOCOL;
+                    }
+                } else {
+                    // remote provider
+                    if (idpConfig != null) {
+                        wsfedIDPEntityID = config3.getFederationID();
+                    } else if (spConfig != null) {
+                        wsfedSPEntityID = config3.getFederationID();
+                    }
+                }
+            }
+        }
         
         if(!iAmIDP && !iAmSAML2SP && !iAmIDFFSP && !iAmWSFedSP) {
             response.sendError(response.SC_BAD_REQUEST, 
@@ -224,7 +256,8 @@
                federatedWithPartner = (manager.readAccountFedInfo(userName,
                    idffIDPEntityID) == null) ? false : true; 
            } else if (iAmWSFedSP) {
-               // TODO : find out federation status
+               // no persistent federation for WS-Federation
+               federatedWithPartner = false; 
            }
         }
     }  
@@ -298,7 +331,7 @@
                 </li>
            <%       } else if (spProtocol.equals(WSFED_PROTOCOL)) { %>
                 <li>
-                <a href="<%= appBase %>TBD?metaAlias=<%= saml2SPMetaAlias %>&idpEntityID=<%= saml2IDPEntityID %>&<%= SAML2Constants.BINDING %>=HTTP-Artifact&RelayState=<%= thisUrl %>">
+                <a href="<%= appBase %>WSFederationServlet/metaAlias<%= wsfedSPMetaAlias %>?goto=<%= thisUrl %>">
                     Login provided by <%= spProtocol %> Identity Provider (<%=  idpTitle%>)</a>
                 </li>
            <%       } else { // should not come here %>
@@ -327,9 +360,9 @@
                   <a href="<%= localLogoutUrl %>?goto=<%= thisUrl %>">Logout</a>
                 </li>
                <% } %>
-       <% if ((wsfedSPEntityID != null) && MultiProtocolUtils.usedInProtocol(request, SingleLogoutManager.WS_FED)) { %> <!-- SAML2 protocol configured -->
+       <% if ((wsfedSPEntityID != null) && MultiProtocolUtils.usedInProtocol(request, SingleLogoutManager.WS_FED)) { %> <!-- WS-Fed protocol configured -->
 	<li>
-       <a href="<%= appBase %>TBD?metaAlias=<%= idffIDPMetaAlias %>&RelayState=<%= thisUrl %>">
+       <a href="<%= appBase %>WSFederationServlet/metaAlias<%= wsfedIDPMetaAlias %>?wa=wsignout1.0&wreply=<%= thisUrl %>">
 	    Logout initiated using WS-Federation protocol. </a>
 	</li>
        <%     localLogout = false;
@@ -356,7 +389,7 @@
            <%         }  %>
            <%     } else if (spProtocol.equals(WSFED_PROTOCOL)) { %>
                 <li>
-                <a href="<%= appBase %>TBD?metaAlias=<%= saml2SPMetaAlias %>&idpEntityID=<%= saml2IDPEntityID %>&<%= SAML2Constants.BINDING %>=HTTP-Artifact&RelayState=<%= thisUrl %>">
+                <a href="<%= appBase %>WSFederationServlet/metaAlias<%= wsfedSPMetaAlias %>?wa=wsignout1.0&wreply=<%= thisUrl %>">
                     Logout</a>
                 </li>
            <%     } else { // should not come here %>

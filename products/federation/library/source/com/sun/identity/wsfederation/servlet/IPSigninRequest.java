@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPSigninRequest.java,v 1.2 2007-08-01 21:04:42 superpat7 Exp $
+ * $Id: IPSigninRequest.java,v 1.3 2007-08-28 00:38:00 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,8 @@ package com.sun.identity.wsfederation.servlet;
 
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionProvider;
+import com.sun.identity.multiprotocol.MultiProtocolUtils;
+import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.shared.DateUtils;
@@ -163,6 +165,9 @@ public class IPSigninRequest extends WSFederationAction {
         boolean sessionUpgrade = false;
 
         if (!sessionUpgrade) {
+            // set session property for multi-federation protocol hub
+            MultiProtocolUtils.addFederationProtocol(session,
+                         SingleLogoutManager.WS_FED);
              sendResponse(session, idpEntityID, spEntityID, idpMetaAlias, 
                  realm);
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationConstants.java,v 1.2 2007-08-01 21:04:45 superpat7 Exp $
+ * $Id: WSFederationConstants.java,v 1.3 2007-08-28 00:37:59 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -267,4 +267,12 @@ public final class WSFederationConstants {
      * WS-Federation HTTP parameter for 'context value'.
      */
     public static final String WCTX = "wctx";
+    /**
+     * HTTP request parameter for FAM realm 
+     */
+    public static final String REALM_PARAM = "famrealm";
+    /**
+     * HTTP request parameter for ws-federation entity id
+     */
+    public static final String ENTITYID_PARAM = "wsfed-entityid"; 
 }

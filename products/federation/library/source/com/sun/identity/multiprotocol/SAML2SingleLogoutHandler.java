@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SingleLogoutHandler.java,v 1.2 2007-07-26 21:57:19 qcheng Exp $
+ * $Id: SAML2SingleLogoutHandler.java,v 1.3 2007-08-28 00:37:58 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -218,12 +218,13 @@ public class SAML2SingleLogoutHandler implements SingleLogoutHandler {
                     // check if this cot contains all entities
                     Set providers = cotManager.listCircleOfTrustMember(realm,
                             cotName, SingleLogoutManager.SAML2);
-                    if (!providers.contains(idpId)) {
+                    if ((providers == null) || !providers.contains(idpId)) {
                         continue;
                     }
                     providers = cotManager.listCircleOfTrustMember(realm,
                             cotName, protocol);
-                    if (!providers.contains(idpEntityID)) {
+                    if ((providers == null) || 
+                        !providers.contains(idpEntityID)) {
                         continue;
                     }
                     if ((spEntityID != null) && (spEntityID.length() != 0) &&
