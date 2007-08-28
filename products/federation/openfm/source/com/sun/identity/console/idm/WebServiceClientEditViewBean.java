@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceClientEditViewBean.java,v 1.2 2007-06-14 21:02:50 veiming Exp $
+ * $Id: WebServiceClientEditViewBean.java,v 1.3 2007-08-28 22:20:58 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,6 @@ import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.idm.model.EntitiesModel;
-import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.security.SecurityMechanism;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.text.MessageFormat;
@@ -50,6 +49,12 @@ public class WebServiceClientEditViewBean
     private static final String PAGE_NAME = "WebServiceClientEdit";
     static final String CHILD_NAME_USERTOKEN_NAME = "usernametokenname";
     static final String CHILD_NAME_USERTOKEN_PASSWORD = "usernametokenpassword";
+    private static final String CHILD_NAME_STS_ENDPOINT =
+        "securitytokenendpoint";
+    private static final String CHILD_NAME_STS_METADATA_ENDPOINT =
+        "securitytokenmetadataendpoint";
+    private static final String ATTR_NAME_STS_ENDPOINT = "STSEndpoint";
+    private static final String ATTR_NAME_STS_MEX_ENDPOINT = "STSMexEndpoint";
         
     public static final String DEFAULT_DISPLAY_URL =
         "/console/idm/WebServiceClientEdit.jsp";
@@ -67,6 +72,14 @@ public class WebServiceClientEditViewBean
             EntitiesModel.ATTR_NAME_DEVICE_KEY_VALUE);
         setExternalizeUIValues(clientUIProperties, values);
         setUserCredential(values);
+
+        String secMech = getAttributeFromSet(values, ATTR_NAME_SECURITY_MECH);
+        if (secMech.equals(SecurityMechanism.STS_SECURITY_URI)) {
+            propertySheetModel.setValue(CHILD_NAME_STS_ENDPOINT,
+                getAttributeFromSet(values, ATTR_NAME_STS_ENDPOINT));
+            propertySheetModel.setValue(CHILD_NAME_STS_METADATA_ENDPOINT,
+                getAttributeFromSet(values, ATTR_NAME_STS_MEX_ENDPOINT));
+        }
     }
     
     private void setUserCredential(Set values) {
@@ -83,7 +96,8 @@ public class WebServiceClientEditViewBean
         }
     }
 
-    protected void getExtendedFormsValues(Set deviceKeyValue) {
+    protected void getExtendedFormsValues(Set deviceKeyValue)
+        throws AMConsoleException {
         String userCredName = (String)propertySheetModel.getValue(
             CHILD_NAME_USERTOKEN_NAME);
         String userCredPwd = (String)propertySheetModel.getValue(
@@ -96,7 +110,25 @@ public class WebServiceClientEditViewBean
                 ATTR_NAME_USERCREDENTIAL_NAME + userCredName + "|" + 
                 ATTR_NAME_USERCREDENTIAL_PWD + userCredPwd);
         }
-        
+
+        String secMech = (String)propertySheetModel.getValue(
+            ATTR_NAME_SECURITY_MECH);
+        if (secMech.equals(SecurityMechanism.STS_SECURITY_URI)) {
+            String stsURL = (String)propertySheetModel.getValue(
+                CHILD_NAME_STS_ENDPOINT);
+            String stsMetaURL = (String)propertySheetModel.getValue(
+                CHILD_NAME_STS_METADATA_ENDPOINT);
+
+            if ((stsURL == null) || (stsURL.trim().length() == 0) ||
+                (stsMetaURL == null) || (stsMetaURL.trim().length() == 0)
+            ) {
+                throw new AMConsoleException(getModel().getLocalizedString(
+                    "web.services.exception.securitytoken.info.missing"));
+            }
+            deviceKeyValue.add(ATTR_NAME_STS_ENDPOINT + "=" + stsURL);
+            deviceKeyValue.add(ATTR_NAME_STS_MEX_ENDPOINT + "=" + stsMetaURL);
+        }
+
         getExternalizeUIValues(clientUIProperties, deviceKeyValue);
         deviceKeyValue.add(EntitiesViewBean.ATTR_NAME_AGENT_TYPE + "WSC");
     }

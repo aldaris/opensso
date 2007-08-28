@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceEditViewBean.java,v 1.4 2007-07-28 01:38:03 veiming Exp $
+ * $Id: WebServiceEditViewBean.java,v 1.5 2007-08-28 22:20:59 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,6 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.idm.model.EntitiesModel;
-import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.security.SecurityMechanism;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.text.MessageFormat;
@@ -115,8 +114,9 @@ public abstract class WebServiceEditViewBean
         return new AMPropertySheetModel(xml);
     }
     
-    protected List getMessageLevelSecurityMech() {
-        return ProviderConfig.getAllMessageLevelSecurityMech();
+    private List getMessageLevelSecurityMech() {
+        return (isWebClient) ? SecurityMechanism.getAllWSCSecurityMechanisms():
+            SecurityMechanism.getAllWSPSecurityMechanisms();
     }
 
     protected void setDefaultValues(String type)

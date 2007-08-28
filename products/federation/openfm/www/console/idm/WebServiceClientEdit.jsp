@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceClientEdit.jsp,v 1.2 2007-06-14 21:02:51 veiming Exp $
+   $Id: WebServiceClientEdit.jsp,v 1.3 2007-08-28 22:20:59 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -49,6 +49,21 @@
             disable;
         frm.elements['WebServiceClientEdit.keypassword'].disabled = disable;
         frm.elements['WebServiceClientEdit.certalias'].disabled = disable;
+    }
+
+    function disableSTSFields() {
+        var frm = document.forms['WebServiceClientEdit'];
+        var securityMech = frm.elements['WebServiceClientEdit.SecurityMech'];
+        var disableSTS = true;
+        for (var i = 0; (i < securityMech.length); i++) {
+            if (securityMech[i].checked) {
+                disableSTS =
+                    (securityMech[i].value != "urn:sun:wss:sts:security");
+                break;
+            }
+        }
+        frm.elements['WebServiceClientEdit.securitytokenendpoint'].disabled = disableSTS;
+        frm.elements['WebServiceClientEdit.securitytokenmetadataendpoint'].disabled = disableSTS;
     }
 </script>
 
@@ -81,6 +96,7 @@
     var frm = document.forms['WebServiceClientEdit'];
     disableCustomKeyStoreFields(frm,
         frm.elements['WebServiceClientEdit.keystoreusage'][0].checked);
+    disableSTSFields();
 </script>
 </cc:header>
 </jato:useViewBean>
