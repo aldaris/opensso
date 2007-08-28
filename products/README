@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.6 2007-05-17 19:27:44 qcheng Exp $
+$Id: README,v 1.7 2007-08-28 18:00:11 bigfatrat Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -75,6 +75,8 @@ The libraries needed for compiling OpenSSO sources are:
    - Mozilla LDAP JDK version 4.17: ldapjdk.jar
    - SleepyCat Berkeley DB version 4.2.52: db.jar 
    - TestNG version 5.1 : testng-5.1-jdk15.jar
+   - JES Monitoring Framework 2.0 (temporarily until Proctor available):
+         mfwk_instrum_tk-2.0.jar
 
 Once these libraries are available, they should be placed under the 
 "opensso/products/extlib" directory of your workspace. Any library placed 
@@ -228,6 +230,15 @@ under the db-4.2.52.NC/build_unix directory.
 
 Download testng-5.1.zip from http://testng.org/testng-5.1.zip; unzip it and 
 testng-5.1-jdk15.jar in the base directory.
+
+%% 2.5 Obtaining mfwk_instrum_tk-2.0.jar
+
+Go to https://proctor.dev.java.net.  Click on "Documents & files".
+Expand the "ctk" node.  Click on "deliveries (n)".  Click on the latest
+"CTK 1.0 m<x>" link to download the ctk-1.0-m<x>.zip file.  Save the
+zip file locally, unzip it, then get ctk/jars/mfwk_instrum_tk-2.0.jar, and
+copy it into the opensso/products/extlib directory in your workspace.
+
 
 %% 3. Building the workspace
 
