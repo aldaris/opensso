@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.22 2007-08-24 16:45:20 bina Exp $
+   $Id: build-war.xml,v 1.23 2007-08-28 09:19:12 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -69,7 +69,8 @@
         </copy>
 
         <copy todir="${war.package.dir}/WEB-INF/classes">
-            <fileset dir="${library.res.dir}" includes="*.properties" />
+            <fileset dir="${library.res.dir}" includes="*.properties" 
+                excludes="FederationConfig.properties" />
             <fileset dir="${library.res.i18n.dir}" includes="*.properties" />
             <fileset dir="${openfm.res.i18n.dir}" includes="*.properties" />
             <fileset dir="${openfm.res.dir}" includes="*.properties" />
