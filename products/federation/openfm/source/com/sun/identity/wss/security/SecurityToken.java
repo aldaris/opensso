@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityToken.java,v 1.2 2007-05-17 18:49:18 mallas Exp $
+ * $Id: SecurityToken.java,v 1.3 2007-08-28 00:20:05 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,9 @@ public interface SecurityToken {
       */
      public static final String WSS_USERNAME_TOKEN = 
                                  "urn:sun:wss:usernametoken";
+     
+     public static final String LIBERTY_ASSERTION_TOKEN = 
+                                 "urn:sun:wss:libertyassertion";
 
      /** 
       * Returns the security token type. The possible values are

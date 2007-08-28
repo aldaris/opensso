@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityMechanism.java,v 1.4 2007-07-11 06:12:44 mrudul_uchil Exp $
+ * $Id: SecurityMechanism.java,v 1.5 2007-08-28 00:20:05 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,6 +149,12 @@ public class SecurityMechanism {
      */
     public static final String LIBERTY_DS_SECURITY_URI = 
                                "urn:sun:liberty:discovery:security";
+    
+    /**     
+     * This <code>URI</code> is mainly for the webservices clients need to
+     * find the security token from the security token service.
+     */
+    public static final String STS_SECURITY_URI = "urn:sun:wss:sts:security";
 
     /**
      * <code>URI</code> for the liberty X509 token security profile.
@@ -304,7 +310,8 @@ public class SecurityMechanism {
         map.put("ClientTLS-SAML2-HolderOfKey", WSS_CLIENT_TLS_SAML2_HK_URI);
         map.put("SAML2-SenderVouches", WSS_NULL_SAML2_SV_URI);
         map.put("TLS-SAML2-SenderVouches", WSS_TLS_SAML2_SV_URI);
-        map.put("ClientTLS-SAML2-SenderVouches", WSS_CLIENT_TLS_SAML2_SV_URI); 
+        map.put("ClientTLS-SAML2-SenderVouches", WSS_CLIENT_TLS_SAML2_SV_URI);
+        map.put("STSSecurity", STS_SECURITY_URI);
     }
 
     // The following defines Security mechanism objects.
@@ -414,6 +421,12 @@ public class SecurityMechanism {
      */
     public static final SecurityMechanism LIBERTY_DS_SECURITY = 
                       new SecurityMechanism("LibertyDiscoverySecurity", true);
+    
+     /**
+     * Defines the security mechanism for the security token service profiles.
+     */
+    public static final SecurityMechanism STS_SECURITY = 
+                      new SecurityMechanism("STSSecurity", true);
     /**
      * Defines the security mechanism for the Liberty x509 token profile.
      */
@@ -627,7 +640,8 @@ public class SecurityMechanism {
                  uri.equals(LIB_CLIENT_TLS_SAML_TOKEN_URI) ||
                  uri.equals(LIB_NULL_SAML_BEARER_TOKEN_URI) ||
                  uri.equals(LIB_TLS_SAML_BEARER_TOKEN_URI) ||
-                 uri.equals(LIB_CLIENT_TLS_SAML_BEARER_TOKEN_URI)) {
+                 uri.equals(LIB_CLIENT_TLS_SAML_BEARER_TOKEN_URI) ||
+                 uri.equals(STS_SECURITY_URI)) {
                  return new SecurityMechanism(key, true);
               } else {
                  return new SecurityMechanism(key);
@@ -672,6 +686,7 @@ public class SecurityMechanism {
         list.add(WSS_NULL_SAML2_SV);
         list.add(WSS_NULL_SAML2_HK);
         list.add(LIBERTY_DS_SECURITY);
+        list.add(STS_SECURITY);
         return list;
     }
 

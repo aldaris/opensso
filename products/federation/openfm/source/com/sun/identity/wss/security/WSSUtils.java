@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.4 2007-07-11 06:12:44 mrudul_uchil Exp $
+ * $Id: WSSUtils.java,v 1.5 2007-08-28 00:20:05 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,6 +73,7 @@ import com.sun.identity.saml.assertion.Subject;
 import com.sun.identity.saml.assertion.SubjectConfirmation;
 import com.sun.identity.saml.assertion.Statement;
 import com.sun.identity.saml.assertion.AuthenticationStatement;
+import com.sun.identity.saml.assertion.AttributeStatement;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.xmlenc.XMLEncryptionManager;
@@ -150,6 +151,7 @@ public class WSSUtils {
      private static Element getKeyInfo(Assertion assertion) {
         try {
             AuthenticationStatement authStatement = null;
+            AttributeStatement attributeStatement = null;
             Subject subject = null;
             Set statements = assertion.getStatement();
             if (statements == null) {
@@ -165,6 +167,10 @@ public class WSSUtils {
                         authStatement = (AuthenticationStatement) statement;
                         subject = authStatement.getSubject();
                         break;
+                    } else if (statement.getStatementType()== 
+                            Statement.ATTRIBUTE_STATEMENT) {
+                        attributeStatement = (AttributeStatement)statement;
+                        subject = attributeStatement.getSubject();
                     }
                 }
             }

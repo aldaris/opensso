@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.4 2007-07-11 06:12:44 mrudul_uchil Exp $
+ * $Id: DefaultAuthenticator.java,v 1.5 2007-08-28 00:20:06 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,7 @@ import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 public class DefaultAuthenticator implements MessageAuthenticator {
 
     private ProviderConfig config = null;
-    private Subject subject = null;
+    //private Subject subject = null;
     private static ResourceBundle bundle = WSSUtils.bundle;
     private static Debug debug = WSSUtils.debug;
 
@@ -115,8 +115,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
              boolean isLiberty) throws SecurityException {
 
         debug.message("DefaultAuthenticator.authenticate: start");
-        this.config = config;
-        this.subject = subject;
+        this.config = config;        
         
         String authChain = config.getAuthenticationChain();
 
@@ -148,12 +147,12 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             
             if ((authChain == null) || (authChain.length() == 0) ||
                 (authChain.equals("none"))) {
-                if(!validateUser(usertoken)) {
+                if(!validateUser(usertoken, subject)) {
                     throw new SecurityException(
                         bundle.getString("authenticationFailed"));
                 }
             } else {
-                if(!authenticateUser(usertoken,authChain)) {
+                if(!authenticateUser(usertoken, subject, authChain)) {
                     throw new SecurityException(
                         bundle.getString("authenticationFailed"));
                 }
@@ -193,14 +192,15 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             
             if ((authChain != null) && (authChain.length() != 0) &&
                 (!authChain.equals("none"))) {
-                if(!authenticateCert(certAlias,authChain,cert)) {
+                if(!authenticateCert(certAlias,authChain,cert, subject)) {
                     throw new SecurityException(
                         bundle.getString("authenticationFailed"));
                 }
             }
             
             String subjectDN = cert.getSubjectDN().getName();
-            addPrincipal(subjectDN);
+            subject = addPrincipal(subjectDN, subject);
+            subject.getPublicCredentials().add(cert);
             WSSUtils.setRoles(subject, subjectDN);
         } else if(
             (SecurityMechanism.WSS_NULL_SAML_HK_URI.equals(uri)) ||
@@ -215,7 +215,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                " token authentication");
             }
             AssertionToken assertionToken = (AssertionToken)securityToken;
-            if(!validateAssertion(assertionToken.getAssertion())) {
+            if(!validateAssertion(assertionToken.getAssertion(), subject)) {
                throw new SecurityException(
                      bundle.getString("authenticationFailed"));
             }
@@ -249,7 +249,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
     /**
      * Validates the user present in the username token.
      */
-    private boolean validateUser(UserNameToken usernameToken) 
+    private boolean validateUser(UserNameToken usernameToken, Subject subject) 
         throws SecurityException {
 
         String user = usernameToken.getUserName();
@@ -302,7 +302,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
            return false;
         }
         
-        addPrincipal(user);
+        subject = addPrincipal(user, subject);
         WSSUtils.setRoles(subject, user);
         return true;
     }
@@ -312,8 +312,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
      * against configured LDAP server.
      */
     private boolean authenticateUser(UserNameToken usernameToken, 
-                                     String authChain) 
-        throws SecurityException {
+            Subject subject, String authChain) throws SecurityException {
 
         String user = usernameToken.getUserName();
         String password = usernameToken.getPassword();
@@ -372,9 +371,9 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             return false;
 	}
         
-        addPrincipal(user);
+        subject = addPrincipal(user, subject);
         WSSUtils.setRoles(subject, user);
-        addSSOToken(ssotoken);
+        addSSOToken(ssotoken, subject);
         return true;
     }
 
@@ -383,8 +382,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
      * against configured Certificate authentication chain on AM server.
      */
     private boolean authenticateCert(String certAlias, String authChain,
-                                     X509Certificate cert) 
-        throws SecurityException {
+           X509Certificate cert, Subject subject) throws SecurityException {
 
         if( (certAlias == null) || (certAlias.length() == 0) ) {  
             return false;
@@ -445,14 +443,14 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             return false;
 	}
 
-        addSSOToken(ssotoken);
+        addSSOToken(ssotoken, subject);
         return true;
     }
 
     /**
      * Validates the security assertion token.
      */
-    private boolean validateAssertion(Assertion assertion)
+    private boolean validateAssertion(Assertion assertion, Subject subject)
                throws SecurityException {
 
         if((assertion.getConditions() != null) &&
@@ -494,7 +492,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
            return false;
         }
 
-        addPrincipal(ni.getName());
+        subject = addPrincipal(ni.getName(), subject);
         WSSUtils.setRoles(subject, ni.getName());
         return true;
     }
@@ -512,7 +510,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         Message requestMsg = (Message)message;
         SecurityAssertion assertion = requestMsg.getAssertion();
         if(assertion != null) {
-           if(!validateAssertion(assertion)) {
+           if(!validateAssertion(assertion, subject)) {
               throw new SecurityException(
                  bundle.getString("authenticationFailed"));
            } else {
@@ -536,14 +534,13 @@ public class DefaultAuthenticator implements MessageAuthenticator {
      *
      * @exception SecurityException
      */
-    private void addSSOToken(SSOToken ssoToken) throws SecurityException {
+    private void addSSOToken(final SSOToken ssoToken, final Subject subj)
+                   throws SecurityException {
         if (ssoToken != null) {
-            try {
-                final SSOToken sToken = ssoToken;
-                final Subject subj = this.subject;
+            try {                
                 AccessController.doPrivileged(new PrivilegedAction() {
                     public java.lang.Object run() {
-                        subj.getPrivateCredentials().add(sToken);
+                        subj.getPrivateCredentials().add(ssoToken);
                         return null;
                     }
                 });
@@ -558,9 +555,10 @@ public class DefaultAuthenticator implements MessageAuthenticator {
     /**
      * Adds SecurityPrincipal to the Subject.
      */
-    private void addPrincipal(String principalName) {
+    private Subject addPrincipal(String principalName, Subject subject) {
         Principal principal = new SecurityPrincipal(principalName); 
-        this.subject.getPrincipals().add(principal);
+        subject.getPrincipals().add(principal);
+        return subject;
     }
 
     // get user's inputs and set them to callback array.

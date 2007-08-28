@@ -17,14 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityPrincipal.java,v 1.1 2007-03-23 00:02:03 mallas Exp $
+ * $Id: SecurityPrincipal.java,v 1.2 2007-08-28 00:20:05 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wss.security;
 
+import java.io.Serializable;
 import  java.security.Principal;
+
 
 
 /**
@@ -32,7 +34,7 @@ import  java.security.Principal;
  * principal via the message level security.
  * @supported.all.api
  */
-public class SecurityPrincipal implements Principal {
+public class SecurityPrincipal implements Principal, Serializable {
 
     private String name;
 

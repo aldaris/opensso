@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.6 2007-08-13 19:18:24 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.7 2007-08-28 00:20:05 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,7 +88,9 @@ public class AgentProvider extends ProviderConfig {
      private static final String USE_DEFAULT_KEYSTORE = "useDefaultStore";
      private static final String FORCE_AUTHENTICATION = "forceUserAuthn";
      private static final String KEEP_SECURITY_HEADERS = "keepSecurityHeaders";
-     private static final String AUTHENTICATION_CHAIN = "authenticationChain";
+     private static final String AUTHENTICATION_CHAIN = "authenticationChain";  
+     private static final String STS_ENDPOINT = "STSEndpoint";
+     private static final String STS_MEX_ENDPOINT = "STSMexEndpoint";
 
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
@@ -252,6 +254,10 @@ public class AgentProvider extends ProviderConfig {
            this.preserveSecHeaders = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(AUTHENTICATION_CHAIN)) {
            this.authenticationChain = value;
+        } else if(attr.equals(STS_ENDPOINT)) {
+           this.stsEndpoint = value;
+        } else if(attr.equals(STS_MEX_ENDPOINT)) {
+           this.stsMexEndpoint = value;
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
@@ -314,6 +320,14 @@ public class AgentProvider extends ProviderConfig {
                        Boolean.toString(preserveSecHeaders)));
         if(authenticationChain != null) {
            set.add(getKeyValue(AUTHENTICATION_CHAIN, authenticationChain));
+        }
+        
+        if(stsEndpoint != null) {
+           set.add(getKeyValue(STS_ENDPOINT, stsEndpoint)); 
+        }
+        
+        if(stsMexEndpoint != null) {
+           set.add(getKeyValue(STS_MEX_ENDPOINT, stsMexEndpoint)); 
         }
         
         if(keyAlias != null) {

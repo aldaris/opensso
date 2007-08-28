@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.6 2007-08-13 19:18:25 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.7 2007-08-28 00:20:06 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Collections;
 import java.io.FileOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +85,8 @@ import com.sun.identity.wss.provider.ProviderException;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.NameID;
+import com.sun.identity.wss.sts.TrustAuthorityClient;
+import com.sun.identity.wss.sts.FAMSTSException;
 
 /* iPlanet-PUBLIC-CLASS */
 
@@ -363,6 +366,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
            config = getWSCConfig();
         }
  
+        SecurityToken securityToken = null;        
         List secMechs = config.getSecurityMechanisms();
         if(secMechs == null || secMechs.isEmpty()) {
            throw new SecurityException(
@@ -371,7 +375,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         String sechMech = (String)secMechs.iterator().next();
         SecurityMechanism securityMechanism = 
-               SecurityMechanism.getSecurityMechanism(sechMech);
+                  SecurityMechanism.getSecurityMechanism(sechMech);
         String uri = securityMechanism.getURI();
         if(SecurityMechanism.WSS_NULL_ANONYMOUS_URI.equals(uri) ||
            (SecurityMechanism.WSS_TLS_ANONYMOUS_URI.equals(uri)) ||
@@ -381,16 +385,31 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         if(securityMechanism.isTALookupRequired()) {
            SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
-           if(subjectSecurity.ssoToken == null) {
-              throw new SecurityException(
-                    bundle.getString("invalidSSOToken"));
-           }
-           return getSecureMessageFromLiberty(subjectSecurity.ssoToken, subject,
-                  soapMessage, sharedState, config);
+           SSOToken ssoToken = subjectSecurity.ssoToken;
+           if(securityMechanism.getURI().equals
+                   (SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
+               if(subjectSecurity.ssoToken == null) {
+                  throw new SecurityException(
+                        bundle.getString("invalidSSOToken"));
+               }
+               return getSecureMessageFromLiberty(subjectSecurity.ssoToken, subject,
+                      soapMessage, sharedState, config);
+            } else {
+               try {
+                   TrustAuthorityClient client = new TrustAuthorityClient();            
+                   securityToken = client.getSecurityToken(config, 
+                                   subjectSecurity.ssoToken);
+               } catch (FAMSTSException stsEx) {
+                   debug.error("SOAPRequestHandler.secureRequest: exception" +
+                           "in obtaining STS Token", stsEx);
+                   throw new SecurityException(stsEx.getMessage());
+               }
+            }
+            
+        } else {
+             securityToken = getSecurityToken(
+                  securityMechanism, config, subject);
         }
-
-        SecurityToken securityToken = getSecurityToken(
-              securityMechanism, config, subject); 
         
         SecureSOAPMessage secureMessage = 
                    new SecureSOAPMessage(soapMessage, true);
@@ -613,15 +632,6 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             certAlias = config.getKeyAlias();
         }
         SecurityToken securityToken = null;
-
-        /** TODO End user credentials need to be done for the WSC?
-        Set credentials = subject.getPublicCredentials();  
-        boolean useEndUserCredentials = false;
-
-        if(credentials == null || credentials.isEmpty()) {
-           // exact credential from the subject 
-        }
-        */
 
         if(debug.messageEnabled()) {
             debug.message("getSecurityToken: SecurityMechanism URI : " + uri);

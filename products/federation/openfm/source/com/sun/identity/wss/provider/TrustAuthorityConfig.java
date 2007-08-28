@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.2 2007-04-06 21:06:43 veiming Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.3 2007-08-28 00:20:04 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,6 +57,7 @@ public abstract class TrustAuthorityConfig {
     protected String keyAlias;
     protected String name;
     protected String type;
+    protected String metadataEndpoint;
     private static Class discoveryConfigClass;
     private static Debug debug = ProviderUtils.debug;
 
@@ -70,6 +71,8 @@ public abstract class TrustAuthorityConfig {
      * Discovery service configuration type.
      */
     public static final String DISCOVERY_TRUST_AUTHORITY = "Discovery";
+    
+    public static final String STS_TRUST_AUTHORITY = "STS";
 
     /**
      * Returns the trust authority name.
@@ -131,6 +134,9 @@ public abstract class TrustAuthorityConfig {
         this.keyAlias = keyAlias; 
     }
 
+    public String getMetadataEndpoint() {
+        return metadataEndpoint;
+    }
     /**
      * Initialize the trust authority.
      * @param name the name of the trust authority.

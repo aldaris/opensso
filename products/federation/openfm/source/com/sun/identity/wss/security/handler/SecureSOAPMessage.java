@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.6 2007-08-13 19:18:25 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.7 2007-08-28 00:20:06 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -528,7 +528,8 @@ public class SecureSOAPMessage {
 
          if( (SecurityMechanism.WSS_NULL_SAML_HK_URI.equals(uri)) ||
              (SecurityMechanism.WSS_TLS_SAML_HK_URI.equals(uri)) ||
-             (SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI.equals(uri)) ) {
+             (SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI.equals(uri)) ||
+             (SecurityMechanism.STS_SECURITY_URI.equals(uri))) {
              cert = WSSUtils.getCertificate(securityToken);
              
          } else if( (SecurityMechanism.WSS_NULL_SAML2_HK_URI.equals(uri)) ||

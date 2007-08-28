@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.6 2007-08-13 19:18:24 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.7 2007-08-28 00:20:04 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,6 +94,8 @@ public abstract class ProviderConfig {
      protected boolean forceAuthn = false;
      protected boolean preserveSecHeaders = false;
      protected String authenticationChain = null;
+     protected String stsEndpoint = null;
+     protected String stsMexEndpoint = null;
 
      private static Class adapterClass;
 
@@ -150,7 +152,7 @@ public abstract class ProviderConfig {
      * @return the endpoint of the web services provider.
      */
     public String getWSPEndpoint() {
-        return wspEndpoint;
+        return wspEndpoint;        
     }
 
     /**
@@ -502,8 +504,40 @@ public abstract class ProviderConfig {
      */
     public void setAuthenticationChain(String authenticationChain) {
         this.authenticationChain = authenticationChain;
+    }                       
+    
+    /**
+     * Returns the Security Token Service Endpoint.
+     * @return returns the security token service end point
+     */
+    public String getSTSEndpoint() {
+        return stsEndpoint;
     }
-        
+    
+    /**
+     * Returns the Security Token Service Metadata exchange endpoint.
+     * @return returns the security token service metadata exchange endpoint.
+     */
+    public String getSTSMexEndpoint() {
+        return stsMexEndpoint;
+    }
+    
+    /**
+     * Sets the Security token service end point.
+     * @param stsEndpoint security token service end point
+     */
+    public void setSTSEndpoint(String stsEndpoint) {
+        this.stsEndpoint = stsEndpoint;
+    }
+    
+    /**
+     * Sets the Security token service metadata end point.
+     * @param stsEndpoint security token service metadata end point
+     */
+    public void setSTSMexEndpoint(String stsMexEndpoint) {
+        this.stsMexEndpoint = stsMexEndpoint;
+    }
+    
     /**
      * Stores the provider configuration
      *
@@ -638,6 +672,7 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN);
         list.add(SecurityMechanism.WSS_TLS_USERNAME_TOKEN_PLAIN);
         list.add(SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN);
+        list.add(SecurityMechanism.STS_SECURITY);
         return list;
     }
 
@@ -656,6 +691,7 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_NULL_SAML2_HK);
         list.add(SecurityMechanism.WSS_NULL_ANONYMOUS);
         list.add(SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN);
+        list.add(SecurityMechanism.STS_SECURITY);
         return list;
     }
 
