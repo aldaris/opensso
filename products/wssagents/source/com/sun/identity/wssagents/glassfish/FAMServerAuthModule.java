@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthModule.java,v 1.1 2007-06-08 06:39:02 mrudul_uchil Exp $
+ * $Id: FAMServerAuthModule.java,v 1.2 2007-08-28 00:38:45 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,11 +36,12 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.xml.soap.SOAPMessage;
 
-import com.sun.enterprise.security.jauth.AuthParam;
-import com.sun.enterprise.security.jauth.AuthPolicy;
-import com.sun.enterprise.security.jauth.SOAPAuthParam;
-import com.sun.enterprise.security.jauth.AuthException;
-import com.sun.enterprise.security.jauth.ServerAuthModule;
+import javax.security.auth.message.module.ServerAuthModule;
+import javax.security.auth.message.MessagePolicy;
+import javax.security.auth.message.MessageInfo;
+import javax.security.auth.message.AuthException;
+import javax.security.auth.message.AuthStatus;
+import com.sun.xml.ws.api.message.Packet;
 
 import java.lang.reflect.Method;
 
@@ -74,11 +75,12 @@ public class FAMServerAuthModule implements ServerAuthModule {
      * <code>javax.security.auth.callback.CallbackHandler</code>
      * @param options
      */
-    public void initialize(
-        AuthPolicy requestPolicy,
-        AuthPolicy responsePolicy,
-        CallbackHandler handler,
-        Map options) {
+    
+    public void initialize(MessagePolicy requestPolicy,
+	       MessagePolicy responsePolicy,
+	       CallbackHandler handler,
+	       Map options)
+	throws AuthException {
         
         if(_logger != null) {
             _logger.log(Level.INFO, "FAMServerAuthModule.Init");
@@ -140,11 +142,13 @@ public class FAMServerAuthModule implements ServerAuthModule {
      * @exception AuthException if there is an error occured in validating
      *            the request.
      */
-    public void validateRequest(AuthParam param,
-        Subject subj, Map sharedState) throws AuthException {
+    public AuthStatus validateRequest(MessageInfo messageInfo,
+			       Subject clientSubject,
+			       Subject serviceSubject) throws AuthException {        
         
         try {
-            SOAPMessage soapMessage = ((SOAPAuthParam)param).getRequest();
+            SOAPMessage soapMessage = (SOAPMessage)messageInfo.getRequestMessage();
+            //SOAPMessage soapMessage = ((SOAPAuthParam)param).getRequest();
             Object args[] = new Object[1];
             if(_logger != null) {
                 args[0] = soapMessage.getSOAPPart().getEnvelope();
@@ -154,9 +158,11 @@ public class FAMServerAuthModule implements ServerAuthModule {
             }
             args = new Object[5];
             args[0] = soapMessage;
-            args[1] = subj;
-            args[2] = sharedState;
-            subj = (Subject) validateRequest.invoke(serverAuthModule, args);
+            args[1] = clientSubject;
+            args[2] = messageInfo.getMap();
+            clientSubject = (Subject) validateRequest.invoke(serverAuthModule, args);
+            Packet packet = (Packet)messageInfo.getMap().get("REQ_PACKET");
+            packet.invocationProperties.put("javax.security.auth.Subject", clientSubject);
             if(_logger != null) {
                 args = new Object[1];
                 args[0] = soapMessage.getSOAPPart().getEnvelope();
@@ -175,6 +181,7 @@ public class FAMServerAuthModule implements ServerAuthModule {
             ae.initCause(sbe);
             throw ae;
         }
+        return AuthStatus.SUCCESS;
     }
     
     /**
@@ -187,10 +194,11 @@ public class FAMServerAuthModule implements ServerAuthModule {
      * @param sharedState sharedMap between the request and response.
      * @exception AuthException for any error while securing the response.
      */
-    public void secureResponse(AuthParam param,
-        Subject subject, Map sharedState) throws AuthException {
+    public AuthStatus secureResponse(MessageInfo messageInfo, Subject serviceSubject)
+	throws AuthException {
         try {
-            SOAPMessage soapMessage = ((SOAPAuthParam)param).getResponse();
+            SOAPMessage soapMessage = (SOAPMessage)messageInfo.getResponseMessage();
+            //SOAPMessage soapMessage = ((SOAPAuthParam)param).getResponse();
             Object[] args = new Object[1];
             args[0] = soapMessage.getSOAPPart().getEnvelope();
             if(_logger != null) {
@@ -200,7 +208,7 @@ public class FAMServerAuthModule implements ServerAuthModule {
             }
             args = new Object[2];
             args[0] = soapMessage;
-            args[1] = sharedState;
+            args[1] = messageInfo.getMap();
             soapMessage = (SOAPMessage) secureResponse.invoke(
                 serverAuthModule, args);
             if(_logger != null) {
@@ -221,6 +229,7 @@ public class FAMServerAuthModule implements ServerAuthModule {
             ae.initCause(ie);
             throw ae;
         }
+        return AuthStatus.SUCCESS;
     }
     
     /**
@@ -231,8 +240,9 @@ public class FAMServerAuthModule implements ServerAuthModule {
      *                    authentication.
      * @exception if there is an error occured while disposing the subject.
      */
-    public void disposeSubject(Subject subject, Map sharedState)
-    throws AuthException {
+    
+    public void cleanSubject(MessageInfo messageInfo, Subject subject)
+	throws AuthException {
         
         if(subject == null) {
             throw new AuthException("nullSubject");
@@ -247,4 +257,8 @@ public class FAMServerAuthModule implements ServerAuthModule {
         _logger = logManager.getLogger(
             "javax.enterprise.system.core.security");
     }
+    
+     public Class[] getSupportedMessageTypes() {
+         return null;
+     }
 }
