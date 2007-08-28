@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedSPViewBean.java,v 1.3 2007-08-14 21:55:14 babysunil Exp $
+ * $Id: WSFedSPViewBean.java,v 1.4 2007-08-28 19:06:06 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,60 +43,60 @@ import java.util.Set;
 public class WSFedSPViewBean extends WSFedGeneralBase {
     public static final String DEFAULT_DISPLAY_URL =
             "/console/federation/WSFedSP.jsp";
-        
+    
     public WSFedSPViewBean() {
         super("WSFedSP");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
     }
     
     public void beginDisplay(DisplayEvent event)
-        throws ModelControlException {
+    throws ModelControlException {
+        
         super.beginDisplay(event);
         WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
         AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
         
         // set extended meta data values for the SP
-        ps.setAttributeValues(getExtendedValues(), model);
-        
-        //TBD- once api for SingleSignOutNotification is available
-        //set standard meta data values for the SP   
-        ps.setAttributeValues(getStandardValues(), model);
+        ps.setAttributeValues(getExtendedValues(), model);        
+        setDisplayFieldValue(WSFedPropertiesModel.TFUSR_AGENT_NAME, "Key");
+        setDisplayFieldValue(WSFedPropertiesModel.TFCOKKI_NAME, "Name");
     }
     
     protected void createPropertyModel() {
-        psModel = new AMPropertySheetModel(
+        retrieveCommonProperties();
+        if (isHosted()) {
+            psModel = new AMPropertySheetModel(
                 getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/propertyWSFedSPView.xml"));
+                    "com/sun/identity/console/propertyWSFedSPViewHosted.xml"));
+        } else {
+            psModel = new AMPropertySheetModel(
+                getClass().getClassLoader().getResourceAsStream(
+                    "com/sun/identity/console/propertyWSFedSPViewRemote.xml"));
+        }
         psModel.clear();
     }
     
     public void handleButton1Request(RequestInvocationEvent event)
-        throws ModelControlException {
+    throws ModelControlException {
         retrieveCommonProperties();
         try {
             WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
             AMPropertySheet ps =
-                (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+                    (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
             
             //retrieve all the extended metadata values from the property sheet
             Map spExtValues =
                 ps.getAttributeValues(model.getSPEXDataMap(), false, model);
             
             //save the extended metadata values for the SP
-            model.setSPExtAttributeValues(realm, entityName, spExtValues);
-            
-            //retrieve all the standard metadata values from the property sheet
-            Map spStdValues =
-                ps.getAttributeValues(model.getSPSTDDataMap(), false, model);
-            
-            //save the standard metadata values for the SP
-            model.setSPSTDAttributeValues(realm, entityName, spStdValues);
+            model.setSPExtAttributeValues(realm, entityName, 
+                                            spExtValues, location);
             
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                "wsfed.sp.property.updated");
+                    "wsfed.sp.property.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
+                    e.getMessage());
         }
         forwardTo();
     }
@@ -116,10 +116,9 @@ public class WSFedSPViewBean extends WSFedGeneralBase {
             while (iterator.hasNext()) {
                 Map.Entry entry = (Map.Entry)iterator.next();
                 tmpMap.put((String)entry.getKey(),
-                    returnEmptySetIfValueIsNull(
+                        returnEmptySetIfValueIsNull(
                         convertListToSet((List)entry.getValue())));
             }
-            
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage() );
@@ -127,25 +126,4 @@ public class WSFedSPViewBean extends WSFedGeneralBase {
         return tmpMap;
     }
     
-    private Map getStandardValues() {
-        Map tmpMap = new HashMap(2);
-        Set claimSet = new HashSet();
-        String ssoEndPoint = null;
-        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-        try {
-            //fedElem is the std metadata federation element under the realm.
-            FederationElement fedElem =
-                model.getEntityDesc(realm, entityName);
-            
-            //TBD-- value currently hardcoded in the method
-            ssoEndPoint = model.getSingleSignoutNotificationEndPoint(fedElem);
-        } catch (AMConsoleException e) {
-            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage() );
-        }
-        claimSet.add(ssoEndPoint);
-        tmpMap.put(WSFedPropertiesModel.TFSSO_NOTIFENDPT, 
-            returnEmptySetIfValueIsNull(claimSet));
-        return tmpMap;
-    }
 }

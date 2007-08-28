@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedGeneralBase.java,v 1.4 2007-08-14 21:54:04 babysunil Exp $
+ * $Id: WSFedGeneralBase.java,v 1.5 2007-08-28 19:05:28 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,43 +41,31 @@ public abstract class WSFedGeneralBase extends EntityPropertiesBase {
     
     public WSFedGeneralBase(String name) {
         super(name);
-    }    
-
+    }
+    
     protected AMModel getModelInternal() {
         HttpServletRequest req = getRequestContext().getRequest();
         return new WSFedPropertiesModelImpl(req, getPageSessionAttributes());
     }
-        
+    
     public void beginDisplay(DisplayEvent event)
     throws ModelControlException {
         super.beginDisplay(event);
-        if (isHosted()) {
-            setPageTitle(entityName);
-        } else {
-            // TBD : temporary workaround to prevent Remote providers 
-            // from being accessed
-            setPageSessionAttribute(FederationViewBean.MESSAGE_TEXT, 
-                "Remote properties are not available");
-            FederationViewBean vb = (FederationViewBean)            
-                getViewBean(FederationViewBean.class);
-            passPgSessionMap(vb);
-            vb.forwardTo(getRequestContext());                               
-        }
     }
-        
+    
     protected String getProfileName() {
         return EntityModel.WSFED;
-    }   
+    }
     
     protected abstract void createPropertyModel();
     
     /**
      * Converts the List to Set.
-     *     
+     *
      * @param list the list to be converted.
      * @return the corresponding Set.
      */
-     protected Set convertListToSet(List list) {
+    protected Set convertListToSet(List list) {
         Set s = new HashSet();
         Iterator it = list.iterator();
         while (it.hasNext()) {
@@ -86,9 +74,9 @@ public abstract class WSFedGeneralBase extends EntityPropertiesBase {
         return s;
     }
     
-     /**
+    /**
      * Return empty set if value is null
-     *     
+     *
      * @param set the set to be checked for null.
      * @return the EMPTY_SET if value is null.
      */

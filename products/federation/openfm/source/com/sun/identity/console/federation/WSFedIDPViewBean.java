@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedIDPViewBean.java,v 1.3 2007-08-14 21:54:58 babysunil Exp $
+ * $Id: WSFedIDPViewBean.java,v 1.4 2007-08-28 19:05:52 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,7 @@ import java.util.HashSet;
 
 public class WSFedIDPViewBean extends WSFedGeneralBase {
     public static final String DEFAULT_DISPLAY_URL =
-        "/console/federation/WSFedIDP.jsp";   
+            "/console/federation/WSFedIDP.jsp";
     
     public WSFedIDPViewBean() {
         super("WSFedIDP");
@@ -52,48 +52,63 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
     public void beginDisplay(DisplayEvent event)
     throws ModelControlException {
         super.beginDisplay(event);
-        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();        
+        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
         AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
         
-        //sets the extended meta data values for the Idp        
+        //sets the extended meta data values for the Idp
         ps.setAttributeValues(getExtendedValues(), model);
         
+        //TBD -once api is ready
         //sets the standard meta data values for the Idp
-        ps.setAttributeValues(getStandardValues(), model);
+        //ps.setAttributeValues(getStandardValues(), model);
+        
+        setDisplayFieldValue(WSFedPropertiesModel.TFCLAIM_TYPES, "UPN");
     }
-     
+    
     protected void createPropertyModel() {
-        psModel = new AMPropertySheetModel(
-            getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/propertyWSFedIDPView.xml"));
+        retrieveCommonProperties();
+        if (isHosted()) {
+            psModel = new AMPropertySheetModel(
+                getClass().getClassLoader().getResourceAsStream(
+                   "com/sun/identity/console/propertyWSFedIDPViewHosted.xml"));
+        } else {
+            psModel = new AMPropertySheetModel(
+                getClass().getClassLoader().getResourceAsStream(
+                   "com/sun/identity/console/propertyWSFedIDPViewRemote.xml"));
+        }
         psModel.clear();
+        
     }
     
     public void handleButton1Request(RequestInvocationEvent event)
     throws ModelControlException {
         retrieveCommonProperties();
         try {
+            
             WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
             AMPropertySheet ps =
-                (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+                    (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
             
             //retrieve all the extended metadata values from the property sheet
             Map idpExtValues =
                 ps.getAttributeValues(model.getIDPEXDataMap(), false, model);
             
+            //save the extended metadata values for the Idp
+            model.setIDPExtAttributeValues(realm, entityName, idpExtValues, 
+                location);
+            
             //retrieve all the standard metadata values from the property sheet
             Map idpStdValues =
                 ps.getAttributeValues(model.getIDPSTDDataMap(), false, model);
             
-            //save the extended metadata values for the Idp 
-            model.setIDPExtAttributeValues(realm, entityName, idpExtValues);
-            
-            //save the standard metadata vlaues for the Idp
-            //TBD--claimtype and signing certificate alias saving
-            //model.setGenAttributeValues(realm, entityName, idpStdValues);
+            //save the standard metadata values for the Idp
+            //TBD--claimtype saving once backend api is complete
+            FederationElement fedElem =
+                    model.getEntityDesc(realm, entityName);
+            //model.setIDPSTDAttributeValues(fedElem, idpStdValues);
             
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                "wsfed.idp.property.updated");
+                    "wsfed.idp.property.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage());
@@ -105,10 +120,11 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
         Map map = new HashMap();
         Map tmpMap = new HashMap();
         WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
+        
         try {
             
             //gets extended metadata values
-            map = model.getIdentityProviderAttributes(realm, entityName);     
+            map = model.getIdentityProviderAttributes(realm, entityName);
             Set entries = map.entrySet();
             Iterator iterator = entries.iterator();
             
@@ -116,36 +132,20 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
             while (iterator.hasNext()) {
                 Map.Entry entry = (Map.Entry)iterator.next();
                 tmpMap.put((String)entry.getKey(),
-                    returnEmptySetIfValueIsNull(
-                    convertListToSet((List)entry.getValue())));
+                        returnEmptySetIfValueIsNull(
+                        convertListToSet((List)entry.getValue())));
             }
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage() );
-        }          
+        }
         return tmpMap;
     }
     
     private Map getStandardValues() {
-        Map tmpMap = new HashMap(2);        
+        Map tmpMap = new HashMap(10);
         WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-        try {
-            
-            //TBD- once format of display is fixed.
-            //To get the value of standard meta data attributes
-            FederationElement fedElem =
-                model.getEntityDesc(realm, entityName);
-            Set claimSet = returnEmptySetIfValueIsNull (
-                convertListToSet(model.getClaimType(fedElem)));
-            tmpMap.put(WSFedPropertiesModel.TFCLAIM_TYPES, claimSet);
-        } catch (AMConsoleException e) {
-            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                    e.getMessage() );
-        }
-        
-        // to get the signing certificate alais
-        //TBD - once the format is decided as to how to display certificates
-        //byte [] signCert = model.getSignCert(fedElem);
+        //TBD - once backend api gets ready
         return tmpMap;
     }
-  }
+}

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModel.java,v 1.2 2007-08-14 21:56:02 babysunil Exp $
+ * $Id: WSFedPropertiesModel.java,v 1.3 2007-08-28 19:06:33 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,9 +65,6 @@ public interface WSFedPropertiesModel extends AMModel {
      * WSFED SP attributes
      ************************************************************************/
     
-    // attribute for Single SignOut Notification Endpoint
-    String TFSSO_NOTIFENDPT = "SingleSignOutNotificationEndpoint";
-    
     // attribute for AutofedEnabled
     String TFSPAUTOFED_ENABLED = "autofedEnabled";
     
@@ -104,6 +101,22 @@ public interface WSFedPropertiesModel extends AMModel {
     // attribute for assertionTimeSkew
     String TFASSERT_TIMESKEW = "assertionTimeSkew";
     
+    // attribute for Account Realm Cookie Name
+    String TFACCT_REALM_COOKIE = "AccountRealmCookieName";
+    
+    // attribute for Account Realm Selection
+    String TFACCT_REALM_SELECTION = "AccountRealmSelection";
+    
+    // attribute for Home Realm Discovery Service
+    String TFACCT_HOMEREALM_DISC_SERVICE = "HomeRealmDiscoveryService";
+    
+    // attribute for label for user agent sting
+    String TFUSR_AGENT_NAME = "useragentkey";
+    
+    // attribute for label for cookie name
+    String TFCOKKI_NAME = "cookiname";
+    
+    
     /************************************************************************
      * WSFED IDP attributes
      ************************************************************************/
@@ -111,8 +124,20 @@ public interface WSFedPropertiesModel extends AMModel {
     // attribute for Signing Certificate Alias
     String TFSIGNCERT_ALIAS = "signingCertAlias";
     
-    // attribute for Claim Types Offered
-    String TFCLAIM_TYPES = "UriNamedClaimTypesOffered";
+    //attribute for types of Claim Types Offered
+    String TFCLAIM_TYPES = "claimTypeOffered";
+    
+    //attribute for Claim Types Offered-Display Name
+    String TFCLAIM_NAME = "claimtypeDisplayName";
+    
+    //attribute for Claim Types Offered-Description
+    String TFCLAIM_DESC = "claimtypeDisplayDescr";
+    
+    //attribute for Claim Types Offered-Uri
+    String TFCLAIM_URI = "claimtypeDisplayUri";
+    
+    // attribute for Claim Types Offered-Other
+    String TFCLAIM_OTHER = "UriNamedClaimTypesOther";
     
     // attribute for AutofedEnabled
     String TFAUTOFED_ENABLED = "autofedEnabled";
@@ -135,7 +160,7 @@ public interface WSFedPropertiesModel extends AMModel {
     // attribute for AttributeMap
     String TFIDPATTR_MAP = "attributeMap";
     
-     /**
+    /**
      * Returns a map with service provider attributes and values.
      *
      * @param realm to which the entity belongs.
@@ -193,7 +218,7 @@ public interface WSFedPropertiesModel extends AMModel {
      * @param fedElem is the FederationElement Object.
      * @return UriNamedClaimTypesOffered for the FederationElement passed.
      */
-    List getClaimType(FederationElement fedElem);
+    Map getClaimType(FederationElement fedElem);
     
     /**
      * Returns Signing Certificate for the FederationElement passed.
@@ -204,34 +229,16 @@ public interface WSFedPropertiesModel extends AMModel {
     byte[] getSignCert(FederationElement fedElem);
     
     /**
-     * Returns SingleSignoutNotificationEndPoint for FederationElement passed.
-     *
-     * @param fedElem is the FederationElement Object.
-     * @return SingleSignoutNotificationEndPoint for FederationElement passed.
-     */
-    String getSingleSignoutNotificationEndPoint(FederationElement fedElem);
-    
-    /**
      * Saves the extended metadata attribute values for the SP.
      *
      * @param realm to which the entity belongs.
      * @param fedid is the entity id.
      * @param Map spExtvalues contain the extended attribute values.
+     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
-    void setSPExtAttributeValues(String realm, String fedId, Map spExtvalues)
-    throws AMConsoleException;
-    
-    /**
-     * Saves the standard attribute values for the SP.
-     *
-     * @param realm to which the entity belongs.
-     * @param fedid is the entity id.
-     * @param Map spStdValues contain standard attribute values.
-     * @throws AMConsoleException if saving of attribute value fails.
-     */
-    void setSPSTDAttributeValues(String realm, String fedId, Map spStdValues)
-    throws AMConsoleException;
+    void setSPExtAttributeValues(String realm, String fedId, Map spExtvalues,
+            String location) throws AMConsoleException;
     
     /**
      * Saves the extended metadata attribute values for the IDP.
@@ -239,10 +246,21 @@ public interface WSFedPropertiesModel extends AMModel {
      * @param realm to which the entity belongs.
      * @param fedid is the entity id.
      * @param Map idpExtValues contain attribute values.
+     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
-    void setIDPExtAttributeValues(String realm, String fedId, Map idpExtValues)
-    throws AMConsoleException;
+    void setIDPExtAttributeValues(String realm, String fedId, Map idpExtValues,
+            String location) throws AMConsoleException;
+    
+    /**
+     * Saves the standard attribute values for the IDP.
+     *
+     * @param fedElem is standard metadata object
+     * @param Map idpStdValues contain standard attribute values.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    void setIDPSTDAttributeValues(FederationElement fedElem, Map spStdValues)
+            throws AMConsoleException;
     
     /**
      * Saves the standard attribute values from the General page.
@@ -253,7 +271,7 @@ public interface WSFedPropertiesModel extends AMModel {
      * @throws AMConsoleException if saving of attribute value fails.
      */
     void setGenAttributeValues(String realm, String fedId, Map idpStdValues)
-    throws AMConsoleException;
+            throws AMConsoleException;
     
     /**
      * Returns a map of wsfed general attribute values.
@@ -268,13 +286,6 @@ public interface WSFedPropertiesModel extends AMModel {
      * @return Map of Wsfed Extended Service Provider attribute values.
      */
     Map getSPEXDataMap();
-    
-    /**
-     * Returns a map of Wsfed Standard Service Provider attribute values.
-     *
-     * @return Map of Wsfed Standard Service Provider attribute values.
-     */
-    Map getSPSTDDataMap();
     
     /**
      * Returns a map of Wsfed Extended Identity Provider attribute values.

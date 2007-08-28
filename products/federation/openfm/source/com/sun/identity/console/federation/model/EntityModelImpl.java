@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.3 2007-08-24 18:17:11 asyhuang Exp $
+ * $Id: EntityModelImpl.java,v 1.4 2007-08-28 19:07:18 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,10 @@ import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
+import com.sun.identity.wsfederation.jaxb.wsfederation.UriNamedClaimTypesOfferedElement;
+import com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory;
+import com.sun.identity.wsfederation.jaxb.wsfederation.TokenIssuerEndpointElement;
 
 public class EntityModelImpl extends AMModelBase implements EntityModel {
     
@@ -344,8 +348,12 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         return roles;
     }
     
-    private List getWSFedRoles(String entity, String realm) {
+    private List getWSFedRoles(String entity, String realm) 
+     {
+        String classMethod = "EntityModelImpl.getWSFedRoles:";
         List roles = new ArrayList(4);
+        boolean isSP = true;
+        int cnt = 0;
         try {
             if (WSFederationMetaManager.getIDPSSOConfig(realm, entity) != null) {
                 roles.add("IDP");
@@ -353,8 +361,29 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             if (WSFederationMetaManager.getSPSSOConfig(realm, entity) != null) {
                 roles.add("SP");
             }
+            
+            //to handle dual roles specifically for WSFED
+            if (roles.isEmpty()) {
+                FederationElement fedElem =
+                    WSFederationMetaManager.getEntityDescriptor(realm, entity);
+                if (fedElem != null) {
+                    for (Iterator iter = fedElem.getAny().iterator();                  
+                      iter.hasNext(); ) {
+                          Object o = iter.next();
+                          if (o instanceof UriNamedClaimTypesOfferedElement) {
+                              roles.add("IDP");
+                              isSP = false; 
+                          } else if (o instanceof TokenIssuerEndpointElement) {
+                              cnt++;
+                          }
+                    }
+                    if ((isSP) || (cnt >1)) {  
+                        roles.add("SP");
+                    } 
+                }
+            }
         } catch (WSFederationMetaException w) {
-            debug.warning("EntityModel.getWSFEdRoles", w);
+            debug.warning(classMethod + w); 
         }
         return (roles != null) ?
             roles : Collections.EMPTY_LIST;
