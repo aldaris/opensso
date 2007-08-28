@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceAuthenticatorImpl.java,v 1.1 2006-10-30 23:18:04 qcheng Exp $
+ * $Id: WebServiceAuthenticatorImpl.java,v 1.2 2007-08-28 18:53:05 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.service.SessionService;
 import com.iplanet.am.util.Cache;
+import com.iplanet.security.x509.CertUtils;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
@@ -143,15 +144,14 @@ class WebServiceAuthenticatorImpl implements WebServiceAuthenticator {
                         cert);
                 }
                 
-                String subjectDN = cert.getSubjectDN().getName();
-                
+                String subjectDN = CertUtils.getSubjectName(cert);                                        
                 if (principal == null) {
                     principal = subjectDN;
                 } else if (!principal.equals(subjectDN)) {
                     principalsSet.add(subjectDN);
                 }
                 
-                String issuerDN = cert.getIssuerDN().getName();
+                String issuerDN = CertUtils.getIssuerName(cert);                        
                 principalsSet.add(issuerDN);
             }
             

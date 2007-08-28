@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServicesClients.java,v 1.1 2006-10-30 23:18:07 qcheng Exp $
+ * $Id: WebServicesClients.java,v 1.2 2007-08-28 18:52:31 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import java.security.cert.X509Certificate;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.iplanet.security.x509.CertUtils;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.ValidValues;
 import com.sun.identity.policy.interfaces.Subject;
@@ -144,8 +145,7 @@ public class WebServicesClients implements Subject {
 				(X509Certificate)ks.getCertificate(alias);
 		    if (cert != null) {
 			debug.message("WSClient.getValidValues:cert not null");
-			Principal principal = cert.getSubjectDN(); 
-			String name = principal.getName();
+                        String name = CertUtils.getSubjectName(cert);
 			if (name != null && name.length() != 0) {
 			    subjects.add(name); 
 	 	        }
