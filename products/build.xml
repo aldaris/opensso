@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2007-07-18 22:41:25 veiming Exp $
+   $Id: build.xml,v 1.16 2007-08-28 16:20:20 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -156,6 +156,10 @@
 
     </target>
 
+    <target name="srczip" depends="clean">
+        <ant antfile="build-srczip.xml" inheritRefs="true"/>
+    </target>
+    
     <target name="clean">
         <delete dir="${prd.nightly.dir}" />
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
@@ -231,6 +235,7 @@
         <echo message=" cvsdiff      : generates diffs under diffs subdirectory"/>
         <echo message=" full-nightly : nightly target with index.html updates"/>
         <echo message=" nightly      : performs nightly builds for all products"/>
+        <echo message=" srczip       : creates zip file containing the OpenSSO source code"/>
         <echo message=" usage        : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>
