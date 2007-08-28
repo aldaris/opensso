@@ -23,4 +23,130 @@
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-Federated Access Manager - Documentation
+Federated Access Manager - Secure Attribute Exchange : Client API
+
+This fam.zip file contains Java and .Net interfaces to enable :
+(i) an application (IDP-App) to generate SAE data to be sent across to a local 
+    FAM in IDP role (FAM-IDP) acting as gateway to s SAMLv2 based COT.
+(ii) an application (SP_App) to consume SAE data sent to it by a local FAM in 
+    SP role (FAM-SP)
+
+The SAE protocol used to tranferring SAE data between the entities identified 
+above is based on simple HTTP-GET and HTTP-redirect.
+
+
+Java API  is provided in fmsae.jar
+.Net API is provided in fmsae.dll.
+
+Two ways of securing SAE data are provided : Symmetric crypto and Asymmetric
+digital signing. Symmetric method needs a shared secret between the 
+application and FAM, while Asymmetric method uses X509 certificates.
+
+Please refer to FAM 8.0 product documentation, Javadocs and the SAE sample 
+Rest of this file proves a brief introduction.
+
+
+IDP-App --- sae ---> FAM-IDP ---| --->FAM-SP --- sae ---> SP-App
+
+Typical use on IDP-App end : also termed as the Asserting party.
+
+0)  One time : 
+ 
+   Register ApplicationName, SAE security type (Asymmetric or Symmetric)
+   and the corresponding shared secret/Public key alias with local FAM-IDP.
+   Store shared secret in a safe place  preferably encrypted.
+   The private key must be stored in a protected keystore and not revealed
+   to FAM. FAM only needs to know the public key, which must be added to 
+   FAM's local keystore.
+
+1) Initialize SecureAttrs class if Asymmetric method is used.
+
+   Java : SecureAttrs class needs enough information to open a
+     java.security.KeyStore instance that contains the keys needed to 
+     secure attributes to be sent to FAM-IDP.
+     Please refer to Javadocs for details on parameters.
+
+   .Net : SecureAttrs class needs access to an appropriate 
+        System.Security.Cryptography.AsymmetricAlgorithm instance.
+        The type SecureAttrs.SAE_CRYPTO_ASYMMETRIC must be specified as
+        part of init - else the default is SecureAttrs.SAE_CRYPTO_SYMMETRIC.
+
+2) Authenticate the user.
+
+3) Construct a Map  (Java) or Hashtable (.Net) representing user attributes to 
+   be asserted.  the following attribute names are predefined :
+        
+    sun.userid : string representing authenticated user.
+    sun.spappurl : SP app to be invoked.
+    sun.idpappurl : Application name
+    sun.cmd : used to convey "logout" message. 
+    Any number of custom attributes may be added.
+
+    Embedded '|' and '=' characters must be escaped.
+
+4) Retrieve shared secret if Symmetric method is used.
+   Asymmetric method need the private key alias.
+
+5) Execute SecureAttrs.getInstance(<type>).getEncodedString() (Java) or
+   SecureAttrs.getEncodedString(<type>) (.Net)
+   passing the user attributes and shared secret or private key alias.
+   <type> is 
+      SecureAttrs.SAE_CRYPTO_ASYMMETRIC or SecureAttrs.SAE_CRYPTO_ASYMMETRIC
+
+6) The app may choose to send the SAE data to a local FAM instance immediately 
+   or may choose to construct a link that the user can click later.
+
+   Example URL : <FAM instance base url>/saml2/jsp/SA+IDP.jsp?sun.data=<SAE data>
+
+
+SP-App typical usage : also called the Relying Party.
+
+0)  One time : Register ApplicationName, SAE Security type (SYM or ASYM)
+     and corresponding Shared secret. 
+     Store shared secret in a safe place  preferably encrypted.
+     Retrieve FAM public key and store it in a local keystore.
+
+1) Initialize SecureAttrs class if Asymmetric method is used.
+
+   Java : SecureAttrs class needs enough information to open a
+     java.security.KeyStore instance that contains the keys needed to 
+     verify attributes from local FAM-SP.
+     Please refer to Javadocs for details on parameters.
+
+   .Net : SecureAttrs class needs access to an appropriate 
+        System.Security.Cryptography.AsymmetricAlgorithm instance.
+
+
+2) Be prepared to receive a HTTP-GET with sun.data query parameter.
+    sun.data parameter contains Base64 encoded SAE data.
+
+3) Retrieve shared secret is symmetric method is used.
+   For asymmetric method be prepared to with the key alias of FAM's public key.
+
+4) Execute SecureAttrs.getInstance(<type>).verifyEncodedString(<type>) [ Java] or
+   SecureAttrs.verifyEncodedString() [.Net] to verify SAE data.
+
+5) If SAE data verifies okay, returned Map contains user data that can be used 
+    to establish a local user session.
+    user.   
+
+Single Logout (SLO) : IDP-App initiated global logout 
+
+0) SP and IDP app registration as in previous usecases.
+   SP-App additionally configures "saeSPLogoutURL" on local FAM.
+1) IDP-App initiates SLO by securely sending the "sun.cmd=logout" to local
+   FAM-IDP instance.
+2) FAM-IDP executes SAMLv2 SLO protocol to FAM-SP.
+3) FAM-SP  picks up "saeSPLogoutURL" config and redirects to it.
+4) saeSPLogoutURL logic can verify sun.data parameter sent to it;
+   it contains two SAE params : sun.cmd=logout and sun.returnurl.
+   After executing local processing (eg invalidating local app session/cleanup
+   etc) the application MUST redirect back to the url specified in
+   sun.returnurl. Otherwise the global logout across the SAMLv2 COT
+   will terminate.
+   Another point to be careful about is to ensure that "saeSPLogoutURL"
+   should be up and running all the time  - else the SLO will terminate
+   with an error.
+
+--
+

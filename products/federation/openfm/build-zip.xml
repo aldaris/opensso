@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.2 2007-08-24 16:45:20 bina Exp $
+   $Id: build-zip.xml,v 1.3 2007-08-28 16:21:10 kevinserwin Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,28 +46,56 @@
         <copy file="${openfm.dir}/docs/README.famzip"
             tofile="${zip.temp.dir}/README" />
             
-        <copy file="${openfm.dir}/deployable-war/distauth.list"
-            tofile="${zip.temp.dir}/deployable-war/distauth.list" />
-        <copy file="${openfm.dir}/deployable-war/famconsole.list"
-            tofile="${zip.temp.dir}/deployable-war/famconsole.list" />
+        <copy todir="${zip.temp.dir}/deployable-war">
+             <fileset dir="${openfm.dir}/deployable-war" includes="**/*"/>
+        </copy>
         <copy file="${fm.dist.dir}/fam.war"
             tofile="${zip.temp.dir}/deployable-war/fam.war" />
             
         <copy file="${openfm.dir}/docs/README"
             tofile="${zip.temp.dir}/docs/README" />
-        <copy file="${openfm.dir}/ldif/README"
-            tofile="${zip.temp.dir}/ldif/README" />
+ 
         <copy todir="${zip.temp.dir}/ldif">
-            <fileset dir="${openfm.dir}/ldif" includes="**/*.ldif"/>
-        </copy>            
+            <fileset dir="${openfm.dir}/ldif" includes="**/*"/>
+        </copy>   
+
+        <copy file="${openfm.dir}/docs/README.libraries"
+            tofile="${zip.temp.dir}/libraries/README" />
+        <copy file="${openfm.dir}/docs/README.dll"
+            tofile="${zip.temp.dir}/libraries/dll/README" />
+        <copy file="${extlib.dir}/fmsae.dll"
+             tofile="${zip.temp.dir}/libraries/dll/fmsae.dll" />            
+        <copy file="${openfm.dir}/docs/README.jars"
+            tofile="${zip.temp.dir}/libraries/jars/README" />
+        <copy todir="${zip.temp.dir}/libraries/jars">
+            <fileset file="${fm.dist.dir}/famclientsdk.jar" />
+            <fileset file="${fm.dist.dir}/famsae.jar" />
+            <fileset dir="${extlib.dir}" includes="jsr173_api.jar" />
+        </copy>
+        
+        <copy file="${openfm.dir}/docs/README.migration"
+            tofile="${zip.temp.dir}/migration/README" />
+  
+        <copy file="${openfm.dir}/patches/README"
+            tofile="${zip.temp.dir}/patches/README" />
+
+        <copy todir="${zip.temp.dir}/samples">
+            <fileset file="${openfm.dir}/samples/README" />
+            <fileset file="${fm.dist.dir}/fam-clientsamples.war" />
+            <fileset file="${products.basedir}/amserver/built/dist/openssosamples.zip" />
+        </copy>
+
+        <copy file="${openfm.dir}/docs/README.tools"
+            tofile="${zip.temp.dir}/tools/README" />
+        <copy todir="${zip.temp.dir}/tools">
+            <fileset file="${fm.dist.dir}/famAdminTools.zip" />
+        </copy>
+        
         <copy todir="${zip.temp.dir}/xml">
             <fileset dir="${openfm.services.xml.dir}" includes="**/*.xml"/>
             <fileset dir="${amserver.services.xml.dir}" includes="**/*.xml"/>
         </copy>
-        <copy todir="${zip.temp.dir}/libraries/jars">
-            <fileset file="${fm.dist.dir}/famclient.jar" />
-            <fileset dir="${extlib.dir}" includes="jsr173_api.jar" />
-        </copy>
+
 
         <zip destfile="${fm.dist.dir}/fam.zip" whenempty="create">
             <zipfileset dir="${zip.temp.dir}" filemode="755">
