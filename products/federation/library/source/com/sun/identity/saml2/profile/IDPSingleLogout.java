@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.6 2007-08-07 23:39:06 weisun2 Exp $
+ * $Id: IDPSingleLogout.java,v 1.7 2007-08-28 23:28:15 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -865,7 +865,7 @@ public class IDPSingleLogout {
 
             Status status = destroyTokenAndGenerateStatus(
                 idpSessionIndex, idpSession.getSession(),
-                request, response);
+                request, response, true);
             
             logoutRes = LogoutUtil.generateResponse(status, 
                 originatingRequestID, SAML2Utils.createIssuer(idpEntityID),
@@ -976,7 +976,7 @@ public class IDPSingleLogout {
             return true;
         }
     }
-
+    
     /**
      * Gets and processes the Single <code>LogoutRequest</code> from SP
      * and return <code>LogoutResponse</code>.
@@ -1001,7 +1001,7 @@ public class IDPSingleLogout {
         String relayState,
         String idpEntityID,
         String realm) throws SAML2Exception {
-
+      
         Status status = null;
         String spEntity = logoutReq.getIssuer().getValue();
         Object session = null;
@@ -1071,16 +1071,23 @@ public class IDPSingleLogout {
                         break;
                     }
                 }
+                List partners = idpSession.getSessionPartners();
+                boolean cleanUp = true; 
+                if (partners != null && !partners.isEmpty()) {
+                    cleanUp = false; 
+                }    
+
                 n = list.size();
                 if (n == 0) {
                     // this is the case where there is no other
                     // session participant
-                      
                     status = destroyTokenAndGenerateStatus(
                         sessionIndex, idpSession.getSession(),
-                        request, response);
-                    IDPCache.idpSessionsByIndices.remove(sessionIndex);
-                    IDPCache.authnContextCache.remove(sessionIndex);
+                        request, response, cleanUp);
+                    if (cleanUp) {    
+                       IDPCache.idpSessionsByIndices.remove(sessionIndex);
+                       IDPCache.authnContextCache.remove(sessionIndex);
+                    }   
                     break;
                 }
 
@@ -1160,9 +1167,11 @@ public class IDPSingleLogout {
                 // and send to initiating SP
                 status = destroyTokenAndGenerateStatus(
                     sessionIndex, idpSession.getSession(),
-                    request, response);
-                IDPCache.idpSessionsByIndices.remove(sessionIndex);
-                IDPCache.authnContextCache.remove(sessionIndex);
+                    request, response, true);
+                if (cleanUp) {    
+                    IDPCache.idpSessionsByIndices.remove(sessionIndex);
+                    IDPCache.authnContextCache.remove(sessionIndex);
+                }    
             } while (false);
             
         } catch (SessionException ssoe) {
@@ -1253,13 +1262,13 @@ public class IDPSingleLogout {
         String sessionIndex,
         Object session,
         HttpServletRequest request,
-        HttpServletResponse response) throws SAML2Exception {
+        HttpServletResponse response, 
+        boolean cleanUp) throws SAML2Exception {
 
         Status status = null;
         if (session != null) {
             try {
-                List partners = IDPProxyUtil.getSessionPartners(request);
-                if (partners == null ||  partners.isEmpty()) { 
+                if (cleanUp) {
                     MultiProtocolUtils.invalidateSession(session, request,
                         response, SingleLogoutManager.SAML2);
                 }

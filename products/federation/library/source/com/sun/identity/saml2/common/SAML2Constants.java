@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.14 2007-08-17 22:48:10 exu Exp $
+ * $Id: SAML2Constants.java,v 1.15 2007-08-28 23:28:14 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1032,7 +1032,16 @@ public interface SAML2Constants {
     /**
      * Default class name of IDP Proxy finder   
      */     
-    public String   DEFAULT_IDP_PROXY_FINDER = 
+    public String  DEFAULT_IDP_PROXY_FINDER = 
         "com.sun.identity.saml2.plugins.SAML2IDPProxyImpl"; 
         
+    /**
+     * Key used to save IDP Session in a map
+     */    
+    public String IDP_SESSION = "IDPSESSION"; 
+    
+    /**
+     * Key used to save session partners in a map 
+     */
+    public String  PARTNERS = "PARTNERS";        
 } 

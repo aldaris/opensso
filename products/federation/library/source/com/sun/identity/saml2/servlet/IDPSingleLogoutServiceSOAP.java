@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogoutServiceSOAP.java,v 1.2 2006-12-21 19:48:47 weisun2 Exp $
+ * $Id: IDPSingleLogoutServiceSOAP.java,v 1.3 2007-08-28 23:28:16 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,9 @@ import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.profile.LogoutUtil;
+import com.sun.identity.saml2.profile.IDPProxyUtil;
+import com.sun.identity.saml2.profile.IDPSession; 
+import com.sun.identity.saml2.profile.IDPCache;
 import com.sun.identity.saml2.profile.IDPSingleLogout;
 import com.sun.identity.saml2.protocol.LogoutRequest;
 import com.sun.identity.saml2.protocol.LogoutResponse;
@@ -39,6 +42,9 @@ import com.sun.identity.saml.common.SAMLUtils;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.List; 
+import java.util.ArrayList;
+import java.util.Map; 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -48,6 +54,7 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import org.w3c.dom.Element;
+
 
 /**
  * This class <code>IDPSingleLogoutServiceSOAP</code> receives and processes 
@@ -85,22 +92,41 @@ public class IDPSingleLogoutServiceSOAP extends HttpServlet {
             // and create a SOAPMessage
             SOAPMessage msg =
                 MessageFactory.newInstance().createMessage(headers, is);
+            Map aMap = IDPProxyUtil.getSessionPartners(msg);
+            List partners = (List) aMap.get(SAML2Constants.PARTNERS); 
             SOAPMessage reply = null;
             reply = onMessage(msg, req, resp, idpEntityID, realm);
-            if (reply != null) {
-                //  Need to call saveChanges because we're
-                // going to use the MimeHeaders to set HTTP
-                // response information. These MimeHeaders
-                // are generated as part of the save.
-                if (reply.saveRequired()) {
-                    reply.saveChanges();
+            if (reply != null) {    
+                // IDP Proxy case
+                if (partners != null &&  (!partners.isEmpty())) {
+                    Element reqElem = SAML2Utils.getSamlpElement(msg,
+                        "LogoutRequest");
+                    LogoutRequest logoutReq =
+                        ProtocolFactory.getInstance().createLogoutRequest(
+                        reqElem);
+                    IDPCache.SOAPMessageByLogoutRequestID.put(
+                        logoutReq.getID(), reply); 
+                    IDPProxyUtil.sendProxyLogoutRequestSOAP(req, resp,
+                        reply, partners, (IDPSession) aMap.get(
+                        SAML2Constants.IDP_SESSION));
+                } else {
+                    //  Need to call saveChanges because we're
+                    // going to use the MimeHeaders to set HTTP
+                    // response information. These MimeHeaders
+                    // are generated as part of the save.
+    
+                   if (reply.saveRequired()) {
+                       reply.saveChanges();
+                   }
+                   resp.setStatus(HttpServletResponse.SC_OK);
+                   SAML2Utils.putHeaders(reply.getMimeHeaders(), resp);
+                   // Write out the message on the response stream
+                   String sessionIndex = (String) aMap.get(
+                       SAML2Constants.SESSION_INDEX); 
+                   OutputStream os = resp.getOutputStream();
+                   reply.writeTo(os);
+                   os.flush();
                 }
-                resp.setStatus(HttpServletResponse.SC_OK);
-                SAML2Utils.putHeaders(reply.getMimeHeaders(), resp);
-                // Write out the message on the response stream
-                OutputStream os = resp.getOutputStream();
-                reply.writeTo(os);
-                os.flush();
             } else {
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }

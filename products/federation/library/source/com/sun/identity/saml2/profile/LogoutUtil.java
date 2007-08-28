@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.6 2007-08-07 23:39:06 weisun2 Exp $
+ * $Id: LogoutUtil.java,v 1.7 2007-08-28 23:28:15 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -272,8 +272,9 @@ public class LogoutUtil {
                     "errorRedirectingLogoutRequest"));
             }
         } else if (binding.equals(SAML2Constants.SOAP)) {
+            logoutRequestID.append(requestID);
             signSLORequest(logoutReq, realm, requesterEntityID, 
-                        hostEntityRole, recipientEntityID);
+                hostEntityRole, recipientEntityID);
             if (debug.messageEnabled()) {
                 debug.message(classMethod + "SLO Request after signing : ");
                 debug.message(logoutReq.toXMLString(true,true));
@@ -282,7 +283,8 @@ public class LogoutUtil {
                 config, location);
             
             doSLOBySOAP(requestID, logoutReq.toXMLString(true,true),
-                location, realm, requesterEntityID, hostEntityRole); 
+                location, realm, requesterEntityID, hostEntityRole, 
+                response); 
         }
         return logoutRequestID;
     }
@@ -366,7 +368,8 @@ public class LogoutUtil {
         String sloURL,
         String realm,
         String hostEntity,
-        String hostRole) throws SAML2Exception, SessionException {
+        String hostRole, 
+        HttpServletResponse response) throws SAML2Exception, SessionException {
 
         if (debug.messageEnabled()) {
             debug.message("LogoutUtil.doSLOBySOAP : SLORequestXML: " 

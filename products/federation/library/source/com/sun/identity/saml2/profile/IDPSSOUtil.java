@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.10 2007-08-09 21:18:17 weisun2 Exp $
+ * $Id: IDPSSOUtil.java,v 1.11 2007-08-28 23:28:15 weisun2 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -241,16 +241,18 @@ public class IDPSSOUtil {
             }
         }    
         Object session = null;
-        try {
-            session = sessionProvider.getSession(request);
-        } catch (SessionException se) {
-            if (SAML2Utils.debug.warningEnabled()) {
-                SAML2Utils.debug.warning(
+        if (newSession != null) {
+            session = newSession;
+        } else { 
+            try {
+                session = sessionProvider.getSession(request);
+            } catch (SessionException se) {
+                if (SAML2Utils.debug.warningEnabled()) {
+                    SAML2Utils.debug.warning(
                     classMethod + "No session yet.");
-            }            
-            // IDP proxy case
-            //session = null;
-            session = newSession;  
+                } 
+                session = null;
+            }
         }
         if ((authnReq == null) && (session == null)) {
             // idp initiated and not logged in yet, need to authenticate
@@ -291,7 +293,6 @@ public class IDPSSOUtil {
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("UnableTofindBinding"));
         }
-
         // generate a response for the authn request
         Response res = IDPSSOUtil.getResponse(session, authnReq, 
                  spEntityID, idpEntityID,  realm, nameIDFormat, acsURL);
@@ -712,8 +713,12 @@ public class IDPSSOUtil {
                     "This is a new IDP session with sessionIndex=" +
                     sessionIndex + ", and sessionID=" +
                     sessionProvider.getSessionID(session));
-            }       
-            idpSession = new IDPSession(session);
+            }      
+            idpSession = (IDPSession) IDPCache.idpSessionsBySessionID.
+                get(sessionProvider.getSessionID(session));  
+            if (idpSession == null) {
+                idpSession = new IDPSession(session);
+            }
             IDPCache.idpSessionsByIndices.put(sessionIndex, idpSession);
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message(classMethod +

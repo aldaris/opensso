@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.4 2007-08-17 22:48:12 exu Exp $
+ * $Id: IDPCache.java,v 1.5 2007-08-28 23:28:15 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -182,4 +182,11 @@ public class IDPCache {
       * value : HttpServletResponse
       */
     public static Hashtable proxySPHttpResponse = new Hashtable(); 
+
+    /** 
+      * Cache saves the SOAPMessage created by proxy IDP to the original SP
+      * key   : requestID (String) 
+      * value : SOAPMessage
+      */
+    public static Hashtable SOAPMessageByLogoutRequestID = new Hashtable(); 
 }

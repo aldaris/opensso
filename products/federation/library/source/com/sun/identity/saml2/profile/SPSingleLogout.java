@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.7 2007-08-07 23:39:07 weisun2 Exp $
+ * $Id: SPSingleLogout.java,v 1.8 2007-08-28 23:28:15 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 
 package com.sun.identity.saml2.profile;
 
+import javax.xml.soap.SOAPMessage;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
@@ -79,7 +80,6 @@ public class SPSingleLogout {
             SAML2Utils.generateStatus(SAML2Constants.RESPONDER_ERROR,
                                 SAML2Utils.bundle.getString("partialLogout"));
     static SessionProvider sessionProvider = null;
-    static String origLogoutRequest = null; 
     
     static {
         try {
@@ -114,12 +114,46 @@ public class SPSingleLogout {
      * @throws SAML2Exception if error initiating request to IDP.
      */
     public static void initiateLogoutRequest(
-        boolean fff, 
         HttpServletRequest request,
         HttpServletResponse response,
         String binding,
-        Map paramsMap)
+        Map paramsMap) 
     throws SAML2Exception {
+        initiateLogoutRequest(request, response, binding,
+            paramsMap, null, null, null);
+    }
+
+    /**
+     * Parses the request parameters and initiates the Logout
+     * Request to be sent to the IDP.
+     *
+     * @param request the HttpServletRequest.
+     * @param response the HttpServletResponse.
+     * @param binding binding used for this request.
+     * @param paramsMap Map of all other parameters.
+     *       Following parameters names with their respective
+     *       String values are allowed in this paramsMap.
+     *       "RelayState" - the target URL on successful Single Logout
+     *       "Destination" - A URI Reference indicating the address to
+     *                       which the request has been sent.
+     *       "Consent" - Specifies a URI a SAML defined identifier
+     *                   known as Consent Identifiers.
+     *       "Extension" - Specifies a list of Extensions as list of
+     *                   String objects.
+     * @param origLogoutRequest original LogoutRequest
+     * @param msg SOAPMessage 
+     * @param  newSession Session object for IDP Proxy
+     * @throws SAML2Exception if error initiating request to IDP.
+     */
+    public static void initiateLogoutRequest(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        String binding,
+        Map paramsMap, 
+        String origLogoutRequest, 
+        SOAPMessage msg, 
+        Object newSession)
+        throws SAML2Exception {
 
         if (debug.messageEnabled()) {
             debug.message("SPSingleLogout:initiateLogoutRequest");
@@ -129,7 +163,12 @@ public class SPSingleLogout {
 
         String metaAlias = (String)paramsMap.get(SAML2Constants.SP_METAALIAS);
         try {
-            Object session = sessionProvider.getSession(request);
+            Object session = null; 
+            if (newSession != null) {
+               session = newSession; 
+            } else {
+                session = sessionProvider.getSession(request);
+            }
             if (session == null) {
                 throw new SAML2Exception(
                     SAML2Utils.bundle.getString("nullSSOToken"));
@@ -214,14 +253,24 @@ public class SPSingleLogout {
 
             StringTokenizer st =
                 new StringTokenizer(infoKeyString,SAML2Constants.SECOND_DELIM);
+            String requestID = null; 
             if (st != null && st.hasMoreTokens()) {
                 while (st.hasMoreTokens()) {
                     String tmpInfoKeyString = (String)st.nextToken();
-                    prepareForLogout(realm,tokenID,metaAlias,extensionsList,
+                    requestID = prepareForLogout(realm,tokenID,metaAlias,extensionsList,
                         binding,relayState,request, response,
-                        paramsMap,tmpInfoKeyString);
+                        paramsMap,tmpInfoKeyString, origLogoutRequest, 
+                        msg);
                 }
             }
+            // IDP Proxy 
+            SOAPMessage soapMsg = (SOAPMessage) 
+                IDPCache.SOAPMessageByLogoutRequestID.get(
+                requestID); 
+            if (soapMsg != null) {   
+                IDPProxyUtil.sendProxyLogoutResponseBySOAP(
+                    soapMsg,response );  
+            }     
             // local log out
             sessionProvider.invalidateSession(session, request, response);   
         } catch (SAML2MetaException sme) {
@@ -235,7 +284,7 @@ public class SPSingleLogout {
         }
     }
 
-    private static void prepareForLogout(String realm,
+    private static String prepareForLogout(String realm,
         String tokenID,
         String metaAlias,
         List extensionsList,
@@ -244,7 +293,9 @@ public class SPSingleLogout {
         HttpServletRequest request,
         HttpServletResponse response,
         Map paramsMap,
-        String infoKeyString) throws SAML2Exception, SessionException {
+        String infoKeyString,
+        String origLogoutRequest, 
+        SOAPMessage msg) throws SAML2Exception, SessionException {
 
         SPFedSession fedSession = null;
         
@@ -275,7 +326,7 @@ public class SPSingleLogout {
                 debug.message(
                     "No session partner, just do local logout.");
             }
-            return;
+            return null;
         }
 
         // get IDPSSODescriptor
@@ -336,6 +387,16 @@ public class SPSingleLogout {
                    origLogoutRequest);
             }   
         }
+        if (requestIDStr != null &&
+            requestIDStr.length() != 0 &&
+            binding.equals(SAML2Constants.SOAP)) {
+            SPCache.logoutRequestIDs.add(requestIDStr);
+            if (msg != null) { 
+                IDPCache.SOAPMessageByLogoutRequestID.put(requestIDStr,
+                    msg);
+            }  
+        }
+        return requestIDStr;
     }
 
     /**
@@ -953,10 +1014,6 @@ public class SPSingleLogout {
             }
         }
         return location;
-    }
-    
-    public static void setLogoutRequest(String logoutRequest) {
-        origLogoutRequest = logoutRequest;
     }
 }
 

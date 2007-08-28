@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.2 2007-08-09 21:18:16 weisun2 Exp $
+ * $Id: IDPProxyUtil.java,v 1.3 2007-08-28 23:28:15 weisun2 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.assertion.Subject;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Issuer;
+import com.sun.identity.saml2.protocol.LogoutRequest;
 import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.common.QuerySignatureUtil;
 import com.sun.identity.saml2.common.SAML2Constants;
@@ -54,6 +55,7 @@ import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Scoping;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Iterator;
@@ -65,12 +67,14 @@ import java.util.Map;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPException;
 import com.sun.identity.saml2.common.NameIDInfoKey;
 import com.sun.identity.saml2.common.AccountUtils;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
-import java.util.Iterator;
+import org.w3c.dom.Element;
 
 /**
  * Utility class to be used for IDP Proxying.
@@ -91,7 +95,6 @@ public class IDPProxyUtil {
              String proxyFinderClass = SystemConfigurationUtil.getProperty(
                  SAML2Constants.IDP_PROXY_FINDER_NAME, 
                  SAML2Constants.DEFAULT_IDP_PROXY_FINDER);
-             debug.error("CLASSS = " +  proxyFinderClass); 
              Class proxyClass = Class.forName(proxyFinderClass);
              proxyFinder = (SAML2IDPProxy)proxyClass.newInstance();
          } catch (Exception ex) {
@@ -525,21 +528,14 @@ public class IDPProxyUtil {
         String spMetaAlias, 
         String realm,
         String samlRequest, 
+        SOAPMessage msg,
         IDPSession idpSession
         ) 
     {
         String RelayState = request.getParameter(
             SAML2Constants.RELAY_STATE);
-        Object ssoToken = null;
-        try { 
-            ssoToken = SessionManager.getProvider().getSession(request);
-        } catch (SessionException se) {
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message("No session.");
-            }
-            ssoToken = null;
-        }
-        
+        Object ssoToken = idpSession.getSession();
+   
         try {
             if (ssoToken == null) {
                 response.sendError(response.SC_BAD_REQUEST,
@@ -559,8 +555,14 @@ public class IDPProxyUtil {
             paramsMap.put("spMetaAlias", metaAlias);
             paramsMap.put("idpEntityID", partner);
             paramsMap.put(SAML2Constants.ROLE, SAML2Constants.SP_ROLE);
-            paramsMap.put(SAML2Constants.BINDING, SAML2Constants.HTTP_REDIRECT);
-            String dest = getLocation(realm,partner); 
+            String binding = null; 
+            if (samlRequest != null && (!samlRequest.equals(""))) {
+                binding = SAML2Constants.HTTP_REDIRECT;
+            } else if (msg != null) { 
+                binding =  SAML2Constants.SOAP;
+            } 
+            paramsMap.put(SAML2Constants.BINDING, binding); 
+            String dest = getLocation(realm, partner, binding); 
             if (dest != null && !dest.equals("")) {
                 paramsMap.put("Destination", dest);  
             } else {
@@ -573,18 +575,19 @@ public class IDPProxyUtil {
             if (RelayState != null) {
                 paramsMap.put(SAML2Constants.RELAY_STATE, RelayState);
             } 
-            String binding =  SAML2Constants.HTTP_REDIRECT;
-            SPSingleLogout.setLogoutRequest(samlRequest);
             idpSession.removeSessionPartner(partner);
-            SPSingleLogout.initiateLogoutRequest(false, request,response,
-                binding, paramsMap);
+            SPSingleLogout.initiateLogoutRequest(request,response,
+                binding, paramsMap, samlRequest, msg, ssoToken);
         } catch (SAML2Exception sse) {
             SAML2Utils.debug.error("Error sending Logout Request " , sse);
             try {
                 response.sendError(response.SC_BAD_REQUEST,
                     SAML2Utils.bundle.getString(
                     "LogoutRequestCreationError"));
-            } catch(Exception e) {}        
+            } catch(Exception se) {
+                SAML2Utils.debug.error("IDPProxyUtil." +
+                     "initiateSPLgoutRequest: ", se); 
+            }        
             return ;
         } catch (Exception e) {
             SAML2Utils.debug.error("Error initializing Request ",e);
@@ -592,7 +595,10 @@ public class IDPProxyUtil {
                 response.sendError(response.SC_BAD_REQUEST,
                     SAML2Utils.bundle.getString(
                     "LogoutRequestCreationError"));
-            } catch(Exception mme) {}  
+            } catch(Exception mme) {
+                SAML2Utils.debug.error("IDPProxyUtil." +
+                     "initiateSPLgoutRequest: ", mme); 
+            }  
             return;
         }
     }
@@ -605,7 +611,8 @@ public class IDPProxyUtil {
      * @return location URL of the SLO response service, return null 
      * if not found.
      */ 
-    public static String getLocation (String realm, String idpEntityID) 
+    public static String getLocation (String realm, String idpEntityID, 
+        String binding) 
     {
         try {
             String location = null;  
@@ -627,33 +634,14 @@ public class IDPProxyUtil {
                 throw new SAML2Exception(
                     SAML2Utils.bundle.getString("sloServiceListNotfound"));
             }
-            location = LogoutUtil.getSLOResponseServiceLocation(
-                slosList, SAML2Constants.HTTP_REDIRECT);
-            if (location == null || location.length() == 0) {
-                location = LogoutUtil.getSLOServiceLocation(
-                    slosList, SAML2Constants.HTTP_REDIRECT);
-                if (location == null || location.length() == 0) {
-                    debug.error(
-                        "Unable to find the IDP's single logout "+
-                        "response service with the HTTP-Redirect binding");
-                    throw new SAML2Exception(
-                        SAML2Utils.bundle.getString(
-                        "sloResponseServiceLocationNotfound"));
-                } else {
-                   if (debug.messageEnabled()) {
-                       debug.message(
-                       "SP's single logout response service location = "+
-                       location);
-                   }
-                }
-            } else {
-                if (debug.messageEnabled()) {
-                    debug.message(
-                    "IDP's single logout response service location = "+
+          
+            location = LogoutUtil.getSLOServiceLocation(slosList,binding);
+            if (SAML2Utils.debug.messageEnabled() && (location != null)
+                && (!location.equals(""))) {
+                SAML2Utils.debug.message("Location URL: " + 
                     location);
-                }
             }
-            return location; 
+            return location;
         } catch (SAML2Exception se) {
             return null; 
         } 
@@ -668,8 +656,7 @@ public class IDPProxyUtil {
             if (tokenID != null && !tokenID.equals("")) {
                 idpSession = (IDPSession) 
                 IDPCache.idpSessionsBySessionID.get(tokenID); 
-            }
-         
+            } 
             List partners= null;    
             if (idpSession != null) {
                 partners = idpSession.getSessionPartners();
@@ -727,7 +714,7 @@ public class IDPProxyUtil {
             String party = partner.getPartner();
             idpSession.removeSessionPartner(party);
             initiateSPLgoutRequest(request,response,
-                party, metaAlias, realm, samlRequest,idpSession);
+                party, metaAlias, realm, samlRequest, null, idpSession);
         } catch (SessionException se) {
             SAML2Utils.debug.error(
                 "sendProxyLogoutRequest: ", se);
@@ -766,4 +753,115 @@ public class IDPProxyUtil {
            SAML2Constants.IDP_ROLE,
            remoteEntity);       
    }  
+   
+    public static void sendProxyLogoutRequestSOAP(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        SOAPMessage msg,
+        List partners, 
+        IDPSession idpSession)
+    {
+        
+            Iterator iter = partners.iterator();
+            SAML2SessionPartner partner = 
+                (SAML2SessionPartner)iter.next();
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(
+                    "CURRENT PARTNER's provider ID: " + 
+                    partner.getPartner());
+                SAML2Utils.debug.message("Starting IDP proxy logout.");
+            }  
+        
+            String metaAlias =
+                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
+            String realm = SAML2Utils.
+                getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
+            String party = partner.getPartner();
+            idpSession.removeSessionPartner(party);
+            initiateSPLgoutRequest(request,response,
+                party, metaAlias, realm, null, msg ,idpSession);
+       
+   }
+   
+   public static Map getSessionPartners(SOAPMessage message) {
+       try { 
+            Map sessMap = new HashMap(); 
+            Element reqElem = SAML2Utils.getSamlpElement(message, 
+                "LogoutRequest");
+            LogoutRequest logoutReq = 
+                ProtocolFactory.getInstance().createLogoutRequest(reqElem);
+            List siList = logoutReq.getSessionIndex();
+            int numSI = 0;
+            if (siList != null) {
+                numSI = siList.size();
+                if (debug.messageEnabled()) {
+                    debug.message(
+                        "Number of session indices in the logout request is "
+                        + numSI);
+                }
+            }
+            String sessionIndex = (String)siList.get(0);
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("getSessionPartners: " +
+                    "SessionIndex= " +  sessionIndex); 
+            }        
+            IDPSession idpSession = (IDPSession)
+                IDPCache.idpSessionsByIndices.get(sessionIndex);
+                   
+            sessMap.put(SAML2Constants.SESSION_INDEX, sessionIndex); 
+            sessMap.put(SAML2Constants.IDP_SESSION, idpSession);     
+            Object session = idpSession.getSession(); 
+            String tokenId = sessionProvider.getSessionID(session);
+            IDPSession newIdpSession = (IDPSession)
+                IDPCache.idpSessionsBySessionID.get(tokenId);
+            List partners= null;
+            if (newIdpSession != null) {
+                partners = newIdpSession.getSessionPartners();
+            }
+
+            if (SAML2Utils.debug.messageEnabled()) {
+                if (partners != null &&  !partners.isEmpty()) {
+                    Iterator iter = partners.iterator();
+                    while(iter.hasNext()) {
+                        SAML2SessionPartner partner =
+                            (SAML2SessionPartner)iter.next();
+                        if (SAML2Utils.debug.messageEnabled()) {
+                            SAML2Utils.debug.message(
+                                "SESSION PARTNER's Provider ID:  "
+                                + partner.getPartner());
+                        }
+                    }
+                }
+            }
+            sessMap.put(SAML2Constants.PARTNERS, partners); 
+            return sessMap;
+        } catch (SAML2Exception se) {
+           SAML2Utils.debug.error("getSessionPartners: ", se); 
+           return null;   
+        }       
+   }
+   
+   public static void sendProxyLogoutResponseBySOAP(
+       SOAPMessage reply,
+       HttpServletResponse resp)
+   {   try {
+           //  Need to call saveChanges because we're
+           // going to use the MimeHeaders to set HTTP
+           // response information. These MimeHeaders
+           // are generated as part of the save.
+           if (reply.saveRequired()) {
+               reply.saveChanges();
+           }
+           resp.setStatus(HttpServletResponse.SC_OK);
+           SAML2Utils.putHeaders(reply.getMimeHeaders(), resp);
+           // Write out the message on the response stream
+           OutputStream os = resp.getOutputStream();
+           reply.writeTo(os);
+           os.flush();
+        } catch (SOAPException se) {
+            SAML2Utils.debug.error("sendProxyLogoutResponseBySOAP: ", se); 
+        } catch (IOException ie) {
+            SAML2Utils.debug.error("sendProxyLogoutResponseBySOAP: ", ie); 
+        }       
+   }
 }

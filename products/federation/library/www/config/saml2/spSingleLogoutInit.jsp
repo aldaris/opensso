@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutInit.jsp,v 1.3 2007-08-07 23:38:25 weisun2 Exp $
+   $Id: spSingleLogoutInit.jsp,v 1.4 2007-08-28 23:28:47 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -145,7 +145,7 @@
             paramsMap.put(SAML2Constants.RELAY_STATE, RelayState);
         }
 
-        SPSingleLogout.initiateLogoutRequest(true, request,response,
+        SPSingleLogout.initiateLogoutRequest(request,response,
             binding,paramsMap);
         if (binding.equalsIgnoreCase(SAML2Constants.SOAP)) {
             if (RelayState != null) {
