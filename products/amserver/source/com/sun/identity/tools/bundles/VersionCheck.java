@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VersionCheck.java,v 1.2 2007-07-20 20:33:57 veiming Exp $
+ * $Id: VersionCheck.java,v 1.3 2007-08-29 21:18:45 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,6 +107,9 @@ public class VersionCheck implements SetupConstants{
                         return false;
                     }
                 } else {
+                    if (currentVersion.charAt(i) > expectedVersion.charAt(i)) {
+                        break;
+                    }
                     if (currentVersion.charAt(i) < expectedVersion.charAt(i)) {
                         return false;
                     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationPlugin.java,v 1.4 2007-08-17 22:51:58 exu Exp $
+ * $Id: FederationPlugin.java,v 1.5 2007-08-29 21:19:23 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -173,9 +173,9 @@ public class FederationPlugin implements ConfiguratorPlugin {
             file.mkdirs();
 
             writeToFile(dir + "/is-html.xsl", 
-                getWebResource("WEB-INF/classes/is-html.xsl", servletCtx));
+                getWebResource("/WEB-INF/classes/is-html.xsl", servletCtx));
             writeToFile(dir + "/is-wml.xsl", 
-                getWebResource("WEB-INF/classes/is-wml.xsl", servletCtx));
+                getWebResource("/WEB-INF/classes/is-wml.xsl", servletCtx));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

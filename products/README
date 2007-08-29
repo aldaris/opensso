@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.7 2007-08-28 18:00:11 bigfatrat Exp $
+$Id: README,v 1.8 2007-08-29 21:19:23 exu Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ Copyright 2006 Sun Microsystems Inc. All Rights Reserved
         %% 2.2 Obtaining jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, 
                jaxb-xjc.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar, 
                activation.jar, saaj-api.jar, saaj-impl.jar, relaxngDatatype.jar,
-               xmlsec.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
+               xmlsec.jar, xalan.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
         %% 2.3 Obtaining ldapjdk.jar
         %% 2.4 Obtaining db.jar
         %% 2.5 Obtaining testng-5.1-jdk15.jar
@@ -71,7 +71,7 @@ The libraries needed for compiling OpenSSO sources are:
    - JWSDP version 1.6: jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, 
      jaxb-xjc.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar, 
      activation.jar, saaj-api.jar, saaj-impl.jar, relaxngDatatype.jar,
-     xmlsec.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
+     xmlsec.jar, xalan.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
    - Mozilla LDAP JDK version 4.17: ldapjdk.jar
    - SleepyCat Berkeley DB version 4.2.52: db.jar 
    - TestNG version 5.1 : testng-5.1-jdk15.jar
@@ -114,11 +114,11 @@ copying it to the "opensso/products/extlib" directory of your workspace.
 %% 2.2 Obtaining jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, 
        jaxb-xjc.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar, 
        activation.jar, saaj-api.jar, saaj-impl.jar, relaxngDatatype.jar,
-       xmlsec.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
+       xmlsec.jar, xalan.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
 
 The libraries jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, jaxb-xjc.jar, 
 jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar, activation.jar, saaj-api.jar, 
-saaj-impl.jar, relaxngDatatype.jar, xmlsec.jar, xsdlib.jar, FastInfoset.jar, 
+saaj-impl.jar, relaxngDatatype.jar, xmlsec.jar, xalan.jar, xsdlib.jar, FastInfoset.jar, 
 jsr173_api.jar can be obtained from the JWSDP version 1.6 distribution.
 
 Follow these steps to obtain JWSDK 1.6:
@@ -147,6 +147,7 @@ corresponding directories:
     - jaxrpc-impl.jar     : <jwsdp-install-dir>/jaxrpc/lib
     - jaxrpc-spi.jar      : <jwsdp-install-dir>/jaxrpc/lib 
     - jaxrpc-api.jar      : <jwsdp-install-dir>/jaxrpc/lib 
+    - xalan.jar           : <jwsdp-install-dir>/jaxp/lib/endorsed
     - activation.jar      : <jwsdp-install-dir>/jwsdp-shared/lib
     - relaxngDatatype.jar : <jwsdp-install-dir>/jwsdp-shared/lib
     - xmlsec.jar          : <jwsdp-install-dir>/jwsdp-shared/lib 
