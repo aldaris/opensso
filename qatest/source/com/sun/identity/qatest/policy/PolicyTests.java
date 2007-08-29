@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyTests.java,v 1.3 2007-08-26 13:08:01 arunav Exp $
+ * $Id: PolicyTests.java,v 1.4 2007-08-29 06:56:49 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,7 +97,7 @@ public class PolicyTests extends TestCommon {
                     mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
                         ".xml", strPeAtOrg);
                     mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
-                    Thread.sleep(75000);
+                    Thread.sleep(80000);
                 } else { 
                     mpc.createRealm("/" + strPeAtOrg);
                     mpc.createIdentities(strLocRB, polIdx, strPeAtOrg);
@@ -108,6 +108,7 @@ public class PolicyTests extends TestCommon {
                         strReferringOrg = rbr.getString(strLocRB + polIdx + 
                              ".referringOrg");
                         mpc.createPolicy(strRefRB + ".xml", strReferringOrg );
+                        Thread.sleep(30000);
                     } else {
                         strDynamicRefValue = "true";
                         mpc.setDynamicReferral(strDynamicRefValue);
