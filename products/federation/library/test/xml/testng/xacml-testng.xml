@@ -1,0 +1,110 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+ 
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+ 
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+ 
+   $Id: xacml-testng.xml,v 1.1 2007-08-29 23:42:38 dillidorai Exp $
+ 
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+
+<suite name="xacml" verbose="1" parallel="false">
+
+    <test name="xacml-1" parallel="false">
+        <parameter name="request-filename" value="mock/xacml/sampleRequest.xml" />
+        <classes>
+            <class name="com.sun.identity.xacml.context.RequestTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-2" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.SubjectTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-3" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.ResourceTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d1" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.common.XACMLSDKUtilsTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d2" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.DecisionTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d3" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.StatusMessageTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d4" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.StatusCodeTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d5" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.StatusDetailTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d6" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.StatusTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d7" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.ResultTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d8" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.ResponseTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d9" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.saml2.XACMLAuthzDecisionQueryTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-d10" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.saml2.XACMLAuthzDecisionStatementTest"/>
+        </classes>
+    </test>
+
+</suite>

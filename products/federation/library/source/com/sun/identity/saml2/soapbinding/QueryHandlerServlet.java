@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryHandlerServlet.java,v 1.2 2007-08-11 08:53:32 bina Exp $
+ * $Id: QueryHandlerServlet.java,v 1.3 2007-08-29 23:39:15 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,8 +54,8 @@ import org.w3c.dom.Element;
 import com.sun.identity.saml2.protocol.RequestAbstract;
 import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.xacml2.context.ContextFactory;
-import com.sun.identity.xacml2.context.Request;
+import com.sun.identity.xacml.context.ContextFactory;
+import com.sun.identity.xacml.context.Request;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -499,7 +499,7 @@ public class QueryHandlerServlet extends HttpServlet {
             SAML2Utils.getAttributeValueFromXACMLConfig(realm,
                 SAML2Constants.PEP_ROLE,pepEntityID,attrName);        
 
-        if (wantResponseSigned != null && 
+        if (wantResponseSigned == null || 
                 wantResponseSigned.equalsIgnoreCase("false")) {
             if (debug.messageEnabled()) {
                 debug.message(classMethod +

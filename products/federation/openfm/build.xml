@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.22 2007-08-24 16:45:20 bina Exp $
+   $Id: build.xml,v 1.23 2007-08-29 23:42:42 dillidorai Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -72,6 +72,7 @@
             destdir="${openfm.classes.dir}" source="1.5" target="1.5" 
             srcdir="${openfm.src.dir}"
             debug="${build.debug}" debuglevel="${build.debuglevel}"
+            excludes="com/sun/identity/xacml2/**"
             includes="com/sun/identity/federation/cli/definition/FederationManager.java">
             <classpath refid="build.class.path"/>
             <compilerarg value="-Xlint:deprecation" />
@@ -91,7 +92,7 @@
             destdir="${openfm.classes.dir}" source="1.4" target="1.4"
             debug="${build.debug}" debuglevel="${build.debuglevel}"
             srcdir="${openfm.src.dir}"
-            excludes="${openfm_one_dot_five_targets},com/sun/identity/federation/cli/tools/**,com/sun/identity/federation/cli/definition/**">
+            excludes="${openfm_one_dot_five_targets},com/sun/identity/federation/cli/tools/**,com/sun/identity/federation/cli/definition/**,com/sun/identity/xacml2/*">
 
             <classpath refid="build.class.path"/>
             <compilerarg value="-Xlint:deprecation" />

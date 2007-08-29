@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryClient.java,v 1.3 2007-08-11 08:53:31 bina Exp $
+ * $Id: QueryClient.java,v 1.4 2007-08-29 23:39:12 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,7 @@ import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.RequestAbstract;
 import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.impl.ResponseImpl;
-import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionQuery;
+import com.sun.identity.xacml.saml2.XACMLAuthzDecisionQuery;
 import javax.xml.soap.SOAPException;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.shared.debug.Debug;

@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.3 2007-06-18 21:39:44 qcheng Exp $
+ * $Id: FMSessionProvider.java,v 1.4 2007-08-29 23:42:45 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,10 +228,15 @@ public class FMSessionProvider implements SessionProvider {
         } else if (ac.getStatus() == AuthContext.Status.FAILED) {
             // TODO: test again when auth changes are done so the error code
             // is set and passed over
-            AuthLoginException ale = ac.getLoginException();
-            String authError = ale.getErrorCode();
             int failureCode = SessionException.AUTH_ERROR_NOT_DEFINED;
-            if (authError.equals(AMAuthErrorCode.AUTH_USER_INACTIVE)) {
+            AuthLoginException ale = ac.getLoginException();
+            String authError = null;
+            if (ale != null) {
+                authError = ale.getErrorCode();
+            }
+            if (authError == null) {
+                failureCode = SessionException.AUTH_ERROR_NOT_DEFINED;
+            } else if (authError.equals(AMAuthErrorCode.AUTH_USER_INACTIVE)) {
                 failureCode = SessionException.AUTH_USER_INACTIVE;
             } else if(authError.equals(AMAuthErrorCode.AUTH_USER_LOCKED)) {
                 failureCode = SessionException.AUTH_USER_LOCKED;
@@ -241,67 +246,76 @@ public class FMSessionProvider implements SessionProvider {
                 failureCode = SessionException.AUTH_ACCOUNT_EXPIRED;
             }
             
-            SessionException se = new SessionException(ale);
+            SessionException se = null;
+            if (ale != null) {
+                se = new SessionException(ale);
+            } else {
+                se = new SessionException(bundle.getString("loginFailed"));
+            }
             se.setErrCode(failureCode);
             throw se;
         } else {
             throw new SessionException(bundle.getString("loginFailed"));
         }
-        ServiceSchemaManager scm = null;
-        try {
-            scm = new ServiceSchemaManager(
-                "iPlanetAMPlatformService", ssoToken);
-        } catch (Exception e) {
-            throw new SessionException(e);
-        }
-        ServiceSchema platformSchema = null;
-        try {
-            platformSchema = scm.getGlobalSchema();
-        } catch (SMSException se) {
-            throw new SessionException(se);
-        }
-        Set cookieDomains = (Set)platformSchema.getAttributeDefaults().
-            get("iplanet-am-platform-cookie-domains");
-        String value = ssoToken.getTokenID().toString();
-        Cookie loadBalancerCookie = null;
-        if (cookieDomains.size() == 0) {
-            Cookie cookie =
-                CookieUtils.newCookie(cookieName, value, "/");
-            response.addCookie(cookie);
-            loadBalancerCookie = setlbCookie(null);
-            if (loadBalancerCookie != null) {
-                response.addCookie(loadBalancerCookie);
+
+        if (response != null) {
+            ServiceSchemaManager scm = null;
+            try {
+                scm = new ServiceSchemaManager(
+                    "iPlanetAMPlatformService", ssoToken);
+            } catch (Exception e) {
+                throw new SessionException(e);
             }
-        } else {
-            Iterator it = cookieDomains.iterator();
-            Cookie cookie = null;
-            String cookieDomain = null;
-            while (it.hasNext()) {
-                cookieDomain = (String) it.next();
-                if (debug.messageEnabled()) {
-                    debug.message("cookieName=" + cookieName);
-                    debug.message("value=" + value);
-                    debug.message("cookieDomain=" + cookieDomain);
-                }
-                cookie = CookieUtils.newCookie(
-                    cookieName, value,
-                    "/", cookieDomain);
+            ServiceSchema platformSchema = null;
+            try {
+                platformSchema = scm.getGlobalSchema();
+            } catch (SMSException se) {
+                throw new SessionException(se);
+            }
+            Set cookieDomains = (Set)platformSchema.getAttributeDefaults().
+                get("iplanet-am-platform-cookie-domains");
+            String value = ssoToken.getTokenID().toString();
+            Cookie loadBalancerCookie = null;
+            if (cookieDomains.size() == 0) {
+                Cookie cookie =
+                    CookieUtils.newCookie(cookieName, value, "/");
                 response.addCookie(cookie);
-                loadBalancerCookie = setlbCookie(cookieDomain);
+                loadBalancerCookie = setlbCookie(null);
                 if (loadBalancerCookie != null) {
                     response.addCookie(loadBalancerCookie);
                 }
+            } else {
+                Iterator it = cookieDomains.iterator();
+                Cookie cookie = null;
+                String cookieDomain = null;
+                while (it.hasNext()) {
+                    cookieDomain = (String) it.next();
+                    if (debug.messageEnabled()) {
+                        debug.message("cookieName=" + cookieName);
+                        debug.message("value=" + value);
+                        debug.message("cookieDomain=" + cookieDomain);
+                    }
+                    cookie = CookieUtils.newCookie(
+                        cookieName, value,
+                        "/", cookieDomain);
+                    response.addCookie(cookie);
+                    loadBalancerCookie = setlbCookie(cookieDomain);
+                    if (loadBalancerCookie != null) {
+                        response.addCookie(loadBalancerCookie);
+                    }
+                }
             }
+            if (urlRewriteEnabled && targetApplication != null) {
+                int n = targetApplication.length();
+                if (n > 0) {
+                    String rewrittenURL = rewriteURL(
+                        ssoToken, targetApplication.toString());
+                    targetApplication.delete(0, n);
+                    targetApplication.append(rewrittenURL);
+                }
+            }   
         }
-        if (urlRewriteEnabled && targetApplication != null) {
-            int n = targetApplication.length();
-            if (n > 0) {
-                String rewrittenURL = rewriteURL(
-                    ssoToken, targetApplication.toString());
-                targetApplication.delete(0, n);
-                targetApplication.append(rewrittenURL);
-            }
-        }   
+
         // set all properties in the info map to sso token
         try {
             Iterator it = info.keySet().iterator();
