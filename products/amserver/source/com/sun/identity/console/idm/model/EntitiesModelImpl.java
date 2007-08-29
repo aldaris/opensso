@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.6 2007-07-11 22:05:13 veiming Exp $
+ * $Id: EntitiesModelImpl.java,v 1.7 2007-08-29 06:25:15 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -161,7 +161,7 @@ public class EntitiesModelImpl
             * we can search on a non naming attribute. 
             */
             IdType type = IdUtils.getType(strType);
-            if (type.equals(IdType.USER)) {
+            if (type.equals(IdType.USER) && !pattern.equals("*")) {
                 Map searchMap = new HashMap(2);
                 Set patternSet = new HashSet(2);
                 patternSet.add(pattern);
