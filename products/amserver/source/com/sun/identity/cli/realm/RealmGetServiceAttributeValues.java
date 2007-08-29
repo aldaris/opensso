@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmGetServiceAttributeValues.java,v 1.1 2006-05-31 21:49:57 veiming Exp $
+ * $Id: RealmGetServiceAttributeValues.java,v 1.2 2007-08-29 22:44:48 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CLIUtil;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.FormatUtils;
 import com.sun.identity.cli.IArgument;
@@ -83,10 +84,10 @@ public class RealmGetServiceAttributeValues extends AuthenticatedCommand {
                     adminSSOToken, realm);
                 attributeValues = ocm.getServiceAttributes(serviceName);
             }
-        
+            
             outputWriter.printlnMessage(FormatUtils.printAttributeValues(
                 getResourceString("get-service-attr-values-of-realm-result"),
-                attributeValues));
+                attributeValues, CLIUtil.getPasswordFields(serviceName)));
             outputWriter.printlnMessage(MessageFormat.format(
                 getResourceString("get-service-attr-values-of-realm-succeed"),
                 (Object[])params));

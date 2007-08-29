@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtil.java,v 1.2 2006-08-25 21:20:36 veiming Exp $
+ * $Id: CLIUtil.java,v 1.3 2007-08-29 22:44:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,10 +25,21 @@
 package com.sun.identity.cli;
 
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.AccessController;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * This is an utility class. 
@@ -92,5 +103,31 @@ public class CLIUtil {
             }
         }
         return buff.toString();
+    }
+
+    /**
+     * Returns a set of attributes (of password syntax) of a given service.
+     *
+     * @param serviceName Name of service.
+     * @return a set of attributes (of password syntax) of a given service.
+     */
+    public static Set getPasswordFields(String serviceName) 
+        throws SMSException, SSOException
+    {
+        Set setPasswords = new HashSet();
+        SSOToken ssoToken = (SSOToken)AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        ServiceSchemaManager ssm = new ServiceSchemaManager(
+            serviceName, ssoToken);
+        ServiceSchema schema = ssm.getOrganizationSchema();
+        Set attributeSchemas = schema.getAttributeSchemas();
+        
+        for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
+            AttributeSchema as = (AttributeSchema)i.next();
+            if (as.getSyntax().equals(AttributeSchema.Syntax.PASSWORD)) {
+                setPasswords.add(as.getName());
+            }
+        }
+        return setPasswords;
     }
 }

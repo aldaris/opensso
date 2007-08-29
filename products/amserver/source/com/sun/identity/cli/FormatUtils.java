@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FormatUtils.java,v 1.1 2006-05-31 21:49:44 veiming Exp $
+ * $Id: FormatUtils.java,v 1.2 2007-08-29 22:44:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SchemaType;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +43,7 @@ import java.util.Set;
  */
 public class FormatUtils {
     public static final String SPACE = "    ";
+    public static final String MASKED_PWD = "********";
     private FormatUtils() {
     }
 
@@ -74,7 +77,27 @@ public class FormatUtils {
         }
         return buff.toString();
     }
-
+    
+    public static String printAttributeValues(
+        String template,
+        Map attributeValues,
+        Set passwords
+    ) {
+        Map map = new HashMap(attributeValues.size() *2);
+        Set setPwd = new HashSet(2);
+        setPwd.add(MASKED_PWD);
+        for (Iterator i = attributeValues.entrySet().iterator(); i.hasNext(); ){
+            Map.Entry entry = (Map.Entry)i.next();
+            Object key = entry.getKey();
+            if (passwords.contains(key)) {
+                map.put(key, setPwd);
+            } else {
+                map.put(key, entry.getValue());
+            }
+        }
+        return printAttributeValues(template, map);
+    }
+    
     public static String printAttributeValues(
         String template,
         Map attributeValues
