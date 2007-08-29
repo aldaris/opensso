@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.5 2007-08-28 19:45:45 babysunil Exp $
+ * $Id: EntityModelImpl.java,v 1.6 2007-08-29 05:51:17 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -263,30 +263,29 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             throw new AMConsoleException("delete.entity.invalid.data");
         }
         
-        Set entities = data.keySet();
+        Set entities = data.keySet();                
         for (Iterator i = entities.iterator(); i.hasNext();) {
-            String name = (String)i.next();           
+            String name = (String)i.next();      
+            
+            // the format of string s is <type>|<realm>|<location>
             String s = (String)data.get(name);
             int pos = s.indexOf("|");
             String type = s.substring(0, pos);
+            String realm = s.substring(pos+1, s.lastIndexOf("|"));
             
-            if (type.equals("IDFF")) {
-                deleteIDFFEntity(name);
-            } else if (type.equals("WSFED")) {
-                deleteWSFedEntity(name);
+            if (type.equals(IDFF)) {
+                deleteIDFFEntity(name, realm);
+            } else if (type.equals(WSFED)) {
+                deleteWSFedEntity(name,realm);
             } else {
-                deleteSAMLv2Entity(name);
+                deleteSAMLv2Entity(name,realm);
             }
         }
     }
     
-    private void deleteSAMLv2Entity(String entityID)
+    private void deleteSAMLv2Entity(String entityID, String realm)
         throws AMConsoleException 
     {
-        //
-        // TBD the realm should be pulled from the entity descriptor element
-        //
-        String realm = "/";
         try {
             SAML2MetaManager metaManager = new SAML2MetaManager();
             metaManager.deleteEntityDescriptor(realm, entityID);
@@ -295,7 +294,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         }
     }
     
-    private void deleteIDFFEntity(String entityID)
+    private void deleteIDFFEntity(String entityID, String realm)
         throws AMConsoleException 
     {
         try {
@@ -309,10 +308,15 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         }
     }
     
-    private void deleteWSFedEntity(String entityID)
+    private void deleteWSFedEntity(String entityID, String realm)
         throws AMConsoleException 
     {
-        throw new AMConsoleException("TBD");
+        try {
+            WSFederationMetaManager.deleteFederation(realm, entityID); 
+        } catch (WSFederationMetaException w) {
+            debug.warning("EntityModel.deleteWSFedEntity", w);
+            throw new AMConsoleException(w.getMessage());
+        }
     }
     
     /*

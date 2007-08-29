@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityModelImpl.java,v 1.3 2007-08-03 23:29:36 jonnelson Exp $
+ * $Id: ImportEntityModelImpl.java,v 1.4 2007-08-29 05:51:17 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,6 +62,11 @@ import javax.xml.bind.JAXBException;
 import javax.servlet.http.HttpServletRequest;
 import org.w3c.dom.Document;
 
+import com.sun.identity.wsfederation.common.WSFederationConstants;
+import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
+
 /**
  * This class provides import entity provider related functionality. Currently
  * the supported types are SAMLv2, IDFF, and WSFederation.
@@ -70,7 +75,7 @@ public class ImportEntityModelImpl extends AMModelBase
     implements ImportEntityModel 
 {
     private static final String IDFF = "urn:liberty:metadata";
-    private static final String WSFED = "WS-Fed";
+    private static final String WSFED = "Federation";
     private static final String DEFAULT_ROOT = "/";
     
     private String standardMetaData;
@@ -94,7 +99,7 @@ public class ImportEntityModelImpl extends AMModelBase
     public void importEntity(Map requestData) 
         throws AMConsoleException 
     {   
-        // standardMetaData is the name of the file containing the metada. This
+        // standardFile is the name of the file containing the metada. This
         // is a required parameter. If we don't find it in the request throw
         // an exception.
         String standardFile = (String)requestData.get(STANDARD_META);
@@ -126,7 +131,7 @@ public class ImportEntityModelImpl extends AMModelBase
             createSAMLv2Entity();
         } else if (protocol.equals(IDFF)) {
             createIDFFEntity();
-        } else {
+        } else {      
             createWSFedEntity();
         }
     }
@@ -149,12 +154,6 @@ public class ImportEntityModelImpl extends AMModelBase
                         // for import
                         realm = SAML2MetaUtils.getRealmByMetaAlias(
                             bConfig.getMetaAlias());                     
-                        if (debug.messageEnabled()) {
-                            debug.message(
-                                "ImportEntityModel.createSAMLv2Entity " +
-                                "getting realm from ext metadata - " +
-                                realm);
-                        }
                     }
                 }
             }
@@ -188,6 +187,35 @@ public class ImportEntityModelImpl extends AMModelBase
         }
     }
 
+    private void importWSFedMetaData()
+        throws WSFederationMetaException, AMConsoleException
+    {    
+        try {
+            Object obj = WSFederationMetaUtils.convertStringToJAXB(standardMetaData);
+       
+            if (obj instanceof com.sun.identity.wsfederation.jaxb.wsfederation.FederationMetadataElement) {
+                obj = ((com.sun.identity.wsfederation.jaxb.wsfederation.FederationMetadataElement)obj).getAny().get(0);
+            }
+
+            if (obj instanceof com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement) {
+                com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement 
+                federation =
+                    (com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement)obj;
+            
+                // TBD
+                //Document doc = XMLUtils.toDOMDocument(standardMetadata, debug);
+                // WSFederationMetaSecurityUtils.verifySignature(doc);
+                WSFederationMetaManager.createFederation(realm, federation);
+            }
+        } catch (JAXBException e) {
+            debug.error("ImportEntityModel.importWSFedMetaData", e);
+            throw new AMConsoleException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            debug.error("ImportEntityModel.importWSFedMetaData", e);
+            throw new AMConsoleException(e.getMessage());
+        }
+    }
+            
     private void importSAML2MetaData(SAML2MetaManager metaManager, String realm)
         throws SAML2MetaException, AMConsoleException
     {        
@@ -285,9 +313,62 @@ public class ImportEntityModelImpl extends AMModelBase
         } 
     }
            
-    private void createWSFedEntity() {
-        // TBD not implemented yet
+    private void createWSFedEntity() throws AMConsoleException {
+        try {
+            com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement 
+                configElt = null;
+            
+            if (extendedMetaData != null) {              
+                configElt = getWSFedEntityConfigElement();
+                /*
+                 * see note at the end of this class for how we decide
+                 * the realm value
+                 */
+                if (configElt != null && configElt.isHosted()) {
+                    List config = configElt.getIDPSSOConfigOrSPSSOConfig();
+                    if (!config.isEmpty()) {
+                        com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType bConfig = 
+                            (com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType)
+                            config.iterator().next();
+                        realm = WSFederationMetaUtils.getRealmByMetaAlias(
+                            bConfig.getMetaAlias());
+                    }
+                }
+            }
+            
+            if (standardMetaData != null) {
+                importWSFedMetaData();
+            }
+            
+            if (configElt != null) {
+                WSFederationMetaManager.createEntityConfig(realm, configElt);
+            }
+        } catch (WSFederationMetaException e) {
+            debug.error("ImportEntityModel.createWSFedEntity", e);
+            throw new AMConsoleException(e);
+        }
     }    
+    
+    private com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement 
+        getWSFedEntityConfigElement()
+        throws WSFederationMetaException, AMConsoleException
+    {
+        try {            
+            Object obj = WSFederationMetaUtils.convertStringToJAXB(extendedMetaData);        
+            return (obj instanceof 
+                com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement) ?
+                (com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement)obj : 
+                null;
+        } catch (JAXBException e) {
+            debug.error("ImportEntityModel.getWSFedEntityConfigElement", e);
+            throw new AMConsoleException(e);
+        } catch (IllegalArgumentException e) {
+            debug.error("ImportEntityModel.getWSFedEntityConfigElement", e);
+            throw new AMConsoleException(e);
+        }
+        
+
+    }
     
     private com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement
         getIDFFEntityConfigElement() throws IDFFMetaException, AMConsoleException {
@@ -333,13 +414,15 @@ public class ImportEntityModelImpl extends AMModelBase
         return buff.toString();
     }
     
-    private String getProtocol(String metaData) {
-        String protocol = SAML2Constants.PROTOCOL_NAMESPACE;
-        if (metaData.contains(WSFED)) {
-            protocol = WSFED;
+    // returns the type provider defined by the meta data.
+    private String getProtocol(String metaData) {       
+        String protocol = WSFED; 
+        
+        if (metaData.contains(SAML2Constants.PROTOCOL_NAMESPACE)) {                          
+            protocol = SAML2Constants.PROTOCOL_NAMESPACE;         
         } else if (metaData.contains(IDFF)) {
-            protocol = IDFF;            
-        }                
+            protocol = IDFF; 
+        }
         
         return protocol;           
     }

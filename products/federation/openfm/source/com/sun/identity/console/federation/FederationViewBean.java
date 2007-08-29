@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.7 2007-08-24 18:16:55 asyhuang Exp $
+ * $Id: FederationViewBean.java,v 1.8 2007-08-29 05:50:57 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -778,8 +778,8 @@ public  class FederationViewBean
     public void handleBtnSearchRequest (RequestInvocationEvent event) {
         // use the action value to determine which view we will forward to
         String actionValue = (String)getDisplayFieldValue ("actionMenu");
-        if (actionValue.equals ("")) {
+
             forwardTo ();
-        }
+        
     }
 }
