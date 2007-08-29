@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2007-08-28 16:20:20 kevinserwin Exp $
+   $Id: build.xml,v 1.17 2007-08-29 22:37:27 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -156,7 +156,8 @@
 
     </target>
 
-    <target name="srczip" depends="clean">
+    <target name="srczip">
+        <mkdir dir="${prd.nightly.dist.dir}" />
         <ant antfile="build-srczip.xml" inheritRefs="true"/>
     </target>
     
