@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFIDPViewBean.java,v 1.3 2007-08-13 19:10:27 asyhuang Exp $
+ * $Id: IDFFIDPViewBean.java,v 1.4 2007-08-29 21:59:03 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class IDFFIDPViewBean
     private void populateValue(String name) {
         IDFFEntityProviderModel model =
             (IDFFEntityProviderModel)getModelInternal();              
-        Map values = model.getEntitySPDescriptor(name);                 
+        Map values = model.getEntityIDPDescriptor(name);                 
         values.putAll(model.getEntityConfig(name,
             IFSConstants.IDP, location));
         AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
