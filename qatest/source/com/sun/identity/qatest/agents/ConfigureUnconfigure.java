@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.2 2007-08-17 17:28:23 rmisra Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.3 2007-08-29 16:58:23 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@ package com.sun.identity.qatest.agents;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdType;
-import com.sun.identity.qatest.common.IdmCommon;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,25 +38,25 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 public class ConfigureUnconfigure extends TestCommon {
-    
+
     private SSOToken admintoken;
     private ResourceBundle rbg;
-    private IdmCommon idmc;
+    private IDMCommon idmc;
     private String agentId;
     private String agentPassword;
     private String strGblRB = "agentsGlobal";
 
-    public ConfigureUnconfigure() 
+    public ConfigureUnconfigure()
     throws Exception{
         super("ConfigureUnconfigure");
         rbg = ResourceBundle.getBundle(strGblRB);
         agentId = rbg.getString(strGblRB + ".agentId");
         agentPassword = rbg.getString(strGblRB + ".agentPassword");
-        idmc = new IdmCommon();
+        idmc = new IDMCommon();
     }
-    
-    @BeforeSuite(groups={"ds_ds, ds_ds_sec, ff_ds, ff_ds_sec"})
-    public void createAgentProfile() 
+
+    @BeforeSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void createAgentProfile()
     throws Exception {
         entering("createAgentProfile", null);
         try {
@@ -79,7 +79,7 @@ public class ConfigureUnconfigure extends TestCommon {
         exiting("createAgentProfile");
     }
 
-    @AfterSuite(groups={"ds_ds, ds_ds_sec, ff_ds, ff_ds_sec"})
+    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void deleteAgentProfile()
     throws Exception {
         entering("deleteAgentProfile", null);

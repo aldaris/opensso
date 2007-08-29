@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.1 2007-08-14 23:32:53 rmisra Exp $
+ * $Id: HeaderAttributeTests.java,v 1.2 2007-08-29 16:56:37 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.AgentsCommon;
-import com.sun.identity.qatest.common.IdmCommon;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import java.net.URL;
@@ -67,7 +67,7 @@ public class HeaderAttributeTests extends TestCommon {
     private int resIdx;
     private int iIdx;
     private AgentsCommon mpc;
-    private IdmCommon idmc;
+    private IDMCommon idmc;
     private SMSCommon smsc;
     private ResourceBundle rbg;
     private SSOToken usertoken;
@@ -80,7 +80,7 @@ public class HeaderAttributeTests extends TestCommon {
     throws Exception{
         super("HeaderAttributeTests");
         mpc = new AgentsCommon();
-        idmc = new IdmCommon();
+        idmc = new IDMCommon();
         rbg = ResourceBundle.getBundle(strGblRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
@@ -122,6 +122,7 @@ public class HeaderAttributeTests extends TestCommon {
             } else
                 log(Level.FINE, "setup", "Executing against non OpenSSO" +
                         " Install");
+            Thread.sleep(15000);
         } catch (Exception e) {
             cleanup();
             log(Level.SEVERE, "setup", e.getMessage());
@@ -395,7 +396,7 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates newly created static single valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ds_ds", "ds_ds_sec"})
     public void evaluateNewSingleValuedProfileAttribute()
     throws Exception {
         entering("evaluateNewSingleValuedProfileAttribute", null);
@@ -433,7 +434,7 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates newly created static multi valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ds_ds", "ds_ds_sec"},
     dependsOnMethods={"evaluateNewSingleValuedProfileAttribute"})
     public void evaluateNewMultiValuedProfileAttribute()
     throws Exception {
@@ -463,7 +464,7 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates newly created dynamic multi valued profile attribute related
      * to static roles
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ds_ds", "ds_ds_sec"},
     dependsOnMethods={"evaluateNewMultiValuedProfileAttribute"})
     public void evaluateNewNsRoleProfileAttribute()
     throws Exception {
@@ -500,7 +501,7 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates newly created dynamic multi valued profile attribute related
      * to dynamic roles
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ds_ds", "ds_ds_sec"},
     dependsOnMethods={"evaluateNewNsRoleProfileAttribute"})
     public void evaluateNewFilteredRoleProfileAttribute()
     throws Exception {
@@ -537,7 +538,7 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates updated static single valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ds_ds", "ds_ds_sec"},
     dependsOnMethods={"evaluateNewNsRoleProfileAttribute"})
     public void evaluateUpdatedSingleValuedProfileAttribute()
     throws Exception {
@@ -589,7 +590,7 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates updated static multi valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ds_ds", "ds_ds_sec"},
     dependsOnMethods={"evaluateUpdatedSingleValuedProfileAttribute"})
     public void evaluateUpdatedMultiValuedProfileAttribute()
     throws Exception {
@@ -637,7 +638,7 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates updated dynamic multi valued profile attribute related to
      * static roles
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ds_ds", "ds_ds_sec"},
     dependsOnMethods={"evaluateUpdatedMultiValuedProfileAttribute"})
     public void evaluateUpdatedNsRoleProfileAttribute()
     throws Exception {
@@ -734,7 +735,7 @@ public class HeaderAttributeTests extends TestCommon {
         exiting("evaluateUpdatedFilteredRoleProfileAttribute");
     }
 
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ff_ds", "ff_ds_sec", "ds_ds", "ds_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -755,13 +756,21 @@ public class HeaderAttributeTests extends TestCommon {
             smsc.removeServiceAttributeValues("iPlanetAMPolicyConfigService",
                     "sun-am-policy-dynamic-response-attributes",
                     "Organization");
-            idmc.deleteIdentity(admintoken, realm, IdType.USER, "pauser");
-            idmc.deleteIdentity(admintoken, realm, IdType.USER, "sauser");
-            idmc.deleteIdentity(admintoken, realm, IdType.USER, "rauser");
-            idmc.deleteIdentity(admintoken, realm, IdType.ROLE, "parole1");
-            idmc.deleteIdentity(admintoken, realm, IdType.ROLE, "parole2");
-            idmc.deleteIdentity(admintoken, realm, IdType.FILTEREDROLE,
-                        "filparole1");
+            if ((idmc.searchIdentities(admintoken, "pauser",
+                    IdType.USER)).size() != 0)
+                idmc.deleteIdentity(admintoken, realm, IdType.USER, "pauser");
+            if (idmc.searchIdentities(admintoken, "sauser",
+                    IdType.USER).size() != 0)
+                idmc.deleteIdentity(admintoken, realm, IdType.USER, "sauser");
+            if (idmc.searchIdentities(admintoken, "rauser",
+                    IdType.USER).size() != 0)
+                idmc.deleteIdentity(admintoken, realm, IdType.USER, "rauser");
+            if (idmc.searchIdentities(admintoken, "parole1",
+                    IdType.ROLE).size() != 0)
+                idmc.deleteIdentity(admintoken, realm, IdType.ROLE, "parole1");
+            if (idmc.searchIdentities(admintoken, "parole2",
+                    IdType.ROLE).size() != 0)
+                idmc.deleteIdentity(admintoken, realm, IdType.ROLE, "parole2");
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
@@ -771,5 +780,27 @@ public class HeaderAttributeTests extends TestCommon {
         }
 
         exiting("cleanup");
+    }
+
+    @AfterClass(groups={"ds_ds", "ds_ds_sec"})
+    public void cleanupForDS()
+    throws Exception {
+        entering("cleanupForDS", null);
+
+        SSOToken locAdminToken = getToken(adminUser, adminPassword, basedn);
+        try {
+            if (idmc.searchIdentities(locAdminToken, "filparole1",
+                    IdType.FILTEREDROLE).size() != 0)
+                idmc.deleteIdentity(locAdminToken, realm, IdType.FILTEREDROLE,
+                        "filparole1");
+        } catch (Exception e) {
+            log(Level.SEVERE, "cleanupForDS", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            destroyToken(locAdminToken);
+        }
+
+        exiting("cleanupForDS");
     }
 }

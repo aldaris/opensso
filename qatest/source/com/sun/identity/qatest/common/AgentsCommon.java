@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsCommon.java,v 1.2 2007-07-06 21:52:28 arunav Exp $
+ * $Id: AgentsCommon.java,v 1.3 2007-08-29 16:55:20 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,14 +27,18 @@ package com.sun.identity.qatest.common;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.client.PolicyEvaluator;
 import com.sun.identity.policy.PolicyDecision;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
+import com.sun.identity.qatest.common.SMSCommon;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,8 +63,10 @@ public class AgentsCommon extends TestCommon {
     private String strGlobalRB;
     private String strLocalRB;
     private FederationManager fmadm;
+    private IDMCommon idmc;
     private WebClient webClient;
-    private SSOToken userToken;
+    private SSOToken usertoken;
+    private SSOToken admintoken;
     
     /**
      * Class constructor. Sets class variables.
@@ -75,11 +81,12 @@ public class AgentsCommon extends TestCommon {
         fmadmURL = protocol + ":" + "//" + host + ":" + port + uri;
         ResourceBundle rbAMConfig = ResourceBundle.
                 getBundle(TestConstants.TEST_PROPERTY_AMCONFIG);
+        idmc = new IDMCommon();
         try {
             baseDir = getTestBase();
             fmadm = new FederationManager(fmadmURL);
         } catch (Exception e) {
-            log(Level.SEVERE, "AgentsCommon", e.getMessage(), null);
+            log(Level.SEVERE, "AgentsCommon", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -90,7 +97,7 @@ public class AgentsCommon extends TestCommon {
      */
     public void createPolicyXML(String strGblRB, String strLocRB,
             int policyIdx, String policyFile)
-            throws Exception {
+    throws Exception {
         String strResource;
         strGlobalRB = strGblRB;
         strLocalRB = strLocRB;
@@ -143,8 +150,8 @@ public class AgentsCommon extends TestCommon {
                         }
                         createSubXML(rbg, rbp, out, null, null, null, list);
                     }
+                    out.write("</Rule>");
                 }
-                out.write("</Rule>");
                 out.write(newline);
             }
             
@@ -245,14 +252,19 @@ public class AgentsCommon extends TestCommon {
                             ".noOfDynamic")).intValue();
                     if (noOfDynamic != 0) {
                         List list = new ArrayList();
+                        List dynSetList = new ArrayList();
                         String strDynamicAttribute = rbp.getString(locPolIdx +
                                 i + ".responseprovider" + j +
                                 ".dynamicAttributeName");
                         for (int k = 0; k < noOfDynamic; k++) {
-                            list.add(rbp.getString(locPolIdx + i +
-                                    ".responseprovider" + j + ".dynamic" + k));
+                            String attrValue = rbp.getString(locPolIdx + i +
+                                    ".responseprovider" + j + ".dynamic" + k);
+                            list.add(attrValue);
+                            dynSetList.add("sun-am-policy-dynamic-response-" +
+                                    "attributes" +  "=" + attrValue);
                         }
                         map.put(strDynamicAttribute, list);
+                        setDynamicRespAttribute(realm, dynSetList);
                         createRPXML(out, "ResponseProvider", name, type, map);
                     }
                 }
@@ -274,7 +286,7 @@ public class AgentsCommon extends TestCommon {
     public void createSubXML(ResourceBundle rbg, ResourceBundle rbp,
             BufferedWriter out, String nameType, String name, String type,
             List list)
-            throws Exception {
+    throws Exception {
         createSubXML(rbg, rbp, out, nameType, name, type, null, list);
     }
     
@@ -284,7 +296,7 @@ public class AgentsCommon extends TestCommon {
     public void createSubXML(ResourceBundle rbg, ResourceBundle rbp,
             BufferedWriter out, String nameType, String name, String type,
             String includeType, List list)
-            throws Exception {
+    throws Exception {
         
         if (nameType != null) {
             if (includeType != null)
@@ -348,7 +360,8 @@ public class AgentsCommon extends TestCommon {
      * Creates part of policy xml related to atttributes for ResponseProviders.
      */
     public void createRPXML(BufferedWriter out, String nameType, String name,
-            String type, Map map) throws Exception {
+            String type, Map map) 
+    throws Exception {
         if (nameType != null) {
             out.write("<" + nameType + " name=\"" + name + "\"" + " type=\"" +
                     type + "\">");
@@ -364,6 +377,7 @@ public class AgentsCommon extends TestCommon {
                 while (it.hasNext()) {
                     key = (String)it.next();
                     value = (List)map.get(key);
+                    out.write("<AttributeValuePair>");
                     out.write("<Attribute name=\"" + key + "\"/>");
                     out.write(newline);
                     for (int i = 0; i < value.size(); i++) {
@@ -428,11 +442,78 @@ public class AgentsCommon extends TestCommon {
                 }
             }
         } catch(Exception e) {
-            log(Level.SEVERE, "createIdentities", e.getMessage(), null);
+            log(Level.SEVERE, "createIdentities", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
+        }
+    }
+
+    /**
+     * Creates user, role and group identities using the client API's.
+     */
+    public void createIdentitiesUsingAPI(String strLocRB, int glbPolIdx)
+    throws Exception {
+        try {
+            ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
+            String strPolIdx = strLocRB + glbPolIdx;
+            int noOfIdentities = new Integer(rb.getString(strPolIdx +
+                    ".noOfIdentities")).intValue();
+            IdType idtype = null;
+            for (int i = 0; i < noOfIdentities; i++) {
+                String name = rb.getString(strPolIdx + ".identity" + i +
+                        ".name");
+                String type = rb.getString(strPolIdx + ".identity" + i +
+                        ".type");
+
+                if (type.equals("User"))
+                    idtype = IdType.USER;
+                else if (type.equals("Role"))
+                    idtype = IdType.ROLE;
+                else if (type.equals("Group"))
+                    idtype = IdType.GROUP;
+
+                String strAttList = rb.getString(strPolIdx + ".identity" + i +
+                        ".attributes");
+                Map map = null;
+                if (!(strAttList.equals("")))
+                    map = getAttributeMap(strAttList, ",");
+                admintoken = getToken(adminUser, adminPassword, basedn);
+                if (map != null)
+                    idmc.createIdentity(admintoken, realm, idtype, name, map);
+                else
+                    idmc.createIdentity(admintoken, realm, idtype, name,
+                            new HashMap());
+                String isMemberOf = rb.getString(strPolIdx + ".identity" + i +
+                        ".isMemberOf");
+                if (isMemberOf.equals("yes")) {
+                    String memberList = rb.getString(strPolIdx + ".identity" +
+                            i + ".memberOf");
+                    List lstMembers = getAttributeList(memberList, ",");
+                    String strIDIdx;
+                    String memberType;
+                    String memberName;
+                    IdType memberIdType = null;
+                    for (int j = 0; j < lstMembers.size(); j++) {
+                        strIDIdx = (String)lstMembers.get(j);
+                        memberType = rb.getString(strIDIdx + ".type");
+                        if (memberType.equals("Role"))
+                            memberIdType = IdType.ROLE;
+                        else if (memberType.equals("GROUP"))
+                            memberIdType = IdType.GROUP;
+                        memberName = rb.getString(strIDIdx + ".name");
+                        idmc.addUserMember(admintoken, name, memberName,
+                                memberIdType); 
+                    }
+                }
+            }
+        } catch(Exception e) {
+            log(Level.SEVERE, "createIdentities", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            destroyToken(admintoken);
         }
     }
     
@@ -457,15 +538,15 @@ public class AgentsCommon extends TestCommon {
                 if (input != null)
                     input.close();
                 policyXML = contents.toString();
-                log(logLevel, "createPolicy", newline + policyXML);
+                log(Level.FINEST, "createPolicy", newline + policyXML);
                 HtmlPage policyCheckPage ;
                 policyCheckPage = fmadm.createPolicies(webClient, realm,
                         policyXML);
-                log(Level.FINER, "createPolicy", newline +
+                log(Level.FINEST, "createPolicy", newline +
                         policyCheckPage.asXml(), null);
             }
         } catch(Exception e) {
-            log(Level.SEVERE, "createPolicy", e.getMessage(), null);
+            log(Level.SEVERE, "createPolicy", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -496,7 +577,7 @@ public class AgentsCommon extends TestCommon {
                 fmadm.deleteIdentities(webClient, realm, list, type);
             }
         } catch(Exception e) {
-            log(Level.SEVERE, "deleteIdentities", e.getMessage(), null);
+            log(Level.SEVERE, "deleteIdentities", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -525,7 +606,7 @@ public class AgentsCommon extends TestCommon {
             }
             fmadm.deletePolicies(webClient, realm, list);
         } catch(Exception e) {
-            log(Level.SEVERE, "deletePolicies", e.getMessage(), null);
+            log(Level.SEVERE, "deletePolicies", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -556,7 +637,7 @@ public class AgentsCommon extends TestCommon {
      */
     public void evaluatePolicyThroughAgents(String resource, String username,
             String password, String expResult)
-            throws Exception {
+    throws Exception {
         try {
             webClient = new WebClient();
             HtmlPage page = consoleLogin(webClient, resource, username,
@@ -564,21 +645,55 @@ public class AgentsCommon extends TestCommon {
             int iIdx = getHtmlPageStringIndex(page, expResult);
             assert (iIdx != -1);
         } catch (Exception e) {
-            log(Level.SEVERE, "evaluatePolicyThroughAgents", e.getMessage(),
-                    null);
+            log(Level.SEVERE, "evaluatePolicyThroughAgents", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
         }
     }
-    
+
+    /**
+     * Evaluates whether attributes are present as header's in the request
+     * send back to the agent.
+     */
+    public void evaluateHeaderAttributes(WebClient webClient, String resource,
+            String username, String password, String expResult,
+            String attributeName, String attributeValue, String evalScriptURL,
+            String login)
+    throws Exception {
+        try {
+            HtmlPage page;
+            int iIdx;
+            if (login.equals("yes"))
+            {
+                page = consoleLogin(webClient, resource, username, password);
+                iIdx = getHtmlPageStringIndex(page, expResult);
+                assert (iIdx != -1);
+            }
+            log(Level.FINEST, "evaluateHeaderAttributes",
+                    "Header Script URL: " + evalScriptURL);
+            URL url = new URL(evalScriptURL);
+            page = (HtmlPage)webClient.getPage(url);
+            iIdx = -1;
+            iIdx = getHtmlPageStringIndex(page, attributeName + " : " +
+                    attributeValue);
+            assert (iIdx != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "evaluateHeaderAttributes", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(webClient, logoutURL);
+        }
+    }
+
     /**
      * Evaluates policy using api
      */
-    public void evaluatePolicyThroughAPI(String resource, SSOToken userToken,
+    public void evaluatePolicyThroughAPI(String resource, SSOToken usertoken,
             String action, Map envMap, String expResult, int idIdx)
-            throws Exception {
+    throws Exception {
         try {
             PolicyEvaluator pe =
                     new PolicyEvaluator("iPlanetAMWebAgentService");
@@ -586,24 +701,24 @@ public class AgentsCommon extends TestCommon {
             Set actions = new HashSet();
             actions.add(action);
             
-            boolean pResult = pe.isAllowed(userToken, resource, action, envMap);
-            log(logLevel, "evaluatePolicyThroughAPI", "Policy Decision: " +
+            boolean pResult = pe.isAllowed(usertoken, resource, action, envMap);
+            log(Level.FINEST, "evaluatePolicyThroughAPI", "Policy Decision: " +
                     pResult);
             
-            PolicyDecision pd = pe.getPolicyDecision(userToken, resource,
+            PolicyDecision pd = pe.getPolicyDecision(usertoken, resource,
                     actions, envMap);
-            log(Level.FINER, "evaluatePolicyThroughAPI",
-                    "Polciy Decision XML: " +  pd.toXML(), null);
+            log(Level.FINEST, "evaluatePolicyThroughAPI",
+                    "Polciy Decision XML: " +  pd.toXML());
             boolean expectedResult = new Boolean(expResult).booleanValue();
             
             assert (pResult == expectedResult);
             
         } catch (Exception e) {
-            log(Level.SEVERE, "evaluatePolicyThroughAPI", e.getMessage(), null);
+            log(Level.SEVERE, "evaluatePolicyThroughAPI", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            destroyToken(userToken);
+            destroyToken(usertoken);
         }
     }
     
@@ -643,7 +758,7 @@ public class AgentsCommon extends TestCommon {
                 }
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "getPolicyEnvParamMap", e.getMessage(), null);
+            log(Level.SEVERE, "getPolicyEnvParamMap", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -654,9 +769,9 @@ public class AgentsCommon extends TestCommon {
      * sets the requested properties in the sso token
      * @param SSOToken, Map, int
      */
-    public void setProperty(String strLocRB, SSOToken userToken, int polIdx,
+    public void setProperty(String strLocRB, SSOToken usertoken, int polIdx,
             int idIdx)
-            throws Exception {
+    throws Exception {
         ResourceBundle rbp = ResourceBundle.getBundle(strLocRB);
         String glbPolIdx = strLocRB + polIdx;
         String locEvalIdx = glbPolIdx + ".identity" + idIdx;
@@ -674,7 +789,7 @@ public class AgentsCommon extends TestCommon {
                 j = strVal.indexOf("=");
                 propName = strVal.substring(0, j);
                 propValue = strVal.substring(j + 1, strVal.length());
-                userToken.setProperty(propName, propValue);
+                usertoken.setProperty(propName, propValue);
             }
         }
     }
@@ -690,5 +805,53 @@ public class AgentsCommon extends TestCommon {
         int idx = new Integer(((String)list.get(1)).
                 substring(iLen - 1, iLen)).intValue();
         return (idx);
+    }
+
+    /**
+     * Enables the dynamic referral to true at the top level org
+     * @param none
+     */
+    public void setDynamicRespAttribute(String strRealm, List dynRespList)
+    throws Exception {
+       try {
+           WebClient webClient = new WebClient();
+           consoleLogin(webClient, loginURL, adminUser, adminPassword);
+           HtmlPage page = fmadm.setServiceAttributes(webClient,
+                     strRealm, "iPlanetAMPolicyConfigService", dynRespList);
+           log(Level.FINEST, "setDynamicRespAttribute",
+                   page.getWebResponse().getContentAsString());
+       } catch (Exception e) {
+           log(Level.SEVERE, "setDynamicRespAttribute", e.getMessage());
+           e.printStackTrace();
+           throw e;
+       } finally {
+           consoleLogout(webClient, logoutURL);
+       }
+    }
+
+    /**
+     * Enables the dynamic referral to true at the top level org
+     * @param none
+     */
+    public void setDynamicRespAttributeUsingAPI(String strRealm,
+            List dynRespList)
+    throws Exception {
+       try {
+           admintoken = getToken(adminUser, adminPassword, basedn);
+           Set set = new HashSet();
+           for (int i = 0; i < dynRespList.size(); i++ ) {
+               set.add(dynRespList.get(i));
+           }
+           SMSCommon smsc = new SMSCommon(admintoken);
+           smsc.updateServiceAttribute("iPlanetAMPolicyConfigService",
+                    "sun-am-policy-dynamic-response-attributes", set,
+                    "Organization");
+       } catch (Exception e) {
+           log(Level.SEVERE, "setDynamicRespAttributeUsingAPI", e.getMessage());
+           e.printStackTrace();
+           throw e;
+       } finally {
+           destroyToken(admintoken);
+       }
     }
 }
