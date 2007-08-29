@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.35 2007-08-02 17:22:59 veiming Exp $
+ * $Id: AccessManager.java,v 1.36 2007-08-29 06:10:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -388,7 +388,7 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "modify-service-of-realm-succeed=Service, {0} under {1} is modified.",
+            "modify-service-of-realm-succeed={1} under {0} is modified.",
             "modify-service-of-realm-not-assigned=Service, {1} is not modified because it is not added to {0}."})
     private String set_service_attributes;
 
