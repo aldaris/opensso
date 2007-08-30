@@ -170,6 +170,25 @@
 		<servlet-class>com.iplanet.services.comm.client.PLLNotificationServlet</servlet-class>
 	</servlet>
 
+        <servlet>
+            <servlet-name>IdentityServices</servlet-name>
+            <display-name>IdentityServices</display-name>
+            <description>Web Service Endpoint - Identity Services</description>
+            <servlet-class>com.sun.identity.idsvcs.IdentityServicesServlet</servlet-class>
+        </servlet>
+        
+        <servlet>
+    	    <servlet-name>IdentityServicesHandler</servlet-name>
+            <display-name>IdentityServicesHandler</display-name>
+            <description>REST Endpoint - Identity Services</description>
+    	    <servlet-class>com.sun.identity.idsvcs.rest.IdentityServicesHandler</servlet-class>
+    	    <init-param>
+    		<param-name>provider</param-name>
+    		<param-value>com.sun.identity.idsvcs.opensso.IdentityServicesImpl</param-value>
+                <description>Default security provider</description>
+    	    </init-param>
+        </servlet>
+
         <!-- servlet declaration -->
 
 
@@ -287,6 +306,14 @@
 		<servlet-name>notificationservice</servlet-name>
 		<url-pattern>/notificationservice</url-pattern>
 	</servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>IdentityServices</servlet-name>
+            <url-pattern>/identityservices/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+    	    <servlet-name>IdentityServicesHandler</servlet-name>
+    	    <url-pattern>/identity/*</url-pattern>
+        </servlet-mapping>
 
         <!-- servlet mapping -->
 

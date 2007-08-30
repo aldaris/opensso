@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.49 2007-07-18 22:41:26 veiming Exp $
+   $Id: build.xml,v 1.50 2007-08-30 00:26:05 arviranga Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -69,6 +69,7 @@
     </target>
 
     <target name="build" depends="checkjar, preparebuild, sharedlib">
+        <antcall target="idsvcs" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
             destdir="${amserver.classes.dir}" source="1.4" target="1.4"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
@@ -139,6 +140,24 @@
                 <include name="*.dtd" />
               </fileset>
         </copy>
+    </target>
+    
+    <target name="idsvcs" unless="amserver.idsvcs.done">
+        <java classname="com.sun.xml.rpc.tools.wscompile.Main" fork="true">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${java.home}/../lib/tools.jar"/>
+            </classpath>
+            <arg value="-classpath" />
+            <arg value="${amserver.classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/saaj-api.jar" />
+            <arg value="-gen:server" />
+            <arg value="-d" />
+            <arg value="${amserver.classes.dir}" />
+            <arg value="${amserver.jaxrpc.xml.dir}/IdentityServicesConfig.xml" />
+        </java>
+
+        <property name="amserver.idsvcs.done" value="true" />
+        <concat destfile="${tracker}" append="true">amserver.idsvcs.done=true&#10;</concat>
     </target>
 
     <target name="jaxrpc" unless="amserver.jaxrpc.done">
@@ -253,12 +272,14 @@
             <arg value="${amserver.res.i18n.dir}"/>
             <arg value="com.sun.identity.cli.definition.AccessManager"/>
         </java>
+        
         <java classname="com.sun.identity.cli.tools.DefinitionStubCreator">
             <classpath refid="build.class.path"/>
             <arg value="com.sun.identity.cli.definition.AccessManager"/>
             <arg value="${amserver.src.dir}/com/sun/identity/cli/stubs/AccessManagerCLI.java"/>
             <arg value="com.sun.identity.cli.stubs"/>
         </java>
+
         <property name="amserver.preparecli.done" value="true" />
         <concat destfile="${tracker}" append="true">amserver.preparecli.done=true&#10;</concat>
     </target>

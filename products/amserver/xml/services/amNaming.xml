@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amNaming.xml,v 1.1 2006-08-29 07:52:31 veiming Exp $
+   $Id: amNaming.xml,v 1.2 2007-08-30 00:26:06 arviranga Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -127,6 +127,24 @@
                     </DefaultValues>
                 </AttributeSchema>
 
+                <AttributeSchema name="sun-naming-idsvcs-jaxws-url"
+                    type="single"
+                    syntax="url"
+                    i18nKey="a115">
+                    <DefaultValues>
+                        <Value>%protocol://%host:%port/@SERVER_URI@/security/</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                
+                <AttributeSchema name="sun-naming-idsvcs-rest-url"
+                    type="single"
+                    syntax="url"
+                    i18nKey="a116">
+                    <DefaultValues>
+                        <Value>%protocol://%host:%port/@SERVER_URI@/securityhandler/</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                
                 <AttributeSchema name="iplanet-am-naming-fsassertionmanager-url"
                     type="single"
                     syntax="url"

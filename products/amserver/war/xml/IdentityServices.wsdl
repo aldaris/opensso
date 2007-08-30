@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://opensso.idsvcs.identity.sun.com/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://opensso.idsvcs.identity.sun.com/" name="IdentityServices">
+    <types>
+        <xsd:schema xmlns:tns="http://opensso.idsvcs.identity.sun.com/"
+            xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0"
+            targetNamespace="http://opensso.idsvcs.identity.sun.com/">
+            
+            <xsd:element name="AccessDenied" type="tns:AccessDenied"></xsd:element>
+            
+            <xsd:element name="GeneralFailure" type="tns:GeneralFailure"></xsd:element>
+            
+            <xsd:element name="InvalidCredentials" type="tns:InvalidCredentials"></xsd:element>
+            
+            <xsd:element name="InvalidPassword" type="tns:InvalidPassword"></xsd:element>
+            
+            <xsd:element name="NeedMoreCredentials" type="tns:NeedMoreCredentials"></xsd:element>
+            
+            <xsd:element name="TokenExpired" type="tns:TokenExpired"></xsd:element>
+            
+            <xsd:element name="UserNotFound" type="tns:UserNotFound"></xsd:element>
+            
+            <xsd:element name="attributes" type="tns:attributes"></xsd:element>
+            
+            <xsd:element name="attributesResponse" type="tns:attributesResponse"></xsd:element>
+            
+            <xsd:element name="authenticate" type="tns:authenticate"></xsd:element>
+            
+            <xsd:element name="authenticateResponse" type="tns:authenticateResponse"></xsd:element>
+            
+            <xsd:element name="authorize" type="tns:authorize"></xsd:element>
+            
+            <xsd:element name="authorizeResponse" type="tns:authorizeResponse"></xsd:element>
+            
+            <xsd:element name="log" type="tns:log"></xsd:element>
+            
+            <xsd:element name="logResponse" type="tns:logResponse"></xsd:element>
+            
+            <xsd:complexType name="log">
+                <xsd:sequence>
+                    <xsd:element name="app" type="tns:token" minOccurs="0"></xsd:element>
+                    <xsd:element name="subject" type="tns:token" minOccurs="0"></xsd:element>
+                    <xsd:element name="logName" type="xsd:string" minOccurs="0"></xsd:element>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="token">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="logResponse">
+                <xsd:sequence></xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="AccessDenied">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="TokenExpired">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="GeneralFailure">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="attributes">
+                <xsd:sequence>
+                    <xsd:element name="attributeNames" type="xsd:string" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+                    <xsd:element name="subject" type="tns:token" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="attributesResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="tns:userDetails" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="userDetails">
+                <xsd:sequence>
+                    <xsd:element name="attributes" type="tns:attribute" nillable="true" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+                    <xsd:element name="roles" type="xsd:string" nillable="true" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+                    <xsd:element name="token" type="tns:token" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="attribute">
+                <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string" minOccurs="0"></xsd:element>
+                    <xsd:element name="values" type="xsd:string" nillable="true" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="authorize">
+                <xsd:sequence>
+                    <xsd:element name="uri" type="xsd:string" minOccurs="0"></xsd:element>
+                    <xsd:element name="action" type="xsd:string" minOccurs="0"></xsd:element>
+                    <xsd:element name="subject" type="tns:token" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="authorizeResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:boolean"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="NeedMoreCredentials">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="authenticate">
+                <xsd:sequence>
+                    <xsd:element name="username" type="xsd:string" minOccurs="0"></xsd:element>
+                    <xsd:element name="password" type="xsd:string" minOccurs="0"></xsd:element>
+                    <xsd:element name="uri" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="authenticateResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="tns:token" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="UserNotFound">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="InvalidPassword">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="InvalidCredentials">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="log">
+        <part name="parameters" element="tns:log"></part>
+    </message>
+    <message name="logResponse">
+        <part name="parameters" element="tns:logResponse"></part>
+    </message>
+    <message name="AccessDenied">
+        <part name="fault" element="tns:AccessDenied"></part>
+    </message>
+    <message name="TokenExpired">
+        <part name="fault" element="tns:TokenExpired"></part>
+    </message>
+    <message name="GeneralFailure">
+        <part name="fault" element="tns:GeneralFailure"></part>
+    </message>
+    <message name="attributes">
+        <part name="parameters" element="tns:attributes"></part>
+    </message>
+    <message name="attributesResponse">
+        <part name="parameters" element="tns:attributesResponse"></part>
+    </message>
+    <message name="authenticate">
+        <part name="parameters" element="tns:authenticate"></part>
+    </message>
+    <message name="authenticateResponse">
+        <part name="parameters" element="tns:authenticateResponse"></part>
+    </message>
+    <message name="UserNotFound">
+        <part name="fault" element="tns:UserNotFound"></part>
+    </message>
+    <message name="InvalidPassword">
+        <part name="fault" element="tns:InvalidPassword"></part>
+    </message>
+    <message name="NeedMoreCredentials">
+        <part name="fault" element="tns:NeedMoreCredentials"></part>
+    </message>
+    <message name="InvalidCredentials">
+        <part name="fault" element="tns:InvalidCredentials"></part>
+    </message>
+    <message name="authorize">
+        <part name="parameters" element="tns:authorize"></part>
+    </message>
+    <message name="authorizeResponse">
+        <part name="parameters" element="tns:authorizeResponse"></part>
+    </message>
+    <portType name="IdentityServicesImpl">
+        <operation name="log">
+            <input message="tns:log"></input>
+            <output message="tns:logResponse"></output>
+            <fault message="tns:AccessDenied" name="AccessDenied"></fault>
+            <fault message="tns:TokenExpired" name="TokenExpired"></fault>
+            <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+        </operation>
+        <operation name="attributes">
+            <input message="tns:attributes"></input>
+            <output message="tns:attributesResponse"></output>
+            <fault message="tns:TokenExpired" name="TokenExpired"></fault>
+            <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+        </operation>
+        <operation name="authenticate">
+            <input message="tns:authenticate"></input>
+            <output message="tns:authenticateResponse"></output>
+            <fault message="tns:UserNotFound" name="UserNotFound"></fault>
+            <fault message="tns:InvalidPassword" name="InvalidPassword"></fault>
+            <fault message="tns:NeedMoreCredentials" name="NeedMoreCredentials"></fault>
+            <fault message="tns:InvalidCredentials" name="InvalidCredentials"></fault>
+            <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+        </operation>
+        <operation name="authorize">
+            <input message="tns:authorize"></input>
+            <output message="tns:authorizeResponse"></output>
+            <fault message="tns:NeedMoreCredentials" name="NeedMoreCredentials"></fault>
+            <fault message="tns:TokenExpired" name="TokenExpired"></fault>
+            <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+        </operation>
+    </portType>
+    <binding name="IdentityServicesImplPortBinding" type="tns:IdentityServicesImpl">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
+        <operation name="log">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+            <fault name="AccessDenied">
+                <soap:fault name="AccessDenied" use="literal"></soap:fault>
+            </fault>
+            <fault name="TokenExpired">
+                <soap:fault name="TokenExpired" use="literal"></soap:fault>
+            </fault>
+            <fault name="GeneralFailure">
+                <soap:fault name="GeneralFailure" use="literal"></soap:fault>
+            </fault>
+        </operation>
+        <operation name="attributes">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+            <fault name="TokenExpired">
+                <soap:fault name="TokenExpired" use="literal"></soap:fault>
+            </fault>
+            <fault name="GeneralFailure">
+                <soap:fault name="GeneralFailure" use="literal"></soap:fault>
+            </fault>
+        </operation>
+        <operation name="authenticate">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+            <fault name="UserNotFound">
+                <soap:fault name="UserNotFound" use="literal"></soap:fault>
+            </fault>
+            <fault name="InvalidPassword">
+                <soap:fault name="InvalidPassword" use="literal"></soap:fault>
+            </fault>
+            <fault name="NeedMoreCredentials">
+                <soap:fault name="NeedMoreCredentials" use="literal"></soap:fault>
+            </fault>
+            <fault name="InvalidCredentials">
+                <soap:fault name="InvalidCredentials" use="literal"></soap:fault>
+            </fault>
+            <fault name="GeneralFailure">
+                <soap:fault name="GeneralFailure" use="literal"></soap:fault>
+            </fault>
+        </operation>
+        <operation name="authorize">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+            <fault name="NeedMoreCredentials">
+                <soap:fault name="NeedMoreCredentials" use="literal"></soap:fault>
+            </fault>
+            <fault name="TokenExpired">
+                <soap:fault name="TokenExpired" use="literal"></soap:fault>
+            </fault>
+            <fault name="GeneralFailure">
+                <soap:fault name="GeneralFailure" use="literal"></soap:fault>
+            </fault>
+        </operation>
+    </binding>
+    <service name="IdentityServicesImplService">
+        <port name="IdentityServicesImplPort" binding="tns:IdentityServicesImplPortBinding">
+            <soap:address location="REPLACE_WITH_ACTUAL_URL"></soap:address>
+        </port>
+    </service>
+</definitions>

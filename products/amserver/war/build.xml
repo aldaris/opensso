@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.24 2007-06-06 05:55:40 veiming Exp $
+   $Id: build.xml,v 1.25 2007-08-30 00:26:03 arviranga Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -128,6 +128,9 @@
             <zipfileset dir="${amserver.dtd.xml.dir}" prefix="WEB-INF" />
             <zipfileset dir="${amserver.classes.dir}/jaxrpc" prefix="WEB-INF/wsdl">
                 <include name="IdentityManagementServices.wsdl" />
+            </zipfileset>
+            <zipfileset dir="${amserver.warbase.dir}/xml" prefix="WEB-INF/wsdl">
+                <include name="IdentityServices.wsdl" />
             </zipfileset>
             <zipfileset dir="${war.xml.dir}/template/sms" prefix="WEB-INF/template/sms">
                 <include name="SunAMClientData.xml" />

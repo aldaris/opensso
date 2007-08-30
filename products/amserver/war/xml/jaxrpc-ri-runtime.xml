@@ -6,7 +6,7 @@
     implementation='com.sun.identity.sm.jaxrpc.SMSJAXRPCObjectImpl'
     tie='com.sun.identity.sm.jaxrpc.SMSObjectIF_Tie'
     model=''
-    wsdl=''
+    wsdl='/WEB-INF/wsdl/IdentityManagementServices.wsdl'
     service='IdentityManagementServices'
     port='SMSObjectIFPort'
     urlpattern='/jaxrpc/SMSObjectIF'/>
@@ -16,7 +16,7 @@
     implementation='com.iplanet.am.sdk.remote.DirectoryManagerImpl'
     tie='com.iplanet.am.sdk.remote.DirectoryManagerIF_Tie'
     model=''
-    wsdl=''
+    wsdl='/WEB-INF/wsdl/IdentityManagementServices.wsdl'
     service='IdentityManagementServices'
     port='DirectoryManagerIFPort'
     urlpattern='/jaxrpc/DirectoryManagerIF'/>
@@ -26,8 +26,18 @@
     implementation='com.sun.identity.entity.EntityObjectImpl'
     tie='com.sun.identity.entity.EntityObjectIF_Tie'
     model=''
-    wsdl=''
+    wsdl='/WEB-INF/wsdl/IdentityManagementServices.wsdl'
     service='IdentityManagementServices'
     port='EntityObjectIFPort'
     urlpattern='/jaxrpc/EntityObjectIF'/>
+   <endpoint
+        name='IdentityServices'
+        interface='com.sun.identity.idsvcs.IdentityServices'
+        implementation='com.sun.identity.idsvcs.opensso.IdentityServicesImpl'
+        tie='com.sun.identity.idsvcs.IdentityServicesImpl_Tie'
+        mode=''
+        wsdl='/WEB-INF/wsdl/IdentityServices.wsdl'
+        service='IdentityServices'
+        port='IdentityServicesPort'
+        urlpattern='/identityservices/IdentityServices'/>
 </endpoints>
