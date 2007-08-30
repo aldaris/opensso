@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.10 2007-08-30 07:03:00 mrudul_uchil Exp $
+$Id: README,v 1.11 2007-08-30 18:49:57 mrudul_uchil Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -236,7 +236,15 @@ under the db-4.2.52.NC/build_unix directory.
 Go to https://wsit.dev.java.net/
 Under "Downloads", click "Promoted Builds".
 Download the latest nightly build.
-Run 'java -jar jax-ws-latest-wsit-installer.jar' to install all required WSIT jars.
+Run 'java -jar jax-ws-latest-wsit-installer.jar' to 
+install / get all required WSIT jars as
+- webservices-rt.jar 
+- webservices-tools.jar 
+- webservices-api.jar 
+- webservices-extra.jar 
+- webservices-extra-api.jar
+Copy all these above mentioned jars to 
+the opensso/products/extlib directory in your workspace.
 
 %% 2.6 Obtaining testng-5.1-jdk15.jar
 
