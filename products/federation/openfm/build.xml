@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.25 2007-08-30 01:09:32 dillidorai Exp $
+   $Id: build.xml,v 1.26 2007-08-30 22:21:26 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -125,17 +125,17 @@
     <target name="nightly">
         <antcall target="war" />
         <antcall target="tools" />
-        <antcall target="zip" />
         <antcall target="unittest" />
         <antcall target="clientsdk" />
         <antcall target="clientsamples" />
         <antcall target="idpdiscovery" />
         <antcall target="doc" />
+        <antcall target="zip" />
         <filter token="DATE" value="${nightly.date}" />
         <copy file="${openfm.docs.dir}/nightly.html" tofile="${fm.dist.dir}/index.html" filtering="true" />
     </target>
 
-    <target name="zip" depends="war, tools">
+    <target name="zip" depends="war,clientsamples,tools">
         <ant antfile="${openfm.dir}/build-zip.xml" inheritRefs="true"/>
     </target>
     
