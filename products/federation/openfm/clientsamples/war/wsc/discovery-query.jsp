@@ -18,9 +18,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-query.jsp,v 1.3 2007-07-27 22:02:23 qcheng Exp $
+   $Id: discovery-query.jsp,v 1.1 2007-08-30 20:20:28 qcheng Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 

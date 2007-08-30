@@ -18,9 +18,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: id-sis-pp-modify.jsp,v 1.1 2006-10-30 23:17:42 qcheng Exp $
+   $Id: id-sis-pp-modify.jsp,v 1.1 2007-08-30 20:20:29 qcheng Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 <%@page import="

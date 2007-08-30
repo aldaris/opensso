@@ -22,7 +22,7 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: run-xacml-client-sample.sh,v 1.1 2007-08-30 08:08:03 dillidorai Exp $
+#$Id: run-xacml-client-sample.sh,v 1.2 2007-08-30 20:20:27 qcheng Exp $
 #Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #------------------------------------------------------------------------------
 #
@@ -78,5 +78,5 @@
 # At PDP host
 # fam/bin/famadm import-entity -u amadmin -f <password_file> -t xacml-pdp-cot -m xacmlPep-r.xml
 #
-java -classpath ../resources:../lib/famclientsdk.jar:../lib/javaee.jar:../lib/jaxb-libs.jar:../lib/jaxb-impl.jar:../lib/webservices-rt.jar:../classes samples.xacml.XACMLClientSample xacmlClientSample
+java -classpath ../resources:../lib/famclientsdk.jar:../lib/j2ee.jar:../lib/jaxb-libs.jar:../lib/jaxb-impl.jar:../lib/webservices-rt.jar:../classes samples.xacml.XACMLClientSample xacmlClientSample
 
