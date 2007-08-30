@@ -206,6 +206,10 @@ com/sun/identity/plugin/session/SessionException.class
 com/sun/identity/plugin/session/SessionListener.class
 com/sun/identity/plugin/session/SessionManager.class
 com/sun/identity/plugin/session/SessionProvider.class
+com/sun/identity/sae/api/FMCerts.class
+com/sun/identity/sae/api/SecureAttrs.class
+com/sun/identity/sae/api/SecureAttrs$Certs.class
+com/sun/identity/sae/api/SecureAttrs$DefaultCerts.class
 com/sun/identity/saml/assertion/Action.class
 com/sun/identity/saml/assertion/AdviceBase.class
 com/sun/identity/saml/assertion/Advice.class

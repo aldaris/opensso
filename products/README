@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.8 2007-08-29 21:19:23 exu Exp $
+$Id: README,v 1.9 2007-08-30 05:09:42 kevinserwin Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -36,6 +36,8 @@ Copyright 2006 Sun Microsystems Inc. All Rights Reserved
         %% 2.3 Obtaining ldapjdk.jar
         %% 2.4 Obtaining db.jar
         %% 2.5 Obtaining testng-5.1-jdk15.jar
+        %% 2.6 Obtaining mfwk_instrum_tk-2.0.jar
+        %% 2.7 Obtaining fmsae.dll
     %% 3. Building the workspace
         %% 3.1 build target
         %% 3.2 doc target
@@ -77,6 +79,7 @@ The libraries needed for compiling OpenSSO sources are:
    - TestNG version 5.1 : testng-5.1-jdk15.jar
    - JES Monitoring Framework 2.0 (temporarily until Proctor available):
          mfwk_instrum_tk-2.0.jar
+   - Secure Attribute Exchange API: fmsae.dll
 
 Once these libraries are available, they should be placed under the 
 "opensso/products/extlib" directory of your workspace. Any library placed 
@@ -232,13 +235,21 @@ under the db-4.2.52.NC/build_unix directory.
 Download testng-5.1.zip from http://testng.org/testng-5.1.zip; unzip it and 
 testng-5.1-jdk15.jar in the base directory.
 
-%% 2.5 Obtaining mfwk_instrum_tk-2.0.jar
+%% 2.6 Obtaining mfwk_instrum_tk-2.0.jar
 
 Go to https://proctor.dev.java.net.  Click on "Documents & files".
 Expand the "ctk" node.  Click on "deliveries (n)".  Click on the latest
 "CTK 1.0 m<x>" link to download the ctk-1.0-m<x>.zip file.  Save the
 zip file locally, unzip it, then get ctk/jars/mfwk_instrum_tk-2.0.jar, and
 copy it into the opensso/products/extlib directory in your workspace.
+
+%% 2.7 Obtaining fmsae.dll
+
+Download fam.zip from 
+http://download.java.net/general/opensso/nightly/openfm/latest/fam.zip
+Save the zip file locally, unzip it, then get fmsae.dll from 
+libraries/dll and copy it into the opensso/products/extlib directory
+in your workspace.
 
 
 %% 3. Building the workspace
