@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+                                                                                
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+                                                                                
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+                                                                                
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+                                                                                
+   $Id: famSTS.xml,v 1.1 2007-08-30 06:29:40 mrudul_uchil Exp $
+                                                                                
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE ServicesConfiguration
+    PUBLIC "=//iPlanet//Service Management Services (SMS) 1.0 DTD//EN"
+    "jar://com/sun/identity/sm/sms.dtd">
+
+<ServicesConfiguration>
+    <Service name="sunFAMSTSService" version="1.0">
+        <Schema 
+            serviceHierarchy=""
+            i18nFileName="famSTS"
+            revisionNumber="10"
+            i18nKey="sunSTS"
+            propertiesViewBeanURL="">
+            <Global>
+               <AttributeSchema name="stsIssuer"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a101">
+                   <DefaultValues>
+                       <Value>SunSTS</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               
+               <AttributeSchema name="stsEndPoint"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a102">
+                   <DefaultValues>
+                       <Value>@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@/@SERVER_URI@/sts</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               
+               <AttributeSchema name="stsEncryptIssuedKey"
+                   type="single"
+                   syntax="boolean"
+                   i18nKey="a103">
+                   <DefaultValues>
+                       <Value>true</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               
+               <AttributeSchema name="stsEncryptIssuedToken"
+                   type="single"
+                   syntax="boolean"
+                   i18nKey="a104">
+                   <DefaultValues>
+                       <Value>false</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               
+               <AttributeSchema name="stsLifetime"
+                   type="single"
+                   syntax="number"
+                   i18nKey="a105">
+                   <DefaultValues>
+                       <Value>36000</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               
+               <AttributeSchema name="stsTokenImplClass"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a106">
+                   <DefaultValues>
+                       <Value>com.sun.xml.ws.security.trust.impl.IssueSamlTokenContractImpl</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               
+               <AttributeSchema name="stsSPName"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a107">
+                   <DefaultValues>
+                       <Value>wsp</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+            </Global>
+        </Schema>
+    </Service>
+</ServicesConfiguration>

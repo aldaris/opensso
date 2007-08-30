@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.1 2007-08-28 00:20:06 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.2 2007-08-30 06:29:38 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,7 @@ public class TrustAuthorityClient {
      * @param pc provider configuration of the web services client.
      * @param ssoToken single sign-on token of the principal.
      * @return SecurityToken security token for the web services consumer.   
-     * @exception SecurityException if it's unable to retrieve security token.
+     * @exception FAMSTSException if it's unable to retrieve security token.
      */
     public SecurityToken getSecurityToken(
             ProviderConfig pc,            
@@ -102,12 +102,12 @@ public class TrustAuthorityClient {
      * @param pc provider configuration of the web services client.
      * @param ssoToken single sign-on token of the principal.     
      * @return SecurityToken security token for the web services consumer.   
-     * @exception SecurityException if it's unable to renew security token or
+     * @exception FAMSTSException if it's unable to renew security token or
      *            if the trust authority configuration is not of STS.
      */
     public SecurityToken renewIssuedToken(SecurityToken securityToken,
             ProviderConfig pc,            
-            SSOToken ssoToken) throws SecurityException {
+            SSOToken ssoToken) throws FAMSTSException {
         //TODO To be implemented
         return null;
         
@@ -119,12 +119,12 @@ public class TrustAuthorityClient {
      * @param securityToken security token that needs to be renewed.
      * @param pc provider configuration of the web services client.
      * @return true if succeed in cancelling the issued token.   
-     * @exception SecurityException if there is an exception in cancelling
+     * @exception FAMSTSException if there is an exception in cancelling
      *            issued security token or if the trust authority configuration
      *            is not of STS.     
      */
     public boolean cancelIssuedToken(SecurityToken securityToken,
-            ProviderConfig pc) throws SecurityException {
+            ProviderConfig pc) throws FAMSTSException {
        // TODO - To be implemented
         return false;
     }
