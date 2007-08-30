@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.25 2007-08-30 00:26:03 arviranga Exp $
+   $Id: build.xml,v 1.26 2007-08-30 20:19:47 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -64,6 +64,7 @@
             <lib dir="${extlib.dir}">
                 <exclude name="j2ee.jar"/>
                 <exclude name="db.jar"/>
+                <exclude name="testng-5.1-jdk15.jar"/>
             </lib>
             <lib dir="${lockhart.dir}/lib" />
             <lib dir="${javahelp.dir}/lib" />
