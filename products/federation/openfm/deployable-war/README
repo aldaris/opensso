@@ -18,10 +18,31 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.1 2007-08-17 22:22:33 kevinserwin Exp $
+   $Id: README,v 1.2 2007-08-30 06:41:19 kevinserwin Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 Federated Access Manager - Deployable War
+
+This directory contains the Federated Access Manager deployable war file
+(fam.war),  which contains all the Federated Access Manager components,
+and the text files (*.list) required to create specialized war files.  
+
+The following specialized war files are supported:
+
+Console Only (fam-console.list)
+Distributed Authentication (fam-distauth.list)
+No Console Server War (fam-noconsole.list)
+No Sample Server War (fam-nosample.list)
+
+In order to create a specialized war file
+
+1.Extract the Federated Access Manager server war
+% cd <server war staging area>
+% jar xvf fam.war
+
+2.War up the specialized war file using the specific Federated Access Manager
+specific file list
+% jar cvf fam-nosample.war @<war staging area>/deployable-war/fam-nosample.list
 
