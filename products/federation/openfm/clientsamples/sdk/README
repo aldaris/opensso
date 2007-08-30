@@ -1,0 +1,54 @@
+------------------------------------------------------------------------------
+README file for Federated Access Manager stand alone client sdk samples
+------------------------------------------------------------------------------
+The contents of this file are subject to the terms
+of the Common Development and Distribution License
+(the License). You may not use this file except in
+compliance with the License.
+
+You can obtain a copy of the License at
+https://opensso.dev.java.net/public/CDDLv1.0.html or
+opensso/legal/CDDLv1.0.txt
+See the License for the specific language governing
+permission and limitations under the License.
+
+When distributing Covered Code, include this CDDL
+Header Notice in each file and include the License file
+at opensso/legal/CDDLv1.0.txt.
+If applicable, add the following below the CDDL Header,
+with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+$Id: README,v 1.1 2007-08-30 08:07:43 dillidorai Exp $
+Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+------------------------------------------------------------------------------
+
+
+This README file provides brief instructions on running Federated Access Manager
+client sdk samples  that would run in a stand alone JVM, outside of any
+container.
+
+1. Unzip the fam-client.zip. You would find a directory clientsamples/sdk. This
+directory has all that is required to try out Federated Access Manager client sdk samples.
+The directory is laid out as below.
+
+sdk
+    source (contains source files that require compilation)
+
+    scripts (contains scripts to compile and run samples)
+
+    resources (contains resources required to run the samples)
+
+    lib (contains jar files required to use the Federated Access Manager clientsdk)
+
+    classes (contains the classes that would result from compiling the source files)
+
+2. to compile the samples, run scripts/compile-samples.sh
+
+3. to run the sample, run scripts/run-<samplename>.sh
+Sample runtime may require, additional property files to be correctly set up
+under resoruces directory. This would be specifically mentioned in the
+comments included in corresponding scripts/run-<samplename>.sh
+
+
