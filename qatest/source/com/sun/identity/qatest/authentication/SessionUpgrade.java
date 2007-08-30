@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUpgrade.java,v 1.1 2007-08-25 02:21:23 sridharev Exp $
+ * $Id: SessionUpgrade.java,v 1.2 2007-08-30 17:56:19 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -305,7 +305,6 @@ public class SessionUpgrade extends TestCommon {
         } catch(Exception e) {
             log(Level.SEVERE, "createUsers", e.getMessage());
             e.printStackTrace();
-            throw e;
         }
     }
     
@@ -334,8 +333,6 @@ public class SessionUpgrade extends TestCommon {
         } catch(Exception e) {
             log(Level.SEVERE, "createModule", e.getMessage());
             e.printStackTrace();
-            throw e;
         }
     }
 }
-        
