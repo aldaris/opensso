@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.23 2007-08-28 09:19:12 veiming Exp $
+   $Id: build-war.xml,v 1.24 2007-08-30 00:28:21 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,7 +44,7 @@
 
     <target name="war" depends="preparebuild">
         <delete dir="${war.package.dir}" />
-        <unjar src="${openfm.extlib.dir}/opensso.war" dest="${war.package.dir}" />
+        <unjar src="${openfm.extlib.dir}/opensso_server_samples.war" dest="${war.package.dir}" />
         <delete dir="META-INF" />
 
         <mkdir dir="${war.package.dir}/WEB-INF/template/openfm"/>
@@ -330,6 +330,14 @@
 
         <mkdir dir="${war.packageweb.dir}" />
         <move file="${war.package.dir}/WEB-INF/web.xml" tofile="${war.packageweb.dir}/web.xml" />
+
+        <!-- add federation server samples to the WAR -->
+        <mkdir dir="${war.package.dir}/samples" />
+        <copy todir="${war.package.dir}/samples">
+            <fileset dir="${openfm.samples.dir}/war"
+                 excludes="**/CVS" />
+        </copy>
+
         <war destfile="${fm.dist.dir}/fam.war" webxml="${war.packageweb.dir}/web.xml">
             <zipfileset dir="${war.package.dir}" />
         </war>

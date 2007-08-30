@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.23 2007-08-29 23:42:42 dillidorai Exp $
+   $Id: build.xml,v 1.24 2007-08-30 00:28:21 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -128,7 +128,6 @@
         <antcall target="zip" />
         <antcall target="unittest" />
         <antcall target="clientsdk" />
-        <antcall target="samples" />
         <antcall target="clientsamples" />
         <antcall target="idpdiscovery" />
         <antcall target="doc" />
@@ -182,10 +181,6 @@
             algorithm="SHA" fileext=".sha" />
     </target>
 
-    <target name="samples" depends="war">
-         <ant antfile="${openfm.samples.dir}/build.xml" inheritRefs="true"/>
-    </target>
-
     <target name="clientsdk" depends="build">
         <ant antfile="${openfm.clientsdkbase.dir}/build.xml" inheritRefs="true"/>
     </target>
@@ -228,7 +223,7 @@
         <mkdir dir="${openfm.built.apidocs.dir}"/>
     </target>
 
-    <target name="clean" depends="war-clean,tools-clean,samples-clean,unittest-clean,clientsdk-clean,clientsamples-clean">
+    <target name="clean" depends="war-clean,tools-clean,unittest-clean,clientsdk-clean,clientsamples-clean">
         <delete dir="${openfm.built.apidocs.dir}"/>
         <delete dir="${openfm.built.docs.dir}"/>
         <delete dir="${openfm.classes.dir}"/>
@@ -261,14 +256,9 @@
         <delete file="${openfm.extlib.dir}/opensso.jar"/>
         <delete file="${openfm.extlib.dir}/opensso-sharedlib.jar"/>
         <delete file="${openfm.extlib.dir}/opensso-test.jar"/>
-        <delete file="${openfm.extlib.dir}/opensso.war"/>
+        <delete file="${openfm.extlib.dir}/opensso_server_samples.war"/>
     </target>
   
-    <target name="samples-clean">
-        <ant antfile="${openfm.samples.dir}/build.xml" inheritRefs="true"
-            target="clean"/>
-    </target>
-
     <target name="clientsamples-clean">
         <ant antfile="${openfm.clientsamples.dir}/build.xml" inheritRefs="true"
             target="clean"/>
@@ -295,10 +285,9 @@
         <echo message=" build               : compiles the sources"/>
         <echo message=" nightly             : generates nightly build binaries"/>
         <echo message=" unittest            : generates unit test zip file"/>
-        <echo message=" samples             : generates server samples war file"/>
         <echo message=" clientsamples       : generates client samples war file"/>
         <echo message=" idpdiscovery        : generates IDP discovery service war file"/>
-        <echo message=" war                 : creates WAR for deployment"/>
+        <echo message=" war                 : creates WAR with server samples for deployment"/>
         <echo message=" tools               : creates tools zip"/>
         <echo message=" zip                 : creates zip file"/>
         <echo message=" clientsdk           : creates client SDK jar file"/>
@@ -306,7 +295,6 @@
         <echo message=" clean               : deletes the generated files"/>
         <echo message=" unittest-clean      : deletes the generated unit test resources"/>
         <echo message=" extlib-clean        : deletes the shared and amserver libraries under extlib "/>
-        <echo message=" samples-clean       : deletes the generated server samples resources"/>
         <echo message=" clientsamples-clean : deletes the generated client samples resources"/>
         <echo message=" clientsdk-clean     : deletes the generated client SDK jar file"/>
         <echo message=" usage               : displays this usage message"/>
