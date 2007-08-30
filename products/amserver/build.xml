@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.50 2007-08-30 00:26:05 arviranga Exp $
+   $Id: build.xml,v 1.51 2007-08-30 17:15:29 arviranga Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -143,6 +143,8 @@
     </target>
     
     <target name="idsvcs" unless="amserver.idsvcs.done">
+        <copy file="${amserver.warbase.dir}/xml/IdentityServices.wsdl"
+            tofile="IdentityServices.wsdl" />
         <java classname="com.sun.xml.rpc.tools.wscompile.Main" fork="true">
             <classpath refid="build.class.path"/>
             <classpath>
@@ -155,7 +157,7 @@
             <arg value="${amserver.classes.dir}" />
             <arg value="${amserver.jaxrpc.xml.dir}/IdentityServicesConfig.xml" />
         </java>
-
+        <delete file="IdentityServices.wsdl" />
         <property name="amserver.idsvcs.done" value="true" />
         <concat destfile="${tracker}" append="true">amserver.idsvcs.done=true&#10;</concat>
     </target>

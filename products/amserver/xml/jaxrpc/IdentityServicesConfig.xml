@@ -20,12 +20,12 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: IdentityServicesConfig.xml,v 1.1 2007-08-30 00:26:04 arviranga Exp $
+   $Id: IdentityServicesConfig.xml,v 1.2 2007-08-30 17:15:29 arviranga Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <configuration xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
-    <wsdl location="war/xml/IdentityServices.wsdl" 
+    <wsdl location="IdentityServices.wsdl" 
         packageName="com.sun.identity.idsvcs" />
 </configuration>
