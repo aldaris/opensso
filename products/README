@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.9 2007-08-30 05:09:42 kevinserwin Exp $
+$Id: README,v 1.10 2007-08-30 07:03:00 mrudul_uchil Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -35,9 +35,10 @@ Copyright 2006 Sun Microsystems Inc. All Rights Reserved
                xmlsec.jar, xalan.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
         %% 2.3 Obtaining ldapjdk.jar
         %% 2.4 Obtaining db.jar
-        %% 2.5 Obtaining testng-5.1-jdk15.jar
-        %% 2.6 Obtaining mfwk_instrum_tk-2.0.jar
-        %% 2.7 Obtaining fmsae.dll
+        %% 2.5 Obtaining WSIT jars
+        %% 2.6 Obtaining testng-5.1-jdk15.jar
+        %% 2.7 Obtaining mfwk_instrum_tk-2.0.jar
+        %% 2.8 Obtaining fmsae.dll
     %% 3. Building the workspace
         %% 3.1 build target
         %% 3.2 doc target
@@ -230,12 +231,19 @@ Software. Follow these steps to obtain the db.jar library:
 Once this process is complete, the db.jar library can be obtained from 
 under the db-4.2.52.NC/build_unix directory.
 
-%% 2.5 Obtaining testng-5.1-jdk15.jar
+%% 2.5 Obtaining WSIT jars
+
+Go to https://wsit.dev.java.net/
+Under "Downloads", click "Promoted Builds".
+Download the latest nightly build.
+Run 'java -jar jax-ws-latest-wsit-installer.jar' to install all required WSIT jars.
+
+%% 2.6 Obtaining testng-5.1-jdk15.jar
 
 Download testng-5.1.zip from http://testng.org/testng-5.1.zip; unzip it and 
 testng-5.1-jdk15.jar in the base directory.
 
-%% 2.6 Obtaining mfwk_instrum_tk-2.0.jar
+%% 2.7 Obtaining mfwk_instrum_tk-2.0.jar
 
 Go to https://proctor.dev.java.net.  Click on "Documents & files".
 Expand the "ctk" node.  Click on "deliveries (n)".  Click on the latest
@@ -243,7 +251,7 @@ Expand the "ctk" node.  Click on "deliveries (n)".  Click on the latest
 zip file locally, unzip it, then get ctk/jars/mfwk_instrum_tk-2.0.jar, and
 copy it into the opensso/products/extlib directory in your workspace.
 
-%% 2.7 Obtaining fmsae.dll
+%% 2.8 Obtaining fmsae.dll
 
 Download fam.zip from 
 http://download.java.net/general/opensso/nightly/openfm/latest/fam.zip
