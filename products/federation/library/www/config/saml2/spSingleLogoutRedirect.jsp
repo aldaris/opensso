@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutRedirect.jsp,v 1.5 2007-08-17 22:48:13 exu Exp $
+   $Id: spSingleLogoutRedirect.jsp,v 1.6 2007-08-31 22:41:22 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -132,11 +132,21 @@
             return;
         }
 
-        if (relayState == null) {
+        if (relayState != null && relayState.length() != 0) {
+            try {
+                 response.sendRedirect(relayState);
+            } catch (java.io.IOException ioe) {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(
+                    "Exception when redirecting to " +
+                    relayState, ioe);
+                }
+            }
+        } else {
             %>
             <jsp:forward page="/saml2/jsp/default.jsp?message=spSloSuccess" />
             <%
-        }
+        } 
     } else {
         String samlRequest = request.getParameter(SAML2Constants.SAML_REQUEST);
         if (samlRequest != null) {
