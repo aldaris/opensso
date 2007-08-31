@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2007-08-15 01:08:02 sean_brydon Exp $
+   $Id: build.xml,v 1.11 2007-08-31 18:10:51 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -101,9 +101,6 @@
             </fileset>
         </copy>
         <copy todir="${j2eeagents.basedir}/weblogic/v10/extlib" >
-            <fileset dir="${prd.nightly.dist.dir}/amserver/${nightly.date}">
-                <include name="amclientsdk.jar" />
-            </fileset>
             <fileset dir="${prd.nightly.dist.dir}/openfm/${nightly.date}">
                 <include name="famclientsdk.jar" />
             </fileset>

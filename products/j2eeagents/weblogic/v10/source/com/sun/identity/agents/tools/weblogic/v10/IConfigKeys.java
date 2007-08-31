@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigKeys.java,v 1.3 2007-08-21 06:30:16 sean_brydon Exp $
+ * $Id: IConfigKeys.java,v 1.4 2007-08-31 18:10:52 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -170,8 +170,8 @@ public interface IConfigKeys {
     /** Agent jar file **/
     public static final String STR_AGENT_JAR = "agent.jar";
     
-    /** amclientsdk jar file */
-    public static final String STR_AM_CLIENT_SDK_JAR = "amclientsdk.jar";
+    /** famclientsdk jar file */
+    public static final String STR_FAM_CLIENT_SDK_JAR = "famclientsdk.jar";
     
     /** JVM options */
     public static final String STR_LOG_CONFIG_FILE_OPTION_PREFIX =
