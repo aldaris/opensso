@@ -1,0 +1,204 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: README.glassfish,v 1.1 2007-08-31 06:06:41 mrudul_uchil Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+=================
+README.glassfish
+=================
+
+This README contains instructions on how to secure web services using FAM WSS plugins on SUN Application Server 9.1 (Glassfish).
+
+This document assumes that users have already done the following:
+
+1. Installed the SUN Application Server 9.1 that host the web services client (WSC) 
+   and web services provider (WSP). 
+2. Implemented the web services client and the web services provider.
+3. Set up the FAM server and profiles for the WSC and the WSP. If not, please 
+   refer to the README.common file for details on setting up FAM server and the
+   profiles of WSC and WSP.
+
+
+Follow the steps below to secure the web services using FAM WSS plugins.
+
+I. Federated Access Manager server
+
+Add the following as Java security permissions to the server.policy file of the Application Server.
+
+Each Application Server domain has its own standard J2SE policy file named server.policy. 
+It is located in the /ApplicationServer-install/domains/<domain-name>/config directory. 
+More information can be found in The server.policy File in Sun Java System Application Server 9 .1 Developer's Guide.
+
+// ADDITIONS FOR Federated Access Manager
+ grant codeBase "file:\${com.sun.aas.instanceRoot}/applications/j2ee-modules/amserver/-" {
+      permission java.net.SocketPermission "*", "connect,accept,resolve";
+      permission java.util.PropertyPermission "*", "read, write";
+      permission java.lang.RuntimePermission "modifyThreadGroup";
+      permission java.lang.RuntimePermission "setFactory";
+      permission java.lang.RuntimePermission "accessClassInPackage.*";
+      permission java.util.logging.LoggingPermission "control";
+      permission java.lang.RuntimePermission "shutdownHooks";
+      permission javax.security.auth.AuthPermission "insertProvider.Mozilla-JSS";
+      permission java.security.SecurityPermission "putProviderProperty.Mozilla-JSS";
+      permission javax.security.auth.AuthPermission "getLoginConfiguration";
+      permission javax.security.auth.AuthPermission "setLoginConfiguration";
+      permission javax.security.auth.AuthPermission "modifyPrincipals";
+      permission javax.security.auth.AuthPermission "createLoginContext.*";
+      permission java.security.SecurityPermission "insertProvider.Mozilla-JSS";
+      permission javax.security.auth.AuthPermission "putProviderProperty.Mozilla-JSS";
+      permission java.io.FilePermission "<<ALL FILES>>", "execute,delete";
+      permission java.util.PropertyPermission "java.util.logging.config.class", "write";
+      permission java.security.SecurityPermission "removeProvider.SUN";
+      permission java.security.SecurityPermission "insertProvider.SUN";
+      permission java.security.SecurityPermission "removeProvider.Mozilla-JSS";
+      permission javax.security.auth.AuthPermission "doAs";
+      permission java.util.PropertyPermission "java.security.krb5.realm", "write";
+      permission java.util.PropertyPermission "java.security.krb5.kdc", "write";
+      permission java.util.PropertyPermission "java.security.auth.login.config", "write";
+      permission java.util.PropertyPermission "user.language", "write";
+      permission javax.security.auth.kerberos.ServicePermission "*", "accept";
+      permission javax.net.ssl.SSLPermission "setHostnameVerifier";
+      permission java.security.SecurityPermission "putProviderProperty.IAIK";
+      permission java.security.SecurityPermission "removeProvider.IAIK";
+      permission java.security.SecurityPermission "insertProvider.IAIK";
+      
+   };
+   // END OF ADDITIONS FOR Federated Access Manager
+   
+
+II. SUN Application Server (Glassfish)
+
+Add the following web services security providers configurations to the domain.xml file as per Application Server guidelines.
+
+domain.xml is located in the /ApplicationServer-install/domains/<domain-name>/config directory and 
+contains most of the Application Server configuration information.
+
+
+The following provider code fragment needs to be added under the <message-security-config auth-layer="HttpServlet"> tag:
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMHttpAuthModule"
+provider-id="AMHttpProvider" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMHttpAuthModule"
+provider-id="AMAuthHttpProvider" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="wsc"/>
+</provider-config>
+
+
+The following provider code fragments need to be added under the <message-security-config auth-layer="SOAP"> tag:
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider-SAML-HolderOfKey" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="SAML-HolderOfKey"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider-SAML-SenderVouches" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="SAML-SenderVouches"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider-X509Token" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="X509Token"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider-LibertySAMLToken" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="LibertySAMLToken"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMClientAuthModule"
+provider-id="AMClientProvider" provider-type="client">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="wsc"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider-UserNameToken" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="UserNameToken"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider-UserNameToken-Plain" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="UserNameToken-Plain"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider-LibertyX509Token" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="LibertyX509Token"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider-LibertyBearerToken" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="LibertyBearerToken"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="wsp"/>
+</provider-config>
+
+<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
+provider-id="AMServerProvider-Anonymous" provider-type="server">
+<request-policy auth-source="content"/>
+<response-policy auth-source="content"/>
+<property name="providername" value="Anonymous"/>
+</provider-config>
+
+
+III. Copy files
+
+1. Copy resources/AMClient.properties to /ApplicationServer-install/domains/<domain-name>/config
+2. Copy lib/famclientsdk.jar to /ApplicationServer-install/addons/accessmanager
+3. Copy lib/famwssproviders.jar to /ApplicationServer-install/addons/accessmanager
+
+
+IV. Restart server
+
+Restart the SUN Application Server (Glassfish).
+
+

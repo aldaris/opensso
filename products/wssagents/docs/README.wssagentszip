@@ -1,0 +1,39 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: README.wssagentszip,v 1.1 2007-08-31 06:06:42 mrudul_uchil Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+Federated Access Manager Web Services Security Agents / Providers - Zip file
+
+famwssproviders.zip
+             |____ lib/famclientsdk.jar (complete clientsdk jar)
+             |____ lib/famwssproviders.jar (complete WSSAgents jar, including glassfish, weblogic, websphere, proxy plugin code binaries)
+             |____ lib/famauthprovider.jar (for weblogic only) 
+             |____ resources/AMClient.properties (complete client properties)
+             |____ README (this file)
+             |____ README.common (common / top level README for common instructions, like modifying AMClient.properties, etc.)
+             |____ README.glassfish (instructions to install, deploy and configure glassfish plugins)
+             |____ README.weblogic (instructions to install, deploy and configure weblogic plugins)
+             |____ README.websphere (instructions to install, deploy and configure websphere plugins)
+             |____ README.proxy (instructions to install, create war, deploy and configure proxy web application)
+             |____ xml/web.xml (for proxy only)

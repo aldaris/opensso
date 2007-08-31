@@ -1,0 +1,113 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: README.common,v 1.1 2007-08-31 06:06:41 mrudul_uchil Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+===============
+README.common
+===============
+
+This README contains instructions on how to setup the common environment for Securing Web Services.
+
+This document assumes that users have already done the following:
+
+1. Installed and configured the Federated Access Manager server. 
+
+
+Follow the steps below to setup the common environment for Securing Web Services.
+
+I. Modify resources/AMClient.properties as follows:
+
+JAVA_HOME=/usr/java
+
+# FAM Server Information
+# Protocol can be either http or https
+SERVER_PROTOCOL=amserver_protocol
+SERVER_HOSTNAME=amserver_host
+SERVER_PORT=amserver_port
+
+# Application username and password
+APPLICATION_USERNAME=amadmin
+APPLICATION_PASSWORD=<amadmin password>
+
+NAMING_URL=amserver_protocol://amserver_host:amserver_port/amserver/namingservice
+
+# Debug information
+DEBUG_LEVEL=error
+DEBUG_DIR=/tmp/amclient
+
+# Cookie information
+AM_COOKIE_NAME=iPlanetDirectoryPro
+
+# SAML xml signature keystore file, keystore password file,
+# key password file and Liberty trusted CA aliases.
+# path_to_file should be replaced by the appropriate value as below:
+# /javaee.home/addons/accessmanager for installations of Java Application Platform SDK 
+# (when Download or Download with JDK is selected), and /javaee.home/addons/amserver 
+# for installations of Java Application Platform SDK or Java EE 5 SDK Update 1 
+# (when Download with Tools is selected), and NetBeans Enterprise Pack 5.5 (when Download is selected).
+SAML_KEYSTORE=/path_to_file/amclientkeystore.jks
+SAML_STOREPASS=/path_to_file/.storepass
+SAML_KEYAPSS=/path_to_file/.keypass
+LIBERTY_TRUSTEDCA_ALIASES=amserver:<amserver_host>
+
+# Login URL and Authentication service URL for Liberty use case
+LOGIN_URL=amserver_protocol://amserver_host:amserver_port/amserver/UI/Login
+LIBERTY_AUTHSVC_URL=amserver_protocol://amserver_host:amserver_port/amserver/Liberty/authnsvc
+
+NOTE : The directory specified as a value for DEBUG_DIR in AMConfig.properties should be different 
+than the one specified as the value for BASE_DIR in Installing Access Manager.
+
+II. Restart the Application Server.
+
+
+III. Configure the web services client and the web services provider for Web services security.
+
+1.  Login into the Federated Access Manager Console with user amadmin and <amadmin password>
+
+         http://localhost:8080/fam
+
+Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the Federated Access Manager Console.
+
+2.  Click on Subjects tab.
+
+3.  Click on Agent tab.
+
+4.  Open wscWSC agent by clicking on it.
+
+5.  In the configurations for "Security Mechanism" enable / select required Security Mechanism / token.
+
+6.  Save the wscWSC configuration.
+
+Next update the Web Services Provider (WSP) for the web services security
+
+8.  Click on "Back to Subject".
+
+9.  Click on "wspWSP" agent.
+
+10.  In the configurations for "Security Mechanism" enable / check the Security Mechanism / token selected in step 5.
+
+11.  Save the configuration.
+
+12. Logout the amadmin user.
+
