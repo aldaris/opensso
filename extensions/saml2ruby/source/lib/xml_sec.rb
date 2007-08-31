@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: xml_sec.rb,v 1.4 2007-08-30 03:14:03 todddd Exp $
+# $Id: xml_sec.rb,v 1.5 2007-08-31 00:22:32 todddd Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 # Portions Copyrighted 2007 Todd W Saxton.
@@ -68,19 +68,18 @@ module XMLSecurity
       XPath.each(sig_element, "//ds:Reference", {"ds"=>"http://www.w3.org/2000/09/xmldsig#"}) do | ref |          
         uri = ref.attributes.get_attribute("URI").value
         logger.info("URI = " + uri[1,uri.size]) if !logger.nil?
-        XPath.first(self, "//[@ID='#{uri[1,uri.size]}']") do | signed_element |
-          logger.info("signed element = " + signed_element.to_s) if !logger.nil?
-          canoner = XML::Util::XmlCanonicalizer.new(false, true)
-          canon_signed_element = canoner.canonicalize_element(signed_element)
-          logger.info("canon signed element = " + canon_signed_element) if !logger.nil?
-          signed_element_hash = Base64.encode64(Digest::SHA1.digest(canon_signed_element)).chomp
-          digest_value = XPath.first(ref, "//ds:DigestValue", {"ds"=>"http://www.w3.org/2000/09/xmldsig#"}).text
-          logger.info("signed_element_hash = " + signed_element_hash) if !logger.nil?
-          logger.info("digest_value_element = " + digest_value) if !logger.nil?
-          
-          valid_flag = signed_element_hash == digest_value 
-          return valid_flag if !valid_flag
-        end
+        hashed_element = XPath.first(self, "//[@ID='#{uri[1,uri.size]}']")
+        logger.info("hashed element = " + hashed_element.to_s) if !logger.nil?
+        canoner = XML::Util::XmlCanonicalizer.new(false, true)
+        canon_hashed_element = canoner.canonicalize_element(hashed_element)
+        logger.info("canon hashed element = " + canon_hashed_element) if !logger.nil?
+        hash = Base64.encode64(Digest::SHA1.digest(canon_hashed_element)).chomp
+        digest_value = XPath.first(ref, "//ds:DigestValue", {"ds"=>"http://www.w3.org/2000/09/xmldsig#"}).text
+        logger.info("hashed_element_hash = " + hash) if !logger.nil?
+        logger.info("digest_value_element = " + digest_value) if !logger.nil?
+        
+        valid_flag = hash == digest_value 
+        return valid_flag if !valid_flag
       end
  
       #
