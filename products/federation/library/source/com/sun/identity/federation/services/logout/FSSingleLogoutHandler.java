@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.6 2007-07-26 21:56:36 qcheng Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.7 2007-08-31 07:28:00 stanguy Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -896,7 +896,7 @@ public class FSSingleLogoutHandler {
                             "doHttpRedirect URL is " + redirectURL.toString());
                     }
                     imgString.append("<IMG SRC=\"")
-                        .append(redirectURL.toString()).append("\" </IMG>");
+                        .append(redirectURL.toString()).append("\" />");
                 }
                 return imgString.toString();
             }
