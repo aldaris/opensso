@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSImpl.java,v 1.2 2007-08-30 06:29:38 mrudul_uchil Exp $
+ * $Id: FAMSTSImpl.java,v 1.3 2007-09-01 00:21:43 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import javax.xml.ws.handler.MessageContext;
 
 @ServiceMode(value=Service.Mode.PAYLOAD)
 @javax.xml.ws.WebServiceProvider(targetNamespace="http://localhost:8080/openfm/SecurityTokenService/",
+                                 portName="ISecurityTokenService_Port",
                                  serviceName="SecurityTokenService",
                                  wsdlLocation="WEB-INF/wsdl/famsts.wsdl")
 @javax.xml.ws.BindingType(value=javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
