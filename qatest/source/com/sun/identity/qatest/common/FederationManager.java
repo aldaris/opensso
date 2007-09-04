@@ -640,6 +640,93 @@ public class FederationManager {
         return (HtmlPage)form.submit();
     }
 
+     /**
+     * add service attribute values in a realm.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param realm Name of realm.
+     * @param servicename Name of service.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
+     */
+    public HtmlPage addServiceAttributes(
+        WebClient webClient,
+        String realm,
+        String servicename,
+        List attributevalues
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "add-service-attributes");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (servicename != null) {
+            HtmlTextInput txtservicename = (HtmlTextInput)form.getInputByName("servicename");
+            txtservicename.setValueAttribute(servicename);
+        }
+
+        if (attributevalues != null) {
+            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
+            String[] fakeOptions = new String[attributevalues.size()];
+            int cnt = 0;
+            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributevalues.fakeSelectedAttribute(fakeOptions);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+    
+    /**
+     * add service attribute values in a realm.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param realm Name of realm.
+     * @param servicename Name of service.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
+     */
+    public HtmlPage removeServiceAttributes(
+        WebClient webClient,
+        String realm,
+        String servicename,
+        List attributevalues
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "remove-service-attributes");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (servicename != null) {
+            HtmlTextInput txtservicename = (HtmlTextInput)form.getInputByName("servicename");
+            txtservicename.setValueAttribute(servicename);
+        }
+
+        if (attributevalues != null) {
+            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
+            String[] fakeOptions = new String[attributevalues.size()];
+            int cnt = 0;
+            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributevalues.fakeSelectedAttribute(fakeOptions);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+    
+ 
+
+
     /**
      * Add attribute value to a realm.
      *
