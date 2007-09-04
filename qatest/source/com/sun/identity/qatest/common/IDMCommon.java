@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.1 2007-08-17 22:39:30 bt199000 Exp $
+ * $Id: IDMCommon.java,v 1.2 2007-09-04 21:46:12 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,13 +27,17 @@ package com.sun.identity.qatest.common;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdConstants;
+import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.sm.OrganizationConfigManager;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -48,6 +52,10 @@ public class IDMCommon extends TestCommon {
      */
     public IDMCommon() {
         super("IDMCommon");
+    }
+    
+    public IDMCommon(String componentName) {
+        super(componentName);
     }
     
     /**
@@ -126,6 +134,28 @@ public class IDMCommon extends TestCommon {
                 ssoToken, parentRealm);
         repo.deleteIdentities(getAMIdentity(
                 ssoToken, entityName, idType, parentRealm));
+    }
+
+    /**
+     * Deletes multiple identities based on specified ssotoken, realm, id type, 
+     * and a list of entity names
+     */
+    public void deleteIdentity(
+            SSOToken ssoToken,
+            String parentRealm,
+            List<IdType> idType,
+            List entityName)
+            throws Exception {
+        AMIdentityRepository repo = new AMIdentityRepository(
+                ssoToken, parentRealm);
+        Iterator iterNameSet = entityName.iterator();
+        Iterator iterTypeSet = idType.iterator();
+        Set amid = new HashSet<AMIdentity>();
+        while (iterNameSet.hasNext()) {
+            amid.add(getFirstAMIdentity(ssoToken, (String)iterNameSet.next(), 
+                    (IdType)iterTypeSet.next(), parentRealm));
+        }
+        repo.deleteIdentities(amid);
     }
     
     /**
@@ -207,11 +237,10 @@ public class IDMCommon extends TestCommon {
                     ssoToken, parentRealm);
             int idx = realm.lastIndexOf("/");
             orgMgr.createSubOrganization(realm.substring(idx+1), null);
-            
             assert (orgMgr.getSubOrganizationNames().contains(realm));
         }
     }
-    
+
     /**
      * Deletes a realm
      */
@@ -258,14 +287,14 @@ public class IDMCommon extends TestCommon {
         entering("searchRealms", null);
         Set realmNames = searchIdentities(ssotoken, pattern, IdType.REALM);
         exiting("searchRealms");
-        return realmNames;   
+        return realmNames;
     }
     
     /**
      * This method searches and retrieves a list of identity
      * @param ssotoken SSO token object
      * @param pattern realm name or pattern
-     * @type  identity type
+     * @type  identity type - user, role, filtered role, group, agent
      * @return a set of identity name
      */
     public Set searchIdentities(SSOToken ssotoken, String pattern, IdType type)
@@ -274,7 +303,7 @@ public class IDMCommon extends TestCommon {
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssotoken, realm);
         IdSearchControl searchControl = new IdSearchControl();
-        IdSearchResults results = repo.searchIdentities(type, pattern, 
+        IdSearchResults results = repo.searchIdentities(type, pattern,
                 searchControl);
         log(Level.FINE, "searchIdentities", "Searching for " + type.getName() +
                 " " + pattern + "...");
@@ -294,5 +323,63 @@ public class IDMCommon extends TestCommon {
         }
         exiting("searchIdentities");
         return idNames;
+    }
+    
+    /**
+     * This method retrieves the configuration key and values by the prefix 
+     * string and store them in a map.
+     * @param prefixName key prefix string
+     * @param cfgFileName properties config file name
+     * @return map of configuration
+     */
+    public Map getDataFromCfgFile(String prefixName, String cfgFileName)
+    throws Exception {
+        Map cfgMapTemp = new HashMap();
+        Map cfgMapNew = new HashMap();
+        cfgMapTemp = getMapFromResourceBundle(cfgFileName);
+        Set keys = cfgMapTemp.keySet();
+        Iterator keyIter = keys.iterator();
+        String key;
+        String value;
+        while (keyIter.hasNext()) {
+            key = keyIter.next().toString();
+            value = cfgMapTemp.get(key).toString();
+            if (key.substring(0, prefixName.length()).equals(prefixName))
+                cfgMapNew.put(key,value);
+        }
+        log(Level.FINEST, "getDataFromCfgFile", cfgMapNew.toString());
+        if (cfgMapNew.isEmpty()) {
+            log(Level.SEVERE, "getDataFromCfgFile",
+                    "Config data map is empty");
+            assert false;
+        }
+        return cfgMapNew;
+    }
+    
+    /**
+     * This method checks and compare IDM exception error message and error 
+     * code with expected error message and code. 
+     * @param IdRepoException idm exception
+     * @param eMessage expected error message
+     * @param eCode expected error code
+     * @return true if match
+     */
+    public boolean checkIDMExpectedErrorMessageCode(IdRepoException e, 
+            String eMessage, String eCode)
+    throws Exception {
+        boolean isMatch = false;
+        String errorCode = e.getErrorCode();
+        String errorMessage = e.getMessage();
+        log(Level.FINEST, "checkExpectedMessageErrorCode", "Error message: " +
+                e.getMessage() + " error code: " + e.getErrorCode());
+        log(Level.FINEST, "checkExpectedMessageErrorCode", 
+                "Expected message: " + eMessage + " expected error code: " +
+                eCode);
+        if (errorCode.equals(eCode) && errorMessage.indexOf(eMessage) >= 0) {
+            log(Level.FINE, "checkExpectedMessageErrorCode",
+                    "Error code and message match");
+            isMatch = true;
+        }  
+        return isMatch;
     }
 }
