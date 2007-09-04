@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationPlugin.java,v 1.5 2007-08-29 21:19:23 exu Exp $
+ * $Id: FederationPlugin.java,v 1.6 2007-09-04 19:09:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,29 +61,7 @@ public class FederationPlugin implements ConfiguratorPlugin {
      * @param baseDir Base directory of the configuration data store.
      */
     public void reinitConfiguratioFile(String baseDir) {
-        String fileName = baseDir + "/FederationConfig.properties";
-        FileInputStream fin = null;
-
-        try {
-            fin = new FileInputStream(fileName);
-            if (fin != null) {
-                Properties prop = new Properties();
-                prop.load(fin);
-                FedLibSystemProperties.initializeProperties(prop);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fin != null) {
-                try {
-                    fin.close();
-                } catch (IOException e) {
-                    // ignored
-                }
-            }
-        }
+        // do nothing
     }
 
     /**
