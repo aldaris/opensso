@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-policy-testng.xml,v 1.4 2007-08-30 04:40:40 arunav Exp $: 
+ $Id: ds_ds-policy-testng.xml,v 1.5 2007-09-04 06:22:55 arunav Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -607,7 +607,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
- <test name="PolicyOrgSubjectTest_P8_E1">
+    <test name="PolicyOrgSubjectTest_P8_E1">
         <parameter name="policyIdx" value="8"/>
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
@@ -623,7 +623,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-<test name="PolicyReferralPolicyTest_P4_E0 ">
+    <test name="PolicyReferralPolicyTest_P4_E0 ">
         <parameter name="policyIdx" value="4"/>
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
@@ -639,7 +639,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
- 
+    
     <test name="PolicyReferralPolicyTest_P4_E1 ">
         <parameter name="policyIdx" value="4"/>
         <parameter name="evaluationIdx" value="1"/>
@@ -752,7 +752,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-   <test name="PolicyMultiConditionTestSubrealm_P9_E1 ">
+    <test name="PolicyMultiConditionTestSubrealm_P9_E1 ">
         <parameter name="policyIdx" value="9"/>
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
@@ -800,7 +800,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-
+    
     <test name="PolicyMergeDecisionTestSubrealm_P10_E0 ">
         <parameter name="policyIdx" value="10"/>
         <parameter name="evaluationIdx" value="0"/>
@@ -817,7 +817,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-   <test name="PolicyMergeDecisionTestSubrealm_P10_E1 ">
+    <test name="PolicyMergeDecisionTestSubrealm_P10_E1 ">
         <parameter name="policyIdx" value="10"/>
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
@@ -865,7 +865,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-
+    
     <test name="PolicyallowDenyTestP5_E0 ">
         <parameter name="policyIdx" value="5"/>
         <parameter name="evaluationIdx" value="0"/>
@@ -882,8 +882,8 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-
-     <test name="PolicyallowDenyTest_P5_E1 ">
+    
+    <test name="PolicyallowDenyTest_P5_E1 ">
         <parameter name="policyIdx" value="5"/>
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
@@ -930,8 +930,8 @@
         <classes>
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
-   </test>
-   <test name="PolicyMultiConditionTestP9_E1 ">
+    </test>
+    <test name="PolicyMultiConditionTestP9_E1 ">
         <parameter name="policyIdx" value="9"/>
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
@@ -995,7 +995,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-   <test name="PolicyMergeDecisionTestP10_E1 ">
+    <test name="PolicyMergeDecisionTestP10_E1 ">
         <parameter name="policyIdx" value="10"/>
         <parameter name="evaluationIdx" value="1"/>
         <parameter name="setup" value="false"/>
@@ -1106,13 +1106,13 @@
         <classes>
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
-        </test>
-        <test name="PolicyLDAPSubjectsSubrealmTest_P0_E4">
+    </test>
+    <test name="PolicyLDAPSubjectsSubrealmTest_P0_E4">
         <parameter name="policyIdx" value="0"/>
         <parameter name="evaluationIdx" value="4"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
-       <parameter name="peAtOrg" value="realm4"/>
+        <parameter name="peAtOrg" value="realm4"/>
         <parameter name="dynamic" value="true"/>
         <groups>
             <run>
@@ -1128,7 +1128,7 @@
         <parameter name="evaluationIdx" value="5"/>
         <parameter name="setup" value="false"/>
         <parameter name="cleanup" value="false"/>
-         <parameter name="peAtOrg" value="realm4"/>
+        <parameter name="peAtOrg" value="realm4"/>
         <parameter name="dynamic" value="true"/>
         <groups>
             <run>
@@ -1187,7 +1187,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-     <test name="PolicyLDAPFilterSubrealmTest_P1_E0 ">
+    <test name="PolicyLDAPFilterSubrealmTest_P1_E0 ">
         <parameter name="policyIdx" value="1"/>
         <parameter name="evaluationIdx" value="0"/>
         <parameter name="setup" value="true"/>
@@ -1363,7 +1363,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-     <test name="PolicyAuthConditionSubrealmTest_P2_E3 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E3 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="3"/>
         <parameter name="setup" value="false"/>
@@ -1379,7 +1379,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-     <test name="PolicyAuthConditionSubrealmTest_P2_E4 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E4 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="4"/>
         <parameter name="setup" value="false"/>
@@ -1395,7 +1395,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-     <test name="PolicyAuthConditionSubrealmTest_P2_E5 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E5 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="5"/>
         <parameter name="setup" value="false"/>
@@ -1411,7 +1411,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-     <test name="PolicyAuthConditionSubrealmTest_P2_E6 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E6 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="6"/>
         <parameter name="setup" value="false"/>
@@ -1427,7 +1427,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-        <test name="PolicyAuthConditionSubrealmTest_P2_E7 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E7 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="7"/>
         <parameter name="setup" value="false"/>
@@ -1443,7 +1443,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-        <test name="PolicyAuthConditionSubrealmTest_P2_E8 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E8 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="8"/>
         <parameter name="setup" value="false"/>
@@ -1459,7 +1459,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-        <test name="PolicyAuthConditionSubrealmTest_P2_E9 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E9 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="9"/>
         <parameter name="setup" value="false"/>
@@ -1475,7 +1475,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-            <test name="PolicyAuthConditionSubrealmTest_P2_E10 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E10 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="10"/>
         <parameter name="setup" value="false"/>
@@ -1491,7 +1491,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-            <test name="PolicyAuthConditionSubrealmTest_P2_E11 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E11 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="11"/>
         <parameter name="setup" value="false"/>
@@ -1507,7 +1507,7 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
-            <test name="PolicyAuthConditionSubrealmTest_P2_E12 ">
+    <test name="PolicyAuthConditionSubrealmTest_P2_E12 ">
         <parameter name="policyIdx" value="2"/>
         <parameter name="evaluationIdx" value="12"/>
         <parameter name="setup" value="false"/>
@@ -1523,4 +1523,293 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test>
+    <test name="PolicyRespProviderTest_P0_E0">
+        <parameter name="policyIdx" value="0"/>
+        <parameter name="evaluationIdx" value="0"/>
+        <parameter name="setup" value="true"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTest_P0_E1">
+        <parameter name="policyIdx" value="0"/>
+        <parameter name="evaluationIdx" value="1"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTest_P1_E0">
+        <parameter name="policyIdx" value="1"/>
+        <parameter name="evaluationIdx" value="0"/>
+        <parameter name="setup" value="true"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTest_P1_E1">
+        <parameter name="policyIdx" value="1"/>
+        <parameter name="evaluationIdx" value="1"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTest_P1_E2">
+        <parameter name="policyIdx" value="1"/>
+        <parameter name="evaluationIdx" value="2"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTest_P1_E3">
+        <parameter name="policyIdx" value="1"/>
+        <parameter name="evaluationIdx" value="3"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTest_P2_E0">
+        <parameter name="policyIdx" value="2"/>
+        <parameter name="evaluationIdx" value="0"/>
+        <parameter name="setup" value="true"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTest_P2_E1">
+        <parameter name="policyIdx" value="2"/>
+        <parameter name="evaluationIdx" value="1"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTest_P2_E2">
+        <parameter name="policyIdx" value="2"/>
+        <parameter name="evaluationIdx" value="2"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="/"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTestSubrealm_P0_E0">
+        <parameter name="policyIdx" value="0"/>
+        <parameter name="evaluationIdx" value="0"/>
+        <parameter name="setup" value="true"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="realm1"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTestSubrealm_P0_E1">
+        <parameter name="policyIdx" value="0"/>
+        <parameter name="evaluationIdx" value="1"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="realm1"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTestSubrealm_P1_E0">
+        <parameter name="policyIdx" value="1"/>
+        <parameter name="evaluationIdx" value="0"/>
+        <parameter name="setup" value="true"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="realm2"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    
+    <test name="PolicyRespProviderTestSubrealm_P1_E1">
+        <parameter name="policyIdx" value="1"/>
+        <parameter name="evaluationIdx" value="1"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="realm2"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTestSubrealm_P1_E2">
+        <parameter name="policyIdx" value="1"/>
+        <parameter name="evaluationIdx" value="2"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="realm2"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTestSubrealm_P1_E3">
+        <parameter name="policyIdx" value="1"/>
+        <parameter name="evaluationIdx" value="3"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="realm2"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTestSubrealm_P2_E0">
+        <parameter name="policyIdx" value="2"/>
+        <parameter name="evaluationIdx" value="0"/>
+        <parameter name="setup" value="true"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="realm3"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTestSubrealm_P2_E1">
+        <parameter name="policyIdx" value="2"/>
+        <parameter name="evaluationIdx" value="1"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="false"/>
+        <parameter name="peAtOrg" value="realm3"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>
+    <test name="PolicyRespProviderTestSubrealm_P2_E2">
+        <parameter name="policyIdx" value="2"/>
+        <parameter name="evaluationIdx" value="2"/>
+        <parameter name="setup" value="false"/>
+        <parameter name="cleanup" value="true"/>
+        <parameter name="peAtOrg" value="realm3"/>
+        <parameter name="dynamic" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyRespTest"/>
+        </classes>
+    </test>    
    </suite>
