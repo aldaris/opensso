@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMCallbackHandler.java,v 1.1 2007-08-30 06:29:38 mrudul_uchil Exp $
+ * $Id: FAMCallbackHandler.java,v 1.2 2007-09-04 22:13:08 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,15 +70,23 @@ public class FAMCallbackHandler implements CallbackHandler {
                 Callback cb = callbacks[i];
                 if(cb instanceof EncryptionKeyCallback) {
                     EncryptionKeyCallback eb = (EncryptionKeyCallback)cb;
-                    EncryptionKeyCallback.AliasX509CertificateRequest x509Req = (EncryptionKeyCallback.AliasX509CertificateRequest)eb.getRequest();
+                    EncryptionKeyCallback.AliasX509CertificateRequest x509Req = 
+                        (EncryptionKeyCallback.AliasX509CertificateRequest)eb.
+                        getRequest();
                     String alias = x509Req.getAlias();
-                    X509Certificate cert = (X509Certificate) keystore.getX509Certificate(alias);
+                    X509Certificate cert = 
+                        (X509Certificate) keystore.getX509Certificate(alias);
                     x509Req.setX509Certificate(cert);
                 } else if(cb instanceof SignatureKeyCallback) {
                     SignatureKeyCallback sb = (SignatureKeyCallback)cb;
-                    SignatureKeyCallback.DefaultPrivKeyCertRequest privKey = (SignatureKeyCallback.DefaultPrivKeyCertRequest)sb.getRequest();
-                    privKey.setX509Certificate((X509Certificate) keystore.getX509Certificate(certAlias));
-                    privKey.setPrivateKey((PrivateKey) keystore.getPrivateKey(certAlias));
+                    SignatureKeyCallback.DefaultPrivKeyCertRequest privKey = 
+                        (SignatureKeyCallback.DefaultPrivKeyCertRequest)sb.
+                        getRequest();
+                    privKey.setX509Certificate(
+                        (X509Certificate) keystore.
+                        getX509Certificate(certAlias));
+                    privKey.setPrivateKey(
+                        (PrivateKey) keystore.getPrivateKey(certAlias));
                 }
             }
         } catch(Exception ex) {
