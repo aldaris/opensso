@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.common,v 1.1 2007-08-31 06:06:41 mrudul_uchil Exp $
+   $Id: README.common,v 1.2 2007-09-04 21:55:40 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -101,13 +101,13 @@ Note: If you have logged in as any other user, click Logout on the console page 
 
 Next update the Web Services Provider (WSP) for the web services security
 
-8.  Click on "Back to Subject".
+7.  Click on "Back to Subject".
 
-9.  Click on "wspWSP" agent.
+8.  Click on "wspWSP" agent.
 
-10.  In the configurations for "Security Mechanism" enable / check the Security Mechanism / token selected in step 5.
+9.  In the configurations for "Security Mechanism" enable / check the Security Mechanism / token selected in step 5.
 
-11.  Save the configuration.
+10.  Save the configuration.
 
-12. Logout the amadmin user.
+11. Logout the amadmin user.
 

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.glassfish,v 1.1 2007-08-31 06:06:41 mrudul_uchil Exp $
+   $Id: README.glassfish,v 1.2 2007-09-04 21:55:41 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -195,6 +195,8 @@ III. Copy files
 1. Copy resources/AMClient.properties to /ApplicationServer-install/domains/<domain-name>/config
 2. Copy lib/famclientsdk.jar to /ApplicationServer-install/addons/accessmanager
 3. Copy lib/famwssproviders.jar to /ApplicationServer-install/addons/accessmanager
+4. Put the /ApplicationServer-install/addons/accessmanager/famwssproviders.jar in 
+classpath suffix (global JVM settings) for Application server
 
 
 IV. Restart server

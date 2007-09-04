@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClientClassLoader.java,v 1.1 2007-06-08 06:39:01 mrudul_uchil Exp $
+ * $Id: FAMClientClassLoader.java,v 1.2 2007-09-04 21:55:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,14 +40,18 @@ public class FAMClientClassLoader {
     /** Constant for file separator */
     public static final String FILE_SEPARATOR = "/";
     
-    public static final String FILE_BEGIN = "file:///";
-
     /**
      * Returns a classloader to load fmclientsdk.jar
      */
     public static URLClassLoader getFAMClientClassLoader() {
         if (urlCls == null) {
             try {
+                String FILE_BEGIN = "file:";
+                String osName = System.getProperty("os.name");
+                if((osName != null) && 
+                    (osName.toLowerCase().startsWith("windows"))) {
+                    FILE_BEGIN = "file:/";
+                }
                 URL urls[] = new URL[3];
                 String installRoot = System.getProperty(
                     "com.sun.aas.installRoot");
@@ -55,9 +59,9 @@ public class FAMClientClassLoader {
                     "com.sun.aas.instanceRoot");
                 String clientSDKPath = FILE_BEGIN + installRoot +
                     FILE_SEPARATOR + "addons" + FILE_SEPARATOR +
-                    "accessmanager" + FILE_SEPARATOR + "fmclientsdk.jar";
+                    "accessmanager" + FILE_SEPARATOR + "famclientsdk.jar";
                 String configPath = FILE_BEGIN + instanceRoot +
-                    FILE_SEPARATOR + "config";
+                    FILE_SEPARATOR + "config" + FILE_SEPARATOR;
                 String xmlsecPath = FILE_BEGIN + installRoot +
                     FILE_SEPARATOR + "lib" + FILE_SEPARATOR +
                     "webservices-rt.jar";
