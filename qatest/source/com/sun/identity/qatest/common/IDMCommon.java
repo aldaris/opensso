@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.2 2007-09-04 21:46:12 bt199000 Exp $
+ * $Id: IDMCommon.java,v 1.3 2007-09-05 00:00:03 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -257,13 +257,22 @@ public class IDMCommon extends TestCommon {
     }
     
     /**
-     * Adds a User Identity to a Group or a Role Identity
+     * Adds a User Identity to a Group or a Role Identity on a root realm
      */
     public void addUserMember(SSOToken ssotoken, String userName,
             String memberName, IdType memberType)
             throws Exception {
-        Set setUser = getAMIdentity(ssotoken, userName, IdType.USER, realm);
-        Set setMember = getAMIdentity(ssotoken, memberName, memberType, realm);
+        addUserMember(ssotoken, userName, memberName, memberType, realm);
+    }
+    
+    /**
+     * Adds a User Identity to a Group or a Role Identity
+     */
+    public void addUserMember(SSOToken ssotoken, String userName,
+            String memberName, IdType memberType, String tRealm)
+            throws Exception {
+        Set setUser = getAMIdentity(ssotoken, userName, IdType.USER, tRealm);
+        Set setMember = getAMIdentity(ssotoken, memberName, memberType, tRealm);
         AMIdentity amidUser = null;
         AMIdentity amidMember = null;
         Iterator itr;
@@ -285,7 +294,8 @@ public class IDMCommon extends TestCommon {
     public Set searchRealms(SSOToken ssotoken, String pattern)
     throws Exception  {
         entering("searchRealms", null);
-        Set realmNames = searchIdentities(ssotoken, pattern, IdType.REALM);
+        Set realmNames = searchIdentities(ssotoken, pattern, IdType.REALM, 
+                realm);
         exiting("searchRealms");
         return realmNames;
     }
@@ -297,11 +307,12 @@ public class IDMCommon extends TestCommon {
      * @type  identity type - user, role, filtered role, group, agent
      * @return a set of identity name
      */
-    public Set searchIdentities(SSOToken ssotoken, String pattern, IdType type)
+    public Set searchIdentities(SSOToken ssotoken, String pattern, IdType type,
+            String realmName)
     throws Exception  {
         entering("searchIdentities", null);
         AMIdentityRepository repo = new AMIdentityRepository(
-                ssotoken, realm);
+                ssotoken, realmName);
         IdSearchControl searchControl = new IdSearchControl();
         IdSearchResults results = repo.searchIdentities(type, pattern,
                 searchControl);
