@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.19 2007-09-04 22:02:29 bt199000 Exp $
+ * $Id: TestCommon.java,v 1.20 2007-09-05 21:04:04 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -222,13 +222,13 @@ public class TestCommon implements TestConstants {
      */
     protected boolean validateToken(SSOToken ssotoken)
     throws Exception {
-        log(Level.INFO, "validateToken", "Inside validate token");
+        log(Level.FINE, "validateToken", "Inside validate token");
         SSOTokenManager stMgr = SSOTokenManager.getInstance();
         boolean bVal = stMgr.isValidToken(ssotoken);
         if (bVal)
-            log(Level.INFO, "validateToken", "Token is Valid");
+            log(Level.FINE, "validateToken", "Token is Valid");
         else
-            log(Level.INFO, "validateToken", "Token is Invalid");
+            log(Level.FINE, "validateToken", "Token is Invalid");
         return bVal;
     }
     
@@ -237,7 +237,7 @@ public class TestCommon implements TestConstants {
      */
     protected void destroyToken(SSOToken ssotoken)
     throws Exception {
-        log(Level.INFO, "destroyToken", "Inside destroy token");
+        log(Level.FINE, "destroyToken", "Inside destroy token");
         if (validateToken(ssotoken)) {
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
             stMgr.destroyToken(ssotoken);
@@ -292,6 +292,9 @@ public class TestCommon implements TestConstants {
                 webclient.isJavaScriptEnabled());
         log(Level.FINEST, "consoleLogin", "Redirect Enabled:" +
                 webclient.isRedirectEnabled());
+        if (amUrl.indexOf("/UI/Login") == -1)
+            amUrl = amUrl + "/UI/Login";
+        log(Level.FINEST, "consoleLogin", "URL: " + amUrl);
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
         log(Level.FINEST, "consoleLogin", page.getTitleText());
@@ -375,7 +378,7 @@ public class TestCommon implements TestConstants {
         
         WebClient webclient = new WebClient();
         String strURL = (String)map.get("serverurl") +
-                (String)map.get("serveruri") + "/UI/Login";
+                (String)map.get("serveruri") + "/configurator.jsp?type=custom";
         log(Level.FINEST, "configureProduct", "strURL:" + strURL);
         URL url = new URL(strURL);
         HtmlPage page = null;
@@ -383,21 +386,23 @@ public class TestCommon implements TestConstants {
             page = (HtmlPage)webclient.getPage(url);
         } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
         {
-            log(Level.INFO, "configureProduct", strURL + " cannot be reached.");
+            log(Level.FINE, "configureProduct", strURL + " cannot be reached.");
             return false;
         }
         
         if (getHtmlPageStringIndex(page, "Not Found") != -1) {
-            log(Level.INFO, "configureProduct",
+            log(Level.FINE, "configureProduct",
                     "Product Configuration was not" +
                     " successfull." + strURL + "was not found." +
                     " Please check if war is deployed properly.");
             exiting("configureProduct");
             return false;
         }
-        
-        if (getHtmlPageStringIndex(page, "configurator.jsp") != -1) {
-            log(Level.INFO, "configureProduct", "Inside configurator.");
+
+        if (getHtmlPageStringIndex(page, " This is a sample Access Manager" +
+                " web application") == -1) {
+            log(Level.FINE, "configureProduct", "Inside configurator.");
+
             HtmlForm form = (HtmlForm)page.getForms().get(0);
             
             HtmlTextInput txtServer =
@@ -432,7 +437,7 @@ public class TestCommon implements TestConstants {
 
             String strConfigStore = (String)map.get(
                     TestConstants.KEY_ATT_CONFIG_DATASTORE);
-            log(Level.INFO, "configureProduct", "Config store is:" +
+            log(Level.FINE, "configureProduct", "Config store is:" +
                     strConfigStore);
 
             HtmlRadioButtonInput rbDataStore =
@@ -440,17 +445,17 @@ public class TestCommon implements TestConstants {
             rbDataStore.setDefaultValue(strConfigStore);
 
             if (strConfigStore.equals("flatfile")) {
-                log(Level.INFO, "configureProduct",
+                log(Level.FINE, "configureProduct",
                         "Doing File System configuration.");
             } else {
-                log(Level.INFO, "configureProduct",
+                log(Level.FINE, "configureProduct",
                         "Doing directory configuration.");
                 if (strConfigStore.equals("dirServer")) {
-                    log(Level.INFO, "configureProduct",
+                    log(Level.FINE, "configureProduct",
                         "Doing Sun ONE Directory Server configuration.");
                 }
                 if (strConfigStore.equals("activeDir")) {
-                    log(Level.INFO, "configureProduct",
+                    log(Level.FINE, "configureProduct",
                         "Doing Active Directory configuration.");
                 }
                 
@@ -501,49 +506,50 @@ public class TestCommon implements TestConstants {
                 log(Level.FINEST, "configureProduct", "Returned Page:" +
                         page.asXml());
             } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
-                log(Level.SEVERE, "configureProduct", e.getMessage(), null);
-                e.printStackTrace();
-                throw e;
             }
-            strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
+            String strNewURL = (String)map.get("serverurl") +
+                    (String)map.get("serveruri") + "/UI/Login" + "?" +
+                    "IDToken1=" + adminUser + "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-            log(Level.INFO, "configureProduct", "strURL:" + strURL);
-            url = new URL(strURL);
+            log(Level.FINE, "configureProduct", "strNewURL:" + strNewURL);
+            url = new URL(strNewURL);
             page = (HtmlPage)webclient.getPage(url);
             if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
                     (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
-                log(Level.INFO, "configureProduct",
+                log(Level.FINE, "configureProduct",
                         "Product Configuration was" +
                         " not successfull. Configuration failed.");
-                strURL = (String)map.get("serverurl") +
-                        (String)map.get("serveruri") + "/UI/Logout";
-                consoleLogout(webclient, strURL);
                 exiting("configureProduct");
                 return false;
             } else {
-                log(Level.INFO, "configureProduct",
+                log(Level.FINE, "configureProduct",
                         "Product Configuration was" +
                         " successfull. New bits were successfully configured.");
+                strNewURL = (String)map.get("serverurl") +
+                        (String)map.get("serveruri") + "/UI/Logout";
+                consoleLogout(webclient, strNewURL);
                 exiting("configureProduct");
                 return true;
             }
         } else {
-            strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
-                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-            log(Level.INFO, "configureProduct", "url:" + strURL);
-            url = new URL(strURL);
+            String strNewURL = (String)map.get("serverurl") +
+                    (String)map.get("serveruri") + "/UI/Login" + "?" +
+                    "IDToken1=" + adminUser + "&IDToken2=" +
+                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);;
+            log(Level.FINE, "configureProduct", "strNewURL:" + strNewURL);
+            url = new URL(strNewURL);
             page = (HtmlPage)webclient.getPage(url);
             if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
-                log(Level.INFO, "configureProduct", "Product was already" +
+                log(Level.FINE, "configureProduct", "Product was already" +
                         " configured. Super admin login failed.");
-                strURL = (String)map.get("serverurl") +
-                        (String)map.get("serveruri") + "/UI/Logout";
-                consoleLogout(webclient, strURL);
                 exiting("configureProduct");
                 return false;
             } else {
-                log(Level.INFO, "configureProduct", "Product was already" +
+                log(Level.FINE, "configureProduct", "Product was already" +
                         " configured. Super admin login successfull.");
+                strNewURL = (String)map.get("serverurl") +
+                        (String)map.get("serveruri") + "/UI/Logout";
+                consoleLogout(webclient, strNewURL);
                 exiting("configureProduct");
                 return true;
             }
@@ -562,6 +568,9 @@ public class TestCommon implements TestConstants {
                 webclient.isJavaScriptEnabled());
         log(Level.FINEST, "consoleLogout", "Redirect Enabled:" +
                 webclient.isRedirectEnabled());
+        if (amUrl.indexOf("/UI/Logout") == -1)
+            amUrl = amUrl + "/UI/Logout";
+        log(Level.FINEST, "consoleLogout", "URL: " + amUrl);
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
         log(Level.FINEST, "consoleLogout", page.getTitleText());
