@@ -1,0 +1,124 @@
+README
+=======
+
+This README explains the steps for web services security using glassfish
+security agents. 
+
+Before you begin:
+================
+
+The web services security for JAX-WS based web services is achieved using
+JSR196 providers. Before you begin, follow the README.common and 
+README.glassfish from the install directory of the zip file to configure the 
+JSR 196 providers(also known as JMAC Providers) and necessary federation
+access manager runtime components. You can configure FAM JSR196 providers
+as the default security providers in Glassfish environment. 
+
+Steps for making FAM JSR 196 providers as default: 
+
+i) Go to Glassfish administration console
+
+ii) From left navigation frame, click on Configuration->Security->Message
+    Security-> SOAP
+ 
+iii) Select Default Provider as FAMServerProvider and Default Client
+    Provider as FAMClientProvider.
+
+iv) Save the configuration. 
+
+
+General Description: 
+====================
+
+The samples provided here are JAX-WS based web service and a web services
+client. The sample demonstrates a simple stock quote service where given
+a stock ticker symbol it obtains stock data. The secure communication
+between stock quote web services client is achieved using Federation
+Access Manager web services security agents. The web services security
+agents profile configuation is stored in backend repository information
+like regular FAM agents. 
+
+Deployment of samples:
+=====================
+
+To configure for web services security, essentially there are two steps
+besides configuring the providers as mentioned above (Before you begin
+section).
+ 
+
+I. Deploy the samples
+II. Create web services agent profiles:
+
+I. Deploy the samples:
+
+   The samples here are provided with convenient "ant" build script to
+   build and deploy the samples. This sample comes with two directories
+   StockQuoteClient and StockService which are for the web services client
+   and web service respectively. Also, it has a file name called as 
+   glassfish.properties. 
+
+   1. Open glassfish.properties and set the correct path for glassfish.home
+
+   2. Make sure that JAVA_HOME is set to JDK1.5 installation and similarly
+      make sure java and javac are in the PATH you are executing it.
+
+   3. cd StockQuoteClient and run "ant -f build.xml". This will build
+      and deploy the StockQuoteClient onto glassfish container.
+
+   4. cd StockQuoteService and run "ant -f build.xml". This will build
+      and deploy the StockService onto glassfish container.
+
+II. Create web services agent profiles
+
+   1. Login into Federation Access Manager Console using amadmin
+
+   2. Navigate to opensso->subjects->agent to create web services client
+      profile. The README.glassfish assumes "wsc" as the web services client
+      profile. 
+
+   3. Click on "New". 
+
+   4. Enter web services client id as "wsc" and enter "test" as the password. 
+      and choose Agent type as "Web Services Security Client"
+
+   5. When you save, this will redirect back to the web services agent page.
+   
+   6. Click on "wsc" to edit "wsc" web services agent.
+
+   7. Choose any of the security mechanism and any optional configuration.
+      Note: More details on this page can be found from the documentation.
+      Here, probably choose X509Token as the security mechanism and enable
+      isRequestSign Enabled flag.
+
+   8. Save the configuration.
+
+   9. Now create Web services provider profile.
+  
+   10. Click on "New".
+
+   11. Enter web services client id as "wsp" and enter "test" as the password.
+       and choose Agent type as "Web Services Security Client" 
+
+   12. When you save, this will redirect back to the web services agent page.
+
+   13. Click on "wsp" to edit "wsp" web services agent.
+
+   14. Select either all the security mechanisms or select X509Token 
+       authentication mechanism.
+
+   15. Enabled isRequest Signature Verified flag and finally save the provider
+       configuration.
+
+   16. Restart the container.
+
+
+How to run the sample:
+======================
+
+  1. Access the stock quote client page.
+
+     http://<host>:<port>/StockQuoteClient/index.jsp
+
+  2. Enter "JAVA" as stock ticker symbol and click "Get Quote".
+
+  3. If successful, this will display the stock values.
