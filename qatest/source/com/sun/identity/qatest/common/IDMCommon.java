@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.3 2007-09-05 00:00:03 bt199000 Exp $
+ * $Id: IDMCommon.java,v 1.4 2007-09-05 19:59:22 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -300,11 +300,24 @@ public class IDMCommon extends TestCommon {
         return realmNames;
     }
     
+     /**
+     * This method searches and retrieves a list of identity
+     * @param ssotoken SSO token object
+     * @param pattern realm name or pattern
+     * @param type identity type - user, role, filtered role, group, agent
+     * @return a set of identity name
+     */
+    public Set searchIdentities(SSOToken ssotoken, String pattern, IdType type)
+    throws Exception  {
+        return searchIdentities(ssotoken, pattern, type, realm);
+    }
+    
     /**
      * This method searches and retrieves a list of identity
      * @param ssotoken SSO token object
      * @param pattern realm name or pattern
-     * @type  identity type - user, role, filtered role, group, agent
+     * @param type identity type - user, role, filtered role, group, agent
+     * @param realmName - realm name
      * @return a set of identity name
      */
     public Set searchIdentities(SSOToken ssotoken, String pattern, IdType type,

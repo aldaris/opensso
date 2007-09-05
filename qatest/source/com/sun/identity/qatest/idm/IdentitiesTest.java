@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentitiesTest.java,v 1.1 2007-09-04 21:43:27 bt199000 Exp $
+ * $Id: IdentitiesTest.java,v 1.2 2007-09-05 19:59:39 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -203,8 +203,8 @@ public class IdentitiesTest extends IDMCommon {
         boolean opSuccess = false;
         log(Level.FINE, "search", "Searching identity " + idType +
                 " name or pattern " + idName + "...");
-        Set idResult =
-                searchIdentities(ssoToken, idName, getIdType(idType));
+        Set idResult = searchIdentities(ssoToken, idName, getIdType(idType), 
+                testRealm);
         List idNameList = getAttributeList(testExpectedResult,
                 IDMConstants.IDM_KEY_SEPARATE_CHARACTER);
         log(Level.FINEST, "search", "Search result " + idResult.toString() +
@@ -387,7 +387,8 @@ public class IdentitiesTest extends IDMCommon {
         log(Level.FINE, "addMembers", "Adding a user member name " +
                 memberName + " to " + idType + " " + idName + "...");
         // Add user member to role or group identity
-        addUserMember(ssoToken, memberName, idName, getIdType(idType));
+        addUserMember(ssoToken, memberName, idName, getIdType(idType), 
+                testRealm);
         // Verification step.  Check to make sure user is member of an identity
         AMIdentity memid = getFirstAMIdentity(ssoToken, memberName,
                 IdType.USER, testRealm);
@@ -436,7 +437,7 @@ public class IdentitiesTest extends IDMCommon {
     throws Exception {
         entering("doesIdentityExists", null);
         boolean idFound = false;
-        Set idRes = searchIdentities(ssoToken, idName, idType);
+        Set idRes = searchIdentities(ssoToken, idName, idType, testRealm);
         Iterator iter = idRes.iterator();
         AMIdentity amIdentity;
         while (iter.hasNext()) {
@@ -521,7 +522,8 @@ public class IdentitiesTest extends IDMCommon {
             putSetIntoMap("inetuserstatus", tempMap, "Active");
         } else if (siaType.equals("agent")) {
             putSetIntoMap("userpassword", tempMap, testPassword);
-            putSetIntoMap("sunIdentityServerDeviceStatus", tempMap, "Active");
+            putSetIntoMap("sunIdentityServerDeviceStatus", tempMap, "Active"); 
+            putSetIntoMap("inetuserstatus", tempMap, "Active");
         } else if (siaType.equals("filteredrole")) {
             putSetIntoMap("cn", tempMap, idName);
             putSetIntoMap("nsRoleFilter", tempMap,
