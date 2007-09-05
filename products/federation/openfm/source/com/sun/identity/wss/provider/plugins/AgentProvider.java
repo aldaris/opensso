@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.7 2007-08-28 00:20:05 mallas Exp $
+ * $Id: AgentProvider.java,v 1.8 2007-09-05 22:06:44 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,7 +120,7 @@ public class AgentProvider extends ProviderConfig {
             IdSearchControl control = new IdSearchControl();
             control.setReturnAttributes(agentConfigAttribute);
             IdSearchResults results = idRepo.searchIdentities(IdType.AGENT,
-                providerName + providerType, control);
+                providerName, control);
             Set agents = results.getSearchResults();
             if (!agents.isEmpty()) {
                 Map attrs = (Map) results.getResultAttributes();
@@ -373,7 +373,7 @@ public class AgentProvider extends ProviderConfig {
             if (profilePresent) {
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
-                    providerName + providerType, IdType.AGENT, "/", null);
+                    providerName, IdType.AGENT, "/", null);
                 debug.message("Attributes to be stored: " + attributes);
                 id.setAttributes(attributes);
                 id.store();
@@ -383,7 +383,7 @@ public class AgentProvider extends ProviderConfig {
                     idRepo = new AMIdentityRepository(token, "/");
                 }
                 idRepo.createIdentity(IdType.AGENT,
-                    providerName + providerType, attributes);
+                    providerName, attributes);
             }
         } catch (Exception e) {
             debug.error("AgentProvider.store: Unable to get idRepo", e);
@@ -403,7 +403,7 @@ public class AgentProvider extends ProviderConfig {
             }
             // Construct AMIdentity object to delete
             AMIdentity id = new AMIdentity(token,
-                providerName + providerType, IdType.AGENT, "/", null);
+                providerName, IdType.AGENT, "/", null);
             Set identities = new HashSet();
             identities.add(id);
             idRepo.deleteIdentities(identities);
