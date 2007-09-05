@@ -22,7 +22,7 @@ on Libraries node in Projects view can be used to add the JSTL 1.1 library.
     <h1>Stock Quote Client Sample</h1>
     
     <form name="GetQuote" action="GetQuote" method="GET">
-        Stock Symbol: <input type="text" name="symbol" value="SUNW" size="12" />
+        Stock Symbol: <input type="text" name="symbol" value="JAVA" size="12" />
         <p><input type="submit" value="GetQuote" name="quote" />
     </form>
     <p><hr>

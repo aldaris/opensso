@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StockService.java,v 1.1 2007-09-05 20:59:56 mallas Exp $
+ * $Id: StockService.java,v 1.2 2007-09-05 21:01:50 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -155,7 +155,7 @@ public class StockService implements com.sun.stockquote.StockQuotePortType {
         stockValues.put("marketCap", "N/A");
         stockValues.put("message", "Quote AUTO Generated");
         stockValues.put("time", getTime());
-        stockData.put("SUNW", stockValues);
+        stockData.put("JAVA", stockValues);
         
         stockValues = new HashMap();
         stockValues.put("realValue", "16.35");
