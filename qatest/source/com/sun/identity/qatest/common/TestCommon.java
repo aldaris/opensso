@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.20 2007-09-05 21:04:04 rmisra Exp $
+ * $Id: TestCommon.java,v 1.21 2007-09-05 22:10:28 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -250,9 +250,10 @@ public class TestCommon implements TestConstants {
      */
     protected String getBaseDir()
     throws Exception {
-        log(Level.FINE, "getBaseDir", "Inside getBaseDir");
+        entering("getBaseDir", null);
         String strCD =  System.getProperty("user.dir");
         log(Level.FINEST, "getBaseDir", "Current Directory:" + strCD);
+        exiting("getBaseDir");
         return (strCD);
     }
     
@@ -313,15 +314,18 @@ public class TestCommon implements TestConstants {
     /**
      * Creates a map object and adds all the configutaion properties to that.
      */
-    protected Map getConfigurationMap(String rb)
+    protected Map getConfigurationMap(String rb, String strProtocol, String strHost, String strPort, String strURI)
     throws Exception {
         entering("getConfigurationMap", null);
+
         ResourceBundle cfg = ResourceBundle.getBundle(rb);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("serverurl",protocol + ":" + "//" + host + ":" + port);
-        map.put("serveruri",uri);
+        map.put("serverurl", strProtocol + ":" + "//" + strHost + ":" + strPort);
+        map.put("serveruri", strURI);
         map.put(TestConstants.KEY_ATT_COOKIE_DOMAIN, cfg.getString(
                 TestConstants.KEY_ATT_COOKIE_DOMAIN));
+        map.put(TestConstants.KEY_ATT_AMADMIN_USER, cfg.getString(
+                TestConstants.KEY_ATT_AMADMIN_USER));
         map.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD, cfg.getString(
                 TestConstants.KEY_ATT_AMADMIN_PASSWORD));
         map.put(TestConstants.KEY_ATT_CONFIG_DIR, cfg.getString(
@@ -344,9 +348,18 @@ public class TestCommon implements TestConstants {
                 cfg.getString(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
         map.put(TestConstants.KEY_ATT_LOAD_UMS, cfg.getString(
                 TestConstants.KEY_ATT_LOAD_UMS));
+
         exiting("getConfigurationMap");
-        
+
         return map;
+    }
+
+    /**
+     * Creates a map object and adds all the configutaion properties to that.
+     */
+    protected Map getConfigurationMap(String rb)
+    throws Exception {
+        return (getConfigurationMap(rb, protocol, host, port, uri));
     }
     
     /**
@@ -509,7 +522,7 @@ public class TestCommon implements TestConstants {
             }
             String strNewURL = (String)map.get("serverurl") +
                     (String)map.get("serveruri") + "/UI/Login" + "?" +
-                    "IDToken1=" + adminUser + "&IDToken2=" +
+                    "IDToken1=" + map.get(TestConstants.KEY_ATT_AMADMIN_USER) + "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
             log(Level.FINE, "configureProduct", "strNewURL:" + strNewURL);
             url = new URL(strNewURL);
@@ -615,7 +628,7 @@ public class TestCommon implements TestConstants {
             String valueString = entry.getValue().toString();
             buff.append(entry.getKey())
             .append("=")
-            .append(valueString.substring(1, valueString.length()-1))
+            .append(valueString.substring(1, valueString.length()))
             .append("\n");
         }
         
@@ -819,5 +832,36 @@ public class TestCommon implements TestConstants {
             item = (String)keyIter.next();
             set1.add(item);
         }
+    }
+
+    /**
+     * Returns protocol, host, port and uri from a given url.
+     * Map contains value pairs in the form of:
+     * protocol, protocol value
+     * host, host value
+     * port, port value
+     * uri, uri value
+     */
+    protected Map getURLComponents(String strNamingURL)
+    throws Exception {
+        Map map = new HashMap();
+        int iFirstSep = strNamingURL.indexOf(":");
+        String strProtocol = strNamingURL.substring(0, iFirstSep);
+        map.put("protocol", strProtocol);
+
+        int iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
+        String strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
+        map.put("host", strHost);
+
+        int iThirdSep = strNamingURL.indexOf(fileseparator, iSecondSep + 1);
+        String strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
+        map.put("port", strPort);
+
+        int iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
+        String strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
+                iFourthSep);
+        map.put("uri", strURI);
+
+        return (map);
     }
 }

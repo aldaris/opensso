@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.4 2007-08-15 22:45:30 rmisra Exp $
+ $Id: opensso-common.xml,v 1.5 2007-09-05 22:09:34 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -201,7 +201,6 @@
 
         <java classname="com.sun.identity.qatest.setup.SetupProduct">
             <classpath refid="client.classpath" />
-            <arg value="${QATEST_HOME}" />
             <arg value="${SERVER_NAME1}" />
             <arg value="${SERVER_NAME2}" />
         </java>
@@ -248,7 +247,6 @@
 
         <java classname="com.sun.identity.qatest.setup.SetupProduct">
             <classpath refid="client.classpath" />
-            <arg value="${QATEST_HOME}" />
             <arg value="${SERVER_NAME1}" />
             <arg value="${SERVER_NAME2}" />
         </java>
