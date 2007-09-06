@@ -1,0 +1,5 @@
+dn: @SM_CONFIG_BASEDN@
+objectClass: domain
+objectClass: top
+dc: @SM_CONFIG_BASEDN_RDNV@
+
