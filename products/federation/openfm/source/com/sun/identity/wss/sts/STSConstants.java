@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.1 2007-08-30 06:29:38 mrudul_uchil Exp $
+ * $Id: STSConstants.java,v 1.2 2007-09-06 07:42:10 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,24 @@ package com.sun.identity.wss.sts;
  */
 public class STSConstants {
 
-     public static final String SAML_V11_TOKEN = 
+    /** WS-Trust namespace URI */
+    public static final String WST_NAMESPACE = 
+        "http://schemas.xmlsoap.org/ws/2005/02/trust";
+   
+    /**
+     * URI for KeyType
+     */
+    public static final String PUBLIC_KEY = WST_NAMESPACE+ "/PublicKey";
+    public static final String SYMMETRIC_KEY = WST_NAMESPACE + "/SymmetricKey";
+
+    /**
+     * URI for TokenType
+     */
+    public static final String SAML11_ASSERTION_TOKEN_TYPE = 
         "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1";
+
+    public static final String SAML20_ASSERTION_TOKEN_TYPE = 
+        "urn:oasis:names:tc:SAML:2.0:assertion";
 
 }
 

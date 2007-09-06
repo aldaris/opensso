@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.26 2007-09-06 07:04:58 kevinserwin Exp $
+   $Id: build-war.xml,v 1.27 2007-09-06 07:42:09 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -54,6 +54,10 @@
         
         <copy todir="${war.package.dir}/WEB-INF/wsdl">
             <fileset dir="${openfm.dir}/wsdl" includes="*"/>
+        </copy>
+        
+        <copy todir="${war.package.dir}/WEB-INF">
+            <fileset dir="${openfm.dir}/xml/wss" includes="sun-jaxws.xml"/>
         </copy>
         
         <copy todir="${war.package.dir}/WEB-INF/classes/META-INF/services">
@@ -246,6 +250,13 @@
         </java>
         
 	<!-- update web.xml with FAM STS info -->
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;listener&gt;.+?&lt;/listener&gt;" />
+            <arg value="${openfm.dir}/xml/wss/web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- listener declaration --&gt;" />
+        </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
             <arg value="&lt;servlet&gt;.+?&lt;/servlet&gt;" />

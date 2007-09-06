@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMTrustSPMetadata.java,v 1.1 2007-08-30 06:29:39 mrudul_uchil Exp $
+ * $Id: FAMTrustSPMetadata.java,v 1.2 2007-09-06 07:42:10 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,9 +32,11 @@ import com.sun.identity.wss.provider.ProviderException;
 import com.sun.identity.wss.sts.STSConstants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.wss.sts.STSUtils;
+import com.sun.identity.wss.security.SecurityMechanism;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 public class FAMTrustSPMetadata implements TrustSPMetadata {
     
@@ -53,7 +55,25 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
         if (config != null) {
             this.endpoint = config.getWSPEndpoint();
             this.certAlias = config.getKeyAlias();
-            this.tokenType = STSConstants.SAML_V11_TOKEN;
+            this.keyType = STSConstants.PUBLIC_KEY;
+
+            List list = config.getSecurityMechanisms();
+            if (list != null) {
+                if( (list.contains(SecurityMechanism.WSS_NULL_SAML_HK_URI)) ||
+                    (list.contains(SecurityMechanism.WSS_TLS_SAML_HK_URI)) ||
+                    (list.contains(
+                        SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI))) {
+
+                    this.tokenType = STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
+                } else if( (list.contains(
+                    SecurityMechanism.WSS_NULL_SAML2_HK_URI)) ||
+                    (list.contains(SecurityMechanism.WSS_TLS_SAML2_HK_URI)) ||
+                    (list.contains(
+                        SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI))) {
+
+                    this.tokenType = STSConstants.SAML20_ASSERTION_TOKEN_TYPE;
+                }
+            }
         }
     }
 
