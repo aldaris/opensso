@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.25 2007-09-04 22:13:07 mrudul_uchil Exp $
+   $Id: build-war.xml,v 1.26 2007-09-06 07:04:58 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -127,6 +127,10 @@
             <fileset dir="${openfm.dir}/www/console"/>
         </copy>
 
+        <copy todir="${war.package.dir}">
+            <fileset file="${openfm.dir}/deployable-war/index.html"/>
+        </copy>
+        
         <replaceregexp flags="s"
             file="${war.package.dir}/WEB-INF/classes/amPolicyConfig.xml"
             match="(iplanet-am-policy-selected-subjects.+?&lt;ChoiceValues&gt;)"
