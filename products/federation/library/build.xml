@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2007-08-29 23:39:04 dillidorai Exp $
+   $Id: build.xml,v 1.16 2007-09-06 16:53:04 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -47,6 +47,9 @@
         <pathelement location="${library.classes.dir}"/>
         <fileset dir="${extlib.dir}">
             <include name="**/*.jar"/>
+            <exclude name="webservices-api.jar"/>
+            <exclude name="webservices-rt.jar"/>
+            <exclude name="webservices-tools.jar"/>
         </fileset>
         <fileset dir="${library.extlib.dir}">
             <include name="**/*.jar"/>

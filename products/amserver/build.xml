@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.51 2007-08-30 17:15:29 arviranga Exp $
+   $Id: build.xml,v 1.52 2007-09-06 16:52:38 qcheng Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -151,7 +151,7 @@
                 <pathelement path="${java.home}/../lib/tools.jar"/>
             </classpath>
             <arg value="-classpath" />
-            <arg value="${amserver.classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/saaj-api.jar" />
+            <arg value="${amserver.classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/webservices-api.jar" />
             <arg value="-gen:server" />
             <arg value="-d" />
             <arg value="${amserver.classes.dir}" />
@@ -169,7 +169,7 @@
                 <pathelement path="${java.home}/../lib/tools.jar"/>
             </classpath>
             <arg value="-classpath" />
-            <arg value="${amserver.classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/saaj-api.jar" />
+            <arg value="${amserver.classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/webservices-api.jar" />
             <arg value="-gen:server" />
             <arg value="-d" />
             <arg value="${amserver.classes.dir}" />

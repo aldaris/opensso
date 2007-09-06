@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.27 2007-09-06 07:42:09 mrudul_uchil Exp $
+   $Id: build-war.xml,v 1.28 2007-09-06 16:55:28 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -69,7 +69,7 @@
         </copy>
 
         <copy todir="${war.package.dir}/WEB-INF/lib">
-            <fileset dir="${extlib.dir}" includes="FastInfoset.jar, jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, jaxb-xjc.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jsr173_api.jar, ldapjdk.jar, mail.jar, relaxngDatatype.jar, saaj-api.jar, saaj-impl.jar, xmlsec.jar, xsdlib.jar" />
+            <fileset dir="${extlib.dir}" includes="FastInfoset.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jsr173_api.jar, ldapjdk.jar, mail.jar, relaxngDatatype.jar, xmlsec.jar, xsdlib.jar" />
         </copy>
 
         <copy todir="${war.package.dir}/WEB-INF/classes">

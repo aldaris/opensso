@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.26 2007-08-30 22:21:26 qcheng Exp $
+   $Id: build.xml,v 1.27 2007-09-06 16:55:28 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -45,6 +45,12 @@
         <pathelement location="${sharedlib.classes.dir}"/>
         <fileset dir="${extlib.dir}">
             <include name="**/*.jar"/>
+            <exclude name="jaxb-api.jar"/>
+            <exclude name="jaxb-impl.jar"/>
+            <exclude name="jaxb-libs.jar"/>
+            <exclude name="jaxb-xjc.jar"/>
+            <exclude name="saaj-api.jar"/>
+            <exclude name="saaj-impl.jar"/>
         </fileset>
         <fileset dir="${openfm.extlib.dir}">
             <include name="**/*.jar"/>

@@ -198,10 +198,8 @@
 ./WEB-INF/lib/opensso-sharedlib.jar
 ./WEB-INF/lib/opensso.jar
 ./WEB-INF/lib/relaxngDatatype.jar
-./WEB-INF/lib/saaj-api.jar
-./WEB-INF/lib/saaj-impl.jar
-./WEB-INF/lib/testng-5.1-jdk15.jar
 ./WEB-INF/lib/webservices-rt.jar
+./WEB-INF/lib/webservices-api.jar
 ./WEB-INF/lib/webservices-tools.jar
 ./WEB-INF/lib/xalan.jar
 ./WEB-INF/lib/xmlsec.jar
