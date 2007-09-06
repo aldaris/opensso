@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurationDone.jsp,v 1.2 2007-08-28 00:38:20 qcheng Exp $
+   $Id: configurationDone.jsp,v 1.3 2007-09-06 18:23:22 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -108,10 +108,18 @@ FJwG83VfWrBO0sg9HBNqsqDFTzTwIJoxgApHaxVuLWPPaCrg3iizi9B6cHSMLaYP+pj+
     &lt;/UriNamedClaimTypesOffered&gt;
 &lt;/Federation&gt;
 </pre> 
+<br>
+Edit IDP extended metadata, set the signing certification alias, e.g.
+<pre>
+        &lt;Attribute name="signingCertAlias"&gt;
+            &lt;Value&gt;test&lt;/Value&gt;
+        &lt;/Attribute&gt;
+
+</pre>
         </li>
-        <li>Delete the exisiting IDP metadata using famadm delete-entity subcommand, and reload the new XML using famadm import-entity subcommand.</li>
+        <li>Delete the exisiting IDP metadata using famadm delete-entity subcommand, and reload the new XML files (both standard and extended) using famadm import-entity subcommand.</li>
         <li>Goto the SP machine, and export the remote IDP metadata using famadm command.</li>
-        <li>Delete the existing IDP metadata on SP machine, and load the new IDP metadata with the signing Certificate using famadm</li>
+        <li>Delete the existing IDP metadata on SP machine, and load the new IDP standard metadata with the signing Certificate using famadm</li>
     <ol>
 <%
     } else {

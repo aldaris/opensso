@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPSigninRequest.java,v 1.3 2007-08-28 00:38:00 qcheng Exp $
+ * $Id: IPSigninRequest.java,v 1.4 2007-09-06 18:23:22 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -368,8 +368,6 @@ public class IPSigninRequest extends WSFederationAction {
         } else {
             try {
                 String[] values = {idpMetaAlias};
-                WSFederationUtils.sessionProvider.setProperty(
-                    session, SAML2Constants.IDP_META_ALIAS, values);
 
                 // Add SP to SP list in session
                 String[] spList = WSFederationUtils.sessionProvider.

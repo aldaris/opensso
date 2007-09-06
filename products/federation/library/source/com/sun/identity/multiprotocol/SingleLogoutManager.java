@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SingleLogoutManager.java,v 1.4 2007-08-28 00:37:58 qcheng Exp $
+ * $Id: SingleLogoutManager.java,v 1.5 2007-09-06 18:23:06 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -400,11 +400,18 @@ public class SingleLogoutManager {
             relayState = getRelayStateURL(request, tmpRelayState);
             if (debug.messageEnabled()) {
                 debug.message("SingleLogoutManager.doIDPSingleLogout : save "
-                    + tmpRelayState);
+                    + tmpRelayState + ", new relayState=" + relayState);
             }
         } else {
             // update existing entry status
             updateStatus(tmpRelayState, currentStatus);
+            if (tmpRelayState.equals(relayState)) {
+                relayState = getRelayStateURL(request, tmpRelayState);
+            }
+            if (debug.messageEnabled()) {
+                debug.message("SingleLogoutManager.doIDPSingleLogout : read "
+                    + tmpRelayState + ", nu relayState=" + relayState);
+            }
         }
         List list = (List) protocolListMap.get(tmpRelayState);
         if ((list == null) || list.isEmpty()) {
@@ -429,6 +436,7 @@ public class SingleLogoutManager {
                     tmpRelayState)).booleanValue(); 
                 isIDPInitiated = ((Boolean) isIDPInitiatedMap.get(
                     tmpRelayState)).booleanValue(); 
+                protocol = (String) origProtocolMap.get(tmpRelayState);
                 realm = (String) realmMap.get(tmpRelayState);
                 idpEntityID = (String) idpEntityIDMap.get(tmpRelayState);
                 spEntityID = (String) spEntityIDMap.get(tmpRelayState);

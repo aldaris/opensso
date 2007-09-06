@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolRelayServlet.java,v 1.2 2007-07-26 21:57:18 qcheng Exp $
+ * $Id: MultiProtocolRelayServlet.java,v 1.3 2007-09-06 18:23:05 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,8 @@ public class MultiProtocolRelayServlet extends HttpServlet {
         int currentStatus = SingleLogoutManager.LOGOUT_FAILED_STATUS;
         // TODO : handle all possible logout status from different protocols
         // check logout success status for IDFF 
-        if ((status != null) && status.equals(IFSConstants.LOGOUT_SUCCESS)) {
+        // ws-federation does not have logout status, assume success
+        if ((status == null) || status.equals(IFSConstants.LOGOUT_SUCCESS)) {
             currentStatus = SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
         }
         String handler = uri.substring(index + 1);
