@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.21 2007-09-05 22:10:28 rmisra Exp $
+ * $Id: TestCommon.java,v 1.22 2007-09-06 21:03:34 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -314,13 +314,15 @@ public class TestCommon implements TestConstants {
     /**
      * Creates a map object and adds all the configutaion properties to that.
      */
-    protected Map getConfigurationMap(String rb, String strProtocol, String strHost, String strPort, String strURI)
+    protected Map getConfigurationMap(String rb, String strProtocol,
+            String strHost, String strPort, String strURI)
     throws Exception {
         entering("getConfigurationMap", null);
 
         ResourceBundle cfg = ResourceBundle.getBundle(rb);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("serverurl", strProtocol + ":" + "//" + strHost + ":" + strPort);
+        map.put("serverurl", strProtocol + ":" + "//" + strHost + ":" +
+                strPort);
         map.put("serveruri", strURI);
         map.put(TestConstants.KEY_ATT_COOKIE_DOMAIN, cfg.getString(
                 TestConstants.KEY_ATT_COOKIE_DOMAIN));
@@ -397,12 +399,13 @@ public class TestCommon implements TestConstants {
         HtmlPage page = null;
         try {
             page = (HtmlPage)webclient.getPage(url);
+        } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
         } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
         {
             log(Level.FINE, "configureProduct", strURL + " cannot be reached.");
             return false;
         }
-        
+
         if (getHtmlPageStringIndex(page, "Not Found") != -1) {
             log(Level.FINE, "configureProduct",
                     "Product Configuration was not" +
@@ -457,20 +460,12 @@ public class TestCommon implements TestConstants {
                     (HtmlRadioButtonInput)form.getInputByName("DATA_STORE");
             rbDataStore.setDefaultValue(strConfigStore);
 
-            if (strConfigStore.equals("flatfile")) {
+            if (strConfigStore.equals("embedded")) {
                 log(Level.FINE, "configureProduct",
-                        "Doing File System configuration.");
+                        "Doing Embedded System configuration.");
             } else {
                 log(Level.FINE, "configureProduct",
                         "Doing directory configuration.");
-                if (strConfigStore.equals("dirServer")) {
-                    log(Level.FINE, "configureProduct",
-                        "Doing Sun ONE Directory Server configuration.");
-                }
-                if (strConfigStore.equals("activeDir")) {
-                    log(Level.FINE, "configureProduct",
-                        "Doing Active Directory configuration.");
-                }
                 
                 HtmlTextInput txtDirServerName =
                         (HtmlTextInput)form.getInputByName("DIRECTORY_SERVER");
@@ -522,7 +517,8 @@ public class TestCommon implements TestConstants {
             }
             String strNewURL = (String)map.get("serverurl") +
                     (String)map.get("serveruri") + "/UI/Login" + "?" +
-                    "IDToken1=" + map.get(TestConstants.KEY_ATT_AMADMIN_USER) + "&IDToken2=" +
+                    "IDToken1=" + map.get(TestConstants.KEY_ATT_AMADMIN_USER) +
+                    "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
             log(Level.FINE, "configureProduct", "strNewURL:" + strNewURL);
             url = new URL(strNewURL);
