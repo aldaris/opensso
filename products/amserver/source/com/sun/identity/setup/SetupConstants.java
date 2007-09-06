@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.12 2007-07-18 22:40:40 veiming Exp $
+ * $Id: SetupConstants.java,v 1.13 2007-09-06 17:41:26 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,6 +94,11 @@ public interface SetupConstants {
     String ENCRYPTED_AD_ADMIN_PWD = "ENCADADMINPASSWD";
 
     /**
+     * SSHA512 Encrypted directory Admin password.
+     */
+    String SSHA512_LDAP_USERPWD = "SSHA512LDAPUSERPWD";
+
+    /**
      * Database name in directory server.
      */
     String DB_NAME = "DB_NAME";
@@ -139,6 +144,19 @@ public interface SetupConstants {
      * Sun Directory Server Schema File for user management data.
      */
     String SDK_PROPERTY_FILENAME = "sdkSchema";
+
+    /**
+     * Type of Data store used for storing the configuration files.
+     * Embedded
+     */
+
+    String SMS_EMBED_DATASTORE = "embedded";
+
+    /**
+     * Type of Data store used for storing the configuration files.
+     * Remote
+     */
+    String SMS_REMOTE_DATASTORE = "remote";
 
     /**
      * Type of Data store used for storing the configuration files.
@@ -357,6 +375,12 @@ public interface SetupConstants {
      * node.
      */
     String SM_CONFIG_BASEDN = "SM_CONFIG_BASEDN";
+
+    /**
+     * Variable for default organization base suffix RDN's value part. 
+     */
+
+    String SM_CONFIG_BASEDN_RDNV = "SM_CONFIG_BASEDN_RDNV";
 
     /**
      * Configuration Variable for service management root suffix.

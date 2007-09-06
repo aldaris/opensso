@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.21 2007-07-18 22:40:01 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.22 2007-09-06 17:41:26 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,6 +68,10 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 import java.security.AccessController;
 import java.security.SecureRandom;
 import javax.servlet.ServletConfig;
@@ -102,6 +106,25 @@ public class AMSetupServlet extends HttpServlet {
             servletCtx = config.getServletContext();
         }
         checkConfigProperties();
+
+        if (isConfiguredFlag) {
+            try {
+                // Check if embedded config is configured
+                String odsDir = getConfigDirectory()
+                           + "/" + SetupConstants.SMS_OPENDS_DATASTORE;
+                File odsDirFile = new File(odsDir);
+                // Start embedded opends
+                if (odsDirFile.exists() && !EmbeddedOpenDS.isStarted()) {
+                    EmbeddedOpenDS.startServer(odsDir);
+                    java.lang.Thread.sleep(5000);
+                } 
+            } catch (Exception ex) {
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                    "AMSetupServlet.createOpenDSDirs:EmbeddedDS", ex);
+                throw new ConfiguratorException(
+                    "Error starting embedded ds:ex="+ex);
+            }
+        }
         LoginLogoutMapping.setProductInitialized(isConfiguredFlag);
     }
 
@@ -190,6 +213,13 @@ public class AMSetupServlet extends HttpServlet {
         HttpServletRequest request, 
         HttpServletResponse response
     ) {
+        /*
+         * This logic needs refactoring later. setServiceConfigValues()
+         * attempts to check if directory is up and makes a call
+         * back to this class. The implementation'd
+         * be cleaner if classes&methods are named better and separated than 
+         * intertwined together.
+         */
         ServicesDefaultValues.setServiceConfigValues(request);
         Map map = ServicesDefaultValues.getDefaultValues();
 
@@ -200,16 +230,39 @@ public class AMSetupServlet extends HttpServlet {
             boolean isDITLoaded = ((String)map.get(
                 SetupConstants.DIT_LOADED)).equals("true");
                 
-            String dataStore = (String)map.get(
-                SetupConstants.CONFIG_VAR_DATA_STORE);
-            boolean isDSServer = dataStore.equals(
-                SetupConstants.SMS_DS_DATASTORE);
-            boolean isADServer = dataStore.equals(
-                SetupConstants.SMS_AD_DATASTORE);
-            boolean isOpenDS = dataStore.equals(
-                SetupConstants.SMS_OPENDS_DATASTORE);
+            String dataStore = (String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE);
+            boolean embedded = 
+                  dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE);
+            boolean isDSServer = false;
+            boolean isADServer = false;
+            if (embedded) {
+                isDSServer = true;
+            } else { // Keep old behavior for now.
+                isDSServer = dataStore.equals(SetupConstants.SMS_DS_DATASTORE);
+                isADServer = dataStore.equals(SetupConstants.SMS_AD_DATASTORE);
+            }
 
-            if ((isDSServer || isADServer || isOpenDS) && !isDITLoaded) {
+            if (embedded == true) {
+                // (i) install, confure and start an embedded instance.
+                // or
+                // (ii) install, configure, and replicate embedded instance
+                try {
+                    EmbeddedOpenDS.setup(map, servletCtx);
+                    // Now create the AMSetupDSConfig instance..Abor if it 	fails.
+                    AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
+                    if (!dsConfig.isDServerUp()) {
+                        Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                         "AMSetupServlet.processRequest:OpenDS conn failed.");
+                        return false;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    throw new ConfiguratorException(
+                        "Error setting up embedded ds:ex="+ex);
+                }
+            }
+
+            if ((isDSServer || isADServer ) && !isDITLoaded) {
                 boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
                     SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
                         "sdkSchema") : false;
@@ -230,7 +283,7 @@ public class AMSetupServlet extends HttpServlet {
                 regService.registers(adminSSOToken);
                 processDataRequests("/WEB-INF/template/sms");
             } else {
-                if (isDSServer || isADServer || isOpenDS) {
+                if (isDSServer || isADServer ) {
                     //Update the platform server list
                     updatePlatformServerList(serverURL, hostname);
                 }
@@ -620,14 +673,21 @@ public class AMSetupServlet extends HttpServlet {
             String absFile = (idx != -1) ? file.substring(idx+1) : file;
 
             if (absFile.equalsIgnoreCase(SetupConstants.AMCONFIG_PROPERTIES)) {
-                String dataStore = (String)map.get(
-                    SetupConstants.CONFIG_VAR_DATA_STORE);
-                boolean isDSServer = dataStore.equals(
-                    SetupConstants.SMS_DS_DATASTORE);
-                boolean isADServer = (isDSServer) ? false : dataStore.equals(
-                    SetupConstants.SMS_AD_DATASTORE);
 
-                if (isDSServer || isADServer) {
+                String dbOption = 
+                    (String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE);
+                boolean embedded = 
+                    dbOption.equals(SetupConstants.SMS_EMBED_DATASTORE);
+                boolean dbSunDS = false;
+                boolean dbMsAD  = false;
+                if (embedded) {
+                    dbSunDS = true;
+                } else { // Keep old behavior for now.
+                    dbSunDS = dbOption.equals(SetupConstants.SMS_DS_DATASTORE);
+                    dbMsAD  = dbOption.equals(SetupConstants.SMS_AD_DATASTORE);
+                }
+
+                if (dbSunDS || dbMsAD) {
                     int idx1 = sbuf.indexOf(
                         SetupConstants.CONFIG_VAR_SMS_DATASTORE_CLASS);
                     if (idx1 != -1) {
@@ -690,6 +750,78 @@ public class AMSetupServlet extends HttpServlet {
             SetupConstants.CONFIG_VAR_DEFAULT_SHARED_KEY;
     }
 
+    /**
+      * Returns a unused port on a given host.
+      *    @param hostname (eg localhost)
+      *    @param start: starting port number to check (eg 389).
+      *    @param incr : port number increments to check (eg 1000).
+      *    @return available port num if found. -1 of not found.
+      */
+    static public int getUnusedPort(String hostname, int start, int incr)
+    {
+        int defaultPort = -1;
+        for (int i=start;i<65500 && (defaultPort == -1);i+=incr) {
+            if (canUseAsPort(hostname, i))
+            {
+                defaultPort = i;
+            }
+        }
+        return defaultPort;
+    }
+    
+    /**
+      * Checks whether the given host:port is currenly under use.
+      *    @param hostname (eg localhost)
+      *    @param incr : port number.
+      *    @return  true if not in use, false if in use.
+      */
+    public static boolean canUseAsPort(String hostname, int port)
+    {
+        boolean canUseAsPort = false;
+        ServerSocket serverSocket = null;
+        try {
+            InetSocketAddress socketAddress = new InetSocketAddress(hostname, port);
+            serverSocket = new ServerSocket();
+            //if (!isWindows()) {
+              //serverSocket.setReuseAddress(true);
+            //}
+            serverSocket.bind(socketAddress);
+            canUseAsPort = true;
+     
+            serverSocket.close();
+       
+            Socket s = null;
+            try {
+              s = new Socket();
+              s.connect(socketAddress, 1000);
+              canUseAsPort = false;
+       
+            } catch (Throwable t) {
+            }
+            finally {
+              if (s != null) {
+                try {
+                  s.close();
+                } catch (Throwable t)
+                {
+                }
+              }
+            }
+     
+     
+        } catch (IOException ex) {
+          canUseAsPort = false;
+        } finally {
+            try {
+                if (serverSocket != null) {
+                    serverSocket.close();
+            }
+            } catch (Exception ex) { }
+        }
+     
+        return canUseAsPort;
+    }
+
 
     /**
      * Returns schema file names.
@@ -708,8 +840,17 @@ public class AMSetupServlet extends HttpServlet {
         ResourceBundle rb = ResourceBundle.getBundle(
             SetupConstants.SCHEMA_PROPERTY_FILENAME);
         String strFiles;
-        boolean isDSServer = dataStore.equals(SetupConstants.SMS_DS_DATASTORE);
-        boolean isADServer = dataStore.equals(SetupConstants.SMS_AD_DATASTORE);
+
+        boolean embedded = 
+              dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE);
+        boolean isDSServer = false;
+        boolean isADServer = false;
+        if (embedded) {
+            isDSServer = true;
+        } else { // Keep old behavior for now.
+            isDSServer = dataStore.equals(SetupConstants.SMS_DS_DATASTORE);
+            isADServer = dataStore.equals(SetupConstants.SMS_AD_DATASTORE);
+        }
 
         if (isDSServer) {
             if (sdkSchema) {

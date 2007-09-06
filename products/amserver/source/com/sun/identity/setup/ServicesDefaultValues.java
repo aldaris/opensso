@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.13 2007-07-18 22:40:40 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.14 2007-09-06 17:41:26 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,35 +117,45 @@ public class ServicesDefaultValues {
         setPlatformLocale();
         
         String dbOption = (String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE);
-        boolean dbSunDS = dbOption.equals(SetupConstants.SMS_DS_DATASTORE);
-        boolean dbMsAD = dbOption.equals(SetupConstants.SMS_AD_DATASTORE);
+        boolean embedded = 
+              dbOption.equals(SetupConstants.SMS_EMBED_DATASTORE);
+        boolean dbSunDS = false;
+        boolean dbMsAD  = false;
+        if (embedded) {
+            dbSunDS = true;
+        } else { // Keep old behavior for now.
+            dbSunDS = dbOption.equals(SetupConstants.SMS_DS_DATASTORE);
+            dbMsAD  = dbOption.equals(SetupConstants.SMS_AD_DATASTORE);
+        }
         
         if (dbSunDS || dbMsAD) {
             AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
             dsConfig.setDSValues();
 
             //try to connect to the DS with the supplied host/port
-            if (!dsConfig.isDServerUp()) {
-                dsConfig = null;
-                throw new ConfiguratorException(
-                    "configurator.dsconnnectfailure", null, locale);
-            }
-            if ((!DN.isDN((String) map.get(
-                SetupConstants.CONFIG_VAR_ROOT_SUFFIX))) ||
-                    (!dsConfig.connectDSwithDN())
-            ) {
-                dsConfig = null;
-                throw new ConfiguratorException("configurator.invalidsuffix",
-                    null, locale);
-            }
-            String dbName = dsConfig.getDBName();
-            if ((dbName != null) && (dbName.length() > 0)) {
-                map.put(SetupConstants.DB_NAME, dbName);
-            }
-            
-            if (dbSunDS) {
-                map.put(SetupConstants.DIT_LOADED, dsConfig.isDITLoaded());
-            }
+            if (embedded ==  false) {
+                if (!embedded && !dsConfig.isDServerUp()) {
+                    dsConfig = null;
+                    throw new ConfiguratorException(
+                        "configurator.dsconnnectfailure", null, locale);
+                }
+                if ((!DN.isDN((String) map.get(
+                    SetupConstants.CONFIG_VAR_ROOT_SUFFIX))) ||
+                        (!dsConfig.connectDSwithDN())
+                ) {
+                    dsConfig = null;
+                    throw new ConfiguratorException("configurator.invalidsuffix",
+                        null, locale);
+                }
+                String dbName = dsConfig.getDBName();
+                if ((dbName != null) && (dbName.length() > 0)) {
+                    map.put(SetupConstants.DB_NAME, dbName);
+                }
+                
+                if (dbSunDS) {
+                    map.put(SetupConstants.DIT_LOADED, dsConfig.isDITLoaded());
+                }
+            } 
         } else {
             map.put(SetupConstants.DATASTORE_NOTIFICATION, "true");
         }
@@ -343,21 +353,33 @@ public class ServicesDefaultValues {
             SetupConstants.CONFIG_VAR_ADMIN_PWD)).trim();
         String confirmAdminPwd = ((String)map.get(
             SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD)).trim();
-
         if (isPasswordValid(adminPwd, confirmAdminPwd, locale)) {
             SystemProperties.initializeProperties(
                 SetupConstants.ENC_PWD_PROPERTY, (((String) map.get(
                     SetupConstants.CONFIG_VAR_ENCRYPTION_KEY)).trim()));
             map.put(SetupConstants.HASH_ADMIN_PWD, (String)Hash.hash(adminPwd));
         }
-        String datastore = (String)map.get(
-            SetupConstants.CONFIG_VAR_DATA_STORE);
+        String dbOption = (String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE);
+        boolean embedded = 
+              dbOption.equals(SetupConstants.SMS_EMBED_DATASTORE);
+        boolean dbSunDS = false;
+        boolean dbMsAD  = false;
+        if (embedded) {
+            dbSunDS = true;
+        } else { // Keep old behavior for now.
+            dbSunDS = dbOption.equals(SetupConstants.SMS_DS_DATASTORE);
+            dbMsAD  = dbOption.equals(SetupConstants.SMS_AD_DATASTORE);
+        }
         
-        if (datastore.equals(SetupConstants.SMS_DS_DATASTORE) ||
-            datastore.equals(SetupConstants.SMS_AD_DATASTORE)
-        ) {
-            adminPwd = ((String)map.get(
+        if (dbSunDS || dbMsAD) {
+            String dsMgrPwd = ((String)map.get(
                 SetupConstants.CONFIG_VAR_DS_MGR_PWD)).trim();
+            if (!embedded || embedded && dsMgrPwd.length() != 0 ) {
+                // Quick install : if embedded make passwd same as admin passwd
+                adminPwd = dsMgrPwd ; 
+            } else {
+                map.put( SetupConstants.CONFIG_VAR_DS_MGR_PWD, adminPwd );
+            }
             if (adminPwd != null) {
                 map.put(SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPwd);
             }
@@ -365,10 +387,14 @@ public class ServicesDefaultValues {
         String encryptAdminPwd = Crypt.encrypt(adminPwd);
         String ldapUserPwd = ((String)map.get(
             SetupConstants.LDAP_USER_PWD)).trim();
+
         map.put(SetupConstants.ENCRYPTED_LDAP_USER_PWD, 
             (String)Crypt.encrypt(ldapUserPwd));
         map.put(SetupConstants.HASH_LDAP_USER_PWD, 
             (String)Hash.hash(ldapUserPwd));
+        map.put(SetupConstants.SSHA512_LDAP_USERPWD, 
+            (String)EmbeddedOpenDS.hash(adminPwd));
+
         map.put(SetupConstants.ENCRYPTED_ADMIN_PWD, encryptAdminPwd);
         map.put(SetupConstants.ENCRYPTED_AD_ADMIN_PWD, encryptAdminPwd);
         map.remove(SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD);

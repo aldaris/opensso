@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.7 2007-05-30 22:04:32 veiming Exp $
+ * $Id: AMSetupDSConfig.java,v 1.8 2007-09-06 17:41:25 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -199,6 +199,12 @@ public class AMSetupDSConfig {
                     map.put(SetupConstants.SM_ROOT_SUFFIX_HAT, 
                         replaceDNDelimiter(smescapedDN, "^"));
                 }
+                // Get naming rdn
+                String nstr = getRDNfromDN(
+                               (String) map.get(
+                                   SetupConstants.SM_CONFIG_BASEDN));
+                map.put(SetupConstants.SM_CONFIG_BASEDN_RDNV, nstr);
+
             }
         }
     }

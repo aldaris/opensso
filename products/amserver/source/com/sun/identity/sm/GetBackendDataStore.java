@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetBackendDataStore.java,v 1.2 2007-03-21 22:33:46 veiming Exp $
+ * $Id: GetBackendDataStore.java,v 1.3 2007-09-06 17:41:26 rajeevangal Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,16 +59,20 @@ public class GetBackendDataStore {
     
     
     private static boolean isSunDS(SSOToken token) {
-        String srchBaseDN = "cn=7-bit check,cn=plugins,cn=config";
-        String filter = "nsslapd-pluginVendor=Sun Microsystems, Inc.";
-        
-        try {
-            Set results = SMSEntry.search(token, srchBaseDN, filter);
-            return (results != null);
-        } catch (SMSException smse) {
-            //ignore
-        }
-        return false;
+        return true;
+        // The rest of the code is commentd for now - revisit when if
+        // ActiveDirectory support is planned.
+
+        //String srchBaseDN = "cn=7-bit check,cn=plugins,cn=config";
+        //String filter = "nsslapd-pluginVendor=Sun Microsystems, Inc.";
+
+        //try {
+            //Set results = SMSEntry.search(token, srchBaseDN, filter);
+            //return (results != null);
+        //} catch (SMSException smse) {
+            ////ignore
+        //}
+        //return false;
     }
     
     private static boolean isFlatFile() {

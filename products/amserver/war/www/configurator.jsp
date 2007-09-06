@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.12 2007-08-30 07:31:03 jonnelson Exp $
+   $Id: configurator.jsp,v 1.13 2007-09-06 17:41:27 rajeevangal Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -85,6 +85,7 @@
     String protocol;
     String basedir;
     String cookieDomain = "";
+    int availableDSPort = 50389;
     String locale = "en_US";
     String adminPwd;
     String serverURL;
@@ -210,6 +211,8 @@
            response.sendRedirect(redirectURL);
            return;
         }
+        availableDSPort = 
+            AMSetupServlet.getUnusedPort("localhost", 50389, 1000);
     }
 %>
 
@@ -469,14 +472,12 @@
                             </td>
                             <td valign="top">  
                                 <div class="ConTblCl2Div">
-                                    <input type="radio" value="flatfile" name="DATA_STORE" id="psLbl2" size="35" checked="checked" onClick="showDSDiv(false);">
-                                    <label for="psLbl2"><config:message i18nKey="configurator.filesystem"/></label>
+                                    <input type="radio" value="embedded" name="DATA_STORE" id="psLbl2" size="35" checked="checked" ">
+                                    <label for="psLbl2"><config:message i18nKey="configurator.embedded"/></label>
                                     <br/>
-                                    <input type="radio" value="dirServer" name="DATA_STORE" id="psLbl2" size="35" onClick="showDSDiv(false);">
-                                    <label for="psLbl2"><config:message i18nKey="configurator.dirsvr"/></label>
+                                    <input type="radio" value="dirServer" name="DATA_STORE" id="psLbl2" size="35" >
+                                    <label for="psLbl2"><config:message i18nKey="configurator.remote"/></label>
                                     <br />
-                                    <input type="radio" value="activeDir" name="DATA_STORE" id="psLbl2" size="35" onClick="showDSDiv(true);">
-                                    <label for="psLbl2"><config:message i18nKey="configurator.activedir"/></label>                                          
                                 </div>
                             </td>
                         </tr>
@@ -528,7 +529,7 @@
                     </div>
                 </td>
                 <td valign="top">
-                    <div class="ConTblCl2Div"><input value="ds.opensso.java.net"  name="DIRECTORY_SERVER" id="psLbl1" size="50" class="TxtFld"></div>
+                    <div class="ConTblCl2Div"><input value="localhost"  name="DIRECTORY_SERVER" id="psLbl1" size="50" class="TxtFld"></div>
                 </td>
             </tr>
 
@@ -539,7 +540,7 @@
                     </div>
                 </td>
                 <td valign="top">
-                    <div class="ConTblCl2Div"><input value="389"  name="DIRECTORY_PORT" id="psLbl1" size="5" class="TxtFld"></div>
+                    <div class="ConTblCl2Div"><input value="<%= availableDSPort %>"  name="DIRECTORY_PORT" id="psLbl1" size="5" class="TxtFld"></div>
                 </td>
             </tr>
 
