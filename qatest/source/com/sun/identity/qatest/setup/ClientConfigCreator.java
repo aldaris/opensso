@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.4 2007-08-17 18:43:24 bt199000 Exp $
+ * $Id: ClientConfigCreator.java,v 1.5 2007-09-06 19:45:55 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -226,22 +226,6 @@ public class ClientConfigCreator {
             properties2.put("idp_" + key, value);
         }
 
-        properties1.put(TestConstants.KEY_ATT_AMADMIN_USER, 
-                configDef1.getString(TestConstants.KEY_ATT_AMADMIN_USER));
-        properties1.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD, 
-                configDef1.getString(TestConstants.KEY_ATT_AMADMIN_PASSWORD));
-        properties1.put("log_level", configDef1.getString("log_level"));
-        properties1.put(TestConstants.KEY_AMC_PROTOCOL, strProtocol);
-        properties1.put(TestConstants.KEY_AMC_HOST, strHost);
-        properties1.put(TestConstants.KEY_AMC_PORT, strPort);
-        properties1.put(TestConstants.KEY_AMC_URI, strURI);
-        properties1.put(TestConstants.KEY_AMC_BASEDN, configDef1.getString(
-                TestConstants.KEY_ATT_DEFAULTORG));
-        properties1.put("realm", configDef1.getString("realm"));
-        properties1.put(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT, "pass");
-        properties1.put(TestConstants.KEY_ATT_SERVER_NAME, serverName1 + "_" +
-                serverName2);
-
         PropertyResourceBundle configDef2 = new PropertyResourceBundle(
             new FileInputStream(testDir + fileseparator + "resources" +
                 fileseparator + "Configurator-" +
@@ -261,6 +245,60 @@ public class ClientConfigCreator {
         iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
         strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
+
+        PropertyResourceBundle clientDef = new PropertyResourceBundle(
+            new FileInputStream(testDir + fileseparator + "resources" +
+                fileseparator + "AMClient.properties"));
+
+        for (Enumeration e = clientDef.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            String value = (String)clientDef.getString(key);
+
+            if (value.equals("@COPY_FROM_CONFIG@")) {
+                if (key.equals(TestConstants.KEY_AMC_PROTOCOL))
+                    value = strProtocol;
+                else if (key.equals(TestConstants.KEY_AMC_HOST))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_AMC_PORT))
+                    value = strPort;
+                else if (key.equals(TestConstants.KEY_AMC_URI))
+                    value = strURI;
+                else if (key.equals(TestConstants.KEY_AMC_NAMING_URL))
+                    value = strNamingURL;
+                else if (key.equals(TestConstants.KEY_AMC_BASEDN))
+                    value = configDef2.getString(
+                            TestConstants.KEY_ATT_DEFAULTORG);
+                else if (key.equals(TestConstants.KEY_AMC_SERVICE_PASSWORD))
+                    value = configDef2.getString(
+                            TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+                else if (key.equals(TestConstants.KEY_ATT_AM_ENC_PWD))
+                    value = configDef2.getString(
+                            TestConstants.KEY_ATT_AM_ENC_KEY);
+            }
+            value = value.replace("@BASE_DIR@", testDir + fileseparator +
+                    serverName2);
+            properties1.put(key, value);
+        }
+
+        for (Enumeration e = configDef2.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            String value = (String)configDef2.getString(key);
+            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
+                    !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
+                    !key.equals(TestConstants.KEY_ATT_METAALIAS)  &&
+                    !key.equals(TestConstants.KEY_ATT_ENTITY_NAME) &&
+                    !key.equals(TestConstants.KEY_ATT_COT) &&
+                    !key.equals(TestConstants.KEY_ATT_CERTALIAS) &&
+                    !key.equals(TestConstants.KEY_ATT_PROTOCOL) &&
+                    !key.equals(TestConstants.KEY_ATT_HOST) &&
+                    !key.equals(TestConstants.KEY_ATT_PORT) &&
+                    !key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI)) {
+                properties1.put(key, value);
+            }
+        }
+
+        properties1.put(TestConstants.KEY_ATT_SERVER_NAME, serverName1 + "_" +
+                serverName2);
 
         for (Enumeration e = configDef2.getKeys(); e.hasMoreElements(); ) {
             String key = (String)e.nextElement();
