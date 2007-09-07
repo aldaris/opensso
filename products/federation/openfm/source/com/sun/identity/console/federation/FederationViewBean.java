@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.8 2007-08-29 05:50:57 jonnelson Exp $
+ * $Id: FederationViewBean.java,v 1.9 2007-09-07 01:06:37 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -741,8 +741,18 @@ public  class FederationViewBean
         
         EntityPropertiesBase vb = null;
         if (protocol.equals(EntityModel.SAMLV2)) {
-            vb = (SAMLv2GeneralViewBean)
-                getViewBean(SAMLv2GeneralViewBean.class);
+            
+            /** 
+             * TBD Backend not implemented yet
+             *
+                vb = (SAMLv2GeneralViewBean)
+                    getViewBean(SAMLv2GeneralViewBean.class);
+             *
+             */
+            setInlineAlertMessage(CCAlert.TYPE_WARNING, 
+                "SAMLv2 Properties Not Available",
+                "This functionality will be available at a later time");
+            forwardTo();
         } else if (protocol.equals(EntityModel.IDFF)) {
             vb = (IDFFGeneralViewBean)
                 getViewBean(IDFFGeneralViewBean.class);
