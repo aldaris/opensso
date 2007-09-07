@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.9 2007-04-26 17:40:32 veiming Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.10 2007-09-07 00:29:18 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,7 @@ import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSObject;
 import com.sun.identity.sm.SMSObjectListener;
+import com.sun.identity.sm.SMSSchema;
 import com.sun.identity.sm.SMSUtils;
 
 public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
@@ -535,7 +536,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             for (int j = 0; j < size; j++) {
                 sb.append("<Value>");
                 try {
-                    sb.append(attr.get(j));
+                    sb.append(
+                        SMSSchema.escapeSpecialCharacters((String)attr.get(j)));
                 } catch (NamingException ne) {
                     throw (new SMSException(ne,
                             "sms-JAXRPC-cannot-copy-fromModItemToString"));
