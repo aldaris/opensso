@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.6 2007-08-29 05:51:17 jonnelson Exp $
+ * $Id: EntityModelImpl.java,v 1.7 2007-09-07 17:46:35 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 List hostedEntities =
                     samlManager.getAllHostedEntities(realmName);
                 for (Iterator j = samlEntities.iterator(); j.hasNext();) {
-                    String entityName = (String)j.next();
+                    String entityName = (String)j.next();   
                     
                     Map data = new HashMap(8);
                     data.put(REALM, realmName);
@@ -148,6 +148,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                     
 // TBD Uncomment when realm support is added in the api
 // default to root realm for now.
+                    realm="/";
                     data.put(REALM, realm);
                     
                     data.put(PROTOCOL, IDFF);
@@ -493,5 +494,5 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             throw new AMConsoleException(getErrorString(e));
         }
         return isAffiliate;
-    }
+    }      
 }

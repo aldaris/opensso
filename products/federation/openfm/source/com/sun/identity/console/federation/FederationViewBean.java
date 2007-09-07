@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.9 2007-09-07 01:06:37 jonnelson Exp $
+ * $Id: FederationViewBean.java,v 1.10 2007-09-07 17:46:20 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,7 @@ public  class FederationViewBean
     private static final String COT_NAME_VALUE = "cotNameValue";
     private static final String COT_NAME_HREF = "cotNameHref";
     private static final String COT_ENTITY_VALUE = "cotEntityValue";
-    private static final String COT_REALM_VALUE = "realmValue";
+    private static final String COT_REALM_VALUE = "cotRealmValue";
     private static final String COT_STATUS_VALUE = "statusValue";
     
     // entity table properties
@@ -94,7 +94,7 @@ public  class FederationViewBean
     private static final String ENTITY_PROTOCOL_VALUE = "protocolValue";
     private static final String ENTITY_ROLE_VALUE = "roleValue";
     private static final String ENTITY_LOCATION_VALUE = "locationValue";
-    private static final String ENTITY_REALM_VALUE = "realmValue";
+    private static final String ENTITY_REALM_VALUE = "entityRealmValue";
     
     // SAML Configuration table
     private static final String SAML_TABLE = "samlTable";
@@ -319,7 +319,7 @@ public  class FederationViewBean
             String realm = (String)data.get(EntityModel.REALM);
             String location = (String)data.get(eModel.LOCATION);
             String completeValue = name+"|"+protocol+"|"+realm+"|"+location;
-            
+           
             tableModel.setValue(ENTITY_NAME_HREF, completeValue);
             tableModel.setValue(ENTITY_NAME_VALUE, name);
             tableModel.setValue(ENTITY_REALM_VALUE, realm);
@@ -378,9 +378,9 @@ public  class FederationViewBean
                 String name = desc.getCircleOfTrustName();
                 tableModel.setValue(COT_NAME_VALUE, name);
                 tableModel.setValue(COT_NAME_HREF, name);
-                
+               
                 // get entity/provider name
-                Set entitySet = desc.getTrustedProviders();
+                Set entitySet = desc.getTrustedProviders();               
                 if ((entitySet != null) && (!entitySet.isEmpty())) {
                     Iterator it = entitySet.iterator();
                     StringBuffer sb = new StringBuffer();
@@ -388,18 +388,19 @@ public  class FederationViewBean
                         String entity = (String)it.next();
                         sb.append (entity).append("<br>");
                     }
-                    tableModel.setValue(COT_ENTITY_VALUE, sb.toString());
+                    tableModel.setValue(COT_ENTITY_VALUE, sb.toString());                   
                 } else {
                     tableModel.setValue(COT_ENTITY_VALUE, "");
                 }
                 
                 // get realm name
                 String realm = desc.getCircleOfTrustRealm();
-                tableModel.setValue(COT_REALM_VALUE, getPath(realm));
-                
+                tableModel.setValue(COT_REALM_VALUE, realm);
+              
                 // get cot status
                 String status = desc.getCircleOfTrustStatus();
                 tableModel.setValue (COT_STATUS_VALUE, status);
+                
                 cache.add (name + "|" + realm);
             }
             szCache.setValue ((ArrayList)cache);
@@ -791,5 +792,5 @@ public  class FederationViewBean
 
             forwardTo ();
         
-    }
+    }   
 }

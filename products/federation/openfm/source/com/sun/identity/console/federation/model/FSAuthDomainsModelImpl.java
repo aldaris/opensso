@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthDomainsModelImpl.java,v 1.3 2007-08-03 23:12:25 jonnelson Exp $
+ * $Id: FSAuthDomainsModelImpl.java,v 1.4 2007-09-07 17:46:35 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -361,10 +361,13 @@ public class FSAuthDomainsModelImpl extends AMModelBase
                 getUserSSOToken());
 
 // TBD pass the realm when support is added from api
-            Set entities = idffManager.getAllEntities();
-            for (Iterator i = entities.iterator(); i.hasNext(); ) {
-                String tmp = (String)i.next();
-                availableEntities.add(tmp + "|idff");
+// default to root realm for now.
+            if (realm.equals("/")) {
+                Set entities = idffManager.getAllEntities();
+                for (Iterator i = entities.iterator(); i.hasNext(); ) {
+                    String tmp = (String)i.next();
+                    availableEntities.add(tmp + "|idff");
+                }
             }
         } catch (IDFFMetaException e) {
             debug.warning("FSAuthDomainModel.getAllProviderNames", e);

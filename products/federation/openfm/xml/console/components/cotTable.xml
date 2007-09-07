@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: cotTable.xml,v 1.1 2007-04-30 18:49:15 jonnelson Exp $
+   $Id: cotTable.xml,v 1.2 2007-09-07 17:45:08 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,8 +49,8 @@
             <attribute name="escape" value="false"/>
         </cc>
     </column>    
-    <column name="realmColumn"  sortname="realmValue" rowheader="true">
-        <cc name="realmValue" 
+    <column name="realmColumn"  sortname="cotRealmValue" rowheader="true">
+        <cc name="cotRealmValue" 
             tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" >
             <attribute name="escape" value="false"/>
         </cc>
