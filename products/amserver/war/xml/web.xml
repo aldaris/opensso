@@ -69,6 +69,8 @@
 		<filter-name>amSetupFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+    
+    <!-- listener declaration -->
 
 	<!-- Add one servlet entry like this per module -->
 	<servlet>
