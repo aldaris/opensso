@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.13 2007-09-06 17:41:27 rajeevangal Exp $
+   $Id: configurator.jsp,v 1.14 2007-09-07 20:29:56 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -117,7 +117,6 @@
                 %><config:message i18nKey="configurator.gotoConfiguratorJSP"/><%
                 out.println("</p>");
             }
-            result = true;
         }
 
         if (result) {
