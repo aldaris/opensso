@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: register.jsp,v 1.3 2007-08-23 19:35:56 jonnelson Exp $
+   $Id: register.jsp,v 1.4 2007-09-07 23:58:11 pawand Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -148,7 +148,7 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
         <!-- text box display -->
         <tr>
         <form name="frm<jato:text name="txtIndex" />" action="blank"
-            onSubmit="defaultSubmit(); return false;">
+            onSubmit="defaultSubmit(); return false;" method="post">
 
         <td nowrap="nowrap"><div class="logLbl">
             <jato:content name="isRequired">
@@ -176,7 +176,7 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
         <!-- password display -->
         <tr>
         <form name="frm<jato:text name="txtIndex" />" action="blank"
-            onSubmit="defaultSubmit(); return false;">
+            onSubmit="defaultSubmit(); return false;" method="post">
 
         <td nowrap="nowrap"><div class="logLbl">
             <jato:content name="isRequired">
@@ -204,7 +204,7 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
         <!-- choice value display -->
         <tr>
         <form name="frm<jato:text name="txtIndex" />" action="blank"
-            onSubmit="defaultSubmit(); return false;">
+            onSubmit="defaultSubmit(); return false;" method="post">
 
         <td nowrap="nowrap"><div class="logLbl">
             <jato:content name="isRequired">

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: Login.jsp,v 1.4 2007-08-23 19:35:52 jonnelson Exp $
+   $Id: Login.jsp,v 1.5 2007-09-07 23:58:11 pawand Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -152,7 +152,7 @@ if (((gotoURL != null) && (gotoURL.length() != 0)) ||
         <!-- text box display -->
         <tr>
         <form name="frm<jato:text name="txtIndex" />" action="blank"
-            onSubmit="defaultSubmit(); return false;">
+            onSubmit="defaultSubmit(); return false;" method="post">
 
         <td nowrap="nowrap"><div class="logLbl">
             <jato:content name="isRequired">
@@ -180,7 +180,7 @@ if (((gotoURL != null) && (gotoURL.length() != 0)) ||
         <!-- password display -->
         <tr>
         <form name="frm<jato:text name="txtIndex" />" action="blank"
-            onSubmit="defaultSubmit(); return false;">
+            onSubmit="defaultSubmit(); return false;" method="post">
 
         <td nowrap="nowrap"><div class="logLbl">
             <jato:content name="isRequired">
@@ -208,7 +208,7 @@ if (((gotoURL != null) && (gotoURL.length() != 0)) ||
         <!-- choice value display -->
         <tr>
         <form name="frm<jato:text name="txtIndex" />" action="blank"
-            onSubmit="defaultSubmit(); return false;">
+            onSubmit="defaultSubmit(); return false;" method="post">
 
         <td nowrap="nowrap"><div class="logLbl">
             <jato:content name="isRequired">
