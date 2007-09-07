@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.setup,v 1.2 2007-04-19 18:26:33 veiming Exp $
+   $Id: README.setup,v 1.3 2007-09-07 18:34:00 bina Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,7 +37,7 @@ Table of contents:
 
 1. Supported JDK versions
 -------------------------
-Supported JDK versions are J2SE 1.4 or higher.
+Supported JDK versions are J2SE 1.5 or higher.
 
 2. Installing amAdminTools.zip
 ------------------------------ 

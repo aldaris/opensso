@@ -18,14 +18,29 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.famadm,v 1.1 2007-07-23 23:06:42 veiming Exp $
+   $Id: README.famadm,v 1.2 2007-09-07 18:34:00 bina Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 Federated Access Manager - famadm CLI 
+================================================================
 
-Steps:
+This file contains information on running the famadm CLI.
+
+Table of Contents :
+-------------------
+
+1. Supported JDK Versions
+2. Steps to run famadm CLI
+
+1. Supported JDK Versions
+----------------------------
+Supported JDK versions are J2SE 1.5 or higher.
+
+2. Steps to run famadm CLI 
+----------------------------
+Steps :
  1. Install Federated Access Manager
      - deploy the openfm.war and configure it
  2. Setup the CLI
@@ -36,5 +51,3 @@ Steps:
        that was generated in Step One
  3. Run the CLI
      - type "famadm" or "famadm.bat" to run the CLI.
-~                                                                               
-~                                                              
