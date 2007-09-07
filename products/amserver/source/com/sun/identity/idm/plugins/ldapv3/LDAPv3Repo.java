@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.24 2007-07-26 20:34:35 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.25 2007-09-07 00:27:42 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1393,7 +1393,7 @@ public class LDAPv3Repo extends IdRepo {
                     + createUserAttrMap);
             prtAttrMap(attrMap);
         }
-        if (type.equals(IdType.USER)) {
+        if (type.equals(IdType.USER) || type.equals(IdType.AGENT)) {
             Iterator itr = createUserAttrMap.keySet().iterator();
             while (itr.hasNext()) {
                 String attrName = (String)itr.next();
@@ -1585,9 +1585,9 @@ public class LDAPv3Repo extends IdRepo {
 
         Map origAttrMap = attrMap;
         attrMap = new CaseInsensitiveHashMap(attrMap);
-        attrMap = getAllowedAttrs(type, attrMap);
         attrMap = doUserStatusMapping(type, name, attrMap);
         attrMap = addAttrMapping(type, name, attrMap);
+        attrMap = getAllowedAttrs(type, attrMap);
 
         LDAPAttributeSet ldapAttrSet = new LDAPAttributeSet();
         if (attrMap != null && !attrMap.isEmpty()) {
