@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MarshallerFactory.java,v 1.1 2007-08-30 00:26:05 arviranga Exp $
+ * $Id: MarshallerFactory.java,v 1.2 2007-09-10 19:37:59 arviranga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,11 +67,13 @@ public class MarshallerFactory {
             _map.put(Token.class, XMLTokenMarshaller.class);
             _map.put(UserDetails.class, XMLUserDetailsMarshaller.class);
             _map.put(GeneralFailure.class, XMLGeneralFailureMarshaller.class);
+            _map.put(Boolean.class, XMLBooleanMarshaller.class);
         } else if (protocol.equals("PROPS"))  {
             _map.put(Token.class, PropertiesTokenMarshaller.class);
             _map.put(UserDetails.class, PropertiesUserDetailsMarshaller.class);
             _map.put(GeneralFailure.class,
                 PropertiesGeneralFailureMarshaller.class);
+            _map.put(Boolean.class, PropertiesBooleanMarshaller.class);
         }
     }
     
@@ -217,6 +219,29 @@ public class MarshallerFactory {
                 attrMarshaller.marshall(wrt, attr);
             }
             // end the userdetails..
+            wrt.writeEndElement();
+        }
+    }
+    
+    /**
+     * Marshall the Boolean into XML format.
+     */
+    static class XMLBooleanMarshaller implements Marshaller {
+        public void marshall(Writer wrt, Object value) throws Exception {
+            assert wrt != null && value != null;
+            // get an XMl factory for use..
+            XMLOutputFactory xmlFactory = XMLOutputFactory.newInstance();
+            XMLStreamWriter xwrt = xmlFactory.createXMLStreamWriter(wrt);
+            xwrt.writeStartDocument();
+            marshall(xwrt, (Boolean)value);
+            xwrt.writeEndDocument();
+        }
+        public void marshall(XMLStreamWriter wrt, Boolean value)
+            throws Exception {
+            String token = value.toString();
+            assert ((token != null) && (token.length() != 0));
+            wrt.writeStartElement("result");
+            wrt.writeAttribute("boolean", token);
             wrt.writeEndElement();
         }
     }
@@ -421,6 +446,23 @@ public class MarshallerFactory {
             wrt.print(prefix);
             wrt.print("exception.name=");
             wrt.println(value.getClass().getName());
+        }
+    }
+
+    /**
+     * Marshall the Boolean into Properties format.
+     */
+    static class PropertiesBooleanMarshaller implements Marshaller {
+        public void marshall(Writer wrt, Object value) throws Exception {
+            assert wrt != null && value != null;
+            marshall(new PrintWriter(wrt), "", (Boolean) value);
+        }
+
+        public void marshall(PrintWriter wrt, String prefix, Boolean value)
+                throws Exception {
+            wrt.print(prefix);
+            wrt.print("boolean=");
+            wrt.println(value.toString());
         }
     }
 }

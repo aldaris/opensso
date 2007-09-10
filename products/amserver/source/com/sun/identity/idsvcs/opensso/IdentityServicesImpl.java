@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.1 2007-08-30 00:26:04 arviranga Exp $
+ * $Id: IdentityServicesImpl.java,v 1.2 2007-09-10 19:38:00 arviranga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idsvcs.opensso;
 
-import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.policy.PolicyException;
 
@@ -62,11 +61,13 @@ import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idsvcs.LogResponse;
 import com.sun.identity.policy.client.PolicyEvaluator;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 
 
 import java.net.URI;
 import java.rmi.RemoteException;
+import java.security.AccessController;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -276,7 +277,7 @@ public class IdentityServicesImpl implements
     public UserDetails attributes(String[] attributeNames, Token subject)
         throws TokenExpired, GeneralFailure, RemoteException {
         List attrNames = null;
-        if (attributeNames != null) {
+        if ((attributeNames != null) && (attributeNames.length > 0)) {
             attrNames = new ArrayList();
             for (int i = 0; i < attributeNames.length; i++) {
                 attrNames.add(attributeNames[i]);
@@ -304,8 +305,10 @@ public class IdentityServicesImpl implements
             AMIdentity userIdentity = IdUtils.getIdentity(ssoToken);
 
             // Determine the types that can have members
+            SSOToken adminToken = (SSOToken) AccessController
+                    .doPrivileged(AdminTokenAction.getInstance());
             AMIdentityRepository idrepo = new AMIdentityRepository(
-                ssoToken, userIdentity.getRealm());
+                adminToken, userIdentity.getRealm());
             Set supportedTypes = idrepo.getSupportedIdTypes();
             Set membersTypes = new HashSet();
             for (Iterator its = supportedTypes.iterator(); its.hasNext();) {
