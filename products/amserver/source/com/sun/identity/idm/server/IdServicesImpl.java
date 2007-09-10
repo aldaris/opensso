@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.18 2007-06-01 17:34:02 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.19 2007-09-10 21:56:36 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -194,6 +194,7 @@ public class IdServicesImpl implements IdServices {
         }
 
         IdRepoException firstException = null;
+        AuthLoginException authException = null;
         // Get the list of plugins and check if they support authN
         SSOToken token = (SSOToken) AccessController
                 .doPrivileged(AdminTokenAction.getInstance());
@@ -232,6 +233,10 @@ public class IdServicesImpl implements IdServices {
                     if (firstException == null) {
                         firstException = ide;
                     }
+                } catch (AuthLoginException authex) {
+                    if (authException == null) {
+                        authException = authex;
+                    }
                 }
             } else if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -241,6 +246,9 @@ public class IdServicesImpl implements IdServices {
         }
         if (firstException != null) {
             throw (firstException);
+        }
+        if (authException != null) {
+            throw (authException);
         }
         return (false);
     }
