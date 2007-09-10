@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.2 2007-08-17 22:39:29 bt199000 Exp $
+ * $Id: SMSCommon.java,v 1.3 2007-09-10 22:42:01 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,8 +73,6 @@ public class SMSCommon extends TestCommon {
         try {
             globalCfgMap = new HashMap();
             globalCfgMap = getMapFromResourceBundle(globalCfgFile);
-            schemastring = (String)globalCfgMap.
-                    get(SMSConstants.SMS_SCHEMNA_LIST);
             admintoken = token;
             if (!validateToken(admintoken)) {
                 log(Level.SEVERE, "SMSCommon", "SSO token is invalid");
@@ -126,7 +124,8 @@ public class SMSCommon extends TestCommon {
     /**
      * Returns attribute value as a set for an attribute in a service.
      */
-    public Set getAttributeValue(String serviceName, String attributeName, String type)
+    public Set getAttributeValue(String serviceName, String attributeName, 
+            String type)
     throws Exception {
         ServiceConfigManager scm = new ServiceConfigManager(admintoken,
                 serviceName, "1.0");
@@ -148,7 +147,8 @@ public class SMSCommon extends TestCommon {
     public void assignServiceRealm(String serviceName, String realm, Map map)
     throws Exception {
         if (!isServiceAssigned(serviceName, realm)) {
-            OrganizationConfigManager ocm = new OrganizationConfigManager(admintoken, realm);
+            OrganizationConfigManager ocm = 
+                    new OrganizationConfigManager(admintoken, realm);
             ocm.assignService(serviceName, map);
         }
     }
@@ -159,7 +159,8 @@ public class SMSCommon extends TestCommon {
     public void unassignServiceRealm(String serviceName, String realm)
     throws Exception {
         if (isServiceAssigned(serviceName, realm)) {
-            OrganizationConfigManager ocm = new OrganizationConfigManager(admintoken, realm);
+            OrganizationConfigManager ocm = 
+                    new OrganizationConfigManager(admintoken, realm);
             ocm.unassignService(serviceName);
         }
     }
@@ -169,7 +170,8 @@ public class SMSCommon extends TestCommon {
      */
     public boolean isServiceAssigned(String serviceName, String realm)
     throws Exception {
-        OrganizationConfigManager ocm = new OrganizationConfigManager(admintoken, realm);
+        OrganizationConfigManager ocm = 
+                new OrganizationConfigManager(admintoken, realm);
         Set set = ocm.getAssignedServices();
         if (set.contains(serviceName))
             return (true);
@@ -180,7 +182,8 @@ public class SMSCommon extends TestCommon {
     /**
      * Sets dynamic attributes for a service at the global leval
      */
-    public void updateGlobalServiceDynamicAttributes(String serviceName, Map map)
+    public void updateGlobalServiceDynamicAttributes(String serviceName, 
+            Map map)
     throws Exception {
         ServiceManager sm = new ServiceManager(admintoken);
         ServiceSchemaManager ssm = sm.getSchemaManager(serviceName , "1.0");
@@ -248,6 +251,8 @@ public class SMSCommon extends TestCommon {
                             get(SMSConstants.SMS_LDAPv3_ORGANIZATION_NAME);
                     LDAPCommon ldc = new LDAPCommon(dsHost, dsPort,
                             dsDirmgrdn, dsDirmgrpwd, dsRootSuffix);
+                    schemastring = (String)globalCfgMap.
+                            get(SMSConstants.SMS_SCHEMNA_LIST + "." + dsType);
                     ldc.loadAMUserSchema(schemastring);
                 }
                 log(Level.FINE, "createDataStoreImpl", "Creating datastore " +
@@ -556,6 +561,8 @@ public class SMSCommon extends TestCommon {
             return SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_LDAP;
         else if (gdstType.equals(SMSConstants.SMS_DATASTORE_TYPE_FF))
             return SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_FF;
+        else if (gdstType.equals(SMSConstants.SMS_DATASTORE_TYPE_AMSDK))
+            return SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK;
         else {
             log(Level.SEVERE, "getDataStoreType", "Invalid type " + gdstType +
                     " .Failed to retrieve datastore schema type name");
@@ -583,14 +590,16 @@ public class SMSCommon extends TestCommon {
                 value = sdscfmMap.get(key).toString();
                 if (!key.startsWith(SMSConstants.SMS_DATASTORE_KEY_PREFIX)) {
                     if ((dsType == null) || (dsType.equalsIgnoreCase(
-                            SMSConstants.SMS_DATASTORE_TYPE_FF))) {
+                            SMSConstants.SMS_DATASTORE_TYPE_FF)) || 
+                            (dsType.equalsIgnoreCase(
+                            SMSConstants.SMS_DATASTORE_TYPE_AMSDK))) {
                         putSetIntoMap(key, dsAttributeMap, value, "|");
                     } else if (!key.equals(SMSConstants.SMS_LDAPv3_LDAP_PORT)) {
                         if (key.equals(SMSConstants.SMS_LDAPv3_LDAP_SERVER)) {
                             portNumber = (String)sdscfmMap.
                                     get(SMSConstants.SMS_LDAPv3_LDAP_PORT);
-                            if (portNumber.equals("")) portNumber = "389";
-                            value = value + ":" + portNumber;
+                            value = (portNumber == null) ? value + ":389" : 
+                                value + ":" + portNumber;
                         }
                         putSetIntoMap(key, dsAttributeMap, value, "|");
                     }
@@ -639,7 +648,9 @@ public class SMSCommon extends TestCommon {
                     if ((!newTempKey.startsWith(
                             SMSConstants.SMS_DATASTORE_KEY_PREFIX)) &&
                             (!dsType.equalsIgnoreCase(
-                            SMSConstants.SMS_DATASTORE_TYPE_FF)))
+                            SMSConstants.SMS_DATASTORE_TYPE_FF)) &&
+                            (!dsType.equalsIgnoreCase(
+                            SMSConstants.SMS_DATASTORE_TYPE_AMSDK)))
                         newTempKey = SMSConstants.SMS_LDAPv3_PREFIX +
                                 newTempKey;
                     dsMap.put(newTempKey, value);
@@ -675,10 +686,10 @@ public class SMSCommon extends TestCommon {
             sValue = (Set)sMap.get(key);
             lValue = (Set)lMap.get(key);
             log(Level.FINEST, "doesMapContainsKeysValues", "Key = " + key);
-            log(Level.FINEST, "doesMapContainsKeysValues", "Small set value = " +
-                    sValue.toString());
-            log(Level.FINEST, "doesMapContainsKeysValues", "Large set value = " +
-                    lValue.toString());
+            log(Level.FINEST, "doesMapContainsKeysValues", 
+                    "Small set value = " + sValue.toString());
+            log(Level.FINEST, "doesMapContainsKeysValues", 
+                    "Large set value = " + lValue.toString());
             // if one of the value of the key does not match or empty, set the
             // flag to false.
             if (!lMap.get(key).equals(sValue)) {
