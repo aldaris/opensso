@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFF.java,v 1.3 2007-08-07 23:35:21 rmisra Exp $
+ * $Id: ConfigureIDFF.java,v 1.4 2007-09-10 22:35:46 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,7 +137,7 @@ public class ConfigureIDFF extends TestCommon {
             FederationManager idpfm = new FederationManager(idpurl);
             
             //on sp side create cot, load sp metadata
-            consoleLogin(spWebClient, spurl,
+            consoleLogin(spWebClient, spurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
@@ -203,7 +203,7 @@ public class ConfigureIDFF extends TestCommon {
                     null);
             
             //idp side create cot, load idp metadata
-            consoleLogin(idpWebClient, idpurl,
+            consoleLogin(idpWebClient, idpurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));

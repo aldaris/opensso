@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFDefaultURLsTests.java,v 1.1 2007-08-31 21:13:25 mrudulahg Exp $
+ * $Id: IDFFDefaultURLsTests.java,v 1.2 2007-09-10 22:35:46 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,10 +137,10 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
         try {
             getWebClient();
             list = new ArrayList();
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
@@ -282,7 +282,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             getWebClient();
             log(Level.FINE, "DefaultURLSPInitFederation", "Login to SP with " + 
                     configMap.get(TestConstants.KEY_SP_USER));
-            consoleLogin(webClient, spurl, 
+            consoleLogin(webClient, spurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_SP_USER),
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             xmlfile = baseDir + "DefaultURLSPInitFederation.xml";
@@ -334,7 +334,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
                     "DefaultURLSPInitSSO");
             log(Level.FINE, "DefaultURLSPInitSSO", "Login to IDP with " + 
                     TestConstants.KEY_IDP_USER);
-            consoleLogin(webClient, idpurl, 
+            consoleLogin(webClient, idpurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             xmlfile = baseDir + "DefaultURLSPInitSSO.xml";
@@ -414,7 +414,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
                     "DefaultURLIDPInitSLO");
             xmlfile = baseDir + "DefaultURLIDPInitSLO_SSO.xml";
             getWebClient();
-            consoleLogin(webClient, spurl, 
+            consoleLogin(webClient, spurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_SP_USER),
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             getxmlSPIDFFFederate(xmlfile, configMap, true);
@@ -445,7 +445,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
         try {
             log(Level.FINE, "DefaultURLIDPInitNameReg", "Running: " +
                     "DefaultURLIDPInitNameReg");
-            consoleLogin(webClient, idpurl, 
+            consoleLogin(webClient, idpurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             xmlfile = baseDir + "DefaultURLIDPInitNameReg.xml";
@@ -500,7 +500,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
         try {
             log(Level.FINE, "cleanup", "Entering Cleanup");
             getWebClient();
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
@@ -513,7 +513,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
                     "User");
 
             // Create idp users
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);

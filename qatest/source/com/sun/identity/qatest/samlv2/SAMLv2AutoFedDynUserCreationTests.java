@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.2 2007-08-07 23:35:23 rmisra Exp $
+ * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.3 2007-09-10 22:36:53 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -138,7 +138,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
         try {   
             getWebClient();
             list = new ArrayList();
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);
@@ -210,7 +210,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
 
         try {
             //get sp & idp extended metadata
-            consoleLogin(webClient, spurl, configMap.get(
+            consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
@@ -223,7 +223,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_REALM), 
                     "iPlanetAMAuthService", listDyn);
             if (spServiceAtt.getWebResponse().getContentAsString().
-                    contains("iPlanetAMAuthService is modified")) {
+                    contains("is modified")) {
                 log(Level.FINE, "autoFedDynamicUserCreationSetup", 
                         "Successfully enabled Dynamic user creation");
             } else {
@@ -276,7 +276,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                 log(Level.FINE, "autoFedDynamicUserCreationSetup", "Imported " +
                         "SP extended metadata"); 
             }
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
@@ -512,7 +512,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
          try {
             getWebClient();
             
-            consoleLogin(webClient, spurl, configMap.get(
+            consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
@@ -523,7 +523,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_REALM), 
                     "iPlanetAMAuthService", listDyn);
             if (spServiceAtt.getWebResponse().getContentAsString().
-                    contains("iPlanetAMAuthService is modified")) {
+                    contains("is modified")) {
                 log(Level.FINE, "cleanup", "Successfully disabled Dynamic " +
                         "user creation");
             } else {
@@ -556,7 +556,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                         getContentAsString());
                 assert(false);
             }
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             log(Level.FINE, "cleanup", "Users to delete are" + idpuserlist);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SmokeTest.java,v 1.5 2007-08-07 23:35:25 rmisra Exp $
+ * $Id: SAMLv2SmokeTest.java,v 1.6 2007-09-10 22:36:54 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,7 @@ public class SAMLv2SmokeTest extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_PORT) +
                     configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
             getWebClient();
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
@@ -119,7 +119,7 @@ public class SAMLv2SmokeTest extends TestCommon {
                     "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_IDP_PORT) +
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
@@ -479,7 +479,7 @@ public class SAMLv2SmokeTest extends TestCommon {
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_SP_PORT) +
                     configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
@@ -497,7 +497,7 @@ public class SAMLv2SmokeTest extends TestCommon {
                     "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_IDP_PORT) +
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);

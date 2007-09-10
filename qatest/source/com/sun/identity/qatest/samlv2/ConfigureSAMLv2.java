@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.7 2007-08-10 19:54:19 mrudulahg Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.8 2007-09-10 22:36:55 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,7 +141,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             FederationManager idpfm = new FederationManager(idpurl);
             
             //on sp side create cot, load sp metadata
-            consoleLogin(spWebClient, spurl,
+            consoleLogin(spWebClient, spurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
@@ -204,7 +204,7 @@ public class ConfigureSAMLv2 extends TestCommon {
                     null);
             
             //idp side create cot, load idp metadata
-            consoleLogin(idpWebClient, idpurl,
+            consoleLogin(idpWebClient, idpurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));

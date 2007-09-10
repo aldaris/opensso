@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFFProtocols.java,v 1.2 2007-08-07 23:35:22 rmisra Exp $
+ * $Id: ConfigureIDFFProtocols.java,v 1.3 2007-09-10 22:35:47 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,12 +114,12 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
             if (strSSOProfile.equals("post") || strSLOProfile.equals("soap") ||
                     strTermProfile.equals("soap") || 
                     strRegProfile.equals("soap")) {
-                consoleLogin(webClient, spurl,
+                consoleLogin(webClient, spurl + "/UI/Login",
                         configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                         configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
 
                 fmSP = new FederationManager(spurl);
-                consoleLogin(webClient, idpurl, configMap.get(
+                consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                         TestConstants.KEY_IDP_AMADMIN_USER),
                         configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
                 fmIDP = new FederationManager(idpurl);
@@ -197,10 +197,10 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
         try {
             getWebClient();
             
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
 

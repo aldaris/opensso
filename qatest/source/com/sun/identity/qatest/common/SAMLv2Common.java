@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.5 2007-07-11 18:12:27 mrudulahg Exp $
+ * $Id: SAMLv2Common.java,v 1.6 2007-09-10 22:34:49 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -622,7 +622,7 @@ public class SAMLv2Common extends TestCommon {
         String sp_userpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
         String strResult = (String)m.get(TestConstants.KEY_LOGIN_RESULT);
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
-                + sp_port + sp_deployment_uri + "\">");
+                + sp_port + sp_deployment_uri + "/UI/Login\">");
         out.write(newline);
         out.write("<form name=\"Login\" buttonName=\"\" >");
         out.write(newline);
@@ -660,7 +660,7 @@ public class SAMLv2Common extends TestCommon {
         String idp_userpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
         String strResult = (String)m.get(TestConstants.KEY_LOGIN_RESULT);
         out.write("<url href=\"" + idp_proto +"://" + idp_host + ":"
-                + idp_port + idp_deployment_uri + "\">");
+                + idp_port + idp_deployment_uri + "/UI/Login\">");
         out.write(newline);
         out.write("<form name=\"Login\" buttonName=\"\" >");
         out.write(newline);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ForceAuthNTests.java,v 1.4 2007-08-07 23:35:24 rmisra Exp $
+ * $Id: SAMLv2ForceAuthNTests.java,v 1.5 2007-09-10 22:36:54 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,11 +100,11 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_PORT) +
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             getWebClient();
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);
@@ -184,7 +184,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 1));
             log(logLevel, "testforceAuthNtrueArt", "Running: testforceAuthNtrueArt");
             getWebClient();
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             configMap.put("urlparams","ForceAuthn=true");
@@ -234,7 +234,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, 
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 2));
             getWebClient();
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             configMap.put("urlparams","ForceAuthn=true");
@@ -282,7 +282,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 3));
             log(logLevel, "testforceAuthNfalseArt", "Running: testforceAuthNfalseArt");
             getWebClient();
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             configMap.put("urlparams","ForceAuthn=false");
@@ -330,7 +330,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, 
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 4));
             getWebClient();
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             configMap.put("urlparams","ForceAuthn=false");
@@ -369,13 +369,13 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
         getWebClient();
         try {
             //get sp & idp extended metadata
-            consoleLogin(webClient, spurl, configMap.get(
+            consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP.deleteIdentities(webClient, configMap.get(
                     TestConstants.KEY_SP_REALM), spuserlist, "User");
             
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP.deleteIdentities(webClient, configMap.get(

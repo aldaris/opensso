@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2.java,v 1.4 2007-08-07 23:35:25 rmisra Exp $
+ * $Id: UnconfigureSAMLv2.java,v 1.5 2007-09-10 22:36:55 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,11 +92,11 @@ public class UnconfigureSAMLv2 extends TestCommon {
                     + configMap.get(TestConstants.KEY_IDP_PORT)
                     + configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             
-            consoleLogin (webClient, spurl,
+            consoleLogin (webClient, spurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            consoleLogin (webClient, idpurl,
+            consoleLogin (webClient, idpurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));

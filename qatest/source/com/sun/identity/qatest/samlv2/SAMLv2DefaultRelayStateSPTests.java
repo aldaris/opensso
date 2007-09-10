@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.1 2007-08-10 23:29:13 mrudulahg Exp $
+ * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.2 2007-09-10 22:36:54 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_PORT) +
                     configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
             getWebClient();
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
@@ -121,7 +121,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_IDP_PORT) +
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
@@ -633,7 +633,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
         try {
             getWebClient();
             // delete sp users
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             idList = new ArrayList();
@@ -645,7 +645,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     "User");
             
             // Create idp users
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             idList = new ArrayList();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSmokeTest.java,v 1.6 2007-08-07 23:35:22 rmisra Exp $
+ * $Id: IDFFSmokeTest.java,v 1.7 2007-09-10 22:35:46 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,10 +131,10 @@ public class IDFFSmokeTest extends IDFFCommon {
         try {
             getWebClient();
             list = new ArrayList();
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
@@ -302,7 +302,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             getWebClient();
             log(Level.FINE, "testSPInitFederation", "Login to SP with " + 
                     configMap.get(TestConstants.KEY_SP_USER));
-            consoleLogin(webClient, spurl, 
+            consoleLogin(webClient, spurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_SP_USER),
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             xmlfile = baseDir + "testspinitfederation.xml";
@@ -353,7 +353,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             log(Level.FINE, "testSPInitSSO", "Running: testSPInitSSO");
             log(Level.FINE, "testSPInitSSO", "Login to IDP with " + 
                     TestConstants.KEY_IDP_USER);
-            consoleLogin(webClient, idpurl, 
+            consoleLogin(webClient, idpurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             xmlfile = baseDir + "testspinitsso.xml";
@@ -431,7 +431,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             log(Level.FINE, "testIDPInitSLO", "Running: testIDPInitSLO");
             xmlfile = baseDir + "testspinitfederation.xml";
             getWebClient();
-            consoleLogin(webClient, spurl, 
+            consoleLogin(webClient, spurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_SP_USER),
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             getxmlSPIDFFFederate(xmlfile, configMap, true);
@@ -462,7 +462,7 @@ public class IDFFSmokeTest extends IDFFCommon {
         try {
             log(Level.FINE, "testIDPInitNameReg", "Running: " +
                     "testIDPInitNameReg");
-            consoleLogin(webClient, idpurl, 
+            consoleLogin(webClient, idpurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             xmlfile = baseDir + "testidpinitnamereg.xml";
@@ -522,7 +522,7 @@ public class IDFFSmokeTest extends IDFFCommon {
         try {
             log(Level.FINE, "cleanup", "Entering Cleanup");
             getWebClient();
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
@@ -535,7 +535,7 @@ public class IDFFSmokeTest extends IDFFCommon {
                     "User");
             
             // Create idp users
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFederationTests.java,v 1.3 2007-08-07 23:35:24 rmisra Exp $
+ * $Id: SAMLv2AutoFederationTests.java,v 1.4 2007-09-10 22:36:54 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,12 +154,12 @@ public class SAMLv2AutoFederationTests extends TestCommon {
         try {
             getWebClient();
             list = new ArrayList();
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
             FederationManager fmSP = new FederationManager(spurl);
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             FederationManager fmIDP = new FederationManager(idpurl);
@@ -250,7 +250,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             //get sp & idp extended metadata
             FederationManager spfm = new FederationManager(spurl);
             FederationManager idpfm = new FederationManager(idpurl);
-            consoleLogin(webClient, spurl, configMap.get(
+            consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
@@ -290,7 +290,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
                         getContentAsString());
                 assert(false);
             }
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
@@ -534,7 +534,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             //get sp & idp extended metadata
             FederationManager spfm = new FederationManager(spurl);
             FederationManager idpfm = new FederationManager(idpurl);
-            consoleLogin(webClient, spurl, configMap.get(
+            consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             spfm.deleteIdentities(webClient, configMap.get(
@@ -563,7 +563,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
                         getContentAsString());
                 assert(false);
             }
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             idpfm.deleteIdentities(webClient, configMap.get(

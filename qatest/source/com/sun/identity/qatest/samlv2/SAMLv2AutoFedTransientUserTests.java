@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedTransientUserTests.java,v 1.2 2007-08-07 23:35:24 rmisra Exp $
+ * $Id: SAMLv2AutoFedTransientUserTests.java,v 1.3 2007-09-10 22:36:54 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -148,7 +148,7 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
         try {   
             getWebClient();
             list = new ArrayList();
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);
@@ -223,7 +223,7 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
             //get sp & idp extended metadata
             FederationManager spfm = new FederationManager(spurl);
             FederationManager idpfm = new FederationManager(idpurl);
-            consoleLogin(webClient, spurl, configMap.get(
+            consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
@@ -265,7 +265,7 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
                         importMeta.getWebResponse().getContentAsString());
                 assert(false);
             }
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
@@ -519,7 +519,7 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
             FederationManager spfm = new FederationManager(spurl);
             FederationManager idpfm = new FederationManager(idpurl);
             
-            consoleLogin(webClient, spurl, configMap.get(
+            consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             HtmlPage deleteExtEntity = spfm.deleteEntity(webClient,
@@ -545,7 +545,7 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
                         getContentAsString());
                 assert(false);
             }
-            consoleLogin(webClient, idpurl, configMap.get(
+            consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);

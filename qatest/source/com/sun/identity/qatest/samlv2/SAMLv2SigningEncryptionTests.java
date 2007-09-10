@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SigningEncryptionTests.java,v 1.2 2007-08-07 23:35:24 rmisra Exp $
+ * $Id: SAMLv2SigningEncryptionTests.java,v 1.3 2007-09-10 22:36:54 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -208,10 +208,10 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             
             getWebClient();
             list = new ArrayList();
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
@@ -482,7 +482,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             
             // delete sp users
             log(Level.FINE, "cleanup", "sp users to delete : " + spuserlist);
-            consoleLogin(webClient, spurl,
+            consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP.deleteIdentities(webClient,
@@ -491,7 +491,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             
             // Create idp users
             log(Level.FINE, "cleanup", "idp users to delete : " + idpuserlist);
-            consoleLogin(webClient, idpurl,
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP.deleteIdentities(webClient,
