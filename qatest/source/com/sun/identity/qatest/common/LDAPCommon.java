@@ -17,6 +17,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: LDAPCommon.java,v 1.2 2007-09-10 22:43:02 bt199000 Exp $
+ *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
@@ -97,25 +99,29 @@ public class LDAPCommon extends TestCommon {
     throws Exception {
         entering("loadAMUserSchema", null);
         try {
-            List schemaFiles = getAttributeList(schemaList, ",");
+            List schemaFiles = getAttributeList(schemaList, ";");
             log(Level.FINE, "loadAMUserSchema",
                     "Loading AM user schema for server " +
                     dshost + ":" + dsport + "...");
+            log(Level.FINEST, "loadAMUserSchema",
+                    "User schema list is " + schemaList);
             if (!isDServerUp()) {
                 log(Level.SEVERE, "loadAMUserSchema",
                         "Server is down. Cannot proceed.");
                 assert false;
-            } else if (isAMUserSchemaLoad())
+            } else if (isAMUserSchemaLoad()) {
                 log(Level.FINE,
                         "loadAMUserSchema", "AM user schema already loaded.");
-            else {
+            } else {
                 log(Level.FINE,
                         "loadAMUserSchema", "Start loading AM user schema...");
                 String schemaFile;
                 for (Iterator i = schemaFiles.iterator(); i.hasNext();) {
                     schemaFile = (String)i.next();
-                    createSchemaFromLDIF(basedir + fileSeparator +
-                            schemaFile, ld);
+                    log(Level.FINEST,
+                            "loadAMUserSchema", "Loading schema file " +
+                            schemaFile + "...");
+                    createSchemaFromLDIF(schemaFile, ld);
                 }
                 if (isAMUserSchemaLoad())
                     log(Level.FINE, "loadAMUserSchema",
