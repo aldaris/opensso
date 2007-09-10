@@ -196,6 +196,7 @@ changetype: modify
 add: schemaUpdateNow
 schemaUpdateNow: 1
 -
+
 dn: CN= iplanet-am-auth-configuration,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
 changetype: add
 adminDisplayName: iplanet-am-auth-configuration
