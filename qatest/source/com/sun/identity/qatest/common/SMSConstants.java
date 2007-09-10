@@ -17,6 +17,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: SMSConstants.java,v 1.2 2007-09-10 22:29:28 bt199000 Exp $
+ *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
@@ -92,6 +94,11 @@ public interface SMSConstants {
     static final String SMS_DATASTORE_TYPE_FF = "ff";
     
     /**
+     * Datastore type key for amsdk
+     */
+    static final String SMS_DATASTORE_TYPE_AMSDK = "amsdk";
+    
+    /**
      * Datastore schema type name for Sun DS
      */
     static final String SMS_DATASTORE_SCHEMA_TYPE_AMDS = "LDAPv3ForAMDS";
@@ -107,15 +114,20 @@ public interface SMSConstants {
     static final String SMS_DATASTORE_SCHEMA_TYPE_LDAP = "LDAPv3";
     
     /**
-     * Datastore schema type name for generic LDAP
+     * Datastore schema type name for flat file
      */
     static final String SMS_DATASTORE_SCHEMA_TYPE_FF = "files";
+    
+    /**
+     * Datastore schema type name for AM SDK
+     */
+    static final String SMS_DATASTORE_SCHEMA_TYPE_AMSDK = "amSDK";
     
     /**
      * Access Manager user schema list key in property file
      */
     static final String SMS_SCHEMNA_LIST = "SMSGlobalConfig.schemalist";
-      
+    
     /**
      * Attributes for LDAPv3 datastore
      */
@@ -250,6 +262,7 @@ public interface SMSConstants {
     /** 
      * Attributes for flat file idRepo
      */
+    static final String SMS_FILES_CLASS = "sunIdRepoClass";
     static final String SMS_FILES_DIRECTORY = "sunFilesIdRepoDirectory";
     static final String SMS_FILES_CACHE = "sunFilesMonitorForChanges";
     static final String SMS_FILES_CACHE_INTERVAL = "sunFilesMonitoringTime";
@@ -258,4 +271,22 @@ public interface SMSConstants {
     static final String SMS_FILES_STATUS_ATTR = "sunFilesStatusAttr";
     static final String SMS_FILES_HASH_ATTR = "sunFilesHashAttrs";
     static final String SMS_FILES_ENCRYPT_ATTR = "sunFilesEncryptAttrs";
+    
+    /** 
+     * Attributes for am sdk idRepo
+     */
+    static final String SMS_AMSDK_CLASS = "sunIdRepoClass";
+    static final String SMS_AMSDK_ORG_NAME  ="amSDKOrgName";
+    static final String SMS_AMSDK_PEOPLE_CONTAINER_NAME = 
+            "sun-idrepo-amSDK-config-people-container-name";
+    static final String SMS_AMSDK_PEOPLE_CONTAINER_VALUE = 
+            "sun-idrepo-amSDK-config-people-container-value";
+    static final String SMS_AMSDK_AGENT_CONTAINER_NAME = 
+            "sun-idrepo-amSDK-config-agent-container-name";
+    static final String SMS_AMSDK_AGENT_CONTAINER_VALUE = 
+            "sun-idrepo-amSDK-config-agent-container-value";
+    static final String SMS_AMSDK_RECURSIVE_ENABLED = 
+            "sun-idrepo-amSDK-config-recursive-enabled";
+    static final String SMS_AMSDK_COPYCONFIG_ENABLED = 
+            "sun-idrepo-amSDK-config-copyconfig-enabled";
 }
