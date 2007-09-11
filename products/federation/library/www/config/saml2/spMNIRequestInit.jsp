@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIRequestInit.jsp,v 1.2 2006-12-05 21:55:52 weisun2 Exp $
+   $Id: spMNIRequestInit.jsp,v 1.3 2007-09-11 22:02:16 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -30,6 +30,8 @@
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
+<%@ page import="com.sun.identity.saml2.meta.SAML2MetaManager" %>
+<%@ page import="com.sun.identity.saml2.meta.SAML2MetaUtils" %>
 <%@ page import="com.sun.identity.saml2.profile.DoManageNameID" %>
 <%@ page import="java.util.HashMap" %>
 
@@ -88,6 +90,15 @@
         String RelayState = request.getParameter(SAML2Constants.RELAY_STATE);
         String binding = DoManageNameID.getMNIBindingInfo(request, metaAlias,
                                         SAML2Constants.SP_ROLE, idpEntityID);
+        
+        if ((RelayState == null) || (RelayState.equals(""))) {
+            SAML2MetaManager metaManager= new SAML2MetaManager();
+            String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
+            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+            RelayState = SAML2Utils.getAttributeValueFromSSOConfig(
+                realm, hostEntity, SAML2Constants.SP_ROLE,
+                SAML2Constants.DEFAULT_RELAY_STATE);
+        } 
 
         HashMap paramsMap = new HashMap();
         paramsMap.put("metaAlias", metaAlias);

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutInit.jsp,v 1.4 2007-08-28 23:28:47 weisun2 Exp $
+   $Id: spSingleLogoutInit.jsp,v 1.5 2007-09-11 22:02:16 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -31,6 +31,8 @@
 <%@ page import="com.sun.identity.plugin.session.SessionException" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
+<%@ page import="com.sun.identity.saml2.meta.SAML2MetaManager" %>
+<%@ page import="com.sun.identity.saml2.meta.SAML2MetaUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
 <%@ page import="com.sun.identity.saml2.profile.LogoutUtil" %>
 <%@ page import="com.sun.identity.saml2.profile.SPSingleLogout" %>
@@ -141,14 +143,23 @@
         paramsMap.put("Destination", request.getParameter("Destination"));
         paramsMap.put("Consent", request.getParameter("Consent"));
         paramsMap.put("Extension", request.getParameter("Extension"));
+        if ((RelayState == null) || (RelayState.equals(""))) {
+            SAML2MetaManager metaManager= new SAML2MetaManager();
+            String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
+            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+            RelayState = SAML2Utils.getAttributeValueFromSSOConfig(
+                realm, hostEntity, SAML2Constants.SP_ROLE,
+                SAML2Constants.DEFAULT_RELAY_STATE);
+        }
         if (RelayState != null) {
             paramsMap.put(SAML2Constants.RELAY_STATE, RelayState);
         }
 
-        SPSingleLogout.initiateLogoutRequest(request,response,
+        SPSingleLogout.initiateLogoutRequest( request,response,
             binding,paramsMap);
+        
         if (binding.equalsIgnoreCase(SAML2Constants.SOAP)) {
-            if (RelayState != null) {
+            if (RelayState != null && (!RelayState.equals(""))) {
                 response.sendRedirect(RelayState);
             } else {
                 %>
