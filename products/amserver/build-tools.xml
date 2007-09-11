@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.7 2007-09-06 16:52:38 qcheng Exp $
+   $Id: build-tools.xml,v 1.8 2007-09-11 21:35:59 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -87,7 +87,7 @@
         <copy todir="${amadm.lib.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${extlib.dir}"
-                includes="j2ee.jar, ldapjdk.jar, mail.jar, activation.jar, db.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar"/>
+                includes="j2ee.jar, xercesImpl.jar, ldapjdk.jar, mail.jar, activation.jar, db.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar"/>
             <fileset dir="${sharedlib.dist.dir}"
                 includes="opensso-sharedlib.jar"/>
             <fileset dir="${amserver.dist.dir}"
