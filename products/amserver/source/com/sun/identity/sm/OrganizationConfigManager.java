@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.15 2007-08-17 17:45:02 goodearth Exp $
+ * $Id: OrganizationConfigManager.java,v 1.16 2007-09-11 01:36:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,7 @@ public class OrganizationConfigManager {
     private String amSDKOrgDN;
 
     // sunOrganizationAlias in org DIT.
-    private String SUNORG_ALIAS = "sunOrganizationAliases";
+    public static final String SUNORG_ALIAS = "sunOrganizationAliases";
 
     // associatedDomain in org DIT.
     private String SUNDNS_ALIAS = "sunDNSAliases";
@@ -789,23 +789,17 @@ public class OrganizationConfigManager {
                             "sms-SMSSchema_service_notfound"));
                 }
 
-                AttributeSchema as = ss.getAttributeSchema(SUNORG_STATUS);
-                AttributeSchema.Type type = as.getType();
-                if ((type != null) && 
-                    (type.equals(AttributeSchema.Type.SINGLE_CHOICE))) {
-                    SMSEntry.debug.error("OrganizationConfigManager. "
-                        + "addAttributeValues():Unable to add Attribute "
-                        + "Values. Add operation is attempted for "
-                        + "SINGLE_CHOICE attribute type for " +attrName); 
-                    Object args[] = { attrName };
-                    throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-                        "sms-attributeschema-attributetype-violation", args));
-                }
                 Map map = new HashMap(2);
-                map.put(attrName, values);
+                Set newValues = new HashSet(values);
+                Map allAttributes = ss.getAttributeDefaults();
+                Set existingValues = (Set)allAttributes.get(attrName);
+                if ((existingValues != null) && !existingValues.isEmpty()) {
+                    newValues.addAll(existingValues);
+                }
+                map.put(attrName, newValues);
                 ss.validateAttributes(map);
-                SMSUtils.addAttribute(e, serviceName + "-" + attrName, values,
-                        ss.getSearchableAttributeNames());
+                SMSUtils.addAttribute(e, serviceName + "-" + attrName,
+                    values, ss.getSearchableAttributeNames());
                 e.save(token);
                 cEntry.refresh(e);
             } catch (SSOException ssoe) {
