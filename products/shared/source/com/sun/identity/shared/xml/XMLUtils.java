@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.5 2007-04-23 03:44:17 hengming Exp $
+ * $Id: XMLUtils.java,v 1.6 2007-09-11 22:01:15 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -682,6 +682,32 @@ public class XMLUtils {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+    
+    /**
+     * Prints a Node tree recursively.
+     * @param node A DOM tree Node
+     * @param encoding character encoding
+     * @return An xml String representation of the DOM tree.
+     */
+    public static String print(Node node, String encoding) {
+	if (node == null) {
+	    return null;
+	}
+        
+        try {
+            TransformerFactory tFactory =
+                TransformerFactory.newInstance();
+            Transformer transformer = tFactory.newTransformer();
+            transformer.setOutputProperty("omit-xml-declaration", "yes");
+            DOMSource source = new DOMSource(node);
+            ByteArrayOutputStream os = new ByteArrayOutputStream(2000);
+            StreamResult result = new StreamResult(os);
+            transformer.transform(source, result);
+            return os.toString(encoding);
+        } catch (Exception e) {
+            return null; 
         }
     }
 
