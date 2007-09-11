@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionImpl.java,v 1.3 2007-07-23 20:42:43 bina Exp $
+ * $Id: AssertionImpl.java,v 1.4 2007-09-11 22:01:48 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,7 +139,7 @@ public class AssertionImpl implements Assertion {
         processElement(element);
         makeImmutable();
         if (signature != null) {
-            signedXMLString = XMLUtils.print(element);
+            signedXMLString = XMLUtils.print(element,"UTF-8");
         }
     }
 
@@ -671,8 +671,9 @@ public class AssertionImpl implements Assertion {
             cert
         );
         signature = XMLUtils.print(signatureElement); 
-        signedXMLString = XMLUtils.print(signatureElement.getOwnerDocument().
-                         getDocumentElement());
+        signedXMLString = XMLUtils.print(
+            signatureElement.getOwnerDocument().
+            getDocumentElement(), "UTF-8");
         makeImmutable();  
     }
 

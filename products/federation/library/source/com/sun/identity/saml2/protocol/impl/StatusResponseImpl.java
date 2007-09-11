@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusResponseImpl.java,v 1.2 2007-04-02 06:02:14 veiming Exp $
+ * $Id: StatusResponseImpl.java,v 1.3 2007-09-11 22:01:49 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -178,7 +178,7 @@ public abstract class StatusResponseImpl implements StatusResponse {
         );
         signatureString = XMLUtils.print(signatureEle);
         signedXMLString = XMLUtils.print(signatureEle.getOwnerDocument().
-                                         getDocumentElement());
+           getDocumentElement(), "UTF-8");
         isSigned =true;
         makeImmutable();
     }

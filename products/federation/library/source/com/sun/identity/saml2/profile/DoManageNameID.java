@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.4 2007-07-02 17:48:57 weisun2 Exp $
+ * $Id: DoManageNameID.java,v 1.5 2007-09-11 22:01:49 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -157,7 +157,7 @@ public class DoManageNameID {
         Object session = 
            SAML2Utils.checkSession(request, response, metaAlias, paramsMap);
         String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
-        String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);;
+        String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
         String hostEntityRole = SAML2Utils.getHostEntityRole(paramsMap);
         if (session == null) {
             if (debug.messageEnabled()) {

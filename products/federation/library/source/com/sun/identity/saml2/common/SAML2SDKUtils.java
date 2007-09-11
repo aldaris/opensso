@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SDKUtils.java,v 1.4 2007-08-07 17:16:50 qcheng Exp $
+ * $Id: SAML2SDKUtils.java,v 1.5 2007-09-11 22:01:49 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,6 +38,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.security.SecureRandom;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -48,7 +49,12 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.soap.SOAPException;
 
 /**

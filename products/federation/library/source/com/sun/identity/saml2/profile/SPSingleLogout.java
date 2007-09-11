@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.8 2007-08-28 23:28:15 weisun2 Exp $
+ * $Id: SPSingleLogout.java,v 1.9 2007-09-11 22:01:49 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -272,7 +272,7 @@ public class SPSingleLogout {
                     soapMsg,response );  
             }     
             // local log out
-            sessionProvider.invalidateSession(session, request, response);   
+            sessionProvider.invalidateSession(session, request, response);  
         } catch (SAML2MetaException sme) {
             debug.error("Error retreiving metadata",sme);
             throw new SAML2Exception(
@@ -505,18 +505,6 @@ public class SPSingleLogout {
                 SAML2Utils.bundle.getString(
                 "LogoutRequestIDandInResponseToDoNotMatch"));
         }
-        
-        // if relay state is present, redirect to
-        // relay state --Wei 
-      /*  if (relayState != null && relayState.length() != 0) {
-            try {
-                 response.sendRedirect(relayState);
-            } catch (java.io.IOException ioe) {
-                debug.message(
-                    "Exception when redirecting to " +
-                    relayState, ioe);
-            }
-        } */
         
         infoMap.put("inResponseTo" , inResponseTo); 
         return infoMap; 

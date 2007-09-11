@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseImpl.java,v 1.1 2006-10-30 23:16:51 qcheng Exp $
+ * $Id: ResponseImpl.java,v 1.2 2007-09-11 22:01:49 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -183,7 +183,8 @@ public class ResponseImpl extends StatusResponseImpl implements Response {
                         throw new SAML2Exception(
                             SAML2SDKUtils.bundle.getString("schemaViolation"));
                     }
-                    signatureString = XMLUtils.print((Element) child); 
+                    signatureString = XMLUtils.print((Element) child, 
+                        "UTF-8");  
                     isSigned = true;
                 } else if (childName.equals("Extensions")) {
                     if (extensions != null) {
@@ -281,7 +282,9 @@ public class ResponseImpl extends StatusResponseImpl implements Response {
         throws SAML2Exception {
         parseElement(element);
         if (isSigned) {
-            signedXMLString = XMLUtils.print(element);
+            signedXMLString = XMLUtils.print(element,
+                "UTF-8");
+
         }
     }
 
