@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2COTUtils.java,v 1.1 2006-10-30 23:16:23 qcheng Exp $
+ * $Id: SAML2COTUtils.java,v 1.2 2007-09-11 19:39:51 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,6 +106,18 @@ public class SAML2COTUtils {
             }
             if (SAML2MetaUtils.getIDPSSODescriptor(edes) != null) {
                 bctype = objFactory.createIDPSSOConfigElement();
+                bctype.getAttribute().add(atype);
+                ll.add(bctype);
+            }
+            if (SAML2MetaUtils.getPolicyEnforcementPointDescriptor(edes)
+                    != null) {
+                bctype =
+                    objFactory.createXACMLAuthzDecisionQueryConfigElement();
+                bctype.getAttribute().add(atype);
+                ll.add(bctype);
+            }
+            if (SAML2MetaUtils.getPolicyDecisionPointDescriptor(edes) != null) {
+                bctype = objFactory.createXACMLPDPConfigElement();
                 bctype.getAttribute().add(atype);
                 ll.add(bctype);
             }

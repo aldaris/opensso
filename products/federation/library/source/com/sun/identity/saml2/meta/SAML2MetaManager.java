@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.8 2007-08-02 18:18:43 bina Exp $
+ * $Id: SAML2MetaManager.java,v 1.9 2007-09-11 19:39:51 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -404,6 +404,16 @@ public class SAML2MetaManager {
             if (spconfig != null) {
                 removeFromCircleOfTrust(spconfig, realm, entityId); 
             }   
+            XACMLAuthzDecisionQueryConfigElement pepConfig =
+                getPolicyEnforcementPointConfig(realm,entityId);
+            if (pepConfig != null) {
+                removeFromCircleOfTrust(pepConfig,realm,entityId);
+            }
+            XACMLPDPConfigElement pdpConfig = 
+                getPolicyDecisionPointConfig(realm,entityId);
+            if (pdpConfig != null) {
+                removeFromCircleOfTrust(pdpConfig,realm,entityId);
+            }
             // end of remove entity from cot
             configInst.deleteConfiguration(realm, entityId, null);
             LogUtil.access(Level.INFO,
