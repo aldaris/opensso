@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModel.java,v 1.3 2007-08-28 19:06:33 babysunil Exp $
+ * $Id: WSFedPropertiesModel.java,v 1.4 2007-09-12 23:38:26 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import java.util.Set;
 
 public interface WSFedPropertiesModel extends AMModel {
     
+    public static final String DUAL = "dual";     
+    
     /************************************************************************
      * WSFED General attributes
      ************************************************************************/
@@ -41,7 +43,10 @@ public interface WSFedPropertiesModel extends AMModel {
     String TF_NAME = "tfName";
     
     // attribute for display name of entity
-    String TF_DISPNAME ="tfDispName";
+    String TF_DISPNAME ="displayName";
+    
+    // attribute for label for idp display name
+    String TFIDPDISP_NAME = "idpdisplayName";
     
     // attribute for token issuer name
     String TFTOKENISSUER_NAME = "TokenIssuerName";
@@ -57,10 +62,6 @@ public interface WSFedPropertiesModel extends AMModel {
     
     // attribute for realm to which entity belongs
     String TF_REALM  = "tfEntRealm";
-    
-    // attribute for description of entity
-    String TF_DESC = "tfEntDescription";
-    
     /************************************************************************
      * WSFED SP attributes
      ************************************************************************/
@@ -115,7 +116,6 @@ public interface WSFedPropertiesModel extends AMModel {
     
     // attribute for label for cookie name
     String TFCOKKI_NAME = "cookiname";
-    
     
     /************************************************************************
      * WSFED IDP attributes
@@ -270,7 +270,7 @@ public interface WSFedPropertiesModel extends AMModel {
      * @param Map idpStdValues contain standard attribute values.
      * @throws AMConsoleException if saving of attribute value fails.
      */
-    void setGenAttributeValues(String realm, String fedId, Map idpStdValues)
+    void setGenAttributeValues(String realm, String fedId, Map idpStdValues, String role, String location)
             throws AMConsoleException;
     
     /**
@@ -278,7 +278,14 @@ public interface WSFedPropertiesModel extends AMModel {
      *
      * @return Map of wsfed general attribute values.
      */
-    Map getGenDataMap();
+    Map getGenAttributes();
+    
+    /**
+     * Returns a map of wsfed general attribute values for dual role.
+     *
+     * @return Map of wsfed general attribute values for dual role.
+     */
+    Map getDualRoleAttributes();
     
     /**
      * Returns a map of Wsfed Extended Service Provider attribute values.
@@ -300,4 +307,4 @@ public interface WSFedPropertiesModel extends AMModel {
      * @return Map of Wsfed Standard Identity Provider attribute values.
      */
     Map getIDPSTDDataMap();
-}
+   }

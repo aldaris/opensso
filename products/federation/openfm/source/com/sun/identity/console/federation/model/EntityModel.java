@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModel.java,v 1.3 2007-08-24 18:17:11 asyhuang Exp $
+ * $Id: EntityModel.java,v 1.4 2007-09-12 23:39:16 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,14 @@ public interface EntityModel
     public static final String WSFED = "WSFed";
     public static final String SAMLV2 = "SAMLv2";
     public static final String IDFF = "IDFF";
+    public static final String HOSTED = "hosted";
+    public static final String REMOTE = "remote";
+    public static final String IDENTITY_PROVIDER = "IDP";
+    public static final String SERVICE_PROVIDER = "SP";
+    public static final String POLICY_DECISION_POINT_DESCRIPTOR = "PDP";
+    public static final String POLICY_ENFORCEMENT_POINT_DESCRIPTOR = "PEP";
+    public static final String GENERAL = "General";
+    public static final String AFFILIATE = "Affiliate";
         
     public Map getEntities() throws AMConsoleException;
     public void deleteEntities(Map entities) throws AMConsoleException;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedGeneralViewBean.java,v 1.4 2007-08-14 21:54:34 babysunil Exp $
+ * $Id: WSFedGeneralViewBean.java,v 1.5 2007-09-12 23:35:45 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,16 +29,19 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
-import com.sun.identity.console.federation.model.EntityModel;
 import com.sun.identity.console.federation.model.WSFedPropertiesModel;
+import com.sun.identity.console.federation.model.EntityModel;
+import com.sun.identity.console.federation.model.EntityModelImpl;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 import com.sun.web.ui.view.alert.CCAlert;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.List;
 
 public class WSFedGeneralViewBean extends WSFedGeneralBase {
     public static final String DEFAULT_DISPLAY_URL =
-        "/console/federation/WSFedGeneral.jsp";
+            "/console/federation/WSFedGeneral.jsp";
     
     public WSFedGeneralViewBean() {
         super("WSFedGeneral");
@@ -46,14 +49,12 @@ public class WSFedGeneralViewBean extends WSFedGeneralBase {
     }
     
     public void beginDisplay(DisplayEvent event)
-        throws ModelControlException {
+    throws ModelControlException {
         super.beginDisplay(event);
         
         //setting the Name fields
         setDisplayFieldValue(WSFedPropertiesModel.TF_REALM, realm);
         setDisplayFieldValue(WSFedPropertiesModel.TF_NAME, entityName);
-        setDisplayFieldValue(WSFedPropertiesModel.TF_DISPNAME, entityName);
-        
         try {
             WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
             FederationElement fedElement =
@@ -66,43 +67,123 @@ public class WSFedGeneralViewBean extends WSFedGeneralBase {
             //setting the Token Issuer End Point
             setDisplayFieldValue(WSFedPropertiesModel.TFTOKENISSUER_ENDPT,
                     model.getTokenEndpoint(fedElement));
+            
+            //setting the value of displayName
+            setDisplayName(entityName, realm);
         } catch (AMConsoleException e) {
             debug.error("WSFedGeneralViewBean.beginDisplay", e);
         }
     }
     
     protected void createPropertyModel() {
-        psModel = new AMPropertySheetModel(
-            getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/propertyWSFedGeneralView.xml"));
+        retrieveCommonProperties();
+        List roleList = getWSFedRoles(entityName, realm);
+        if (roleList.size() == 1) {
+            psModel = new AMPropertySheetModel(
+                getClass().getClassLoader().getResourceAsStream(
+                    "com/sun/identity/console/propertyWSFedGeneralView.xml"));
+        } else {
+            psModel = new AMPropertySheetModel(
+                getClass().getClassLoader().getResourceAsStream(
+                    "com/sun/identity/console/propertyWSFedGeneralDual.xml"));
+        }
         psModel.clear();
     }
     
     public void handleButton1Request(RequestInvocationEvent event)
     throws ModelControlException {
         
-        // get the entity name, realm, and location...
+        // get the entity name, realm, and location.
         retrieveCommonProperties();
         try {
             WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
             AMPropertySheet ps =
-                (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
-            
-            //TBD- save of 'Display Name' and 'Description' to be added later 
-            //when backend api available
-            
-            //genValues has the values displayed in the General property page
-            Map genValues =
-                ps.getAttributeValues(model.getGenDataMap(), false, model);
-            
-            //save for the general attributes
-            model.setGenAttributeValues(realm, entityName, genValues);
+                    (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+            String role = "dual";
+            Map attributes = null;
+            List roleList = getWSFedRoles(entityName, realm);
+            if (roleList.size() == 1) {
+                role = (String)roleList.listIterator().next();              
+                attributes =  model.getGenAttributes();                
+            } else {
+                attributes = model.getDualRoleAttributes();
+            }
+            Map values = ps.getAttributeValues(attributes, false, model);
+            model.setGenAttributeValues(
+                 realm, entityName, values, role, location);
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                "wsfed.general.property.updated");
+                    "wsfed.general.property.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
+                    e.getMessage());
         }
         forwardTo();
+    }
+    
+    private void setDisplayName(String entityName, String realm) {
+        WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
+        Map spmap = new HashMap();
+        Map idpmap = new HashMap();
+        try {
+            // retrieve role of entity
+            List roleList = getWSFedRoles(entityName, realm);
+            Iterator rIt = roleList.listIterator();
+            
+            // to display idp and sp display names in case of a dual entity
+            if (roleList.size() > 1) {
+                spmap = model.getServiceProviderAttributes(realm, entityName);
+                idpmap = model.getIdentityProviderAttributes(
+                    realm, entityName);
+                setDisplayFieldValue(
+                    WSFedPropertiesModel.TF_DISPNAME, getDisplayName(spmap));
+                setDisplayFieldValue(
+                    WSFedPropertiesModel.TFIDPDISP_NAME, getDisplayName(idpmap));
+                
+            } else {
+                
+                // to show display name for an entity with single role
+                while (rIt.hasNext()) {
+                    String role = (String)rIt.next();
+                    if (role.equals(EntityModel.SERVICE_PROVIDER)) {
+                        spmap = model.getServiceProviderAttributes(
+                            realm, entityName);
+                        setDisplayFieldValue(
+                            WSFedPropertiesModel.TF_DISPNAME,
+                                getDisplayName(spmap));
+                    } else if (role.equals(EntityModel.IDENTITY_PROVIDER)) {
+                        idpmap = 
+                            model.getIdentityProviderAttributes(
+                                realm, entityName);
+                        setDisplayFieldValue(
+                            WSFedPropertiesModel.TF_DISPNAME,
+                                getDisplayName(idpmap));
+                    }
+                }
+            }
+            
+            
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                    "error in setting Display Name ");
+        }
+        
+    }
+    
+    private String getDisplayName(Map map) {
+        String disName = null;
+        if (map.get(WSFedPropertiesModel.TF_DISPNAME) != null) {
+            List list = (List)map.get(WSFedPropertiesModel.TF_DISPNAME);
+            Iterator i = list.iterator();
+            while ((i !=  null)&& (i.hasNext())) {
+                disName = (String) i.next();
+            }
+        }
+        return disName;
+    }
+    
+    private List getWSFedRoles(String entityName, String realm) {
+        EntityModelImpl entModel = (EntityModelImpl)getEntityModel();
+        List role = entModel.getWSFedRoles(entityName, realm);
+        return role;
     }
 }

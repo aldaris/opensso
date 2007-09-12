@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.7 2007-09-07 17:46:35 asyhuang Exp $
+ * $Id: EntityModelImpl.java,v 1.8 2007-09-12 23:39:01 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 List hostedEntities =
                     samlManager.getAllHostedEntities(realmName);
                 for (Iterator j = samlEntities.iterator(); j.hasNext();) {
-                    String entityName = (String)j.next();   
+                    String entityName = (String)j.next();
                     
                     Map data = new HashMap(8);
                     data.put(REALM, realmName);
@@ -106,9 +106,9 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                     if ((hostedEntities != null) &&
                         hostedEntities.contains(entityName)) 
                     {
-                        data.put(LOCATION, "hosted");
+                        data.put(LOCATION, HOSTED);
                     } else {
-                        data.put(LOCATION, "remote");
+                        data.put(LOCATION, REMOTE);
                     }
                     
                     samlv2Map.put(entityName, (HashMap)data);
@@ -148,15 +148,14 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                     
 // TBD Uncomment when realm support is added in the api
 // default to root realm for now.
-                    realm="/";
                     data.put(REALM, realm);
                     
                     data.put(PROTOCOL, IDFF);
                     data.put(ROLE, listToString(getIDFFRoles(name, realm)));
                     if (hostedEntities.contains(name)) {
-                        data.put(LOCATION, "hosted");
+                        data.put(LOCATION, HOSTED);
                     } else {
-                        data.put(LOCATION, "remote");
+                        data.put(LOCATION, REMOTE);
                     }
                     
                     idffMap.put(name, (HashMap)data);
@@ -186,7 +185,6 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                     WSFederationMetaManager.getAllEntities(realm);
                 List hosted =
                     WSFederationMetaManager.getAllHostedEntities(realm);
-                
                 for (Iterator j = wsfedEntities.iterator(); j.hasNext(); ) {
                     String entity = (String)j.next();
                     Map data = new HashMap(8);
@@ -194,9 +192,9 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                     data.put(PROTOCOL, WSFED);
                     data.put(ROLE, listToString(getWSFedRoles(entity, realm)));
                     if ((hosted != null) && (hosted.contains(entity))) {
-                        data.put(LOCATION, "hosted");
+                        data.put(LOCATION, HOSTED);
                     } else {
-                        data.put(LOCATION, "remote");
+                        data.put(LOCATION, REMOTE);
                     }
                     
                     wsfedMap.put(entity, (HashMap)data);
@@ -229,7 +227,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
     }
     
     public void createEntity(Map data) throws AMConsoleException {
-        String protocol = (String)data.remove("protocol");
+        String protocol = (String)data.remove(PROTOCOL);
         if (protocol.equals(SAMLV2)) {
             createSAMLv2Provider(data);
         } else if (protocol.equals(WSFED)) {
@@ -334,13 +332,13 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             
             // find out what role this dude is playing
             if (idffManager.getIDPDescriptor(entity) != null) {
-                roles.add("IDP");
+                roles.add(IDENTITY_PROVIDER);
             }
             if (idffManager.getSPDescriptor(entity) != null) {
-                roles.add("SP");
+                roles.add(SERVICE_PROVIDER);
             }
             if(idffManager.getAffiliationDescriptor(entity) != null) {
-                roles.add("Affiliate");
+                roles.add(AFFILIATE);
             }
         } catch (IDFFMetaException s) {
             if (debug.warningEnabled()) {
@@ -352,7 +350,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         return roles;
     }
     
-    private List getWSFedRoles(String entity, String realm) 
+    public List getWSFedRoles(String entity, String realm) 
      {
         String classMethod = "EntityModelImpl.getWSFedRoles:";
         List roles = new ArrayList(4);
@@ -360,10 +358,10 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         int cnt = 0;
         try {
             if (WSFederationMetaManager.getIDPSSOConfig(realm, entity) != null) {
-                roles.add("IDP");
+                roles.add(IDENTITY_PROVIDER);
             }
             if (WSFederationMetaManager.getSPSSOConfig(realm, entity) != null) {
-                roles.add("SP");
+                roles.add(SERVICE_PROVIDER);
             }
             
             //to handle dual roles specifically for WSFED
@@ -375,14 +373,14 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                       iter.hasNext(); ) {
                           Object o = iter.next();
                           if (o instanceof UriNamedClaimTypesOfferedElement) {
-                              roles.add("IDP");
+                              roles.add(IDENTITY_PROVIDER);
                               isSP = false; 
                           } else if (o instanceof TokenIssuerEndpointElement) {
                               cnt++;
                           }
                     }
                     if ((isSP) || (cnt >1)) {  
-                        roles.add("SP");
+                        roles.add(SERVICE_PROVIDER);
                     } 
                 }
             }
@@ -410,16 +408,16 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 // find out what role this dude is playing
                 StringBuffer role = new StringBuffer(32);
                 if (SAML2MetaUtils.getSPSSODescriptor(d) != null) {
-                    roles.add("SP");
+                    roles.add(SERVICE_PROVIDER);
                 }
                 if (SAML2MetaUtils.getIDPSSODescriptor(d) != null) {
-                    roles.add("IDP");
+                    roles.add(IDENTITY_PROVIDER);
                 }
                 if (SAML2MetaUtils.getPolicyDecisionPointDescriptor(d) != null) {
-                    roles.add("PDP");
+                    roles.add(POLICY_DECISION_POINT_DESCRIPTOR);
                 }
                 if (SAML2MetaUtils.getPolicyEnforcementPointDescriptor(d) != null) {
-                    roles.add("PEP");
+                    roles.add(POLICY_ENFORCEMENT_POINT_DESCRIPTOR);
                 }
             }
         } catch (SAML2MetaException s) {
@@ -494,5 +492,5 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             throw new AMConsoleException(getErrorString(e));
         }
         return isAffiliate;
-    }      
+    }
 }
