@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtility.java,v 1.4 2007-08-16 17:44:30 cmwesley Exp $
+ * $Id: CLIUtility.java,v 1.5 2007-09-12 16:23:19 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -286,15 +286,30 @@ public class CLIUtility extends TestCommon {
         
         while (tokenizer.hasMoreTokens()) {
             String searchToken = tokenizer.nextToken();
-            log(Level.FINE, "findStringsInOutput", "Searching for string \'" + 
-                    searchToken + "\' in command output.");
-            if (!findStringInOutput(searchToken)) {
-                stringsFound = false;
-                log(Level.FINE, "findStringsInOutput", "Could not find string '"
-                        + searchToken + "'" + " in the command output.");
+            if (searchToken.indexOf('!') != 0) {
+                log(Level.FINE, "findStringsInOutput", "Searching for string \'" + 
+                        searchToken + "\' in command output.");
+                if (!findStringInOutput(searchToken)) {
+                    stringsFound = false;
+                    log(Level.FINE, "findStringsInOutput", "Could not find string '"
+                            + searchToken + "'" + " in the command output.");
+                } else {
+                    log(Level.FINEST, "findStringsInOutput", "Found the string '" + 
+                            searchToken + "'" + " in the command output.");
+                }
             } else {
-                log(Level.FINEST, "findStringsInOutput", "Found the string '" + 
-                        searchToken + "'" + " in the command output.");
+                String token = searchToken.substring(1);
+                log(Level.FINE, "findStringsInOutput", "Searching not to " +
+                        "find \'" + token + "\' in the command output.");
+                if (findStringInOutput(token)) {
+                    stringsFound = false;
+                    log(Level.FINE, "findStringsInOutput", "Found unexpected " +
+                            "string \'" + token + "\' in the command output.");
+                } else {
+                    log(Level.FINEST, "findStringsInOutput", "Did not find " + 
+                            "unexpected string \'" + token + "\' in the " + 
+                            "command output.");
+                }
             }
         }
         return stringsFound;

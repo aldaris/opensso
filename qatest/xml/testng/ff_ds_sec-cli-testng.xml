@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-cli-testng.xml,v 1.4 2007-08-16 17:48:15 cmwesley Exp $
+ $Id: ff_ds_sec-cli-testng.xml,v 1.5 2007-09-12 16:22:08 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -724,7 +724,7 @@
         <parameter name="testName" value="createidentity-test36"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -735,7 +735,7 @@
         <parameter name="testName" value="createidentity-test37"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -746,7 +746,7 @@
         <parameter name="testName" value="createidentity-test38"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -757,7 +757,7 @@
         <parameter name="testName" value="createidentity-test39"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2280,7 +2280,7 @@
         <parameter name="testName" value="addrealmattributes-test1"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2291,7 +2291,7 @@
         <parameter name="testName" value="addrealmattributes-test2"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2302,7 +2302,7 @@
         <parameter name="testName" value="addrealmattributes-test3"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2313,7 +2313,7 @@
         <parameter name="testName" value="addrealmattributes-test4"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2324,7 +2324,7 @@
         <parameter name="testName" value="addrealmattributes-test5"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2335,7 +2335,7 @@
         <parameter name="testName" value="addrealmattributes-test6"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2346,7 +2346,7 @@
         <parameter name="testName" value="addrealmattributes-test7"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2357,7 +2357,7 @@
         <parameter name="testName" value="addrealmattributes-test8"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2368,7 +2368,7 @@
         <parameter name="testName" value="getidentity-test1"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2379,7 +2379,7 @@
         <parameter name="testName" value="getidentity-test2"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2390,7 +2390,7 @@
         <parameter name="testName" value="getidentity-test3"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2401,7 +2401,7 @@
         <parameter name="testName" value="getidentity-test4"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2412,7 +2412,7 @@
         <parameter name="testName" value="getidentity-test5"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2423,7 +2423,7 @@
         <parameter name="testName" value="getidentity-test6"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2434,7 +2434,7 @@
         <parameter name="testName" value="getidentity-test7"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2445,7 +2445,7 @@
         <parameter name="testName" value="getidentity-test8"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2456,7 +2456,7 @@
         <parameter name="testName" value="getidentity-test9"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2467,7 +2467,7 @@
         <parameter name="testName" value="getidentity-test10"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2478,7 +2478,7 @@
         <parameter name="testName" value="getidentity-test11"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2489,7 +2489,7 @@
         <parameter name="testName" value="getidentity-test12"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2500,7 +2500,7 @@
         <parameter name="testName" value="getidentity-test13"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2511,7 +2511,7 @@
         <parameter name="testName" value="getidentity-test14"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2522,7 +2522,7 @@
         <parameter name="testName" value="getidentity-test21"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2533,7 +2533,7 @@
         <parameter name="testName" value="getidentity-test22"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2544,7 +2544,7 @@
         <parameter name="testName" value="getidentity-test23"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2555,7 +2555,7 @@
         <parameter name="testName" value="getidentity-test24"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2566,7 +2566,7 @@
         <parameter name="testName" value="setrealmattributes-test1"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2577,7 +2577,7 @@
         <parameter name="testName" value="setrealmattributes-test2"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2588,7 +2588,7 @@
         <parameter name="testName" value="setrealmattributes-test3"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2599,7 +2599,7 @@
         <parameter name="testName" value="setrealmattributes-test4"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2610,7 +2610,7 @@
         <parameter name="testName" value="setrealmattributes-test5"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2621,7 +2621,7 @@
         <parameter name="testName" value="setrealmattributes-test6"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2632,7 +2632,7 @@
         <parameter name="testName" value="getrealm-test1"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2643,7 +2643,7 @@
         <parameter name="testName" value="getrealm-test2"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2654,7 +2654,7 @@
         <parameter name="testName" value="getrealm-test3"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2665,7 +2665,7 @@
         <parameter name="testName" value="getrealm-test4"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -2676,11 +2676,957 @@
         <parameter name="testName" value="getrealm-test5"/>
         <groups>
             <run>
-                <include name="ff_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.GetRealmTest"/>
         </classes>
-    </test>        
+    </test>
+    <test name="CLI_delete-realm-attribute01">
+        <parameter name="testName" value="deleterealmattribute-test1"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmAttributeTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-realm-attribute02">
+        <parameter name="testName" value="deleterealmattribute-test2"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmAttributeTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-realm-attribute03">
+        <parameter name="testName" value="deleterealmattribute-test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmAttributeTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-realm-attribute04">
+        <parameter name="testName" value="deleterealmattribute-test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmAttributeTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-realm-attribute05">    
+        <parameter name="testName" value="deleterealmattribute-test5"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmAttributeTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-realm-attribute06">
+        <parameter name="testName" value="deleterealmattribute-test6"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmAttributeTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance01">
+        <parameter name="testName" value="createauthinstance-test1"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance02">
+        <parameter name="testName" value="createauthinstance-test2"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance03">
+        <parameter name="testName" value="createauthinstance-test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance04">
+        <parameter name="testName" value="createauthinstance-test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance05">
+        <parameter name="testName" value="createauthinstance-test5"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance06">
+        <parameter name="testName" value="createauthinstance-test6"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance07">
+        <parameter name="testName" value="createauthinstance-test7"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance06">
+        <parameter name="testName" value="createauthinstance-test6"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance07">
+        <parameter name="testName" value="createauthinstance-test7"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance08">
+        <parameter name="testName" value="createauthinstance-test8"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance09">
+        <parameter name="testName" value="createauthinstance-test9"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance10">
+        <parameter name="testName" value="createauthinstance-test10"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance11">
+        <parameter name="testName" value="createauthinstance-test11"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance12">
+        <parameter name="testName" value="createauthinstance-test12"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance13">
+        <parameter name="testName" value="createauthinstance-test13"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance14">
+        <parameter name="testName" value="createauthinstance-test14"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance15">
+        <parameter name="testName" value="createauthinstance-test15"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance16">
+        <parameter name="testName" value="createauthinstance-test16"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance17">
+        <parameter name="testName" value="createauthinstance-test17"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance18">
+        <parameter name="testName" value="createauthinstance-test18"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance19">
+        <parameter name="testName" value="createauthinstance-test19"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance20">
+        <parameter name="testName" value="createauthinstance-test20"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance21">
+        <parameter name="testName" value="createauthinstance-test21"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance22">
+        <parameter name="testName" value="createauthinstance-test22"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance23">
+        <parameter name="testName" value="createauthinstance-test23"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance24">
+        <parameter name="testName" value="createauthinstance-test24"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance25">
+        <parameter name="testName" value="createauthinstance-test25"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-auth-instance26">
+        <parameter name="testName" value="createauthinstance-test26"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance01">
+        <parameter name="testName" value="updateauthinstance-test1"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance02">
+        <parameter name="testName" value="updateauthinstance-test2"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance03">
+        <parameter name="testName" value="updateauthinstance-test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance04">
+        <parameter name="testName" value="updateauthinstance-test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance05">
+        <parameter name="testName" value="updateauthinstance-test5"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance06">
+        <parameter name="testName" value="updateauthinstance-test6"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance07">
+        <parameter name="testName" value="updateauthinstance-test7"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance08">
+        <parameter name="testName" value="updateauthinstance-test8"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance09">
+        <parameter name="testName" value="updateauthinstance-test9"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance10">
+        <parameter name="testName" value="updateauthinstance-test10"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance11">
+        <parameter name="testName" value="updateauthinstance-test11"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance12">
+        <parameter name="testName" value="updateauthinstance-test12"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance13">
+        <parameter name="testName" value="updateauthinstance-test13"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance14">
+        <parameter name="testName" value="updateauthinstance-test14"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance15">
+        <parameter name="testName" value="updateauthinstance-test15"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance16">
+        <parameter name="testName" value="updateauthinstance-test16"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance17">
+        <parameter name="testName" value="updateauthinstance-test17"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance18">
+        <parameter name="testName" value="updateauthinstance-test18"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance19">
+        <parameter name="testName" value="updateauthinstance-test19"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance20">
+        <parameter name="testName" value="updateauthinstance-test20"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance21">
+        <parameter name="testName" value="updateauthinstance-test21"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance22">
+        <parameter name="testName" value="updateauthinstance-test22"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance23">
+        <parameter name="testName" value="updateauthinstance-test23"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance24">
+        <parameter name="testName" value="updateauthinstance-test24"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance25">
+        <parameter name="testName" value="updateauthinstance-test25"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance26">
+        <parameter name="testName" value="updateauthinstance-test26"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance27">
+        <parameter name="testName" value="updateauthinstance-test27"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance28">
+        <parameter name="testName" value="updateauthinstance-test28"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance29">
+        <parameter name="testName" value="updateauthinstance-test29"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance30">
+        <parameter name="testName" value="updateauthinstance-test30"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance31">
+        <parameter name="testName" value="updateauthinstance-test31"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance32">
+        <parameter name="testName" value="updateauthinstance-test32"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance33">
+        <parameter name="testName" value="updateauthinstance-test33"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance34">
+        <parameter name="testName" value="updateauthinstance-test34"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance35">
+        <parameter name="testName" value="updateauthinstance-test35"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance36">
+        <parameter name="testName" value="updateauthinstance-test36"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance37">
+        <parameter name="testName" value="updateauthinstance-test37"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance38">
+        <parameter name="testName" value="updateauthinstance-test38"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance39">
+        <parameter name="testName" value="updateauthinstance-test39"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance40">
+        <parameter name="testName" value="updateauthinstance-test40"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance41">
+        <parameter name="testName" value="updateauthinstance-test41"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance42">
+        <parameter name="testName" value="updateauthinstance-test42"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance43">
+        <parameter name="testName" value="updateauthinstance-test43"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance44">
+        <parameter name="testName" value="updateauthinstance-test44"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance45">
+        <parameter name="testName" value="updateauthinstance-test45"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance46">
+        <parameter name="testName" value="updateauthinstance-test46"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance47">
+        <parameter name="testName" value="updateauthinstance-test47"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance48">
+        <parameter name="testName" value="updateauthinstance-test48"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance49">
+        <parameter name="testName" value="updateauthinstance-test49"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance50">
+        <parameter name="testName" value="updateauthinstance-test50"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance51">
+        <parameter name="testName" value="updateauthinstance-test51"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance52">
+        <parameter name="testName" value="updateauthinstance-test52"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>    
 </suite>

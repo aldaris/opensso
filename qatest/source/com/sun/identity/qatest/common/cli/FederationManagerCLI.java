@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.8 2007-08-16 17:43:56 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.9 2007-09-12 16:23:19 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -498,8 +498,7 @@ public class FederationManagerCLI extends CLIUtility
         }
         return (allRealmsCreated);
     }
-   
-    
+       
     /**
      * Delete a realm.
      *
@@ -1025,6 +1024,62 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
+     * Create multiple auth instances from a list of instances.
+     *
+     * @param instanceList - a list of instances to create separated by pipes 
+     * ('|') in the following format 
+     * (<realm1>,<auth-instance-name1>,<auth-instance-type1>|
+     * <realm2>,<auth-instance-name2>,<auth-instance-type2>)
+     * @return a boolean indicating whether all the instances are created 
+     * successfully.
+     */
+    public boolean createAuthInstances(String instanceList)
+    throws Exception {
+        boolean allInstancesCreated = true;
+        
+        if (instanceList != null) {
+            if (instanceList.length() > 0) {
+                String [] instances = instanceList.split("\\|");
+                for (String instance: instances) {
+                    String[] instanceInfo = instance.split(",");
+                    if (instanceInfo.length == 3) {
+                        String realm = instanceInfo[0];
+                        String instanceName = instanceInfo[1];
+                        String authType = instanceInfo[2];
+                        log(Level.FINE, "createAuthInstances", "Creating auth " + 
+                                "instance " + instance);
+                        int exitStatus = createAuthInstance(realm, instanceName,
+                                authType);
+                        logCommand("createAuthInstances");
+                        resetArgList();
+                        if (exitStatus != SUCCESS_STATUS) {
+                            allInstancesCreated = false;
+                            log(Level.SEVERE, "createAuthInstances", 
+                                    "The instance " + instance + 
+                                    " failed to be created.");
+                        }
+                    } else {
+                        allInstancesCreated = false;
+                        log(Level.SEVERE, "createAuthInstances", 
+                                "The instance to be created must contain a " + 
+                                "realm, an instance name, and an instance " +
+                                "type.");
+                    }
+                }
+            } else {
+                allInstancesCreated = false;
+                log(Level.SEVERE, "createAuthInstances", 
+                        "The list of instances is empty.");
+            }
+        } else {
+            allInstancesCreated = false;
+            log(Level.SEVERE, "createAuthInstances", 
+                    "The list of instances is null.");
+        }
+        return (allInstancesCreated);
+    }
+    
+    /**
      * Delete one or more authentication instances.
      *
      * @param realm - the realm in which the authentication instance should be
@@ -1101,7 +1156,95 @@ public class FederationManagerCLI extends CLIUtility
     
         addGlobalOptions();
         return(executeCommand(commandTimeout));
-    }        
+    }
+    
+    /**
+     * Set attribute values in multiple auth instances.
+     *
+     * @param instanceList - a list of instances to create separated by pipes 
+     * ('|') in the following format 
+     * (<realm1>,<auth-instance-name1>,<attribute-name1>=<attribute-value1>;
+     * <attribute-name2>=<attribute-value2>|
+     * <realm2>,<auth-instance-name2>,<attribute-name1>=<attribute-value1>;
+     * <attribute-name2>=<attribute-value2>)
+     * @return a boolean indicating whether all the instances are updated 
+     * successfully.
+     */
+    public boolean updateAuthInstances(String instanceList)
+    throws Exception {
+        boolean allInstancesUpdated = true;
+        
+        if (instanceList != null) {
+            if (instanceList.length() > 0) {
+                String [] instances = instanceList.split("\\|");
+                for (String instance: instances) {
+                    String[] instanceInfo = instance.split(",");
+                    if (instanceInfo.length == 3) {
+                        String realm = instanceInfo[0];
+                        String instanceName = instanceInfo[1];
+                        String attributeValues = instanceInfo[2];
+                        log(Level.FINE, "updateAuthInstances", "Creating auth " + 
+                                "instance " + instance);
+                        int exitStatus = updateAuthInstance(realm, instanceName,
+                                attributeValues, false);
+                        logCommand("updateAuthInstances");
+                        resetArgList();
+                        if (exitStatus != SUCCESS_STATUS) {
+                            allInstancesUpdated = false;
+                            log(Level.SEVERE, "updateAuthInstances", 
+                                    "The instance " + instance + 
+                                    " failed to be updated.");
+                        }
+                    } else {
+                        allInstancesUpdated = false;
+                        log(Level.SEVERE, "updateAuthInstances", 
+                                "The instance to be created must contain a " + 
+                                "realm, an instance name, and an instance " +
+                                "type.");
+                    }
+                }
+            } else {
+                allInstancesUpdated = false;
+                log(Level.SEVERE, "updateAuthInstnces", 
+                        "The list of instances is empty.");
+            }
+        } else {
+            allInstancesUpdated = false;
+            log(Level.SEVERE, "updateAuthInstances", 
+                    "The list of instances is null.");
+        }
+        return (allInstancesUpdated);
+    }
+    
+    
+    /**
+     * Set service attribute values in a realm.
+     *
+     * @param realm - the realm in which the attribute should be set.
+     * @param serviceName - the name of the service in which to set the 
+     * attribute.
+     * @param attributeValues - a semi-colon delimited string containing the 
+     * attribute values to be set in the service.
+     * @param useDatafile - a boolean indicating whether a datafile should be 
+     * used.  If true, a datafile will be created and the "--datafile" argument
+     * will be used.  If false, the "--attributevalues" argument and a list of 
+     * attribute name/value pairs will be used.
+     * @return the exit status of the "set-service-attributes" command.
+     */
+    public int setServiceAttributes(String realm, String service, 
+            String attributeValues, boolean useDatafile) 
+    throws Exception {
+        setSubcommand(SET_SERVICE_ATTRIBUTES_SUBCOMMAND);
+        addRealmArguments(realm);
+        addServiceNameArguments(service);
+        if (!useDatafile) {
+            addAttributevaluesArguments(attributeValues);
+        } else {
+            addDatafileArguments(attributeValues, "attr", ".txt");
+        }
+        addGlobalOptions();
+        return(executeCommand(commandTimeout));
+    }
     
     /**
      * Execute the command specified by the subcommand and teh argument list
@@ -1667,7 +1810,7 @@ public class FederationManagerCLI extends CLIUtility
                                 ";");
                     } else {
                         log(Level.SEVERE, "findIdentityAttributes", 
-                                "The famadm get-realm command returned " + 
+                                "The famadm get-identity command returned " + 
                                 commandStatus + " as an exit status");
                         attributesFound = false;
                     }
@@ -1683,6 +1826,114 @@ public class FederationManagerCLI extends CLIUtility
             }
         } else {
             log(Level.SEVERE, "findIdentityAttributes", 
+                    "The realm name is not valid");
+            attributesFound = false;
+        }
+        return attributesFound;
+    }
+    
+    /**
+     * Search through the attributes of a realm to verify that certain list of
+     * attributes name/value pairs are present.
+     *
+     * @param realm - the realm in which the auth instances should be listed.
+     * @param instanceName - a pipe ('|') separated list of auth instances in 
+     * the following format: 
+     * <auth-instance-name1>,<auth-instance-type1>|<auth-instance-name2>,
+     * <auth-instance-type2>
+     * @return a boolean flag indicating whether all of the auth instances were
+     * found in the output of the "famadm list-auth-instances command.
+     */
+    public boolean findAuthInstances(String realm, String instanceNames)
+    throws Exception {
+        boolean instancesFound = true;
+        int commandStatus = -1;
+        
+        if (realm != null && !realm.equals("")) {
+            commandStatus = listAuthInstances(realm);
+            if (commandStatus == SUCCESS_STATUS) {
+                StringBuffer instanceList = new StringBuffer();
+                String[] instances = instanceNames.split("\\|");
+                for (int i=0; i < instances.length; i++) {
+                    String[] instanceInfo = instances[i].split(",");
+                    if (instanceInfo.length == 2) {
+                        String name = instanceInfo[0];
+                        String type = instanceInfo[1];
+                        instanceList.append(name).append(", [type=").
+                                append(type).append("]");
+                        if (i < instances.length - 1) {
+                            instanceList.append(";");
+                        }
+                    } else {
+                        log(Level.SEVERE, "findAuthInstances", 
+                                "The instance list must contain a name and " +
+                                "type for each instance");
+                        instancesFound = false;
+                    }
+                }
+                if (instancesFound) {
+                    log(Level.FINE, "findAuthInstances", "Searching for the " + 
+                            "following instances: " + instanceList);
+                    instancesFound = 
+                            findStringsInOutput(instanceList.toString(), ";");
+                }
+            } else {
+                log(Level.SEVERE, "findAuthInstances", 
+                        "The famadm list-auth-instances command returned " + 
+                        commandStatus + " as an exit status");
+                instancesFound = false;
+            }
+        } else {
+            log(Level.SEVERE, "findIdentityAttributes", 
+                    "The realm name is not valid");
+            instancesFound = false;
+        }
+        return instancesFound;
+    }
+    
+    /**
+     * Search through the attributes of a realm to verify that certain list of
+     * attributes name/value pairs are present.
+     *
+     * @param realm - the realm in which the identity exists.
+     * @param instanceName - the name of the authentication instance for which 
+     * the attributes should be retrieved.
+     * @param attributeValues - the attribute name/value pair or pairs which 
+     * should be found.
+     * @return a boolean flag indicating whether all of the attribute name/value
+     * pairs are found in the output of the "famadm get-auth-instance" command.
+     */
+    public boolean findAuthInstanceAttributes(String realm, 
+            String instanceName, String attributeValues)
+    throws Exception {
+        boolean attributesFound = true;
+        int commandStatus = -1;
+        
+        if (realm != null && !realm.equals("")) {
+            if (instanceName != null && !instanceName.equals("")) {
+                if (attributeValues != null && !attributeValues.equals("")) {
+                    commandStatus = getAuthInstance(realm, instanceName);
+                    if (commandStatus == SUCCESS_STATUS) {
+                        attributesFound = findStringsInOutput(attributeValues, 
+                                ";");
+                    } else {
+                        log(Level.SEVERE, "findAuthInstanceAttributes", 
+                                "The famadm get-auth-instance command returned "
+                                + commandStatus + " as an exit status");
+                        attributesFound = false;
+                    }
+                } else {
+                    log(Level.SEVERE, "findAuthInstanceAttributes", 
+                            "The attribute value list is not valid");
+                    attributesFound = false;
+                }
+            } else {
+                log(Level.SEVERE, "findAuthInstanceAttributes", 
+                        "The instance name is not valid");
+                attributesFound = false;
+            }
+        } else {
+            log(Level.SEVERE, "findAuthInstanceAttributes", 
                     "The realm name is not valid");
             attributesFound = false;
         }
