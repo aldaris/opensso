@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.22 2007-09-06 21:03:34 rmisra Exp $
+ * $Id: TestCommon.java,v 1.23 2007-09-12 19:51:54 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -293,8 +293,6 @@ public class TestCommon implements TestConstants {
                 webclient.isJavaScriptEnabled());
         log(Level.FINEST, "consoleLogin", "Redirect Enabled:" +
                 webclient.isRedirectEnabled());
-        if (amUrl.indexOf("/UI/Login") == -1)
-            amUrl = amUrl + "/UI/Login";
         log(Level.FINEST, "consoleLogin", "URL: " + amUrl);
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
@@ -577,8 +575,6 @@ public class TestCommon implements TestConstants {
                 webclient.isJavaScriptEnabled());
         log(Level.FINEST, "consoleLogout", "Redirect Enabled:" +
                 webclient.isRedirectEnabled());
-        if (amUrl.indexOf("/UI/Logout") == -1)
-            amUrl = amUrl + "/UI/Logout";
         log(Level.FINEST, "consoleLogout", "URL: " + amUrl);
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
