@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.3 2007-08-16 19:06:40 cmwesley Exp $
+ * $Id: CLIConstants.java,v 1.4 2007-09-12 18:45:36 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -259,17 +259,23 @@ public interface CLIConstants {
      * String for the "delete-datastores" sub-command
      */
     public static final String DELETE_DATASTORES_SUBCOMMAND = 
-            "delete-datatores";
+            "delete-datastores";
 
     /**
      * String for the "list-datastores" sub-command
      */
     public static final String LIST_DATASTORES_SUBCOMMAND = 
-            "list-datatores";
+            "list-datastores";
     
     /**
      * String for the "update-datastores" sub-command
      */
     public static final String UPDATE_DATASTORES_SUBCOMMAND = 
-            "update-datatores";    
+            "update-datastores"; 
+    
+    /**
+     * String for the "set-service-attributes"
+     */
+    public static final String SET_SERVICE_ATTRIBUTES_SUBCOMMAND = 
+            "set-service-attributes";
 }
