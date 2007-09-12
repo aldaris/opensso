@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgent.template,v 1.2 2007-08-16 23:47:02 sean_brydon Exp $
+# $Id: AMAgent.template,v 1.3 2007-09-12 23:31:59 sean_brydon Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -25,10 +25,10 @@
 #------------------------------------------------------------------------------
 # Configuration Property File
 #
-# @AGENT_NAME@ for:
-# @TARGET_SERVER@
+# Sun Java(TM) System Access Manager Policy Agent for:
+# BEA WebLogic 10.0 Server/Portal
 #
-# Version: @AGENT_VERSION@
+# Version: 2.2
 #------------------------------------------------------------------------------
 #
 # THIS FILE PROVIDES THE CONFIGURATION SETTINGS NECESSARY FOR THE AGENT

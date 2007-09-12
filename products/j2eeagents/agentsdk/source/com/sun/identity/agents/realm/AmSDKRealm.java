@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmSDKRealm.java,v 1.1 2006-09-29 00:05:00 huacui Exp $
+ * $Id: AmSDKRealm.java,v 1.2 2007-09-12 23:31:59 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.Map;
+import java.util.Iterator;
 
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.AMUser;
@@ -65,6 +67,10 @@ public class AmSDKRealm extends AmRealmBase implements IAmRealm {
         initSessionPrivilegedAttributeList();
         initSSOTokenValidator();
         initFilteredRolesEnableFlag();
+        initPrivilegedAttributeMappingEnableFlag();
+        if (isPrivilegedAttributeMappingEnabled()) {
+            initPrivilegedAttributeMap();
+        }
         if (isLogMessageEnabled()) {
             logMessage("AmSDKRealm: Initialized.");
         }
@@ -153,10 +159,10 @@ public class AmSDKRealm extends AmRealmBase implements IAmRealm {
                         
                         if (user != null) {
                             Set roles = user.getRoleDNs();
-                            attributeSet.addAll(roles);
+                            attributeSet.addAll( getPrivilegedMappedAttributesSet(roles)); 
                             if (isFilteredRolesEnabled()) {
                                 Set filteredRoles = user.getFilteredRoleDNs();
-                                attributeSet.addAll(filteredRoles);
+                                attributeSet.addAll( getPrivilegedMappedAttributesSet(filteredRoles));
                             }
                             if (isSessionAttributeFetchEnabled()) {
                                 String[] sessionAttributes =
@@ -214,6 +220,74 @@ public class AmSDKRealm extends AmRealmBase implements IAmRealm {
         }
         
         return result;
+    }
+    
+    /**
+     * Iterate thru a set and swap current values for mapped 
+     * values, if attribute mapping enabled.
+     */
+    private Set getPrivilegedMappedAttributesSet(Set originalSet) {
+        Set returnSet = originalSet;
+        if (isPrivilegedAttributeMappingEnabled()) {
+            returnSet = new HashSet();
+            if (originalSet != null && originalSet.size() > 0) {
+                for (Iterator it = originalSet.iterator(); it.hasNext(); ) {
+                  String mappedValue =  getPrivilegedMappedAttribute((String)it.next());
+                  returnSet.add(mappedValue);
+                }
+            }
+        }
+        return returnSet;
+    }
+    /**
+     * maps original Attribute to the one defined in AMAgent.properties.
+     * It helps with some cases like handling special characters in original
+     * attribute.
+     */
+    private String getPrivilegedMappedAttribute(String originalAttribute) {
+        String mappedAttribute = originalAttribute;
+        if (isPrivilegedAttributeMappingEnabled()) {
+            Map privilegedAttributeMap = getPrivilegedAttributeMap();
+            if (privilegedAttributeMap != null &&
+                    originalAttribute != null) {
+                mappedAttribute = (String)privilegedAttributeMap.get(
+                        originalAttribute);
+            }
+            if (mappedAttribute == null) {
+                mappedAttribute = originalAttribute;
+            }
+        }
+        return mappedAttribute;
+    }
+    
+    private void initPrivilegedAttributeMappingEnableFlag() {
+        _privilegedAttributeMappingEnabled = getConfigurationBoolean(
+                CONFIG_PRIVILEGED_ATTRIBUTE_MAPPING_ENABLED,
+                DEFAULT_PRIVILEGED_ATTRIBUTE_MAPPING_ENABLED
+                );
+        if (isLogMessageEnabled()) {
+            logMessage(
+                    "AmSDKRealm: Using privileged attribute " 
+                    + "mapping enabled flag: "
+                    + _privilegedAttributeMappingEnabled);
+        }
+    }
+    
+    private void initPrivilegedAttributeMap() {
+        _privilegedAttributeMap = getConfigurationMap(
+                CONFIG_PRIVILEGED_ATTRIBUTE_MAPPING);
+        if (isLogMessageEnabled()) {
+            logMessage("AmSDKRealm: privileged attribute mapping: "+
+                    _privilegedAttributeMap);
+        }
+    }
+    
+    private boolean isPrivilegedAttributeMappingEnabled() {
+        return _privilegedAttributeMappingEnabled;
+    }
+    
+    private Map getPrivilegedAttributeMap() {
+        return _privilegedAttributeMap;
     }
     
     private AMUser getUser(SSOToken token) throws Exception {
@@ -412,7 +486,7 @@ public class AmSDKRealm extends AmRealmBase implements IAmRealm {
                     buff.append(",");
                 }
             }
-            logMessage("AmRealm: Session attributes: " +buff.toString());
+            logMessage("AmSDKRealm: Session attributes: " +buff.toString());
         }
     }
     
@@ -423,4 +497,6 @@ public class AmSDKRealm extends AmRealmBase implements IAmRealm {
     private ISSOTokenValidator _ssoTokenValidator;
     private boolean _filteredRolesEnabled;
     private String[] _sessionAttributes;
+    private Map _privilegedAttributeMap = null;
+    private boolean _privilegedAttributeMappingEnabled;
 }
