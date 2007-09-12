@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: policy-testng.xml,v 1.2 2007-07-30 18:11:43 dillidorai Exp $
+   $Id: policy-testng.xml,v 1.3 2007-09-12 21:42:37 dillidorai Exp $
  
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,8 +29,8 @@
 <suite name="policy" verbose="1">
 
     <parameter name="orgName" value="/"/>
-    <parameter name="userName" value="amadmin"/>
-    <parameter name="password" value="secret12"/>
+    <parameter name="userName" value="user1"/>
+    <parameter name="password" value="user1"/>
     <parameter name="serviceName" value="iPlanetAMWebAgentService"/>
     <parameter name="resourceName" value="http://realm1.red.iplanet.com:80/banner.html"/>
     <parameter name="actionName" value="GET"/>
@@ -51,6 +51,12 @@
     <test name="policy3" parallel="false">
         <classes>
             <class name="com.sun.identity.policy.client.Issue619Test"/>
+        </classes>
+    </test>
+
+    <test name="policy4" parallel="false">
+        <classes>
+            <class name="com.sun.identity.policy.client.Issue736Test"/>
         </classes>
     </test>
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.3 2006-08-25 21:21:03 veiming Exp $
+ * $Id: PolicyManager.java,v 1.4 2007-09-12 21:42:41 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1447,8 +1447,9 @@ public final class PolicyManager {
     String getOrgAliasWithResource(String resourceName) 
             throws PolicyException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("PolicyManager.getManagedResourceNames(): "
-                    + " returning: orgName = " + org);
+            debug.message("PolicyManager.getOrgAliasWithResource(): "
+                    + " orgName = " + org
+                    + ", resourceName = " + resourceName);
         }
         if (resourceName == null) {
             return null;
@@ -1471,9 +1472,11 @@ public final class PolicyManager {
         try {
             aliasMappedOrg = IdUtils.getOrganization(token, orgAlias);
         } catch (IdRepoException re) {
-            String[] objs = { orgAlias };
-            throw (new PolicyException(ResBundleUtils.rbName,
-                    "unable_to_get_alias_mapped_org", objs, re));
+            //idRepo throws exception if there is no mapping
+            if (debug.messageEnabled()) {
+                debug.message("PolicyManager.getOrgNameWithAlias(): "
+                        + " can not get orgName for orgAlias = " + orgAlias);
+            }
         }
         return aliasMappedOrg;
     }
