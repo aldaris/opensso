@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPostLogin.java,v 1.2 2007-05-17 19:31:57 qcheng Exp $
+ * $Id: FSPostLogin.java,v 1.3 2007-09-12 23:59:33 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -462,7 +462,7 @@ public class FSPostLogin {
         Iterator hdrNames = retHeaderMap.keySet().iterator();
         while (hdrNames.hasNext()) {
             String name = hdrNames.next().toString();
-            String value = (String)headerMap.get(name);
+            String value = (String)retHeaderMap.get(name);
             response.addHeader(name, value);
         }
         String urlKey = (String) retMap.get(IFSConstants.URL_KEY);
