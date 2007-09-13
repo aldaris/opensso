@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemPropertiesManager.java,v 1.1 2006-08-25 21:21:43 veiming Exp $
+ * $Id: SystemPropertiesManager.java,v 1.2 2007-09-13 19:10:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.shared.configuration;
+
+import java.util.Properties;
 
 /**
  * This manages the system configuration class. The order for locating
@@ -141,5 +143,35 @@ public final class SystemPropertiesManager {
         String value = get(key);
         return ((value != null) && (value.trim().length() > 0)) 
             ? value : defaultValue;
+    }
+
+    /**
+     * Initializes the properties to be used by Open Federation Library.
+     * Ideally this must be called first before any other method is called
+     * within Open Federation Library. This method provides a programmatic way
+     * to set the properties, and will override similar properties if loaded
+     * for a properties file.
+     *
+     * @param properties  properties for Open Federation Library
+     */
+    public static void initializeProperties(Properties properties) {
+        if (systemProperties != null) {
+            systemProperties.initializeProperties(properties);
+        }
+    }
+
+    /**
+     * Initializes the properties map.
+     *
+     * @param propertyName Name of properties.
+     * @param propertyValue Value of properties.
+     */
+    public static void initializeProperties(
+        String propertyName,
+        String propertyValue
+    ) {
+        if (systemProperties != null) {
+            systemProperties.initializeProperties(propertyName, propertyValue);
+        }
     }
 }

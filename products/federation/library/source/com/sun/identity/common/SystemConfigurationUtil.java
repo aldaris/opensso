@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemConfigurationUtil.java,v 1.2 2007-03-27 06:02:58 veiming Exp $
+ * $Id: SystemConfigurationUtil.java,v 1.3 2007-09-13 19:10:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -248,6 +248,29 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
             throw new SystemConfigurationException("noServerFromID", data);
         }
         return server;
+    }
+
+    /**
+     * Initializes the properties map.
+     *
+     * @param properties Map of new properties.
+     */
+    public static void initializeProperties(Properties properties) {
+        SystemPropertiesManager.initializeProperties(properties);
+    }
+
+    /**
+     * Initializes the properties map.
+     *
+     * @param propertyName Name of properties.
+     * @param propertyValue Value of properties.
+     */
+    public static void initializeProperties(
+        String propertyName,
+        String propertyValue
+    ) {
+        SystemPropertiesManager.initializeProperties(
+            propertyName, propertyValue);
     }
 
     /**

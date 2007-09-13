@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedLibSystemProperties.java,v 1.2 2007-03-27 06:02:59 veiming Exp $
+ * $Id: FedLibSystemProperties.java,v 1.3 2007-09-13 19:10:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ public class FedLibSystemProperties implements ISystemProperties {
      *
      * @param properties  properties for Open Federation Library
      */
-    public static synchronized void initializeProperties(Properties properties){
+    public void initializeProperties(Properties properties){
         Properties newProps = new Properties();
         newProps.putAll(systemConfigProps);
         newProps.putAll(properties);
@@ -119,5 +119,18 @@ public class FedLibSystemProperties implements ISystemProperties {
     ) throws Exception {
         return SystemConfigurationUtil.getServiceURL(
             serviceName, protocol, hostname, port);
+    }
+
+    /**
+     * Initializes the properties map.
+     *
+     * @param propertyName Name of properties.
+     * @param propertyValue Value of properties.
+     */
+    public void initializeProperties(String propertyName, String propertyValue){
+        Properties newProps = new Properties();
+        newProps.putAll(systemConfigProps);
+        newProps.put(propertyName, propertyValue);
+        systemConfigProps = newProps;
     }
 }

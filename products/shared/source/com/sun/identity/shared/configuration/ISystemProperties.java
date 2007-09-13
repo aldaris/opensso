@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISystemProperties.java,v 1.1 2006-08-25 21:21:42 veiming Exp $
+ * $Id: ISystemProperties.java,v 1.2 2007-09-13 19:10:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.shared.configuration;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.Properties;
 
 /**
  * This interface provides method to get System configuration information.
@@ -63,4 +64,19 @@ public interface ISystemProperties {
         String hostname,
         int port)
         throws Exception;
+
+    /**
+     * Initializes the properties map.
+     *
+     * @param properties Map of new properties.
+     */
+    void initializeProperties(Properties properties);
+
+    /**
+     * Initializes the properties map.
+     *
+     * @param propertyName Name of properties.
+     * @param propertyValue Value of properties.
+     */
+    void initializeProperties(String propertyName, String propertyValue);
 }

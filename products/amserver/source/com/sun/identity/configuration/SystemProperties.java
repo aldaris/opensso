@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.1 2006-08-25 21:20:41 veiming Exp $
+ * $Id: SystemProperties.java,v 1.2 2007-09-13 19:10:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.shared.configuration.ISystemProperties;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Properties;
 
 /**
  * This is the adapter class for <code>amserver</code> to the shared library.
@@ -79,5 +80,25 @@ public class SystemProperties implements ISystemProperties {
     ) throws Exception {
         return WebtopNaming.getServiceURL(serviceName, protocol, hostname,
             Integer.toString(port));
+    }
+
+    /**
+     * Initializes the properties map.
+     *
+     * @param properties Map of new properties.
+     */
+    public void initializeProperties(Properties properties) {
+        com.iplanet.am.util.SystemProperties.initializeProperties(properties);
+    }
+
+    /**
+     * Initializes the properties map.
+     *
+     * @param propertyName Name of properties.
+     * @param propertyValue Value of properties.
+     */
+    public void initializeProperties(String propertyName, String propertyValue){
+        com.iplanet.am.util.SystemProperties.initializeProperties(
+            propertyName, propertyValue);
     }
 }
