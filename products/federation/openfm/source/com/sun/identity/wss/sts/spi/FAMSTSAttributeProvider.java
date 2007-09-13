@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.1 2007-08-23 22:05:53 mrudul_uchil Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.2 2007-09-13 16:19:29 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,12 +29,21 @@ import com.sun.xml.ws.api.security.trust.*;
 import java.security.Principal;
 import java.util.*;
 import javax.xml.namespace.*;
+import com.iplanet.security.x509.CertUtils;
+import java.security.cert.X509Certificate;
 
 public class FAMSTSAttributeProvider implements STSAttributeProvider {
     
     public Map<QName, List<String>> getClaimedAttributes(Subject subject, String appliesTo, String tokenType, Claims claims)
     {
         String name = null; 
+
+        Iterator iter = subject.getPublicCredentials().iterator();
+        Object  object = iter.next();
+        if(object instanceof X509Certificate) {
+           X509Certificate cert = (X509Certificate)object;
+           name = CertUtils.getSubjectName(cert); 
+        }
         
         Set<Principal> principals = subject.getPrincipals();
         if (principals != null){
@@ -73,7 +82,7 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
             return "jondoe";
         }
         
-        return null;
+        return userName;
     }
     
     private String getUserRole(String userName){
@@ -85,6 +94,6 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
             return "silver";
         }
         
-        return null;
+        return "wsc";
     }
 }

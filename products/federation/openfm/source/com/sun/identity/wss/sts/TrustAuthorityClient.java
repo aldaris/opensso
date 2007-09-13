@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.2 2007-08-30 06:29:38 mrudul_uchil Exp $
+ * $Id: TrustAuthorityClient.java,v 1.3 2007-09-13 16:19:29 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,8 @@ import com.sun.xml.ws.security.IssuedTokenContext;
 import com.sun.xml.ws.security.Token;
 import com.sun.identity.wss.security.AssertionToken;
 import com.sun.xml.ws.api.security.trust.WSTrustException;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.common.SystemConfigurationUtil;
 
 /**
  * The class <code>TrustAuthorityClient</code> is used to obtain the 
@@ -135,8 +137,13 @@ public class TrustAuthorityClient {
     private SecurityToken getSTSToken(ProviderConfig pc, 
             SSOToken ssoToken) throws FAMSTSException {
         
+/*
+  //TODO - we have to change this to use have multiple STS configuration
         String stsEndpoint = pc.getSTSEndpoint();
         String stsMexAddress = pc.getSTSMexEndpoint();
+*/
+        String stsEndpoint = getSTSEndpoint(); 
+        String stsMexAddress = getSTSMexEndpoint();
         STSClientConfiguration config = 
                 new STSClientConfiguration(stsEndpoint, stsMexAddress);        
         try {
@@ -172,6 +179,23 @@ public class TrustAuthorityClient {
             SSOToken ssoToken) throws FAMSTSException {
         // TODO - to be implemented
         return null;
+    }
+
+    // Temporary static method
+    private static String getSTSEndpoint() {
+        String protocol =  SystemConfigurationUtil.getProperty(
+                           Constants.AM_SERVER_PROTOCOL);        
+        String host = SystemConfigurationUtil.getProperty(
+                       Constants.AM_SERVER_HOST);
+        String port = SystemConfigurationUtil.getProperty(
+                       Constants.AM_SERVER_PORT);
+        String deployuri = SystemConfigurationUtil.getProperty(
+                       Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        return protocol + "://" + host + ":" + port + deployuri + "/sts";
+    }
+
+    private static String getSTSMexEndpoint() {
+        return getSTSEndpoint() + "/mex";
     }
             
             
