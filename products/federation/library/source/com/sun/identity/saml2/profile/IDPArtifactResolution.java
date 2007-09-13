@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.2 2006-12-13 19:03:20 weisun2 Exp $
+ * $Id: IDPArtifactResolution.java,v 1.3 2007-09-13 23:49:28 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,8 @@ import java.util.logging.Level;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -323,6 +325,12 @@ public class IDPArtifactResolution {
                 "UnableToFindResponse", null);
         }
 
+        Map props = new HashMap();
+        String nameIDString = SAML2Utils.getNameIDStringFromResponse(res);
+        if (nameIDString != null) {
+            props.put(LogUtil.NAME_ID, nameIDString);
+        }
+        
         // check if need to sign the assertion
         boolean signAssertion = spSSODescriptor.isWantAssertionsSigned();
         if (signAssertion) {
@@ -388,7 +396,7 @@ public class IDPArtifactResolution {
         String str = artResponse.toXMLString(true,true);
         String[] logdata = {idpEntityID, artStr, str};
         LogUtil.access(Level.INFO,
-            LogUtil.ARTIFACT_RESPONSE, logdata, null);
+            LogUtil.ARTIFACT_RESPONSE, logdata, null, props);
         if (str != null) {
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message(classMethod +

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.11 2007-08-28 23:28:15 weisun2 Exp $
+ * $Id: IDPSSOUtil.java,v 1.12 2007-09-13 23:49:29 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,6 +93,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -185,6 +186,20 @@ public class IDPSSOUtil {
    
         String classMethod = "IDPSSOUtil.doSSOFederate: ";
 
+        Object session = null;
+        if (newSession != null) {
+            session = newSession;
+        } else { 
+            try {
+                session = sessionProvider.getSession(request);
+            } catch (SessionException se) {
+                if (SAML2Utils.debug.warningEnabled()) {
+                    SAML2Utils.debug.warning(
+                    classMethod + "No session yet.");
+                } 
+            }
+        }
+
         // log the authnRequest       
         String authnRequestStr = null;
         if (authnReq != null) {
@@ -192,7 +207,7 @@ public class IDPSSOUtil {
         }
         String[] logdata = { spEntityID, idpMetaAlias, authnRequestStr };
         LogUtil.access(Level.INFO, 
-            LogUtil.RECEIVED_AUTHN_REQUEST, logdata, null);
+            LogUtil.RECEIVED_AUTHN_REQUEST, logdata, session);
 
 
         // retrieve IDP entity id from meta alias
@@ -212,7 +227,7 @@ public class IDPSSOUtil {
                     "Unable to get IDP Entity ID from meta.");
                 String[] data = { idpEntityID };
                 LogUtil.error(Level.INFO, 
-                    LogUtil.INVALID_IDP, data, null);
+                    LogUtil.INVALID_IDP, data, session);
                 throw new SAML2Exception(
                     SAML2Utils.bundle.getString("metaDataError")); 
             }
@@ -222,7 +237,7 @@ public class IDPSSOUtil {
                 "Unable to get IDP Entity ID from meta.");
             String[] data = { idpMetaAlias };
             LogUtil.error(Level.INFO,
-                LogUtil.IDP_METADATA_ERROR, data, null);
+                LogUtil.IDP_METADATA_ERROR, data, session);
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("metaDataError")); 
         }
@@ -240,20 +255,7 @@ public class IDPSSOUtil {
                     SAML2Utils.bundle.getString("invalidReceiver"));
             }
         }    
-        Object session = null;
-        if (newSession != null) {
-            session = newSession;
-        } else { 
-            try {
-                session = sessionProvider.getSession(request);
-            } catch (SessionException se) {
-                if (SAML2Utils.debug.warningEnabled()) {
-                    SAML2Utils.debug.warning(
-                    classMethod + "No session yet.");
-                } 
-                session = null;
-            }
-        }
+
         if ((authnReq == null) && (session == null)) {
             // idp initiated and not logged in yet, need to authenticate
             try {
@@ -281,7 +283,7 @@ public class IDPSSOUtil {
             SAML2Utils.debug.error(classMethod + "no ACS URL found.");
             String[] data = { idpMetaAlias };
             LogUtil.error(Level.INFO,
-                LogUtil.NO_ACS_URL, data, null);
+                LogUtil.NO_ACS_URL, data, session);
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("UnableTofindACSURL"));
         }
@@ -289,7 +291,7 @@ public class IDPSSOUtil {
             SAML2Utils.debug.error(classMethod + "no return binding found.");
             String[] data = { idpMetaAlias };
             LogUtil.error(Level.INFO,
-                LogUtil.NO_RETURN_BINDING, data, null);
+                LogUtil.NO_RETURN_BINDING, data, session);
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("UnableTofindBinding"));
         }
@@ -324,7 +326,9 @@ public class IDPSSOUtil {
                  SingleLogoutManager.SAML2);
             // check if the COT cookie needs to be set
             if (setCOTCookie(request, response, acsBinding, spEntityID, 
-                 idpEntityID, idpMetaAlias, realm, relayState, acsURL, res)) {
+                 idpEntityID, idpMetaAlias, realm, relayState, acsURL, res,
+                 session)) 
+            {
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(classMethod +
                         "Redirected to set COT cookie.");
@@ -339,7 +343,7 @@ public class IDPSSOUtil {
                      res.toXMLString());
             }       
             sendResponse(response, acsBinding, spEntityID, idpEntityID,
-                      idpMetaAlias, realm, relayState, acsURL, res);
+                      idpMetaAlias, realm, relayState, acsURL, res,session);
         } else {
             SAML2Utils.debug.error(classMethod + "error response is null");
             throw new SAML2Exception(
@@ -359,7 +363,9 @@ public class IDPSSOUtil {
         String realm,
         String relayState,
         String acsURL, 
-        Response res) {
+        Response res,
+        Object session) 
+    {
 
         String classMethod = "IDPSSOUtil.setCOTCookie: ";
 
@@ -370,7 +376,7 @@ public class IDPSSOUtil {
         }
         // save the needed info into cache so they can be used later
         // when it is redirected back
-        ArrayList cacheList = new ArrayList(8);
+        ArrayList cacheList = new ArrayList(9);
         cacheList.add(0, acsBinding); 
         cacheList.add(1, spEntityID); 
         cacheList.add(2, idpEntityID); 
@@ -379,6 +385,7 @@ public class IDPSSOUtil {
         cacheList.add(5, relayState); 
         cacheList.add(6, acsURL); 
         cacheList.add(7, res); 
+        cacheList.add(8, session);
         String cachedResID = SAML2Utils.generateIDWithServerID();
         IDPCache.responseCache.put(cachedResID, cacheList);
 
@@ -439,7 +446,7 @@ public class IDPSSOUtil {
         String classMethod = "IDPSSOUtil.sendResponse: ";
         ArrayList cacheList = 
             (ArrayList)IDPCache.responseCache.remove(cachedResID);
-        if ((cacheList != null) && (cacheList.size() == 8)) {
+        if ((cacheList != null) && (cacheList.size() == 9)) {
             String acsBinding = (String)cacheList.get(0);
             String spEntityID = (String)cacheList.get(1);
             String idpEntityID = (String)cacheList.get(2);
@@ -448,8 +455,9 @@ public class IDPSSOUtil {
             String relayState = (String)cacheList.get(5);
             String acsURL = (String)cacheList.get(6);
             Response res = (Response)cacheList.get(7); 
+            Object session = cacheList.get(8);
             sendResponse(response, acsBinding, spEntityID, idpEntityID,
-                      idpMetaAlias, realm, relayState, acsURL, res);
+                idpMetaAlias, realm, relayState, acsURL, res, session);
          } else {
             SAML2Utils.debug.error(classMethod + 
                 "unable to get response information from cache.");
@@ -483,10 +491,15 @@ public class IDPSSOUtil {
         String realm,
         String relayState,
         String acsURL, 
-        Response res) 
+        Response res,
+        Object session) 
         throws SAML2Exception {
     
         String classMethod = "IDPSSOUtil.sendResponse: ";
+
+        String nameIDString = SAML2Utils.getNameIDStringFromResponse(res);
+        Map props = new HashMap();
+        props.put(LogUtil.NAME_ID, nameIDString);
 
         // send the response back through HTTP POST or Artifact 
         if (acsBinding.equals(SAML2Constants.HTTP_POST)) {
@@ -513,7 +526,7 @@ public class IDPSSOUtil {
 
             String[] logdata1 = { spEntityID, idpMetaAlias, resMsg };
             LogUtil.access(Level.INFO, 
-                LogUtil.POST_RESPONSE, logdata1, null);
+                LogUtil.POST_RESPONSE, logdata1, session, props);
             try {
                 IDPSSOUtil.postToTarget(response, "SAMLResponse",
                    encodedResMsg, "RelayState", relayState, acsURL);
@@ -522,13 +535,13 @@ public class IDPSSOUtil {
                     "postToTarget failed.", e);
                 String[] data = { acsURL };
                 LogUtil.error(Level.INFO,
-                    LogUtil.POST_TO_TARGET_FAILED, data, null);
+                    LogUtil.POST_TO_TARGET_FAILED, data, session, props);
                 throw new SAML2Exception(
                     SAML2Utils.bundle.getString("postToTargetFailed")); 
             }
         } else if (acsBinding.equals(SAML2Constants.HTTP_ARTIFACT)) {
             IDPSSOUtil.sendResponseArtifact(response, idpEntityID, 
-                realm, acsURL, relayState, res);
+                realm, acsURL, relayState, res, session, props);
         } else {
             SAML2Utils.debug.error(classMethod + 
                                    "unsupported return binding.");
@@ -1643,6 +1656,8 @@ public class IDPSSOUtil {
      * @param acsURL the assertion consumer service <code>URL</code>
      * @param relayState the value of the <code>RelayState</code>
      * @param res the <code>SAML Response</code> object
+     * @param session user session
+     * @param props property map including nameIDString for logging
      * 
      * @exception SAML2Exception if the operation is not successful
      */
@@ -1652,7 +1667,9 @@ public class IDPSSOUtil {
                                        String realm,
                                        String acsURL,
                                        String relayState,
-                                       Response res) 
+                                       Response res,
+                                       Object session,
+                                       Map props) 
         throws SAML2Exception {
     
         String classMethod = "IDPSSOUtil.sendResponseArtifact: ";
@@ -1666,7 +1683,7 @@ public class IDPSSOUtil {
                     + "Unable to get IDP SSO Descriptor from meta.");
                 String[] data = { idpEntityID };
                 LogUtil.error(Level.INFO,
-                    LogUtil.IDP_METADATA_ERROR, data, null);
+                    LogUtil.IDP_METADATA_ERROR, data, session, props);
                 throw new SAML2Exception(
                     SAML2Utils.bundle.getString("metaDataError")); 
             }
@@ -1675,7 +1692,7 @@ public class IDPSSOUtil {
                 + "Unable to get IDP SSO Descriptor from meta.");
             String[] data = { idpEntityID };
             LogUtil.error(Level.INFO,
-                LogUtil.IDP_METADATA_ERROR, data, null);
+                LogUtil.IDP_METADATA_ERROR, data, session, props);
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("metaDataError")); 
         } 
@@ -1688,7 +1705,7 @@ public class IDPSSOUtil {
                 "Unable to get ArtifactResolutionServiceElement from meta.");
             String[] data = { idpEntityID };
             LogUtil.error(Level.INFO,
-                LogUtil.IDP_METADATA_ERROR, data, null);
+                LogUtil.IDP_METADATA_ERROR, data, session, props);
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("metaDataError")); 
         } 
@@ -1706,7 +1723,7 @@ public class IDPSSOUtil {
                 "Unable to create artifact: ", se);
             String[] data = { idpEntityID };
             LogUtil.error(Level.INFO,
-                LogUtil.CANNOT_CREATE_ARTIFACT, data, null);
+                LogUtil.CANNOT_CREATE_ARTIFACT, data, session, props);
             try {
                 response.sendError(response.SC_INTERNAL_SERVER_ERROR,
                     SAML2Utils.bundle.getString("errorCreateArtifact"));
@@ -1728,7 +1745,7 @@ public class IDPSSOUtil {
             IDPCache.responsesByArtifacts.put(artStr, res);
             String[] logdata = { idpEntityID, realm, redirectURL };
             LogUtil.access(Level.INFO, 
-                LogUtil.SEND_ARTIFACT, logdata, null);
+                LogUtil.SEND_ARTIFACT, logdata, session, props);
             response.sendRedirect(redirectURL);    
         } catch (IOException ioe) {
             SAML2Utils.debug.error(classMethod + 
