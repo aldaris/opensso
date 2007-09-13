@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Utils.java,v 1.4 2007-04-23 03:32:57 hengming Exp $
+ * $Id: Utils.java,v 1.5 2007-09-13 07:41:20 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -626,7 +626,7 @@ public class Utils {
             throw sfe;
         }
         
-        if (isServer) {
+        if (isServer && SOAPBindingService.enforceOnlyKnownProviders()) {
             String providerID = provH.getProviderID();
             ProviderManager providerManager = ProviderUtil.getProviderManager();
 

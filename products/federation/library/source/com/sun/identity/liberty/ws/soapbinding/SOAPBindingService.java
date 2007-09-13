@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPBindingService.java,v 1.1 2006-10-30 23:15:22 qcheng Exp $
+ * $Id: SOAPBindingService.java,v 1.2 2007-09-13 07:41:20 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,8 @@ public class SOAPBindingService implements ConfigurationListener {
                             "WebServiceAuthenticator";
     static final String SUPPORTED_AUTHENTICATION_MECHANISMS_ATTR =
                             "SupportedAuthenticationMechanisms";
+    static final String ENFORCE_ONLY_KNOWN_PROVIDER_ATTR =
+                            "EnforceOnlyKnownProvider";
 
     static ConfigurationInstance ci = null;
 
@@ -59,6 +61,7 @@ public class SOAPBindingService implements ConfigurationListener {
     static HashMap handlers = new HashMap();
     static WebServiceAuthenticator wsAuthenticator = null;
     static Set supportedAuthMechs = null;
+    static boolean enforceOnlyKnownProvider = true;
 
     static {
         try {
@@ -92,6 +95,29 @@ public class SOAPBindingService implements ConfigurationListener {
      */
     static Set getSupportedAuthenticationMechanisms() {
         return supportedAuthMechs;
+    }
+
+    /**
+     * Returns <code>true</code> if provider check must fail if the provider is
+     * not known by the WSP (i.e. : if the WSP has not got the metadata of the
+     * WSC.)
+     * 
+     * 
+     * @return
+     * <ul>
+     * <li><code>true</code> if provider check must fail if the provider is
+     * not known by the WSP (i.e. : if the WSP has not got the metadata of the
+     * WSC.)</li>
+     * <li><code>false</code> if the WSP accepts ID-WSF requests from unknown
+     * providers (i.e. : from providers which metadata are not known by the WSP
+     * side)</li>
+     * </ul>
+     */
+    static boolean enforceOnlyKnownProviders() {
+        if (Utils.debug.messageEnabled()) {
+            Utils.debug.message("SOAPBindingService.enforceOnlyKnownProviders");
+        }
+        return enforceOnlyKnownProvider;
     }
 
     /**
@@ -189,5 +215,15 @@ public class SOAPBindingService implements ConfigurationListener {
         supportedAuthMechs =
                 (Set)attrMap.get(SUPPORTED_AUTHENTICATION_MECHANISMS_ATTR);
         
+
+        Set valuesEnforceOnlyKnownProvider = 
+            (Set) attrMap.get(ENFORCE_ONLY_KNOWN_PROVIDER_ATTR);
+        if ( valuesEnforceOnlyKnownProvider != null 
+             && !valuesEnforceOnlyKnownProvider.isEmpty() ){
+            String enforce = 
+                (String) valuesEnforceOnlyKnownProvider.iterator().next();
+            enforceOnlyKnownProvider = Boolean.parseBoolean( enforce );
+        }
+
     }
 }
