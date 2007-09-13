@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.7 2007-08-28 00:20:06 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.8 2007-09-13 07:24:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,7 +73,7 @@ import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import com.sun.identity.shared.xml.XMLUtils;
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.Constants;
 
@@ -100,11 +100,11 @@ public class SecureSOAPMessage {
      private static ResourceBundle bundle = WSSUtils.bundle;
 
      private String server_proto =
-     SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
+     SystemConfigurationUtil.getProperty(Constants.AM_SERVER_PROTOCOL);
      private String server_host  =
-     SystemProperties.get(Constants.AM_SERVER_HOST);
+     SystemConfigurationUtil.getProperty(Constants.AM_SERVER_HOST);
      private String server_port  =
-     SystemProperties.get(Constants.AM_SERVER_PORT);
+     SystemConfigurationUtil.getProperty(Constants.AM_SERVER_PORT);
 
      /**
       * Constructor to create secure SOAP message. 

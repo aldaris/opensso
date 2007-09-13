@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.1 2007-08-30 06:29:39 mrudul_uchil Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.2 2007-09-13 07:24:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,8 +55,7 @@ public class FAMSTSConfiguration implements
     private static boolean encryptIssuedKey = true;
     private static long issuedTokenTimeout;
     private static String stsEndpoint;
-    private static String spName;
-    private static String spCertAlias;
+    private static String certAlias;
     
     private CallbackHandler callbackHandler;
     
@@ -71,7 +70,7 @@ public class FAMSTSConfiguration implements
     static final String ENCRYPT_ISSUED_TOKEN = "stsEncryptIssuedToken";
     static final String LIFE_TIME = "stsLifetime";
     static final String TOKEN_IMPL_CLASS = "stsTokenImplClass";
-    static final String SP_NAME = "stsSPName";
+    static final String CERT_ALIAS = "stsCertAlias";
 
     private static Debug debug = STSUtils.debug;
     static ConfigurationInstance ci = null;
@@ -157,15 +156,10 @@ public class FAMSTSConfiguration implements
             type = (String)values.iterator().next();
         }
 
-        values = (Set)attrMap.get(SP_NAME);
+        values = (Set)attrMap.get(CERT_ALIAS);
         if (values != null && !values.isEmpty()) {
-            spName = (String)values.iterator().next();
+            certAlias = (String)values.iterator().next();
         }
-
-        FAMTrustSPMetadata data = new FAMTrustSPMetadata(spName);
-        spMap.put(data.getSPEndPoint(), data);
-
-        spCertAlias = data.getCertAlias();
 
     }
 
@@ -176,6 +170,10 @@ public class FAMSTSConfiguration implements
     }
     
     public TrustSPMetadata getTrustSPMetadata(final String spEndpoint){
+
+        FAMTrustSPMetadata data = new FAMTrustSPMetadata(spEndpoint);
+        spMap.put(spEndpoint, data);
+
         return (TrustSPMetadata)spMap.get(spEndpoint);
     }
     
@@ -224,7 +222,7 @@ public class FAMSTSConfiguration implements
     }
     
     public CallbackHandler getCallbackHandler(){
-        return new FAMCallbackHandler(this.spCertAlias);
+        return new FAMCallbackHandler(this.certAlias);
     }
     
     public Map<String, Object> getOtherOptions(){

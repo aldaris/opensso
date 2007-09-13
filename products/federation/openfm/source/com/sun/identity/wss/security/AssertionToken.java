@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionToken.java,v 1.2 2007-05-17 18:49:17 mallas Exp $
+ * $Id: AssertionToken.java,v 1.3 2007-09-13 07:24:21 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,7 +45,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.SystemConfigurationUtil;
 
 import com.sun.identity.shared.DateUtils;
 import com.sun.identity.shared.Constants;
@@ -73,7 +73,7 @@ public class AssertionToken implements SecurityToken {
       private static final String KEY_INFO_TYPE =
          "com.sun.identity.liberty.ws.security.keyinfotype";
 
-      private static String keyInfoType = SystemProperties.get(
+      private static String keyInfoType = SystemConfigurationUtil.getProperty(
                                           KEY_INFO_TYPE);
       /**
        * Constructor that initializes the AssertionToken.
@@ -130,7 +130,7 @@ public class AssertionToken implements SecurityToken {
                 getConfirmationMethod(securityMechanism.getURI());
 
           // TODO: Read the issuer from the service xml??
-          String issuer = SystemProperties.get(Constants.AM_SERVER_HOST);
+          String issuer = SystemConfigurationUtil.getProperty(Constants.AM_SERVER_HOST);
           Date issueInstant = new Date();
 
           AuthenticationStatement authStatement = 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPRequestHandler.java,v 1.2 2007-06-26 17:15:35 mrudul_uchil Exp $
+ * $Id: HTTPRequestHandler.java,v 1.3 2007-09-13 07:24:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,7 @@ import java.util.ResourceBundle;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.wss.provider.ProviderConfig;
@@ -184,7 +184,8 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
      * @return String Login URL
      */
     public String getLoginURL(HttpServletRequest request) {
-        String loginURL = SystemProperties.get(Constants.LOGIN_URL);
+        String loginURL = 
+            SystemConfigurationUtil.getProperty(Constants.LOGIN_URL);
         StringBuffer requestURL = request.getRequestURL();
         loginURL = loginURL + "?" + GOTO + "=" + requestURL.toString();
         String query = request.getQueryString();
@@ -218,7 +219,7 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
     // Sets the authenticated principal to the subject.
     private void setPrincipal(Subject subject) {
         Principal p = new SecurityPrincipal(
-                        SystemProperties.get(
+                        SystemConfigurationUtil.getProperty(
                         "com.sun.identity.jsr196.authenticated.user",
                         AUTHENTICATED_USERS));
          subject.getPrincipals().add(p);

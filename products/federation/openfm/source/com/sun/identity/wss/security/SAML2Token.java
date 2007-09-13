@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Token.java,v 1.1 2007-05-17 18:49:17 mallas Exp $
+ * $Id: SAML2Token.java,v 1.2 2007-09-13 07:24:21 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,7 @@ import org.w3c.dom.Text;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
@@ -77,7 +77,7 @@ public class SAML2Token implements SecurityToken {
     private String certAlias = "";
     private static final String KEY_INFO_TYPE =
          "com.sun.identity.liberty.ws.security.keyinfotype";
-    private static String keyInfoType = SystemProperties.get(
+    private static String keyInfoType = SystemConfigurationUtil.getProperty(
                                           KEY_INFO_TYPE);
     private static AssertionFactory factory = AssertionFactory.getInstance();
     
@@ -154,7 +154,8 @@ public class SAML2Token implements SecurityToken {
               assertion.setVersion("2.0");
               assertion.setID(SAML2Utils.generateID());
               Issuer issuer = factory.createIssuer();
-              issuer.setValue(SystemProperties.get(Constants.AM_SERVER_HOST));          
+              issuer.setValue(SystemConfigurationUtil.getProperty(
+                  Constants.AM_SERVER_HOST));          
               assertion.setIssuer(issuer);
           
               Date issueInstant = new Date();

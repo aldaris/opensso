@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.3 2007-08-28 00:20:04 mallas Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.4 2007-09-13 07:24:21 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.sun.identity.shared.debug.Debug;
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -216,7 +216,7 @@ public abstract class TrustAuthorityConfig {
     private static DiscoveryConfig getDiscoveryConfig() 
         throws ProviderException {
         if (discoveryConfigClass == null) {
-            String adapterName = SystemProperties.get(
+            String adapterName = SystemConfigurationUtil.getProperty(
                 WSS_DISCOVERY_CONFIG_PLUGIN, 
                 "com.sun.identity.wss.provider.plugins.DiscoveryAgent");
             try {

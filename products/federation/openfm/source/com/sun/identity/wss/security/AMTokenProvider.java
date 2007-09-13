@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTokenProvider.java,v 1.3 2007-06-21 23:12:49 mallas Exp $
+ * $Id: AMTokenProvider.java,v 1.4 2007-09-13 07:24:21 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,8 +40,8 @@ import java.util.Vector;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOTokenManager;
-import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.common.SystemConfigurationUtil;
 
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import com.sun.identity.saml.xmlsig.KeyProvider;
@@ -116,7 +116,7 @@ public class AMTokenProvider implements TokenProvider {
 
            // Currently it reads the same SAML Authority until the STS
            // service is ready.
-           String trustAlias = SystemProperties.get(
+           String trustAlias = SystemConfigurationUtil.getProperty(
               Constants.SAML_XMLSIG_CERT_ALIAS);
 
            assertionToken.sign(trustAlias);
@@ -132,7 +132,7 @@ public class AMTokenProvider implements TokenProvider {
         } else if(tokenSpec instanceof SAML2TokenSpec) {
             SAML2Token saml2Token = 
                     new SAML2Token((SAML2TokenSpec)tokenSpec, ssoToken);
-            String trustAlias = SystemProperties.get(
+            String trustAlias = SystemConfigurationUtil.getProperty(
                  Constants.SAML_XMLSIG_CERT_ALIAS);
             saml2Token.sign(trustAlias);
             return saml2Token;             

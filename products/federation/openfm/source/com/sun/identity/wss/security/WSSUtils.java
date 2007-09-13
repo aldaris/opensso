@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.5 2007-08-28 00:20:05 mallas Exp $
+ * $Id: WSSUtils.java,v 1.6 2007-09-13 07:24:21 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,7 +78,6 @@ import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.xmlenc.XMLEncryptionManager;
 import com.sun.identity.xmlenc.EncryptionException;
-import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.encode.Base64;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -565,7 +564,7 @@ public class WSSUtils {
         return roles;
     }    
     
-    private static SSOToken getAdminToken() {
+    public static SSOToken getAdminToken() {
         SSOToken adminToken = null;
         try {
             adminToken = (SSOToken) AccessController.doPrivileged(

@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.1 2007-08-30 06:29:40 mrudul_uchil Exp $
+   $Id: famSTS.xml,v 1.2 2007-09-13 07:24:23 mrudul_uchil Exp $
                                                                                 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -92,12 +92,12 @@
                    </DefaultValues>
                </AttributeSchema>
                
-               <AttributeSchema name="stsSPName"
+               <AttributeSchema name="stsCertAlias"
                    type="single"
                    syntax="string"
                    i18nKey="a107">
                    <DefaultValues>
-                       <Value>wsp</Value>
+                       <Value>test</Value>
                    </DefaultValues>
                </AttributeSchema>
             </Global>

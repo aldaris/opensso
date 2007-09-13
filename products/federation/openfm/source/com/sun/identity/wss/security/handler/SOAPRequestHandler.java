@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.7 2007-08-28 00:20:06 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.8 2007-09-13 07:24:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,10 +52,11 @@ import org.w3c.dom.NodeList;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
+import com.iplanet.am.util.SystemProperties;
 
 import com.sun.identity.liberty.ws.authnsvc.AuthnSvcClient;
 import com.sun.identity.liberty.ws.authnsvc.AuthnSvcConstants;
@@ -297,7 +298,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 AdminTokenAction.getInstance());
         SecurityTokenFactory factory = SecurityTokenFactory.getInstance(token);
 
-        String keyAlias = SystemProperties.get(
+        String keyAlias = SystemConfigurationUtil.getProperty(
                     Constants.SAML_XMLSIG_CERT_ALIAS);
         if(!config.useDefaultKeyStore()) {
            keyAlias = config.getKeyAlias();
@@ -417,7 +418,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         secureMessage.setSecurityMechanism(securityMechanism);
         
-        String keyAlias = SystemProperties.get(
+        String keyAlias = SystemConfigurationUtil.getProperty(
                           Constants.SAML_XMLSIG_CERT_ALIAS);
         if(!config.useDefaultKeyStore()) {
             keyAlias = config.getKeyAlias();
@@ -626,7 +627,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
              Subject subject) throws SecurityException {
 
         String uri = secMech.getURI();
-        String certAlias = SystemProperties.get(
+        String certAlias = SystemConfigurationUtil.getProperty(
                                Constants.SAML_XMLSIG_CERT_ALIAS);
         if(!config.useDefaultKeyStore()) {
             certAlias = config.getKeyAlias();
@@ -835,7 +836,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         if(authenticator != null) {
            return authenticator;
         }
-        String classImpl = SystemProperties.get(
+        String classImpl = SystemConfigurationUtil.getProperty(
                 WSS_AUTHENTICATOR, 
                "com.sun.identity.wss.security.handler.DefaultAuthenticator");
         try {
@@ -961,7 +962,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                    throws SecurityException {
         SASLRequest saslReq = new SASLRequest(MECHANISM_SSOTOKEN);
         try {
-            String authURL = SystemProperties.get(LIBERTY_AUTHN_URL);
+            String authURL = SystemConfigurationUtil.getProperty(LIBERTY_AUTHN_URL);
             if(authURL == null) {
                debug.error("SOAPRequestHandler.getSASLResponse:: AuthnURL " +
                " not present in the configuration.");

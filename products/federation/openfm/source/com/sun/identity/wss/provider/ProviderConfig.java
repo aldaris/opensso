@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.7 2007-08-28 00:20:04 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.8 2007-09-13 07:24:20 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
@@ -697,7 +697,7 @@ public abstract class ProviderConfig {
 
     private static ProviderConfig getConfigAdapter() throws ProviderException {
         if (adapterClass == null) {
-            String adapterName =   SystemProperties.get(
+            String adapterName =   SystemConfigurationUtil.getProperty(
                 WSS_PROVIDER_CONFIG_PLUGIN, 
                 "com.sun.identity.wss.provider.plugins.AgentProvider");
             try {
