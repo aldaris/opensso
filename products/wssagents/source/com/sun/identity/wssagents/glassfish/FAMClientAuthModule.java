@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClientAuthModule.java,v 1.1 2007-06-08 06:39:01 mrudul_uchil Exp $
+ * $Id: FAMClientAuthModule.java,v 1.2 2007-09-13 16:23:31 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,16 +54,16 @@ import java.lang.reflect.Method;
 
 import org.w3c.dom.Element;
 
-import com.sun.enterprise.server.ApplicationServer;
-import com.sun.enterprise.security.TextLoginDialog;
-import com.sun.enterprise.security.auth.login.PasswordCredential;
-
-import com.sun.enterprise.security.jauth.AuthParam;
-import com.sun.enterprise.security.jauth.AuthPolicy;
-import com.sun.enterprise.security.jauth.SOAPAuthParam;
-import com.sun.enterprise.security.jauth.AuthException;
-import com.sun.enterprise.security.jauth.ClientAuthModule;
-
+import javax.security.auth.message.module.ClientAuthModule;
+import javax.security.auth.message.MessagePolicy;
+import javax.security.auth.message.MessageInfo;
+import javax.security.auth.message.AuthException;
+import javax.security.auth.message.AuthStatus;
+import com.sun.xml.ws.api.message.Packet;
+import com.sun.xml.ws.api.SOAPVersion;
+import com.sun.xml.ws.api.addressing.AddressingVersion;
+import com.sun.xml.ws.security.trust.WSTrustConstants;
+import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.identity.wssagents.common.FAMClientClassLoader;
 
 /**
@@ -95,11 +95,12 @@ public class FAMClientAuthModule implements ClientAuthModule {
      *             <code>javax.security.auth.callback.CallbackHandler</code>
      * @param options
      */
-    public void initialize(
-        AuthPolicy requestPolicy,
-        AuthPolicy responsePolicy,
-        CallbackHandler handler,
-        Map options) {
+    public void initialize(MessagePolicy requestPolicy,
+               MessagePolicy responsePolicy,
+               CallbackHandler handler,
+               Map options)
+        throws AuthException {
+
         
         if(_logger != null) {
             _logger.log(Level.INFO, "FAMClientAuthModule.Init");
@@ -149,18 +150,31 @@ public class FAMClientAuthModule implements ClientAuthModule {
     /**
      * Secures the outbound request based on the configuration
      * exposed through deployment descriptors.
-     * @param param <code>AuthParam</code> that has a <code>SOAPMessage</code>.
-     * @param subject J2EE <code>Subject</code> that will have authenticated
-     *          principal
-     * @param sharedState Any shared state that can be set between request
-     *        and response.
+     * @param messageInfo that has a <code>SOAPMessage</code>.
+     * @param client subject J2EE <code>Subject</code> that will have 
+     *        authenticated principal
+     * @return AuthStatus if successful
      * @exception AuthException for any failures.
      */
-    public void secureRequest(AuthParam param, Subject subject,
-        Map sharedState) throws AuthException {
+    public AuthStatus secureRequest(MessageInfo messageInfo, 
+                      Subject clientSubject) throws AuthException {
         
         try {
-            SOAPMessage soapMessage = ((SOAPAuthParam)param).getRequest();
+            Packet packet = (Packet)messageInfo.getMap().get("REQ_PACKET");
+            if ("true".equals(packet.invocationProperties.get(
+                    WSTrustConstants.IS_TRUST_MESSAGE))){
+                _logger.log(Level.FINE, "FAMClientAuthModule.secureRequest:" +
+                    " Trust Message");
+                String action = (String)packet.invocationProperties.get(
+                    WSTrustConstants.REQUEST_SECURITY_TOKEN_ISSUE_ACTION);
+                HeaderList headers = packet.getMessage().getHeaders();
+                headers.fillRequestAddressingHeaders(packet,
+                   AddressingVersion.W3C, SOAPVersion.SOAP_12,false, action);
+            }
+
+            //SOAPMessage soapMessage = ((SOAPAuthParam)param).getRequest();
+            SOAPMessage soapMessage = 
+                           (SOAPMessage)messageInfo.getRequestMessage();
             Object args[];
             if(_logger != null) {
                 args = new Object[1];
@@ -173,8 +187,8 @@ public class FAMClientAuthModule implements ClientAuthModule {
             // Invoke the secure request method
             args = new Object[3];
             args[0] = soapMessage;
-            args[1] = subject;
-            args[2] = sharedState;
+            args[1] = clientSubject;
+            args[2] = messageInfo.getMap();
             soapMessage = (SOAPMessage) secureRequest.invoke(
                 clientAuthModule, args);
             
@@ -185,6 +199,7 @@ public class FAMClientAuthModule implements ClientAuthModule {
                     "SOAPMessage after securing: " + print.invoke(
                     clientAuthModule, args));
             }
+            return AuthStatus.SUCCESS;
             
         } catch (Exception ex) {
             if(_logger != null) {
@@ -200,20 +215,18 @@ public class FAMClientAuthModule implements ClientAuthModule {
     
     /**
      * Validates the response from the server.
-     * @param param <code>AuthParam</code> that has a inbound
-     * <code>SOAPMessage</code>
-     * @param subject J2EE <code>Subject</code>
-     * @param sharedState Any shared state that is required for message
-     *        validations.
+     * @param messageInfo that has a inbound <code>SOAPMessage</code>
+     * @param clientSubject Client J2EE <code>Subject</code>
+     * @param serviceSubject Service J2EE <code>Subject</code>
+     * @return AuthStatus if successful in validating the response.
      * @exception AuthException for any error occured during validation of
      *        the message.
      */
-    public void validateResponse(AuthParam param, Subject subject,
-        Map sharedState) throws AuthException {
+    public AuthStatus validateResponse(MessageInfo messageInfo, 
+        Subject clientSubject, Subject serviceSubject) throws AuthException {
         
         try {
-            // Obtain the response.
-            SOAPMessage soapMessage = ((SOAPAuthParam)param).getResponse();
+            SOAPMessage soapMessage = (SOAPMessage)messageInfo.getResponseMessage();
             Object args[];
             if(_logger != null) {
                 args = new Object[1];
@@ -226,7 +239,7 @@ public class FAMClientAuthModule implements ClientAuthModule {
             // Invoke validate response
             args = new Object[2];
             args[0] = soapMessage;
-            args[1] = sharedState;
+            args[1] = messageInfo.getMap();
             validateResponse.invoke(clientAuthModule, args);
             
             if(_logger != null) {
@@ -236,6 +249,7 @@ public class FAMClientAuthModule implements ClientAuthModule {
                             + " SOAPMessage after validation: " + print.invoke(
                             clientAuthModule, args));
             }
+            return AuthStatus.SUCCESS;
         } catch (Exception ex) {
             if(_logger != null) {
                 _logger.log(Level.SEVERE, 
@@ -251,32 +265,22 @@ public class FAMClientAuthModule implements ClientAuthModule {
     
     /**
      * Clears the subject and shared state.
+     * @param messageInfo
      * @param subject
-     * @param sharedState
      * @exception AuthException
      */
-    public void disposeSubject(Subject subject, Map sharedState)
-    throws AuthException {
+    public void cleanSubject(MessageInfo messageInfo, Subject subject) throws
+          AuthException {
         
         if (subject == null) {
             return;
         }
         
-        try {
-            if (sharedState != null) {
-                sharedState.clear();
-            }
-        } catch(Exception ex) {
-            if(_logger != null) {
-                _logger.log(Level.SEVERE, "FAMClientAuthModule.disposeSubject " 
-                            + "Failure in dispose subject.");
-            }
-            ex.printStackTrace();
-            AuthException ae = new AuthException("disposeSubjectFailed");
-            ae.initCause(ex);
-            throw ae;
-        }    
     }
+
+     public Class[] getSupportedMessageTypes() {
+         return null;
+     }
     
     private static Logger _logger = null;
     static {

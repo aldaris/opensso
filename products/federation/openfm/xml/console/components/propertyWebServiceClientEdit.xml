@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceClientEdit.xml,v 1.6 2007-08-28 22:20:59 veiming Exp $
+   $Id: propertyWebServiceClientEdit.xml,v 1.7 2007-09-13 16:21:33 mallas Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -101,6 +101,7 @@
         </ccgroup>
     </property>
 
+<!--
     <property>
         <label name="lblsecuritytokenendpoint" defaultValue="web.services.profile.securitytokenendpoint"
             labelFor="securitytokenendpoint" />
@@ -122,6 +123,8 @@
             <attribute name="autoSubmit" value="false" />
         </cc>
     </property>
+-->
+
 
     <property>
         <label name="lblforuserauthn"
@@ -279,6 +282,17 @@
             <attribute name="autoSubmit" value="false" />
         </cc>
         <fieldhelp name="helpwssproxyEndPoint" defaultValue="web.services.profile.wssproxyEndPoint.help" />
+    </property>
+
+    <property>
+        <label name="lblwspendpoint" defaultValue="web.services.profile.wspendpoint"
+            labelFor="wspendpoint" />
+        <cc name="wspendpoint"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="70" />
+            <attribute name="localizeDisplayFieldValue" value="false" />
+            <attribute name="autoSubmit" value="false" />
+        </cc>
     </property>
 
     <property>

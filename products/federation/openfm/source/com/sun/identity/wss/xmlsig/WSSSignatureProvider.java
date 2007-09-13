@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.1 2007-07-11 06:12:45 mrudul_uchil Exp $
+ * $Id: WSSSignatureProvider.java,v 1.2 2007-09-13 16:20:50 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,11 +228,14 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                         Constants.ALGO_ID_DIGEST_SHA1);
             }
 
+/*
+ *          Until we verify the fix from XWSS to support STRTransform
             Transforms strtransform = new Transforms(doc);
             strtransform.addTransform(STRTransform.STR_TRANSFORM_URI,
                        transformParams);
             signature.addDocument("#"+secRefId, strtransform,
                         Constants.ALGO_ID_DIGEST_SHA1);
+*/
 
             Element keyIdentifier = doc.createElementNS(
                         WSSConstants.WSSE_NS,
@@ -430,11 +433,13 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                 signature.addDocument("#"+id, transforms,
                         Constants.ALGO_ID_DIGEST_SHA1);
             }
+/*
             Transforms strtransforms = new Transforms(doc);
             strtransforms.addTransform(
                                STRTransform.STR_TRANSFORM_URI, transformParams);
             signature.addDocument("#"+secRefId, strtransforms,
                         Constants.ALGO_ID_DIGEST_SHA1);
+*/
 
             Element reference = doc.createElementNS(WSSConstants.WSSE_NS,
                         SAMLConstants.TAG_REFERENCE);

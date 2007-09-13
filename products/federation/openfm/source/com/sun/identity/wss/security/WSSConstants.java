@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.4 2007-08-13 19:18:25 mrudul_uchil Exp $
+ * $Id: WSSConstants.java,v 1.5 2007-09-13 16:20:50 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class WSSConstants {
      public static final String WSSE_X509_NS = "http://docs.oasis-open.org/" +
              "wss/2004/01/oasis-200401-wss-x509-token-profile-1.0";
 
-     public static final String TIME_STAMP = "TimeStamp";
+     public static final String TIME_STAMP = "Timestamp";
 
      public static final String TAG_KEYIDENTIFIER = "KeyIdentifier";
 
