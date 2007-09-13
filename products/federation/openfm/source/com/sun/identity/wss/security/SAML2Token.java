@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Token.java,v 1.2 2007-09-13 07:24:21 mrudul_uchil Exp $
+ * $Id: SAML2Token.java,v 1.3 2007-09-13 22:11:45 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ import com.sun.identity.saml2.assertion.SubjectConfirmation;
 import com.sun.identity.saml2.assertion.SubjectConfirmationData;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
-import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.common.SAML2SDKUtils;
 
 
 /**
@@ -152,7 +152,7 @@ public class SAML2Token implements SecurityToken {
           // when the STS is ready.
           try {
               assertion.setVersion("2.0");
-              assertion.setID(SAML2Utils.generateID());
+              assertion.setID(SAML2SDKUtils.generateID());
               Issuer issuer = factory.createIssuer();
               issuer.setValue(SystemConfigurationUtil.getProperty(
                   Constants.AM_SERVER_HOST));          
