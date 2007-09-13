@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.5 2007-08-26 13:12:39 arunav Exp $
+ * $Id: PolicyCommon.java,v 1.6 2007-09-13 16:39:39 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1385,6 +1385,7 @@ public class PolicyCommon extends TestCommon {
                                 " is already deleted:" + roleName);
                     }
                 }
+                idList.clear();
             }
         } catch(Exception e){
             e.getMessage();
