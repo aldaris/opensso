@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.3 2007-09-05 22:10:49 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.4 2007-09-14 16:35:23 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,7 +91,7 @@ public class SetupProduct extends TestCommon {
                     assert false;
                 } else {
                     String strUMDatastore1 = cfg1.getString("umdatastore");
-                    if (!(strUMDatastore1.equals("flatfile"))) {
+                    if (!(strUMDatastore1.equals("embedded"))) {
                         String adminUser = cfg1.getString(
                                 TestConstants.KEY_ATT_AMADMIN_USER);
                         String adminPassword = cfg1.getString(
@@ -200,15 +200,15 @@ public class SetupProduct extends TestCommon {
                             " for " + serverName2);
                     assert false;
                 } else {
-                    admintoken = getToken(adminUser, adminPassword, basedn);
-                    smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
                     ResourceBundle cfg2 =
                             ResourceBundle.getBundle("Configurator-" +
                             serverName2);
                     String strUMDatastore2 = cfg2.getString("umdatastore");
                     log(Level.FINE, "SetupProduct", "UM Datastore for " +
                             serverName2 + " is " + strUMDatastore2);
-                    if (!(strUMDatastore2.equals("flatfile"))) {
+                    if (!(strUMDatastore2.equals("embedded"))) {
+                        admintoken = getToken(adminUser, adminPassword, basedn);
+                        smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
                         smsc.createDataStore(1, "configGlobalData");
                         smsc.deleteDataStore(realm, "files");
                     }
@@ -223,15 +223,15 @@ public class SetupProduct extends TestCommon {
                     setSingleServerSetupFailedFlag();
                     assert false;
                 } else {
-                    admintoken = getToken(adminUser, adminPassword, basedn);
-                    smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
                     ResourceBundle cfg1 =
                             ResourceBundle.getBundle("Configurator-" +
                             serverName1);
                     String strUMDatastore1 = cfg1.getString("umdatastore");
                     log(Level.FINE, "SetupProduct", "UM Datastore for " +
                             serverName1 + " is " + strUMDatastore1);
-                    if (!(strUMDatastore1.equals("flatfile"))) {
+                    if (!(strUMDatastore1.equals("embedded"))) {
+                        admintoken = getToken(adminUser, adminPassword, basedn);
+                        smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
                         smsc.createDataStore(1, "configGlobalData");
                         smsc.deleteDataStore(realm, "files");
                     }

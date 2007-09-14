@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.23 2007-09-12 19:51:54 rmisra Exp $
+ * $Id: TestCommon.java,v 1.24 2007-09-14 16:34:58 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -395,12 +395,31 @@ public class TestCommon implements TestConstants {
         log(Level.FINEST, "configureProduct", "strURL:" + strURL);
         URL url = new URL(strURL);
         HtmlPage page = null;
+        int pageIter = 0;
         try {
-            page = (HtmlPage)webclient.getPage(url);
-        } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+            // THIS WHILE IS WRITTEN BECUASE IT TAKES SOME TIME FOR INITIAL
+            // CONFIGURATOR PAGE TO LOAD AND WEBCLIENT CALL DOES NOT WAIT
+            // FOR SUCH A DURATION.
+            while (page == null && pageIter <= 30) {
+               try {
+                   page = (HtmlPage)webclient.getPage(url);
+                   Thread.sleep(10000);
+                   pageIter++;
+               } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+               }
+            }
         } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
         {
             log(Level.FINE, "configureProduct", strURL + " cannot be reached.");
+            return false;
+        }
+
+        if (pageIter > 30) {
+            log(Level.FINE, "configureProduct",
+                    "Product Configuration was not" +
+                    " successfull." + strURL + "was not found." +
+                    " Please check if war is deployed properly.");
+            exiting("configureProduct");
             return false;
         }
 
@@ -520,8 +539,12 @@ public class TestCommon implements TestConstants {
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
             log(Level.FINE, "configureProduct", "strNewURL:" + strNewURL);
             url = new URL(strNewURL);
-            page = (HtmlPage)webclient.getPage(url);
+            try {
+                page = (HtmlPage)webclient.getPage(url);
+            } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+            }
             if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
+                    (getHtmlPageStringIndex(page, "Status: Failed") != -1) ||
                     (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
                 log(Level.FINE, "configureProduct",
                         "Product Configuration was" +
@@ -590,7 +613,13 @@ public class TestCommon implements TestConstants {
             String searchStr)
     throws Exception {
         entering("getHtmlPageStringIndex", null);
-        String strPage = page.asXml();
+        String strPage;
+        try {
+            strPage = page.asXml();
+        } catch (java.lang.NullPointerException npe) {
+           log(Level.FINEST, "getHtmlPageStringIndex", "Page object is NULL");
+           return 0;
+        }
         log(Level.FINEST, "getHtmlPageStringIndex", "Search string:" +
                 searchStr);
         log(Level.FINEST, "getHtmlPageStringIndex", "Search page\n:" +
@@ -618,10 +647,11 @@ public class TestCommon implements TestConstants {
         for (Iterator i = properties.entrySet().iterator(); i.hasNext(); ) {
             Map.Entry entry = (Map.Entry)i.next();
             String valueString = entry.getValue().toString();
-            buff.append(entry.getKey())
-            .append("=")
-            .append(valueString.substring(1, valueString.length()))
-            .append("\n");
+            buff.append(entry.getKey());
+            buff.append("=");
+            if (valueString.length() != 0)
+                buff.append(valueString.substring(0, valueString.length()));
+            buff.append("\n");
         }
         
         BufferedWriter out = new BufferedWriter(new FileWriter(
