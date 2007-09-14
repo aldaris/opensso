@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFIDPViewBean.java,v 1.4 2007-08-29 21:59:03 asyhuang Exp $
+ * $Id: IDFFIDPViewBean.java,v 1.5 2007-09-14 21:32:51 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,14 +60,14 @@ public class IDFFIDPViewBean
         psModel.setValue(IDFFEntityProviderModel.ATTR_PROVIDER_TYPE,
             (String)getPageSessionAttribute(ENTITY_LOCATION));
         
-        populateValue(entityName);              
+        populateValue(entityName, ENTITY_REALM);              
     }
     
-    private void populateValue(String name) {
+    private void populateValue(String name, String realm) {
         IDFFEntityProviderModel model =
             (IDFFEntityProviderModel)getModelInternal();              
-        Map values = model.getEntityIDPDescriptor(name);                 
-        values.putAll(model.getEntityConfig(name,
+        Map values = model.getEntityIDPDescriptor(name, realm);                 
+        values.putAll(model.getEntityConfig(name, realm,
             IFSConstants.IDP, location));
         AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
         ps.setAttributeValues(values, model);      
@@ -109,16 +109,18 @@ public class IDFFIDPViewBean
                 (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
             
             // update standard metadata
-            Map origStdMeta =  model.getEntityIDPDescriptor(entityName);
+            Map origStdMeta =  
+                model.getEntityIDPDescriptor(entityName, ENTITY_REALM);
             Map stdValues = ps.getAttributeValues(origStdMeta, false, model);
-            model.updateEntityDescriptor(entityName, 
+            model.updateEntityDescriptor(entityName, ENTITY_REALM,
                 IFSConstants.IDP, stdValues);
             
             //update extended metadata
-            Map origExtMeta = model.getEntityConfig(entityName,
+            Map origExtMeta = model.getEntityConfig(entityName, ENTITY_REALM,
                 IFSConstants.IDP, location);
             Map extValues = ps.getAttributeValues(origExtMeta, false, model);
-            model.updateEntityConfig(entityName, IFSConstants.IDP, extValues);
+            model.updateEntityConfig(entityName, ENTITY_REALM, 
+                IFSConstants.IDP, extValues);
             
             setInlineAlertMessage(CCAlert.TYPE_INFO,
                 "message.information",

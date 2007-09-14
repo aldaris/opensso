@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityProviderModel.java,v 1.3 2007-08-24 18:17:12 asyhuang Exp $
+ * $Id: IDFFEntityProviderModel.java,v 1.4 2007-09-14 21:33:05 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -259,29 +259,57 @@ public interface IDFFEntityProviderModel
     /**
      * Returns the type of a provider such as hosted or remote.
      *
-     * @param name of Entity Descriptor.
+     * @param name Name of Entity Descriptor.
+     * @param realm Realm of Entity
      * @param role Provider's role.
      * @return the type of a provider such as hosted or remote.
      */
-    public String getProviderType(String name, String role);
+    public String getProviderType(String name, String realm, String role);
     
-    public IDPDescriptorType getIdentityProvider(String name);
-    public SPDescriptorType getServiceProvider(String name);
+    /**
+     * Returns IDPDescriptorType
+     *
+     * @param name Name of Entity Descriptor.
+     * @param realm Realm of Entity   
+     */
+    public IDPDescriptorType getIdentityProvider(String name, String realm);
     
+     /**
+     * Returns SPDescriptorType
+     *
+     * @param name Name of Entity Descriptor.
+     * @param realm Realm of Entity   
+     */
+    public SPDescriptorType getServiceProvider(String name, String realm);
     
-    public Map getEntityIDPDescriptor(String entityName);
-    public Map getEntitySPDescriptor(String entityName);
+     /**
+     * Returns Map values of IDP Descriptor
+     *
+     * @param name Name of Entity Descriptor.
+     * @param realm Realm of Entity   
+     */
+    public Map getEntityIDPDescriptor(String entityName, String realm);
+    
+     /**
+     * Returns Map values of SP Descriptor
+     *
+     * @param name Name of Entity Descriptor.
+     * @param realm Realm of Entity   
+     */
+    public Map getEntitySPDescriptor(String entityName, String realm);
     
     /**
      * Returns attributes values of provider.
      *
      * @param entityName Name of Entity Descriptor.
+     * @param realm Realm of Entity
      * @param role Role of provider.
      * @param location Location of provider such as Hosted or Remote.
      * @return attributes values of provider.
      */
     public Map getEntityConfig(
         String entityName,
+        String realm,
         String role,
         String location);
     
@@ -290,12 +318,14 @@ public interface IDFFEntityProviderModel
      * Modifies a provider's standard metadata.
      *
      * @param entityName Name of Entity Descriptor.
+     * @param realm Realm of Entity
      * @param role Role of provider. (SP or IDP)
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
      */
     public void updateEntityDescriptor(
         String entityName,
+        String realm,
         String role,
         Map attrValues
         ) throws AMConsoleException ;
@@ -305,18 +335,31 @@ public interface IDFFEntityProviderModel
      * Modifies a provider's extended metadata.
      *
      * @param entityName Name of Entity Descriptor.
+     * @param realm Realm of Entity
      * @param role Role of provider. (SP or IDP)
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
      */
     public void updateEntityConfig(
         String entityID,
+        String realm,
         String role,
         Map attrValues)
         throws AMConsoleException, JAXBException;
     
+     /**
+     * createEntityConfig
+     * create a provider's extended metadata.
+     *
+     * @param entityName Name of Entity Descriptor.
+     * @param realm Realm of Entity
+     * @param role Role of provider. (SP or IDP)
+     * @param attrValues Map of attribute name to set of values.
+     * @throws AMConsoleException if provider cannot be modified.
+     */
     public void createEntityConfig(
         String entityName,
+        String realm,
         String role,
         String location
         ) throws AMConsoleException, JAXBException;

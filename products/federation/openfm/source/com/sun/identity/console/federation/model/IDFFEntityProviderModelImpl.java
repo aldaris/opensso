@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityProviderModelImpl.java,v 1.3 2007-08-24 18:17:12 asyhuang Exp $
+ * $Id: IDFFEntityProviderModelImpl.java,v 1.4 2007-09-14 21:33:05 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,32 @@ public class IDFFEntityProviderModelImpl
     private static Map extendedMetaMap = new HashMap(24);
     private static Map extendedMetaIdpMap = new HashMap(9);
     private static Map extendedMetaSpMap = new HashMap(13);
+
+    private static List federationTerminationProfileList = new ArrayList(2);
+    static {
+     federationTerminationProfileList.add("http://projectliberty.org/profiles/fedterm-sp-http");
+     federationTerminationProfileList.add("http://projectliberty.org/profiles/fedterm-sp-soap");
+    }
+
+    private static List singleLogoutProfileList = new ArrayList(3);
+    static {
+        singleLogoutProfileList.add("http://projectliberty.org/profiles/slo-sp-http");
+        singleLogoutProfileList.add("http://projectliberty.org/profiles/slo-idp-http-get");
+        singleLogoutProfileList.add("http://projectliberty.org/profiles/slo-sp-soap");
+    }
+
+    private static List nameRegistrationProfileList = new ArrayList(2);
+    static {
+        nameRegistrationProfileList.add("http://projectliberty.org/profiles/rni-sp-http");
+        nameRegistrationProfileList.add("http://projectliberty.org/profiles/rni-sp-soap");
+    }
+
+    private static List federationProfileList = new ArrayList(3);
+    static {
+        federationProfileList.add("http://projectliberty.org/profiles/brws-post");
+        federationProfileList.add("http://projectliberty.org/profiles/brws-art");
+        federationProfileList.add("http://projectliberty.org/profiles/lecp");
+    }    
     
     // BOTH idp AND SP extended metadata
     static{
@@ -179,7 +205,7 @@ public class IDFFEntityProviderModelImpl
      * @param role Provider's role.
      * @return the type of a provider such as hosted or remote.
      */
-    public String getProviderType(String name, String role) {
+    public String getProviderType(String name, String realm, String role) {
         String type = null;
         try {
             IDFFMetaManager mgr = getIDFFMetaManager();
@@ -203,7 +229,7 @@ public class IDFFEntityProviderModelImpl
      * @param name of Entity Descriptor.
      * @return the handler of IDP Descriptor
      */
-    public IDPDescriptorType getIdentityProvider(String name) {
+    public IDPDescriptorType getIdentityProvider(String name, String realm) {
         IDPDescriptorType pdesc = null;
         try {
             IDFFMetaManager mgr = getIDFFMetaManager();
@@ -220,7 +246,7 @@ public class IDFFEntityProviderModelImpl
      * @param name of Entity Descriptor.
      * @return the handler of SP Descriptor
      */
-    public SPDescriptorType getServiceProvider(String name) {
+    public SPDescriptorType getServiceProvider(String name, String realm) {
         SPDescriptorType pdesc = null;
         try {
             IDFFMetaManager mgr = getIDFFMetaManager();
@@ -237,9 +263,9 @@ public class IDFFEntityProviderModelImpl
      * @param name of Entity Descriptor.
      * @return map of IDP key/value pairs
      */
-    public Map getEntityIDPDescriptor(String entityName) {
+    public Map getEntityIDPDescriptor(String entityName, String realm) {
         Map map = new HashMap();
-        IDPDescriptorType  pDesc = getIdentityProvider(entityName);
+        IDPDescriptorType  pDesc = getIdentityProvider(entityName, realm);
         
         // common attributes
         map.put(ATTR_PROTOCOL_SUPPORT_ENUMERATION,
@@ -268,16 +294,16 @@ public class IDFFEntityProviderModelImpl
             returnEmptySetIfValueIsNull(
             pDesc.getRegisterNameIdentifierServiceReturnURL()));
         
-        // communication profiles
+        // communication profiles        
         map.put(ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE,
-            convertListToSet(
-            pDesc.getFederationTerminationNotificationProtocolProfile()));
+            returnEmptySetIfValueIsNull(
+            (String)pDesc.getFederationTerminationNotificationProtocolProfile().get(0)));
         map.put(ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE,
-            convertListToSet(pDesc.getSingleLogoutProtocolProfile()));
+            returnEmptySetIfValueIsNull((String)pDesc.getSingleLogoutProtocolProfile().get(0)));
         map.put(ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE,
-            convertListToSet(pDesc.getRegisterNameIdentifierProtocolProfile()));
+            returnEmptySetIfValueIsNull((String)pDesc.getRegisterNameIdentifierProtocolProfile().get(0)));
         map.put(ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE,
-            convertListToSet(pDesc.getSingleSignOnProtocolProfile()));
+            returnEmptySetIfValueIsNull((String)pDesc.getSingleSignOnProtocolProfile().get(0)));
         
         return map;
     }
@@ -288,9 +314,9 @@ public class IDFFEntityProviderModelImpl
      * @param name of Entity Descriptor.
      * @return map of SP key/value pairs
      */
-    public Map getEntitySPDescriptor(String entityName) {
+    public Map getEntitySPDescriptor(String entityName, String realm) {
         Map map = new HashMap();
-        SPDescriptorType  pDesc = getServiceProvider(entityName);
+        SPDescriptorType  pDesc = getServiceProvider(entityName, realm);
         
         // common attributes
         map.put(ATTR_PROTOCOL_SUPPORT_ENUMERATION,
@@ -319,12 +345,12 @@ public class IDFFEntityProviderModelImpl
         
         // communication profiles
         map.put(ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE,
-            convertListToSet(
-            pDesc.getFederationTerminationNotificationProtocolProfile()));
+            returnEmptySetIfValueIsNull(
+            (String)pDesc.getFederationTerminationNotificationProtocolProfile().get(0)));
         map.put(ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE,
-            convertListToSet(pDesc.getSingleLogoutProtocolProfile()));
+            returnEmptySetIfValueIsNull((String)pDesc.getSingleLogoutProtocolProfile().get(0)));
         map.put(ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE,
-            convertListToSet(pDesc.getRegisterNameIdentifierProtocolProfile()));
+            returnEmptySetIfValueIsNull((String)pDesc.getRegisterNameIdentifierProtocolProfile().get(0)));
         
         // only for Service Provider
         com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType.AssertionConsumerServiceURLType
@@ -362,6 +388,7 @@ public class IDFFEntityProviderModelImpl
      */
     public Map getEntityConfig(
         String entityName,
+        String realm,
         String role,
         String location) {
         IDFFMetaManager manager;
@@ -372,25 +399,25 @@ public class IDFFEntityProviderModelImpl
             String metaAlias = null;
             if (role.equals(IFSConstants.IDP)) {
                 IDPDescriptorType  pDesc =
-                    getIdentityProvider(entityName);
+                    getIdentityProvider(entityName, realm);
                 BaseConfigType  idpConfig=
                     manager.getIDPDescriptorConfig(entityName);
                 if (idpConfig != null){
                     map = IDFFMetaUtils.getAttributes(idpConfig) ;
                     metaAlias = idpConfig.getMetaAlias();
                 } else {
-                    createEntityConfig(entityName, role, location);
+                    createEntityConfig(entityName, realm, role, location);
                 }
             } else if (role.equals(IFSConstants.SP)) {
                 SPDescriptorType  pDesc =
-                    getServiceProvider(entityName);
+                    getServiceProvider(entityName, realm);
                 BaseConfigType spConfig =
                     manager.getSPDescriptorConfig(entityName);
                 if (spConfig != null) {
                     map = IDFFMetaUtils.getAttributes(spConfig) ;
                     metaAlias = spConfig.getMetaAlias();
                 } else {
-                    createEntityConfig(entityName, role, location);
+                    createEntityConfig(entityName, realm, role, location);
                 }
             }
             
@@ -419,12 +446,14 @@ public class IDFFEntityProviderModelImpl
      * Modifies a provider's standard metadata.
      *
      * @param entityName Name of Entity Descriptor.
+     * @param realm Realm of entity
      * @param role Role of provider. (SP or IDP)
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
      */
     public void updateEntityDescriptor(
         String entityName,
+        String realm,
         String role,
         Map attrValues
         ) throws AMConsoleException {
@@ -479,14 +508,46 @@ public class IDFFEntityProviderModelImpl
             pDesc.getFederationTerminationNotificationProtocolProfile().add(
                 (String)AMAdminUtils.getValue((Set)attrValues.get(
                 ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)));
+            int size = federationTerminationProfileList.size();            
+            for (int i=0; i< size; i++) {                
+                if(!federationTerminationProfileList.get(i).equals(
+                    (String)AMAdminUtils.getValue((Set)attrValues.get(
+                    ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)))) 
+                {            
+                    pDesc.getFederationTerminationNotificationProtocolProfile().add(                
+                     federationTerminationProfileList.get(i));
+                }
+            }
+            
             pDesc.getSingleLogoutProtocolProfile().clear();
             pDesc.getSingleLogoutProtocolProfile().add(
                 (String)AMAdminUtils.getValue((Set)attrValues.get(
                 ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)));
+            size = singleLogoutProfileList.size();         
+            for (int i=0; i< size; i++) {              
+                if(!singleLogoutProfileList.get(i).equals(
+                    (String)AMAdminUtils.getValue((Set)attrValues.get(
+                    ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE))))
+                {
+                    pDesc.getSingleLogoutProtocolProfile().add(
+                        singleLogoutProfileList.get(i));
+                }
+            }
+            
             pDesc.getRegisterNameIdentifierProtocolProfile().clear();
             pDesc.getRegisterNameIdentifierProtocolProfile().add(
                 (String)AMAdminUtils.getValue((Set)attrValues.get(
                 ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)));
+            size = nameRegistrationProfileList.size();
+            for (int i=0; i< size; i++) {              
+                if(!nameRegistrationProfileList.get(i).equals(
+                    (String)AMAdminUtils.getValue((Set)attrValues.get(
+                    ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE))))
+                {
+                    pDesc.getRegisterNameIdentifierProtocolProfile().add(
+                        nameRegistrationProfileList.get(i));
+                }
+            }
             
             // only for sp
             String id =  (String) AMAdminUtils.getValue(
@@ -569,24 +630,68 @@ public class IDFFEntityProviderModelImpl
             pDesc.setRegisterNameIdentifierServiceReturnURL(
                 (String)AMAdminUtils.getValue((Set)attrValues.get(
                 ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL)));
-            
+                        
             // communication profiles
             pDesc.getFederationTerminationNotificationProtocolProfile().clear();
             pDesc.getFederationTerminationNotificationProtocolProfile().add(
                 (String)AMAdminUtils.getValue((Set)attrValues.get(
                 ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)));
+            int size = federationTerminationProfileList.size();           
+            for (int i=0; i< size; i++) {                
+                if(!federationTerminationProfileList.get(i).equals(
+                    (String)AMAdminUtils.getValue((Set)attrValues.get(
+                    ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)))) 
+                {            
+                    pDesc.getFederationTerminationNotificationProtocolProfile().add(                
+                     federationTerminationProfileList.get(i));
+                }
+            }
+
             pDesc.getSingleLogoutProtocolProfile().clear();
             pDesc.getSingleLogoutProtocolProfile().add(
                 (String)AMAdminUtils.getValue((Set)attrValues.get(
                 ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)));
+            size = singleLogoutProfileList.size();          
+            for (int i=0; i< size; i++) {               
+                if(!singleLogoutProfileList.get(i).equals(
+                    (String)AMAdminUtils.getValue((Set)attrValues.get(
+                    ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE))))
+                {
+                    pDesc.getSingleLogoutProtocolProfile().add(
+                        singleLogoutProfileList.get(i));
+                }
+            }
+
             pDesc.getRegisterNameIdentifierProtocolProfile().clear();
             pDesc.getRegisterNameIdentifierProtocolProfile().add(
                 (String)AMAdminUtils.getValue((Set)attrValues.get(
-                ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)));
+                ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)));        
+            size = nameRegistrationProfileList.size();
+            for (int i=0; i< size; i++) {               
+                if(!nameRegistrationProfileList.get(i).equals(
+                    (String)AMAdminUtils.getValue((Set)attrValues.get(
+                    ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE))))
+                {
+                    pDesc.getRegisterNameIdentifierProtocolProfile().add(
+                        nameRegistrationProfileList.get(i));
+                }
+            }
+
             pDesc.getSingleSignOnProtocolProfile().clear();
             pDesc.getSingleSignOnProtocolProfile().add(
                 (String)AMAdminUtils.getValue((Set)attrValues.get(
-                ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE)));
+                ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE)));         
+            size = federationProfileList.size();
+            for (int i=0; i< size; i++) {               
+                if(!federationProfileList.get(i).equals(
+                    (String)AMAdminUtils.getValue((Set)attrValues.get(
+                    ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE))))
+                {
+                    pDesc.getSingleSignOnProtocolProfile().add(
+                        federationProfileList.get(i));
+                }
+
+            }
             
             entityDescriptor.getIDPDescriptor().clear();
             entityDescriptor.getIDPDescriptor().add(pDesc);
@@ -637,6 +742,7 @@ public class IDFFEntityProviderModelImpl
      */
     public void updateEntityConfig(
         String name,
+        String realm,
         String role,
         Map attrValues)
         throws AMConsoleException, JAXBException {
@@ -695,6 +801,7 @@ public class IDFFEntityProviderModelImpl
     
     public void createEntityConfig(
         String entityName,
+        String realm,
         String role,
         String location
         ) throws AMConsoleException, JAXBException {
