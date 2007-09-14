@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2007-08-08 18:59:27 sean_brydon Exp $
+   $Id: build.xml,v 1.4 2007-09-14 00:08:17 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -61,6 +61,8 @@
         <copy todir="${container.j2ee_agent.config.dir}">
             <fileset dir="${j2eeagents.basedir}/${containername}/v81/config">
                 <include name="AMAgent.template"/>
+                <include name="AMAgentBootStrap.template"/>
+                <include name="AMAgentTags.template"/>
                 <include name="AMToolsConfig.properties"/>
                 <include name="AMAgentLogConfig.properties"/>
             </fileset>

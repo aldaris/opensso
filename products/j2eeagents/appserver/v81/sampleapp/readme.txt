@@ -133,6 +133,8 @@ Post Deployment Agents Tasks
           o com.sun.identity.agents.config.notenforced.uri[2] = /agentsample/styles/*
           o com.sun.identity.agents.config.notenforced.uri[3] = /agentsample/index.html
           o com.sun.identity.agents.config.notenforced.uri[4] = /agentsample
+
+          o com.sun.identity.agents.config.notenforced.uri[5] = /agentsample/
     * Access Denied URI:
           o com.sun.identity.agents.config.access.denied.uri = 
 					/agentsample/authentication/accessdenied.html
