@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Driver.java,v 1.1 2006-09-28 07:37:22 rarcot Exp $
+ * $Id: Driver.java,v 1.2 2007-09-13 23:57:23 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -416,6 +416,11 @@ abstract public class Driver implements InstallConstants {
     /** Field LOC_DR_MSG_VERSION_INFO **/
     public static final String LOC_DR_MSG_VERSION_INFO = 
         "DR_MSG_VERSION_INFO";
+
+    /** Field LOC_DR_MSG_PRODUCT_AGENT_TAGS_FILE_NAME **/
+    public static final String LOC_DR_MSG_PRODUCT_AGENT_TAGS_FILE_NAME = 
+        "DR_MSG_PRODUCT_AGENT_TAGS_FILE_NAME";
+
 
     // Constants
     public static final int INT_RUN_IFINDER_INTERACTIONS = 0;

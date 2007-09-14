@@ -55,26 +55,32 @@ com.sun.am.cookie.name = iPlanetDirectoryPro
 com.sun.am.cookie.secure = false
 
 #
-# The URL for the Access Manager Naming service.
-#
-com.sun.am.naming.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/namingservice 
-
-#
-# The URL of the login page on the Access Manager.
-#
-com.sun.am.policy.am.login.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Login
-
-#
-# Name of the file to use for logging messages.
-#
-com.sun.am.policy.agents.config.local.log.file =@DEBUG_LOGS_DIR@/amAgent
-
-#
 # This property is used for Log Rotation. The value of the property specifies 
 # whether the agent deployed on the server supports the feature of not. If set 
 # to false all log messages are written to the same file.
 #
 com.sun.am.policy.agents.config.local.log.rotate = @LOG_ROTATION@
+
+#
+# This property is used to determine the number of bytes after which
+# the local debug log file will be rotated. Minimum value is 3000 bytes.
+# Any value below that will be reset to 3000 bytes. Default value is 10MB.
+#
+com.sun.am.policy.agents.config.local.log.size = 10000000 
+
+#
+# The username and password for Agent to login to AM.
+#
+com.sun.am.policy.am.username = @AGENT_PROFILE_NAME@
+com.sun.am.policy.am.password = @AGENT_ENCRYPTED_PASSWORD@
+
+#
+# Set the url access logging level. the choices are 
+#      LOG_NONE   - do not log user access to url
+#      LOG_DENY   - log url access that was denied.
+#      LOG_ALLOW  - log url access that was allowed.
+#      LOG_BOTH   - log url access that was allowed or denied.
+com.sun.am.policy.agents.config.audit.accesstype = LOG_DENY
 
 #
 # Name of the Access Manager log file to use for logging messages to 
@@ -85,65 +91,12 @@ com.sun.am.policy.agents.config.local.log.rotate = @LOG_ROTATION@
 com.sun.am.policy.agents.config.remote.log = amAuthLog.@AGENT_HOST@.@AGENT_PREF_PORT@
 
 #
-# Set the logging level for the specified logging categories.
-# The format of the values is
+# The below property indicates whether agent needs to send an access denied 
+# status if remote logging fails. A value of true indicates that agent will 
+# send an access denied status and a value of false indicates a status
+# of success will be sent even if remote logging fails.
 #
-#	<ModuleName>[:<Level>][,<ModuleName>[:<Level>]]*
-#
-# The currently used module names are: AuthService, NamingService,
-# PolicyService, SessionService, PolicyEngine, ServiceEngine,
-# Notification, PolicyAgent, RemoteLog and all.
-#
-# The all module can be used to set the logging level for all currently
-# none logging modules.  This will also establish the default level for
-# all subsequently created modules.
-#
-# The meaning of the 'Level' value is described below:
-#
-#	0	Disable logging from specified module*
-#	1	Log error messages
-#	2	Log warning and error messages
-#	3	Log info, warning, and error messages
-#	4	Log debug, info, warning, and error messages
-#	5	Like level 4, but with even more debugging messages
-# 128	log url access to log file on AM server. 
-# 256	log url access to log file on local machine. 
-#
-# If level is omitted, then the logging module will be created with
-# the default logging level, which is the logging level associated with
-# the 'all' module.
-#
-# for level of 128 and 256, you must also specify a logAccessType.
-#
-# *Even if the level is set to zero, some messages may be produced for
-# a module if they are logged with the special level value of 'always'.
-#
-com.sun.am.log.level = 
-
-#
-# The org, username and password for Agent to login to AM.
-#
-com.sun.am.policy.am.username = @AGENT_PROFILE_NAME@
-com.sun.am.policy.am.password = @AGENT_ENCRYPTED_PASSWORD@
-
-#
-# Name of the directory containing the certificate databases for SSL.
-#
-com.sun.am.sslcert.dir = 
-
-#
-# Set this property if the certificate databases in the directory specified
-# by the previous property have a prefix.
-#
-com.sun.am.certdb.prefix = 
-
-#
-# Should agent trust all server certificates when Access Manager
-# is running SSL?
-#
-# Possible values are true or false.
-#
-com.sun.am.trust_server_certs = true
+com.sun.am.policy.agents.config.deny_on_log_failure = true
 
 #
 # Should the policy SDK use the Access Manager notification
@@ -185,6 +138,12 @@ com.sun.am.sso.polling.period=3
 # variable. By default this parameter is set to "UserToken"
 #
 com.sun.am.policy.am.userid.param=UserToken
+
+# 
+# This property indicates from where the value of UserToken needs to be
+# fetched. Possible values are SESSION and LDAP
+#
+com.sun.am.policy.am.userid.param.type= SESSION
 
 #
 # Profile attributes fetch mode
@@ -265,6 +224,12 @@ com.sun.am.policy.agents.config.response.attribute.fetch.mode=NONE
 #
 com.sun.am.policy.agents.config.response.attribute.map=
 
+#
+# The below propery indicates the character that will be used to separate
+# multiple values of the same attribute name returned in any of the previous
+# maps (profile, session and policy)
+com.sun.am.policy.agents.config.attribute.multi_value_separator = |
+
 # indicate where a load balancer is used for Access Manager
 # services.
 #
@@ -272,18 +237,6 @@ com.sun.am.policy.agents.config.response.attribute.map=
 #
 com.sun.am.load_balancer.enable = false
 
-####Agent Configuration####
-# this is for product versioning, please do not modify it
-#
-com.sun.am.policy.agents.config.version=2.2
-
-#
-# Set the url access logging level. the choices are 
-#      LOG_NONE   - do not log user access to url
-#      LOG_DENY   - log url access that was denied.
-#      LOG_ALLOW  - log url access that was allowed.
-#      LOG_BOTH   - log url access that was allowed or denied.
-com.sun.am.policy.agents.config.audit.accesstype = LOG_DENY
 
 # Agent prefix
 com.sun.am.policy.agents.config.agenturi.prefix = @AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/amagent
@@ -359,14 +312,14 @@ com.sun.am.policy.agents.config.fqdn.default = @AGENT_HOST@
 # xyz.hostname.com and you have specified polices using xyz.hostname.com at
 # the Access Manager policy console, in this file set the mapping as
 #
-# com.sun.am.policy.agents.fqdn.map = valid|xyz.hostname.com
+# com.sun.am.policy.agents.config.fqdn.map = valid|xyz.hostname.com
 #
 # Another example is if you have multiple virtual servers say rst.hostname.com,
 # uvw.hostname.com and xyz.hostname.com pointing to the same actual server
 # abc.hostname.com and each of the virtual servers have their own policies 
 # defined, then the fqdnMap should be defined as follows:
 #
-# com.sun.am.policy.agents.fqdn.map = valid1|rst.hostname.com,valid2|uvw.hostname.com,valid3|xyz.hostname.com
+# com.sun.am.policy.agents.config.fqdn.map = valid1|rst.hostname.com,valid2|uvw.hostname.com,valid3|xyz.hostname.com
 #
 # WARNING: Invalid value for this property can result in the Web Server
 # becoming unusable or the resources becoming inaccessible.
@@ -461,6 +414,16 @@ com.sun.am.policy.agents.config.client_ip_validation.enable = false
 com.sun.am.policy.agents.config.profile.attribute.cookie.prefix = HTTP_
 com.sun.am.policy.agents.config.profile.attribute.cookie.maxage = 300
 
+#
+# Cross-Domain Single Sign On URL
+# Is CDSSO enabled.
+com.sun.am.policy.agents.config.cdsso.enable=false
+
+# This is the URL the user will be redirected to for authentication
+# in a CDSSO Scenario.
+com.sun.am.policy.agents.config.cdcservlet.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
+
+#
 # Logout URL - application's Logout URL.
 # This URL is not enforced by policy. 
 # if set, agent will intercept this URL and destroy the user's session,
@@ -555,49 +518,21 @@ com.sun.am.policy.agents.config.override_notification.url =
 com.sun.am.policy.agents.config.connection_timeout =
 
 #
-# Time in milliseconds the agent will wait to receive the
-# response from Access Manager. After the timeout, the connection
-# will be drop.
-# A value of 0 means that the agent will wait until receiving the response.
-# WARNING: Invalid value for this property can result in 
-# the resources becoming inaccessible.
-com.sun.am.receive_timeout = 0
+# This property indicates whether Agent needs to check whether Access 
+# Manager is up and running before doing a 302 redirect
+#
+com.sun.am.ignore_server_check = false
 
 #
-# The following property in milliseconds indicates how long the
-# socket connection needs to be kept open.
-# The default value is 0 which implies no timeout.
-#
-com.sun.am.connect_timeout = 0
-
 # This property determines the amount of time (in minutes) after which
 # the agent polls whether the primary server is up and running.
 # The default value is 5 minutes
-
 com.sun.am.poll_primary_server = 5
 
-# Indicate if the socket option TCP_NODELAY should be enabled.
-# Possible values are true or false. Default is false
 #
-com.sun.am.tcp_nodelay.enable = false
-
-# The following property is to enable encoding of URL special 
-# chars, if any. If set to true agent will encode URl special
-# characters before sending for policy evaluation.
-com.sun.am.policy.agents.config.encode_url_special_chars.enable = false
-
-# Set the IIS filter priority. The choices are
-#      HIGH      - IIS5 filter priority is HIGH.
-#      LOW       - IIS5 filter priority is LOW.
-#      MEDIUM    - IIS5 filter priority is MEDIUM.
-#      DEFAULT   - IIS5 filter priority is DEFAULT.
-com.sun.am.policy.agents.config.iis.filter_priority =  HIGH
-
-# Cross-Domain Single Sign On URL
-# Is CDSSO enabled.
-com.sun.am.policy.agents.config.cdsso.enable=false
-
-# This is the URL the user will be redirected to for authentication
-# in a CDSSO Scenario.
-com.sun.am.policy.agents.config.cdcservlet.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
-
+# This property indicates whether the naming request will have a preferred
+# naming url as an attribute
+# A value of true indicates that the naming request will not have the 
+# preferred naming url as attribute and a value of false indicates
+# that naming request will have the preferred naming url as an attribute
+com.sun.am.ignore.preferred_naming_url = true

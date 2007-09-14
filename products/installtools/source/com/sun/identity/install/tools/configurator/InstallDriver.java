@@ -1,4 +1,5 @@
 /* The contents of this file are subject to the terms
+
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallDriver.java,v 1.1 2006-09-28 07:37:27 rarcot Exp $
+ * $Id: InstallDriver.java,v 1.2 2007-09-13 23:57:23 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,6 +125,11 @@ public class InstallDriver extends Driver {
         messageList.add(getSummaryInfoHeaderMessageFmtLine());
         messageList.add(getProductInstanceNameMessage());
         messageList.add(getProductConfigFilePathMessage());
+	String repositoryType = (String)getInstallState().getStateAccess().get(
+				"AGENT_REPOSITORY_TYPE");
+	if (repositoryType.equals(AGENT_REPOSITORY_REMOTE)) {
+           messageList.add(getAgentTagsConfigFilePathMessage());
+        }
         messageList.add(getProductAuditLogsPathMessage());
         messageList.add(getProductDebugLogsPathMessage());
 
@@ -195,6 +201,16 @@ public class InstallDriver extends Driver {
         }
     }
 
+    public LocalizedMessage getAgentTagsConfigFilePathMessage() {
+        String agentTagsConfigFilePath = (String) getInstallState()
+                .getStateAccess().get(STR_CONFIG_AGENT_TAGS_FILE_PATH_TAG);
+        Object[] args = { agentTagsConfigFilePath };
+        LocalizedMessage message = LocalizedMessage.get(
+                LOC_DR_MSG_PRODUCT_AGENT_TAGS_FILE_NAME, args);
+        return message;
+    }
+
+
     /** Field LOC_DR_ERR_ALREADY_CONFIGURED_INST * */
     public static final String LOC_DR_ERR_ALREADY_CONFIGURED_INST = 
         "DR_ERR_ALREADY_CONFIGURED_INST";
@@ -207,4 +223,6 @@ public class InstallDriver extends Driver {
 
     public static final String LOC_DR_MSG_INSTALL_LOG_VERSION_DESC_LINE = 
         "DR_MSG_INSTALL_LOG_VERSION_DESC_LINE";
+
+    public static final String AGENT_REPOSITORY_REMOTE = "remote";
 }

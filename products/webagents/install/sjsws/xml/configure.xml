@@ -38,6 +38,21 @@
 	</instance-finder>	
 	<install>
 		<common-interactions>
+                    <interaction lookupkey="AGENT_REPOSITORY_TYPE" persistent="false">
+				<i18n key="INT_AGENT_REPOSITORY_TYPE" group="amToolsMessages"/>
+				<default-value-finder>
+					<class name="StaticDefaultValueFinder" type="system"/>
+					<static value="local"/>
+				</default-value-finder>
+				<validations>
+					<validation name="VALID_CHOICE">
+						<class name="ChoiceValidator" type="system"/>
+						<property name="value1" value="remote"/>
+						<property name="value2" value="local"/>
+						<property name="ignorecase" value="false"/>
+					</validation>
+				</validations>
+                    </interaction>
 		    <interaction lookupkey="AM_SERVICES_HOST">
 				<i18n key="INT_AM_SERVICES_HOST" group="amToolsMessages"/>
 				<validations>			
@@ -185,10 +200,18 @@
            	</task>
             <task name="CONFIGURE_AGENT_PROPS">
                 <class name="ConfigurePropertiesTask" type="system"/>
+                <property name="AGENT_REPOSITORY_TYPE_KEY"
+                                          value="AGENT_REPOSITORY_TYPE"/>
                 <property name="CONFIG_FILENAME_TEMPLATE"
                                           value="AMAgent.template"/>
+                <property name="CONFIG_FILENAME_BOOTSTRAP_TEMPLATE"
+                                          value="AMAgentBootStrap.template"/>
+                <property name="CONFIG_FILENAME_TAGS_TEMPLATE"
+                                          value="AMAgentTags.template"/>
                 <property name="CONFIG_FILENAME"
                                           value="AMAgent.properties"/>
+                <property name="CONFIG_FILENAME_AGENT_TAGS"
+                                          value="AMAgentTags.properties"/>
             </task>
             <task name="BACKUP_FILE">
            	 	<class name="BackupFileTask" type="system"/>

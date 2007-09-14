@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgent.template,v 1.4 2007-09-14 00:09:26 madan_ranganath Exp $
+# $Id: AMAgentTags.template,v 1.1 2007-09-14 00:04:15 madan_ranganath Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -26,9 +26,10 @@
 # Configuration Property File
 #
 # Sun Java(TM) System Access Manager Policy Agent for:
-# BEA WebLogic 10.0 Server/Portal
+# Sun Java(TM) System Application Server 8.1/8.2/9.0/9.1
 #
 # Version: 2.2
+
 #------------------------------------------------------------------------------
 #
 # THIS FILE PROVIDES THE CONFIGURATION SETTINGS NECESSARY FOR THE AGENT
@@ -245,15 +246,6 @@ com.sun.identity.agents.config.locale.language = en
 com.sun.identity.agents.config.locale.country = US
 
 #
-# ORGANIZATION NAME
-#   Specifies the organization or realm name to be used for authenticating
-#   the Agent during runtime. The default value "/" identifies the root
-#   organization or realm.
-# Hot-Swap Enabled: No
-#
-com.sun.identity.agents.config.organization.name = /
-
-#
 # AUDIT LOG PROPERTIES
 #   - audit.accesstype: Specifies the access type which will be logged by the
 #     Agent. Valid value is one of: LOG_NONE, LOG_ALLOW, LOG_DENY, LOG_BOTH.
@@ -357,16 +349,6 @@ com.sun.identity.agents.config.login.content.file = FormLoginContent.txt
 com.sun.identity.agents.config.auth.handler[] =     
 com.sun.identity.agents.config.logout.handler[] =
 com.sun.identity.agents.config.verification.handler[] =
-
-# HTTP SESSION BINDING
-# Its default value is true, in which case the agent will invalidate
-# the http session when agent identifies that login has failed,
-# user does not have SSO session or pincipal user name does not
-# match SSO user name.
-# If its value is false, agent will not be invloved in invalidating 
-# http session.
-# Hot-Swap Enabled: NO
-com.sun.identity.agents.config.httpsession.binding = true 
 
 #
 # GOTO PARAMETER NAME
@@ -497,7 +479,7 @@ com.sun.identity.agents.config.cdsso.redirect.uri = @AGENT_APP_URI@/sunwCDSSORed
 com.sun.identity.agents.config.cdsso.cdcservlet.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
 com.sun.identity.agents.config.cdsso.clock.skew = 0
 com.sun.identity.agents.config.cdsso.trusted.id.provider[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
-#com.sun.identity.agents.config.cdsso.domain[0] = 
+#com.sun.identity.agents.config.cdsso.domain[0] =
 
 # 
 # LOGOUT PROCESSING PROPERTIES
@@ -720,67 +702,21 @@ com.sun.identity.agents.config.bypass.principal[0] =
 #     privileged attribute types should be converted to lowercase.
 #   - privileged.session.attribute: A list of session property names which 
 #     hold privileged attributes for the authenticated user.
-#   - privileged.attribute.mapping.enable: A flag to specify whether 
-#     a mapping from an attibute's original value to another value is
-#     enabled. This mapping may be necessary to satisfy container-specific
-#     restrictions on character set being used in certain configuration files.
-#   - privileged.attribute.mapping: A map property that specifies the above
-#     mentioned mapping; Note that if a key contains "=" or ":", then these
-#     special character needs to be escaped by "\".
-#
 # Hot-Swap Enabled: No
 # Examples:
 #   com.sun.identity.agents.config.default.privileged.attribute[0] = AUTHENTICATED_USERS
 #   com.sun.identity.agents.config.privileged.attribute.type[0] = Role
 #   com.sun.identity.agents.config.privileged.attribute.tolowercase[Role] = false
 #   com.sun.identity.agents.config.privileged.session.attribute[0] = UserToken
-#   com.sun.identity.agents.config.privileged.attribute.mapping.enable=true
-#   com.sun.identity.agents.config.privileged.attribute.mapping[id\=manager,ou\=role,dc\=iplanet,dc\=com] = am_manager_role
-#   com.sun.identity.agents.config.privileged.attribute.mapping[id\=employee,ou\=role,dc\=iplanet,dc\=com] = am_employee_role
-
+#
 com.sun.identity.agents.config.default.privileged.attribute[0] = AUTHENTICATED_USERS
 com.sun.identity.agents.config.privileged.attribute.type[0] = Role
 com.sun.identity.agents.config.privileged.attribute.tolowercase[Role] = false
 com.sun.identity.agents.config.privileged.session.attribute[0] = 
-com.sun.identity.agents.config.privileged.attribute.mapping.enable=true
-
-#
-# SERVICE RESOLVER
-#   Specifies the service resolver used by this Agent.
-# Hot-Swap Enabled: No
-#
-com.sun.identity.agents.config.service.resolver = com.sun.identity.agents.weblogic.v10.AmWLAgentServiceResolver
-
-#
-# AGENT USERNAME AND PASSWORD PROPERTIES
-#   These are the credentials used by the Agent to identify and 
-#   authenticate itself before requesting any services that require the 
-#   Agent to be authenticated. If plain text password should not be 
-#   used, then supply the encrypted password and encryption key.
-# Hot-Swap Enabled: No
-#
-com.sun.identity.agents.app.username = @AGENT_PROFILE_NAME@
-com.iplanet.am.service.secret = @AGENT_ENCRYPTED_PASSWORD@
-
-# The key that will be used to encrypt and decrypt passwords
-# Hot-Swap Enabled: No
-am.encryption.pwd = @AGENT_ENCRYPT_KEY@
 
 # The Client key that will be used to encrypt and decrypt passwords
 # Hot-Swap Enabled: No
 com.sun.identity.client.encryptionKey= @AGENT_ENCRYPT_KEY@
-
-
-#
-# DEBUG SERVICE PROPERTIES
-#   - com.iplanet.services.debug.level: Specifies the debug level to be used.
-#     The value is one of: off, error, warning, message.
-#   - com.iplanet.services.debug.directory: Specifies the complete path to the
-#     directory where debug files will be stored by the Agent.
-# Hot-Swap Enabled: No
-#
-com.iplanet.services.debug.level=@DEBUG_LEVEL@
-com.iplanet.services.debug.directory=@DEBUG_LOGS_DIR@
 
 #
 # SSO TOKEN COOKIE NAME
@@ -788,15 +724,6 @@ com.iplanet.services.debug.directory=@DEBUG_LOGS_DIR@
 #   the Agent.
 # Hot-Swap Enabled: No
 com.iplanet.am.cookie.name=iPlanetDirectoryPro
-
-#
-# NAMING SERVICE URL
-#    Specifies the naming service url(s) that can be used by the system 
-#    for naming lookups. One or more urls can be specified for this 
-#    property as a string of urls separated by single space characters.
-# Hot-Swap Enabled: No
-#
-com.iplanet.am.naming.url=@AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/namingservice
 
 #
 # SESSION CLIENT PROPERTIES
@@ -904,5 +831,3 @@ com.sun.identity.policy.client.cacheMode=subtree
 com.sun.identity.policy.client.booleanActionValues=iPlanetAMWebAgentService|GET|allow|deny:iPlanetAMWebAgentService|POST|allow|deny
 com.sun.identity.policy.client.resourceComparators=serviceType=iPlanetAMWebAgentService|class=com.sun.identity.policy.plugins.HttpURLResourceName|wildcard=*|delimiter=/|caseSensitive=false
 com.sun.identity.policy.client.clockSkew=10
-
-

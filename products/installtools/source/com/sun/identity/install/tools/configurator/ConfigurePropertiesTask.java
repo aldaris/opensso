@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurePropertiesTask.java,v 1.1 2006-09-28 07:37:20 rarcot Exp $
+ * $Id: ConfigurePropertiesTask.java,v 1.2 2007-09-13 23:57:23 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,11 +37,26 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
     public boolean execute(String name, IStateAccess stateAccess, 
             Map properties) throws InstallException {
         boolean status = false;
+        String agentTemplate = null;
+        String agentTagsTemplate = null;
 
+	String repositoryTypeKey = (String) properties.get(
+                                         STR_AGENT_REPOSITORY_TYPE_KEY);
+	String repositoryType = (String) stateAccess.get(repositoryTypeKey);
+        if (repositoryType != null) {
+	    if (repositoryType.equals(AGENT_REPOSITORY_REMOTE)) {
+                agentTemplate = (String) properties.get(
+                        STR_PRODUCT_CONFIG_FILENAME_BOOTSTRAP_TEMPLATE_KEY);
+                agentTagsTemplate = (String) properties.get(
+                        STR_PRODUCT_CONFIG_FILENAME_TAGS_TEMPLATE_KEY);
+	    } else if (repositoryType.equals(AGENT_REPOSITORY_LOCAL)) {
+                agentTemplate = (String) properties.get(
+                        STR_PRODUCT_CONFIG_FILENAME_TEMPLATE_KEY);
+	    }
+        }
         String configFile = ConfigUtil.getConfigDirPath()
                 + FILE_SEP
-                + (String) properties.get(
-                        STR_PRODUCT_CONFIG_FILENAME_TEMPLATE_KEY);
+                + agentTemplate;
         String instanceConfigFile = getInstanceConfigFile(stateAccess,
                 properties);
 
@@ -56,12 +71,34 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
             filter.tagSwapAndCopyFile();
             // Copy the Config File location to the state
             stateAccess.put(STR_CONFIG_FILE_PATH_TAG, instanceConfigFile);
+
+            // Generate the AMAgentTags.properties file is repository type
+	    // is remote
+            if ((repositoryType != null) && 
+                    (repositoryType.equals(AGENT_REPOSITORY_REMOTE))) {
+                String agentTagTemplate = (String) properties.get(
+                        STR_PRODUCT_CONFIG_FILENAME_TAGS_TEMPLATE_KEY);
+                String agentTagTemplateFile = ConfigUtil.getConfigDirPath()
+                        + FILE_SEP
+                        + agentTagsTemplate;
+                String agentTagConfigFile = getAgentTagsConfigFile(
+                                                               stateAccess,
+                                                               properties);
+                Debug.log("ConfigurePropertiesTask.execute()- Generating a tag "
+                + "swapped '" + agentTagConfigFile + "' using file '"
+                + agentTagTemplateFile);
+                ReplaceTokens tagFilter = new ReplaceTokens(
+                                              agentTagTemplateFile,
+                                              agentTagConfigFile, tokens);
+                tagFilter.tagSwapAndCopyFile();
+                stateAccess.put(STR_CONFIG_AGENT_TAGS_FILE_PATH_TAG, 
+                                agentTagConfigFile);
+            }
             status = true;
         } catch (Exception e) {
             Debug.log("ConfigurePropertiesTask.execute() - Exception "
                     + "occurred while tag swapping properties. ", e);
         }
-
         return status;
     }
 
@@ -89,15 +126,33 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
 
     public boolean rollBack(String name, IStateAccess stateAccess,
             Map properties) throws InstallException {
+        File file = null;
+        boolean status = false;
+	String printStatus = null;
+
         String instanceConfigFile = getInstanceConfigFile(stateAccess,
                 properties);
-        File file = new File(instanceConfigFile);
-        boolean status = file.delete();
+        file = new File(instanceConfigFile);
+        status = file.delete();
 
-        String printStatus = (status) ? "Successful." : "FAILED.";
+        printStatus = (status) ? "Successful." : "FAILED.";
         Debug.log("ConfigurePropertiesTask.rollBack() - Deleting file '"
                 + instanceConfigFile + "'. " + printStatus);
 
+	String repositoryTypeKey = (String) properties.get(
+                                         STR_AGENT_REPOSITORY_TYPE_KEY);
+	String repositoryType = (String) stateAccess.get(repositoryTypeKey);
+        if (repositoryType != null && 
+                repositoryType.equals(AGENT_REPOSITORY_REMOTE)) {
+            String agentTagConfigFile = getAgentTagsConfigFile(stateAccess,
+                                                               properties);
+            file = new File(agentTagConfigFile);
+            status = file.delete();
+
+            printStatus = (status) ? "Successful." : "FAILED.";
+            Debug.log("ConfigurePropertiesTask.rollBack() - Deleting file '"
+                + agentTagConfigFile + "'. " + printStatus);
+	}
         return status;
     }
 
@@ -105,6 +160,13 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
             Map properties) {
         return (String) stateAccess.get(STR_CONFIG_DIR_PREFIX_TAG) + FILE_SEP
                 + (String) properties.get(STR_PRODUCT_CONFIG_FILENAME_KEY);
+    }
+
+    private String getAgentTagsConfigFile(IStateAccess stateAccess,
+            Map properties) {
+        return (String) stateAccess.get(STR_CONFIG_DIR_PREFIX_TAG) + FILE_SEP
+                + (String) properties.get(
+                                 STR_PRODUCT_CONFIG_FILENAME_AGENT_TAGS_KEY);
     }
 
     public static final String LOC_DR_ERR_TAG_SWAP_CONFIG = 
@@ -115,6 +177,22 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
 
     public static final String STR_PRODUCT_CONFIG_FILENAME_KEY = 
         "CONFIG_FILENAME";
+
+    public static final String STR_PRODUCT_CONFIG_FILENAME_AGENT_TAGS_KEY = 
+        "CONFIG_FILENAME_AGENT_TAGS";
+
+    public static final String AGENT_REPOSITORY_REMOTE = 
+        "remote";
+
+    public static final String AGENT_REPOSITORY_LOCAL = 
+        "local";
+
+    public static final String STR_AGENT_REPOSITORY_TYPE_KEY = 
+        "AGENT_REPOSITORY_TYPE_KEY";
+
+    public static final String STR_PRODUCT_CONFIG_FILENAME_BOOTSTRAP_TEMPLATE_KEY = "CONFIG_FILENAME_BOOTSTRAP_TEMPLATE";
+
+    public static final String STR_PRODUCT_CONFIG_FILENAME_TAGS_TEMPLATE_KEY = "CONFIG_FILENAME_TAGS_TEMPLATE";
 
     public static final String LOC_TSK_MSG_CONFIGURE_PRODUCT_PROPS_EXECUTE = 
         "TSK_MSG_CONFIGURE_PRODUCT_PROPS_EXECUTE";
