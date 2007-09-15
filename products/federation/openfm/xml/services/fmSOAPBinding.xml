@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmSOAPBinding.xml,v 1.2 2007-09-13 07:41:19 stanguy Exp $
+   $Id: fmSOAPBinding.xml,v 1.3 2007-09-15 08:01:26 rajeevangal Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -111,9 +111,9 @@
                 <AttributeSchema name="EnforceOnlyKnownProvider"
                   type="single"
                   syntax="boolean"
-                  i18nkey="a106">
+                  i18nKey="a106">
                   <DefaultValues>
-                    <value>true</value>
+                    <Value>true</Value>
                   </DefaultValues>
                 </AttributeSchema>
             </Global>
