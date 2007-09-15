@@ -610,11 +610,11 @@ attributeTypes: ( 1.3.6.1.4.1.26027.1.1.177
   NAME 'ds-cfg-allow-user-password-changes' SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
   SINGLE-VALUE X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.178
-  NAME 'ds-cfg-default-password-storage-scheme'
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 X-ORIGIN 'OpenDS Directory Server' )
+  NAME 'ds-cfg-default-password-storage-scheme-dn'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.179
-  NAME 'ds-cfg-deprecated-password-storage-scheme'
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 X-ORIGIN 'OpenDS Directory Server' )
+  NAME 'ds-cfg-deprecated-password-storage-scheme-dn'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.180
   NAME 'ds-cfg-expire-passwords-without-warning'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE
@@ -1466,11 +1466,11 @@ attributeTypes: ( 1.3.6.1.4.1.26027.1.1.428
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
   X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.429
-  NAME 'ds-cfg-default-user-password-storage-scheme'
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 X-ORIGIN 'OpenDS Directory Server' )
+  NAME 'ds-cfg-default-user-password-storage-scheme-dn'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.430
-  NAME 'ds-cfg-default-auth-password-storage-scheme'
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 X-ORIGIN 'OpenDS Directory Server' )
+  NAME 'ds-cfg-default-auth-password-storage-scheme-dn'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.435
   NAME 'ds-cfg-strip-syntax-minimum-upper-bound'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE
@@ -1511,14 +1511,20 @@ attributeTypes: ( 1.3.6.1.4.1.26027.1.1.447 NAME 'ds-cfg-sender-address'
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.448 NAME 'ds-cfg-recipient-address'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.449 NAME 'ds-cfg-message-subject'
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
-  X-ORIGIN 'OpenDS Directory Server' )
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.450 NAME 'ds-cfg-message-body'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.479
+  NAME 'ds-sync-generation-id'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  USAGE directoryOperation SINGLE-VALUE
   X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.451
   NAME 'ds-task-import-clear-backend'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.452
+  NAME 'ds-cfg-je-property' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
   X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.453
   NAME 'ds-task-disconnect-connection-id'
@@ -1557,6 +1563,10 @@ attributeTypes: ( 1.3.6.1.4.1.26027.1.1.465
   NAME 'ds-cfg-notification-sender-address'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
   X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.480
+  NAME 'ds-task-reset-generation-id-domain-base-dn'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.466
   NAME 'ds-cfg-plugin-order-subordinate-modify-dn'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
@@ -1575,6 +1585,97 @@ attributeTypes: ( 1.3.6.1.4.1.26027.1.1.468
   X-ORIGIN 'OpenDS Directory Server' )
 attributeTypes: ( 1.3.6.1.4.1.26027.1.1.471
   NAME 'ds-cfg-backend-compact-encoding'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.481
+  NAME 'ds-cfg-ssl-encryption'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+  SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.482
+  NAME 'ds-cfg-public-key-certificate'
+  DESC 'cryptographic public-key certificate'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.8
+  SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.483
+  NAME 'ds-cfg-key-id'
+  DESC 'cryptographic cipher-key unique identifier'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.484
+  NAME 'ds-cfg-key-compromised-time'
+  DESC 'The time a cryptographic cipher key was suspected to be compromised'
+  EQUALITY generalizedTimeMatch
+  ORDERING generalizedTimeOrderingMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
+  SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.476
+  NAME 'ds-cfg-email-address-attribute-type'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.477
+  NAME 'ds-cfg-send-notification-without-end-user-address'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.478
+  NAME 'ds-cfg-message-template-file' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.485
+  NAME 'ds-cfg-save-config-on-successful-startup'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.474
+  NAME 'ds-cfg-referential-integrity-log-file'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.475
+  NAME 'ds-cfg-referential-integrity-update-interval'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.472
+  NAME 'ds-cfg-referential-integrity-attribute-type'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.473
+   NAME 'ds-cfg-referential-integrity-base-dn'
+   SYNTAX 1.3.6.1.4.1.1466.115.121.1.12
+   X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.486
+  NAME 'ds-cfg-max-blocked-write-time-limit'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.487
+  NAME 'ds-cfg-7-bit-clean-attribute-type' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.488
+  NAME 'ds-cfg-7-bit-clean-base-dn' SYNTAX 1.3.6.1.4.1.1466.115.121.1.12
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.489 NAME 'ds-cfg-ldif-directory'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.490 NAME 'ds-cfg-poll-interval'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.491
+  NAME 'ds-cfg-plugin-order-synchronization-add'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.492
+  NAME 'ds-cfg-plugin-order-synchronization-delete'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.493
+  NAME 'ds-cfg-plugin-order-synchronization-modify'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.494
+  NAME 'ds-cfg-plugin-order-synchronization-modify-dn'
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
+  X-ORIGIN 'OpenDS Directory Server' )
+attributeTypes: ( 1.3.6.1.4.1.26027.1.1.495
+  NAME 'ds-cfg-invoke-for-internal-operations'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE
   X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.1
@@ -1624,18 +1725,7 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.6 NAME 'ds-cfg-je-backend'
   ds-cfg-database-checkpointer-bytes-interval $
   ds-cfg-database-checkpointer-wakeup-interval $
   ds-cfg-database-lock-num-lock-tables $ ds-cfg-database-cleaner-num-threads $
-  ds-cfg-backend-compact-encoding )
-  X-ORIGIN 'OpenDS Directory Server' )
-objectClasses: ( 1.3.6.1.4.1.26027.1.2.7 NAME 'ds-cfg-je-database'
-  SUP top STRUCTURAL MAY ( cn $ ds-cfg-database-cache-percent $
-  ds-cfg-database-cache-size $ ds-cfg-database-txn-no-sync $
-  ds-cfg-database-txn-write-no-sync $ ds-cfg-database-run-cleaner $
-  ds-cfg-database-cleaner-min-utilization $ ds-cfg-database-evictor-lru-only $
-  ds-cfg-database-evictor-nodes-per-scan $ ds-cfg-database-log-file-max $
-  ds-cfg-database-logging-file-handler-on $ ds-cfg-database-logging-level $
-  ds-cfg-database-checkpointer-bytes-interval $
-  ds-cfg-database-checkpointer-wakeup-interval $
-  ds-cfg-database-lock-num-lock-tables $ ds-cfg-database-cleaner-num-threads )
+  ds-cfg-backend-compact-encoding $ ds-cfg-je-property )
   X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.8 NAME 'ds-cfg-je-index' SUP top
   STRUCTURAL MUST ( ds-cfg-index-attribute $ ds-cfg-index-type )
@@ -1670,7 +1760,8 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.14
   ds-cfg-ssl-client-auth-policy $ ds-cfg-ssl-cert-nickname $
   ds-cfg-accept-backlog $ ds-cfg-key-manager-provider-dn $
   ds-cfg-trust-manager-provider-dn $ ds-cfg-ssl-protocol $
-  ds-cfg-ssl-cipher-suite ) X-ORIGIN 'OpenDS Directory Server' )
+  ds-cfg-ssl-cipher-suite $ ds-cfg-max-blocked-write-time-limit )
+  X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.15 NAME 'ds-cfg-entry-cache'
   SUP top STRUCTURAL MUST ( cn $ ds-cfg-entry-cache-class $
   ds-cfg-entry-cache-enabled ) X-ORIGIN 'OpenDS Directory Server' )
@@ -1776,7 +1867,8 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.36
   ds-cfg-password-validator-enabled ) X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.37 NAME 'ds-cfg-plugin' SUP top
   STRUCTURAL MUST ( cn $ ds-cfg-plugin-class $ ds-cfg-plugin-enabled $
-  ds-cfg-plugin-type ) X-ORIGIN 'OpenDS Directory Server' )
+  ds-cfg-plugin-type ) MAY ds-cfg-invoke-for-internal-operations
+  X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.38 NAME 'ds-cfg-profiler-plugin'
   SUP ds-cfg-plugin STRUCTURAL MAY ( ds-cfg-enable-profiling-on-startup $
   ds-cfg-profile-directory $ ds-cfg-profile-sample-interval $
@@ -1796,7 +1888,8 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.40 NAME 'ds-cfg-root-config'
   ds-cfg-reject-unauthenticated-requests  $
   ds-cfg-bind-with-dn-requires-password $ ds-cfg-lookthrough-limit $
   ds-cfg-smtp-server $ ds-cfg-allowed-task $ ds-cfg-disabled-privilege $
-  ds-cfg-return-bind-error-messages $ ds-cfg-idle-time-limit )
+  ds-cfg-return-bind-error-messages $ ds-cfg-idle-time-limit $
+  ds-cfg-save-config-on-successful-startup )
   X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.41 NAME 'ds-cfg-root-dn' SUP top
   AUXILIARY MAY ds-cfg-alternate-bind-dn X-ORIGIN 'OpenDS Directory Server' )
@@ -1892,12 +1985,12 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.61
   X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.62 NAME 'ds-cfg-password-policy'
   SUP top STRUCTURAL MUST ( cn $ ds-cfg-password-attribute $
-  ds-cfg-default-password-storage-scheme )
+  ds-cfg-default-password-storage-scheme-dn )
   MAY ( ds-cfg-account-status-notification-handler-dn $
   ds-cfg-allow-expired-password-changes $
   ds-cfg-allow-multiple-password-values $ ds-cfg-allow-pre-encoded-passwords $
   ds-cfg-allow-user-password-changes $
-  ds-cfg-deprecated-password-storage-scheme $
+  ds-cfg-deprecated-password-storage-scheme-dn $
   ds-cfg-expire-passwords-without-warning $ ds-cfg-force-change-on-add $
   ds-cfg-force-change-on-reset $ ds-cfg-grace-login-count $
   ds-cfg-idle-lockout-interval $ ds-cfg-last-login-time-attribute $
@@ -2140,8 +2233,10 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.110 NAME 'ds-cfg-file-system-entry-cache'
   SUP ds-cfg-entry-cache STRUCTURAL MAY ( ds-cfg-max-entries $
   ds-cfg-max-memory-size $ ds-cfg-lock-timeout $ ds-cfg-exclude-filter $
   ds-cfg-include-filter $ ds-cfg-cache-directory $ ds-cfg-cache-type $
-  ds-cfg-persistent-cache $ ds-cfg-database-cache-percent $
-  ds-cfg-database-cache-size ) X-ORIGIN 'OpenDS Directory Server' )
+  ds-cfg-persistent-cache $ ds-cfg-backend-compact-encoding $
+  ds-cfg-database-cache-percent $ ds-cfg-database-cache-size $
+  ds-cfg-je-property )
+  X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.114 NAME 'ds-cfg-plugin-root'
   SUP top AUXILIARY MAY ( ds-cfg-plugin-order-startup $
   ds-cfg-plugin-order-shutdown $ ds-cfg-plugin-order-post-connect $
@@ -2180,6 +2275,10 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.114 NAME 'ds-cfg-plugin-root'
   ds-cfg-plugin-order-post-response-modify $
   ds-cfg-plugin-order-post-response-modify-dn $
   ds-cfg-plugin-order-post-response-search $
+  ds-cfg-plugin-order-synchronization-add $
+  ds-cfg-plugin-order-synchronization-delete $
+  ds-cfg-plugin-order-synchronization-modify $
+  ds-cfg-plugin-order-synchronization-modify-dn $
   ds-cfg-plugin-order-search-result-entry $
   ds-cfg-plugin-order-search-result-reference $
   ds-cfg-plugin-order-subordinate-modify-dn $
@@ -2187,8 +2286,8 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.114 NAME 'ds-cfg-plugin-root'
   X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.115
   NAME 'ds-cfg-password-policy-import-plugin' SUP ds-cfg-plugin STRUCTURAL
-  MAY ( ds-cfg-default-user-password-storage-scheme $
-  ds-cfg-default-auth-password-storage-scheme )
+  MAY ( ds-cfg-default-user-password-storage-scheme-dn $
+  ds-cfg-default-auth-password-storage-scheme-dn )
   X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.117
   NAME 'ds-cfg-vlv-je-index' SUP top STRUCTURAL
@@ -2207,6 +2306,10 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.119
   MUST ds-task-disconnect-connection-id
   MAY ( ds-task-disconnect-message $ ds-task-disconnect-notify-client )
   X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.124
+  NAME 'ds-task-reset-generation-id' SUP ds-task
+  MUST ( ds-task-reset-generation-id-domain-base-dn )
+  X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.121
   NAME 'ds-cfg-regular-expression-identity-mapper' SUP ds-cfg-identity-mapper
   STRUCTURAL MUST ( ds-cfg-match-attribute $ ds-cfg-match-pattern )
@@ -2214,6 +2317,196 @@ objectClasses: ( 1.3.6.1.4.1.26027.1.2.121
   X-ORIGIN 'OpenDS Directory Server' )
 objectClasses: ( 1.3.6.1.4.1.26027.1.2.120
   NAME 'ds-cfg-unique-attribute-plugin' SUP ds-cfg-plugin
-  STRUCTURAL
-  MAY ( ds-cfg-unique-attribute-type $ ds-cfg-unique-attribute-base-dn )
+  STRUCTURAL MUST ds-cfg-unique-attribute-type
+  MAY ds-cfg-unique-attribute-base-dn
   X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.123
+  NAME 'ds-cfg-smtp-account-status-notification-handler'
+  SUP ds-cfg-account-status-notification-handler
+  MUST ( ds-cfg-sender-address $
+  ds-cfg-send-notification-without-end-user-address $
+  ds-cfg-message-template-file ) MAY ( ds-cfg-email-address-attribute-type $
+  ds-cfg-recipient-address $ ds-cfg-message-subject )
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.164
+  NAME 'ds-cfg-trust-store-backend'
+  SUP ds-cfg-backend STRUCTURAL
+  MAY ( ds-cfg-trust-store-type $ ds-cfg-trust-store-file $
+  ds-cfg-trust-store-pin $ ds-cfg-trust-store-pin-property $
+  ds-cfg-trust-store-pin-environment-variable $ ds-cfg-trust-store-pin-file )
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.163
+  NAME 'ds-cfg-crypto-manager'
+  SUP top
+  STRUCTURAL
+  MAY ( cn $ ds-cfg-ssl-protocol $ ds-cfg-ssl-cipher-suite $
+  ds-cfg-ssl-cert-nickname $ ds-cfg-ssl-encryption )
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.165
+  NAME 'ds-cfg-instance-key'
+  SUP top
+  STRUCTURAL
+  MUST ( ds-cfg-key-id $ ds-cfg-public-key-certificate )
+  MAY ds-cfg-key-compromised-time
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.166
+  NAME 'ds-cfg-self-signed-cert-request'
+  SUP top
+  STRUCTURAL
+  MUST ( ds-cfg-key-id )
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.125 NAME 'ds-cfg-entryuuid-plugin'
+  SUP ds-cfg-plugin STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.126 NAME 'ds-cfg-lastmod-plugin'
+  SUP ds-cfg-plugin STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.127 NAME 'ds-cfg-ldap-ad-list-plugin'
+  SUP ds-cfg-plugin STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.128 NAME 'ds-cfg-jmx-alert-handler'
+  SUP ds-cfg-alert-handler STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.129 NAME 'ds-cfg-memory-backend'
+  SUP ds-cfg-backend STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.130 NAME 'ds-cfg-monitor-backend'
+  SUP ds-cfg-backend STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.131
+  NAME 'ds-cfg-cancel-extended-operation-handler'
+  SUP ds-cfg-extended-operation-handler STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.132
+  NAME 'ds-cfg-get-connection-id-extended-operation-handler'
+  SUP ds-cfg-extended-operation-handler STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.133
+  NAME 'ds-cfg-password-policy-state-extended-operation-handler'
+  SUP ds-cfg-extended-operation-handler STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.134
+  NAME 'ds-cfg-starttls-extended-operation-handler'
+  SUP ds-cfg-extended-operation-handler STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.135
+  NAME 'ds-cfg-who-am-i-extended-operation-handler'
+  SUP ds-cfg-extended-operation-handler STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.136
+  NAME 'ds-cfg-static-group-implementation' SUP ds-cfg-group-implementation
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.137
+  NAME 'ds-cfg-dynamic-group-implementation' SUP ds-cfg-group-implementation
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.138
+  NAME 'ds-cfg-virtual-static-group-implementation'
+  SUP ds-cfg-group-implementation STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.139
+  NAME 'ds-cfg-client-connection-monitor-provider' SUP ds-cfg-monitor-provider
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.140
+  NAME 'ds-cfg-stack-trace-monitor-provider' SUP ds-cfg-monitor-provider
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.141
+  NAME 'ds-cfg-system-info-monitor-provider' SUP ds-cfg-monitor-provider
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.142
+  NAME 'ds-cfg-version-monitor-provider' SUP ds-cfg-monitor-provider
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.143
+  NAME 'ds-cfg-base64-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.144
+  NAME 'ds-cfg-clear-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.145
+  NAME 'ds-cfg-crypt-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.146
+  NAME 'ds-cfg-md5-password-storage-scheme' SUP ds-cfg-password-storage-scheme
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.147
+  NAME 'ds-cfg-sha1-password-storage-scheme' SUP ds-cfg-password-storage-scheme
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.148
+  NAME 'ds-cfg-salted-md5-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.149
+  NAME 'ds-cfg-salted-sha1-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.150
+  NAME 'ds-cfg-salted-sha256-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.151
+  NAME 'ds-cfg-salted-sha384-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.152
+  NAME 'ds-cfg-salted-sha512-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.153
+  NAME 'ds-cfg-anonymous-sasl-mechanism-handler'
+  SUP ds-cfg-sasl-mechanism-handler STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.154
+  NAME 'ds-cfg-blind-trust-manager-provider' SUP ds-cfg-trust-manager-provider
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.155
+  NAME 'ds-cfg-entrydn-virtual-attribute' SUP ds-cfg-virtual-attribute
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.156
+  NAME 'ds-cfg-entryuuid-virtual-attribute' SUP ds-cfg-virtual-attribute
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.157
+  NAME 'ds-cfg-hassubordinates-virtual-attribute' SUP ds-cfg-virtual-attribute
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.158
+  NAME 'ds-cfg-numsubordinates-virtual-attribute' SUP ds-cfg-virtual-attribute
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.159
+  NAME 'ds-cfg-ismemberof-virtual-attribute' SUP ds-cfg-virtual-attribute
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.160
+  NAME 'ds-cfg-subschemasubentry-virtual-attribute'
+  SUP ds-cfg-virtual-attribute STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.161
+  NAME 'ds-cfg-config-file-handler-backend' SUP ds-cfg-backend STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.162
+  NAME 'ds-cfg-subject-equals-dn-certificate-mapper'
+  SUP ds-cfg-certificate-mapper STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.122
+  NAME 'ds-cfg-referential-integrity-plugin' SUP ds-cfg-plugin
+  STRUCTURAL MUST ds-cfg-referential-integrity-attribute-type
+  MAY ( ds-cfg-referential-integrity-base-dn
+  $ ds-cfg-referential-integrity-update-interval
+  $ ds-cfg-referential-integrity-log-file )
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.167 NAME 'ds-cfg-7-bit-clean-plugin'
+  SUP ds-cfg-plugin STRUCTURAL MUST ds-cfg-7-bit-clean-attribute-type
+  MAY ds-cfg-7-bit-clean-base-dn X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.168
+  NAME 'ds-cfg-ldif-connection-handler' SUP ds-cfg-connection-handler
+  MUST ( ds-cfg-ldif-directory $ ds-cfg-poll-interval )
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.169
+  NAME 'ds-cfg-triple-des-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.170
+  NAME 'ds-cfg-aes-password-storage-scheme' SUP ds-cfg-password-storage-scheme
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.171
+  NAME 'ds-cfg-rc4-password-storage-scheme' SUP ds-cfg-password-storage-scheme
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.172
+  NAME 'ds-cfg-blowfish-password-storage-scheme'
+  SUP ds-cfg-password-storage-scheme STRUCTURAL
+  X-ORIGIN 'OpenDS Directory Server' )
+objectClasses: ( 1.3.6.1.4.1.26027.1.2.173
+  NAME 'ds-cfg-entry-cache-monitor-provider' SUP ds-cfg-monitor-provider
+  STRUCTURAL X-ORIGIN 'OpenDS Directory Server' )
+
