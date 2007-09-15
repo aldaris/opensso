@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.1 2007-09-06 17:41:26 rajeevangal Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.2 2007-09-15 08:03:25 rajeevangal Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,21 +102,21 @@ public class EmbeddedOpenDS {
 
         // copy files
         String[] files = {
-            "config/upgrade/schema.ldif.2794",
-            "config/upgrade/config.ldif.2794",
+            "config/upgrade/schema.ldif.3056",
+            "config/upgrade/config.ldif.3056",
             "config/config.ldif",
             "config/famsuffix.ldif",
             "config/schema/00-core.ldif",
-            "config/schema/03-changelog.ldif",
-            "config/schema/03-rfc2739.ldif",
-            "config/schema/03-rfc3712.ldif",
             "config/schema/01-pwpolicy.ldif",
-            "config/schema/03-rfc2713.ldif",
-            "config/schema/03-rfc2926.ldif",
-            "config/schema/03-uddiv3.ldif",
             "config/schema/02-config.ldif",
+            "config/schema/03-changelog.ldif",
+            "config/schema/03-rfc2713.ldif",
             "config/schema/03-rfc2714.ldif",
+            "config/schema/03-rfc2739.ldif",
+            "config/schema/03-rfc2926.ldif",
             "config/schema/03-rfc3112.ldif",
+            "config/schema/03-rfc3712.ldif",
+            "config/schema/03-uddiv3.ldif",
             "config/schema/04-rfc2307bis.ldif"
         };
         for (int i = 0 ; i < files.length; i++) {

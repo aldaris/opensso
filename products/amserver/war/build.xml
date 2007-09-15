@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.28 2007-09-06 17:41:27 rajeevangal Exp $
+   $Id: build.xml,v 1.29 2007-09-15 08:04:15 rajeevangal Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -162,8 +162,8 @@
                 <include name="wordlist.txt" />
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/opends/config/upgrade" prefix="WEB-INF/template/opends/config/upgrade">
-                <include name="config.ldif.2794" />
-                <include name="schema.ldif.2794" />
+                <include name="config.ldif.3056" />
+                <include name="schema.ldif.3056" />
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/opends/config/schema" prefix="WEB-INF/template/opends/config/schema">
                 <include name="00-core.ldif" />
