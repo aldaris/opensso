@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.24 2007-09-14 16:34:58 rmisra Exp $
+ * $Id: TestCommon.java,v 1.25 2007-09-18 02:46:29 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -885,5 +885,35 @@ public class TestCommon implements TestConstants {
         map.put("uri", strURI);
 
         return (map);
+    }
+    
+    /**
+     * Replace all tags in a file with actual value that are defined in a map 
+     * @param inFile input file name to be replaced with the tag
+     * @param outFile output file name with actual value
+     * @param valMap a map contains tag name and value i.e. 
+     * [ROOT_SUFFIX, dc=sun,dc=com]
+     */
+    public void replaceStringInFile(String inFile, String outFile, Map valMap)
+    throws Exception {
+        String key = null;
+        String value = null;
+        String outputStr = null;
+        Iterator keyIter;
+        BufferedReader buff = new BufferedReader(new FileReader(inFile));
+        StringBuffer sb = new StringBuffer();
+        for (String inputStr = buff.readLine(); (inputStr != null);
+        inputStr = buff.readLine()) {
+            keyIter = valMap.keySet().iterator();
+            while (keyIter.hasNext()) {
+                key = (String)keyIter.next();
+                value = (String)valMap.get(key);
+                inputStr = inputStr.replaceAll(key, value);
+            }
+            sb.append(inputStr + "\n");
+        }
+        BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
+        out.write(sb.toString());
+        out.close();
     }
 }
