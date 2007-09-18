@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.9 2006-12-13 20:58:14 beomsuk Exp $
+ * $Id: SessionService.java,v 1.10 2007-09-18 00:18:53 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchResults;
@@ -2833,7 +2834,7 @@ public class SessionService {
 
         try {
 
-            connection = (HttpURLConnection) url.openConnection();
+            connection = HttpURLConnectionManager.getConnection(url);
 
             String securityCookie = (String) AccessController
                     .doPrivileged(new EncodeAction(thisSessionServerURL + "@"

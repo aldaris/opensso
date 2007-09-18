@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationSender.java,v 1.1 2005-11-01 00:30:13 arvindp Exp $
+ * $Id: NotificationSender.java,v 1.2 2007-09-18 00:17:57 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.net.URL;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.share.NotificationSet;
 import com.iplanet.services.comm.share.PLLBundle;
+import com.sun.identity.common.HttpURLConnectionManager;
 
 public class NotificationSender {
 
@@ -50,7 +51,7 @@ public class NotificationSender {
         HttpURLConnection conn = null;
         OutputStream httpOut = null;
         try {
-            conn = (HttpURLConnection) url.openConnection();
+            conn = HttpURLConnectionManager.getConnection(url);
             conn.setDoOutput(true);
             conn.setUseCaches(false);
             conn.setRequestMethod("POST");

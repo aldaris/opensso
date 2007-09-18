@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCRLStore.java,v 1.3 2007-01-05 23:44:38 beomsuk Exp $
+ * $Id: AMCRLStore.java,v 1.4 2007-09-18 00:14:46 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,6 +60,7 @@ import com.iplanet.security.x509.IssuingDistributionPoint;
 import com.iplanet.security.x509.IssuingDistributionPointExtension;
 import com.iplanet.security.x509.X500Name;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.shared.encode.URLEncDec;
 
 /**
@@ -576,7 +577,7 @@ public class AMCRLStore extends AMCertStore {
             }
             
             URL uri = new URL(url); 
-            con = (HttpURLConnection) uri.openConnection();
+            con = HttpURLConnectionManager.getConnection(uri);
             
             // Prepare for both input and output
             con.setDoOutput( true );

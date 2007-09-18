@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.1 2007-01-21 10:34:15 mrudul_uchil Exp $
+ * $Id: AuthClientUtils.java,v 1.2 2007-09-18 00:14:19 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,6 +103,7 @@ import com.sun.identity.common.ResourceLookup;
 import com.sun.identity.common.Constants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.FQDNUtils;
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.common.RequestUtils;
 import com.sun.identity.common.ISLocaleContext;
 
@@ -1890,7 +1891,7 @@ public class AuthClientUtils {
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("Connecting to : " + authURL);
             }
-            conn = (HttpURLConnection)authURL.openConnection();
+            conn = HttpURLConnectionManager.getConnection(authURL);
             conn.setDoOutput( true );
             conn.setUseCaches( false );
             conn.setRequestMethod("POST");

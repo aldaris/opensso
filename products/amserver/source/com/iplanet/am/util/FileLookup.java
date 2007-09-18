@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileLookup.java,v 1.4 2006-08-29 21:55:05 veiming Exp $
+ * $Id: FileLookup.java,v 1.5 2007-09-18 00:19:27 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.search.FileLookupException;
@@ -463,8 +464,8 @@ public class FileLookup {
             int responseCode = -1;
             try {
                 URL handle = new URL(document);
-                HttpURLConnection connection = (HttpURLConnection) handle
-                        .openConnection();
+                HttpURLConnection connection = 
+                        HttpURLConnectionManager.getConnection(handle);
 
                 responseCode = connection.getResponseCode();
                 connection.disconnect();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteStatusCheckThreadImpl.java,v 1.1 2007-02-07 20:24:21 beomsuk Exp $
+ * $Id: SiteStatusCheckThreadImpl.java,v 1.2 2007-09-18 00:17:37 ericow Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.naming.WebtopNaming.SiteStatusCheck;
@@ -169,8 +170,8 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
                             t0 = Calendar.getInstance().getTime();
                         }
 
-                        HttpURLConnection huc = (HttpURLConnection) url
-                                .openConnection();
+                        HttpURLConnection huc =
+                                HttpURLConnectionManager.getConnection(url);
                         huc.setDoInput(true);
                         huc.setRequestMethod("GET");
                         String s = huc.getHeaderField(0);
