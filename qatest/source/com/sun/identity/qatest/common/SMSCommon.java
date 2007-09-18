@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.3 2007-09-10 22:42:01 bt199000 Exp $
+ * $Id: SMSCommon.java,v 1.4 2007-09-18 00:34:50 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,6 @@ import java.util.logging.Level;
  */
 public class SMSCommon extends TestCommon {
     private SSOToken admintoken;
-    private String schemastring;
     private String fileSeparator = System.getProperty("file.separator");
     private Map globalCfgMap;
 
@@ -251,9 +250,11 @@ public class SMSCommon extends TestCommon {
                             get(SMSConstants.SMS_LDAPv3_ORGANIZATION_NAME);
                     LDAPCommon ldc = new LDAPCommon(dsHost, dsPort,
                             dsDirmgrdn, dsDirmgrpwd, dsRootSuffix);
-                    schemastring = (String)globalCfgMap.
+                    String schemaString = (String)globalCfgMap.
                             get(SMSConstants.SMS_SCHEMNA_LIST + "." + dsType);
-                    ldc.loadAMUserSchema(schemastring);
+                    String schemaAttributes = (String)globalCfgMap.
+                            get(SMSConstants.SMS_SCHEMNA_ATTR + "." + dsType);
+                    ldc.loadAMUserSchema(schemaString, schemaAttributes);
                 }
                 log(Level.FINE, "createDataStoreImpl", "Creating datastore " +
                         dsName +  "...");
@@ -642,17 +643,6 @@ public class SMSCommon extends TestCommon {
                 if (posOfLastPeriodIndex >= 0) {
                     newTempKey = (posOfLastPeriodIndex >= 0) ?
                         key.substring(0, posOfLastPeriodIndex) : key;
-                    
-                    // Append the LDAPv3 datastore prefix to the datastore
-                    // attributes
-                    if ((!newTempKey.startsWith(
-                            SMSConstants.SMS_DATASTORE_KEY_PREFIX)) &&
-                            (!dsType.equalsIgnoreCase(
-                            SMSConstants.SMS_DATASTORE_TYPE_FF)) &&
-                            (!dsType.equalsIgnoreCase(
-                            SMSConstants.SMS_DATASTORE_TYPE_AMSDK)))
-                        newTempKey = SMSConstants.SMS_LDAPv3_PREFIX +
-                                newTempKey;
                     dsMap.put(newTempKey, value);
                 }
                 log(Level.FINEST, "setDataStoreConfigData", dsMap.toString());
