@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCommon.java,v 1.2 2007-09-10 22:43:02 bt199000 Exp $
+ * $Id: LDAPCommon.java,v 1.3 2007-09-18 00:35:06 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,7 +40,9 @@ import netscape.ldap.util.LDIFContent;
 import netscape.ldap.util.LDIFModifyContent;
 import netscape.ldap.util.LDIFRecord;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.logging.Level;
 
@@ -93,42 +95,77 @@ public class LDAPCommon extends TestCommon {
     
     /**
      * This method loads Access Manager user schema files
-     * @param    schemaList  A string of AM user schema file name(s)
+     * @param   schemaList  a list of AM user schema file name(s)
+     * @param   schemaAttr  a list of schema attributes to be checked for the
+     * existing of the schema in LDAP server.  If empty or not defined, schema
+     * will be loaded without checking.
      */
-    public void loadAMUserSchema(String schemaList)
+    public void loadAMUserSchema(String schemaList, String schemaAttr)
     throws Exception {
         entering("loadAMUserSchema", null);
         try {
-            List schemaFiles = getAttributeList(schemaList, ";");
             log(Level.FINE, "loadAMUserSchema",
                     "Loading AM user schema for server " +
-                    dshost + ":" + dsport + "...");
-            log(Level.FINEST, "loadAMUserSchema",
-                    "User schema list is " + schemaList);
+                    dshost + ":" + dsport + ":" + dsrootsuffix + "...");
             if (!isDServerUp()) {
                 log(Level.SEVERE, "loadAMUserSchema",
                         "Server is down. Cannot proceed.");
                 assert false;
-            } else if (isAMUserSchemaLoad()) {
-                log(Level.FINE,
-                        "loadAMUserSchema", "AM user schema already loaded.");
             } else {
+                List schemaFilesList = getAttributeList(schemaList, ";");
+                List schemaAttrsList = getAttributeList(schemaAttr, ";");
+                log(Level.FINEST, "loadAMUserSchema",
+                    	"User schema list is " + schemaList);
                 log(Level.FINE,
                         "loadAMUserSchema", "Start loading AM user schema...");
                 String schemaFile;
-                for (Iterator i = schemaFiles.iterator(); i.hasNext();) {
+                String schemaAttrItem;
+                String fn;
+                int index;
+                Map ldMap = new HashMap();
+                Iterator j = schemaAttrsList.iterator();
+                for (Iterator i = schemaFilesList.iterator(); i.hasNext();) {
                     schemaFile = (String)i.next();
+                    if (j.hasNext())
+                        schemaAttrItem = ((String)j.next()).trim();  
+                    else 
+                        schemaAttrItem = "";
                     log(Level.FINEST,
                             "loadAMUserSchema", "Loading schema file " +
-                            schemaFile + "...");
-                    createSchemaFromLDIF(schemaFile, ld);
+                            schemaFile + " with attribute " + schemaAttrItem + 
+                            "...");
+                    if (schemaAttrItem.length() == 0 ||
+                            !isAMUserSchemaLoad(schemaAttrItem)) {
+                        log(Level.FINEST,
+                            "loadAMUserSchema", "Loading schema file " +
+                            schemaFile + " with attribute " + schemaAttrItem + 
+                            "...");
+                        index = schemaFile.lastIndexOf("/");
+                        if (index >= 0) {
+                            fn = basedir + fileSeparator + "resources" + 
+                                    fileSeparator + 
+                                    schemaFile.substring(index + 1);
+                            ldMap.put("ROOT_SUFFIX", dsrootsuffix);
+                            ldMap.put("@ROOT_SUFFIX@", dsrootsuffix);
+                            replaceStringInFile(schemaFile, fn, ldMap);
+                        } else
+                            fn = schemaFile;
+                        createSchemaFromLDIF(fn, ld);
+                        if (isAMUserSchemaLoad(schemaAttrItem) || 
+                                schemaAttrItem.length() == 0)
+                            log(Level.FINE, "loadAMUserSchema", 
+                                    "AM user schema " +  schemaFile + 
+                                    " was loaded successful.");
+                        else
+                            log(Level.SEVERE, "loadAMUserSchema", 
+                                    "Failed to load AM user schema " + 
+                                    schemaFile);
+                    } else
+                        log(Level.FINE, "loadAMUserSchema", 
+                                "AM user schema file " +  schemaFile + 
+                                " is not loaded because it was already loaded");
                 }
-                if (isAMUserSchemaLoad())
-                    log(Level.FINE, "loadAMUserSchema",
-                            "AM user schema was loaded successful.");
-                else
-                    log(Level.SEVERE, "loadAMUserSchema",
-                            "Failed to load AM user schema.");
+                
             }
         } catch (Exception e) {
             log(Level.SEVERE, "loadAMUserSchema", e.getMessage());
@@ -141,9 +178,10 @@ public class LDAPCommon extends TestCommon {
     
     /**
      * This method checks if Access Manager user schema loaded
-     * @return   true if schema exists or false if schema not found
+     * @oaran   schema attribute to be checked.
+     * @return  true if schema exists or false if schema not found
      */
-    public boolean isAMUserSchemaLoad()
+    public boolean isAMUserSchemaLoad(String attrToBeChecked)
     throws Exception {
         entering("isAMUserSchemaLoad", null);
         boolean isLoad = false;
@@ -152,9 +190,10 @@ public class LDAPCommon extends TestCommon {
         try {
             dirSchema.fetchSchema(ld);
             LDAPAttributeSchema newAttrType =
-                    dirSchema.getAttribute("sunserviceschema");
+                    dirSchema.getAttribute(attrToBeChecked);
             if (newAttrType != null) {
-                log(Level.FINEST, "isAMUserSchemaLoad", "sunserviceschema := " +
+                log(Level.FINEST, "isAMUserSchemaLoad", 
+                        "Attribute " + attrToBeChecked + " := " + 
                         newAttrType.toString());
                 isLoad = true;
             }
@@ -218,9 +257,12 @@ public class LDAPCommon extends TestCommon {
                     ld.add(amEntry);
                 }
             } catch (LDAPException e) {
+                log(Level.FINEST, "createSchemaFromLDIF", "LDAP error " + 
+                        e.getLDAPResultCode() + " " + e.getLDAPErrorMessage());
                 switch (e.getLDAPResultCode()) {
                     case LDAPException.ATTRIBUTE_OR_VALUE_EXISTS:
-                        throw e;
+                        //throw e;
+			break;
                     case LDAPException.NO_SUCH_ATTRIBUTE:
                         // Ignore some attributes need to be deleted if present
                         break;
