@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPGroups.java,v 1.3 2006-08-25 21:21:09 veiming Exp $
+ * $Id: LDAPGroups.java,v 1.4 2007-09-18 17:58:41 ericow Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -459,6 +459,7 @@ public class LDAPGroups implements Subject {
         }
         if (selectedRFCGroupDNs.size() > 0) {
             Iterator groupsIter = selectedRFCGroupDNs.iterator();
+            String userRDN = null;
             while (groupsIter.hasNext()) {
                 Boolean matchFound = null;
                 String groupDN = (String)groupsIter.next();
@@ -482,7 +483,6 @@ public class LDAPGroups implements Subject {
                         +" not in subject evaluation cache,fetching from "
                         +"directory server.");
                 }
-                String userRDN = null;
                 if (userDN == null) {
                     int beginIndex = userLocalDN.indexOf("=");
                     int endIndex = userLocalDN.indexOf(",");
