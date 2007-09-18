@@ -1,0 +1,425 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<!--
+ The contents of this file are subject to the terms
+ of the Common Development and Distribution License
+ (the License). You may not use this file except in
+ compliance with the License.
+
+ You can obtain a copy of the License at
+ https://opensso.dev.java.net/public/CDDLv1.0.html or
+ opensso/legal/CDDLv1.0.txt
+ See the License for the specific language governing
+ permission and limitations under the License.
+
+ When distributing Covered Code, include this CDDL
+ Header Notice in each file and include the License file
+ at opensso/legal/CDDLv1.0.txt.
+ If applicable, add the following below the CDDL Header,
+ with the fields enclosed by brackets [] replaced by
+ your own identifying information:
+ "Portions Copyrighted [year] [name of copyright owner]"
+
+ $Id: ds_ds_sec-wss-testng.xml,v 1.1 2007-09-18 19:49:37 rmisra Exp $: 
+
+ Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<suite name="ds_ds_sec-wss" verbose="1">
+    <test name="SecurityTokenTest 0">
+        <parameter name="testIdx" value="0"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 1">
+        <parameter name="testIdx" value="1"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 2">
+        <parameter name="testIdx" value="2"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 3">
+        <parameter name="testIdx" value="3"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 4">
+        <parameter name="testIdx" value="4"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 5">
+        <parameter name="testIdx" value="5"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 6">
+        <parameter name="testIdx" value="6"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 7">
+        <parameter name="testIdx" value="7"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 8">
+        <parameter name="testIdx" value="8"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 9">
+        <parameter name="testIdx" value="9"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 10">
+        <parameter name="testIdx" value="10"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 11">
+        <parameter name="testIdx" value="11"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 12">
+        <parameter name="testIdx" value="12"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 13">
+        <parameter name="testIdx" value="13"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 14">
+        <parameter name="testIdx" value="14"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 15">
+        <parameter name="testIdx" value="15"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 16">
+        <parameter name="testIdx" value="16"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 17">
+        <parameter name="testIdx" value="17"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 18">
+        <parameter name="testIdx" value="18"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 19">
+        <parameter name="testIdx" value="19"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 20">
+        <parameter name="testIdx" value="20"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 21">
+        <parameter name="testIdx" value="21"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 22">
+        <parameter name="testIdx" value="22"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 23">
+        <parameter name="testIdx" value="23"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 24">
+        <parameter name="testIdx" value="24"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 25">
+        <parameter name="testIdx" value="25"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 26">
+        <parameter name="testIdx" value="26"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 27">
+        <parameter name="testIdx" value="27"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 28">
+        <parameter name="testIdx" value="28"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 29">
+        <parameter name="testIdx" value="29"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 30">
+        <parameter name="testIdx" value="30"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 31">
+        <parameter name="testIdx" value="31"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 32">
+        <parameter name="testIdx" value="32"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 33">
+        <parameter name="testIdx" value="33"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 34">
+        <parameter name="testIdx" value="34"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+    <test name="SecurityTokenTest 35">
+        <parameter name="testIdx" value="35"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
+        </classes>
+    </test>
+</suite>

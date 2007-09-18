@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.5 2007-09-06 19:45:55 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.6 2007-09-18 19:46:03 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -143,6 +143,27 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_ATT_AM_ENC_PWD))
                     value = configDef.getString(
                             TestConstants.KEY_ATT_AM_ENC_KEY);
+                else if (key.equals(TestConstants.KEY_AMC_WSC_CERTALIAS))
+                    value = configDef.getString(
+                            TestConstants.KEY_AMC_WSC_CERTALIAS);
+                else if (key.equals(TestConstants.KEY_AMC_KEYSTORE))
+                    value = configDef.getString(
+                            TestConstants.KEY_AMC_KEYSTORE);
+                else if (key.equals(TestConstants.KEY_AMC_KEYPASS))
+                    value = configDef.getString(
+                            TestConstants.KEY_AMC_KEYPASS);
+                else if (key.equals(TestConstants.KEY_AMC_STOREPASS))
+                    value = configDef.getString(
+                            TestConstants.KEY_AMC_STOREPASS);
+                else if (key.equals(TestConstants.KEY_AMC_XMLSIG_CERTALIAS))
+                    value = configDef.getString(
+                            TestConstants.KEY_AMC_XMLSIG_CERTALIAS);
+                else if (key.equals(TestConstants.KEY_AMC_IDM_CACHE_ENABLED))
+                    value = configDef.getString(
+                            TestConstants.KEY_AMC_IDM_CACHE_ENABLED);
+                else if (key.equals(TestConstants.KEY_AMC_AUTHNSVC_URL))
+                    value = strProtocol + "://" + strHost + ":" + strPort +
+                            strURI + "/" + "Liberty/authnsvc";
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName);
@@ -274,6 +295,27 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_ATT_AM_ENC_PWD))
                     value = configDef2.getString(
                             TestConstants.KEY_ATT_AM_ENC_KEY);
+                else if (key.equals(TestConstants.KEY_AMC_WSC_CERTALIAS))
+                    value = configDef2.getString(
+                            TestConstants.KEY_AMC_WSC_CERTALIAS);
+                else if (key.equals(TestConstants.KEY_AMC_KEYSTORE))
+                    value = configDef2.getString(
+                            TestConstants.KEY_AMC_KEYSTORE);
+                else if (key.equals(TestConstants.KEY_AMC_KEYPASS))
+                    value = configDef2.getString(
+                            TestConstants.KEY_AMC_KEYPASS);
+                else if (key.equals(TestConstants.KEY_AMC_STOREPASS))
+                    value = configDef2.getString(
+                            TestConstants.KEY_AMC_STOREPASS);
+                else if (key.equals(TestConstants.KEY_AMC_XMLSIG_CERTALIAS))
+                    value = configDef2.getString(
+                            TestConstants.KEY_AMC_XMLSIG_CERTALIAS);
+                else if (key.equals(TestConstants.KEY_AMC_IDM_CACHE_ENABLED))
+                    value = configDef2.getString(
+                            TestConstants.KEY_AMC_IDM_CACHE_ENABLED);
+                else if (key.equals(TestConstants.KEY_AMC_AUTHNSVC_URL))
+                    value = strProtocol + "://" + strHost + ":" + strPort +
+                            strURI + "/" + "Liberty/authnsvc";
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName2);

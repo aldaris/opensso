@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.9 2007-08-17 18:44:42 bt199000 Exp $
+ * $Id: TestConstants.java,v 1.10 2007-09-18 19:48:19 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,41 @@ public interface TestConstants {
      * Property key for <code>com.iplanet.am.service.password</code>.
      */
     String KEY_AMC_SERVICE_PASSWORD = "com.iplanet.am.service.password";
+
+    /**
+     * Property key for <code>com.sun.identity.liberty.ws.wsc.certalias</code>.
+     */
+    String KEY_AMC_WSC_CERTALIAS = "com.sun.identity.liberty.ws.wsc.certalias";
+
+    /**
+     * Property key for <code>com.sun.identity.saml.xmlsig.keystore</code>.
+     */
+    String KEY_AMC_KEYSTORE = "com.sun.identity.saml.xmlsig.keystore";
+
+    /**
+     * Property key for <code>com.sun.identity.saml.xmlsig.keypass</code>.
+     */
+    String KEY_AMC_KEYPASS = "com.sun.identity.saml.xmlsig.keypass";
+
+    /**
+     * Property key for <code>com.sun.identity.saml.xmlsig.storepass</code>.
+     */
+    String KEY_AMC_STOREPASS = "com.sun.identity.saml.xmlsig.storepass";
+
+    /**
+     * Property key for <code>com.sun.identity.saml.xmlsig.certalias</code>.
+     */
+    String KEY_AMC_XMLSIG_CERTALIAS = "com.sun.identity.saml.xmlsig.certalias";
+
+    /**
+     * Property key for <code>com.sun.identity.idm.cache.enabled</code>.
+     */
+    String KEY_AMC_IDM_CACHE_ENABLED = "com.sun.identity.idm.cache.enabled";
+
+    /**
+     * Property key for <code>com.sun.identity.liberty.authnsvc.url</code>.
+     */
+    String KEY_AMC_AUTHNSVC_URL = "com.sun.identity.liberty.authnsvc.url";
 
     /**
      * Property key for <code>realm</code>.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.4 2007-09-18 00:34:50 bt199000 Exp $
+ * $Id: SMSCommon.java,v 1.5 2007-09-18 19:47:52 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,11 +82,63 @@ public class SMSCommon extends TestCommon {
             throw e;
         }
     }
+
+    /**
+     * Returns attribute value as a set for an attribute in a service using 
+     * ServiceSchema API. Service type can be one of the following: Global,
+     * Organization, Dynamic, User or Policy.
+     */
+    public Set getAttributeValueFromSchema(String serviceName,
+            String attributeName, String type)
+    throws Exception {
+        ServiceManager sm = new ServiceManager(admintoken);
+        ServiceSchemaManager ssm = sm.getSchemaManager(serviceName, "1.0");
+        ServiceSchema ss = null;
+        if (type.equals("Global"))
+            ss = ssm.getGlobalSchema();
+        else if (type.equals("Organization"))
+            ss = ssm.getOrganizationSchema();
+        else if (type.equals("Dynamic"))
+            ss = ssm.getDynamicSchema();
+        else if (type.equals("User"))
+            ss = ssm.getUserSchema();
+        else if (type.equals("Policy"))
+            ss = ssm.getPolicySchema();
+        Map map = ss.getAttributeDefaults();
+        if (map.containsKey(attributeName))
+            return (((Set)map.get(attributeName)));
+        else
+            return (null);
+    }
+
+    /**
+     * Returns attribute value as a set for an attribute in a service
+     * which have sub configurations. Service type can be one of the following:
+     * Global or Organization.
+     */
+    public Set getAttributeValue(String serviceName, String attributeName,
+            String type)
+    throws Exception {
+        ServiceConfigManager scm = new ServiceConfigManager(admintoken,
+                serviceName, "1.0");
+        ServiceConfig sc = null;
+        if (type.equals("Global"))
+            sc = scm.getGlobalConfig(null);
+        else if (type.equals("Organization"))
+            sc = scm.getOrganizationConfig(realm, null);
+        Map map = sc.getAttributes();
+        if (map.containsKey(attributeName))
+            return (((Set)map.get(attributeName)));
+        else
+            return (null);
+    }
     
     /**
      * Method updates a given attribute in any sepcified service.
      * This is only valid for Global and Organization level attributes.
-     * It does not update Dynamic attributes.
+     * It does not update Dynamic attributes. This updates attribute
+     * values for global and organization services which have sub
+     * configurations.
      */
     public void updateServiceAttribute(String serviceName,
             String attributeName, Set set, String type)
@@ -105,6 +157,30 @@ public class SMSCommon extends TestCommon {
     }
 
     /**
+     * Method updates a given attribute in any sepcified service.
+     * This is only valid for Global, Organization, Dynamic, User and Policy
+     * attributes. This directly updates the schema entry for these services.
+     */
+    public void updateServiceSchemaAttribute(String serviceName,
+            String attributeName, Set set, String type)
+    throws Exception {
+        ServiceManager sm = new ServiceManager(admintoken);
+        ServiceSchemaManager ssm = sm.getSchemaManager(serviceName, "1.0");
+        ServiceSchema ss = null;
+        if (type.equals("Global"))
+            ss = ssm.getGlobalSchema();
+        else if (type.equals("Organization"))
+            ss = ssm.getOrganizationSchema();
+        else if (type.equals("Dynamic"))
+            ss = ssm.getDynamicSchema();
+        else if (type.equals("User"))
+            ss = ssm.getUserSchema();
+        else if (type.equals("Policy"))
+            ss = ssm.getPolicySchema();
+        ss.setAttributeDefaults(attributeName, set);
+    }
+
+    /**
      * Method removes values for a given attribute in any sepcified service
      */
     public void removeServiceAttributeValues(String serviceName,
@@ -118,26 +194,6 @@ public class SMSCommon extends TestCommon {
         else if (type.equals("Organization"))
             sc = scm.getOrganizationConfig(realm, null);
         sc.removeAttribute(attributeName);
-    }
-
-    /**
-     * Returns attribute value as a set for an attribute in a service.
-     */
-    public Set getAttributeValue(String serviceName, String attributeName, 
-            String type)
-    throws Exception {
-        ServiceConfigManager scm = new ServiceConfigManager(admintoken,
-                serviceName, "1.0");
-        ServiceConfig sc = null;
-        if (type.equals("Global"))
-            sc = scm.getGlobalConfig(null);
-        else if (type.equals("Organization"))
-            sc = scm.getOrganizationConfig(realm, null);
-        Map map = sc.getAttributesWithoutDefaults();
-        if (map.containsKey(attributeName))
-            return (((Set)map.get(attributeName)));
-        else
-            return (null);
     }
 
     /**
@@ -187,7 +243,6 @@ public class SMSCommon extends TestCommon {
         ServiceManager sm = new ServiceManager(admintoken);
         ServiceSchemaManager ssm = sm.getSchemaManager(serviceName , "1.0");
         ServiceSchema ss = ssm.getDynamicSchema();
-        //System.out.println("SERVICE SCHEMA:\n" + ss.toString());
         ss.setAttributeDefaults(map);
     }
 
