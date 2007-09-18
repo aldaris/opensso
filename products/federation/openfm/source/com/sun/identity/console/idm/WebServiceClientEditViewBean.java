@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceClientEditViewBean.java,v 1.3 2007-08-28 22:20:58 veiming Exp $
+ * $Id: WebServiceClientEditViewBean.java,v 1.4 2007-09-18 06:42:06 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -119,12 +119,15 @@ public class WebServiceClientEditViewBean
             String stsMetaURL = (String)propertySheetModel.getValue(
                 CHILD_NAME_STS_METADATA_ENDPOINT);
 
+            /* Commented since we are constructing the STS EndPoint 
+             * and STS Mex EndPoint
             if ((stsURL == null) || (stsURL.trim().length() == 0) ||
                 (stsMetaURL == null) || (stsMetaURL.trim().length() == 0)
             ) {
                 throw new AMConsoleException(getModel().getLocalizedString(
                     "web.services.exception.securitytoken.info.missing"));
-            }
+            }*/
+
             deviceKeyValue.add(ATTR_NAME_STS_ENDPOINT + "=" + stsURL);
             deviceKeyValue.add(ATTR_NAME_STS_MEX_ENDPOINT + "=" + stsMetaURL);
         }
