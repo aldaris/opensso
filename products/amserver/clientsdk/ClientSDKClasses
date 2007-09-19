@@ -350,7 +350,7 @@ com/sun/identity/shared/debug/IDebugProvider.class
 com/sun/identity/shared/debug/impl/DebugImpl.class
 com/sun/identity/shared/debug/impl/DebugProviderImpl.class
 com/sun/identity/authentication/modules/securid/SecurIDPrincipal.class
-com/sun/identity/common/HttpURLConnectionManager.java
+com/sun/identity/common/HttpURLConnectionManager.class
 
 com/iplanet/am/util/Debug.class
 com/iplanet/am/util/XMLUtils.class
