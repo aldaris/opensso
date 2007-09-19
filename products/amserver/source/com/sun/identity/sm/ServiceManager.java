@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.10 2007-04-16 07:14:14 veiming Exp $
+ * $Id: ServiceManager.java,v 1.11 2007-09-19 18:20:03 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1076,6 +1076,13 @@ public class ServiceManager {
                 // Get the default services to be loaded
                 defaultServicesToLoad = (Set) map
                         .get(DEFAULT_SERVICES_FOR_REALMS);
+
+                // Make this flag false, for always the union of 
+                // auto assignment services from idRepoService.xml and
+                // auth services from AMAuthenticationManager code
+                // should be returned for deep copy for a newly created
+                // sub realm.
+                loadedAuthServices = false;
             }
             if (debug.messageEnabled()) {
                 debug.message("ServiceManager::checkFlags:realmEnabled="
