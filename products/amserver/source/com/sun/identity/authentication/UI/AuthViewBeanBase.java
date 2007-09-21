@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthViewBeanBase.java,v 1.5 2007-01-21 10:34:13 mrudul_uchil Exp $
+ * $Id: AuthViewBeanBase.java,v 1.6 2007-09-21 23:13:54 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,13 +103,6 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
             loginDebug.message("In setPageEncoding - JCharset : " + jCharset);
         }
         setDisplayFieldValue(PAGE_ENCODING, jCharset);
-        
-        try {
-            response.getWriter();
-        } catch (IOException ex) {
-            /* Problem in handling charset Ignore it*/
-            response.setContentType(content_type);
-        }
     }
     
     // Method to set Access Manager cookie (HostUrl) in
