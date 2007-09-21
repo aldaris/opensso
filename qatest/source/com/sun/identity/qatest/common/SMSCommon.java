@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.5 2007-09-18 19:47:52 rmisra Exp $
+ * $Id: SMSCommon.java,v 1.6 2007-09-21 21:58:08 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,8 @@ package com.sun.identity.qatest.common;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.LDAPCommon;
@@ -197,7 +199,40 @@ public class SMSCommon extends TestCommon {
     }
 
     /**
-     * Assigns a service to a realm
+     * Assign a service which has dynamic attributes like session or user from
+     * a realm
+     */
+    public Map getDynamicServiceAttributeRealm(String serviceName, String realm)
+    throws Exception {
+        AMIdentityRepository idrepo = new AMIdentityRepository(admintoken,
+                realm);
+        AMIdentity realmIdentity = idrepo.getRealmIdentity();
+        Set set = realmIdentity.getAssignedServices();
+        if (set.contains(serviceName))
+            return (realmIdentity.getServiceAttributes(serviceName));
+        else
+            return (null);
+    }
+
+    /**
+     * Assign a service which has dynamic attributes like session or user from
+     * a realm
+     */
+    public boolean assignDynamicServiceRealm(String serviceName, String realm,
+            Map map)
+    throws Exception {
+        AMIdentityRepository idrepo = new AMIdentityRepository(admintoken,
+                realm);
+        AMIdentity realmIdentity = idrepo.getRealmIdentity();
+        Set set = realmIdentity.getAssignedServices();
+        if (!set.contains(serviceName))
+            realmIdentity.assignService(serviceName, map); 
+        set = realmIdentity.getAssignedServices();
+        return (set.contains(serviceName));
+    }
+
+    /**
+     * Assign a service without dynamic attributes to a realm
      */
     public void assignServiceRealm(String serviceName, String realm, Map map)
     throws Exception {
@@ -209,7 +244,23 @@ public class SMSCommon extends TestCommon {
     }
 
     /**
-     * Unassigns a service from a realm
+     * Unassign a service which has dynamic attributes like session or user
+     * from a realm
+     */
+    public boolean unassignDynamicServiceRealm(String serviceName, String realm)
+    throws Exception {
+        AMIdentityRepository idrepo = new AMIdentityRepository(admintoken,
+                realm);
+        AMIdentity realmIdentity = idrepo.getRealmIdentity();
+        Set set = realmIdentity.getAssignedServices();
+        if (set.contains(serviceName))
+            realmIdentity.unassignService(serviceName);
+        set = realmIdentity.getAssignedServices();
+        return (!set.contains(serviceName));
+    }
+
+    /**
+     * Unassign a service without dynamic attributes from a realm
      */
     public void unassignServiceRealm(String serviceName, String realm)
     throws Exception {
