@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-notification-testng.xml,v 1.1 2007-09-01 00:11:57 mrudulahg Exp $
+ $Id: ds_ds-notification-testng.xml,v 1.2 2007-09-24 20:40:45 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -81,4 +81,14 @@
             <class name="com.sun.identity.qatest.notification.IDRepoNotificationTests"/> 
         </classes>
     </test> 
+    <test name="SMNotification">
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.notification.SMNotificationTests"/>
+        </classes>
+    </test>
 </suite>
