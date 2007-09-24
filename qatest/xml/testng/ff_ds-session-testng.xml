@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-session-testng.xml,v 1.1 2007-09-21 21:59:33 rmisra Exp $: 
+ $Id: ff_ds-session-testng.xml,v 1.2 2007-09-24 20:29:05 rmisra Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,6 +34,16 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.session.SessionServerTimeConstraintsTest"/>
+        </classes>
+    </test>
+    <test name="SessionProperty">
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.session.SessionProperty"/>
         </classes>
     </test>
 </suite>
