@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.25 2007-09-18 02:46:29 bt199000 Exp $
+ * $Id: TestCommon.java,v 1.26 2007-09-24 20:33:30 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -237,13 +237,24 @@ public class TestCommon implements TestConstants {
      */
     protected void destroyToken(SSOToken ssotoken)
     throws Exception {
+        destroyToken(null, ssotoken);
+    }
+
+    /**
+     * Destroys single sign on token.
+     */
+    protected void destroyToken(SSOToken requester, SSOToken ssotoken)
+    throws Exception {
         log(Level.FINE, "destroyToken", "Inside destroy token");
         if (validateToken(ssotoken)) {
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
-            stMgr.destroyToken(ssotoken);
+            if (requester != null)
+                stMgr.destroyToken(requester, ssotoken);
+            else
+                stMgr.destroyToken(ssotoken);
         }
     }
-    
+
     /**
      * Returns the base directory where code base is
      * checked out.
@@ -915,5 +926,27 @@ public class TestCommon implements TestConstants {
         BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
         out.write(sb.toString());
         out.close();
+    }
+
+    /**
+     * Returns the SSOToken of a user.
+     */
+    protected SSOToken getUserToken(SSOToken requester, String userId)
+    throws Exception {
+        SSOToken stok = null;
+        if (validateToken(requester)) {
+            SSOTokenManager stMgr = SSOTokenManager.getInstance();
+            Set set = stMgr.getValidSessions(requester, host);
+            Iterator it = set.iterator();
+            String strLocUserID;
+            while (it.hasNext()) {
+                stok = (SSOToken)it.next();
+                strLocUserID = stok.getProperty("UserId");
+                log(Level.FINEST, "getUserToken", "UserID: " + strLocUserID);
+                if (strLocUserID.equals(userId))
+                    break;
+            }
+        }
+        return (stok);
     }
 }

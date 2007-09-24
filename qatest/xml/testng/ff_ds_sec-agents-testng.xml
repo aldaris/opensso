@@ -20,25 +20,12 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-agents-testng.xml,v 1.3 2007-08-14 23:31:41 rmisra Exp $: 
+ $Id: ff_ds_sec-agents-testng.xml,v 1.4 2007-09-24 20:31:20 rmisra Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ff_ds_sec-agents" verbose="1">
-    <test name="HeaderAttributeTests">
-        <parameter name="policyIdx" value="0"/>
-        <parameter name="resourceIdx" value="21"/>
-        <groups>
-            <run>
-                <include name="ff_ds_sec"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.agents.ConfigureUnconfigure"/>
-            <class name="com.sun.identity.qatest.agents.HeaderAttributeTests"/>
-        </classes>
-    </test>
     <test name="AgentsSubjectTests 1">
         <parameter name="policyIdx" value="0"/>
         <parameter name="evaluationIdx" value="0"/>
@@ -359,6 +346,33 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.agents.AgentsTests"/>
+        </classes>
+    </test>
+    <test name="GeneralAgentsTests">
+        <parameter name="policyIdx" value="0"/>
+        <parameter name="resourcePIdx" value="21"/>
+        <parameter name="resourceNPIdx" value="22"/>
+        <parameter name="resourceCaseIdx" value="23"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.agents.GeneralAgentTests"/>
+        </classes>
+    </test>
+    <test name="HeaderAttributeTests">
+        <parameter name="policyIdx" value="0"/>
+        <parameter name="resourceIdx" value="21"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.agents.ConfigureUnconfigure"/>
+            <class name="com.sun.identity.qatest.agents.HeaderAttributeTests"/>
         </classes>
     </test>
 </suite>
