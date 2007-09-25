@@ -20,14 +20,15 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-idm-testng.xml,v 1.1 2007-09-05 00:34:09 bt199000 Exp $
+ $Id: ff_ds_sec-idm-testng.xml,v 1.2 2007-09-25 17:32:54 bt199000 Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ff_ds_sec-idm" verbose="1">
     <parameter name="dsindex" value="0"/>
-    <parameter name="configidm" value="true"/>
+    <parameter name="setupidm" value="true"/>
+    <parameter name="cleanupidm" value="true"/>
     <test name="IDMTestSetupCleanup">
         <groups>
             <run>
@@ -40,552 +41,722 @@
     </test>
     <test name="CreateIdentitiesTest1">
     	<parameter name="testNum" value="1"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest2">
     	<parameter name="testNum" value="2"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest3">
     	<parameter name="testNum" value="3"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest4">
     	<parameter name="testNum" value="4"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest5">
     	<parameter name="testNum" value="5"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest6">
     	<parameter name="testNum" value="6"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest7">
     	<parameter name="testNum" value="7"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest8">
     	<parameter name="testNum" value="8"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest9">
     	<parameter name="testNum" value="9"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest10">
     	<parameter name="testNum" value="10"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest11">
     	<parameter name="testNum" value="11"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest12">
     	<parameter name="testNum" value="12"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest13">
     	<parameter name="testNum" value="13"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest14">
     	<parameter name="testNum" value="14"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="CreateIdentitiesTest15">
     	<parameter name="testNum" value="15"/>
+    	<parameter name="testName" value="createIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.CreateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest1">
     	<parameter name="testNum" value="1"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest2">
     	<parameter name="testNum" value="2"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest3">
     	<parameter name="testNum" value="3"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest4">
     	<parameter name="testNum" value="4"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest5">
     	<parameter name="testNum" value="5"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest6">
     	<parameter name="testNum" value="6"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest7">
     	<parameter name="testNum" value="7"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest8">
     	<parameter name="testNum" value="8"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest9">
     	<parameter name="testNum" value="9"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest10">
     	<parameter name="testNum" value="10"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest11">
     	<parameter name="testNum" value="11"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest12">
     	<parameter name="testNum" value="12"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest13">
     	<parameter name="testNum" value="13"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest14">
     	<parameter name="testNum" value="14"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="DeleteIdentitiesTest15">
     	<parameter name="testNum" value="15"/>
+    	<parameter name="testName" value="deleteIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.DeleteIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest1">
     	<parameter name="testNum" value="1"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest2">
     	<parameter name="testNum" value="2"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest3">
     	<parameter name="testNum" value="3"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest4">
     	<parameter name="testNum" value="4"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest5">
     	<parameter name="testNum" value="5"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest6">
     	<parameter name="testNum" value="6"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest7">
     	<parameter name="testNum" value="7"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest8">
     	<parameter name="testNum" value="8"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest9">
     	<parameter name="testNum" value="9"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest10">
     	<parameter name="testNum" value="10"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest11">
     	<parameter name="testNum" value="11"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest12">
     	<parameter name="testNum" value="12"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest13">
     	<parameter name="testNum" value="13"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest14">
     	<parameter name="testNum" value="14"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="SearchIdentitiesTest15">
     	<parameter name="testNum" value="15"/>
+    	<parameter name="testName" value="searchIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.SearchIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="UpdateIdentitiesTest1">
     	<parameter name="testNum" value="1"/>
+    	<parameter name="testName" value="updateIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.UpdateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="UpdateIdentitiesTest2">
     	<parameter name="testNum" value="2"/>
+    	<parameter name="testName" value="updateIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.UpdateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="UpdateIdentitiesTest3">
     	<parameter name="testNum" value="3"/>
+    	<parameter name="testName" value="updateIdentitiesTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.UpdateIdentitiesTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="UpdateIdentitiesTest4">
+    	<parameter name="testNum" value="4"/>
+    	<parameter name="testName" value="updateIdentitiesTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="UpdateIdentitiesTest5">
+    	<parameter name="testNum" value="5"/>
+    	<parameter name="testName" value="updateIdentitiesTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="AddMembersTest1">
     	<parameter name="testNum" value="1"/>
+    	<parameter name="testName" value="addMembersTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.AddMembersTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
     <test name="AddMembersTest2">
     	<parameter name="testNum" value="2"/>
+    	<parameter name="testName" value="addMembersTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.idm.AddMembersTest"/>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="AddMembersTest3">
+    	<parameter name="testNum" value="3"/>
+    	<parameter name="testName" value="addMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="AddMembersTest4">
+    	<parameter name="testNum" value="4"/>
+    	<parameter name="testName" value="addMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="AddMembersTest5">
+    	<parameter name="testNum" value="5"/>
+    	<parameter name="testName" value="addMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="AddMembersTest6">
+    	<parameter name="testNum" value="6"/>
+    	<parameter name="testName" value="addMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="RemoveMembersTest1">
+    	<parameter name="testNum" value="1"/>
+    	<parameter name="testName" value="removeMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+     </test>
+    <test name="RemoveMembersTest2">
+    	<parameter name="testNum" value="2"/>
+    	<parameter name="testName" value="removeMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+     </test>
+    <test name="RemoveMembersTest3">
+    	<parameter name="testNum" value="3"/>
+    	<parameter name="testName" value="removeMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+     </test>
+    <test name="RemoveMembersTest4">
+    	<parameter name="testNum" value="4"/>
+    	<parameter name="testName" value="removeMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
 </suite>

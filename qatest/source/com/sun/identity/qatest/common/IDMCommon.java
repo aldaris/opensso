@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.4 2007-09-05 19:59:22 bt199000 Exp $
+ * $Id: IDMCommon.java,v 1.5 2007-09-25 17:35:15 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -286,6 +286,31 @@ public class IDMCommon extends TestCommon {
     }
     
     /**
+     * Remove a User Identity from a Group or a Role Identity
+     * @param ssotoken SSO token
+     * @param userName user name to be removed
+     * @param memberName member name
+     * @param memberType member type
+     * @param tRealm realm name
+     */
+    public void removeUserMember(SSOToken ssotoken, String userName,
+            String memberName, IdType memberType, String tRealm)
+            throws Exception {
+        Set setUser = getAMIdentity(ssotoken, userName, IdType.USER, tRealm);
+        Set setMember = getAMIdentity(ssotoken, memberName, memberType, tRealm);
+        AMIdentity amidUser = null;
+        AMIdentity amidMember = null;
+        Iterator itr;
+        for (itr = setUser.iterator(); itr.hasNext();) {
+            amidUser = (AMIdentity)itr.next();
+        }
+        for (itr = setMember.iterator(); itr.hasNext();) {
+            amidMember = (AMIdentity)itr.next();
+        }
+        amidMember.removeMember(amidUser);
+    }
+    
+    /**
      * This method searches and retrieves a list of realm
      * @param ssotoken SSO token object
      * @param pattern realm name or pattern
@@ -358,6 +383,7 @@ public class IDMCommon extends TestCommon {
      */
     public Map getDataFromCfgFile(String prefixName, String cfgFileName)
     throws Exception {
+        entering("getDataFromCfgFile", null);
         Map cfgMapTemp = new HashMap();
         Map cfgMapNew = new HashMap();
         cfgMapTemp = getMapFromResourceBundle(cfgFileName);
@@ -377,6 +403,7 @@ public class IDMCommon extends TestCommon {
                     "Config data map is empty");
             assert false;
         }
+        exiting("getDataFromCfgFile");
         return cfgMapNew;
     }
     
@@ -391,6 +418,7 @@ public class IDMCommon extends TestCommon {
     public boolean checkIDMExpectedErrorMessageCode(IdRepoException e, 
             String eMessage, String eCode)
     throws Exception {
+        entering("checkIDMExpectedErrorMessageCode", null);
         boolean isMatch = false;
         String errorCode = e.getErrorCode();
         String errorMessage = e.getMessage();
@@ -404,6 +432,37 @@ public class IDMCommon extends TestCommon {
                     "Error code and message match");
             isMatch = true;
         }  
+        exiting("checkIDMExpectedErrorMessageCode");
         return isMatch;
+    }
+    
+    /**
+     * This method checks the support identity type in current deployment.
+     * @param ssotoken SSO token
+     * @param realmName realm name
+     * @param idtype identity type
+     * @return true if identity type to be checked is supported identity type
+     */
+    public boolean isIdTypeSupported(SSOToken ssotoken, String realmName, 
+            String idtype)
+    throws Exception {
+        entering("isIdTypeSupported", null);
+        boolean supportsIDType = false;
+        AMIdentityRepository idrepo = 
+                new AMIdentityRepository(ssotoken, realmName);
+        Set types = idrepo.getSupportedIdTypes();
+        log(Level.FINEST, "isIdTypeSupported", "Support id type is " + 
+                types.toString());
+        Iterator iter = types.iterator();
+        IdType type;
+        while (iter.hasNext()) {
+            type =(IdType)iter.next();
+            if (type.getName().equalsIgnoreCase(idtype)) {
+                supportsIDType = true;
+                break;
+            }
+        }
+        exiting("isIdTypeSupported");
+        return supportsIDType;
     }
 }

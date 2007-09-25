@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMTestConfig.java,v 1.1 2007-09-04 21:43:27 bt199000 Exp $
+ * $Id: IDMTestConfig.java,v 1.2 2007-09-25 17:36:30 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.AfterSuite;
+import com.sun.identity.idm.IdType;
 
 /**
  * <code>IDMTestConfig</code> runs before each test suite to set up and clean 
@@ -76,25 +77,27 @@ public class IDMTestConfig extends IDMCommon {
      * @param setupds true to create a datastore
      */
     @BeforeSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    @Parameters({"dsindex","configidm"})
-    public void setupIdmTest(String dsindex, boolean configidm)
+    @Parameters({"dsindex","setupidm"})
+    public void setupIdmTest(String dsindex, boolean setupidm)
     throws Exception {
-        Object[] params = {dsindex, configidm};
-        if (!configidm) return;
+        Object[] params = {dsindex, setupidm};
+        if (!setupidm) return;
         entering("setupIdmTest", params);
         try {
+ 
             dsCfgMap = smsObj.getDataStoreConfigByIndex(
                     Integer.parseInt(dsindex), "SMSGlobalDatastoreConfig");
             subRealm = (String)dsCfgMap.get(
                     SMSConstants.SMS_DATASTORE_REALM + "." + datastoreNum);
-            String childRealm = 
+ 	    if ((subRealm != null) && !subRealm.equals("/")) {
+                String childRealm = 
                         subRealm.substring(subRealm.lastIndexOf("/") + 1);
- 	    if ((searchRealms(ssotoken, childRealm).isEmpty()) 
-		    && (subRealm != null) && !subRealm.equals("/")) {
-            	log(Level.FINE,"setupIdmTest", "Creating sub realm " + 
+                if (searchRealms(ssotoken, childRealm).isEmpty()) {
+                    log(Level.FINE,"setupIdmTest", "Creating sub realm " + 
                     subRealm + "...");
-                createIdentity(ssotoken, getParentRealm(subRealm), IdType.REALM, 
-                        childRealm, new HashMap());
+                    createIdentity(ssotoken, getParentRealm(subRealm), 
+                            IdType.REALM, childRealm, new HashMap());
+                }
 	    }
             Set listDataStore = smsObj.listDataStore(subRealm);
             Iterator iterSet = listDataStore.iterator();
@@ -122,10 +125,11 @@ public class IDMTestConfig extends IDMCommon {
      * @param setupds true to create a datastore
      */
     @AfterSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    @Parameters({"configidm"})
-    public void cleanupIdmTest(boolean configidm)
+    @Parameters({"cleanupidm"})
+    public void cleanupIdmTest(boolean cleanupidm)
     throws Exception {
-        if (!configidm) return;
+        Object[] params = {cleanupidm};
+        if (!cleanupidm) return;
         entering("cleanupDataStore", null);
         try {
             log(Level.FINE, "cleanupIdmTest", "Deleting datastore...");

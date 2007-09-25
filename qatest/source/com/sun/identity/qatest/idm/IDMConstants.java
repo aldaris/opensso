@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMConstants.java,v 1.1 2007-09-04 21:43:26 bt199000 Exp $
+ * $Id: IDMConstants.java,v 1.2 2007-09-25 17:36:30 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,31 +34,6 @@ public interface IDMConstants {
      * Identities test case prefix string
      */
     static final String IDM_TESTCASES_PREFIX = "test";
-    
-    /**
-     * Identities test case create identity name
-     */
-    static final String IDM_TESTCASES_CREATE_NAME = "createIdentitiesTest";
-    
-    /**
-     * Identities test case update identity name
-     */
-    static final String IDM_TESTCASES_UPDATE_NAME = "updateIdentitiesTest";
-           
-    /**
-     * Identities test case delete identity name
-     */
-    static final String IDM_TESTCASES_DELETE_NAME = "deleteIdentitiesTest";
-    
-    /**
-     * Identities test case search identity name
-     */
-    static final String IDM_TESTCASES_SEARCH_NAME = "searchIdentitiesTest";
-    
-    /**
-     * Identities test case add members name
-     */
-    static final String IDM_TESTCASES_ADDMEMBERS_NAME = "addMembersTest";
     
     /**
      * Identities type <code>user<code>
@@ -86,14 +61,14 @@ public interface IDMConstants {
     static final String IDM_IDENTITY_TYPE_AGENT = "agent";
     
     /**
-     * Identities properties key <code>setup_name<code>
+     * Identities properties key <code>count<code>
      */
-    static final String IDM_KEY_SETUP_NAME = "setup_name";
+    static final String IDM_KEY_COUNT = "count";
     
     /**
-     * Identities properties key <code>setup_type<code>
+     * Identities properties key <code>action<code>
      */
-    static final String IDM_KEY_SETUP_TYPE = "setup_type";
+    static final String IDM_KEY_ACTION = "action";
     
     /**
      * Identities properties key <code>description<code>
@@ -111,19 +86,14 @@ public interface IDMConstants {
     static final String IDM_KEY_IDENTITY_NAME = "name";
     
     /**
-     * Identities properties key <code>password<code>
+     * Identities properties key <code>attributes<code>
      */
-    static final String IDM_KEY_IDENTITY_PASSWORD = "password";
-    
-    /**
-     * Identities properties key <code>identity_attr<code>
-     */
-    static final String IDM_KEY_IDENTITY_ATTRIBUTE = "identity_attr";
+    static final String IDM_KEY_IDENTITY_ATTR = "attributes";
     
     /**
      * Identities properties key <code>idtype<code>
      */
-    static final String IDM_KEY_IDENTITY_TYPE = "idtype";
+    static final String IDM_KEY_IDENTITY_TYPE = "type";
     
     /**
      * Identities properties key <code>member_name<code>
@@ -133,7 +103,7 @@ public interface IDMConstants {
     /**
      * Identities properties key <code>member_idtype<code>
      */
-    static final String IDM_KEY_IDENTITY_MEMBER_TYPE = "member_idtype";
+    static final String IDM_KEY_IDENTITY_MEMBER_TYPE = "member_type";
     
     /**
      * Identities properties key <code>expected_error_code<code>
@@ -155,9 +125,4 @@ public interface IDMConstants {
      * Identities properties key <code>separate character<code>
      */
     static final String IDM_KEY_SEPARATE_CHARACTER = ";";
-    
-    /**
-     * Identities properties <code>special charactersr<code>
-     */
-    static final String IDM_SPECIAL_CHARACTERS = "`!@#$%^&*()-_={}[]|:<>";
 }

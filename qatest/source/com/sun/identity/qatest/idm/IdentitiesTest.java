@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentitiesTest.java,v 1.2 2007-09-05 19:59:39 bt199000 Exp $
+ * $Id: IdentitiesTest.java,v 1.3 2007-09-25 17:36:30 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,12 +25,14 @@
 /**
  * <code>IdentitiesTest</code> contains the methods to create, delete, search,
  * and update identities with identity types user, role, filtered role, group,
- * and agent.  They are used to execute idm test cases.
+ * and agent.  It executes the idm test cases.
  */
 package com.sun.identity.qatest.idm;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
@@ -43,27 +45,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+import org.testng.Reporter;
 
 public class IdentitiesTest extends IDMCommon {
+    private Map cfgMap;
     private SSOToken ssoToken;
+    private String prefixTestName;
+    private String testAction;
+    private String testIdAttr;
+    private String testCount;
     private String testDescription;
     private String testRealm;
     private String testIdType;
-    private String testPassword;
     private String testIdName;
     private String testReturnCode;
-    private String testSetupIdName;
-    private String testSetupIdType;
-    private String testIdAttr;
     private String testExpectedErrCode;
     private String testExpectedErrMsg;
     private String testExpectedResult;
     private String testMemberName;
-    private String testMemberType;
-    private String testCaseName;
-    private int testCaseNumber;
-    private Map testCaseMap;
-    private String prefixStr;
     
     /**
      * Empty Class constructor.
@@ -71,39 +74,32 @@ public class IdentitiesTest extends IDMCommon {
     public IdentitiesTest() {
         super("IdentitiesTest");
     }
+    
     /**
-     * Creates a new instance of IdentitiesTest
-     * @param tcIndex test index number in propperties file
-     * @param tcName test case name
-     * @param testcaseMap map contains test cases parameters
+     * This method provides the initial test set up and retrieve test
+     * input data
+     * @param testNum   test case number in propperties file
+     * @param testName  test case name
      */
-    public IdentitiesTest(int tcIndex, String tcName, Map tcMap)
+    @BeforeTest(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Parameters({"testNum", "testName"})
+    public void setup(String testNum, String testName)
     throws Exception {
-        super("IdentitiesTest");
-        testCaseName = tcName;
-        testCaseNumber = tcIndex;
-        testCaseMap = tcMap;
+        Object[] params = {testNum, testName};
+        entering("setup", params);
+        prefixTestName = testName + testNum;
+        cfgMap = getDataFromCfgFile(prefixTestName, testName);
+        testCount = getParams(IDMConstants.IDM_KEY_COUNT);
+        log(Level.FINEST, "IdentitiesTest", "Count = " + testCount);
         testDescription = getParams(IDMConstants.IDM_KEY_DESCRIPTION);
-        testRealm = getParams(IDMConstants.IDM_KEY_REALM_NAME);
-        testIdType = getParams(IDMConstants.IDM_KEY_IDENTITY_TYPE);
-        testPassword = getParams(IDMConstants.IDM_KEY_IDENTITY_PASSWORD);
-        testIdName = getParams(IDMConstants.IDM_KEY_IDENTITY_NAME);
-        testSetupIdName = getParams(IDMConstants.IDM_KEY_SETUP_NAME);
-        testSetupIdType = getParams(IDMConstants.IDM_KEY_SETUP_TYPE);
-        testIdAttr = getParams(IDMConstants.IDM_KEY_IDENTITY_ATTRIBUTE);
-        testExpectedErrCode =
-                getParams(IDMConstants.IDM_KEY_EXPECTED_ERROR_CODE);
-        testExpectedErrCode =
-                getParams(IDMConstants.IDM_KEY_EXPECTED_ERROR_MESSAGE);
-        testExpectedResult = getParams(IDMConstants.IDM_KEY_EXPECTED_RESULT);
-        testMemberName = getParams(IDMConstants.IDM_KEY_IDENTITY_MEMBER_NAME);
-        testMemberType = getParams(IDMConstants.IDM_KEY_IDENTITY_MEMBER_TYPE);
         log(Level.FINEST, "IdentitiesTest", "Description = " + testDescription);
+        testRealm = getParams(IDMConstants.IDM_KEY_REALM_NAME);
         log(Level.FINEST, "IdentitiesTest", "Realm = " + testRealm);
-        log(Level.FINEST, "IdentitiesTest", "Type = " + testIdType);
-        log(Level.FINEST, "IdentitiesTest", "User name = " + testIdName);
-        log(Level.FINEST, "IdentitiesTest", "Password = " + testPassword);
-        log(Level.FINEST, "IdentitiesTest", "Set up name = " + testSetupIdName);
+        Reporter.log("========== BEGIN TEST CASE ==========");
+        Reporter.log("Test Name: " + prefixTestName);
+        Reporter.log("Description: " + testDescription);
+        Reporter.log("Realm: " + testRealm);      
+        Reporter.log("Number of Items: " + testCount); 
         try {
             ssoToken = getToken(adminUser, adminPassword, basedn);
             if (!validateToken(ssoToken)) {
@@ -114,88 +110,257 @@ public class IdentitiesTest extends IDMCommon {
             e.getStackTrace();
             throw e;
         }
+        exiting("setup");
     }
     
-    /*
-     * This method creates an identity with default values from properties file
-     * @return true if identity is created successfully
+    /**
+     * This method executes the test cases of create, update, delete, search,
+     * add member, remove member for all identities
      */
-    public boolean create()
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    public void testIdentities()
     throws Exception {
-        return createImpl(this.testIdName, this.testIdType);
+        entering("testIdentities", null);
+        for (int i = 0; i < Integer.parseInt(testCount); i++) {
+            testAction = getParams(IDMConstants.IDM_KEY_ACTION, i);
+            testIdName = getParams(IDMConstants.IDM_KEY_IDENTITY_NAME, i);
+            testIdType = getParams(IDMConstants.IDM_KEY_IDENTITY_TYPE, i);
+            testIdAttr = getParams(IDMConstants.IDM_KEY_IDENTITY_ATTR, i);
+            testExpectedErrCode =
+                    getParams(IDMConstants.IDM_KEY_EXPECTED_ERROR_CODE, i);
+            testExpectedErrMsg =
+                    getParams(IDMConstants.IDM_KEY_EXPECTED_ERROR_MESSAGE, i);
+            testExpectedResult =
+                    getParams(IDMConstants.IDM_KEY_EXPECTED_RESULT, i);
+            testMemberName =
+                    getParams(IDMConstants.IDM_KEY_IDENTITY_MEMBER_NAME, i);
+            log(Level.FINEST, "testIdentities", "Action = " + testAction);
+            log(Level.FINEST, "testIdentities", "ID Name = " + testIdName);
+            log(Level.FINEST, "testIdentities", "ID Type = " + testIdType);
+            Reporter.log("Action " + i + " : " + testAction);
+            Reporter.log("Name " + i + " : " + testIdName);
+            Reporter.log("Type " + i + " : " + testIdName);
+            Reporter.log("Attributes " + i + " : " + testIdAttr);
+            Reporter.log("Member Name " + i + " : " + testMemberName);
+            Reporter.log("Expected Error Code " + i + " : " + 
+                    testExpectedErrCode);
+            Reporter.log("Expected Error Message " + i + " : " + 
+                    testExpectedErrMsg);
+            Reporter.log("Expected Results " + i + " : " + testExpectedResult);
+            if (testIdType == null) {
+                log(Level.FINE, "testIdentities", "Invalid IDType " + 
+                        testIdType);
+                assert false;
+                break;
+            } else if (!isIdTypeSupported(ssoToken, testRealm, testIdType)) {
+                log(Level.FINE, "testIdentities", "IDType " + testIdType +
+                    " is not supported in this deployment.");
+                break;
+            }
+            if (testAction.equals("create")) {
+                try {
+                    assert(create(testIdName, testIdType, testIdAttr));
+                } catch (IdRepoException idre) {
+                    if (checkIDMExpectedErrorMessageCode(idre,
+                            testExpectedErrMsg, testExpectedErrCode))
+                        assert true;
+                    else {
+                        log(Level.SEVERE, "testIdentities::create",
+                                idre.getMessage() + " " + idre.getErrorCode());
+                        idre.printStackTrace();
+                        throw idre;
+                    }
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testIdentities::create", e.getMessage());
+                    e.printStackTrace();
+                    throw e;
+                }
+            } else if (testAction.equals("delete")) {
+                try {
+                    assert(delete(testIdName, testIdType));
+                } catch (IdRepoException idre) {
+                    if (checkIDMExpectedErrorMessageCode(idre,
+                            testExpectedErrMsg, testExpectedErrCode))
+                        assert true;
+                    else {
+                        log(Level.SEVERE, "testIdentities::delete",
+                                idre.getMessage() + " " + idre.getErrorCode());
+                        idre.printStackTrace();
+                        throw idre;
+                    }
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testIdentities::delete", e.getMessage());
+                    e.printStackTrace();
+                    throw e;
+                }
+            } else if (testAction.equals("update")) {
+                try {
+                    assert(update(testIdName, testIdType,
+                            setIDAttributes(testIdAttr)));
+                } catch (IdRepoException idre) {
+                    if (checkIDMExpectedErrorMessageCode(idre,
+                            testExpectedErrMsg, testExpectedErrCode))
+                        assert true;
+                    else {
+                        log(Level.SEVERE, "testIdentities::update",
+                                idre.getMessage() + " " + idre.getErrorCode());
+                        idre.printStackTrace();
+                        throw idre;
+                    }
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testIdentities::update", e.getMessage());
+                    e.printStackTrace();
+                    throw e;
+                }
+            } else if (testAction.equals("search")) {
+                try {
+                    assert(search(testIdName, testIdType));
+                } catch (IdRepoException idre) {
+                    if (checkIDMExpectedErrorMessageCode(idre,
+                            testExpectedErrMsg, testExpectedErrCode))
+                        assert true;
+                    else {
+                        log(Level.SEVERE, "testIdentities::search",
+                                idre.getMessage() + " " + idre.getErrorCode());
+                        idre.printStackTrace();
+                        throw idre;
+                    }
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testIdentities::search", e.getMessage());
+                    e.printStackTrace();
+                    throw e;
+                }
+            } else if (testAction.equals("addmember")) {
+                try {
+                    assert(addMembers(testIdName, testIdType,
+                            testMemberName));
+                } catch (IdRepoException idre) {
+                    if (checkIDMExpectedErrorMessageCode(idre,
+                            testExpectedErrMsg, testExpectedErrCode))
+                        assert true;
+                    else {
+                        log(Level.SEVERE, "testIdentities::addmember",
+                                idre.getMessage());
+                        idre.printStackTrace();
+                        throw idre;
+                    }
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testIdentities::addmember",
+                            e.getMessage());
+                    e.printStackTrace();
+                    throw e;
+                }
+            } else if (testAction.equals("removemember")) {
+                try {
+                    assert(removeMembers(testIdName, testIdType,
+                            testMemberName));
+                } catch (IdRepoException idre) {
+                    if (checkIDMExpectedErrorMessageCode(idre,
+                            testExpectedErrMsg, testExpectedErrCode))
+                        assert true;
+                    else {
+                        log(Level.SEVERE, "testIdentities::removemember",
+                                idre.getMessage());
+                        idre.printStackTrace();
+                        throw idre;
+                    }
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testIdentities::removemember",
+                            e.getMessage());
+                    e.printStackTrace();
+                    throw e;
+                }
+            } else {
+                log(Level.SEVERE, "testIdentities", "Invalid test action, " +
+                        testAction + ", for test index " + i);
+                assert false;
+            }
+            exiting("testIdentities");
+        }
     }
     
-    /*
-     * This method creates one or more identities with the same type
-     * @param idName identity names.  To create multiple identity, concatenate
-     *  the identity name with character ";" i.e. user1;user2;user3;user4
-     * @param idType identity type - user, role, agent, filteredrole, group
-     * @return true if identity is created successfully
+    /**
+     * This method remove all identites that are created during the test
+     * execution and are not cleaned up due to test failure or exception
      */
-    public boolean create(String idName, String idType)
+    @AfterTest(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    public void cleanup()
+    throws Exception {
+        entering("cleanup", null);
+        Reporter.log("=========== END TEST CASE ===========");
+        AMIdentityRepository idrepo = 
+                new AMIdentityRepository(ssoToken, testRealm);
+        Set types = idrepo.getSupportedIdTypes();
+        Iterator iter = types.iterator();
+        while (iter.hasNext()) 
+            cleanupIdentities((IdType)iter.next());
+        exiting("cleanup");
+    }
+    
+    /**
+     * This method remove identity of different type that is passed from
+     * the argument
+     */
+    private void cleanupIdentities(IdType idType)
+    throws Exception {
+        entering("cleanupIdentities", null);
+        Set result = searchIdentities(ssoToken, "*", idType, 
+                testRealm);
+        if (!result.isEmpty()) {
+            log(Level.FINEST,"cleanupIdentities", 
+                    "Identities found. Start the clean up " + 
+                    result.toString());
+            Iterator iter = result.iterator();
+            AMIdentity id;
+            while (iter.hasNext()) {
+                id = (AMIdentity)iter.next();
+                log(Level.FINEST, "cleanupIdentities", "Deleting " + 
+                        idType.getName() + " " + id.getName());
+                delete(id.getName(), idType.getName());
+           }
+        }  
+        exiting("cleanupIdentities");
+    }
+    
+    /**
+     * This method creates a identity with given name and type and verifies
+     * that user exists.
+     * @param idName    identity name
+     * @param idType    identity type - user, group, role, filtered role, agent
+     * @param userAttr  identity attributes. If null, default attributes is used
+     */
+    private boolean create(String idName, String idType, String userAttr)
     throws Exception {
         entering("create", null);
         boolean opSuccess = false;
-        idType = (idType == null)? testIdType : idType;
-        Object idTypeArr[] = getAttributeList(idType,
-                IDMConstants.IDM_KEY_SEPARATE_CHARACTER).toArray();
-        Object idNameArr[] = getAttributeList(idName,
-                IDMConstants.IDM_KEY_SEPARATE_CHARACTER).toArray();
-        log(Level.FINEST, "create", idNameArr.toString());
-        for (int i = 0; i < idNameArr.length; i++) {
-            idType = (idTypeArr.length == 1) ? idType :
-                idTypeArr[i].toString();
-            if (!createImpl(idNameArr[i].toString(), idType)) {
-                opSuccess = false;
-                // Terminate if any of identity creation failed.
-                break;
-            } else
-                opSuccess = true;
-        }
-        exiting("create");
-        return opSuccess;
-    }
-    
-    /*
-     * This method creates a identity with given name and type and verifies
-     * that user exists.
-     * @return true if identity is created successfully
-     */
-    private boolean createImpl(String idName, String idType)
-    throws Exception {
-        entering("createImpl", null);
-        boolean opSuccess = false;
-        Map userAttrMap = setDefaultIdAttributes(idType, idName);
-        log(Level.FINE, "createImpl", "Creating identity " + idType +
+        log(Level.FINE, "create", "Creating identity " + idType +
                 " name " + idName + "...");
-        log(Level.FINEST, "createImpl", "realm = " + testRealm
+        Map userAttrMap;
+        if (userAttr == null) 
+            userAttrMap = setDefaultIdAttributes(idType, idName);
+        else
+            userAttrMap = setIDAttributes(userAttr);
+        log(Level.FINEST, "create", "realm = " + testRealm
                 + " type = " + getIdType(idType).getName() +
                 " attributes = " + userAttrMap.toString());
         createIdentity(ssoToken, testRealm, getIdType(idType), idName,
                 userAttrMap);
         opSuccess = (doesIdentityExists(idName, idType)) ? true : false;
         if (opSuccess)
-            log(Level.FINE, "createImpl", idType + " " + idName +
+            log(Level.FINE, "create", idType + " " + idName +
                     " is created successfully.");
         else
-            log(Level.FINE, "createImpl", "Failed to create " + idType +
+            log(Level.FINE, "create", "Failed to create " + idType +
                     " " + idName);
-        exiting("createImpl");
-        return opSuccess;
+        exiting("create");
+        return (opSuccess);
     }
-    
-    /*
-     * This method searches for an identity with default value of name and type
-     */
-    public boolean search()
-    throws Exception {
-        return search(this.testIdName, this.testIdType);
-    }
-    
-    /*
+        
+    /**
      * This method searches for an identity with given identity name and type
      * @param idName identity name or pattern
      * @param idType identity type
+     * @return true if identity found
      */
     public boolean search(String idName, String idType)
     throws Exception {
@@ -203,7 +368,7 @@ public class IdentitiesTest extends IDMCommon {
         boolean opSuccess = false;
         log(Level.FINE, "search", "Searching identity " + idType +
                 " name or pattern " + idName + "...");
-        Set idResult = searchIdentities(ssoToken, idName, getIdType(idType), 
+        Set idResult = searchIdentities(ssoToken, idName, getIdType(idType),
                 testRealm);
         List idNameList = getAttributeList(testExpectedResult,
                 IDMConstants.IDM_KEY_SEPARATE_CHARACTER);
@@ -231,22 +396,10 @@ public class IdentitiesTest extends IDMCommon {
             log(Level.FINE, "create", "Failed to search " + idType +
                     " " + idName);
         exiting("search");
-        return opSuccess;
+        return (opSuccess);
     }
     
-    /*
-     * This method updates an identity with default value of identity name and
-     * type in the properties file.  It also gets the updated attributes from
-     * the properties file.
-     * @return true if identity is updated successfully
-     */
-    public boolean update()
-    throws Exception {
-        return update(this.testIdName, this.testIdType,
-                setIDAttributes(testIdAttr));
-    }
-    
-    /*
+    /**
      * This method updates an identity with identity name, type, and attributes
      * map.
      * @param idName identity name
@@ -297,17 +450,7 @@ public class IdentitiesTest extends IDMCommon {
         return (opSuccess);
     }
     
-    /*
-     * This method deletes an identity with default values of identity name and
-     * type from the properties file
-     * @return true if identity is deleted successfully
-     */
-    public boolean delete()
-    throws Exception {
-        return delete(this.testIdName, this.testIdType);
-    }
-    
-    /*
+    /**
      * This method deletes one or multiple identities with identity name and
      * type
      * @param idName identity name
@@ -361,24 +504,13 @@ public class IdentitiesTest extends IDMCommon {
         return opSuccess;
     }
     
-    /*
-     * This method adds an user member to an identity with default values of
-     * identity name, type, and member name in the properties file
-     * @return true if member is added to dentity successfully
-     */
-    public boolean addMembers()
-    throws Exception {
-        return addMembers(this.testIdName, this.testIdType,
-                this.testMemberName);
-    }
-    
-    /*
+    /**
      * This method addes an user member to an identity with identity name, type,
      * and member name.
      * @param idName identity name
      * @param idType identity type
      * @param memberName user member name
-     * @return true if member is added to dentity successfully
+     * @return true if member is added to an identity successfully
      */
     public boolean addMembers(String idName, String idType, String memberName)
     throws Exception {
@@ -387,7 +519,7 @@ public class IdentitiesTest extends IDMCommon {
         log(Level.FINE, "addMembers", "Adding a user member name " +
                 memberName + " to " + idType + " " + idName + "...");
         // Add user member to role or group identity
-        addUserMember(ssoToken, memberName, idName, getIdType(idType), 
+        addUserMember(ssoToken, memberName, idName, getIdType(idType),
                 testRealm);
         // Verification step.  Check to make sure user is member of an identity
         AMIdentity memid = getFirstAMIdentity(ssoToken, memberName,
@@ -404,7 +536,39 @@ public class IdentitiesTest extends IDMCommon {
         return opSuccess;
     }
     
-    /*
+    /**
+     * This method removes an user member from an identity with identity name, 
+     * type, and member name.
+     * @param idName identity name
+     * @param idType identity type
+     * @param memberName user member name
+     * @return true if member is removed from an identity successfully
+     */
+    public boolean removeMembers(String idName, String idType, String memberName)
+    throws Exception {
+        entering("removeMembers", null);
+        boolean opSuccess = false;
+        log(Level.FINE, "removeMembers", "Removing a user member name " +
+                memberName + " from " + idType + " " + idName + "...");
+        // Remove user member to role or group identity
+        removeUserMember(ssoToken, memberName, idName, getIdType(idType),
+                testRealm);
+        // Verification step.  Check to make sure user is member of an identity
+        AMIdentity memid = getFirstAMIdentity(ssoToken, memberName,
+                IdType.USER, testRealm);
+        AMIdentity id = getFirstAMIdentity(ssoToken, idName,
+                getIdType(idType), testRealm);
+        opSuccess = (!memid.isMember(id)) ? true : false;
+        if (opSuccess)
+            log(Level.FINE, "removeMembers", "User member " + memberName +
+                    " is removed from " + idType + " " + idName + " successfully");
+        else
+            log(Level.FINE, "removeMembers", "Failed to remove member");
+        exiting("removeMembers");
+        return opSuccess;
+    }
+    
+    /**
      * This method checks if an identity exists.  It uses defaults value of
      * identity name and type in the properties file.
      * @return true if identity exists
@@ -414,7 +578,7 @@ public class IdentitiesTest extends IDMCommon {
         return doesIdentityExists(this.testIdName, this.testIdType);
     }
     
-    /*
+    /**
      * This method checks if an identity exists.  It accepts identity name and
      * type from the arguments.
      * @param idName identity name
@@ -426,7 +590,7 @@ public class IdentitiesTest extends IDMCommon {
         return doesIdentityExists(idName, getIdType(idType));
     }
     
-    /*
+    /**
      * This method checks if an identity exists.  It accepts identity name and
      * type from the arguments.
      * @param idName identity name
@@ -453,18 +617,27 @@ public class IdentitiesTest extends IDMCommon {
         return (idFound);
     }
     
-    /*
+    /**
      * This method return value of test case property based on the key
      * @param key test case property key
      * @return test case property value
      */
     protected String getParams(String key) {
-        prefixStr = IDMConstants.IDM_TESTCASES_PREFIX + testCaseNumber + "." +
-                testCaseName + ".";
-        return (String)testCaseMap.get(prefixStr + key);
+        String paramKey = prefixTestName + "." + key;
+        return (String)cfgMap.get(paramKey);
     }
     
-    /*
+    /**
+     * This method return value of test case property based on the key
+     * @param key test case property key
+     * @return test case property value
+     */
+    protected String getParams(String key, int idx) {
+        String paramKey = prefixTestName + "." + key + "." + idx;
+        return (String)cfgMap.get(paramKey);
+    }
+    
+    /**
      * This method return type IdType of identity type
      */
     private IdType getIdType(String gidtType)
@@ -486,7 +659,7 @@ public class IdentitiesTest extends IDMCommon {
         }
     }
     
-    /*
+    /**
      * This method creates a map of identity attributes
      */
     private Map setIDAttributes(String idAttrList)
@@ -508,7 +681,7 @@ public class IdentitiesTest extends IDMCommon {
         return tempAttrMap;
     }
     
-    /*
+    /**
      * This method create a map with default identity attributes.  This map
      * is used to create an identity
      */
@@ -518,18 +691,18 @@ public class IdentitiesTest extends IDMCommon {
         if (siaType.equals("user")) {
             putSetIntoMap("sn", tempMap, idName);
             putSetIntoMap("cn", tempMap, idName);
-            putSetIntoMap("userpassword", tempMap, testPassword);
+            putSetIntoMap("givenname", tempMap, idName);
+            putSetIntoMap("userpassword", tempMap, idName);
             putSetIntoMap("inetuserstatus", tempMap, "Active");
         } else if (siaType.equals("agent")) {
-            putSetIntoMap("userpassword", tempMap, testPassword);
-            putSetIntoMap("sunIdentityServerDeviceStatus", tempMap, "Active"); 
-            putSetIntoMap("inetuserstatus", tempMap, "Active");
+            putSetIntoMap("userpassword", tempMap, idName);
+            putSetIntoMap("sunIdentityServerDeviceStatus", tempMap, "Active");
         } else if (siaType.equals("filteredrole")) {
             putSetIntoMap("cn", tempMap, idName);
             putSetIntoMap("nsRoleFilter", tempMap,
                     "(objectclass=inetorgperson)");
         } else if (siaType.equals("role") || siaType.equals("group")) {
-            log(Level.FINE, "setIdAttributes", "Type is " + siaType +
+            log(Level.FINEST, "setIdAttributes", "Type is " + siaType +
                     ". No attribute is set");
         } else {
             log(Level.SEVERE, "setIdAttributes", "Invalid identity type " +
