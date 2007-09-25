@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.3 2006-12-20 00:24:38 bhavnab Exp $
+ * $Id: PolicyEvaluator.java,v 1.4 2007-09-25 17:37:20 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1429,9 +1429,11 @@ public class PolicyEvaluator {
      public Set getResourceNames(SSOToken token, String resourceName, 
              boolean followReferral, Set visitedOrgs) 
              throws PolicyException, SSOException {
+         DEBUG.message("PolicyEvaluator.getResourceNames():entering");
          Set resourceNames = new HashSet();
          Set policyNameSet = null;
          Set toRemovePolicyNameSet = null;
+         Set orgsToVisit = new HashSet();
          policyNameSet = resourceIndexManager.getSubResourcePolicyNames(
                 serviceType, resourceName);
          policyNameSet.addAll(
@@ -1454,7 +1456,7 @@ public class PolicyEvaluator {
                      if (pResourceNames != null) {
                          resourceNames.addAll(pResourceNames);
                      }
-                     } else { // add policy names to toRemovePolicyNameSet
+                 } else { // add policy names to toRemovePolicyNameSet
                     if (toRemovePolicyNameSet == null) {
                         toRemovePolicyNameSet = new HashSet();
                     }
@@ -1463,60 +1465,72 @@ public class PolicyEvaluator {
                         DEBUG.message("PolicyEvaluator.getResourceNames():"
                             +policyName+ " is inactive or non-existent");
                     }
-                     }
+                 }
              }
              // remove inactive/missing policies from policyNameSet
              if (toRemovePolicyNameSet != null) {
                  policyNameSet.removeAll(toRemovePolicyNameSet);
              }
 
-             Set orgsToVisit = getOrgsToVisit(policyNameSet);
+             orgsToVisit.addAll(getOrgsToVisit(policyNameSet));
 
-             if (PolicyConfig.orgAliasMappedResourcesEnabled()
-                    && PolicyManager.WEB_AGENT_SERVICE.equalsIgnoreCase(
-                    serviceTypeName)) {
-                 String orgAlias = policyManager.getOrgAliasWithResource(
-                        resourceName); 
-                 if (orgAlias != null) {
-                     String orgWithAlias = policyManager.getOrgNameWithAlias(
-                            orgAlias);
-                     if (orgWithAlias != null) {
-                         if ( DEBUG.messageEnabled() ) {
-                             DEBUG.message("PolicyEvaluator."
-                                     + "getgetResourceNames():"
-                                     + "adding orgWithAlias to orgsToVisit="
-                                     + orgWithAlias);
-                         }
-                         orgsToVisit.add(orgWithAlias);
+             if ( DEBUG.messageEnabled() ) {
+                 DEBUG.message("PolicyEvaluator.getResourceNames():"
+                     + "realmAliasEnabled=" 
+                     + PolicyConfig.orgAliasMappedResourcesEnabled()
+                     + ", serviceTypeName=" + serviceTypeName);
+             }
+         }
+         if (PolicyConfig.orgAliasMappedResourcesEnabled()
+                && PolicyManager.WEB_AGENT_SERVICE.equalsIgnoreCase(
+                serviceTypeName)) {
+             String orgAlias = policyManager.getOrgAliasWithResource(
+                    resourceName); 
+             if (orgAlias != null) {
+                 String orgWithAlias = policyManager.getOrgNameWithAlias(
+                        orgAlias);
+                 if (orgWithAlias != null) {
+                     if ( DEBUG.messageEnabled() ) {
+                         DEBUG.message("PolicyEvaluator."
+                                 + "getgetResourceNames():"
+                                 + "adding orgWithAlias to orgsToVisit="
+                                 + orgWithAlias);
+                     }
+                     orgsToVisit.add(orgWithAlias);
+                 } else {
+                     if ( DEBUG.messageEnabled() ) {
+                         DEBUG.message("PolicyEvaluator."
+                                 + "getgetResourceNames():"
+                                 + "no realm matched orgAlias:" + orgAlias);
                      }
                  }
              }
+         }
 
-             orgsToVisit.removeAll(visitedOrgs);
-             while (orgsToVisit.size() != 0 ) {
-                 String orgToVisit = (String) orgsToVisit.iterator().next();
-                 orgsToVisit.remove(orgToVisit);
-                 visitedOrgs.add(orgToVisit);
-                 //resourceNames.add(resourceName);
-                 try {
-                     // need to use admin sso token here. Need all privileges to
-                     // check for the organzation
-                     policyManager.verifyOrgName(orgToVisit);
-                 } catch (NameNotFoundException nnfe) {
-                     if( DEBUG.warningEnabled()) {
-                         DEBUG.warning("PolicyEvaluator."
-                                + "getgetResourceNames():"
-                                 + "Organization does not exist - "
-                                 + "skipping referral to " + orgToVisit);
-                     }
-                     continue;
+         orgsToVisit.removeAll(visitedOrgs);
+         while (orgsToVisit.size() != 0 ) {
+             String orgToVisit = (String) orgsToVisit.iterator().next();
+             orgsToVisit.remove(orgToVisit);
+             visitedOrgs.add(orgToVisit);
+             //resourceNames.add(resourceName);
+             try {
+                 // need to use admin sso token here. Need all privileges to
+                 // check for the organzation
+                 policyManager.verifyOrgName(orgToVisit);
+             } catch (NameNotFoundException nnfe) {
+                 if( DEBUG.warningEnabled()) {
+                     DEBUG.warning("PolicyEvaluator."
+                            + "getgetResourceNames():"
+                             + "Organization does not exist - "
+                             + "skipping referral to " + orgToVisit);
                  }
-                 PolicyEvaluator pe = new PolicyEvaluator(orgToVisit, 
-                        serviceTypeName);
-                 resourceNames.addAll(pe.getResourceNames(token, 
-                        resourceName, true,
-                        visitedOrgs)); 
+                 continue;
              }
+             PolicyEvaluator pe = new PolicyEvaluator(orgToVisit, 
+                    serviceTypeName);
+             resourceNames.addAll(pe.getResourceNames(token, 
+                    resourceName, true,
+                    visitedOrgs)); 
          }
          return resourceNames; 
      }
@@ -1724,6 +1738,11 @@ public class PolicyEvaluator {
      * @param pe policy event
      */
     static void policyChanged(String serviceTypeName, PolicyEvent pe) {
+
+        if (DEBUG.messageEnabled()) {
+            DEBUG.message("PolicyEvaulator.policyChanged():serviceTypeName="
+                    + serviceTypeName);
+        }
         resourceNamesMap.remove(serviceTypeName);
 
         Cache resourceNamesCache    
@@ -1732,6 +1751,7 @@ public class PolicyEvaluator {
             return;
         }
         try {
+            DEBUG.error("PolicyEvaluator.policyChanged: enterred try block");
             ServiceTypeManager stm = ServiceTypeManager.getServiceTypeManager();
             ServiceType serviceType = stm.getServiceType(serviceTypeName);
             Set resourceNamesToRemove = new HashSet();
@@ -1763,6 +1783,12 @@ public class PolicyEvaluator {
             DEBUG.error("PolicyEvaluator.policyChanged:", e);
         } catch (PolicyException pex) {
             DEBUG.error("PolicyEvaluator.policyChanged:", pex);
+        }
+        if (DEBUG.messageEnabled()) {
+            DEBUG.message("PolicyEvaulator.policyChanged():serviceTypeName="
+                    + serviceTypeName
+                    + ", new cached resoruceNames=" 
+                    + resourceNamesMap.get(serviceTypeName));
         }
     }
 

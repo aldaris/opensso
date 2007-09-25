@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.4 2007-09-12 21:42:41 dillidorai Exp $
+ * $Id: PolicyManager.java,v 1.5 2007-09-25 17:37:23 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1477,6 +1477,11 @@ public final class PolicyManager {
                 debug.message("PolicyManager.getOrgNameWithAlias(): "
                         + " can not get orgName for orgAlias = " + orgAlias);
             }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("PolicyManager.getOrgNameWithAlias(): "
+                    + " orgAlias = " + orgAlias
+                    + ", mapped org = " + aliasMappedOrg);
         }
         return aliasMappedOrg;
     }
