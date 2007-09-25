@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.10 2007-09-07 00:29:18 goodearth Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.11 2007-09-25 18:32:13 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,7 @@ import com.sun.identity.sm.SMSObject;
 import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SMSSchema;
 import com.sun.identity.sm.SMSUtils;
+import com.sun.identity.common.CaseInsensitiveHashMap;
 
 public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
 
@@ -176,8 +177,10 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             SSOException {
         try {
             String[] objs = { token.getTokenID().toString(), objName };
-            return ((Map) client.send(client.encodeMessage("read", objs), 
-                Session.getLBCookie(token.getTokenID().toString()), null));
+            Map attrs = (Map) client.send(client.encodeMessage("read", objs), 
+                Session.getLBCookie(token.getTokenID().toString()), null);
+            // Return CaseInsesitiveHashMap to be consistent with server side
+            return (new CaseInsensitiveHashMap(attrs));
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {
