@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurePropertiesTask.java,v 1.2 2007-09-13 23:57:23 madan_ranganath Exp $
+ * $Id: ConfigurePropertiesTask.java,v 1.3 2007-09-26 18:14:24 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,21 +39,30 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
         boolean status = false;
         String agentTemplate = null;
         String agentTagsTemplate = null;
+        String repositoryTypeKey = null;
+        String repositoryType = null;
 
-	String repositoryTypeKey = (String) properties.get(
-                                         STR_AGENT_REPOSITORY_TYPE_KEY);
-	String repositoryType = (String) stateAccess.get(repositoryTypeKey);
-        if (repositoryType != null) {
-	    if (repositoryType.equals(AGENT_REPOSITORY_REMOTE)) {
-                agentTemplate = (String) properties.get(
+	repositoryTypeKey = (String) properties.get(
+                                                 STR_AGENT_REPOSITORY_TYPE_KEY);
+        if (repositoryTypeKey != null) {
+	    repositoryType = (String) stateAccess.get(repositoryTypeKey);
+            if (repositoryType != null) {
+	        if (repositoryType.equals(AGENT_REPOSITORY_REMOTE)) {
+                    agentTemplate = (String) properties.get(
                         STR_PRODUCT_CONFIG_FILENAME_BOOTSTRAP_TEMPLATE_KEY);
-                agentTagsTemplate = (String) properties.get(
+                    agentTagsTemplate = (String) properties.get(
                         STR_PRODUCT_CONFIG_FILENAME_TAGS_TEMPLATE_KEY);
-	    } else if (repositoryType.equals(AGENT_REPOSITORY_LOCAL)) {
-                agentTemplate = (String) properties.get(
+	        } else if (repositoryType.equals(AGENT_REPOSITORY_LOCAL)) {
+                    agentTemplate = (String) properties.get(
                         STR_PRODUCT_CONFIG_FILENAME_TEMPLATE_KEY);
-	    }
-        }
+	        }
+            }
+        } else {
+	    // Using the old tags in configure.xml
+            agentTemplate = (String) properties.get(
+                                     STR_PRODUCT_CONFIG_FILENAME_TEMPLATE_KEY);
+	}
+
         String configFile = ConfigUtil.getConfigDirPath()
                 + FILE_SEP
                 + agentTemplate;

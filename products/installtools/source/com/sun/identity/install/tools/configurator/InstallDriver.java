@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallDriver.java,v 1.2 2007-09-13 23:57:23 madan_ranganath Exp $
+ * $Id: InstallDriver.java,v 1.3 2007-09-26 18:14:24 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,7 +127,8 @@ public class InstallDriver extends Driver {
         messageList.add(getProductConfigFilePathMessage());
 	String repositoryType = (String)getInstallState().getStateAccess().get(
 				"AGENT_REPOSITORY_TYPE");
-	if (repositoryType.equals(AGENT_REPOSITORY_REMOTE)) {
+	if (repositoryType != null && 
+            repositoryType.equals(AGENT_REPOSITORY_REMOTE)) {
            messageList.add(getAgentTagsConfigFilePathMessage());
         }
         messageList.add(getProductAuditLogsPathMessage());
