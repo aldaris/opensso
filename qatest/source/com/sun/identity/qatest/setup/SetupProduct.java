@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.4 2007-09-14 16:35:23 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.5 2007-09-26 00:33:02 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,23 +139,23 @@ public class SetupProduct extends TestCommon {
                                         i);
                                 dsRealm = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        "datastore-realm" + "." + i);
+                                        SMSConstants.SMS_DATASTORE_REALM + "." + i);
                                 ldapServer = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        "ldap-server" + "." + i);
+                                        SMSConstants.SMS_LDAPv3_LDAP_SERVER + "." + i);
                                 ldapPort = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        "ldap-port" + "." + i);
+                                        SMSConstants.SMS_LDAPv3_LDAP_PORT + "." + i);
                                 dsAdminPassword = cfg1Data.getString(
                                         SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        "datastore-adminpw" + "." + i);
+                                        SMSConstants.SMS_DATASTORE_ADMINPW + "." + i);
                                 orgName = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        "organization_name" + "." + i);
+                                        SMSConstants.SMS_LDAPv3_ORGANIZATION_NAME + "." + i);
                                 sslEnabled = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        "ssl-enabled" + "." + i);
+                                        SMSConstants.SMS_LDAPv3_LDAP_SSL_ENABLED + "." + i);
                                 list.add(SMSConstants.
                                         SMS_LDAPv3_LDAP_SERVER + "=" +
                                         ldapServer + ":" + ldapPort);
