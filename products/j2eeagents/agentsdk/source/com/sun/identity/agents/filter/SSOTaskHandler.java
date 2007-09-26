@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTaskHandler.java,v 1.2 2007-08-08 01:24:24 sean_brydon Exp $
+ * $Id: SSOTaskHandler.java,v 1.3 2007-09-26 17:43:10 dknab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,9 +30,13 @@ import javax.servlet.http.HttpSession;
 
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Manager;
+import com.sun.identity.agents.arch.AgentConfiguration;
+import com.sun.identity.agents.arch.ServiceFactory;
+import com.sun.identity.agents.arch.ServiceResolver;
 import com.sun.identity.agents.common.ISSOTokenValidator;
 import com.sun.identity.agents.common.SSOValidationResult;
 import com.sun.identity.agents.common.ICookieResetHelper;
+import com.sun.identity.agents.filter.ApplicationLogoutHandler;
 
 /**
  * <p>
@@ -70,13 +74,31 @@ implements ISSOTaskHandler {
             tokenValidator.validate(ctx.getHttpServletRequest());
 
         if (!ssoValidationResult.isValid()) {
-            if(isLogMessageEnabled()) {
-                logMessage("SSOTaskHandler: SSO Validation failed for "
-                           + tokenValidator.getSSOTokenValue(
-                                   ctx.getHttpServletRequest()));
+            //Check if it is a logout request
+            try {
+                String applicationLogoutHandlerImplClass =
+                          AgentConfiguration.getServiceResolver().
+                          getApplicationLogoutHandlerImpl();
+                ApplicationLogoutHandler handler = (ApplicationLogoutHandler) 
+                                ServiceFactory.getServiceInstance(getManager(),
+                                applicationLogoutHandlerImplClass);
+                handler.initialize(ssoContext, ctx.getFilterMode());
+                result = handler.process(ctx);
+            } catch (Exception ex) {
+                logError("SSOTaskHandler: Error while " + 
+                         " delegating to ApplicationLogoutHandler.", ex);
+                result = null;
+            }
+            
+            if (result == null) {
+                if(isLogMessageEnabled()) {
+                    logMessage("SSOTaskHandler: SSO Validation failed for "
+                               + tokenValidator.getSSOTokenValue(
+                                       ctx.getHttpServletRequest()));
                 }
-            doCookiesReset(ctx);
-            result = doSSOLogin(ctx);
+                doCookiesReset(ctx);
+                result = doSSOLogin(ctx);
+            }
         } else {
             if (ssoContext.isSSOCacheEnabled()) {
                 cacheSSOToken(ssoValidationResult);

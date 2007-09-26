@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgent.template,v 1.4 2007-08-10 23:23:11 dknab Exp $
+# $Id: AMAgent.template,v 1.5 2007-09-26 17:43:10 dknab Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -474,6 +474,10 @@ com.sun.identity.agents.config.cookie.reset.path[] =
 #     Server/ID providers that should be trusted by the agent, when evaluating
 #     the CDC Liberty Responses. Used when a Load Balancer/Firewall is between 
 #     the agent & server.
+#   - cdsso.secure.enable: A flag that specifies if the SSO Token cookie
+#     set by the agent in the different domains in CDSSO mode will be marked
+#     secure. When the property is set to true the SSO Token cookie will only
+#     be transmitted if the communications channel with the host is a secure one.
 #   - cdsso.domain: This property specifies the domains for which cookies have
 #     to be set in a CDSSO scenario. If this property is left blank then the 
 #     fully qualified cookie domain for the agent server will be used for 
@@ -488,6 +492,7 @@ com.sun.identity.agents.config.cdsso.redirect.uri = @AGENT_APP_URI@/sunwCDSSORed
 com.sun.identity.agents.config.cdsso.cdcservlet.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
 com.sun.identity.agents.config.cdsso.clock.skew = 0
 com.sun.identity.agents.config.cdsso.trusted.id.provider[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
+com.sun.identity.agents.config.cdsso.secure.enable = false
 #com.sun.identity.agents.config.cdsso.domain[0] =
 
 # 

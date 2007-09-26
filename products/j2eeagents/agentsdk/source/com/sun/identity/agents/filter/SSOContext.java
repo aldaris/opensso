@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOContext.java,v 1.2 2007-08-10 23:22:07 dknab Exp $
+ * $Id: SSOContext.java,v 1.3 2007-09-26 17:43:10 dknab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -150,6 +150,8 @@ public class SSOContext extends AgentBase
         }
         Cookie[] cookies;
         String[] domains = getConfigurationStrings(CONFIG_CDSSO_DOMAIN);
+        boolean isSecure = getConfigurationBoolean(CONFIG_CDSSO_SECURE_ENABLED);
+        
         int nbDomains = 0;
         if (domains != null && domains.length > 0) {
             nbDomains = domains.length;
@@ -159,6 +161,7 @@ public class SSOContext extends AgentBase
             cookies[0] = new Cookie(AgentConfiguration.getSSOTokenName(),
                 tokenValue);
             cookies[0].setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
+            cookies[0].setSecure(isSecure);
         } else {
             cookies = new Cookie[nbDomains];
             for(int i = 0; i < nbDomains; i++) {
@@ -166,6 +169,7 @@ public class SSOContext extends AgentBase
                     tokenValue);
                 cookies[i].setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
                 cookies[i].setDomain(domains[i]);
+                cookies[i].setSecure(isSecure);
             }
         }
         return cookies;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFilterConfigurationConstants.java,v 1.4 2007-08-10 23:22:06 dknab Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.5 2007-09-26 17:43:46 dknab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,6 +76,9 @@ public interface IFilterConfigurationConstants {
 
     public static final String CONFIG_CDSSO_CLOCK_SKEW =
         "cdsso.clock.skew";
+        
+    public static final String CONFIG_CDSSO_SECURE_ENABLED =
+        "cdsso.secure.enable";        
 
     public static final String CONFIG_CDSSO_DOMAIN =
         "cdsso.domain";
