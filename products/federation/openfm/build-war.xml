@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.28 2007-09-06 16:55:28 qcheng Exp $
+   $Id: build-war.xml,v 1.29 2007-09-27 00:24:54 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -131,7 +131,7 @@
             <fileset dir="${openfm.dir}/www/console"/>
         </copy>
 
-        <copy todir="${war.package.dir}">
+        <copy overwrite="true" todir="${war.package.dir}">
             <fileset file="${openfm.dir}/deployable-war/index.html"/>
         </copy>
         
