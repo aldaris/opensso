@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealm.java,v 1.2 2007-04-02 06:02:15 veiming Exp $
+ * $Id: AmRealm.java,v 1.3 2007-09-27 01:43:09 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -136,7 +136,7 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                 SSOValidationResult ssoValidationResult =
                         getSSOTokenValidator().validate(transportString);
                 if (ssoValidationResult.isValid()) {
-                    if (userName.equals(ssoValidationResult.getUserId())) {
+                    if (userName.equalsIgnoreCase(ssoValidationResult.getUserId())) {
                         result = authenticateInternal(ssoValidationResult);
                     } else {
                         logError("AmRealm: Username mismatch: given: "
@@ -146,6 +146,7 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                     }
                 }
             } else {
+                result = new AmRealmAuthenticationResult(true);
                 if(isLogMessageEnabled()) {
                     logMessage("AmRealm: Bypassed authentication for user: "
                             + userName);
@@ -211,19 +212,27 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                                 if (memberships != null &&
                                         memberships.size() > 0) {
                                     Iterator mIt = memberships.iterator();
+                                    String origUUID = null;
                                     while (mIt.hasNext()) {
-                                        String universalId = 
-                                                getUniquePartOfUuid(
-                                                IdUtils.getUniversalId(
-                                                (AMIdentity) mIt.next()));
+                                        origUUID = IdUtils.getUniversalId(
+                                                    (AMIdentity) mIt.next());
                                         if (toLowerCaseStat.booleanValue()) {
-                                            universalId =
-                                                    universalId.toLowerCase();
+                                                origUUID =
+                                                        origUUID.toLowerCase();
                                         }
-                                        String mappedId = 
-                                                getPrivilegedMappedAttribute(
-                                                    universalId);
+                                        String mappedId = getPrivilegedMappedAttribute(origUUID);
                                         attributeSet.add(mappedId);
+
+                                        String universalId = getUniquePartOfUuid(
+                                                    origUUID);
+                                        if (!origUUID.equalsIgnoreCase(universalId)) {
+                                            if (toLowerCaseStat.booleanValue()) {
+                                                    universalId =
+                                                            universalId.toLowerCase();
+                                            }
+                                            mappedId = getPrivilegedMappedAttribute(universalId);
+                                            attributeSet.add(mappedId);
+                                        }
                                     }
                                 }
                             }
