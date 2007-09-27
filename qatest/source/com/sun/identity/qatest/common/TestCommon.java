@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.26 2007-09-24 20:33:30 rmisra Exp $
+ * $Id: TestCommon.java,v 1.27 2007-09-27 22:14:56 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -443,8 +443,7 @@ public class TestCommon implements TestConstants {
             return false;
         }
 
-        if (getHtmlPageStringIndex(page, " This is a sample Access Manager" +
-                " web application") == -1) {
+        if (getHtmlPageStringIndex(page, "configurator.jsp") != -1) {
             log(Level.FINE, "configureProduct", "Inside configurator.");
 
             HtmlForm form = (HtmlForm)page.getForms().get(0);
