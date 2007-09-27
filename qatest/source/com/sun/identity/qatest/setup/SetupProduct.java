@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.5 2007-09-26 00:33:02 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.6 2007-09-27 21:51:53 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.qatest.setup;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.LDAPCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.TestCommon;
@@ -122,11 +123,18 @@ public class SetupProduct extends TestCommon {
                             String dsRealm = null;
                             String dsType;
                             String dsName;
+                            String adminId;
                             String ldapServer;
                             String ldapPort;
                             String dsAdminPassword;
                             String orgName;
                             String sslEnabled;
+                            String authId;
+                            String psearchBase;
+                            String groupAtt;
+                            String roleAtt;
+                            String userObjClass;
+                            String userAtt;
 
                             for (int i = 0; i < dCount; i++) {
                                 dsType = cfg1Data.getString(SMSConstants.
@@ -137,25 +145,59 @@ public class SetupProduct extends TestCommon {
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
                                         SMSConstants.SMS_DATASTORE_NAME + "." +
                                         i);
+                                adminId = cfg1Data.getString(SMSConstants.
+                                        SMS_DATASTORE_PARAMS_PREFIX + "0." +
+                                        SMSConstants.SMS_DATASTORE_ADMINID +
+                                        "." + i);
                                 dsRealm = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        SMSConstants.SMS_DATASTORE_REALM + "." + i);
+                                        SMSConstants.SMS_DATASTORE_REALM +
+                                        "." + i);
                                 ldapServer = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        SMSConstants.SMS_LDAPv3_LDAP_SERVER + "." + i);
+                                        SMSConstants.SMS_LDAPv3_LDAP_SERVER +
+                                        "." + i);
                                 ldapPort = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        SMSConstants.SMS_LDAPv3_LDAP_PORT + "." + i);
+                                        SMSConstants.SMS_LDAPv3_LDAP_PORT +
+                                        "." + i);
                                 dsAdminPassword = cfg1Data.getString(
                                         SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        SMSConstants.SMS_DATASTORE_ADMINPW + "." + i);
+                                        SMSConstants.SMS_DATASTORE_ADMINPW +
+                                        "." + i);
                                 orgName = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        SMSConstants.SMS_LDAPv3_ORGANIZATION_NAME + "." + i);
+                                        SMSConstants.
+                                        SMS_LDAPv3_ORGANIZATION_NAME + "." + i);
                                 sslEnabled = cfg1Data.getString(SMSConstants.
                                         SMS_DATASTORE_PARAMS_PREFIX + "0." +
-                                        SMSConstants.SMS_LDAPv3_LDAP_SSL_ENABLED + "." + i);
+                                        SMSConstants.SMS_LDAPv3_LDAP_SSL_ENABLED
+                                        + "." + i);
+                                authId = cfg1Data.getString(SMSConstants.
+                                        SMS_DATASTORE_PARAMS_PREFIX + "0." +
+                                        SMSConstants.SMS_LDAPv3_AUTHID
+                                        + "." + i);
+                                psearchBase = cfg1Data.getString(SMSConstants.
+                                        SMS_DATASTORE_PARAMS_PREFIX + "0." +
+                                        SMSConstants.SMS_LDAPv3_LDAP_PSEARCHBASE
+                                        + "." + i);
+                                groupAtt = cfg1Data.getString(SMSConstants.
+                                        SMS_DATASTORE_PARAMS_PREFIX + "0." +
+                                        SMSConstants.SMS_LDAPv3_GROUP_ATTR
+                                        + "." + i);
+                                roleAtt = cfg1Data.getString(SMSConstants.
+                                        SMS_DATASTORE_PARAMS_PREFIX + "0." +
+                                        SMSConstants.SMS_LDAPv3_ROLE_ATTR
+                                        + "." + i);
+                                userObjClass = cfg1Data.getString(SMSConstants.
+                                        SMS_DATASTORE_PARAMS_PREFIX + "0." +
+                                        SMSConstants.SMS_LDAPv3_USER_OBJECT_CLASS
+                                        + "." + i);
+                                userAtt = cfg1Data.getString(SMSConstants.
+                                        SMS_DATASTORE_PARAMS_PREFIX + "0." +
+                                        SMSConstants.SMS_LDAPv3_USER_ATTR
+                                        + "." + i);
                                 list.add(SMSConstants.
                                         SMS_LDAPv3_LDAP_SERVER + "=" +
                                         ldapServer + ":" + ldapPort);
@@ -168,6 +210,60 @@ public class SetupProduct extends TestCommon {
                                 list.add(SMSConstants.
                                         SMS_LDAPv3_LDAP_SSL_ENABLED + "=" +
                                         sslEnabled);
+                                list.add(SMSConstants.
+                                        SMS_LDAPv3_AUTHID + "=" +
+                                        authId);
+                                list.add(SMSConstants.
+                                        SMS_LDAPv3_LDAP_PSEARCHBASE + "=" +
+                                        psearchBase);
+                                if (groupAtt.indexOf("|") != 0) {
+                                    List locList = getAttributeList(groupAtt, "|");
+                                    for (int j = 0; j < locList.size(); j++) {
+                                        list.add(SMSConstants.
+                                            SMS_LDAPv3_GROUP_ATTR + "=" +
+                                            (String)locList.get(j));
+                                    }
+                                } else {
+                                    list.add(SMSConstants.
+                                        SMS_LDAPv3_GROUP_ATTR + "=" +
+                                        groupAtt);
+                                }
+                                if (roleAtt.indexOf("|") != 0) {
+                                    List locList = getAttributeList(roleAtt, "|");
+                                    for (int j = 0; j < locList.size(); j++) {
+                                        list.add(SMSConstants.
+                                            SMS_LDAPv3_ROLE_ATTR + "=" +
+                                            (String)locList.get(j));
+                                    }
+                                } else {
+                                    list.add(SMSConstants.
+                                        SMS_LDAPv3_ROLE_ATTR + "=" +
+                                        roleAtt);
+                                }
+                                if (userObjClass.indexOf("|") != 0) {
+                                    List locList = getAttributeList(userObjClass, "|");
+                                    for (int j = 0; j < locList.size(); j++) {
+                                        list.add(SMSConstants.
+                                            SMS_LDAPv3_USER_OBJECT_CLASS + "=" +
+                                            (String)locList.get(j));
+                                    }
+                                } else {
+                                    list.add(SMSConstants.
+                                        SMS_LDAPv3_USER_OBJECT_CLASS + "=" +
+                                        userObjClass);
+                                }
+                                if (userAtt.indexOf("|") != 0) {
+                                    List locList = getAttributeList(userAtt, "|");
+                                    for (int j = 0; j < locList.size(); j++) {
+                                        list.add(SMSConstants.
+                                            SMS_LDAPv3_USER_ATTR + "=" +
+                                            (String)locList.get(j));
+                                    }
+                                } else {
+                                    list.add(SMSConstants.
+                                        SMS_LDAPv3_USER_ATTR + "=" +
+                                        userAtt);
+                                }
                                 log(Level.FINEST, "setup", "Datastore" +
                                         " attributes list:" + list);
                                 if (getHtmlPageStringIndex(
@@ -176,6 +272,21 @@ public class SetupProduct extends TestCommon {
                                     famadm.createDatastore(webClient, dsRealm,
                                             dsName, dsType, list);
                                 list.clear();
+                                LDAPCommon ldc = new LDAPCommon(ldapServer,
+                                        ldapPort, adminId, dsAdminPassword,
+                                        orgName);
+                                ResourceBundle smsGblCfg = ResourceBundle.
+                                        getBundle("SMSGlobalConfig");
+                                String schemaString = (String)smsGblCfg.
+                                        getString(SMSConstants.SMS_SCHEMNA_LIST
+                                        + "." +
+                                        SMSConstants.SMS_DATASTORE_TYPE_AMDS); 
+                                String schemaAttributes = (String)smsGblCfg.
+                                        getString(SMSConstants.SMS_SCHEMNA_ATTR
+                                        + "." +
+                                        SMSConstants.SMS_DATASTORE_TYPE_AMDS);
+                                ldc.loadAMUserSchema(schemaString,
+                                        schemaAttributes);
                             }
                             list.add("files");
                             if (getHtmlPageStringIndex(
