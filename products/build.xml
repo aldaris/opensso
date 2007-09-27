@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.18 2007-09-13 22:44:37 veiming Exp $
+   $Id: build.xml,v 1.19 2007-09-27 00:37:54 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -186,6 +186,8 @@
         <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true"
             target="clean" />
         <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true"
+            target="clean" />
+        <ant antfile="${sharedlib.dir}/build.xml" inheritRefs="true"
             target="clean" />
     </target>
 
