@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.glassfish,v 1.2 2007-09-04 21:55:41 mrudul_uchil Exp $
+   $Id: README.glassfish,v 1.3 2007-09-27 07:04:20 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,7 +50,7 @@ It is located in the /ApplicationServer-install/domains/<domain-name>/config dir
 More information can be found in The server.policy File in Sun Java System Application Server 9 .1 Developer's Guide.
 
 // ADDITIONS FOR Federated Access Manager
- grant codeBase "file:\${com.sun.aas.instanceRoot}/applications/j2ee-modules/amserver/-" {
+ grant codeBase "file:\${com.sun.aas.instanceRoot}/applications/j2ee-modules/fam/-" {
       permission java.net.SocketPermission "*", "connect,accept,resolve";
       permission java.util.PropertyPermission "*", "read, write";
       permission java.lang.RuntimePermission "modifyThreadGroup";
@@ -96,14 +96,14 @@ contains most of the Application Server configuration information.
 
 The following provider code fragment needs to be added under the <message-security-config auth-layer="HttpServlet"> tag:
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMHttpAuthModule"
-provider-id="AMHttpProvider" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMHttpAuthModule"
+provider-id="FAMHttpProvider" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMHttpAuthModule"
-provider-id="AMAuthHttpProvider" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMHttpAuthModule"
+provider-id="FAMAuthHttpProvider" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="wsc"/>
@@ -112,78 +112,78 @@ provider-id="AMAuthHttpProvider" provider-type="server">
 
 The following provider code fragments need to be added under the <message-security-config auth-layer="SOAP"> tag:
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider-SAML-HolderOfKey" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider-SAML-HolderOfKey" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="SAML-HolderOfKey"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider-SAML-SenderVouches" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider-SAML-SenderVouches" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="SAML-SenderVouches"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider-X509Token" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider-X509Token" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="X509Token"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider-LibertySAMLToken" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider-LibertySAMLToken" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="LibertySAMLToken"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMClientAuthModule"
-provider-id="AMClientProvider" provider-type="client">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMClientAuthModule"
+provider-id="FAMClientProvider" provider-type="client">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="wsc"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider-UserNameToken" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider-UserNameToken" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="UserNameToken"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider-UserNameToken-Plain" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider-UserNameToken-Plain" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="UserNameToken-Plain"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider-LibertyX509Token" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider-LibertyX509Token" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="LibertyX509Token"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider-LibertyBearerToken" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider-LibertyBearerToken" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="LibertyBearerToken"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="wsp"/>
 </provider-config>
 
-<provider-config class-name="com.sun.identity.agents.jsr196.as9soap.AMServerAuthModule"
-provider-id="AMServerProvider-Anonymous" provider-type="server">
+<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
+provider-id="FAMServerProvider-Anonymous" provider-type="server">
 <request-policy auth-source="content"/>
 <response-policy auth-source="content"/>
 <property name="providername" value="Anonymous"/>
