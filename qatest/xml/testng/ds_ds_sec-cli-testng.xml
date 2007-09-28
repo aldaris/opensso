@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-cli-testng.xml,v 1.5 2007-09-21 13:58:42 cmwesley Exp $
+ $Id: ds_ds_sec-cli-testng.xml,v 1.6 2007-09-28 21:15:59 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -3761,8 +3761,7 @@
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.cli.ConfigureCLI"/>
-            <class name="com.sun.identity.qatest.cli.DeleteAuthInstancesTest"/>
+             <class name="com.sun.identity.qatest.cli.DeleteAuthInstancesTest"/>
         </classes>
     </test>
     <test name="CLI_delete-auth-instances02">
@@ -3774,7 +3773,6 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.DeleteAuthInstancesTest"/>
-        </classes>
         </classes>
     </test>
     <test name="CLI_delete-auth-instances03">
