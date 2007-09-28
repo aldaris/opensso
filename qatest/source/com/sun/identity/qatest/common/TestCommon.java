@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.27 2007-09-27 22:14:56 rmisra Exp $
+ * $Id: TestCommon.java,v 1.28 2007-09-28 17:33:52 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -490,6 +490,29 @@ public class TestCommon implements TestConstants {
             if (strConfigStore.equals("embedded")) {
                 log(Level.FINE, "configureProduct",
                         "Doing Embedded System configuration.");
+
+                HtmlTextInput txtDirServerPort =
+                        (HtmlTextInput)form.getInputByName("DIRECTORY_PORT");
+                txtDirServerPort.
+                        setValueAttribute((String)map.get(
+                        TestConstants.KEY_ATT_DIRECTORY_PORT));
+
+                HtmlTextInput txtDirConfigData =
+                        (HtmlTextInput)form.getInputByName("ROOT_SUFFIX");
+                txtDirConfigData.setValueAttribute((String)map.
+                        get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX));
+
+                HtmlTextInput txtDirSMData =
+                        (HtmlTextInput)form.
+                        getInputByName("SM_CONFIG_ROOT_SUFFIX");
+                txtDirSMData.setValueAttribute((String)map.
+                        get(TestConstants.KEY_ATT_SM_ROOT_SUFFIX));
+
+                HtmlPasswordInput txtDirAdminPassword =
+                        (HtmlPasswordInput)form.
+                        getInputByName("DS_DIRMGRPASSWD");
+                txtDirAdminPassword.setValueAttribute((String)map.
+                        get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
             } else {
                 log(Level.FINE, "configureProduct",
                         "Doing directory configuration.");
