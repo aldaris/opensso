@@ -17,17 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsTests.java,v 1.2 2007-08-07 23:35:19 rmisra Exp $
+ * $Id: AgentsTests.java,v 1.3 2007-09-28 20:15:33 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.agents;
 
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.AgentsCommon;
 import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.FederationManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,19 +33,12 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 public class AgentsTests extends TestCommon {
     
-    private String loginURL;
-    private String logoutURL;
-    private String fmadmURL;
-    private FederationManager fmadm;
-    private WebClient webClient;
     private int polIdx;
     private int evalIdx;
     private String strSetup;
@@ -69,41 +60,8 @@ public class AgentsTests extends TestCommon {
                 ".executeAgainstOpenSSO")).booleanValue();
     }
     
-    @BeforeSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void createAgentProfile() 
-    throws Exception {
-        entering("createAgentProfile", null);
-        if (executeAgainstOpenSSO) {
-            String agentId = rbg.getString(strGblRB + ".agentId");
-            String agentPassword = rbg.getString(strGblRB + ".agentPassword");
-            loginURL = protocol + ":" + "//" + host + ":" + port + uri +
-                "/UI/Login";
-            logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
-                "/UI/Logout";
-            fmadmURL = protocol + ":" + "//" + host + ":" + port + uri;
-            try {
-                List list = new ArrayList();
-                list.add("userpassword=" + agentPassword);
-                list.add("sunIdentityServerDeviceStatus=Active");
-                fmadm = new FederationManager(fmadmURL);
-                webClient = new WebClient();
-                consoleLogin(webClient, loginURL, adminUser, adminPassword);
-                fmadm.createIdentity(webClient, realm, agentId, "Agent", list);
-            } catch (Exception e) {
-                log(Level.SEVERE, "AgentsCommon", e.getMessage(), null);
-                e.printStackTrace();
-                throw e;
-            } finally {
-                consoleLogout(webClient, logoutURL);
-            }
-        } else
-            log(logLevel, "createAgentProfile",
-                    "Executing against non OpenSSO Install");
-        exiting("createAgentProfile");
-    }
-
     @Parameters({"policyIdx","evaluationIdx","setup","cleanup"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup
             , String cleanup)
     throws Exception {
@@ -131,7 +89,7 @@ public class AgentsTests extends TestCommon {
         exiting("setup");
     }
     
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void evaluatePolicyAgents()
     throws Exception {
         entering("evaluatePolicyAgents", null);
@@ -157,7 +115,7 @@ public class AgentsTests extends TestCommon {
         exiting("evaluatePolicyAgents");
     }
 
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -175,35 +133,5 @@ public class AgentsTests extends TestCommon {
         } else
             log(logLevel, "cleanup", "Executing against non OpenSSO Install");
         exiting("cleanup");
-    }
-
-    @AfterSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void deleteAgentProfile()
-    throws Exception {
-        entering("deleteAgentProfile", null);
-        if (executeAgainstOpenSSO) {
-            String agentId = rbg.getString(strGblRB + ".agentId");
-            loginURL = protocol + ":" + "//" + host + ":" + port + uri +
-                "/UI/Login";
-            logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
-                "/UI/Logout";
-            fmadmURL = protocol + ":" + "//" + host + ":" + port + uri;
-            try {
-                List list = new ArrayList();
-                list.add(agentId);
-                fmadm = new FederationManager(fmadmURL);
-                webClient = new WebClient();
-                consoleLogin(webClient, loginURL, adminUser, adminPassword);
-                fmadm.deleteIdentities(webClient, realm, list, "Agent");
-            } catch (Exception e) {
-                log(Level.SEVERE, "AgentsCommon", e.getMessage(), null);
-                e.printStackTrace();
-                throw e;
-            } finally {
-                consoleLogout(webClient, logoutURL);
-            }
-        } else
-            log(logLevel, "cleanup", "Executing against non OpenSSO Install");
-        exiting("deleteAgentProfile");
     }
 }
