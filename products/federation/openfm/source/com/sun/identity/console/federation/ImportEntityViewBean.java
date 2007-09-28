@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityViewBean.java,v 1.2 2007-08-03 22:29:02 jonnelson Exp $
+ * $Id: ImportEntityViewBean.java,v 1.3 2007-09-28 22:25:05 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,7 @@ public class ImportEntityViewBean
         populateRealmData();
         
         // hide these sections for now. We may enable them later
-        psModel.setVisible("realmProperty", false);     
+        psModel.setVisible("realmProperty", true);     
         psModel.setVisible("standardURLProperty", false);
         psModel.setVisible("extendedURLProperty", false);
     }    
