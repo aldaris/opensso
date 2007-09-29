@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.38 2007-09-29 04:29:50 veiming Exp $
+ * $Id: AccessManager.java,v 1.39 2007-09-29 04:32:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1671,4 +1671,19 @@ public class AccessManager {
         }
     )
     private String create_serverconfig_xml;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.realm.GetSupportedAuthModules",
+        description="Show the supported authenitcation modules in a realm",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Name of realm."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "get-supported-authtypes-succeed=The following authenticated modules are supported.",
+            "get-supported-no-supported-authtype=There are no supported authentication modules."})
+    private String show_auth_modules;
+
 }
