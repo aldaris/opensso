@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestContext.java,v 1.5 2007-06-08 06:07:36 veiming Exp $
+ * $Id: RequestContext.java,v 1.6 2007-09-29 04:29:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,9 +50,6 @@ public class RequestContext {
      * @param request Request object.
      * @param commandMgr Command Manager object.
      * @param subcmd Sub Command object.
-     * @param argv Array of arguments/options.
-     * @param parentArgv Array of arguments/options of parent command.
-     * @param ssoToken Single Sign On token of the user.
      * @throws CLIException if this object cannot be constructed.
      */
     public RequestContext(
