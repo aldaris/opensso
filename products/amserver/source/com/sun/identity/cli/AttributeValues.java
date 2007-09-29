@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValues.java,v 1.5 2007-08-02 17:22:59 veiming Exp $
+ * $Id: AttributeValues.java,v 1.6 2007-09-29 05:06:12 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,13 +134,13 @@ public class AttributeValues {
                 line = line.trim();
                 if (line.length() > 0) {
                     int idx = line.indexOf('=');
-                    if ((idx == -1) || (idx == 0) || (idx == (line.length() -1))
-                    ) {
+                    if ((idx == -1) || (idx == 0)) {
                         throw createIncorrectFormatException(mgr, line);
                     }
 
                     String key = line.substring(0, idx).trim();
-                    String value = line.substring(idx+1).trim();
+                    String value = (idx == (line.length() -1)) ? "" :
+                        line.substring(idx+1).trim();
                     Set values = (Set)attrValues.get(key);
                     if (values == null) {
                         values = new HashSet();
