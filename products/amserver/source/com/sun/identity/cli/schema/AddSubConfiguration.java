@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddSubConfiguration.java,v 1.3 2007-01-31 01:37:40 veiming Exp $
+ * $Id: AddSubConfiguration.java,v 1.4 2007-09-29 04:27:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,8 @@ import java.util.logging.Level;
  * Adds sub configuration.
  */
 public class AddSubConfiguration extends SchemaCommand {
+    private static final String OPTION_PRIORITY = "priority";
+    
     /**
      * Services a Commandline Request.
      *
@@ -73,16 +75,28 @@ public class AddSubConfiguration extends SchemaCommand {
                 getResourceString("missing-attributevalues"),
                 ExitCodes.INCORRECT_OPTION, rc.getSubCommand().getName());
         }
+        
+        int priority = 0;
+        String strPriority = getStringOptionValue(OPTION_PRIORITY);
+        if ((strPriority != null) && (strPriority.length() > 0)) {
+            try {
+                priority = Integer.parseInt(strPriority);
+            } catch (NumberFormatException ex) {
+                throw new CLIException(getResourceString(
+                    "add-sub-configuration-priority-no-integer"),
+                    ExitCodes.INVALID_OPTION_VALUE);
+            }
+        }
 
         Map attributeValues = AttributeValues.parse(
             getCommandManager(), datafile, attrValues);
 
         if ((realmName == null) || (realmName.length() == 0)) {
             addSubConfigToRoot(serviceName, subConfigName, subConfigId,
-                attributeValues);
+                attributeValues, priority);
         } else {
             addSubConfigToRealm(realmName, serviceName, subConfigName,
-                subConfigId, attributeValues);
+                subConfigId, attributeValues, priority);
         }
     }
 
@@ -91,7 +105,8 @@ public class AddSubConfiguration extends SchemaCommand {
         String serviceName,
         String subConfigName,
         String subConfigId,
-        Map attrValues
+        Map attrValues,
+        int priority
     ) throws CLIException {
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
@@ -108,7 +123,7 @@ public class AddSubConfiguration extends SchemaCommand {
             if (sc == null) {
                 sc = scm.createOrganizationConfig(realmName, null);
             }
-            addSubConfig(sc, subConfigName, subConfigId, attrValues);
+            addSubConfig(sc, subConfigName, subConfigId, attrValues, priority);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_ADD_SUB_CONFIGURATION_TO_REALM", params);
             outputWriter.printlnMessage(MessageFormat.format(
@@ -135,7 +150,8 @@ public class AddSubConfiguration extends SchemaCommand {
         String serviceName,
         String subConfigName,
         String subConfigId,
-        Map attrValues
+        Map attrValues,
+        int priority
     ) throws CLIException {
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
@@ -162,7 +178,7 @@ public class AddSubConfiguration extends SchemaCommand {
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
 
-            addSubConfig(sc, subConfigName, subConfigId, attrValues);
+            addSubConfig(sc, subConfigName, subConfigId, attrValues, priority);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_ADD_SUB_CONFIGURATION", params);
             outputWriter.printlnMessage(MessageFormat.format(
@@ -187,7 +203,8 @@ public class AddSubConfiguration extends SchemaCommand {
         ServiceConfig sc,
         String subConfigName,
         String subConfigId,
-        Map attrValues
+        Map attrValues,
+        int priority
     ) throws SSOException, SMSException {
         StringTokenizer st = new StringTokenizer(subConfigName, "/");
         int tokenCount = st.countTokens();
@@ -202,7 +219,7 @@ public class AddSubConfiguration extends SchemaCommand {
                     subConfigId = subConfigName;
                 }
 
-                sc.addSubConfig(scn, subConfigId, 0, attrValues);
+                sc.addSubConfig(scn, subConfigId, priority, attrValues);
              }
         }
     }

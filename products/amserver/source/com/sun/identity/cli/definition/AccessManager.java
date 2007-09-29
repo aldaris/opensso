@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.36 2007-08-29 06:10:59 veiming Exp $
+ * $Id: AccessManager.java,v 1.37 2007-09-29 04:27:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -883,9 +883,11 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data.",
             "realm|e|s|Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).",
-            "subconfigid|b|s|ID of parent configuration(Sub Configuration shall be added to root configuration if this option is not provided)."},
+            "subconfigid|b|s|ID of parent configuration(Sub Configuration shall be added to root configuration if this option is not provided).",
+            "priority|p|s|Priority of the sub configuration."},
         resourceStrings={
             "add-sub-configuration-succeed=Sub Configuration, {0} is added.",
+            "add-sub-configuration-priority-no-integer=Priority needs to be an integer.",
             "add-sub-configuration-to-realm-succeed=Sub Configuration, {1} is added to realm, {0}",
             "add-sub-configuration-no-global-config=There are no global configurations for service, {0}"})
     private String create_sub_configuration;
