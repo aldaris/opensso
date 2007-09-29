@@ -17,19 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAuthInstance.java,v 1.1 2007-02-23 22:37:01 veiming Exp $
+ * $Id: GetAuthInstance.java,v 1.2 2007-09-29 05:08:13 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli.authentication;
 
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.config.AMAuthenticationInstance;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
+import com.sun.identity.authentication.config.AMAuthenticationSchema;
 import com.sun.identity.authentication.config.AMConfigurationException;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CLIUtil;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.FormatUtils;
 import com.sun.identity.cli.IArgument;
@@ -37,6 +40,7 @@ import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.log.Level;
+import com.sun.identity.sm.SMSException;
 import java.util.Map;
 
 public class GetAuthInstance extends AuthenticatedCommand {
@@ -69,12 +73,18 @@ public class GetAuthInstance extends AuthenticatedCommand {
                 Map attributeValues = ai.getAttributeValues();
                 
                 if ((attributeValues != null) && !attributeValues.isEmpty()) {
+
+                    AMAuthenticationSchema schema =
+                        mgr.getAuthenticationSchema(ai.getType());
+                    String serviceName = schema.getServiceName();
+
                     outputWriter.printlnMessage(getResourceString(
                         "authentication-get-auth-instance-succeeded"));
-                    outputWriter.printlnMessage(FormatUtils.printAttributeValues(
-                        getResourceString(
+                    outputWriter.printlnMessage(
+                        FormatUtils.printAttributeValues(getResourceString(
                             "authentication-get-auth-instance-result"),
-                        attributeValues));
+                        attributeValues,
+                        CLIUtil.getPasswordFields(serviceName)));
                 } else {
                     outputWriter.printlnMessage(getResourceString(
                         "authentication-get-auth-instance-no-values"));
@@ -89,6 +99,16 @@ public class GetAuthInstance extends AuthenticatedCommand {
                         "authentication-get-auth-instance-not-found"), 
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
+        } catch (SSOException e) {
+            debugError("GetAuthInstance.handleRequest", e);
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_GET_AUTH_INSTANCE", params);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SMSException e) {
+            debugError("GetAuthInstance.handleRequest", e);
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_GET_AUTH_INSTANCE", params);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (AMConfigurationException e) {
             debugError("GetAuthInstance.handleRequest", e);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
