@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.39 2007-09-29 04:32:13 veiming Exp $
+ * $Id: AccessManager.java,v 1.40 2007-09-29 05:04:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1393,7 +1393,7 @@ public class AccessManager {
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of authentication instance.",
-            "authtype|t|s|Type of authentication instance e.g. LDAP, Datastore."},
+            "authtype|t|s|Type of authentication instance e.g. LDAP, DataStore."},
         optionAliases={},
         macro="authentication",
         optionalOptions={},
