@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: fmAuthSAE.xml,v 1.1 2007-08-24 16:43:28 bina Exp $
+$Id: fmAuthSAE.xml,v 1.2 2007-10-01 23:57:28 exu Exp $
 
 Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,7 +35,7 @@ Copyright 2007 Sun Microsystems Inc. All Rights Reserved
         <Schema
             serviceHierarchy="/DSAMEConfig/authentication/sunAMAuthSAEService"
             i18nFileName="fmAuthSAE"
-	    revisionNumber="20"
+	    revisionNumber="10"
             i18nKey="sunAMAuthSAEServiceDescription">
 	    
             <Organization>                  

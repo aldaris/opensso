@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_IDP.jsp,v 1.1 2007-08-17 22:48:12 exu Exp $
+   $Id: SA_IDP.jsp,v 1.2 2007-10-01 23:57:28 exu Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -116,11 +116,9 @@ com.sun.identity.shared.debug.Debug"
         return;
     }
 
-    if (!SecureAttrs.isInitialized()) {
-        // Make sure we are in FM mode.
-        SecureAttrs.setServerFlag(true);
-        SecureAttrs.init(new Properties());
-    }
+    // Make sure we are in FM mode.
+    SecureAttrs.setServerFlag(true);
+    SecureAttrs.init(new Properties());
 
     // Initially we need an instance for decoding, not verifying. So
     // Crypto type doesnt matter.

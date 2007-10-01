@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureAttrs.java,v 1.2 2007-10-01 05:38:09 qcheng Exp $
+ * $Id: SecureAttrs.java,v 1.3 2007-10-01 23:55:36 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -231,13 +231,13 @@ public class SecureAttrs
     /**
      * Debug : true | false
      */
-    public static boolean dbg = true;
+    public static boolean dbg = false;
 
     private static Certs certs = null;
 
     private static boolean isServer = false;
     private static HashMap instances = new HashMap();
-    private static boolean initdone;
+    private static boolean initdone = false;
     private static int tsDuration = 120000; // 2 minutes
     private boolean asymsigning = false;
 
@@ -262,6 +262,9 @@ public class SecureAttrs
      */
     synchronized public static void init(Properties properties) throws Exception
     {
+        if (initdone) {
+            return;
+        }
         String dur = properties.getProperty(SAE_CONFIG_SIG_VALIDITY_DURATION);
         if (dur != null) 
             tsDuration = Integer.parseInt(dur);
@@ -454,8 +457,9 @@ public class SecureAttrs
             // Encrypt
             signature = encrypt(str+seed, seed);
         }
-        if (signature == null)
+        if (signature == null) {
             return null;
+        }
         return ("TS"+timestamp + "TS"+signature);
     }
 
