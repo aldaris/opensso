@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.1 2007-08-29 23:43:05 dillidorai Exp $
+ * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.2 2007-10-01 05:40:18 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,7 +98,6 @@ import org.w3c.dom.Element;
  * This class is an extension point for all XACML related exceptions.
  * This class also handles message localization in XACML exceptions.
  *
- * @supported.all.api
  */
 public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
 

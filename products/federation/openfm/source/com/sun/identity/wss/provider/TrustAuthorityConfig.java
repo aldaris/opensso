@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.4 2007-09-13 07:24:21 mrudul_uchil Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.5 2007-10-01 05:39:45 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,8 @@ import com.sun.identity.shared.Constants;
  *
  * <p> This class can be extended to define the trust authority config
  * such as discovery configuration, ws-trust etc.
+ * 
+ * @supported.all.api
  */
 public abstract class TrustAuthorityConfig {
 

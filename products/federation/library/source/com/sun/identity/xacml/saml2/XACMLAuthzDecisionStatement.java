@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionStatement.java,v 1.1 2007-08-29 23:41:08 dillidorai Exp $
+ * $Id: XACMLAuthzDecisionStatement.java,v 1.2 2007-10-01 05:39:08 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,6 +65,7 @@ import com.sun.identity.saml2.assertion.Statement;
  * </pre>
  * </p>
  *
+ *@supported.all.api
  *
  **/
 

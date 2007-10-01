@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureAttrs.java,v 1.1 2007-08-17 22:48:10 exu Exp $
+ * $Id: SecureAttrs.java,v 1.2 2007-10-01 05:38:09 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,7 +52,7 @@ import java.security.cert.X509Certificate;
  * Freshness is provided by a varying seed generated from the
  * current timestamp and a configurable expiry period within which
  * the relying party must validate the token.
- * @supported.all.api
+ * @supported.api
  */
 public class SecureAttrs
 {
@@ -60,6 +60,7 @@ public class SecureAttrs
      *  HTTP parameter name used to send and receive secure attribute data. 
      *  IDP : sends secure attrs in this parameter.
      *  SP  : receives secure attrs in this parameter.
+     * @supported.api
      */
     public static final String SAE_PARAM_DATA     = "sun.data";
 
@@ -68,6 +69,7 @@ public class SecureAttrs
      *  Currently only "logout" needs to be explicitly provided. SSO is implied.
      *  IDP  : Uses this parameter to instruct FM to issue a global logout. 
      *  SP   : Receives this parameter from FM.
+     * @supported.api
      */
 
     public static final String SAE_PARAM_CMD      = "sun.cmd";
@@ -76,6 +78,7 @@ public class SecureAttrs
      *  SAE Parameter representing the authenticated user.
      *  IDP  : Uses this parameter to send authenticated userid to FM.
      *  SP   : Receives userid in this parameter.
+     * @supported.api
      */
     public static final String SAE_PARAM_USERID   = "sun.userid";
 
@@ -83,6 +86,7 @@ public class SecureAttrs
      *  SAE Parameter representing the requested SP app to be invoked.
      *  IDP  : populates this parameter with SP side app to be invoked.
      *  SP   : Not Applicable.
+     * @supported.api
      */
     public static final String SAE_PARAM_SPAPPURL = "sun.spappurl";
 
@@ -90,26 +94,31 @@ public class SecureAttrs
      *  SAE Parameter used to identify the IDP app (Asserting party)
      *  IDP  : populates this parameter to identify itself.
      *  SP   : Not Applicable.
+     * @supported.api
      */
     public static final String SAE_PARAM_IDPAPPURL = "sun.idpappurl";
 
     /**
      *  SAE Parameter : Deprecated.
+     * @supported.api
      */
     public static final String SAE_PARAM_APPID    = "sun.appid";
 
     /**
      *  SAE Parameter internally used by FM for storing token timestamp.
+     * @supported.api
      */
     public static final String SAE_PARAM_TS       = "sun.ts";
 
     /**
      *  SAE Parameter internally used by FM for storing signature data.
+     * @supported.api
      */
     public static final String SAE_PARAM_SIGN     = "sun.sign";
 
     /**
      *  SAE Parameter used to comunicate errors.
+     * @supported.api
      */
     public static final String SAE_PARAM_ERROR     = "sun.error";
 
@@ -118,6 +127,7 @@ public class SecureAttrs
      *  upon Logout completion.
      *  IDP : Not applicable
      *  SP  : expected to redirect to the value upon processing logout req.
+     * @supported.api
      */
     public static final String SAE_PARAM_APPSLORETURNURL  = "sun.returnurl";
 
@@ -126,80 +136,95 @@ public class SecureAttrs
      *  global logout is completed.
      *  IDP : sends this param as part of logout command.
      *  SP  : N/A.
+     * @supported.api
      */
     public static final String SAE_PARAM_APPRETURN  = "sun.appreturn";
 
     /**
      *  SAE command <code>SAE_PARAM_CMD</code>
+     * @supported.api
      */
     public static final String SAE_CMD_LOGOUT     = "logout";
 
     /**
      * Crypto types supported. 
+     * @supported.api
      */
     public static final String SAE_CRYPTO_TYPE = "type";
 
     /**
      * Crypto type : Symmetric : shared secret based trust between parties.
+     * @supported.api
      */
     public static final String SAE_CRYPTO_TYPE_ASYM = "asymmetric";
 
     /**
      * Crypto type : Asymmetric : PKI based trust.
+     * @supported.api
      */
     public static final String SAE_CRYPTO_TYPE_SYM = "symmetric";
 
     /**
      * SAE Config : Location of the keystore to access keys from for
      *   asymmetric crypto.
+     * @supported.api
      */
     public static final String SAE_CONFIG_KEYSTORE_FILE = "keystorefile";
 
     /**
      *  SAE Config : keystore type. Default : JKS
+     * @supported.api
      */
     public static final String SAE_CONFIG_KEYSTORE_TYPE = "keystoretype";
 
     /**
      * SAE Config : Password to open the keystrore.
+     * @supported.api
      */
     public static final String SAE_CONFIG_KEYSTORE_PASS = "keystorepass";
 
     /**
      * SAE Config : Private key alias for asymmetric signing. Alias
      *              is used to retrive the key from the keystore.
+     * @supported.api
      */
     public static final String SAE_CONFIG_PRIVATE_KEY_ALIAS = "privatekeyalias";
 
     /**
      * SAE Config : Public key for asymmetric signature verification. Alias
      *              is used to retrive the key from the keystore.
+     * @supported.api
      */
     public static final String SAE_CONFIG_PUBLIC_KEY_ALIAS = "pubkeyalias";
 
     /**
      * SAE Config : Private key for asymmetric signing.
+     * @supported.api
      */
     public static final String SAE_CONFIG_PRIVATE_KEY = "privatekey";
 
     /**
      * SAE Config : Password to access the private key.
+     * @supported.api
      */
     public static final String SAE_CONFIG_PRIVATE_KEY_PASS = "privatekeypass";
 
     /**
      * SAE Config : Flag to indicate whether keys should be cached in memory
      *       once retrieved from the keystore.
+     * @supported.api
      */
     public static final String SAE_CONFIG_CACHE_KEYS = "cachekeys";
 
     /**
      * SAE Config : shared secret constant - used internally in FM.
+     * @supported.api
      */
     public static final String SAE_CONFIG_SHARED_SECRET = "secret";
 
     /**
      * SAE Config :  Signature validity : since timetamp on signature.
+     * @supported.api
      */
     public static final String SAE_CONFIG_SIG_VALIDITY_DURATION =
                                                 "saesigvalidityduration";
@@ -220,6 +245,7 @@ public class SecureAttrs
      * Returns the appropriate instance to perform crypto operations.
      *  @param type one of <code>SAE_CRYPTO_TYPE</code> values.
      *  @return <code>SecureAttrs</code> instance.
+     * @supported.api
      */
     public static synchronized SecureAttrs getInstance(String type)
     {
@@ -232,6 +258,7 @@ public class SecureAttrs
      * @param properties : please see SAE_CONFIG_* constants for configurable 
      *                     values.
      * @throws Exception rethrows underlying exception.
+     * @supported.api
      */
     synchronized public static void init(Properties properties) throws Exception
     {
@@ -254,6 +281,7 @@ public class SecureAttrs
      * Returns true if SecureAttrs has already been initialzed via a call
      * to <code>init</code>.
      * @return true or false
+     * @supported.api
      */
     public static boolean isInitialized()
     {
@@ -266,6 +294,7 @@ public class SecureAttrs
      *   @param secret	Shared secret (symmetric) Private key alias (asymmetric)
      *
      *   @return Base64 encoded token String to be passed to a relying party.
+     * @supported.api
      */
     public String getEncodedString(Map attrs, String secret) throws Exception 
     {
@@ -294,6 +323,7 @@ public class SecureAttrs
      *   @param secret	Shared secret (symmmetric) or Public Key (asymmetric)
      *
      *   @return	Decoded, verified and parsed attrbute name-valie pairs.
+     * @supported.api
      */
     public Map verifyEncodedString(String str, String secret) throws Exception
     {
@@ -316,6 +346,7 @@ public class SecureAttrs
      *   @param str	Base64 encoded string containing attribute
      *
      *   @return	Decoded and parsed attrbute name-value pairs.
+     * @supported.api
      */
     public Map getRawAttributesFromEncodedData(String str) throws Exception
     {
@@ -352,6 +383,7 @@ public class SecureAttrs
      * SecureAttr to obtain the signing key from a configured keystore.
      * To use this key during signing, specify secret as null.
      * @param privatekey
+     * @supported.api
      */
     public static void setPrivateKey(PrivateKey privatekey)
     {
@@ -364,6 +396,7 @@ public class SecureAttrs
      * obtain public keys from a configured keystore.
      * @param pubkeyalias
      * @param x509certificate instance.
+     * @supported.api
      */
     public static void addPublicKey(
                        String pubkeyalias, X509Certificate x509certificate)
@@ -371,6 +404,12 @@ public class SecureAttrs
         certs.addPublicKey(pubkeyalias, x509certificate);
     }
 
+    /**
+     * Sets server flag.
+     * @param flag  Server flag. True if this is running on server, false
+     *  otherwise.
+     * @supported.api
+     */
     public static void setServerFlag(boolean flag)
     {
         isServer = flag;
@@ -393,6 +432,7 @@ public class SecureAttrs
      *   @param secret	Shared secret (symmmetric) or Private Key (asymmetric)
      *
      *   @return	token String to be passed to a relying party.
+     * @supported.api
      */
     public String getSignedString(Map attrs, String secret) throws Exception
     {
@@ -428,6 +468,7 @@ public class SecureAttrs
      *   @param secret	Shared secret (symmmetric) or Public Key (asymmetric)
      *
      *   @return true  if attrs and token verify okay, else returns false.
+     * @supported.api
      */
     public boolean verifyAttrs(Map attrs, String token, String secret) 
                                throws Exception

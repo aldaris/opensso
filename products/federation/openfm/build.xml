@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.27 2007-09-06 16:55:28 qcheng Exp $
+   $Id: build.xml,v 1.28 2007-10-01 05:39:30 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -201,17 +201,41 @@
 
     <target name="doc" depends="preparebuild">
         <javadoc maxmemory="512m" destdir="${openfm.built.apidocs.dir}" 
-            windowtitle="Open Federation API" failonerror="true">
+            windowtitle="Federated Access Manager API" failonerror="true">
             <classpath refid="build.class.path"/>
             <packageset dir="${openfm.src.dir}">
+                <include name="com/sun/identity/authentication/**"/>
+                <include name="com/sun/identity/configuration/**"/>
+                <include name="com/sun/identity/console/**"/>
                 <include name="com/sun/identity/federation/**"/>
                 <include name="com/sun/identity/liberty/ws/**"/>
                 <include name="com/sun/identity/plugin/**"/>
+                <include name="com/sun/identity/policy/**"/>
                 <include name="com/sun/identity/saml/**"/>
                 <include name="com/sun/identity/saml2/**"/>
-                <include name="com/sun/identity/sae/**"/>
-                <include name="com/sun/liberty/**"/>
+                <include name="com/sun/identity/setup/**"/>
+                <include name="com/sun/identity/wsfederation/**"/>
+                <include name="com/sun/identity/wss/**"/>
+                <include name="com/sun/identity/xacml/**"/>
             </packageset>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
+        </javadoc>
+    </target>
+
+    <target name="publicdoc" depends="preparebuild">
+        <javadoc maxmemory="512m" destdir="${openfm.built.publicapidocs.dir}"
+                 windowtitle="Federated Access Manager Public API" failonerror="true">
+            <classpath refid="build.class.path"/>
+            <packageset dir="${openfm.src.dir}">
+                <include name="com/sun/identity/wss/provider/**"/>
+                <include name="com/sun/identity/wss/security/**"/>
+                <include name="com/sun/identity/wss/sts/**"/>
+            </packageset>
+            <doclet name="com.sun.identity.tools.javadocs.SupportedAPIDoclet"
+                    path="${library.classes.dir}" />
+            <tag name="supported.all.api" description="" />
+            <tag name="supported.api" description="" />
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
             <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
         </javadoc>
@@ -298,6 +322,7 @@
         <echo message=" zip                 : creates zip file"/>
         <echo message=" clientsdk           : creates client SDK jar file"/>
         <echo message=" doc                 : creates javadocs"/>
+        <echo message=" publicdoc           : creates public javadocs"/>
         <echo message=" clean               : deletes the generated files"/>
         <echo message=" unittest-clean      : deletes the generated unit test resources"/>
         <echo message=" extlib-clean        : deletes the shared and amserver libraries under extlib "/>

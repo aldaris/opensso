@@ -17,32 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderException.java,v 1.2 2007-10-01 05:39:31 qcheng Exp $
+ * $Id: package-info.java,v 1.1 2007-10-01 05:38:26 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.wss.provider;
-
 /**
- * @supported.all.api
+ * Defines common WS-Federation utilities and constants.
+ *
+ * @supported.api
  */
-
-public class ProviderException extends Exception {
-
-    /**
-     * Create an <code>ProviderException</code> with no message.
-     */
-    public ProviderException() {
-	super();
-    }
-
-    /**
-     * Create an <code>ProviderException</code> with a message.
-     * @param s message for the exception
-     */
-    public ProviderException(String s) {
-	super(s);
-    }
-}
-
+package com.sun.identity.wsfederation.common;

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2007-09-06 16:53:04 qcheng Exp $
+   $Id: build.xml,v 1.17 2007-10-01 05:38:08 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -246,6 +246,7 @@
                 <include name="com/sun/identity/sae/**"/>
                 <include name="com/sun/identity/wsfederation/**"/>
                 <include name="com/sun/identity/multiprotocol/**"/>
+                <include name="com/sun/identity/xacml/**"/>
                 <include name="com/sun/liberty/**"/>
             </packageset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
@@ -265,6 +266,7 @@
                 <include name="com/sun/identity/saml2/**"/>
                 <include name="com/sun/identity/sae/**"/>
                 <include name="com/sun/identity/wsfederation/**"/>
+                <include name="com/sun/identity/xacml/**"/>
                 <include name="com/sun/liberty/**"/>
             </packageset>
             <doclet name="com.sun.identity.tools.javadocs.SupportedAPIDoclet"
