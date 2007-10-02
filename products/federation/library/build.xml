@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.17 2007-10-01 05:38:08 qcheng Exp $
+   $Id: build.xml,v 1.18 2007-10-02 00:40:40 dillidorai Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -107,7 +107,6 @@
     <target name="compile" depends="preparebuild">
 	<javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
                 destdir="${library.classes.dir}" source="1.5" target="1.5"
-                excludes="com/sun/identity/xacml2/**"
 	        debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${library.src.dir}"/>
             <classpath refid="build.class.path"/>
@@ -126,7 +125,7 @@
                 destdir="${library.classes.dir}" source="1.4" target="1.4"
                 debug="${build.debug}" debuglevel="${build.debuglevel}"
                 srcdir="${library.src.dir}"
-                excludes="${one_dot_five_targets},com/sun/identity/xacml2/**">
+                excludes="${one_dot_five_targets}">
             <classpath refid="build.class.path"/>
             <compilerarg value="-Xlint:deprecation" />
         </javac>
@@ -134,7 +133,6 @@
                 destdir="${library.classes.dir}" source="1.5" target="1.5"
                 debug="${build.debug}" debuglevel="${build.debuglevel}"
                 srcdir="${library.src.dir}"
-                excludes="com/sun/identity/xacml2/**"
                 includes="${one_dot_five_targets}">
             <classpath refid="build.class.path"/>
             <compilerarg value="-Xlint:deprecation" />
