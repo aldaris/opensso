@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2007-08-29 23:41:35 dillidorai Exp $
+   $Id: build.xml,v 1.5 2007-10-02 00:29:43 dillidorai Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,7 +41,6 @@
 
     <target name="build" depends="preparebuild">
         <javac destdir="${test.classes.dir}" source="1.5" target="1.5"
-               excludes="com/sun/identity/xacml2/**"
                debug="on" debuglevel="lines,vars,source">
             <compilerarg value="-Xlint:unchecked"/>
             <compilerarg value="-Xlint:deprecation"/>
