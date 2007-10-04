@@ -21,7 +21,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.2 2007-09-13 22:55:12 mallas Exp $
+   $Id: index.html,v 1.3 2007-10-04 05:55:59 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -84,7 +84,7 @@
       <h3>Introduction</h3>
       <p> This sample demonstrates the usage of Security Token Service
 Client API for obtaining security tokens from a Security Token Service
-hosted on Federation Access Manager. <br>
+hosted on Federated Access Manager. <br>
 There are three parties involved in this sample: <br>
 * Web Services Client (WSC) <br>
 * Web Services Provider (WSP) <br>
@@ -92,7 +92,7 @@ There are three parties involved in this sample: <br>
       </p>
       <p>The security token service issues security tokens for web
 services clients so that web services clients could present it to the
-web services providers for authentication purposes.The Federation
+web services providers for authentication purposes.The Federated
 Access Manager Security Token Service currently issues
 SAML1 security tokens and SAML2 security tokens for web services
 clients. In order to generate SAML Tokens, web services client must
@@ -101,14 +101,23 @@ using it's X509 Certificate. <br>
       </p>
       <h3>Setup</h3>
 This sample needs configuration of Security Token Service hosted on
-Federation Access Manager , Security Token Service Client
+Federated Access Manager , Security Token Service Client
 Configuration, Web Services Client Configuration and Web Services
-Provider Configuration. The web services security in
-Federation Access Manager requires a JKS KeyStore. Creating a JKS
+Provider Configuration. The web services security in Federated Access
+Manager requires a JKS KeyStore. Creating a JKS
 Keystore is describes in SAML samples and this samples assumes that you
 have created the keystore and
-the corresponding keypass and storepass files. You could use different
+the corresponding keypass, storepass files and updated their locations
+in server's AMConfig.properties file. You could use different
 private keys for STS, WSC and WSP.<br>
+      <br>
+      <span style="font-style: italic;">[<span
+ style="color: rgb(204, 0, 0);">Note</span> : Temporary action - There
+is client AMConfig.properties file bundled with this web application
+(under web application's root directory). You need to tag swap values
+of properties which are dynamic and then place this updated
+AMConfig.properties file under web application's WEB-INF/classes
+directory. Then restart the container.]</span><br>
       <br>
       <span style="font-weight: bold;">Before you setup STS, deploy the
 stockquote web service client and stock quote web service provider as
@@ -136,7 +145,7 @@ FAM&nbsp; STS WSDL is accessible.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 http://&lt;host&gt;:&lt;port&gt;/fam/sts?wsdl<br>
       <br>
-&nbsp;STS Client setp:<br>
+&nbsp;Security Token Service Client :<br>
       <br>
 &nbsp;&nbsp;&nbsp;&nbsp; 1. Login into Administrative Console using
 amadmin<br>
@@ -152,17 +161,11 @@ redirect back to the Agent(s) page.<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 6. Click on the created "SecurityTokenService"
 agent.<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 7. Select "SecurityMechanism" as "X509Token",
-enable "isRequestSignEnabled", Enter "Web Service Endpoint" as your
-planned WSP point.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For e.g. if you use
-stock quote service, the end point would be
-"http://&lt;host&gt;:&lt;port&gt;/StockService/StockService"<br>
+enable (check) "<span class="LblLev2Txt">Is Request Signed</span>".<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 8. Use rest of&nbsp; the configuration as it
 is and save the configuration.<br>
       <br>
-StockService Web Service Client:&nbsp; Create a web services client
-configuration Stock Service. The default WSC configuration can not be
-used.<br>
+StockService Web Service Client:<br>
 &nbsp; <br>
 &nbsp;&nbsp;&nbsp;&nbsp; 1. Login into Administrative Console using
 amadmin<br>
@@ -178,13 +181,18 @@ and click "OK"<br>
 redirect back to the Agent(s) page.<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 6. Click on the created "StockService" agent.<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 7. Select "SecurityMechanism" as
-"STSSecurity", enable
-"isRequestSignEnabled".<br>
+"STSSecurity", enable (check) "<span class="LblLev2Txt">Is Request
+Signed</span>", Enter "Web Service Endpoint" as your
+planned WSP point.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For e.g. if you use
+stock quote service, the end point would be
+"http://&lt;host&gt;:&lt;port&gt;/StockService/StockService"<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 8. Use rest of&nbsp; the configuration as it
 is and save the configuration.<br>
       <br>
       <br>
-Stock Service Web Service Provider:&nbsp;&nbsp; You can use default WSP
+StockService Web Service Provider:&nbsp;&nbsp; You can use default
+"wsp"
 configuration or you can create StockServiceWSP.<br>
       <br>
 &nbsp;&nbsp;&nbsp;&nbsp; 1. Login into Administrative Console using
@@ -202,7 +210,8 @@ redirect back to the Agent(s) page.<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 6. Click on the created "StockServiceWSP"
 agent.<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 7. Enabled all SecurityMechanisms , enable
-"isRequestSignEnabled".<br>
+(check)
+"<span class="LblLev2Txt">Is Request Signature Verified</span>".<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 8. Use rest of&nbsp; the configuration as it
 is and save the configuration.<br>
       <br>

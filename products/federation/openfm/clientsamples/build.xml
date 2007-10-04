@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2007-09-17 22:09:29 qcheng Exp $
+   $Id: build.xml,v 1.11 2007-10-04 05:55:58 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -108,6 +108,15 @@
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib">
             <fileset dir="${extlib.dir}" includes="mail.jar,relaxngDatatype.jar,xmlsec.jar,xsdlib.jar,webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar" />
         </copy>
+        
+        <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes"/>
+        <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes/META-INF"/>
+        <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes/META-INF/services"/>
+       
+        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes/META-INF/services">
+            <fileset dir="${openfm.dir}/resources/META-INF/services" includes="com.sun.xml.ws.assembler.ClientPipelineHook"/>
+        </copy>
+            
         <copy todir="${clientsamples.war.packages.dir}">
             <fileset dir="${openfm.clientsamples.dir}/war"
                  excludes="**/CVS build.xml" />
