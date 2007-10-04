@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnRequestImpl.java,v 1.2 2007-04-02 06:02:13 veiming Exp $
+ * $Id: AuthnRequestImpl.java,v 1.3 2007-10-04 04:35:51 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,8 +67,6 @@ public class AuthnRequestImpl extends RequestAbstractImpl
     private Boolean isPassive;
     private String protocolBinding;
     private String assertionConsumerServiceURL;
-    private String xmlString;
-    private boolean isSigned=false;
     
     /**
      * Constructor to create <code>AuthnRequest</code> Object .
@@ -110,7 +108,6 @@ public class AuthnRequestImpl extends RequestAbstractImpl
         if (isSigned) {
             signedXMLString = xmlString;
         }
-	this.xmlString = xmlString;
     }
 
     /** 

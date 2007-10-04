@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.12 2007-09-13 23:49:29 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.13 2007-10-04 04:34:50 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,8 @@ import com.sun.identity.saml2.common.NewBoolean;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.ecp.ECPFactory;
+import com.sun.identity.saml2.ecp.ECPResponse;
 import com.sun.identity.saml2.idpdiscovery.IDPDiscoveryConstants;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
@@ -65,11 +67,9 @@ import com.sun.identity.saml2.jaxb.metadata.ArtifactResolutionServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
-
 import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.key.EncInfo;
 import com.sun.identity.saml2.key.KeyUtil;
-
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
@@ -77,17 +77,20 @@ import com.sun.identity.saml2.plugins.IDPAccountMapper;
 import com.sun.identity.saml2.plugins.IDPAttributeMapper;
 import com.sun.identity.saml2.plugins.IDPAuthnContextInfo;
 import com.sun.identity.saml2.plugins.IDPAuthnContextMapper;
+import com.sun.identity.saml2.plugins.IDPECPSessionMapper;
 import com.sun.identity.saml2.protocol.Artifact;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Response;
+import com.sun.identity.saml2.protocol.Scoping;
 import com.sun.identity.saml2.protocol.Status;
 import com.sun.identity.saml2.protocol.StatusCode;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
@@ -101,7 +104,9 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.sun.identity.saml2.protocol.Scoping;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+
 /**
  * The utility class is used by the identity provider to process 
  * the authentication request from a service provider and send back
@@ -274,13 +279,40 @@ public class IDPSSOUtil {
             return;
         }
 
+        sendResponseToACS(request, response, session, authnReq, spEntityID,
+            idpEntityID, idpMetaAlias, realm, nameIDFormat, relayState);
+    }
+
+    /**
+     * Sends <code>Response</code> containing an <code>Assertion</code>
+     * back to the requesting service provider
+     *
+     * @param request the <code>HttpServletRequest</code> object
+     * @param response the <code>HttpServletResponse</code> object
+     * @param session user session
+     * @param authnReq the <code>AuthnRequest</code> object
+     * @param spEntityID the entity id of the service provider
+     * @param idpEntityID the entity id of the identity provider
+     * @param idpMetaAlias the meta alias of the identity provider
+     * @param realm the realm
+     * @param nameIDFormat the <code>NameIDFormat</code>
+     * @param relayState the relay state 
+     * 
+     */
+    public static void sendResponseToACS(HttpServletRequest request,
+        HttpServletResponse response, Object session, AuthnRequest authnReq,
+        String spEntityID, String idpEntityID, String idpMetaAlias,
+        String realm, String nameIDFormat, String relayState) 
+        throws SAML2Exception {
+
         StringBuffer returnedBinding = new StringBuffer();
         String acsURL = IDPSSOUtil.getACSurl(
                    spEntityID, realm, authnReq, request, returnedBinding);
         String acsBinding = returnedBinding.toString();
 
         if ((acsURL == null) || (acsURL.trim().length() == 0)) {
-            SAML2Utils.debug.error(classMethod + "no ACS URL found.");
+            SAML2Utils.debug.error("IDPSSOUtil.sendResponseToACS:" +
+                " no ACS URL found.");
             String[] data = { idpMetaAlias };
             LogUtil.error(Level.INFO,
                 LogUtil.NO_ACS_URL, data, session);
@@ -288,7 +320,8 @@ public class IDPSSOUtil {
                 SAML2Utils.bundle.getString("UnableTofindACSURL"));
         }
         if ((acsBinding == null) || (acsBinding.trim().length() == 0)) {
-            SAML2Utils.debug.error(classMethod + "no return binding found.");
+            SAML2Utils.debug.error("IDPSSOUtil.sendResponseToACS:" +
+                " no return binding found.");
             String[] data = { idpMetaAlias };
             LogUtil.error(Level.INFO,
                 LogUtil.NO_RETURN_BINDING, data, session);
@@ -300,7 +333,8 @@ public class IDPSSOUtil {
                  spEntityID, idpEntityID,  realm, nameIDFormat, acsURL);
      
         if (res == null) {
-            SAML2Utils.debug.error(classMethod + "response is null");
+            SAML2Utils.debug.error("IDPSSOUtil.sendResponseToACS:" +
+                " response is null");
             String errorMsg = 
                 SAML2Utils.bundle.getString("UnableToCreateAssertion");
             if  (authnReq == null) {
@@ -315,8 +349,8 @@ public class IDPSSOUtil {
                 sessionProvider.setProperty(
                     session, SAML2Constants.IDP_META_ALIAS, values);
             } catch (SessionException e) {
-                SAML2Utils.debug.error(classMethod +
-                    "error setting idpMetaAlias into the session: ", e);
+                SAML2Utils.debug.error("IDPSSOUtil.sendResponseToACS:" +
+                    " error setting idpMetaAlias into the session: ", e);
             }
         }
 
@@ -330,22 +364,22 @@ public class IDPSSOUtil {
                  session)) 
             {
                 if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message(classMethod +
-                        "Redirected to set COT cookie.");
+                    SAML2Utils.debug.message("IDPSSOUtil.sendResponseToACS:" +
+                        " Redirected to set COT cookie.");
                 }
                 return;
             }
             if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message(classMethod +
-                    "Doesn't set COT cookie.");           
-                SAML2Utils.debug.message(classMethod +
-                    "Response is:  " + 
-                     res.toXMLString());
+                SAML2Utils.debug.message("IDPSSOUtil.sendResponseToACS:" +
+                    " Doesn't set COT cookie.");           
+                SAML2Utils.debug.message("IDPSSOUtil.sendResponseToACS:" +
+                    " Response is:  " + res.toXMLString());
             }       
             sendResponse(response, acsBinding, spEntityID, idpEntityID,
                       idpMetaAlias, realm, relayState, acsURL, res,session);
         } else {
-            SAML2Utils.debug.error(classMethod + "error response is null");
+            SAML2Utils.debug.error("IDPSSOUtil.sendResponseToACS:" +
+                " error response is null");
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("UnableToCreateErrorResponse"));
         }
@@ -542,6 +576,13 @@ public class IDPSSOUtil {
         } else if (acsBinding.equals(SAML2Constants.HTTP_ARTIFACT)) {
             IDPSSOUtil.sendResponseArtifact(response, idpEntityID, 
                 realm, acsURL, relayState, res, session, props);
+        } else if (acsBinding.equals(SAML2Constants.PAOS)) {
+            // signing assertion is a must for ECP profile.
+            // encryption is optional based on SP config settings.
+            signAndEncryptResponseComponents(
+                    realm, spEntityID, idpEntityID, res, true);
+            IDPSSOUtil.sendResponseECP(response, idpEntityID, 
+                realm, acsURL, res);
         } else {
             SAML2Utils.debug.error(classMethod + 
                                    "unsupported return binding.");
@@ -1089,6 +1130,56 @@ public class IDPSSOUtil {
         }
 
         return idpAuthnContextMapper;
+    }
+
+    /** 
+     * Returns an <code>IDPECPSessionMapper</code>
+     *
+     * @param realm the realm name
+     * @param idpEntityID the entity id of the identity provider
+     *
+     * @return the <code>IDPECPSessionMapper</code>
+     * @exception SAML2Exception if the operation is not successful
+     */
+    static IDPECPSessionMapper getIDPECPSessionMapper(String realm,
+        String idpEntityID) throws SAML2Exception {
+
+        String idpECPSessionMapperName = null;
+        IDPECPSessionMapper idpECPSessionMapper = null;
+        try {
+            idpECPSessionMapperName = getAttributeValueFromIDPSSOConfig(realm,
+                idpEntityID, SAML2Constants.IDP_ECP_SESSION_MAPPER_CLASS);
+            if (idpECPSessionMapperName == null) {
+                idpECPSessionMapperName = 
+                    SAML2Constants.DEFAULT_IDP_ECP_SESSION_MAPPER_CLASS;
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(
+                        "IDPSSOUtil.getIDPECPSessionMapper: use " + 
+                        SAML2Constants.DEFAULT_IDP_ECP_SESSION_MAPPER_CLASS);
+                }
+            }
+            idpECPSessionMapper = (IDPECPSessionMapper)
+                IDPCache.idpECPSessionMapperCache.get(
+                idpECPSessionMapperName);
+            if (idpECPSessionMapper == null) {
+                idpECPSessionMapper = (IDPECPSessionMapper)
+                    Class.forName(idpECPSessionMapperName).newInstance();
+                IDPCache.idpECPSessionMapperCache.put(
+                    idpECPSessionMapperName, idpECPSessionMapper);
+            } else {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(
+                        "IDPSSOUtil.getIDPECPSessionMapper: " +
+                        "got the IDPECPSessionMapper from cache");
+                }
+            }
+        } catch (Exception ex) {
+            SAML2Utils.debug.error("IDPSSOUtil.getIDPECPSessionMapper: " +
+                "Unable to get IDPECPSessionMapper.", ex);
+            throw new SAML2Exception(ex);
+        }
+
+        return idpECPSessionMapper;
     }
 
     /**
@@ -1752,6 +1843,70 @@ public class IDPSSOUtil {
                 "Unable to send redirect: ", ioe);
         }                
     }    
+
+    /**
+     * This method sends SAML Response back to ECP.
+     *
+     * @param response the <code>HttpServletResponse</code> object
+     * @param idpEntityID the entity id of the identity provider 
+     * @param realm the realm name of the identity provider
+     * @param acsURL the assertion consumer service <code>URL</code>
+     * @param res the <code>SAML Response</code> object
+     * 
+     * @exception SAML2Exception if the operation is not successful
+     */
+    public static void sendResponseECP(HttpServletResponse response,
+        String idpEntityID, String realm, String acsURL,
+        Response res) throws SAML2Exception {
+
+        ECPFactory ecpFactory = ECPFactory.getInstance(); 
+        ECPResponse ecpResponse = ecpFactory.createECPResponse();
+        ecpResponse.setMustUnderstand(Boolean.TRUE);
+        ecpResponse.setActor(SAML2Constants.SOAP_ACTOR_NEXT);
+        ecpResponse.setAssertionConsumerServiceURL(acsURL);
+
+        String header = ecpResponse.toXMLString(true, true);
+        String body = res.toXMLString(true, true);
+
+        try {
+            SOAPMessage reply = SAML2Utils.createSOAPMessage(header, body);
+
+            String[] logdata = { idpEntityID, realm, acsURL, "" };
+            if (LogUtil.isAccessLoggable(Level.FINE)) {
+                logdata[3] = SAML2Utils.soapMessageToString(reply);
+            }
+            LogUtil.access(Level.INFO, LogUtil.SEND_ECP_RESPONSE, logdata,
+                null);
+
+            // Need to call saveChanges because we're
+            // going to use the MimeHeaders to set HTTP
+            // response information. These MimeHeaders
+            // are generated as part of the save.
+            if (reply.saveRequired()) {
+                reply.saveChanges();
+            }
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            SAML2Utils.putHeaders(reply.getMimeHeaders(), response);
+
+            // Write out the message on the response stream
+            OutputStream os = response.getOutputStream();
+            reply.writeTo(os);
+            os.flush();
+        } catch (Exception ex) {
+            SAML2Utils.debug.error("IDPSSOUtil.sendResponseECP", ex);
+            String[] data = { idpEntityID, realm, acsURL };
+            LogUtil.error(Level.INFO, LogUtil.SEND_ECP_RESPONSE_FAILED, data,
+                null);
+            try {
+                response.sendError(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                    ex.getMessage());
+            } catch (IOException ioex) {
+                SAML2Utils.debug.error("IDPSSOUtil.sendResponseECP", ioex);
+            }
+        }
+    }
 
     /**
      * Returns the session index of an <code>IDPSession</code>

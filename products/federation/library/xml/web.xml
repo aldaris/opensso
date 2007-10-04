@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.7 2007-08-17 22:48:08 exu Exp $
+   $Id: web.xml,v 1.8 2007-10-04 04:38:25 hengming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -198,6 +198,10 @@
             <jsp-file>/saml2/jsp/idpSSOFederate.jsp</jsp-file>
         </servlet>
         <servlet>
+            <servlet-name>SSOSoap</servlet-name>
+            <servlet-class>com.sun.identity.saml2.servlet.IDPSingleSignOnServiceSOAP</servlet-class>
+        </servlet>
+        <servlet>
             <servlet-name>Consumer</servlet-name>
             <jsp-file>/saml2/jsp/spAssertionConsumer.jsp</jsp-file>
         </servlet>
@@ -212,6 +216,10 @@
         <servlet>
             <servlet-name>SPSloSoap</servlet-name>
             <servlet-class>com.sun.identity.saml2.servlet.SPSingleLogoutServiceSOAP</servlet-class>
+        </servlet>
+        <servlet>
+            <servlet-name>SPECP</servlet-name>
+            <servlet-class>com.sun.identity.saml2.servlet.SPECPService</servlet-class>
         </servlet>
         <servlet>
             <servlet-name>SPMniRedirect</servlet-name>
@@ -279,6 +287,10 @@
             <url-pattern>/SPMniInit/*</url-pattern>
         </servlet-mapping>
         <servlet-mapping>
+            <servlet-name>SPECP</servlet-name>
+            <url-pattern>/SPECP/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
             <servlet-name>SPSloSoap</servlet-name>
             <url-pattern>/SPSloSoap/*</url-pattern>
         </servlet-mapping>
@@ -297,6 +309,10 @@
         <servlet-mapping>
             <servlet-name>SSORedirect</servlet-name>
             <url-pattern>/SSORedirect/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>SSOSoap</servlet-name>
+            <url-pattern>/SSOSoap/*</url-pattern>
         </servlet-mapping>
         <servlet-mapping>
             <servlet-name>IDPMniSoap</servlet-name>

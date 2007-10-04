@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SAML2LogMessageIDs.xml,v 1.1 2007-08-24 16:43:27 bina Exp $
+   $Id: SAML2LogMessageIDs.xml,v 1.2 2007-10-04 04:39:42 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1970,6 +1970,138 @@
         </datainfo>
         <triggers>
             <item>SAE_SP failed.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="SEND_ECP_RESPONSE" id="149"
+        loglevel="LL_INFO"
+        description="Send a response to ECP.">
+        <datainfo>
+            <item>Identity Provider Entity Identifier</item>
+            <item>Realm or organization name</item>
+            <item>Assertion Consumer Service URL</item>
+            <item>SOAP message string if the log level was set to LL_FINE at run time</item>
+        </datainfo>
+        <triggers>
+            <item>Received AuthnRequest.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="SEND_ECP_RESPONSE_FAILED" id="150"
+        loglevel="LL_INFO"
+        description="Unable to send a response to ECP.">
+        <datainfo>
+            <item>Identity Provider Entity Identifier</item>
+            <item>Realm or organization name</item>
+            <item>Assertion Consumer Service URL</item>
+        </datainfo>
+        <triggers>
+            <item>Send a response to ECP.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="CANNOT_INSTANTIATE_SOAP_MESSAGE_ECP" id="151"
+        loglevel="LL_INFO"
+        description="Unable to instantiate a SOAP message sent from ECP.">
+        <datainfo>
+            <item>Service Provider Entity Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Received a response from ECP.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="RECEIVE_SOAP_FAULT_ECP" id="152"
+        loglevel="LL_INFO"
+        description="Received a SOAP fault from ECP.">
+        <datainfo>
+            <item>Service Provider Entity Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Received a response from ECP.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="CANNOT_INSTANTIATE_SOAP_MESSAGE_ECP" id="153"
+        loglevel="LL_INFO"
+        description="Unable to instantiate a SAML Response sent from ECP.">
+        <datainfo>
+            <item>Service Provider Entity Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Received a response from ECP.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="ECP_ASSERTION_NOT_SIGNED" id="154"
+        loglevel="LL_INFO"
+        description="Assertion received from ECP is not signed.">
+        <datainfo>
+            <item>Identity Provider Entity Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Received a response from ECP.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="ECP_ASSERTION_INVALID_SIGNATURE" id="155"
+        loglevel="LL_INFO"
+        description="Assertion received from ECP has invalid signature.">
+        <datainfo>
+            <item>Identity Provider Entity Identifier</item>
+        </datainfo>
+        <triggers>
+            <item>Assertion signature verification.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="RECEIVED_AUTHN_REQUEST_ECP" id="156"
+        loglevel="LL_INFO"
+        description="Received AuthnRequest from ECP.">
+        <datainfo>
+            <item>Service Provider Entity Identifier</item>
+            <item>IDP meta alias</item>
+            <item>authnRequest xml string</item>
+        </datainfo>
+        <triggers>
+            <item>Single Sign On.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="RECEIVED_HTTP_REQUEST_ECP" id="157"
+        loglevel="LL_INFO"
+        description="Received HTTP request from ECP.">
+        <datainfo>
+            <item>Service Provider Entity Identifier</item>
+            <item>Realm or organization name</item>
+        </datainfo>
+        <triggers>
+            <item>ECP accessed SP Resource.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="SEND_ECP_PAOS_REQUEST" id="158"
+        loglevel="LL_INFO"
+        description="Send a PAOS request to ECP.">
+        <datainfo>
+            <item>Service Provider Entity Identifier</item>
+            <item>Realm or organization name</item>
+            <item>SOAP message string if the log level was set to LL_FINE at run time</item>
+        </datainfo>
+        <triggers>
+            <item>Received HTTP request from ECP.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="SEND_ECP_PAOS_REQUEST_FAILED" id="159"
+        loglevel="LL_INFO"
+        description="Unable to send a PAOS request to ECP.">
+        <datainfo>
+            <item>Service Provider Entity Identifier</item>
+            <item>Realm or organization name</item>
+        </datainfo>
+        <triggers>
+            <item>Send a PAOS request to ECP.</item>
         </triggers>
         <actions/>
     </logmessage>

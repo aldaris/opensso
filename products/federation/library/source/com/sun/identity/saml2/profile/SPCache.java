@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.6 2007-08-29 00:30:08 hengming Exp $
+ * $Id: SPCache.java,v 1.7 2007-10-04 04:34:51 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,6 +121,12 @@ public class SPCache {
      */
     public static Hashtable spAccountMapperCache = new Hashtable();
 
+    /**
+     * Cache saves the ecp request IDP list finder.
+     * Key : ecp request IDP list finder class name
+     * Value : ecp request IDP list finder object
+     */
+    public static Hashtable ecpRequestIDPListFinderCache = new Hashtable();
 
     /**
      * Clears the auth context object hash table.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.4 2007-08-17 22:48:10 exu Exp $
+ * $Id: LogUtil.java,v 1.5 2007-10-04 04:30:43 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,6 +141,27 @@ public class LogUtil {
                                   "RECEIVED_AUTHN_REQUEST";
     public static final String POST_RESPONSE = "POST_RESPONSE";
     public static final String SEND_ARTIFACT = "SEND_ARTIFACT";
+    public static final String SEND_ECP_RESPONSE = "SEND_ECP_RESPONSE";
+    public static final String SEND_ECP_RESPONSE_FAILED =
+                                "SEND_ECP_RESPONSE_FAILED";
+    public static final String CANNOT_INSTANTIATE_SOAP_MESSAGE_ECP =
+                                "CANNOT_INSTANTIATE_SOAP_MESSAGE_ECP";
+    public static final String RECEIVE_SOAP_FAULT_ECP =
+                                "RECEIVE_SOAP_FAULT_ECP";
+    public static final String CANNOT_INSTANTIATE_SAML_RESPONSE_FROM_ECP =
+                                "CANNOT_INSTANTIATE_SAML_RESPONSE_FROM_ECP";
+    public static final String ECP_ASSERTION_NOT_SIGNED =
+                                "ECP_ASSERTION_NOT_SIGNED";
+    public static final String ECP_ASSERTION_INVALID_SIGNATURE =
+                                "ECP_ASSERTION_INVALID_SIGNATURE";
+    public static final String RECEIVED_AUTHN_REQUEST_ECP =
+                                "RECEIVED_AUTHN_REQUEST_ECP";
+    public static final String RECEIVED_HTTP_REQUEST_ECP =
+                                "RECEIVED_HTTP_REQUEST_ECP";
+    public static final String SEND_ECP_PAOS_REQUEST =
+                                "SEND_ECP_PAOS_REQUEST";
+    public static final String SEND_ECP_PAOS_REQUEST_FAILED =
+                                "SEND_ECP_PAOS_REQUEST_FAILED";
     public static final String INVALID_SOAP_MESSAGE = "INVALID_SOAP_MESSAGE";
     public static final String ARTIFACT_RESPONSE = "ARTIFACT_RESPONSE";
     public static final String GOT_ENTITY_DESCRIPTOR = "GOT_ENTITY_DESCRIPTOR";

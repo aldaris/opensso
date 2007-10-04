@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.5 2007-08-28 23:28:15 weisun2 Exp $
+ * $Id: IDPCache.java,v 1.6 2007-10-04 04:34:50 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,6 +101,13 @@ public class IDPCache {
      * Value : idp authn context mapper object
      */
     public static Hashtable idpAuthnContextMapperCache = new Hashtable(); 
+
+    /**
+     * Cache saves the idp ecp session mapper.
+     * Key : idp ecp session mapper class name
+     * Value : idp ecp session mapper object
+     */
+    public static Hashtable idpECPSessionMapperCache = new Hashtable(); 
 
     /**
      * Cache saves information needed after coming back from COT cookie setting.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.3 2007-08-28 23:28:15 weisun2 Exp $
+ * $Id: IDPProxyUtil.java,v 1.4 2007-10-04 04:34:50 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,7 @@ import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
-import com.sun.identity.saml2.plugins.SAML2IDPProxy;
+import com.sun.identity.saml2.plugins.SAML2IDPFinder;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Scoping;
@@ -82,7 +82,7 @@ import org.w3c.dom.Element;
 public class IDPProxyUtil { 
 
     // IDP proxy finder 
-    private static SAML2IDPProxy proxyFinder = null;
+    private static SAML2IDPFinder proxyFinder = null;
     
     private static SAML2MetaManager sm = null;
     
@@ -96,7 +96,7 @@ public class IDPProxyUtil {
                  SAML2Constants.IDP_PROXY_FINDER_NAME, 
                  SAML2Constants.DEFAULT_IDP_PROXY_FINDER);
              Class proxyClass = Class.forName(proxyFinderClass);
-             proxyFinder = (SAML2IDPProxy)proxyClass.newInstance();
+             proxyFinder = (SAML2IDPFinder)proxyClass.newInstance();
          } catch (Exception ex) {
              SAML2Utils.debug.error("IDPSSOFederate:Static Init Failed", ex);
          }
@@ -121,9 +121,14 @@ public class IDPProxyUtil {
         HttpServletResponse response)
         throws SAML2Exception
     {
-        return proxyFinder.getPreferredIDP(
+        List idpProviderIDs = proxyFinder.getPreferredIDP(
             authnRequest, hostedEntityId, realm, 
             request, response);
+        if ((idpProviderIDs == null) || idpProviderIDs.isEmpty()) {
+            return null;
+        }
+
+        return (String)idpProviderIDs.get(0);
     }
 
     /**
@@ -187,7 +192,8 @@ public class IDPProxyUtil {
                  getIDPSSODescriptor(realm, preferredIDP);
              List ssoServiceList =
                  idpDescriptor.getSingleSignOnService();
-             targetURL = SPSSOFederate.getSSOURL(ssoServiceList);
+             targetURL = SPSSOFederate.getSSOURL(ssoServiceList,
+                 SAML2Constants.HTTP_REDIRECT);
              
              if (targetURL == null) {
                  SAML2Utils.debug.error(
@@ -300,7 +306,8 @@ public class IDPProxyUtil {
                 getSPSSODescriptor(realm, hostedEntityId);   
             List ssoServiceList =
                 idpDescriptor.getSingleSignOnService();
-            String dest = SPSSOFederate.getSSOURL(ssoServiceList);
+            String dest = SPSSOFederate.getSSOURL(ssoServiceList,
+                SAML2Constants.HTTP_REDIRECT);
              
             newRequest.setDestination(dest); 
             newRequest.setConsent(origRequest.getConsent());

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.15 2007-08-28 23:28:14 weisun2 Exp $
+ * $Id: SAML2Constants.java,v 1.16 2007-10-04 04:30:42 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,6 +88,12 @@ public interface SAML2Constants {
      */
     public String SOAP =
                 "urn:oasis:names:tc:SAML:2.0:bindings:SOAP";
+
+    /**
+     * String used to represent PAOS Binding.
+     */
+    public static final String PAOS =
+                "urn:oasis:names:tc:SAML:2.0:bindings:PAOS";
 
     /**
      * String used to represent HTTP POST Binding.
@@ -340,6 +346,16 @@ public interface SAML2Constants {
      */
     public String PROTOBINDING="ProtocolBinding";
     
+    /**
+     * Constant for mustUnderstand attribute
+     */
+    public static final String MUST_UNDERSTAND = "mustUnderstand";
+
+    /**
+     * Constant for actor attribute
+     */
+    public static final String ACTOR = "actor";
+
     /**
      * Constant for Binding parameter name
      */
@@ -640,6 +656,12 @@ public interface SAML2Constants {
 
     /**
      * This is an attribute in entity config for the
+     * entity description
+     */
+    public String ENTITY_DESCRIPTION = "description";
+
+    /**
+     * This is an attribute in entity config for the
      * signing certificate alias
      */
     public String SIGNING_CERT_ALIAS = "signingCertAlias";
@@ -761,6 +783,28 @@ public interface SAML2Constants {
                                    = "wantMNIResponseSigned";
     
     /**
+     * SP Entity Config attribute name. Used to specify IDPList child element
+     * of ECP request.
+     */
+    public static final String ECP_REQUEST_IDP_LIST =
+        "ECPRequestIDPList";
+
+    /**
+     * SP Entity Config attribute name. Used to specify an implementation that
+     * finds IDPList child element of ECP request
+     * of ECP request.
+     */
+    public static final String ECP_REQUEST_IDP_LIST_FINDER_IMPL =
+        "ECPRequestIDPListFinderImpl";
+
+    /**
+     * SP Entity Config attribute name. Used to specify attribute 'GetComplete'
+     * of IDPList child element of ECP request
+     */
+    public static final String ECP_REQUEST_IDP_LIST_GET_COMPLETE =
+        "ECPRequestIDPListGetComplete";
+
+    /**
      * Constant for SAML2IDPSessionIndex SSO token property
      */
     public String IDP_SESSION_INDEX = "SAML2IDPSessionIndex";
@@ -847,6 +891,10 @@ public interface SAML2Constants {
     public String IDP_AUTHNCONTEXT_MAPPER_CLASS =
                             "idpAuthncontextMapper";
 
+    // IDP ECP Session mapper class attribute name
+    public static final String IDP_ECP_SESSION_MAPPER_CLASS =
+                            "idpECPSessionMapper";
+
     // Default IDP authn context mapper class name
     public String DEFAULT_IDP_AUTHNCONTEXT_MAPPER_CLASS =
         "com.sun.identity.saml2.plugins.DefaultIDPAuthnContextMapper";
@@ -862,6 +910,10 @@ public interface SAML2Constants {
     // Default IDP attribute mapper class name
     public String DEFAULT_IDP_ATTRIBUTE_MAPPER_CLASS =
         "com.sun.identity.saml2.plugins.DefaultIDPAttributeMapper";
+
+    // Default IDP ECP Session mapper class name
+    public static final String DEFAULT_IDP_ECP_SESSION_MAPPER_CLASS =
+        "com.sun.identity.saml2.plugins.DefaultIDPECPSessionMapper";
 
     // IDP authn context class reference mapping attribute name
     public String IDP_AUTHNCONTEXT_CLASSREF_MAPPING =
@@ -1044,4 +1096,55 @@ public interface SAML2Constants {
      * Key used to save session partners in a map 
      */
     public String  PARTNERS = "PARTNERS";        
+
+    /**
+     * String used to declare ECP namespace prefix.
+     */
+    public static final String ECP_PREFIX = "ecp:";
+    
+    /**
+     * ECP namespace URI.
+     */
+    public static final String ECP_NAMESPACE =
+        "urn:oasis:names:tc:SAML:2.0:profiles:SSO:ecp";
+    
+    /**
+     * String used to declare ECP namespace.
+     */
+    public static final String ECP_DECLARE_STR =
+        "xmlns:ecp=\"urn:oasis:names:tc:SAML:2.0:profiles:SSO:ecp\"";
+
+    /**
+     * Constant for ECP end tag
+     */
+    public static final String ECP_END_TAG="</ecp:";
+
+    /**
+     * ECP service name in PAOS header
+     */
+    public static final String PAOS_ECP_SERVICE =
+        "urn:oasis:names:tc:SAML:2.0:profiles:SSO:ecp";
+
+    /**
+     * String used to declare SOAP envelope namespace prefix.
+     */
+    public static final String SOAP_ENV_PREFIX = "soap-env:";
+    
+    /**
+     * SOAP envelope namespace URI.
+     */
+    public static final String SOAP_ENV_NAMESPACE =
+        "http://schemas.xmlsoap.org/soap/envelope/";
+    
+    /**
+     * String used to declare SOAP envelope namespace.
+     */
+    public static final String SOAP_ENV_DECLARE_STR =
+        "xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"";
+
+    /**
+     * SOAP actor.
+     */
+    public static final String SOAP_ACTOR_NEXT =
+        "http://schemas.xmlsoap.org/soap/actor/next";
 } 

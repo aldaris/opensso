@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.18 2007-08-27 23:45:11 mchlbgs Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.19 2007-10-04 04:39:42 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -435,6 +435,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <SingleSignOnService\n" +
                 "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
                 "            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
+                "        <SingleSignOnService\n" +
+                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
+                "            Location=\"" + url + "/SSOSoap" + maStr + "\"/>\n" +
                 "    </IDPSSODescriptor>\n"
                 );
     }
@@ -514,6 +517,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "            index=\"1\"\n" +
                 "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
                 "            Location=\"" + url + "/Consumer" + maStr + "\"/>\n" +
+                "        <AssertionConsumerService\n" +
+                "            index=\"2\"\n" +
+                "            Binding=\"" + SAML2Constants.PAOS + "\"\n" +
+                "            Location=\"" + url + "/Consumer/ECP" + maStr + "\"/>\n" +
                 "    </SPSSODescriptor>\n"
                 );
     }
@@ -680,6 +687,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         throws IOException {
         pw.write(
                 "    <IDPSSOConfig metaAlias=\"" + idpAlias + "\">\n" +
+                "        <Attribute name=\"" + SAML2Constants.ENTITY_DESCRIPTION + "\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
                 "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
                 "            <Value>" + idpSCertAlias + "</Value>\n" +
                 "        </Attribute>\n" +
@@ -721,6 +731,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + SAML2Constants.IDP_ATTRIBUTE_MAPPER +"\">\n" +
                 "            <Value>com.sun.identity.saml2.plugins.DefaultIDPAttributeMapper" +
+                "</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.IDP_ECP_SESSION_MAPPER_CLASS +"\">\n" +
+                "            <Value>" + SAML2Constants.DEFAULT_IDP_ECP_SESSION_MAPPER_CLASS +
                 "</Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + SAML2Constants.ATTRIBUTE_MAP +"\">\n" +
@@ -772,6 +786,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         throws IOException {
         pw.write(
                 "    <SPSSOConfig metaAlias=\"" + spAlias + "\">\n" +
+                "        <Attribute name=\"" + SAML2Constants.ENTITY_DESCRIPTION + "\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
                 "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
                 "            <Value>" + spSCertAlias + "</Value>\n" +
                 "        </Attribute>\n" +
@@ -872,6 +889,15 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "           <Value>" + url + "/spsaehandler/metaAlias" + spAlias + "</Value>\n" +
                 "       </Attribute>\n" +
                 "       <Attribute name=\""+SAML2Constants.SAE_SP_LOGOUT_URL+"\">\n" +
+                "       </Attribute>\n" +
+                "       <Attribute name=\"" + SAML2Constants.ECP_REQUEST_IDP_LIST_FINDER_IMPL + "\">\n" +
+                "           <Value>com.sun.identity.saml2.plugins.ECPIDPFinder</Value>\n" +
+                "       </Attribute>\n" +
+                "       <Attribute name=\"" + SAML2Constants.ECP_REQUEST_IDP_LIST + "\">\n" +
+                "           <Value></Value>\n" +
+                "       </Attribute>\n" +
+                "       <Attribute name=\"" + SAML2Constants.ECP_REQUEST_IDP_LIST_GET_COMPLETE + "\">\n" +
+                "           <Value></Value>\n" +
                 "       </Attribute>\n" +
                 "    </SPSSOConfig>\n");
     }

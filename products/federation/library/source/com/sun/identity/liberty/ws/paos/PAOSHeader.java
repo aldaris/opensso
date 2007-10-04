@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PAOSHeader.java,v 1.1 2006-10-30 23:15:14 qcheng Exp $
+ * $Id: PAOSHeader.java,v 1.2 2007-10-04 04:27:31 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,7 +81,7 @@ public class PAOSHeader {
         if (paosHeaderStr != null) {
             paosHeaderStr = paosHeaderStr.trim();
         } else {
-            PAOSRequest.debug.error(
+            PAOSUtils.debug.error(
                     "PAOSHeader:PAOSHeader: No POAS header.");
             throw new PAOSException(
                     "There is no PAOS header.");
@@ -102,7 +102,7 @@ public class PAOSHeader {
         if (paosHeaderStr != null) {
             paosHeaderStr = paosHeaderStr.trim();
         } else {
-            PAOSRequest.debug.error(
+            PAOSUtils.debug.error(
                     "PAOSHeader:PAOSHeader: No POAS header.");
             throw new PAOSException(
                     "There is no PAOS header.");
@@ -116,7 +116,7 @@ public class PAOSHeader {
     private void parse() throws PAOSException {
 	
 	if (paosHeaderStr.length() == 0) {
-	    PAOSRequest.debug.error(
+	    PAOSUtils.debug.error(
 		"PAOSHeader:PAOSHeader: Null POAS header.");
 	    throw new PAOSException(
 		"PAOS header value is empty"); 

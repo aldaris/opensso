@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PAOSException.java,v 1.1 2006-10-30 23:15:14 qcheng Exp $
+ * $Id: PAOSException.java,v 1.2 2007-10-04 04:27:31 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,27 +25,54 @@
 
 package com.sun.identity.liberty.ws.paos;
 
+import com.sun.identity.shared.locale.L10NMessageImpl;
+
 /**
  * The <code>PAOSException</code> class represents a error while
  * processing SOAP request and response.
  *
  * @supported.all.api
  */
-public class PAOSException extends Exception {
+public class PAOSException extends L10NMessageImpl {
     
     /**
-     * Default constructor.
+     * Constructs a new <code>PAOSException</code> without a nested
+     * <code>Throwable</code>.
+     * @param rbName Resource Bundle Name to be used for getting
+     * localized error message.
+     * @param errorCode Key to resource bundle. You can use
+     * <pre>
+     * ResourceBundle rb = ResourceBunde.getBundle (rbName,locale);
+     * String localizedStr = rb.getString(errorCode);
+     * </pre>
+     * @param args arguments to message. If it is not present pass them
+     * as null
+     * 
      */
-    public PAOSException() {
-        super();
+    public PAOSException(String rbName, String errorCode, Object[] args) {
+        super(rbName, errorCode, args);
     }
     
     /**
-     * Constructor.
+     * Constructs a new <code>PAOSException</code> with the given
+     * message.
      *
-     * @param msg the exception message.
+     * @param message message for this exception. This message can be later
+     * retrieved by <code>getMessage()</code> method.
+     * 
      */
-    public PAOSException(String msg) {
-        super(msg);
+    public PAOSException(String message) {
+        super(message);
+    }
+    
+    /**
+     * Constructs an <code>PAOSException</code> with given
+     * <code>Throwable</code>.
+     *
+     * @param t Exception nested in the new exception.
+     * 
+     */
+    public PAOSException(Throwable t) {
+        super(t);
     }
 }

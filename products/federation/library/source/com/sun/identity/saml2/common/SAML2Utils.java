@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.9 2007-08-17 22:48:10 exu Exp $
+ * $Id: SAML2Utils.java,v 1.10 2007-10-04 04:30:43 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,13 +54,14 @@ import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.logging.LogUtil;
-import com.sun.identity.saml2.profile.CacheCleanUpThread;
-import com.sun.identity.saml2.profile.AuthnRequestInfo;
 import com.sun.identity.saml2.plugins.DefaultSPAuthnContextMapper;
 import com.sun.identity.saml2.plugins.IDPAccountMapper;
-import com.sun.identity.saml2.profile.IDPCache;
+import com.sun.identity.saml2.plugins.SAML2IDPFinder;
 import com.sun.identity.saml2.plugins.SPAccountMapper;
 import com.sun.identity.saml2.plugins.SPAuthnContextMapper;
+import com.sun.identity.saml2.profile.AuthnRequestInfo;
+import com.sun.identity.saml2.profile.CacheCleanUpThread;
+import com.sun.identity.saml2.profile.IDPCache;
 import com.sun.identity.saml2.profile.SPCache;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
@@ -1366,30 +1367,90 @@ public class SAML2Utils extends SAML2SDKUtils {
      */
     public static SOAPMessage createSOAPMessage(String xmlString)
     throws SOAPException, SAML2Exception {
+        return createSOAPMessage(null, xmlString);
+    }
+    
+    /**
+     * Creates <code>SOAPMessage</code> with the input XML String
+     * as message header and body.
+     * @param header XML string to be put into <code>SOAPMessage</code> header.
+     * @param body XML string to be put into <code>SOAPMessage</code> body.
+     * @return newly created <code>SOAPMessage</code>.
+     * @exception SOAPException if it cannot create the
+     *     <code>SOAPMessage</code>.
+     */
+    public static SOAPMessage createSOAPMessage(String header, String body)
+        throws SOAPException, SAML2Exception {
+
         SOAPMessage msg = null;
         try {
             MimeHeaders mimeHeaders = new MimeHeaders();
             mimeHeaders.addHeader("Content-Type", "text/xml");
             
             if (debug.messageEnabled()) {
-                debug.message("SAML2Utils.createSOAPMessage: xmlstr = " +
-                        xmlString);
+                debug.message("SAML2Utils.createSOAPMessage: header = " +
+                    header + ", body = " + body);
             }
-            String soapMsgStr = createSOAPMessageString(xmlString);
+            
+            StringBuffer sb = new StringBuffer(500);
+            sb.append("<").append(SAMLConstants.SOAP_ENV_PREFIX)
+              .append(":Envelope").append(SAMLConstants.SPACE)
+              .append("xmlns:").append(SAMLConstants.SOAP_ENV_PREFIX)
+              .append("=\"").append(SAMLConstants.SOAP_URI).append("\">");
+            if (header != null) {
+                sb.append("<")
+                  .append(SAMLConstants.SOAP_ENV_PREFIX).append(":Header>")
+                  .append(header)
+                  .append(SAMLConstants.START_END_ELEMENT)
+                  .append(SAMLConstants.SOAP_ENV_PREFIX)
+                  .append(":Header>");
+            }
+            if (body != null) {
+                sb.append("<")
+                  .append(SAMLConstants.SOAP_ENV_PREFIX).append(":Body>")
+                  .append(body)
+                  .append(SAMLConstants.START_END_ELEMENT)
+                  .append(SAMLConstants.SOAP_ENV_PREFIX)
+                  .append(":Body>");
+            }
+            sb.append(SAMLConstants.START_END_ELEMENT)
+              .append(SAMLConstants.SOAP_ENV_PREFIX)
+              .append(":Envelope>").append(SAMLConstants.NL);
             
             if (debug.messageEnabled()) {
                 debug.message("SAML2Utils.createSOAPMessage: soap message = " +
-                        soapMsgStr);
+                    sb.toString());
             }
+            
             msg = mf.createMessage(mimeHeaders, new ByteArrayInputStream(
-                    soapMsgStr.getBytes(SAML2Constants.DEFAULT_ENCODING)));
+                    sb.toString().getBytes(SAML2Constants.DEFAULT_ENCODING)));
         } catch (IOException io) {
             debug.error("SAML2Utils.createSOAPMessage: IOE", io);
             throw new SAML2Exception(io.getMessage());
         }
         return msg;
     }
-    
+
+    /**
+     * Converts a <code>SOAPMessage</code> to a <code>String</code>.
+     * @param message SOAPMessage object.
+     * @return the <code>String</code> converted from the
+     *     <code>SOAPMessage</code> or null if an error ocurred.
+     */
+    public static String soapMessageToString(SOAPMessage message) {
+        try {
+            ByteArrayOutputStream bop = new ByteArrayOutputStream();
+            message.writeTo(bop);
+            return new String(bop.toByteArray());
+        } catch (IOException ie) {
+            debug.error("SAML2Utils.soapMessageToString:", ie);
+            return null;
+        } catch (SOAPException soapex) {
+            debug.error("SAML2Utils.soapMessageToString:", soapex);
+            return null;
+        }
+    }
+
     /**
      * Returns SOAP body as DOM Element from SOAPMessage.
      * @param message SOAPMessage object.
@@ -2606,6 +2667,56 @@ public class SAML2Utils extends SAML2SDKUtils {
         return spAccountMapper;
     }
    
+    /**
+     * Returns an <code>SAML2IDPFinder</code> which is used to find a list
+     * of IDP's for ECP Request.
+     *
+     * @param realm the realm name
+     * @param spEntityID the entity id of the service provider
+     *
+     * @return the <code>SAML2IDPFinder</code>
+     * @exception SAML2Exception if the operation is not successful
+     */
+    public static SAML2IDPFinder getECPIDPFinder(String realm,
+        String spEntityID) throws SAML2Exception {
+        String classMethod = "SAML2Utils.getECPIDPFinder: ";
+        String implClassName = null;
+        SAML2IDPFinder ecpRequestIDPListFinder = null;
+        try {
+            implClassName = getAttributeValueFromSSOConfig(
+                    realm, spEntityID, SAML2Constants.SP_ROLE,
+                    SAML2Constants.ECP_REQUEST_IDP_LIST_FINDER_IMPL);
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(classMethod + "use " + implClassName);
+            }
+            if ((implClassName == null) ||
+                (implClassName.trim().length() == 0)) {
+                return null;
+            }
+
+            ecpRequestIDPListFinder = (SAML2IDPFinder)
+                SPCache.ecpRequestIDPListFinderCache.get(implClassName);
+            if (ecpRequestIDPListFinder == null) {
+                ecpRequestIDPListFinder = (SAML2IDPFinder)
+                    Class.forName(implClassName).newInstance();
+                SPCache.ecpRequestIDPListFinderCache.put(
+                        implClassName, ecpRequestIDPListFinder);
+            } else {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(classMethod +
+                        "got the ECP Request IDP List Finder from cache");
+                }
+            }
+        } catch (Exception ex) {
+            if (SAML2Utils.debug.warningEnabled()) {
+                SAML2Utils.debug.warning(classMethod +
+                    "Unable to get ECP Request IDP List Finder.", ex);
+            }
+        }
+        
+        return ecpRequestIDPListFinder;
+    }
+
     /**
      * Returns the URL to which redirection will happen after
      * Single-Signon / Federation. This methods checks the 

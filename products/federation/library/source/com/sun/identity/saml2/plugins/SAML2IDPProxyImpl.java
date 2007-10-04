@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2IDPProxyImpl.java,v 1.1 2007-08-07 23:39:05 weisun2 Exp $
+ * $Id: SAML2IDPProxyImpl.java,v 1.2 2007-10-04 04:31:35 hengming Exp $
  */
 
 package com.sun.identity.saml2.plugins;
@@ -33,6 +33,7 @@ import com.sun.identity.saml2.profile.SPSSOFederate;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,25 +41,25 @@ import java.util.Map;
  * This class <code>SAML2IDPProxyImpl</code> is used to find a preferred Identity
  * Authenticating provider to proxy the authentication request.
  */ 
-public class SAML2IDPProxyImpl implements SAML2IDPProxy {
+public class SAML2IDPProxyImpl implements SAML2IDPFinder {
     /**
      * Default Constructor.
      */
     public SAML2IDPProxyImpl(){}
 
     /**
-     * Returns the preferred IDP.
+     * Returns a list of preferred IDP providerIDs.
      * @param authnRequest original authnrequest
      * @param hostProviderID ProxyIDP providerID.
      * @param realm Realm
      * @param request HttpServletRequest
      * @param response HttpServletResponse
-     * @return providerID of the authenticating provider to be proxied.
-     *  <code>null</code> to disable the proxying and continue for the local
-     *  authenticating provider.
+     * @return a list of providerID's of the authenticating providers to be
+     *     proxied or <code>null</code> to disable the proxying and continue
+     *     for the localauthenticating provider.
      * @exception SAML2Exception if error occurs.
      */
-    public String getPreferredIDP (
+    public List getPreferredIDP (
           AuthnRequest authnRequest,
           String hostProviderID,
           String realm,
@@ -94,7 +95,9 @@ public class SAML2IDPProxyImpl implements SAML2IDPProxy {
                         "Preferred IDPs are null.");
                     return null;
                 }
-                return (String)proxyIDPs.iterator().next();
+                List providerIDs = new ArrayList();
+                providerIDs.add(proxyIDPs.iterator().next());
+                return providerIDs;
             } else {
                 /* TODO: test introduction cookie case*/
                 /*

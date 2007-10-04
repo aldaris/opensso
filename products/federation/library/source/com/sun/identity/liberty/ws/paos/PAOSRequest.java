@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PAOSRequest.java,v 1.1 2006-10-30 23:15:14 qcheng Exp $
+ * $Id: PAOSRequest.java,v 1.2 2007-10-04 04:27:32 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,275 +25,322 @@
 
 package com.sun.identity.liberty.ws.paos; 
 
-import com.sun.identity.shared.debug.Debug;
-
-import com.sun.identity.liberty.ws.idpp.common.IDPPUtils;
-import com.sun.identity.liberty.ws.idpp.jaxb.QueryElement;
-import com.sun.identity.liberty.ws.soapbinding.Message;
-import com.sun.identity.liberty.ws.soapbinding.ProviderHeader;
-import com.sun.identity.liberty.ws.soapbinding.SOAPBindingException;
 import com.sun.identity.liberty.ws.soapbinding.Utils;
-
-import com.sun.identity.liberty.ws.paos.jaxb.ObjectFactory;
-import com.sun.identity.liberty.ws.paos.jaxb.RequestElement;
-import com.sun.identity.saml.common.SAMLUtils;
-
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBException;
-
+import com.sun.identity.shared.xml.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * The <code>PAOSRequest</code> class is used by a web application on
  * HTTP server side to construct a <code>PAOS</code> request message and send
  * it via an HTTP response to the user agent side.
  *
- * This class can be used in conjunction with either the Personal Profile
- * Client API or other service APIs. These two different cases would use
- * different constructors, and different get methods for original queries.
- *
  * @supported.all.api
  */
 public class PAOSRequest {
 
-    static final String ACTOR="http://schemas.xmlsoap.org/soap/actor/next";
-    static final String PAOS_CONTENT_TYPE="application/vnd.paos+xml";
-    static final String RESOURCE_ID="urn:liberty:isf:implied-resource";
-    static Hashtable reqTable = new Hashtable();
-    static Debug debug = Debug.getInstance("amPAOS");
-
-    private String origURL = null;
-    private String[] qItems = null;
-    private List qBodies = null;
-    private String messageID = null;
-    private String msgStr = null;
+    private String responseConsumerURL;
+    private String service;
+    private String messageID;
+    private Boolean mustUnderstand;
+    private String actor;
     
     /**
-     * This constructor composes the request message based on the input
-     * parameters. It is to be used in conjunction with service APIs other
-     * than the Personal Profile Client API.
+     * Constructs the <code>PAOSRequest</code> Object.
      *
-     * @param originalURL the URL for the above mentioned servlet.
-     * @param service the URI of the service from which this <code>PAOS</code>
-     *        request is requesting data from, it should be already published in
-     *        the HTTP request header <code>"PAOS:"/code>.
-     * @param responseConsumerURL the URL where the <code>PAOS</code> response
-     *        should be sent and consumed, this URL should be used by the
-     *        <code>PAOS</code> server side.
-     * @param soapBodies a list of <code>org.w3c.dom.Element</code> objects
-     *                   representing the queries for data, they should be
-     *                   filled in by the underlying service API (other than
-     *                   the Personal Profile Client API).
-     * @throws PAOSException if there is any problem composing the request
-     *                       message
+     * @param responseConsumerURL the value of the responseConsumerURL
+     *     attribute
+     * @param service the value of the service attribute
+     * @param messageID the value of the messageID attribute
+     * @param mustUnderstand the value of the mustUnderstand attribute
+     * @param actor the value of the actor attribute
+     * @throws PAOSException if <code>PAOSRequest</code> cannot be created.
      */
-    public PAOSRequest(String originalURL,String service,
-                       String responseConsumerURL,List soapBodies)
-	               throws PAOSException {
-	try {
-	    compose(originalURL,service,responseConsumerURL,soapBodies);
-	} catch (javax.xml.bind.JAXBException jaxbe) {
-	    throw new PAOSException("Unable to compose PAOS request message. " +
-				    "More details: "+jaxbe.getMessage());
-	}
+    public PAOSRequest(String responseConsumerURL, String service,
+        String messageID, Boolean mustUnderstand, String actor)
+        throws PAOSException {
+
+        this.responseConsumerURL = responseConsumerURL;
+        this.service = service;
+        this.messageID = messageID;
+        this.mustUnderstand = mustUnderstand;
+        this.actor = actor;
+
+        validateData();
     }
 
     /**
-     * This constructor composes the request message based on the input
-     * parameters. It is to be used in conjunction with the Personal Profile
-     * Client API.
+     * Constructs the <code>PAOSRequest</code> Object.
      *
-     * @param originalURL the URL for the above mentioned servlet.
-     * @param service the URI of the service from which this <code>PAOS</code>
-     *        request is requesting data from, it should be already published in
-     *        the HTTP request header <code>"PAOS:"</code>.
-     * @param responseConsumerURL the URL where the <code>PAOS</code> response
-     *        should be sent and consumed, this URL should be used by the
-     *        <code>PAOS</code> server side.
-     * @param queryItems an array of query expressions understood by the 
-     *                   Personal Profile Client API, the API would use them to 
-     *                   construct soap body
-     * @throws PAOSException if there is any problem composing the request
-     *                       message
+     * @param element the Document Element of PAOS <code>Request</code> object.
+     * @throws PAOSException if <code>PAOSRequest</code> cannot be created.
      */
-    public PAOSRequest(String originalURL,String service,
-            String responseConsumerURL,String[] queryItems)
-            throws PAOSException {
-        qItems = queryItems;
-        
-        int n = queryItems.length;
-        
-        ArrayList queryExpressions = new ArrayList(n);
-        
-        for (int i=0; i<n; i++) {
-            queryExpressions.add(queryItems[i]);
-        }
-        qBodies = new ArrayList(1);
-        QueryElement qe = null;
-        try {
-            qe = IDPPUtils.createQueryElement(queryExpressions,
-                    RESOURCE_ID,
-                    false);
-        } catch (Exception e) {
-            debug.error(
-                    "PAOSRequest.PAOSRequest: Unable to create QueryElement.",
-                    e);
-            throw new PAOSException(
-                    "Unable to compose PAOS request message. More details: "+
-                    e.getMessage());
-        }
-        try {
-            qBodies.add(Utils.convertJAXBToElement(qe));
-            compose(originalURL,service,responseConsumerURL,null);
-        } catch (javax.xml.bind.JAXBException jaxbe) {
-            throw new PAOSException(
-                    "Unable to compose PAOS request message. More details: "+
-                    jaxbe.getMessage());
-        }
-    }
-
-    private void compose(String originalURL,String service,
-			 String responseConsumerURL,List soapBodies)
-	                 throws javax.xml.bind.JAXBException {
-	origURL = originalURL;
-	if (soapBodies != null) {
-	    qBodies = soapBodies;
-	}
-	com.sun.identity.liberty.ws.paos.jaxb.ObjectFactory of = new 
-	  com.sun.identity.liberty.ws.paos.jaxb.ObjectFactory();
-	RequestElement req = null;
-
-	try {
-	    req = of.createRequestElement();
-	} catch (javax.xml.bind.JAXBException jaxbe) {
-	    debug.error(
-		"PAOSRequest:compose: Unable to create RequestElement.",
-		jaxbe);
-	    throw jaxbe;
-	}
-
-	req.setService(service);
-	req.setMustUnderstand(true);
-	req.setResponseConsumerURL(responseConsumerURL);
-	req.setActor(ACTOR);
-
-        Message msg = null;
-        try {
-            String providerID = "tmp";
-	    msg = new Message(new ProviderHeader(providerID));
-        } catch (SOAPBindingException sbe) {
-            debug.message("Error creating Provider Header: " , sbe);
-        }
-
-	List headerList = new ArrayList(1);
-	headerList.add(req);
-        headerList = Utils.convertJAXBToElement(headerList);
-	msg.setOtherSOAPHeaders(headerList, null); 
-	msg.setSOAPBodies(qBodies);
-	
-	msgStr = msg.toString();
-	messageID = msg.getCorrelationHeader().getMessageID();
+    public PAOSRequest(Element element) throws PAOSException {
+        parseElement(element);
     }
 
     /**
-     * Sends the <code>PAOS</code> request message via an HTTP response to the
-     * User Agent side.
+     * Constructs the <code>PAOSRequest</code> Object.
      *
-     * @param res the HTTP response through which the <code>PAOS</code> request
-     *        message is sent to the User Agent side.
-     * @param closeOutputStream whether to close the output steam in the first
-     *        parameter. or to leave it open for the caller to close it.
-     * @exception java.io.IOException if there are IO problems obtaining the
-     *            output stream from the first parameter
+     * @param xmlString the XML String representation of this object.
+     * @throws PAOSException if <code>PAOSRequest</code> cannot be created.
      */
-    public void send(HttpServletResponse res, boolean closeOutputStream)
-	             throws java.io.IOException {
-	
-	res.setContentType(PAOS_CONTENT_TYPE);
-	res.setContentLength(1+msgStr.length());
-	
-	OutputStream os = null;
-	try {
-	    os = res.getOutputStream();
-	} catch (java.io.IOException ioe) {
-	    debug.error(
-		"PAOSRequest:send: Unable to get output stream from "
-                + "HttpServletResponse.", ioe);
-	    throw ioe;
-	}
-	
-	PrintWriter out = new PrintWriter(os);
-	out.println(msgStr);
-	
-	if (closeOutputStream) { 
-	    out.close();
-	}
-	reqTable.put((Object)messageID, (Object)this);
+    public PAOSRequest(String xmlString) throws PAOSException {
+        Document xmlDocument =
+            XMLUtils.toDOMDocument(xmlString, PAOSUtils.debug);
+        if (xmlDocument == null) {
+            throw new PAOSException(
+                PAOSUtils.bundle.getString("errorPAOSRequestElement"));
+        }
+        parseElement(xmlDocument.getDocumentElement());
     }
+
+    /**
+     * Returns the value of the responseConsumerURL attribute.
+     *
+     * @return the value of the responseConsumerURL attribute.
+     * @see #setResponseConsumerURL(String)
+     */
+    public String getResponseConsumerURL() {
+        return responseConsumerURL;
+    }
+
+    /**
+     * Sets the value of the responseConsumerURL attribute.
+     *
+     * @param responseConsumerURL the value of the responseConsumerURL
+     *     attribute
+     * @see #getResponseConsumerURL
+     */
+    public void setResponseConsumerURL(String responseConsumerURL) {
+        this.responseConsumerURL = responseConsumerURL;
+    }
+
+    /**
+     * Returns the value of the service attribute.
+     *
+     * @return the value of the service attribute.
+     * @see #setService(String)
+     */
+    public String getService() {
+        return service;
+    }
+
+    /**
+     * Sets the value of the service attribute.
+     *
+     * @param service the value of the service attribute
+     * @see #getService
+     */
+    public void setService(String service) {
+        this.service = service;
+    }
+
     
     /**
-     * Returns the message ID value used inside <code>PAOS</code> request.
-     * It is useful for checking the <code>refMessageID</code> in
-     * <code>PAOS</code> response against the original message ID.
+     * Returns the value of the messageID attribute.
      *
-     * @return the message ID value used inside <code>PAOS</code> request.
+     * @return the value of the messageID attribute.
+     * @see #setMessageID(String)
      */
     public String getMessageID() {
         return messageID;
     }
     
     /**
-     * Returns an array of the original query expression strings.
-     * This method is relevant only in the case of Personal Profile service.
-     * It is useful for correlating the query responses to the original queries.
+     * Sets the value of the messageID attribute.
      *
-     * @return an array of query expression strings.
+     * @param messageID the value of the messageID attribute
+     * @see #getMessageID
      */
-    public String[] getQueryItems() {
-        return qItems;
+    public void setMessageID(String messageID) {
+        this.messageID = messageID;
+    }
+
+    /** 
+     * Returns value of <code>mustUnderstand</code> attribute.
+     *
+     * @return value of <code>mustUnderstand</code> attribute.
+     */
+    public Boolean isMustUnderstand() {
+        return mustUnderstand;
     }
     
-    /**
-     * Returns a list of the original query <code>org.w3c.dom.Element</code>
-     * objects. This method is more relevant in the non-Personal Profile case.
-     * It is useful for correlating the query responses to the original queries.
+    /** 
+     * Sets the value of the <code>mustUnderstand</code> attribute.
      *
-     * @return a list of <code>org.w3c.dom.Element</code> objects representing
-     *         the original queries.
+     * @param mustUnderstand the value of <code>mustUnderstand</code>
+     *     attribute.
      */
-    public List getQueryObjects() {
-        return qBodies;
-    }
-    
-    /**
-     * Returns the original URL from which the <code>PAOS</code> request is
-     * made. The URL may be useful in processing the corresponding
-     * <code>PAOS</code> response.
-     *
-     * @return the URL string representing the web application making the
-     *         <code>PAOS</code> request
-     */
-    public String getOriginalURL() {
-        return origURL;
+    public void setMustUnderstand(Boolean mustUnderstand) {
+        this.mustUnderstand = mustUnderstand;
     }
 
     /**
-     * Returns the content string which resides inside an HTTP response,
-     * and represents the <code>PAOS</code> request in the form of a SOAP
-     * message.
+     * Returns value of <code>actor</code> attribute.
      *
-     * @return the string representing the <code>PAOS</code> request in the
-     *         form of a SOAP message
+     * @return value of <code>actor</code> attribute
      */
-    public String toString() {
-        return msgStr;
+    public String getActor() {
+        return actor;
+    }
+
+    /**
+     * Sets the value of <code>actor</code> attribute.
+     *
+     * @param actor the value of <code>actor</code> attribute
+     */
+    public void setActor(String actor) {
+        this.actor = actor;
+    }
+
+    /**
+     * Returns a String representation of this Object.
+     * @return a  String representation of this Object.
+     * @exception PAOSException if it could not create String object
+     */
+    public String toXMLString() throws PAOSException {
+        return toXMLString(true, false);
+    }
+
+    /**
+     *  Returns a String representation
+     *  @param includeNSPrefix determines whether or not the namespace
+     *      qualifier is prepended to the Element when converted
+     *  @param declareNS determines whether or not the namespace is declared
+     *      within the Element.
+     *  @return a String representation of this Object.
+     *  @exception PAOSException ,if it could not create String object.
+     */
+    public String toXMLString(boolean includeNSPrefix,boolean declareNS)
+        throws PAOSException {
+
+        validateData();
+
+        StringBuffer xml = new StringBuffer(300);
+
+        xml.append("<");
+        if (includeNSPrefix) {
+            xml.append(PAOSConstants.PAOS_PREFIX).append(":");
+        }
+        xml.append(PAOSConstants.REQUEST);
+
+        if (declareNS) {
+            xml.append(" xmlns:").append(PAOSConstants.PAOS_PREFIX)
+               .append("=\"").append(PAOSConstants.PAOS_NAMESPACE)
+               .append("\" xmlns:").append(PAOSConstants.SOAP_ENV_PREFIX)
+               .append("=\"").append(PAOSConstants.SOAP_ENV_NAMESPACE)
+               .append("\"");
+        }
+        xml.append(" ").append(PAOSConstants.RESPONSE_CONSUMER_URL)
+           .append("=\"").append(responseConsumerURL).append("\"")
+           .append(" ").append(PAOSConstants.SERVICE).append("=\"")
+           .append(service).append("\"");
+        if (messageID != null) {
+            xml.append(" ").append(PAOSConstants.MESSAGE_ID).append("=\"")
+               .append(messageID).append("\"");
+        }
+        xml.append(" ").append(PAOSConstants.SOAP_ENV_PREFIX).append(":")
+           .append(PAOSConstants.MUST_UNDERSTAND).append("=\"")
+           .append(mustUnderstand.toString()).append("\"")
+           .append(" ").append(PAOSConstants.SOAP_ENV_PREFIX).append(":")
+           .append(PAOSConstants.ACTOR).append("=\"")
+           .append(actor).append("\"></");
+        if (includeNSPrefix) {
+            xml.append(PAOSConstants.PAOS_PREFIX).append(":");
+        }
+        xml.append(PAOSConstants.REQUEST).append(">");
+
+        return xml.toString();
+    }
+
+    private void parseElement(Element element) throws PAOSException {
+        if (element == null) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSRequest.parseElement:" +
+                    " Input is null.");
+            }
+            throw new PAOSException(
+                PAOSUtils.bundle.getString("nullInput"));
+        }
+        String localName = element.getLocalName();
+        if (!PAOSConstants.REQUEST.equals(localName)) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSRequest.parseElement:" +
+                    " element local name should be " + PAOSConstants.REQUEST);
+            }
+            throw new PAOSException(
+                PAOSUtils.bundle.getString("invalidPAOSRequest"));
+        }
+        String namespaceURI = element.getNamespaceURI();
+        if (!PAOSConstants.PAOS_NAMESPACE.equals(namespaceURI)) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSRequest.parseElement:" +
+                    " element namespace should be " +
+                    PAOSConstants.PAOS_NAMESPACE);
+            }
+            throw new PAOSException(
+                PAOSUtils.bundle.getString("invalidPAOSNamesapce"));
+        }
+
+        responseConsumerURL = XMLUtils.getNodeAttributeValue(element,
+            PAOSConstants.RESPONSE_CONSUMER_URL);
+
+        service = XMLUtils.getNodeAttributeValue(element,
+            PAOSConstants.SERVICE);
+
+        messageID = XMLUtils.getNodeAttributeValue(element,
+            PAOSConstants.MESSAGE_ID);
+
+        String str = XMLUtils.getNodeAttributeValueNS(element,
+            PAOSConstants.SOAP_ENV_NAMESPACE, PAOSConstants.MUST_UNDERSTAND);
+        try {
+            mustUnderstand = Utils.StringToBoolean(str);
+        } catch (Exception ex) {
+            throw new PAOSException(PAOSUtils.bundle.getString(
+                "invalidValueMustUnderstand"));
+        }
+        actor = XMLUtils.getNodeAttributeValueNS(element,
+            PAOSConstants.SOAP_ENV_NAMESPACE, PAOSConstants.ACTOR);
+
+        validateData();
+    }
+
+    private void validateData() throws PAOSException {
+        if (responseConsumerURL == null) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSRequest.validateData: " +
+                    "responseConsumerURL is missing in the paos:Request");
+            }
+            throw new PAOSException(PAOSUtils.bundle.getString(
+                "missingResponseConsumerURLPAOSRequest"));
+        }
+
+        if (service == null) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSRequest.validateData: " +
+                    "service is missing in the paos:Request");
+            }
+            throw new PAOSException(PAOSUtils.bundle.getString(
+                "missingServicePAOSRequest"));
+        }
+
+        if (mustUnderstand == null) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSRequest.validateData: " +
+                    "mustUnderstand is missing in the paos:Request");
+            }
+            throw new PAOSException(PAOSUtils.bundle.getString(
+                "missingMustUnderstandPAOSRequest"));
+        }
+
+        if (actor == null) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSRequest.validateData: " +
+                    "actor is missing in the paos:Request");
+            }
+            throw new PAOSException(PAOSUtils.bundle.getString(
+                "missingActorPAOSRequest"));
+        }
     }
 }

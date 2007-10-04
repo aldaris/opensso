@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PAOSResponse.java,v 1.1 2006-10-30 23:15:14 qcheng Exp $
+ * $Id: PAOSResponse.java,v 1.2 2007-10-04 04:27:32 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,25 +25,9 @@
 
 package com.sun.identity.liberty.ws.paos;
 
-import com.sun.identity.liberty.ws.dst.DSTException;
-import com.sun.identity.liberty.ws.dst.DSTData;
-import com.sun.identity.liberty.ws.dst.DSTQueryResponse;
-
-import com.sun.identity.liberty.ws.soapbinding.Message;
-import com.sun.identity.liberty.ws.soapbinding.SOAPFault;
-import com.sun.identity.liberty.ws.soapbinding.SOAPBindingException;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.util.Iterator;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import javax.xml.bind.JAXBException;
-
+import com.sun.identity.liberty.ws.soapbinding.Utils;
+import com.sun.identity.shared.xml.XMLUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -54,203 +38,234 @@ import org.w3c.dom.Element;
  * From this class, the original <code>PAOSRequest</code> object could obtained
  * to correlate with this response.
  *
- * This class can be used in conjunction with either the Personal Profile
- * Client API or other service APIs. These two different cases would use
- * different get methods for query responses.
- *
  * @supported.all.api
  */
 public class PAOSResponse {
     
     private String refToMessageID = null;
-    private List bodies = null;
-    private PAOSRequest paosReq = null;
-    private String msgStr = null;
+    private Boolean mustUnderstand;
+    private String actor;
     
     /**
-     * This constructor parses the HTTP request to get <code>PAOS</code>
-     * response.
+     * Constructs the <code>PAOSResponse</code> Object.
      *
-     * @param req the HTTP request where the <code>PAOS</code> response is
-     *        residing.
-     * @exception PAOSException if there are errors during parsing
-     *            <code>PAOS</code> response. The errors could include the case
-     *            where an <code>PAOS</code> message response is not conformant
-     *            to <code>PAOS</code> protocols like
-     *            <code>refToMessageID</code> attribute missing, etc.
-     * @exception IOException if there are IO problems obtaining the input
-     *                        stream from the HTTP request
+     * @param refToMessageID the value of the refToMessageID attribute
+     * @param mustUnderstand the value of the mustUnderstand attribute
+     * @param actor the value of the actor attribute
+     * @throws PAOSException if <code>PAOSResponse</code> cannot be created.
      */
-    public PAOSResponse(HttpServletRequest req)
-    throws PAOSException, java.io.IOException {
-        
-        String contentType = req.getContentType();
-        
-        if (!contentType.equals(PAOSRequest.PAOS_CONTENT_TYPE)) {
-            PAOSRequest.debug.error(
-                    "PAOSResponse:PAOSResponse: Wrong content type: " +
-                    contentType);
-            throw new PAOSException("Wrong content type in HTTP request: " +
-                    contentType);
-        }
-        
-        InputStream is = null;
-        
-        try {
-            is = req.getInputStream();
-        } catch (java.io.IOException ioe) {
-            PAOSRequest.debug.error(
-                    "Unable to get input stream from HttpServletRequest", ioe);
-            throw ioe;
-        }
-        
-        Message msg = null;
-        
-        try {
-            msg = new Message(is);
-        } catch (SOAPBindingException sbe) {
-            PAOSRequest.debug.error(
-                    "PAOSResponse:PAOSResponse: SOAP binding exception in "+
-                    "message construction from input stream.", sbe);
+    public PAOSResponse(String refToMessageID, Boolean mustUnderstand,
+        String actor) throws PAOSException {
+
+        this.refToMessageID = refToMessageID;
+        this.mustUnderstand = mustUnderstand;
+        this.actor = actor;
+
+        validateData();
+    }
+
+    /**
+     * Constructs the <code>PAOSResponse</code> Object.
+     *
+     * @param element the Document Element of PAOS <code>Response</code> object.
+     * @throws PAOSException if <code>PAOSResponse</code> cannot be created.
+     */
+    public PAOSResponse(Element element) throws PAOSException {
+        parseElement(element);
+    }
+
+    /**
+     * Constructs the <code>PAOSResponse</code> Object.
+     *
+     * @param xmlString the XML String representation of this object.
+     * @throws PAOSException if <code>PAOSResponse</code> cannot be created.
+     */
+    public PAOSResponse(String xmlString) throws PAOSException {
+        Document xmlDocument =
+            XMLUtils.toDOMDocument(xmlString, PAOSUtils.debug);
+        if (xmlDocument == null) {
             throw new PAOSException(
-                    "Unable to parse the input stream content.");
+                PAOSUtils.bundle.getString("errorPAOSResponseElement"));
         }
-        
-        SOAPFault sf = msg.getSOAPFault();
-        if (sf != null) {
-            String faultString = sf.getFaultString();
-            PAOSRequest.debug.error(
-                    "PAOSResponse:PAOSResponse: SOAP Fault in response: " +
-                    faultString);
-            throw new PAOSException("Got fault in response: " + faultString);
+        parseElement(xmlDocument.getDocumentElement());
+    }
+
+    /**
+     * Returns the value of the refToMessageID attribute.
+     *
+     * @return the value of the refToMessageID attribute.
+     * @see #setRefToMessageID(String)
+     */
+    public String getRefToMessageID() {
+        return refToMessageID;
+    }
+    
+    /**
+     * Sets the value of the refToMessageID attribute.
+     *
+     * @param refToMessageID the value of the refToMessageID attribute
+     * @see #getRefToMessageID
+     */
+    public void setRefToMessageID(String refToMessageID) {
+        this.refToMessageID = refToMessageID;
+    }
+
+    /** 
+     * Returns value of <code>mustUnderstand</code> attribute.
+     *
+     * @return value of <code>mustUnderstand</code> attribute.
+     */
+    public Boolean isMustUnderstand() {
+        return mustUnderstand;
+    }
+    
+    /** 
+     * Sets the value of the <code>mustUnderstand</code> attribute.
+     *
+     * @param mustUnderstand the value of <code>mustUnderstand</code>
+     *     attribute.
+     */
+    public void setMustUnderstand(Boolean mustUnderstand) {
+        this.mustUnderstand = mustUnderstand;
+    }
+
+    /**
+     * Returns value of <code>actor</code> attribute.
+     *
+     * @return value of <code>actor</code> attribute
+     */
+    public String getActor() {
+        return actor;
+    }
+
+    /**
+     * Sets the value of <code>actor</code> attribute.
+     *
+     * @param actor the value of <code>actor</code> attribute
+     */
+    public void setActor(String actor) {
+        this.actor = actor;
+    }
+
+    /**
+     * Returns a String representation of this Object.
+     * @return a  String representation of this Object.
+     * @exception PAOSException if it could not create String object
+     */
+    public String toXMLString() throws PAOSException {
+        return toXMLString(true, false);
+    }
+
+    /**
+     *  Returns a String representation
+     *  @param includeNSPrefix determines whether or not the namespace
+     *      qualifier is prepended to the Element when converted
+     *  @param declareNS determines whether or not the namespace is declared
+     *      within the Element.
+     *  @return a String representation of this Object.
+     *  @exception PAOSException ,if it could not create String object.
+     */
+    public String toXMLString(boolean includeNSPrefix,boolean declareNS)
+        throws PAOSException {
+
+        validateData();
+
+        StringBuffer xml = new StringBuffer(300);
+
+        xml.append("<");
+        if (includeNSPrefix) {
+            xml.append(PAOSConstants.PAOS_PREFIX).append(":");
         }
-        
-        refToMessageID = msg.getCorrelationHeader().getRefToMessageID();
-        if (refToMessageID == null) {
-            PAOSRequest.debug.error(
-                    "PAOSResponse:PAOSResponse: No refToMessageID.");
-            throw new PAOSException(
-                    "Unrecognized PAOS response message.");
+        xml.append(PAOSConstants.RESPONSE);
+
+        if (declareNS) {
+            xml.append(" xmlns:").append(PAOSConstants.PAOS_PREFIX)
+               .append("=\"").append(PAOSConstants.PAOS_NAMESPACE)
+               .append("\" xmlns:").append(PAOSConstants.SOAP_ENV_PREFIX)
+               .append("=\"").append(PAOSConstants.SOAP_ENV_NAMESPACE)
+               .append("\"");
         }
-        if (! PAOSRequest.reqTable.containsKey(refToMessageID)) {
-            PAOSRequest.debug.error(
-                    "PAOSResponse:PAOSResponse: refToMessageID="+
-                    refToMessageID+"is not recognized.");
-            throw new PAOSException(
-                    "Unrecognized PAOS response message.");
-        } else {
-            if (PAOSRequest.debug.messageEnabled()) {
-                PAOSRequest.debug.message(
-                        "PAOSResponse:PAOSResponse: refToMessageID=" +
-                        refToMessageID + " is recognized.");
+        if (refToMessageID != null) {
+            xml.append(" ").append(PAOSConstants.REF_TO_MESSAGE_ID)
+               .append("=\"").append(refToMessageID).append("\"");
+        }
+        xml.append(" ").append(PAOSConstants.SOAP_ENV_PREFIX).append(":")
+           .append(PAOSConstants.MUST_UNDERSTAND).append("=\"")
+           .append(mustUnderstand.toString()).append("\"")
+           .append(" ").append(PAOSConstants.SOAP_ENV_PREFIX).append(":")
+           .append(PAOSConstants.ACTOR).append("=\"")
+           .append(actor).append("\"></");
+        if (includeNSPrefix) {
+            xml.append(PAOSConstants.PAOS_PREFIX).append(":");
+        }
+        xml.append(PAOSConstants.RESPONSE).append(">");
+
+        return xml.toString();
+    }
+
+    private void parseElement(Element element) throws PAOSException {
+        if (element == null) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSResponse.parseElement:" +
+                    " Input is null.");
             }
+            throw new PAOSException(
+                PAOSUtils.bundle.getString("nullInput"));
         }
-        paosReq = (PAOSRequest)(PAOSRequest.reqTable.remove(refToMessageID));
-        
-        bodies = msg.getBodies();
-        msgStr = msg.toString();
-        
-        // looks like inside Message class, XMLUtils.toDOMDocument(inputStream)
-        // already closed the input stream, so don't close it again here
-    }
-    
-    /**
-     * Returns a list of <code>DSTData</code> objects representing query
-     * responses. This method is relevant only in the case of the Personal
-     * Profile service.
-     *
-     * @return a list of <code>DSTData</code> objects representing query
-     *         responses.
-     * @throws PAOSException if there are errors during parsing Personal
-     *                       Profile Query response.
-     */
-    public List getPPResponse() throws PAOSException {
-        if (bodies == null || bodies.size() == 0) {
-            return null;
+        String localName = element.getLocalName();
+        if (!PAOSConstants.RESPONSE.equals(localName)) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSResponse.parseElement:" +
+                    " element local name should be " + PAOSConstants.RESPONSE);
+            }
+            throw new PAOSException(
+                PAOSUtils.bundle.getString("invalidPAOSResponse"));
         }
-        if (PAOSRequest.debug.messageEnabled()) {
-            PAOSRequest.debug.message(
-                    "PAOSResponse:getPPResponse: SOAP bodies size = " +
-                    bodies.size());
+        String namespaceURI = element.getNamespaceURI();
+        if (!PAOSConstants.PAOS_NAMESPACE.equals(namespaceURI)) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSResponse.parseElement:" +
+                    " element namespace should be " +
+                    PAOSConstants.PAOS_NAMESPACE);
+            }
+            throw new PAOSException(
+                PAOSUtils.bundle.getString("invalidPAOSNamesapce"));
         }
-        org.w3c.dom.Element qre = (org.w3c.dom.Element)(bodies.get(0));
-        DSTQueryResponse dstQr = null;
+
+        refToMessageID = XMLUtils.getNodeAttributeValue(element,
+            PAOSConstants.REF_TO_MESSAGE_ID);
+
+        String str = XMLUtils.getNodeAttributeValueNS(element,
+            PAOSConstants.SOAP_ENV_NAMESPACE, PAOSConstants.MUST_UNDERSTAND);
         try {
-            dstQr = new DSTQueryResponse(qre);
-        } catch (DSTException de) {
-            PAOSRequest.debug.error(
-                    "PAOSResponse:getPPResponse: Error while parsing "+
-                    "query response.", de);
-            throw new PAOSException("Error while parsing query response: " +
-                    de.getMessage());
+            mustUnderstand = Utils.StringToBoolean(str);
+        } catch (Exception ex) {
+            throw new PAOSException(PAOSUtils.bundle.getString(
+                "invalidValueMustUnderstand"));
         }
-        return dstQr.getData();
+        actor = XMLUtils.getNodeAttributeValueNS(element,
+            PAOSConstants.SOAP_ENV_NAMESPACE, PAOSConstants.ACTOR);
+
+        validateData();
     }
-    
-    /**
-     * Return a String representation of the query response from the Personal
-     * Profile service. This is just a convenient method on top of the method
-     * <code>getPPResponse()</code>.
-     *
-     * @return a String representing the query response from the Personal
-     *         Profile service.
-     * @exception PAOSException if there are errors during parsing Personal
-     *                          Profile Query response.
-     */
-    public String getPPResponseStr() throws PAOSException {
-        
-        String retStr = "";
-        DSTData dstData = null;
-        
-        List dstDataList = getPPResponse();
-        
-        Iterator iter = dstDataList.iterator();
-        while (iter.hasNext()) {
-            dstData = (DSTData)iter.next();
-            retStr += dstData.toString(true,true) + "\n";
+
+    private void validateData() throws PAOSException {
+        if (mustUnderstand == null) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSResponse.validateData: " +
+                    "mustUnderstand is missing in the paos:Response");
+            }
+            throw new PAOSException(PAOSUtils.bundle.getString(
+                "missingMustUnderstandPAOSResponse"));
         }
-        return retStr;
-    }
-    
-    
-    /**
-     * Returns a list of <code>org.w3c.dom.Element</code> objects
-     * representing query responses. This method is more relevant
-     * in the case of non-Personal Profile service (but can be used
-     * for in the case of Personal Profile service).
-     *
-     * @return a list of <code>org.w3c.dom.Element</code> objects
-     *         representing query responses.
-     */
-    public List getResponse() {
-        return bodies;
-    }
-    
-    /**
-     * Returns the original <code>PAOSRequest</code> object which corresponds
-     * to this <code>PAOSResponse</code> object. This is useful for correlation
-     * between <code>PAOS</code> requests and responses.
-     *
-     * @return the original <code>PAOS</code> request object.
-     */
-    public PAOSRequest getOriginalPAOSRequest() {
-        return paosReq;
-    }
-    
-    /**
-     * Returns the content string which resides inside an HTTP request,
-     * and represents the <code>PAOS</code> response in the form of a SOAP
-     * message.
-     *
-     * @return the string representing the <code>PAOS</code> response in the
-     *         form of a SOAP message
-     */
-    public String toString() {
-        return msgStr;
+
+        if (actor == null) {
+            if (PAOSUtils.debug.messageEnabled()) {
+                PAOSUtils.debug.message("PAOSResponse.validateData: " +
+                    "actor is missing in the paos:Response");
+            }
+            throw new PAOSException(PAOSUtils.bundle.getString(
+                "missingActorPAOSResponse"));
+        }
     }
 }
-
-
-
-
-

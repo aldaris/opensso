@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SDKUtils.java,v 1.5 2007-09-11 22:01:49 weisun2 Exp $
+ * $Id: SAML2SDKUtils.java,v 1.6 2007-10-04 04:30:43 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,6 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.security.SecureRandom;
-import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -49,12 +48,7 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.soap.SOAPException;
 
 /**
@@ -121,7 +115,10 @@ public class SAML2SDKUtils {
     public static final String ARTIFACT = "Artifact"; 
     public static final String ARTIFACT_RESOLVE = "ArtifactResolve"; 
     public static final String ARTIFACT_RESPONSE = "ArtifactResponse";
-    public static final String AUTHN_REQUEST = "AuthnRequest"; 
+    public static final String AUTHN_REQUEST = "AuthnRequest";
+    public static final String ECP_RELAY_STATE = "ECPRelayState";
+    public static final String ECP_REQUEST = "ECPRequest";
+    public static final String ECP_RESPONSE = "ECPResponse";
     public static final String EXTENSIONS = "Extensions"; 
     public static final String GET_COMPLETE = "GetComplete"; 
     public static final String IDPENTRY = "IDPEntry"; 
@@ -743,5 +740,29 @@ public class SAML2SDKUtils {
         return locationURL.substring(0, index+2) +
                 u + ":" + dp + "@" +
                 locationURL.substring(index+2);
+    }
+
+    /**
+     * Converts a value of XML boolean type to Boolean object.
+     *
+     * @param str a value of XML boolean type
+     * @return a Boolean object.
+     * @throws SAML2Exception if there is a syntax error
+     */
+    public static Boolean StringToBoolean(String str) throws SAML2Exception {
+        if (str == null) {
+            return null;
+        }
+        
+        if (str.equals("true") || str.equals("1")) {
+            return Boolean.TRUE;
+        }
+        
+        if (str.equals("false") || str.equals("0")) {
+            return Boolean.FALSE;
+        }
+        
+        throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
+            "invalidXMLBooleanValue"));
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.9 2007-08-17 22:48:12 exu Exp $
+ * $Id: SPACSUtils.java,v 1.10 2007-10-04 04:34:51 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,9 @@ import javax.xml.soap.SOAPMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.liberty.ws.soapbinding.Message;
+import com.sun.identity.liberty.ws.soapbinding.SOAPBindingException;
+import com.sun.identity.liberty.ws.soapbinding.SOAPFaultException;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.saml.common.SAMLConstants;
@@ -68,6 +71,8 @@ import com.sun.identity.saml2.common.NameIDInfoKey;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.ecp.ECPFactory;
+import com.sun.identity.saml2.ecp.ECPRelayState;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.ArtifactResolutionServiceElement;
@@ -132,8 +137,14 @@ public class SPACSUtils {
             respInfo = getResponseFromGet(request, response, orgName,
                                 hostEntityId, metaManager);
         } else if (method.equals("POST")) {
-            respInfo = new ResponseInfo(getResponseFromPost(request, response),
-                                true);
+            String pathInfo = request.getPathInfo();
+            if ((pathInfo != null) && (pathInfo.startsWith("/ECP"))) {
+                respInfo = getResponseFromPostECP(request, response, orgName,
+                    hostEntityId, metaManager);
+            } else {
+                respInfo = new ResponseInfo(getResponseFromPost(request,
+                    response), true, null);
+            }
         } else {
             // not supported
             response.sendError(response.SC_METHOD_NOT_ALLOWED,
@@ -249,7 +260,7 @@ public class SPACSUtils {
         return new ResponseInfo(
                 getResponseFromArtifact(art, location, hostEntityId,
                         idpEntityID, idp, response, orgName, metaManager),
-                false);
+                false, null);
     }
 
     // Retrieves response using artifact profile.
@@ -635,6 +646,141 @@ public class SPACSUtils {
                 response.SC_INTERNAL_SERVER_ERROR, se.getMessage());
             throw se;
         }
+    }
+
+    /**
+     * Obtains <code>SAML Response</code> from <code>SOAPBody</code>.
+     * Used by ECP profile.
+     */
+    private static ResponseInfo getResponseFromPostECP(
+        HttpServletRequest request, HttpServletResponse response,
+        String orgName, String hostEntityId, SAML2MetaManager metaManager)
+            throws SAML2Exception,IOException
+    {
+        Message message = null;
+        try {
+            message = new Message(SAML2Utils.getSOAPMessage(request));
+        } catch (SOAPException soapex) {
+            String[] data = { hostEntityId } ;
+            LogUtil.error(Level.INFO,
+                LogUtil.CANNOT_INSTANTIATE_SOAP_MESSAGE_ECP, data, null);
+            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                soapex.getMessage());
+            throw new SAML2Exception(soapex.getMessage()); 
+        } catch (SOAPBindingException soapex) {
+            String[] data = { hostEntityId } ;
+            LogUtil.error(Level.INFO,
+                LogUtil.CANNOT_INSTANTIATE_SOAP_MESSAGE_ECP, data, null);
+            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                soapex.getMessage());
+            throw new SAML2Exception(soapex.getMessage()); 
+        } catch(SOAPFaultException sfex) {
+            String[] data = { hostEntityId } ;
+            LogUtil.error(Level.INFO, LogUtil.RECEIVE_SOAP_FAULT_ECP,
+                data, null);
+            String faultString =
+                sfex.getSOAPFaultMessage().getSOAPFault().getFaultString();
+            response.sendError(response.SC_INTERNAL_SERVER_ERROR, faultString);
+            throw new SAML2Exception(faultString);
+        }
+
+        List soapHeaders = message.getOtherSOAPHeaders();
+        ECPRelayState ecpRelayState = null;
+        if ((soapHeaders != null) && (!soapHeaders.isEmpty())) {
+            for(Iterator iter = soapHeaders.iterator(); iter.hasNext();) {
+                Element headerEle = (Element)iter.next();
+                try {
+                    ecpRelayState =
+                        ECPFactory.getInstance().createECPRelayState(headerEle);
+                    break;
+                } catch (SAML2Exception saml2ex) {
+                    // not ECP RelayState
+                }
+            }
+        }
+        String relayState = null;
+        if (ecpRelayState != null) {
+            relayState = ecpRelayState.getValue();
+        }
+
+        List soapBodies = message.getBodies();
+        if ((soapBodies == null) || (soapBodies.isEmpty())) {
+            String[] data = { hostEntityId } ;
+            LogUtil.error(Level.INFO,
+                LogUtil.CANNOT_INSTANTIATE_SAML_RESPONSE_FROM_ECP, data, null);
+            response.sendError(response.SC_BAD_REQUEST,
+                SAML2Utils.bundle.getString("missingSAMLResponse"));
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("missingSAMLResponse"));
+        }
+
+        Element resElem = (Element)soapBodies.get(0);
+
+        Response resp = null;
+        try {
+            resp = ProtocolFactory.getInstance().createResponse(resElem);
+        } catch (SAML2Exception se) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("SPACSUtils.getResponseFromPostECP:" +
+                    "Couldn't create Response:", se);
+            }
+            String[] data = { hostEntityId } ;
+            LogUtil.error(Level.INFO,
+                LogUtil.CANNOT_INSTANTIATE_SAML_RESPONSE_FROM_ECP, data, null);
+            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                se.getMessage());
+            throw se;
+        }
+
+        String idpEntityID = resp.getIssuer().getValue();
+        IDPSSODescriptorElement idpDesc = null;
+        try {
+            idpDesc = metaManager.getIDPSSODescriptor(orgName, idpEntityID);
+        } catch (SAML2MetaException se) {
+            String[] data = { orgName, idpEntityID };
+            LogUtil.error(Level.INFO, LogUtil.IDP_META_NOT_FOUND, data, null);
+            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                se.getMessage());
+            throw se;
+        }
+
+        X509Certificate cert = KeyUtil.getVerificationCert(idpDesc,
+            idpEntityID, true);
+        List assertions = resp.getAssertion();
+        if ((assertions != null) && (!assertions.isEmpty())) {
+            for(Iterator iter = assertions.iterator(); iter.hasNext(); ) {
+                Assertion assertion = (Assertion)iter.next();
+                if (!assertion.isSigned()) {
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(
+                            "SPACSUtils.getResponseFromPostECP: " + 
+                            " Assertion is not signed.");
+                    }
+                    String[] data = { idpEntityID };
+                    LogUtil.error(Level.INFO,
+                        LogUtil.ECP_ASSERTION_NOT_SIGNED, data, null);
+                    response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                        SAML2Utils.bundle.getString("assertionNotSigned"));
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("assertionNotSigned"));
+                } else if (!assertion.isSignatureValid(cert)) {
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(
+                            "SPACSUtils.getResponseFromPostECP: " + 
+                            " Assertion signature is invalid.");
+                    }
+                    String[] data = { idpEntityID };
+                    LogUtil.error(Level.INFO,
+                        LogUtil.ECP_ASSERTION_INVALID_SIGNATURE, data, null);
+                    response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                        SAML2Utils.bundle.getString("invalidSignature"));
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("invalidSignature"));
+                }
+            }
+        }
+
+        return new ResponseInfo(resp, false, relayState);
     }
 
     // Obtains SAML Response from POST.

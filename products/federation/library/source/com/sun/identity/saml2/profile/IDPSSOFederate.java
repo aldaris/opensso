@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.7 2007-08-14 18:19:36 weisun2 Exp $
+ * $Id: IDPSSOFederate.java,v 1.8 2007-10-04 04:34:50 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,24 +37,33 @@ import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
+import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.plugins.IDPAuthnContextInfo;
 import com.sun.identity.saml2.plugins.IDPAuthnContextMapper;
+import com.sun.identity.saml2.plugins.IDPECPSessionMapper;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
+import java.io.InputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.cert.X509Certificate;
+import java.util.logging.Level;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import org.w3c.dom.Element;
 
 /**
  * This class handles the federation and/or single sign on request
@@ -82,455 +91,518 @@ public class IDPSSOFederate {
      */
     public static void doSSOFederate(HttpServletRequest request,
                                      HttpServletResponse response) {
+        doSSOFederate(request, response, false);
+    }
+    /**
+     * This method processes the <code>AuthnRequest</code> coming 
+     * from a service provider via HTTP Redirect.
+     *
+     * @param request the <code>HttpServletRequest</code> object
+     * @param response the <code>HttpServletResponse</code> object
+     * @param isFromECP true if the request comes from ECP
+     *
+     */
+    public static void doSSOFederate(HttpServletRequest request,
+        HttpServletResponse response, boolean isFromECP) {
 
         String classMethod = "IDPSSOFederate.doSSOFederate: ";
         Object session = null;
         SPSSODescriptorElement spSSODescriptor = null;
         try { 
-        String idpMetaAlias = request.getParameter(
-                              SAML2MetaManager.NAME_META_ALIAS_IN_URI);
-        if ((idpMetaAlias == null)
-            || (idpMetaAlias.trim().length() == 0)) {
-            idpMetaAlias = SAML2MetaUtils.getMetaAliasByUri(
-                                            request.getRequestURI());
-        }
-        if ((idpMetaAlias == null) 
-            || (idpMetaAlias.trim().length() == 0)) {
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message(classMethod +
-                    "unable to get IDP meta alias from request.");
+            String idpMetaAlias = request.getParameter(
+                SAML2MetaManager.NAME_META_ALIAS_IN_URI);
+            if ((idpMetaAlias == null) || (idpMetaAlias.trim().length() == 0)) {
+                idpMetaAlias = SAML2MetaUtils.getMetaAliasByUri(
+                    request.getRequestURI());
             }
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                SAML2Utils.bundle.getString("IDPMetaAliasNotFound"));
-            return;
-        }
-      
-        // retrieve IDP entity id from meta alias
-        String idpEntityID = null;
-        String realm = null;
-        try {
-            if (IDPSSOUtil.metaManager == null) {
-                SAML2Utils.debug.error(classMethod +
-                    "Unable to get meta manager.");
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                   SAML2Utils.bundle.getString("errorMetaManager"));
-                return;
-            }
-            idpEntityID = IDPSSOUtil.metaManager.getEntityByMetaAlias(
-                                                         idpMetaAlias);
-            if ((idpEntityID == null) 
-                || (idpEntityID.trim().length() == 0)) {
-                SAML2Utils.debug.error(classMethod +
-                    "Unable to get IDP Entity ID from meta.");
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                   SAML2Utils.bundle.getString("nullIDPEntityID"));
-                return;
-            }
-            realm = SAML2MetaUtils.getRealmByMetaAlias(idpMetaAlias);
-        } catch (SAML2MetaException sme) {
-            SAML2Utils.debug.error(classMethod +
-                "Unable to get IDP Entity ID from meta.");
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-               SAML2Utils.bundle.getString("nullIDPEntityID"));
-            return;
-        }
-
-        // get the request id query parameter from the request. If this
-        // is the first visit then the request id is not set; if it is 
-        // coming back from a successful authentication, then request 
-        // id should be there.
-        String reqID = request.getParameter(REQ_ID);
-        if ((reqID != null) && (reqID.trim().length() == 0)) { 
-            reqID = null;
-        }
-
-        AuthnRequest authnReq = null;
-        String relayState = null;
-        if (reqID == null) {
-            // this is the first time visit 
-            // get the saml request query parameter from the request
-            String samlRequest = 
-                   request.getParameter(SAML2Constants.SAML_REQUEST);
-    
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message(classMethod +
-                    "saml request=" + samlRequest);
-            }
-            if (samlRequest == null) { 
-                SAML2Utils.debug.error(classMethod + "samlRequest is null");
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                   SAML2Utils.bundle.getString("InvalidSAMLRequest"));
-                return;
-            }
-
-            // get the AuthnRequest from the saml request
-            authnReq = getAuthnRequest(samlRequest);
-            if (authnReq == null) {
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                   SAML2Utils.bundle.getString("InvalidSAMLRequest"));
-                return;
-            }
-       
-            if (!SAML2Utils.isSourceSiteValid(
-                  authnReq.getIssuer(), realm, idpEntityID)) {
-                if (SAML2Utils.debug.warningEnabled()) {
-                    SAML2Utils.debug.warning(classMethod + 
-                        "Issuer in Request is not valid.");
-                }
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                   SAML2Utils.bundle.getString("InvalidSAMLRequest"));
-                return;
-            }
- 
-            // verify the signature of the query string if applicable
-            IDPSSODescriptorElement idpSSODescriptor = null;
-            try {
-                idpSSODescriptor = IDPSSOUtil.metaManager.
-                             getIDPSSODescriptor(realm, idpEntityID);
-            } catch (SAML2MetaException sme) {
-                SAML2Utils.debug.error(classMethod, sme);
-                idpSSODescriptor = null;
-            }
-            if (idpSSODescriptor == null) {
-                SAML2Utils.debug.error(classMethod +
-                    "Unable to get IDP SSO Descriptor from meta.");
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                    SAML2Utils.bundle.getString("metaDataError"));
-                return;
-            } 
-            String spEntityID = authnReq.getIssuer().getValue();
-            try {
-                 spSSODescriptor = IDPSSOUtil.metaManager.
-                     getSPSSODescriptor(realm, spEntityID);
-            } catch (SAML2MetaException sme) {
-                 SAML2Utils.debug.error(classMethod, sme);
-                 spSSODescriptor = null;
-            }
-            if (idpSSODescriptor.isWantAuthnRequestsSigned()) {
-                // need to verify the query string containing authnRequest
-                if ((spEntityID == null) || 
-                    (spEntityID.trim().length() == 0)) {
-                    response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                        SAML2Utils.bundle.getString("InvalidSAMLRequest"));
-                    return;
-                }
-                
-                if (spSSODescriptor == null) {
-                    SAML2Utils.debug.error(classMethod +
-                        "Unable to get SP SSO Descriptor from meta.");
-                    response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                        SAML2Utils.bundle.getString("metaDataError"));
-                    return;
-                }            
-                X509Certificate spCert = KeyUtil.getVerificationCert(
-                    spSSODescriptor, spEntityID, false);
-         
-                String queryString = request.getQueryString();         
-                try {
-                    if (!QuerySignatureUtil.verify(queryString, spCert)) {
-                        SAML2Utils.debug.error(classMethod +
-                            "authn request verification failed.");
-                        response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                            SAML2Utils.bundle.getString(
-                                "invalidSignInRequest"));
-                        return;
-                    }
-                    // verify Destination
-                    List ssoServiceList =
-                         idpSSODescriptor.getSingleSignOnService();
-                    String ssoURL = SPSSOFederate.getSSOURL(ssoServiceList);
-                    if (!SAML2Utils.verifyDestination(
-                        authnReq.getDestination(),
-                        ssoURL)) {
-                        SAML2Utils.debug.error(classMethod +
-                            "authn request destination verification failed.");
-                        response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                            SAML2Utils.bundle.getString(
-                            "invalidDestination"));
-                        return;
-                    }
-                } catch (SAML2Exception se) {
-                    SAML2Utils.debug.error(classMethod +
-                        "authn request verification failed.", se);
-                    response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                        SAML2Utils.bundle.getString("invalidSignInRequest"));
-                    return;
-                } 
-                
-                if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message(classMethod + 
-                        "Authn Request signature verification is successful.");
-                }
-            }
-
-            reqID = authnReq.getID();
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message(classMethod +
-                    "request id=" + reqID);
-            }
-            if (reqID == null) {
-                SAML2Utils.debug.error(classMethod + "Request id is null");
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                   SAML2Utils.bundle.getString("InvalidSAMLRequestID"));
-                return;
-            }
-            // get the user sso session from the request
-            try {
-                session = SessionManager.getProvider().getSession(request);
-            } catch (SessionException se) {
-                if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message(
-                        classMethod + "Unable to retrieve user session.");
-                }
-                session = null;
-            }
-            // need to check if the forceAuth is true. if so, do auth 
-            if (Boolean.TRUE.equals(authnReq.isForceAuthn())) {
-                if (session != null) {
-                    try {
-                        SessionManager.getProvider().invalidateSession(
-                            session, request, response);
-                    } catch (SessionException ssoe) {
-                        SAML2Utils.debug.error(classMethod +
-                            "Unable to invalidate the sso session.");
-                    }
-                    session = null;
-                }
-            }
-
-            // get the relay state query parameter from the request
-            relayState = request.getParameter(SAML2Constants.RELAY_STATE);
-    
-            if (session == null) {
-                // the user has not logged in yet, redirect to auth
-    
-                // TODO: need to verify the signature of the AuthnRequest
-
-                // save the AuthnRequest in the IDPCache so that it can be
-                // retrieved later when the user successfully authenticates
-                synchronized (IDPCache.authnRequestCache) { 
-                    IDPCache.authnRequestCache.put(reqID,
-                        new CacheObject(authnReq));
-                }
-    
-                // save the relay state in the IDPCache so that it can be
-                // retrieved later when the user successfully authenticates
-                if (relayState != null && relayState.trim().length() != 0) {
-                    IDPCache.relayStateCache.put(reqID, relayState);
-                }
-     
-                //Initiate proxying
-                try {
-                    boolean isProxy = IDPProxyUtil.isIDPProxyEnabled(
-                        authnReq, realm);
-                    if (isProxy) { 
-                        String preferredIDP = IDPProxyUtil.getPreferredIDP(
-                            authnReq,idpEntityID, realm, request, response);
-                        if (preferredIDP != null) {
-                            if (SAML2Utils.debug.messageEnabled()) {
-                                SAML2Utils.debug.message(
-                                classMethod +
-                                "IDP to be proxied" + 
-                                preferredIDP);
-                            }
-                            String tmp = 
-                                IDPProxyUtil.sendProxyAuthnRequest(
-                                authnReq, preferredIDP,
-                                spSSODescriptor, idpEntityID, request,
-                                response, realm, relayState);
-                            response.sendRedirect(tmp);
-                            return;
-                        }  
-                     }
-                     //else continue for the local authentication.    
-                 } catch (SAML2Exception re) {
-                     if (SAML2Utils.debug.messageEnabled()) {
-                         SAML2Utils.debug.message(
-			     classMethod +
-                             "Redirecting for the proxy handling error: "
-                             + re.getMessage());
-                     }
-                     response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                         SAML2Utils.bundle.getString(
-                         "UnableToRedirectToPreferredIDP"));
-                }
-   
-                // redirect to the authentication service
-                try {
-                    redirectAuthentication(request, response, authnReq,
-                                     reqID, realm, idpEntityID);
-                } catch (IOException ioe) {
-                    SAML2Utils.debug.error(classMethod +
-                        "Unable to redirect to authentication.", ioe);
-                    response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                       SAML2Utils.bundle.getString("UnableToRedirectToAuth"));
-                } catch (SAML2Exception se) {
-                    SAML2Utils.debug.error(classMethod +
-                        "Unable to redirect to authentication.", se);
-                    response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                       SAML2Utils.bundle.getString("UnableToRedirectToAuth"));
-                } 
-                return;
-            } else {
-                if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message(classMethod + 
-                        "Session is valid");
-                }
-                RequestedAuthnContext requestAuthnContext =
-                                   authnReq.getRequestedAuthnContext();
-                boolean sessionUpgrade = true;
-                IDPSession oldIDPSession = null;
-                String sessionIndex = null;
-                sessionIndex = IDPSSOUtil.getSessionIndex(session);
-                sessionUpgrade =
-                    isSessionUpgrade(requestAuthnContext,sessionIndex);
-                 
+            if ((idpMetaAlias == null) || (idpMetaAlias.trim().length() == 0)) {
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(classMethod +
-                               "Session Upgrade is :" + sessionUpgrade);
+                        "unable to get IDP meta alias from request.");
                 }
-                if (sessionUpgrade) {
-                    // Save the original IDP Session
-                    oldIDPSession = (IDPSession) 
-                            IDPCache.idpSessionsByIndices.get(sessionIndex); 
-                    IDPCache.oldIDPSessionCache.put(reqID,oldIDPSession);
-                    // Save the new requestId and AuthnRequest
-                    IDPCache.authnRequestCache.put(reqID, 
-                        new CacheObject(authnReq));
-                    // save if the request was an Session Upgrade case.
-                    IDPCache.isSessionUpgradeCache.add(reqID);
-                    // redirect to the authentication service
-
-                    // save the relay state in the IDPCache so that it can be
-                    // retrieved later when the user successfully
-                    // authenticates
-                    if ((relayState != null) &&
-                        (relayState.trim().length() != 0)) {
-                        IDPCache.relayStateCache.put(reqID, relayState);
-                    }
-
-                    try {
-                         redirectAuthentication(request, response, authnReq,
-                                                reqID, realm, idpEntityID);
-                         return;
-                    } catch (IOException ioe) {
-                        SAML2Utils.debug.error(classMethod +
-                             "Unable to redirect to authentication.", ioe);
-                        SAML2Utils.bundle.getString("UnableToRedirectToAuth");
-                        sessionUpgrade = false;
-                        cleanUpCache(reqID);
-                    } catch (SAML2Exception se) {
-                       SAML2Utils.debug.error(classMethod +
-                        "Unable to redirect to authentication.", se);
-                       SAML2Utils.bundle.getString("UnableToRedirectToAuth");
-                       sessionUpgrade = false;
-                       cleanUpCache(reqID);
-                    }
-                } 
-                // comes here if either no session upgrade or error
-                // redirecting to authentication url.
-                // generate assertion response
-                if (!sessionUpgrade) {
-                     // call multi-federation protocol to set the protocol
-                     MultiProtocolUtils.addFederationProtocol(session, 
-                         SingleLogoutManager.SAML2);
-                     sendResponseToACS(request,response,authnReq,
-                                       idpMetaAlias,relayState);
-                }
-            }
-        } else {
-            // the second visit, the user has already authenticated
-            // retrieve the cache authn request and relay state
-            CacheObject cacheObj = null;
-            synchronized (IDPCache.authnRequestCache) {
-                cacheObj =(CacheObject)IDPCache.authnRequestCache.remove(reqID);
-            }
-            if (cacheObj != null) {
-                authnReq = (AuthnRequest)cacheObj.getObject();
-            }
-            relayState = (String)IDPCache.relayStateCache.remove(reqID);
-            if (authnReq == null) {
-                SAML2Utils.debug.error(classMethod +
-                    "Unable to get AuthnRequest from cache.");
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                    SAML2Utils.bundle.getString("UnableToGetAuthnReq"));
+                sendError(response, SAML2Constants.CLIENT_FAULT,
+                    "IDPMetaAliasNotFound", null, isFromECP);
                 return;
             }
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message(classMethod + "RequestID=" + reqID);
+      
+            // retrieve IDP entity id from meta alias
+            String idpEntityID = null;
+            String realm = null;
+            try {
+                if (IDPSSOUtil.metaManager == null) {
+                    SAML2Utils.debug.error(classMethod +
+                        "Unable to get meta manager.");
+                    sendError(response, SAML2Constants.SERVER_FAULT,
+                        "errorMetaManager", null, isFromECP);
+                    return;
+                }
+                idpEntityID = IDPSSOUtil.metaManager.getEntityByMetaAlias(
+                    idpMetaAlias);
+                if ((idpEntityID == null) ||
+                    (idpEntityID.trim().length() == 0)) {
+                    SAML2Utils.debug.error(classMethod +
+                        "Unable to get IDP Entity ID from meta.");
+                    String[] data = { idpEntityID };
+                    LogUtil.error(Level.INFO, LogUtil.INVALID_IDP, data, null);
+                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                        "nullIDPEntityID", null, isFromECP);
+                    return;
+                }
+                realm = SAML2MetaUtils.getRealmByMetaAlias(idpMetaAlias);
+            } catch (SAML2MetaException sme) {
+                SAML2Utils.debug.error(classMethod +
+                    "Unable to get IDP Entity ID from meta.");
+                String[] data = { idpMetaAlias };
+                LogUtil.error(Level.INFO, LogUtil.IDP_METADATA_ERROR, data,
+                    null);
+                sendError(response, SAML2Constants.SERVER_FAULT,
+                    "nullIDPEntityID", sme.getMessage(), isFromECP);
+                return;
             }
-            boolean isSessionUpgrade = false;
 
-            if (IDPCache.isSessionUpgradeCache != null 
-                && !IDPCache.isSessionUpgradeCache.isEmpty()) {
-                if (IDPCache.isSessionUpgradeCache.contains(reqID)) {
-                    isSessionUpgrade =  true;
+            // get the request id query parameter from the request. If this
+            // is the first visit then the request id is not set; if it is 
+            // coming back from a successful authentication, then request 
+            // id should be there.
+            String reqID = request.getParameter(REQ_ID);
+            if ((reqID != null) && (reqID.trim().length() == 0)) { 
+                reqID = null;
+            }
+
+            AuthnRequest authnReq = null;
+            String relayState = null;
+            if (reqID == null) {
+                authnReq = getAuthnRequest(request, isFromECP);
+                if (authnReq == null) {
+                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                        "InvalidSAMLRequest", null, isFromECP);
+                    return;
+                }
+
+                String spEntityID = authnReq.getIssuer().getValue();
+                try {
+                    String authnRequestStr = authnReq.toXMLString();
+                    String[] logdata = { spEntityID, idpMetaAlias,
+                        authnRequestStr };
+                    String logId = isFromECP ?
+                        LogUtil.RECEIVED_AUTHN_REQUEST_ECP :
+                        LogUtil.RECEIVED_AUTHN_REQUEST;
+                    LogUtil.access(Level.INFO, logId, logdata, null);
+                } catch (SAML2Exception saml2ex) {
+                    SAML2Utils.debug.error(classMethod, saml2ex);
+                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                        "InvalidSAMLRequest", saml2ex.getMessage(), isFromECP);
+                    return;
+                }
+
+                if (!SAML2Utils.isSourceSiteValid(
+                    authnReq.getIssuer(), realm, idpEntityID)) {
+                    if (SAML2Utils.debug.warningEnabled()) {
+                        SAML2Utils.debug.warning(classMethod + 
+                            "Issuer in Request is not valid.");
+                    }
+                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                        "InvalidSAMLRequest", null, isFromECP);
+                    return;
+                }
+ 
+                // verify the signature of the query string if applicable
+                IDPSSODescriptorElement idpSSODescriptor = null;
+                try {
+                    idpSSODescriptor = IDPSSOUtil.metaManager.
+                        getIDPSSODescriptor(realm, idpEntityID);
+                } catch (SAML2MetaException sme) {
+                    SAML2Utils.debug.error(classMethod, sme);
+                    idpSSODescriptor = null;
+                }
+                if (idpSSODescriptor == null) {
+                    SAML2Utils.debug.error(classMethod +
+                        "Unable to get IDP SSO Descriptor from meta.");
+                    sendError(response, SAML2Constants.SERVER_FAULT,
+                        "metaDataError", null, isFromECP);
+                    return;
+                } 
+                try {
+                    spSSODescriptor = IDPSSOUtil.metaManager.
+                        getSPSSODescriptor(realm, spEntityID);
+                } catch (SAML2MetaException sme) {
+                    SAML2Utils.debug.error(classMethod, sme);
+                    spSSODescriptor = null;
+                }
+
+                if (isFromECP || idpSSODescriptor.isWantAuthnRequestsSigned()) {
+                    // need to verify the query string containing authnRequest
+                    if ((spEntityID == null) || 
+                        (spEntityID.trim().length() == 0)) {
+                        sendError(response, SAML2Constants.CLIENT_FAULT,
+                            "InvalidSAMLRequest", null, isFromECP);
+                        return;
+                    }
+                
+                    if (spSSODescriptor == null) {
+                        SAML2Utils.debug.error(classMethod +
+                            "Unable to get SP SSO Descriptor from meta.");
+                        sendError(response, SAML2Constants.SERVER_FAULT,
+                            "metaDataError", null, isFromECP);
+                        return;
+                    }
+                    X509Certificate spCert = KeyUtil.getVerificationCert(
+                        spSSODescriptor, spEntityID, false);
+
+                    try {
+                        boolean isSignatureOK = false;
+                        if (isFromECP) {
+                            isSignatureOK = authnReq.isSignatureValid(spCert);
+                        } else {
+                            String queryString = request.getQueryString();
+                            isSignatureOK =
+                                QuerySignatureUtil.verify(queryString, spCert);
+                        }
+                        if (!isSignatureOK) {
+                            SAML2Utils.debug.error(classMethod +
+                                "authn request verification failed.");
+                            sendError(response, SAML2Constants.CLIENT_FAULT,
+                                "invalidSignInRequest", null, isFromECP);
+                            return;
+                        }
+
+                        // In ECP profile, sp doesn't know idp.
+                        if (!isFromECP) {
+                            // verify Destination
+                            List ssoServiceList =
+                                idpSSODescriptor.getSingleSignOnService();
+                            String ssoURL =
+                                SPSSOFederate.getSSOURL(ssoServiceList,
+                                SAML2Constants.HTTP_REDIRECT);
+                            if (!SAML2Utils.verifyDestination(
+                                authnReq.getDestination(), ssoURL)) {
+                                SAML2Utils.debug.error(classMethod + "authn " +
+                                    "request destination verification failed.");
+                                sendError(response, SAML2Constants.CLIENT_FAULT,
+                                    "invalidDestination", null, isFromECP);
+                                return;
+                            }
+                        }
+                    } catch (SAML2Exception se) {
+                        SAML2Utils.debug.error(classMethod +
+                            "authn request verification failed.", se);
+                        sendError(response, SAML2Constants.CLIENT_FAULT,
+                            "invalidSignInRequest", null, isFromECP);
+                        return;
+                    } 
+                
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod + "authn " +
+                            "request signature verification is successful.");
+                    }
+                }
+
+                reqID = authnReq.getID();
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(classMethod +
+                        "request id=" + reqID);
+                }
+                if (reqID == null) {
+                    SAML2Utils.debug.error(classMethod + "Request id is null");
+                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                        "InvalidSAMLRequestID", null, isFromECP);
+                    return;
+                }
+
+                if (isFromECP) {
+                    try {
+                        IDPECPSessionMapper idpECPSessonMapper = 
+                            IDPSSOUtil.getIDPECPSessionMapper(realm,
+                            idpEntityID);
+                        session = idpECPSessonMapper.getSession(request,
+                            response);
+                    } catch (SAML2Exception se) {
+                        if (SAML2Utils.debug.messageEnabled()) {
+                            SAML2Utils.debug.message(classMethod +
+                                "Unable to retrieve user session.");
+                        }
+                    }
+                } else {
+                    // get the user sso session from the request
+                    try {
+                        session = SessionManager.getProvider().getSession(
+                            request);
+                    } catch (SessionException se) {
+                        if (SAML2Utils.debug.messageEnabled()) {
+                            SAML2Utils.debug.message(classMethod +
+                                "Unable to retrieve user session.");
+                        }
+                        session = null;
+                    }
+                }
+                // need to check if the forceAuth is true. if so, do auth 
+                if (Boolean.TRUE.equals(authnReq.isForceAuthn())) {
+                    if (session != null) {
+                        try {
+                            SessionManager.getProvider().invalidateSession(
+                                session, request, response);
+                        } catch (SessionException ssoe) {
+                            SAML2Utils.debug.error(classMethod +
+                                "Unable to invalidate the sso session.");
+                        }
+                        session = null;
+                    }
+                }
+
+                // get the relay state query parameter from the request
+                relayState = request.getParameter(SAML2Constants.RELAY_STATE);
+    
+                if (session == null) {
+                    // the user has not logged in yet, redirect to auth
+    
+                    // TODO: need to verify the signature of the AuthnRequest
+
+                    // save the AuthnRequest in the IDPCache so that it can be
+                    // retrieved later when the user successfully authenticates
+                    synchronized (IDPCache.authnRequestCache) { 
+                        IDPCache.authnRequestCache.put(reqID,
+                            new CacheObject(authnReq));
+                    }
+    
+                    // save the relay state in the IDPCache so that it can be
+                    // retrieved later when the user successfully authenticates
+                    if (relayState != null && relayState.trim().length() != 0) {
+                        IDPCache.relayStateCache.put(reqID, relayState);
+                    }
+     
+                    //Initiate proxying
+                    try {
+                        boolean isProxy = IDPProxyUtil.isIDPProxyEnabled(
+                            authnReq, realm);
+                        if (isProxy) { 
+                            String preferredIDP = IDPProxyUtil.getPreferredIDP(
+                                authnReq,idpEntityID, realm, request, response);
+                            if (preferredIDP != null) {
+                                if (SAML2Utils.debug.messageEnabled()) {
+                                    SAML2Utils.debug.message(classMethod +
+                                        "IDP to be proxied" +  preferredIDP);
+                                }
+                                String tmp = IDPProxyUtil.sendProxyAuthnRequest(
+                                    authnReq, preferredIDP, spSSODescriptor,
+                                    idpEntityID, request, response, realm,
+                                    relayState);
+                                response.sendRedirect(tmp);
+                                return;
+                            }
+                        }
+                         //else continue for the local authentication.    
+                    } catch (SAML2Exception re) {
+                        if (SAML2Utils.debug.messageEnabled()) {
+                            SAML2Utils.debug.message(classMethod +
+                                "Redirecting for the proxy handling error: "
+                                + re.getMessage());
+                        }
+                        sendError(response, SAML2Constants.SERVER_FAULT,
+                            "UnableToRedirectToPreferredIDP", re.getMessage(),
+                            isFromECP);
+                    }
+   
+                    // redirect to the authentication service
+                    try {
+                        redirectAuthentication(request, response, authnReq,
+                            reqID, realm, idpEntityID);
+                    } catch (IOException ioe) {
+                        SAML2Utils.debug.error(classMethod +
+                            "Unable to redirect to authentication.", ioe);
+                        sendError(response, SAML2Constants.SERVER_FAULT,
+                            "UnableToRedirectToAuth", ioe.getMessage(),
+                            isFromECP);
+                    } catch (SAML2Exception se) {
+                        SAML2Utils.debug.error(classMethod +
+                            "Unable to redirect to authentication.", se);
+                        sendError(response, SAML2Constants.SERVER_FAULT,
+                            "UnableToRedirectToAuth", se.getMessage(),
+                            isFromECP);
+                    } 
+                    return;
+                } else {
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod + 
+                            "Session is valid");
+                    }
+                    RequestedAuthnContext requestAuthnContext =
+                        authnReq.getRequestedAuthnContext();
+                    boolean sessionUpgrade = true;
+                    IDPSession oldIDPSession = null;
+                    String sessionIndex = null;
+                    sessionIndex = IDPSSOUtil.getSessionIndex(session);
+                    sessionUpgrade =
+                        isSessionUpgrade(requestAuthnContext,sessionIndex);
+
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod +
+                            "Session Upgrade is :" + sessionUpgrade);
+                    }
+                    if (sessionUpgrade) {
+                        // Save the original IDP Session
+                        oldIDPSession = (IDPSession) 
+                            IDPCache.idpSessionsByIndices.get(sessionIndex); 
+                        IDPCache.oldIDPSessionCache.put(reqID,oldIDPSession);
+                        // Save the new requestId and AuthnRequest
+                        IDPCache.authnRequestCache.put(reqID, 
+                            new CacheObject(authnReq));
+                        // save if the request was an Session Upgrade case.
+                        IDPCache.isSessionUpgradeCache.add(reqID);
+                        // redirect to the authentication service
+
+                        // save the relay state in the IDPCache so that it can
+                        // be retrieved later when the user successfully
+                        // authenticates
+                        if ((relayState != null) &&
+                            (relayState.trim().length() != 0)) {
+                            IDPCache.relayStateCache.put(reqID, relayState);
+                        }
+
+                        try {
+                             redirectAuthentication(request, response, authnReq,
+                                 reqID, realm, idpEntityID);
+                             return;
+                        } catch (IOException ioe) {
+                            SAML2Utils.debug.error(classMethod +
+                                 "Unable to redirect to authentication.", ioe);
+                            sessionUpgrade = false;
+                            cleanUpCache(reqID);
+                            sendError(response, SAML2Constants.SERVER_FAULT,
+                                "UnableToRedirectToAuth", ioe.getMessage(),
+                                isFromECP);
+                        } catch (SAML2Exception se) {
+                            SAML2Utils.debug.error(classMethod +
+                                "Unable to redirect to authentication.", se);
+                            sessionUpgrade = false;
+                            cleanUpCache(reqID);
+                            sendError(response, SAML2Constants.SERVER_FAULT,
+                                "UnableToRedirectToAuth", se.getMessage(),
+                                isFromECP);
+                        }
+                    } 
+                    // comes here if either no session upgrade or error
+                    // redirecting to authentication url.
+                    // generate assertion response
+                    if (!sessionUpgrade) {
+                         // call multi-federation protocol to set the protocol
+                         MultiProtocolUtils.addFederationProtocol(session, 
+                             SingleLogoutManager.SAML2);
+                        NameIDPolicy policy = authnReq.getNameIDPolicy();
+                        String nameIDFormat =
+                            (policy == null) ? null : policy.getFormat();
+                        try {
+                            IDPSSOUtil.sendResponseToACS(request, response,
+                                session, authnReq, spEntityID, idpEntityID,
+                                idpMetaAlias, realm, nameIDFormat, relayState);
+                        } catch (SAML2Exception se) {
+                            SAML2Utils.debug.error(classMethod +
+                                "Unable to do sso or federation.", se);
+                            sendError(response, SAML2Constants.SERVER_FAULT,
+                                "UnableToDOSSOOrFederation", se.getMessage(),
+                                isFromECP);
+                        }
+                    }
+                }
+            } else {
+                // the second visit, the user has already authenticated
+                // retrieve the cache authn request and relay state
+                CacheObject cacheObj = null;
+                synchronized (IDPCache.authnRequestCache) {
+                    cacheObj =
+                        (CacheObject)IDPCache.authnRequestCache.remove(reqID);
+                }
+                if (cacheObj != null) {
+                    authnReq = (AuthnRequest)cacheObj.getObject();
+                }
+                relayState = (String)IDPCache.relayStateCache.remove(reqID);
+                if (authnReq == null) {
+                    SAML2Utils.debug.error(classMethod +
+                        "Unable to get AuthnRequest from cache.");
+                    sendError(response, SAML2Constants.SERVER_FAULT,
+                        "UnableToGetAuthnReq", null, isFromECP);
+                    return;
+                }
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(classMethod + "RequestID=" +
+                        reqID);
+                }
+                boolean isSessionUpgrade = false;
+
+                if (IDPCache.isSessionUpgradeCache != null 
+                    && !IDPCache.isSessionUpgradeCache.isEmpty()) {
+                    if (IDPCache.isSessionUpgradeCache.contains(reqID)) {
+                        isSessionUpgrade =  true;
+                    }
+                }
+                SessionProvider sessionProvider = SessionManager.getProvider();
+                session = sessionProvider.getSession(request);
+                if (isSessionUpgrade) {
+                    IDPSession oldSess = 
+                        (IDPSession)IDPCache.oldIDPSessionCache.remove(reqID);
+                    String sessionIndex = IDPSSOUtil.getSessionIndex(session);
+                    if (sessionIndex != null && (sessionIndex.length() != 0 )) { 
+                        IDPCache.idpSessionsByIndices.put(sessionIndex,oldSess);
+                    }
+                }
+                if (session != null) {
+                    // call multi-federation protocol to set the protocol
+                    MultiProtocolUtils.addFederationProtocol(session, 
+                        SingleLogoutManager.SAML2);
+                }
+                // generate assertion response
+                String spEntityID = authnReq.getIssuer().getValue();
+                NameIDPolicy policy = authnReq.getNameIDPolicy();
+                String nameIDFormat =
+                    (policy == null) ? null : policy.getFormat();
+                try {
+                    IDPSSOUtil.sendResponseToACS(request, response, session,
+                        authnReq, spEntityID, idpEntityID, idpMetaAlias, realm,
+                        nameIDFormat, relayState);
+                } catch (SAML2Exception se) {
+                    SAML2Utils.debug.error(classMethod +
+                        "Unable to do sso or federation.", se);
+                    sendError(response, SAML2Constants.SERVER_FAULT,
+                        "UnableToDOSSOOrFederation", se.getMessage(),
+                        isFromECP);
                 }
             }
-            SessionProvider sessionProvider = SessionManager.getProvider();
-            session = sessionProvider.getSession(request);
-            if (isSessionUpgrade) {
-                 IDPSession oldSess = 
-                     (IDPSession)IDPCache.oldIDPSessionCache.remove(reqID);                 
-                 String sessionIndex = IDPSSOUtil.getSessionIndex(session);
-                 if (sessionIndex != null && (sessionIndex.length() != 0 )) { 
-                     IDPCache.idpSessionsByIndices.put(sessionIndex,oldSess);
-                 }
-            }
-            if (session != null) {
-                // call multi-federation protocol to set the protocol
-                MultiProtocolUtils.addFederationProtocol(session, 
-                    SingleLogoutManager.SAML2);
-            }
-            // generate assertion response
-            sendResponseToACS(
-                request, response, authnReq, idpMetaAlias, relayState);
-        }
         } catch (IOException ioe) {
             SAML2Utils.debug.error(classMethod + "I/O rrror", ioe);
         } catch (SessionException sso) {
             SAML2Utils.debug.error("SSOException : " , sso);
+        } catch (SOAPException soapex) {
+            SAML2Utils.debug.error("IDPSSOFederate.doSSOFederate:" , soapex);
         }
     }
 
- 
-    /**
-     * Sends <code>Response</code> containing an <code>Assertion</code>
-     * back to the requesting service provider
-     *
-     * @param request the <code>HttpServletRequest</code> object
-     * @param response the <code>HttpServletResponse</code> object
-     * @param authnReq the <code>AuthnRequest</code> object
-     * @param idpMetaAlias the meta alias of the identity provider
-     * @param relayState the relay state 
-     * 
-     */
-    private static void sendResponseToACS(
-                                   HttpServletRequest request,
-                                   HttpServletResponse response,
-                                   AuthnRequest authnReq,
-                                   String idpMetaAlias,
-                                   String relayState) 
-        throws IOException {
+    private static void sendError(HttpServletResponse response,
+        String faultCode, String rbKey, String detail, boolean isFromECP)
+        throws IOException, SOAPException {
 
-        String classMethod = "IDPSSOFederate.sendResponeToACS: " ;
-        String spEntityID = authnReq.getIssuer().getValue();
-    
-        String nameIDFormat = null;
-        NameIDPolicy policy = authnReq.getNameIDPolicy();
-        if (policy != null) {
-            nameIDFormat = policy.getFormat();
-        }
-        try {
-            IDPSSOUtil.doSSOFederate(request, response, authnReq, 
-                  spEntityID, idpMetaAlias, nameIDFormat, 
-                  relayState); 
-        } catch (SAML2Exception se) {
-            SAML2Utils.debug.error(classMethod +
-                "Unable to do sso or federation.", se);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                SAML2Utils.bundle.getString("UnableToDOSSOOrFederation"));
-       
+        if (isFromECP) {
+            SOAPMessage soapFault = SAML2Utils.createSOAPFault(faultCode,
+                rbKey, detail);
+            if (soapFault != null) {
+                //  Need to call saveChanges because we're
+                // going to use the MimeHeaders to set HTTP
+                // response information. These MimeHeaders
+                // are generated as part of the save.
+                if (soapFault.saveRequired()) {
+                    soapFault.saveChanges();
+                }
+                response.setStatus(HttpServletResponse.SC_OK);
+                SAML2Utils.putHeaders(soapFault.getMimeHeaders(), response);
+                // Write out the message on the response stream
+                OutputStream os = response.getOutputStream();
+                soapFault.writeTo(os);
+                os.flush();
+                os.close();
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                SAML2Utils.bundle.getString(rbKey));
         }
     }
 
@@ -554,6 +626,38 @@ public class IDPSSOFederate {
         return authnReq;
     }
 
+    /**
+     *  Returns the <code>AuthnRequest</code> from HttpServletRequest
+     */
+    private static AuthnRequest getAuthnRequest(HttpServletRequest request,
+        boolean isFromECP) {
+
+        if (isFromECP) {
+            MimeHeaders headers = SAML2Utils.getHeaders(request);
+            try {
+                InputStream is = request.getInputStream();
+                SOAPMessage msg = SAML2Utils.mf.createMessage(headers, is);
+                Element elem = SAML2Utils.getSamlpElement(msg, 
+                    SAML2Constants.AUTHNREQUEST);
+                return ProtocolFactory.getInstance().createAuthnRequest(elem);
+	    } catch (Exception ex) {
+                SAML2Utils.debug.error("IDPSSOFederate.getAuthnRequest:", ex);
+            }
+            return null;
+        } else {
+            String samlRequest = 
+                request.getParameter(SAML2Constants.SAML_REQUEST);
+    
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("IDPSSOFederate.getAuthnRequest: " +
+                    "saml request = " + samlRequest);
+            }
+            if (samlRequest == null) { 
+                return null;
+            }
+            return getAuthnRequest(samlRequest);
+        }
+    }
     /**
      * Redirect to authenticate service
      */

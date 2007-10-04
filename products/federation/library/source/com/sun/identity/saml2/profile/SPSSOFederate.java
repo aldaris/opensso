@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.6 2007-08-07 23:39:07 weisun2 Exp $
+ * $Id: SPSSOFederate.java,v 1.7 2007-10-04 04:34:51 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,10 @@
 
 package com.sun.identity.saml2.profile;
 
+import com.sun.identity.liberty.ws.paos.PAOSException;
+import com.sun.identity.liberty.ws.paos.PAOSConstants;
+import com.sun.identity.liberty.ws.paos.PAOSHeader;
+import com.sun.identity.liberty.ws.paos.PAOSRequest;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.saml.xmlsig.KeyProvider;
@@ -35,11 +39,16 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.common.QuerySignatureUtil;
+import com.sun.identity.saml2.ecp.ECPFactory;
+import com.sun.identity.saml2.ecp.ECPRelayState;
+import com.sun.identity.saml2.ecp.ECPRequest;
 import com.sun.identity.saml2.key.KeyUtil;
-import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.saml2.plugins.SAML2IDPFinder;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.Extensions;
+import com.sun.identity.saml2.protocol.GetComplete;
 import com.sun.identity.saml2.protocol.NameIDPolicy;
+import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
@@ -55,6 +64,7 @@ import com.sun.identity.saml2.protocol.Scoping;
 import com.sun.identity.saml2.protocol.IDPEntry;
 import com.sun.identity.saml2.protocol.IDPList;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.util.logging.Level;
 import java.util.Date;
@@ -63,8 +73,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
 /**
  * This class reads the query parameters and performs the required
@@ -223,7 +236,8 @@ public class SPSSOFederate {
             }
             
             List ssoServiceList = idpsso.getSingleSignOnService();
-            String ssoURL = getSSOURL(ssoServiceList);
+            String ssoURL = getSSOURL(ssoServiceList,
+                SAML2Constants.HTTP_REDIRECT);
 
             if (ssoURL == null || ssoURL.length() == 0) {
               String[] data = { idpEntityID };
@@ -236,7 +250,7 @@ public class SPSSOFederate {
             // create AuthnRequest 
             AuthnRequest authnRequest = createAuthnRequest(realm,spEntityID,
                     paramsMap,spConfigAttrsMap,extensionsList,spsso,
-                    ssoURL);
+                    ssoURL, false);
                 
             String authReqXMLString = authnRequest.toXMLString(true,true);
         
@@ -307,6 +321,273 @@ public class SPSSOFederate {
         }
     }
 
+    /**
+     * Parses the request parameters and builds ECP Request to sent to the IDP.
+     *
+     * @param request the HttpServletRequest.
+     * @param response the HttpServletResponse.
+     *
+     * @throws SAML2Exception if error creating AuthnRequest.
+     * @throws IOException if error sending AuthnRequest to ECP.
+     */
+    public static void initiateECPRequest(HttpServletRequest request,
+        HttpServletResponse response)
+        throws SAML2Exception, IOException {
+
+        if (!isFromECP(request)) {
+            SAML2Utils.debug.error("SPSSOFederate.initiateECPRequest: " +
+                "invalid HTTP request from ECP.");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                SAML2Utils.bundle.getString("invalidHttpRequestFromECP"));
+            return;
+        }
+
+        String metaAlias = request.getParameter("metaAlias");
+        Map paramsMap = SAML2Utils.getParamsMap(request);
+
+        // get the sp entity ID from the metaAlias
+        String spEntityID = sm.getEntityByMetaAlias(metaAlias);
+        String realm = getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message("SPSSOFederate.initiateECPRequest: " +
+                "spEntityID is " + spEntityID + ", realm is " + realm);
+        }
+        
+        try {
+            // Retreive MetaData 
+            if (sm == null) {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("errorMetaManager"));
+            }
+
+            SPSSOConfigElement spEntityCfg = 
+                sm.getSPSSOConfig(realm,spEntityID);
+            Map spConfigAttrsMap=null;
+            if (spEntityCfg != null) {
+                spConfigAttrsMap = SAML2MetaUtils.getAttributes(spEntityCfg);
+            }
+             // get SPSSODescriptor
+            SPSSODescriptorElement spsso = 
+                sm.getSPSSODescriptor(realm,spEntityID);
+
+            if (spsso == null) {
+                String[] data = { spEntityID };
+                LogUtil.error(Level.INFO,LogUtil.SP_METADATA_ERROR,data, null);
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("metaDataError"));
+            }
+
+            String[] data = { spEntityID, realm };
+            LogUtil.access(Level.INFO, LogUtil.RECEIVED_HTTP_REQUEST_ECP, data,
+                null);
+
+            List extensionsList = getExtensionsList(sm,spEntityID,realm);
+
+            // create AuthnRequest 
+            AuthnRequest authnRequest = createAuthnRequest(realm, spEntityID,
+                paramsMap, spConfigAttrsMap, extensionsList, spsso, null,
+                true);
+
+            String alias = SAML2Utils.getSigningCertAlias(realm, spEntityID,
+                SAML2Constants.SP_ROLE);
+
+            PrivateKey signingKey =
+                KeyUtil.getKeyProviderInstance().getPrivateKey(alias);
+            if (signingKey != null) {
+                authnRequest.sign(signingKey, null);
+            } else {
+                SAML2Utils.debug.error("SPSSOFederate.initiateECPRequest: " +
+                    "Unable to find signing key.");
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("metaDataError"));
+            }
+
+            ECPFactory ecpFactory = ECPFactory.getInstance(); 
+
+            // Default URL if relayState not present? in providerConfig?
+            // TODO get Default URL from metadata 
+            String relayState = getParameter(paramsMap,
+                SAML2Constants.RELAY_STATE);
+
+            String ecpRelayStateXmlStr = "";
+            if (relayState != null && relayState.length()> 0) {
+                String relayStateID = getRelayStateID(relayState,
+                    authnRequest.getID());
+                ECPRelayState ecpRelayState = ecpFactory.createECPRelayState();
+                ecpRelayState.setValue(relayStateID);
+                ecpRelayState.setMustUnderstand(Boolean.TRUE);
+                ecpRelayState.setActor(SAML2Constants.SOAP_ACTOR_NEXT);
+                ecpRelayStateXmlStr = ecpRelayState.toXMLString(true, true);
+            }
+
+            ECPRequest ecpRequest = ecpFactory.createECPRequest();
+            ecpRequest.setIssuer(createIssuer(spEntityID));
+            ecpRequest.setMustUnderstand(Boolean.TRUE);
+            ecpRequest.setActor(SAML2Constants.SOAP_ACTOR_NEXT);
+            ecpRequest.setIsPassive(authnRequest.isPassive());
+            SAML2IDPFinder ecpIDPFinder =
+                SAML2Utils.getECPIDPFinder(realm, spEntityID);
+            if (ecpIDPFinder != null) {
+                List idps = ecpIDPFinder.getPreferredIDP(authnRequest,
+                    spEntityID, realm, request, response);
+                if ((idps != null) && (!idps.isEmpty())) {
+                    SAML2MetaManager saml2MetaManager =
+                        SAML2Utils.getSAML2MetaManager();
+                    List idpEntries = null;
+                    for(Iterator iter = idps.iterator(); iter.hasNext();) {
+                        String idpEntityID = (String)iter.next();
+                        IDPSSODescriptorElement idpDesc = saml2MetaManager
+                            .getIDPSSODescriptor(realm, idpEntityID);
+                        if (idpDesc != null) {
+                            IDPEntry idpEntry = ProtocolFactory.getInstance()
+                                .createIDPEntry();
+                            idpEntry.setProviderID(idpEntityID);
+                            String description =
+                                SAML2Utils.getAttributeValueFromSSOConfig(
+                                realm, idpEntityID, SAML2Constants.IDP_ROLE,
+                                SAML2Constants.ENTITY_DESCRIPTION);
+                            idpEntry.setName(description);
+                            List ssoServiceList =
+                                idpDesc.getSingleSignOnService();
+                            String ssoURL = getSSOURL(ssoServiceList,
+                                SAML2Constants.SOAP);
+                            idpEntry.setLoc(ssoURL);
+                            if (idpEntries == null) {
+                                idpEntries = new ArrayList();
+                            }
+                            idpEntries.add(idpEntry);
+                        }
+                    }
+                    if (idpEntries != null) {
+                        IDPList idpList = ProtocolFactory.getInstance()
+                            .createIDPList();
+                        idpList.setIDPEntries(idpEntries);
+                        ecpRequest.setIDPList(idpList);
+                        Map attrs = SAML2MetaUtils.getAttributes(spEntityCfg);
+                        List values = (List)attrs.get(
+                            SAML2Constants.ECP_REQUEST_IDP_LIST_GET_COMPLETE);
+                        if ((values != null) && (!values.isEmpty())) {
+                            GetComplete getComplete =
+                                ProtocolFactory.getInstance()
+                                .createGetComplete();
+                            getComplete.setValue((String)values.get(0));
+                            idpList.setGetComplete(getComplete);
+                        }
+                    }
+                }
+            }
+            String paosRequestXmlStr = "";
+            try {
+                PAOSRequest paosRequest = new PAOSRequest(
+                    authnRequest.getAssertionConsumerServiceURL(),
+                    SAML2Constants.PAOS_ECP_SERVICE, null, Boolean.TRUE,
+                    SAML2Constants.SOAP_ACTOR_NEXT);
+                paosRequestXmlStr =  paosRequest.toXMLString(true, true);
+            } catch (PAOSException paosex) {
+                SAML2Utils.debug.error("SPSSOFederate.initiateECPRequest:",
+                    paosex);
+                throw new SAML2Exception(paosex.getMessage());
+            }
+            String header = paosRequestXmlStr +
+                ecpRequest.toXMLString(true, true) + ecpRelayStateXmlStr;
+
+            String body = authnRequest.toXMLString(true, true);
+            try {
+                SOAPMessage reply = SAML2Utils.createSOAPMessage(header, body);
+
+                String[] data2 = { spEntityID, realm, "" };
+                if (LogUtil.isAccessLoggable(Level.FINE)) {
+                    data2[2] = SAML2Utils.soapMessageToString(reply);
+                }
+                LogUtil.access(Level.INFO, LogUtil.SEND_ECP_PAOS_REQUEST, data2,
+                    null);
+
+                // Need to call saveChanges because we're
+                // going to use the MimeHeaders to set HTTP
+                // response information. These MimeHeaders
+                // are generated as part of the save.
+                if (reply.saveRequired()) {
+                    reply.saveChanges();
+                }
+
+                response.setStatus(HttpServletResponse.SC_OK);
+                SAML2Utils.putHeaders(reply.getMimeHeaders(), response);
+                response.setContentType(PAOSConstants.PAOS_MIME_TYPE);
+                // Write out the message on the response stream
+                OutputStream os = response.getOutputStream();
+                reply.writeTo(os);
+                os.flush();
+            } catch (SOAPException soapex) {
+                SAML2Utils.debug.error("SPSSOFederate.initiateECPRequest",
+                    soapex);
+                String[] data3 = { spEntityID, realm };
+                LogUtil.error(Level.INFO, LogUtil.SEND_ECP_PAOS_REQUEST_FAILED,
+                    data3, null);
+                response.sendError(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                    soapex.getMessage());
+                return;
+            }
+
+            AuthnRequestInfo reqInfo = 
+                new AuthnRequestInfo(request,response,realm,spEntityID,
+                                     null, authnRequest,relayState,
+                                     paramsMap);
+            synchronized(SPCache.requestHash) {             
+                SPCache.requestHash.put(authnRequest.getID(),reqInfo);
+            } 
+        } catch (SAML2MetaException sme) {
+            SAML2Utils.debug.error("SPSSOFederate:Error retreiving metadata"
+                                    ,sme);
+            throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("metaDataError"));            
+        }
+            
+
+    }
+
+    /**
+     * Checks if the request is from ECP.
+     * @param request the HttpServletRequest.
+     * @return true if the request is from ECP.
+     */
+    public static boolean isFromECP(HttpServletRequest request) {
+        PAOSHeader paosHeader = null;
+        try {
+            paosHeader = new PAOSHeader(request);
+        } catch (PAOSException pex) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("SPSSOFederate.initiateECPRequest:" +
+                    "no PAOS header");
+            }
+            return false;
+        }
+
+        Map svcOpts = paosHeader.getServicesAndOptions();
+        if ((svcOpts == null) ||
+           (!svcOpts.containsKey(SAML2Constants.PAOS_ECP_SERVICE))) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("SPSSOFederate.initiateECPRequest:" +
+                    "PAOS header doesn't contain ECP service");
+            }
+            return false;
+        }
+
+        String acceptHeader = request.getHeader("Accept");
+        if (acceptHeader == null) {
+            return false;
+        }
+
+        StringTokenizer stz = new StringTokenizer(acceptHeader, ",");
+        while(stz.hasMoreTokens()) {
+            if (stz.nextToken().trim().equals(PAOSConstants.PAOS_MIME_TYPE)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /* Create NameIDPolicy Element */
     private static NameIDPolicy createNameIDPolicy(String spEntityID,
             String nameIdentifier,boolean allowCreate,
@@ -361,7 +642,8 @@ public class SPSSOFederate {
         Map spConfigMap,
         List extensionsList,
         SPSSODescriptorElement spsso,
-        String ssourl
+        String ssourl,
+        boolean isForECP
         ) throws SAML2Exception {
         // generate unique request ID
         String requestID = SAML2Utils.generateID();
@@ -391,7 +673,8 @@ public class SPSSOFederate {
          Integer acsIndex = getIndex(paramsMap,SAML2Constants.ACS_URL_INDEX);
          Integer attrIndex = getIndex(paramsMap,SAML2Constants.ATTR_INDEX);
          
-         String protocolBinding= getParameter(paramsMap,SAML2Constants.BINDING);
+         String protocolBinding = isForECP ? SAML2Constants.PAOS : 
+             getParameter(paramsMap,SAML2Constants.BINDING);
          OrderedSet acsSet = getACSUrl(spsso,protocolBinding);
          String acsURL = (String) acsSet.get(0);
          protocolBinding = (String)acsSet.get(1);
@@ -402,10 +685,12 @@ public class SPSSOFederate {
          
          AuthnRequest authnReq = 
                 ProtocolFactory.getInstance().createAuthnRequest();    
-         if ((destinationURI == null) || (destinationURI.length() == 0)) {
-             authnReq.setDestination(ssourl);
-         } else {
-             authnReq.setDestination(destinationURI);
+         if (!isForECP) {
+             if ((destinationURI == null) || (destinationURI.length() == 0)) {
+                 authnReq.setDestination(ssourl);
+             } else {
+                 authnReq.setDestination(destinationURI);
+             }
          }
          authnReq.setConsent(consent);
          authnReq.setIsPassive(isPassive);
@@ -473,9 +758,8 @@ public class SPSSOFederate {
 
 
     /* Returns the SingleSignOnService URL */
-    static String getSSOURL(List ssoServiceList) {
+    static String getSSOURL(List ssoServiceList, String binding) {
          String ssoURL = null;
-         String binding = SAML2Constants.HTTP_REDIRECT;
          if ((ssoServiceList != null) && (!ssoServiceList.isEmpty())) {
             Iterator i = ssoServiceList.iterator();
             while (i.hasNext()) {
@@ -733,7 +1017,7 @@ public class SPSSOFederate {
    /** 
     * Signs the query string.
     */
-   public static String signQueryString(String queryString,String certAlias)
+    public static String signQueryString(String queryString,String certAlias)
         throws SAML2Exception {
         if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("SPSSOFederate:queryString:" 
@@ -744,5 +1028,5 @@ public class SPSSOFederate {
         KeyProvider kp = KeyUtil.getKeyProviderInstance();
         PrivateKey privateKey = kp.getPrivateKey(certAlias);
         return QuerySignatureUtil.sign(queryString,privateKey);
-  }
+    }
 }
