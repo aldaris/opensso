@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderUtil.java,v 1.1 2007-04-23 03:41:04 hengming Exp $
+ * $Id: ProviderUtil.java,v 1.2 2007-10-04 04:29:13 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import com.sun.identity.shared.debug.Debug;
 public class ProviderUtil {
     private static ProviderManager providerManager;
     private static final String PROVIDER_MANAGER_CLASS_PROP =
-        "com.sun.identity.liberty.ws.uti.providerManagerClass";
+        "com.sun.identity.liberty.ws.util.providerManagerClass";
     static Debug debug = Debug.getInstance("libProviderUtil");
 
     static {
