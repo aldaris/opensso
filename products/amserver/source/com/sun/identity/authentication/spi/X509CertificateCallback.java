@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: X509CertificateCallback.java,v 1.1 2007-06-07 18:57:41 beomsuk Exp $
+ * $Id: X509CertificateCallback.java,v 1.2 2007-10-04 22:05:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,9 +91,9 @@ public class X509CertificateCallback implements Callback {
         return certificate;
     }
     /**
-     * Set the reqSignature flag.
+     * Sets the required signature flag.
      *
-     * @param true if client has to set signature
+     * @param required <code>true</code> if signature is required.
      */
     public void setReqSignature(boolean required) {
         this.reqSignature = required;

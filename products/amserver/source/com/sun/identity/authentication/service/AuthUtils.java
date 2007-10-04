@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.13 2007-01-21 10:34:22 mrudul_uchil Exp $
+ * $Id: AuthUtils.java,v 1.14 2007-10-04 22:05:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -186,40 +186,44 @@ public class AuthUtils extends AuthClientUtils {
      * on error throws AuthException
      */
     
-    /** Returns the AuthContext Handle for the Request.
-     *  @param request, HttpServletRequest
-     *  @param response, HttpServletResponse
-     *  @param sid, SessionID for this request
-     *  @param isSessionUpgrade, a boolean
-     *  @param isBackPost, a boolean
-     *  @return AuthContextLocal object
+    /**
+     * Returns the authentication context for a request.
+     *
+     * @param request HTTP Servlet Request.
+     * @param response HTTP Servlet Response.
+     * @param sid SessionID for this request.
+     * @param isSessionUpgrade <code>true</code> if session upgrade.
+     * @param isBackPost <code>true</code> if back posting.
+     * @return authentication context.
      */
     public static AuthContextLocal getAuthContext(
-    HttpServletRequest request,
-    HttpServletResponse response,
-    SessionID sid,
-    boolean isSessionUpgrade,
-    boolean isBackPost) throws AuthException {
+        HttpServletRequest request,
+        HttpServletResponse response,
+        SessionID sid,
+        boolean isSessionUpgrade,
+        boolean isBackPost) throws AuthException {
         return getAuthContext(request,response,sid,
-                              isSessionUpgrade,isBackPost,false);
+            isSessionUpgrade,isBackPost,false);
     }
     
-    /** Returns the AuthContext Handle for the Request.
-     *  @param request, HttpServletRequest
-     *  @param response, HttpServletResponse
-     *  @param sid, SessionID for this request
-     *  @param isSessionUpgrade, a boolean
-     *  @param isBackPost, a boolean
-     *  @param isLogout, a boolean
-     *  @return AuthContextLocal object
+    /**
+     * Returns the authentication context for a request.
+     *
+     * @param request HTTP Servlet Request.
+     * @param response HTTP Servlet Response.
+     * @param sid SessionID for this request.
+     * @param isSessionUpgrade <code>true</code> if session upgrade.
+     * @param isBackPost <code>true</code> if back posting.
+     * @param isLogout <code>true</code> for logout.
+     * @return authentication context.
      */
     public static AuthContextLocal getAuthContext(
-    HttpServletRequest request,
-    HttpServletResponse response,
-    SessionID sid,
-    boolean isSessionUpgrade,
-    boolean isBackPost,
-    boolean isLogout) throws AuthException {
+        HttpServletRequest request,
+        HttpServletResponse response,
+        SessionID sid,
+        boolean isSessionUpgrade,
+        boolean isBackPost,
+        boolean isLogout) throws AuthException {
         utilDebug.message("In AuthUtils:getAuthContext");
         Hashtable dataHash;
         AuthContextLocal authContext = null;
@@ -413,15 +417,16 @@ public class AuthUtils extends AuthClientUtils {
         return sidString;
     }
     
-    /** Returns the Cookie object created based on
-     *  the cookieName , Session ID and cookieDomain.
-     *  If Session is in Invalid State then cookie is created
-     *  with Auth Cookie Name , if Active/Inactive Session
-     *  state AM Cookie Name will be used to create cookie.
+    /**
+     * Returns the Cookie object created based on the cookie name,
+     * Session ID and cookie domain. If Session is in invalid State then
+     * cookie is created with authentication cookie name , if
+     * Active/Inactive Session state AM Cookie Name will be used to create
+     * cookie.
      *
-     *  @param ac, the AuthContext object
-     *	@param cookieDomain, the cookie domain for creating cookie
-     *  @return cookie, the Cookie object
+     * @param ac the AuthContext object
+     *@param cookieDomain the cookie domain for creating cookie
+     * @return Cookie object.
      */
     public Cookie getCookieString(AuthContextLocal ac,String cookieDomain) {
         
@@ -446,13 +451,14 @@ public class AuthUtils extends AuthClientUtils {
         return cookie;
     }
     
-    /** Returns the Logout cookie.
-     *  @param ac, the AuthContextLocal object
-     *  @param cookieDomain, the cookieDomain
-     *  @return Cookie, the Logout cookie .
+    /**
+     * Returns the Logout cookie.
+     *
+     * @param ac the AuthContextLocal object
+     * @param cookieDomain the cookieDomain
+     * @return Logout cookie .
      */
-    public Cookie getLogoutCookie(AuthContextLocal ac,
-    String cookieDomain) {
+    public Cookie getLogoutCookie(AuthContextLocal ac, String cookieDomain) {
         LoginState loginState = getLoginState(ac);
         SessionID sid = loginState.getSid();
         String logoutCookieString = getLogoutCookieString(sid);
@@ -606,12 +612,13 @@ public class AuthUtils extends AuthClientUtils {
         }
     }    
    
-    /** Returns ture if the session has timed out or the page has timed out
-     *  otherwise false.
-     *  @param authContext , the authcontext object for the request
-     *  @return true if timed out else false.
+    /**
+     * Returns <code>true</code> if the session has timed out or the page has
+     * timed out.
+     *
+     * @param authContext the authentication context object for the request.
+     * @return <code>true</code> if timed out else false.
      */
-    
     public boolean sessionTimedOut(AuthContextLocal authContext) {
         boolean timedOut = false;
         
@@ -813,13 +820,16 @@ public class AuthUtils extends AuthClientUtils {
         return recdCallback;
     }    
     
-    /** Returns the resource based on the default values
-     * @param request , Reference to HttpServletRequest object
-     * @param fileName, name of the file
-     * @return a String, path to the resource.
+    /**
+     * Returns the resource based on the default values.
+     *
+     * @param request HTTP Servlet Request.
+     * @param fileName name of the file
+     * @return Path to the resource.
      */
-    public String getDefaultFileName(HttpServletRequest request,
-    String fileName) {
+    public String getDefaultFileName(
+        HttpServletRequest request,
+        String fileName) {
         // initialize auth service.
         AuthD ad = AuthD.getAuth();
         
@@ -1036,18 +1046,20 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /**
-     * This method returns a set of authentication modules whose authentication
+     * Returns a set of authentication modules whose authentication
      * level equals to or greater than the specified authLevel. If no such
      * module exists, an empty set will be returned.
-     * @param    authLevl    Integer auth level.
-     * @param    organizationDN    DN for the organization.
-     * @param    clientType    Client type, e.g. "genericHTML".
-     * @return    Set    Set of authentication modules whose authentication
-     *    level equals to or greater that the specified authLevel.
+     *
+     * @param authLevel authentication level.
+     * @param organizationDN DN for the organization.
+     * @param clientType  Client type, e.g. "genericHTML".
+     * @return Set of authentication modules whose authentication level
+     *         equals to or greater that the specified authentication level.
      */
-    public static Set getAuthModules(int authLevel,
-    String organizationDN,
-    String clientType) {
+    public static Set getAuthModules(
+        int authLevel,
+        String organizationDN,
+        String clientType) {
         return AMAuthLevelManager.getInstance().getModulesForLevel(authLevel,
         organizationDN, clientType);
     }
@@ -1180,16 +1192,14 @@ public class AuthUtils extends AuthClientUtils {
         return loginState.isCookieSet();
     }
     
-    /** Checks for cookies in the request, returns true
-     *  if cookies found in the request else false.
+    /**
+     * Returns true if cookies found in the request.
      *
-     *  @param req, the HttpServletRequest
-     *  @param ac, the AuthContext object
-     *  @return a boolean,true if cookies found in request else false
+     * @param req  HTTP Servlet Request.
+     * @param ac authentication context.
+     * @return <code>true</code> if cookies found in request.
      */
-    public boolean checkForCookies(HttpServletRequest req, 
-                                   AuthContextLocal ac) {
-        
+    public boolean checkForCookies(HttpServletRequest req, AuthContextLocal ac){
         LoginState loginState =  getLoginState(ac);
         if (loginState!=null) {
             utilDebug.message("set cookieSet to false.");
@@ -1469,15 +1479,18 @@ public class AuthUtils extends AuthClientUtils {
         return 0;
     }       
    
-    /** Returns successURL for this request.
-     *  If goto parameter is in the current request then returns
-     *  the goto parameter else returns the successURL set in the valid session
-     *  @param request, the HttpServletRequest
-     *  @param authContext,AuthContext for this request.
-     *  @param successURL, a String
+    /**
+     * Returns success URL for this request. If <code>goto</code> parameter is
+     * in the current request then returns the <code>goto</code> parameter
+     * else returns the success URL set in the valid session.
+     *
+     * @param request HTTP Servlet Request.
+     * @param authContext authentication context for this request.
+     * @return success URL.
      */
-    public String getSuccessURL(HttpServletRequest request,
-    AuthContextLocal authContext) {
+    public String getSuccessURL(
+        HttpServletRequest request,
+        AuthContextLocal authContext) {
         String successURL = null;
         if (request != null) {
             successURL = request.getParameter("goto");

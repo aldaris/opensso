@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.2 2007-09-18 00:14:19 ericow Exp $
+ * $Id: AuthClientUtils.java,v 1.3 2007-10-04 22:05:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -245,12 +245,14 @@ public class AuthClientUtils {
         return (data);
     }           
 
-    /** Returns the Logout cookie.
-     *  @param sid, the SessionID
-     *  @param cookieDomain, the cookieDomain
-     *  @return a String, the logout cookie string.
+    /**
+     * Returns the Logout cookie.
+     *
+     * @param sid Session ID.
+     * @param cookieDomain Cookie domain.
+     * @return logout cookie string.
      */
-    public Cookie getLogoutCookie(SessionID sid,String cookieDomain) {
+    public Cookie getLogoutCookie(SessionID sid, String cookieDomain) {
         String logoutCookieString = getLogoutCookieString(sid);
         Cookie logoutCookie = createCookie(logoutCookieString,cookieDomain);
         logoutCookie.setMaxAge(0);
@@ -258,14 +260,15 @@ public class AuthClientUtils {
     }
 
 
-    /** Returns the encrpted Logout cookie string .
-     *  The format of this cookie is:
-     *  LOGOUT@protocol@servername@serverport@sessiondomain
-     *  @param sid, the SessionID
-     *  @return a String, the logout cookie string.
+    /**
+     * Returns the encrpted Logout cookie string .
+     * The format of this cookie is:
+     * <code>LOGOUT@protocol@servername@serverport@sessiondomain</code>.
+     *
+     * @param sid the SessionID
+     * @return encrypted logout cookie string.
      */
     public static String getLogoutCookieString(SessionID sid) {
-
         String logout_cookie = null;
         try {
             logout_cookie = (String) AccessController.doPrivileged(
@@ -286,13 +289,14 @@ public class AuthClientUtils {
         return (logout_cookie );
     }
 
-    /** Returns Cookie to be set in the response.
-     *  @param cookieValue, value of cookie
-     *  @param cookieDomain, domain for which cookie will be set.
-     *  @return Cookie , the Cookie object
+    /**
+     * Returns Cookie to be set in the response.
+     *
+     * @param cookieValue value of cookie
+     * @param cookieDomain domain for which cookie will be set.
+     * @return Cookie object.
      */
-    public Cookie createCookie(String cookieValue,String cookieDomain) {
-
+    public Cookie createCookie(String cookieValue, String cookieDomain) {
         String cookieName = getCookieName();
         if (utilDebug.messageEnabled()) {
             utilDebug.message("cookieName : " + cookieName);
@@ -384,15 +388,19 @@ public class AuthClientUtils {
     }
 
     /**
-     * Creates a Cookie with the cookieName , cookieValue for
-     * the cookie domains specified.
+     * Creates a Cookie with the <code>cookieName</code>,
+     * <code>cookieValue</code> for the cookie domains specified.
+     *
      * @param cookieName is the name of the cookie
      * @param cookieValue is the value fo the cookie
-     * @param cookie Domain for which the cookie is to be set.
-     * @return the cookie object
+     * @param cookieDomain Domain for which the cookie is to be set.
+     * @return the cookie object.
      */
-    public Cookie createCookie(String cookieName , String cookieValue ,
-        String cookieDomain) {
+    public Cookie createCookie(
+        String cookieName,
+        String cookieValue,
+        String cookieDomain
+    ) {
         if (utilDebug.messageEnabled()) {
             utilDebug.message("cookieName   : " + cookieName);
             utilDebug.message("cookieValue  : " + cookieValue);
@@ -498,24 +506,24 @@ public class AuthClientUtils {
     }     
 
     /**
-     * adds Logout cookie to URL
+     * Adds Logout cookie to URL.
+     *
      * @param url is the url to be rewritten with the logout cookie
      * @param logoutCookie is the logoutCookie String
-     * @param cookieSupported is a boolean which indicates whether
+     * @param isCookieSupported is a boolean which indicates whether
      *        cookie support is true or false
-     * @return Returns a URL with the logout cookie appended to the url.
-     *
+     * @return URL with the logout cookie appended to it.
      */
-    public static String addLogoutCookieToURL(String url,
+    public static String addLogoutCookieToURL(
+        String url,
         String logoutCookie,
         boolean isCookieSupported) {
         String logoutURL = null;
+
         if ((logoutCookie == null) || (isCookieSupported)) {
             logoutURL = url;
         } else {
-
             StringBuffer cookieString = new StringBuffer();
-
             cookieString.append(AMURLEncDec.encode(getCookieName()))
             .append("=").append(AMURLEncDec.encode(logoutCookie));
 
@@ -542,18 +550,17 @@ public class AuthClientUtils {
         return (logoutURL);
     }                 
 
-    /** Returns the SessionID for the request.
-     *  The cookie in the request for invalid sessions
-     *  is in auth cookie ,com.iplanet.am.auth.cookie,
-     *  and for active/inactive sessions in
-     *  com.iplanet.am.cookie
+    /**
+     * Returns the Session ID for the request.
+     * The cookie in the request for invalid sessions
+     * is in authentication cookie, <code>com.iplanet.am.auth.cookie</code>,
+     * and for active/inactive sessions in <code>com.iplanet.am.cookie</code>.
      *
-     *  @param request, HttpServletRequest object
-     *  @return SessionID, session id for this request
+     *  @param request HttpServletRequest object.
+     *  @return session id for this request.
      */
     private static SessionID getSidFromCookie(HttpServletRequest request) {
         SessionID sessionID = null;
-        /// get auth cookie
         String authCookieName = getAuthCookieName();
         String sidValue =
             CookieUtils.getCookieValueFromReq(request,authCookieName);
@@ -568,17 +575,15 @@ public class AuthClientUtils {
         return (sessionID);
     }
 
-    /** Returns the SessionID for this request .
-     *  If Auth Cookie and Valid AM Cookie are
-     *  there and request method is GET then use Valid
-     *  AM Cookie else use Auth Cookie.
-     *  The cookie in the request for invalid sessions
-     *  is in auth cookie ,com.iplanet.am.auth.cookie,
-     *  and for active/inactive sessions in
-     *  com.iplanet.am.cookie
+    /**
+     * Returns the Session ID for this request.  If Authetnication Cookie and
+     * Valid AM Cookie are there and request method is GET then use Valid
+     * AM Cookie else use Auth Cookie. The cookie in the request for invalid
+     * sessions is in auth cookie, <code>com.iplanet.am.auth.cookie</code>,
+     * and for active/inactive sessions in <code>com.iplanet.am.cookie</code>.
      *
-     *  @param request, HttpServletRequest object
-     *  @return session, SessionID for this request
+     * @param request HTTP Servlet Request.
+     * @return Session ID for this request.
      */
     public SessionID getSessionIDFromRequest(HttpServletRequest request) {
         boolean isGetRequest= (request !=null &&
@@ -602,10 +607,11 @@ public class AuthClientUtils {
     }    
 
     /**
-     * Returns true if the request has the <code>arg=newsession</code>
-     * query parameter.
+     * Returns <code>true</code> if the request has the
+     * <code>arg=newsession</code> query parameter.
      *
-     * returns true if this parameter is present otherwise false.
+     * @param reqDataHash Request Data Hashtable.
+     * returns <code>true</code> if this parameter is present.
      */
     public boolean newSessionArgExists(Hashtable reqDataHash) {
         String arg = (String) reqDataHash.get("arg");
@@ -1109,7 +1115,7 @@ public class AuthClientUtils {
      * @param orgParam is the org or domain query param ,
      *        or the server host name
      * @param noQueryParam is a boolean indicating that the
-     *	       the request did not have query.
+     *        the request did not have query.
      * @param request is the HttpServletRequest object
      * @return A String which is the organization DN
      */
@@ -1179,16 +1185,16 @@ public class AuthClientUtils {
      * 4. URL - check if the orgName passed is a DNS alias (URL).
      * 5. If no orgDN is found null is returned.
      *
-     * @param request is the HttpServletRequest object
-     * @param requeshHash is the query Hashtable
-     * @return A String which is the organization DN
+     * @param request HTTP Servlet Request object.
+     * @param requestHash Query Hashtable.
+     * @return Organization DN.
      */
-    public String getDomainNameByRequest(HttpServletRequest request,
+    public String getDomainNameByRequest(
+        HttpServletRequest request,
         Hashtable requestHash) {
-
         boolean noQueryParam=false;
-
         String orgParam = getOrgParam(requestHash);
+
         if (utilDebug.messageEnabled()) {
             utilDebug.message("orgParam is.. :" + orgParam);
         }
@@ -1211,10 +1217,10 @@ public class AuthClientUtils {
     }
 
     /**
-     * This method returns the org or domain parameter passed as a
-     * query in the request
-     * @param Hashtable containing the query parameters
-     * @return A String which is the orgName
+     * Returns the org or domain parameter passed as a query in the request.
+     *
+     * @param requestHash Hashtable containing the query parameters
+     * @return organization name.
      */
     public static String getOrgParam(Hashtable requestHash) {
         String orgParam = null;
@@ -1248,11 +1254,13 @@ public class AuthClientUtils {
         }
     }
 
-    /* check if the host name entered in the URL is a valid
-     * one
+    /**
+     * Returns <code>true</code> if the host name in the URL is valid.
+     *
+     * @param hostName Host name.
+     * @return <code>true</code> if the host name in the URL is valid.
      */
     public static boolean isValidFQDNRequest(String hostName) {
-
         if (utilDebug.messageEnabled()) {
             utilDebug.message("hostName is : " + hostName);
         }
@@ -1271,18 +1279,22 @@ public class AuthClientUtils {
         return (retVal);
     }
 
-    /* this method retrieves the valid hostname from the fqdn map and
-     * constructs the correct url. the request will be forwarded to
-     * the new url
+    /**
+     * Returns the valid hostname from the fqdn map and constructs the correct
+     * URL. The request will be forwarded to the new URL.
+     *
+     * @param partialHostName Partial host name.
+     * @param servletRequest HTTP Servlet Request.
      */
-    public static String getValidFQDNResource(String partialHostName,
-        HttpServletRequest servletRequest) {
-
-        // get mapping from table
+    public static String getValidFQDNResource(
+        String partialHostName,
+        HttpServletRequest servletRequest
+    ) {
         if (utilDebug.messageEnabled()) {
             utilDebug.message("Get mapping for " + partialHostName);
         }
 
+        // get mapping from table
         String validHostName =
             fqdnUtils.getFullyQualifiedHostName(partialHostName);
 
@@ -1467,15 +1479,16 @@ public class AuthClientUtils {
         }
     }
 
-    /** Returns the Cookie object created based on
-     *  the cookieName, Session ID and cookieDomain.
-     *  If AuthContext status is not SUCCESS then cookie is created
-     *  with Auth Cookie Name , else AM Cookie Name will be used
-     *  to create cookie.
+    /**
+     * Returns the Cookie object created based on the <code>cookieName</code>,
+     * Session ID and <code>cookieDomain</code>.
+     * If <code>AuthContext,/code> status is not <code>SUCCESS</code> then
+     * cookie is created with authentication cookie Name, else AM Cookie Name
+     * will be used to create cookie.
      *
-     *  @param ac, the AuthContext object
-     *	@param cookieDomain, the cookie domain for creating cookie
-     *  @return cookie, the Cookie object
+     * @param ac the AuthContext object
+     * @param cookieDomain the cookie domain for creating cookie.
+     * @return Cookie object.
      */
     public Cookie getCookieString(AuthContext ac, String cookieDomain) {
         Cookie cookie = null;
@@ -1500,17 +1513,20 @@ public class AuthClientUtils {
         return (cookie);
     }
 
-    /**Returns URL with the cookie value in the URL.
-     * The cookie in the rewritten url will have
-     * the AM cookie if session is active/inactive and
-     * auth cookie if session is invalid
-     * @param url, a String
-     * @param request, HttpServletRequest
-     * @param ac, AuthContext object
-     * @return a String, the encoded URL
+    /**
+     ( Returns URL with the cookie value in the URL. The cookie in the
+     * re-written URL will have the AM cookie if session is active/inactive
+     * and authentication cookie if session is invalid.
+     *
+     * @param url URL to be encoded.
+     * @param request HTTP Servlet Request.
+     * @param ac Authentication Context.
+     * @return the encoded URL.
      */
     public String encodeURL(
-        String url, HttpServletRequest request, AuthContext ac) {
+        String url,
+        HttpServletRequest request,
+        AuthContext ac) {
         if (isCookieSupported(request)) {
             return (url);
         }
@@ -1548,15 +1564,19 @@ public class AuthClientUtils {
         return (encodedURL);
     }
 
-    /** Returns the resource based on the default values
-     * @param request , Reference to HttpServletRequest object
-     * @param fileName, name of the file
-     * @param locale, java.util.Locale
-     * @param servletContext, ServletContext for server
-     * @return a String, path to the resource.
+    /**
+     * Returns the resource based on the default values.
+     *
+     * @param request HTTP Servlet Request.
+     * @param fileName name of the file
+     * @param locale Locale used for the search.
+     * @param servletContext Servlet Context for server
+     * @return Path to the resource.
      */
-    public String getDefaultFileName(HttpServletRequest request,
-        String fileName, java.util.Locale locale, 
+    public String getDefaultFileName(
+        HttpServletRequest request,
+        String fileName,
+        java.util.Locale locale, 
         ServletContext servletContext) {
 
         String strlocale = "";
@@ -1734,19 +1754,27 @@ public class AuthClientUtils {
         return (orgPath);
     }
 
-    /** Returns the File name based on the given input values
-     * @param fileName, name of the file
-     * @param localeName, String localeName
-     * @param orgDN, String Org DN
-     * @param servletRequest, Reference to HttpServletRequest object
-     * @param servletContext, ServletContext for server
-     * @param indexType, AuthContext.IndexType
-     * @param indexName, String indexName associated with the indexType
-     * @return a String, File name of the resource.
+    /**
+     * Returns the File name based on the given input values.
+     *
+     * @param fileName Name of the file.
+     * @param localeName Locale name.
+     * @param orgDN Organization distinguished name.
+     * @param servletRequest HTTP Servlet Request.
+     * @param servletContext Servlet Context for server.
+     * @param indexType AuthContext Index Type.
+     * @param indexName index name associated with the index type.
+     * @return File name of the resource.
      */
-    public String getFileName(String fileName,String localeName,String orgDN,
-        HttpServletRequest servletRequest, ServletContext servletContext,
-        AuthContext.IndexType indexType, String indexName) {
+    public String getFileName(
+        String fileName,
+        String localeName,
+        String orgDN,
+        HttpServletRequest servletRequest,
+        ServletContext servletContext,
+        AuthContext.IndexType indexType,
+        String indexName
+    ) {
         String fileRoot = getFileRoot();
         String templateFile = null;
         try {
@@ -2149,13 +2177,14 @@ public class AuthClientUtils {
     }
 
     /**
-     * Creates new server cookie with 0 max age given
-     * <code>HttpServletResponse</code>response and <code>Cookie</code>
-     * @param aCookie auth context associated with lb cookie
-     * @param response <code>HttpServletResponse</code> response object
+     * Clears server cookie.
+     *
+     * @param cookieName Cookie Name.
+     * @param response HTTP Servlet Response.
      */
-    public void clearServerCookie(String cookieName,
-        HttpServletResponse response){
+    public void clearServerCookie(
+        String cookieName,
+        HttpServletResponse response) {
         if (utilDebug.messageEnabled()) {
             utilDebug.message("In clear server Cookie = " +  cookieName);
         }

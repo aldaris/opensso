@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectCallback.java,v 1.1 2007-01-21 10:34:27 mrudul_uchil Exp $
+ * $Id: RedirectCallback.java,v 1.2 2007-10-04 22:05:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -173,13 +173,12 @@ public class RedirectCallback implements Callback, java.io.Serializable {
     }
     
     /**
-     * Sets the statusParameter to be checked from HttpServletRequest object at 
-     * the result of redirection.
+     * Sets the status parameter to be checked from HTTP Servlet Request object
+     * at the result of redirection.
      *
-     * @param statusParameter statusParameter to be checked from 
-     * HttpServletRequest object at the result of redirection.
+     * @param statusParameter Status parameter.
      */
-    public void setStatusParameter(String statusHeader) {
+    public void setStatusParameter(String statusParameter) {
         this.statusParameter = statusParameter;
     }
     

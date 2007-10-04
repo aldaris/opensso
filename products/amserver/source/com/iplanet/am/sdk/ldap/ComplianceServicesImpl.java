@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ComplianceServicesImpl.java,v 1.6 2007-04-02 06:02:06 veiming Exp $
+ * $Id: ComplianceServicesImpl.java,v 1.7 2007-10-04 22:05:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -449,7 +449,7 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
      * <p>
      * 
      * @param po a PersistentObject of the entry.
-     * @param attributeName Array of attribute names.
+     * @param attributeNames Array of attribute names.
      * @throws AMException if the fetched attribute names has inetuserstatus
      *         attribute and the value of which is "deleted" or if unable to
      *         fetch the attribute set.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLResponse.java,v 1.3 2006-12-22 02:51:21 pawand Exp $
+ * $Id: AuthXMLResponse.java,v 1.4 2007-10-04 22:05:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -460,8 +460,9 @@ public class AuthXMLResponse {
     }
 
     /**
-     * Set previous AuthContext
-     * @param oldAuthContext previous AuthContext object
+     * Sets previous authentication context.
+     *
+     * @param aOldAuthContext previous authentication context object.
      */
     public void setPrevAuthContext(AuthContextLocal aOldAuthContext) {
         this.oldAuthContext = aOldAuthContext;
