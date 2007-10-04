@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetSupportedIdTypes.java,v 1.1 2006-05-31 21:49:52 veiming Exp $
+ * $Id: GetSupportedIdTypes.java,v 1.2 2007-10-04 06:09:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,8 +68,13 @@ public class GetSupportedIdTypes extends IdentityCommand {
             Set supportedIdTypes = amir.getSupportedIdTypes();
 
             if ((supportedIdTypes != null) && !supportedIdTypes.isEmpty()) {
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("get-supported-idtypes-succeed"), 
+                    (Object[])params));
+                outputWriter.printlnMessage("");
                 String msg = getResourceString("supported-type-result");
                 String[] arg = {""};
+
                 for (Iterator i = supportedIdTypes.iterator(); i.hasNext(); ) {
                     arg[0] = ((IdType)i.next()).getName();
                     outputWriter.printlnMessage(
@@ -80,9 +85,6 @@ public class GetSupportedIdTypes extends IdentityCommand {
                     "no-supported-idtype"));
             }
 
-            outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("get-supported-idtypes-succeed"), 
-                (Object[])params));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
                 "SUCCEED_GET_SUPPORTED_IDTYPES", params);
         } catch (IdRepoException e) {

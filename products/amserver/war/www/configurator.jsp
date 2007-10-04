@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.14 2007-09-07 20:29:56 jonnelson Exp $
+   $Id: configurator.jsp,v 1.15 2007-10-04 06:09:40 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -163,15 +163,7 @@
             } 
         }
         
-        String configDir = null;
-        try {
-            ResourceBundle rb = ResourceBundle.getBundle(
-                SetupConstants.BOOTSTRAP_PROPERTIES_FILE);
-            configDir = rb.getString(SetupConstants.PRESET_CONFIG_DIR);
-        } catch (MissingResourceException e) {
-            //ignored because bootstrap properties file maybe absent.
-        }
-
+        String configDir = AMSetupServlet.getPresetConfigDir();
         if ((configDir == null) || (configDir.length() == 0)) {
             basedir = System.getProperty("user.home");
             if (File.separatorChar == '\\') {
@@ -179,9 +171,7 @@
             }
         } else {
             presetConfigDir = true;
-            basedir = configDir + "/" +
-                SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX +
-            AMSetupServlet.getNormalizedRealPath(config.getServletContext());
+            basedir = configDir;
         }
         
         String subDomain;

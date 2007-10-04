@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.13 2007-09-06 17:41:26 rajeevangal Exp $
+ * $Id: SetupConstants.java,v 1.14 2007-10-04 06:09:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -401,5 +401,9 @@ public interface SetupConstants {
      * Property to set the root of configuration directory.
      */
     String PRESET_CONFIG_DIR = "configuration.dir";
+    
+    /**
+     * Tag in bootstrap file for real path substitution.
+     */
+    String TAG_REALPATH = "@REAL_PATH@";
 }
-

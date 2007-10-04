@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.22 2007-09-06 17:41:26 rajeevangal Exp $
+ * $Id: AMSetupServlet.java,v 1.23 2007-10-04 06:09:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -441,12 +441,23 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
-    private static String getPresetConfigDir() {
+    public static String getPresetConfigDir() {
         String configDir = null;
         try {
             ResourceBundle rb = ResourceBundle.getBundle(
                 SetupConstants.BOOTSTRAP_PROPERTIES_FILE);
             configDir = rb.getString(SetupConstants.PRESET_CONFIG_DIR);
+            
+            if ((configDir != null) && (configDir.length() > 0)) {
+                String realPath = getNormalizedRealPath(servletCtx);
+                if (realPath != null) {
+                    configDir = configDir.replaceAll(
+                        SetupConstants.TAG_REALPATH, realPath);
+                } else {
+                    throw new ConfiguratorException(
+                        "cannot get configuration path");
+                }
+            }
         } catch (MissingResourceException e) {
             //ignored because bootstrap properties file maybe absent.
         }
@@ -455,20 +466,11 @@ public class AMSetupServlet extends HttpServlet {
 
     private static String getConfigDirectory()
         throws IOException {
-        String configDir = null;
-        String presetConfigDir = getPresetConfigDir();
-        if ((presetConfigDir != null) && (presetConfigDir.length() > 0)) {
-            String realPath = getNormalizedRealPath(servletCtx);
-            if (realPath != null) {
-                configDir = presetConfigDir + "/" +
-                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + realPath;
-                File f = new File(configDir);
-                if (!f.exists()) {
-                    configDir = null;
-                }
-            } else {
-                throw new ConfiguratorException(
-                    "cannot get configuration path");
+        String configDir = getPresetConfigDir();
+        if ((configDir  != null) && (configDir .length() > 0)) {
+            File f = new File(configDir);
+            if (!f.exists()) {
+                configDir = null;
             }
         } else {
             try {
@@ -483,20 +485,13 @@ public class AMSetupServlet extends HttpServlet {
         }
         return configDir;
     }
+    
 
     private static void createBootstrapFile(Map configMap)
         throws ConfiguratorException, IOException {
         String configDir = getPresetConfigDir();
         if ((configDir != null) && (configDir.length() > 0)) {
-            String realPath = getNormalizedRealPath(servletCtx);
-            if (realPath != null) {
-                String basedir = configDir + "/" +
-                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + realPath;
-                configMap.put(SetupConstants.CONFIG_VAR_BASE_DIR, basedir);
-            } else {
-                throw new ConfiguratorException(
-                    "cannot get configuration path");
-            }
+            configMap.put(SetupConstants.CONFIG_VAR_BASE_DIR, configDir);
         } else {
             String bootstrap = getBootStrapFile();
             File btsFile = new File(bootstrap);

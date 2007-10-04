@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.40 2007-09-29 05:04:04 veiming Exp $
+ * $Id: AccessManager.java,v 1.41 2007-10-04 06:09:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1102,9 +1102,9 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-supported-idtypes-succeed=Supported identity type in realm, {0} is printed.",
+            "get-supported-idtypes-succeed=The following identity types are supported in realm {0}.",
             "supported-type-result={0}",
-            "no-supported-idtype=There are no supported identity type."})
+            "no-supported-idtype=There are no supported identity types."})
     private String show_identity_types;
 
     @SubCommandInfo(
