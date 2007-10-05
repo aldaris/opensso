@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.7 2007-08-28 23:28:15 weisun2 Exp $
+ * $Id: IDPSingleLogout.java,v 1.8 2007-10-05 23:00:00 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -541,8 +541,6 @@ public class IDPSingleLogout {
         if (!isMultiProtocolSession || 
             (retStatus != SingleLogoutManager.LOGOUT_REDIRECTED_STATUS)) {
             logoutRes = updateLogoutResponse(logoutRes, retStatus);
-            //Wei 
-            
             List partners = IDPProxyUtil.getSessionPartners(request);
             if (partners != null &&  !partners.isEmpty()) {
                 IDPProxyUtil.sendProxyLogoutRequest(request, response,
