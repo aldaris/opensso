@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amNaming.xml,v 1.2 2007-08-30 00:26:06 arviranga Exp $
+   $Id: amNaming.xml,v 1.3 2007-10-05 00:31:14 arviranga Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -132,7 +132,7 @@
                     syntax="url"
                     i18nKey="a115">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/security/</Value>
+                        <Value>%protocol://%host:%port/@SERVER_URI@/identityservices/</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 
@@ -141,7 +141,7 @@
                     syntax="url"
                     i18nKey="a116">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/securityhandler/</Value>
+                        <Value>%protocol://%host:%port/@SERVER_URI@/identity/</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 
