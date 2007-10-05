@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.6 2007-10-05 17:56:33 qcheng Exp $
+$Id: README,v 1.7 2007-10-05 22:56:51 qcheng Exp $
 
 %% Contents:
     %% 1. Build requirements
@@ -56,7 +56,7 @@ is setup correctly pointing to its location.
        or
        - download opensso_server_samples.war, console.jar, opensso.jar, 
          opensso-test.jar, amclientsdk.jar, amAdminTools.zip, 
-         openssosamples.zip from
+         openssosamples.zip, amclientsdk.jar, opensso-sharedlib.jar from
          https://opensso.dev.java.net/public/use/index.html and copy them to 
          the "opensso/products/federation/extlib" directory of your workspace.
 
