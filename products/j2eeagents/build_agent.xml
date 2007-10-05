@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.5 2007-09-14 00:12:11 madan_ranganath Exp $
+   $Id: build_agent.xml,v 1.6 2007-10-05 21:40:22 leiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -57,7 +57,9 @@
     </path>
 
     <target name="build" depends="preparebuild">
-        <javac destdir="${j2eeagents.container.classes.dir}" source="1.5" target="1.5"
+        <javac destdir="${j2eeagents.container.classes.dir}" 
+               source="${jdk.source.version}" 
+               target="${jdk.target.version}"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${j2eeagents.src.dir}"/>
             <classpath refid="build.class.path"/>
