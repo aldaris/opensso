@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureWSFed.java,v 1.1 2007-10-05 18:23:47 mrudulahg Exp $
+ * $Id: ConfigureWSFed.java,v 1.2 2007-10-05 23:37:17 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,8 @@ public class ConfigureWSFed extends WSFedCommon {
     private Map<String, String> configMap;
     private Map<String, String> spConfigMap;
     private Map<String, String> idpConfigMap;
+    private String spurl;
+    private String idpurl;
     
     /** Creates a new instance of ConfigureWSFed */
     public ConfigureWSFed() {
@@ -89,11 +91,11 @@ public class ConfigureWSFed extends WSFedCommon {
             configMap = getMapFromResourceBundle("WSFedTestConfigData");
             log(Level.FINEST, "ConfigureWSFed", "Map:" + configMap);
             
-            String spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)
+            spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)
             + "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_SP_PORT)
                     + configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
-            String idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL)
+            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL)
             + "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_IDP_PORT)
                     + configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
