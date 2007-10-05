@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.7 2007-09-28 17:34:30 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.8 2007-10-05 18:25:44 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,6 +66,9 @@ public class ClientConfigCreator {
     private String IDFF_FILE_CLIENT_PROPERTIES =
             "resources" + fileseparator + "idff" + fileseparator +
             "idffTestConfigData.properties";
+    private String WSFED_FILE_CLIENT_PROPERTIES =
+            "resources" + fileseparator + "wsfed" + fileseparator +
+            "WSFedTestConfigData.properties";
 
     /**
      * Default constructor. Calls method to transfer properties from:
@@ -84,6 +87,8 @@ public class ClientConfigCreator {
                 createFileFromMap(properties2, SAML_FILE_CLIENT_PROPERTIES);
             if (executionMode.indexOf("idff") != -1)
                 createFileFromMap(properties2, IDFF_FILE_CLIENT_PROPERTIES);
+            if (executionMode.indexOf("wsfed") != -1)
+                createFileFromMap(properties2, WSFED_FILE_CLIENT_PROPERTIES);
         }
         createFileFromMap(properties1, ALL_FILE_CLIENT_PROPERTIES);
     }

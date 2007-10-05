@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebUtils.java,v 1.1 2007-03-29 21:41:37 mrudulahg Exp $
+ * $Id: WebUtils.java,v 1.2 2007-10-05 18:24:20 mrudulahg Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,6 @@ public class WebUtils {
         String formName
     ) throws Exception {
         HtmlForm form;
-//        System.out.println(page.getWebResponse().getContentAsString());
         if (formName.equals(NULL_FORMNAME)) {
             form = (HtmlForm)page.getForms().get(0);
         } else {
@@ -134,12 +133,15 @@ public class WebUtils {
 
         Page result = null;
         String btnName = data.getButtonName();
-        
-        if (btnName.trim().length() == 0) {
-            result = form.submit(); 
-        } else {
-            HtmlInput btn = form.getInputByName(btnName);
-            result = btn.click();
+        try {
+            if (btnName.trim().length() == 0) {
+                result = form.submit(); 
+            } else {
+                HtmlInput btn = form.getInputByName(btnName);
+                result = btn.click();
+            }
+        } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+            //do nothing.
         }
 
         data.validate(result);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.2 2007-08-10 19:55:13 mrudulahg Exp $
+ * $Id: MultiProtocolCommon.java,v 1.3 2007-10-05 18:24:05 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,20 +76,8 @@ public class MultiProtocolCommon extends TestCommon {
                         null, null, spec);
             }
             
-            String spPage = spmetaPage.getWebResponse().getContentAsString();
-            if (spPage.indexOf("EntityDescriptor") != -1) {
-                arrMetadata[0] = spPage.substring(
-                        spPage.indexOf("EntityDescriptor") - 4,
-                        spPage.lastIndexOf("EntityDescriptor") + 17);
-                arrMetadata[1] = spPage.substring(
-                        spPage.indexOf("EntityConfig") - 4,
-                        spPage.lastIndexOf("EntityConfig") + 13);
-            } else {
-                System.out.println(spPage);
-                arrMetadata[0] = null;
-                arrMetadata[1] = null;
-                assert false;
-            }
+            arrMetadata[0] = getMetadataFromPage(spmetaPage, spec);
+            arrMetadata[1] = getExtMetadataFromPage(spmetaPage, spec);
             if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
@@ -151,19 +139,9 @@ public class MultiProtocolCommon extends TestCommon {
                         null, null, null, null, null, null, null, null, null,
                         spec);
             }
-            String idpPage = idpmetaPage.getWebResponse().getContentAsString();
-            if (idpPage.indexOf("EntityDescriptor") != -1) {
-                arrMetadata[0] = idpPage.substring(
-                        idpPage.indexOf("EntityDescriptor") - 4,
-                        idpPage.lastIndexOf("EntityDescriptor") + 17);
-                arrMetadata[1] = idpPage.substring(
-                        idpPage.indexOf("EntityConfig") - 4,
-                        idpPage.lastIndexOf("EntityConfig") + 13);
-            } else {
-                arrMetadata[0] = null;
-                arrMetadata[1] = null;
-                assert false;
-            }
+            
+            arrMetadata[0] = getMetadataFromPage(idpmetaPage, spec);
+            arrMetadata[1] = getExtMetadataFromPage(idpmetaPage, spec);
             if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
@@ -187,6 +165,7 @@ public class MultiProtocolCommon extends TestCommon {
         }
         return arrMetadata;
     }
+    
     /**
      * This method fills map with SP configuration data which is needed by
      * TestCommon.configureProduct method.
@@ -284,7 +263,7 @@ public class MultiProtocolCommon extends TestCommon {
     public static String getMetadataFromPage(HtmlPage page) {
         String metadata = "";
         String metaPage = page.getWebResponse().getContentAsString();
-        if (!(metaPage.indexOf("EntityConfig") == -1)) {
+        if (!(metaPage.indexOf("EntityDescriptor") == -1)) {
             metadata = metaPage.substring(metaPage.
                     indexOf("EntityDescriptor") - 4,
                     metaPage.lastIndexOf("EntityDescriptor") + 17);
@@ -310,5 +289,49 @@ public class MultiProtocolCommon extends TestCommon {
         }
         return metadata;
     }
+    
+    /**
+     * This method grep Metadata from the htmlpage & returns as the string.
+     * @param HtmlPage page which contains metadata
+     */
+    public static String getMetadataFromPage(HtmlPage page, String spec) {
+        String metadata = "";
+        if (spec.equals("wsfed")) {
+            String metaPage = page.getWebResponse().getContentAsString();
+            if (!(metaPage.indexOf("Federation ") == -1)) {
+                metadata = metaPage.substring(metaPage.
+                        indexOf("Federation ") - 4,
+                        metaPage.indexOf("/Federation", metaPage.
+                        indexOf("Federation ")) + 12);
+                metadata = metadata.replaceAll("&lt;", "<");
+                metadata = metadata.replaceAll("&gt;", ">");
+            }
+        } else if ((spec.equals("saml2")) || (spec.equals("idff"))) {
+            metadata = getMetadataFromPage(page);
+        }
+        return metadata;
+    }
+    
+    /**
+     * This method grep ExtendedMetadata from the htmlpage & returns the string
+     * @param HtmlPage page which contains extended metadata
+     */
+    public static String getExtMetadataFromPage(HtmlPage page, String spec) {
+        String metadata = "";
+        if (spec.equals("wsfed")) {
+            String metaPage = page.getWebResponse().getContentAsString();
+            if (!(metaPage.indexOf("FederationConfig") == -1)) {
+                metadata = metaPage.substring(metaPage.
+                        indexOf("FederationConfig") - 4,
+                        metaPage.lastIndexOf("FederationConfig") + 17);
+                metadata = metadata.replaceAll("&lt;", "<");
+                metadata = metadata.replaceAll("&gt;", ">");
+            }
+        } else if ((spec.equals("saml2")) || (spec.equals("idff"))) {
+            metadata = getExtMetadataFromPage(page);
+        }
+        return metadata;
+    }
+
 }
 
