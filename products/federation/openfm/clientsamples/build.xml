@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.11 2007-10-04 05:55:58 mrudul_uchil Exp $
+   $Id: build.xml,v 1.12 2007-10-05 17:57:08 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -40,8 +40,10 @@
     <property name="clientsamples.war.packages.dir" location="${clientsamples.packages.dir}/war"/>
     <property name="clientsamples.sdk.packages.dir" location="${clientsamples.packages.dir}/sdk"/>
     <property name="clientsamples.packages.temp.dir" location="${openfm.built.dir}/clientsamples/.package"/>
+    <property name="clientsamples.packages.temp2.dir" location="${openfm.built.dir}/clientsamples/.AMConfig"/>
+    <property name="amserver.samples.dir" location="${amserver.base.dir}/samples"/>
 
-    <target name="all" depends="preparebuild, jdk15-client-war-samples, jdk14-client-war-samples, client-sdk-samples">
+    <target name="all" depends="preparebuild, client-properties, jdk15-client-war-samples, jdk14-client-war-samples, client-sdk-samples">
         <delete dir="${clientsamples.packages.temp.dir}" />
         <delete dir="${clientsamples.war.packages.dir}" />
         <mkdir dir="${clientsamples.war.packages.dir}" />
@@ -52,6 +54,7 @@
         <zip destfile="${fm.dist.dir}/fam-client.zip" basedir="${clientsamples.packages.dir}" />
 
         <checksum file="${fm.dist.dir}/fam-client.zip" algorithm="SHA" fileext=".sha" />
+        <delete dir="${clientsamples.packages.temp2.dir}" />
     </target>
 
     <target name="jdk14-client-war-samples">
@@ -67,6 +70,12 @@
                 <include name="console/images/PrimaryProductName.png"/>
             </patternset>
         </unjar>
+        <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes"/>
+        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes"
+              file="${clientsamples.packages.temp2.dir}/AMConfig.properties.template"/>
+        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes">
+            <fileset dir="${openfm.classes.dir}" includes="com/sun/identity/setup/ClientConfiguratorFilter.class, com/sun/identity/setup/SetupClientWARSamples.class" />
+        </copy>
         <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/lib" />
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib"
               file="${fm.dist.dir}/famclientsdk.jar"/>
@@ -77,6 +86,20 @@
             <fileset dir="${openfm.clientsamples.dir}/war"
                  excludes="**/CVS build.xml" />
         </copy>
+        <!-- copy client samples from OpenSSO (amserver) -->
+        <delete dir="${clientsamples.packages.temp.dir}" />
+        <mkdir dir="${clientsamples.packages.temp.dir}" />
+        <unzip src="${openfm.extlib.dir}/openssosamples.zip" dest="${clientsamples.packages.temp.dir}">
+            <patternset>
+                <include name="war/**"/>
+            </patternset>
+        </unzip>
+        <copy todir="${clientsamples.war.packages.dir}">
+            <fileset dir="${clientsamples.packages.temp.dir}/war"
+                 excludes="index.html" />
+        </copy>
+        <copy file="${clientsamples.packages.temp.dir}/war/index.html" tofile="${clientsamples.war.packages.dir}/am-samples.html" />
+
         <delete dir="META-INF" />
 	<mkdir dir="${clientsamples.packages.temp.dir}" />
 	<move file="${clientsamples.war.packages.dir}/WEB-INF/web.xml" tofile="${clientsamples.packages.temp.dir}/web.xml" />
@@ -102,6 +125,12 @@
                 <include name="console/images/PrimaryProductName.png"/>
             </patternset>
         </unjar>
+        <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes"/>
+        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes"
+              file="${clientsamples.packages.temp2.dir}/AMConfig.properties.template"/>
+        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes">
+            <fileset dir="${openfm.classes.dir}" includes="com/sun/identity/setup/ClientConfiguratorFilter.class, com/sun/identity/setup/SetupClientWARSamples.class" />
+        </copy>
         <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/lib" />
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib"
               file="${fm.dist.dir}/famclientsdk.jar"/>
@@ -121,7 +150,26 @@
             <fileset dir="${openfm.clientsamples.dir}/war"
                  excludes="**/CVS build.xml" />
         </copy>
+        <copy todir="${clientsamples.war.packages.dir}">
+            <fileset dir="${openfm.clientsamples.dir}/war"
+                 excludes="**/CVS build.xml" />
+        </copy>
+        <!-- copy client samples from OpenSSO (amserver) -->
+	<delete dir="${clientsamples.packages.temp.dir}" />
+	<mkdir dir="${clientsamples.packages.temp.dir}" />
+        <unzip src="${openfm.extlib.dir}/openssosamples.zip" dest="${clientsamples.packages.temp.dir}">
+            <patternset>
+                <include name="war/**"/>
+            </patternset>
+        </unzip>
+        <copy todir="${clientsamples.war.packages.dir}">
+            <fileset dir="${clientsamples.packages.temp.dir}/war"
+                 excludes="index.html" />
+        </copy>
+        <copy file="${clientsamples.packages.temp.dir}/war/index.html" tofile="${clientsamples.war.packages.dir}/am-samples.html" />
+
         <delete dir="META-INF" />
+	<delete dir="${clientsamples.packages.temp.dir}" />
 	<mkdir dir="${clientsamples.packages.temp.dir}" />
 	<move file="${clientsamples.war.packages.dir}/WEB-INF/web.xml" tofile="${clientsamples.packages.temp.dir}/web.xml" />
         <war destfile="${fm.dist.dir}/fam-client-jdk15.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
@@ -140,14 +188,71 @@
                  excludes="**/CVS build.xml" />
         </copy>
         <mkdir dir="${clientsamples.sdk.packages.dir}/classes" />
-        <!-- zip does not include empty directory, copy README for now -->
-        <copy file="${openfm.clientsamples.dir}/sdk/README" tofile="${clientsamples.sdk.packages.dir}/classes/.README" />
+        <copy todir="${clientsamples.sdk.packages.dir}/classes">
+            <fileset dir="${openfm.classes.dir}" includes="com/sun/identity/setup/SetupClientSDKSamples.class" />
+        </copy>
         <mkdir dir="${clientsamples.sdk.packages.dir}/lib" />
         <copy todir="${clientsamples.sdk.packages.dir}/lib"
               file="${fm.dist.dir}/famclientsdk.jar"/>
         <copy todir="${clientsamples.sdk.packages.dir}/lib">
             <fileset dir="${extlib.dir}" includes="j2ee.jar,jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xmlsec.jar,xsdlib.jar,webservices-rt.jar,webservices-api.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar" />
         </copy>
+        <copy todir="${clientsamples.sdk.packages.dir}/resources"
+              file="${clientsamples.packages.temp2.dir}/AMConfig.properties.template"/>
+        <copy todir="${clientsamples.sdk.packages.dir}/resources">
+            <fileset dir="${fedlibrary.base.dir}/resources/locale">
+                <include name="libCOT.properties" />
+                <include name="libSAML2.properties" />
+                <include name="libSAML2Meta.properties" />
+            </fileset>
+        </copy>
+
+        <!-- copy client SDK samples from opensso (amserver) -->
+        <copy file="${amserver.samples.dir}/resources/clientDefault.properties" tofile="${clientsamples.sdk.packages.dir}/resources/clientDefault.properties" />
+
+        <copy todir="${clientsamples.sdk.packages.dir}/source">
+            <fileset dir="${amserver.samples.dir}/source">
+                <include name="**/*.java" />
+                <exclude name="com/sun/identity/samples/setup/Main.java" />
+                <exclude name="com/sun/identity/samples/setup/Scripts.java" />
+                <exclude name="com/sun/identity/samples/setup/ScriptFileFilter.java" />
+            </fileset>
+        </copy>
+
+        <copy todir="${clientsamples.sdk.packages.dir}/scripts">
+            <fileset dir="${amserver.samples.dir}/scripts">
+                <include name="*.sh" />
+                <include name="*.bat" />
+                <exclude name="setup.*" />
+                <exclude name="chmod.*" />
+            </fileset>
+        </copy>
+
+        <copy todir="${clientsamples.sdk.packages.dir}/resources">
+            <fileset dir="${amserver.base.dir}/resources/locale">
+                <include name="amAuth.properties" />
+                <include name="amAuthContext.properties" />
+                <include name="amIdRepo.properties" />
+                <include name="amUtilMsgs.properties" />
+                <include name="amNaming.properties" />
+                <include name="amProfile.properties" />
+                <include name="amSecurity.properties" />
+                <include name="amSSOProvider.properties" />
+                <include name="amSession.properties" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="client-properties">
+        <delete dir="${clientsamples.packages.temp2.dir}" />
+        <mkdir dir="${clientsamples.packages.temp2.dir}" />
+        <java classname="com.sun.identity.setup.MergeClientConfig" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="${amserver.base.dir}/clientsdk/resources/AMClient.properties"
+/>
+            <arg value="${fedlibrary.clientsdkbase.dir}/resources/FederationClient.properties" />
+            <arg value="${clientsamples.packages.temp2.dir}/AMConfig.properties.template"/>
+        </java>
     </target>
 
     <target name="preparebuild">

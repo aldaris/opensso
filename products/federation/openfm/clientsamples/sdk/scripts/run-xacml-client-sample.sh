@@ -22,7 +22,7 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: run-xacml-client-sample.sh,v 1.3 2007-09-07 22:51:57 dillidorai Exp $
+#$Id: run-xacml-client-sample.sh,v 1.4 2007-10-05 17:57:09 qcheng Exp $
 #Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #------------------------------------------------------------------------------
 #
@@ -47,11 +47,11 @@
 #see ../resources/xacmlClientSample.properties for more information
 #
 #Requires ../resources/AMConfig.properties 
-#and ../resources/FederationConfig.properites
-#they should be pointing as a client to the FAM that hosts
-#PEP Metadata
-#Default templates have been provided at ../resources.
-#Please update them to match your deployment
+#Must run "setup.sh" once to configure the client to find the FAM server, this
+#is referred as PEP host below. Modify AMConfig.properties, set value of
+#"com.sun.identity.agents.app.username" property to "amadmin", set value of 
+#"com.iplanet.am.service.password" property to the amadmin password if it is 
+#different from the password entered when running setup.sh command. 
 #
 #Setting up PDP FAM and PEP FAM
 #
@@ -87,5 +87,5 @@
 # fam/bin/famadm import-entity -u amadmin -f <password_file> -t xacml-pdp-cot -m xacmlPep-r.xml
 #
 # Then, run this script
-java -classpath ../resources:../lib/famclientsdk.jar:../lib/javaee.jar:../lib/jaxb-libs.jar:../lib/jaxb-impl.jar:../lib/webservices-rt.jar:../classes samples.xacml.XACMLClientSample xacmlClientSample
+java -classpath resources:lib/famclientsdk.jar:lib/j2ee.jar:lib/jaxb-libs.jar:lib/jaxb-impl.jar:lib/webservices-rt.jar:classes samples.xacml.XACMLClientSample xacmlClientSample
 

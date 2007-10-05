@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.1 2007-08-30 20:20:26 qcheng Exp $
+   $Id: README,v 1.2 2007-10-05 17:57:08 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,6 +26,8 @@
 Federated Access Manager - Client Samples
 
 There are two sub-directories under the client samples:
- - sdk : contains CLI based client samples 
- - war : contains a deployable WAR which includes all web based client samples
+ - sdk : Contains CLI based client samples. 
+ - war : Contains deployable WARs which includes all web based client samples.
+         The fam-client-jdk14.war is for web containers running JDK 1.4.x,
+         the fam-client-jdk15.war is for web containers running JDK 1.5+.
 

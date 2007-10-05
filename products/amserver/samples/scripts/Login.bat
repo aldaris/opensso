@@ -1,2 +1,2 @@
-java -cp classes;lib/amclientsdk.jar;lib/j2ee.jar  com.sun.identity.samples.authentication.Login
+java -cp classes;resources;lib/amclientsdk.jar;lib/famclientsdk.jar;lib/j2ee.jar  com.sun.identity.samples.authentication.Login
 

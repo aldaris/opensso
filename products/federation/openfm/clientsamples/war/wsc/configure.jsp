@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.1 2007-08-30 20:20:28 qcheng Exp $
+   $Id: configure.jsp,v 1.2 2007-10-05 17:57:11 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -47,9 +47,9 @@ java.util.Properties"
     String idpHost = request.getParameter("idpHost");
     String idpPort = request.getParameter("idpPort");
     String idpDeploymenturi = request.getParameter("idpDeploymenturi");
-    String configDir = request.getParameter("configDir");
     String submit = request.getParameter("submit");
     String servletPath = request.getServletPath();
+    String configDir = System.getProperty("java.io.tmpdir");
 
     if (submit != null) {
         File configDirF = new File(configDir);
@@ -57,8 +57,8 @@ java.util.Properties"
             errorMsg = "Configuration Directory '" + configDir + "' doesn't" +
                 " exist.";
         } else {
-            File fedConfig = new File(configDir +
-                "/AMConfig.properties");
+            File fedConfig = new File(configDir + File.separator +
+                "AMConfig.properties");
             if (!fedConfig.exists()) {
                 errorMsg = configDir + " is not a valid configuration " +
                     "directory.";
@@ -163,11 +163,6 @@ java.util.Properties"
     <tr>
     <td>IDP Deployment URI:</td>
     <td><input name="idpDeploymenturi" type="text" size="15" value="<%= idpDeploymenturi == null ? "" : idpDeploymenturi %>" /></td>
-    </tr>
-    <tr>
-    <tr>
-    <td>Configuration Directory:</td>
-    <td><input name="configDir" type="text" size="15" value="<%= configDir == null ? "" : configDir %>" /></td>
     </tr>
     <tr>
     <td colspan="2" align="center">
