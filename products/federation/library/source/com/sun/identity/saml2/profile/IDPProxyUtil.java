@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.4 2007-10-04 04:34:50 hengming Exp $
+ * $Id: IDPProxyUtil.java,v 1.5 2007-10-05 21:21:19 weisun2 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -455,14 +455,15 @@ public class IDPProxyUtil {
             session.setAuthnContext(authnContext);
         }*/
 
-        //TODO: need to change http://www.sun.com to relayState
+        String relayState = (String) 
+            IDPCache.relayStateCache.get(origRequest.getID()); 
         IDPSSOUtil.doSSOFederate( request,
                                   response,
-                                  origRequest,
+                                  origRequest, 
                                   origRequest.getIssuer().getValue(),
                                   idpMetaAlias, 
                                   nameIDFormat, 
-                                  "http://www.sun.com",
+                                  relayState,
                                   newSess); 
     }
     

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.6 2007-10-04 04:38:25 hengming Exp $
+   $Id: spAssertionConsumer.jsp,v 1.7 2007-10-05 21:22:17 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -211,8 +211,10 @@ com.sun.identity.plugin.session.SessionException
         IDPProxyUtil.generateProxyResponse(request, response, metaAlias,
              respInfo,newSession);
     } catch (SAML2Exception se) {
-         SAML2Utils.debug.message("Failed sending proxy response"); 
-    } } 
+        SAML2Utils.debug.message("Failed sending proxy response"); 
+    }
+        return;  
+    } 
     // redirect to relay state
     String finalUrl = SPACSUtils.getRelayState(
         relayState, orgName, hostEntityId, metaManager);
