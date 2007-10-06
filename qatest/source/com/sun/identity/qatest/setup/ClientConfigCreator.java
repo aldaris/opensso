@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.8 2007-10-05 18:25:44 mrudulahg Exp $
+ * $Id: ClientConfigCreator.java,v 1.9 2007-10-06 00:02:34 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,7 @@ public class ClientConfigCreator {
 
     private String newline = System.getProperty("line.separator");
     private String fileseparator = System.getProperty("file.separator");
+    private String uriseparator = "/";
     private Map properties1 = new HashMap();
     private Map properties2 = new HashMap();
     private String ALL_FILE_CLIENT_PROPERTIES = "resources" + fileseparator +
@@ -117,11 +118,11 @@ public class ClientConfigCreator {
         int iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
         String strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
 
-        int iThirdSep = strNamingURL.indexOf(fileseparator, iSecondSep + 1);
+        int iThirdSep = strNamingURL.indexOf(uriseparator, iSecondSep + 1);
         String strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
 
-        int iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
-        String strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
+        int iFourthSep = strNamingURL.indexOf(uriseparator, iThirdSep + 1);
+        String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
 
         for (Enumeration e = clientDef.getKeys(); e.hasMoreElements(); ) {
@@ -218,11 +219,11 @@ public class ClientConfigCreator {
         int iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
         String strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
 
-        int iThirdSep = strNamingURL.indexOf(fileseparator, iSecondSep + 1);
+        int iThirdSep = strNamingURL.indexOf(uriseparator, iSecondSep + 1);
         String strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
 
-        int iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
-        String strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
+        int iFourthSep = strNamingURL.indexOf(uriseparator, iThirdSep + 1);
+        String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
 
         for (Enumeration e = configDef1.getKeys(); e.hasMoreElements(); ) {
@@ -265,11 +266,11 @@ public class ClientConfigCreator {
         iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
         strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
 
-        iThirdSep = strNamingURL.indexOf(fileseparator, iSecondSep + 1);
+        iThirdSep = strNamingURL.indexOf(uriseparator, iSecondSep + 1);
         strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
 
-        iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
-        strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
+        iFourthSep = strNamingURL.indexOf(uriseparator, iThirdSep + 1);
+        strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
 
         PropertyResourceBundle clientDef = new PropertyResourceBundle(

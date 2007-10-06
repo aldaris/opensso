@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-properties.xml,v 1.4 2007-08-15 22:45:30 rmisra Exp $
+ $Id: opensso-properties.xml,v 1.5 2007-10-05 23:57:46 bt199000 Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,10 +31,10 @@
     </target>
 
     <target name="setOSVariables"
-        depends="setOSConditions,setUnixVariables">
+        depends="setOSConditions,setVariables">
     </target>
 
-    <target name="setUnixVariables" if="isUnix">
+    <target name="setVariables">
         <property name="base.report.dir" value="./${SERVER_DIR}/docs/reports/${EXECUTION_MODE}/${date}"/>
         <property name="built.classes.dir" value="./${SERVER_DIR}/built/classes"/>
         <property name="debug.dir" value="./${SERVER_DIR}/debug"/>
@@ -47,13 +47,7 @@
         <property name="client.cp" refid="client.classpath"/>
     </target>
 
-    <exec executable="uname" outputproperty="hostname">
-        <arg line="-n"/>
-    </exec>
-
-    <exec executable="uname" outputproperty="osname">
-        <arg line="-s"/>
-    </exec>
+    <exec executable="hostname" outputproperty="hostname"/>
 
     <target name="setOSConditions">
         <condition property="isUnix">

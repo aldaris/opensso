@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.5 2007-09-05 22:09:34 rmisra Exp $
+ $Id: opensso-common.xml,v 1.6 2007-10-05 23:57:45 bt199000 Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,13 +27,13 @@
     <target name="moveDebugFiles" depends="init-common">
         <move file="${SERVER_DIR}/test_env.txt" todir="${base.report.dir}"/>
         <move file="${SERVER_DIR}/debug" todir="${base.report.dir}"/>
-        <move file="${SERVER_DIR}/logs" todir="${base.report.dir}"/>
-        <move todir="${base.report.dir}">
+        <copy file="${SERVER_DIR}/logs" todir="${base.report.dir}"/>
+        <copy todir="${base.report.dir}">
           <fileset dir="./${SERVER_DIR}">
             <include name="**/*.output"/>
           </fileset>
-        </move>
-    </target>
+        </copy>
+     </target>
 
     <target name="report" if="REPORT_DIR" depends="init-common">
         <mkdir dir="${REPORT_DIR}/${SERVER_DIR}/${EXECUTION_MODE}/${current.timestamp}"/>
@@ -213,15 +213,12 @@
             <xmlfileset dir="./xml/testng" includes="${EXECUTION_MODE}-*-testng.xml"/>
         </testng>
 
-        <concat destfile="${SERVER_DIR}/logs.tmp">
-            <fileset file="${SERVER_DIR}/logs" />
+        <concat destfile="${SERVER_DIR}/logs">
             <fileset file="${SERVER_DIR}/logs.1" />
         </concat>
-       
-        <delete file="${SERVER_DIR}/logs"/>
-        <delete file="${SERVER_DIR}/logs.1"/>
-
-        <move file="${SERVER_DIR}/logs.tmp" tofile="${SERVER_DIR}/logs"/>
+      
+  	<delete file="${SERVER_DIR}/logs.1" />
+ 
     </target>
 
     <target name="execute-module" depends="compile-all">
@@ -258,15 +255,12 @@
             <xmlfileset dir="./xml/testng" includes="${EXECUTION_MODE}-${TEST_MODULE}-testng.xml"/>
         </testng>
 
-        <concat destfile="${SERVER_DIR}/logs.tmp">
-            <fileset file="${SERVER_DIR}/logs"/>
+        <concat destfile="${SERVER_DIR}/logs" append="true">
             <fileset file="${SERVER_DIR}/logs.1"/>
         </concat>
 
-        <delete file="${SERVER_DIR}/logs"/>
-        <delete file="${SERVER_DIR}/logs.1"/>
+  	<delete file="${SERVER_DIR}/logs.1" />
 
-        <move file="${SERVER_DIR}/logs.tmp" tofile="${SERVER_DIR}/logs"/>
     </target>
 
     <target name="doc" depends="compile-doc">
@@ -301,13 +295,13 @@
       
             Platform=[
                Machine:${hostname}
-               OS     :${osname}
+               OS     :${os.name}
                Version:${os.version}
                Arch   :${os.arch}
             ]
     
             Java Platform=[
-               Path[JAVA_HOME]:${JAVA_HOME}
+               Path[JAVA_HOME]:${java.home}
                Version        :${java.version}
                VM             :${java.vm.vendor}
             ]
