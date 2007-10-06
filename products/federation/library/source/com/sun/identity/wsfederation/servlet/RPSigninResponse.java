@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninResponse.java,v 1.2 2007-08-01 21:04:43 superpat7 Exp $
+ * $Id: RPSigninResponse.java,v 1.3 2007-10-06 00:57:09 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.sun.identity.wsfederation.plugins.SPAccountMapper;
 import com.sun.identity.wsfederation.plugins.SPAttributeMapper;
 import com.sun.identity.wsfederation.profile.RequestSecurityTokenResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -88,17 +89,6 @@ public class RPSigninResponse extends WSFederationAction {
                     null);
             throw new WSFederationException(WSFederationUtils.bundle.
                 getString("nullWresult"));
-        }
-        
-        // Validate context
-        if ((wctx == null) || (wctx.length() == 0)) {
-            String[] data = {request.getQueryString()};
-            LogUtil.error(Level.INFO,
-                    LogUtil.MISSING_WCTX,
-                    data,
-                    null);
-            throw new WSFederationException(WSFederationUtils.bundle.
-                getString("nullWctx"));
         }
         
         RequestSecurityTokenResponse rstr = null;
@@ -226,7 +216,13 @@ public class RPSigninResponse extends WSFederationAction {
             throw new WSFederationException(se);
         }
         
-        String target = WSFederationUtils.removeReplyURL(wctx);
+        String target = null;
+        if (wctx != null) {
+            target = WSFederationUtils.removeReplyURL(wctx);
+        } else {
+            target = WSFederationMetaUtils.getAttribute(spssoconfig,
+                SAML2Constants.DEFAULT_RELAY_STATE);
+        }
         
         String[] data = {wctx, LogUtil.isErrorLoggable(Level.FINER)? wresult : 
                 rstr.getRequestedSecurityToken().getTokenId(), 
@@ -238,7 +234,16 @@ public class RPSigninResponse extends WSFederationAction {
                 LogUtil.SSO_SUCCESSFUL,
                 data,
                 session);
-        
+
+        if ( target == null )
+        {
+            // What to do? There was no wreply URL specified, and there is no
+            // default target configured
+            PrintWriter pw = response.getWriter();
+            pw.println("Logged in");
+            return;
+        }
+
         response.sendRedirect(target);
     }
     

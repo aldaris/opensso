@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninRequest.java,v 1.2 2007-08-01 21:04:44 superpat7 Exp $
+ * $Id: RPSigninRequest.java,v 1.3 2007-10-06 00:57:08 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,6 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.common.WSFederationException;
-import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import java.io.IOException;
 import java.util.Date;
 import javax.servlet.http.Cookie;
@@ -265,8 +264,11 @@ public class RPSigninRequest extends WSFederationAction {
         StringBuffer url = new StringBuffer(endpoint);
         url.append("?wa=");
         url.append(URLEncDec.encode(WSFederationConstants.WSIGNIN10));
-        url.append("&wctx=");
-        url.append(URLEncDec.encode(wctx));
+        if ( wctx != null )
+        {
+            url.append("&wctx=");
+            url.append(URLEncDec.encode(wctx));
+        }
         url.append("&wreply=");
         url.append(URLEncDec.encode(replyURL));
         url.append("&wct=");
