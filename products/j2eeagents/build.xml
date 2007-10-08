@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2007-10-05 21:40:22 leiming Exp $
+   $Id: build.xml,v 1.14 2007-10-08 17:44:45 leiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,28 +49,16 @@
     <target name="clean_appserver_v9">
         <property name="containername" value="appserver"/>
         <property name="containerversion" value="v9"/>
-        <property name="jdk.source.version" value="1.5"/>
-        <property name="jdk.target.version" value="1.5"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
     </target>
     
     <target name="clean_weblogic_v10">
         <property name="containername" value="weblogic"/>
         <property name="containerversion" value="v10"/>
-        <property name="jdk.source.version" value="1.5"/>
-        <property name="jdk.target.version" value="1.5"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
     </target>
 
-    <target name="clean_websphere_v60portal">
-        <property name="containername" value="websphere"/>
-        <property name="containerversion" value="v60portal"/>
-        <property name="jdk.source.version" value="1.4"/>
-        <property name="jdk.target.version" value="1.4"/>
-        <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
-    </target>
-
-    <target name="clean" depends="clean_appserver_v9, clean_weblogic_v10, clean_websphere_v60portal">
+    <target name="clean" depends="clean_appserver_v9, clean_weblogic_v10">
         <delete dir="${j2eeagents.dist.dir}"/>
         <delete dir="${j2eeagents.built.dir}"/>
     </target>
@@ -78,15 +66,12 @@
     <target name="all">
         <antcall target="appserver_v9" />
         <antcall target="weblogic_v10" />
-        <antcall target="websphere_v60portal" />
     </target>
 
     <target name="appserver_v9" depends="preparebuild">
         <echo message="Dispatch to appserver_v9"/>
         <property name="containername" value="appserver"/>
         <property name="containerversion" value="v9"/>
-        <property name="jdk.source.version" value="1.5"/>
-        <property name="jdk.target.version" value="1.5"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
     </target>
 
@@ -94,17 +79,6 @@
         <echo message="Dispatch to weblogic_v10"/>
         <property name="containername" value="weblogic"/>
         <property name="containerversion" value="v10"/>
-        <property name="jdk.source.version" value="1.5"/>
-        <property name="jdk.target.version" value="1.5"/>
-        <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
-    </target>
-
-    <target name="websphere_v60portal" depends="preparebuild">
-        <echo message="Dispatch to websphere_v60portal"/>
-        <property name="containername" value="websphere"/>
-        <property name="containerversion" value="v60portal"/>
-        <property name="jdk.source.version" value="1.4"/>
-        <property name="jdk.target.version" value="1.4"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
     </target>
 
@@ -135,16 +109,6 @@
                 <include name="opensso-installtools-launcher.jar" />
             </fileset>
         </copy>
-        <copy todir="${j2eeagents.basedir}/websphere/v60portal/extlib" >
-            <fileset dir="${prd.nightly.dist.dir}/openfm/${nightly.date}">
-                <include name="famclientsdk.jar" />
-            </fileset>
-            <fileset dir="${installtools.dist.dir}">
-                <include name="opensso-installtools.jar" />
-                <include name="opensso-installtools-launcher.jar" />
-            </fileset>
-        </copy>
-
     </target>
         
     <target name="postnightly">
@@ -163,8 +127,6 @@
         <echo message=" clean_appserver_v9  : deletes the generated files for appserver_v9 agent"/>
         <echo message=" weblogic_v10        : builds the BEA WebLogic 10.0 agent"/>
         <echo message=" clean_weblogic_v10  : deletes the generated files for weblogic_v10 agent"/>
-        <echo message=" websphere_v60portal : builds the IBM Websphere 6.0 portal agent"/>
-        <echo message=" clean_websphere_v60portal : deletes the generated files for websphere_v60portal agent"/>
         <echo message=" usage               : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>
