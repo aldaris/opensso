@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2007-10-05 21:40:23 leiming Exp $
+   $Id: build.xml,v 1.9 2007-10-08 17:50:20 leiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,9 +39,7 @@
     <property name="j2eeagents.appserver.v81.src.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/source"/>
 
     <target name="build">
-        <javac destdir="${j2eeagents.container.classes.dir}" 
-               source="${jdk.source.version}" 
-               target="${jdk.target.version}"
+        <javac destdir="${j2eeagents.container.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${j2eeagents.appserver.v81.src.dir}"/>
             <classpath refid="build.class.path"/>
