@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.4 2007-02-07 20:24:58 beomsuk Exp $
+ * $Id: WebtopNaming.java,v 1.5 2007-10-08 19:38:04 huacui Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,6 +66,10 @@ public class WebtopNaming {
     public static final String NAMING_SERVICE = "com.iplanet.am.naming";
 
     public static final String NODE_SEPARATOR = "|";
+
+    private static final String AM_NAMING_PREFIX = "iplanet-am-naming-";
+
+    private static final String FAM_NAMING_PREFIX = "sun-naming-";
 
     private static Hashtable namingTable = null;
 
@@ -195,8 +199,12 @@ public class WebtopNaming {
                 getNamingProfile(false);
             }
             String url = null;
-            String name = "iplanet-am-naming-" + service.toLowerCase() + "-url";
+            String name = AM_NAMING_PREFIX + service.toLowerCase() + "-url";
             url = (String) namingTable.get(name);
+            if (url == null) {
+                name = FAM_NAMING_PREFIX + service.toLowerCase() + "-url";
+                url = (String)namingTable.get(name);
+            }
             if (url != null) {
                 // If replacement is required, the protocol, host, and port
                 // validation is needed against the server list
@@ -256,7 +264,12 @@ public class WebtopNaming {
                 getNamingProfile(false);
             }
 
-            String name = "iplanet-am-naming-" + service.toLowerCase() + "-url";            String url = (String)namingTable.get(name);
+            String name = AM_NAMING_PREFIX + service.toLowerCase() + "-url";            
+            String url = (String)namingTable.get(name);
+            if (url == null) {
+                name = FAM_NAMING_PREFIX + service.toLowerCase() + "-url";
+                url = (String)namingTable.get(name);
+            }
             if (url != null) {
                 allurls = new Vector();
                 if (monitorThread == null) {
@@ -515,9 +528,13 @@ public class WebtopNaming {
                 getNamingProfile(false);
             }
             String cls = null;
-            String name = "iplanet-am-naming-" + service.toLowerCase()
+            String name = AM_NAMING_PREFIX + service.toLowerCase()
                     + "-class";
             cls = (String) namingTable.get(name);
+            if (cls == null) {
+                name = FAM_NAMING_PREFIX + service.toLowerCase() + "-class";
+                cls = (String)namingTable.get(name);
+            }
             if (cls == null) {
                 throw new Exception(NamingBundle.getString("noServiceClass")
                         + service);
