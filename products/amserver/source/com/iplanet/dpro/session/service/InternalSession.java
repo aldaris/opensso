@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.4 2006-08-25 21:19:40 veiming Exp $
+ * $Id: InternalSession.java,v 1.5 2007-10-08 20:31:28 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -587,10 +587,12 @@ public class InternalSession implements Serializable {
      *
      */
     void putExternalProperty(String key, String value) throws SessionException {
-        if (protectedProperties.contains(key)) {
+        if (protectedProperties.contains(key) ||
+            key.toLowerCase().startsWith(
+            Constants.AM_PROTECTED_PROPERTY_PREFIX)) {
             SessionService.sessionDebug
-                    .error("Attempt to set protected property [" + key + "="
-                            + value + "]");
+                    .warning("InternalSession.putExternalProperty: Attempt"+
+                    "to set protected property [" + key + "=" + value + "]");
             SessionService.getSessionService().logIt(this,
                     "SESSION_PROTECTED_PROPERTY_ERROR");
             throw new SessionException(SessionBundle

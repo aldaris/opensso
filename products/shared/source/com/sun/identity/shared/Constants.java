@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.9 2007-04-26 18:23:19 veiming Exp $
+ * $Id: Constants.java,v 1.10 2007-10-08 20:30:56 pawand Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -994,6 +994,15 @@ public interface Constants {
      * Property string for Site Status Check timeout
      */
     String MONITORING_TIMEOUT = "com.sun.identity.sitemonitor.timeout";
+
+    /**
+     * String identifying the prefix for all AM protected
+     * properties. Even if a property is not defined in the
+     * PROCTED_PROPERTIES_LIST but starts with this prefix
+     * its considered protected.
+     */
+    public static final String AM_PROTECTED_PROPERTY_PREFIX =
+        "am.protected";
 
     /**
      * Property Name for cache polling interval.
