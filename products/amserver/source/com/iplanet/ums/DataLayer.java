@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.8 2007-04-09 23:24:23 goodearth Exp $
+ * $Id: DataLayer.java,v 1.9 2007-10-09 18:46:59 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -242,7 +242,6 @@ public class DataLayer implements java.io.Serializable {
             } catch (LDAPServiceException ex) {
                 debug.error("Error:  Unable to get server config instance "
                         + ex.getMessage());
-                ex.printStackTrace();
             }
         }
         return m_instance;
@@ -1350,7 +1349,6 @@ public class DataLayer implements java.io.Serializable {
         } catch (LDAPServiceException ex) {
             debug.error("Error initializing connection pool "
                         + ex.getMessage());
-            ex.printStackTrace();
         }
 
         int poolMin = svrCfg.getMinConnections();
@@ -1419,10 +1417,7 @@ public class DataLayer implements java.io.Serializable {
                 _trialConn.getAuthenticationPassword(), connOptions);
 
         } catch (LDAPException e) {
-            // throw new ConnectionException( m_host + m_port, e);
             debug.error("Exception in DataLayer.initLdapPool:", e);
-            e.printStackTrace();
-
         }
     }
 
