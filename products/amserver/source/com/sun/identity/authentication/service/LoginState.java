@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.13 2007-05-24 23:13:52 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.14 2007-10-09 18:54:38 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -322,6 +322,7 @@ public class LoginState {
     long pCookieTimeCreated;
     static AuthUtils au = new AuthUtils();
     Set identityTypes = Collections.EMPTY_SET;
+    Set userSessionMapping = Collections.EMPTY_SET;
     Hashtable idRepoHash = new Hashtable();
     AMIdentityRepository amIdRepo = null;
     private static boolean messageEnabled;
@@ -631,6 +632,8 @@ public class LoginState {
                 ISAuthConstants.AUTH_USER_CONTAINER);
                 getContainerDN(containerDNs);
             }
+            userSessionMapping = (Set)attrs.get(ISAuthConstants.
+                USER_SESSION_MAPPING);
             
             userNamingAttr = CollectionHelper.getMapAttr(
                 attrs, ISAuthConstants.AUTH_NAMING_ATTR, "uid");
@@ -1274,6 +1277,57 @@ public class LoginState {
                     finalAuthConfig.length() != 0)){
                     session.putProperty(ISAuthConstants.SERVICE,
                         finalAuthConfig);
+                }
+            }
+            if ((userSessionMapping != null) && 
+                !(userSessionMapping.isEmpty())) {
+                Iterator tmpIterator = userSessionMapping.iterator();
+                while (tmpIterator.hasNext()) {
+                    String mapping = (String) tmpIterator.next();
+                    if ((mapping != null) && (mapping.length() != 0)) {
+                        StringTokenizer tokenizer = new StringTokenizer(
+                            mapping, "|");
+                        String userAttribute = null;
+                        String sessionAttribute = null;
+                        if (tokenizer.hasMoreTokens()) {
+                            userAttribute = (String) tokenizer.nextToken();
+                        }
+                        if (tokenizer.hasMoreTokens()) {
+                            sessionAttribute = (String) tokenizer.nextToken();
+                        }
+                        if ((userAttribute != null)&& 
+                            (userAttribute.length() != 0)){
+                            Set userAttrValueSet = amIdentityUser.getAttribute(
+                                userAttribute);
+                            if ((userAttrValueSet != null) && 
+                                !(userAttrValueSet.isEmpty())) {
+                                Iterator valueIter = userAttrValueSet.
+                                    iterator();
+                                StringBuffer strBuffValues = new StringBuffer();
+                                while (valueIter.hasNext()) {
+                                    String userAttrValue = (String)
+                                        valueIter.next();
+                                    if (strBuffValues.length() == 0){
+                                        strBuffValues.append(userAttrValue);
+                                    } else {
+                                        strBuffValues.append("|").append
+                                            (userAttrValue);
+                                    }
+                                }
+                                if (sessionAttribute != null){
+                                    session.putProperty(
+                                        Constants.AM_PROTECTED_PROPERTY_PREFIX
+                                        + "." + sessionAttribute, 
+                                        strBuffValues.toString());
+                                } else {
+                                    session.putProperty(
+                                        Constants.AM_PROTECTED_PROPERTY_PREFIX
+                                        + "." + userAttribute, 
+                                        strBuffValues.toString());
+                                }
+                            }
+                        }
+                    }
                 }
             }            
             

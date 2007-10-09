@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.6 2007-08-09 22:26:42 pawand Exp $
+    $Id: amAuth.xml,v 1.7 2007-10-09 18:55:53 pawand Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -343,6 +343,11 @@
                     type="list"
                     syntax="string"
                     i18nKey="a143">
+                </AttributeSchema>
+                <AttributeSchema name="sunAMUserAttributesSessionMapping"
+                    type="list"
+                    syntax="string"
+                    i18nKey="a147">
                 </AttributeSchema>
             </Organization>
         </Schema>

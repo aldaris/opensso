@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.6 2007-01-09 18:55:32 manish_rustagi Exp $
+ * $Id: ISAuthConstants.java,v 1.7 2007-10-09 18:54:09 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -569,4 +569,8 @@ public interface ISAuthConstants {
 
     // Property to store the Distributed Authentication Login URL in SSOToken
     public static final String DISTAUTH_LOGINURL = "DistAuthLoginURL";
+
+    // Property to store the  User Attribute to Session Attribute Mapping
+    public static final String USER_SESSION_MAPPING = 
+        "sunAMUserAttributesSessionMapping";
 }
