@@ -17,13 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.4 2006-08-25 21:19:35 veiming Exp $
+ * $Id: SystemProperties.java,v 1.5 2007-10-09 19:02:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
+import com.sun.identity.common.AttributeStruct;
+import com.sun.identity.common.PropertiesFinder;
 import com.sun.identity.shared.Constants;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -58,6 +61,22 @@ import java.util.ResourceBundle;
  * @supported.all.api
  */
 public class SystemProperties {
+    private static Map attributeMap = new HashMap();
+    
+    static {
+        initAttributeMapping();
+    }
+    
+    private static void initAttributeMapping() {
+        ResourceBundle rb = ResourceBundle.getBundle("serverAttributeMap");
+        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
+            String propertyName = (String)e.nextElement();
+            attributeMap.put(propertyName, new AttributeStruct(
+                rb.getString(propertyName)));
+        }
+    }
+    
+
     private static Properties props;
 
     private static long lastModified;
@@ -203,10 +222,20 @@ public class SystemProperties {
      * @return the value if the key exists; otherwise returns <code>null</code>
      */
     public static String get(String key) {
-        String answer = System.getProperty(key);
-        if (answer == null) {
-            answer = props.getProperty(key);
+        AttributeStruct ast = (AttributeStruct)attributeMap.get(key);
+        String answer = null;
+        
+        if (ast != null) {
+            answer = PropertiesFinder.getProperty(key, ast);
         }
+        
+        if (answer == null) {
+            answer = System.getProperty(key);
+            if (answer == null) {
+                answer = props.getProperty(key);
+            }
+        }
+        
         return (answer);
     }
 

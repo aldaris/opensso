@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedSystemProperties.java,v 1.2 2007-03-27 06:03:00 veiming Exp $
+ * $Id: FedSystemProperties.java,v 1.3 2007-10-09 19:02:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,15 +26,35 @@ package com.sun.identity.configuration;
 
 import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.common.AttributeStruct;
+import com.sun.identity.common.PropertiesFinder;
 import com.sun.identity.common.SystemConfigurationUtil;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * This is the adapter class for Federation Manager to the shared library.
  * Mainly to provide system configuration information.
   */
 public class FedSystemProperties extends FedLibSystemProperties {
+    private static Map attributeMap = new HashMap();
+
+    static {
+        initAttributeMapping();        
+    }
+    
+    private static void initAttributeMapping() {
+        ResourceBundle rb = ResourceBundle.getBundle("serverAttributeMap");
+        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
+            String propertyName = (String)e.nextElement();
+            attributeMap.put(propertyName, new AttributeStruct(
+                rb.getString(propertyName)));
+        }
+    }
     
     /**
      * Creates a new instance of <code>FedSystemProperties</code>
@@ -48,6 +68,17 @@ public class FedSystemProperties extends FedLibSystemProperties {
      * @param key Key to the properties.
      */
     public String get(String key) {
+        AttributeStruct ast = (AttributeStruct)attributeMap.get(key);
+        String value = null;
+        
+        if (ast != null) {
+            value = PropertiesFinder.getProperty(key, ast);
+        }
+        
+        return (value != null) ? value : getPropertyValue(key);
+    }
+    
+    private String getPropertyValue(String key) {
         String value = super.get(key);
         if ((value != null) && (value.trim().length() > 0)) {
             return value;

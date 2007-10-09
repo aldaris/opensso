@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStoreProviderManager.java,v 1.1 2006-10-30 23:15:28 qcheng Exp $
+ * $Id: DataStoreProviderManager.java,v 1.2 2007-10-09 19:02:38 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,7 +149,8 @@ public final class DataStoreProviderManager {
                 bundle.getString("defaultProviderNotDefined"));
         }
         try {
-            return ((DataStoreProvider) Class.forName(className).newInstance());
+            return ((DataStoreProvider)Class.forName(
+                className).newInstance());
         } catch (Exception e) {
             throw new DataStoreProviderException(e);
         }

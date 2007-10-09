@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmSAML.xml,v 1.1 2007-08-24 16:43:29 bina Exp $
+   $Id: fmSAML.xml,v 1.2 2007-10-09 19:02:42 veiming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,6 +34,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/iPlanetAMSAMLService"
             i18nFileName="fmSAMLConfiguration"
+            revisionNumber="20"
             i18nKey="iplanet-am-saml-service-description">
             <Global>
                 <AttributeSchema name="serviceObjectClasses"
@@ -143,6 +144,43 @@
                     type="list"
                     syntax="string"
                     i18nKey="a121">
+                </AttributeSchema>
+                <AttributeSchema name="DefaultAssertionVersion"
+                    type="single_choice"
+                    syntax="string"
+                    i18nKey="a122">
+                    <ChoiceValues>
+                        <ChoiceValue i18nKey="v1.1">1.1</ChoiceValue>
+                        <ChoiceValue i18nKey="v1.0">1.0</ChoiceValue>
+                    </ChoiceValues>
+                    <DefaultValues>
+                        <Value>1.1</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="DefaultProtocolVersion"
+                    type="single_choice"
+                    syntax="string"
+                    i18nKey="a123">
+                    <ChoiceValues>
+                        <ChoiceValue i18nKey="v1.1">1.1</ChoiceValue>
+                        <ChoiceValue i18nKey="v1.0">1.0</ChoiceValue>
+                    </ChoiceValues>
+                    <DefaultValues>
+                        <Value>1.1</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="RemoveAssertion"
+                    type="single"
+                    syntax="boolean"
+                    i18nKey="a124">
+                    <DefaultValues>
+                        <Value>true</Value>
+                    </DefaultValues>
+                </AttributeSchema> 
+                <AttributeSchema name="AttributeListForAttributeQuery"
+                    type="list"
+                    syntax="string"
+                    i18nKey="a125">
                 </AttributeSchema>
             </Global>
 

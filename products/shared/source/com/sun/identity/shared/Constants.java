@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.10 2007-10-08 20:30:56 pawand Exp $
+ * $Id: Constants.java,v 1.11 2007-10-09 19:02:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -925,7 +925,7 @@ public interface Constants {
     /**
      *  Property string for Fallback Monitoring thread polling interval
      */
-    public static final String LDAP_FALLBACK_SLEEP_TIME_IN_MINS =
+    String LDAP_FALLBACK_SLEEP_TIME_IN_MINS =
         "com.sun.am.ldap.fallback.sleep.minutes";
 
     /**

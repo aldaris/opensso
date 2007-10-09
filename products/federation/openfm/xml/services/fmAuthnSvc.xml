@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmAuthnSvc.xml,v 1.1 2007-08-24 16:43:28 bina Exp $
+   $Id: fmAuthnSvc.xml,v 1.2 2007-10-09 19:02:42 veiming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,6 +34,7 @@
         <Schema 
             serviceHierarchy="/DSAMEConfig/sunIdentityServerAuthnService" 
             i18nFileName="fmAuthnSvcConfiguration" 
+            revisionNumber="20"
             i18nKey="sunIdentityServerAuthnServiceDescription"> 
             <Global> 
                 <AttributeSchema name="MechanismHandlerList" 
@@ -47,6 +48,19 @@
                         <Value>key=SSOTOKEN|class=@AUTHNSVC_SSOTOKEN_MECHANISM_HANDLER@</Value> 
                     </DefaultValues> 
                 </AttributeSchema> 
+                <AttributeSchema name="ChallengeCleanupInterval"
+                    type="single"
+                    syntax="number"
+                    i18nKey="a102">
+                    <DefaultValues>
+                        <Value>60000</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="TransformClasses"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a103">
+                </AttributeSchema>
             </Global>
         </Schema> 
     </Service> 

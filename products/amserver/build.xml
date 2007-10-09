@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.52 2007-09-06 16:52:38 qcheng Exp $
+   $Id: build.xml,v 1.53 2007-10-09 19:02:34 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -241,6 +241,8 @@
         <mkdir dir="${amserver.built.docs.dir}"/>
         <mkdir dir="${amserver.built.apidocs.dir}"/>
         <mkdir dir="${amserver.built.publicapidocs.dir}"/>
+        <copy file="${amserver.config.res.dir}/serverAttributeMap.properties"
+            toFile="${amserver.classes.dir}/serverAttributeMap.properties" />
         <antcall target="preparecli" />
     </target>
 
