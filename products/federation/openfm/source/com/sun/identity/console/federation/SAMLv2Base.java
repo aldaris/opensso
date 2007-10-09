@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: SAMLv2Base.java,v 1.2 2007-08-13 19:10:27 asyhuang Exp $
+ * $Id: SAMLv2Base.java,v 1.3 2007-10-09 01:10:03 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.federation.model.EntityModel;
 import com.sun.identity.console.federation.model.EntityModelImpl;
+import com.sun.identity.console.federation.model.SAMLv2ModelImpl;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,18 +43,7 @@ public abstract class SAMLv2Base extends EntityPropertiesBase {
         throws ModelControlException 
     {
         super.beginDisplay(event);
-        if (isHosted()) {
-            setPageTitle(entityName);
-        } else {
-            // TBD : temporary workaround to prevent Remote providers 
-            // from being accessed
-            setPageSessionAttribute(FederationViewBean.MESSAGE_TEXT, 
-                "Remote properties are not available");
-            FederationViewBean vb = (FederationViewBean)            
-                getViewBean(FederationViewBean.class);
-            passPgSessionMap(vb);
-            vb.forwardTo(getRequestContext());                               
-        }
+
     }
         
     protected String getProfileName() {
@@ -62,7 +52,7 @@ public abstract class SAMLv2Base extends EntityPropertiesBase {
     
     protected AMModel getModelInternal() {
         HttpServletRequest req = getRequestContext().getRequest();
-        return new EntityModelImpl(req, getPageSessionAttributes());
+        return new SAMLv2ModelImpl(req, getPageSessionAttributes());
     }
     
     protected abstract void createPropertyModel();
