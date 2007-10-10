@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amNaming.xml,v 1.3 2007-10-05 00:31:14 arviranga Exp $
+   $Id: amNaming.xml,v 1.4 2007-10-10 06:12:01 mrudul_uchil Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -159,6 +159,22 @@
                     i18nKey="a113">
                     <DefaultValues>
                         <Value>%protocol://%host:%port/@SERVER_URI@/SecurityTokenManagerServlet/SecurityTokenManagerIF</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-sts-url"
+                    type="single"
+                    syntax="url"
+                    i18nKey="a117">
+                    <DefaultValues>
+                        <Value>%protocol://%host:%port/@SERVER_URI@/sts</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-sts-mex-url"
+                    type="single"
+                    syntax="url"
+                    i18nKey="a118">
+                    <DefaultValues>
+                        <Value>%protocol://%host:%port/@SERVER_URI@/sts/mex</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-profile-class"
