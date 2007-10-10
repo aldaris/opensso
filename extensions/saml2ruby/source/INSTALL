@@ -11,6 +11,15 @@ This library depends on the Ruby XMLC14N-r library available at http://rubyforge
 
 download the .gem file and run 
 gem install XMLCanonicalizer*
+
+* Patches
+In XMLCanonicalizer-1.0.1 (WSS4R-0.4a), XmlCanonicalizer#canonicalize_element handles 'line feed (\n)' differently from Apache XML Security (c14n specification). If you want to use saml2ruby with XMLCanonicalizer-1.0.1 or before, you need to apply patches/xmlcanonicalizer.rb.patch.
+
+Apply patch by using GNU patch:
+	# cd /usr/lib/ruby/gems/1.8/gems/XMLCanonicalizer-1.0.1
+	# patch -p0 -b < /path/to/saml2ruby/source/patches/xmlcanonicalizer.rb.patch
+
+Original file is copied to /usr/lib/ruby/gems/1.8/gems/XMLCanonicalizer-1.0.1/lib/xml/utils/xmlcanonicalizer.rb.orig
  
 == SAML2 library Installation
 
@@ -32,5 +41,4 @@ At the moment you have to use the example rails application to test:
  * Edit the saml2ruby/source/examples/rails/SimpleSAMLRP/app/controllers/account_controller.rb and change the SP and IdP settings to match your environment
  * run the rails server
  * Now browse to http://myserver.mydomain.com:myport/account
-
 
