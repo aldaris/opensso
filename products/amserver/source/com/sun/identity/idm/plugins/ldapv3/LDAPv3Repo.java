@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.25 2007-09-07 00:27:42 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.26 2007-10-10 17:51:12 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2895,7 +2895,7 @@ public class LDAPv3Repo extends IdRepo {
                         namingAttr, objectClassFilter, pattern)); // note A
 
         if ((avPairs != null) && (avPairs.size() > 0)) {
-            filterSB.append(constructFilter(avPairs));
+            filterSB.append(constructFilter(filterOp, avPairs));
         }
 
         filterSB.append(")"); // matches "(" in note A above
@@ -4665,7 +4665,7 @@ public class LDAPv3Repo extends IdRepo {
         return dn;
     }
 
-    private String constructFilter(Map avPairs) {
+    private String constructFilter(int filterModifier, Map avPairs) {
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: constructFilter: avPairs=" + avPairs);
         }
@@ -4673,7 +4673,13 @@ public class LDAPv3Repo extends IdRepo {
         boolean appendedAmp = false;
 
         Iterator iter = avPairs.keySet().iterator();
-        if (iter.hasNext()) {
+
+        if ((filterModifier == IdRepo.NO_MOD) || !iter.hasNext()) {
+            return filterSB.toString();
+        } else if (filterModifier == IdRepo.OR_MOD) {
+            filterSB.append("(|");
+            appendedAmp = true;
+        } else if (filterModifier == IdRepo.AND_MOD) {
             filterSB.append("(&");
             appendedAmp = true;
         }
