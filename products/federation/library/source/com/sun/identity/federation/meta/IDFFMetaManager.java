@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaManager.java,v 1.3 2007-04-10 06:28:33 veiming Exp $
+ * $Id: IDFFMetaManager.java,v 1.4 2007-10-10 15:32:13 mchlbgs Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1249,10 +1249,10 @@ public class IDFFMetaManager {
                         // remember this and continue to process others,
                         entityId = tmpId;
                     }
-                    IDFFMetaCache.setEntitySuccinctIDMapping(succinctId, tmpId);
+                    IDFFMetaCache.setEntitySuccinctIDMapping(tmpSuccinctId, tmpId);
                     if (debug.messageEnabled()) {
                         debug.message("IDFFMetaManager.getEntityBySuccinctID"
-                                + ": update cache, succinctId=" + succinctId
+                                + ": update cache, succinctId=" + tmpSuccinctId
                                 + ", entity ID=" + tmpId);
                     }
                 }
