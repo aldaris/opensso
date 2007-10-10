@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMTrustSPMetadata.java,v 1.3 2007-09-13 07:24:22 mrudul_uchil Exp $
+ * $Id: FAMTrustSPMetadata.java,v 1.4 2007-10-10 06:15:55 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,6 +76,7 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
     private static final String NAME = "Name";
     private static final String SEC_MECH = "SecurityMech";
     private static final String KEY_ALIAS = "keyAlias";
+    private static final String KEY_TYPE = "keyType";
 
     /** Creates a new instance of FAMTrustSPMetedata */
     public FAMTrustSPMetadata(String spEndPoint) {
@@ -86,8 +87,6 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
         this.certAlias = 
             SystemConfigurationUtil.getProperty(
                 Constants.SAML_XMLSIG_CERT_ALIAS);
-        this.keyType = STSConstants.PUBLIC_KEY;
-
     }
 
     public String getSPEndPoint(){
@@ -220,7 +219,13 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
             }
 
         } else if(attr.equals(KEY_ALIAS)) {
-           //this.certAlias = value;
+            //this.certAlias = value;
+        } else if(attr.equals(KEY_TYPE)) {
+            if ( value == null || value.length() == 0 ) {
+                this.keyType = STSConstants.PUBLIC_KEY;
+            } else {
+                this.keyType = STSConstants.WST_NAMESPACE + value;
+            }
         }
     }
 

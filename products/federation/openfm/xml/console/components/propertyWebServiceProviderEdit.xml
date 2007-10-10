@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceProviderEdit.xml,v 1.6 2007-08-09 21:01:51 veiming Exp $
+   $Id: propertyWebServiceProviderEdit.xml,v 1.7 2007-10-10 06:15:55 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -262,6 +262,17 @@
             <attribute name="autoSubmit" value="false" />
         </cc>
         <fieldhelp name="helpwspendpoint" defaultValue="web.services.profile.wspendpoint.help" />
+    </property>
+    
+    <property>
+        <label name="lblkeyType" defaultValue="web.services.provider.profile.keyType"
+            labelFor="keyType" />
+        <cc name="keyType"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="40" />
+            <attribute name="localizeDisplayFieldValue" value="false" />
+            <attribute name="autoSubmit" value="false" />
+        </cc>
     </property>
     
     <property>

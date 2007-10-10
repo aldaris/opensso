@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.2 2007-09-06 07:42:10 mrudul_uchil Exp $
+ * $Id: STSConstants.java,v 1.3 2007-10-10 06:15:54 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,13 +32,13 @@ public class STSConstants {
 
     /** WS-Trust namespace URI */
     public static final String WST_NAMESPACE = 
-        "http://schemas.xmlsoap.org/ws/2005/02/trust";
+        "http://schemas.xmlsoap.org/ws/2005/02/trust/";
    
     /**
      * URI for KeyType
      */
-    public static final String PUBLIC_KEY = WST_NAMESPACE+ "/PublicKey";
-    public static final String SYMMETRIC_KEY = WST_NAMESPACE + "/SymmetricKey";
+    public static final String PUBLIC_KEY = WST_NAMESPACE+ "PublicKey";
+    public static final String SYMMETRIC_KEY = WST_NAMESPACE + "SymmetricKey";
 
     /**
      * URI for TokenType

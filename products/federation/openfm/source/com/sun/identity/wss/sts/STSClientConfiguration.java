@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientConfiguration.java,v 1.1 2007-08-28 00:20:06 mallas Exp $
+ * $Id: STSClientConfiguration.java,v 1.2 2007-10-10 06:15:54 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,10 +32,7 @@ import com.sun.xml.ws.api.security.trust.client.STSIssuedTokenConfiguration;
  * obtain the security tokens from a trusted authority.
  */
 public class STSClientConfiguration extends STSIssuedTokenConfiguration {
-    
-    private static final String PUBLIC_KEY_TYPE = 
-            "http://schemas.xmlsoap.org/ws/2005/02/trust/PublicKey";
-            
+           
     private String tokenType = null;
     
     private String keyType = null;
@@ -57,7 +54,7 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
         // We need public key value in the STS issued assertion for signing
         // purposes
         // TODO - we will have to see for Symmetric key
-        this.keyType = PUBLIC_KEY_TYPE;
+        this.keyType = STSConstants.PUBLIC_KEY;
     }
     
     public STSClientConfiguration(String stsEndpoint,
@@ -68,7 +65,7 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
         super(stsEndpoint, stsWSDLLocation, stsServiceName, stsPortName,
               stsNamespace);
         
-        keyType = PUBLIC_KEY_TYPE;
+        keyType = STSConstants.PUBLIC_KEY;
     }
         
     public String getTokenType() {
