@@ -42,7 +42,7 @@
                 <i18n key="INT_SERVER_NAME" group="wl10Tools"/>
                 <default-value-finder>
                     <class name="StaticDefaultValueFinder" type="system"/>
-                    <static value="myserver"/>
+                    <static value="AdminServer"/>
                 </default-value-finder>
                 <validations>
                     <validation name="VALID_STRING">
@@ -54,82 +54,6 @@
     </instance-finder>	
     <install>
         <common-interactions>
-            <interaction lookupkey="AGENT_REPOSITORY_TYPE" persistent="false">
-                <i18n key="INT_AGENT_REPOSITORY_TYPE" group="amToolsMessages"/>
-                <default-value-finder>
-                    <class name="StaticDefaultValueFinder" type="system"/>
-                    <static value="local"/>
-                </default-value-finder>
-                <validations>
-                    <validation name="VALID_CHOICE">
-                        <class name="ChoiceValidator" type="system"/>
-                        <property name="value1" value="remote"/>
-                        <property name="value2" value="local"/>
-                        <property name="ignorecase" value="false"/>
-                    </validation>
-                 </validations>
-            </interaction>
-            <interaction lookupkey="AM_SERVICES_HOST">
-                <i18n key="INT_AM_SERVICES_HOST" group="amToolsMessages"/>
-                <validations>			
-                    <validation name="VALID_FULLY_QUALIFIED_HOST">
-                        <class name="NetworkValidator" type="system"/>
-                    </validation>
-                    <validation name="VALID_HOST">
-                        <class name="NetworkValidator" type="system"/>
-                    </validation>
-                </validations>
-            </interaction>
-            <interaction lookupkey="AM_SERVICES_PORT">
-                <i18n key="INT_AM_SERVICES_PORT" group="amToolsMessages"/>
-                <default-value-finder>
-                    <class name="StaticDefaultValueFinder" type="system"/>
-                    <static value="80"/>
-                </default-value-finder>
-                <validations>
-                    <validation name="VALID_PORT">
-                        <class name="NetworkValidator" type="system"/>
-                    </validation>
-                </validations>
-            </interaction>
-            <interaction lookupkey="AM_SERVICES_PROTO">
-                <i18n key="INT_AM_SERVICES_PROTO" group="amToolsMessages"/>
-                <default-value-finder>
-                    <class name="StaticDefaultValueFinder" type="system"/>
-                    <static value="http"/>
-                </default-value-finder>
-                <validations>
-                    <validation name="VALID_CHOICE">
-                        <class name="ChoiceValidator" type="system"/>
-                        <property name="value1" value="http"/>
-                        <property name="value2" value="https"/>
-                        <property name="ignorecase" value="false"/>
-                    </validation>
-                </validations>
-            </interaction>
-            <interaction lookupkey="AM_SERVICES_DEPLOY_URI">
-                <i18n key="INT_AM_SERVICES_DEPLOY_URI" group="amToolsMessages"/>
-                <default-value-finder>
-                    <class name="StaticDefaultValueFinder" type="system"/>
-                    <static value="/amserver"/>
-                </default-value-finder>
-                <validations>
-                    <validation name="VALID_URI">
-                        <class name="NetworkValidator" type="system"/>
-                    </validation>
-                </validations>
-            </interaction>
-            <interaction lookupkey="AGENT_HOST">
-                <i18n key="INT_AGENT_HOST" group="amToolsMessages"/>
-                <validations>	
-                    <validation name="VALID_FULLY_QUALIFIED_HOST">
-                        <class name="NetworkValidator" type="system"/>
-                    </validation>
-                    <validation name="VALID_HOST">
-                        <class name="NetworkValidator" type="system"/>
-                    </validation>
-                </validations>
-            </interaction>	
             <interaction lookupkey="WEBLOGIC_HOME_DIR">
                 <i18n key="INT_WEBLOGIC_HOME_DIR" group="wl10Tools"/>
                 <default-value-finder>
@@ -152,6 +76,14 @@
                 <value-normalizer>
                     <class name="PathNormalizer" type="system"/>
                 </value-normalizer>
+            </interaction>
+            <interaction lookupkey="AM_SERVER_URL" persistent="false">
+                <i18n key="INT_AM_SERVER_URL" group="amToolsMessages"/>
+                <validations>			
+                    <validation name="VALID_SERVER_URL">
+                        <class name="ValidateURL" type="system"/>
+                    </validation>
+                </validations>
             </interaction>
             <interaction lookupkey="DOMAIN_IS_PORTAL">
                 <i18n key="INT_DOMAIN_IS_PORTAL" group="wl10Tools"/>
@@ -188,30 +120,11 @@
             </interaction>
         </common-interactions>
         <instance-interactions>
-            <interaction lookupkey="AGENT_PREF_PORT">
-                <i18n key="INT_AGENT_PREF_PORT" group="amToolsMessages"/>
-                <default-value-finder>
-                    <class name="StaticDefaultValueFinder" type="system"/>
-                    <static value="80"/>
-                </default-value-finder>
+            <interaction lookupkey="AGENT_URL">
+                <i18n key="INT_AGENT_URL" group="amToolsMessages"/>
                 <validations>
-                    <validation name="VALID_PORT">
-                        <class name="NetworkValidator" type="system"/>
-                    </validation>
-                </validations>
-            </interaction>
-            <interaction lookupkey="AGENT_PREF_PROTO">
-                <i18n key="INT_AGENT_PREF_PROTO" group="amToolsMessages"/>
-                <default-value-finder>
-                    <class name="StaticDefaultValueFinder" type="system"/>
-                    <static value="http"/>
-                </default-value-finder>
-                <validations>
-                    <validation name="VALID_CHOICE">
-                        <class name="ChoiceValidator" type="system"/>
-                        <property name="value1" value="http"/>
-                        <property name="value2" value="https"/>
-                        <property name="ignorecase" value="false"/>
+                    <validation name="VALID_AGENT_URL">
+                        <class name="ValidateURL" type="system"/>
                     </validation>
                 </validations>
             </interaction>
@@ -242,7 +155,7 @@
                     </validation>
                 </validations>
             </interaction>
-            <interaction lookupkey="AGENT_PROFILE_NAME">
+            <interaction lookupkey="AGENT_PROFILE_NAME" persistent="false">
                 <i18n key="INT_AGENT_PROFILE_NAME" group="amToolsMessages"/>
                 <validations>
                     <validation name="VALID_STRING">
@@ -268,21 +181,6 @@
                 <value-normalizer>
                     <class name="PathNormalizer" type="system"/>
                 </value-normalizer>
-            </interaction>
-            <interaction lookupkey="AM_COEXIST">
-                <i18n key="INT_AM_COEXIST" group="amToolsMessages"/>
-                <default-value-finder>
-                    <class name="StaticDefaultValueFinder" type="system"/>
-                    <static value="false"/>
-                </default-value-finder>
-                <validations>
-                    <validation name="VALID_CHOICE">
-                        <class name="ChoiceValidator" type="system"/>
-                        <property name="value1" value="true"/>
-                        <property name="value2" value="false"/>
-                        <property name="ignorecase" value="true"/>
-                    </validation>
-                </validations>
             </interaction>
         </instance-interactions>
         <common-tasks>
@@ -314,18 +212,14 @@
            	</task>
             <task name="CONFIGURE_AGENT_PROPS">
             	<class name="ConfigurePropertiesTask" type="system"/>    
-                <property name="AGENT_REPOSITORY_TYPE_KEY"
-                                          value="AGENT_REPOSITORY_TYPE"/>
-                <property name="CONFIG_FILENAME_TEMPLATE"
-                                          value="AMAgent.template"/>
-                <property name="CONFIG_FILENAME_BOOTSTRAP_TEMPLATE"
-                                          value="AMAgentBootStrap.template"/>
-                <property name="CONFIG_FILENAME_TAGS_TEMPLATE"
-                                          value="AMAgentTags.template"/>
-                <property name="CONFIG_FILENAME"
-                                          value="AMAgent.properties"/>
-                <property name="CONFIG_FILENAME_AGENT_TAGS"
-                                          value="AMAgentTags.properties"/>
+                <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
+                                      value="AMAgent.template"/>
+                <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
+                                      value="AMAgent.properties"/>
+                <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
+                                      value="AMAgentConfiguration.template"/>
+                <property name="CONFIG_FILENAME_AGENT_CONFIG"
+                                      value="AMAgentConfiguration.properties"/>
             </task>
             <task name="CONFIGURE_STARTUP_SCRIPT">
                 <class name="ConfigureStartupScriptTask" type="custom"/>

@@ -67,12 +67,19 @@ Building Sample Program on UNIX platforms
    2. Make sure you have gcc or any other compliant C compiler program
       available.
 
-   3. From the samples directory, simply invoke the make program. For
+   3. Under install directory>/is_csdk/lib, please do the following
+
+       ln -s libamsdk.so.2 libamsdk.so
+       ln -s libxml2.so.2 libxml2.so
+
+   4. Include directory>/is_csdk/lib in LD_LIBRARY_PATH
+
+   5. From the samples directory, simply invoke the make program. For
       example, 
 
 	  $ gmake
 
-   4. This produces executables of the samples am_*_test in the same directory.
+   6. This produces executables of the samples am_*_test in the same directory.
 
 Note on Red Hat Linux Advanced Server release 2.1AS/i686 platform:
 
