@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordValidator.java,v 1.2 2007-10-12 20:43:49 madan_ranganath Exp $
+ * $Id: PasswordValidator.java,v 1.3 2007-10-12 22:27:26 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -263,7 +263,7 @@ public class PasswordValidator extends ValidatorBase {
             br = new BufferedReader(fir);
             firstLine = br.readLine();
         } catch (Exception e) {
-            Debug.log("PasswordValidator.readPasswordFromFile() - Error " 
+            Debug.log("PasswordValidator.readPasswordFromFile() - Error " +
                         "reading file - " + fileName, e);
             throw new InstallException(LocalizedMessage.get(
                 LOC_TK_ERR_PASSWD_FILE_READ), e);                  
