@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentTags.template,v 1.1 2007-09-14 00:09:26 madan_ranganath Exp $
+# $Id: AMAgentConfiguration.template,v 1.1 2007-10-12 22:10:43 madan_ranganath Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -474,6 +474,10 @@ com.sun.identity.agents.config.cookie.reset.path[] =
 #     Server/ID providers that should be trusted by the agent, when evaluating
 #     the CDC Liberty Responses. Used when a Load Balancer/Firewall is between 
 #     the agent & server.
+#   - cdsso.secure.enable: A flag that specifies if the SSO Token cookie
+#     set by the agent in the different domains in CDSSO mode will be marked
+#     secure. When the property is set to true the SSO Token cookie will only
+#     be transmitted if the communications channel with the host is a secure one.
 #   - cdsso.domain: This property specifies the domains for which cookies have
 #     to be set in a CDSSO scenario. If this property is left blank then the 
 #     fully qualified cookie domain for the agent server will be used for 
@@ -488,6 +492,7 @@ com.sun.identity.agents.config.cdsso.redirect.uri = @AGENT_APP_URI@/sunwCDSSORed
 com.sun.identity.agents.config.cdsso.cdcservlet.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
 com.sun.identity.agents.config.cdsso.clock.skew = 0
 com.sun.identity.agents.config.cdsso.trusted.id.provider[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
+com.sun.identity.agents.config.cdsso.secure.enable = false
 #com.sun.identity.agents.config.cdsso.domain[0] = 
 
 # 
@@ -735,10 +740,6 @@ com.sun.identity.agents.config.privileged.attribute.tolowercase[Role] = false
 com.sun.identity.agents.config.privileged.session.attribute[0] = 
 com.sun.identity.agents.config.privileged.attribute.mapping.enable=true
 
-# The Client key that will be used to encrypt and decrypt passwords
-# Hot-Swap Enabled: No
-com.sun.identity.client.encryptionKey= @AGENT_ENCRYPT_KEY@
-
 
 #
 # SSO TOKEN COOKIE NAME
@@ -853,3 +854,5 @@ com.sun.identity.policy.client.cacheMode=subtree
 com.sun.identity.policy.client.booleanActionValues=iPlanetAMWebAgentService|GET|allow|deny:iPlanetAMWebAgentService|POST|allow|deny
 com.sun.identity.policy.client.resourceComparators=serviceType=iPlanetAMWebAgentService|class=com.sun.identity.policy.plugins.HttpURLResourceName|wildcard=*|delimiter=/|caseSensitive=false
 com.sun.identity.policy.client.clockSkew=10
+
+
