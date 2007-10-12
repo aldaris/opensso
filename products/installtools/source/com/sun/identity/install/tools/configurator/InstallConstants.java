@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallConstants.java,v 1.3 2007-09-13 23:57:23 madan_ranganath Exp $
+ * $Id: InstallConstants.java,v 1.4 2007-10-12 20:43:49 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -123,8 +123,9 @@ public interface InstallConstants extends ICommonToolsConstants {
     /** Field STR_CONFIG_FILE_PATH_TAG **/
     public static final String STR_CONFIG_FILE_PATH_TAG = "CONFIG_FILE_PATH";
 
-    /** Field STR_CONFIG_AGENT_TAGS_FILE_PATH_TAG **/
-    public static final String STR_CONFIG_AGENT_TAGS_FILE_PATH_TAG = "AGENT_TAGS_FILE_PATH";
+    /** Field STR_CONFIG_AGENT_CONFIG_FILE_PATH_TAG **/
+    public static final String STR_CONFIG_AGENT_CONFIG_FILE_PATH_TAG = 
+        "AGENT_CONFIG_FILE_PATH";
     
     
     // FORMATTING LINE FOR WELCOME AND EXIT MESSAGE, 80 chars

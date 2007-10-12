@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CumulativeValResult.java,v 1.1 2006-09-28 07:37:21 rarcot Exp $
+ * $Id: CumulativeValResult.java,v 1.2 2007-10-12 20:43:49 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,15 +65,25 @@ public class CumulativeValResult {
     void setErrorMessage(LocalizedMessage errorMsg) {
         errorMessage = errorMsg;
     }
+    
+    void setWarningMessage(LocalizedMessage warningMsg) {
+        warningMessage = warningMsg;
+    }
 
     LocalizedMessage getErrorMessage() {
         return errorMessage;
     }
 
+    LocalizedMessage getWarningMessage() {
+        return warningMessage;
+    }
+    
     private boolean cumValResStat;
 
     private HashMap calculatedKeys;
 
     private LocalizedMessage errorMessage;
+    
+    private LocalizedMessage warningMessage;
 
 }

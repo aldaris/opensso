@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallInteraction.java,v 1.1 2006-09-28 07:37:27 rarcot Exp $
+ * $Id: InstallInteraction.java,v 1.2 2007-10-12 20:43:49 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,7 +92,17 @@ public class InstallInteraction extends UserDataInteraction implements
             } else {
                 CumulativeValResult cumRes = processValidators(procInput,
                         state, true);
+                Debug.log("InstallInteraction.processData: " + 
+                          cumRes.getWarningMessage());
                 if (cumRes.getCumValResult()) {
+                    if (cumRes.getWarningMessage() != null) {
+                        Console.println();
+                        Console.println();
+                        Console.println(getWarning());
+                        // Specific warning message
+                        Console.println(cumRes.getWarningMessage());
+                        Console.println();
+                    }
                     result = InteractionResultStatus.STATUS_CONTINUE;
                     // Store the user input
                     state.put(getKey(), getNormalizedValue(procInput));

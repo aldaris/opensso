@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordValidator.java,v 1.1 2006-09-28 07:37:32 rarcot Exp $
+ * $Id: PasswordValidator.java,v 1.2 2007-10-12 20:43:49 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,13 +25,22 @@
 package com.sun.identity.install.tools.configurator;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.net.URL;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.sun.identity.install.tools.util.Debug;
 import com.sun.identity.install.tools.util.LocalizedMessage;
+
 
 public class PasswordValidator extends ValidatorBase {
 
@@ -113,6 +122,105 @@ public class PasswordValidator extends ValidatorBase {
         return new ValidationResult(validRes, null, returnMessage);
     }
 
+    /*
+     * Checks if url is valid
+     * 
+     * @param port @param props @param state
+     * 
+     * @return ValidationResult
+     */
+     
+    public ValidationResult isAgentLoginValid(String passfileName, Map props,
+            IStateAccess state) throws InstallException {
+
+        ValidationResultStatus validRes = ValidationResultStatus.STATUS_FAILED;
+        LocalizedMessage returnMessage = null;
+        String agentUserName = null;
+        String serverURL = null;
+        String restAuthURL = null;
+        String str = null;
+        
+        String serverURLValid = (String)state.get("isServerURLValid");
+
+        if (serverURLValid != null && serverURLValid.equals("true")) {
+            String agentUserNameKey = (String) 
+                                     props.get(STR_AGENT_PROFILE_LOOKUP_KEY);
+            if (agentUserNameKey != null) {
+                agentUserName = (String) state.get(agentUserNameKey);
+            }
+        
+            Map tokens = state.getData();
+            if (tokens.containsKey("AM_SERVER_URL")) {
+                serverURL = (String) tokens.get("AM_SERVER_URL");           
+            }
+                
+            String agentUserPasswd = readDataFromFile(passfileName);
+           
+            try {
+                restAuthURL = serverURL + 
+                              "/identity/authenticate";                             
+                
+       	        URL amUrl = new URL(restAuthURL);
+	        HttpURLConnection urlConnect = (HttpURLConnection)
+                                              amUrl.openConnection();
+                urlConnect.setDoInput(true);
+                urlConnect.setDoOutput(true);
+                urlConnect.setUseCaches(false);
+                               
+                urlConnect.setRequestProperty("Content-Type", 
+                                       "application/x-www-form-urlencoded");
+              
+                // send post data
+                DataOutputStream output = 
+                           new DataOutputStream(urlConnect.getOutputStream());
+                String encodingType = "UTF-8";
+                String encodedPostData = "username="  +
+                             URLEncoder.encode(agentUserName,encodingType) +
+                             "&password=" +
+                             URLEncoder.encode(agentUserPasswd,encodingType);
+                output.writeBytes(encodedPostData);
+                output.flush();
+                output.close();
+            
+                // Read response code
+                int responseCode = urlConnect.getResponseCode();
+                if (responseCode == HTTP_RESPONSE_OK) {
+                    validRes = ValidationResultStatus.STATUS_SUCCESS;
+                } else {
+                    returnMessage = LocalizedMessage.get(
+                                             LOC_VA_WRN_IN_VAL_AGENT_PASSWORD,
+                                             new Object[] {});
+                    validRes = ValidationResultStatus.STATUS_WARNING;
+               }           
+            } catch (UnknownHostException uhe) {
+                Debug.log("ValidateURL.isServerUrlValid threw exception :",
+                                uhe);
+                returnMessage = LocalizedMessage.get(
+                                LOC_VA_WRN_UN_REACHABLE_SERVER_URL,
+                                new Object[] { serverURL });
+	        validRes = ValidationResultStatus.STATUS_WARNING;
+            } catch (ConnectException ce) {
+                Debug.log("ValidateURL.isServerUrlValid threw exception :",
+                                ce);
+                returnMessage = LocalizedMessage.get(
+                                LOC_VA_WRN_UN_REACHABLE_SERVER_URL,
+                                new Object[] { serverURL });
+	        validRes = ValidationResultStatus.STATUS_WARNING; 
+            } catch (Exception e) {
+                 Debug.log("ValidateURL.isAgentUrlValid threw exception :", e);
+            }      
+            return new ValidationResult(validRes, null, returnMessage);
+        } else {
+            // 
+            returnMessage = LocalizedMessage.get(
+                                LOC_VA_WRN_SERVER_URL_NOT_RUNNING,
+                                new Object[] { serverURL });
+	    validRes = ValidationResultStatus.STATUS_WARNING; 
+            return new ValidationResult(validRes, null, returnMessage);
+        }
+    }    
+
+
     public void initializeValidatorMap() throws InstallException {
 
         Class[] paramObjs = { String.class, Map.class, IStateAccess.class };
@@ -120,6 +228,9 @@ public class PasswordValidator extends ValidatorBase {
         try {
             getValidatorMap().put("VALID_PASSWORD",
                     this.getClass().getMethod("isPasswordValid", paramObjs));
+        
+            getValidatorMap().put("VALIDATE_AGENT_PASSWORD",
+                    this.getClass().getMethod("isAgentLoginValid", paramObjs));
 
         } catch (NoSuchMethodException nsme) {
             Debug.log("PasswordValidator: "
@@ -140,20 +251,58 @@ public class PasswordValidator extends ValidatorBase {
         }
 
     }
+    
+    private String readDataFromFile(String fileName) 
+        throws InstallException 
+    {
+        String firstLine = null;
+        BufferedReader br = null;
+        try {
+            FileInputStream fis = new FileInputStream(fileName);
+            InputStreamReader fir = new InputStreamReader(fis);            
+            br = new BufferedReader(fir);
+            firstLine = br.readLine();
+        } catch (Exception e) {
+            Debug.log("PasswordValidator.readPasswordFromFile() - Error " 
+                        "reading file - " + fileName, e);
+            throw new InstallException(LocalizedMessage.get(
+                LOC_TK_ERR_PASSWD_FILE_READ), e);                  
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException i) {
+                    // Ignore
+                }
+            }
+        }     
+        return firstLine;
+    }
 
     /** Hashmap of Validator names and integers */
     Map validMap = new HashMap();
 
     /*
-     * Localized constants
+     * Localized messages
      */
     public static String LOC_VA_WRN_IN_VAL_PASS = "VA_WRN_IN_VAL_PASS";
+    public static final String LOC_TK_ERR_PASSWD_FILE_READ = 
+                                            "TSK_ERR_PASSWD_FILE_READ";
+    public static String LOC_VA_WRN_UN_REACHABLE_SERVER_URL = 
+                                            "VA_WRN_UN_REACHABLE_SERVER_URL";
+    public static String LOC_VA_WRN_IN_VAL_AGENT_PASSWORD = 
+                                            "VA_WRN_IN_VAL_AGENT_PASSWORD";
+    public static String LOC_VA_WRN_SERVER_URL_NOT_RUNNING = 
+                                            "VA_WRN_SERVER_URL_NOT_RUNNING";
 
     /*
      * String constants
      */
     public static String STR_VAL_MIN_DIGITS = "minLen";
-
     public static String STR_IN_MAX_DIGITS = "maxLen";
+    public static final int HTTP_RESPONSE_OK = 200;
 
+    // Lookup keys
+    public static final String STR_AGENT_PROFILE_LOOKUP_KEY = 
+        "AGENT_PROFILE_LOOKUP_KEY";
 }

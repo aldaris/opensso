@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserDataInteraction.java,v 1.1 2006-09-28 07:37:36 rarcot Exp $
+ * $Id: UserDataInteraction.java,v 1.2 2007-10-12 20:43:49 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -356,13 +356,26 @@ abstract public class UserDataInteraction extends BaseInteraction implements
                             props, state);
 
                     if (validRes != null) {
-                        switch (validRes.getStatus().getIntValue()) {
+                      switch (validRes.getStatus().getIntValue()) {
                         case ValidationResultStatus.INT_STATUS_SUCCESS:
-                        case ValidationResultStatus.INT_STATUS_WARNING:
                             if ((validRes.getData() != null)
                                     && (validRes.getData().size() > 0)) {
                                 cumulRes.getCalcKeyValPairs().putAll(
                                         validRes.getData());
+                            }
+                            break;
+                        case ValidationResultStatus.INT_STATUS_WARNING:
+                             if (validRes.getMessage() != null) {
+                                 if (isInter) {          
+                                     cumulRes.setWarningMessage(validRes
+                                                               .getMessage());
+                                 }
+                                 Debug.log(validRes.getMessage().toString());
+                                 if ((validRes.getData() != null)
+                                    && (validRes.getData().size() > 0)) {
+                                    cumulRes.getCalcKeyValPairs().putAll(
+                                             validRes.getData());
+                                 }
                             }
                             break;
                         case ValidationResultStatus.INT_STATUS_FAILED:
@@ -542,6 +555,10 @@ abstract public class UserDataInteraction extends BaseInteraction implements
 
     public LocalizedMessage getError() {
         return getMessage(STR_IN_ERROR_SUFFIX);
+    }
+    
+    public LocalizedMessage getWarning() {
+        return getMessage(STR_IN_WARNING_SUFFIX);
     }
 
     public LocalizedMessage getMessage(String suffix) {

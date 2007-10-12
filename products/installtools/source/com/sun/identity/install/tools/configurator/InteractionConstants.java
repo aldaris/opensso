@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionConstants.java,v 1.1 2006-09-28 07:37:28 rarcot Exp $
+ * $Id: InteractionConstants.java,v 1.2 2007-10-12 20:43:49 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,6 +76,8 @@ public interface InteractionConstants {
     public static final String STR_IN_HELP_SUFFIX = "_HELP";
 
     public static final String STR_IN_ERROR_SUFFIX = "_ERROR";
+
+    public static final String STR_IN_WARNING_SUFFIX = "_WARNING";
 
     /**
      * public static strings

@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallDriver.java,v 1.3 2007-09-26 18:14:24 madan_ranganath Exp $
+ * $Id: InstallDriver.java,v 1.4 2007-10-12 20:43:49 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,12 +125,7 @@ public class InstallDriver extends Driver {
         messageList.add(getSummaryInfoHeaderMessageFmtLine());
         messageList.add(getProductInstanceNameMessage());
         messageList.add(getProductConfigFilePathMessage());
-	String repositoryType = (String)getInstallState().getStateAccess().get(
-				"AGENT_REPOSITORY_TYPE");
-	if (repositoryType != null && 
-            repositoryType.equals(AGENT_REPOSITORY_REMOTE)) {
-           messageList.add(getAgentTagsConfigFilePathMessage());
-        }
+	messageList.add(getAgentConfigFilePathMessage());
         messageList.add(getProductAuditLogsPathMessage());
         messageList.add(getProductDebugLogsPathMessage());
 
@@ -202,12 +197,12 @@ public class InstallDriver extends Driver {
         }
     }
 
-    public LocalizedMessage getAgentTagsConfigFilePathMessage() {
-        String agentTagsConfigFilePath = (String) getInstallState()
-                .getStateAccess().get(STR_CONFIG_AGENT_TAGS_FILE_PATH_TAG);
-        Object[] args = { agentTagsConfigFilePath };
+    public LocalizedMessage getAgentConfigFilePathMessage() {
+        String agentConfigFilePath = (String) getInstallState()
+                .getStateAccess().get(STR_CONFIG_AGENT_CONFIG_FILE_PATH_TAG);
+        Object[] args = { agentConfigFilePath };
         LocalizedMessage message = LocalizedMessage.get(
-                LOC_DR_MSG_PRODUCT_AGENT_TAGS_FILE_NAME, args);
+                LOC_DR_MSG_PRODUCT_AGENT_CONFIG_FILE_NAME, args);
         return message;
     }
 
@@ -224,6 +219,7 @@ public class InstallDriver extends Driver {
 
     public static final String LOC_DR_MSG_INSTALL_LOG_VERSION_DESC_LINE = 
         "DR_MSG_INSTALL_LOG_VERSION_DESC_LINE";
-
-    public static final String AGENT_REPOSITORY_REMOTE = "remote";
+    
+    public static final String LOC_DR_MSG_PRODUCT_AGENT_CONFIG_FILE_NAME = 
+        "DR_MSG_PRODUCT_AGENT_CONFIG_FILE_NAME";
 }
