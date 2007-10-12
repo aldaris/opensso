@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataEntry.java,v 1.1 2007-03-29 21:41:36 mrudulahg Exp $
+ * $Id: DataEntry.java,v 1.2 2007-10-12 23:32:29 mrudulahg Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,11 +25,13 @@
 package com.sun.identity.qatest.common.webtest;
 
 import com.gargoylesoftware.htmlunit.Page;
+import com.sun.identity.qatest.common.TestCommon;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
-public class DataEntry {
+public class DataEntry extends TestCommon {
     private String visitURLPattern;
     private URL url;
     private String formName;
@@ -42,13 +44,16 @@ public class DataEntry {
         new HashMap<String, String[]>();
     
     DataEntry() {
+        super("DataEntry");
     }
 
     DataEntry(URL url) {
+        super("DataEntry");
         this.url = url;
     }
     
     DataEntry(String url) {
+        super("DataEntry");
         visitURLPattern = url;
     }
     
@@ -61,6 +66,7 @@ public class DataEntry {
         Map<String, String[]> dynamicInputs,
         String expectedResult
     ) {
+        super("DataEntry");
         this.formName = formName;
         this.btnName = btnName;
         this.inputs.putAll(inputs);
@@ -120,6 +126,10 @@ public class DataEntry {
     public void validate(Page page) {
         if (expectedResult != null) {
             String content = page.getWebResponse().getContentAsString();
+            if (content.indexOf(expectedResult) == -1) {
+                log(Level.SEVERE, "validate", "The expected result did NOT match with the output");
+                log(Level.SEVERE, "validate", "The html output is: \n" + content);
+            }
             assert(content.indexOf(expectedResult) != -1);
         }
     }
