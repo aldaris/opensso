@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.3 2007-04-02 06:02:14 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.4 2007-10-13 00:07:20 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,8 +34,16 @@ import java.util.Properties;
 import java.util.Vector;
 
 import com.sun.identity.shared.debug.Debug;
+import com.iplanet.services.naming.URLNotFoundException;
+import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 
+import com.sun.identity.agents.util.AgentRemoteConfigUtils;
+import com.sun.identity.agents.common.CommonFactory;
+import com.sun.identity.agents.common.IApplicationSSOTokenProvider;
 
 /**
  * <p>
@@ -91,6 +99,11 @@ public class AgentConfiguration implements
     * for configuration settings that are application specific.
     */
     public static final String DEFAULT_WEB_APPLICATION_NAME = "DefaultWebApp";
+    private static final String ATTRIBUTE_SERVICE_NAME = "idsvcs-rest";
+    private static final String AGENT_CONFIG_CENTRALIZED = "centralized";
+    private static final String AGENT_CONFIG_LOCAL = "local";
+    public static final String ROOT_REALM_NAME = "/";
+    
     
    /**
     * Returns a header name that contains the client IP address. If no header
@@ -124,7 +137,7 @@ public class AgentConfiguration implements
     * @return the organization or realm name to which the Agent profile belongs.
     */
     public static String getOrganizationName() {
-        return _organizationName;
+        return ROOT_REALM_NAME;
     }    
     
    /**
@@ -379,51 +392,32 @@ public class AgentConfiguration implements
     private static synchronized void setConfigurationFilePath() {
         if (!isInitialized()) {
             String result = null;
-            if (usePrimaryConfiguration()) {
-                URL resUrl = ClassLoader.getSystemResource(CONFIG_FILE_NAME);
-                    if(resUrl == null) {
-                        ClassLoader cl = 
-                            Thread.currentThread().getContextClassLoader();
-                        if(cl != null) {
-                            resUrl = cl.getResource(CONFIG_FILE_NAME);
-                        }
-                    }
-            
-                    if (resUrl == null) {
-                        throw new RuntimeException(
-                                "Failed to get configuration file:"
-                                 + CONFIG_FILE_NAME);
-                    }
-                    result = resUrl.getPath();                     
-            } else {
-                String configFilePath = SystemProperties.get(
-                        SDKPROP_AMAGENT_LOCATION);
-                if (configFilePath == null 
-                        || configFilePath.trim().length() == 0) 
-                {
-                    throw new RuntimeException(
-                            "Failed to load secondary configuration: "
-                            + "No value specified for: "
-                            + SDKPROP_AMAGENT_LOCATION);
+            URL resUrl = ClassLoader.getSystemResource(CONFIG_FILE_NAME);
+            if(resUrl == null) {
+                ClassLoader cl = 
+                    Thread.currentThread().getContextClassLoader();
+                if(cl != null) {
+                    resUrl = cl.getResource(CONFIG_FILE_NAME);
                 }
-                
-                File configFile = new File(configFilePath);
-                if (!configFile.exists() || !configFile.isFile() 
-                        || !configFile.canRead()) 
-                {
-                    throw new RuntimeException(
-                            "Failed to load secondary configuration: " 
-                            + "Invalid value specified for: "
-                            + SDKPROP_AMAGENT_LOCATION + ", value: "
-                            + configFilePath);
-                }
-                result = configFilePath;
             }
+            
+            if (resUrl == null) {
+                throw new RuntimeException(
+                    "Failed to get configuration file:" + CONFIG_FILE_NAME);
+            }
+            result = resUrl.getPath();                     
             if (result == null) {
                 throw new RuntimeException(
-                        "Failed to load secondary configuration");
+                    "Failed to get configuration file:" + CONFIG_FILE_NAME);
             }
             setConfigFilePath(result);
+            int index = result.lastIndexOf(CONFIG_FILE_NAME);
+            if (index < 0) {
+                throw new RuntimeException(
+                "Failed to find the agent bootstrap file:" + CONFIG_FILE_NAME);
+            }
+            String pathDir = result.substring(0, index);
+            setLocalConfigFilePath(pathDir + LOCAL_CONFIG_FILE_NAME);
         }
     }
     
@@ -450,29 +444,157 @@ public class AgentConfiguration implements
         return result;
     }
     
+    private static Properties getPropertiesFromRemote(Vector urls) 
+        throws AgentException {
+        Properties result = new Properties();
+        String tokenId = getAppSSOToken().getTokenID().toString();
+        result = AgentRemoteConfigUtils.getAgentProperties(urls, tokenId);
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration: Centralized agent properties =" 
+                    + result);
+        }
+        return result; 
+    }
+           
+    private static Properties getPropertiesFromLocal() 
+        throws AgentException {
+        Properties result = new Properties();
+        BufferedInputStream instream = null;
+        try {
+            instream = new BufferedInputStream(
+                    new FileInputStream(getLocalConfigFilePath()));
+            result.load(instream);
+        } catch (Exception ex) {
+            throw new AgentException(ex);
+        } finally {
+                if (instream != null) {
+                    try {
+                        instream.close();
+                    } catch (Exception ex) {
+                        // No handling required
+                    }
+                }
+        }
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration: Local config properties =" + result);
+        }
+        return result;
+    }
+    
+    private static void setAppSSOToken() throws AgentException {
+        CommonFactory cf = new CommonFactory(BaseModule.getModule());
+        IApplicationSSOTokenProvider provider =  
+            cf.newApplicationSSOTokenProvider();
+        
+        _appSSOToken = provider.getApplicationSSOToken();
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration: appSSOToken =" + _appSSOToken);
+        }
+    }
+    
+    private static SSOToken getAppSSOToken() throws AgentException {
+        try {
+            if ((_appSSOToken == null) ||
+               (!SSOTokenManager.getInstance().isValidToken(_appSSOToken))) {
+                if (isLogMessageEnabled()) {
+                    logMessage("AgentConfiguration: " +
+                       "need to reauthenticate to get a new app SSO token");
+                }
+                setAppSSOToken();
+            }
+        } catch (SSOException se) {
+            throw new AgentException(se);
+        }
+        return _appSSOToken;
+    }
+    
+    private static Vector getAttributeServiceURLs() throws AgentException {
+        if (_attributeServiceURLs == null) {
+            try {
+                _attributeServiceURLs = WebtopNaming.getServiceAllURLs(
+                                          ATTRIBUTE_SERVICE_NAME);
+                if (isLogMessageEnabled()) {
+                    logMessage("AgentConfiguration: attribute service urls"
+                                + _attributeServiceURLs);
+                }    
+            } catch (URLNotFoundException ue) {
+                throw new AgentException(ue);
+            }
+        }
+        return _attributeServiceURLs;
+    }
+       
     private static synchronized void bootStrapClientConfiguration() {
         if (!isInitialized()) {
             HashMap sysPropertyMap = null;
             setConfigurationFilePath();
-                try {
+            try {
                 sysPropertyMap = new HashMap();
                 Properties properties = getProperties();
                 properties.clear();
                 properties.putAll(getPropertiesFromConfigFile());
+                
+                // set the bootstrap properties to system properties
+                Iterator iter = properties.keySet().iterator();
+                while (iter.hasNext()) {
+                    String nextKey = (String) iter.next();
+                    if (!nextKey.startsWith(AGENT_CONFIG_PREFIX)) {
+                        String nextValue = 
+                                getProperties().getProperty(nextKey);
+                        System.setProperty(nextKey, nextValue);
+                        sysPropertyMap.put(nextKey, nextValue);
+                    }
+                }
+                setDebug(Debug.getInstance(IBaseModuleConstants.BASE_RESOURCE));
+                setServiceResolver();
+                setApplicationUser();
+                setApplicationPassword();
+                setAppSSOToken();
 
-                if (usePrimaryConfiguration()) {
-                    Iterator it = properties.keySet().iterator();
-                    while (it.hasNext()) {
-                        String nextKey = (String) it.next();
-                        if (!nextKey.startsWith(AGENT_CONFIG_PREFIX)) {
-                            String nextValue = 
-                                    getProperties().getProperty(nextKey);
-                            System.setProperty(nextKey, nextValue);
-                            sysPropertyMap.put(nextKey, nextValue);
+                Vector attrServiceURLs = getAttributeServiceURLs();
+                if (attrServiceURLs != null) {
+                    Properties props = getPropertiesFromRemote(attrServiceURLs);
+                    String agentConfigLocation = 
+                            props.getProperty(CONFIG_REPOSITORY_LOCATION);
+                    if ((agentConfigLocation == null)
+                         || (agentConfigLocation.trim().equals(""))
+                         || (agentConfigLocation.equalsIgnoreCase(
+                            AGENT_CONFIG_LOCAL))) {  
+                        // if audit log mode is set, then agent configuration is 
+                        // already loaded during bootstrapping. 
+                        // This happens when agent config file is old style.
+                        if (properties.getProperty(CONFIG_AUDIT_LOG_MODE) == null) {
+                           // Need to read the rest of agent config from its 
+                           // local configuration file
+                            properties.putAll(getPropertiesFromLocal());
                         }
+                    } else if (agentConfigLocation.equalsIgnoreCase(
+                            AGENT_CONFIG_CENTRALIZED)) {
+                        markAgentConfigurationRemote();
+                        properties.putAll(props);
+                    } else {
+                        throw new AgentException("Invalid agent config location.");
                     }
                 } else {
-                    properties.putAll(getAllSystemProperties());
+                    // if audit log mode is set, then agent configuration is 
+                    // already loaded during bootstrapping. 
+                    // This happens when agent config file is old style.
+                    if (properties.getProperty(CONFIG_AUDIT_LOG_MODE) == null) {
+                        // Need to read the rest of agent config from its local
+                        // configuration file
+                        properties.putAll(getPropertiesFromLocal());
+                    }
+                }
+
+                Iterator it = properties.keySet().iterator();
+                while (it.hasNext()) {
+                    String nextKey = (String) it.next();
+                    if (!nextKey.startsWith(AGENT_CONFIG_PREFIX)) {
+                        String nextValue = 
+                               getProperties().getProperty(nextKey);
+                        System.setProperty(nextKey, nextValue);
+                        sysPropertyMap.put(nextKey, nextValue);
+                    }
                 }
 
                 String modIntervalString = getProperty(CONFIG_LOAD_INTERVAL);
@@ -491,53 +613,33 @@ public class AgentConfiguration implements
                         + ex.getMessage());
             }
         
-                // Initilaize the Debug Engine
-                setDebug(Debug.getInstance(IBaseModuleConstants.BASE_RESOURCE));
-                if (isLogMessageEnabled()) {
-                    logMessage("AgentConfiguration: Using " 
-                    + (usePrimaryConfiguration()?"primary":"secondary")
-                    + " configuration.");
-            
-                    if (sysPropertyMap != null) {
-                        logMessage(
-                            "AgentConfiguration: The following properties "
-                            + "were added to system: " + sysPropertyMap);
-                    } else {
-                        logMessage(
-                            "AgentConfiguration: No properties were added "
-                            + " to system.");
-                    }
-            
-                    if (usePrimaryConfiguration()) {
-                        logMessage(
-                            "AgentConfiguration: Mod Interval is set to: "
-                            + getModInterval() + " ms.");
-                    }
-                }
-        
-                //Start the Configuration Monitor if necessary
-                if (getModInterval() > 0L) {
-                    Thread monitorThread = new Thread(
-                            new ConfigurationMonitor(), "AgentConfigMonitor");
-                    monitorThread.setDaemon(true);
-                    monitorThread.setPriority(Thread.MIN_PRIORITY);
-                    monitorThread.start();
-                }
-        }
-    }
-    
-    private static synchronized void setConfigurationDisposition() {
-        if (!isInitialized()) {
-            String debugLevel = SystemProperties.get(SDKPROP_DEBUG_LEVEL);
-                if (debugLevel == null) {
-                    markUsePrimaryConfiguration();
+            // Initilaize the Debug Engine
+            //setDebug(Debug.getInstance(IBaseModuleConstants.BASE_RESOURCE));
+            if (isLogMessageEnabled()) {
+                if (sysPropertyMap != null) {
+                    logMessage(
+                        "AgentConfiguration: The following properties "
+                        + "were added to system: " + sysPropertyMap);
                 } else {
-                    markUseSecondaryConfiguration();
-                    getAllSystemProperties().putAll(SystemProperties.getAll());
+                    logMessage(
+                        "AgentConfiguration: No properties were added "
+                        + " to system.");
                 }
+                logMessage("AgentConfiguration: Mod Interval is set to: "
+                        + getModInterval() + " ms.");
+            }
+        
+            //Start the Configuration Monitor if necessary
+            if (getModInterval() > 0L) {
+                Thread monitorThread = new Thread(
+                        new ConfigurationMonitor(), "AgentConfigMonitor");
+                monitorThread.setDaemon(true);
+                monitorThread.setPriority(Thread.MIN_PRIORITY);
+                monitorThread.start();
+            }
         }
     }
-    
+   
     private static synchronized void setServiceResolver() {
         if (!isInitialized()) {
             String serviceResolverClassName =
@@ -831,34 +933,14 @@ public class AgentConfiguration implements
         }
     }
     
-    private static synchronized void setOrganizationName() {
-        if (!isInitialized()) {
-            _organizationName = getProperty(CONFIG_ORG_NAME);
-            if (_organizationName == null || 
-                    _organizationName.trim().length() == 0) {
-                logError("AgentConfiguration: Empty/missing organization name");
-                throw new RuntimeException(
-                        "Invalid organization name specified");
-            }
-            if (isLogMessageEnabled()) {
-                logMessage("AgentConfiguration: Organization name set to: "
-                        + _organizationName);
-            }
-        }
-    }
-    
     private static synchronized void initializeConfiguration() {
         if (!isInitialized()) {
-            setConfigurationDisposition();
             bootStrapClientConfiguration();
-            setServiceResolver();
             setUserMappingMode();
             setAuditLogMode();
             setUserAttributeName();
             setUserPrincipalEnabledFlag();
             setSSOTokenName();
-            setApplicationUser();
-            setApplicationPassword();
             setUserIdPropertyName();
             setAnonymousUserName();
             setSessionNotificationURL();
@@ -867,7 +949,6 @@ public class AgentConfiguration implements
             setPolicyNotificationEnabledFlag();
             setClientIPAddressHeader();
             setClientHostNameHeader();
-            setOrganizationName();
             
             markInitialized();
         }
@@ -906,14 +987,16 @@ public class AgentConfiguration implements
     }    
     
     private static void updateProperties() {
-        if(needToRefresh()) {
-            File configFile = new File(getConfigFilePath());
-            if(getLastLoadTime() > configFile.lastModified()) {
-                markCurrent();
-            } else {
-                if (loadProperties()) {
-                    notifyModuleConfigurationListeners();
-                }
+        if (needToRefresh()) {
+            if (!isAgentConfigurationRemote()) {
+                File configFile = new File(getConfigFilePath());
+                if(getLastLoadTime() > configFile.lastModified()) {
+                    markCurrent();
+                    return; 
+                } 
+            }
+            if (loadProperties()) {
+                notifyModuleConfigurationListeners();
             }
         }
     }
@@ -946,11 +1029,24 @@ public class AgentConfiguration implements
             Properties properties = new Properties();
             properties.clear();
             properties.putAll(getPropertiesFromConfigFile());
-            if (useSecondaryConfiguration()) {
-                properties.putAll(getAllSystemProperties());
+            if (!isAgentConfigurationRemote()) {
+                // if audit log mode is set, then agent configuration is 
+                // already loaded during bootstrapping. 
+                // This happens when agent config file is old style.
+                if (properties.getProperty(CONFIG_AUDIT_LOG_MODE) == null) {
+                    // Need to read the rest of agent config from its local
+                    // configuration file
+                    properties.putAll(getPropertiesFromLocal());
+                }
+            } else {
+                properties.putAll(getPropertiesFromRemote(
+                    getAttributeServiceURLs()));
             }
             String modIntervalString = properties.getProperty(
                     CONFIG_LOAD_INTERVAL);
+            if (isLogMessageEnabled()) {
+                logMessage("AgentConfiguration: interval=" + modIntervalString);
+            }
             if (modIntervalString != null && 
                     modIntervalString.trim().length()>0) 
             {
@@ -1036,28 +1132,28 @@ public class AgentConfiguration implements
         }
     }
     
-    private static boolean usePrimaryConfiguration() {
-        return _usePrimaryConfiguration;
+    private static boolean isAgentConfigurationRemote() {
+        return _isAgentConfigurationRemote;
     }
-    
-    private static boolean useSecondaryConfiguration() {
-        return !usePrimaryConfiguration();
+   
+    private static void markAgentConfigurationRemote() {
+        _isAgentConfigurationRemote = true; 
     }
-    
-    private static void markUsePrimaryConfiguration() {
-        _usePrimaryConfiguration = true;
-    }
-    
-    private static void markUseSecondaryConfiguration() {
-        _usePrimaryConfiguration = false;
-    }
-    
+   
     private static String getConfigFilePath() {
         return _configFilePath;
     }
     
     private static void setConfigFilePath(String configFilePath) {
         _configFilePath = configFilePath;
+    }
+    
+    private static String getLocalConfigFilePath() {
+        return _localConfigFilePath;
+    }
+    
+    private static void setLocalConfigFilePath(String localConfigFilePath) {
+        _localConfigFilePath = localConfigFilePath;
     }
     
     private static Properties getProperties() {
@@ -1097,9 +1193,10 @@ public class AgentConfiguration implements
     }
    
         
-    private static boolean _usePrimaryConfiguration;
+    private static boolean _isAgentConfigurationRemote = false;
     private static boolean _initialized;
     private static String _configFilePath;
+    private static String _localConfigFilePath;
     private static Properties _properties = new Properties();
     private static Debug _debug;
     private static long _modInterval = 0L;
@@ -1122,9 +1219,10 @@ public class AgentConfiguration implements
     private static boolean _sessionNotificationEnabledFlag;
     private static String _clientIPAddressHeader;
     private static String _clientHostNameHeader;
-    private static String _organizationName;
     private static ICrypt _crypt;
     private static Properties _systemProperties = new Properties();
+    private static SSOToken _appSSOToken = null;
+    private static Vector _attributeServiceURLs = null;
     
     static {
         initializeConfiguration();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigurationKeyConstants.java,v 1.1 2006-09-28 23:21:50 huacui Exp $
+ * $Id: IConfigurationKeyConstants.java,v 1.2 2007-10-13 00:09:09 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,6 +68,12 @@ public interface IConfigurationKeyConstants {
     //------- Configuration Subkey Definitions -----------------//
     
     // Non-Static subkeys: These keys may be reloaded by hot-swap
+     
+    /**
+     * Configuration subkey for config location
+     */ 
+     public static final String CONFIG_SUBKEY_CONFIG_REPOSITORY_LOCATION = 
+        "repository.location";     
      
     /**
      * Configuration subkey for config load interval.
@@ -152,6 +158,7 @@ public interface IConfigurationKeyConstants {
      * A list of all configuration subkeys that do not participate in hot-swap.
      */
      public static final String[] CONFIG_STATIC_SUBKEY_LIST = new String[] {
+             CONFIG_SUBKEY_CONFIG_REPOSITORY_LOCATION,
              CONFIG_SUBKEY_SERVICE_RESOLVER,
              CONFIG_SUBKEY_USER_MAPPING_MODE,
              CONFIG_SUBKEY_USER_ATTRIBUTE_NAME,
@@ -167,6 +174,12 @@ public interface IConfigurationKeyConstants {
      };
      
     //------- Configuration Key and Format Definitions -----------//
+     
+    /**
+     * Configuration key for configuration remote repository property.
+     */
+     public static final String CONFIG_REPOSITORY_LOCATION =
+         AGENT_CONFIG_PREFIX + CONFIG_SUBKEY_CONFIG_REPOSITORY_LOCATION;
      
     /**
      * Configuration key for configuration reload interval property.
