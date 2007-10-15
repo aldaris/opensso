@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.28 2007-09-28 17:33:52 rmisra Exp $
+ * $Id: TestCommon.java,v 1.29 2007-10-15 20:35:19 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -307,7 +307,7 @@ public class TestCommon implements TestConstants {
         log(Level.FINEST, "consoleLogin", "URL: " + amUrl);
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
-        log(Level.FINEST, "consoleLogin", page.getTitleText());
+        log(Level.FINEST, "consoleLogin", "BEFORE CONSOLE LOGIN:" + page.getTitleText());
         HtmlForm form = page.getFormByName("Login");
         HtmlHiddenInput txt1 =
                 (HtmlHiddenInput)form.getInputByName("IDToken1");
@@ -316,6 +316,7 @@ public class TestCommon implements TestConstants {
                 (HtmlHiddenInput)form.getInputByName("IDToken2");
         txt2.setValueAttribute(amadmPassword);
         page = (HtmlPage)form.submit();
+        log(Level.FINEST, "consoleLogin", "AFTER CONSOLE LOGIN: " + page.getTitleText());
         exiting("consoleLogin");
         return (page);
     }

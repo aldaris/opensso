@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.9 2007-10-06 00:02:34 bt199000 Exp $
+ * $Id: ClientConfigCreator.java,v 1.10 2007-10-15 20:35:57 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,8 +57,10 @@ public class ClientConfigCreator {
     private String newline = System.getProperty("line.separator");
     private String fileseparator = System.getProperty("file.separator");
     private String uriseparator = "/";
-    private Map properties1 = new HashMap();
-    private Map properties2 = new HashMap();
+    private Map properties_ss = new HashMap();
+    private Map properties_saml = new HashMap();
+    private Map properties_idff = new HashMap();
+    private Map properties_wsfed = new HashMap();
     private String ALL_FILE_CLIENT_PROPERTIES = "resources" + fileseparator +
             "AMConfig.properties";
     private String SAML_FILE_CLIENT_PROPERTIES =
@@ -84,14 +86,11 @@ public class ClientConfigCreator {
             getDefaultValues(testDir, serverName1);
         } else {
             getDefaultValues(testDir, serverName1, serverName2);
-            if (executionMode.indexOf("saml") != -1)
-                createFileFromMap(properties2, SAML_FILE_CLIENT_PROPERTIES);
-            if (executionMode.indexOf("idff") != -1)
-                createFileFromMap(properties2, IDFF_FILE_CLIENT_PROPERTIES);
-            if (executionMode.indexOf("wsfed") != -1)
-                createFileFromMap(properties2, WSFED_FILE_CLIENT_PROPERTIES);
+            createFileFromMap(properties_saml, SAML_FILE_CLIENT_PROPERTIES);
+            createFileFromMap(properties_idff, IDFF_FILE_CLIENT_PROPERTIES);
+            createFileFromMap(properties_wsfed, WSFED_FILE_CLIENT_PROPERTIES);
         }
-        createFileFromMap(properties1, ALL_FILE_CLIENT_PROPERTIES);
+        createFileFromMap(properties_ss, ALL_FILE_CLIENT_PROPERTIES);
     }
 
     /**
@@ -173,7 +172,7 @@ public class ClientConfigCreator {
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName);
-            properties1.put(key, value);
+            properties_ss.put(key, value);
         }
 
         for (Enumeration e = configDef.getKeys(); e.hasMoreElements(); ) {
@@ -189,11 +188,11 @@ public class ClientConfigCreator {
                     !key.equals(TestConstants.KEY_ATT_HOST) &&
                     !key.equals(TestConstants.KEY_ATT_PORT) &&
                     !key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI)) {
-                properties1.put(key, value);
+                properties_ss.put(key, value);
             }
         }
   
-        properties1.put(TestConstants.KEY_ATT_SERVER_NAME, serverName);
+        properties_ss.put(TestConstants.KEY_ATT_SERVER_NAME, serverName);
     }
 
     /**
@@ -250,7 +249,9 @@ public class ClientConfigCreator {
                     !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
                     !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
                     !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
-            properties2.put("idp_" + key, value);
+            properties_saml.put("idp_" + key, value);
+            properties_idff.put("idp_" + key, value);
+            properties_wsfed.put("idp_" + key, value);
         }
 
         PropertyResourceBundle configDef2 = new PropertyResourceBundle(
@@ -324,8 +325,8 @@ public class ClientConfigCreator {
                             strURI + "/" + "Liberty/authnsvc";
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
-                    serverName2);
-            properties1.put(key, value);
+                    serverName1 + "_" + serverName2);
+            properties_ss.put(key, value);
         }
 
         for (Enumeration e = configDef2.getKeys(); e.hasMoreElements(); ) {
@@ -341,11 +342,11 @@ public class ClientConfigCreator {
                     !key.equals(TestConstants.KEY_ATT_HOST) &&
                     !key.equals(TestConstants.KEY_ATT_PORT) &&
                     !key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI)) {
-                properties1.put(key, value);
+                properties_ss.put(key, value);
             }
         }
 
-        properties1.put(TestConstants.KEY_ATT_SERVER_NAME, serverName1 + "_" +
+        properties_ss.put(TestConstants.KEY_ATT_SERVER_NAME, serverName1 + "_" +
                 serverName2);
 
         for (Enumeration e = configDef2.getKeys(); e.hasMoreElements(); ) {
@@ -372,7 +373,9 @@ public class ClientConfigCreator {
                     !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
                     !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
                     !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
-            properties2.put("sp_" + key, value);
+            properties_saml.put("sp_" + key, value);
+            properties_idff.put("sp_" + key, value);
+            properties_wsfed.put("sp_" + key, value);
         }
     }
 
