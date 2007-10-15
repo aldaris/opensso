@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.5 2007-06-22 20:11:40 exu Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.6 2007-10-15 09:12:38 mchlbgs Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1611,7 +1611,11 @@ public class FSAssertionArtifactHandler {
                     setAttributeMap(ssoToken, attributeMap);
                 }
             }
-
+            
+            if (securityAssertions != null) {
+                session.setBootStrapCredential(securityAssertions);
+            }
+            
             sessionManager.addSession(userID, session);
 
         } catch(Exception ex){
