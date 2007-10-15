@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.15 2007-10-04 06:09:40 veiming Exp $
+   $Id: configurator.jsp,v 1.16 2007-10-15 17:55:05 rajeevangal Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -26,6 +26,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ page import="com.sun.identity.setup.AMSetupServlet"%>
+<%@ page import="com.sun.identity.setup.SetupProgress"%>
 <%@ page import="com.sun.identity.setup.SetupConstants"%>
 <%@ page import="java.io.*"%>
 <%@ page import="java.util.*"%>
@@ -54,6 +55,88 @@
             }
 
             document.forms['configurator'].elements['DS_UM_SCHEMA'].disabled = um;
+        }
+        function addProgressText(str) 
+        { 
+            var obj = document.getElementById("progressText"); 
+            obj.innerHTML += str;
+            var obj = document.getElementById("progressP");
+            obj.scrollTop = obj.scrollHeight; 
+        }
+        var isProgressShow = false;
+        function toggleProgressDiv()
+        {
+            var obj = document.getElementById("progressControl"); 
+            var obj1 = document.getElementById("progressDiv"); 
+            if (isProgressShow == true ) {
+                obj.innerHTML = "Show Progress";
+                obj1.style.display ="none";
+                isProgressShow = false;
+            } else {
+                obj.innerHTML = "Hide progress log";
+                obj1.style.display="block";
+                isProgressShow = true;
+            }
+        }
+        function processConfigType()
+        {
+            var show = 'table-row';
+            try {
+                // Firefox
+                document.getElementById("smdsrsuffix").style.display = show;
+            } catch(e) { 
+                // IE
+                show = 'block';
+            }
+            var dschoice = document.getElementById("embeddedOp");
+            if (dschoice.checked) { 
+                // embedded
+                document.getElementById("smrootsuffix").style.display = 'none';
+                document.getElementById("smdsservername").style.display = 'none';
+                document.getElementById("smdsserverport").style.display = show;
+                document.getElementById("smdsdmtextbox").style.display = 'none';
+                document.getElementById("smdsadmindn").style.display = 'none';
+                document.getElementById("smdsadminpwd").style.display = 'none';
+                document.getElementById("smdsloaduserschema").style.display = 'none';
+                document.getElementById("smdsembreplsection").style.display = show;
+                document.getElementById("smdsembreplchoose").style.display = show;
+                document.getElementById("smdsreplconfig").style.display = 'none';
+                showReplicationOptions();
+                document.getElementById("smdssection").style.display = 'none';
+
+            } else {
+               // SunDS
+                document.getElementById("smrootsuffix").style.display = show;
+                document.getElementById("smdsservername").style.display = show;
+                document.getElementById("smdsserverport").style.display = show;
+                document.getElementById("smdsdmtextbox").style.display = show;
+                document.getElementById("smdsadmindn").style.display = show;
+                document.getElementById("smdsadminpwd").style.display = show;
+                document.getElementById("smdsloaduserschema").style.display = show;
+                document.getElementById("smdsembreplsection").style.display = 'none';
+                document.getElementById("smdsembreplchoose").style.display = 'none';
+                document.getElementById("smdsreplconfig").style.display = 'none';
+                document.getElementById("smdsrepladvanced").style.display = 'none';
+                document.getElementById("smdssection").style.display = show;
+            }
+        }
+        function showReplicationOptions()
+        {
+            var show = 'table-row';
+            try {
+                // Firefox
+                document.getElementById("smdsrsuffix").style.display = show;
+            } catch(e) { 
+                // IE
+                show = 'block';
+            }
+            if (document.getElementById("smdsembrepl").checked) {
+                document.getElementById("smdsreplconfig").style.display = show;
+                document.getElementById("smdsrepladvanced").style.display = show;
+            } else {
+                document.getElementById("smdsreplconfig").style.display = 'none';
+                document.getElementById("smdsrepladvanced").style.display = 'none';
+            }
         }
     </script>
 </head>
@@ -86,6 +169,8 @@
     String basedir;
     String cookieDomain = "";
     int availableDSPort = 50389;
+    int availableDSReplLocalPort = 18989;
+    int availableDSReplRemotePort = 18990;
     String locale = "en_US";
     String adminPwd;
     String serverURL;
@@ -109,6 +194,16 @@
             out.flush();
 
             try {
+              %>
+              <p><a href="#" onclick="toggleProgressDiv()" 
+                    id="progressControl">Show progress log</a>
+              <div id="progressDiv" style="display:none">
+                <p id="progressP" 
+                   style="height:200px; overflow:auto; border:1px solid grey;"> 
+                <span id="progressText"></span> </p> 
+              </div>
+              <%
+                SetupProgress.setWriter(out);
                 result = AMSetupServlet.processRequest(request, response);
             } catch (Exception e) {
                 out.println("<p>");
@@ -202,6 +297,10 @@
         }
         availableDSPort = 
             AMSetupServlet.getUnusedPort("localhost", 50389, 1000);
+        availableDSReplLocalPort = 
+            AMSetupServlet.getUnusedPort("localhost", 58989, 1000);
+        availableDSReplRemotePort = 
+            AMSetupServlet.getUnusedPort("localhost", 58990, 1000);
     }
 %>
 
@@ -377,6 +476,7 @@
             </td>
             <td valign="top">
                 <div class="ConTblCl2Div"><input value="<%= config.getServletContext().getAttribute("am.enc.pwd") %>" name="AM_ENC_KEY" id="psLbl3" size="50" class="TxtFld"></div>
+                <div class="HlpFldTxt"><config:message i18nKey="configurator.encryptionkeyhelp"/></div>
             </td>
         </tr>
 
@@ -461,10 +561,10 @@
                             </td>
                             <td valign="top">  
                                 <div class="ConTblCl2Div">
-                                    <input type="radio" value="embedded" name="DATA_STORE" id="psLbl2" size="35" checked="checked" ">
+                                    <input type="radio" value="embedded" name="DATA_STORE" id="embeddedOp" size="35" checked="checked" onclick="processConfigType();">
                                     <label for="psLbl2"><config:message i18nKey="configurator.embedded"/></label>
                                     <br/>
-                                    <input type="radio" value="dirServer" name="DATA_STORE" id="psLbl2" size="35" >
+                                    <input type="radio" value="dirServer" name="DATA_STORE" id="psLbl2" size="35" onclick="processConfigType();" >
                                     <label for="psLbl2"><config:message i18nKey="configurator.remote"/></label>
                                     <br />
                                 </div>
@@ -475,7 +575,7 @@
             </tr>
 
             <!-- Root Suffix -->
-            <tr>
+            <tr id="smdsrsuffix">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
                         <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.configdatasuffix"/></span></div>
@@ -487,7 +587,7 @@
             </tr>
 
             <!-- Root Suffix for Service Management-->
-            <tr>
+            <tr id="smrootsuffix">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
                         <div class="ConTblCl1Div">
@@ -504,14 +604,14 @@
             <tr><td colspan=2>&nbsp;</td></tr>  
 
             <!-- Directory Server Admin Subsection -->
-            <tr>
+            <tr id="smdssection">
                 <td colspan="2" valign="top">
                     <div class="ConTblCl1Div"><span class="LblLev2Txt"><config:message i18nKey="configurator.dirsvradmin"/></span></div>
                 </td>
             </tr>
 
             <!-- Server Name -->
-            <tr>
+            <tr id="smdsservername">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
                         <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.name"/></span></div>
@@ -521,9 +621,8 @@
                     <div class="ConTblCl2Div"><input value="localhost"  name="DIRECTORY_SERVER" id="psLbl1" size="50" class="TxtFld"></div>
                 </td>
             </tr>
-
             <!-- Server Port -->
-            <tr>
+            <tr id="smdsserverport">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.port"/></span></div>
                     </div>
@@ -532,11 +631,11 @@
                     <div class="ConTblCl2Div"><input value="<%= availableDSPort %>"  name="DIRECTORY_PORT" id="psLbl1" size="5" class="TxtFld"></div>
                 </td>
             </tr>
-
-            <tr><td colspan=2>&nbsp;</td></tr>                   
+            <tr id="smdsdmtextbox">
+              <td colspan=2>&nbsp;</td></tr>                   
 
             <!-- Directory Manager Text Box -->
-            <tr>
+            <tr id="smdsadmindn">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
                         <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.dirsvradmindn"/></span></div>
@@ -548,7 +647,7 @@
             </tr>
 
             <!-- Directory Server Admin Password Text Box -->
-            <tr>
+            <tr id="smdsadminpwd">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.dirsvrpasswd"/></span></div>
                     </div>
@@ -563,7 +662,7 @@
             <tr><td colspan=2>&nbsp;</td></tr>
 
             <!-- load schema -->
-            <tr>
+            <tr  id="smdsloaduserschema" >
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
                         <div class="ConTblCl1Div"><height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.loaduserschema"/></span></div>
@@ -578,6 +677,81 @@
                     </div>
                 </td>
             </tr>    
+            <!-- EMbedded: Replication Subsection -->
+            <tr id="smdsembreplsection" >
+                <td colspan="2" valign="top">
+                    <div class="ConTblCl1Div"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplsection"/></span></div>
+                </td>
+            </tr>
+
+            <!-- Embedded : replication scheme -->
+            <tr  id="smdsembreplchoose" >
+                <td valign="top">
+                    <div class="ConEmbTblCl1Div">
+                        <div class="ConTblCl1Div"><height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplchoose"/></span></div>
+                    </div>
+                </td>
+                <td valign="top">
+                    <div class="ConTblCl2Div">
+                        <input type="checkbox" value="embReplFlag" name="DS_EMB_REPL_FLAG" id="smdsembrepl" onclick="showReplicationOptions();">
+                    </div>
+                    <div class="HlpFldTxt">
+                        <config:message i18nKey="configurator.embreplhelp"/>
+                    </div>
+                </td>
+            </tr>    
+            <tr  id="smdsreplconfig">
+                <td colspan=2>
+                  <div id="smdsrepladvanced">
+                  <table>
+            <!-- Repl Server Name -->
+            <tr>
+                <td valign="top">
+                    <div class="ConEmbTblCl1Div">
+                        <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplhost2"/></span></div>
+                    </div>
+                </td>
+                <td valign="top">
+                    <div class="ConTblCl2Div"><input value="localhost"  name="DS_EMB_REPL_HOST2" id="psLbl1" size="50" class="TxtFld"></div>
+                </td>
+            </tr>
+
+            <!-- Repl Server Port -->
+            <tr>
+                <td valign="top">
+                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplport2"/></span></div>
+                    </div>
+                </td>
+                <td valign="top">
+                    <div class="ConTblCl2Div"><input value="<%= availableDSPort %>"  name="DS_EMB_REPL_PORT2" id="psLbl1" size="5" class="TxtFld"></div>
+                </td>
+            </tr>
+            <!-- Repl Port2 -->
+            <tr>
+                <td valign="top">
+                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplreplport2"/></span></div>
+                    </div>
+                </td>
+                <td valign="top">
+                    <div class="ConTblCl2Div"><input value="<%= availableDSReplLocalPort %>"  name="DS_EMB_REPL_REPLPORT2" id="psLbl1" size="5" class="TxtFld"></div>
+                </td>
+            </tr>
+            <!-- Repl Port1 -->
+            <tr>
+                <td valign="top">
+                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplreplport1"/></span></div>
+                    </div>
+                </td>
+                <td valign="top">
+                    <div class="ConTblCl2Div"><input value="<%= availableDSReplRemotePort %>"  name="DS_EMB_REPL_REPLPORT1" id="psLbl1" size="5" class="TxtFld"></div>
+                </td>
+            </tr>
+                  </table>
+                </td>
+            </tr>
+                  </table>
+                </td>
+            </tr>
 
             <!-- separator -->
 
@@ -608,3 +782,6 @@
 </form>
 </body>
 </html>
+<script>
+processConfigType();
+</script>

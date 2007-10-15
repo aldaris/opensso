@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.5 2006-12-08 21:02:35 veiming Exp $
+ * $Id: RegisterServices.java,v 1.6 2007-10-15 17:55:02 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,6 +72,7 @@ public class RegisterServices {
 
         for (Iterator i = serviceNames.iterator(); i.hasNext(); ) {
             String serviceFileName = (String)i.next();
+            SetupProgress.reportStart("emb.registerservice",serviceFileName);
             BufferedReader rawReader = null;
             InputStream serviceStream = null;
             
@@ -88,14 +89,20 @@ public class RegisterServices {
                 
                 rawReader.close();
                 rawReader = null;
-                String strXML = manipulateServiceXML(
-                    serviceFileName, buff.toString());
+
+                String strXML = buff.toString();
+
+                // Flatfile idrepo removed : Following code will be removed.
+                //String strXML = manipulateServiceXML(
+                    //serviceFileName, buff.toString());
+
                 strXML = ServicesDefaultValues.tagSwap(strXML);
                 serviceStream = (InputStream)new ByteArrayInputStream(
                     strXML.getBytes());
                 serviceManager.registerServices(serviceStream);
                 serviceStream.close();
                 serviceStream = null;
+                SetupProgress.reportEnd("emb.success", null);
             } finally {
                 if (rawReader != null) {
                     rawReader.close();

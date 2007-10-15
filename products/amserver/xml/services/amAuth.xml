@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.7 2007-10-09 18:55:53 pawand Exp $
+    $Id: amAuth.xml,v 1.8 2007-10-15 17:55:05 rajeevangal Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -330,9 +330,10 @@
                     syntax="string"
                     i18nKey="a142">
                     <ChoiceValues>
-                        <ChoiceValuesClassName
-                            className=
-                    "com.sun.identity.authentication.service.ConfiguredIdentityTypes" />
+			<ChoiceValue i18nKey="choiceUser">user</ChoiceValue>
+			<ChoiceValue i18nKey="choiceAgent">agent</ChoiceValue>
+			<ChoiceValue i18nKey="choiceGroup">group</ChoiceValue>
+			<ChoiceValue i18nKey="choiceRole">role</ChoiceValue>
                     </ChoiceValues>
                     <DefaultValues>
                         <Value>user</Value>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.23 2007-10-04 06:09:40 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.24 2007-10-15 17:55:01 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,10 +115,13 @@ public class AMSetupServlet extends HttpServlet {
                 File odsDirFile = new File(odsDir);
                 // Start embedded opends
                 if (odsDirFile.exists() && !EmbeddedOpenDS.isStarted()) {
+                    SetupProgress.reportStart("emb.startemb", null);
                     EmbeddedOpenDS.startServer(odsDir);
-                    java.lang.Thread.sleep(5000);
+                    //java.lang.Thread.sleep(5000);
+                    SetupProgress.reportEnd("emb.success", null);
                 } 
             } catch (Exception ex) {
+                SetupProgress.reportEnd("emb.failed", null);
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "AMSetupServlet.createOpenDSDirs:EmbeddedDS", ex);
                 throw new ConfiguratorException(
@@ -248,7 +251,11 @@ public class AMSetupServlet extends HttpServlet {
                 // (ii) install, configure, and replicate embedded instance
                 try {
                     EmbeddedOpenDS.setup(map, servletCtx);
-                    // Now create the AMSetupDSConfig instance..Abor if it 	fails.
+                    // Determine if DITLoaded flag needs to be set...
+                    if (EmbeddedOpenDS.isMultiServer(map)) {
+                        isDITLoaded = true;
+                    }
+                    // Now create the AMSetupDSConfig instance.Abort on failure
                     AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
                     if (!dsConfig.isDServerUp()) {
                         Debug.getInstance(SetupConstants.DEBUG_NAME).error(
@@ -847,7 +854,10 @@ public class AMSetupServlet extends HttpServlet {
             isADServer = dataStore.equals(SetupConstants.SMS_AD_DATASTORE);
         }
 
-        if (isDSServer) {
+        if (embedded) {
+            strFiles = rb.getString(
+                           SetupConstants.OPENDS_SMS_PROPERTY_FILENAME); 
+        } else if (isDSServer) {
             if (sdkSchema) {
                 strFiles = rb.getString(SetupConstants.SDK_PROPERTY_FILENAME);
             } else {

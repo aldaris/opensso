@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.2 2007-09-15 08:03:25 rajeevangal Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.3 2007-10-15 17:55:02 rajeevangal Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,9 @@ import org.opends.messages.Message;
 import org.opends.server.util.EmbeddedUtils;
 import org.opends.server.types.DirectoryEnvironmentConfig;
 import org.opends.server.extensions.SaltedSHA512PasswordStorageScheme;
+
+// Until we have apis to setup replication we will use the clin interface.
+import org.opends.guitools.replicationcli.ReplicationCliMain;
 
 /**
   * This class encapsulates all <code>OpenDS</code>  dependencies.
@@ -104,6 +107,8 @@ public class EmbeddedOpenDS {
         String[] files = {
             "config/upgrade/schema.ldif.3056",
             "config/upgrade/config.ldif.3056",
+            //"config/upgrade/schema.ldif.3207",
+            //"config/upgrade/config.ldif.3207",
             "config/config.ldif",
             "config/famsuffix.ldif",
             "config/schema/00-core.ldif",
@@ -157,12 +162,37 @@ public class EmbeddedOpenDS {
                 }
             }
         }
+        SetupProgress.reportStart("emb.installingemb", odsRoot);
         EmbeddedOpenDS.startServer(odsRoot);
-        java.lang.Thread.sleep(5000);
-        EmbeddedOpenDS.shutdownServer("to load ldif");
-        EmbeddedOpenDS.loadLDIF(odsRoot, odsRoot+ "/config/famsuffix.ldif");
-        EmbeddedOpenDS.startServer(odsRoot);
-        java.lang.Thread.sleep(5000);
+        SetupProgress.reportEnd("emb.done", null);
+        //java.lang.Thread.sleep(5000);
+
+        // Check: If adding a new server to a existing cluster
+
+        if (isMultiServer(map)) {
+            // Setup replication
+            SetupProgress.reportStart("emb.creatingreplica", null);
+            int ret = setupReplication(map);
+            if (ret == 0) {
+                SetupProgress.reportEnd("emb.success", null);
+                Debug.getInstance(SetupConstants.DEBUG_NAME).message(
+                    "EmbeddedOpenDS.setup(). replication setup succeeded.");
+            } else {
+                SetupProgress.reportEnd("emb.failed", new Integer(ret));
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                    "EmbeddedOpenDS.setup(). Error setting up replication");
+                throw new ConfiguratorException(
+                        "configurator.embreplfailed");
+            }
+        } else {
+            // Default: single / first server.
+            SetupProgress.reportStart("emb.creatingfamsuffix", null);
+            EmbeddedOpenDS.shutdownServer("to load ldif");
+            EmbeddedOpenDS.loadLDIF(odsRoot, odsRoot+ "/config/famsuffix.ldif");
+            EmbeddedOpenDS.startServer(odsRoot);
+            SetupProgress.reportEnd("emb.done", null);
+        }
+        //java.lang.Thread.sleep(5000);
     }
 
     /**
@@ -210,6 +240,95 @@ public class EmbeddedOpenDS {
             debug.message("EmbeddedOpenDS.shutdown server success.");
             serverStarted = false;
         }
+    }
+
+    /**
+      * Setups replication between two opends sms and user stores.
+      * $ dsreplication enable
+      *    --no-prompt
+      *    --host1 host1 --port1 1389 --bindDN1 "cn=Directory Manager"
+      *    --bindPassword1 password --replicationPort1 8989
+      *    --host2 host2 --port2 2389 --bindDN2 "cn=Directory Manager"
+      *    --bindPassword2 password --replicationPort2 8990 
+      *    --adminUID admin --adminPassword password 
+      *    --baseDN "dc=example,dc=com"
+      *
+      * $ dsreplication initialize 
+      *     --baseDN "dc=example,dc=com" --adminUID admin --adminPassword pass
+      *     --hostSource host1 --portSource 1389
+      *     --hostDestination host2 --portDestination 2389
+      *
+      *  @param map Map of properties collected by the configurator.
+      *  @return status : 0 == success, !0 == failure
+      */
+    public static int setupReplication(Map map)
+    {
+        String[] enableCmd= {
+            "--no-prompt",           // 0
+            "--host1",               // 1
+            "host1val",              // 2
+            "--port1",               // 3
+            "port1ival",             // 4
+            "--bindDN1",             // 5
+            "cn=Directory Manager",  // 6
+            "--bindPassword1",       // 7
+            "password",              // 8
+            "--replicationPort1",    // 9
+            "8989",                  // 10
+            "--host2",               // 11
+            "host2val",              // 12
+            "--port2",               // 13
+            "port2ival",             // 14
+            "--bindDN2",             // 15
+            "cn=Directory Manager",  // 16
+            "--bindPassword2",       // 17
+            "password",              // 18
+            "--replicationPort2",    // 19
+            "8989",                  // 20
+            "--adminUID",            // 21
+            "admin",                 // 22
+            "--adminPassword",       // 23
+            "password",              // 24 
+            "--baseDN",              // 25
+            "dc=example,dc=com"      // 26
+        };
+        enableCmd[2] = "localhost";
+        enableCmd[4] = (String) map.get(SetupConstants.DS_EMB_REPL_REPLPORT1);
+        enableCmd[8] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
+        enableCmd[10] = "18989";
+
+        enableCmd[12] = (String) map.get(SetupConstants.DS_EMB_REPL_HOST2);
+        enableCmd[14] = (String) map.get(SetupConstants.DS_EMB_REPL_PORT2);
+        enableCmd[18] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
+        enableCmd[20] = (String) map.get(SetupConstants.DS_EMB_REPL_REPLPORT2);
+        enableCmd[24] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
+
+        SetupProgress.reportStart("emb.replcommand",concat(enableCmd));
+
+        //int ret = ReplicationCliMain.mainCLI(enableCmd, true, 
+                                            //null, null, null); 
+        SetupProgress.reportEnd("..TODO:Not executed pending OpenDS bug", null);
+        return 1;
+    }
+ 
+    /**
+      * @return true if multi server option is selected in the configurator.
+      */
+    public static boolean isMultiServer(Map map) 
+    {
+        String replFlag = (String) map.get(SetupConstants.DS_EMB_REPL_FLAG); 
+        if (replFlag != null && replFlag.startsWith(
+              SetupConstants.DS_EMP_REPL_FLAG_VAL)) {
+            return true;
+        }
+        return false;
+    }
+    private static String concat(String[] args)
+    {
+        String ret = "";
+        for (int i = 0; i < args.length; i++)
+           ret += args[i]+" ";
+        return ret;
     }
 
     /**

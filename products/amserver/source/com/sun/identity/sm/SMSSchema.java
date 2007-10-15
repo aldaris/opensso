@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSSchema.java,v 1.5 2007-03-21 22:33:47 veiming Exp $
+ * $Id: SMSSchema.java,v 1.6 2007-10-15 17:55:04 rajeevangal Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -418,6 +418,7 @@ public class SMSSchema {
             Document doc = builder.parse(in);
             return (doc);
         } catch (SAXParseException pe) {
+            SMSEntry.debug.error("SMSSchema: SAXPasrseException", pe);
             Object params[] = { new Integer(pe.getLineNumber()) };
             throw (new SchemaException(IUMSConstants.UMS_BUNDLE_NAME,
                     IUMSConstants.SMS_SMSSchema_parser_error, params));

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.5 2007-10-08 19:38:04 huacui Exp $
+ * $Id: WebtopNaming.java,v 1.6 2007-10-15 17:55:01 rajeevangal Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -355,6 +355,7 @@ public class WebtopNaming {
             if (protocol == null || host == null || port == null ||
                 protocol.length() == 0 || host.length() == 0 ||
                 port.length() == 0) {
+                debug.error("WebtopNaming.getServerId():noServerId");
                 throw new Exception(NamingBundle.getString("noServerID"));
             }
 
@@ -371,11 +372,13 @@ public class WebtopNaming {
             }
 
             if (serverID == null) {
+                debug.error("WebtopNaming.getServerId():serverId null");
                 throw new ServerEntryNotFoundException(
                     NamingBundle.getString("noServerID"));
             }
             return serverID;
         } catch (Exception e) {
+            debug.error("WebtopNaming.getServerId()", e);
             throw new ServerEntryNotFoundException(e);
         }
     }

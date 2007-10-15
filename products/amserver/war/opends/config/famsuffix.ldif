@@ -3,3 +3,11 @@ objectClass: domain
 objectClass: top
 dc: @SM_CONFIG_BASEDN_RDNV@
 
+dn: ou=people,@SM_CONFIG_BASEDN@
+ou: People
+objectClass: organizationalUnit
+
+dn: ou=groups,@SM_CONFIG_BASEDN@
+ou: Groups
+objectClass: organizationalUnit
+

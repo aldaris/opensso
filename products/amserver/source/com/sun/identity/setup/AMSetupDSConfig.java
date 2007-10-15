@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.8 2007-09-06 17:41:25 rajeevangal Exp $
+ * $Id: AMSetupDSConfig.java,v 1.9 2007-10-15 17:55:01 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -315,12 +315,20 @@ public class AMSetupDSConfig {
                 String file = (String)i.next();
                 int idx = file.lastIndexOf("/");
                 String schemaFile = (idx != -1) ? file.substring(idx+1) : file;
+                SetupProgress.reportStart("emb.loadingschema",schemaFile);
                 LDAPUtils.createSchemaFromLDIF(basedir + "/" + schemaFile, ld);
+                SetupProgress.reportEnd("emb.success", null);
             }
         } catch (IOException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                 "AMSetupDSConfig.loadSchemaFiles:failed", e);
+            SetupProgress.reportEnd("emb.failed", null);
             throw new ConfiguratorException("configurator.ldiferror",
                 null, locale);
         } catch (LDAPException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                 "AMSetupDSConfig.loadSchemaFiles:failed", e);
+            SetupProgress.reportEnd("emb.failed", null);
             throw new ConfiguratorException(e.getMessage());
         }
     }
