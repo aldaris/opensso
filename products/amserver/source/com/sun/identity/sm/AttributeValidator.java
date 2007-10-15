@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValidator.java,v 1.4 2007-10-15 17:55:03 rajeevangal Exp $
+ * $Id: AttributeValidator.java,v 1.5 2007-10-15 18:02:49 rajeevangal Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -265,7 +265,6 @@ class AttributeValidator {
                         return (true);
                     }
                 }
-System.out.println("VALTYPE  failed 1111");
                 return (false);
             }
         }
@@ -276,7 +275,6 @@ System.out.println("VALTYPE  failed 1111");
             int maxValue = as.getMaxValue();
             if (!(minValue == -1 || maxValue == -1)) {
                 if (size < minValue || size > maxValue) {
-System.out.println("VALTYPE  failed 222");
                     return (false);
                 }
             }
@@ -285,7 +283,6 @@ System.out.println("VALTYPE  failed 222");
             }
 
             if ((array == null) || (array.length == 0)) {
-System.out.println("VALTYPE  failed 333");
                 return false;
             }
 
@@ -301,7 +298,6 @@ System.out.println("VALTYPE  failed 333");
                     }
                 }
                 if (!match) {
-System.out.println("VALTYPE  failed 444");
                     return (false);
                 }
             }
