@@ -42,7 +42,6 @@
 #
 com.sun.am.naming.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/namingservice 
 
-
 #
 # Name of the file to use for logging messages.
 #

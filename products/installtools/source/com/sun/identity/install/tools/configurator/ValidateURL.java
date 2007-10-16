@@ -59,10 +59,6 @@ public class ValidateURL extends ValidatorBase {
 	
         try {
 	    URL serverUrl = new URL(url);
-	    URLConnection urlConnect = serverUrl.openConnection();
-	    urlConnect.connect();
-            returnMessage = LocalizedMessage.get(LOC_VA_MSG_VAL_SERVER_URL,
-                            new Object[] { url });
             String protocol = serverUrl.getProtocol();
             String hostName = serverUrl.getHost();
             int portNum = serverUrl.getPort();           
@@ -91,6 +87,11 @@ public class ValidateURL extends ValidatorBase {
                     tokens.put("AM_SERVICES_DEPLOY_URI", deploymentURI);
                 }              
                 state.putData(tokens);               
+		// Establish the connection
+	        URLConnection urlConnect = serverUrl.openConnection();
+	        urlConnect.connect();
+                returnMessage = LocalizedMessage.get(LOC_VA_MSG_VAL_SERVER_URL,
+                            new Object[] { url });
                 state.put("isServerURLValid", "true");
                 validRes = ValidationResultStatus.STATUS_SUCCESS;
             } else {

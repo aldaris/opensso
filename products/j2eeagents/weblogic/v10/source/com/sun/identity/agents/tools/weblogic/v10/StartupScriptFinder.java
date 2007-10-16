@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StartupScriptFinder.java,v 1.1 2007-08-07 01:47:46 sean_brydon Exp $
+ * $Id: StartupScriptFinder.java,v 1.2 2007-10-16 22:38:48 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,10 +50,10 @@ public class StartupScriptFinder implements IDefaultValueFinder, IConfigKeys {
         String osName = System.getProperty(STR_OS_NAME_PROPERTY);
         if (osName.toLowerCase().startsWith(STR_WINDOWS)) {
             result =
-                "C:\\bea\\user_projects\\domains\\mydomain\\startWebLogic.cmd";
+              "C:\\bea\\user_projects\\domains\\base_domain\\startWebLogic.cmd";
         } else {
             result =
-                    "/usr/local/bea/user_projects/domains/mydomain/" +
+                    "/usr/local/bea/user_projects/domains/base_domain/" +
                     "startWebLogic.sh";
         }
         
