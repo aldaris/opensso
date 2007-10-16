@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.6 2007-08-01 21:04:48 superpat7 Exp $
+ * $Id: ImportMetaData.java,v 1.7 2007-10-16 22:09:41 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -198,12 +198,12 @@ public class ImportMetaData extends AuthenticatedCommand {
             }
             
             if (metadata != null) {
-                entityID = importIDFFMetaData(metaManager);
+                entityID = importIDFFMetaData(realm, metaManager);
             }
             if (configElt != null) {
                 String out = (webAccess) ? "web" : extendedData;
                 Object[] objs = { out };
-                metaManager.createEntityConfig(configElt);
+                metaManager.createEntityConfig(realm, configElt);
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("import-entity-succeeded"), objs));
             }
@@ -335,7 +335,7 @@ public class ImportMetaData extends AuthenticatedCommand {
         }
     }
 
-    private String importIDFFMetaData(IDFFMetaManager metaManager)
+    private String importIDFFMetaData(String realm, IDFFMetaManager metaManager)
         throws IDFFMetaException, CLIException
     {
         InputStream is = null;
@@ -363,7 +363,7 @@ public class ImportMetaData extends AuthenticatedCommand {
                 //TODO: signature
                 //SAML2MetaSecurityUtils.verifySignature(doc);
                 //
-                metaManager.createEntityDescriptor(descriptor);
+                metaManager.createEntityDescriptor(realm, descriptor);
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("import-entity-succeeded"), objs));
             }

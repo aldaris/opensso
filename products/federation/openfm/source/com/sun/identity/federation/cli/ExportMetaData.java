@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportMetaData.java,v 1.4 2007-06-21 23:01:37 superpat7 Exp $
+ * $Id: ExportMetaData.java,v 1.5 2007-10-16 22:09:41 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -230,7 +230,7 @@ public class ExportMetaData extends AuthenticatedCommand {
             IDFFMetaManager metaManager = new IDFFMetaManager(
                 getAdminSSOToken());
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement
-                descriptor = metaManager.getEntityDescriptor(entityID);
+                descriptor = metaManager.getEntityDescriptor(realm,entityID);
             
             if (descriptor == null) {
                 Object[] objs2 = {entityID, realm};
@@ -241,9 +241,9 @@ public class ExportMetaData extends AuthenticatedCommand {
             }
             
             SPDescriptorConfigElement spConfig = 
-                metaManager.getSPDescriptorConfig(entityID);
+                metaManager.getSPDescriptorConfig(realm, entityID);
             IDPDescriptorConfigElement idpConfig = 
-                metaManager.getIDPDescriptorConfig(entityID);
+                metaManager.getIDPDescriptorConfig(realm, entityID);
 
             Document doc = null;
 /*
@@ -252,7 +252,7 @@ public class ExportMetaData extends AuthenticatedCommand {
                 descriptor, spConfig, idpConfig);
  */
             if (doc == null) {
-                runExportMeta();
+                runIDFFExportMeta();
                 return;
             } else {
                 String xmlstr = XMLUtils.print(doc);
@@ -418,7 +418,7 @@ public class ExportMetaData extends AuthenticatedCommand {
             IDFFMetaManager metaManager = new IDFFMetaManager(
                 getAdminSSOToken());
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement
-                descriptor = metaManager.getEntityDescriptor(entityID);
+                descriptor = metaManager.getEntityDescriptor(realm, entityID);
             if (descriptor == null) {
                 throw new CLIException(MessageFormat.format(getResourceString(
                     "export-entity-exception-entity-descriptor-not-exist"),
@@ -596,7 +596,7 @@ public class ExportMetaData extends AuthenticatedCommand {
             IDFFMetaManager metaManager = new IDFFMetaManager(
                 getAdminSSOToken());
             com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement
-                config = metaManager.getEntityConfig(entityID);
+                config = metaManager.getEntityConfig(realm, entityID);
             if (config == null) {
                 throw new CLIException(MessageFormat.format(getResourceString(
                     "export-entity-exception-entity-config-not-exist"),

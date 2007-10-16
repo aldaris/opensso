@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityModel.java,v 1.2 2007-08-24 18:17:11 asyhuang Exp $
+ * $Id: IDFFEntityModel.java,v 1.3 2007-10-16 22:09:39 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -150,30 +150,34 @@ public interface IDFFEntityModel
     /**
      * Returns provider-affiliate common attribute values.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of Entity Descriptor.
      * @return provider-affiliate common attribute values.
      * @throws AMConsoleException if attribute values cannot be obtained.
      */
-    public Map getCommonAttributeValues(String name)
+    public Map getCommonAttributeValues(String realm, String name)
     throws AMConsoleException;
     
      /**
      * Modifies entity descriptor profile.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of entity descriptor.
      * @param map Map of attribute type to a Map of attribute name to values.
      * @throws AMConsoleException if profile cannot be modified.
      */
-    public void modifyEntityProfile(String name, Map map)
+    public void modifyEntityProfile(String realm, String name, Map map)
         throws AMConsoleException;
     
     
      /**
      * Returns true if entity descriptor is an affiliate.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of entity descriptor.
      * @return true if entity descriptor is an affiliate.
      */
-    public boolean isAffiliate(String name) throws AMConsoleException;
+    public boolean isAffiliate(String realm, String name) 
+        throws AMConsoleException;
 }
 

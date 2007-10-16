@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityModelImpl.java,v 1.3 2007-08-24 18:17:11 asyhuang Exp $
+ * $Id: IDFFEntityModelImpl.java,v 1.4 2007-10-16 22:09:39 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,11 +71,12 @@ public class IDFFEntityModelImpl
     
     /**
      * Returns provider-affiliate common attribute values.
+     * @param realm the realm in which the entity resides.
      * @param name Name of Entity Descriptor.
      * @return provider-affiliate common attribute values.
      * @throws IDFFMetaException if attribute values cannot be obtained.
      */
-    public Map getCommonAttributeValues(String name)
+    public Map getCommonAttributeValues(String realm, String name)
         throws AMConsoleException 
     {
         Map values = new HashMap(26);
@@ -84,7 +85,8 @@ public class IDFFEntityModelImpl
         
         try {
             IDFFMetaManager manager = getIDFFMetaManager();
-            EntityDescriptorElement desc = manager.getEntityDescriptor(name);
+            EntityDescriptorElement desc = manager.getEntityDescriptor(
+                realm, name);
             values.put(ATTR_VALID_UNTIL, returnEmptySetIfValueIsNull(
                 desc.getValidUntil()));
             values.put(ATTR_CACHE_DURATION, returnEmptySetIfValueIsNull(
@@ -105,11 +107,12 @@ public class IDFFEntityModelImpl
     /**
      * Modifies entity descriptor profile.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of entity descriptor.
      * @param map Map of attribute type to a Map of attribute name to values.
      * @throws AMConsoleException if profile cannot be modified.
      */
-    public void modifyEntityProfile(String name, Map map)
+    public void modifyEntityProfile(String realm, String name, Map map)
         throws AMConsoleException 
     {
         String[] param = {name};
@@ -117,7 +120,8 @@ public class IDFFEntityModelImpl
         
         try {
             IDFFMetaManager manager = getIDFFMetaManager();
-            EntityDescriptorElement desc =  manager.getEntityDescriptor(name);
+            EntityDescriptorElement desc =  manager.getEntityDescriptor(
+                realm, name);
             
             desc.setValidUntil((String)AMAdminUtils.getValue(
                 (Set)map.get(ATTR_VALID_UNTIL)));
@@ -126,7 +130,7 @@ public class IDFFEntityModelImpl
             
             modifyContactPerson(desc, map);
             modifyOrganization(desc, map);
-            manager.setEntityDescriptor(desc);
+            manager.setEntityDescriptor(realm, desc);
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", param);
         } catch (IDFFMetaException e) {
             String[] paramsEx = {name, getErrorString(e)};
@@ -371,15 +375,18 @@ public class IDFFEntityModelImpl
      /**
      * Returns true if entity descriptor is an affiliate.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of entity descriptor.
      * @return true if entity descriptor is an affiliate.
      */
-    public boolean isAffiliate(String name) throws AMConsoleException {
+    public boolean isAffiliate(String realm, String name) 
+    throws AMConsoleException 
+    {
         boolean isAffiliate = false;
         try {
             IDFFMetaManager idffManager =getIDFFMetaManager();
             AffiliationDescriptorType ad = (AffiliationDescriptorType)
-            idffManager.getAffiliationDescriptor(name);
+                idffManager.getAffiliationDescriptor(realm, name);
             if (ad != null) {
                 isAffiliate = true;
             }

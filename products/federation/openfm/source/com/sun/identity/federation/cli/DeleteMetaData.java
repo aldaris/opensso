@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteMetaData.java,v 1.4 2007-06-21 23:01:37 superpat7 Exp $
+ * $Id: DeleteMetaData.java,v 1.5 2007-10-16 22:09:40 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,23 +117,23 @@ public class DeleteMetaData extends AuthenticatedCommand {
         try {
             IDFFMetaManager metaManager = new IDFFMetaManager(
                 getAdminSSOToken());
-            if (metaManager.getEntityDescriptor(entityID) == null) {
-                Object[] param = {entityID};
+            if (metaManager.getEntityDescriptor(realm, entityID) == null) {
+                Object[] param = {entityID, realm};
                 throw new CLIException(MessageFormat.format(
                     getResourceString("delete-entity-entity-not-exist"), param),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
            
             if (extendedOnly) {
-                metaManager.deleteEntityConfig(entityID);
-                Object[] objs = {entityID};
+                metaManager.deleteEntityConfig(realm, entityID);
+                Object[] objs = {entityID, realm};
                 
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("delete-entity-config-deleted"),
                     objs));
             } else {
-                metaManager.deleteEntityDescriptor(entityID);
-                Object[] objs = {entityID};
+                metaManager.deleteEntityDescriptor(realm, entityID);
+                Object[] objs = {entityID, realm};
                 
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("delete-entity-descriptor-deleted"),

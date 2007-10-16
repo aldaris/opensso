@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.8 2007-09-12 23:39:01 babysunil Exp $
+ * $Id: EntityModelImpl.java,v 1.9 2007-10-16 22:09:39 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,17 +137,14 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             for (Iterator j = realms.iterator(); j.hasNext(); ) {
                 String realm = (String)j.next();
                 
-// TBD pass the realm when support is added from api
-                Set entities = idffManager.getAllEntities();
-                List hostedEntities = idffManager.getAllHostedEntities();
+                Set entities = idffManager.getAllEntities(realm);
+                List hostedEntities = idffManager.getAllHostedEntities(realm);
                 
                 for (Iterator i = entities.iterator(); i.hasNext();) {
                     String name = (String)i.next();
                     
                     Map data = new HashMap(8);
                     
-// TBD Uncomment when realm support is added in the api
-// default to root realm for now.
                     data.put(REALM, realm);
                     
                     data.put(PROTOCOL, IDFF);
@@ -300,7 +297,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             IDFFMetaManager metaManager = new IDFFMetaManager(
                 getUserSSOToken());
             
-            metaManager.deleteEntityDescriptor(entityID);
+            metaManager.deleteEntityDescriptor(realm, entityID);
             
         } catch (IDFFMetaException e) {
             throw new AMConsoleException(e.getMessage());
@@ -331,13 +328,13 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 getUserSSOToken());
             
             // find out what role this dude is playing
-            if (idffManager.getIDPDescriptor(entity) != null) {
+            if (idffManager.getIDPDescriptor(realm, entity) != null) {
                 roles.add(IDENTITY_PROVIDER);
             }
-            if (idffManager.getSPDescriptor(entity) != null) {
+            if (idffManager.getSPDescriptor(realm, entity) != null) {
                 roles.add(SERVICE_PROVIDER);
             }
-            if(idffManager.getAffiliationDescriptor(entity) != null) {
+            if(idffManager.getAffiliationDescriptor(realm, entity) != null) {
                 roles.add(AFFILIATE);
             }
         } catch (IDFFMetaException s) {
@@ -474,16 +471,19 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
     /**
      * Returns true if entity descriptor is an affiliate.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of entity descriptor.
      * @return true if entity descriptor is an affiliate.
      */
-    public boolean isAffiliate(String name) throws AMConsoleException {
+    public boolean isAffiliate(String realm, String name) 
+    throws AMConsoleException 
+    {
         boolean isAffiliate = false;
         try {
             IDFFMetaManager idffManager = new IDFFMetaManager(
                 getUserSSOToken());
             AffiliationDescriptorType ad = (AffiliationDescriptorType)
-            idffManager.getAffiliationDescriptor(name);
+                idffManager.getAffiliationDescriptor(realm, name);
             if (ad != null) {
                 isAffiliate = true;
             }

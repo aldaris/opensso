@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: util.jsp,v 1.2 2007-08-28 00:38:19 qcheng Exp $ 
+   $Id: util.jsp,v 1.3 2007-10-16 22:09:37 exu Exp $ 
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -141,7 +141,7 @@ import="java.io.IOException,
             + SP_SUFFIX;
         IDFFMetaManager idffManager = new IDFFMetaManager(ssoToken);
         spEntityList = 
-            idffManager.getAllHostedServiceProviderEntities();
+            idffManager.getAllHostedServiceProviderEntities(defaultRealm);
         spExists = ((spEntityList != null && !spEntityList.isEmpty()) 
               && spEntityList.contains(entityID)) ;
         if (spExists) {
@@ -307,7 +307,7 @@ import="java.io.IOException,
 
         IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
         List spEntityList = 
-            metaManager.getAllHostedServiceProviderEntities();
+            metaManager.getAllHostedServiceProviderEntities(defaultRealm);
         boolean spExists = ((spEntityList != null && !spEntityList.isEmpty()) 
               && spEntityList.contains(hostedSPEntityID)) ;
         if (!spExists) {
@@ -354,17 +354,17 @@ import="java.io.IOException,
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement
                 descriptor = (com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement)
                 IDFFMetaUtils.convertStringToJAXB(metaXML);
-            metaManager.createEntityDescriptor(descriptor);
+            metaManager.createEntityDescriptor(defaultRealm, descriptor);
         
             com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement 
                 extendConfigElm = (com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement)
                 IDFFMetaUtils.convertStringToJAXB(extendedXML);
-            metaManager.createEntityConfig(extendConfigElm);
+            metaManager.createEntityConfig(defaultRealm, extendConfigElm);
             // [END] Import these XMLs
         }
         
         List idpEntityList = 
-            metaManager.getAllRemoteIdentityProviderIDs();
+            metaManager.getAllRemoteIdentityProviderIDs(defaultRealm);
         boolean idpExists = ((idpEntityList != null && !idpEntityList.isEmpty()) 
               && idpEntityList.contains(remoteIDPEntityID)) ;
         if (!idpExists) {
@@ -403,7 +403,7 @@ import="java.io.IOException,
                 idpDescriptor = (com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement)
                 IDFFMetaUtils.convertStringToJAXB(idpMetaXML);
             remoteIDPEntityID = idpDescriptor.getProviderID();
-            metaManager.createEntityDescriptor(idpDescriptor);
+            metaManager.createEntityDescriptor(defaultRealm, idpDescriptor);
             // [END] Swap protocol, host, port and deployment URI
             //       to form IDP metadata XML and import it
         }
@@ -711,7 +711,7 @@ import="java.io.IOException,
 
         IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
         List idpEntityList =
-                metaManager.getAllHostedIdentityProviderIDs();
+                metaManager.getAllHostedIdentityProviderIDs(defaultRealm);
         boolean idpExists = ((idpEntityList != null && !idpEntityList.isEmpty())
             && idpEntityList.contains(hostedIDPEntityID)) ;
         if (!idpExists) {
@@ -758,16 +758,16 @@ import="java.io.IOException,
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement 
                 descriptor = (com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement)
                     IDFFMetaUtils.convertStringToJAXB(metaXML);
-            metaManager.createEntityDescriptor(descriptor);
+            metaManager.createEntityDescriptor(defaultRealm, descriptor);
             
             com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement extendConfigElm = (com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement)
             IDFFMetaUtils.convertStringToJAXB(extendedXML);
-            metaManager.createEntityConfig(extendConfigElm);
+            metaManager.createEntityConfig(defaultRealm, extendConfigElm);
             // [END] Import these XMLs
         }
         
         List spEntityList =
-                metaManager.getAllRemoteServiceProviderEntities();
+                metaManager.getAllRemoteServiceProviderEntities(defaultRealm);
         boolean spExists = ((spEntityList != null && !spEntityList.isEmpty())
         && spEntityList.contains(remoteSPEntityID)) ;
         if (!idpExists) {
@@ -804,7 +804,7 @@ import="java.io.IOException,
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement spDescriptor = (com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement)
                 IDFFMetaUtils.convertStringToJAXB(spMetaXML);
             remoteSPEntityID = spDescriptor.getProviderID();
-            metaManager.createEntityDescriptor(spDescriptor);
+            metaManager.createEntityDescriptor(defaultRealm, spDescriptor);
             // [END] Swap protocol, host, port and deployment URI
             //       to form IDP metadata XML and import it
         }

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.5 2007-05-17 19:32:00 qcheng Exp $
+   $Id: configure.jsp,v 1.6 2007-10-16 22:09:37 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -60,6 +60,7 @@
     String hostedSPEntityID = null;
     String remoteIDPEntityID = null;
     String SAMPLE_COT_NAME = "sampleidffcot";
+    String REALM = "/";
     if ((localAuthUrl == null) && (errorMsg == null)) {
         String proto = request.getParameter("proto");
         String host = request.getParameter("host");
@@ -130,11 +131,11 @@
                         (EntityDescriptorElement)
                             IDFFMetaUtils.convertStringToJAXB(metaXML);
                     hostedSPEntityID = entityName;
-                    metaManager.createEntityDescriptor(descriptor);
+                    metaManager.createEntityDescriptor(REALM, descriptor);
 
                     EntityConfigElement extendConfigElm = (EntityConfigElement)
                         IDFFMetaUtils.convertStringToJAXB(extendedXML);
-                    metaManager.createEntityConfig(extendConfigElm);
+                    metaManager.createEntityConfig(REALM, extendConfigElm);
                     // [END] Import these XMLs
                     
                     // [START] Make a call to CLI to get IDP meta data template
@@ -172,7 +173,7 @@
                         (EntityDescriptorElement)
                             IDFFMetaUtils.convertStringToJAXB(idpMetaXML);
                     remoteIDPEntityID = idpDescriptor.getProviderID();
-                    metaManager.createEntityDescriptor(idpDescriptor);
+                    metaManager.createEntityDescriptor(REALM, idpDescriptor);
                     // [END] Swap protocol, host, port and deployment URI
                     //       to form IDP metadata XML and import it
 
@@ -185,8 +186,8 @@
                         COTConstants.IDFF);
                     CircleOfTrustManager cotManager = new 
                         CircleOfTrustManager();
-                    cotManager.createCircleOfTrust("/",
-                        new CircleOfTrustDescriptor(SAMPLE_COT_NAME, "/",
+                    cotManager.createCircleOfTrust(REALM,
+                        new CircleOfTrustDescriptor(SAMPLE_COT_NAME, REALM,
                             COTConstants.ACTIVE, "", null, null, 
                             null, null, providers));
                     // [END] Create Circle of Trust

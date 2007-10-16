@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityModelImpl.java,v 1.4 2007-08-29 05:51:17 jonnelson Exp $
+ * $Id: ImportEntityModelImpl.java,v 1.5 2007-10-16 22:09:40 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -269,7 +269,7 @@ public class ImportEntityModelImpl extends AMModelBase
                        
             importIDFFMetaData(metaManager);            
             if (configElt != null) {
-                metaManager.createEntityConfig(configElt);                
+                metaManager.createEntityConfig(realm, configElt);                
             }
 
         } catch (IDFFMetaException e) {
@@ -301,7 +301,7 @@ public class ImportEntityModelImpl extends AMModelBase
                 //TODO: signature
                 //SAML2MetaSecurityUtils.verifySignature(doc);
                 //
-                metaManager.createEntityDescriptor(descriptor);
+                metaManager.createEntityDescriptor(realm, descriptor);
             }
     
         } catch (JAXBException e) {

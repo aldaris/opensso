@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: home.jsp,v 1.2 2007-08-28 00:38:19 qcheng Exp $
+   $Id: home.jsp,v 1.3 2007-10-16 22:09:37 exu Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -150,11 +150,11 @@
                 String entityID = (String) it.next();
                 IDFFMetaManager mm = new IDFFMetaManager(null);
                 com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement 
-                    config2 = mm.getEntityConfig(entityID);
+                    config2 = mm.getEntityConfig(REALM, entityID);
                 com.sun.identity.federation.jaxb.entityconfig.IDPDescriptorConfigElement
-                            idpConfig = mm.getIDPDescriptorConfig(entityID);
+                            idpConfig = mm.getIDPDescriptorConfig(REALM, entityID);
                 com.sun.identity.federation.jaxb.entityconfig.SPDescriptorConfigElement
-                            spConfig = mm.getSPDescriptorConfig(entityID);
+                            spConfig = mm.getSPDescriptorConfig(REALM, entityID);
                 if (config2.isHosted()) {
                     // hosted provider
                     if (idpConfig != null) {
@@ -380,10 +380,10 @@
                     Logout </a>
                 </li>
            <%         } else { 
-                          String relayState = URLEncoder.encode(appBase + "/config/federation/default/FederationDone.jsp?metaAlias=" + idffSPMetaAlias); 
+                          String relayState = URLEncoder.encode(appBase + "config/federation/default/FederationDone.jsp?metaAlias=" + idffSPMetaAlias); 
            %>
                 <li>
-                <a href="<%= appBase %>/federation?metaAlias=<%= idffSPMetaAlias %>&selectedprovider=<%= idffIDPEntityID %>&RelayState=<%= relayState %>">
+                <a href="<%= appBase %>federation?metaAlias=<%= idffSPMetaAlias %>&selectedprovider=<%= idffIDPEntityID %>&RelayState=<%= relayState %>">
                     Federate with <%= spProtocol %> Identity Provider (<%=  idpTitle%>)</a>
                 </li>
            <%         }  %>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListEntities.java,v 1.3 2007-06-21 23:01:37 superpat7 Exp $
+ * $Id: ListEntities.java,v 1.4 2007-10-16 22:09:41 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,7 +110,7 @@ public class ListEntities extends AuthenticatedCommand {
         try {
             IDFFMetaManager metaManager = new IDFFMetaManager(
                 getAdminSSOToken());
-            Set entities = metaManager.getAllEntities();
+            Set entities = metaManager.getAllEntities(realm);
             
             if ((entities == null) || entities.isEmpty()) {
                 outputWriter.printlnMessage(MessageFormat.format(

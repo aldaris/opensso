@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityProviderModel.java,v 1.4 2007-09-14 21:33:05 asyhuang Exp $
+ * $Id: IDFFEntityProviderModel.java,v 1.5 2007-10-16 22:09:40 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -367,54 +367,62 @@ public interface IDFFEntityProviderModel
     /**
      * Returns true if entity descriptor is an affiliate.
      *
+     * @param realm Realm of Entity
      * @param name Name of entity descriptor.
      * @return true if entity descriptor is an affiliate.
      */
-    public boolean isAffiliate(String name) throws AMConsoleException;
+    public boolean isAffiliate(String realm, String name) 
+        throws AMConsoleException;
     
     /**
      * Returns affiliate profile attribute values.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of Entity Descriptor.
      * @return affiliate profile attribute values.
      * @throws AMConsoleException if attribute values cannot be obtained.
      */
-    public Map getAffiliateProfileAttributeValues(String name)
+    public Map getAffiliateProfileAttributeValues(String realm, String name)
     throws AMConsoleException;
     
     /**
      * Modifies affiliate profile.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of entity descriptor.
      * @param values Map of attribute name/value pairs.
      * @param members Set of Affiliate memebers
      * @throws AMConsoleException if profile cannot be modified.
      */
-    public void updateAffiliateProfile(String name, Map values, Set members)
+    public void updateAffiliateProfile(
+        String realm, String name, Map values, Set members)
     throws AMConsoleException;
     
     /*
      * Returns a Set of all the idff entities
      *
+      * @param realm the realm in which the entity resides.
      * @throws AMConsoleException if value cannot be obtained.
      */
-    public  Set getAllEntityDescriptorNames()
+    public  Set getAllEntityDescriptorNames(String realm)
     throws AMConsoleException;
     
      /*
       * Returns a Set of all the affiliate entity name
       *
+      * @param realm the realm in which the entity resides.
       * @throws AMConsoleException if value cannot be obtained.
       */
-    public  Set getAllAffiliateEntityDescriptorNames()
+    public  Set getAllAffiliateEntityDescriptorNames(String realm)
     throws AMConsoleException ;
     
     /*
      * Returns a Set of all the affiliate members
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of Entity Descriptor.
      * @throws AMConsoleException if values cannot be obtained.
      */
-    public Set getAllAffiliateMembers(String entityID)
+    public Set getAllAffiliateMembers(String realm, String entityID)
     throws AMConsoleException ;
 }

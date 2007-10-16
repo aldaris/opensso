@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sampleconfigurator.jsp,v 1.1 2007-10-05 17:57:10 qcheng Exp $
+   $Id: sampleconfigurator.jsp,v 1.2 2007-10-16 22:09:36 exu Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -82,7 +82,7 @@ java.util.Properties"
                 props.setProperty("DEPLOY_URI", famDeploymenturi);
                 props.setProperty("DEBUG_DIR", debugDir);
                 props.setProperty("NAMING_URL", famProt + "://" + famHost + ":"
-                    + famPort + "/" + famDeploymenturi + "/namingservice");
+                    + famPort + famDeploymenturi + "/namingservice");
                 props.setProperty("DEBUG_LEVEL", "message");
                 props.setProperty("APPLICATION_USER", "UrlAccessAgent");
                 //props.setProperty("ENCODED_APPLICATION_PASSWORD", (String) 

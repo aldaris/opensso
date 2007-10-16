@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFGeneralViewBean.java,v 1.3 2007-08-24 18:16:55 asyhuang Exp $
+ * $Id: IDFFGeneralViewBean.java,v 1.4 2007-10-16 22:09:38 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,7 @@ public class IDFFGeneralViewBean
         psModel.setValue(TF_NAME, entityName);        
         IDFFEntityModel model = (IDFFEntityModel)getModel();
         try {
-            if (model.isAffiliate(entityName)) {
+            if (model.isAffiliate(realm, entityName)) {
                 psModel.setValue(TXT_TYPE, 
                     "idff.entityDescriptor.type.affiliate.label");
             } else {
@@ -70,7 +70,7 @@ public class IDFFGeneralViewBean
     private void populateValue(String name) {
         IDFFEntityModel model = (IDFFEntityModel)getModel();
         try {
-            Map values = model.getCommonAttributeValues(name);
+            Map values = model.getCommonAttributeValues(realm, name);
             AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
             ps.setAttributeValues(values, model);
         } catch (AMConsoleException e) {
@@ -98,10 +98,10 @@ public class IDFFGeneralViewBean
         IDFFEntityModel model = (IDFFEntityModel)getModel();
         
         try {
-            Map orig = model.getCommonAttributeValues(entityName);
+            Map orig = model.getCommonAttributeValues(realm, entityName);
             AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
             Map values = ps.getAttributeValues(orig, false, model);
-            model.modifyEntityProfile(entityName, values);
+            model.modifyEntityProfile(realm, entityName, values);
             setInlineAlertMessage(CCAlert.TYPE_INFO,
                 "message.information",
                 "idff.entityDescriptor.provider.general.updated");

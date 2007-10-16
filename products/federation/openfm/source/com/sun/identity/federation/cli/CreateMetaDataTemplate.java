@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.19 2007-10-04 04:39:42 hengming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.20 2007-10-16 22:09:40 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,11 +33,13 @@ import com.sun.identity.cot.COTConstants;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaSecurityUtils;
+import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
+import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement;
@@ -91,7 +93,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private String host;
     private String port;
     private String deploymentURI;
-    private String realm = "/";
+    private String realm;
     private boolean isWebBased;
     
     /**
@@ -322,15 +324,19 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     "    entityID=\"" + entityID + "\">\n");
             
             if (idpAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(idpAlias);
                 addIdentityProviderTemplate(pw, url);
             }
             if (spAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(spAlias);
                 addServiceProviderTemplate(pw, url);
             }
             if (pdpAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(pdpAlias);
                 addPDPTemplate(pw, url);
             }
             if (pepAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(pepAlias);
                 addPEPTemplate(pw, url);
             }
             pw.write("</EntityDescriptor>\n");
@@ -647,15 +653,19 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     "    entityID=\"" + entityID + "\">\n\n");
             
             if (idpAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(idpAlias);
                 buildIDPConfigTemplate(pw, url);
             }
             if (spAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(spAlias);
                 buildSPConfigTemplate(pw, url);
             }
             if (pdpAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(pdpAlias);
                 buildPDPConfigTemplate(pw);
             }
             if (pepAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(pepAlias);
                 buildPEPConfigTemplate(pw);
             }
             
@@ -977,9 +987,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     "    entityID=\"" + entityID + "\">\n\n");
             
             if (idpAlias != null) {
+                realm = IDFFMetaUtils.getRealmByMetaAlias(idpAlias);
                 buildIDFFIDPConfigTemplate(pw);
             }
             if (spAlias != null) {
+                realm = IDFFMetaUtils.getRealmByMetaAlias(spAlias);
                 buildIDFFSPConfigTemplate(pw);
             }
 
@@ -1029,9 +1041,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + IFSConstants.GENERATE_BOOTSTRAPPING + "\">\n" +
                 "            <Value>true</Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.REALM_NAME + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.RESPONDS_WITH + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
@@ -1077,7 +1086,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + IFSConstants.ASSERTION_ISSUER + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ATTRIBUTE_PLUGIN + "\">\n" +
+                "        <Attribute name=\"" + IFSConstants.REALM_ATTRIBUTE_PLUGIN + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.IDP_ATTRIBUTE_MAP + "\">\n" +
@@ -1095,7 +1104,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + IFSConstants.AUTO_FEDERATION_ATTRIBUTE + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ATTRIBUTE_MAPPER_CLASS + "\">\n" +
+                "        <Attribute name=\"" + IFSConstants.REALM_ATTRIBUTE_MAPPER_CLASS + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "       <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
@@ -1137,9 +1146,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.ENABLE_NAMEID_ENCRYPTION + "\">\n" +
                 "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.REALM_NAME + "\">\n" +
-                "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.SUPPORTED_SSO_PROFILE + "\">\n" +
                 "            <Value>http://projectliberty.org/profiles/brws-art</Value>\n" +
@@ -1207,7 +1213,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + IFSConstants.AUTO_FEDERATION_ATTRIBUTE + "\">\n"+
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ATTRIBUTE_MAPPER_CLASS + "\">\n" +
+                "        <Attribute name=\"" + IFSConstants.REALM_ATTRIBUTE_MAPPER_CLASS + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.SP_ATTRIBUTE_MAP + "\">\n" +
@@ -1241,9 +1247,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     "    providerID=\"" + entityID + "\">\n");
             
             if (idpAlias != null) {
+                realm = IDFFMetaUtils.getRealmByMetaAlias(idpAlias);
                 addIDFFIdentityProviderTemplate(pw, url);
             }
             if (spAlias != null) {
+                realm = IDFFMetaUtils.getRealmByMetaAlias(spAlias);
                 addIDFFServiceProviderTemplate(pw, url);
             }
             pw.write("</EntityDescriptor>\n");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFAffiliateViewBean.java,v 1.1 2007-08-24 18:16:43 asyhuang Exp $
+ * $Id: IDFFAffiliateViewBean.java,v 1.2 2007-10-16 22:09:38 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,11 +78,15 @@ public class IDFFAffiliateViewBean
             (IDFFEntityProviderModel)getModelInternal();
         
         try {
-            Map values = model.getAffiliateProfileAttributeValues(name);
+            Map values = model.getAffiliateProfileAttributeValues(
+                realm, name);
             
-            Set availableEntities = model.getAllEntityDescriptorNames();
-            Set affliliatEntities = model.getAllAffiliateEntityDescriptorNames();
-            Set affiliateMembers = model.getAllAffiliateMembers(name);
+            Set availableEntities = model.getAllEntityDescriptorNames(
+                realm);
+            Set affliliatEntities = model.getAllAffiliateEntityDescriptorNames(
+                realm);
+            Set affiliateMembers = model.getAllAffiliateMembers(
+                realm, name);
             availableEntities.removeAll(affiliateMembers);
             availableEntities.removeAll(affliliatEntities);
             
@@ -146,9 +150,11 @@ public class IDFFAffiliateViewBean
             Set members = new HashSet(getSelectedValues(addRemoveModel));
             
             AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
-            Map orig =  model.getAffiliateProfileAttributeValues(entityName);
+            Map orig =  model.getAffiliateProfileAttributeValues(
+                realm, entityName);
             Map values = ps.getAttributeValues(orig, false, model);
-            model.updateAffiliateProfile(entityName, values, members);
+            model.updateAffiliateProfile(
+                realm, entityName, values, members);
             
             setInlineAlertMessage(CCAlert.TYPE_INFO,
                 "message.information","idff.entityDescriptor.Affiliate.updated");

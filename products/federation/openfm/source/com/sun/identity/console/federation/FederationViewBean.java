@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.11 2007-10-10 00:53:48 asyhuang Exp $
+ * $Id: FederationViewBean.java,v 1.12 2007-10-16 22:09:38 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -326,7 +326,7 @@ public  class FederationViewBean
             tableModel.setValue(ENTITY_PROTOCOL_VALUE, protocol);         
             
             try {
-                if(eModel.isAffiliate(name)){               
+                if(eModel.isAffiliate(realm, name)){               
                     tableModel.setValue(ENTITY_LOCATION_VALUE, "");               
                     tableModel.setValue(ENTITY_ROLE_VALUE, 
                         "affiliate" );

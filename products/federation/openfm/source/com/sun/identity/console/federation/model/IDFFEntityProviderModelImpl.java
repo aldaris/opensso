@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityProviderModelImpl.java,v 1.4 2007-09-14 21:33:05 asyhuang Exp $
+ * $Id: IDFFEntityProviderModelImpl.java,v 1.5 2007-10-16 22:09:40 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -209,7 +209,7 @@ public class IDFFEntityProviderModelImpl
         String type = null;
         try {
             IDFFMetaManager mgr = getIDFFMetaManager();
-            EntityConfigElement entityConfig = mgr.getEntityConfig(name);
+            EntityConfigElement entityConfig = mgr.getEntityConfig(realm, name);
             if (entityConfig != null) {
                 if(entityConfig.isHosted()){
                     type = IFSConstants.PROVIDER_HOSTED;
@@ -233,7 +233,7 @@ public class IDFFEntityProviderModelImpl
         IDPDescriptorType pdesc = null;
         try {
             IDFFMetaManager mgr = getIDFFMetaManager();
-            pdesc = mgr.getIDPDescriptor(name);
+            pdesc = mgr.getIDPDescriptor(realm, name);
         } catch (IDFFMetaException e) {
             debug.error("IDFFEntityProviderModel.getIdentityProvider", e);
         }
@@ -250,7 +250,7 @@ public class IDFFEntityProviderModelImpl
         SPDescriptorType pdesc = null;
         try {
             IDFFMetaManager mgr = getIDFFMetaManager();
-            pdesc = mgr.getSPDescriptor(name);
+            pdesc = mgr.getSPDescriptor(realm, name);
         } catch (IDFFMetaException e) {
             debug.error("IDFFEntityProviderModel.getServiceProvider", e);
         }
@@ -401,7 +401,7 @@ public class IDFFEntityProviderModelImpl
                 IDPDescriptorType  pDesc =
                     getIdentityProvider(entityName, realm);
                 BaseConfigType  idpConfig=
-                    manager.getIDPDescriptorConfig(entityName);
+                    manager.getIDPDescriptorConfig(realm, entityName);
                 if (idpConfig != null){
                     map = IDFFMetaUtils.getAttributes(idpConfig) ;
                     metaAlias = idpConfig.getMetaAlias();
@@ -412,7 +412,7 @@ public class IDFFEntityProviderModelImpl
                 SPDescriptorType  pDesc =
                     getServiceProvider(entityName, realm);
                 BaseConfigType spConfig =
-                    manager.getSPDescriptorConfig(entityName);
+                    manager.getSPDescriptorConfig(realm, entityName);
                 if (spConfig != null) {
                     map = IDFFMetaUtils.getAttributes(spConfig) ;
                     metaAlias = spConfig.getMetaAlias();
@@ -458,21 +458,23 @@ public class IDFFEntityProviderModelImpl
         Map attrValues
         ) throws AMConsoleException {
         if (role.equals(IFSConstants.SP)) {
-            updateEntitySPDescriptor(entityName, attrValues);
+            updateEntitySPDescriptor(realm, entityName, attrValues);
         } else {
-            updateEntityIDPDescriptor(entityName, attrValues);
+            updateEntityIDPDescriptor(realm, entityName, attrValues);
         }
     }
     
     private void updateEntitySPDescriptor(
+        String realm,
         String entityName,
         Map attrValues
         ) throws AMConsoleException {
         try{
             IDFFMetaManager idffManager = getIDFFMetaManager();
             EntityDescriptorElement entityDescriptor =
-                idffManager.getEntityDescriptor(entityName) ;
-            SPDescriptorType pDesc = idffManager.getSPDescriptor(entityName);
+                idffManager.getEntityDescriptor(realm, entityName) ;
+            SPDescriptorType pDesc = idffManager.getSPDescriptor(
+                realm, entityName);
             
             //Protocol Support Enumeration
             pDesc.getProtocolSupportEnumeration().clear();
@@ -581,7 +583,7 @@ public class IDFFEntityProviderModelImpl
             
             entityDescriptor.getSPDescriptor().clear();
             entityDescriptor.getSPDescriptor().add(pDesc);
-            idffManager.setEntityDescriptor(entityDescriptor);
+            idffManager.setEntityDescriptor(realm, entityDescriptor);
         } catch (IDFFMetaException e) {
             debug.error("IDFFMetaException, updateEntitySPDescriptor");
         } catch (JAXBException e){
@@ -590,14 +592,16 @@ public class IDFFEntityProviderModelImpl
     }
     
     private void updateEntityIDPDescriptor(
+        String realm,
         String entityName,
         Map attrValues
         ) throws AMConsoleException {
         try{
             IDFFMetaManager idffManager = getIDFFMetaManager();
             EntityDescriptorElement entityDescriptor =
-                idffManager.getEntityDescriptor(entityName) ;
-            IDPDescriptorType pDesc = idffManager.getIDPDescriptor(entityName);
+                idffManager.getEntityDescriptor(realm, entityName) ;
+            IDPDescriptorType pDesc = idffManager.getIDPDescriptor(
+                realm, entityName);
             
             //Protocol Support Enumeration
             pDesc.getProtocolSupportEnumeration().clear();
@@ -695,13 +699,14 @@ public class IDFFEntityProviderModelImpl
             
             entityDescriptor.getIDPDescriptor().clear();
             entityDescriptor.getIDPDescriptor().add(pDesc);
-            idffManager.setEntityDescriptor(entityDescriptor);
+            idffManager.setEntityDescriptor(realm, entityDescriptor);
         } catch (IDFFMetaException e) {
             debug.error("IDFFMetaException , updateEntityIDPDescriptor" + e);
         }
     }
     
     private void updateAttrInConfig(
+        String realm,
         List configList,
         Map values,
         EntityConfigElement entityConfig,
@@ -722,7 +727,7 @@ public class IDFFEntityProviderModelImpl
                     atype.getValue().addAll((List)values.get(key));
                     list.add(atype);
                 }
-                idffMetaMgr.setEntityConfig(entityConfig);
+                idffMetaMgr.setEntityConfig(realm, entityConfig);
             }
         } catch (IDFFMetaException e) {
             throw new AMConsoleException(getErrorString(e));
@@ -755,7 +760,7 @@ public class IDFFEntityProviderModelImpl
             ObjectFactory objFactory = new ObjectFactory();
             // Check whether the entity id existed in the DS
             EntityDescriptorElement entityDesc =
-                idffMetaMgr.getEntityDescriptor(name);
+                idffMetaMgr.getEntityDescriptor(realm, name);
             
             if (entityDesc == null) {
                 throw new AMConsoleException(classMethod +
@@ -764,7 +769,7 @@ public class IDFFEntityProviderModelImpl
             }
             
             EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(name);
+                idffMetaMgr.getEntityConfig(realm, name);
             
             if (entityConfig == null) {
                 throw new AMConsoleException(classMethod +
@@ -775,6 +780,7 @@ public class IDFFEntityProviderModelImpl
                 if (role.equals(IFSConstants.SP)) {
                     List spConfigList = entityConfig.getSPDescriptorConfig();
                     updateAttrInConfig(
+                        realm,
                         spConfigList,
                         values,
                         entityConfig,
@@ -783,6 +789,7 @@ public class IDFFEntityProviderModelImpl
                 } else if (role.equals(IFSConstants.IDP)) {
                     List idpConfigList = entityConfig.getIDPDescriptorConfig();
                     updateAttrInConfig(
+                        realm,
                         idpConfigList,
                         values,
                         entityConfig,
@@ -812,7 +819,7 @@ public class IDFFEntityProviderModelImpl
             ObjectFactory objFactory = new ObjectFactory();
             // Check whether the entity id existed in the DS
             EntityDescriptorElement entityDesc =
-                idffMetaMgr.getEntityDescriptor(entityName);
+                idffMetaMgr.getEntityDescriptor(realm, entityName);
             
             if (entityDesc == null) {
                 throw new AMConsoleException(classMethod +
@@ -820,7 +827,7 @@ public class IDFFEntityProviderModelImpl
                     entityName);
             }
             EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(entityName);
+                idffMetaMgr.getEntityConfig(realm, entityName);
             if (entityConfig == null) {
                 entityConfig =
                     objFactory.createEntityConfigElement();
@@ -883,7 +890,7 @@ public class IDFFEntityProviderModelImpl
                 }
                 entityConfig.getIDPDescriptorConfig().add(baseCfgType);
             }
-            idffMetaMgr.setEntityConfig(entityConfig);
+            idffMetaMgr.setEntityConfig(realm, entityConfig);
         } catch (IDFFMetaException e){
             debug.error("Exception in" + classMethod);
         }
@@ -902,12 +909,14 @@ public class IDFFEntityProviderModelImpl
      * @param name Name of entity descriptor.
      * @return true if entity descriptor is an affiliate.
      */
-    public boolean isAffiliate(String name) throws AMConsoleException {
+    public boolean isAffiliate(String realm, String name) 
+        throws AMConsoleException 
+    {
         boolean isAffiliate = false;
         try {
             IDFFMetaManager idffManager =getIDFFMetaManager();
             AffiliationDescriptorType ad = (AffiliationDescriptorType)
-            idffManager.getAffiliationDescriptor(name);
+            idffManager.getAffiliationDescriptor(realm, name);
             if (ad != null) {
                 isAffiliate = true;
             }
@@ -922,17 +931,18 @@ public class IDFFEntityProviderModelImpl
     /**
      * Returns affiliate profile attribute values.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of Entity Descriptor.
      * @return affiliate profile attribute values.
      * @throws AMConsoleException if attribute values cannot be obtained.
      */
-    public Map getAffiliateProfileAttributeValues(String name)
+    public Map getAffiliateProfileAttributeValues(String realm, String name)
     throws AMConsoleException{
         Map values = new HashMap();
         try {          
             IDFFMetaManager idffManager = getIDFFMetaManager();
             AffiliationDescriptorType aDesc = (AffiliationDescriptorType)
-                idffManager.getAffiliationDescriptor(name);
+                idffManager.getAffiliationDescriptor(realm, name);
             
             if (aDesc != null) {
                 values.put(ATTR_AFFILIATE_ID,
@@ -971,17 +981,19 @@ public class IDFFEntityProviderModelImpl
     /**
      * Modifies affiliate profile.
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of entity descriptor.
      * @param values Map of attribute name/value pairs.
      * @param members Set of affiliate members
      * @throws AMConsoleException if profile cannot be modified.
      */
-    public void updateAffiliateProfile(String name, Map values, Set members)
+    public void updateAffiliateProfile(
+        String realm, String name, Map values, Set members)
     throws AMConsoleException{
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
             EntityDescriptorElement entityDescriptor =
-                idffManager.getEntityDescriptor(name) ;
+                idffManager.getEntityDescriptor(realm, name) ;
             AffiliationDescriptorType aDesc =
                 entityDescriptor.getAffiliationDescriptor();
             
@@ -1010,7 +1022,7 @@ public class IDFFEntityProviderModelImpl
             }
             
             entityDescriptor.setAffiliationDescriptor(aDesc);
-            idffManager.setEntityDescriptor(entityDescriptor);
+            idffManager.setEntityDescriptor(realm, entityDescriptor);
             
         } catch (IDFFMetaException e) {
             debug.warning("IDFFEntityProviderModel.updateAffiliateProfile", e);
@@ -1020,13 +1032,14 @@ public class IDFFEntityProviderModelImpl
     
      /*
       * Returns a Set of all the idff entities
+      * @param realm the realm in which the entity resides.
       */
-    public  Set getAllEntityDescriptorNames()
+    public  Set getAllEntityDescriptorNames(String realm)
     throws AMConsoleException {
         Set entitySet = new HashSet();
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
-            entitySet = idffManager.getAllEntities();
+            entitySet = idffManager.getAllEntities(realm);
         } catch (IDFFMetaException e) {
             debug.warning("IDFFEntityProviderModel.getAllEntityDescriptorNames", e);
             throw new AMConsoleException(e.getMessage());
@@ -1037,16 +1050,16 @@ public class IDFFEntityProviderModelImpl
      /*
       * Returns a Set of all the idff Affiliate entities
       */
-    public  Set getAllAffiliateEntityDescriptorNames()
+    public  Set getAllAffiliateEntityDescriptorNames(String realm)
     throws AMConsoleException {
         Set entitySet = new HashSet();
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
-            Set allEntities = idffManager.getAllEntities();
+            Set allEntities = idffManager.getAllEntities(realm);
             Iterator it = allEntities.iterator();
             while (it.hasNext()) {
                 String name = (String) it.next();
-                if (isAffiliate(name)) {
+                if (isAffiliate(realm, name)) {
                     entitySet.add(name);
                 }
             }
@@ -1060,16 +1073,17 @@ public class IDFFEntityProviderModelImpl
     /*
      * Returns a Set of all the affiliate members
      *
+     * @param realm the realm in which the entity resides.
      * @param name Name of Entity Descriptor.
      * @throws AMConsoleException if values cannot be obtained.
      */
-    public Set getAllAffiliateMembers(String entityID)
+    public Set getAllAffiliateMembers(String realm, String entityID)
     throws AMConsoleException {
         Set memberSet = new HashSet();
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
             AffiliationDescriptorType aDesc = (AffiliationDescriptorType)
-            idffManager.getAffiliationDescriptor(entityID);
+                idffManager.getAffiliationDescriptor(realm, entityID);
             memberSet = convertListToSet(aDesc.getAffiliateMember());
         } catch (IDFFMetaException e) {
             debug.warning("IDFFEntityProviderModel.getAllAffiliateMembers", e);
