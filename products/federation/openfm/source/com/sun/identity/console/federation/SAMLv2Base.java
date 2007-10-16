@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: SAMLv2Base.java,v 1.3 2007-10-09 01:10:03 asyhuang Exp $
+ * $Id: SAMLv2Base.java,v 1.4 2007-10-16 20:13:42 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,12 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.federation.model.EntityModel;
-import com.sun.identity.console.federation.model.EntityModelImpl;
 import com.sun.identity.console.federation.model.SAMLv2ModelImpl;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,7 +52,7 @@ public abstract class SAMLv2Base extends EntityPropertiesBase {
         
     protected String getProfileName() {
         return EntityModel.SAMLV2;
-    }   
+    }
     
     protected AMModel getModelInternal() {
         HttpServletRequest req = getRequestContext().getRequest();
@@ -56,4 +60,25 @@ public abstract class SAMLv2Base extends EntityPropertiesBase {
     }
     
     protected abstract void createPropertyModel();
+    /**
+     * Converts the List to Set.
+     *
+     * @param list the list to be converted.
+     * @return the corresponding Set.
+     */
+    protected Set convertListToSet(List list) {
+        Set s = new HashSet();
+        s.addAll(list);
+        return s;
+    }
+    
+    /**
+     * Return empty set if value is null
+     *
+     * @param set the set to be checked for null.
+     * @return the EMPTY_SET if value is null.
+     */
+    protected Set returnEmptySetIfValueIsNull(Set set) {
+        return (set != null) ? set : Collections.EMPTY_SET;
+    }
 }

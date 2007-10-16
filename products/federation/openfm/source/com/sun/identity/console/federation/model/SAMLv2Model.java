@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.1 2007-10-09 01:11:12 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.2 2007-10-16 20:15:06 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,63 @@ import javax.xml.bind.JAXBException;
 public interface SAMLv2Model
     extends AMModel {
     
+    //SAMLv2 IDP Standard attributes
+     public static final String WANT_AUTHN_REQ_SIGNED = 
+             "WantAuthnRequestsSigned";
+     public static final String PROTOCOL_SUPP_ENUM =  
+             "protocolSupportEnumeration";
+     public static final String ART_RES_LOCATION = "artLocation";
+     public static final String ART_RES_INDEX = "index";
+     public static final String ART_RES_ISDEFAULT = "isDefault";
+     public static final String SINGLE_LOGOUT_HTTP_LOCATION = 
+             "slohttpLocation";
+     public static final String SINGLE_LOGOUT_HTTP_RESP_LOCATION = 
+             "slohttpResponseLocation";
+     public static final String SINGLE_LOGOUT_SOAP_LOCATION = 
+             "slosoapLocation";
+     public static final String MANAGE_NAMEID_HTTP_LOCATION = 
+             "mnihttpLocation";
+     public static final String MANAGE_NAMEID_HTTP_RESP_LOCATION = 
+             "mnihttpResponseLocation";
+     public static final String MANAGE_NAMEID_SOAP_LOCATION = 
+             "mnisoapLocation";
+     public static final String NAMEID_FORMAT = "nameidlist";
+     public static final String SINGLE_SIGNON_HTTP_LOCATION = 
+             "ssohttpLocation";
+     public static final String SINGLE_SIGNON_SOAP_LOCATION = 
+             "ssosoapLocation";
+        
+    //SAMLv2 SP Standard attributes
+     public static final String IS_AUTHN_REQ_SIGNED = "AuthnRequestsSigned";
+     public static final String WANT_ASSERTIONS_SIGNED =  
+             "WantAssertionsSigned";
+     public static final String SP_PROTOCOL_SUPP_ENUM =  
+             "protocolSupportEnumeration";
+     public static final String SP_SINGLE_LOGOUT_HTTP_LOCATION = 
+             "slohttpLocation";
+     public static final String SP_SINGLE_LOGOUT_HTTP_RESP_LOCATION = 
+             "slohttpResponseLocation";
+     public static final String SP_SINGLE_LOGOUT_SOAP_LOCATION = 
+             "slosoapLocation";
+     public static final String SP_MANAGE_NAMEID_HTTP_LOCATION = 
+             "mnihttpLocation";
+     public static final String SP_MANAGE_NAMEID_HTTP_RESP_LOCATION = 
+             "mnihttpResponseLocation";     
+     public static final String SP_MANAGE_NAMEID_SOAP_LOCATION = 
+             "mnisoapLocation";
+     public static final String SP_MANAGE_NAMEID_SOAP_RESP_LOCATION = 
+             "mnisoapResponseLocation";     
+     public static final String HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT = 
+             "isDefault";
+     public static final String HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX = 
+             "httpArtifactIndex";     
+     public static final String HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION = 
+             "httpArtifactLocation";
+     public static final String HTTP_POST_ASSRT_CONS_SERVICE_INDEX = 
+             "httpPostIndex";     
+     public static final String HTTP_POST_ASSRT_CONS_SERVICE_LOCATION = 
+             "httpPostLocation";
+         
     // XACML PDP/PEP 
     public static final String ATTR_TXT_PROTOCOL_SUPPORT_ENUM =
         "txtProtocolSupportEnum";
@@ -43,12 +100,10 @@ public interface SAMLv2Model
     public static final String ATTR_XACML_AUTHZ_SERVICE_LOCATION =
         "XACMLAuthzServiceLocation";
     public static final String ATTR_WANT_ASSERTION_SIGNED =
-        "wantAssertionSigned";
-    
+        "wantAssertionSigned";    
     public static final String ATTR_SIGNING_CERT_ALIAS = "signingCertAlias";
     public static final String ATTR_ENCRYPTION_CERT_ALIAS =
-        "encryptionCertAlias";
-    
+        "encryptionCertAlias";    
     public static final String ATTR_BASIC_AUTH_ON = "basicAuthOn";
     public static final String ATTR_BASIC_AUTH_USER = "basicAuthUser";
     public static final String ATTR_BASIC_AUTH_PASSWORD = "basicAuthPassword";
@@ -58,6 +113,122 @@ public interface SAMLv2Model
         "wantAssertionEncrypted";
     public static final String ATTR_COTLIST = "cotlist";
     
+    /**
+     * Returns a map with standard identity provider attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with standard attribute values of Identity Provider.
+     * @throws AMConsoleException if unable to retrieve the Identity Provider
+     *     attrubutes based on the realm and entityName passed.
+     */
+    public Map getStandardIdentityProviderAttributes(
+            String realm,
+            String entityName
+    ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with extended identity provider attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended attribute values of Identity Provider.
+     * @throws AMConsoleException if unable to retrieve the Identity Provider
+     *     attrubutes based on the realm and entityName passed.
+     */
+    public Map getExtendedIdentityProviderAttributes(
+            String realm,
+            String entityName
+    ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with standard service provider attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with standard attribute values of Service Provider.
+     * @throws AMConsoleException if unable to retrieve the Service Provider
+     *     attrubutes based on the realm and entityName passed.
+     */
+    public Map getStandardServiceProviderAttributes(
+            String realm, 
+            String entityName
+    ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with extended service provider attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended attribute values of Service Provider.
+     * @throws AMConsoleException if unable to retrieve the Service Provider
+     *     attrubutes based on the realm and entityName passed.
+     */
+    public Map getExtendedServiceProviderAttributes(
+            String realm, 
+            String entityName
+    ) throws AMConsoleException;
+    
+    /**
+     * Saves the standard attribute values for the Identiy Provider.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param idpStdValues Map which contains the standard attribute values.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    void setIDPStdAttributeValues(
+            String realm, 
+            String entityName,
+            Map idpStdValues 
+    ) throws AMConsoleException;
+    
+    /**
+     * Saves the extended attribute values for the Identity Provider.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param idpExtValues Map which contains the standard attribute values.
+     * @param location has the information whether remote or hosted.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    void setIDPExtAttributeValues(
+            String realm, 
+            String entityName,
+            Map idpExtValues, 
+            String location 
+    ) throws AMConsoleException;
+    
+     /**
+     * Saves the standard attribute values for the Service Provider.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param spStdValues Map which contains the standard attribute values.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    void setSPStdAttributeValues(
+            String realm, 
+            String entityName,
+            Map spStdValues 
+    ) throws AMConsoleException;
+    
+    /**
+     * Saves the extended attribute values for the Service Provider.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param spExtValues Map which contains the standard attribute values.
+     * @param location has the information whether remote or hosted.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    void setSPExtAttributeValues(
+            String realm, 
+            String entityName,
+            Map spExtValues, 
+            String location
+    ) throws AMConsoleException;
+       
     /**
      * Returns a Map of PEP descriptor data.(Standard Metadata)
      *
