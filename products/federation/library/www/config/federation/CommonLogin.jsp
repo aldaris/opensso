@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CommonLogin.jsp,v 1.2 2007-01-19 06:38:13 veiming Exp $
+   $Id: CommonLogin.jsp,v 1.3 2007-10-16 21:50:22 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -46,10 +46,11 @@ com.sun.liberty.LibertyManager"
     String providerIDKey = LibertyManager.getProviderIDKey();
     String loginURL = LibertyManager.getLoginURL(request);
     String intersiteServletUrl = LibertyManager.getInterSiteURL(request);
+    String realm = LibertyManager.getRealmByMetaAlias(metaAlias);
     String providerID = LibertyManager.getEntityID(metaAlias);
     Iterator providerIter = null;
     if(providerID != null)
-        providerIter = LibertyManager.getIDPList(providerID);
+        providerIter = LibertyManager.getIDPList(realm, providerID);
     else
        response.sendError(response.SC_INTERNAL_SERVER_ERROR,"Not able to get Provider ID");
     String idpID = null;

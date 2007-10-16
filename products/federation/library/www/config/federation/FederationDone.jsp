@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: FederationDone.jsp,v 1.2 2007-01-19 06:38:14 veiming Exp $
+   $Id: FederationDone.jsp,v 1.3 2007-10-16 21:50:22 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -39,11 +39,12 @@ import="com.sun.liberty.LibertyManager"
         return;
     }
 
+    String realm = LibertyManager.getRealmByMetaAlias(providerAlias);
     String providerId = LibertyManager.getEntityID(providerAlias);
     String providerRole = LibertyManager.getProviderRole(providerAlias);
     String HOME_URI = "";
     if (providerId != null) {
-        HOME_URI = LibertyManager.getHomeURL(providerId, providerRole);
+        HOME_URI = LibertyManager.getHomeURL(realm, providerId, providerRole);
     } else {
         response.sendError(response.SC_INTERNAL_SERVER_ERROR,
             "Not able to get Provider ID");

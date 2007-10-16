@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Termination.jsp,v 1.2 2007-01-19 06:38:15 veiming Exp $
+   $Id: Termination.jsp,v 1.3 2007-10-16 21:50:23 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -31,10 +31,11 @@ java.util.Set,java.util.Iterator"
 <%
     String providerAlias = request.getParameter(
         LibertyManager.getMetaAliasKey());
+    String realm = LibertyManager.getRealmByMetaAlias(providerAlias);
     String hostedProviderId = LibertyManager.getEntityID(providerAlias);
     String providerRole = LibertyManager.getProviderRole(providerAlias);
     String termDonePageURL = LibertyManager.getTerminationDonePageURL(
-        hostedProviderId, providerRole, request);
+        realm, hostedProviderId, providerRole, request);
     String dest = termDonePageURL + "&termStatus=cancel";
 
     if ((providerAlias == null) || (providerAlias.length() < 1)) {
@@ -50,11 +51,11 @@ java.util.Set,java.util.Iterator"
     }
 
     String HOME_URL = LibertyManager.getHomeURL(
-        hostedProviderId, providerRole);
+        realm, hostedProviderId, providerRole);
     String preLoginURL = LibertyManager.getPreLoginServletURL(
-        hostedProviderId, providerRole, request);
+        realm, hostedProviderId, providerRole, request);
     String actionLocation = LibertyManager.getTerminationURL(
-        hostedProviderId, providerRole, request);
+        realm, hostedProviderId, providerRole, request);
     String gotoUrl = HttpUtils.getRequestURL(request).toString()
         + "?" + request.getQueryString();
     String userDN = LibertyManager.getUser(request);
@@ -81,7 +82,7 @@ java.util.Set,java.util.Iterator"
 <%
     try {
        Set providerList = LibertyManager.getFederatedProviders(
-            userDN, hostedProviderId, providerRole);
+            userDN, realm, hostedProviderId, providerRole);
        if ((providerList != null) && !providerList.isEmpty()) {
 %>
 

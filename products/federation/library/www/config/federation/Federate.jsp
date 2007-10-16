@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Federate.jsp,v 1.2 2007-01-19 06:38:14 veiming Exp $
+   $Id: Federate.jsp,v 1.3 2007-10-16 21:50:22 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -62,14 +62,15 @@ if(bLECP) {
     String selectedProvider = LibertyManager.getSelectedProviderKey();
     String LRURL = request.getParameter(LRURLKey);
     String userDN = LibertyManager.getUser(request);
+    String realm = LibertyManager.getRealmByMetaAlias(metaAlias);
     String providerID = LibertyManager.getEntityID(metaAlias);
     String providerRole = LibertyManager.getProviderRole(metaAlias);
-    String HOME_URL = LibertyManager.getHomeURL(providerID, providerRole);
+    String HOME_URL = LibertyManager.getHomeURL(realm, providerID, providerRole);
     if (userDN == null) {
         String gotoUrl = HttpUtils.getRequestURL(request).toString()
             + "?" + request.getQueryString();
         String preLoginURL = LibertyManager.getPreLoginServletURL(
-            providerID, providerRole, request);
+            realm, providerID, providerRole, request);
         char delimiter = preLoginURL.indexOf('?') < 0 ? '?' : '&';
         response.sendRedirect(preLoginURL + delimiter + "goto=" +
             java.net.URLEncoder.encode(gotoUrl));
@@ -79,14 +80,14 @@ if(bLECP) {
     String actionURL = LibertyManager.getFederationHandlerURL(request);
     if(providerID != null) {
         providerSet = LibertyManager.getProvidersToFederate(
-            providerID, providerRole, userDN);
+            realm, providerID, providerRole, userDN);
     } else {
         response.sendError(response.SC_INTERNAL_SERVER_ERROR,
             "Not able to get providerID");
     }
     if (LRURL == null || LRURL.length() <= 0) {
         LRURL = LibertyManager.getFederationDonePageURL(
-            providerID, providerRole, request);
+            realm, providerID, providerRole, request);
     }
 %>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

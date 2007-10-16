@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: NameRegistrationDone.jsp,v 1.2 2007-01-19 06:38:15 veiming Exp $
+   $Id: NameRegistrationDone.jsp,v 1.3 2007-10-16 21:50:23 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -39,11 +39,12 @@ import="com.sun.liberty.LibertyManager"
             "Provider Alias not found");
         return;
     }
+    String realm = LibertyManager.getRealmByMetaAlias(providerAlias);
     String providerId = LibertyManager.getEntityID(providerAlias);
     String providerRole = LibertyManager.getProviderRole(providerAlias);
     String HOME_URI = "";
     if (providerId != null) {
-        HOME_URI = LibertyManager.getHomeURL(providerId, providerRole);
+        HOME_URI = LibertyManager.getHomeURL(realm, providerId, providerRole);
     }
     
     if (LibertyManager.isNameRegistrationSuccess(request)) {

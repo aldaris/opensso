@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: NameRegistration.jsp,v 1.2 2007-01-19 06:38:15 veiming Exp $
+   $Id: NameRegistration.jsp,v 1.3 2007-10-16 21:50:22 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -31,19 +31,20 @@ import="com.sun.liberty.LibertyManager, java.util.Set, java.util.Iterator"
 <%
     String providerAlias = request.getParameter(
         LibertyManager.getMetaAliasKey());
+    String realm = LibertyManager.getRealmByMetaAlias(providerAlias);
     String providerID = LibertyManager.getEntityID(providerAlias);
     String providerRole = LibertyManager.getProviderRole(providerAlias);
-    String homeURL = LibertyManager.getHomeURL(providerID, providerRole);
+    String homeURL = LibertyManager.getHomeURL(realm, providerID, providerRole);
     String preLoginURL = LibertyManager.getPreLoginServletURL(
-        providerID, providerRole, request);
+        realm, providerID, providerRole, request);
     String actionLocation = LibertyManager.getNameRegistrationURL(
-        providerID, providerRole, request);
+        realm, providerID, providerRole, request);
     String gotoUrl = HttpUtils.getRequestURL(request).toString()
         + "?" + request.getQueryString();
     String userDN = LibertyManager.getUser(request);
     String nameRegistrationDonePageURL = 
         LibertyManager.getNameRegistrationDonePageURL(
-            providerID, providerRole, request);
+            realm, providerID, providerRole, request);
     String dest = nameRegistrationDonePageURL + "&regStatus=cancel";
 %>
 
@@ -74,7 +75,7 @@ import="com.sun.liberty.LibertyManager, java.util.Set, java.util.Iterator"
     }
     try {
         Set providerList = LibertyManager.getRegisteredProviders(
-            userDN, providerID, providerRole);
+            userDN, realm, providerID, providerRole);
     if (providerList != null && !providerList.isEmpty()) {
 %>
 

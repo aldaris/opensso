@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SingleLogoutManager.java,v 1.5 2007-09-06 18:23:06 qcheng Exp $
+ * $Id: SingleLogoutManager.java,v 1.6 2007-10-16 21:50:20 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -679,13 +679,13 @@ public class SingleLogoutManager {
                     debug.message("SingleLogoutManager.sendLogoutResp: IDFF");
                     IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
                     ProviderDescriptorType descriptor =
-                        metaManager.getSPDescriptor(spEntityID);
+                        metaManager.getSPDescriptor(realm, spEntityID);
                     String retURL = descriptor.getSingleLogoutServiceReturnURL();
                     Element elem = XMLUtils.toDOMDocument(logoutResponseXML,
                         SingleLogoutManager.debug).getDocumentElement();
                     FSLogoutResponse responseLogout = new FSLogoutResponse(elem);
                     BaseConfigType hostedConfig =
-                        metaManager.getIDPDescriptorConfig(idpEntityID);
+                        metaManager.getIDPDescriptorConfig(realm, idpEntityID);
                     logoutDoneURL = FSServiceUtils.getLogoutDonePageURL(request,
                         hostedConfig, null);
                     Status status = responseLogout.getStatus();
@@ -735,8 +735,8 @@ public class SingleLogoutManager {
                         redirectURL.append(IFSConstants.AMPERSAND);
                     }
                     redirectURL.append(urlEncodedResponse);
-                    if (FSUtils.debug.messageEnabled()) {
-                        FSUtils.debug.message("SingleLogoutManager.sendResponse "
+                    if (debug.messageEnabled()) {
+                        debug.message("SingleLogoutManager.sendResponse "
                                 + "for IDFF, url = " + redirectURL.toString());
                     }
                     response.sendRedirect(redirectURL.toString());

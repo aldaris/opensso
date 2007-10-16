@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyManagerImpl.java,v 1.1 2006-10-30 23:17:00 qcheng Exp $
+ * $Id: LibertyManagerImpl.java,v 1.2 2007-10-16 21:50:21 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import com.sun.identity.liberty.ws.security.SecurityAssertion;
 import com.sun.identity.federation.services.FSSession;
 import com.sun.identity.federation.services.FSSessionManager;
 import com.sun.identity.federation.common.FSUtils;
+import com.sun.identity.federation.common.IFSConstants;
+import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 
@@ -61,8 +63,11 @@ public class LibertyManagerImpl implements LibertyManagerIF {
         try {
             Object token = SessionManager.getProvider().getSession(tokenID);
     
-            FSSession session = FSSessionManager.getInstance(hostProviderID).
-                    getSession(token);
+            FSSession session = FSSessionManager.getInstance(
+                IDFFMetaUtils.getMetaAlias(
+                    IFSConstants.ROOT_REALM, hostProviderID, 
+                    IFSConstants.SP, token)).
+                        getSession(token);
 
             if (session == null) {
                 if (FSUtils.debug.messageEnabled()) {
@@ -116,8 +121,11 @@ public class LibertyManagerImpl implements LibertyManagerIF {
         try {
             Object token = SessionManager.getProvider().getSession(tokenID);
 
-            FSSession session = FSSessionManager.getInstance(hostProviderID).
-                    getSession(token);
+            FSSession session = FSSessionManager.getInstance(
+                IDFFMetaUtils.getMetaAlias(
+                    IFSConstants.ROOT_REALM, hostProviderID, 
+                    IFSConstants.SP, token)).
+                        getSession(token);
 
             if (session == null) {
                 if (FSUtils.debug.messageEnabled()) {

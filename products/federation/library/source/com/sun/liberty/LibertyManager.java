@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyManager.java,v 1.4 2007-06-22 20:11:41 exu Exp $
+ * $Id: LibertyManager.java,v 1.5 2007-10-16 21:50:21 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,12 +96,26 @@ public class LibertyManager {
     }
     
     /**
-     * Returns a list of all trusted Identity Providers.
+     * Returns a list of all trusted Identity Providers under root realm.
      *
      * @return an iterator to a list of strings, each containing the
      *         entity ID of Identity Providers.
+     * @deprecated This method has been deprecated. Please use 
+     *  <code>getAllIDPList(String realm)</code> instead.
+     * @see #getAllIDPList(String)
      */
     public static Iterator getIDPList() {
+        return getAllIDPList(IFSConstants.ROOT_REALM);
+    }
+
+    /**
+     * Returns a list of all trusted Identity Providers under the realm.
+     *
+     * @param realm The realm under which the entity resides.
+     * @return an iterator to a list of strings, each containing the
+     *         entity ID of Identity Providers.
+     */
+    public static Iterator getAllIDPList(String realm) {
         // returns list of idps... for default org.
         // since all the providers have their description under default org..
         // hence returning the List of all the active idps.
@@ -109,35 +123,69 @@ public class LibertyManager {
         try {
             if (metaManager != null) {
                 // TODO: check if the idp is active if we decide to support it
-                idpList.addAll(metaManager.getAllHostedIdentityProviderIDs());
-                idpList.addAll(metaManager.getAllRemoteIdentityProviderIDs());
+                idpList.addAll(
+                    metaManager.getAllHostedIdentityProviderIDs(realm));
+                idpList.addAll(
+                    metaManager.getAllRemoteIdentityProviderIDs(realm));
             }
         } catch (IDFFMetaException ame) {
-            debug.error("LibertyManager: getIDPList: Error while getting " +
+            debug.error("LibertyManager: getAllIDPList: Error while getting " +
                 " Active ProviderIds  ", ame);
         }
         return idpList.iterator();
     }// end of method.
     
     /**
-     * Returns a list of all trusted Identity Providers for a given
-     * hosted provider's entity ID.
+     * Returns a list of all trusted Identity Providers under root realm
+     * for a given hosted provider's entity ID.
      *
      * @param hostedEntityID hosted provider's entity ID.
      * @return an iterator to a list of strings, each containing the provider
      *         ID of an trusted Identity Provider for this hosted provider.
+     * @deprecated This method is deprecated. Please use
+     *  <code>getIDPList(String,String)</code>
+     * @see #getIDPList(String,String)
      */
     public static Iterator getIDPList(String hostedEntityID) {
-        return getList(hostedEntityID, IFSConstants.SP, IFSConstants.IDP);
+        return getList(IFSConstants.ROOT_REALM, hostedEntityID, 
+            IFSConstants.SP, IFSConstants.IDP);
+    }
+
+    /**
+     * Returns a list of all trusted Identity Providers under the realm 
+     * for a given hosted provider's entity ID.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param hostedEntityID hosted provider's entity ID.
+     * @return an iterator to a list of strings, each containing the provider
+     *         ID of an trusted Identity Provider for this hosted provider.
+     */
+    public static Iterator getIDPList(String realm, String hostedEntityID) {
+        return getList(
+            realm, hostedEntityID, IFSConstants.SP, IFSConstants.IDP);
     }
     
     /**
-     * Returns a list of all trusted Service Providers.
+     * Returns a list of all trusted Service Providers under root realm.
      *
      * @return an iterator to a list of strings, each containing the
      *  entity ID of a Service Provider.
+     * @deprecated This method is deprecated. Please use 
+     *  <code>getAllSPList(String realm)</code>.
+     * @see #getAllSPList(String)
      */
     public static Iterator getSPList() {
+        return getSPList(IFSConstants.ROOT_REALM);
+    }
+
+    /**
+     * Returns a list of all trusted Service Providers under the realm.
+     *
+     * @param realm The realm under which the entity resides.
+     * @return an iterator to a list of strings, each containing the
+     *  entity ID of a Service Provider.
+     */
+    public static Iterator getAllSPList(String realm) {
         // returns list of sps... for default org.
         // since all the providers have their description under default org..
         // hence returning the List of all the active sps.
@@ -146,31 +194,49 @@ public class LibertyManager {
             if (metaManager != null) {
                 // TODO: check if the sp is active if we decide to support it
                 spList.addAll(
-                    metaManager.getAllHostedServiceProviderEntities());
+                    metaManager.getAllHostedServiceProviderEntities(realm));
                 spList.addAll(
-                    metaManager.getAllRemoteServiceProviderEntities());
+                    metaManager.getAllRemoteServiceProviderEntities(realm));
             }
         } catch (IDFFMetaException ame) {
-            debug.error("LibertyManager: getIDPList: Error while getting " +
+            debug.error("LibertyManager: getAllSPList: Error while getting " +
                 " Active ProviderIds  ", ame);
         }
         return spList.iterator();
     }
     
     /**
-     * Returns a list of all trusted Service Providers for this
+     * Returns a list of all trusted Service Providers under root realm for this
      * Hosted Provider.
      *
      * @param hostedEntityID hosted provider's entity ID.
      * @return an iterator to a list of strings, each containing the
      *  entity ID of an Service Provider for the given Hosted Provider.
+     * @deprecated This method is deprecated. Please use
+     *  <code>getSPList(String,String)</code>
+     * @see #getSPList(String,String)
      */
     public static Iterator getSPList(String hostedEntityID) {
-        return getList(hostedEntityID, IFSConstants.IDP, IFSConstants.SP);
+        return getList(IFSConstants.ROOT_REALM, hostedEntityID, 
+            IFSConstants.IDP, IFSConstants.SP);
+    }
+
+    /**
+     * Returns a list of all trusted Service Providers for this
+     * Hosted Provider.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param hostedEntityID hosted provider's entity ID.
+     * @return an iterator to a list of strings, each containing the
+     *  entity ID of an Service Provider for the given Hosted Provider.
+     */
+    public static Iterator getSPList(String realm, String hostedEntityID) {
+        return getList(
+            realm, hostedEntityID, IFSConstants.IDP, IFSConstants.SP);
     }
     
     /**
-     * Gets the federation status of a user with an Identity Provider.
+     * Returns the federation status of a user with an Identity Provider.
      * This method assumes that the user is already federated with the 
      * provider.
      * @param user The user name obtained by calling <code>getUser()</code> on a
@@ -179,9 +245,35 @@ public class LibertyManager {
      * @param hostedEntityId Hosted Provider's entity ID.
      * @param hostedProviderRole Hosted Provider's Role.
      * @return The federation status of a user with an Identity Provider.
+     * @deprecated This method is deprecated.
+     * @see #getIDPFederationStatus(String,String,String,String)
      */
     public static boolean getIDPFederationStatus(
         String user,
+        String remoteEntityId,
+        String hostedEntityId,
+        String hostedProviderRole)
+    {
+        return getIDPFederationStatus(
+            user, IFSConstants.ROOT_REALM, remoteEntityId, 
+            hostedEntityId, hostedProviderRole);
+    }
+
+    /**
+     * Returns the federation status of a user with an Identity Provider.
+     * This method assumes that the user is already federated with the 
+     * provider.
+     * @param user The user name obtained by calling <code>getUser()</code> on a
+     * Liberty-authenticated <code>HttpServletRequest</code> from the user
+     * @param realm The realm under which the entity resides.
+     * @param remoteEntityId Entity ID of the Remote Identity Provider.
+     * @param hostedEntityId Hosted Provider's entity ID.
+     * @param hostedProviderRole Hosted Provider's Role.
+     * @return The federation status of a user with an Identity Provider.
+     */
+    public static boolean getIDPFederationStatus(
+        String user,
+        String realm,
         String remoteEntityId,
         String hostedEntityId,
         String hostedProviderRole)
@@ -198,7 +290,7 @@ public class LibertyManager {
         }
         try {
             result = FSAccountManager.getInstance(
-                getMetaAlias(hostedEntityId, hostedProviderRole)).
+                getMetaAlias(realm, hostedEntityId, hostedProviderRole)).
                     isFederationActive(user, remoteEntityId);
         } catch (FSAccountMgmtException ame) {
             debug.error("LibertyManager: getIDPFederationStatus: " +
@@ -208,7 +300,7 @@ public class LibertyManager {
     }
     
     /**
-     * Gets the federations status of a user with an Service Provider.
+     * Returns the federations status of a user with an Service Provider.
      * This method assumes that the user is already federated with the 
      * provider.
      *
@@ -219,9 +311,37 @@ public class LibertyManager {
      * @param hostedProviderId Hosted provider's entity ID.
      * @param hostedProviderRole Hosted Provider Role.
      * @return The federation status of a user with an Service Provider.
+     * @deprecated This method is deprecated.
+     * @see #getSPFederationStatus(String,String,String,String,String)
      */
     public static boolean getSPFederationStatus(
         String user,
+        String remoteProviderId,
+        String hostedProviderId,
+        String hostedProviderRole)
+    {
+        return getSPFederationStatus(
+            user, IFSConstants.ROOT_REALM, remoteProviderId,
+            hostedProviderId, hostedProviderRole);
+    }
+
+    /**
+     * Returns the federations status of a user with an Service Provider.
+     * This method assumes that the user is already federated with the 
+     * provider.
+     *
+     * @param user The user name obtained by calling
+     *  <code>getRemoteUser()</code> on a Liberty-authenticated
+     *  <code>HttpServletRequest</code> from the user.
+     * @param realm The relam under which the entity resides.
+     * @param remoteProviderId The entity ID of the Remote Service Provider.
+     * @param hostedProviderId Hosted provider's entity ID.
+     * @param hostedProviderRole Hosted Provider Role.
+     * @return The federation status of a user with an Service Provider.
+     */
+    public static boolean getSPFederationStatus(
+        String user,
+        String realm,
         String remoteProviderId,
         String hostedProviderId,
         String hostedProviderRole)
@@ -238,7 +358,7 @@ public class LibertyManager {
         }
         try {
             result = FSAccountManager.getInstance(
-                getMetaAlias(hostedProviderId, hostedProviderRole)).
+                getMetaAlias(realm, hostedProviderId, hostedProviderRole)).
                     isFederationActive(user, remoteProviderId);
         } catch (FSAccountMgmtException ame) {
             debug.error("LibertyManager: getIDPFederationStatus: " +
@@ -248,7 +368,7 @@ public class LibertyManager {
     }
     
     /**
-     * Gets a nonce for use in forms to be posted to well known servlets.
+     * Returns a nonce for use in forms to be posted to well known servlets.
      * Avoids cross site scripting type attacks.
      *
      * @param user The user obtained by calling
@@ -281,7 +401,7 @@ public class LibertyManager {
     }
     
     /**
-     * Gets the ID of the provider discovered via the introduction protocol.
+     * Returns the ID of the provider discovered via the introduction protocol.
      * If <code>null</code>, no provider was discovered. Can be passed to
      * <code>LoginServlet</code> if <code>null</code>.
      *
@@ -299,13 +419,14 @@ public class LibertyManager {
      * which takes in role and does the required function.
      */
     private static Iterator getList(
+        String realm,
         String entityID, 
         String providerRole,
         String remoteProviderRole)
     {
         Set trustedProviders = null;
-        BaseConfigType providerConfig = getExtendedConfig(
-            entityID, providerRole);
+        BaseConfigType providerConfig = IDFFMetaUtils.getExtendedConfig(
+            realm, entityID, providerRole, metaManager);
         if (providerConfig != null) {
             trustedProviders = metaManager.getAllTrustedProviders(
                 providerConfig.getMetaAlias());
@@ -432,10 +553,27 @@ public class LibertyManager {
      * @param providerID Provider's entity ID.
      * @param providerRole Provider Role.
      * @return Provider's <code>HomePageURL</code>.
+     * @deprecated This method is deprecated.
+     * @see #getHomeURL(String,String,String)
      */
     public static String getHomeURL(String providerID, String providerRole) {
+        return getHomeURL(IFSConstants.ROOT_REALM, providerID, providerRole);
+    }
+
+    /**
+     * Returns Provider's <code>HomePageURL</code>.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param providerID Provider's entity ID.
+     * @param providerRole Provider Role.
+     * @return Provider's <code>HomePageURL</code>.
+     */
+    public static String getHomeURL(
+        String realm, String providerID, String providerRole) 
+    {
         String homeURL = null;
-        BaseConfigType config = getExtendedConfig(providerID, providerRole);
+        BaseConfigType config = IDFFMetaUtils.getExtendedConfig(
+            realm, providerID, providerRole, metaManager);
         if (config != null) {
             homeURL = IDFFMetaUtils.getFirstAttributeValue(
                 IDFFMetaUtils.getAttributes(config),
@@ -453,13 +591,36 @@ public class LibertyManager {
      * @param request HTTP servlet request.
      * @return <code>PreLoginServlet</code> URL and appends
      * <code>metaAlias</code> to it.
+     * @deprecated This method is deprecated.
+     * @see #getPreLoginServletURL(String,String,String,HttpServletRequest)
      */
     public static String getPreLoginServletURL(
         String providerID, 
         String providerRole,
         HttpServletRequest request)
     {
-        String metaAlias = getMetaAlias(providerID, providerRole);
+        return getPreLoginServletURL(
+            IFSConstants.ROOT_REALM, providerID, providerRole, request);
+    }
+
+    /** 
+     * Returns <code>PreLoginServlet</code> URL and appends
+     * <code>metaAlias</code> to it.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param providerID Provider's entity ID.
+     * @param providerRole Provider Role.
+     * @param request HTTP servlet request.
+     * @return <code>PreLoginServlet</code> URL and appends
+     * <code>metaAlias</code> to it.
+     */
+    public static String getPreLoginServletURL(
+        String realm,
+        String providerID, 
+        String providerRole,
+        HttpServletRequest request)
+    {
+        String metaAlias = getMetaAlias(realm, providerID, providerRole);
         String baseURL = FSServiceUtils.getServicesBaseURL(request);
         return baseURL + IFSConstants.PRE_LOGIN_PAGE + "?" +
             IFSConstants.META_ALIAS + "=" + metaAlias;
@@ -532,8 +693,35 @@ public class LibertyManager {
      * @param userName name of user.
      * @return Set containing all the Identity Provider IDs which the user is
      *  not already federated with.
+     * @deprecated This method is deprecated. Please use 
+     *  <code>getProvidersToFederate(String, String, String,String)</code>
+     * @see #getProvidersToFederate(String,String,String,String)
      */
     public static Set getProvidersToFederate(
+        String providerID, 
+        String providerRole,
+        String userName) 
+    {
+        return getProvidersToFederate(
+            IFSConstants.ROOT_REALM, providerID, providerRole, userName);
+    }
+
+    /**
+     * Returns the list of all Trusted Identity Providers of this user not
+     * already federated with.  This is a subset of the Set returned by
+     * <code>getIDPList()</code>. This method is used to show the drop-down
+     * menu consisting of all the Identity Providers that the user is not
+     * already federated with.
+     *
+     * @param realm the realm that the provider resides
+     * @param providerID provider's entity ID.
+     * @param providerRole provider Role.
+     * @param userName name of user.
+     * @return Set containing all the Identity Provider IDs which the user is
+     *  not already federated with.
+     */
+    public static Set getProvidersToFederate(
+        String realm,
         String providerID, 
         String providerRole,
         String userName) 
@@ -555,11 +743,11 @@ public class LibertyManager {
                 " ProviderRole.");
             return unFederatedIDPs;
         }
-        Iterator idpList = getIDPList(providerID);
+        Iterator idpList = getIDPList(realm, providerID);
         Set alreadyFederatedProviders = null;
         try {
             alreadyFederatedProviders = FSAccountManager.getInstance(
-                getMetaAlias(providerID, providerRole)).
+                getMetaAlias(realm, providerID, providerRole)).
                     readAllFederatedProviderID(providerID, userName); 
             String idp = null;
             while (idpList.hasNext()) {
@@ -585,16 +773,39 @@ public class LibertyManager {
      * @param hostProviderRole Hosted Provider Role.
      * @return federated providers a Set containing the provider IDs of
      *  federated providers for the given <code>userName</code>.
+     * @deprecated This method is deprecated.
+     * @see #getFederatedProviders(String, String, String, String)
      */
     public static Set getFederatedProviders(
         String userName,
         String hostProviderId,
         String hostProviderRole)
     {
+        return getFederatedProviders(
+            userName, IFSConstants.ROOT_REALM,hostProviderId, hostProviderRole);
+    }
+
+    /** 
+     * Returns the set of federated providers for an user
+     * using Account Management API.
+     *
+     * @param userName for which the federated providers are to be returned.
+     * @param realm The realm under which the entity resides.
+     * @param hostProviderId Hosted provider's entity ID.
+     * @param hostProviderRole Hosted Provider Role.
+     * @return federated providers a Set containing the provider IDs of
+     *  federated providers for the given <code>userName</code>.
+     */
+    public static Set getFederatedProviders(
+        String userName,
+        String realm,
+        String hostProviderId,
+        String hostProviderRole)
+    {
         Set federatedProviders = new HashSet();
         try {
             federatedProviders = FSAccountManager.getInstance(
-                getMetaAlias(hostProviderId, hostProviderRole)).
+                getMetaAlias(realm, hostProviderId, hostProviderRole)).
                     readAllFederatedProviderID(userName); 
         } catch (FSAccountMgmtException ame) {
             debug.error("LibertyManager: getFederatedProviders: Error while " +
@@ -603,9 +814,8 @@ public class LibertyManager {
         return federatedProviders;
     }
     
-
     /**
-     * Returns the List of COTs for the given Provider.
+     * Returns the List of COTs for the given Provider under root realm.
      *
      * @param providerId The ID of the provider whose <code>COTList</code>
      *  is to be found
@@ -613,10 +823,30 @@ public class LibertyManager {
      *  is to be found
      * @return The set containing the authentication domains for the given
      *  provider.
+     * @deprecated This method is deprecated.
+     * @see #getListOfCOTs(String,String,String)
      */
     public static Set getListOfCOTs(String providerId, String providerRole) {
+        return getListOfCOTs(IFSConstants.ROOT_REALM, providerId, providerRole);
+    }
+
+    /**
+     * Returns the List of COTs for the given Provider under a realm.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param providerId The ID of the provider whose <code>COTList</code>
+     *  is to be found
+     * @param providerRole The Role of the provider whose <code>COTList</code>
+     *  is to be found
+     * @return The set containing the authentication domains for the given
+     *  provider.
+     */
+    public static Set getListOfCOTs(
+        String realm, String providerId, String providerRole) 
+    {
         Set returnSet = new HashSet();
-        BaseConfigType hostConfig = getExtendedConfig(providerId, providerRole);
+        BaseConfigType hostConfig = IDFFMetaUtils.getExtendedConfig(
+            realm, providerId, providerRole, metaManager);
         if (hostConfig != null) {
             List cotSet = IDFFMetaUtils.getAttributeValueFromConfig(
                 hostConfig, IFSConstants.COT_LIST);
@@ -625,9 +855,10 @@ public class LibertyManager {
                 while (iter.hasNext()) {
                     String cotID = (String) iter.next();
                     try {
-                        CircleOfTrustManager cotManager = new CircleOfTrustManager();
+                        CircleOfTrustManager cotManager = 
+                            new CircleOfTrustManager();
                         CircleOfTrustDescriptor cotDesc =
-                            cotManager.getCircleOfTrust("/", cotID);
+                            cotManager.getCircleOfTrust(realm, cotID);
                         String tldURL = cotDesc.getIDFFWriterServiceURL();
                         String cotStatus = cotDesc.getCircleOfTrustStatus();
                         if (tldURL != null && tldURL.length() > 0 &&
@@ -657,15 +888,32 @@ public class LibertyManager {
     }
 
     /** 
-     * Returns <code>metaAlias</code> from provider ID.
+     * Returns <code>metaAlias</code> from provider ID under root realm.
      *
      * @param providerID Provider's entity ID.
      * @param providerRole Provider Role.
      * @return <code>metaAlias</code> from provider ID
+     * @deprecated This method is deprecated by 
+     *  <code>getMetaAlias(String,String,String)</code>.
+     * @see #getMetaAlias(String,String,String)
      */
     public static String getMetaAlias(String providerID, String providerRole) {
-        BaseConfigType providerConfig = 
-            getExtendedConfig(providerID, providerRole);
+        return getMetaAlias(null, providerID, providerRole);
+    }
+
+    /** 
+     * Returns <code>metaAlias</code> from provider ID under a realm.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param providerID Provider's entity ID.
+     * @param providerRole Provider Role.
+     * @return <code>metaAlias</code> from provider ID
+     */
+    public static String getMetaAlias(
+        String realm, String providerID, String providerRole) 
+    {
+        BaseConfigType providerConfig = IDFFMetaUtils.getExtendedConfig(
+            realm, providerID, providerRole, metaManager);
 
         String metaAlias = "";
         if (providerConfig != null) {
@@ -679,18 +927,41 @@ public class LibertyManager {
      }
 
     /** 
-     * Returns the <code>FederationDonePageURL</code> from the provider ID.
+     * Returns the <code>FederationDonePageURL</code> from the provider ID
+     * under root realm.
      *
      * @param providerID Provider's entity ID.
      * @param providerRole Provider Role.
      * @param request HTTP servlet request.
      * @return the <code>FederationDonePageURL</code> from the provider ID.
+     * @deprecated This method is deprecated.
+     * @see #getFederationDonePageURL(String,String,String,HttpServletRequest)
      */
     public static String getFederationDonePageURL(
         String providerID, String providerRole, HttpServletRequest request) 
     {
-        BaseConfigType providerConfig = getExtendedConfig(
-            providerID, providerRole);
+        return getFederationDonePageURL(
+            IFSConstants.ROOT_REALM, providerID, providerRole, request);
+    }
+
+    /** 
+     * Returns the <code>FederationDonePageURL</code> from the provider ID
+     * under a realm.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param providerID Provider's entity ID.
+     * @param providerRole Provider Role.
+     * @param request HTTP servlet request.
+     * @return the <code>FederationDonePageURL</code> from the provider ID.
+     * @deprecated This method is deprecated.
+     * @see #getFederationDonePageURL(String,String,String,HttpServletRequest)
+     */
+    public static String getFederationDonePageURL(
+        String realm, String providerID, 
+        String providerRole, HttpServletRequest request) 
+    {
+        BaseConfigType providerConfig = IDFFMetaUtils.getExtendedConfig(
+            realm, providerID, providerRole, metaManager);
         String metaAlias = null;
         if (providerConfig != null) {
             metaAlias = providerConfig.getMetaAlias();
@@ -701,18 +972,39 @@ public class LibertyManager {
     
     
     /** 
-     * Returns the <code>TerminationDonePageURL</code> from the provider ID.
+     * Returns the <code>TerminationDonePageURL</code> from the provider ID
+     * under root realm.
      *
+     * @param providerID Provider's entity ID.
+     * @param providerRole Provider Role.
+     * @param request HTTP servlet request.
+     * @return the <code>TerminationDonePageURL</code> from the provider ID.
+     * @deprecated This method is deprecated
+     * @see #getTerminationDonePageURL(String,String,String,HttpServletRequest)
+     */
+    public static String getTerminationDonePageURL(
+        String providerID, String providerRole, HttpServletRequest request) 
+    {
+        return getTerminationDonePageURL(
+            IFSConstants.ROOT_REALM, providerID, providerRole, request);
+    }
+
+    /** 
+     * Returns the <code>TerminationDonePageURL</code> from the provider ID
+     * under a realm.
+     *
+     * @param realm The realm under which the entity resides.
      * @param providerID Provider's entity ID.
      * @param providerRole Provider Role.
      * @param request HTTP servlet request.
      * @return the <code>TerminationDonePageURL</code> from the provider ID.
      */
     public static String getTerminationDonePageURL(
-        String providerID, String providerRole, HttpServletRequest request) 
+        String realm, String providerID, 
+        String providerRole, HttpServletRequest request) 
     {
-        BaseConfigType providerConfig = getExtendedConfig(
-            providerID, providerRole);
+        BaseConfigType providerConfig = IDFFMetaUtils.getExtendedConfig(
+            realm, providerID, providerRole, metaManager);
         String metaAlias = null;
         if (providerConfig != null) {
             metaAlias = providerConfig.getMetaAlias();
@@ -729,13 +1021,34 @@ public class LibertyManager {
      * @param providerRole Provider Role.
      * @param request HTTP servlet request.
      * @return Termination URL.
+     * @deprecated This method is deprecated
+     * @see #getTerminationURL(String,String,String,HttpServletRequest)
      */
     public  static String getTerminationURL(
         String providerID,
         String providerRole,
         HttpServletRequest request)
     {
-        String metaAlias = getMetaAlias(providerID, providerRole);
+        return getTerminationURL(IFSConstants.ROOT_REALM, providerID, 
+            providerRole, request);
+    }
+
+    /**
+     * Returns Termination URL.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param providerID Provider's entity ID.
+     * @param providerRole Provider Role.
+     * @param request HTTP servlet request.
+     * @return Termination URL.
+     */
+    public  static String getTerminationURL(
+        String realm,
+        String providerID,
+        String providerRole,
+        HttpServletRequest request)
+    {
+        String metaAlias = getMetaAlias(realm, providerID, providerRole);
         String baseURL = FSServiceUtils.getServicesBaseURL(request);
         return baseURL + IFSConstants.TERMINATE_SERVLET + "?"
             + IFSConstants.META_ALIAS + "=" + metaAlias;
@@ -748,13 +1061,34 @@ public class LibertyManager {
      * @param providerRole Provider Role.
      * @param request HTTP servlet request.
      * @return <code>NameRegistrationURL</code>.
+     * @deprecated This method is deprecated.
+     * @see #getNameRegistrationURL(String,String,String,HttpServletRequest)
      */
     public static String getNameRegistrationURL(
         String providerID,
         String providerRole,
         HttpServletRequest request)
     {
-        String metaAlias = getMetaAlias(providerID, providerRole);
+        return getNameRegistrationURL(
+            IFSConstants.ROOT_REALM, providerID, providerRole, request);
+    }
+
+    /**
+     * Returns <code>NameRegistrationURL</code>.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param providerID Provider's entity ID.
+     * @param providerRole Provider Role.
+     * @param request HTTP servlet request.
+     * @return <code>NameRegistrationURL</code>.
+     */
+    public static String getNameRegistrationURL(
+        String realm,
+        String providerID,
+        String providerRole,
+        HttpServletRequest request)
+    {
+        String metaAlias = getMetaAlias(realm, providerID, providerRole);
         String baseURL = FSServiceUtils.getServicesBaseURL(request);
         return baseURL + IFSConstants.REGISTRATION_SERVLET + "?"
             + IFSConstants.META_ALIAS + "=" + metaAlias;
@@ -768,14 +1102,36 @@ public class LibertyManager {
      * @param providerRole Provider Role.
      * @param request HTTP servlet request.
      * @return the provider's error page.
+     * @deprecated This method is deprecated. Please use
+     *  <code>getErrorPageURL(String,String,String,HttpServletRequest)</code>
+     * @see #getErrorPageUrl(String,String,String,HttpServletReuqest
      */
     public static String getErrorPageURL(
         String providerId, 
         String providerRole,
         HttpServletRequest request) 
     {
-        BaseConfigType providerConfig = getExtendedConfig(
-            providerId, providerRole);
+        return getErrorPageURL(IFSConstants.ROOT_REALM, providerId, 
+            providerRole, request);
+    }
+
+    /**
+     * Returns the provider's error page.
+     *
+     * @param realm The realm under which the entity resides.
+     * @param providerId Provider's entity ID.
+     * @param providerRole Provider Role.
+     * @param request HTTP servlet request.
+     * @return the provider's error page.
+     */
+    public static String getErrorPageURL(
+        String realm,
+        String providerId, 
+        String providerRole,
+        HttpServletRequest request) 
+    {
+        BaseConfigType providerConfig = IDFFMetaUtils.getExtendedConfig(
+            realm, providerId, providerRole, metaManager);
         String metaAlias = null;
         if (providerConfig != null) {
             metaAlias = providerConfig.getMetaAlias();
@@ -784,27 +1140,6 @@ public class LibertyManager {
             request, providerConfig, metaAlias);
     }
     
-    private static BaseConfigType getExtendedConfig(
-        String providerId, String providerRole)
-    {
-        BaseConfigType providerConfig = null;
-        if (metaManager != null && providerRole != null) {
-            try {
-                if (providerRole.equalsIgnoreCase(IFSConstants.IDP)) {
-                    providerConfig = metaManager.getIDPDescriptorConfig(
-                        providerId);
-                } else if (providerRole.equalsIgnoreCase(IFSConstants.SP)) {
-                    providerConfig = metaManager.getSPDescriptorConfig(
-                        providerId);
-                }
-            } catch (IDFFMetaException ie) {
-                FSUtils.debug.error(
-                    "LibertyManager.getExtendedConfig: couldn't get meta:",ie);
-            }
-        }
-        return providerConfig;
-    }
-
     /**
      * Returns the <code>FederationHandler</code>.
      *
@@ -906,6 +1241,19 @@ public class LibertyManager {
         }
     }
     
+    /**
+     * Returns the realm by parsing the metaAlias. MetaAlias format is
+     * <pre>
+     * &lt;realm>/&lt;any string without '/'> for non-root realm or
+     * /&lt;any string without '/'> for root realm.
+     * </pre>
+     * @param metaAlias The metaAlias.
+     * @return the realm associated with the metaAlias.
+     */
+    public static String getRealmByMetaAlias(String metaAlias) {
+        return IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
+    }
+
     /** 
      * Creates New Request ID from the <code>HttpRequestServlet</code>.
      *
@@ -916,13 +1264,14 @@ public class LibertyManager {
         String targetURL = request.getParameter(IFSConstants.LRURL);
         String metaAlias = request.getParameter(IFSConstants.META_ALIAS);
         String entityID = getEntityID(metaAlias);
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
         Map headerMap = getHeaderMap(request);
         String homePage = null;
         if (targetURL == null || targetURL.length() <= 0 ) {
             try {
                 if (metaManager != null) {
                     BaseConfigType providerConfig = 
-                        metaManager.getSPDescriptorConfig(entityID);
+                        metaManager.getSPDescriptorConfig(realm, entityID);
                     homePage = IDFFMetaUtils.getFirstAttributeValue(
                         IDFFMetaUtils.getAttributes(providerConfig),
                         IFSConstants.PROVIDER_HOME_PAGE_URL);
@@ -969,16 +1318,35 @@ public class LibertyManager {
     }
     
     /**
-     * Sets the authentication request to be sent to identity provider.
+     * Sets the authentication request to be sent to identity provider under
+     * root realm.
      * 
      * @param request <code>FSAuthnRequest</code> associated with a user
      *  session.
      * @param entityID Hosted Provider's entity ID
      * @return <code>true</code> if the operation is successful; 
      *  <code>false</code> otherwise.
+     * @deprecated This method is deprecated.
+     * @see #setAuthnRequest(FSAuthnRequest,String,String)
      */
     public static boolean setAuthnRequest(
         FSAuthnRequest request, String entityID) 
+    {
+        return setAuthnRequest(request, IFSConstants.ROOT_REALM, entityID);
+    }
+
+    /**
+     * Sets the authentication request to be sent to identity provider.
+     * 
+     * @param request <code>FSAuthnRequest</code> associated with a user
+     *  session.
+     * @param realm the realm in which the entity resides
+     * @param entityID Hosted Provider's entity ID
+     * @return <code>true</code> if the operation is successful; 
+     *  <code>false</code> otherwise.
+     */
+    public static boolean setAuthnRequest(
+        FSAuthnRequest request, String realm, String entityID) 
     {
   
         if (request == null || entityID == null) {
@@ -986,8 +1354,8 @@ public class LibertyManager {
             return false; 
         }
         try {
-            FSSessionManager sessionManager = 
-                FSSessionManager.getInstance(entityID);
+            FSSessionManager sessionManager = FSSessionManager.getInstance(
+                getMetaAlias(realm, entityID, IFSConstants.SP));
             String requestID = request.getRequestID();
             if (requestID != null) {
                 sessionManager.setAuthnRequest(requestID, request);
@@ -1088,16 +1456,38 @@ public class LibertyManager {
      * @param hostProviderId Hosted provider's entity ID.
      * @param providerRole Hosted Provider Role.
      * @return registered providers.
+     * @deprecated This method is deprecated. Please use
+     *  <code>getRegisteredProviders(String,String,String,String)</code>
+     * @see #getRegisteredProviders(String,String,String,String)
      */
     public static Set getRegisteredProviders(
         String userName,
         String hostProviderId,
         String providerRole)
     {
+        return getRegisteredProviders(
+            userName, IFSConstants.ROOT_REALM, hostProviderId, providerRole);
+    }
+
+    /**
+     * Returns registered providers of an user.
+     *
+     * @param userName user ID.
+     * @param realm The realm under which the entity resides.
+     * @param hostProviderId Hosted provider's entity ID.
+     * @param providerRole Hosted Provider Role.
+     * @return registered providers.
+     */
+    public static Set getRegisteredProviders(
+        String userName,
+        String realm,
+        String hostProviderId,
+        String providerRole)
+    {
         Set registeredProviders = new HashSet();
         try {
             registeredProviders = FSAccountManager.getInstance(
-                getMetaAlias(hostProviderId, providerRole)).
+                getMetaAlias(realm, hostProviderId, providerRole)).
                     readAllFederatedProviderID(userName); 
         } catch (FSAccountMgmtException ame) {
             debug.error("LibertyManager: getRegisteredProviders: Error while " +
@@ -1152,8 +1542,30 @@ public class LibertyManager {
     
     /** 
      * Returns the Name <code>RegistrationDonePageURL</code> from the
-     * <code>providerID</code>.
+     * <code>providerID</code> under root realm.
      *
+     * @param providerID provider's entity ID.
+     * @param providerRole provider Role.
+     * @param request HTTP servlet request.
+     * @return the Name <code>RegistrationDonePageURL</code> from the
+     *  <code>providerID</code>.
+     * @deprecated This method is deprecated. Please use
+     *  <code>getNameRegistrationDonePageURL(
+     *  String,String,String,HttpServletRequest)</code>
+     * @see #getnameRegistrationDonePageURL(String,String,String,HttpServletRequest)
+     */
+    public static String getNameRegistrationDonePageURL(
+        String providerID, String providerRole, HttpServletRequest request) 
+    {      
+        return getNameRegistrationDonePageURL(
+            IFSConstants.ROOT_REALM, providerID, providerRole, request);
+    }
+
+    /** 
+     * Returns the Name <code>RegistrationDonePageURL</code> from the
+     * <code>providerID</code> under a realm.
+     *
+     * @param realm The realm under which the entity resides.
      * @param providerID provider's entity ID.
      * @param providerRole provider Role.
      * @param request HTTP servlet request.
@@ -1161,10 +1573,13 @@ public class LibertyManager {
      *  <code>providerID</code>.
      */
     public static String getNameRegistrationDonePageURL(
-        String providerID, String providerRole, HttpServletRequest request) 
+        String realm, 
+        String providerID, 
+        String providerRole, 
+        HttpServletRequest request) 
     {      
-        BaseConfigType extendedConfig = getExtendedConfig(
-            providerID, providerRole);
+        BaseConfigType extendedConfig = IDFFMetaUtils.getExtendedConfig(
+            realm, providerID, providerRole, metaManager);
         String metaAlias = null;
         if (extendedConfig != null) {
             metaAlias = extendedConfig.getMetaAlias();
@@ -1174,7 +1589,7 @@ public class LibertyManager {
     }
     
     /** 
-     * Gets Authentication Request Envelope from a HTTP servlet request.
+     * Returns Authentication Request Envelope from a HTTP servlet request.
      * @param request a HTTP servlet request
      * @return Authentication Request Envelope in String
      */
@@ -1196,7 +1611,7 @@ public class LibertyManager {
     }
 
     /** 
-     * Gets Liberty-enabled client and proxy profile HTTP header name.
+     * Returns Liberty-enabled client and proxy profile HTTP header name.
      * @return header name
      */
     public static String getLECPHeaderName(){
@@ -1204,7 +1619,7 @@ public class LibertyManager {
     }
 
     /** 
-     * Gets Liberty-enabled client and proxy profile HTTP content type.
+     * Returns Liberty-enabled client and proxy profile HTTP content type.
      * @return content type
      */
     public static String getLECPContentType(){
@@ -1212,7 +1627,7 @@ public class LibertyManager {
     }
 
     /**
-     * Gets the Discovery Service Resource Offerings nodes in an attribute
+     * Returns the Discovery Service Resource Offerings nodes in an attribute
      * statement. After a single sign-on with an Identity Provider, a service
      * provider may get Discovery Service Resource Offerings through a SAML
      * assertion. This APIs helps in retrieving the resource offerings
@@ -1241,8 +1656,9 @@ public class LibertyManager {
        }
        try {
            Object token  = SessionManager.getProvider().getSession(request);
-           FSSessionManager sessionManager = 
-               FSSessionManager.getInstance(providerID);
+           FSSessionManager sessionManager = FSSessionManager.getInstance(
+               getMetaAlias(
+                   IFSConstants.ROOT_REALM, providerID, IFSConstants.SP));
            FSSession session = sessionManager.getSession(token);
            if (session == null) {
                if (FSUtils.debug.messageEnabled()) {
@@ -1261,13 +1677,13 @@ public class LibertyManager {
     }
     
     /**
-     * Gets the Discovery Service Resource Offerings nodes in an attribute
+     * Returns the Discovery Service Resource Offerings nodes in an attribute
      * statement. After a single sign-on with an Identity Provider, a service
      * provider may get Discovery Service Resource Offerings through a SAML
      * assertion. This APIs helps in retrieving the resource offerings
      * if the user has been authenticated through the liberty SSO. It will
      * need to have a valid single sign on token (generated through the
-     * liberty SSO).
+     * liberty SSO). The service provider should be under root realm.
      *
      * @param request <code>HttpServletRequest</code> associated with a user
      *  session.
@@ -1288,8 +1704,9 @@ public class LibertyManager {
        }
        try {
            Object token  = SessionManager.getProvider().getSession(request);
-           FSSessionManager sessionManager = 
-               FSSessionManager.getInstance(providerID);
+           FSSessionManager sessionManager = FSSessionManager.getInstance(
+               getMetaAlias(
+                   IFSConstants.ROOT_REALM, providerID, IFSConstants.SP));
            FSSession session = sessionManager.getSession(token);
            if (session == null) {
                if (debug.messageEnabled()) {
@@ -1307,13 +1724,13 @@ public class LibertyManager {
     }
 
     /**
-     * Gets the Discovery Service Credentials in the Advice element.
+     * Returns the Discovery Service Credentials in the Advice element.
      * After a single sign-on with an Identity Provider, a service
      * provider may get Discovery Service Resource Offerings and Credentials
      * through a SAML assertion. This APIs helps in retrieving the Credentials
      * if the user has been authenticated through the liberty SSO. It will
      * need to have a valid single sign on token (generated through the
-     * liberty SSO).
+     * liberty SSO). The service provider should be under root realm.
      *
      * @param request <code>HttpServletRequest</code> associated with a user
      *  session.
@@ -1337,8 +1754,9 @@ public class LibertyManager {
        }
        try {
            Object token  = SessionManager.getProvider().getSession(request);
-           FSSessionManager sessionManager = 
-               FSSessionManager.getInstance(providerID);
+           FSSessionManager sessionManager = FSSessionManager.getInstance(
+               getMetaAlias(
+                   IFSConstants.ROOT_REALM, providerID, IFSConstants.SP));
            FSSession session = sessionManager.getSession(token);
            if (session == null) {
                if (debug.messageEnabled()) {
@@ -1357,13 +1775,13 @@ public class LibertyManager {
     }
 
     /**
-     * Gets the Discovery Service Credentials in the Advice element.
+     * Returns the Discovery Service Credentials in the Advice element.
      * After a single sign-on with an Identity Provider, a service
      * provider may get Discovery Service Resource Offerings and Credentials
      * through a SAML assertion. This APIs helps in retrieving the Credentials
      * if the user has been authenticated through the liberty SSO. It will
      * need to have a valid single sign on token (generated through the
-     * liberty SSO).
+     * liberty SSO). The service provider should be under root realm.
      *
      * @param request <code>HttpServletRequest</code> associated with a user
      *  session.
@@ -1385,7 +1803,8 @@ public class LibertyManager {
        try {
            Object token  = SessionManager.getProvider().getSession(request);
            FSSessionManager sessionManager = FSSessionManager.getInstance(
-               providerID);
+               getMetaAlias(
+                   IFSConstants.ROOT_REALM, providerID, IFSConstants.SP));
            FSSession session = sessionManager.getSession(token);
            if (session == null) {
                if (debug.messageEnabled()) {
@@ -1405,7 +1824,30 @@ public class LibertyManager {
 
 
     /**
-     * Gets the authentication context used in liberty single sign-on.
+     * Returns the authentication context used in liberty single sign-on.
+     * After single sign-on with an Identity Provider, a service
+     * provider may obtain the authentication context used by the identity
+     * provider that authenticates the user. It will need to have a valid
+     * single sign on token (generated through the liberty SSO). The providers
+     * are under root realm.
+     *
+     * @param request <code>HttpServletRequest</code> associated with a user
+     *  session.
+     * @param entityID Hosted Provider's entity ID 
+     * @return authentication context string;
+     *         <code>null</code> if there is any failure, or no liberty
+     *         session is found.
+     * @deprecated This method is deprecated.
+     * @see #getAuthnContext(HttpServletRequest,String,String)
+     */
+    public static String getAuthnContext(
+        HttpServletRequest request, String entityID) 
+    {
+        return getAuthnContext(request, IFSConstants.ROOT_REALM, entityID);
+    }
+
+    /**
+     * Returns the authentication context used in liberty single sign-on.
      * After single sign-on with an Identity Provider, a service
      * provider may obtain the authentication context used by the identity
      * provider that authenticates the user. It will need to have a valid
@@ -1413,13 +1855,14 @@ public class LibertyManager {
      *
      * @param request <code>HttpServletRequest</code> associated with a user
      *  session.
+     * @param realm the realm in which the provider resides
      * @param entityID Hosted Provider's entity ID
      * @return authentication context string;
      *         <code>null</code> if there is any failure, or no liberty
      *         session is found.
      */
     public static String getAuthnContext(
-       HttpServletRequest request, String entityID) 
+       HttpServletRequest request, String realm, String entityID) 
     {
   
        if (request == null || entityID == null) {
@@ -1428,8 +1871,8 @@ public class LibertyManager {
        }
        try {
            Object token  = SessionManager.getProvider().getSession(request);
-           FSSessionManager sessionManager = 
-               FSSessionManager.getInstance(entityID);
+           FSSessionManager sessionManager = FSSessionManager.getInstance(
+               getMetaAlias(realm, entityID, IFSConstants.SP));
            FSSession session = sessionManager.getSession(token);
            if (session == null) {
                if (debug.messageEnabled()) {
@@ -1447,9 +1890,10 @@ public class LibertyManager {
     }
 
     /**
-     * Gets the federation information associated with current liberty session.
+     * Returns the federation information associated with current liberty 
+     * session.
      * It will need to have a valid single sign on token (generated through 
-     * the liberty SSO).
+     * the liberty SSO). It is for a service provider in a root realm.
      *
      * @param request <code>HttpServletRequest</code> associated with a user
      *  session.
@@ -1457,9 +1901,34 @@ public class LibertyManager {
      * @return <code>FSAccountFedInfo</code> associated with this session.
      *         <code>null</code> if there is any failure, or no liberty session
      *         is found.
+     * @deprecated This method is deprecated.
+     * @see #getAccountFedInfo(HttpServletRequest,String,String,String)
      */
     public static FSAccountFedInfo getAccountFedInfo(
-       HttpServletRequest request, String entityID) 
+        HttpServletRequest request, String entityID) 
+    {
+        return getAccountFedInfo(
+            request, IFSConstants.ROOT_REALM, entityID, IFSConstants.SP);
+    }
+
+    /**
+     * Returns the federation information associated with current liberty 
+     * session. 
+     * It will need to have a valid single sign on token (generated through 
+     * the liberty SSO).
+     *
+     * @param request <code>HttpServletRequest</code> associated with a user
+     *  session.
+     * @param realm the realm in which the provider resides
+     * @param entityID Hosted Provider's entity ID
+     * @param providerRole the role of the provider
+     * @return <code>FSAccountFedInfo</code> associated with this session.
+     *         <code>null</code> if there is any failure, or no liberty session
+     *         is found.
+     */
+    public static FSAccountFedInfo getAccountFedInfo(
+       HttpServletRequest request, String realm, String entityID, 
+       String providerRole) 
     {
   
        if (request == null || entityID == null) {
@@ -1468,8 +1937,8 @@ public class LibertyManager {
        }
        try {
            Object token  = SessionManager.getProvider().getSession(request);
-           FSSessionManager sessionManager = 
-               FSSessionManager.getInstance(entityID);
+           FSSessionManager sessionManager = FSSessionManager.getInstance(
+               getMetaAlias(realm, entityID, providerRole));
            FSSession session = sessionManager.getSession(token);
            if (session == null) {
                if (debug.messageEnabled()) {
@@ -1536,6 +2005,7 @@ public class LibertyManager {
         String classMethod = "LibertyManager.getMappedNameIdentifier: ";
         
         String hostedEntityID = getEntityID(hostedSPMetaAlias);
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(hostedSPMetaAlias);
         
         if (debug.messageEnabled()) {
             debug.message(
@@ -1547,8 +2017,10 @@ public class LibertyManager {
         SPDescriptorType hostedDescriptor = null;
         BaseConfigType hostedConfig = null;
         try {
-            hostedDescriptor = metaManager.getSPDescriptor(hostedEntityID);
-            hostedConfig = metaManager.getSPDescriptorConfig(hostedEntityID);
+            hostedDescriptor = metaManager.getSPDescriptor(
+                realm, hostedEntityID);
+            hostedConfig = metaManager.getSPDescriptorConfig(
+                realm, hostedEntityID);
         } catch (IDFFMetaException ie) {
             debug.error(classMethod + "couldn't obtain hosted meta:", ie);
             return null;
@@ -1579,7 +2051,7 @@ public class LibertyManager {
                 remoteSPEntityID);
         }
         FSSessionManager sMgr =
-            FSSessionManager.getInstance(hostedEntityID);
+            FSSessionManager.getInstance(hostedSPMetaAlias);
         FSSession sess = null;
         if (sMgr != null) {
             sess = sMgr.getSession(ssoToken);
@@ -1644,7 +2116,7 @@ public class LibertyManager {
         IDPDescriptorType remoteProviderDesc = null;
         try {
             remoteProviderDesc = metaManager.getIDPDescriptor(
-                remoteIDPEntityID);
+                realm, remoteIDPEntityID);
         } catch (IDFFMetaException fme1) {
             debug.error(classMethod, fme1);
             return null;
@@ -1700,7 +2172,7 @@ public class LibertyManager {
         }
         if (FSServiceUtils.isSigningOn()) {
             if (FSNameMappingHandler.
-                verifyNameIdMappingResponseSignature(elt, returnMsg)) {
+                verifyNameIdMappingResponseSignature(elt, returnMsg, realm)) {
                 
                 if (debug.messageEnabled()) {
                     debug.message(

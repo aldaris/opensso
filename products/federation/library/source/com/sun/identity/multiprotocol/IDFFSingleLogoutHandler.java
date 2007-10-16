@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSingleLogoutHandler.java,v 1.2 2007-08-28 00:37:57 qcheng Exp $
+ * $Id: IDFFSingleLogoutHandler.java,v 1.3 2007-10-16 21:50:20 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -193,7 +193,7 @@ public class IDFFSingleLogoutHandler implements SingleLogoutHandler {
             ssoToken = (Object) userSession.iterator().next();
         } else {
             FSSessionManager manager = 
-                FSSessionManager.getInstance(idpEntityId);
+                FSSessionManager.getInstance(idpMetaAlias);
             List sessions = manager.getSessionList(userID);
             if ((sessions != null) && !sessions.isEmpty()) {
                 // TODO : handle multiple SSO token case
@@ -215,9 +215,9 @@ public class IDFFSingleLogoutHandler implements SingleLogoutHandler {
                  (String)providerMap.get(IFSConstants.SESSION_INDEX);
             if (currentSessionProvider != null) {
                 ProviderDescriptorType hostedProviderDesc =
-                    metaManager.getIDPDescriptor(idpEntityId);
+                    metaManager.getIDPDescriptor(realm, idpEntityId);
                 BaseConfigType hostedConfig = 
-                    metaManager.getIDPDescriptorConfig(idpEntityId);
+                    metaManager.getIDPDescriptorConfig(realm, idpEntityId);
                 FSSingleLogoutHandler handlerObj = new FSSingleLogoutHandler();
                 handlerObj.setHostedDescriptor(hostedProviderDesc);
                 handlerObj.setHostedDescriptorConfig(hostedConfig);
@@ -227,6 +227,7 @@ public class IDFFSingleLogoutHandler implements SingleLogoutHandler {
                 handlerObj.setSingleLogoutProtocol(
                     IFSConstants.LOGOUT_IDP_SOAP_PROFILE);
                 handlerObj.setRelayState(relayState);
+                handlerObj.setRealm(realm);
                 FSLogoutStatus logoutStatus = handlerObj.handleSingleLogout(
                     response, request, currentSessionProvider, userID,
                     sessionIndex, false, ssoToken);
@@ -256,7 +257,8 @@ public class IDFFSingleLogoutHandler implements SingleLogoutHandler {
             String realm, String protocol) {
         try {
             IDFFMetaManager idffManager = new IDFFMetaManager(null);
-            List hostedIdps = idffManager.getAllHostedIdentityProviderIDs();
+            List hostedIdps = idffManager.getAllHostedIdentityProviderIDs(
+                realm);
             if ((hostedIdps == null) || hostedIdps.isEmpty()) {
                 return null;
             }
@@ -292,7 +294,7 @@ public class IDFFSingleLogoutHandler implements SingleLogoutHandler {
                                 "found IDP " + idpId + " in COT " + cotName);
                     }
                     IDPDescriptorConfigElement config =
-                            idffManager.getIDPDescriptorConfig(idpId);
+                            idffManager.getIDPDescriptorConfig(realm, idpId);
                     return config.getMetaAlias();
                 }
             }
