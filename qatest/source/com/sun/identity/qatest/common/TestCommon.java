@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.29 2007-10-15 20:35:19 rmisra Exp $
+ * $Id: TestCommon.java,v 1.30 2007-10-16 22:14:44 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,7 +127,10 @@ public class TestCommon implements TestConstants {
         className = this.getClass().getName();
         productSetupResult = rb_amconfig.getString(
                 TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT);
-        assert (productSetupResult.equals("pass"));
+        if (productSetupResult.equals("fail")) {
+            log(Level.SEVERE, "TestCommon", "Product setup failed. Check logs for more detail...");
+            assert false;
+        }
     }
     
     /**
@@ -422,12 +425,12 @@ public class TestCommon implements TestConstants {
             }
         } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
         {
-            log(Level.FINE, "configureProduct", strURL + " cannot be reached.");
+            log(Level.SEVERE, "configureProduct", strURL + " cannot be reached.");
             return false;
         }
 
         if (pageIter > 30) {
-            log(Level.FINE, "configureProduct",
+            log(Level.SEVERE, "configureProduct",
                     "Product Configuration was not" +
                     " successfull." + strURL + "was not found." +
                     " Please check if war is deployed properly.");
@@ -436,7 +439,7 @@ public class TestCommon implements TestConstants {
         }
 
         if (getHtmlPageStringIndex(page, "Not Found") != -1) {
-            log(Level.FINE, "configureProduct",
+            log(Level.SEVERE, "configureProduct",
                     "Product Configuration was not" +
                     " successfull." + strURL + "was not found." +
                     " Please check if war is deployed properly.");
@@ -490,7 +493,7 @@ public class TestCommon implements TestConstants {
 
             if (strConfigStore.equals("embedded")) {
                 log(Level.FINE, "configureProduct",
-                        "Doing Embedded System configuration.");
+                        "Doing embedded System configuration.");
 
                 HtmlTextInput txtDirServerPort =
                         (HtmlTextInput)form.getInputByName("DIRECTORY_PORT");
@@ -580,7 +583,7 @@ public class TestCommon implements TestConstants {
             if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
                     (getHtmlPageStringIndex(page, "Status: Failed") != -1) ||
                     (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
-                log(Level.FINE, "configureProduct",
+                log(Level.SEVERE, "configureProduct",
                         "Product Configuration was" +
                         " not successfull. Configuration failed.");
                 exiting("configureProduct");

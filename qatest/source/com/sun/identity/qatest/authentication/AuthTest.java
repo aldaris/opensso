@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.5 2007-08-07 23:35:19 rmisra Exp $
+ * $Id: AuthTest.java,v 1.6 2007-10-16 22:13:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,8 +26,8 @@ package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.FederationManager;
-import com.sun.identity.qatest.common.AuthenticationCommon;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -277,7 +277,7 @@ public class AuthTest extends TestCommon {
      * (3) Delete all users and roles
      * This is called only once per auth module.
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    //@AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
