@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.6 2007-09-27 21:51:53 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.7 2007-10-16 22:16:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,6 +97,8 @@ public class SetupProduct extends TestCommon {
                                 TestConstants.KEY_ATT_AMADMIN_USER);
                         String adminPassword = cfg1.getString(
                                 TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+                        String defDatastoreName1 = cfg1.getString(
+                                TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME);
 
                         String loginURL = protocol + ":" + "//" + host + ":" +
                                 port + uri + "/UI/Login";
@@ -288,10 +290,10 @@ public class SetupProduct extends TestCommon {
                                 ldc.loadAMUserSchema(schemaString,
                                         schemaAttributes);
                             }
-                            list.add("files");
+                            list.add(defDatastoreName1);
                             if (getHtmlPageStringIndex(
                                     famadm.listDatastores(webClient, dsRealm),
-                                    "files") != -1)
+                                    defDatastoreName1) != -1)
                                 famadm.deleteDatastores(webClient, realm, list);
                         } catch (Exception e) {
                             log(Level.SEVERE, "setup", e.getMessage());
@@ -315,13 +317,14 @@ public class SetupProduct extends TestCommon {
                             ResourceBundle.getBundle("Configurator-" +
                             serverName2);
                     String strUMDatastore2 = cfg2.getString("umdatastore");
+                    String defDataStoreName2 = cfg2.getString(TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME);
                     log(Level.FINE, "SetupProduct", "UM Datastore for " +
                             serverName2 + " is " + strUMDatastore2);
                     if (!(strUMDatastore2.equals("embedded"))) {
                         admintoken = getToken(adminUser, adminPassword, basedn);
                         smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
                         smsc.createDataStore(1, "configGlobalData");
-                        smsc.deleteDataStore(realm, "files");
+                        smsc.deleteDataStore(realm, defDataStoreName2);
                     }
                 }
             } else if ((serverName1.indexOf("SERVER_NAME1") == -1) &&
@@ -338,13 +341,14 @@ public class SetupProduct extends TestCommon {
                             ResourceBundle.getBundle("Configurator-" +
                             serverName1);
                     String strUMDatastore1 = cfg1.getString("umdatastore");
+                    String defDataStoreName1 = cfg1.getString(TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME);
                     log(Level.FINE, "SetupProduct", "UM Datastore for " +
                             serverName1 + " is " + strUMDatastore1);
                     if (!(strUMDatastore1.equals("embedded"))) {
                         admintoken = getToken(adminUser, adminPassword, basedn);
                         smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
                         smsc.createDataStore(1, "configGlobalData");
-                        smsc.deleteDataStore(realm, "files");
+                        smsc.deleteDataStore(realm, defDataStoreName1);
                     }
                 }
             } else if ((serverName1.indexOf("SERVER_NAME1") != -1) &&

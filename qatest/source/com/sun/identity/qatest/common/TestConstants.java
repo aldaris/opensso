@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.10 2007-09-18 19:48:19 rmisra Exp $
+ * $Id: TestConstants.java,v 1.11 2007-10-16 22:15:55 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -151,6 +151,11 @@ public interface TestConstants {
      * Property key for <code>am.encryption.pwd</code>.
      */
     String KEY_ATT_AM_ENC_PWD = "am.encryption.pwd";
+
+    /**
+     * Property key for <code>defaultdatastorename</code>.
+     */
+    String KEY_ATT_CONFIG_DEFDATASTORENAME = "defaultdatastorename";
     
     /**
      * Property key for <code>datastore</code>.
