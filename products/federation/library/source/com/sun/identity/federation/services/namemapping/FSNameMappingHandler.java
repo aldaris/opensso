@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSNameMappingHandler.java,v 1.1 2006-10-30 23:14:34 qcheng Exp $
+ * $Id: FSNameMappingHandler.java,v 1.2 2007-10-16 21:49:18 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,6 +60,7 @@ public class FSNameMappingHandler {
     private ProviderDescriptorType hostedProviderDesc = null;
     private BaseConfigType hostedConfig = null;
     private String metaAlias = null;
+    private String realm = null;
     private static IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
     
     /**
@@ -80,6 +81,7 @@ public class FSNameMappingHandler {
         hostedProviderDesc = hostedDesc;
         this.hostedConfig = hostedConfig;
         this.metaAlias = metaAlias;
+        this.realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
         try {
             accountMgr = FSAccountManager.getInstance(metaAlias);        
         } catch (FSAccountMgmtException e){
@@ -159,16 +161,13 @@ public class FSNameMappingHandler {
         boolean local)
         throws FSAccountMgmtException, SAMLException
     {
-        String orgDN = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-            hostedConfig, IFSConstants.REALM_NAME);
-
         FSAccountFedInfoKey acctkey = new FSAccountFedInfoKey(
                 mappingRequest.getProviderID(),
                 mappingRequest.getNameIdentifier().getName().trim());
         Map env = new HashMap();
         env.put(IFSConstants.FS_USER_PROVIDER_ENV_NAMEMAPPING_KEY,
                         mappingRequest);
-        String userID = accountMgr.getUserID(acctkey, orgDN, env);
+        String userID = accountMgr.getUserID(acctkey, realm, env);
         return getNameIdentifier(userID, remoteEntityID, local);
     }
     
@@ -178,12 +177,14 @@ public class FSNameMappingHandler {
      *  <code>FSNameIdentifierMappingResopnse</code>
      * @param msg <code>SOAPMessage</code> object which contains signed
      *  name identifier mapping response.
+     * @param realm the realm in which the provider resides
      * @return <code>true</code> if the signature is valid; <code>false</code>
      *  otherwise.
      */
     public static boolean verifyNameIdMappingResponseSignature(
         Element elt,
-        SOAPMessage msg
+        SOAPMessage msg,
+        String realm
     ) {
         FSUtils.debug.message(
             "FSNameMappingHandler.verifyNameIdMappingResponseSignature:Called");
@@ -199,7 +200,7 @@ public class FSNameMappingHandler {
             
             String entityId = nimRes.getProviderID();
             X509Certificate cert = KeyUtil.getVerificationCert(
-                metaManager.getIDPDescriptor(entityId), entityId, true);
+                metaManager.getIDPDescriptor(realm, entityId), entityId, true);
                
             if (cert == null) {
                 FSUtils.debug.error("FSNameMappingHandler."

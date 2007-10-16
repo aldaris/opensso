@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutUtil.java,v 1.5 2007-07-26 21:56:09 qcheng Exp $
+ * $Id: FSLogoutUtil.java,v 1.6 2007-10-16 21:49:17 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,7 @@ public class FSLogoutUtil {
      */
     protected static boolean destroyPrincipalSession(
                 String userID, 
-                String hostedEntityId,
+                String metaAlias,
                 String sessionIndex,
                 HttpServletRequest request,
                 HttpServletResponse response)
@@ -93,7 +93,7 @@ public class FSLogoutUtil {
                 " for user : " + userID + " SessionIndex = " + sessionIndex);
         }
         Vector sessionObjList = getSessionObjectList(
-            userID, hostedEntityId, sessionIndex);
+            userID, metaAlias, sessionIndex);
         if (sessionObjList == null) {
             return false;
         }
@@ -112,7 +112,7 @@ public class FSLogoutUtil {
             FSUtils.debug.message("To call cleanSessionMap for user : " 
                 + userID);
         }
-        cleanSessionMap(userID, hostedEntityId, session);
+        cleanSessionMap(userID, metaAlias, session);
         return true;
     }
 
@@ -205,13 +205,13 @@ public class FSLogoutUtil {
      * Gets the list of the principal's active sessionID
      * that is maintained by <code>FSSessionManager</code>.
      * @param userDn the principal whose session needs to be destroyed
-     * @param hostedEntityId the hosted Entity doing logout cleanup
+     * @param metaAlias the hosted Entity doing logout cleanup
      * @param sessionIndex index of the user's session
      * @return Vector list of active Session IDs
      */
     protected static Vector getSessionObjectList(
         String userDn, 
-        String hostedEntityId,
+        String metaAlias,
         String sessionIndex)
     {
         if (FSUtils.debug.messageEnabled()) {
@@ -220,7 +220,7 @@ public class FSLogoutUtil {
         }
         Vector retList = new Vector();
         FSSessionManager sessionMgr =
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
         synchronized (sessionMgr) {
             List sessionList = sessionMgr.getSessionList(userDn);
             if (sessionList != null){
@@ -258,13 +258,13 @@ public class FSLogoutUtil {
      * @param userDN the principal whose session needs to be destroyed
      * @param currentEntityId the provider to whom logout notification is 
      *  about to be sent
-     * @param hostedEntityId the hostedProvider doing logout cleanup
+     * @param metaAlias the hostedProvider doing logout cleanup
      * @param session Liberty session.
      */    
     public static void cleanSessionMapPartnerList(
         String userDN,
         String currentEntityId,
-        String hostedEntityId, 
+        String metaAlias, 
         FSSession session)
     {
         if (FSUtils.debug.messageEnabled()) {
@@ -272,7 +272,7 @@ public class FSLogoutUtil {
                 userDN + "and provider : " + currentEntityId);
         }
         FSSessionManager sessionMgr = 
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
         sessionMgr.removeProvider(userDN, currentEntityId, session);
     }
     
@@ -283,16 +283,16 @@ public class FSLogoutUtil {
      * @param userDN the principal whose session needs to be destroyed
      * @param currentEntityId the provider to whom logout notification is 
      * about to be sent
-     * @param hostedEntityId the hostedProvider doing logout cleanup
+     * @param  the hostedProvider doing logout cleanup
      */
-    
+/* 
     protected static void cleanSessionWithNoPartners(
       String userDN,
       String currentEntityId,
-      String hostedEntityId)
+      String metaAlias)
     {
         FSSessionManager sessionMgr =
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
         synchronized (sessionMgr) {
             List sessionList = sessionMgr.getSessionList(userDN);
             if (sessionList != null){
@@ -310,6 +310,7 @@ public class FSLogoutUtil {
             }
         }
     }
+*/
     
     /**
      * Cleans the <code>FSSessionManager</code> maintained session
@@ -318,19 +319,19 @@ public class FSLogoutUtil {
      * If <code>FSSession</code> is null, then it cleans up the user's all 
      * sessions.
      * @param userDn the principal whose session needs to be destroyed
-     * @param hostedEntityId the hostedProvider doing logout cleanup
+     * @param metaAlias the hostedProvider doing logout cleanup
      * @param session Liberty session.
      * @return <code>true</code> if session map cleaning was successful;
      *  <code>false</code> otherwise.
      */
     protected static boolean cleanSessionMap(
         String userDn,
-        String hostedEntityId,
+        String metaAlias,
         FSSession session) 
     {
         FSUtils.debug.message("Entered cleanSessionMap");
         FSSessionManager sessionMgr =
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
         synchronized (sessionMgr) {
             if (session == null) {
                 sessionMgr.removeSessionList(userDn);
@@ -386,10 +387,12 @@ public class FSLogoutUtil {
         try {
             FSAccountManager accountInst = FSAccountManager.getInstance(
                 metaAlias);
+            
             if (metaManager != null) {
                 try {
+                    String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
                     Set affiliates = metaManager.getAffiliateEntity(
-                        entityID);
+                        realm, entityID);
                     if (affiliates != null && !affiliates.isEmpty()) {
                         Iterator iter = affiliates.iterator();
                         while(iter.hasNext()) {
@@ -439,19 +442,19 @@ public class FSLogoutUtil {
      * connections (provider that received/issued assertion for this user) 
      * including <code>sessionIndex</code>, provider Id etc.
      * @param userID principal who needs to be logged out
-     * @param hostedEntityId the hostedProvider doing logout cleanup
+     * @param metaAlias the hostedProvider doing logout cleanup
      * @return HashMap information about live connection provider
      */
     protected static HashMap getCurrentProvider(
         String userID,
-        String hostedEntityId)
+        String metaAlias)
     {
-        return getCurrentProvider(userID, hostedEntityId, null);
+        return getCurrentProvider(userID, metaAlias, null);
     }
 
     public static HashMap getCurrentProvider(
         String userID,
-        String hostedEntityId,
+        String metaAlias,
         Object ssoToken) 
     {
         if (FSUtils.debug.messageEnabled()) {
@@ -463,7 +466,7 @@ public class FSLogoutUtil {
         
         try {
             FSSessionManager sessionMgr = FSSessionManager.getInstance(
-                hostedEntityId);
+                metaAlias);
 
             FSSession session = sessionMgr.getSession(ssoToken);
             if (session != null) {
@@ -499,21 +502,22 @@ public class FSLogoutUtil {
      * (provider that received/issued assertion for user).
      * @param userID principal who needs to be logged out
      * @param entityId to whom logout notification needs to be sent
-     * @param hostedEntityId the hostedProvider performing ogout
+     * @param metaAlias the hostedProvider performing logout
      * @return <code>true</code> if provider has IDP role;
      *  <code>false</code> otherwise.
      */
+/*
     public static boolean getCurrentProviderRole(
         String userID,
         String entityId,
-        String hostedEntityId)
+        String metaAlias)
     {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("Entered getCurrentProviderRole" +
                 " for user : " + userID);
         }
         FSSessionManager sessionMgr = FSSessionManager.getInstance(
-                   hostedEntityId);
+                   metaAlias);
         synchronized(sessionMgr) {
             List sessionList = sessionMgr.getSessionList(userID);
             if (sessionList != null) {
@@ -539,19 +543,19 @@ public class FSLogoutUtil {
         }      
         return false;
     }
-    
+*/ 
     
     /**
      * Finds out if there is at least one more partner who should be notified 
      * of logout
      * @param userID principal who needs to be logged out
-     * @param hostedEntityId ther provider performing logout
+     * @param metaAlias ther provider performing logout
      * @return <code>true</code> if any provider exists; <code>false</code>
      *  otherwise.
      */    
     public static boolean liveConnectionsExist(
         String userID,
-        String hostedEntityId) 
+        String metaAlias) 
     {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("Entered liveConnectionsExist for user : " +
@@ -559,7 +563,7 @@ public class FSLogoutUtil {
         }
 
         FSSessionManager sessionMgr =
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
         synchronized(sessionMgr) {
             FSUtils.debug.message("About to call getSessionList");
             List sessionList = sessionMgr.getSessionList(userID);
@@ -588,13 +592,13 @@ public class FSLogoutUtil {
      * information for the user for the given list of sessions.
      * @param userID principal who needs to be logged out
      * @param sessionList is the list of session Ids to be cleaned for the user
-     * @param hostedEntityId the provider performing logout
+     * @param metaAlias the provider performing logout
      * @return always return <code>true</code>
      */    
     protected static boolean cleanSessionMapProviders(
         String userID,
         Vector sessionList,
-        String hostedEntityId) 
+        String metaAlias) 
     {
         if (sessionList != null) {
             for (int i=0; i < sessionList.size(); i++) {
@@ -605,7 +609,7 @@ public class FSLogoutUtil {
                 cleanSessionMapPartnerList(
                      userID, 
                      (String)sessionList.elementAt(i),
-                     hostedEntityId,
+                     metaAlias,
                      null);
             }
         }
@@ -618,7 +622,8 @@ public class FSLogoutUtil {
      * @param userID principal who needs to be logged out
      * @param entityId current provider who uses HTTP GET profile for logout
      * @param sessionIndex for the current provider
-     * @param hostedEntityId the hosted provider performing logout
+     * @param realm the realm in which the provider resides
+     * @param metaAlias the hosted provider performing logout
      * @return HashMap list of providers who indicate preference to be notified 
      * of logout using GET profile
      */    
@@ -626,7 +631,8 @@ public class FSLogoutUtil {
                 String userID,
                 String entityId,
                 String sessionIndex,
-                String hostedEntityId)
+                String realm,
+                String metaAlias)
     {
         try {
             FSUtils.debug.message(
@@ -637,7 +643,7 @@ public class FSLogoutUtil {
             providerVector.addElement(entityId);
             sessionProvider.put(entityId, sessionIndex);
             FSSessionManager sessionMgr = FSSessionManager.getInstance(
-                   hostedEntityId);
+                   metaAlias);
             synchronized(sessionMgr) {
                 FSUtils.debug.message("About to call getSessionList");
                 List sessionList = sessionMgr.getSessionList(userID);
@@ -664,7 +670,7 @@ public class FSLogoutUtil {
                                         sessionPartner.getPartner();
                                     ProviderDescriptorType curDesc =
                                         metaManager.getSPDescriptor(
-                                            curEntityId);
+                                            realm, curEntityId);
                                     if (curDesc != null) {
                                         List profiles = curDesc.
                                             getSingleLogoutProtocolProfile();
@@ -715,6 +721,7 @@ public class FSLogoutUtil {
     /**
      * Determines the user name from the logout request.
      * @param reqLogout the logout rerquest received
+     * @param realm the realm under which the entity resides
      * @param hostedEntityId the hosted provider performing logout
      * @param hostedRole the role of the hosted provider
      * @param hostedConfig extended meta config for hosted provider
@@ -722,19 +729,15 @@ public class FSLogoutUtil {
      * @return user id if the user is found; <code>null</code> otherwise.
      */
     public static String getUserFromRequest(FSLogoutNotification reqLogout, 
-        String hostedEntityId, String hostedRole, BaseConfigType hostedConfig,
-        String metaAlias)
+        String realm, String hostedEntityId, String hostedRole, 
+        BaseConfigType hostedConfig, String metaAlias)
     {
-        String orgDN = "";
         FSAccountManager accountInst = null;
         try {
-            orgDN = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                hostedConfig, IFSConstants.REALM_NAME);
             if (FSUtils.debug.messageEnabled()) {
-                FSUtils.debug.message("OrgDN : " + orgDN + 
+                FSUtils.debug.message("Realm : " + realm + 
                     ", entityID : " + hostedEntityId);
             }
-            // end get orgDN
             accountInst = FSAccountManager.getInstance(metaAlias);
         } catch (FSAccountMgmtException fe) {
             FSUtils.debug.message("In FSAccountManagementException :: cannot" +
@@ -772,7 +775,7 @@ public class FSLogoutUtil {
             }
             Map env = new HashMap();
             env.put(IFSConstants.FS_USER_PROVIDER_ENV_LOGOUT_KEY, reqLogout);
-            String userID = accountInst.getUserID(acctkey, orgDN, env);
+            String userID = accountInst.getUserID(acctkey, realm, env);
             if (userID == null) {
                 // could not find userDN, search using other domain
                 // for backward compitability
@@ -783,7 +786,7 @@ public class FSLogoutUtil {
                     acctkey = new FSAccountFedInfoKey(
                         associatedDomain, opaqueHandle);
                 }
-                userID = accountInst.getUserID(acctkey, orgDN, env);
+                userID = accountInst.getUserID(acctkey, realm, env);
             }
             if (userID == null) {
                 FSUtils.debug.message("UserID is null");
@@ -805,10 +808,10 @@ public class FSLogoutUtil {
      * logout.
      * @param token the session token used to identify the user's 
      *  session
-     * @param hostedEntityId the hosted provider performing logout
+     * @param metaAlias the hosted provider performing logout
      */
     public static void removeTokenFromSession(
-        Object token, String hostedEntityId)
+        Object token, String metaAlias)
     {
         String univId = "";
         String tokenId = "";
@@ -828,7 +831,7 @@ public class FSLogoutUtil {
                 univId);
         }
         FSSessionManager sessionMgr = 
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
         FSSession currentSession = sessionMgr.getSession(univId, tokenId);
         if (currentSession != null) {
             sessionMgr.removeSession(univId, currentSession);
@@ -863,7 +866,8 @@ public class FSLogoutUtil {
             responseLogout.setID(IFSConstants.LOGOUTID);
             if (userID != null) {
                 FSReturnSessionManager mngInst =
-                    FSReturnSessionManager.getInstance(hostedEntityId);
+                    FSReturnSessionManager.getInstance(
+                        hostedConfig.getMetaAlias());
                 HashMap providerMap = new HashMap();
                 if (mngInst != null) {
                     providerMap = mngInst.getUserProviderInfo(userID);
@@ -906,8 +910,7 @@ public class FSLogoutUtil {
                 if (certAlias == null || certAlias.length() == 0) {
                     if (FSUtils.debug.messageEnabled()) {
                         FSUtils.debug.message(
-                            "FSBrowserArtifactConsumerHandler:: " +
-                            "signSAMLRequest:" +
+                            "FSLogoutUtil::buildSignedResponse:" +
                             "couldn't obtain this site's cert alias.");
                     }
                     throw new SAMLResponderException(
@@ -927,7 +930,7 @@ public class FSLogoutUtil {
             }
             redirectURL.append(urlEncodedResponse);
             if (FSUtils.debug.messageEnabled()) {
-                FSUtils.debug.message("LogoutServlet : Response to be sent : " +
+                FSUtils.debug.message("FSLogoutUtil : Response to be sent : " +
                     redirectURL.toString());
             }
             return redirectURL.toString();
@@ -1002,6 +1005,7 @@ public class FSLogoutUtil {
     {
         try {
             String retURL = "";
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(providerAlias);
             if (metaManager != null) {
                 String hostedRole = metaManager.getProviderRoleByMetaAlias(
                     providerAlias);
@@ -1012,12 +1016,12 @@ public class FSLogoutUtil {
                     hostedEntityId.equalsIgnoreCase(IFSConstants.IDP))
                 {
                     hostedConfig = metaManager.getIDPDescriptorConfig(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                 } else if (hostedEntityId != null &&
                     hostedEntityId.equalsIgnoreCase(IFSConstants.SP))
                 {
                     hostedConfig = metaManager.getSPDescriptorConfig(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                 }
                 retURL = FSServiceUtils.getLogoutDonePageURL(
                     request, hostedConfig, providerAlias);
@@ -1063,27 +1067,27 @@ public class FSLogoutUtil {
 
     /**
      * Removes current session partner from the session partner list.
-     * @param hostedEntityId id of the hosted provider
+     * @param metaAlias meta alias of the hosted provider
      * @param remoteEntityId id of the remote provider
      * @param ssoTOken session object of the principal who presently login
      * @param userID id of the principal
      */
     public static void removeCurrentSessionPartner(
-        String hostedEntityId,
+        String metaAlias,
         String remoteEntityId,
         Object ssoToken,
         String userID)
     {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("FSLogoutUtil.removeCSP, hosted=" +
-                hostedEntityId + ", remote=" + remoteEntityId +
+                metaAlias + ", remote=" + remoteEntityId +
                 ", userID=" + userID);
         }
         FSSessionManager sessionManager =
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
         FSSession session = sessionManager.getSession(ssoToken);
         FSLogoutUtil.cleanSessionMapPartnerList(
-            userID, remoteEntityId, hostedEntityId, session);
+            userID, remoteEntityId, metaAlias, session);
     }
   
     /**

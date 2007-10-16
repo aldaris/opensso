@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSDefaultAttributeMapper.java,v 1.2 2007-10-16 21:49:12 exu Exp $
+ * $Id: FSDefaultRealmAttributeMapper.java,v 1.1 2007-10-16 21:49:12 exu Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 
@@ -44,8 +44,8 @@ import org.w3c.dom.Element;
 
 
 /**
- * This class <code>FSDefaultAttributeMapper</code> is the default 
- * implementation of the <code>FSAttributeMapper</code> used at the service
+ * This class <code>FSDefaultRealmAttributeMapper</code> is the default 
+ * implementation of the <code>FSRealmAttributeMapper</code> used at the service
  * provider(SP) and configurable through provider's local configuration.
  * The default implementation reads the assertion attributes and
  * map to the configured attribute map that is defined in Provider's
@@ -54,12 +54,13 @@ import org.w3c.dom.Element;
  * dependent applications. If the configuration is not defined, then the 
  * attributes in the assertion themselves will be populated. 
  */ 
-public class FSDefaultAttributeMapper implements FSAttributeMapper {
+public class FSDefaultRealmAttributeMapper implements FSRealmAttributeMapper {
 
     /**
      * Returns the attribute map for the given list of 
      * <code>AttributeStatement</code>s. 
      * @param statements list of <code>AttributeStatements</code>s.
+     * @param realm The realm under which the entity resides.
      * @param hostEntityId Hosted provider entity id.
      * @param remoteEntityId Remote provider entity id.
      * @param token Single sign-on session token.
@@ -69,6 +70,7 @@ public class FSDefaultAttributeMapper implements FSAttributeMapper {
      */
     public Map getAttributes(
         List statements, 
+        String realm,
         String hostEntityId, 
         String remoteEntityId, 
         Object token)
@@ -84,7 +86,7 @@ public class FSDefaultAttributeMapper implements FSAttributeMapper {
             IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
             if (metaManager != null) {
                 SPDescriptorConfigElement spConfig =
-                    metaManager.getSPDescriptorConfig("/", hostEntityId);
+                    metaManager.getSPDescriptorConfig(realm, hostEntityId);
                 if (spConfig != null) {
                     Map attributes = IDFFMetaUtils.getAttributes(spConfig);
                     configMap = FSServiceUtils.parseAttributeConfig((List)

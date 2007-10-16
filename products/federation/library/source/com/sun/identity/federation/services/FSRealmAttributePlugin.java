@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAttributePlugin.java,v 1.2 2007-10-16 21:49:12 exu Exp $
+ * $Id: FSRealmAttributePlugin.java,v 1.1 2007-10-16 21:49:13 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,28 +29,26 @@ import java.util.List;
 
 /**
  * <p>
- * The interface <code>FSAttributePlugin</code> is a plugin for adding the
+ * The interface <code>FSRealmAttributePlugin</code> is a plugin for adding the
  * AttributeStatements into the <code>Assertion</code> by the Identity Provider
  * during the Single Sign-on process. The implementation of this plugin
  * must return list of SAML <code>AttributeStatement</code>s.
  * </p>
  * @supported.all.api
- * @deprecated This SPI is deprecated.
- * @see com.sun.identity.federation.services.FSRealmAttributePlugin
  */ 
-public interface FSAttributePlugin {
+public interface FSRealmAttributePlugin {
 
     /**
      * Gets the list of AttributeStatements.
+     * @param realm The realm under which the entity resides
      * @param hostProviderID Hosted ProviderID.
      * @param remoteProviderID Remote ProviderID.
      * @param subject <code>FSSubject</code> to use in the statements
      * @param token session object
      * @return List A list of SAML <code>AttributeStatement<code>s.
-     * @deprecated This method is deprecated.
-     * @see com.sun.identity.federation.services.FSRealmAttributePlugin
      */
     public List getAttributeStatements(
+        String realm,
         String hostProviderID,
         String remoteProviderID,
         FSSubject subject,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSIntersiteTransferService.java,v 1.3 2007-05-17 19:31:58 qcheng Exp $
+ * $Id: FSIntersiteTransferService.java,v 1.4 2007-10-16 21:49:15 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,6 +78,8 @@ public class FSIntersiteTransferService extends HttpServlet {
             FSUtils.debug.message("FSIntersiteTransferService."
                 + "redirectToCommonDomain: Called");
         }
+        String metaAlias = request.getParameter(IFSConstants.META_ALIAS);
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
         try {
             IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
             HttpSession session = request.getSession(true);
@@ -85,7 +87,7 @@ public class FSIntersiteTransferService extends HttpServlet {
                    (Set)session.getAttribute(IFSConstants.SESSION_COTSET_ATTR);
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
             if(cotSet == null){
-                cotSet = cotManager.getAllCirclesOfTrust("/");
+                cotSet = cotManager.getAllCirclesOfTrust(realm);
                 if(cotSet != null){
                     session.setAttribute(IFSConstants.SESSION_COTSET_ATTR, 
                                          cotSet);
@@ -121,7 +123,7 @@ public class FSIntersiteTransferService extends HttpServlet {
             cotSet.remove(cotName);
             session.setAttribute(IFSConstants.SESSION_COTSET_ATTR, cotSet);
             String readerServiceURL = 
-                cotManager.getCircleOfTrust("/", cotName)
+                cotManager.getCircleOfTrust(realm, cotName)
                     .getIDFFReaderServiceURL();
             if(readerServiceURL != null){
                 StringBuffer redirectURL = new StringBuffer(300);
@@ -133,7 +135,7 @@ public class FSIntersiteTransferService extends HttpServlet {
                 returnURL.append("&")
                          .append(IFSConstants.META_ALIAS)
                          .append("=")
-                         .append(request.getParameter(IFSConstants.META_ALIAS));
+                         .append(URLEncDec.encode(metaAlias));
                 redirectURL.append(readerServiceURL);
                 redirectURL.append("?");
                 redirectURL.append(IFSConstants.LRURL);
@@ -312,10 +314,11 @@ public class FSIntersiteTransferService extends HttpServlet {
             
             String metaAlias =  request.getParameter(IFSConstants.META_ALIAS);
             if (metaAlias == null || metaAlias.length() == 0) {
-                FSServiceUtils.getMetaAlias(request);
+                metaAlias = FSServiceUtils.getMetaAlias(request);
             }
             IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
             String hostEntityId = metaManager.getEntityIDByMetaAlias(metaAlias);
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
             if ((request == null) ||(response == null)) {
                 response.sendError(response.SC_INTERNAL_SERVER_ERROR,
                     FSUtils.bundle.getString("nullInputParameter"));
@@ -343,7 +346,7 @@ public class FSIntersiteTransferService extends HttpServlet {
                     + "RequestID found: " + requestID);
             }
             FSSessionManager sessionMgr = FSSessionManager.getInstance(
-                hostEntityId);
+                metaAlias);
             FSAuthnRequest authnRequest = sessionMgr.getAuthnRequest(requestID);
             
             if (authnRequest == null) {
@@ -360,7 +363,7 @@ public class FSIntersiteTransferService extends HttpServlet {
             framedLoginPageURL = FSServiceUtils.getCommonLoginPageURL(
                 metaAlias, resourceUrl, null, request, baseURL);        
             
-           String idpID = FSUtils.findPreferredIDP(request);
+           String idpID = FSUtils.findPreferredIDP(realm, request);
             if (idpID == null) {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSIntersiteTransferService.doGet: "
@@ -374,7 +377,7 @@ public class FSIntersiteTransferService extends HttpServlet {
                 redirectToCommonDomain(request, response, requestID);
                 return;
             } else {
-                idpDescriptor = metaManager.getIDPDescriptor(idpID);
+                idpDescriptor = metaManager.getIDPDescriptor(realm, idpID);
                 if (idpDescriptor == null) {
                     FSUtils.debug.error("FSIntersiteTransferService.doGet: "
                         + FSUtils.bundle.getString("noTrust"));
@@ -400,14 +403,14 @@ public class FSIntersiteTransferService extends HttpServlet {
             authnRequest.setMinorVersion(minorVersion);
             authnRequest.getAuthnContext().setMinorVersion(minorVersion);
             SPDescriptorType hostDesc = 
-                metaManager.getSPDescriptor(hostEntityId);
+                metaManager.getSPDescriptor(realm, hostEntityId);
             BaseConfigType hostConfig = 
-                metaManager.getSPDescriptorConfig(hostEntityId);
+                metaManager.getSPDescriptorConfig(realm, hostEntityId);
             if (IDFFMetaUtils.getBooleanAttributeValueFromConfig(
                     hostConfig, IFSConstants.ENABLE_AFFILIATION))
             {
                 Set affiliations = 
-                    metaManager.getAffiliateEntity(idpID);
+                    metaManager.getAffiliateEntity(realm, idpID);
                 if (affiliations != null && !affiliations.isEmpty()) {
                     AffiliationDescriptorType affiliateDescriptor =
                         (AffiliationDescriptorType)

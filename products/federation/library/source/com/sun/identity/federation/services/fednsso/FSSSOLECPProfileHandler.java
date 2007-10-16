@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOLECPProfileHandler.java,v 1.1 2006-10-30 23:14:30 qcheng Exp $
+ * $Id: FSSSOLECPProfileHandler.java,v 1.2 2007-10-16 21:49:16 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,6 +141,12 @@ public class FSSSOLECPProfileHandler extends FSSSOAndFedHandler {
             returnUrl.append(IFSConstants.PROVIDER_ID_KEY)
                 .append("=")
                 .append(URLEncDec.encode(hostedEntityId))
+                .append("&").append(IFSConstants.REALM)
+                .append("=")
+                .append(URLEncDec.encode(realm))
+                .append("&").append(IFSConstants.META_ALIAS)
+                .append("=")
+                .append(URLEncDec.encode(metaAlias))
                 .append("&").append(IFSConstants.AUTH_REQUEST_ID)
                 .append("=")
                 .append(URLEncDec.encode(authnRequest.getRequestID()));
@@ -152,7 +158,7 @@ public class FSSSOLECPProfileHandler extends FSSSOAndFedHandler {
                 .append(metaAlias).append("/");
 
             FSSessionManager sessMgr =
-                FSSessionManager.getInstance(hostedEntityId);
+                FSSessionManager.getInstance(metaAlias);
             String id = authnRequest.getRequestID();
             sessMgr.setRelayState(id, returnUrl.toString());
 
@@ -173,9 +179,7 @@ public class FSSSOLECPProfileHandler extends FSSSOAndFedHandler {
             redirectUrl.append(URLEncDec.encode(
                 gotoUrl.toString())).append("&");
 
-            String authUrl = FSUtils.getAuthDomainURL(
-                IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                    hostedConfig, IFSConstants.REALM_NAME));
+            String authUrl = FSUtils.getAuthDomainURL(realm);
             if (authUrl != null && authUrl.length() != 0){
                 redirectUrl.append(IFSConstants.ORGKEY).append("=").
                     append(URLEncDec.encode(authUrl)).append("&");

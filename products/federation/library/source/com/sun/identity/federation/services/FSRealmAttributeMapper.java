@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAttributeMapper.java,v 1.2 2007-10-16 21:49:12 exu Exp $
+ * $Id: FSRealmAttributeMapper.java,v 1.1 2007-10-16 21:49:13 exu Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.services;
@@ -29,7 +29,7 @@ import java.util.Map;
 
 /**
  * <p>
- * The interface <code>FSAttributeMapper</code> is a plugin for
+ * The interface <code>FSRealmAttributeMapper</code> is a plugin for
  * mapping the <code>Attribute</code>s  during the single sign-on at the
  * <code>ServiceProvider</code> of the Liberty protocols. The service
  * provider while it is validating the <code>Assertion</code> uses this
@@ -38,16 +38,15 @@ import java.util.Map;
  * service will populate these attributes to the application via the
  * single sign-on token.
  * </p>
- * @deprecated This SPI is deprecated.
- * @see com.sun.identity.federation.services.FSRealmAttributeMapper
  * @supported.all.api
  */ 
-public interface FSAttributeMapper {
+public interface FSRealmAttributeMapper {
 
     /**
      * Returns the map of local attributes for the given list of attribute
      * statements. 
      * @param attributeStatements list of <code>AttributeStatement</code>s.
+     * @param realm The realm under which the entity resides.
      * @param hostEntityId Hosted provider entity id.
      * @param remoteEntityId Remote provider entity id.
      * @param token Single sign-on session token.
@@ -56,6 +55,7 @@ public interface FSAttributeMapper {
      */
     public Map getAttributes(
         List attributeStatements, 
+        String realm,
         String hostEntityId,
         String remoteEntityId,
         Object token);

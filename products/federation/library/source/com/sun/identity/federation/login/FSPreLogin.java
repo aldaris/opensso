@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogin.java,v 1.2 2007-01-16 20:14:20 exu Exp $
+ * $Id: FSPreLogin.java,v 1.3 2007-10-16 21:49:08 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ import com.sun.liberty.LibertyManager;
  */
 public class FSPreLogin {
     
-    private String orgDN = null;
+    private String realm = null;
     private static String postLoginURL = null;
     private static String loginURL = null;
     private static String amserverURI = null;
@@ -161,6 +161,7 @@ public class FSPreLogin {
         FSUtils.debug.message("FSPreLogin::getQueryString called");
         String lrURL = httpRequest.getParameter(IFSConstants.GOTOKEY);
         String reqQueryString = removeMetaGotoOrg(httpRequest);
+
         if (lrURL == null || lrURL.length() <= 0) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSPreLogin::getQueryString."
@@ -182,6 +183,13 @@ public class FSPreLogin {
             .append(IFSConstants.LRURL).append(IFSConstants.EQUAL_TO)
             .append(lrURL)
             .toString();
+/*
+        String gotoURL = new StringBuffer().append(postLoginURL)
+            .append(IFSConstants.QUESTION_MARK).append(IFSConstants.META_ALIAS)
+            .append(IFSConstants.EQUAL_TO)
+            .append(metaAlias)
+            .toString();
+*/
         if (showFederatePage) {
             gotoURL = new StringBuffer().append(gotoURL)
                 .append(IFSConstants.AMPERSAND)
@@ -197,7 +205,7 @@ public class FSPreLogin {
         StringBuffer returnURLBuf =
             new StringBuffer().append(IFSConstants.ORGKEY)
                 .append(IFSConstants.EQUAL_TO)
-                .append(URLEncDec.encode(orgDN));
+                .append(realm);
         if (reqQueryString != null && reqQueryString.length() > 0) {
             returnURLBuf.append(IFSConstants.AMPERSAND).append(reqQueryString);
         }
@@ -240,22 +248,22 @@ public class FSPreLogin {
                     "FSPreLogin:: could not get meta manager handle.");
             }
             
+            realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
             BaseConfigType hostedConfig = null;
             if (hostedProviderRole != null) {
                 if (hostedProviderRole.equals(IFSConstants.SP)) {
                     hostedConfig =
-                        metaManager.getSPDescriptorConfig(hostedEntityID);
+                        metaManager.getSPDescriptorConfig(
+                            realm, hostedEntityID);
                 } else if (hostedProviderRole.equals(IFSConstants.IDP)) {
                     hostedConfig =
-                        metaManager.getIDPDescriptorConfig(hostedEntityID);
+                        metaManager.getIDPDescriptorConfig(
+                            realm, hostedEntityID);
                 }
             }
 
             if (hostedConfig != null) {
                 Map attributes = IDFFMetaUtils.getAttributes(hostedConfig);
-                orgDN = FSUtils.getAuthDomainURL(
-                    IDFFMetaUtils.getFirstAttributeValue(
-                    attributes, IFSConstants.REALM_NAME));
                 homePage = IDFFMetaUtils.getFirstAttributeValue(
                     attributes, IFSConstants.PROVIDER_HOME_PAGE_URL);
                 authType= IDFFMetaUtils.getFirstAttributeValue(
@@ -283,7 +291,7 @@ public class FSPreLogin {
             }
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(
-                    "FSPreLogin::setMetaInfo.orgDN = " + orgDN
+                    "FSPreLogin::setMetaInfo.realm = " + realm
                     + " doLocalAuth = " + doLocalAuth);
             }
         } catch (IDFFMetaException allianExp) {

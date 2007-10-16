@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaUtils.java,v 1.1 2006-10-30 23:14:18 qcheng Exp $
+ * $Id: IDFFMetaUtils.java,v 1.2 2007-10-16 21:49:10 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -333,7 +333,8 @@ public class IDFFMetaUtils {
     }
 
     public static String getFirstAttributeValueFromIDPConfig(
-        IDFFMetaManager metaManager, String idpEntityID, String attrName)
+        IDFFMetaManager metaManager, String realm,
+        String idpEntityID, String attrName)
     {
         if (metaManager == null || idpEntityID == null || attrName == null) {
             return null;
@@ -341,7 +342,7 @@ public class IDFFMetaUtils {
         String returnVal = null;
         try {
             IDPDescriptorConfigElement idpConfig =
-                metaManager.getIDPDescriptorConfig(idpEntityID);
+                metaManager.getIDPDescriptorConfig(realm, idpEntityID);
             if (idpConfig != null) {
                 Map attributes = getAttributes(idpConfig);
                 returnVal = getFirstAttributeValue(attributes, attrName);
@@ -387,4 +388,103 @@ public class IDFFMetaUtils {
         }
     } 
         
+    /**
+     * Returns the realm by parsing the metaAlias. MetaAlias format is
+     * <pre>
+     * &lt;realm>/&lt;any string without '/'> for non-root realm or
+     * /&lt;any string without '/'> for root realm.
+     * </pre>
+     * @param metaAlias The metaAlias.
+     * @return the realm associated with the metaAlias.
+     */
+    public static String getRealmByMetaAlias(String metaAlias) {
+        if (metaAlias == null) {
+            return null;
+        }
+
+        int index = metaAlias.lastIndexOf("/");
+        if (index == -1 || index == 0) {
+            return "/";
+        }
+
+        return metaAlias.substring(0, index);
+    }
+
+    /**
+     * Returns metaAlias embedded in uri.
+     * @param uri The uri string.
+     * @return the metaAlias embedded in uri or null if not found.
+     */
+    public static String getMetaAliasByUri(String uri) {
+        if (uri == null) {
+            return null;
+        }
+
+        int index = uri.indexOf(IDFFMetaManager.NAME_META_ALIAS_IN_URI);
+        if (index == -1 || index + 9 == uri.length()) {
+            return null;
+        }
+
+        return uri.substring(index + 9);
+    }
+
+    /**
+     * Obtains provider's meta alias.
+     * @param realm the realm in which the provider resides
+     * @param poviderID provider's entity ID
+     * @param providerRole provider's role
+     * @param session user session object
+     * @return service provider's meta alias; or <code>null</code> if an error
+     *     occurs.
+     */
+    public static String getMetaAlias(
+        String realm, String providerID, String providerRole, Object session)
+    {
+        try {
+            IDFFMetaManager metaManager = new IDFFMetaManager(session);
+            if (metaManager != null) {
+                BaseConfigType extendedConfig = getExtendedConfig(
+                    realm, providerID, providerRole, metaManager);
+                if (extendedConfig != null) {
+                    return extendedConfig.getMetaAlias();
+                }
+            }
+        } catch (IDFFMetaException e) {
+            if (debug.messageEnabled()) {
+                debug.message("IDFFMetaUtils.getMetaAlias:", e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtains provider's extended meta.
+     * @param realm the realm in which the provider resides
+     * @param poviderID provider's entity ID
+     * @param providerRole provider's role
+     * @param metaManager <code>IDFFMetaManager</code> instance.
+     * @return provider's extended meta; or <code>null</code> if an error
+     *     occurs.
+     */
+    public static BaseConfigType getExtendedConfig(
+        String realm, String providerId, String providerRole,
+        IDFFMetaManager metaManager)
+    {
+        BaseConfigType providerConfig = null;
+        if (metaManager != null && providerRole != null) {
+            try {
+                if (providerRole.equalsIgnoreCase(IFSConstants.IDP)) {
+                    providerConfig = metaManager.getIDPDescriptorConfig(
+                        realm, providerId);
+                } else if (providerRole.equalsIgnoreCase(IFSConstants.SP)) {
+                    providerConfig = metaManager.getSPDescriptorConfig(
+                        realm, providerId);
+                }
+            } catch (IDFFMetaException ie) {
+                debug.error(
+                    "IDFFMetaUtils.getExtendedConfig: couldn't get meta:",ie);
+            }
+        }
+        return providerConfig;
+    }
 }

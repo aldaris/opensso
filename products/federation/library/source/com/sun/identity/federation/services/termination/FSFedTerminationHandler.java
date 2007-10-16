@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSFedTerminationHandler.java,v 1.3 2007-01-10 06:29:35 exu Exp $
+ * $Id: FSFedTerminationHandler.java,v 1.4 2007-10-16 21:49:19 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,6 +86,7 @@ public class FSFedTerminationHandler {
         SystemConfigurationUtil.getProperty(IFSConstants.FEDERATE_COOKIE_NAME);
     protected static final String RELAY_STATE =
         IFSConstants.TERMINATION_RELAY_STATE;
+    protected String realm = "";
     protected String hostedEntityId = "";
     protected String remoteEntityId = "";
     protected String metaAlias = "";
@@ -162,6 +163,14 @@ public class FSFedTerminationHandler {
     }
 
     /**
+     * Sets realm.
+     * @param realm The realm under which the entity resides.
+     */
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
+    /**
      * Sets remote provider's entity ID.
      * @param remoteId remote provider's entity id
      */
@@ -230,13 +239,9 @@ public class FSFedTerminationHandler {
                     FSUtils.debug.message("Name Qualifier : "
                         + associatedDomain);
                 }
-                // Get orgDN
-                String orgDN = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                    hostedConfig, IFSConstants.REALM_NAME);
                 if (FSUtils.debug.messageEnabled()) {
-                    FSUtils.debug.message("OrgDN : " + orgDN);
+                    FSUtils.debug.message("Realm : " + realm);
                 }
-                // end get orgDN
                 
                 String searchDomain = hostedEntityId;
                 if ((associatedDomain != null) &&
@@ -250,11 +255,11 @@ public class FSFedTerminationHandler {
                 Map env = new HashMap();
                 env.put(IFSConstants.FS_USER_PROVIDER_ENV_TERMINATION_KEY,
                     reqTermination);
-                this.userID = managerInst.getUserID(acctkey, orgDN, env);
+                this.userID = managerInst.getUserID(acctkey, realm, env);
                 if (this.userID == null) {
                     acctkey = new FSAccountFedInfoKey(
                         remoteEntityId, opaqueHandle);
-                    this.userID = managerInst.getUserID(acctkey, orgDN, env);
+                    this.userID = managerInst.getUserID(acctkey, realm, env);
                     if (this.userID == null) {
                         FSUtils.debug.message("UserID is null");
                         return false;
@@ -411,7 +416,7 @@ public class FSFedTerminationHandler {
                 hostedEntityId);
         }
         FSLogoutUtil.cleanSessionMapPartnerList(
-            userID, remoteEntityId, hostedEntityId, null);
+            userID, remoteEntityId, metaAlias, null);
         return true;
     }
     

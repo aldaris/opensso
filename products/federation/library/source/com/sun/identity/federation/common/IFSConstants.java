@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.8 2007-08-07 17:12:06 qcheng Exp $
+ * $Id: IFSConstants.java,v 1.9 2007-10-16 21:49:08 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1266,6 +1266,10 @@ public interface IFSConstants {
      */
     public static final String PROVIDER_ID_KEY = "_liberty_idp" ;
     /**
+     * Parameter used to pass realm value.
+     */
+     public static final String REALM = "realm";
+    /**
      * Intersite transfer URL
      */
     public static final String INTERSITE_URL = "IntersiteTransferService";
@@ -2178,11 +2182,6 @@ public interface IFSConstants {
     public String GENERATE_BOOTSTRAPPING = "generateBootstrapping";
 
     /**
-     * Realm Name 
-     */ 
-    public String REALM_NAME = "realmName";
-
-    /**
      * Responds with 
      */ 
     public String RESPONDS_WITH = "respondsWith";
@@ -2278,6 +2277,11 @@ public interface IFSConstants {
     public String ATTRIBUTE_PLUGIN = "attributePlugin";
 
     /**
+     * Realm Attribute Plugin 
+     */ 
+    public String REALM_ATTRIBUTE_PLUGIN = "realmAttributePlugin";
+
+    /**
      * IDP Attribute Map 
      */ 
     public String IDP_ATTRIBUTE_MAP = "idpAttributeMap";
@@ -2318,6 +2322,11 @@ public interface IFSConstants {
      * Attribute Mapper Class 
      */ 
     public String ATTRIBUTE_MAPPER_CLASS = "attributeMapperClass";
+
+    /**
+     * Realm Attribute Mapper Class 
+     */ 
+    public String REALM_ATTRIBUTE_MAPPER_CLASS = "realmAttributeMapperClass";
 
     /**
      * Circle-of-trust list 
@@ -2390,5 +2399,10 @@ public interface IFSConstants {
      * boolean to indicate if this is SOAP profile
      */
     public String IS_SOAP_PROFILE = "isSOAPProfile";
+
+    /**
+     * root realm.
+     */
+    public String ROOT_REALM = "/";
 }
 

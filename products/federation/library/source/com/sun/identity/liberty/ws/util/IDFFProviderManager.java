@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFProviderManager.java,v 1.1 2007-04-23 03:41:03 hengming Exp $
+ * $Id: IDFFProviderManager.java,v 1.2 2007-10-16 21:49:21 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,7 @@ import com.sun.identity.shared.debug.Debug;
  */
 public class IDFFProviderManager implements ProviderManager {
 
+    private static final String ROOT_REALM = "/";
     private static IDFFMetaManager idffMetaManager = null;
 
     static {
@@ -67,7 +68,8 @@ public class IDFFProviderManager implements ProviderManager {
     public boolean containsProvider(String providerID) {
         SPDescriptorType spDescriptor = null;
         try {
-            spDescriptor = idffMetaManager.getSPDescriptor(providerID);
+            spDescriptor = idffMetaManager.getSPDescriptor(
+                ROOT_REALM, providerID);
         } catch (IDFFMetaException imex) {
             ProviderUtil.debug.error(
                 "IDFFProviderManager.containsProvider:", imex);
@@ -86,7 +88,8 @@ public class IDFFProviderManager implements ProviderManager {
     public boolean isAffiliationMember(String providerID, String affID) {
 
         try {
-            return idffMetaManager.isAffiliateMember(providerID, affID);
+            return idffMetaManager.isAffiliateMember(
+                ROOT_REALM, providerID, affID);
         } catch (IDFFMetaException imex) {
             ProviderUtil.debug.error(
                 "IDFFProviderManager.isAffiliationMember:", imex);
@@ -105,7 +108,8 @@ public class IDFFProviderManager implements ProviderManager {
     public boolean isNameIDEncryptionEnabled(String providerID) {
         EntityConfigElement entityConfig = null;
         try {
-            entityConfig = idffMetaManager.getEntityConfig(providerID);
+            entityConfig = idffMetaManager.getEntityConfig(
+                ROOT_REALM, providerID);
         } catch (IDFFMetaException imex) {
             ProviderUtil.debug.error(
                 "IDFFProviderManager.isNameIDEncryptionEnabled:", imex);
@@ -175,10 +179,11 @@ public class IDFFProviderManager implements ProviderManager {
     public PrivateKey getDecryptionKey(String providerID) {
         BaseConfigType providerConfig = null;
         try {
-            providerConfig = idffMetaManager.getSPDescriptorConfig(providerID);
+            providerConfig = idffMetaManager.getSPDescriptorConfig(
+                ROOT_REALM, providerID);
             if (providerConfig == null) {
                 providerConfig = idffMetaManager.
-                    getIDPDescriptorConfig(providerID);
+                    getIDPDescriptorConfig(ROOT_REALM, providerID);
             }
         } catch (IDFFMetaException imex) {
             ProviderUtil.debug.error("IDFFProviderManager.getDecryptionKey",
@@ -200,9 +205,11 @@ public class IDFFProviderManager implements ProviderManager {
     public String getSigningKeyAlias(String providerID) {
         BaseConfigType config = null;
         try {
-            config = idffMetaManager.getSPDescriptorConfig(providerID);
+            config = idffMetaManager.getSPDescriptorConfig(
+                ROOT_REALM, providerID);
             if (config == null) {
-                config = idffMetaManager.getIDPDescriptorConfig(providerID);
+                config = idffMetaManager.getIDPDescriptorConfig(
+                    ROOT_REALM, providerID);
             }
         } catch(IDFFMetaException imex) {
             ProviderUtil.debug.error(
@@ -224,9 +231,11 @@ public class IDFFProviderManager implements ProviderManager {
     private EncInfo getEncInfo(String providerID) {
         ProviderDescriptorType providerDesc = null;
         try {
-            providerDesc = idffMetaManager.getSPDescriptor(providerID);
+            providerDesc = idffMetaManager.getSPDescriptor(
+                ROOT_REALM, providerID);
             if (providerDesc == null) {
-                providerDesc = idffMetaManager.getIDPDescriptor(providerID);
+                providerDesc = idffMetaManager.getIDPDescriptor(
+                    ROOT_REALM, providerID);
             }
             if (providerDesc == null) {
                 return null;

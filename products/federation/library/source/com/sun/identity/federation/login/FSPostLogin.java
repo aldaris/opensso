@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPostLogin.java,v 1.3 2007-09-12 23:59:33 exu Exp $
+ * $Id: FSPostLogin.java,v 1.4 2007-10-16 21:49:08 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,7 @@ import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
+import com.sun.identity.federation.meta.IDFFMetaUtils;
 
 import com.sun.identity.federation.services.FSLoginHelper;
 import com.sun.identity.federation.services.FSLoginHelperException;
@@ -76,6 +77,7 @@ public class FSPostLogin {
     private boolean isIDP = false;
     private String providerRole = null;
     private String entityID = null;
+    private String realm = null;
     
     static {
         metaManager = FSUtils.getIDFFMetaManager();
@@ -107,8 +109,7 @@ public class FSPostLogin {
             sso = getValueFromURL(rqst, IFSConstants.SSOKEY);
             // this is for LECP, we need to map the random id back to
             // original URL stored in session manager
-            FSSessionManager sessMgr = FSSessionManager.getInstance(
-                LibertyManager.getEntityID(metaAlias));
+            FSSessionManager sessMgr = FSSessionManager.getInstance(metaAlias);
             String relayStateURL = sessMgr.getRelayState(lrURL);
             if (relayStateURL != null) {
                 sessMgr.removeRelayState(lrURL);
@@ -123,7 +124,7 @@ public class FSPostLogin {
         }
         
         if (lrURL == null || lrURL.length() <= 0) {
-            lrURL = LibertyManager.getHomeURL(entityID, providerRole);
+            lrURL = LibertyManager.getHomeURL(realm, entityID, providerRole);
         }
         if ((sso != null  && sso.length() > 0
                 && sso.equalsIgnoreCase(IFSConstants.SSOVALUE)) ||
@@ -132,7 +133,7 @@ public class FSPostLogin {
             // means in middle of SSO show consent to introduction page
             try {
                 Set cotSet = LibertyManager.getListOfCOTs(
-                    entityID, providerRole);
+                    realm, entityID, providerRole);
                 if (cotSet != null && !cotSet.isEmpty()) {
                     if(cotSet.size() <= 1) {
                         String cotSelected = (String)cotSet.iterator().next();
@@ -182,7 +183,7 @@ public class FSPostLogin {
                 return;
             }
             Set providerSet = LibertyManager.getProvidersToFederate(
-                providerID, providerRole,univId);
+                realm, providerID, providerRole,univId);
             if (providerSet != null &&  providerSet.size() != 0 &&
                 federationPage != null) 
             {
@@ -234,21 +235,20 @@ public class FSPostLogin {
         Object ssoToken = null;
         String sessionID = null;
         String userID = null;
-        String providerID = LibertyManager.getEntityID(metaAlias);
         try {
             SessionProvider sessionProvider = SessionManager.getProvider();
             ssoToken = sessionProvider.getSession(request);
             sessionID = sessionProvider.getSessionID(ssoToken);
             userID = sessionProvider.getPrincipalName(ssoToken);
             sessionProvider.addListener(
-                ssoToken, new FSTokenListener(providerID));
+                ssoToken, new FSTokenListener(metaAlias));
         } catch(SessionException ssoExp) {
             FSUtils.debug.error("FSPostLogin::setTokenListenerAndSessionInfo "
                 + "Failed during trying to add token Listener:", ssoExp);
             return;
         }
         FSSessionManager sessionManager =
-            FSSessionManager.getInstance(providerID);
+            FSSessionManager.getInstance(metaAlias);
         FSSession session = sessionManager.getSession(userID, sessionID);
         if(session == null)  {
             if (FSUtils.debug.messageEnabled()) {
@@ -315,17 +315,18 @@ public class FSPostLogin {
                     metaManager.getProviderRoleByMetaAlias(metaAlias);
                 String hostedEntityId = metaManager.getEntityIDByMetaAlias(
                     metaAlias);
+                realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
                 if (hostedProviderRole != null &&
                     hostedProviderRole.equals(IFSConstants.IDP))
                 {
                     isIDP = true;
                     hostedConfig = metaManager.getIDPDescriptorConfig(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                 } else if (hostedProviderRole != null &&
                     hostedProviderRole.equalsIgnoreCase(IFSConstants.SP))
                 {
                     hostedConfig = metaManager.getSPDescriptorConfig(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                 }
             } catch (IDFFMetaException ie) {
                 FSUtils.debug.error("FSPostLogin::setMetaInfo: exception:",ie);
@@ -359,6 +360,7 @@ public class FSPostLogin {
         throws FSPostLoginException 
     {
         String entityID = null;
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
         String tldURL = null;
         try {
             if (metaManager != null) {
@@ -366,7 +368,7 @@ public class FSPostLogin {
             }
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
             CircleOfTrustDescriptor cotDesc = cotManager.getCircleOfTrust(
-                "/", cotSelected);
+                realm, cotSelected);
             if (cotDesc != null &&
                 (cotDesc.getCircleOfTrustStatus())
                     .equalsIgnoreCase(IFSConstants.ACTIVE)) 

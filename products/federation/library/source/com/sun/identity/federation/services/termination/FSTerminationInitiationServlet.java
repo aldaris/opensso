@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSTerminationInitiationServlet.java,v 1.2 2007-01-10 06:29:35 exu Exp $
+ * $Id: FSTerminationInitiationServlet.java,v 1.3 2007-10-16 21:49:19 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,6 +141,7 @@ public class FSTerminationInitiationServlet extends HttpServlet {
         BaseConfigType hostedConfig = null;
         String hostedRole = null;
         String hostedEntityId = null;
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(providerAlias);
         try {
             hostedRole = metaManager.getProviderRoleByMetaAlias(providerAlias);
             hostedEntityId = metaManager.getEntityIDByMetaAlias(providerAlias);
@@ -148,16 +149,16 @@ public class FSTerminationInitiationServlet extends HttpServlet {
                 hostedRole.equalsIgnoreCase(IFSConstants.SP))
             {
                 hostedProviderDesc =
-                    metaManager.getSPDescriptor(hostedEntityId);
+                    metaManager.getSPDescriptor(realm, hostedEntityId);
                 hostedConfig =
-                    metaManager.getSPDescriptorConfig(hostedEntityId);
+                    metaManager.getSPDescriptorConfig(realm, hostedEntityId);
             } else if (hostedRole != null &&
                 hostedRole.equalsIgnoreCase(IFSConstants.IDP))
             {
                 hostedProviderDesc =
-                    metaManager.getIDPDescriptor(hostedEntityId);
+                    metaManager.getIDPDescriptor(realm, hostedEntityId);
                 hostedConfig =
-                    metaManager.getIDPDescriptorConfig(hostedEntityId);
+                    metaManager.getIDPDescriptorConfig(realm, hostedEntityId);
             }
             if (hostedProviderDesc == null) {
                 throw new IDFFMetaException((String) null);
@@ -172,8 +173,8 @@ public class FSTerminationInitiationServlet extends HttpServlet {
         }
         this.request = request;
         setTerminationURL(hostedConfig, providerAlias);
-        doFederationInitiation(request, response, hostedProviderDesc, 
-            hostedConfig, hostedEntityId, hostedRole, providerAlias);
+        doTerminationInitiation(request, response, hostedProviderDesc, 
+            hostedConfig, realm, hostedEntityId, hostedRole, providerAlias);
         return;
     }
     
@@ -225,22 +226,24 @@ public class FSTerminationInitiationServlet extends HttpServlet {
      *  response back to user agent
      * @param hostedProviderDesc the provider where termination is initiated
      * @param hostedConfig hosted provider's extended meta
+     * @param realm the realm under which the entity resides
      * @param hostedEntityId hosted provider's entity ID
      * @param hostedRole hosted provider's role
      * @param providerAlias hosted provider's meta alias
      */    
-    private void doFederationInitiation(
+    private void doTerminationInitiation(
         HttpServletRequest request,
         HttpServletResponse response,
         ProviderDescriptorType hostedProviderDesc,
         BaseConfigType hostedConfig,
+        String realm,
         String hostedEntityId,
         String hostedRole,
         String providerAlias) 
     {
 
         FSUtils.debug.message(
-            "Entered FSTerminationInitiationServlet::doFederationInitiation");
+            "Entered FSTerminationInitiationServlet::doTerminationInitiation");
         try {
             Object ssoToken = getValidToken(request);
             if (ssoToken != null) {
@@ -271,6 +274,7 @@ public class FSTerminationInitiationServlet extends HttpServlet {
                             remoteProviderRole,
                             SessionManager.getProvider().getPrincipalName(
                                 ssoToken),
+                            realm,
                             hostedEntityId,
                             providerAlias); 
 
@@ -279,6 +283,7 @@ public class FSTerminationInitiationServlet extends HttpServlet {
                         handlerObj.setHostedDescriptorConfig(hostedConfig);
                         handlerObj.setHostedProviderRole(hostedRole);
                         handlerObj.setMetaAlias(providerAlias);
+                        handlerObj.setRealm(realm);
                         handlerObj.setHostedEntityId(hostedEntityId);
                         boolean bStatus = 
                             handlerObj.handleFederationTermination(request,
@@ -311,13 +316,13 @@ public class FSTerminationInitiationServlet extends HttpServlet {
             }          
         } catch(IOException e) {
             if (FSUtils.debug.messageEnabled()) {
-                FSUtils.debug.message("IOException in doFederationInitiation",
+                FSUtils.debug.message("IOException in doTerminationInitiation",
                     e);
             }
         } catch(SessionException ex) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(
-                    "SessionException in doFederationInitiation", ex);
+                    "SessionException in doTerminationInitiation", ex);
             }
         }
         FSServiceUtils.returnLocallyAfterOperation(

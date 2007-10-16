@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSBrowserArtifactConsumerHandler.java,v 1.3 2007-04-06 20:53:07 exu Exp $
+ * $Id: FSBrowserArtifactConsumerHandler.java,v 1.4 2007-10-16 21:49:15 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -144,7 +144,7 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
             "FSBrowserArtifactConsumerHandler.processSAMLRequest: Called"); 
         String baseURL = FSServiceUtils.getBaseURL(request);
         String framedPageURL = FSServiceUtils.getCommonLoginPageURL(
-            hostMetaAlias, null, null, request,baseURL);
+            hostMetaAlias, relayState, null, request,baseURL);
         try {
             FSSOAPService soapHelper = FSSOAPService.getInstance();
             samlRequest.setID(samlRequest.getRequestID());
@@ -283,7 +283,7 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
             "FSBrowserArtifactConsumerHandler.processSAMLResponse: Called");
         String baseURL = FSServiceUtils.getBaseURL(request);
         String framedPageURL = FSServiceUtils.getCommonLoginPageURL(
-            hostMetaAlias, null, null, request,baseURL);        
+            hostMetaAlias, relayState, null, request,baseURL);        
 
         try {
             if (samlResponse == null) {
@@ -348,6 +348,7 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
             }
             
             this.authnRequest = authnRequestRef;
+            FSUtils.debug.error("EMILY: handler: relayState = " + relayState);
             this.relayState = authnRequest.getRelayState();
             if ((this.relayState == null) || 
                 (this.relayState.trim().length() == 0))
@@ -361,6 +362,7 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                     this.relayState =
                         baseURL + IFSConstants.SP_DEFAULT_RELAY_STATE;
                 }
+                FSUtils.debug.error("EMILY: handler1: relayState = " + relayState);
             }
             this.doFederate = authnRequest.getFederate();
             this.nameIDPolicy = authnRequest.getNameIDPolicy();
@@ -432,7 +434,7 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                     if (returnCode == FederationSPAdapter.SUCCESS) {
                         // remove it from session manager table
                         FSSessionManager sessionManager =
-                            FSSessionManager.getInstance(hostEntityId);
+                            FSSessionManager.getInstance(hostMetaAlias);
                         sessionManager.removeAuthnRequest(
                            assertion.getInResponseTo());
                         return;
@@ -466,7 +468,7 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
             } else {
                 // remove it from session manager table
                 FSSessionManager sessionManager =
-                    FSSessionManager.getInstance(hostEntityId);
+                    FSSessionManager.getInstance(hostMetaAlias);
                 sessionManager.removeAuthnRequest(
                     assertion.getInResponseTo());
                 NameIdentifier niIdp = 
@@ -500,9 +502,6 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                     handleType = IFSConstants.LOCAL_OPAQUE_HANDLE;
                 }
                 if (ni != null) {
-                    String orgDN = 
-                        IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                            hostConfig, IFSConstants.REALM_NAME);
                     if (FSUtils.debug.messageEnabled()) {
                         FSUtils.debug.message(
                             "FSBrowserArtifactConsumerHandler."
@@ -516,7 +515,7 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                     env.put(IFSConstants.FS_USER_PROVIDER_ENV_FSRESPONSE_KEY,
                                 samlResponse);
                     int returnCode = doSingleSignOn(
-                        ni, handleType, orgDN, niIdp, env);
+                        ni, handleType, niIdp, env);
                     if (returnCode == FederationSPAdapter.SUCCESS) {
                         String requestID = assertion.getInResponseTo();
                         if (isIDPProxyEnabled(requestID)) {
@@ -618,7 +617,7 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
         FSUtils.debug.message(
             "FSBrowserArtifactConsumerHandler.getInResponseToRequest: Called");
         FSSessionManager sessionManager = 
-            FSSessionManager.getInstance(hostEntityId);
+            FSSessionManager.getInstance(hostMetaAlias);
         authnRequest = sessionManager.getAuthnRequest(requestID);
         return authnRequest;
     }

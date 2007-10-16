@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLoginHandler.java,v 1.1 2006-10-30 23:14:07 qcheng Exp $
+ * $Id: FSPreLoginHandler.java,v 1.2 2007-10-16 21:49:09 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,7 @@ public class FSPreLoginHandler extends HttpServlet {
         if(metaAlias != null && metaAlias.length() > 0) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSPreLoginHandler::processRequest:"
-                    + "Calling prelogin with metaAlias" + metaAlias);
+                    + "Calling prelogin with metaAlias=" + metaAlias);
             }
             FSPreLogin preLogin = new FSPreLogin();
             preLogin.doPreLogin(request,response);

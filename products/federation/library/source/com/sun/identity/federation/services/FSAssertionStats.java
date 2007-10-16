@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionStats.java,v 1.1 2006-10-30 23:14:20 qcheng Exp $
+ * $Id: FSAssertionStats.java,v 1.2 2007-10-16 21:49:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,15 +33,18 @@ import java.util.Map;
 public class FSAssertionStats implements StatsListener {
 
     private Map table;
+    private String realm;
     private String providerId;
 
     /**
      * Constructs a <code>FSAssertionStats</code> object for a given provider.
      * @param table Map of assertion ID and <code>Assertion.Entry</code> object
+     * @param realm the realm in which the provier resides
      * @param providerId provider ID
      */
-    public FSAssertionStats(Map table, String providerId) {
+    public FSAssertionStats(Map table, String realm, String providerId) {
         this.table = table;
+        this.realm = realm;
         this.providerId = providerId;
     }
 
@@ -53,10 +56,11 @@ public class FSAssertionStats implements StatsListener {
         if (table.size() != 0 ) {
             FSAssertionManager.assrtStats.record(
                 "Number of assertion in table for provider " + providerId +
-                " : " + table.size());
+                " under realm " + realm + " : " + table.size());
         } else {
             FSAssertionManager.assrtStats.record(
-                "No assertion found in table for provider " + providerId + ".");
+                "No assertion found in table for provider " + providerId + 
+                " under realm " + realm + ".");
         }
     }
 }

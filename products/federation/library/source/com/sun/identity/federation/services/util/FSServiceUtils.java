@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceUtils.java,v 1.4 2007-08-07 17:16:03 qcheng Exp $
+ * $Id: FSServiceUtils.java,v 1.5 2007-10-16 21:49:20 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -174,15 +174,18 @@ public class FSServiceUtils {
                 "metaAlias is null");
             return null;
         }
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
         BaseConfigType hostConfig = null;
         try{
             String role = metaManager.getProviderRoleByMetaAlias(metaAlias);
             String entityId = metaManager.getEntityIDByMetaAlias(metaAlias);
             if (role != null) {
                 if (role.equalsIgnoreCase(IFSConstants.SP)) {
-                    hostConfig = metaManager.getSPDescriptorConfig(entityId);
+                    hostConfig = metaManager.getSPDescriptorConfig(
+                        realm, entityId);
                 } else if (role.equalsIgnoreCase(IFSConstants.IDP)) {
-                    hostConfig = metaManager.getIDPDescriptorConfig(entityId);
+                    hostConfig = metaManager.getIDPDescriptorConfig(
+                        realm, entityId);
                 }
             }
         }catch(Exception e){
@@ -225,9 +228,7 @@ public class FSServiceUtils {
         }
         commonLoginPageUrl.append (IFSConstants.GOTOKEY).append ("=").
             append (URLEncDec.encode (gotoBuffer.toString ()));
-        String org = FSUtils.getAuthDomainURL(
-            IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                hostConfig, IFSConstants.REALM_NAME));
+        String org = FSUtils.getAuthDomainURL(realm);
         if(org != null && org.length() != 0){
             commonLoginPageUrl.append("&").append(IFSConstants.ORGKEY).
                 append ("=").append (URLEncDec.encode (org));
@@ -270,43 +271,20 @@ public class FSServiceUtils {
      * @return meta alias of a provider embeded in the request url
      */
     public static String getMetaAlias (HttpServletRequest request) {
-        String reqURLStr = request.getRequestURL().toString();
+        String uri = request.getRequestURI();
         if (FSUtils.debug.messageEnabled()) {
-            FSUtils.debug.message ("FSServiceUtil.getMetaAlias request = "
-                + reqURLStr);
+            FSUtils.debug.message ("FSServiceUtil.getMetaAlias request uri = "
+                + uri);
         }
-        int iIndex = reqURLStr.indexOf (IFSConstants.META_ALIAS);
-        if (iIndex == -1) {
-            reqURLStr = request.getQueryString();
-            if (reqURLStr != null) {
-                iIndex = reqURLStr.indexOf (IFSConstants.META_ALIAS);
-            }
-        }
-        if (iIndex != -1) {
-            //add 1 for "/"
-            iIndex = iIndex + IFSConstants.META_ALIAS.length () + 1;
-            String newStr = reqURLStr.substring (iIndex);
-            byte strInBytes[] = newStr.getBytes ();
-            int endOfString;
-            for(endOfString=0; endOfString < newStr.length (); endOfString++) {
-                if(strInBytes[endOfString] == '/' ||
-                    strInBytes[endOfString] == '?' ||
-                    strInBytes[endOfString] == '&')
-                {
-                    break;
-                }
-            }
-            String returnStr = newStr.substring (0,endOfString);
-            if (FSUtils.debug.messageEnabled()) {
-                FSUtils.debug.message ("FSServiceUtil.getMetaAlias returning /"
-                    + returnStr);
-            }
-            return "/" + returnStr;
-        } else {
+        int index = uri.indexOf (IFSConstants.META_ALIAS);
+        if ((index == -1) || 
+            (index + IFSConstants.META_ALIAS.length() == uri.length()))
+        {
             FSUtils.debug.message (
                 "FSServiceUtil.getMetaAlias no metaAlias in request");
             return null;
         }
+        return uri.substring(index + IFSConstants.META_ALIAS.length());
     }
     
     /**
@@ -515,12 +493,13 @@ public class FSServiceUtils {
     
     /**
      * Gets the Affiliation ID for the provider that it belongs.
+     * @param realm The realm under which the entity resides.
      * @param entityID provider's entity ID.
      * @return Affiliation ID.
      */
-    public static String getAffiliationID(String entityID) {
+    public static String getAffiliationID(String realm, String entityID) {
         if (metaManager != null) {
-            Set affiliations = metaManager.getAffiliateEntity(entityID);
+            Set affiliations = metaManager.getAffiliateEntity(realm, entityID);
             if (affiliations != null && !affiliations.isEmpty()) {
                 AffiliationDescriptorType affiliateDescriptor =
                     (AffiliationDescriptorType) 
@@ -1147,18 +1126,19 @@ public class FSServiceUtils {
                 hostSPConfig, IFSConstants.FEDERATION_SP_ADAPTER);
             List adapterEnv = IDFFMetaUtils.getAttributeValueFromConfig(
                 hostSPConfig, IFSConstants.FEDERATION_SP_ADAPTER_ENV);
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(
+                hostSPConfig.getMetaAlias());
             if (adapterName != null && adapterName.length() != 0) {
                 Class adapterClass = Class.forName(adapterName.trim());
                 FederationSPAdapter adapterInstance = 
                     (FederationSPAdapter) adapterClass.newInstance();
-                if (adapterEnv == null || adapterEnv.isEmpty()) {
-                    adapterInstance.initialize(
-                        hostEntityID, Collections.EMPTY_SET);
-                } else {
-                    Set newEnv = new HashSet();
+                Set newEnv = new HashSet();
+                if (adapterEnv != null && !adapterEnv.isEmpty()) {
                     newEnv.addAll(adapterEnv);
-                    adapterInstance.initialize(hostEntityID, newEnv);
                 }
+                newEnv.add(FederationSPAdapter.ENV_REALM + realm);
+                adapterInstance.initialize(hostEntityID, newEnv);
+               
                 return adapterInstance;
             }
         } catch (Exception e) {

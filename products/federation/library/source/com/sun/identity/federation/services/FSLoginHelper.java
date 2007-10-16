@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLoginHelper.java,v 1.3 2007-05-17 19:31:57 qcheng Exp $
+ * $Id: FSLoginHelper.java,v 1.4 2007-10-16 21:49:13 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,6 +77,7 @@ public class FSLoginHelper {
     private boolean forceAuthn;
     private boolean isPassive;
     private String nameIDPolicy = null;
+    private String realm = null;
     private String hostEntityID = null;
     private BaseConfigType hostConfig = null;
     private SPDescriptorType hostDescriptor = null;
@@ -131,10 +132,13 @@ public class FSLoginHelper {
         throws FSLoginHelperException
     {
        try {
+           realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
             if (metaManager != null) {
                 hostEntityID = metaManager.getEntityIDByMetaAlias(metaAlias);
-                hostDescriptor = metaManager.getSPDescriptor(hostEntityID);
-                hostConfig = metaManager.getSPDescriptorConfig(hostEntityID);
+                hostDescriptor = metaManager.getSPDescriptor(
+                    realm, hostEntityID);
+                hostConfig = metaManager.getSPDescriptorConfig(
+                    realm, hostEntityID);
             } else {
                 FSUtils.debug.error("FSLoginHelper::setMetaInfo " 
                     + "could not get meta manager handle "
@@ -274,7 +278,7 @@ public class FSLoginHelper {
                 "FSLoginHelper.createAuthnRequest()::RequestID: " + requestID);
         }
         
-        FSSessionManager sessMngr = FSSessionManager.getInstance(hostEntityID);
+        FSSessionManager sessMngr = FSSessionManager.getInstance(metaAlias);
         sessMngr.setAuthnRequest(requestID, authnRequest);
         sessMngr.setIDPEntityID(requestID, remoteEntityID);
 
@@ -320,7 +324,7 @@ public class FSLoginHelper {
                     idpID = (String)iter.next();
                     if (idpID != null){
                         IDPDescriptorType idpDescr = 
-                            metaManager.getIDPDescriptor(idpID);
+                            metaManager.getIDPDescriptor(realm, idpID);
                         idpLocation = idpDescr.getSingleSignOnServiceURL();
                         if (idpEntryList == null){
                             idpEntryList = new ArrayList();
@@ -423,9 +427,11 @@ public class FSLoginHelper {
                         retMap.put(authnReqIDKey,requestID);
                         return retMap;
                     } else if(actionOnNoFedCookie.equals(IFSConstants.ACTIVE)) {
-                        changeToPassiveAuthnRequest(requestID, false);
+                        changeToPassiveAuthnRequest(
+                            requestID, false, metaAlias);
                     } else {
-                        changeToPassiveAuthnRequest(requestID, true);
+                        changeToPassiveAuthnRequest(
+                            requestID, true, metaAlias);
                     }
                 }
 
@@ -441,7 +447,7 @@ public class FSLoginHelper {
          * a passive call to the IDP.
          */
         if (isPassiveQuery) {
-            changeToPassiveAuthnRequest(requestID, true);
+            changeToPassiveAuthnRequest(requestID, true, metaAlias);
         }
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("FSLoginHelper.createAuthnRequest()::"
@@ -458,9 +464,11 @@ public class FSLoginHelper {
         return retMap;
     }
 
-    void changeToPassiveAuthnRequest(String requestID, boolean isPassiveFlag) {
+    void changeToPassiveAuthnRequest(
+        String requestID, boolean isPassiveFlag, String metaAlias) 
+    {
         FSUtils.debug.message("FSPreLogin.changeToPassiveAuthnRequest called");
-        FSSessionManager sessMngr = FSSessionManager.getInstance(hostEntityID);
+        FSSessionManager sessMngr = FSSessionManager.getInstance(metaAlias);
         if (sessMngr == null) {
             FSUtils.debug.message("Session Manager null");
             return;
@@ -488,9 +496,9 @@ public class FSLoginHelper {
                 Iterator it = trustedProviders.iterator();
                 while (it.hasNext()) {
                     provider = (String) it.next();
-                    providerDesc = metaManager.getIDPDescriptor(provider);
+                    providerDesc = metaManager.getIDPDescriptor(realm,provider);
                     providerConfig = 
-                        metaManager.getIDPDescriptorConfig(provider);
+                        metaManager.getIDPDescriptorConfig(realm, provider);
                     if (providerDesc == null || providerConfig == null) {
                         continue;
                     } 
@@ -676,7 +684,7 @@ public class FSLoginHelper {
                 while (iter.hasNext()) {
                     CircleOfTrustDescriptor cotDesc = 
                         cotManager.getCircleOfTrust(
-                            "/", (String)iter.next());
+                            realm, (String)iter.next());
                     if (cotDesc != null && 
                         (cotDesc.getCircleOfTrustStatus()).
                             equalsIgnoreCase(IFSConstants.ACTIVE)) 
@@ -756,8 +764,7 @@ public class FSLoginHelper {
                     "FSLoginHelper.createAuthnRequest()::RequestID: " +
                     requestID);
             }
-            FSSessionManager sessMngr = FSSessionManager.getInstance(
-                hostEntityID);
+            FSSessionManager sessMngr = FSSessionManager.getInstance(metaAlias);
             sessMngr.setAuthnRequest(requestID, authnRequest);
 
             Object ssoToken = SessionManager.getProvider().getSession(request);
@@ -790,7 +797,7 @@ public class FSLoginHelper {
                 idpID = (String)iter.next();
                 if (idpID != null){
                     IDPDescriptorType idpDescr = 
-                        metaManager.getIDPDescriptor(idpID);
+                        metaManager.getIDPDescriptor(realm, idpID);
                     idpLocation = idpDescr.getSingleSignOnServiceURL(); 
                     if (idpEntryList == null){
                         idpEntryList = new ArrayList();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAccountManager.java,v 1.2 2006-11-01 19:57:02 qcheng Exp $
+ * $Id: FSAccountManager.java,v 1.3 2007-10-16 21:49:08 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,10 +57,10 @@ public class FSAccountManager {
      * additional SP filter to check, this is for the case when two SP
      * are federated with same IDP
      */
-    private static String SP_FILTER = null;
-    private static String SP_PROVIDER_ID;
+    private String SP_FILTER = null;
+    private String SP_PROVIDER_ID;
 
-    private static IDFFMetaManager metaManager =
+    private IDFFMetaManager metaManager =
         FSUtils.getIDFFMetaManager();
     private DataStoreProvider provider = null;
     private FSUserProvider userProvider = null;
@@ -77,17 +77,18 @@ public class FSAccountManager {
             provider = DataStoreProviderManager.getInstance().
                 getDataStoreProvider(IFSConstants.IDFF);
             String role = metaManager.getProviderRoleByMetaAlias(metaAlias);
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
             String hostedEntityID = 
                 metaManager.getEntityIDByMetaAlias(metaAlias);
             BaseConfigType hostedConfig = null;
             if (role != null && role.equalsIgnoreCase(IFSConstants.IDP)) {
                 hostedConfig = 
-                    metaManager.getIDPDescriptorConfig(hostedEntityID);
+                    metaManager.getIDPDescriptorConfig(realm, hostedEntityID);
             } else if (role != null &&
                 role.equalsIgnoreCase(IFSConstants.SP))
             {
                 hostedConfig = 
-                    metaManager.getSPDescriptorConfig(hostedEntityID);
+                    metaManager.getSPDescriptorConfig(realm, hostedEntityID);
                 SP_PROVIDER_ID = hostedEntityID;
                 SP_FILTER = "|" + SP_PROVIDER_ID + "|";
             }

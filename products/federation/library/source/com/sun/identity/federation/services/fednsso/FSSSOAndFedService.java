@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedService.java,v 1.3 2007-07-26 22:24:12 hengming Exp $
+ * $Id: FSSSOAndFedService.java,v 1.4 2007-10-16 21:49:16 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.sun.identity.federation.services.FSServiceManager;
 import com.sun.identity.federation.services.FSSOAPService;
 import com.sun.identity.federation.services.util.FSServiceUtils;
 import com.sun.identity.federation.meta.IDFFMetaManager;
+import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.federation.message.FSAuthnRequest;
 import com.sun.identity.federation.message.common.Extension;
 import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
@@ -145,8 +146,10 @@ public class FSSSOAndFedService  extends HttpServlet {
                 request.getParameter(IFSConstants.PROVIDER_ID_KEY);
             String authnContext = 
                 request.getParameter(IFSConstants.AUTHN_CONTEXT);
+            String realm = request.getParameter(IFSConstants.REALM);
+            String metaAlias = request.getParameter(IFSConstants.META_ALIAS);
             FSSessionManager sessionService = FSSessionManager.getInstance(
-                hostEntityId);
+                metaAlias);
 
             FSAuthnRequest authnRequest = 
                 sessionService.getAuthnRequest(requestId);
@@ -164,6 +167,8 @@ public class FSSSOAndFedService  extends HttpServlet {
             }
             //End Change
             if (authnRequest != null &&
+                realm != null &&
+                realm.length() != 0 &&
                 hostEntityId != null &&
                 hostEntityId.length() != 0 &&
                 authnContext != null &&
@@ -172,6 +177,7 @@ public class FSSSOAndFedService  extends HttpServlet {
                 handleAuthnRequest(request, 
                                     response,
                                     authnRequest, 
+                                    realm,
                                     hostEntityId, 
                                     bLECP,
                                     authnContext);
@@ -212,14 +218,17 @@ public class FSSSOAndFedService  extends HttpServlet {
             return;
         }
         String metaAlias = null;
+        String realm = null;
         String hostEntityId = null;
         IDPDescriptorType hostedDesc = null;
         BaseConfigType hostedConfig = null;
         try {
             metaAlias = FSServiceUtils.getMetaAlias(request);
+            realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
             hostEntityId = metaManager.getEntityIDByMetaAlias(metaAlias);
-            hostedDesc = metaManager.getIDPDescriptor(hostEntityId);
-            hostedConfig = metaManager.getIDPDescriptorConfig(hostEntityId);
+            hostedDesc = metaManager.getIDPDescriptor(realm, hostEntityId);
+            hostedConfig = metaManager.getIDPDescriptorConfig(
+                realm, hostEntityId);
         } catch (Exception e) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(
@@ -232,6 +241,7 @@ public class FSSSOAndFedService  extends HttpServlet {
                             authnRequest, 
                             bPostAuthn,
                             bLECP,
+                            realm,
                             hostEntityId,
                             metaAlias,
                             hostedDesc,
@@ -330,14 +340,17 @@ public class FSSSOAndFedService  extends HttpServlet {
         }
         
         String metaAlias = null;
+        String realm = null;
         String hostEntityId = null;
         IDPDescriptorType hostedDesc = null;
         BaseConfigType hostedConfig = null;
         try {
             metaAlias = FSServiceUtils.getMetaAlias(request);
+            realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
             hostEntityId = metaManager.getEntityIDByMetaAlias(metaAlias);
-            hostedDesc = metaManager.getIDPDescriptor(hostEntityId);
-            hostedConfig = metaManager.getIDPDescriptorConfig(hostEntityId);
+            hostedDesc = metaManager.getIDPDescriptor(realm, hostEntityId);
+            hostedConfig = metaManager.getIDPDescriptorConfig(
+                realm, hostEntityId);
         } catch (Exception e) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(
@@ -349,6 +362,7 @@ public class FSSSOAndFedService  extends HttpServlet {
                             authnRequest, 
                             false,
                             false,
+                            realm,
                             hostEntityId,
                             metaAlias,
                             hostedDesc,
@@ -381,6 +395,7 @@ public class FSSSOAndFedService  extends HttpServlet {
         HttpServletRequest request, 
         HttpServletResponse response, 
         FSAuthnRequest authnRequest, 
+        String realm,
         String hostEntityId, 
         boolean bLECP,
         String authnContext
@@ -391,8 +406,9 @@ public class FSSSOAndFedService  extends HttpServlet {
         BaseConfigType hostedConfig = null;
         String metaAlias = null;
         try {
-            hostedDesc = metaManager.getIDPDescriptor(hostEntityId);
-            hostedConfig = metaManager.getIDPDescriptorConfig(hostEntityId);
+            hostedDesc = metaManager.getIDPDescriptor(realm, hostEntityId);
+            hostedConfig = metaManager.getIDPDescriptorConfig(
+                realm, hostEntityId);
             if (hostedConfig != null) {
                 metaAlias = hostedConfig.getMetaAlias();
             }
@@ -435,7 +451,7 @@ public class FSSSOAndFedService  extends HttpServlet {
             }
             
             FSSessionManager sessionManager = FSSessionManager.getInstance(
-                hostEntityId);
+                metaAlias);
             FSSession session = sessionManager.getSession(ssoToken);
             userID = sessionProvider.getPrincipalName(ssoToken);
             if (session == null) {
@@ -481,9 +497,9 @@ public class FSSSOAndFedService  extends HttpServlet {
                     try {
                         FSNameRegistrationHandler handlerObj = 
                             instSManager.getNameRegistrationHandler(
-                                remoteEntityID, IFSConstants.SP); 
+                                realm, remoteEntityID, IFSConstants.SP); 
                         SPDescriptorType remoteProviderDesc = 
-                            metaManager.getSPDescriptor(remoteEntityID);
+                            metaManager.getSPDescriptor(realm,remoteEntityID);
                         if (handlerObj != null) {
                             handlerObj.setHostedDescriptor(hostedDesc);
                             handlerObj.setHostedDescriptorConfig(hostedConfig);
@@ -530,6 +546,7 @@ public class FSSSOAndFedService  extends HttpServlet {
                             authnRequest, 
                             true, 
                             bLECP,
+                            realm,
                             hostEntityId,
                             metaAlias,
                             hostedDesc,
@@ -542,6 +559,7 @@ public class FSSSOAndFedService  extends HttpServlet {
         FSAuthnRequest authnRequest, 
         boolean bPostAuthn, 
         boolean bLECP,
+        String realm,
         String hostEntityId,
         String metaAlias,
         IDPDescriptorType hostedDesc,
@@ -562,13 +580,13 @@ public class FSSSOAndFedService  extends HttpServlet {
         try {
             if (!bPostAuthn && !authnRequest.getIsPassive()){
                 FSSessionManager sessionService = FSSessionManager.getInstance(
-                    hostEntityId);
+                    metaAlias);
                 sessionService.setAuthnRequest(authnRequest.getRequestID(),
                     authnRequest);
             } else {
                 // remove it from authn request map
                 FSSessionManager sessionService = FSSessionManager.getInstance(
-                    hostEntityId);
+                    metaAlias);
                 sessionService.removeAuthnRequest(authnRequest.getRequestID());
             }
             // handle sso
@@ -589,10 +607,11 @@ public class FSSSOAndFedService  extends HttpServlet {
             FSSSOAndFedHandler handler = null;
             if (!bLECP) {
                 handler = 
-                    sm.getSSOAndFedHandler(request, response, authnRequest);
+                    sm.getSSOAndFedHandler(
+                        request, response, authnRequest, realm);
             } else {
-                handler = 
-                    sm.getLECPProfileHandler(request, response, authnRequest);
+                handler = sm.getLECPProfileHandler(
+                    request, response, authnRequest, realm);
             }
             if (handler == null){
                 FSUtils.debug.error("FSSSOAndFedService.handleAuthnRequest: "
@@ -610,6 +629,7 @@ public class FSSSOAndFedService  extends HttpServlet {
             handler.setMetaAlias(metaAlias);
             handler.setHostedDescriptor(hostedDesc);
             handler.setHostedDescriptorConfig(hostedConfig);
+            handler.setRealm(realm);
             handler.processAuthnRequest(authnRequest, bPostAuthn);
             return;
         } catch(Exception se) {
@@ -672,18 +692,20 @@ public class FSSSOAndFedService  extends HttpServlet {
                     FSAuthnRequest authnRequest = new FSAuthnRequest(elt);
                     String metaAlias = FSServiceUtils.getMetaAlias(request);
                     IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
+                    String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
                     String hostEntityId = metaManager.getEntityIDByMetaAlias(
                         metaAlias);
                     IDPDescriptorType hostedDesc =
-                        metaManager.getIDPDescriptor(hostEntityId);
+                        metaManager.getIDPDescriptor(realm, hostEntityId);
                     BaseConfigType hostedConfig =
-                        metaManager.getIDPDescriptorConfig(hostEntityId);
+                        metaManager.getIDPDescriptorConfig(realm, hostEntityId);
                     FSSessionManager sessionService = 
-                        FSSessionManager.getInstance(hostEntityId);
+                        FSSessionManager.getInstance(metaAlias);
                     sessionService.setAuthnRequest(
                         authnRequest.getRequestID(), authnRequest);
                     handleLECPRequest(request, response, authnRequest,
-                        hostedDesc, hostedConfig, hostEntityId, metaAlias);
+                        hostedDesc, hostedConfig, realm, hostEntityId,
+                        metaAlias);
                     retMessage = null;
                 } catch(Exception e){
                     FSUtils.debug.error("FSSSOAndFedService.onMessage: "
@@ -730,6 +752,7 @@ public class FSSSOAndFedService  extends HttpServlet {
      * @param authnRequest <code>FSAuthnRequest</code> object
      * @param hostedDesc hosted identity provider's meta descriptor
      * @param hostedConfig hosted identity provider's extended meta
+     * @param realm The realm under which the entity resides
      * @param hostEntityId hosted identity provider's entity id
      * @param metaAlias hosted identity provider's meta alias
      */
@@ -739,6 +762,7 @@ public class FSSSOAndFedService  extends HttpServlet {
         FSAuthnRequest authnRequest,
         IDPDescriptorType hostedDesc,
         BaseConfigType hostedConfig,
+        String realm,
         String hostEntityId,
         String metaAlias) 
     {
@@ -746,12 +770,13 @@ public class FSSSOAndFedService  extends HttpServlet {
         try {
             // handle sso
             FSServiceManager sm = FSServiceManager.getInstance();
-            FSSSOLECPProfileHandler handler =
-                sm.getLECPProfileHandler(request, response, authnRequest);
+            FSSSOLECPProfileHandler handler = sm.getLECPProfileHandler(
+                request, response, authnRequest, realm);
             handler.setHostedEntityId(hostEntityId);
             handler.setMetaAlias(metaAlias);
             handler.setHostedDescriptor(hostedDesc);
             handler.setHostedDescriptorConfig(hostedConfig);
+            handler.setRealm(realm);
             handler.processLECPAuthnRequest(authnRequest);
         } catch(Exception se) {
             FSUtils.debug.error("FSSSOAndFedService.handleLECPRequest: " +

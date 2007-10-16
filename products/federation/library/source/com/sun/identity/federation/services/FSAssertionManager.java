@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManager.java,v 1.4 2007-08-20 07:25:57 stanguy Exp $
+ * $Id: FSAssertionManager.java,v 1.5 2007-10-16 21:49:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,18 +139,34 @@ public final class FSAssertionManager {
     private static Thread cThread  = null;
     
     private String hostEntityId = null;
+    private String realm = null;
+    private String metaAlias = null;
     
-    private FSAssertionManager(String hostEntityId) {
+    private FSAssertionManager(String metaAlias) 
+        throws FSException
+    {
         idEntryMap = new HashMap();
         artIdMap = new HashMap();
 
-        this.hostEntityId = hostEntityId;
+        this.metaAlias = metaAlias;
+        realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
+        try {
+            IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
+            if (metaManager != null) {
+                hostEntityId = metaManager.getEntityIDByMetaAlias(metaAlias);
+            }
+        } catch (IDFFMetaException ie) {
+            throw new FSException(ie);
+        }
+        if (hostEntityId == null) {
+            throw new FSException("nullProviderID", null);
+        }
 
         if (assrtStats.isEnabled()) {
-            assrtIdStats = new FSAssertionStats(idEntryMap, hostEntityId);
+            assrtIdStats = new FSAssertionStats(idEntryMap, realm,hostEntityId);
             assrtStats.addStatsListener(assrtIdStats);
 
-            artIdStats = new FSArtifactStats(artIdMap, hostEntityId);
+            artIdStats = new FSArtifactStats(artIdMap, realm, hostEntityId);
             artStats.addStatsListener(artIdStats);
         }
 
@@ -160,6 +176,42 @@ public final class FSAssertionManager {
         }
     }
     
+    /**
+     * Returns hosted provider meta alias.
+     * @return hosted provider meta alias.
+     * @see #setMetaAlias(String)
+     */
+    public String getMetaAlias() {
+        return metaAlias; 
+    }
+
+    /**
+     * Sets hosted provider meta alias.
+     * @param metaAlias hosted provider meta alias
+     * @see #getMetaAlias()
+     */
+    public void setMetaAlias(String metaAlias) {
+        this.metaAlias = metaAlias;
+    }
+
+    /**
+     * Returns the realm which hosted provider resides.
+     * @return the realm which hosted provider resides.
+     * @see #setRealm(String)
+     */
+    public String getRealm() {
+        return realm; 
+    }
+
+    /**
+     * Sets the realm which hosted provider resides.
+     * @param realm The realm which hosted provider resides
+     * @see #getRealm()
+     */
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
     /**
      * Returns hosted provider Entity ID.
      * @return hosted provider Entity ID
@@ -196,26 +248,26 @@ public final class FSAssertionManager {
 
     /**
      * Returns a <code>FSAssertionManager</code> instance.
-     * @param hostEntityId hosted entity ID
+     * @param metaAlias hosted entity ID
      * @return <code>FSAssertionManager</code> instance.
      * @exception FSException if error occurrs.
      */
     public static synchronized FSAssertionManager getInstance(
-        String hostEntityId)
+        String metaAlias)
         throws FSException
     { 
 
         FSUtils.debug.message("FSAssertionManager.getInstance: Called");
         FSAssertionManager instance = 
-            (FSAssertionManager) instanceMap.get(hostEntityId);
+            (FSAssertionManager) instanceMap.get(metaAlias);
         if (instance == null) {
             if (FSUtils.debug.messageEnabled() ) {
                 FSUtils.debug.message("FSAssertionManager.getInstance: " +
                     "Constructing a new instance of FSAssertionManager");
             }
-            instance = new FSAssertionManager(hostEntityId);
+            instance = new FSAssertionManager(metaAlias);
             synchronized (instanceMap) {
-                instanceMap.put(hostEntityId, instance);
+                instanceMap.put(metaAlias, instance);
             }
         }
         return(instance);
@@ -225,8 +277,8 @@ public final class FSAssertionManager {
     /**
      * Creates an assertion artifact.
      * @param id session ID
+     * @param realm the realm in which the provider resides
      * @param spEntityID service provider's entity ID
-     * @param entityID entity ID of identity provider
      * @param spHandle service provider issued <code>NameIdentifier</code>
      * @param idpHandle identity provider issued <code>NameIdentifier</code>
      * @param inResponseTo value to InResponseTo attribute. It's the request ID.
@@ -236,8 +288,8 @@ public final class FSAssertionManager {
      */
     public AssertionArtifact createFSAssertionArtifact(
         String id,
+        String realm,
         String spEntityID,
-        String entityID,
         NameIdentifier spHandle,
         NameIdentifier idpHandle,
         String inResponseTo,
@@ -264,7 +316,7 @@ public final class FSAssertionManager {
         }
         
         // TODO: should obtain it through meta
-        String sourceSuccinctID = FSUtils.generateSourceID(entityID);
+        String sourceSuccinctID = FSUtils.generateSourceID(hostEntityId);
         byte bytesSourceId[] = SAMLUtils.stringToByteArray(sourceSuccinctID);
         byte bytesHandle[] = null;
         try{
@@ -284,8 +336,8 @@ public final class FSAssertionManager {
         Assertion assertion =
             createFSAssertion(id,
                               art,
+                              realm,
                               spEntityID,
-                              entityID,
                               spHandle,
                               idpHandle,
                               inResponseTo,
@@ -297,8 +349,8 @@ public final class FSAssertionManager {
      * Creates an assertion artifact.
      * @param id session ID
      * @param artifact assertion artifact
+     * @param realm the realm under which the entity resides.
      * @param spEntityID service provider's entity ID
-     * @param entityID entity ID of identity provider
      * @param spHandle service provider issued <code>NameIdentifier</code>
      * @param idpHandle identity provider issued <code>NameIdentifier</code>
      * @param inResponseTo value to InResponseTo attribute. It's the request ID.
@@ -308,8 +360,8 @@ public final class FSAssertionManager {
     public FSAssertion createFSAssertion(
         String id,
         AssertionArtifact artifact,
+        String realm,
         String spEntityID,
-        String entityID,
         NameIdentifier spHandle,
         NameIdentifier idpHandle,
         String inResponseTo,
@@ -322,7 +374,7 @@ public final class FSAssertionManager {
         if ((id == null) ||(spEntityID == null)) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSAssertionManager: null input for"
-                    + " method createFSAssertionArtifact.");
+                    + " method createFSAssertion.");
             }
             throw new FSException("nullInput",null);
         }
@@ -339,14 +391,15 @@ public final class FSAssertionManager {
         SubjectLocality authLocality = null;
 
         FSSessionManager sessionManager = 
-             FSSessionManager.getInstance(entityID);
+             FSSessionManager.getInstance(metaAlias);
 
         IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
         Map attributes = new HashMap();
         if (metaManager != null) {
             BaseConfigType idpConfig = null;
             try {
-                idpConfig = metaManager.getIDPDescriptorConfig(entityID);
+                idpConfig = metaManager.getIDPDescriptorConfig(
+                    realm, hostEntityId);
             } catch (IDFFMetaException e) {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message(
@@ -462,14 +515,7 @@ public final class FSAssertionManager {
             
             univId = sessionProvider.getPrincipalName(token);
             
-            if (entityID != null) {
-                securityDomain = entityID;
-            } else {
-                FSUtils.debug.error("FSAssertionManager.createAssertion(id):"
-                    + " Alliance manager could not find local descriptor");
-                throw new FSException(
-                    "alliance_manager_no_local_descriptor", null);
-            }
+            securityDomain = hostEntityId;
         } catch(Exception e) {
             FSUtils.debug.error("FSAssertionManager.createAssertion(id):"
                 + " exception retrieving info from the session: ", e);
@@ -650,7 +696,7 @@ public final class FSAssertionManager {
                 IFSConstants.FF_12_PROTOCOL_MINOR_VERSION);
             try {
                 FSDiscoveryBootStrap bootStrap = new FSDiscoveryBootStrap(
-                    token, authContext, sub, univId, destID);
+                    token, authContext, sub, univId, destID, realm);
                 attribStatement = bootStrap.getBootStrapStatement();
                 if (bootStrap.hasCredentials()) {
                     advice = bootStrap.getCredentials();
@@ -670,15 +716,17 @@ public final class FSAssertionManager {
         }
 
         String attributePluginImpl = IDFFMetaUtils.getFirstAttributeValue(
-            attributes, IFSConstants.ATTRIBUTE_PLUGIN);
-        if (attributePluginImpl != null && attributePluginImpl.length() != 0) {
+            attributes, IFSConstants.REALM_ATTRIBUTE_PLUGIN);
+        if ((attributePluginImpl != null) && 
+            (attributePluginImpl.length() != 0)) 
+        {
             try {
                 Class pluginClass = Class.forName(attributePluginImpl);
-                FSAttributePlugin attributePlugin =
-                    (FSAttributePlugin)pluginClass.newInstance();
+                FSRealmAttributePlugin attributePlugin =
+                    (FSRealmAttributePlugin)pluginClass.newInstance();
                 List attribStatements =
                     attributePlugin.getAttributeStatements(
-                        hostEntityId, destID, sub, token);
+                        realm, hostEntityId, destID, sub, token);
 
                 if (attribStatements != null && attribStatements.size() != 0) {
                     Iterator iter = attribStatements.iterator();
@@ -690,17 +738,45 @@ public final class FSAssertionManager {
                 FSUtils.debug.error(
                     "FSAssertion.createAssertion(id):getAttributePlugin:", ex);
             }
+        } else {
+            attributePluginImpl = IDFFMetaUtils.getFirstAttributeValue(
+                attributes, IFSConstants.ATTRIBUTE_PLUGIN);
+            if ((attributePluginImpl != null) && 
+                (attributePluginImpl.length() != 0)) 
+            {
+                try {
+                    Class pluginClass = Class.forName(attributePluginImpl);
+                    FSAttributePlugin attributePlugin =
+                        (FSAttributePlugin)pluginClass.newInstance();
+                    List attribStatements =
+                        attributePlugin.getAttributeStatements(
+                            hostEntityId, destID, sub, token);
+
+                    if ((attribStatements != null) && 
+                        (attribStatements.size() != 0)) 
+                    {
+                        Iterator iter = attribStatements.iterator();
+                        while (iter.hasNext()) {
+                            statements.add((AttributeStatement)iter.next()); 
+                        }
+                    }
+                } catch (Exception ex) {
+                    FSUtils.debug.error(
+                        "FSAssertion.createAssertion(id):getAttributePlugin:",
+                        ex);
+                }
+            }
         }
 
         if (IDFFMetaUtils.isAutoFedEnabled(attributes)) {
             AttributeStatement autoFedStatement = 
                 FSAttributeStatementHelper.getAutoFedAttributeStatement(
-                    hostEntityId, sub, token);
+                    realm, hostEntityId, sub, token);
             statements.add(autoFedStatement);
         }
 
         FSAssertion assertion = new FSAssertion(aID.getAssertionIDReference(), 
-                                                entityID, 
+                                                hostEntityId, 
                                                 issueInstant, 
                                                 cond, 
                                                 advice,
@@ -809,7 +885,7 @@ public final class FSAssertionManager {
                     "destid: calling another server in lb site:" + remoteUrl);
             }
             FSAssertionManagerClient amc = new FSAssertionManagerClient(
-                hostEntityId, getFullServiceURL(remoteUrl));
+                metaAlias, getFullServiceURL(remoteUrl));
             return amc.getAssertion(artifact, destID);
         } // else 
         
@@ -910,7 +986,7 @@ public final class FSAssertionManager {
                     "destid: calling another server in lb site:" + remoteUrl);
             }
             FSAssertionManagerClient amc = new FSAssertionManagerClient(
-                hostEntityId, getFullServiceURL(remoteUrl));
+                metaAlias, getFullServiceURL(remoteUrl));
             return amc.getDestIdForArtifact(artifact);
         } // else 
         
@@ -988,7 +1064,8 @@ public final class FSAssertionManager {
                             try {
                                 BaseConfigType idpConfig =
                                     FSUtils.getIDFFMetaManager().
-                                        getIDPDescriptorConfig(hostEntityId);
+                                        getIDPDescriptorConfig(
+                                            manager.getRealm(), providerId);
                                 attributes = IDFFMetaUtils.getAttributes(
                                     idpConfig);
                             } catch(Exception e){
@@ -1213,7 +1290,7 @@ public final class FSAssertionManager {
             }
             try {
                 FSAssertionManagerClient amc = new FSAssertionManagerClient(
-                    hostEntityId, getFullServiceURL(remoteUrl));
+                    metaAlias, getFullServiceURL(remoteUrl));
                 s = amc.getErrorStatus( aa );
             } catch ( FSException fse ) {
                 FSUtils.debug.error( fse.getMessage() );

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSDefaultAttributePlugin.java,v 1.2 2007-10-16 21:49:12 exu Exp $
+ * $Id: FSDefaultRealmAttributePlugin.java,v 1.1 2007-10-16 21:49:12 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,35 +50,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class <code>FSDefaultAttributePlugin</code> is the default
- * attribute plugin implementation of <code>FSAttributePlugin</code>
+ * This class <code>FSDefaultRealmAttributePlugin</code> is the default
+ * attribute plugin implementation of <code>FSRealmAttributePlugin</code>
  * of Identity provider. The default implementation will read the
  * attribute map configuration defined in hosted IDP local configuration
  * and create SAML <code>AttributeStatement</code>s so that they can be
  * inserted into SAML SSO <code>Assertion</code>. 
  */
-public class FSDefaultAttributePlugin implements FSAttributePlugin {
-
-    /**
-     * Returns list of <code>AttributeStatement</code>s by using attribute
-     * map defined in the configuration.
-     * @param hostEntityId Hosted identity provider entity id.
-     * @param remoteEntityID Remote provider's entity id
-     * @param subject Subject subject of the authenticated principal.
-     * @param token user's session.
-     * @return list of SAML <code>AttributeStatement<code>s.
-     * @deprecated This method is deprecated.
-     * @see #getAttributeStatement(String,String,String,FSSubject,Object)
-     */
-    public List getAttributeStatements(
-           String hostEntityId,
-           String remoteEntityID,
-           FSSubject subject,
-           Object token)
-    {
-        return getAttributeStatements(
-            "/", hostEntityId, remoteEntityID, subject, token);
-    }
+public class FSDefaultRealmAttributePlugin implements FSRealmAttributePlugin {
 
     /**
      * Returns list of <code>AttributeStatement</code>s by using attribute

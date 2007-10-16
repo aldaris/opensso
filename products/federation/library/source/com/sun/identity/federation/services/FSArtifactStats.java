@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSArtifactStats.java,v 1.1 2006-10-30 23:14:18 qcheng Exp $
+ * $Id: FSArtifactStats.java,v 1.2 2007-10-16 21:49:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,15 +34,18 @@ public class FSArtifactStats implements StatsListener {
 
     private Map table;
     private String providerId;
+    private String realm;
 
     /**
      * Constructs a <code>FSArtifactStats</code> object for a given provider.
      * @param table Map of artifact and assertion id
+     * @param realm the realm in which the provider resides
      * @param providerId provider id
      */
-    public FSArtifactStats(Map table, String providerId) {
+    public FSArtifactStats(Map table, String realm, String providerId) {
         this.table = table;
         this.providerId = providerId;
+        this.realm = realm;
     }
 
     /**
@@ -53,10 +56,11 @@ public class FSArtifactStats implements StatsListener {
         if (table.size() != 0 ) {
             FSAssertionManager.artStats.record(
                 "Number of artifact in table for provider " +
-                providerId + " : " + table.size());
+                providerId + " under realm " + realm + " : " + table.size());
         } else {
             FSAssertionManager.artStats.record(
-                "No artifact found in table for provider " + providerId + "."); 
+                "No artifact found in table for provider " + providerId + 
+                " under realm " + realm + "."); 
         }
     }
 }

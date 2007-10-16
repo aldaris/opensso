@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaManager.java,v 1.4 2007-10-10 15:32:13 mchlbgs Exp $
+ * $Id: IDFFMetaManager.java,v 1.5 2007-10-16 21:49:10 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,6 +73,11 @@ public class IDFFMetaManager {
     ConfigurationInstance idffMetaConfigInstance = null;
     Object session = null;
     
+    /**
+     * Constant used to identify meta alias.
+     */
+    public static final String NAME_META_ALIAS_IN_URI = "metaAlias";
+
     static {
         try {
             cotManager = new CircleOfTrustManager();
@@ -120,14 +125,17 @@ public class IDFFMetaManager {
     
     /**
      * Creates the standard metadata entity descriptor.
-     * The metadata is created under the root realm.
+     * The metadata is created under the realm.
      *
+     * @param realm The realm under which the entity resides.
      * @param entityDescriptor The standard entity descriptor object to
      *        be created.
      * @throws IDFFMetaException if unable to create the entity descriptor.
      */
-    public void createEntityDescriptor(EntityDescriptorElement entityDescriptor)
-        throws IDFFMetaException {
+    public void createEntityDescriptor(
+        String realm, EntityDescriptorElement entityDescriptor)
+        throws IDFFMetaException 
+    {
         String classMethod = "IDFFMetaManager.createEntityDescriptor:";
         String entityId= null;
         if (entityDescriptor == null) {
@@ -142,8 +150,12 @@ public class IDFFMetaManager {
             }
         }
         
-        String[] args = { entityId };
-        EntityDescriptorElement descriptor = getEntityDescriptor(entityId);
+        if ((realm == null) || (realm.length() == 0)) {
+            realm = ROOT_REALM;
+        }
+        String[] args = { entityId, realm };
+        EntityDescriptorElement descriptor = getEntityDescriptor(
+            realm,entityId);
         
         if (descriptor != null) {
             List idps = descriptor.getIDPDescriptor();
@@ -165,16 +177,16 @@ public class IDFFMetaManager {
             
             idps.addAll(newIDPs);
             sps.addAll(newSPs);
-            setEntityDescriptor(descriptor);
+            setEntityDescriptor(realm, descriptor);
         } else {
             try {
-                Map attrs = IDFFMetaUtils.convertJAXBToAttrMap(IDFF_METADATA_ATTR,
-                    entityDescriptor);
+                Map attrs = IDFFMetaUtils.convertJAXBToAttrMap(
+                    IDFF_METADATA_ATTR, entityDescriptor);
                 if (debug.messageEnabled()) {
                     debug.message(classMethod + attrs);
                 }
                 idffMetaConfigInstance.createConfiguration(
-                    ROOT_REALM, entityId, attrs);
+                    realm, entityId, attrs);
                 LogUtil.access(Level.INFO, LogUtil.CREATE_ENTITY_SUCCEEDED,
                     args);
             } catch (ConfigurationException ce) {
@@ -196,14 +208,15 @@ public class IDFFMetaManager {
     }
     
     /**
-     * Returns the standard metadata entity descriptor under the root realm.
-     *
+     * Returns the standard metadata entity descriptor under the realm.
+     * @param realm The realm under which the entity resides.
      * @param entityID identifier of the entity to be retrieved.
      * @return <code>EntityDescriptorElement</code> for the entity or null if
      *         not found.
      * @throws IDFFMetaException if unable to retrieve the entity descriptor.
      */
-    public EntityDescriptorElement getEntityDescriptor(String entityID)
+    public EntityDescriptorElement getEntityDescriptor(
+        String realm, String entityID)
     throws IDFFMetaException {
         String classMethod = "IDFFMetaManager.getEntityDescriptor:";
         if (debug.messageEnabled()) {
@@ -211,13 +224,17 @@ public class IDFFMetaManager {
         }
         EntityDescriptorElement entityDescriptor = null;
         if (entityID != null) {
-            String[] args = { entityID };
+            if ((realm == null) || (realm.length() == 0)) {
+                realm = ROOT_REALM;
+            }
+            String[] args = { entityID, realm };
             // retrieve from cache
-            entityDescriptor = IDFFMetaCache.getEntityDescriptor(entityID);
+            entityDescriptor = IDFFMetaCache.getEntityDescriptor(
+                realm, entityID);
             if (entityDescriptor == null)  {
                 try {
                     Map attrs = idffMetaConfigInstance.getConfiguration(
-                            ROOT_REALM, entityID);
+                            realm, entityID);
                     if (attrs != null) {
                         Set metaValues = (Set) attrs.get(IDFF_METADATA_ATTR);
                         if (metaValues != null && !metaValues.isEmpty()) {
@@ -229,8 +246,8 @@ public class IDFFMetaManager {
                             if (object instanceof EntityDescriptorElement) {
                                 entityDescriptor =
                                         (EntityDescriptorElement) object;
-                                IDFFMetaCache.setEntityDescriptor(entityID,
-                                        entityDescriptor);
+                                IDFFMetaCache.setEntityDescriptor(
+                                    realm, entityID, entityDescriptor);
                             } else {
                                 debug.error(classMethod + "Invalid standard "
                                         + " meta value for : " + entityID);
@@ -262,26 +279,31 @@ public class IDFFMetaManager {
     
     
     /**
-     * Sets the standard metadata entity descriptor under the root realm.
+     * Sets the standard metadata entity descriptor under the realm.
      * The EntiyDescriptor to be set should exist otherwise an error is
      * thrown.
      *
+     * @param realm The realm under which the entity resides.
      * @param entityDescriptor The standard entity descriptor object to be set.
      * @throws IDFFMetaException if there is an error setting the entity
      *         descriptor.
      * @see createEntityDescriptor(EntityDescriptorElement)
      */
-    public void setEntityDescriptor(EntityDescriptorElement entityDescriptor)
+    public void setEntityDescriptor(
+        String realm, EntityDescriptorElement entityDescriptor)
     throws IDFFMetaException {
         String classMethod = "IDFFMetaManager:setEntityDescriptor";
         if (entityDescriptor != null) {
             String entityID = entityDescriptor.getProviderID();
-            String[] args = { entityID };
+            if ((realm == null) || (realm.length() == 0)) {
+                realm = ROOT_REALM;
+            }
+            String[] args = { entityID, realm };
             try {
                 Map origEntityAttrs = null;
                 if (entityID != null) {
                     origEntityAttrs =
-                            idffMetaConfigInstance.getConfiguration(ROOT_REALM,
+                            idffMetaConfigInstance.getConfiguration(realm,
                             entityID);
                     Map newAttrs =
                             IDFFMetaUtils.convertJAXBToAttrMap(
@@ -293,7 +315,7 @@ public class IDFFMetaManager {
                     throw new IDFFMetaException("nullEntityID",null);
                 }
                 idffMetaConfigInstance.setConfiguration(
-                        ROOT_REALM,entityID,origEntityAttrs);
+                        realm,entityID,origEntityAttrs);
                 LogUtil.access(Level.INFO, LogUtil.SET_ENTITY_SUCCEEDED, args);
             }  catch (ConfigurationException ce) {
                 debug.error("Error setting Entity Descriptor ",ce);
@@ -309,33 +331,37 @@ public class IDFFMetaManager {
     }
     
     /**
-     * Deletes the standard metadata entity descriptor under the root realm.
-     *
+     * Deletes the standard metadata entity descriptor under the realm.
+     * @param realm The realm under which the entity resides.
      * @param  entityID identifier of the entity to be deleted.
      * @throws IDFFMetaException if there is an error deleting the entity
      *         descriptor.
      */
-    public void  deleteEntityDescriptor(String entityID)
+    public void  deleteEntityDescriptor(String realm, String entityID)
     throws IDFFMetaException {
         if (entityID == null) {
             LogUtil.error(Level.INFO, LogUtil.NULL_ENTITY_ID, null);
             throw new IDFFMetaException("nullEntityID",null);
         } else {
-            String[] args = { entityID };
+            if ((realm == null) || (realm.length() == 0)) {
+                realm = ROOT_REALM;
+            }
+            String[] args = { entityID, realm };
             try {
                 Map oldAttrs = idffMetaConfigInstance.getConfiguration(
-                        ROOT_REALM, entityID);
+                        realm, entityID);
                 if (oldAttrs == null || oldAttrs.isEmpty() ) {
                     LogUtil.error(Level.INFO,
                             LogUtil.ENTITY_DOES_NOT_EXISTS, args);
                     throw new IDFFMetaException("entityDoesNotExists", args);
                 }
                 
-                removeEntityFromCOT(entityID);
+                removeEntityFromCOT(realm, entityID);
                 idffMetaConfigInstance.deleteConfiguration(
-                        ROOT_REALM, entityID, null);
+                        realm, entityID, null);
                 LogUtil.access(Level.INFO,
                         LogUtil.DELETE_ENTITY_SUCCEEDED, args);
+                IDFFMetaCache.setEntityDescriptor(realm, entityID, null);
             } catch (ConfigurationException ce) {
                 debug.error("Error deleting Entity Descriptor" + entityID,ce);
                 LogUtil.error(Level.INFO, LogUtil.DELETE_ENTITY_FAILED, args);
@@ -350,20 +376,24 @@ public class IDFFMetaManager {
     
     /**
      * Deletes the extended entity configuration.
+     * @param realm The realm under which the entity resides.
      * @param entityId The ID of the entity for whom the extended entity
      *                 configuration will be deleted.
      * @throws IDFFMetaException if unable to delete the entity descriptor.
      */
-    public void deleteEntityConfig(String entityId)
+    public void deleteEntityConfig(String realm, String entityId)
     throws IDFFMetaException {
         if (entityId == null) {
             LogUtil.error(Level.INFO, LogUtil.NULL_ENTITY_ID, null);
             throw new IDFFMetaException("nullEntityID",null);
         } else {
-            String[] args = {entityId};
+            if ((realm == null) || (realm.length() == 0)) {
+                realm = ROOT_REALM;
+            }
+            String[] args = {entityId, realm };
             try {
                 Map oldAttrs = idffMetaConfigInstance.getConfiguration(
-                        ROOT_REALM, entityId);
+                        realm, entityId);
                 if (oldAttrs == null || oldAttrs.isEmpty() ) {
                     LogUtil.error(Level.INFO,
                             LogUtil.ENTITY_DOES_NOT_EXISTS, args);
@@ -376,14 +406,15 @@ public class IDFFMetaManager {
                     throw new IDFFMetaException("noEntityConfig", args);
                 }
                 
-                removeEntityFromCOT(entityId);
+                removeEntityFromCOT(realm, entityId);
                 
                 Set attr = new HashSet();
                 attr.add(IDFF_ENTITY_CONFIG_ATTR);
                 idffMetaConfigInstance.deleteConfiguration(
-                        ROOT_REALM, entityId, attr);
+                        realm, entityId, attr);
                 LogUtil.access(Level.INFO,
                         LogUtil.DELETE_ENTITY_CONFIG_SUCCEEDED, args);
+                IDFFMetaCache.setEntityConfig(realm, entityId, null);
             } catch (ConfigurationException e) {
                 debug.error("IDFFMetaManager.deleteEntityConfig:", e);
                 LogUtil.error(Level.INFO, LogUtil.DELETE_ENTITY_CONFIG_FAILED,
@@ -401,16 +432,16 @@ public class IDFFMetaManager {
      * Returns the Service Provider's Descriptor for the
      * entity identifier. If there are more then one Service Providers
      * the first one retrieved is returned.
-     *
+     * @param realm The realm under which the entity resides.
      * @param entityID Entity Identifier to retrieve Service Provider from.
      * @return <code>SPDescriptorType</code> for the provider. A null is
      *         returned if no Service Provider is found.
      * @throws IDFFMetaException if there is an error retreiving the provider.
      */
-    public SPDescriptorType getSPDescriptor(String entityID)
+    public SPDescriptorType getSPDescriptor(String realm, String entityID)
     throws IDFFMetaException {
         EntityDescriptorElement entityDescriptor =
-                getEntityDescriptor(entityID);
+                getEntityDescriptor(realm, entityID);
         
         return IDFFMetaUtils.getSPDescriptor(entityDescriptor);
     }
@@ -419,16 +450,16 @@ public class IDFFMetaManager {
      * Returns Identity Provider's Descriptor for the
      * entity identifier. If there are more then one Identity Providers
      * the first one retrieved is returned.
-     *
+     * @param realm The realm under which the entity resides.
      * @param entityID Entity Identifier to retrieve Identity Provider from.
      * @return <code>IDPDescriptorType</code> for the entity. A null is
      *         returned if no Identity Provider is found.
      * @throws IDFFMetaException if there is an error retreiving the provider.
      */
-    public IDPDescriptorType getIDPDescriptor(String entityID)
+    public IDPDescriptorType getIDPDescriptor(String realm, String entityID)
     throws IDFFMetaException {
         EntityDescriptorElement entityDescriptor =
-                getEntityDescriptor(entityID);
+                getEntityDescriptor(realm, entityID);
         
         return IDFFMetaUtils.getIDPDescriptor(entityDescriptor);
     }
@@ -437,6 +468,7 @@ public class IDFFMetaManager {
     /**
      * Returns the Affiliation Descriptor for the entity identifier.
      *
+     * @param realm The realm under which the entity resides.
      * @param entityID Entity Identifier to retrieve Affiliation Descriptor
      *        from.
      * @return <code>AffiliationDescriptorType</code> the Affliation
@@ -444,11 +476,12 @@ public class IDFFMetaManager {
      * @throws IDFFMetaException if there is an error retreiving the
      *         affiliation.
      */
-    public AffiliationDescriptorType getAffiliationDescriptor(String entityID)
+    public AffiliationDescriptorType getAffiliationDescriptor(
+        String realm, String entityID)
     throws IDFFMetaException {
         AffiliationDescriptorType affiliationDescriptor = null;
         EntityDescriptorElement entityDescriptor =
-                getEntityDescriptor(entityID);
+                getEntityDescriptor(realm, entityID);
         if (entityDescriptor != null) {
             affiliationDescriptor = entityDescriptor.getAffiliationDescriptor();
         }
@@ -456,12 +489,15 @@ public class IDFFMetaManager {
     }
     
     /**
-     * Creates the extended entity configuration under the root realm.
+     * Creates the extended entity configuration under the realm.
      *
+     * @param realm The realm under which the entity configuration will be
+     * created.
      * @param entityConfig extended entity configuration to be created.
      * @throws IDFFMetaException if unable to create the entity configuration.
      */
-    public void createEntityConfig(EntityConfigElement entityConfig)
+    public void createEntityConfig(
+        String realm, EntityConfigElement entityConfig)
     throws IDFFMetaException {
         String classMethod = "IDFFMetaManager.createEntityConfig:";
         String entityID = null;
@@ -476,12 +512,17 @@ public class IDFFMetaManager {
                 throw new IDFFMetaException("nullEntityID", null);
             }
         }
-        String[] args = { entityID };
+
+        if ((realm == null) || (realm.length() == 0)) {
+            realm = ROOT_REALM;
+        }
+
+        String[] args = { entityID, realm };
         try {
             Map attrs = IDFFMetaUtils.convertJAXBToAttrMap(
                     IDFF_ENTITY_CONFIG_ATTR,entityConfig);
             
-            Map origAttrs = idffMetaConfigInstance.getConfiguration(ROOT_REALM,
+            Map origAttrs = idffMetaConfigInstance.getConfiguration(realm,
                     entityID);
             if (origAttrs == null) {
                 if (debug.messageEnabled()) {
@@ -505,10 +546,10 @@ public class IDFFMetaManager {
             if (debug.messageEnabled()) {
                 debug.message(classMethod + "Entity Config Attrs :" + attrs);
             }
-            idffMetaConfigInstance.setConfiguration(ROOT_REALM,entityID,attrs);
+            idffMetaConfigInstance.setConfiguration(realm,entityID,attrs);
             
             // add entity to the circle of trust
-            addEntityToCOT(entityID);
+            addEntityToCOT(realm, entityID);
             
             LogUtil.access(Level.INFO,
                     LogUtil.CREATE_ENTITY_CONFIG_SUCCEEDED, args);
@@ -529,8 +570,9 @@ public class IDFFMetaManager {
     }
     
     /**
-     * Returns extended entity configuration under the root realm.
+     * Returns extended entity configuration under the realm.
      *
+     * @param realm The realm under which the entity resides.
      * @param entityID identifier of the entity whose config is to be
      *        retrieved.
      * @return <code>EntityConfigElement</code> object of the entity or null
@@ -538,18 +580,21 @@ public class IDFFMetaManager {
      * @throws IDFFMetaException if unable to retrieve the entity
      *                            configuration.
      */
-    public EntityConfigElement getEntityConfig(String entityID)
+    public EntityConfigElement getEntityConfig(String realm, String entityID)
     throws IDFFMetaException {
         String classMethod = "IDFFMetaManager:getEntityConfig:";
         EntityConfigElement entityConfig = null;
         if (entityID != null) {
-            String[] args = { entityID };
+            if ((realm == null) || (realm.length() == 0)) {
+                realm = ROOT_REALM;
+            }
+            String[] args = { entityID, realm };
             // retrieve config from cache
-            entityConfig = IDFFMetaCache.getEntityConfig(entityID);
+            entityConfig = IDFFMetaCache.getEntityConfig(realm, entityID);
             if (entityConfig == null) {
                 try {
                     Map attrs = idffMetaConfigInstance.getConfiguration(
-                            ROOT_REALM,entityID);
+                            realm, entityID);
                     if (attrs != null) {
                         Set cfgValues =
                                 (Set) attrs.get(IDFF_ENTITY_CONFIG_ATTR);
@@ -561,7 +606,7 @@ public class IDFFMetaManager {
                             if (object instanceof EntityConfigElement) {
                                 entityConfig = (EntityConfigElement) object;
                                 IDFFMetaCache.setEntityConfig(
-                                        entityID,entityConfig);
+                                        realm, entityID, entityConfig);
                             } else {
                                 debug.error(classMethod + "Invalid entityID"
                                         + entityID);
@@ -594,25 +639,29 @@ public class IDFFMetaManager {
     }
     
     /**
-     * Sets the extended entity configuration under the root realm.
+     * Sets the extended entity configuration under the realm.
      * The EntityConfig should exist in order to set attributes in
      * the EntityConfig.
      *
+     * @param realm The realm under which the entity resides in
      * @param entityConfig The extended entity configuration object to be set.
      * @throws IDFFMetaException if unable to set the entity configuration.
      * @see #createEntityConfig(EntityConfigElement)
      */
-    public void setEntityConfig(EntityConfigElement entityConfig)
+    public void setEntityConfig(String realm, EntityConfigElement entityConfig)
     throws IDFFMetaException {
         String classMethod = "IDFFMetaManager:setEntityConfig";
         if (entityConfig != null) {
             String entityID = entityConfig.getEntityID();
+            if ((realm == null) || (realm.length() == 0)) {
+                realm = ROOT_REALM;
+            }
             Map origEntityAttrs = null;
-            String[] args = { entityID };
+            String[] args = { entityID, realm };
             try {
                 if (entityID != null) {
                     origEntityAttrs =
-                            idffMetaConfigInstance.getConfiguration(ROOT_REALM,
+                            idffMetaConfigInstance.getConfiguration(realm,
                             entityID);
                     Map newAttrs =
                             IDFFMetaUtils.convertJAXBToAttrMap(
@@ -627,7 +676,7 @@ public class IDFFMetaManager {
                     throw new IDFFMetaException("nullEntityID",null);
                 }
                 idffMetaConfigInstance.setConfiguration(
-                        ROOT_REALM,entityID,origEntityAttrs);
+                        realm,entityID,origEntityAttrs);
                 LogUtil.access(Level.INFO,
                         LogUtil.SET_ENTITY_CONFIG_SUCCEEDED, args);
                 
@@ -649,6 +698,7 @@ public class IDFFMetaManager {
      * If there are multiple service providers found then the first one
      * retrieved is returned.
      *
+     * @param realm The realm under which the entity resides.
      * @param entityID ID of the entity to be retrieved.
      * @return <code>SPDescriptorConfigElement</code> for the entity
      *         identifier .  A null is returned if the configuration
@@ -656,10 +706,13 @@ public class IDFFMetaManager {
      * @throws IDFFMetaException if there is an error retrieving service
      *         provider configuration.
      */
-    public SPDescriptorConfigElement getSPDescriptorConfig(String entityID)
-    throws IDFFMetaException {
+    public SPDescriptorConfigElement getSPDescriptorConfig(
+        String realm, String entityID)
+    throws IDFFMetaException 
+    {
         
-        EntityConfigElement entityConfigElement = getEntityConfig(entityID);
+        EntityConfigElement entityConfigElement = getEntityConfig(
+            realm, entityID);
         
         return IDFFMetaUtils.getSPDescriptorConfig(entityConfigElement);
     }
@@ -668,6 +721,7 @@ public class IDFFMetaManager {
      * Returns Identity Provider's Configuration for the entity identifier.
      * If there are multiple identity providers found then the first one
      * retrieved is returned.
+     * @param realm The realm under which the entity resides.
      * @param entityID ID of the entity to be retrieved.
      * @return <code>IDPDescriptorConfigElement</code> for the entity
      *         identifier .  A null is returned if the configuration
@@ -675,10 +729,13 @@ public class IDFFMetaManager {
      * @throws IDFFMetaException if there is an error retrieving service
      *         provider configuration.
      */
-    public IDPDescriptorConfigElement getIDPDescriptorConfig(String entityID)
-    throws IDFFMetaException {
+    public IDPDescriptorConfigElement getIDPDescriptorConfig(
+        String realm, String entityID)
+    throws IDFFMetaException 
+    {
         
-        EntityConfigElement entityConfigElement = getEntityConfig(entityID);
+        EntityConfigElement entityConfigElement = getEntityConfig(
+            realm, entityID);
         
         return IDFFMetaUtils.getIDPDescriptorConfig(entityConfigElement);
     }
@@ -686,6 +743,7 @@ public class IDFFMetaManager {
     /**
      * Returns Affiliation Configuration for the entity identifier.
      *
+     * @param realm The realm under which the entity resides.
      * @param entityID ID of the entity to be retrieved.
      * @return <code>AffiliationDescriptorConfigElement</code> for the entity
      *         identifier .  A null is returned if the configuration
@@ -694,10 +752,10 @@ public class IDFFMetaManager {
      *         provider configuration.
      */
     public AffiliationDescriptorConfigElement
-            getAffiliationDescriptorConfig(String entityID)
+            getAffiliationDescriptorConfig(String realm, String entityID)
             throws IDFFMetaException {
         AffiliationDescriptorConfigElement affiliationDesConfig = null;
-        EntityConfigElement entityConfig = getEntityConfig(entityID);
+        EntityConfigElement entityConfig = getEntityConfig(realm, entityID);
         if (entityConfig != null) {
             affiliationDesConfig =
                     (AffiliationDescriptorConfigElement)
@@ -707,51 +765,17 @@ public class IDFFMetaManager {
     }
     
     /**
-     * Returns all <code>EntityDescriptor</code> objects.
+     * Returns all entities under the realm.
      *
-     * @return a <code>List</code> of <code>EntityDescriptor</code> objects.
-     * @throws IDFFMetaException if unable to retrieve the entity descriptors.
-     */
-    public List getAllEntityDescriptors() throws IDFFMetaException {
-        
-        String classMethod = "IDFFMetaManager:getAllEntityDescriptors";
-        
-        List entityDescriptorList = new ArrayList();
-        try {
-            Set entityIDs =
-                    idffMetaConfigInstance.getAllConfigurationNames(ROOT_REALM);
-            if (entityIDs != null && !entityIDs.isEmpty()) {
-                Iterator entityIterator = entityIDs.iterator();
-                while (entityIterator.hasNext()) {
-                    String entityID = (String)entityIterator.next();
-                    EntityDescriptorElement entityDescriptor =
-                            getEntityDescriptor(entityID);
-                    if (entityDescriptor != null) {
-                        entityDescriptorList.add(entityDescriptor);
-                    }
-                }
-            }
-            LogUtil.access(Level.INFO,
-                    LogUtil.GET_ALL_ENTITIES_SUCCEEDED, null);
-        } catch (ConfigurationException e) {
-            debug.error(classMethod , e);
-            LogUtil.error(Level.INFO, LogUtil.GET_ALL_ENTITIES_FAILED, null);
-            throw new IDFFMetaException(e);
-        }
-        return entityDescriptorList;
-    }
-    
-    /**
-     * Returns all entities under the root realm.
-     *
+     * @param realm The realm under which the hosted entities reside.
      * @return a <code>Set</code> of entity ID <code>String</code>.
      * @throws IDFFMetaException if unable to retrieve the entity ids.
      */
-    public Set getAllEntities() throws IDFFMetaException {
+    public Set getAllEntities(String realm) throws IDFFMetaException {
         Set entityIDSet = new HashSet() ;
         try {
             Set entityIDs =
-                    idffMetaConfigInstance.getAllConfigurationNames(ROOT_REALM);
+                    idffMetaConfigInstance.getAllConfigurationNames(realm);
             if (entityIDs != null && !entityIDs.isEmpty()) {
                 entityIDSet.addAll(entityIDs);
             }
@@ -766,23 +790,24 @@ public class IDFFMetaManager {
     }
     
     /**
-     * Returns all remote entities under the root realm.
+     * Returns all remote entities under the realm.
      *
+     * @param realm The realm under which the hosted entities reside.
      * @return a <code>List</code> of entity identifiers as Strings.
      * @throws IDFFMetaException if unable to retrieve the remote entity
      *         identifiers.
      */
-    public List getAllHostedEntities() throws IDFFMetaException {
+    public List getAllHostedEntities(String realm) throws IDFFMetaException {
         List hostedEntityList = new ArrayList() ;
         try {
             Set entityIDs =
-                    idffMetaConfigInstance.getAllConfigurationNames(ROOT_REALM);
+                    idffMetaConfigInstance.getAllConfigurationNames(realm);
             if (entityIDs != null && !entityIDs.isEmpty()) {
                 Iterator entityIterator = entityIDs.iterator();
                 while (entityIterator.hasNext()) {
                     String entityID = (String) entityIterator.next();
                     EntityConfigElement entityConfig =
-                            getEntityConfig(entityID);
+                            getEntityConfig(realm, entityID);
                     if (entityConfig != null && entityConfig.isHosted()) {
                         hostedEntityList.add(entityID);
                     }
@@ -799,24 +824,25 @@ public class IDFFMetaManager {
     }
     
     /**
-     * Returns all remote entities under the root realm.
+     * Returns all remote entities under the realm.
      *
+     * @param realm The realm under which the hosted entities reside.
      * @return a <code>List</code> of entity identifiers as Strings.
      * @throws IDFFMetaException if unable to retrieve the remote entity
      *         identifiers.
      */
-    public List getAllRemoteEntities() throws IDFFMetaException {
+    public List getAllRemoteEntities(String realm) throws IDFFMetaException {
         
         List remoteEntityList = new ArrayList() ;
         try {
             Set entityIDs =
-                    idffMetaConfigInstance.getAllConfigurationNames(ROOT_REALM);
+                    idffMetaConfigInstance.getAllConfigurationNames(realm);
             if (entityIDs != null && !entityIDs.isEmpty()) {
                 Iterator entityIterator = entityIDs.iterator();
                 while (entityIterator.hasNext()) {
                     String entityID = (String) entityIterator.next();
                     EntityConfigElement entityConfig =
-                            getEntityConfig(entityID);
+                            getEntityConfig(realm, entityID);
                     if (entityConfig != null && !entityConfig.isHosted()) {
                         remoteEntityList.add(entityID);
                     }
@@ -834,19 +860,21 @@ public class IDFFMetaManager {
     
     /**
      * Returns all hosted Service Provider Entity Identifiers under the
-     * root realm.
+     * realm.
      *
+     * @param realm The realm under which the hosted entities reside.
      * @return a <code>List</code> of entity identifiers as Strings.
      * @throws IDFFMetaException if unable to retrieve the entity ids.
      */
-    public List getAllHostedServiceProviderEntities() throws IDFFMetaException {
+    public List getAllHostedServiceProviderEntities(String realm) 
+        throws IDFFMetaException {
         List hostedSPEntityList = new ArrayList() ;
-        List hostedEntityIds = getAllHostedEntities();
+        List hostedEntityIds = getAllHostedEntities(realm);
         
         Iterator entityIterator = hostedEntityIds.iterator();
         while (entityIterator.hasNext()) {
             String entityID = (String) entityIterator.next();
-            if (getSPDescriptor(entityID) != null) {
+            if (getSPDescriptor(realm, entityID) != null) {
                 hostedSPEntityList.add(entityID);
             }
         }
@@ -857,18 +885,20 @@ public class IDFFMetaManager {
     
     /**
      * Returns all remote Service Provider Entity Identifiers under the
-     * root realm.
+     * realm.
      *
+     * @param realm The realm under which the hosted entities reside.
      * @return a <code>List</code> of entity identifiers as Strings.
      * @throws IDFFMetaException if unable to retrieve the entity ids.
      */
-    public List getAllRemoteServiceProviderEntities() throws IDFFMetaException {
+    public List getAllRemoteServiceProviderEntities(String realm) 
+        throws IDFFMetaException {
         List remoteSPEntityList = new ArrayList();
-        List remoteEntitiesList = getAllRemoteEntities();
+        List remoteEntitiesList = getAllRemoteEntities(realm);
         Iterator entityIterator = remoteEntitiesList.iterator();
         while (entityIterator.hasNext()) {
             String entityID = (String) entityIterator.next();
-            if (getSPDescriptor(entityID) != null) {
+            if (getSPDescriptor(realm, entityID) != null) {
                 remoteSPEntityList.add(entityID);
             }
         }
@@ -879,20 +909,22 @@ public class IDFFMetaManager {
     
     /**
      * Returns all hosted Identity Provider Entity Identifiers under the
-     * root realm.
+     * realm.
      *
+     * @param realm The realm under which the hosted entities reside.
      * @return a <code>List</code> of identity provider entity identifiers.
      *        The values in the list are Strings.
      * @throws IDFFMetaException if unable to retrieve the entity ids.
      */
-    public List getAllHostedIdentityProviderIDs() throws IDFFMetaException {
+    public List getAllHostedIdentityProviderIDs(String realm) 
+        throws IDFFMetaException {
         List hostedIDPEntityList = new ArrayList() ;
-        List hostedEntityIds = getAllHostedEntities();
+        List hostedEntityIds = getAllHostedEntities(realm);
         
         Iterator entityIterator = hostedEntityIds.iterator();
         while (entityIterator.hasNext()) {
             String entityID = (String) entityIterator.next();
-            if (getIDPDescriptor(entityID) != null) {
+            if (getIDPDescriptor(realm, entityID) != null) {
                 hostedIDPEntityList.add(entityID);
             }
         }
@@ -902,20 +934,21 @@ public class IDFFMetaManager {
     }
     
     /**
-     * Returns all remote Identity Provider Identifiers under the
-     * root realm.
+     * Returns all remote Identity Provider Identifiers under the realm.
      *
+     * @param realm The realm under which the hosted entities reside.
      * @return a <code>List</code> of remote identity provider identifiers.
      *         The values in the list are Strings.
      * @throws IDFFMetaException if unable to retrieve the provider identifiers.
      */
-    public List getAllRemoteIdentityProviderIDs() throws IDFFMetaException {
+    public List getAllRemoteIdentityProviderIDs(String realm) 
+        throws IDFFMetaException {
         List remoteIDPEntityList = new ArrayList();
-        List remoteEntitiesList = getAllRemoteEntities();
+        List remoteEntitiesList = getAllRemoteEntities(realm);
         Iterator entityIterator = remoteEntitiesList.iterator();
         while (entityIterator.hasNext()) {
             String entityID = (String) entityIterator.next();
-            if (getIDPDescriptor(entityID) != null) {
+            if (getIDPDescriptor(realm, entityID) != null) {
                 remoteIDPEntityList.add(entityID);
             }
         }
@@ -927,23 +960,26 @@ public class IDFFMetaManager {
     /**
      * Checks whether two entities are in the same circle of trust.
      *
+     * @param realm The realm under which the entity resides.
      * @param hostedEntityID the hosted entity identifier.
      * @param entityID the identifier of the entity to be checked for trust.
      * @return true if both providers are in the same circle of trust.
      */
-    public boolean isTrustedProvider(String hostedEntityID, String entityID) {
+    public boolean isTrustedProvider(
+        String realm, String hostedEntityID, String entityID) 
+    {
         String classMethod = "IDFFMetaManager:isTrustedProvider";
         boolean isTrusted = false;
         try {
             SPDescriptorConfigElement spConfig =
-                    getSPDescriptorConfig(entityID);
+                    getSPDescriptorConfig(realm, entityID);
             if (spConfig != null) {
-                isTrusted = isSameCircleOfTrust(spConfig,entityID);
+                isTrusted = isSameCircleOfTrust(spConfig,realm, entityID);
             } else {
                 IDPDescriptorConfigElement idpConfig =
-                        getIDPDescriptorConfig(entityID);
+                        getIDPDescriptorConfig(realm, entityID);
                 if (idpConfig != null) {
-                    isTrusted = isSameCircleOfTrust(idpConfig,entityID);
+                    isTrusted = isSameCircleOfTrust(idpConfig,realm, entityID);
                 }
             }
         } catch (IDFFMetaException ide) {
@@ -961,23 +997,24 @@ public class IDFFMetaManager {
      *         if there is an error or no trusted providers are found.
      */
     public Set getAllTrustedProviders(String hostedProviderMetaAlias) {
-        String classMethod = "CircleOfTrustManager:getAllTrustedProviders:";
+        String classMethod = "IDFFMetaManager:getAllTrustedProviders:";
         Set trustedProviders = new HashSet();
         try {
             String hostedEntityID =
                     getEntityIDByMetaAlias(hostedProviderMetaAlias);
             String role = getProviderRoleByMetaAlias(hostedProviderMetaAlias);
-            
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(
+                hostedProviderMetaAlias);
             List hostedEntityIDs = new ArrayList();
             List remoteEntityIDs = new ArrayList();
             if (role!=null && role.equalsIgnoreCase(IFSConstants.SP)) {
-                hostedEntityIDs = getAllHostedServiceProviderEntities();
-                remoteEntityIDs = getAllRemoteIdentityProviderIDs();
+                hostedEntityIDs = getAllHostedServiceProviderEntities(realm);
+                remoteEntityIDs = getAllRemoteIdentityProviderIDs(realm);
             } else if (role != null && role.equalsIgnoreCase(IFSConstants.IDP)){
-                hostedEntityIDs = getAllHostedIdentityProviderIDs();
-                remoteEntityIDs = getAllRemoteServiceProviderEntities();
+                hostedEntityIDs = getAllHostedIdentityProviderIDs(realm);
+                remoteEntityIDs = getAllRemoteServiceProviderEntities(realm);
             }
-            Map idffCOTs = cotManager.getIDFFCOTProviderMapping();
+            Map idffCOTs = cotManager.getIDFFCOTProviderMapping(realm);
             
             Set cotSet = idffCOTs.keySet();
             if (hostedEntityIDs.size() > 0 &&
@@ -1011,6 +1048,7 @@ public class IDFFMetaManager {
     /**
      * Checks if the provider is a member of the Affiliation.
      *
+     * @param realm The realm under which the entity resides.
      * @param providerID the provider's identitifer.
      * @param affiliationID the Affiliation identifier.
      *
@@ -1018,17 +1056,21 @@ public class IDFFMetaManager {
      * @throws IDFFMetaException if there is an error retreiving the affiliate
      *         information.
      */
-    public boolean isAffiliateMember(String providerID, String affiliationID)
+    public boolean isAffiliateMember(
+        String realm, String providerID, String affiliationID)
     throws IDFFMetaException {
         boolean isAffiliateMember = false;
+        if ((realm == null) || (realm.length() == 0)) {
+            realm = ROOT_REALM;
+        }
         if (providerID != null && affiliationID != null) {
-            Set entityIDSet = getAllEntities();
+            Set entityIDSet = getAllEntities(realm);
             if (entityIDSet != null && !entityIDSet.isEmpty()) {
                 Iterator entityIterator = entityIDSet.iterator();
                 while (entityIterator.hasNext()) {
                     String entityID = (String)  entityIterator.next();
                     AffiliationDescriptorType affDescriptor =
-                            getAffiliationDescriptor(entityID);
+                            getAffiliationDescriptor(realm, entityID);
                     if (affDescriptor != null) {
                         String affID = affDescriptor.getAffiliationID();
                         if (affID != null && affID.equals(affiliationID))  {
@@ -1045,7 +1087,7 @@ public class IDFFMetaManager {
                 }
             }
         }
-        String[] args = { providerID , affiliationID };
+        String[] args = { providerID , affiliationID, realm };
         LogUtil.access(Level.INFO, LogUtil.IS_AFFILIATE_MEMBER_SUCCEEDED, args);
         return isAffiliateMember;
     }
@@ -1055,25 +1097,29 @@ public class IDFFMetaManager {
      * Returns a set of Affiliation Entity Descriptors of which the
      * provider identifier is a member of.
      *
+     * @param realm The realm under which the entity resides.
      * @param providerID the provider identifier.
      * @return a set of Affliation Entity Descriptors. An empty set is
      *         returned if there are no affiliation descriptors found or
      *         if there is an retrieving the descriptors.
      */
-    public Set getAffiliateEntity(String providerID) {
+    public Set getAffiliateEntity(String realm, String providerID) {
         String classMethod = "IDFFMetaManager:getAffiliateEntity:";
         Set affDescSet = new HashSet();
+        if ((realm == null) || (realm.length() == 0)) {
+            realm = ROOT_REALM;
+        }
         try {
-            Set entityIDs = getAllEntities();
+            Set entityIDs = getAllEntities(realm);
             if (entityIDs != null && !entityIDs.isEmpty()) {
                 Iterator eIter = entityIDs.iterator();
                 while (eIter.hasNext()) {
                     String entityID = (String) eIter.next();
                     AffiliationDescriptorType affDesc =
-                            getAffiliationDescriptor(entityID);
+                            getAffiliationDescriptor(realm, entityID);
                     if (affDesc != null) {
                         String affId = affDesc.getAffiliationID();
-                        if (isAffiliateMember(providerID,affId)) {
+                        if (isAffiliateMember(realm, providerID,affId)) {
                             affDescSet.add(affDesc);
                         }
                         
@@ -1114,8 +1160,9 @@ public class IDFFMetaManager {
                 }
                 return entityId;
             }
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
             Set entityIds =
-                    idffMetaConfigInstance.getAllConfigurationNames(ROOT_REALM);
+                    idffMetaConfigInstance.getAllConfigurationNames(realm);
             if (entityIds == null || entityIds.isEmpty()) {
                 return null;
             }
@@ -1129,7 +1176,7 @@ public class IDFFMetaManager {
                 }
                 
                 SPDescriptorConfigElement spconfig =
-                        getSPDescriptorConfig(tmpId);
+                        getSPDescriptorConfig(realm, tmpId);
                 if (spconfig != null) {
                     String tmpMetaAlias = spconfig.getMetaAlias();
                     if (tmpMetaAlias != null && tmpMetaAlias.length() > 0) {
@@ -1151,7 +1198,7 @@ public class IDFFMetaManager {
                 }
                 
                 IDPDescriptorConfigElement idpconfig =
-                        getIDPDescriptorConfig(tmpId);
+                        getIDPDescriptorConfig(realm, tmpId);
                 if (idpconfig != null) {
                     String tmpMetaAlias = idpconfig.getMetaAlias();
                     if (tmpMetaAlias != null && tmpMetaAlias.length() > 0) {
@@ -1201,13 +1248,14 @@ public class IDFFMetaManager {
     /**
      * Returns entity ID associated with the succinct ID.
      *
+     * @param realm The realm under which the entity resides.
      * @param succinctId Succinct ID of a IDP contained in the entity
      *        to be retrieved.
      * @return Entity ID associated with the succinct ID, or null if could
      *          not be found.
      * @throws IDFFMetaException if unable to retrieve the entity ID.
      */
-    public String getEntityIDBySuccinctID(String succinctId)
+    public String getEntityIDBySuccinctID(String realm, String succinctId)
     throws IDFFMetaException {
         
         try {
@@ -1226,8 +1274,11 @@ public class IDFFMetaManager {
                 return entityId;
             }
             
+            if ((realm == null) || (realm.length() == 0)) {
+                realm = ROOT_REALM;
+            }
             Set entityIds =
-                    idffMetaConfigInstance.getAllConfigurationNames(ROOT_REALM);
+                    idffMetaConfigInstance.getAllConfigurationNames(realm);
             if (entityIds == null || entityIds.isEmpty()) {
                 return null;
             }
@@ -1241,7 +1292,7 @@ public class IDFFMetaManager {
                 }
                 
                 IDPDescriptorConfigElement idpconfig =
-                        getIDPDescriptorConfig(tmpId);
+                        getIDPDescriptorConfig(realm, tmpId);
                 if (idpconfig != null) {
                     String tmpSuccinctId = FSUtils.generateSourceID(tmpId);
                     if ((tmpSuccinctId != null) &&
@@ -1249,7 +1300,8 @@ public class IDFFMetaManager {
                         // remember this and continue to process others,
                         entityId = tmpId;
                     }
-                    IDFFMetaCache.setEntitySuccinctIDMapping(tmpSuccinctId, tmpId);
+                    IDFFMetaCache.setEntitySuccinctIDMapping(
+                        tmpSuccinctId, tmpId);
                     if (debug.messageEnabled()) {
                         debug.message("IDFFMetaManager.getEntityBySuccinctID"
                                 + ": update cache, succinctId=" + tmpSuccinctId
@@ -1269,10 +1321,13 @@ public class IDFFMetaManager {
      * Checks if the remote entity identifier is in the Entity Config's 
      * circle of trust.
      *
+     * @param realm The realm under which the entity resides.
      * @param config the entity config object.
      * @param entityID the entity identifer.
      */
-    private boolean isSameCircleOfTrust(BaseConfigType config,String entityID){
+    private boolean isSameCircleOfTrust(
+        BaseConfigType config, String realm, String entityID)
+    {
         boolean isTrusted = false;
         if (config != null) {
             Map attr = IDFFMetaUtils.getAttributes(config);
@@ -1280,7 +1335,7 @@ public class IDFFMetaManager {
             if ((cotList != null) && !cotList.isEmpty()) {
                 for (Iterator iter = cotList.iterator(); iter.hasNext();) {
                     String cotName = (String) iter.next();
-                    if (cotManager.isInCircleOfTrust(ROOT_REALM,cotName,
+                    if (cotManager.isInCircleOfTrust(realm,cotName,
                             COTConstants.IDFF,entityID)) {
                         isTrusted = true;
                     }
@@ -1293,10 +1348,13 @@ public class IDFFMetaManager {
     /**
      * Adds entity identifier to circle of trust.
      *
+     * @param realm The realm under which the entity resides.
      * @param config the entity config.
      * @param entityId the entity identifier.
      */
-    private void addToCircleOfTrust(BaseConfigType config,String entityId) {
+    private void addToCircleOfTrust(BaseConfigType config,
+        String realm, String entityId) 
+    {
         String classMethod = "COTManager:addToCircleOfTrust :";
         try {
             if (config != null) {
@@ -1309,7 +1367,7 @@ public class IDFFMetaManager {
                         String cotName = (String) iter.next();
                         try {
                             cotManager.addCircleOfTrustMember(
-                                    COTConstants.ROOT_REALM,cotName,
+                                    realm, cotName,
                                     COTConstants.IDFF,entityId);
                         } catch (COTException ce) {
                             debug.error(classMethod + cotName + " cotName");
@@ -1326,12 +1384,14 @@ public class IDFFMetaManager {
     /**
      * Remove entity identifier from circle of trust.
      *
+     * @param realm The realm under which the entity resides.
      * @param config the <code>BaseConfigType</code> object
      *        which is the entity config.
      * @param entityId the entity identifier.
      */
-    private void removeFromCircleOfTrust(BaseConfigType config,
-            String entityId) {
+    private void removeFromCircleOfTrust(
+        BaseConfigType config, String realm, String entityId) 
+    {
         String classMethod = "IDFFMetaManager:removeFromCircleOfTrust:";
         try {
             if (config != null) {
@@ -1344,7 +1404,7 @@ public class IDFFMetaManager {
                         String cotName = (String) iter.next();
                         if (cotName != null && cotName.length() > 0) {
                             try {
-                                cotManager.removeCircleOfTrustMember(ROOT_REALM,
+                                cotManager.removeCircleOfTrustMember(realm,
                                         cotName,COTConstants.IDFF,entityId);
                             } catch (COTException ce) {
                                 if (debug.messageEnabled()) {
@@ -1365,39 +1425,46 @@ public class IDFFMetaManager {
     /**
      * Adds an entity identifier to circle of trust.
      *
+     * @param realm The realm under which the entity resides in
      * @param entityID the entity identifier.
      * @throws IDFFMetaException if there is an error adding entity to circle
      *         of trust.
      */
-    private void addEntityToCOT(String entityID) throws IDFFMetaException {
+    private void addEntityToCOT(String realm, String entityID) 
+        throws IDFFMetaException 
+    {
         IDPDescriptorConfigElement idpConfig =
-                getIDPDescriptorConfig(entityID);
+                getIDPDescriptorConfig(realm, entityID);
         if (idpConfig !=null) {
-            addToCircleOfTrust(idpConfig, entityID);
+            addToCircleOfTrust(idpConfig, realm, entityID);
         }
         
-        SPDescriptorConfigElement spConfig = getSPDescriptorConfig(entityID);
+        SPDescriptorConfigElement spConfig = getSPDescriptorConfig(
+            realm, entityID);
         if (spConfig != null) {
-            addToCircleOfTrust(spConfig,entityID);
+            addToCircleOfTrust(spConfig,realm, entityID);
         }
     }
     
     /**
      * Removes and entity identifier from circle of trust.
-     *
+     * @param realm The realm under which the entity resides.
      * @param entityID the entity identifier.
      * @throws IDFFMetaException if there is an error remove entity.
      */
-    private void removeEntityFromCOT(String entityID) throws IDFFMetaException {
+    private void removeEntityFromCOT(String realm, String entityID) 
+        throws IDFFMetaException 
+    {
         IDPDescriptorConfigElement idpConfig =
-                getIDPDescriptorConfig(entityID);
+                getIDPDescriptorConfig(realm, entityID);
         if (idpConfig != null) {
-            removeFromCircleOfTrust(idpConfig, entityID);
+            removeFromCircleOfTrust(idpConfig, realm, entityID);
         }
         
-        SPDescriptorConfigElement spConfig = getSPDescriptorConfig(entityID);
+        SPDescriptorConfigElement spConfig = getSPDescriptorConfig(
+            realm, entityID);
         if (spConfig != null) {
-            removeFromCircleOfTrust(spConfig, entityID);
+            removeFromCircleOfTrust(spConfig, realm, entityID);
         }
     }
 }

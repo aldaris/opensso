@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.8 2007-08-23 18:45:16 qcheng Exp $
+ * $Id: CircleOfTrustManager.java,v 1.9 2007-10-16 21:49:07 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -297,7 +297,7 @@ public class CircleOfTrustManager {
         Set entityIds = Collections.EMPTY_SET;
         if (type != null) {
             if (type.equalsIgnoreCase(COTConstants.IDFF)) {
-                entityIds = getIDFFEntities();
+                entityIds = getIDFFEntities(realm);
             } else if (type.equalsIgnoreCase(COTConstants.SAML2)) {
                 entityIds = getSAML2Entities(realm);
             } else {
@@ -309,12 +309,12 @@ public class CircleOfTrustManager {
     }
     
     /**
-     * Returns a set of all IDFF entity identifiers.
+     * Returns a set of all IDFF entity identifiers under a realm.
      */
-    Set getIDFFEntities() throws COTException  {
+    Set getIDFFEntities(String realm) throws COTException  {
         try {
             IDFFMetaManager idffMetaMgr = new IDFFMetaManager(null);
-            return idffMetaMgr.getAllEntities();
+            return idffMetaMgr.getAllEntities(realm);
         } catch (IDFFMetaException idffe) {
             throw new COTException(idffe);
         }
@@ -375,7 +375,7 @@ public class CircleOfTrustManager {
         String entityID) throws COTException,JAXBException {
         if (protocolType.equalsIgnoreCase(COTConstants.IDFF)) {
             try {
-                new IDFFCOTUtils().updateEntityConfig(cotName,entityID);
+                new IDFFCOTUtils().updateEntityConfig(realm,cotName,entityID);
             } catch (IDFFMetaException idffe) {
                 throw new COTException(idffe);
             }
@@ -428,7 +428,8 @@ public class CircleOfTrustManager {
     ) throws COTException, JAXBException {
         if (protocolType.equalsIgnoreCase(COTConstants.IDFF)) {
             try {
-                new IDFFCOTUtils().removeFromEntityConfig(cotName,entityID);
+                new IDFFCOTUtils().removeFromEntityConfig(
+                    realm, cotName,entityID);
             } catch (IDFFMetaException idme) {
                 throw new COTException(idme);
             }
@@ -482,7 +483,7 @@ public class CircleOfTrustManager {
                     trustedProviders.iterator();iter.hasNext();) {
                 entityId = (String) iter.next();
                 try {
-                    idffCotUtils.updateEntityConfig(cotName, entityId);
+                    idffCotUtils.updateEntityConfig(realm, cotName, entityId);
                 } catch (IDFFMetaException idfe) {
                     throw new COTException(idfe);
                 } catch (JAXBException jbe) {
@@ -962,10 +963,12 @@ public class CircleOfTrustManager {
      *                      trusted providers.
      * TODO : cache this 
      */
-    public Map getIDFFCOTProviderMapping() throws COTException {
+    public Map getIDFFCOTProviderMapping(String realm) throws COTException {
         String classMethod = "COTManager.getAllActiveCirclesOfTrust: ";
         Map cotMap = new HashMap();
-        String realm = COTConstants.ROOT_REALM;
+        if (realm == null) {
+            realm = COTConstants.ROOT_REALM;
+        }
         
         try {
             Set valueSet = configInst.getAllConfigurationNames(realm);

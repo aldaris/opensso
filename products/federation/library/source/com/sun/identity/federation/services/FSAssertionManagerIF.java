@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerIF.java,v 1.2 2007-08-20 07:25:57 stanguy Exp $
+ * $Id: FSAssertionManagerIF.java,v 1.3 2007-10-16 21:49:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,7 @@ public interface FSAssertionManagerIF extends Remote {
     
     /**
      * Returns assertion associated with the artifact.
-     * @param hostedProviderId hosted provider ID
+     * @param metaAlias hosted provider meta alias. 
      * @param artifact assertion artifact.
      * @param destID The destination site requesting the assertion using
      *  the artifact.
@@ -46,35 +46,36 @@ public interface FSAssertionManagerIF extends Remote {
      *  the process
      */
     public String getAssertion(
-        String hostedProviderId, String artifact, String destID)
+        String metaAlias, String artifact, String destID)
         throws FSRemoteException, RemoteException;
     
     /**
      * Returns the destination id the artifact is created for.
-     * @param hostedProviderId hosted provider ID
+     * @param metaAlias hosted provider meta alias
      * @param artifact assertion artifact string
      * @return destination id
      * @exception FSRemoteException, RemoteException if error occurred.
      */
-    public String getDestIdForArtifact(String hostedProviderId, String artifact)
+    public String getDestIdForArtifact(String metaAlias, String artifact)
         throws FSRemoteException, RemoteException;
 
     /**
      * Checks if the user exists.
      * @param userDN user ID
-     * @param hostedProviderId hosted provider ID
+     * @param metaAlias hosted provider's meta alias
      * @return <code>true</code> if the user exists; <code>false</code> 
      *  otherwise.
      * @exception FSRemoteException,RemoteException if error occurred.
      */
-    public boolean isUserExists(String userDN, String hostedProviderId)
+    public boolean isUserExists(String userDN, String metaAlias)
         throws FSRemoteException, RemoteException;
 
     /**
-     * Returns the error status of a given artifact
+     * Returns the error status of a given artifact.
+     * @param metaAlias hosted provider's meta alias
      * @param artifact
      * @return status encoded in XML
      */
-    public String getErrorStatus( String hostedEntityId, String artifact )
+    public String getErrorStatus( String metaAlias, String artifact )
         throws FSRemoteException, RemoteException;
 }

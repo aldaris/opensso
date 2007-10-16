@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSRegistrationInitiationServlet.java,v 1.2 2007-01-10 06:29:34 exu Exp $
+ * $Id: FSRegistrationInitiationServlet.java,v 1.3 2007-10-16 21:49:18 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,6 +163,7 @@ public class FSRegistrationInitiationServlet extends HttpServlet {
         BaseConfigType hostedConfig = null;
         String hostedRole = null;
         String hostedEntityId = null;
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(providerAlias);
         try {
             hostedRole = metaManager.getProviderRoleByMetaAlias(providerAlias);
             hostedEntityId = metaManager.getEntityIDByMetaAlias(providerAlias);
@@ -170,16 +171,16 @@ public class FSRegistrationInitiationServlet extends HttpServlet {
                 hostedRole.equalsIgnoreCase(IFSConstants.SP))
             {
                 hostedProviderDesc = 
-                    metaManager.getSPDescriptor(hostedEntityId);
+                    metaManager.getSPDescriptor(realm, hostedEntityId);
                 hostedConfig = 
-                    metaManager.getSPDescriptorConfig(hostedEntityId);
+                    metaManager.getSPDescriptorConfig(realm, hostedEntityId);
             } else if (hostedRole != null &&
                 hostedRole.equalsIgnoreCase(IFSConstants.IDP))
             {
                 hostedProviderDesc = 
-                    metaManager.getIDPDescriptor(hostedEntityId);
+                    metaManager.getIDPDescriptor(realm, hostedEntityId);
                 hostedConfig = 
-                    metaManager.getIDPDescriptorConfig(hostedEntityId);
+                    metaManager.getIDPDescriptorConfig(realm, hostedEntityId);
             }
             if (hostedProviderDesc == null) {
                 throw new IDFFMetaException((String) null);

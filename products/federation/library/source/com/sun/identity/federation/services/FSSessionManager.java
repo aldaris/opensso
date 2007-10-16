@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSessionManager.java,v 1.1 2006-10-30 23:14:25 qcheng Exp $
+ * $Id: FSSessionManager.java,v 1.2 2007-10-16 21:49:14 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,8 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.message.FSAuthnRequest;
+import com.sun.identity.federation.meta.IDFFMetaManager;
+import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
 import com.sun.identity.plugin.session.SessionManager;
@@ -77,6 +79,7 @@ public final class FSSessionManager {
     private Map idDestnMap = 
         Collections.synchronizedMap(new HashMap ());
     private String hostEntityId = null;
+    private String realm = null;
     private Map relayStateMap =
         Collections.synchronizedMap(new HashMap());
     private Map proxySPDescMap = 
@@ -504,34 +507,44 @@ public final class FSSessionManager {
         setSessionList(userID, newSessionList);
     }
     
-    private FSSessionManager (String entityId){
+    private FSSessionManager (String metaAlias){
         if (FSUtils.debug.messageEnabled()) {
-            FSUtils.debug.message ("FSSessionManager(): created " + entityId);
+            FSUtils.debug.message ("FSSessionManager(): created " + metaAlias);
         }
-        hostEntityId = entityId;
+        realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
+        try {
+            IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
+            hostEntityId = metaManager.getEntityIDByMetaAlias(metaAlias);
+        } catch (Exception ie) {
+            if (FSUtils.debug.warningEnabled()) {
+                FSUtils.debug.warning("FSSessionManager constructor: couldnot "
+                    + "obtain hosted entity ID:", ie);
+            }
+        }
+
         if (sessStats.isEnabled()) {
             dnStats = new FSSessionMapStats(userIDSessionListMap,
-                "userIDSessionListMap", hostEntityId);
+                "userIDSessionListMap", realm, hostEntityId);
             sessStats.addStatsListener(dnStats);
 
             reqStats = new FSSessionMapStats(idAuthnRequestMap,
-                "idAuthnRequestMap", hostEntityId);
+                "idAuthnRequestMap", realm, hostEntityId);
             sessStats.addStatsListener(reqStats);
 
             reqTimeoutStats = new FSSessionMapStats(idAuthnRequestTimeoutMap, 
-                "idAuthnRequestTimeoutMap", hostEntityId);
+                "idAuthnRequestTimeoutMap", realm, hostEntityId);
             sessStats.addStatsListener(reqTimeoutStats);
 
             tokenStats = new FSSessionMapStats(idLocalSessionTokenMap,
-                "idLocalSessionTokenMap", hostEntityId);
+                "idLocalSessionTokenMap", realm, hostEntityId);
             sessStats.addStatsListener(tokenStats);
 
             idStats = new FSSessionMapStats(idDestnMap,
-                "idDestnMap", hostEntityId);
+                "idDestnMap", realm, hostEntityId);
             sessStats.addStatsListener(idStats);
 
             relayStats = new FSSessionMapStats(relayStateMap,
-                "relayStateMap", hostEntityId);
+                "relayStateMap", realm, hostEntityId);
             sessStats.addStatsListener(relayStats);
         }
 
@@ -541,10 +554,11 @@ public final class FSSessionManager {
         {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSSessionManager.getInstance: " +
-                    "start cleanup thread for " + entityId);
+                    "start cleanup thread for " + hostEntityId +
+                    " in realm " + realm);
             }
             cThread = new FSRequestCleanUpThread(
-                entityId, 
+                hostEntityId, 
                 idAuthnRequestTimeoutMap,
                 idAuthnRequestMap, 
                 idDestnMap,
@@ -556,31 +570,31 @@ public final class FSSessionManager {
     
     /**
      * Gets the singleton instance of <code>FSSessionManager</code>.
-     * @param entityId hosted provider's entity ID
+     * @param metaAlias hosted provider's metaAlias
      * @return The singleton <code>FSSessionManager</code> instance
-     *  for proivder ID
+     *  for this provider
      */
-    public static synchronized FSSessionManager getInstance (String entityId){
+    public static synchronized FSSessionManager getInstance (String metaAlias){
         // not throwing any exception
         if (FSUtils.debug.messageEnabled () ) {
             FSUtils.debug.message ("FSSessionManager.getInstance: Called " 
-                + entityId);
+                + metaAlias);
         }
-        if (entityId == null) {
+        if (metaAlias == null) {
             FSUtils.debug.error(
-                "FSSessionManager.getInstance: null provider ID");
+                "FSSessionManager.getInstance: null provider meta alias");
             return null;
         }
         FSSessionManager instance = 
-            (FSSessionManager)instanceMap.get(entityId);
+            (FSSessionManager)instanceMap.get(metaAlias);
         if (instance == null) {
             if (FSUtils.debug.messageEnabled () ) {
                 FSUtils.debug.message ("FSSessionManager.getInstance: " +
-                    "new instance of FSSessionManager: " + entityId);
+                    "new instance of FSSessionManager: " + metaAlias);
             }
-            instance = new FSSessionManager(entityId);
+            instance = new FSSessionManager(metaAlias);
             synchronized (instanceMap) {
-                instanceMap.put(entityId, instance);
+                instanceMap.put(metaAlias, instance);
             }
         }
         return (instance);

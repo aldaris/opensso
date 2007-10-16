@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSReturnSessionManager.java,v 1.1 2006-10-30 23:14:32 qcheng Exp $
+ * $Id: FSReturnSessionManager.java,v 1.2 2007-10-16 21:49:17 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,23 +131,23 @@ public final class FSReturnSessionManager{
     /**
      * Gets the singleton instance of <code>FSReturnSessionManager</code>.
      * There is a single instance for each hosted provider.
-     * @return hostedProviderId the hosted provider whose instance needs to be
+     * @return metaAlias the hosted provider whose instance needs to be
      *  returned
      * @return the singleton <code>FSReturnSessionManager</code> instance
      */
-    public static FSReturnSessionManager getInstance(String hostedProviderId){
+    public static FSReturnSessionManager getInstance(String metaAlias){
         FSUtils.debug.message("Entered FSReturnSessionManager::getInstance");
         FSReturnSessionManager instance = null;
         synchronized (FSReturnSessionManager.class) {
             instance =
-                (FSReturnSessionManager)instanceMap.get(hostedProviderId);
+                (FSReturnSessionManager)instanceMap.get(metaAlias);
             if (instance == null) {
                 if (FSUtils.debug.messageEnabled() ) {
                     FSUtils.debug.message("Constructing a new instance"
                         + " of FSReturnSessionManager");
                 }
                 instance = new FSReturnSessionManager();
-                instanceMap.put(hostedProviderId, instance);
+                instanceMap.put(metaAlias, instance);
             }
             return (instance);
         }

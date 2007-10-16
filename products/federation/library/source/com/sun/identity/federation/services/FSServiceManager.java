@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceManager.java,v 1.2 2007-01-16 20:14:21 exu Exp $
+ * $Id: FSServiceManager.java,v 1.3 2007-10-16 21:49:14 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -160,6 +160,7 @@ public class FSServiceManager {
      * artifact profile.
      * @param request http request object
      * @param response http response object
+     * @param realm The realm under which the entity resides.
      * @param idpSuccinctId identity provider's succinct ID
      * @param samlRequest <code>SAML</code> request object
      * @param relayState where to go after the process is done
@@ -168,6 +169,7 @@ public class FSServiceManager {
     public FSAssertionArtifactHandler getBrowserArtifactHandler(
         HttpServletRequest request,
         HttpServletResponse response,
+        String realm,
         String idpSuccinctId,
         FSRequest samlRequest,
         String relayState
@@ -187,9 +189,9 @@ public class FSServiceManager {
             IDFFMetaManager metaManager =
                 FSUtils.getIDFFMetaManager();
             String idpEntityId = metaManager.getEntityIDBySuccinctID(
-                idpSuccinctId);
+                realm, idpSuccinctId);
             IDPDescriptorType idpDescriptor =
-                metaManager.getIDPDescriptor(idpEntityId);
+                metaManager.getIDPDescriptor(realm, idpEntityId);
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(
                     "FSServiceManager.getBrowserArtifactHandler:" +
@@ -213,12 +215,14 @@ public class FSServiceManager {
      * @param request http request object
      * @param response http response object
      * @param authnRequest authentication request sent by service provider
+     * @param realm The realm under which the entity resides.
      * @return <code>FSSSOAndFedHandler</code> object
      */
     public FSSSOAndFedHandler getSSOAndFedHandler(
         HttpServletRequest request,
         HttpServletResponse response,
-        FSAuthnRequest authnRequest
+        FSAuthnRequest authnRequest,
+        String realm
     ) {
         FSUtils.debug.message("FSServiceManager.getSSOAndFedHandler: Called ");
         if ((request == null) ||(response == null) ||(authnRequest == null)) {
@@ -232,9 +236,9 @@ public class FSServiceManager {
             IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
             String spEntityId = authnRequest.getProviderId();
             SPDescriptorType spDescriptor = 
-                metaManager.getSPDescriptor(spEntityId);
+                metaManager.getSPDescriptor(realm, spEntityId);
             BaseConfigType spConfig =
-                metaManager.getSPDescriptorConfig(spEntityId);
+                metaManager.getSPDescriptorConfig(realm, spEntityId);
             String relayState = authnRequest.getRelayState();
             
             if (FSUtils.debug.messageEnabled()) {
@@ -344,12 +348,14 @@ public class FSServiceManager {
      * @param request http request object
      * @param response http response object
      * @param authnRequest authentication request
+     * @param realm The realm under which the entity resides.
      * @return <code>FSSSOLECPProfileHandler</code> object
      */
     public FSSSOLECPProfileHandler getLECPProfileHandler(
         HttpServletRequest request,
         HttpServletResponse response,
-        FSAuthnRequest authnRequest
+        FSAuthnRequest authnRequest,
+        String realm
     ) {
         FSUtils.debug.message("FSServiceManager.getLECPProfileHandler:Called");
         try {
@@ -367,8 +373,8 @@ public class FSServiceManager {
                 request,
                 response, 
                 authnRequest,
-                metaManager.getSPDescriptor(spEntityId),
-                metaManager.getSPDescriptorConfig(spEntityId),
+                metaManager.getSPDescriptor(realm, spEntityId),
+                metaManager.getSPDescriptorConfig(realm, spEntityId),
                 spEntityId,
                 authnRequest.getRelayState());
         } catch(IDFFMetaException ex){
@@ -383,12 +389,14 @@ public class FSServiceManager {
      * turned on.
      * The <code>remoteEntityId</code> passed is that of the <code>IdP</code>
      * with whom registration will be done.
+     * @param realm the realm in which the provider resides
      * @param remoteEntityId remote Provider Entity ID. 
      * @param remoteProviderRole remote Provider Role.
      * @return <code>FSNameRegistrationHandler</code> the name registration 
      *  handler
      */
     public FSNameRegistrationHandler getNameRegistrationHandler(
+        String realm,
         String remoteEntityId,
         String remoteProviderRole)
     {
@@ -412,15 +420,18 @@ public class FSServiceManager {
                 } else if (remoteProviderRole.equalsIgnoreCase(
                     IFSConstants.IDP))
                 {
-                    remoteDesc = metaManager.getIDPDescriptor(remoteEntityId);
+                    remoteDesc = metaManager.getIDPDescriptor(
+                        realm, remoteEntityId);
                 } else if (remoteProviderRole.equalsIgnoreCase(IFSConstants.SP))
                 {
-                    remoteDesc = metaManager.getSPDescriptor(remoteEntityId);
+                    remoteDesc = metaManager.getSPDescriptor(
+                        realm, remoteEntityId);
                 }
 
                 if (remoteDesc != null) {
                     handlerRegistration.setRemoteDescriptor(remoteDesc);
                     handlerRegistration.setRemoteEntityId(remoteEntityId);
+                    handlerRegistration.setRealm(realm);
                     return handlerRegistration;
                 } else {
                     return null;
@@ -451,6 +462,7 @@ public class FSServiceManager {
     public FSFedTerminationHandler getFedTerminationHandler(
         FSFederationTerminationNotification terminationRequest,
         BaseConfigType hostedConfig,
+        String realm,
         String hostedEntityId,
         String hostedProviderRole,
         String metaAlias,
@@ -469,12 +481,10 @@ public class FSServiceManager {
 
             NameIdentifier nameIdObj = terminationRequest.getNameIdentifier();
             // Get amId
-            String orgDN = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                hostedConfig, IFSConstants.REALM_NAME);
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("Remote provider : " + remoteEntityId
                     + ", Name Qualifier : " + nameIdObj.getNameQualifier()
-                    + ", Name : " + nameIdObj.getName() + ", OrgDN : " + orgDN);
+                    + ", Name : " + nameIdObj.getName() + ", Realm : " + realm);
             }
             String nameQualifier = nameIdObj.getNameQualifier();
             String searchDomain = hostedEntityId;
@@ -496,7 +506,7 @@ public class FSServiceManager {
             Map env = new HashMap();
             env.put(IFSConstants.FS_USER_PROVIDER_ENV_TERMINATION_KEY,
                 terminationRequest);
-            String userID = managerInst.getUserID(acctkey, orgDN, env);
+            String userID = managerInst.getUserID(acctkey, realm, env);
             if (userID == null) {
                 if (hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) {
                     acctkey = new FSAccountFedInfoKey(
@@ -505,7 +515,7 @@ public class FSServiceManager {
                     acctkey = new FSAccountFedInfoKey(
                         hostedEntityId, nameIdObj.getName());
                 }
-                userID = managerInst.getUserID(acctkey, orgDN, env);
+                userID = managerInst.getUserID(acctkey, realm, env);
                 if (userID == null) {
                     if (FSUtils.debug.messageEnabled()) {
                         FSUtils.debug.message("UserID is null");
@@ -574,6 +584,7 @@ public class FSServiceManager {
      * @param remoteEntityId provider with whom termination needs to be done
      * @param remoteProviderRole role of remote provider
      * @param userID user who is terminating federation with remote provider
+     * @param realm the realm under which the entity resides
      * @param hostedEntityId hosted provider's entity id
      * @param metaAlias hosted provider's meta alias
      * @return <code>FSFedTerminationHandler</code> object
@@ -582,6 +593,7 @@ public class FSServiceManager {
         String remoteEntityId,
         String remoteProviderRole,
         String userID,
+        String realm,
         String hostEntityId,
         String metaAlias
     ) {
@@ -620,9 +632,11 @@ public class FSServiceManager {
             if(handlerTermination != null){
                 ProviderDescriptorType remoteDesc = null;
                 if (remoteProviderRole.equalsIgnoreCase(IFSConstants.IDP)) {
-                    remoteDesc = metaManager.getIDPDescriptor(remoteEntityId);
+                    remoteDesc = metaManager.getIDPDescriptor(
+                        realm, remoteEntityId);
                 } else {
-                    remoteDesc = metaManager.getSPDescriptor(remoteEntityId);
+                    remoteDesc = metaManager.getSPDescriptor(
+                        realm, remoteEntityId);
                 }
                 handlerTermination.setRemoteDescriptor(remoteDesc);
                 handlerTermination.setRemoteEntityId(remoteEntityId);
@@ -680,6 +694,7 @@ public class FSServiceManager {
                 }
                 return null;
             }
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
             // Pass USERID TO HANDLER to AVOID SEARCH AGAIN
             FSNameRegistrationHandler handlerRegistration = 
                 new FSNameRegistrationHandler();
@@ -687,14 +702,17 @@ public class FSServiceManager {
                 ProviderDescriptorType remoteDesc = null;
                 BaseConfigType remoteConfig = null;
                 if (remoteProviderRole.equalsIgnoreCase(IFSConstants.SP)) {
-                    remoteDesc = metaManager.getSPDescriptor(remoteEntityId);
-                    remoteConfig = 
-                        metaManager.getSPDescriptorConfig(remoteEntityId);
+                    remoteDesc = metaManager.getSPDescriptor(
+                        realm, remoteEntityId);
+                    remoteConfig = metaManager.getSPDescriptorConfig(
+                        realm, remoteEntityId);
                 } else {
-                    remoteDesc = metaManager.getIDPDescriptor(remoteEntityId);
-                    remoteConfig = 
-                        metaManager.getIDPDescriptorConfig(remoteEntityId);
+                    remoteDesc = metaManager.getIDPDescriptor(
+                        realm, remoteEntityId);
+                    remoteConfig = metaManager.getIDPDescriptorConfig(
+                        realm, remoteEntityId);
                 }
+                handlerRegistration.setRealm(realm);
                 handlerRegistration.setRemoteEntityId(remoteEntityId);
                 handlerRegistration.setRemoteDescriptor(remoteDesc);
                 handlerRegistration.setUserID(userID);

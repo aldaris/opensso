@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAttributeStatementHelper.java,v 1.1 2006-10-30 23:14:37 qcheng Exp $
+ * $Id: FSAttributeStatementHelper.java,v 1.2 2007-10-16 21:49:20 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,7 @@ public class FSAttributeStatementHelper {
     /**
      * Gets a SAML <code>AttributeStatement</code> by using an
      * <code>AutoFederate</code> attribute that is configured in Local Provider.
+     * @param realm The realm under which the entity resides.
      * @param entityID Host Provider's entity ID.
      * @param sub Liberty Subject.
      * @param ssoToken session of the user
@@ -68,14 +69,14 @@ public class FSAttributeStatementHelper {
      * @exception FSException if an error occurred
      */
     public static AttributeStatement getAutoFedAttributeStatement(
-        String entityID, FSSubject sub, Object ssoToken)
+        String realm, String entityID, FSSubject sub, Object ssoToken)
         throws FSException
     {
         IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
         BaseConfigType hostConfig = null;
         try {
             if (metaManager != null) {
-                hostConfig = metaManager.getIDPDescriptorConfig(entityID);
+                hostConfig = metaManager.getIDPDescriptorConfig(realm,entityID);
             }
         } catch (IDFFMetaException fae) {
             FSUtils.debug.error("FSAttributeStatementHelper.getAutoFed" +

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSProcessLogoutServlet.java,v 1.4 2007-07-03 22:06:24 qcheng Exp $
+ * $Id: FSProcessLogoutServlet.java,v 1.5 2007-10-16 21:49:17 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -148,6 +148,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     IFSConstants.FAILED_HOSTED_DESCRIPTOR));
             return;
         }
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(providerAlias);
         ProviderDescriptorType hostedProviderDesc = null;
         BaseConfigType hostedConfig = null;
         String hostedRole = null;
@@ -158,14 +159,14 @@ public class FSProcessLogoutServlet extends HttpServlet {
             if (hostedRole != null) {
                 if (hostedRole.equalsIgnoreCase(IFSConstants.IDP)) {
                     hostedProviderDesc = metaManager.getIDPDescriptor(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                     hostedConfig = metaManager.getIDPDescriptorConfig(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                 } else if (hostedRole.equalsIgnoreCase(IFSConstants.SP)) {
                     hostedProviderDesc = metaManager.getSPDescriptor(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                     hostedConfig = metaManager.getSPDescriptorConfig(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                 }
             }
             if (hostedProviderDesc == null){
@@ -250,8 +251,8 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     FSUtils.debug.message(
                         "Control where Source is local -  from applink");
                     doLogoutInitiation(request, response, hostedProviderDesc, 
-                        hostedConfig, hostedEntityId, hostedRole, providerAlias,
-                        ssoToken, logoutDoneURL, sourceCheck);
+                        hostedConfig, realm, hostedEntityId, hostedRole, 
+                        providerAlias, ssoToken, logoutDoneURL, sourceCheck);
                     return;
                 } else if (sourceCheck.equalsIgnoreCase("remote")){
                     // logout return
@@ -261,8 +262,8 @@ public class FSProcessLogoutServlet extends HttpServlet {
                             "link but from other provider. Token valid");
                     }
                     doLogoutInitiation(request, response, hostedProviderDesc, 
-                        hostedConfig, hostedEntityId, hostedRole, providerAlias,
-                        ssoToken, logoutDoneURL, sourceCheck);
+                        hostedConfig, realm, hostedEntityId, hostedRole, 
+                        providerAlias, ssoToken, logoutDoneURL, sourceCheck);
                     return;
                 } else if (sourceCheck.equalsIgnoreCase("logoutGet")){
                     // logout Get profile
@@ -273,8 +274,8 @@ public class FSProcessLogoutServlet extends HttpServlet {
                             + "preLogouthandler ");
                     }
                     doLogoutInitiation(request, response, hostedProviderDesc, 
-                        hostedConfig, hostedEntityId, hostedRole, providerAlias,
-                        ssoToken, logoutDoneURL, sourceCheck);
+                        hostedConfig, realm, hostedEntityId, hostedRole, 
+                        providerAlias, ssoToken, logoutDoneURL, sourceCheck);
                     return;
                 }
             }
@@ -310,6 +311,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                 hostedProviderDesc,
                 hostedConfig,
                 hostedRole,
+                realm,
                 hostedEntityId,
                 providerAlias,
                 logoutObj,
@@ -356,6 +358,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
      * @param hostedDescriptor the provider for whom request is received
      * @param hostedConfig hosted provider's extended meta config
      * @param hostedRole hosted provider's role
+     * @param realm the realm in which the entity resides
      * @param hostedEntityId hosted provider's entity id
      * @param metaAlias hosted provider's meta alias
      * @param reqLogout the single logout request
@@ -368,6 +371,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
         ProviderDescriptorType hostedDescriptor,
         BaseConfigType hostedConfig,
         String hostedRole,
+        String realm,
         String hostedEntityId,
         String metaAlias,
         FSLogoutNotification reqLogout,
@@ -385,9 +389,11 @@ public class FSProcessLogoutServlet extends HttpServlet {
         try {
             if (hostedRole != null) {
                 if (hostedRole.equalsIgnoreCase(IFSConstants.IDP)) {
-                    remoteDesc = metaManager.getSPDescriptor(remoteEntityId);
+                    remoteDesc = metaManager.getSPDescriptor(
+                        realm, remoteEntityId);
                 } else if (hostedRole.equalsIgnoreCase(IFSConstants.SP)) {
-                    remoteDesc = metaManager.getIDPDescriptor(remoteEntityId);
+                    remoteDesc = metaManager.getIDPDescriptor(
+                        realm, remoteEntityId);
                     isIDP = true;
                 }
             }
@@ -396,7 +402,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
             }
         } catch(IDFFMetaException e) {
             FSUtils.debug.error("Remote provider metadata not found.");
-            String[] data = { remoteEntityId };
+            String[] data = { remoteEntityId, realm };
             LogUtil.error(Level.INFO,LogUtil.INVALID_PROVIDER,data);
             FSLogoutUtil.returnToSource(response, 
                 remoteDesc,
@@ -438,7 +444,9 @@ public class FSProcessLogoutServlet extends HttpServlet {
         String errorStatus = IFSConstants.SAML_RESPONDER;
         if (bVerify) {
             // Check if trusted provider
-            if (metaManager.isTrustedProvider(hostedEntityId,remoteEntityId)) {
+            if (metaManager.isTrustedProvider(
+                realm, hostedEntityId,remoteEntityId)) 
+            {
                 Object ssoToken = getValidToken(request);
                 if (ssoToken != null) {
                     // session is valid, start single logout
@@ -461,6 +469,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                                 hostedDescriptor);
                             handlerObj.setHostedDescriptorConfig(
                                 hostedConfig);
+                            handlerObj.setRealm(realm);
                             handlerObj.setHostedEntityId(hostedEntityId);
                             handlerObj.setHostedProviderRole(hostedRole);
                             handlerObj.setMetaAlias(metaAlias);
@@ -498,12 +507,12 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     }
                     //Verify request,getUserDNcall destroyPrincipalSession
                         userID = FSLogoutUtil.getUserFromRequest(
-                        reqLogout, hostedEntityId, hostedRole,hostedConfig,
-                        metaAlias);
+                        reqLogout, realm, hostedEntityId, hostedRole,
+                        hostedConfig, metaAlias);
                     if (userID != null) {
                         FSLogoutUtil.destroyPrincipalSession(
                             userID,
-                            hostedEntityId, 
+                            metaAlias,
                             reqLogout.getSessionIndex(),
                             request,
                             response);
@@ -544,6 +553,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
      *  to user agent
      * @param hostedDescriptor the provider for whom request is received
      * @param hostedConfig hosted provider's extended meta config
+     * @param realm the realm in which the provider resides
      * @param hostedEntityId hosted provider's entity id
      * @param metaAlias hosted provider's meta alias
      * @param ssoToken session token of the user
@@ -558,6 +568,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
         HttpServletResponse response,
         ProviderDescriptorType hostedDescriptor,
         BaseConfigType hostedConfig,
+        String realm,
         String hostedEntityId,
         String hostedRole,
         String metaAlias,
@@ -580,6 +591,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
             if (handlerObj != null) {
                 handlerObj.setHostedDescriptor(hostedDescriptor);
                 handlerObj.setHostedDescriptorConfig(hostedConfig);
+                handlerObj.setRealm(realm);
                 handlerObj.setHostedEntityId(hostedEntityId);
                 handlerObj.setHostedProviderRole(hostedRole);
                 handlerObj.setMetaAlias(metaAlias);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSReturnLogoutServlet.java,v 1.3 2007-01-16 20:14:22 exu Exp $
+ * $Id: FSReturnLogoutServlet.java,v 1.4 2007-10-16 21:49:17 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,6 +169,7 @@ public class FSReturnLogoutServlet extends HttpServlet {
                     IFSConstants.FEDERATION_FAILED_META_INSTANCE));
             return;
         }
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(providerAlias);
         String hostedRole = null;
         String hostedEntityId = null;
         BaseConfigType hostedConfig = null;
@@ -179,10 +180,10 @@ public class FSReturnLogoutServlet extends HttpServlet {
             if (hostedRole != null) {
                 if (hostedRole.equalsIgnoreCase(IFSConstants.IDP)) {
                     hostedConfig = metaManager.getIDPDescriptorConfig(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                 } else if (hostedRole.equalsIgnoreCase(IFSConstants.SP)) {
                     hostedConfig = metaManager.getSPDescriptorConfig(
-                        hostedEntityId);
+                        realm, hostedEntityId);
                 }
             }
             if (hostedConfig == null) {
@@ -227,9 +228,11 @@ public class FSReturnLogoutServlet extends HttpServlet {
         boolean isRemoteIDP = false;
         try {
             if (hostedRole.equalsIgnoreCase(IFSConstants.IDP)) {
-                remoteDesc = metaManager.getSPDescriptor(remoteEntityId);
+                remoteDesc = metaManager.getSPDescriptor(
+                    realm, remoteEntityId);
             } else if (hostedRole.equalsIgnoreCase(IFSConstants.SP)) {
-                remoteDesc = metaManager.getIDPDescriptor(remoteEntityId);
+                remoteDesc = metaManager.getIDPDescriptor(
+                    realm, remoteEntityId);
                 isRemoteIDP = true;
             }
         } catch (IDFFMetaException e){
@@ -264,7 +267,7 @@ public class FSReturnLogoutServlet extends HttpServlet {
             !isRemoteIDP)
         {
             FSLogoutUtil.removeCurrentSessionPartner(
-                hostedEntityId, remoteEntityId, ssoToken, univId);
+                providerAlias, remoteEntityId, ssoToken, univId);
         }
 
         if (bVerify) {
@@ -272,7 +275,7 @@ public class FSReturnLogoutServlet extends HttpServlet {
             // in ReturnSessionManager only if it is failure
             if (!logoutStatus.equalsIgnoreCase(IFSConstants.SAML_SUCCESS)) {
                 FSReturnSessionManager localManager =
-                    FSReturnSessionManager.getInstance(hostedEntityId);
+                    FSReturnSessionManager.getInstance(providerAlias);
                 if (localManager != null) {
                     if (FSUtils.debug.messageEnabled()) {
                         FSUtils.debug.message(

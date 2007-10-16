@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSessionMapStats.java,v 1.1 2006-10-30 23:14:25 qcheng Exp $
+ * $Id: FSSessionMapStats.java,v 1.2 2007-10-16 21:49:14 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,17 +35,22 @@ public class FSSessionMapStats implements StatsListener {
      private Map table;
      private String name;
      private String providerId;
+     private String realm;
 
      /**
       * Constructs a new <code>FSSessionMapStats</code> object.
       * @param table a map whose statistics to be run
       * @param name name of the map
+      * @param realm the realm in which the entity resides
       * @param providerId hosted provider ID
       */
-     public FSSessionMapStats(Map table, String name, String providerId) {
+     public FSSessionMapStats(
+         Map table, String name, String realm, String providerId) 
+    {
          this.table = table;
          this.name = name;
          this.providerId = providerId;
+         this.realm = realm;
      }
 
      /**
@@ -54,11 +59,12 @@ public class FSSessionMapStats implements StatsListener {
      public void printStats() {
          if (table.size() != 0 ) {
              FSSessionManager.sessStats.record("Number of entries in " + name 
-                  + " table for provider " + providerId + " : " 
-                  + table.size());
+                  + " table for provider " + providerId + " in realm " 
+                  + realm + " : " + table.size());
          } else {
              FSSessionManager.sessStats.record("No entry found in " + name 
-                  + " table for provider " + providerId + "."); 
+                  + " table for provider " + providerId
+                  + " in realm " + realm + "."); 
          }
      }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSTerminationReturnServlet.java,v 1.1 2006-10-30 23:14:37 qcheng Exp $
+ * $Id: FSTerminationReturnServlet.java,v 1.2 2007-10-16 21:49:19 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,14 +132,15 @@ public class FSTerminationReturnServlet extends HttpServlet {
                 providerAlias);
             String hostedEntityId = metaManager.getEntityIDByMetaAlias(
                 providerAlias);
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(providerAlias);
             if (hostedRole != null && 
                 hostedRole.equalsIgnoreCase(IFSConstants.IDP)) {
                 hostedConfig = metaManager.getIDPDescriptorConfig(
-                    hostedEntityId);
+                    realm, hostedEntityId);
             } else if (hostedRole != null &&
                 hostedRole.equalsIgnoreCase(IFSConstants.SP)) {
                 hostedConfig = metaManager.getSPDescriptorConfig(
-                    hostedEntityId);
+                    realm, hostedEntityId);
             }
             if (hostedRole == null || hostedConfig == null) {
                 throw new IDFFMetaException((String) null);

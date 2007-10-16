@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerClient.java,v 1.3 2007-08-20 07:25:57 stanguy Exp $
+ * $Id: FSAssertionManagerClient.java,v 1.4 2007-10-16 21:49:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,6 +71,7 @@ public final class FSAssertionManagerClient {
     private static boolean isLocal;
     private boolean useLocal;
     private String hostedEntityId;
+    private String metaAlias;
     
     // Remote JAX-RPC server for objects that use default constructor
     private static SOAPClient remoteStub;
@@ -84,15 +85,17 @@ public final class FSAssertionManagerClient {
     /**
      * Returns an instance of <code>AssertionManagerClient</code>.
      *
-     * @param hostedEntityId hosted provider ID
+     * @param metaAlias hosted provider's meta alias.
      * @throws FSException
      */
-    public FSAssertionManagerClient(String hostedEntityId) throws FSException
+    public FSAssertionManagerClient(String metaAlias) throws FSException
     {
         if (!checkedForLocal) {
             try {
                 // Construct the URL for local server
-                this.hostedEntityId = hostedEntityId;
+                this.metaAlias = metaAlias;
+                hostedEntityId = FSUtils.getIDFFMetaManager().
+                    getEntityIDByMetaAlias(metaAlias);
                 remoteStub = getServiceEndPoint(
                     SystemConfigurationUtil.getProperty(
                         SAMLConstants.SERVER_PROTOCOL),
@@ -103,7 +106,7 @@ public final class FSAssertionManagerClient {
                 if (FSAssertionManagerImpl.isLocal) {
                     isLocal = true;
                     assertionManager =
-                        FSAssertionManager.getInstance(hostedEntityId);
+                        FSAssertionManager.getInstance(metaAlias);
                 }
                 checkedForLocal = true;
             } catch (Exception e) {
@@ -128,16 +131,18 @@ public final class FSAssertionManagerClient {
      * that will use the provided <code>URL</code> for the management
      * of assertions.
      *
-     * @param hostedEntityId hosted provider ID.
+     * @param metaAlias hosted provider's meta alias.
      * @param url the <code>FSAssertionManager</code> service URL that
      *  will be used to create, get and delete <code>Assertion</code>s
      * @throws FSException
      */
-    public FSAssertionManagerClient(String hostedEntityId, String url)
+    public FSAssertionManagerClient(String metaAlias, String url)
         throws FSException {
         try {
             // Construct the JAX-RPC stub and set the URL endpoint
-            this.hostedEntityId = hostedEntityId;
+            this.metaAlias = metaAlias;
+            this.hostedEntityId = FSUtils.getIDFFMetaManager().
+                getEntityIDByMetaAlias(metaAlias);
             String[] urls = {url};
             stub = new SOAPClient(urls);
         } catch (Exception e) {
@@ -186,7 +191,7 @@ public final class FSAssertionManagerClient {
         
         String assertion = null;
         try {
-            Object[] obj = {hostedEntityId, artifact.getAssertionArtifact(),
+            Object[] obj = {metaAlias, artifact.getAssertionArtifact(),
                 Base64.encode(SAMLUtils.stringToByteArray(destID))};
             assertion = (String) stub.send("getAssertion", obj, null, null); 
             if (assertion == null && FSUtils.debug.messageEnabled()) {
@@ -241,7 +246,7 @@ public final class FSAssertionManagerClient {
         }
         String providerId = null;
         try {
-            Object[] obj = {hostedEntityId, artifact.getAssertionArtifact()};
+            Object[] obj = {metaAlias, artifact.getAssertionArtifact()};
             providerId = (String) stub.send("getDestIdForArtifact", obj, 
             		null, null); 
             if (providerId == null && FSUtils.debug.messageEnabled()) {
@@ -279,16 +284,15 @@ public final class FSAssertionManagerClient {
     /**
      * Checks if the user exists.
      * @param userDN user ID
-     * @param hostedEntityId hosted provider ID
      * @return <code>true</code> if the user exists; <code>false</code>
      *  otherwise.
      * @exception FSException if error occurred.
      */
-    public boolean isUserExists(String userDN, String hostedEntityId)
+    public boolean isUserExists(String userDN)
         throws FSException
     {
         try {
-            Object[] obj = {userDN, hostedEntityId};
+            Object[] obj = {userDN, metaAlias};
             Boolean ret = (Boolean) stub.send("isUserExists", obj, null,
             		null);
             if (FSUtils.debug.messageEnabled()) {
@@ -318,7 +322,7 @@ public final class FSAssertionManagerClient {
     {
         String status = null;
         try {
-            Object[] obj = {hostedEntityId, artifact.getAssertionArtifact()};
+            Object[] obj = {metaAlias, artifact.getAssertionArtifact()};
             status = (String) stub.send("getErrorStatus", obj, null, null); 
             if (status == null && FSUtils.debug.messageEnabled()) {
                 if (FSUtils.debug.messageEnabled()) {

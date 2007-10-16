@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptedNameIdentifier.java,v 1.2 2007-04-23 03:31:03 hengming Exp $
+ * $Id: EncryptedNameIdentifier.java,v 1.3 2007-10-16 21:49:09 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,12 +89,13 @@ public class EncryptedNameIdentifier {
      * identifier and the provider ID.
      *
      * @param ni the <code>NameIdentifier</code> object.
+     * @param realm The realm under which the entity resides.
      * @param providerID the remote provider identifier.
      * @return the <code>NameIdentifier</code> object.
      * @throws FSException on error.
      */
     public static NameIdentifier getEncryptedNameIdentifier(
-            NameIdentifier ni, String providerID)
+            NameIdentifier ni, String realm, String providerID)
             throws FSException {
         
         if(ni == null || providerID == null) {
@@ -106,10 +107,11 @@ public class EncryptedNameIdentifier {
         try {
             IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
             if (metaManager != null) {
-                providerDesc = metaManager.getSPDescriptor(providerID);
+                providerDesc = metaManager.getSPDescriptor(realm, providerID);
 
                 if (providerDesc == null) {
-                    providerDesc = metaManager.getIDPDescriptor(providerID);
+                    providerDesc = metaManager.getIDPDescriptor(
+                        realm, providerID);
                 }
             }
             if (providerDesc == null) {
@@ -197,13 +199,16 @@ public class EncryptedNameIdentifier {
      * Returns the decrypted <code>NameIdentifier</code> object.
      *
      * @param encNI the <code>EncryptedNameIdentifier</code> object.
+     * @param realm The realm under which the entity resides.
      * @param providerID the Hosted Provider Identifer.
      * @return the <code>NameIdentifier</code> object,
      *          the decrypted <code>NameIdentifier</code>.
      * @throws FSException on error.
      */
     public static NameIdentifier getDecryptedNameIdentifier(
-            NameIdentifier encNI, String providerID) throws FSException {
+        NameIdentifier encNI, String realm, String providerID) 
+        throws FSException 
+    {
         
         if(encNI == null || providerID == null) {
             FSUtils.debug.error("EncryptedNameIdentifier.getDecryptedName" +
@@ -214,10 +219,10 @@ public class EncryptedNameIdentifier {
         BaseConfigType providerConfig = null;
         try {
             providerConfig = FSUtils.getIDFFMetaManager().
-                getSPDescriptorConfig(providerID);
+                getSPDescriptorConfig(realm, providerID);
             if (providerConfig == null) {
                 providerConfig = FSUtils.getIDFFMetaManager().
-                    getIDPDescriptorConfig(providerID);
+                    getIDPDescriptorConfig(realm, providerID);
             }
         } catch (Exception ae) {
             FSUtils.debug.error("EncryptedNameIdentifier.getDecryptedName" +

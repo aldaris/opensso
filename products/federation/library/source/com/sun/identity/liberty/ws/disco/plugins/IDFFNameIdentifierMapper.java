@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFNameIdentifierMapper.java,v 1.1 2007-05-05 03:57:18 qcheng Exp $
+ * $Id: IDFFNameIdentifierMapper.java,v 1.2 2007-10-16 21:49:21 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,7 @@ public class IDFFNameIdentifierMapper implements NameIdentifierMapper {
 
             IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
             String metaAlias = metaManager.getIDPDescriptorConfig(
-                idpProviderID).getMetaAlias();
+                "/", idpProviderID).getMetaAlias();
             
             FSAccountManager fsaccountmgr = 
                 FSAccountManager.getInstance(metaAlias);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSRegistrationReturnServlet.java,v 1.2 2007-01-10 06:29:35 exu Exp $
+ * $Id: FSRegistrationReturnServlet.java,v 1.3 2007-10-16 21:49:19 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -144,6 +144,7 @@ public class FSRegistrationReturnServlet extends HttpServlet {
             return;
         }
 
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(providerAlias);
         ProviderDescriptorType hostedProviderDesc = null;
         BaseConfigType hostedConfig = null;
         String hostedEntityId = null;
@@ -157,16 +158,16 @@ public class FSRegistrationReturnServlet extends HttpServlet {
                 hostedProviderRole.equalsIgnoreCase(IFSConstants.IDP))
             {
                 hostedProviderDesc =
-                    metaManager.getIDPDescriptor(hostedEntityId);
+                    metaManager.getIDPDescriptor(realm, hostedEntityId);
                 hostedConfig =
-                    metaManager.getIDPDescriptorConfig(hostedEntityId);
+                    metaManager.getIDPDescriptorConfig(realm, hostedEntityId);
             } else if (hostedProviderRole != null &&
                 hostedProviderRole.equalsIgnoreCase(IFSConstants.SP))
             {
                 hostedProviderDesc =
-                    metaManager.getSPDescriptor(hostedEntityId);
+                    metaManager.getSPDescriptor(realm, hostedEntityId);
                 hostedConfig =
-                    metaManager.getSPDescriptorConfig(hostedEntityId);
+                    metaManager.getSPDescriptorConfig(realm, hostedEntityId);
             }
             if (hostedProviderDesc == null) {
                 throw new IDFFMetaException((String) null);
@@ -215,10 +216,12 @@ public class FSRegistrationReturnServlet extends HttpServlet {
         boolean isIDP = false;
         try {
             if (hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) {
-                remoteDesc = metaManager.getIDPDescriptor(remoteEntityId);
+                remoteDesc = metaManager.getIDPDescriptor(
+                    realm, remoteEntityId);
                 isIDP = true;
             } else {
-                remoteDesc = metaManager.getSPDescriptor(remoteEntityId);
+                remoteDesc = metaManager.getSPDescriptor(
+                    realm, remoteEntityId);
             }
         } catch (IDFFMetaException e){
             FSUtils.debug.error("FSRegistrationReturnServlet:", e);
@@ -251,6 +254,7 @@ public class FSRegistrationReturnServlet extends HttpServlet {
             handlerObj.setMetaAlias(providerAlias);
             handlerObj.setRemoteEntityId(remoteEntityId);
             handlerObj.setRemoteDescriptor(remoteDesc);
+            handlerObj.setRealm(realm);
             handlerObj.processRegistrationResponse(
                 request, response, regisResponse);
             return;

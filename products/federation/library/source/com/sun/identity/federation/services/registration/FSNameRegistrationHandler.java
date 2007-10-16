@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSNameRegistrationHandler.java,v 1.2 2007-01-10 06:29:34 exu Exp $
+ * $Id: FSNameRegistrationHandler.java,v 1.3 2007-10-16 21:49:18 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,6 +104,7 @@ public class FSNameRegistrationHandler {
     protected static String returnURL = "";
     protected static String regisSource = "";
     protected String remoteEntityId = "";
+    protected String realm = "";
     protected String hostedEntityId = "";
     protected String hostedProviderRole = null;;
          
@@ -175,6 +176,14 @@ public class FSNameRegistrationHandler {
                     IFSConstants.FEDERATION_FAILED_ACCOUNT_INSTANCE));
             managerInst = null;
         }
+    }
+
+    /**
+     * Sets realm.
+     * @param relam The realm under which the entity resides.
+     */
+    public void setRealm(String realm) {
+        this.realm = realm;
     }
 
     /**
@@ -259,13 +268,9 @@ public class FSNameRegistrationHandler {
                     FSUtils.debug.message(
                         "processRegistrationRequest IdPName : " + opaqueHandle);
                 }
-                // Get orgDN
-                String orgDN = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                    hostedConfig, IFSConstants.REALM_NAME);
                 if (FSUtils.debug.messageEnabled()) {
-                    FSUtils.debug.message("OrgDN : " + orgDN);
+                    FSUtils.debug.message("Realm : " + realm);
                 }
-                // end get orgDN
 
                 String searchDomain = hostedEntityId;
                 String nameQualifier = idpNameIdentifier.getNameQualifier(); 
@@ -283,7 +288,7 @@ public class FSNameRegistrationHandler {
                         hostedEntityId +
                         opaqueHandle );
                 }
-                this.userID = managerInst.getUserID(acctkey, orgDN, env);
+                this.userID = managerInst.getUserID(acctkey, realm, env);
                 if (this.userID == null) {                    
                     FSUtils.debug.message("UserID is null");
                     return false;
@@ -307,13 +312,9 @@ public class FSNameRegistrationHandler {
                 return true;
             } else {
                 FSUtils.debug.message("oldProvidedNameIdentifier not null");
-                // Get orgDN
-                String orgDN = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                    hostedConfig, IFSConstants.REALM_NAME);
                 if (FSUtils.debug.messageEnabled()) {
-                    FSUtils.debug.message("OrgDN : " + orgDN);
+                    FSUtils.debug.message("Realm : " + realm);
                 }
-                // end get orgDN
                 String opaqueHandle = "";
                 String nameQualifier = null;
                 boolean isSPEmpty = false;                                
@@ -341,7 +342,7 @@ public class FSNameRegistrationHandler {
                     FSUtils.debug.message("Search based on :" +
                         searchDomain + " " + opaqueHandle );
                 }
-                this.userID = managerInst.getUserID(acctkey, orgDN, env);
+                this.userID = managerInst.getUserID(acctkey, realm, env);
                 if (this.userID == null) {
                     FSUtils.debug.message("UserID is null in step 3");
                     opaqueHandle = idpNameIdentifier.getName();
@@ -358,13 +359,13 @@ public class FSNameRegistrationHandler {
                         FSUtils.debug.message("Search based on :"+
                             searchDomain + " " + opaqueHandle );
                     }
-                    this.userID = managerInst.getUserID(acctkey, orgDN, env);
+                    this.userID = managerInst.getUserID(acctkey, realm, env);
                     if (this.userID == null) {
                         opaqueHandle = idpNameIdentifier.getName();
                         searchDomain = hostedEntityId;
                         acctkey = new FSAccountFedInfoKey(
                             searchDomain, opaqueHandle);
-                        this.userID = managerInst.getUserID(acctkey, orgDN,env);
+                        this.userID = managerInst.getUserID(acctkey, realm,env);
                         if (this.userID == null) {
                             if (FSUtils.debug.messageEnabled()) {
                                  FSUtils.debug.message("UserID is null in "+
@@ -385,7 +386,7 @@ public class FSNameRegistrationHandler {
                                          opaqueHandle );
                                 }
                                 this.userID = managerInst.getUserID(
-                                              acctkey, orgDN, env);
+                                              acctkey, realm, env);
                             }
                         }
                         if (this.userID == null) {
@@ -1654,7 +1655,7 @@ public class FSNameRegistrationHandler {
                     NameIdentifier nameIdentifier = generateNameIdentifier();
                     if (acctInfo.getAffiliation()) {
                         String affiliationID = FSServiceUtils.getAffiliationID(
-                            remoteEntityId);
+                            realm, remoteEntityId);
                         if (affiliationID != null) {
                             nameIdentifier.setNameQualifier(affiliationID);
                         }
@@ -1754,7 +1755,7 @@ public class FSNameRegistrationHandler {
                     NameIdentifier nameIdentifier = generateNameIdentifier();
                     if (acctInfo.getAffiliation()) {
                         String affiliationID = FSServiceUtils.getAffiliationID(
-                            remoteEntityId);
+                            realm, remoteEntityId);
                         if (affiliationID != null) {
                             nameIdentifier.setNameQualifier(affiliationID);
                         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.4 2007-01-16 20:14:21 exu Exp $ 
+ * $Id: FSSSOAndFedHandler.java,v 1.5 2007-10-16 21:49:16 exu Exp $ 
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.federation.services.FSAssertionManager;
 import com.sun.identity.federation.services.FSAuthnDecisionHandler;
 import com.sun.identity.federation.services.FSAuthContextResult;
 import com.sun.identity.federation.services.FSIDPProxy;
+import com.sun.identity.federation.services.FSRealmIDPProxy;
 import com.sun.identity.federation.services.logout.FSTokenListener;
 import com.sun.identity.federation.services.util.FSNameIdentifierHelper;
 import com.sun.identity.federation.services.util.FSServiceUtils;
@@ -93,6 +94,7 @@ import java.io.ByteArrayInputStream;
  */
 public abstract class FSSSOAndFedHandler {
     private static FSIDPProxy proxyFinder = null; 
+    private static FSRealmIDPProxy realmProxyFinder = null; 
     protected static IDFFMetaManager metaManager = null;
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
@@ -106,6 +108,7 @@ public abstract class FSSSOAndFedHandler {
     protected String metaAlias = null;
     protected IDPDescriptorType hostedDesc = null;
     protected BaseConfigType hostedConfig = null;
+    protected String realm = null;
     protected String hostedEntityId = null;
     protected Status noFedStatus = null;
     protected FSAccountManager accountManager = null;
@@ -113,9 +116,22 @@ public abstract class FSSSOAndFedHandler {
     static {
         try {
             String proxyFinderClass = SystemConfigurationUtil.getProperty(
-                "com.sun.identity.federation.proxyfinder");
-            Class proxyClass = Class.forName(proxyFinderClass);
-            proxyFinder = (FSIDPProxy)proxyClass.newInstance();
+                "com.sun.identity.federation.realmproxyfinder");
+            if ((proxyFinderClass != null) &&
+                (proxyFinderClass.length() != 0))
+            {
+                Class proxyClass = Class.forName(proxyFinderClass);
+                realmProxyFinder = (FSRealmIDPProxy)proxyClass.newInstance();
+            } else {
+                proxyFinderClass = SystemConfigurationUtil.getProperty(
+                    "com.sun.identity.federation.proxyfinder");
+                if ((proxyFinderClass != null) &&
+                    (proxyFinderClass.length() != 0))
+                {
+                    Class proxyClass = Class.forName(proxyFinderClass);
+                    proxyFinder = (FSIDPProxy)proxyClass.newInstance();
+                }
+            }
             metaManager = FSUtils.getIDFFMetaManager();
         } catch (Exception ex) {
             FSUtils.debug.error("FSSSOAndFedHandler:Static Init Failed", ex);
@@ -170,6 +186,24 @@ public abstract class FSSSOAndFedHandler {
         return hostedEntityId;
     }
     
+    /**
+     * Gets the realm under which the entity resides.
+     * @return the realm under which the entity resides.
+     * @see #setRealm(String)
+     */
+    public String getRealm() {
+        return realm;
+    }
+
+    /**
+     * Sets the realm under which the entity resides.
+     * @param realm The realm under which the entity resides.
+     * @see #getRealm()
+     */
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
     /**
      * Default constructor.
      */ 
@@ -264,7 +298,7 @@ public abstract class FSSSOAndFedHandler {
         String authType = null;
         FSAuthContextResult authnResult = null;
         FSSessionManager sessionMgr = 
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
         
         if (authnRequest.getAuthnContext() != null){
             authenticationContextClassRef = 
@@ -339,7 +373,7 @@ public abstract class FSSSOAndFedHandler {
                 // added in case of multiple SPs
                 try {
                     sessionProvider.addListener(ssoToken,
-                        new FSTokenListener(hostedEntityId));
+                        new FSTokenListener(metaAlias));
                 } catch (Exception e) {
                     if (FSUtils.debug.messageEnabled()) {
                         FSUtils.debug.message(
@@ -391,7 +425,7 @@ public abstract class FSSSOAndFedHandler {
                     + "User's authentication status: " + authenticated);
             }
             FSAuthnDecisionHandler authnDecisionHandler = 
-                new FSAuthnDecisionHandler(hostedEntityId,request);
+                new FSAuthnDecisionHandler(realm, hostedEntityId,request);
             List defAuthnCxtList = new ArrayList();
             defAuthnCxtList.add(IDFFMetaUtils.getFirstAttributeValueFromConfig(
                 hostedConfig, IFSConstants.DEFAULT_AUTHNCONTEXT));
@@ -638,8 +672,12 @@ public abstract class FSSSOAndFedHandler {
                 .append("=").append(IFSConstants.AUTHN_INDICATOR_VALUE)
                 .append("&").append(IFSConstants.AUTHN_CONTEXT)
                 .append("=").append(URLEncDec.encode(authnContext))
+                .append("&").append(IFSConstants.REALM)
+                .append("=").append(URLEncDec.encode(realm))
                 .append("&").append(IFSConstants.PROVIDER_ID_KEY)
                 .append("=").append(URLEncDec.encode(hostedEntityId))
+                .append("&").append(IFSConstants.META_ALIAS)
+                .append("=").append(URLEncDec.encode(metaAlias))
                 .append("&").append(IFSConstants.AUTH_REQUEST_ID)
                 .append("=").append(URLEncDec.encode(
                     authnRequest.getRequestID()));
@@ -670,11 +708,8 @@ public abstract class FSSSOAndFedHandler {
             redirectUrl.append(IFSConstants.GOTO_URL_PARAM).append("=")
                 .append(URLEncDec.encode(gotoUrl.toString()));
             
-            String org = FSUtils.getAuthDomainURL(
-                IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                    hostedConfig, IFSConstants.REALM_NAME));
             redirectUrl.append("&").append(IFSConstants.ORGKEY).append("=")
-                    .append(URLEncDec.encode(org));
+                    .append(URLEncDec.encode(realm));
             //will change
             //request.getSession(true)
              //      .setAttribute(IFSConstants.AUTHN_CONTEXT, authnContext);
@@ -739,7 +774,7 @@ public abstract class FSSSOAndFedHandler {
             return false;
         }
         FSSessionManager sessionManager = 
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
         FSSession session = sessionManager.getSession(userID, sessionID);
         
         if (session != null){
@@ -815,17 +850,15 @@ public abstract class FSSSOAndFedHandler {
         FSAuthnResponse authnResponse = null;
         try {
             String requestID = authnRequest.getRequestID();
-            String sourceID = hostedEntityId;
             FSAssertionManager am = 
-                FSAssertionManager.getInstance(hostedEntityId);
-            am.setEntityId(hostedEntityId);
+                FSAssertionManager.getInstance(metaAlias);
             FSAssertion assertion = null;
             SessionProvider sessionProvider = SessionManager.getProvider();
             assertion = am.createFSAssertion(
                 sessionProvider.getSessionID(ssoToken),
                 null,
+                realm,
                 spEntityId,
-                sourceID,
                 userHandle,
                 idpHandle,
                 inResponseTo,
@@ -982,7 +1015,7 @@ public abstract class FSSSOAndFedHandler {
         if (affiliationID != null) {
             try {
                 isAffiliationFed =  metaManager.isAffiliateMember(
-                            hostedEntityId, affiliationID);
+                            realm, hostedEntityId, affiliationID);
             } catch (Exception e) {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSSSOAndFedHandler.doAccount" +
@@ -1099,10 +1132,10 @@ public abstract class FSSSOAndFedHandler {
         spEntityId = authnRequest.getProviderId();
 
         try {
-            spDescriptor = metaManager.getSPDescriptor(spEntityId);
-            spConfig = metaManager.getSPDescriptorConfig(spEntityId);
+            spDescriptor = metaManager.getSPDescriptor(realm, spEntityId);
+            spConfig = metaManager.getSPDescriptorConfig(realm, spEntityId);
             if (!metaManager.isTrustedProvider(
-                hostedEntityId, spEntityId)) 
+                realm, hostedEntityId, spEntityId)) 
             { 
                 FSUtils.debug.error(
                     "FSSSOAndFedHandler.processAuthnRequest: "
@@ -1437,7 +1470,7 @@ public abstract class FSSSOAndFedHandler {
          }
 
          FSSessionManager sessManager = 
-             FSSessionManager.getInstance(hostedEntityId);
+             FSSessionManager.getInstance(metaAlias);
          String requestID = newAuthnRequest.getRequestID();
          sessManager.setAuthnRequest(requestID, newAuthnRequest);
          sessManager.setProxySPDescriptor(requestID, spDescriptor);
@@ -1449,7 +1482,7 @@ public abstract class FSSSOAndFedHandler {
          BaseConfigType localDescriptorConfig = null;
          try {
              IDPDescriptorType idpDescriptor = 
-                 metaManager.getIDPDescriptor(preferredIDP);
+                 metaManager.getIDPDescriptor(realm, preferredIDP);
 
              targetURL = idpDescriptor.getSingleSignOnServiceURL();
              if (targetURL == null) {
@@ -1459,9 +1492,10 @@ public abstract class FSSSOAndFedHandler {
                  return;
              }
 
-             localDescriptor = metaManager.getSPDescriptor(hostedEntityId);
+             localDescriptor = metaManager.getSPDescriptor(
+                 realm, hostedEntityId);
              localDescriptorConfig =
-                 metaManager.getSPDescriptorConfig(hostedEntityId);
+                 metaManager.getSPDescriptorConfig(realm, hostedEntityId);
          } catch (Exception e) {
              FSUtils.debug.error(
                  "FSSSOAndFedHandler.sendProxyAuthnRequest:",e);
@@ -1533,8 +1567,13 @@ public abstract class FSSSOAndFedHandler {
     private String getPreferredIDP(FSAuthnRequest authnRequest)
         throws FSRedirectException 
     {
-        return proxyFinder.getPreferredIDP(
-            authnRequest, hostedEntityId, request, response);
+        if (realmProxyFinder != null) {
+            return realmProxyFinder.getPreferredIDP(
+                authnRequest, realm, hostedEntityId, request, response);
+        } else {  
+            return proxyFinder.getPreferredIDP(
+                authnRequest, hostedEntityId, request, response);
+        }
     }
 
 

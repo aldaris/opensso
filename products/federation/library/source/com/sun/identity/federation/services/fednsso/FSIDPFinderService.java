@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSIDPFinderService.java,v 1.2 2007-05-17 19:31:57 qcheng Exp $
+ * $Id: FSIDPFinderService.java,v 1.3 2007-10-16 21:49:15 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,8 @@ public class FSIDPFinderService extends HttpServlet {
         FSUtils.debug.message("FSIDPFinderService.doGet::Init");
         String entityID = request.getParameter("ProviderID");
         String requestID = request.getParameter("RequestID");
-        if (entityID == null || requestID == null) {
+        String realm = request.getParameter("Realm");
+        if (entityID == null || requestID == null || realm == null) {
             FSUtils.debug.error("FSIDPFinderService.doGet:: Request is missing"+
                 "either ProviderID or the RequestID"); 
             throw new ServletException("invalidRequest");
@@ -107,7 +108,7 @@ public class FSIDPFinderService extends HttpServlet {
         String idpID = null;
         try {
             idpID = getCommonDomainIDP(
-                request, response, entityID, requestID);
+                request, response, realm, entityID, requestID);
         } catch (FSRedirectException fe) {
             if (FSUtils.debug.messageEnabled()) {
                FSUtils.debug.message("FSIDPFinderService.doGet:Redirection" +
@@ -116,14 +117,31 @@ public class FSIDPFinderService extends HttpServlet {
             return;
         }
 
+        String hostMetaAlias = null;
+        BaseConfigType hostConfig = null;
+        IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
+        try {
+            if (metaManager != null ) {
+                hostConfig = metaManager.getIDPDescriptorConfig(
+                    realm, entityID);
+                if (hostConfig != null) {
+                    hostMetaAlias = hostConfig.getMetaAlias();
+                }
+            }
+        } catch (IDFFMetaException ie) {
+            FSUtils.debug.error("FSIDPFinderService.doGet:: Failure in " +
+                "getting proxying hosted meta:", ie);
+            return;
+        }
+
         FSSessionManager sessionManager = 
-            FSSessionManager.getInstance(entityID);
+            FSSessionManager.getInstance(hostMetaAlias);
         FSAuthnRequest authnReq = sessionManager.getAuthnRequest(requestID);
 
         // If the introduction cookie is not available or the provider
         // is same as the local provider then do a local login.
         if (idpID == null || idpID.equals(entityID)) {
-            String loginURL = getLoginURL(authnReq, entityID, request);
+            String loginURL = getLoginURL(authnReq, realm, entityID, request);
             if (loginURL == null) {
                 FSUtils.debug.error("FSIDPFinderService.doGet : login url" +
                     " is null");
@@ -144,23 +162,17 @@ public class FSIDPFinderService extends HttpServlet {
                 FSProxyHandler handler = new FSProxyHandler(request, response);
                 handler.setHostedEntityId(entityID);
                 IDPDescriptorType hostDesc = null;
-                BaseConfigType hostConfig = null;
-                String hostMetaAlias = null;
                 SPDescriptorType origSPDesc = null;
-                IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
                 if (metaManager != null ) {
-                    hostDesc = metaManager.getIDPDescriptor(entityID);
-                    hostConfig = metaManager.getIDPDescriptorConfig(entityID);
-                    if (hostConfig != null) {
-                        hostMetaAlias = hostConfig.getMetaAlias();
-                    }
+                    hostDesc = metaManager.getIDPDescriptor(realm, entityID);
                     origSPDesc = metaManager.getSPDescriptor(
-                        authnReq.getProviderId());
+                        realm, authnReq.getProviderId());
                 }
                 handler.setSPDescriptor(origSPDesc);
                 handler.setHostedDescriptor(hostDesc);
                 handler.setHostedDescriptorConfig(hostConfig);
                 handler.setMetaAlias(hostMetaAlias);
+                handler.setRealm(realm);
                 handler.sendProxyAuthnRequest(authnReq, idpID);
             } catch (IDFFMetaException ie) {
                 FSUtils.debug.error("FSIDPFinderService.doGet:: Failure in " +
@@ -192,6 +204,7 @@ public class FSIDPFinderService extends HttpServlet {
      * Gets a preferred IDP from the common domain cookie.
      * @param request HttpServletRequest
      * @param response HttpServletResponse
+     * @param realm The realm under which the entity resides.
      * @param entityID Hosted entity ID.
      * @param requestID Original Authentication Request ID.
      * @exception FSRedirectException for the redirection.
@@ -200,12 +213,13 @@ public class FSIDPFinderService extends HttpServlet {
     private String getCommonDomainIDP(
         HttpServletRequest request,
         HttpServletResponse response,
+        String realm,
         String entityID,
         String requestID
     ) throws FSRedirectException, IOException 
     {
 
-        String idpID = FSUtils.findPreferredIDP(request);
+        String idpID = FSUtils.findPreferredIDP(realm, request);
         if (idpID != null) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSIDPFinderService.getCommonDomainIDP:" +
@@ -223,7 +237,7 @@ public class FSIDPFinderService extends HttpServlet {
                 List cotList = null;
                 if (metaManager != null) {
                     BaseConfigType spConfig = 
-                        metaManager.getSPDescriptorConfig(entityID);
+                        metaManager.getSPDescriptorConfig(realm, entityID);
                     cotList = IDFFMetaUtils.getAttributeValueFromConfig(
                         spConfig, IFSConstants.COT_LIST);
                 }
@@ -262,7 +276,7 @@ public class FSIDPFinderService extends HttpServlet {
            try {
                CircleOfTrustManager cotManager = new CircleOfTrustManager();
                CircleOfTrustDescriptor cotDesc =
-                   cotManager.getCircleOfTrust("/", cotName);
+                   cotManager.getCircleOfTrust(realm, cotName);
                if (cotDesc != null &&
                    (cotDesc.getCircleOfTrustStatus())
                        .equalsIgnoreCase(IFSConstants.ACTIVE))
@@ -279,6 +293,8 @@ public class FSIDPFinderService extends HttpServlet {
                returnURL.append(baseURL).append(IFSConstants.IDP_FINDER_URL)
                    .append("?").append("RequestID")
                    .append("=").append(URLEncDec.encode(requestID))
+                   .append("&").append("Realm=")
+                   .append(URLEncDec.encode(realm))
                    .append("&").append("ProviderID=")
                    .append(URLEncDec.encode(entityID));
                StringBuffer redirectURL = new StringBuffer(300);
@@ -302,6 +318,7 @@ public class FSIDPFinderService extends HttpServlet {
 
     private String getLoginURL(
         FSAuthnRequest authnRequest, 
+        String realm,
         String hostProviderID,
         HttpServletRequest httpRequest) 
     {
@@ -322,8 +339,9 @@ public class FSIDPFinderService extends HttpServlet {
         BaseConfigType idpConfig = null;
         try {
             IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
-            idpDescriptor = metaManager.getIDPDescriptor(hostProviderID);
-            idpConfig = metaManager.getIDPDescriptorConfig(hostProviderID);
+            idpDescriptor = metaManager.getIDPDescriptor(realm, hostProviderID);
+            idpConfig = metaManager.getIDPDescriptorConfig(
+                realm, hostProviderID);
         } catch (Exception e) {
             FSUtils.debug.error("FSIDPFinderServer.getLoginURL : exception "+
                 "while retrieving meta config", e);
@@ -333,7 +351,7 @@ public class FSIDPFinderService extends HttpServlet {
         String authType = authnRequest.getAuthContextCompType();
 
         FSAuthnDecisionHandler authnDecisionHandler =
-            new FSAuthnDecisionHandler(hostProviderID, httpRequest);
+            new FSAuthnDecisionHandler(realm, hostProviderID, httpRequest);
         List defAuthnCtxList = IDFFMetaUtils.getAttributeValueFromConfig(
                 idpConfig, IFSConstants.DEFAULT_AUTHNCONTEXT);
         FSAuthContextResult authnResult = authnDecisionHandler.
@@ -341,6 +359,7 @@ public class FSIDPFinderService extends HttpServlet {
         return formatLoginURL(
             authnResult.getLoginURL(), 
             authnResult.getAuthContextRef(),
+            realm,
             hostProviderID, 
             idpDescriptor,
             idpConfig,
@@ -351,6 +370,7 @@ public class FSIDPFinderService extends HttpServlet {
     private String formatLoginURL(
         String loginURL, 
         String authnContext,
+        String realm,
         String hostProviderID,
         IDPDescriptorType idpDescriptor,
         BaseConfigType idpConfig,
@@ -381,8 +401,14 @@ public class FSIDPFinderService extends HttpServlet {
                     .append(IFSConstants.AUTHN_CONTEXT)
                     .append("=").append(URLEncDec.encode(authnContext))
                     .append("&")
+                    .append(IFSConstants.REALM)
+                    .append("=").append(URLEncDec.encode(realm))
+                    .append("&")
                     .append(IFSConstants.PROVIDER_ID_KEY)
                     .append("=").append(URLEncDec.encode(hostProviderID))
+                    .append("&")
+                    .append(IFSConstants.META_ALIAS)
+                    .append("=").append(URLEncDec.encode(metaAlias))
                     .append("&")
                     .append(IFSConstants.AUTH_REQUEST_ID)
                     .append("=").append(URLEncDec.encode(
@@ -414,11 +440,9 @@ public class FSIDPFinderService extends HttpServlet {
             redirectUrl.append(IFSConstants.GOTO_URL_PARAM).append("=")
                 .append(URLEncDec.encode(gotoUrl.toString()));
 
-            String org = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                idpConfig, IFSConstants.REALM_NAME);
-            if (org != null && org.length() != 0) {
+            if (realm != null && realm.length() != 0) {
                 redirectUrl.append("&").append(IFSConstants.ORGKEY).append("=")
-                    .append(URLEncDec.encode(org));
+                    .append(URLEncDec.encode(realm));
             }
             int len = redirectUrl.length() - 1;
             if (redirectUrl.charAt(len) == '&') {

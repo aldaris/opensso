@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSIDPProxy.java,v 1.2 2007-10-16 21:49:13 exu Exp $
+ * $Id: FSRealmIDPProxy.java,v 1.1 2007-10-16 21:49:14 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,17 +31,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This interface <code>FSIDPProxy</code> is used to find a preferred Identity
- * Authenticating provider to proxy the authentication request.
+ * This interface <code>FSRealmIDPProxy</code> is used to find a preferred 
+ * Identity Authenticating provider to proxy the authentication request.
  * @supported.all.api
- * @deprecated This SPI is deprecated.
- * @see com.sun.identity.federation.services.FSRealmIDPProxy
  */ 
-public interface FSIDPProxy {
+public interface FSRealmIDPProxy {
 
     /**
      * Returns the preferred IDP.
      * @param authnRequest original authnrequest
+     * @param realm The realm under which the entity resides.
      * @param hostProviderID ProxyIDP providerID.
      * @param request HttpServletRequest
      * @param response HttpServletResponse
@@ -49,11 +48,10 @@ public interface FSIDPProxy {
      *  <code>null</code> to disable the proxying and continue for the local 
      *  authenticating provider. 
      * @exception FSRedirectException if redirect was done
-     * @deprecated This method is deprecated.
-     * @see com.sun.identity.federation.services.FSRealmIDPProxy
      */
     public String getPreferredIDP (
           FSAuthnRequest authnRequest, 
+          String realm,
           String hostProviderID,
           HttpServletRequest request,
           HttpServletResponse response 

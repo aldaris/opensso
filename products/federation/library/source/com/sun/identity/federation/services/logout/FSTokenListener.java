@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSTokenListener.java,v 1.1 2006-10-30 23:14:33 qcheng Exp $
+ * $Id: FSTokenListener.java,v 1.2 2007-10-16 21:49:17 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import com.sun.identity.plugin.session.SessionListener;
  */
 public class FSTokenListener implements SessionListener {
     
-    private String hostedProviderId = null;
+    private String metaAlias = null;
     
     /**
      * Default constructor.
@@ -43,18 +43,18 @@ public class FSTokenListener implements SessionListener {
 
     /**
      * Construct a <code>FSTokenListener</code> object.
-     * @param providerId hosted provider identifier
+     * @param metaAlias hosted provider's meta alias
      */
-    public FSTokenListener(String providerId) {
-        hostedProviderId = providerId;
+    public FSTokenListener(String metaAlias) {
+        this.metaAlias = metaAlias;
     }
     
     /**
      * Sets the hosted Provider where cleanup of session must happen.
-     * @param hostedProviderId the Hosted provider Identifier
+     * @param metaAlias the Hosted provider's meta alias
      */
-    public void setHostedProvider(String hostedProviderId) {
-        this.hostedProviderId = hostedProviderId;
+    public void setMetaAlias(String metaAlias) {
+        this.metaAlias = metaAlias;
     }
     
     /**
@@ -62,6 +62,6 @@ public class FSTokenListener implements SessionListener {
      * @param session The session being invalidated
      */
     public void sessionInvalidated(Object session) {
-        FSLogoutUtil.removeTokenFromSession(session, hostedProviderId);
+        FSLogoutUtil.removeTokenFromSession(session, metaAlias);
     }
 }

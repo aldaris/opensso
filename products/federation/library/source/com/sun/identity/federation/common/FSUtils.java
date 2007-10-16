@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSUtils.java,v 1.1 2006-10-30 23:14:03 qcheng Exp $
+ * $Id: FSUtils.java,v 1.2 2007-10-16 21:49:08 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -297,18 +297,20 @@ public class FSUtils {
 
     /**
      * Returns entity ID from the Succinct ID.
+     * @param realm The realm under which the entity resides.
      * @param succinctID Succinct ID.
      * @return String entity ID; or <code>null</code> for failure in 
      *  converting the succinct id to entity id.
      */ 
-    private static String getProviderIDFromSuccinctID(String succinctID) {
+    private static String getProviderIDFromSuccinctID(
+        String realm, String succinctID) {
         if (succinctID == null) {
             return null;
         }
         try {
             metaInstance = getIDFFMetaManager();
             if (metaInstance != null) {
-                return metaInstance.getEntityIDBySuccinctID(succinctID);
+                return metaInstance.getEntityIDBySuccinctID(realm, succinctID);
             }
         } catch(Exception ex) {
             debug.error("FSUtils.getProviderIDFromSuccinctID::", ex);
@@ -318,11 +320,13 @@ public class FSUtils {
 
     /**
      * Finds the preferred IDP from the HttpServletRequest.
+     * @param realm The realm under which the entity resides.
      * @param request HttpServletRequest.
      * @return String preferred IDP entity ID; or <code>null</code> for failure
      *  or unable to find in the request.
      */
-    public static String findPreferredIDP(HttpServletRequest request) {
+    public static String findPreferredIDP(
+        String realm, HttpServletRequest request) {
 
         if (request == null) {
             return null;
@@ -348,7 +352,7 @@ public class FSUtils {
         preferredSuccinctId = SAMLUtils.byteArrayToString(
             Base64.decode(preferredSuccinctId));
 
-        return getProviderIDFromSuccinctID(preferredSuccinctId);
+        return getProviderIDFromSuccinctID(realm, preferredSuccinctId);
     }
 
     /**

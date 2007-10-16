@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCOTUtils.java,v 1.2 2006-12-09 06:21:14 veiming Exp $
+ * $Id: IDFFCOTUtils.java,v 1.3 2007-10-16 21:49:09 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,21 +55,22 @@ public class IDFFCOTUtils {
      * <code>cotlist</code> attribute. The Service Provider and Identity
      * Provider Configurations are updated.
      *
+     * @param realm realm the entity resides in.
      * @param cotName the circle of trust name.
-     * @entityID the name of the Entity identifier.
+     * @param entityID the name of the Entity identifier.
      * @throws IDFFMetaException if there is a configuration error when
      *         updating the configuration.
      * @throws JAXBException is there is an error updating the entity
      *          configuration.
      */
-    public void updateEntityConfig(String cotName,String entityID)
+    public void updateEntityConfig(String realm, String cotName,String entityID)
     throws IDFFMetaException , JAXBException {
         String classMethod = "IDFFCOTUtils.updateEntityConfig: ";
         IDFFMetaManager idffMetaMgr = new IDFFMetaManager(null);
         ObjectFactory objFactory = new ObjectFactory();
         // Check whether the entity id existed in the DS
         EntityDescriptorElement entityDesc =
-                idffMetaMgr.getEntityDescriptor(entityID);
+                idffMetaMgr.getEntityDescriptor(realm, entityID);
         
         if (entityDesc == null) {
             debug.error(classMethod +" No such entity: " + entityID);
@@ -77,7 +78,7 @@ public class IDFFCOTUtils {
             throw new IDFFMetaException("invalidEntityID", data);
         }
         EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(entityID);
+                idffMetaMgr.getEntityConfig(realm, entityID);
         if (entityConfig == null) {
             // create entity config and add the cot attribute
             BaseConfigType IDFFCOTUtils = null;
@@ -100,15 +101,16 @@ public class IDFFCOTUtils {
                 IDFFCOTUtils.getAttribute().add(atype);
                 entityConfig.getIDPDescriptorConfig().add(IDFFCOTUtils);
             }
-            idffMetaMgr.setEntityConfig(entityConfig);
+            idffMetaMgr.setEntityConfig(realm, entityConfig);
         } else {
             // update the sp and idp entity config
             List spConfigList = entityConfig.getSPDescriptorConfig();
             List idpConfigList = entityConfig.getIDPDescriptorConfig();
             updateCOTAttrInConfig(
-                    spConfigList,cotName,entityConfig,objFactory,idffMetaMgr);
+                realm,spConfigList,cotName,entityConfig,objFactory,idffMetaMgr);
             updateCOTAttrInConfig(
-                    idpConfigList,cotName,entityConfig,objFactory,idffMetaMgr);
+                realm, idpConfigList,cotName,entityConfig,objFactory,
+                idffMetaMgr);
         }
     }
     
@@ -117,30 +119,34 @@ public class IDFFCOTUtils {
      * list attribute in the Entity Config. The Service Provider and Identity
      * Provider Entity Configuration are updated.
      *
+     * @param realm realm the entity resides in.
      * @param cotName the circle of trust name to be removed.
      * @param entityID the entity identifier of the provider.
      * @throws IDFFMetaException if there is an error updating the entity
      *          config.
      * @throws JAXBException if there is an error updating the entity config.
      */
-    public void removeFromEntityConfig(String cotName,String entityID)
+    public void removeFromEntityConfig(
+        String realm, String cotName,String entityID)
     throws IDFFMetaException, JAXBException {
         String classMethod = "IDFFCOTUtils.removeFromEntityConfig: ";
         IDFFMetaManager idffMetaMgr = new IDFFMetaManager(null);
         // Check whether the entity id existed in the DS
         EntityDescriptorElement entityDesc =
-                idffMetaMgr.getEntityDescriptor(entityID);
+                idffMetaMgr.getEntityDescriptor(realm, entityID);
         if (entityDesc == null) {
             debug.error(classMethod +"No such entity: " + entityID);
             String[] data = { entityID };
             throw new IDFFMetaException("invalidEntityID", data);
         }
         EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(entityID);
+                idffMetaMgr.getEntityConfig(realm, entityID);
         if (entityConfig != null) {
             List spConfigList = entityConfig.getSPDescriptorConfig();
             List idpConfigList = entityConfig.getIDPDescriptorConfig();
-            removeCOTNameFromConfig(spConfigList,cotName,
+            removeCOTNameFromConfig(realm, spConfigList,cotName,
+                    entityConfig,idffMetaMgr);
+            removeCOTNameFromConfig(realm, idpConfigList,cotName,
                     entityConfig,idffMetaMgr);
         }
     }
@@ -161,6 +167,7 @@ public class IDFFCOTUtils {
      * Updates the entity config to update the values of the
      * <code>cotlist</code> attribute.
      *
+     * @param realm realm the entity resides in.
      * @param configList the list containing config elements.
      * @param cotName the circle of trust name.
      * @param entityConfig the <code>EntityConfigElement</code> object
@@ -171,7 +178,8 @@ public class IDFFCOTUtils {
      * @throws <code>JAXBException</code> if there is an error setting the
      *         config.
      */
-    private void updateCOTAttrInConfig(List configList,String cotName,
+    private void updateCOTAttrInConfig(String realm,
+            List configList,String cotName,
             EntityConfigElement entityConfig,
             ObjectFactory objFactory,
             IDFFMetaManager idffMetaMgr)
@@ -187,7 +195,7 @@ public class IDFFCOTUtils {
                     List avpl = avp.getValue();
                     if (avpl.isEmpty() ||!containsValue(avpl,cotName)) {
                         avpl.add(cotName);
-                        idffMetaMgr.setEntityConfig(entityConfig);
+                        idffMetaMgr.setEntityConfig(realm, entityConfig);
                         break;
                     }
                 }
@@ -198,7 +206,7 @@ public class IDFFCOTUtils {
                 atype.setName(COT_LIST);
                 atype.getValue().add(cotName);
                 list.add(atype);
-                idffMetaMgr.setEntityConfig(entityConfig);
+                idffMetaMgr.setEntityConfig(realm, entityConfig);
             }
         }
     }
@@ -207,7 +215,10 @@ public class IDFFCOTUtils {
      * Iterates through a list of entity config elements and
      * removes the circle trust name from the entity config.
      */
-    private void removeCOTNameFromConfig(List configList,String cotName,
+    private void removeCOTNameFromConfig(
+            String realm,
+            List configList,
+            String cotName,
             EntityConfigElement entityConfig,
             IDFFMetaManager idffMetaMgr)
             throws IDFFMetaException {
@@ -221,7 +232,7 @@ public class IDFFCOTUtils {
                     if (avpl != null && !avpl.isEmpty() &&
                             containsValue(avpl,cotName)) {
                         avpl.remove(cotName);
-                        idffMetaMgr.setEntityConfig(entityConfig);
+                        idffMetaMgr.setEntityConfig(realm, entityConfig);
                         break;
                     }
                 }

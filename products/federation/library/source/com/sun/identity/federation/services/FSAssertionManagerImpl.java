@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerImpl.java,v 1.2 2007-08-20 07:25:57 stanguy Exp $
+ * $Id: FSAssertionManagerImpl.java,v 1.3 2007-10-16 21:49:11 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,7 @@ public class FSAssertionManagerImpl implements FSAssertionManagerIF {
 
     /**
      * Returns assertion associated with the artifact.
-     * @param hostedEntityId hosted provider's entity ID
+     * @param metaAlias hosted provider's meta alias.
      * @param artifact assertion artifact.
      * @param destID The destination site requesting the assertion using
      *  the artifact.
@@ -62,12 +62,12 @@ public class FSAssertionManagerImpl implements FSAssertionManagerIF {
      * @exception FSRemoteException, RemoteException If an error occurred during     *  the process
      */
     public String getAssertion(
-        String hostedEntityId, String artifact, String destID)
+        String metaAlias, String artifact, String destID)
         throws FSRemoteException 
     {
         try {
             FSAssertionManager assertionManager = 
-                FSAssertionManager.getInstance(hostedEntityId);
+                FSAssertionManager.getInstance(metaAlias);
             FSAssertion a = (FSAssertion)assertionManager.getAssertion(
                 new FSAssertionArtifact(artifact),
                 SAMLUtils.byteArrayToString(Base64.decode(destID)));
@@ -92,17 +92,17 @@ public class FSAssertionManagerImpl implements FSAssertionManagerIF {
     
     /**
      * Returns the destination id the artifact is created for.
-     * @param hostedEntityId hosted provider's entity ID
+     * @param metaAlias hosted provider's meta alias
      * @param artifact assertion artifact string
      * @return destination id
      * @exception FSRemoteException if error occurred.
      */
-    public String getDestIdForArtifact(String hostedEntityId, String artifact)
+    public String getDestIdForArtifact(String metaAlias, String artifact)
         throws FSRemoteException 
     {
        try {
             FSAssertionManager assertionManager = 
-                FSAssertionManager.getInstance(hostedEntityId);
+                FSAssertionManager.getInstance(metaAlias);
             String destID = assertionManager.getDestIdForArtifact(
                 new FSAssertionArtifact(artifact));
             if (destID == null) {
@@ -125,12 +125,12 @@ public class FSAssertionManagerImpl implements FSAssertionManagerIF {
      *  otherwise.
      * @exception FSRemoteException,RemoteException if error occurred.
      */
-    public boolean isUserExists(String userDN, String hostedEntityId)
+    public boolean isUserExists(String userDN, String metaAlias)
         throws FSRemoteException
     {
         try {
             FSSessionManager sessionMgr = FSSessionManager.getInstance(
-                hostedEntityId);
+                metaAlias);
             synchronized(sessionMgr) {
                 FSUtils.debug.message("About to call getSessionList");
                 List sessionList = sessionMgr.getSessionList(userDN);
@@ -154,15 +154,15 @@ public class FSAssertionManagerImpl implements FSAssertionManagerIF {
         }
     }
 
-    public String getErrorStatus( String hostedEntityId, String artifact) 
+    public String getErrorStatus( String metaAlias, String artifact) 
         throws FSRemoteException{
         try {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSAssertionManagerImpl.getErrStatus(" 
-                        + hostedEntityId + ", " + artifact );
+                        + metaAlias + ", " + artifact );
             }
             AssertionArtifact aa = new FSAssertionArtifact(artifact);
-            Status s = FSAssertionManager.getInstance( hostedEntityId )
+            Status s = FSAssertionManager.getInstance( metaAlias )
                 .getErrorStatus( aa );
             if ( null != s )
                 return s.toString( true, true );

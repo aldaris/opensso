@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationSPAdapter.java,v 1.1 2007-01-10 06:29:31 exu Exp $
+ * $Id: FederationSPAdapter.java,v 1.2 2007-10-16 21:49:10 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,13 +139,17 @@ public interface FederationSPAdapter {
      */
     public static final int SSO_FAILED_TOKEN_GENERATION = 16;
 
+    /**
+     * Adapter's initialization parameter name for realm.
+     */
+    public static final String ENV_REALM = "REALM=";
 
     /**
      * Initializes the federation adapter, this method will only be executed
      * once after creation of the adapter instance.
      * @param hostedEntityID entity ID for the hosted SP
-     * @param initParams  initial set of parameters configured in the service
-     * 		provider for this adapter 
+     * @param initParams  initial set of parameters(such as REALM) configured
+     *  in the service provider for this adapter.
      */
     public void initialize(String hostedEntityID, Set initParams);
  

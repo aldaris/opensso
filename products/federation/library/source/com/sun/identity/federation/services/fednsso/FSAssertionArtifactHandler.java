@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.6 2007-10-15 09:12:38 mchlbgs Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.7 2007-10-16 21:49:14 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,7 @@ import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.federation.services.FSSPAuthenticationContextInfo;
 import com.sun.identity.federation.services.FSAttributeMapper;
+import com.sun.identity.federation.services.FSRealmAttributeMapper;
 import com.sun.identity.federation.services.FSServiceManager;
 import com.sun.identity.federation.services.FSSession;
 import com.sun.identity.federation.services.FSSessionManager;
@@ -126,10 +127,12 @@ public class FSAssertionArtifactHandler {
     protected List attrStatements = new ArrayList();
     protected SPDescriptorType hostDesc = null;
     protected BaseConfigType hostConfig = null;
+    protected String realm = null;
     protected String hostEntityId = null;
     protected String hostMetaAlias = null;
     protected static String ANONYMOUS_PRINCIPAL = "anonymous";
     protected FSAttributeMapper attributeMapper = null;
+    protected FSRealmAttributeMapper realmAttributeMapper = null;
     protected FSResponse samlResponse = null;
     
     static {
@@ -169,14 +172,32 @@ public class FSAssertionArtifactHandler {
         hostMetaAlias = metaAlias;
     }
     /**
-     * Gets hosted SP's Entity ID.provider id.
+     * Gets hosted SP's Entity ID.
      * @return hosted entity id.
-     * @see #setHostEntityId(String)Id(String)
+     * @see #setHostEntityId(String)
      */
     public String getHostEntityId() {
         return hostEntityId;
     }
     
+    /**
+     * Gets the realm under which the entity resides.
+     * @return the realm under which the entity resides.
+     * @see #setRealm(String)
+     */
+    public String getRealm() {
+        return realm;
+    }
+
+    /**
+     * Sets the realm under which the entity resides.
+     * @param realm The realm under which the entity resides.
+     * @see #getRealm()
+     */
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
     /**
      * Gets <code>FSAuthnRequest</code> object.
      * @return <code>FSAuthnRequest</code> object
@@ -333,7 +354,7 @@ public class FSAssertionArtifactHandler {
             boolean valid = verifyResponseStatus(authnResponse);
             if (!valid) {
                 FSSessionManager sessionManager =
-                    FSSessionManager.getInstance(hostEntityId);
+                    FSSessionManager.getInstance(hostMetaAlias);
                 // clean request map
                 String inResponseTo = authnResponse.getInResponseTo();
                 sessionManager.removeAuthnRequest(inResponseTo);
@@ -371,7 +392,7 @@ public class FSAssertionArtifactHandler {
             }
            
             FSSessionManager sessionManager = 
-                FSSessionManager.getInstance(hostEntityId);
+                FSSessionManager.getInstance(hostMetaAlias);
 
             if (doFederate){
                 if (FSUtils.debug.messageEnabled()) {
@@ -478,13 +499,11 @@ public class FSAssertionArtifactHandler {
                     handleType = IFSConstants.LOCAL_OPAQUE_HANDLE;
                 }
                 
-                String orgDN = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                    hostConfig, IFSConstants.REALM_NAME);
                 Map env = new HashMap();
                 env.put(IFSConstants.FS_USER_PROVIDER_ENV_AUTHNRESPONSE_KEY,
                     authnResponse);
                 int returnCode = 
-                    doSingleSignOn(ni, handleType, orgDN, niIdp, env);
+                    doSingleSignOn(ni, handleType, niIdp, env);
                 if (returnCode == FederationSPAdapter.SUCCESS){
                     if (FSUtils.debug.messageEnabled()) {
                         FSUtils.debug.message("FSAssertionArtifactHandler."
@@ -655,7 +674,7 @@ public class FSAssertionArtifactHandler {
                     IDFFMetaManager metaManager = 
                         FSUtils.getIDFFMetaManager();
                     IDPDescriptorType idpDesc= 
-                        metaManager.getIDPDescriptor(issuer);
+                        metaManager.getIDPDescriptor(realm, issuer);
                     if (idpDesc == null){
                         FSUtils.debug.error("FSAssertionArtifactHandler."
                             + "validateAssertion:"
@@ -979,7 +998,6 @@ public class FSAssertionArtifactHandler {
     protected int generateToken(
         NameIdentifier ni,
         int handleType, 
-        String orgDN,
         NameIdentifier niIdp,
         Map env
     ) 
@@ -990,14 +1008,6 @@ public class FSAssertionArtifactHandler {
             FSUtils.debug.error("FSAssertionArtifactHandler."
                 + "generateToken: Invalid userDN input");
             return FederationSPAdapter.SSO_FAILED;
-        }
-        if ((orgDN == null) ||(orgDN.length() == 0)){
-            if (FSUtils.debug.messageEnabled()) {
-                FSUtils.debug.message(
-                    "FSAssertionArtifactHandler.generateToken:" +
-                    "Invalid orgDN input using default orgDN");
-            }
-            orgDN = "/";
         }
         try {
             String name = ni.getName();
@@ -1021,13 +1031,13 @@ public class FSAssertionArtifactHandler {
                 new FSAccountFedInfoKey(nameSpace, name);
             FSAccountManager accountManager = FSAccountManager.getInstance(
                 hostMetaAlias);
-            String userID = accountManager.getUserID(fedKey, orgDN, env);
+            String userID = accountManager.getUserID(fedKey, realm, env);
             FSAccountFedInfo fedInfo = null;
             if (userID == null) {
                 if (niIdp != null && nameSpace.equals(affiliationID)) {
                     fedKey = new FSAccountFedInfoKey(affiliationID, 
                         niIdp.getName());
-                    userID =  accountManager.getUserID(fedKey, orgDN, env);
+                    userID =  accountManager.getUserID(fedKey, realm, env);
                     if (userID != null) { 
                         FSAccountFedInfo oldInfo = 
                             accountManager.readAccountFedInfo(
@@ -1056,7 +1066,7 @@ public class FSAssertionArtifactHandler {
                         idpEntityId, name);
 
                     if (oldKey != null) {
-                        userID = accountManager.getUserID(oldKey, orgDN, env);
+                        userID = accountManager.getUserID(oldKey, realm, env);
                         if (userID != null) {
                             fedInfo = accountManager.readAccountFedInfo(
                                     userID, idpEntityId); 
@@ -1102,7 +1112,7 @@ public class FSAssertionArtifactHandler {
                                 _autoFedStatement != null) 
                             {
                                 userID = accountManager.getUserID(
-                                    autoFedSearchMap, orgDN, null); 
+                                    autoFedSearchMap, realm, null); 
                                 if (userID != null) {
                                     FSAccountFedInfoKey newKey = 
                                         new FSAccountFedInfoKey(
@@ -1253,7 +1263,7 @@ public class FSAssertionArtifactHandler {
             }
             try {
                 sessionProvider.addListener(
-                    ssoSession, new FSTokenListener(hostEntityId));
+                    ssoSession, new FSTokenListener(hostMetaAlias));
             } catch (Exception e) {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message(
@@ -1289,7 +1299,7 @@ public class FSAssertionArtifactHandler {
             
             //keep local session ref
             FSSessionManager sessionManager = 
-                        FSSessionManager.getInstance(hostEntityId);
+                        FSSessionManager.getInstance(hostMetaAlias);
             FSSession session = sessionManager.getSession(userID, value);
             if (session != null){
                 if (FSUtils.debug.messageEnabled()) {
@@ -1338,18 +1348,26 @@ public class FSAssertionArtifactHandler {
 
             if (attrStatements.size() != 0) {
                 session.setAttributeStatements(attrStatements);
-                attributeMapper = getAttributeMapper();
-                if (attributeMapper != null) { 
-                    Map attributeMap = attributeMapper.getAttributes(
-                        attrStatements, hostEntityId, 
+                Map attributeMap = null;
+                realmAttributeMapper = getRealmAttributeMapper();
+                if (realmAttributeMapper != null) { 
+                    attributeMap = realmAttributeMapper.getAttributes(
+                        attrStatements, realm, hostEntityId, 
                         idpEntityId, ssoToken);
-                    if (FSUtils.debug.messageEnabled()) {
-                        FSUtils.debug.message("FSAssertionArtifactHandler." +
-                            "generateToken: Attribute map :" + attributeMap);
-                    } 
-                    if (attributeMap != null) {
-                        setAttributeMap(ssoToken, attributeMap);  
+                } else {
+                    attributeMapper = getAttributeMapper();
+                    if (attributeMapper != null) {
+                        attributeMap = attributeMapper.getAttributes(
+                            attrStatements, hostEntityId, 
+                            idpEntityId, ssoToken);
                     }
+                }
+                if (FSUtils.debug.messageEnabled()) {
+                    FSUtils.debug.message("FSAssertionArtifactHandler." +
+                        "generateToken: Attribute map :" + attributeMap);
+                } 
+                if (attributeMap != null) {
+                    setAttributeMap(ssoToken, attributeMap);  
                 }
             }
 
@@ -1373,14 +1391,13 @@ public class FSAssertionArtifactHandler {
     protected int doSingleSignOn(
         NameIdentifier ni, 
         int handleType, 
-        String orgDN,
         NameIdentifier niIdp,
         Map env
     ) 
     {
         FSUtils.debug.message(
             "FSAssertionArtifactHandler.doSingleSignOn: Called");
-        int returnCode = generateToken(ni, handleType, orgDN, niIdp, env);
+        int returnCode = generateToken(ni, handleType, niIdp, env);
         if (returnCode != FederationSPAdapter.SUCCESS) {
             String[] data = 
                 { FSUtils.bundle.getString("failGenerateSSOToken") };
@@ -1446,7 +1463,7 @@ public class FSAssertionArtifactHandler {
         if (Boolean.valueOf(cookieRewriteEnabled).booleanValue() 
            && (ssoToken == null)) {
             try {
-                sessionManager = FSSessionManager.getInstance(hostEntityId);
+                sessionManager = FSSessionManager.getInstance(hostMetaAlias);
                 ssoToken = sessionManager.getLocalSessionToken(
                                         authnRequest.getRequestID());
                 if ((ssoToken == null) ||(!sessionProvider.isValid(ssoToken))) {
@@ -1540,7 +1557,7 @@ public class FSAssertionArtifactHandler {
             }
             //keep local session ref
             if (sessionManager == null) {
-                sessionManager = FSSessionManager.getInstance(hostEntityId);
+                sessionManager = FSSessionManager.getInstance(hostMetaAlias);
             }
             String sessionID = sessionProvider.getSessionID(ssoToken);
             FSSession session = sessionManager.getSession(
@@ -1599,15 +1616,25 @@ public class FSAssertionArtifactHandler {
             }
             
             if (attrStatements.size() != 0) {
-                attributeMapper = getAttributeMapper();
-                if (attributeMapper != null) {
-                    Map attributeMap = attributeMapper.getAttributes(
-                        attrStatements, hostEntityId,
+                Map attributeMap = null;
+                realmAttributeMapper = getRealmAttributeMapper();
+                if (realmAttributeMapper != null) {
+                    attributeMap = realmAttributeMapper.getAttributes(
+                        attrStatements, realm, hostEntityId,
                         idpEntityId, ssoToken);
-                    if (FSUtils.debug.messageEnabled()) {
-                        FSUtils.debug.message("FSAssertionArtifactHandler." +
-                            "generateToken: Attribute map :" + attributeMap);
+                } else {
+                    attributeMapper = getAttributeMapper();
+                    if (attributeMapper != null) {
+                        attributeMap = attributeMapper.getAttributes(
+                            attrStatements, hostEntityId,
+                            idpEntityId, ssoToken);
                     }
+                }
+                if (FSUtils.debug.messageEnabled()) {
+                    FSUtils.debug.message("FSAssertionArtifactHandler." +
+                        "generateToken: Attribute map :" + attributeMap);
+                }
+                if (attributeMap != null) {
                     setAttributeMap(ssoToken, attributeMap);
                 }
             }
@@ -1670,6 +1697,7 @@ public class FSAssertionArtifactHandler {
                     FSServiceManager.getInstance();
                 FSNameRegistrationHandler handlerObj = 
                     serviceManager.getNameRegistrationHandler(
+                        realm,
                         idpEntityId,
                         IFSConstants.IDP);
                 if (handlerObj != null) {
@@ -1737,11 +1765,6 @@ public class FSAssertionArtifactHandler {
         try {
             Map valueMap = new HashMap();
             valueMap.put(SessionProvider.PRINCIPAL_NAME, ANONYMOUS_PRINCIPAL);
-            String realm = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                    hostConfig, IFSConstants.REALM_NAME);
-            if ((realm == null) || (realm.length() == 0)) {
-                realm = "/";
-            }
             valueMap.put(SessionProvider.REALM, realm);
             // default auth level to "0" for anonymous 
             valueMap.put(SessionProvider.AUTH_LEVEL, "0");
@@ -1754,7 +1777,7 @@ public class FSAssertionArtifactHandler {
                     new StringBuffer(this.relayState));
             try {
                 sessionProvider.addListener(
-                    ssoSession, new FSTokenListener(hostEntityId));
+                    ssoSession, new FSTokenListener(hostMetaAlias));
             } catch (Exception e) {
                 FSUtils.debug.error(
                     "FSAssertionArtifactHandler.generateAnonymousToken:" +
@@ -1778,7 +1801,7 @@ public class FSAssertionArtifactHandler {
         FSUtils.debug.message(
             "FSBrowserArtifactConsumerHandler.getInResponseToRequest: Called");
         FSSessionManager sessionManager = 
-            FSSessionManager.getInstance(hostEntityId);
+            FSSessionManager.getInstance(hostMetaAlias);
         return authnRequest = sessionManager.getAuthnRequest(requestID);
     }
     
@@ -1786,7 +1809,7 @@ public class FSAssertionArtifactHandler {
         FSUtils.debug.message(
             "FSAssertionArtifactHandler.getProvider: Called");
         FSSessionManager sessionManager = 
-            FSSessionManager.getInstance(hostEntityId);
+            FSSessionManager.getInstance(hostMetaAlias);
         return sessionManager.getIDPEntityID(requestID);
     }
     
@@ -1824,7 +1847,7 @@ public class FSAssertionArtifactHandler {
      */
     protected boolean isIDPProxyEnabled(String requestID) {
         FSSessionManager sessionManager = 
-            FSSessionManager.getInstance(hostEntityId);
+            FSSessionManager.getInstance(hostMetaAlias);
         return (sessionManager.getProxySPDescriptor(requestID) != null);
     }
 
@@ -1837,7 +1860,7 @@ public class FSAssertionArtifactHandler {
     protected void sendProxyResponse(String requestID) {
         FSUtils.debug.message("FSAssertionArtifactHandler.sendProxyResponse::");
         FSSessionManager sessionManager =
-            FSSessionManager.getInstance(hostEntityId);
+            FSSessionManager.getInstance(hostMetaAlias);
         FSAuthnRequest origRequest = 
             sessionManager.getProxySPAuthnRequest(requestID);
         if (FSUtils.debug.messageEnabled()) {
@@ -1880,7 +1903,8 @@ public class FSAssertionArtifactHandler {
         IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
         BaseConfigType proxySPConfig = null;
         try {
-            proxySPConfig = metaManager.getSPDescriptorConfig(proxySPEntityId);
+            proxySPConfig = metaManager.getSPDescriptorConfig(
+                realm, proxySPEntityId);
         } catch (Exception e) {
             FSUtils.debug.error("FSAssertionArtifactHandler.sendProxyResponse:"
                 + "Couldn't obtain proxy sp meta:", e);
@@ -1894,14 +1918,16 @@ public class FSAssertionArtifactHandler {
         BaseConfigType localIDPConfig = null;
         String localIDPMetaAlias = null;
         try {
-            localIDPDesc = metaManager.getIDPDescriptor(hostEntityId);
-            localIDPConfig = metaManager.getIDPDescriptorConfig(hostEntityId);
+            localIDPDesc = metaManager.getIDPDescriptor(realm, hostEntityId);
+            localIDPConfig = metaManager.getIDPDescriptorConfig(
+                realm, hostEntityId);
             localIDPMetaAlias = localIDPConfig.getMetaAlias();
         } catch (Exception e) {
             FSUtils.debug.error("FSAssertionartifactHandler.sendProxyResponse:"
                 + "Exception when obtaining local idp meta:", e);
         }
         
+        handler.setRealm(realm);
         handler.setHostedEntityId(hostEntityId);
         handler.setHostedDescriptor(localIDPDesc);
         handler.setHostedDescriptorConfig(localIDPConfig);
@@ -1963,6 +1989,26 @@ public class FSAssertionArtifactHandler {
         }
         
         return attributeMapper;
+    }
+
+    private FSRealmAttributeMapper getRealmAttributeMapper() {
+
+        if (realmAttributeMapper != null) {
+            return realmAttributeMapper;
+        }
+
+        String mapperStr = IDFFMetaUtils.getFirstAttributeValueFromConfig(
+            hostConfig, IFSConstants.REALM_ATTRIBUTE_MAPPER_CLASS);
+        try {
+            Class mapperClass = Class.forName(mapperStr);
+            realmAttributeMapper = 
+                (FSRealmAttributeMapper) mapperClass.newInstance();
+        } catch (Exception e) {
+            FSUtils.debug.error(
+                "FSAssertionArtifactHandler.getRealmAttributeMapper:", e);
+        }
+        
+        return realmAttributeMapper;
     }
 
 }

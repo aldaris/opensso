@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOBrowserArtifactProfileHandler.java,v 1.3 2007-08-20 07:25:58 stanguy Exp $
+ * $Id: FSSSOBrowserArtifactProfileHandler.java,v 1.4 2007-10-16 21:49:16 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -323,8 +323,7 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
         }
         FSAssertionManager am = null;
         try {
-            am = FSAssertionManager.getInstance(hostedEntityId);
-            am.setEntityId(hostedEntityId);
+            am = FSAssertionManager.getInstance(metaAlias);
         } catch(FSException se ) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSSSOBrowserArtifactProfileHandler."
@@ -476,7 +475,7 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                 } else {
                     try {
                         if (!metaManager.isTrustedProvider(
-                            hostedEntityId,providerID)) 
+                            realm, hostedEntityId,providerID)) 
                         { 
                             FSUtils.debug.error(
                                 "FSSSOAndFedHandler.processAuthnRequest: "
@@ -493,7 +492,8 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                                 samlRequest.getMinorVersion());
                             return retResponse;
                         }
-                        spDescriptor = metaManager.getSPDescriptor(providerID);
+                        spDescriptor = metaManager.getSPDescriptor(
+                            realm, providerID);
                         spEntityId = providerID;
                         remoteAddr = providerID;
                     } catch(Exception ae){
@@ -827,12 +827,11 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
         List artifactList = new ArrayList();
         try {
             FSAssertionManager am = 
-                FSAssertionManager.getInstance(hostedEntityId);
-            am.setEntityId(hostedEntityId);
+                FSAssertionManager.getInstance(metaAlias);
             AssertionArtifact artifact = am.createFSAssertionArtifact(
                 SessionManager.getProvider().getSessionID(ssoToken),
+                realm,
                 spEntityId,
-                hostedEntityId,
                 userHandle,
                 idpHandle,
                 inResponseTo,
@@ -950,7 +949,7 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
             List artis = new ArrayList();
             artis.add(art.getAssertionArtifact());
             FSAssertionManager am = 
-                FSAssertionManager.getInstance( hostedEntityId );
+                FSAssertionManager.getInstance( metaAlias );
             am.setErrStatus( art, noFedStatus );
             return artis;
         } catch(Exception e) {

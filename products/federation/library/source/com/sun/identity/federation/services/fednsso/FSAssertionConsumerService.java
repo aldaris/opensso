@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionConsumerService.java,v 1.1 2006-10-30 23:14:27 qcheng Exp $
+ * $Id: FSAssertionConsumerService.java,v 1.2 2007-10-16 21:49:15 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,6 +103,7 @@ public class FSAssertionConsumerService extends HttpServlet {
                 + relayState);
         }
         String metaAlias = FSServiceUtils.getMetaAlias(request);
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
         String baseURL = FSServiceUtils.getBaseURL(request);
         String framedPageURL = FSServiceUtils.getCommonLoginPageURL(
             metaAlias, relayState, null,request,baseURL);
@@ -117,8 +118,9 @@ public class FSAssertionConsumerService extends HttpServlet {
         String hostEntityId = null;
         try {
             hostEntityId = metaManager.getEntityIDByMetaAlias(metaAlias);
-            hostDesc = metaManager.getSPDescriptor(hostEntityId);
-            hostConfig = metaManager.getSPDescriptorConfig(hostEntityId);
+            hostDesc = metaManager.getSPDescriptor(realm, hostEntityId);
+            hostConfig = metaManager.getSPDescriptorConfig(
+                realm, hostEntityId);
         } catch (Exception e) {
             FSUtils.debug.error("FSAssertionConsumerService.doGet: ", e);
             FSUtils.forwardRequest(request, response, framedPageURL);
@@ -185,6 +187,7 @@ public class FSAssertionConsumerService extends HttpServlet {
             FSAssertionArtifactHandler handler = sm.getBrowserArtifactHandler(
                 request, 
                 response,
+                realm,
                 firstSourceID, 
                 samlRequest,
                 relayState);
@@ -198,6 +201,7 @@ public class FSAssertionConsumerService extends HttpServlet {
                 FSUtils.debug.message("FSAssertionConsumerService.doGet: "
                     + "BrowserArtifactHandler created");
             }
+            handler.setRealm(realm);
             handler.setHostEntityId(hostEntityId);
             handler.setMetaAlias(metaAlias);
             handler.setHostDescriptor(hostDesc);
@@ -232,6 +236,7 @@ public class FSAssertionConsumerService extends HttpServlet {
         }
         
         String metaAlias = FSServiceUtils.getMetaAlias(request);
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
         String baseURL = FSServiceUtils.getBaseURL(request);
         String framedPageURL = FSServiceUtils.getCommonLoginPageURL(
             metaAlias, null, null, request, baseURL);
@@ -240,8 +245,8 @@ public class FSAssertionConsumerService extends HttpServlet {
         BaseConfigType hostConfig = null;
         try {
             hostEntityId = metaManager.getEntityIDByMetaAlias(metaAlias);
-            hostDesc = metaManager.getSPDescriptor(hostEntityId);
-            hostConfig = metaManager.getSPDescriptorConfig(hostEntityId);
+            hostDesc = metaManager.getSPDescriptor(realm, hostEntityId);
+            hostConfig = metaManager.getSPDescriptorConfig(realm, hostEntityId);
         } catch (Exception e) {
             FSUtils.debug.error("FSAssertionConsumerService.doPost: " +
                 "Exception when obtain host meta data:", e);
@@ -374,7 +379,7 @@ public class FSAssertionConsumerService extends HttpServlet {
                 "AuthnResponse received is against requestID: " + requestID);
         }
         
-        authnRequest = getInResponseToRequest(requestID, hostEntityId);
+        authnRequest = getInResponseToRequest(requestID, metaAlias);
         if (authnRequest == null){
             FSUtils.debug.error("FSAssertionConsumerService.doPost: "
                 + "Invalid AuthnResponse. AuthnResponse"
@@ -404,8 +409,9 @@ public class FSAssertionConsumerService extends HttpServlet {
                 IFSConstants.SSO_PROF_LECP))
             {
                 idpEntityId = getProvider(
-                    authnResponse.getInResponseTo(), hostEntityId);
-                idpDescriptor = metaManager.getIDPDescriptor(idpEntityId);
+                    authnResponse.getInResponseTo(), metaAlias);
+                idpDescriptor = metaManager.getIDPDescriptor(
+                    realm, idpEntityId);
                 if (idpEntityId == null || idpDescriptor == null) {
                     FSUtils.debug.error("FSAssertionConsumerService.doPost: "
                         + "Invalid AuthnResponse. Sender information "
@@ -444,7 +450,8 @@ public class FSAssertionConsumerService extends HttpServlet {
                         + "Get providerId from the response");
                 }
                 idpEntityId = authnResponse.getProviderId();
-                idpDescriptor = metaManager.getIDPDescriptor(idpEntityId);
+                idpDescriptor = metaManager.getIDPDescriptor(
+                    realm, idpEntityId);
             }     
         
        
@@ -475,6 +482,7 @@ public class FSAssertionConsumerService extends HttpServlet {
             handler.setHostDescriptor(hostDesc);
             handler.setHostDescriptorConfig(hostConfig);
             handler.setMetaAlias(metaAlias);
+            handler.setRealm(realm);
             handler.processAuthnResponse(authnResponse);
             return;
         } catch (Exception se) {
@@ -492,24 +500,20 @@ public class FSAssertionConsumerService extends HttpServlet {
     
     private FSAuthnRequest getInResponseToRequest(
         String requestID, 
-        String hostEntityId
+        String metaAlias
     ) 
     {
         FSUtils.debug.message(
             "FSAssertionConsumerService::getInResponseToRequest: Called");
         FSSessionManager sessionManager = FSSessionManager.getInstance(
-            hostEntityId);
+            metaAlias);
         return sessionManager.getAuthnRequest(requestID);
     }
     
-    private String getProvider(
-        String requestID, 
-        String hostEntityId
-    ) 
-    {
+    private String getProvider( String requestID, String metaAlias) {
         FSUtils.debug.message("FSAssertionConsumerService.getProvider: Called");
         FSSessionManager sessionManager = FSSessionManager.getInstance(
-            hostEntityId);
+            metaAlias);
         return sessionManager.getIDPEntityID(requestID);
     }
     

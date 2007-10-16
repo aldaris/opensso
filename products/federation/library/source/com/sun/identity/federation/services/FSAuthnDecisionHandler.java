@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthnDecisionHandler.java,v 1.2 2007-07-11 21:59:11 hengming Exp $
+ * $Id: FSAuthnDecisionHandler.java,v 1.3 2007-10-16 21:49:12 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,10 +58,12 @@ public class FSAuthnDecisionHandler {
     /**
      * Constructs a new <code>FSAuthnDecisionHandler</code> object. It handles
      * authentication decision based on the configuration per identity provider.
+     * @param realm The realm under which the entity resides.
      * @param entityID hosted identity provider entity ID
      * @param request http servlet request
      */
-    public FSAuthnDecisionHandler(String entityID,HttpServletRequest request)
+    public FSAuthnDecisionHandler(
+        String realm, String entityID,HttpServletRequest request)
     {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("FSAuthnDecisionHandler::Constructor called "
@@ -77,16 +79,16 @@ public class FSAuthnDecisionHandler {
         loginURL = loginURL + IFSConstants.QUESTION_MARK 
             + IFSConstants.ARGKEY + IFSConstants.EQUAL_TO 
             + IFSConstants.NEWSESSION;
-        getIDPAuthContextInfo(entityID);
+        getIDPAuthContextInfo(realm, entityID);
     }
     
-    private void getIDPAuthContextInfo(String entityID) {
+    private void getIDPAuthContextInfo(String realm, String entityID) {
         if (metaManager == null) {
             return;
         }
         try {
             IDPDescriptorConfigElement entityConfig = 
-                metaManager.getIDPDescriptorConfig(entityID);
+                metaManager.getIDPDescriptorConfig(realm, entityID);
             if (entityConfig == null) {
                 return;
             }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaCache.java,v 1.1 2006-10-30 23:14:17 qcheng Exp $
+ * $Id: IDFFMetaCache.java,v 1.2 2007-10-16 21:49:09 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,23 +52,28 @@ public class IDFFMetaCache {
     }
     
     /**
-     * Returns the Entity Descriptor representing the standard metadata.
+     * Returns the Entity Descriptor representing the standard metadata under
+     * the realm from cache.
      *
+     * @param realm The realm under which the entity resides.
      * @param entityID the entity descriptor identifier.
      * @return <code>EntityDescriptorElement</code> for the entity or null
      *         if not found. 
      */
-    public static EntityDescriptorElement getEntityDescriptor(String entityID) {
+    public static EntityDescriptorElement getEntityDescriptor(
+        String realm, String entityID)
+    {
         String classMethod = "IDFFMetaCache:getEntityDescriptor" ;
+        String cacheKey = buildCacheKey(realm, entityID);
         EntityDescriptorElement entityDescriptor =
-            (EntityDescriptorElement)entityDescriptorCache.get(entityID);
+            (EntityDescriptorElement)entityDescriptorCache.get(cacheKey);
         if (debug.messageEnabled()) {
             if (entityDescriptor != null) {
                 debug.message(classMethod + " Entity Descriptor found for : "
-                        + entityID );
+                        + cacheKey );
             } else {
                 debug.message(classMethod + "EntityDescriptor not found for :"
-                        + entityID );
+                        + cacheKey );
             }
         }
         return entityDescriptor;
@@ -76,36 +81,44 @@ public class IDFFMetaCache {
     
     /**
      * Updates the Entity Descriptor cache with the Entity Descriptor.
-     * The Key is the entityID and the Value is the 
-     * <code>EntityDescriptorElement</code> object.
      *
+     * @param realm The realm under which the entity resides.
      * @param entityID entity descriptor identifier. 
      * @param entityDescriptor <code>EntityDescriptorElement</code> of
      *        the entity.
      */
-    public static void setEntityDescriptor(String entityID,
+    public static void setEntityDescriptor(String realm, String entityID,
             EntityDescriptorElement entityDescriptor) {
-        entityDescriptorCache.put(entityID,entityDescriptor);
+        String cacheKey = buildCacheKey(realm, entityID);
+        if (entityDescriptor != null) {
+            entityDescriptorCache.put(cacheKey,entityDescriptor);
+        } else {
+            entityDescriptorCache.remove(cacheKey);
+            entityConfigCache.remove(cacheKey);   
+        }
     }
     
     /**
-     * Returns the Entity Config from the cache.
+     * Returns the Entity Config under the realm from the cache.
      *
+     * @param realm The realm under which the entity resides.
      * @param entityID the entity config identifier.
      * @return <code>EntityConfigElement</code> object for the entity or null
      *         if not found.
      */
-    public static EntityConfigElement getEntityConfig(String entityID) {
+    public static EntityConfigElement getEntityConfig(
+        String realm, String entityID) {
         String classMethod = "IDFFMetaCache:getEntityConfig";
+        String cacheKey = buildCacheKey(realm, entityID);
         EntityConfigElement entityConfig =
-                (EntityConfigElement)entityConfigCache.get(entityID);
+                (EntityConfigElement)entityConfigCache.get(cacheKey);
         if (debug.messageEnabled()) {
             if (entityConfig != null) {
                 debug.message(classMethod + "Entity Config found for "
-                              + entityID);
+                              + cacheKey);
             } else {
                 debug.message(classMethod + "Entity Config not found for "
-                             + entityID);
+                             + cacheKey);
             }
         }
         return entityConfig;
@@ -113,15 +126,19 @@ public class IDFFMetaCache {
     
     /**
      * Updates the the Entity Configuration Cache with Entity Config.
-     * The key is the entityID and the value is the 
-     * <code>EntityConfigElement</code> object.
-     * @param entityId ID of the entity to be retrieved.
+     * @param realm The realm under which the entity resides.
+     * @param entityID ID of the entity to be retrieved.
      * @return <code>EntityConfigElement</code> object for the entity or null
      *         if not found.
      */
-    public static void setEntityConfig(String entityID,
+    public static void setEntityConfig(String realm, String entityID,
             EntityConfigElement entityConfig) {
-        entityConfigCache.put(entityID,entityConfig);
+        String cacheKey = buildCacheKey(realm, entityID);
+        if (entityConfig != null) {
+            entityConfigCache.put(cacheKey,entityConfig);
+        } else {
+            entityConfigCache.remove(cacheKey);
+        }
     }
 
     /**    
@@ -193,5 +210,16 @@ public class IDFFMetaCache {
         metaAliasEntityCache.clear();
         metaAliasRoleCache.clear();
         entitySuccinctIDCache.clear();
+    }
+
+    /**
+     * Build cache key for descriptorCache and configCache based on realm and
+     * entity ID.
+     * @param realm The realm under which the entity resides.
+     * @param entityID The entity ID or the name of circle of trust.
+     * @return The cache key.
+     */
+    private static String buildCacheKey(String realm, String entityId) {
+        return realm + "//" + entityId;
     }
 }

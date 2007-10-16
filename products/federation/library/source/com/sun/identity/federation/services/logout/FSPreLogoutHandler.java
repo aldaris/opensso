@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogoutHandler.java,v 1.6 2007-07-26 21:56:36 qcheng Exp $
+ * $Id: FSPreLogoutHandler.java,v 1.7 2007-10-16 21:49:17 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,6 +76,7 @@ public  class FSPreLogoutHandler {
     protected static String COMMON_ERROR_URL = null;
     protected ProviderDescriptorType remoteDescriptor = null;
     protected String remoteEntityID = "";
+    protected String realm = null;
     protected String hostedEntityId = "";
     protected String hostedRole = null;
     protected String metaAlias = null;
@@ -123,6 +124,14 @@ public  class FSPreLogoutHandler {
         ProviderDescriptorType hostedProviderDesc)
     {
         this.hostedDescriptor = hostedProviderDesc;
+    }
+
+    /**
+     * Sets hosted provider's realm.
+     * @param realm the realm in which the provider resides
+     */
+    public void setRealm(String realm) {
+        this.realm = realm;
     }
 
     /**
@@ -215,8 +224,7 @@ public  class FSPreLogoutHandler {
                 isWMLAgent = true;
             }
 
-            FSSessionManager sMgr = FSSessionManager.getInstance(
-                hostedEntityId);
+            FSSessionManager sMgr = FSSessionManager.getInstance(metaAlias);
             FSSession session = sMgr.getSession(ssoToken);
            
             String sessionIndex = null;
@@ -241,10 +249,10 @@ public  class FSPreLogoutHandler {
             }
 
             if (FSLogoutUtil.liveConnectionsExist(
-                userID, hostedEntityId))
+                userID, metaAlias))
             {
                 HashMap providerMap = FSLogoutUtil.getCurrentProvider(
-                    userID, hostedEntityId, ssoToken);
+                    userID, metaAlias, ssoToken);
                 if (providerMap != null) {
                     FSSessionPartner currentSessionProvider =
                         (FSSessionPartner)providerMap.get(
@@ -259,6 +267,7 @@ public  class FSPreLogoutHandler {
                             new FSSingleLogoutHandler();
                         handlerObj.setHostedDescriptor(hostedDescriptor);
                         handlerObj.setHostedDescriptorConfig(hostedConfig);
+                        handlerObj.setRealm(realm);
                         handlerObj.setHostedEntityId(hostedEntityId);
                         handlerObj.setHostedProviderRole(hostedRole);
                         handlerObj.setMetaAlias(metaAlias);
@@ -275,7 +284,7 @@ public  class FSPreLogoutHandler {
                         "\ndestroy user session call destroyPrincipalSession");
                 }
                 FSLogoutUtil.destroyPrincipalSession(
-                    userID, hostedEntityId, sessionIndex, request, response);
+                    userID, metaAlias, sessionIndex, request, response);
                 // control could come here when local login has happened
                 // In this FSSessionmap will not have anything and so we destroy
                 // the session based on ssoToken
@@ -320,7 +329,7 @@ public  class FSPreLogoutHandler {
                 }
 
                 FSLogoutUtil.destroyPrincipalSession(
-                    userID, hostedEntityId, sessionIndex, request, response);
+                    userID, metaAlias, sessionIndex, request, response);
                 // control will come here when local login has happened
                 // In this FSSessionmap will not have anything and so we destroy
                 // the session based on ssoToken
@@ -359,7 +368,7 @@ public  class FSPreLogoutHandler {
             FSUtils.debug.error("SessionException in liveConnectionsExist"
                 + " So destroy self and exit");
             FSLogoutUtil.destroyPrincipalSession(
-                userID, hostedEntityId, null, request, response);
+                userID, metaAlias, null, request, response);
             // cannot call FSLogoutUtil.destroyLocalSession(ssoToken)
             // since session exception has occurred
             returnToPostLogout(IFSConstants.SAML_SUCCESS);
@@ -392,7 +401,7 @@ public  class FSPreLogoutHandler {
         this.response = response;
         this.ssoToken = ssoToken;
 
-        FSSessionManager sMgr = FSSessionManager.getInstance(hostedEntityId);
+        FSSessionManager sMgr = FSSessionManager.getInstance(metaAlias);
         FSSession session = sMgr.getSession(ssoToken);
         String sessionIndex = session.getSessionIndex();
 
@@ -403,7 +412,7 @@ public  class FSPreLogoutHandler {
                 FSUtils.debug.message("FSPH:processSingleLogout: Onetime case");
             } else {
                 this.userID = FSLogoutUtil.getUserFromRequest(reqLogout, 
-                    hostedEntityId, hostedRole, hostedConfig, metaAlias);
+                    realm, hostedEntityId, hostedRole, hostedConfig, metaAlias);
             }
         } catch (SessionException se) {
             FSUtils.debug.error("processSingleLogoutRequest", se);
@@ -432,14 +441,14 @@ public  class FSPreLogoutHandler {
         String relayState = reqLogout.getRelayState();
 
         FSLogoutUtil.cleanSessionMapPartnerList(
-            userID, remoteEntityID, hostedEntityId, session);
+            userID, remoteEntityID, metaAlias, session);
 
         FSUtils.debug.message("FSPrelogoutHandler::calling getCurrentProvider");
         boolean bHasAnyOtherProvider = false;
         HashMap providerMap = new HashMap();
         FSSessionPartner sessionPartner = null;
         providerMap = FSLogoutUtil.getCurrentProvider(
-            userID, hostedEntityId, ssoToken);
+            userID, metaAlias, ssoToken);
 
         if (providerMap != null) {
             sessionPartner = (FSSessionPartner)providerMap.get(
@@ -464,6 +473,7 @@ public  class FSPreLogoutHandler {
         FSSingleLogoutHandler handlerObj = new FSSingleLogoutHandler();
         handlerObj.setHostedDescriptor(hostedDescriptor);
         handlerObj.setHostedDescriptorConfig(hostedConfig);
+        handlerObj.setRealm(realm);
         handlerObj.setHostedEntityId(hostedEntityId);
         handlerObj.setHostedProviderRole(hostedRole);
         handlerObj.setMetaAlias(metaAlias);
@@ -494,15 +504,15 @@ public  class FSPreLogoutHandler {
                 " processSingleLogoutRequest SOAP Profile");
         }
         // User DN needs to be figured from logout request
-        userID = FSLogoutUtil.getUserFromRequest(reqLogout, hostedEntityId,
-            hostedRole, hostedConfig, metaAlias);
+        userID = FSLogoutUtil.getUserFromRequest(reqLogout, realm, 
+            hostedEntityId, hostedRole, hostedConfig, metaAlias);
         if (userID == null) {
             FSUtils.debug.error("User does not exist. Invalid request");
             return new FSLogoutStatus(IFSConstants.SAML_REQUESTER);
         }
 
         FSSessionManager sessionManager = 
-            FSSessionManager.getInstance(hostedEntityId);
+            FSSessionManager.getInstance(metaAlias);
 
         String sessionIndex = reqLogout.getSessionIndex();
 
@@ -510,13 +520,13 @@ public  class FSPreLogoutHandler {
             sessionManager.getSessionList(userID), sessionIndex);
 
         FSLogoutUtil.cleanSessionMapPartnerList(
-            userID, remoteEntityID, hostedEntityId, session);
+            userID, remoteEntityID, metaAlias, session);
 
         boolean bHasAnyOtherProvider = false;
         HashMap providerMap = new HashMap();
         FSSessionPartner sessionPartner = null;
         providerMap = FSLogoutUtil.getCurrentProvider(
-            userID, hostedEntityId, ssoToken);
+            userID, metaAlias, ssoToken);
 
         if (providerMap != null) {
             sessionPartner = (FSSessionPartner)providerMap.get(
@@ -542,6 +552,7 @@ public  class FSPreLogoutHandler {
         FSSingleLogoutHandler handlerObj = new FSSingleLogoutHandler();
         handlerObj.setHostedDescriptor(hostedDescriptor);
         handlerObj.setHostedDescriptorConfig(hostedConfig);
+        handlerObj.setRealm(realm);
         handlerObj.setHostedEntityId(hostedEntityId);
         handlerObj.setHostedProviderRole(hostedRole);
         handlerObj.setMetaAlias(metaAlias);
@@ -589,7 +600,7 @@ public  class FSPreLogoutHandler {
             
             FSLogoutResponse responseLogout = new FSLogoutResponse();
             FSReturnSessionManager mngInst =
-                FSReturnSessionManager.getInstance(hostedEntityId);
+                FSReturnSessionManager.getInstance(metaAlias);
             HashMap providerMap = new HashMap();
 
             if (mngInst != null) {
@@ -638,9 +649,11 @@ public  class FSPreLogoutHandler {
             returnProviderId = (String) providerMap.get(IFSConstants.PROVIDER);
             ProviderDescriptorType descriptor = null;
             if (hostedRole.equalsIgnoreCase(IFSConstants.IDP)) {
-                descriptor = metaManager.getSPDescriptor(returnProviderId);
+                descriptor = metaManager.getSPDescriptor(
+                    realm, returnProviderId);
             } else {
-                descriptor = metaManager.getIDPDescriptor(returnProviderId);
+                descriptor = metaManager.getIDPDescriptor(
+                    realm, returnProviderId);
             }
             retURL = descriptor.getSingleLogoutServiceReturnURL();
             relayState =
@@ -790,7 +803,7 @@ public  class FSPreLogoutHandler {
             }
             retStatus = SingleLogoutManager.getInstance().
                 doIDPSingleLogout(set, userID, request, response, isSOAPProfile,
-                    true, SingleLogoutManager.IDFF, "/", hostedEntityId,
+                    true, SingleLogoutManager.IDFF, realm, hostedEntityId,
                     remoteEntityID, finalRelayState, requestXML, responseXML,
                     currentStatus);
         } catch (Exception e) {

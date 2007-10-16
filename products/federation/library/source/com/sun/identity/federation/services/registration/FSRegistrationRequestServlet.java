@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSRegistrationRequestServlet.java,v 1.2 2007-01-10 06:29:34 exu Exp $
+ * $Id: FSRegistrationRequestServlet.java,v 1.3 2007-10-16 21:49:18 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -158,6 +158,7 @@ public class FSRegistrationRequestServlet extends HttpServlet {
                     IFSConstants.FAILED_HOSTED_DESCRIPTOR));
             return;
         }
+        String realm = IDFFMetaUtils.getRealmByMetaAlias(providerAlias);
         ProviderDescriptorType hostedProviderDesc = null;
         BaseConfigType hostedConfig = null;
         String hostedEntityId = null;
@@ -170,16 +171,16 @@ public class FSRegistrationRequestServlet extends HttpServlet {
                 hostedProviderRole.equalsIgnoreCase(IFSConstants.IDP))
             {
                 hostedProviderDesc =
-                    metaManager.getIDPDescriptor(hostedEntityId);
+                    metaManager.getIDPDescriptor(realm, hostedEntityId);
                 hostedConfig = 
-                    metaManager.getIDPDescriptorConfig(hostedEntityId);
+                    metaManager.getIDPDescriptorConfig(realm, hostedEntityId);
             } else if (hostedProviderRole != null &&
                 hostedProviderRole.equalsIgnoreCase(IFSConstants.SP))
             {
                 hostedProviderDesc = 
-                    metaManager.getSPDescriptor(hostedEntityId);
+                    metaManager.getSPDescriptor(realm, hostedEntityId);
                 hostedConfig = 
-                    metaManager.getSPDescriptorConfig(hostedEntityId);
+                    metaManager.getSPDescriptorConfig(realm, hostedEntityId);
             }
             if (hostedProviderDesc == null) {
                 throw new IDFFMetaException((String) null);
@@ -223,6 +224,7 @@ public class FSRegistrationRequestServlet extends HttpServlet {
                                 hostedProviderDesc,
                                 hostedConfig,
                                 hostedProviderRole,
+                                realm,
                                 hostedEntityId,
                                 providerAlias,
                                 regisRequest);
@@ -240,6 +242,7 @@ public class FSRegistrationRequestServlet extends HttpServlet {
      * @param hostedProviderDesc the provider for whom request is received
      * @param hostedConfig hosted provider's extended meta
      * @param hostedProviderRole hosted provider's role
+     * @param realm the realm under which the provider resides
      * @param hostedEntityId hosted provider's entity ID
      * @param providerAlias hosted provider's meta alias
      * @param regisRequest the federation registration request
@@ -250,6 +253,7 @@ public class FSRegistrationRequestServlet extends HttpServlet {
         ProviderDescriptorType hostedProviderDesc,
         BaseConfigType hostedConfig,
         String hostedProviderRole,
+        String realm, 
         String hostedEntityId,
         String providerAlias,
         FSNameRegistrationRequest regisRequest) 
@@ -264,10 +268,11 @@ public class FSRegistrationRequestServlet extends HttpServlet {
         boolean isIDP = false;
         try {
             if (hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) {
-                remoteDesc = metaManager.getIDPDescriptor(remoteEntityId);
+                remoteDesc = metaManager.getIDPDescriptor(
+                    realm, remoteEntityId);
                 isIDP = true;
             } else {
-                remoteDesc = metaManager.getSPDescriptor(remoteEntityId);
+                remoteDesc = metaManager.getSPDescriptor(realm, remoteEntityId);
             }
  
             retURL = remoteDesc.getRegisterNameIdentifierServiceReturnURL();
@@ -275,7 +280,7 @@ public class FSRegistrationRequestServlet extends HttpServlet {
             FSUtils.debug.error("FSRegistrationRequestServlet.doRequest " +
                 "Processing: Can not retrieve remote provider data."
                 + remoteEntityId);
-            String[] data = {  remoteEntityId };
+            String[] data = {  remoteEntityId, realm };
             LogUtil.error(Level.INFO,LogUtil.INVALID_PROVIDER, data);
             FSServiceUtils.returnToSource(
                 response,
@@ -296,7 +301,7 @@ public class FSRegistrationRequestServlet extends HttpServlet {
                         request, remoteDesc, remoteEntityId, isIDP);
                 } else{
                     FSUtils.debug.error("Cannot retrieve provider descriptor.");
-                    String[] data = { remoteEntityId };
+                    String[] data = { remoteEntityId, realm };
                     LogUtil.error(Level.INFO,LogUtil.INVALID_PROVIDER,data);
                     FSServiceUtils.returnToSource(
                         response,
@@ -342,7 +347,9 @@ public class FSRegistrationRequestServlet extends HttpServlet {
         }                        
         if (bVerify) {       
             // Check if trusted provider
-            if (metaManager.isTrustedProvider(hostedEntityId, remoteEntityId)) {
+            if (metaManager.isTrustedProvider(
+                realm, hostedEntityId, remoteEntityId)) 
+            {
                 FSNameRegistrationHandler regisHandler = 
                     new FSNameRegistrationHandler();
                 if (regisHandler != null) {
@@ -355,6 +362,7 @@ public class FSRegistrationRequestServlet extends HttpServlet {
                     regisHandler.setHostedEntityId(hostedEntityId);
                     regisHandler.setHostedProviderRole(hostedProviderRole);
                     regisHandler.setMetaAlias(providerAlias);
+                    regisHandler.setRealm(realm);
                     regisHandler.processRegistrationRequest(
                         request, response, regisRequest);
                     return; 

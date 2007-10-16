@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSDiscoveryBootStrap.java,v 1.1 2006-10-30 23:14:22 qcheng Exp $
+ * $Id: FSDiscoveryBootStrap.java,v 1.2 2007-10-16 21:49:13 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,6 +71,8 @@ public class FSDiscoveryBootStrap {
      * @param sub Federated Subject.
      * @param userID User's ID for which the discovery resource offering is
      *  being obtained.
+     * @param wscID the wsc's entity ID
+     * @param realm the realm in which the provider resides
      * @exception FSException if there is any failure. 
      */
     public FSDiscoveryBootStrap(
@@ -78,7 +80,8 @@ public class FSDiscoveryBootStrap {
         AuthnContext authnContext,
         FSSubject sub,
         String userID,
-        String wscID)
+        String wscID,
+        String realm)
         throws FSException
     {
         if (sub == null || userID == null) {
@@ -90,7 +93,7 @@ public class FSDiscoveryBootStrap {
             List attributeList = new ArrayList();
             List resourceOfferings = new ArrayList();
             Document offering = getResourceOffering(
-                sub, authnContext, userID, wscID);
+                sub, authnContext, userID, wscID, realm);
             resourceOfferings.add(offering.getDocumentElement());
             Attribute attribute =
                 new Attribute(IFSConstants.DISCO_RESOURCE_OFFERING_NAME,
@@ -115,7 +118,8 @@ public class FSDiscoveryBootStrap {
         FSSubject libSubject,
         AuthnContext authnContext,
         String userID,
-        String wscID)
+        String wscID,
+        String realm)
         throws FSException
     {
 
@@ -162,6 +166,7 @@ public class FSDiscoveryBootStrap {
                 sessionSubject = new SessionSubject(
                     EncryptedNameIdentifier.getEncryptedNameIdentifier(
                         libSubject.getNameIdentifier(),
+                        realm, 
                         providerID),
                     libSubject.getSubjectConfirmation(),
                     libSubject.getIDPProvidedNameIdentifier());

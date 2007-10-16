@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSIDPProxyImpl.java,v 1.2 2007-10-16 21:49:13 exu Exp $
+ * $Id: FSRealmIDPProxyImpl.java,v 1.1 2007-10-16 21:49:14 exu Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 
@@ -40,22 +40,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class <code>FSIDPProxyImpl</code> is used to find a preferred Identity
- * Authenticating provider to proxy the authentication request.
- * @deprecated
- * @see com.sun.identity.federation.services.FSRealmIDPProxyImpl
+ * This class <code>FSRealmIDPProxyImpl</code> is used to find a preferred 
+ * Identity Authenticating provider to proxy the authentication request.
  */ 
-public class FSIDPProxyImpl implements FSIDPProxy {
+public class FSRealmIDPProxyImpl implements FSRealmIDPProxy {
 
 
     /**
      * Default Constructor.
      */
-    public FSIDPProxyImpl(){}
+    public FSRealmIDPProxyImpl(){}
 
     /**
      * Returns the preferred IDP.
      * @param authnRequest original authnrequest
+     * @param realm The realm under which the entity resides.
      * @param hostEntityID ProxyIDP entity ID.
      * @param request <code>HttpServletRequest</code> object
      * @param response <code>HttpServletResponse</code> object
@@ -64,6 +63,7 @@ public class FSIDPProxyImpl implements FSIDPProxy {
      */
     public String getPreferredIDP(
         FSAuthnRequest authnRequest, 
+        String realm,
         String hostEntityID,
         HttpServletRequest request,
         HttpServletResponse response)
@@ -74,7 +74,7 @@ public class FSIDPProxyImpl implements FSIDPProxy {
         try {
             Map attributes = IDFFMetaUtils.getAttributes(
                 FSUtils.getIDFFMetaManager().getSPDescriptorConfig(
-                    "/", authnRequest.getProviderId()));
+                    realm, authnRequest.getProviderId()));
             String useIntroductionForProxying = 
                 IDFFMetaUtils.getFirstAttributeValue(
                     attributes, IFSConstants.USE_INTRODUCTION_FOR_IDP_PROXY);
@@ -95,6 +95,8 @@ public class FSIDPProxyImpl implements FSIDPProxy {
                 redirectURL.append(baseURL).append(IFSConstants.IDP_FINDER_URL)
                         .append("?").append("RequestID=")
                         .append(authnRequest.getRequestID())
+                        .append("&").append("Realm=")
+                        .append(realm)
                         .append("&").append("ProviderID=")
                         .append(hostEntityID);
                 FSUtils.forwardRequest(
