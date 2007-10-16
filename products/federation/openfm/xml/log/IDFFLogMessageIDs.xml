@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: IDFFLogMessageIDs.xml,v 1.1 2007-08-24 16:43:26 bina Exp $
+   $Id: IDFFLogMessageIDs.xml,v 1.2 2007-10-16 22:10:11 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -456,6 +456,7 @@
         description="Invalid Provider Registration.">
         <datainfo>
             <item>provider id</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Invalid Provider.</item>
@@ -627,6 +628,7 @@
         description="Deleting of IDFF Standard Meta Data succeeded.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>IDFF Standard Meta data for the entity is deleted in the data repository.</item>
@@ -638,6 +640,7 @@
         description="Deleting of Standard Metadata for entity identifier failed.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Trying to delete IDFF Standard Meta data for the entity.</item>
@@ -945,6 +948,7 @@
         description="No entity configuration to delete.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Delete Entity Configuration.</item>
@@ -958,6 +962,7 @@
         description="Failed to delete entity configuration.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Delete Entity Configuration.</item>
@@ -973,6 +978,7 @@
         description="Entity configuration deleted successfully.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Delete Entity Configuration.</item>
@@ -984,6 +990,7 @@
         description="Entity does not exist.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Delete Entity Descriptor.</item>

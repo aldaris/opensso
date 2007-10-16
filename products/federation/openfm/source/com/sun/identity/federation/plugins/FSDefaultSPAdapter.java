@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSDefaultSPAdapter.java,v 1.4 2007-04-10 06:28:34 veiming Exp $
+ * $Id: FSDefaultSPAdapter.java,v 1.5 2007-10-16 22:10:10 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,6 +78,9 @@ import javax.servlet.http.HttpServletResponse;
 
 public class FSDefaultSPAdapter implements FederationSPAdapter {
 
+    private final String ROOT_REALM = "/";
+    private String realm = null;
+
     /**
      * Initializes the federation adapter, this method will only be executed
      * once after creation of the adapter instance.
@@ -87,6 +90,31 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
      */
     public void initialize(String hostedProviderID, Set initParams) {
         FSUtils.debug.message("In FSDefaultSPAdapter.initialize.");
+        if ((initParams != null) && !initParams.isEmpty()) {
+            Iterator iter = initParams.iterator();
+            while (iter.hasNext()) {
+                String envValue = (String) iter.next();
+                if ((envValue.toUpperCase()).startsWith(
+                    FederationSPAdapter.ENV_REALM))
+                {
+                    try {
+                        realm = envValue.substring(
+                            (FederationSPAdapter.ENV_REALM).length(),
+                            envValue.length());
+                    } catch (Exception e) {
+                        if (FSUtils.debug.warningEnabled()) {
+                           FSUtils.debug.warning(
+                               "FSDefaultSPAdapter.init:Could not get realm:",
+                               e);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        if ((realm == null) || (realm.length() == 0)) {
+            realm = ROOT_REALM;
+        }
     }
 
     /**
@@ -263,7 +291,7 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
                         if (metaManager != null) {
                             SPDescriptorConfigElement spConfig =
                                 metaManager.getSPDescriptorConfig(
-                                    hostedEntityID);
+                                    realm, hostedEntityID);
                             if (spConfig != null) {
                                 metaAlias = spConfig.getMetaAlias();
                             }
