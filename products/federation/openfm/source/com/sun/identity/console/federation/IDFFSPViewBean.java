@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSPViewBean.java,v 1.4 2007-09-14 21:32:51 asyhuang Exp $
+ * $Id: IDFFSPViewBean.java,v 1.5 2007-10-17 21:37:35 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,7 @@ public class IDFFSPViewBean
         
         psModel.setValue(IDFFEntityProviderModel.ATTR_PROVIDER_TYPE,
             (String)getPageSessionAttribute(ENTITY_LOCATION));
-        populateValue(entityName, ENTITY_REALM);
+        populateValue(entityName, realm);
     }
     
     private void populateValue(String name, String realm) {
@@ -111,16 +111,16 @@ public class IDFFSPViewBean
             
             // update standard metadata
             Map origStdMeta =  
-                model.getEntitySPDescriptor(entityName, ENTITY_REALM);
+                model.getEntitySPDescriptor(entityName, realm);
             Map stdValues = ps.getAttributeValues(origStdMeta, false, model);
-            model.updateEntityDescriptor(entityName, ENTITY_REALM,
+            model.updateEntityDescriptor(entityName, realm,
                 IFSConstants.SP, stdValues);
             
             //update extended metadata
-            Map origExtMeta = model.getEntityConfig(entityName, ENTITY_REALM,
+            Map origExtMeta = model.getEntityConfig(entityName, realm,
                 IFSConstants.SP, location);
             Map extValues = ps.getAttributeValues(origExtMeta, false, model);
-            model.updateEntityConfig(entityName, ENTITY_REALM,
+            model.updateEntityConfig(entityName, realm,
                 IFSConstants.SP, extValues);
             
             setInlineAlertMessage(CCAlert.TYPE_INFO,
