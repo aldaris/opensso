@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLPropertyXMLBuilder.java,v 1.1 2007-07-10 09:54:24 asyhuang Exp $
+ * $Id: SAMLPropertyXMLBuilder.java,v 1.2 2007-10-17 06:11:08 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ public class SAMLPropertyXMLBuilder
     
     static {
         String[] attrs = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.TARGET,
             SAMLConstants.SAMLURL,
@@ -60,6 +61,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.VERSION
         };
         String[] mand = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.TARGET,
             SAMLConstants.SAMLURL,
@@ -75,6 +77,7 @@ public class SAMLPropertyXMLBuilder
     
     static {
         String[] attrs = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.TARGET,
             SAMLConstants.POSTURL,
@@ -83,6 +86,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.VERSION
         };
         String[] mand = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.TARGET,
             SAMLConstants.POSTURL
@@ -97,6 +101,7 @@ public class SAMLPropertyXMLBuilder
     
     static {
         String[] attrs = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.SOAPUrl,
             SAMLConstants.ACCOUNTMAPPER,
@@ -108,6 +113,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.VERSION
         };
         String[] mand = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.SOAPUrl
         };
@@ -121,12 +127,14 @@ public class SAMLPropertyXMLBuilder
     
     static {
         String[] attrs = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.ISSUER,
             SAMLConstants.ACCOUNTMAPPER,
             SAMLConstants.CERTALIAS
         };
         String[] mand = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.ISSUER
         };
@@ -140,6 +148,7 @@ public class SAMLPropertyXMLBuilder
     
     static {
         String[] attrs = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.HOST_LIST,
             SAMLConstants.ATTRIBUTEMAPPER,
@@ -150,6 +159,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.VERSION
         };
         String[] mand = {
+            SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.HOST_LIST
         };
@@ -204,6 +214,11 @@ public class SAMLPropertyXMLBuilder
     public List getSAMLProperties (Map values) {
         List list = new ArrayList (values.size()*2);
         Set attributeNames = AMAdminUtils.lowerCase (values.keySet ());
+        // for upgrade case, the old value won't have PARTNERNAME
+        // if we don't add PARTNERNAME to attributeNames, this function
+        // will return empty List.
+        attributeNames.add(SAMLConstants.PARTNERNAME.toLowerCase());
+
         for (Iterator i = profileList.iterator (); i.hasNext (); ) {
             SAMLProperty p = (SAMLProperty)i.next ();
             if (attributeNames.containsAll (
@@ -343,6 +358,8 @@ public class SAMLPropertyXMLBuilder
             
             if (allAttributes.isEmpty ()) {
                 allAttributes.addAll (p.getAttributeNames ());
+                allAttributes.remove (SAMLConstants.PARTNERNAME);
+                common.add (SAMLConstants.PARTNERNAME);
                 allAttributes.remove (SAMLConstants.SOURCEID);
                 common.add (SAMLConstants.SOURCEID);
             } else {

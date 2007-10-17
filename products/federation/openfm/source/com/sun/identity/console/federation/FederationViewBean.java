@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.12 2007-10-16 22:09:38 exu Exp $
+ * $Id: FederationViewBean.java,v 1.13 2007-10-17 06:11:07 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -224,8 +224,12 @@ public  class FederationViewBean
                     Map map = AMAdminUtils.upCaseKeys (
                         tokenizer.tokenizes (tokenizedValue));
                     
-                    tblModel.setValue (SAML_TRUSTED_PARTNER_VALUE,
-                        (String)map.get (SAMLConstants.SOURCEID));
+                    String partnerName =
+                        (String)map.get(SAMLConstants.PARTNERNAME);
+                    if (partnerName == null) {
+                        partnerName = (String)map.get(SAMLConstants.SOURCEID);
+                    }
+                    tblModel.setValue (SAML_TRUSTED_PARTNER_VALUE, partnerName);
                     tblModel.setValue (SAML_TRUSTED_PARTNER_HREF,
                         Integer.toString (counter++));
                     cache.add (tokenizedValue);

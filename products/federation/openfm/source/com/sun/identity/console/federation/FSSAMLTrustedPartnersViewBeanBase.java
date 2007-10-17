@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLTrustedPartnersViewBeanBase.java,v 1.2 2007-07-11 22:05:51 veiming Exp $
+ * $Id: FSSAMLTrustedPartnersViewBeanBase.java,v 1.3 2007-10-17 06:11:07 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,6 +68,8 @@ public abstract class FSSAMLTrustedPartnersViewBeanBase
     private static Map exactAttributeNames = new HashMap();
     
     static {
+        errorMessages.put(SAMLConstants.PARTNERNAME,
+            "saml.profile.trustedPartner.missing.partnerName.message");
         errorMessages.put(SAMLConstants.SOURCEID,
             "saml.profile.trustedPartner.missing.sourceid.message");
         errorMessages.put(SAMLConstants.TARGET,
@@ -85,6 +87,8 @@ public abstract class FSSAMLTrustedPartnersViewBeanBase
     }
     
     static {
+        exactAttributeNames.put(SAMLConstants.PARTNERNAME.toLowerCase(),
+            SAMLConstants.PARTNERNAME);
         exactAttributeNames.put(SAMLConstants.SOURCEID.toLowerCase(),
             SAMLConstants.SOURCEID);
         exactAttributeNames.put(SAMLConstants.TARGET.toLowerCase(),

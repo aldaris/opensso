@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLPropertyTemplate.java,v 1.1 2007-07-10 09:54:20 asyhuang Exp $
+ * $Id: SAMLPropertyTemplate.java,v 1.2 2007-10-17 06:11:08 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,11 @@ public class SAMLPropertyTemplate {
     public static final String CONFIRM_SUFFIX = "_confirm";
     
     static {
+        templates.put(SAMLConstants.PARTNERNAME,
+            "<property required=\"true\"><label name=\"lblPartnerName\" defaultValue=\"saml.profile.trustedPartners.partnerName.label\" labelFor=\"" + SAMLConstants.PARTNERNAME+ "\" /><cc name=\"" + SAMLConstants.PARTNERNAME + "\" tagclass=\"com.sun.web.ui.taglib.html.CCTextFieldTag\"><attribute name=\"size\" value=\"75\" /></cc></property>");
+        readonlyTemplates.put(SAMLConstants.PARTNERNAME,
+            "<property><label name=\"lblPartnerName\" defaultValue=\"saml.profile.trustedPartners.partnerName.label\" labelFor=\"" + SAMLConstants.PARTNERNAME+ "\" /><cc name=\"" + SAMLConstants.PARTNERNAME + "\" tagclass=\"com.sun.web.ui.taglib.html.CCStaticTextFieldTag\" /></property>");
+
         templates.put(SAMLConstants.SOURCEID,
             "<property required=\"true\"><label name=\"lblSourceid\" defaultValue=\"saml.profile.trustedPartners.sourceID.label\" labelFor=\"" + SAMLConstants.SOURCEID+ "\" /><cc name=\"" + SAMLConstants.SOURCEID + "\" tagclass=\"com.sun.web.ui.taglib.html.CCTextFieldTag\"><attribute name=\"size\" value=\"75\" /></cc></property>");
         readonlyTemplates.put(SAMLConstants.SOURCEID,
