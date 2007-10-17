@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.8 2007-10-04 04:34:50 hengming Exp $
+ * $Id: IDPSSOFederate.java,v 1.9 2007-10-17 18:46:36 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.saml2.profile;
 
+import com.sun.identity.saml2.protocol.Scoping;
 import com.sun.identity.multiprotocol.MultiProtocolUtils;
 import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.shared.encode.URLEncDec;
@@ -390,7 +391,7 @@ public class IDPSSOFederate {
                                 return;
                             }
                         }
-                         //else continue for the local authentication.    
+                        //else continue for the local authentication.    
                     } catch (SAML2Exception re) {
                         if (SAML2Utils.debug.messageEnabled()) {
                             SAML2Utils.debug.message(classMethod +

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.7 2007-10-04 04:34:51 hengming Exp $
+ * $Id: SPSSOFederate.java,v 1.8 2007-10-17 18:46:36 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -718,8 +718,11 @@ public class SPSSOFederate {
         {
             Scoping scoping = 
                 ProtocolFactory.getInstance().createScoping();
-            scoping.setProxyCount(new Integer(
-                getParameter(spConfigMap, SAML2Constants.IDP_PROXY_COUNT)));
+            String proxyCountParam = getParameter(spConfigMap,
+                SAML2Constants.IDP_PROXY_COUNT);
+            if (proxyCountParam != null && (!proxyCountParam.equals(""))) { 
+                scoping.setProxyCount(new Integer(proxyCountParam));
+            }
             List proxyIDPs = (List) spConfigMap.get(
                 SAML2Constants.IDP_PROXY_LIST);
             if (proxyIDPs != null && !proxyIDPs.isEmpty()) {

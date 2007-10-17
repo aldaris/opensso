@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutRedirect.jsp,v 1.4 2007-07-26 21:58:17 qcheng Exp $
+   $Id: idpSingleLogoutRedirect.jsp,v 1.5 2007-10-17 18:47:17 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -33,7 +33,9 @@
 <%@ page import="com.sun.identity.saml2.profile.IDPCache" %>
 <%@ page import="com.sun.identity.saml2.profile.IDPSingleLogout" %>
 <%@ page import="java.util.Map" %>
-
+<%@ page import="com.sun.identity.saml2.protocol.LogoutResponse" %>
+<%@ page import="com.sun.identity.saml2.protocol.ProtocolFactory" %>
+<%@ page import="com.sun.identity.saml2.profile.LogoutUtil" %>
 <%--
     idpSingleLogoutRedirect.jsp
 
@@ -93,15 +95,50 @@
          */
             doRelayState = IDPSingleLogout.processLogoutResponse(
                 request, response,samlResponse, relayState);
+            //IDP Proxy          
+            String decodedStr =
+                SAML2Utils.decodeFromRedirect(samlResponse);
+            if (decodedStr == null) {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString(
+                    "nullDecodedStrFromSamlResponse"));
+            }
+            LogoutResponse logoutRes =
+                ProtocolFactory.getInstance().createLogoutResponse(
+                decodedStr);
+            String requestId = logoutRes.getInResponseTo();
+            Map logoutResponseMap = (Map) 
+                IDPCache.logoutResponseCache.get(requestId);
+            if (logoutResponseMap != null &&
+               (!logoutResponseMap.isEmpty())) { 
+                LogoutResponse logoutResp = (LogoutResponse)
+                    logoutResponseMap.get("LogoutResponse");     
+                String location = (String) logoutResponseMap.get(
+                    "Location");
+                String spEntity = (String) logoutResponseMap.get(
+                    "spEntityID"); 
+                String idpEntity = (String) logoutResponseMap.get(
+                    "idpEntityID"); 
+                if (logoutResp != null && location != null && 
+                    spEntity != null && idpEntity !=null) { 
+                    LogoutUtil.sendSLOResponse(response, logoutResp,
+                        location, relayState,
+                        "/", spEntity, SAML2Constants.SP_ROLE, idpEntity);
+                    return;
+                }
+            } 
         } catch (SAML2Exception sse) {
-            SAML2Utils.debug.error("Error processing LogoutResponse :", sse);
+            SAML2Utils.debug.error("Error processing LogoutResponse :",
+                sse);
             response.sendError(response.SC_BAD_REQUEST,
-                 SAML2Utils.bundle.getString("LogoutResponseProcessingError"));
+                SAML2Utils.bundle.getString(
+                "LogoutResponseProcessingError"));
             return;
         } catch (Exception e) {
             SAML2Utils.debug.error("Error processing LogoutResponse ",e);
             response.sendError(response.SC_BAD_REQUEST,
-                 SAML2Utils.bundle.getString("LogoutResponseProcessingError"));
+                SAML2Utils.bundle.getString(
+                "LogoutResponseProcessingError"));
             return;
         }
 

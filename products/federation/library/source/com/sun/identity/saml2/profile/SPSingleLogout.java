@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.9 2007-09-11 22:01:49 weisun2 Exp $
+ * $Id: SPSingleLogout.java,v 1.10 2007-10-17 18:46:36 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -629,13 +629,24 @@ public class SPSingleLogout {
                     location);
             }
         }
-
-        LogoutResponse logoutRes =
-            processLogoutRequest(logoutReq, spEntityID, realm,
-                                 request, response, false);
-        logoutRes.setDestination(location);
-        LogoutUtil.sendSLOResponse(response, logoutRes, location, relayState, 
+        List partners = IDPProxyUtil.getSPSessionPartners(request);
+         
+        //IDP Proxy Case 
+        if (partners != null && !partners.isEmpty()) {
+            LogoutResponse logoutRespon =
+                processLogoutRequest(logoutReq, spEntityID, realm,
+                request, response, false, false);
+            logoutRespon.setDestination(location);   
+            IDPProxyUtil.sendIDPInitProxyLogoutRequest(request, response, 
+                 logoutRespon, location, spEntityID, idpEntityID);   
+         } else {  
+             LogoutResponse logoutRes = processLogoutRequest(
+                 logoutReq, spEntityID, realm,
+                 request, response, false);
+             logoutRes.setDestination(location);
+             LogoutUtil.sendSLOResponse(response, logoutRes, location, relayState, 
                 realm, spEntityID, SAML2Constants.SP_ROLE, idpEntityID);
+         }       
     }
 
     /**
@@ -655,6 +666,27 @@ public class SPSingleLogout {
         LogoutRequest logoutReq, String spEntityID, String realm,
         HttpServletRequest request, HttpServletResponse response,
         boolean isLBReq) {
+            return processLogoutRequest(logoutReq, spEntityID, realm,
+            request, response, isLBReq, true);        
+     }    
+ 
+     /**
+      * Gets and processes the Single <code>LogoutRequest</code> from IDP
+      * and return <code>LogoutResponse</code>.
+      *
+      * @param logoutReq <code>LogoutRequest</code> from IDP
+      * @param spEntityID name of host entity ID.
+      * @param realm name of host entity.
+      * @param request HTTP servlet request.
+      * @param request HTTP servlet response.
+      * @param isLBReq true if the request is for load balancing.
+      * @return LogoutResponse the target URL on successful
+      * <code>LogoutRequest</code>.
+      */
+    public static LogoutResponse processLogoutRequest(
+        LogoutRequest logoutReq, String spEntityID, String realm,
+        HttpServletRequest request, HttpServletResponse response,
+        boolean isLBReq, boolean destroySession) {
         final String method = "processLogoutRequest : "; 
         NameID nameID = null;
         Status status = null;
@@ -796,9 +828,11 @@ public class SPSingleLogout {
                         if (debug.messageEnabled()) {
                             debug.message(method
                                 + "destroy token " + tokenID);
-                        }
-                        sessionProvider.invalidateSession(token, request,
+                        } 
+                        if (destroySession) {
+                            sessionProvider.invalidateSession(token, request,
                             response);
+                        }    
                     }
                     if (foundPeer) {
                         boolean peerError = false;
@@ -859,8 +893,10 @@ public class SPSingleLogout {
                                          + "destroy token (2) " 
                                          + tokenIDToBeDestroyed);
                                  }
-                                 sessionProvider.invalidateSession(
-                                    token, request, response);
+                                 if (destroySession) {
+                                     sessionProvider.invalidateSession(
+                                        token, request, response);
+                                 }   
                             } catch (SessionException se) {
                                 debug.error(method + "Could not create " +
                                     "session from token ID = " +

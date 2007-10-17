@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.8 2007-10-05 23:00:00 weisun2 Exp $
+ * $Id: IDPSingleLogout.java,v 1.9 2007-10-17 18:46:36 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -329,6 +329,11 @@ public class IDPSingleLogout {
                     binding.equals(SAML2Constants.HTTP_REDIRECT)) {
                     idpSession.setPendingLogoutRequestID(requestIDStr);
                     idpSession.setLogoutAll(logoutall);
+                    Map logoutMap = (Map) paramsMap.get("LogoutMap"); 
+                    if (logoutMap != null && !logoutMap.isEmpty()) { 
+                       IDPCache.logoutResponseCache.put(requestIDStr, 
+                           (Map) paramsMap.get("LogoutMap"));
+                    }        
                     break;
                 }
             }

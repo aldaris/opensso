@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.5 2007-10-05 21:21:19 weisun2 Exp $
+ * $Id: IDPProxyUtil.java,v 1.6 2007-10-17 18:46:36 weisun2 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.key.KeyUtil;
@@ -338,14 +339,16 @@ public class IDPProxyUtil {
             newRequest.setVersion(SAML2Constants.VERSION_2_0);
             Scoping scoping = origRequest.getScoping(); 
             if (scoping != null) {
-                int proxyCount = scoping.getProxyCount().intValue();
-                if (proxyCount > 0 ) {
-                    Scoping newScoping = ProtocolFactory.getInstance().
-                        createScoping();
+                Scoping newScoping = ProtocolFactory.getInstance().
+                    createScoping(); 
+                Integer proxyCountInt = scoping.getProxyCount();
+                int proxyCount = 1; 
+                if (proxyCountInt != null) {
+                    proxyCount = scoping.getProxyCount().intValue();
                     newScoping.setProxyCount(new Integer(proxyCount-1));
-                    newScoping.setIDPList(scoping.getIDPList());
-                    newRequest.setScoping(newScoping);
                 }
+                newScoping.setIDPList(scoping.getIDPList());
+                newRequest.setScoping(newScoping);
             }
             return newRequest;
         } catch (Exception ex) {
@@ -368,7 +371,19 @@ public class IDPProxyUtil {
         throws SAML2Exception
     {
         Scoping scoping = authnRequest.getScoping();
-        if (scoping != null && ((scoping.getProxyCount().intValue()) == 0)) {
+        if (scoping == null) {
+            return false;
+        }    
+        Integer proxyCountInt = scoping.getProxyCount(); 
+        int proxyCount = 0; 
+        if (proxyCountInt == null) {
+            //Proxy count missing, IDP Proxy allowed 
+            proxyCount = 1; 
+        } else {   
+            proxyCount = proxyCountInt.intValue();
+        }    
+         
+        if (proxyCount <= 0) {
             return false;
         }
         SPSSOConfigElement spConfig =
@@ -447,6 +462,10 @@ public class IDPProxyUtil {
                 + ":Original requesting service provider id:"
                 + proxySPEntityId);
         }
+        // Save the SP provider id based on the token id
+        IDPCache.spSessionPartnerBySessionID.put(
+            (String) sessionProvider.getSessionID(newSess), 
+             proxySPEntityId);
  
         //TODO: set AuthnContext
         /*AuthnContext authnContextStm;
@@ -872,4 +891,95 @@ public class IDPProxyUtil {
             SAML2Utils.debug.error("sendProxyLogoutResponseBySOAP: ", ie); 
         }       
    }
+   
+   public static void sendIDPInitProxyLogoutRequest(
+        HttpServletRequest request,
+        HttpServletResponse response, 
+        LogoutResponse logoutResponse, 
+        String location,
+        String spEntityID, 
+        String idpEntityID)  
+       throws SAML2Exception
+   {
+        try { 
+            Object tmpsession = sessionProvider.getSession(request);
+            String tokenID = sessionProvider.getSessionID(tmpsession); 
+            String metaAlias =
+                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI());
+            String realm = SAML2Utils.
+                getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
+            String logoutAll = request.getParameter(SAML2Constants.LOGOUT_ALL);
+            HashMap paramsMap = new HashMap();
+            IDPSSOConfigElement config = sm.getIDPSSOConfig(
+                "/", spEntityID);
+            paramsMap.put("metaAlias", config.getMetaAlias()); 
+            paramsMap.put(SAML2Constants.ROLE, SAML2Constants.IDP_ROLE);
+            paramsMap.put(SAML2Constants.BINDING, 
+                SAML2Constants.HTTP_REDIRECT);
+            paramsMap.put("Destination", 
+                request.getParameter("Destination"));
+            paramsMap.put("Consent", request.getParameter("Consent"));
+            paramsMap.put("Extension", request.getParameter("Extension"));
+      
+            Map logoutResponseMap =  new HashMap(); 
+            if (logoutResponse != null) {
+                logoutResponseMap.put("LogoutResponse", logoutResponse);
+            }
+            if (location != null && !location.equals("")) {
+               logoutResponseMap.put("Location", location); 
+            }
+            if (spEntityID != null && !spEntityID.equals("")) {
+                logoutResponseMap.put("spEntityID", spEntityID); 
+            } 
+            if (idpEntityID != null && !idpEntityID.equals("")) {
+                logoutResponseMap.put("idpEntityID", idpEntityID); 
+            }
+            paramsMap.put("LogoutMap", logoutResponseMap); 
+        
+            if (logoutAll != null) {
+                paramsMap.put(SAML2Constants.LOGOUT_ALL, logoutAll);
+            }
+            String binding = SAML2Constants.HTTP_REDIRECT;
+            IDPSingleLogout.initiateLogoutRequest(request,response,
+                binding,paramsMap);
+            
+            /*TODO: 
+            if (binding.equalsIgnoreCase(SAML2Constants.SOAP)) {
+            if (RelayState != null) {
+                response.sendRedirect(RelayState);
+            } else {
+                %>
+                <jsp:forward
+                    page="/saml2/jsp/default.jsp?message=idpSloSuccess" />
+                <%
+            }
+            }  
+            */              
+        } catch (SessionException se) {
+            SAML2Utils.debug.error(
+                "sendIDPInitProxyLogoutRequest: ", se);
+        } 
+   }
+    
+   public static List getSPSessionPartners(HttpServletRequest request) 
+   {
+       try {
+           Object tmpsession = sessionProvider.getSession(request);
+           String tokenID = sessionProvider.getSessionID(tmpsession);
+           String pid = null; 
+           if (tokenID != null && !tokenID.equals("")) {    
+               pid=(String)IDPCache.spSessionPartnerBySessionID.get(tokenID); 
+           } 
+           List partners= null; 
+           if (pid != null && !pid.equals("")) {
+               partners = new ArrayList();    
+               SAML2Utils.debug.message(
+                   "SP SESSION PARTNER's Provider ID:  " + pid);  
+                   partners.add(pid);
+            }    
+            return partners;
+        } catch (SessionException se) {
+            return null;
+        } 
+    }      
 }
