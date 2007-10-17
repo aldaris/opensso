@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSAuthModule.java,v 1.3 2007-07-23 17:54:19 pawand Exp $
+ * $Id: SMSAuthModule.java,v 1.4 2007-10-17 23:00:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,9 +67,9 @@ public class SMSAuthModule implements LoginModule {
 
     private static boolean registeredCallbackHandler;
 
-    private static Map users = new CaseInsensitiveHashMap();
+    private static Map users;
 
-    private static Map userNameToDN = new CaseInsensitiveHashMap();
+    private static Map userNameToDN;
 
     private static Debug debug = Debug.getInstance("amAuthInternalSMModule");
 
@@ -127,24 +127,36 @@ public class SMSAuthModule implements LoginModule {
         }
 
         if (!initialized) {
-            if (debug.messageEnabled()) {
-                debug.message("SMSAuthModule::initialize() Initializing "
-                        + "Username and password from serverconfig.xml");
-            }
-            // Get internal user names and passwords from serverconfig.xml
-            // %%% Might have to get them directory from DSConfigMgr %%%
-            // if other than "default" needs to be used
-            String name = (String) AccessController
-                    .doPrivileged(new AdminDNAction());
-            String passwd = (String) AccessController
-                    .doPrivileged(new AdminPasswordAction());
-            addUserToCache(name, Hash.hash(passwd));
-            if (debug.messageEnabled()) {
-                debug.message("SMSAuthModule::initialize() Username "
-                        + "serviceconfig.xml: " + name);
-            }
-            initialized = true;
+            initialize();
         }
+    }
+    
+    public static void initialize() {
+        if (debug.messageEnabled()) {
+            debug.message("SMSAuthModule.initialize() Initializing "
+                    + "Username and password from serverconfig.xml");
+        }
+        
+        // reset so that internal users set will be reloaded later in time.
+        loadedInternalUsers = false;
+        
+        // initialize caches.
+        users = new CaseInsensitiveHashMap();
+        userNameToDN = new CaseInsensitiveHashMap();
+
+        // Get internal user names and passwords from serverconfig.xml
+        // %%% Might have to get them directory from DSConfigMgr %%%
+        // if other than "default" needs to be used
+        String name = (String) AccessController
+            .doPrivileged(new AdminDNAction());
+        String passwd = (String) AccessController
+            .doPrivileged(new AdminPasswordAction());
+        addUserToCache(name, Hash.hash(passwd));
+        if (debug.messageEnabled()) {
+            debug.message("SMSAuthModule.initialize() Username "
+                    + "serviceconfig.xml: " + name);
+        }
+        initialized = true;
     }
 
     public boolean login() throws LoginException {

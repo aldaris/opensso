@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.2 2007-09-13 19:10:29 veiming Exp $
+ * $Id: SystemProperties.java,v 1.3 2007-10-17 23:00:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,6 +69,7 @@ public class SystemProperties implements ISystemProperties {
      * @param protocol The service protocol.
      * @param hostname The service host name.
      * @param port The service listening port.
+     * @param uri The service depployment URI.
      * @return The URL of the specified service on the specified host.
      * @throws Exception if the URL could not be found.
      */
@@ -76,10 +77,11 @@ public class SystemProperties implements ISystemProperties {
         String serviceName, 
         String protocol,
         String hostname,
-        int port
+        int port,
+        String uri
     ) throws Exception {
         return WebtopNaming.getServiceURL(serviceName, protocol, hostname,
-            Integer.toString(port));
+            Integer.toString(port), uri);
     }
 
     /**

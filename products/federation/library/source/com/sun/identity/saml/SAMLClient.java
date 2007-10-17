@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLClient.java,v 1.2 2006-12-14 18:40:19 beomsuk Exp $
+ * $Id: SAMLClient.java,v 1.3 2007-10-17 23:00:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,7 @@ public class SAMLClient {
             URL serverurl = new URL(SAMLServiceManager.getServerURL()); 
             weburl = SystemConfigurationUtil.getServiceURL(service,  
                 serverurl.getProtocol(), serverurl.getHost(),
-                serverurl.getPort());  
+                serverurl.getPort(), serverurl.getPath());  
             
         } catch(SystemConfigurationException ue) {
             SAMLUtils.debug.error("SAMLClient", ue); 
@@ -224,7 +224,7 @@ public class SAMLClient {
                 samlsoap = SystemConfigurationUtil.getServiceURL(
                     SAMLConstants.SAML_SOAP_NAMING,
                     serverurl.getProtocol(), serverurl.getHost(),
-                    serverurl.getPort());   
+                    serverurl.getPort(), serverurl.getPath());   
             } else {
                 samlsoap = new URL(ssurl);
             }

@@ -17,16 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NT.java,v 1.3 2007-01-09 19:08:43 manish_rustagi Exp $
+ * $Id: NT.java,v 1.4 2007-10-17 23:00:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
-
 package com.sun.identity.authentication.modules.nt;
 
-import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
@@ -105,16 +105,11 @@ public class NT extends AMLoginModule {
             debug =  com.sun.identity.shared.debug.Debug.getInstance(amAuthNT);
             debug.message("NT constructor called");
         }
-        try {
-            baseDir = SystemProperties.get("com.iplanet.am.installdir");
-            if (baseDir.length() == 0) {
-                baseDir = "/opt/SUNWam";
-            }
-            smbPath = baseDir + "/bin/smbclient";
-        }
-        catch (Exception ex) {
-            debug.error("NT failed to initialize " + ex.getMessage());
-        }
+        String base = SystemProperties.get(SystemProperties.CONFIG_PATH);
+        String deployURL = SystemProperties.get(
+            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        baseDir = base + "/" + deployURL;
+        smbPath = baseDir + "/bin/smbclient";
         File file = new File (smbPath);
         if(!file.exists()) {
             debug.error ("smbclient file not found");

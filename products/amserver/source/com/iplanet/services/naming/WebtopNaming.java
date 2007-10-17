@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.6 2007-10-15 17:55:01 rajeevangal Exp $
+ * $Id: WebtopNaming.java,v 1.7 2007-10-17 23:00:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,6 +92,8 @@ public class WebtopNaming {
     private static String amServer = null;
 
     private static String amServerPort = null;
+    
+    private static String amServerURI;
 
     private static SiteMonitor monitorThread = null;
 
@@ -110,28 +112,32 @@ public class WebtopNaming {
         return serverMode;
     }
 
-    public static boolean isSiteEnabled(String protocol, String host,
-            String port) throws Exception {
-        String serverid = getServerID(protocol, host, port);
-
+    public static boolean isSiteEnabled(
+        String protocol,
+        String host,
+        String port, 
+        String uri
+    ) throws Exception {
+        String serverid = getServerID(protocol, host, port, uri);
         return isSiteEnabled(serverid);
     }
 
     public static boolean isSiteEnabled(String serverid) throws Exception {
         String siteid = (String) siteIdTable.get(serverid);
-
         return (!serverid.equals(siteid));
     }
 
     public static String getAMServerID() throws ServerEntryNotFoundException {
-        return getServerID(amServerProtocol, amServer, amServerPort);
+        return getServerID(amServerProtocol, amServer, amServerPort, 
+            amServerURI);
     }
 
     private static void getAMServer() {
         amServer = SystemProperties.get(Constants.AM_SERVER_HOST);
         amServerPort = SystemProperties.get(Constants.AM_SERVER_PORT);
         amServerProtocol = SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
-        return;
+        amServerURI = SystemProperties.get(
+            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
     }
 
     private static void initializeNamingService() {
@@ -161,36 +167,88 @@ public class WebtopNaming {
      * @return The URL of the specified service on the specified host.
      */
     public static URL getServiceURL(String service, String protocol,
-            String host, String port) throws URLNotFoundException {
+            String host, String port, String uri) throws URLNotFoundException {
         boolean validate = isServerMode();
+        return (getServiceURL(service, protocol, host, port, uri, validate));
+    }
 
-        return (getServiceURL(service, protocol, host, port, validate));
+        /**
+     * Returns the URL of the specified service on the specified host.
+     * 
+     * @param service Name of the service.
+     * @param protocol Service protocol.
+     * @param host Service host name.
+     * @param port Service listening port.
+     * @param uri Deployment URI.
+     * @param validate Validate the protocol, host and port of AM server
+     * @return The URL of the specified service on the specified host.
+     */
+    public static URL getServiceURL(String service, URL url, boolean validate)
+        throws URLNotFoundException {
+        return getServiceURL(service, url.getProtocol(), 
+            url.getHost(), Integer.toString(url.getPort()), url.getPath(),
+            validate);
     }
 
     /**
-     * This method returns the URL of the specified service on the specified
-     * host.
+     * Returns the URL of the specified service on the specified host.
      * 
-     * @param service
-     *            The name of the service.
-     * @param protocol
-     *            The service protocol
-     * @param host
-     *            The service host name
-     * @param port
-     *            The service listening port
-     * @param validate
-     *            Validate the protocol, host and port of AM server
+     * @param service Name of the service.
+     * @param protocol Service protocol.
+     * @param host Service host name.
+     * @param port Service listening port.
+     * @param validate Validate the protocol, host and port of AM server
      * @return The URL of the specified service on the specified host.
      */
-    public static URL getServiceURL(String service, String protocol,
-            String host, String port, boolean validate)
-            throws URLNotFoundException {
+    public static URL getServiceURL(
+        String service, 
+        String protocol,
+        String host,
+        String port,
+        boolean validate
+    ) throws URLNotFoundException {
+        String namingURL = SystemProperties.get(Constants.AM_NAMING_URL);
+        try {
+            URL url = new URL(namingURL);
+            String uri = url.getPath();
+            int idx = uri.lastIndexOf('/');
+            while (idx > 0) {
+                uri = uri.substring(0, idx);
+                idx = uri.lastIndexOf('/');
+            }
+            return getServiceURL(service, protocol, host, port, uri, validate);
+        } catch (MalformedURLException ex) {
+            throw new URLNotFoundException(ex.getMessage());
+        }
+        
+    }
+    
+    /**
+     * Returns the URL of the specified service on the specified host.
+     * 
+     * @param service Name of the service.
+     * @param protocol Service protocol.
+     * @param host Service host name.
+     * @param port Service listening port.
+     * @param uri Deployment URI.
+     * @param validate Validate the protocol, host and port of AM server
+     * @return The URL of the specified service on the specified host.
+     */
+    public static URL getServiceURL(
+        String service, 
+        String protocol,
+        String host,
+        String port,
+        String uri,
+        boolean validate
+    ) throws URLNotFoundException {
         try {
             // check before the first naming table update to avoid deadlock
-            if (protocol == null || host == null || port == null
-                    || protocol.length() == 0 || host.length() == 0
-                    || port.length() == 0) {
+            if ((protocol == null) || (host == null) || (port == null) ||
+                (uri == null) || (protocol.length() == 0) ||
+                (host.length() == 0) || (port.length() == 0) ||
+                (uri.length() == 0)
+            ) {
                 throw new Exception(NamingBundle.getString("noServiceURL")
                         + service);
             }
@@ -198,19 +256,21 @@ public class WebtopNaming {
             if (namingTable == null) {
                 getNamingProfile(false);
             }
+
             String url = null;
             String name = AM_NAMING_PREFIX + service.toLowerCase() + "-url";
-            url = (String) namingTable.get(name);
+            url = (String)namingTable.get(name);
             if (url == null) {
                 name = FAM_NAMING_PREFIX + service.toLowerCase() + "-url";
                 url = (String)namingTable.get(name);
             }
+
             if (url != null) {
                 // If replacement is required, the protocol, host, and port
                 // validation is needed against the server list
                 // (iplanet-am-platform-server-list)
                 if (validate && url.indexOf("%") != -1) {
-                    validate(protocol, host, port);
+                    validate(protocol, host, port, uri);
                 }
                 // %protocol processing
                 int idx;
@@ -237,6 +297,20 @@ public class WebtopNaming {
                             + url.substring(idx + "%port".length(), url
                                     .length());
                 }
+                
+                // %uri processing
+                // uri can be null for previous releases.
+                if ((uri != null) && ((idx = url.indexOf("%uri")) != -1)) {
+                    int test = uri.lastIndexOf('/');
+                    while (test > 0) {
+                        uri = uri.substring(0, test);
+                        test = uri.lastIndexOf('/');
+                    }
+
+                    url = url.substring(0, idx) + uri + 
+                        url.substring(idx + "%uri".length(), url.length());
+                }
+
                 return new URL(url);
             } else {
                 throw new Exception(NamingBundle.getString("noServiceURL")
@@ -264,17 +338,18 @@ public class WebtopNaming {
                 getNamingProfile(false);
             }
 
-            String name = AM_NAMING_PREFIX + service.toLowerCase() + "-url";            
+            String name = AM_NAMING_PREFIX + service.toLowerCase() + "-url";
             String url = (String)namingTable.get(name);
             if (url == null) {
                 name = FAM_NAMING_PREFIX + service.toLowerCase() + "-url";
                 url = (String)namingTable.get(name);
             }
+
             if (url != null) {
                 allurls = new Vector();
                 if (monitorThread == null) {
                     allurls.add(getServiceURL(service, amServerProtocol,
-                                      amServer, amServerPort));
+                        amServer, amServerPort, amServerURI));
                 } else {
                     if (url.indexOf("%") != -1) {
                         Vector servers =  SiteMonitor.getAvailableSites();
@@ -283,9 +358,9 @@ public class WebtopNaming {
                             String server = getServerFromID((String)it.next());
                             URL serverURL = new URL(server);
                             allurls.add(getServiceURL(service,
-                                      serverURL.getProtocol(),
-                                      serverURL.getHost(),
-                                      String.valueOf(serverURL.getPort())));
+                                serverURL.getProtocol(), serverURL.getHost(),
+                                String.valueOf(serverURL.getPort()), 
+                                serverURL.getPath()));
                         }
                     } else {
                         allurls.add(new URL(url));
@@ -338,18 +413,22 @@ public class WebtopNaming {
      * list for a corresponding server. One use of this function is to keep this
      * server id in our session id.
      */
-    public static String getServerID(String protocol,
-                                     String host,
-                                     String port)
+    public static String getServerID(
+        String protocol,
+        String host,
+        String port,
+        String uri)
         throws ServerEntryNotFoundException {
-        return getServerID(protocol, host, port, true);
+        return getServerID(protocol, host, port, uri, true);
     }
 
-    public static String getServerID(String protocol, 
-                                     String host, 
-                                     String port,
-                                     boolean updatetbl)
-        throws ServerEntryNotFoundException {
+    public static String getServerID(
+        String protocol, 
+        String host, 
+        String port,
+        String uri,
+        boolean updatetbl
+    ) throws ServerEntryNotFoundException {
         try {
             // check before the first naming table update to avoid deadlock
             if (protocol == null || host == null || port == null ||
@@ -359,7 +438,9 @@ public class WebtopNaming {
                 throw new Exception(NamingBundle.getString("noServerID"));
             }
 
-            String server = protocol + ":" + "//" + host + ":" + port;
+            String server = (uri != null) ?
+                protocol + ":" + "//" + host + ":" + port + uri :
+                protocol + ":" + "//" + host + ":" + port;
             String serverID = null;
             if (serverIdTable != null) {
                 serverID = getValueFromTable(serverIdTable, server);
@@ -423,10 +504,13 @@ public class WebtopNaming {
      * list for a corresponding server. One use of this function is to keep this
      * server id in our session id.
      */
-    public static String getSiteID(String protocol, String host, String port)
-            throws ServerEntryNotFoundException {
-        String serverid = getServerID(protocol, host, port);
-
+    public static String getSiteID(
+        String protocol,
+        String host,
+        String port, 
+        String uri
+    ) throws ServerEntryNotFoundException {
+        String serverid = getServerID(protocol, host, port, uri);
         return getSiteID(serverid);
     }
 
@@ -578,21 +662,33 @@ public class WebtopNaming {
         amServerProtocol = url.getProtocol();
         amServer = url.getHost();
         amServerPort = Integer.toString(url.getPort());
+        amServerURI = url.getPath();
+        amServerURI = amServerURI.replaceAll("//", "/");
+        int idx = amServerURI.lastIndexOf("/");
+        while (idx > 0) {
+            amServerURI = amServerURI.substring(0, idx);
+            idx = amServerURI.lastIndexOf("/");
+        }
 
         SystemProperties.initializeProperties(Constants.AM_SERVER_PROTOCOL,
-                amServerProtocol);
+            amServerProtocol);
         SystemProperties.initializeProperties(Constants.AM_SERVER_HOST,
-                amServer);
+            amServer);
         SystemProperties.initializeProperties(Constants.AM_SERVER_PORT,
-                amServerPort);
+            amServerPort);
+        SystemProperties.initializeProperties(
+            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR, amServerURI);
         if (debug.messageEnabled()) {
             debug.message("Server Properties are changed : ");
             debug.message(Constants.AM_SERVER_PROTOCOL + " : "
-                    + SystemProperties.get(Constants.AM_SERVER_PROTOCOL, null));            
+                + SystemProperties.get(Constants.AM_SERVER_PROTOCOL, null));
             debug.message(Constants.AM_SERVER_HOST + " : "
-                    + SystemProperties.get(Constants.AM_SERVER_HOST, null));
+                + SystemProperties.get(Constants.AM_SERVER_HOST, null));
             debug.message(Constants.AM_SERVER_PORT + " : "
-                    + SystemProperties.get(Constants.AM_SERVER_PORT, null));
+                + SystemProperties.get(Constants.AM_SERVER_PORT, null));
+            debug.message(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR + " : "
+                + SystemProperties.get(
+                    Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR, null));
         }
     }
 
@@ -662,7 +758,8 @@ public class WebtopNaming {
             StringTokenizer st = new StringTokenizer(servers, ",");
             platformServers.clear();
             while (st.hasMoreTokens()) {
-                platformServers.add((st.nextToken()).toLowerCase());
+                String svr = st.nextToken();
+                platformServers.add(svr.toLowerCase());
             }
         }
         updateServerIdMappings();
@@ -736,27 +833,38 @@ public class WebtopNaming {
             String plaformURL = (String) it.next();
             URL url = new URL(plaformURL);
             String serverID = getServerID(url.getProtocol(), url.getHost(),
-                Integer.toString(url.getPort()));
+                Integer.toString(url.getPort()), url.getPath());
             if (platformServerIDs.contains(serverID) == false) {
                 platformServerIDs.add(serverID);
             }
         }
     }
 
-    private static void validate(String protocol, String host, String port)
-            throws URLNotFoundException {
-        String server = (protocol + "://" + host + ":" + port).toLowerCase();
+    private static void validate(
+        String protocol, 
+        String host, 
+        String port,
+        String uri
+    ) throws URLNotFoundException {
+        String server = (uri != null) ?
+            protocol + "://" + host + ":" + port + uri :
+            protocol + "://" + host + ":" + port;
+        server = server.toLowerCase();
+        
         try {
             // first check if this is the local server, proto, and port,
             // if it is there is no need to
             // validate that it is in the trusted server platform server list
-            if (protocol.equalsIgnoreCase(amServerProtocol)
-                    && host.equalsIgnoreCase(amServer)
-                    && port.equals(amServerPort)) {
+            if (protocol.equalsIgnoreCase(amServerProtocol) &&
+                host.equalsIgnoreCase(amServer) && 
+                port.equals(amServerPort) &&
+                ((uri == null) || uri.equals(amServerURI))
+            ) {
                 return;
             }
             if (debug.messageEnabled()) {
-                debug.message("platformServers: " + platformServers);
+                debug.message("WebtopNaming.validate: platformServers= " + 
+                    platformServers);
             }
             if (!platformServers.contains(server)) {
                 getNamingProfile(true);
@@ -788,7 +896,7 @@ public class WebtopNaming {
             String configURLListString =
                                SystemProperties.get(Constants.AM_NAMING_URL);
             if (configURLListString != null) {
-                StringTokenizer stok = new StringTokenizer(configURLListString);                
+                StringTokenizer stok = new StringTokenizer(configURLListString);
                 while (stok.hasMoreTokens()) {
                     String nextURL = stok.nextToken();
                     if (urlList.contains(nextURL)) {
@@ -857,8 +965,8 @@ public class WebtopNaming {
         if (monitorThread != null) {
             try {
                 String serverid = getServerID(url.getProtocol(),
-                                     url.getHost(),
-                                     String.valueOf(url.getPort()));
+                    url.getHost(), String.valueOf(url.getPort()), 
+                    url.getPath());
                 SiteMonitor.removeFailedSite(serverid);
             } catch (ServerEntryNotFoundException e) {
                 debug.error("Can not find server ID : ", e);
@@ -890,8 +998,8 @@ static public class SiteMonitor extends Thread {
             sleepInterval = Long.valueOf(SystemProperties.
                     get(Constants.MONITORING_INTERVAL, "60000")).longValue();
             getNamingProfile(false);
-            currentSiteID =
-                getServerID(amServerProtocol, amServer, amServerPort);
+            currentSiteID = getServerID(amServerProtocol, amServer, 
+                amServerPort, amServerURI);
         } catch (Exception e) {
             debug.message("SiteMonitor initialization failed : ", e);
         }
@@ -935,9 +1043,9 @@ static public class SiteMonitor extends Thread {
                     continue;
                 }
 
-                String serverid = getServerID(siteurl.getProtocol(),
-                                       siteurl.getHost(),
-                               String.valueOf(siteurl.getPort()));
+                String serverid = getServerID(
+                    siteurl.getProtocol(), siteurl.getHost(),
+                    String.valueOf(siteurl.getPort()), siteurl.getPath());
                 siteList.add(serverid);
             } catch (MalformedURLException ex) {
                 if (debug.messageEnabled()) {
@@ -972,7 +1080,7 @@ static public class SiteMonitor extends Thread {
         String serverID = null;
         try {
             serverID = getServerID(url.getProtocol(), url.getHost(),
-                Integer.toString(url.getPort()), false);
+                Integer.toString(url.getPort()), url.getPath(), false);
         } catch (ServerEntryNotFoundException e) {
             if (debug.messageEnabled()) {
                 debug.message("URL is not part of AM setup.");
@@ -1011,7 +1119,7 @@ static public class SiteMonitor extends Thread {
         String serverID = null;
         try {
             serverID = getServerID(url.getProtocol(), url.getHost(),
-                Integer.toString(url.getPort()), false);
+                Integer.toString(url.getPort()), url.getPath(), false);
         } catch (ServerEntryNotFoundException e) {
             if (debug.messageEnabled()) {
                 debug.message("URL is not part of AM setup.");
@@ -1037,9 +1145,9 @@ static public class SiteMonitor extends Thread {
             String[] namingURLs = getNamingServiceURL();
             for (int i = 0; i < namingURLs.length; i++) {
                 URL url = new URL(namingURLs[i]);
-                availableSiteList.add(getServerID(url.getProtocol(),
-                                                  url.getHost(),
-                                  String.valueOf(url.getPort())));
+                availableSiteList.add(getServerID(
+                    url.getProtocol(), url.getHost(), 
+                    String.valueOf(url.getPort()), url.getPath()));
             }
 
             updateCurrentSite(availableSiteList);

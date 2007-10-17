@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManager.java,v 1.6 2007-04-16 07:14:14 veiming Exp $
+ * $Id: ServiceSchemaManager.java,v 1.7 2007-10-17 23:00:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,7 +56,7 @@ public class ServiceSchemaManager {
     
     private ServiceSchemaManagerImpl ssm;
     
-    private static Debug debug = SMSEntry.debug;
+    private static Debug debug = Debug.getInstance("amSMS");
     
     /**
      * Constructor for backward compatibility. Chooses on of the versions.

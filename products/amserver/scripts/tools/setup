@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: setup,v 1.1 2007-04-17 19:39:41 ww203982 Exp $
+# $Id: setup,v 1.2 2007-10-17 23:00:15 veiming Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 
@@ -38,4 +38,4 @@ if [ "$1" = "-p" -o "$1" = "--path" ] ; then
   path_AMConfig="$2"
 fi
 
-java -D"load.config=yes" -D"help.print=${help_print}" -D"path.AMConfig=${path_AMConfig}" -jar "lib/amadm_setup.jar"
+java -D"load.config=yes" -D"help.print=${help_print}" -D"path.AMConfig=${path_AMConfig}" -cp "lib/opensso.jar:lib/amadm_setup.jar:lib/opensso-sharedlib.jar:lib/ldapjdk.jar:lib/OpenDS.jar:locale" com.sun.identity.tools.bundles.Main

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.3 2007-03-10 00:29:22 qcheng Exp $
+ * $Id: SAMLUtils.java,v 1.4 2007-10-17 23:00:57 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -166,7 +166,8 @@ public class SAMLUtils  extends SAMLUtilsCommon {
             id = SystemConfigurationUtil.getServerID(
             SAMLServiceManager.getServerProtocol(),
             SAMLServiceManager.getServerHost(),
-            Integer.parseInt(SAMLServiceManager.getServerPort()));
+            Integer.parseInt(SAMLServiceManager.getServerPort()),
+            SAMLServiceManager.getServerURI());
         } catch (Exception ex) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("SAMLUtil:generateAssertionID: "
@@ -288,9 +289,10 @@ public class SAMLUtils  extends SAMLUtilsCommon {
         String id = null;
         try {
             id = SystemConfigurationUtil.getServerID(
-            SAMLServiceManager.getServerProtocol(),
-            SAMLServiceManager.getServerHost(),
-            Integer.parseInt(SAMLServiceManager.getServerPort()));
+                SAMLServiceManager.getServerProtocol(),
+                SAMLServiceManager.getServerHost(),
+                Integer.parseInt(SAMLServiceManager.getServerPort()),
+                SAMLServiceManager.getServerURI());
         } catch (Exception ex) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("SAMLUtil:generateAssertionHandle: "
@@ -571,10 +573,8 @@ public class SAMLUtils  extends SAMLUtilsCommon {
         try {
             URL u = new URL(shortUrl);
             URL weburl = SystemConfigurationUtil.getServiceURL(
-                        SAMLConstants.SAML_AM_NAMING,
-                        u.getProtocol(),
-                        u.getHost(),
-                        u.getPort());
+                SAMLConstants.SAML_AM_NAMING, u.getProtocol(), u.getHost(),
+                    u.getPort(), u.getPath());
             result = weburl.toString();
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("SAMLUtils.getFullServiceURL:" +

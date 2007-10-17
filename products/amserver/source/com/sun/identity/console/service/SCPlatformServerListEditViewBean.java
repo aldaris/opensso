@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCPlatformServerListEditViewBean.java,v 1.1 2007-02-07 20:26:37 jonnelson Exp $
+ * $Id: SCPlatformServerListEditViewBean.java,v 1.2 2007-10-17 23:00:37 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.service;
 
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
@@ -32,6 +31,7 @@ import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.delegation.model.DelegationConfig;
 import com.sun.identity.console.service.model.SCPlatformModelImpl;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.model.CCPageTitleModel;
 import java.util.Map;
 

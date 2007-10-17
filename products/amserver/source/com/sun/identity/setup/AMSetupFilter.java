@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupFilter.java,v 1.3 2007-01-19 23:39:35 veiming Exp $
+ * $Id: AMSetupFilter.java,v 1.4 2007-10-17 23:00:45 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,6 +86,7 @@ public final class AMSetupFilter implements Filter {
                 }
             }
         } catch(Exception ex) {
+            ex.printStackTrace();
             throw new ServletException("AMSetupFilter.doFilter", ex);
         }
     }

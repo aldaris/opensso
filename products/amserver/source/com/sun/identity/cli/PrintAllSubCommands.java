@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrintAllSubCommands.java,v 1.2 2006-12-08 21:02:19 veiming Exp $
+ * $Id: PrintAllSubCommands.java,v 1.3 2007-10-17 23:00:25 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,7 @@
 package com.sun.identity.cli;
 
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Prints all subcommands.
@@ -44,13 +43,24 @@ public class PrintAllSubCommands extends CLICommandBase {
         UsageFormatter uf = UsageFormatter.getInstance();
         CommandManager mgr = rc.getCommandManager();
         List definitions = mgr.getDefinitionObjects();
+        Map subcommands = new HashMap();
+        Set subcmdNames = new TreeSet();
 
         for (Iterator i = definitions.iterator(); i.hasNext(); ) {
             IDefinition def = (IDefinition)i.next();
             List subcmds = def.getSubCommands();
+
             for (Iterator it = subcmds.iterator(); it.hasNext(); ) {
-                uf.format(mgr, (SubCommand)it.next());
+                SubCommand s = (SubCommand)it.next();
+                subcommands.put(s.getName(), s);
+                subcmdNames.add(s.getName());
             }
+        }
+
+        for (Iterator i = subcmdNames.iterator(); i.hasNext(); ) {
+            String name = (String)i.next();
+            SubCommand s = (SubCommand)subcommands.get(name);
+            uf.format(mgr, s);
         }
     }
 }

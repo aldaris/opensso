@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedSystemProperties.java,v 1.3 2007-10-09 19:02:41 veiming Exp $
+ * $Id: FedSystemProperties.java,v 1.4 2007-10-17 23:00:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,6 +109,7 @@ public class FedSystemProperties extends FedLibSystemProperties {
      * @param protocol The service protocol.
      * @param hostname The service host name.
      * @param port The service listening port.
+     * @param uri The service URI.
      * @return The URL of the specified service on the specified host.
      * @throws Exception if the URL could not be found.
      */
@@ -116,9 +117,10 @@ public class FedSystemProperties extends FedLibSystemProperties {
         String serviceName, 
         String protocol,
         String hostname,
-        int port
+        int port,
+        String uri
     ) throws Exception {
         return WebtopNaming.getServiceURL(
-            serviceName, protocol, hostname, "" + port);
+            serviceName, protocol, hostname, "" + port, uri);
     }
 }

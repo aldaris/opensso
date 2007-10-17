@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoServiceManager.java,v 1.2 2007-05-05 03:56:38 qcheng Exp $
+ * $Id: DiscoServiceManager.java,v 1.3 2007-10-17 23:00:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,8 +35,7 @@ import java.util.StringTokenizer;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.bind.*;
 
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.liberty.ws.disco.plugins.Default64ResourceIDMapper;
 import com.sun.identity.liberty.ws.disco.plugins.DiscoEntryHandler;
 import com.sun.identity.liberty.ws.disco.plugins.NameIdentifierMapper;
@@ -49,6 +48,9 @@ import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.plugin.configuration.ConfigurationInstance;
 import com.sun.identity.plugin.configuration.ConfigurationListener;
 import com.sun.identity.plugin.configuration.ConfigurationManager;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
 
 
 /**
@@ -281,7 +283,7 @@ public class DiscoServiceManager implements ConfigurationListener {
             bootDiscoEntry = null;
         }
 
-            return bootDiscoEntry;
+        return bootDiscoEntry;
     }
 
     /**
@@ -431,6 +433,8 @@ public class DiscoServiceManager implements ConfigurationListener {
             bootDiscoEntryStr = CollectionHelper.getMapAttr(
                 attrsMap, ATTR_BOOTSTRAPPING_DISCO_ENTRY);
 
+            tagswapBootDiscoEntry();
+
             requireSessionContextStmt = Boolean.valueOf(
                 CollectionHelper.getMapAttr(
                     attrsMap, ATTR_BOOTSTRAPPING_SESSION_CONTEXT,
@@ -466,6 +470,21 @@ public class DiscoServiceManager implements ConfigurationListener {
         } catch (Exception e) {
             debug.error("DiscoServiceManager.setValues: Exception", e);
         }
+    }
+
+    private static void tagswapBootDiscoEntry() {
+        bootDiscoEntryStr = bootDiscoEntryStr.replaceAll(
+            Constants.TAG_SERVER_PROTO, SystemConfigurationUtil.getProperty(
+                Constants.AM_SERVER_PROTOCOL));
+        bootDiscoEntryStr = bootDiscoEntryStr.replaceAll(
+            Constants.TAG_SERVER_HOST, SystemConfigurationUtil.getProperty(
+                Constants.AM_SERVER_HOST));
+        bootDiscoEntryStr = bootDiscoEntryStr.replaceAll(
+            Constants.TAG_SERVER_PORT, SystemConfigurationUtil.getProperty(
+                Constants.AM_SERVER_PORT));
+        bootDiscoEntryStr = bootDiscoEntryStr.replaceAll(
+            Constants.TAG_SERVER_URI, SystemConfigurationUtil.getProperty(
+                Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR));
     }
 
     /**

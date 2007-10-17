@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.7 2007-10-09 18:54:09 pawand Exp $
+ * $Id: ISAuthConstants.java,v 1.8 2007-10-17 23:00:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -174,9 +174,6 @@ public interface ISAuthConstants {
 
     public static final String PLATFORM_LOCALE_ATTR = 
         "iplanet-am-platform-locale";
-
-    public static final String PLATFORM_LOGIN_URL_ATTR = 
-        "iplanet-am-platform-login-url";
 
     public static final String PLATFORM_CLIENT_CHARSET_ATTR = 
         "iplanet-am-platform-client-charsets";

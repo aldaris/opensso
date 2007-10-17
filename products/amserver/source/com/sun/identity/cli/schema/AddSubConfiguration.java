@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddSubConfiguration.java,v 1.4 2007-09-29 04:27:34 veiming Exp $
+ * $Id: AddSubConfiguration.java,v 1.5 2007-10-17 23:00:26 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -191,6 +191,7 @@ public class AddSubConfiguration extends SchemaCommand {
                 "FAILED_ADD_SUB_CONFIGURATION", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
+            e.printStackTrace();
             String[] args = {subConfigName, serviceName, e.getMessage()};
             debugError("AddSubConfiguration.addSubConfigToRoot", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLTags.java,v 1.4 2007-06-07 18:59:19 beomsuk Exp $
+ * $Id: AuthXMLTags.java,v 1.5 2007-10-17 23:00:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,8 @@ public interface AuthXMLTags {
         "PagePropertiesCallback";
     public static final String LANGUAGE_CALLBACK = "LanguageCallback";
     public static final String SAML_CALLBACK = "SAMLCallback";
-    public static final String X509CERTIFICATE_CALLBACK = "X509CertificateCallback";
+    public static final String X509CERTIFICATE_CALLBACK =
+        "X509CertificateCallback";
     public static final String CUSTOM_CALLBACK = "CustomCallback";
     public static final String PROMPT = "Prompt";
     public static final String ECHO_PASSWORD = "echoPassword";
@@ -120,7 +121,8 @@ public interface AuthXMLTags {
     public static final String REDIRECT_URL = "RedirectUrl";
     public static final String REDIRECT_DATA = "RedirectData";
     public static final String REDIRECT_STATUS_PARAM = "RedirectStatusParam";
-    public static final String REDIRECT_BACK_URL_COOKIE = "RedirectBackUrlCookie";
+    public static final String REDIRECT_BACK_URL_COOKIE =
+        "RedirectBackUrlCookie";
     public static final String REDIRECT_METHOD = "method";
     
     /**

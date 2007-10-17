@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IArgument.java,v 1.4 2007-04-16 07:14:13 veiming Exp $
+ * $Id: IArgument.java,v 1.5 2007-10-17 23:00:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,6 +78,11 @@ public interface IArgument {
      * Attribute name.
      */
     String ATTRIBUTE_NAME = "attributename";
+
+    /**
+     * Property names.
+     */
+    String PROPERTY_NAMES = "propertynames";
 
     /**
      * Default values.
@@ -143,4 +148,29 @@ public interface IArgument {
      * Secret key for encrypting and decrypting password.
      */
     String ENCRYPT_SECRET = "encryptsecret";
+
+    /**
+     * Server name.
+     */
+    String SERVER_NAME = "servername";
+
+    /**
+     * Server names.
+     */
+    String SERVER_NAMES = "servernames";
+
+    /**
+     * Site name.
+     */
+    String SITE_NAME = "sitename";
+    
+    /**
+     * Site URL.
+     */
+    String SITE_URL = "siteurl";
+    
+    /**
+     * Site secondary URLs.
+     */
+    String SECONDARY_URLS = "secondaryurls";
 }

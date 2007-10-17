@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.12 2007-09-25 23:32:03 arviranga Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.13 2007-10-17 23:00:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,8 +99,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
                                     JAXRPCUtil.SMS_SERVICE,
                                     new SMSNotificationHandler());
                             // Register for notification with SMS Server
-                            client.send("registerNotificationURL", url.toString(),
-                                    null, null);
+                            client.send("registerNotificationURL",
+                                url.toString(), null, null);
                             if (debug.messageEnabled()) {
                                 debug.message("SMSJAXRPCObject: Using " 
                                         + "notification mechanism for cache " 
@@ -138,7 +138,7 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         int cachePollingInterval = Constants.DEFAULT_CACHE_POLLING_TIME;
         if (cachePollingTimeStr != null) { 
             try {
-                cachePollingInterval = Integer.parseInt(cachePollingTimeStr);            
+                cachePollingInterval = Integer.parseInt(cachePollingTimeStr);
             } catch (NumberFormatException nfe) {
                 debug.error("EventListener::NotificationThread:: "
                         + "Invalid Polling Time: " + cachePollingTimeStr + 

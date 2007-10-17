@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.3 2007-10-15 17:55:02 rajeevangal Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.4 2007-10-17 23:00:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,16 +78,18 @@ public class EmbeddedOpenDS {
      * <li>lays out the filesystem directory structure needed by opends
      * <li>sets up port numbers for ldap and replication
      * <li>invokes <code>EmbeddedUtils</code> to start the embedded server.
+     * </ul>
      *
      *  @param map Map of properties collected by the configurator.
      *  @param servletCtx Servlet Context to read deployed war contents.
-     *
      *  @throws Exception on encountering errors.
      */
-    public static void setup(Map map, ServletContext servletCtx) throws Exception
-    {
+    public static void setup(Map map, ServletContext servletCtx)
+        throws Exception {
         String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
-        String odsRoot = basedir + "/" + SetupConstants.SMS_OPENDS_DATASTORE;
+        String odsRoot = basedir + "/" +
+            SetupConstants.SMS_OPENDS_DATASTORE;
+        new File(basedir).mkdir();
         new File(odsRoot).mkdir();
         String[] subDirectories =
         { "adminDb", "bak", "bin", "changelogDb", "classes",
@@ -96,12 +98,10 @@ public class EmbeddedOpenDS {
           "db_index_test", "db_import_test", "config/schema", 
           "config/upgrade" };
 
-        
         // create sub dirs
         for (int i = 0; i < subDirectories.length; i++) {
             new File(odsRoot, subDirectories[i]).mkdir();
         }
-
 
         // copy files
         String[] files = {

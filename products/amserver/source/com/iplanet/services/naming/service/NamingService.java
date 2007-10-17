@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.4 2006-12-13 20:58:14 beomsuk Exp $
+ * $Id: NamingService.java,v 1.5 2007-10-17 23:00:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,8 @@ import com.iplanet.services.naming.share.NamingResponse;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.security.AdminDNAction;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.shared.Constants;
@@ -47,6 +49,7 @@ import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
 import java.text.MessageFormat;
@@ -209,7 +212,7 @@ public class NamingService implements RequestHandler, ServiceListener {
             nametable = convertToHash(namingAttrs);
             if (forClient && (namingTable != null)) {
                 String siteList = (String) namingTable
-                        .get(Constants.SITE_ID_LIST);
+                    .get(Constants.SITE_ID_LIST);
                 nametable.put(Constants.SITE_ID_LIST, siteList);
             }
         } catch (Exception ex) {
@@ -370,6 +373,7 @@ public class NamingService implements RequestHandler, ServiceListener {
         String protocol = sessID.getSessionServerProtocol();
         String host = sessID.getSessionServer();
         String port = sessID.getSessionServerPort();
+        String uri = sessID.getSessionServerURI();
         if (protocol.equalsIgnoreCase("") || host.equalsIgnoreCase("")
                 || port.equalsIgnoreCase("")) {
             return null;
@@ -390,24 +394,10 @@ public class NamingService implements RequestHandler, ServiceListener {
             Object obj = e.nextElement();
             String key = obj.toString();
             String url = (tempNamingTable.get(obj)).toString();
-            int idx;
-            if ((idx = url.indexOf("%protocol")) != -1) {
-                url = url.substring(0, idx)
-                        + protocol
-                        + url.substring(idx + "%protocol".length(), url
-                                .length());
-            }
-            // %host processing
-            if ((idx = url.indexOf("%host")) != -1) {
-                url = url.substring(0, idx) + host
-                        + url.substring(idx + "%host".length(), url.length());
-            }
-            // %port processing
-            if ((idx = url.indexOf("%port")) != -1) {
-                // plugin the server name
-                url = url.substring(0, idx) + port
-                        + url.substring(idx + "%port".length(), url.length());
-            }
+            url = url.replaceAll("%protocol", protocol);
+            url = url.replaceAll("%host", host);
+            url = url.replaceAll("%port", port);
+            url = url.replaceAll("%uri", uri);
             tempNamingTable.put(key, url);
         }
         return tempNamingTable;
@@ -463,29 +453,30 @@ public class NamingService implements RequestHandler, ServiceListener {
     }
 
     private static void registFQDNMapping(Set sites) {
-        Iterator iter = null;
-        MessageFormat form = null;
-
-        if (sites == null) {
+        if ((sites == null) || sites.isEmpty()) {
             return;
         }
 
-        iter = sites.iterator();
-        form = new MessageFormat("com.sun.identity.server.fqdnMap[{0}]");
+        MessageFormat form = new MessageFormat(
+            "com.sun.identity.server.fqdnMap[{0}]");
 
-        while (iter.hasNext()) {
+        for (Iterator iter = sites.iterator(); iter.hasNext(); ) {
             String entry = (String) iter.next();
             StringTokenizer tok = new StringTokenizer(entry, "|");
-            URL url = null;
+            String strUrl = tok.nextToken();
+            String strId = tok.nextToken();
+            
             try {
-                url = new URL(tok.nextToken());
-            } catch (Exception e) {
-            }
-            String host = url.getHost();
-            if (host != null) {
-                Object[] args = { host };
-                form.format(args);
-                SystemProperties.initializeProperties(form.format(args), host);
+                URL url = new URL(strUrl);
+                String host = url.getHost();
+                if (host != null) {
+                    Object[] args = { host };
+                    form.format(args);
+                    SystemProperties.initializeProperties(
+                        form.format(args), host);
+                }
+            } catch (MalformedURLException ex) {
+                namingDebug.error("NamingService.registFQDNMapping", ex);
             }
         }
     }
@@ -493,11 +484,11 @@ public class NamingService implements RequestHandler, ServiceListener {
     private static Set getSites(Map platformAttrs) throws Exception {
         Set sites = null;
 
-        Set servers = (Set) platformAttrs.get(Constants.PLATFORM_LIST);
         if (serviceRevNumber < SERVICE_REV_NUMBER_70) {
+            Set servers = (Set) platformAttrs.get(Constants.PLATFORM_LIST);
             sites = getSitesFromSessionConfig(servers);
         } else {
-            sites = (Set) platformAttrs.get(Constants.SITE_LIST);
+            sites = SiteConfiguration.getSiteInfo(sso);
         }
 
         if (namingDebug.messageEnabled()) {
@@ -511,9 +502,8 @@ public class NamingService implements RequestHandler, ServiceListener {
 
     private static Set getServers(Map platformAttrs, Set sites)
             throws Exception {
-        Set servers = null;
-
-        servers = (Set) platformAttrs.get(Constants.PLATFORM_LIST);
+        Set servers = ServerConfiguration.getServerInfo(sso);
+        
         if ((sites != null) && (serviceRevNumber < SERVICE_REV_NUMBER_70)) {
             servers = getServersFromSessionConfig(sites, servers);
         }

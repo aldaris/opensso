@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.15 2007-10-15 17:55:02 rajeevangal Exp $
+ * $Id: SetupConstants.java,v 1.16 2007-10-17 23:00:46 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,6 +62,11 @@ public interface SetupConstants {
      * <code>AMConfig.properties</code> file name.
      */
     String AMCONFIG_PROPERTIES = "AMConfig.properties";
+
+    /**
+     * Server properties file name.
+     */
+    String SITE_PROPERTIES = "site.properties";
 
     /**
      * Encrypted Admin password.
@@ -149,7 +154,6 @@ public interface SetupConstants {
      * Type of Data store used for storing the configuration files.
      * Embedded
      */
-
     String SMS_EMBED_DATASTORE = "embedded";
 
     /**

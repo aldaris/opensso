@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.9 2007-07-20 20:33:56 veiming Exp $
+ * $Id: CLIRequest.java,v 1.10 2007-10-17 23:00:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,8 +58,8 @@ public class CLIRequest {
     /**
      * Constructs a CLI request object.
      *
-     * @param parent Parent request object. This can be null if the request is the
-     *        root request.
+     * @param parent Parent request object. This can be null if the request is
+     *        the root request.
      * @param argv Options for the request.
      */
     public CLIRequest(CLIRequest parent, String[] argv) {

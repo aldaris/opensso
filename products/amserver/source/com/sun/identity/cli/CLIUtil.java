@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtil.java,v 1.3 2007-08-29 22:44:47 veiming Exp $
+ * $Id: CLIUtil.java,v 1.4 2007-10-17 23:00:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.AccessController;
@@ -110,6 +111,9 @@ public class CLIUtil {
      *
      * @param serviceName Name of service.
      * @return a set of attributes (of password syntax) of a given service.
+     * @throws SMSException if error occurs when reading the service schema 
+     *         layer
+     * @throws SSOException if Single sign-on token is invalid.
      */
     public static Set getPasswordFields(String serviceName) 
         throws SMSException, SSOException
@@ -129,5 +133,30 @@ public class CLIUtil {
             }
         }
         return setPasswords;
+    }
+    
+    /**
+     * Writes to a file.
+     *
+     * @param file Name of file.
+     * @param content Content to be written.
+     * @throws IOException if file cannot be accessed.
+     */
+    public static void writeToFile(String file, String content) 
+        throws IOException {
+        FileOutputStream fout = null;
+        
+        try {
+            fout = new FileOutputStream(file);
+            fout.write(content.getBytes());
+        } finally {
+            if (fout != null) {
+                try {
+                    fout.close();
+                } catch (IOException ioe) {
+                    //ignored
+                }
+            }
+        }
     }
 }

@@ -17,17 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: G11NSupportedCharsetsAddViewBean.java,v 1.1 2007-02-07 20:26:33 jonnelson Exp $
+ * $Id: G11NSupportedCharsetsAddViewBean.java,v 1.2 2007-10-17 23:00:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.service;
 
-import com.iplanet.am.util.OrderedSet;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.service.model.LocaleSupportedCharsetsEntry;
 import com.sun.identity.console.service.model.SMG11NModelImpl;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.util.Map;
 import java.util.Set;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISystemProperties.java,v 1.2 2007-09-13 19:10:30 veiming Exp $
+ * $Id: ISystemProperties.java,v 1.3 2007-10-17 23:01:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,7 @@ public interface ISystemProperties {
      * @param protocol The service protocol.
      * @param hostname The service host name.
      * @param port The service listening port.
+     * @param rui The service deployment URI.
      * @return The URL of the specified service on the specified host.
      * @throws Exception if the URL could not be found.
      */
@@ -62,7 +63,8 @@ public interface ISystemProperties {
         String serviceName, 
         String protocol,
         String hostname,
-        int port)
+        int port,
+        String uri)
         throws Exception;
 
     /**

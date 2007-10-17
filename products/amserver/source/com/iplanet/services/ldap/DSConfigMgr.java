@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.7 2007-08-07 22:31:52 goodearth Exp $
+ * $Id: DSConfigMgr.java,v 1.8 2007-10-17 23:00:18 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,9 +32,9 @@ import com.iplanet.services.util.XMLParser;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.security.ServerInstanceAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessController;
@@ -138,29 +138,16 @@ public class DSConfigMgr {
         if (thisInstance == null) {
             InputStream is = null;
             try {
-                is = DSConfigMgr.class.getClassLoader().getResourceAsStream(
-                        SystemProperties.CONFIG_FILE_NAME);
-                if (is == null) {
-                    String path = SystemProperties
-                            .get(SystemProperties.CONFIG_PATH);
-                    if (path == null) {
-                        // For Backward compatibility obtain from runtime flag
-                        path = System.getProperty(RUN_TIME_CONFIG_PATH);
-                    }
-                    String configFile = path
-                            + System.getProperty("file.separator")
-                            + SystemProperties.CONFIG_FILE_NAME;
-                    is = new FileInputStream(configFile);
+                String path = SystemProperties.get(
+                    SystemProperties.CONFIG_PATH);
+                if (path == null) {
+                    // For Backward compatibility obtain from runtime flag
+                    path = System.getProperty(RUN_TIME_CONFIG_PATH);
                 }
-            } catch (FileNotFoundException fnfex) {                
-                
-                if (debugger.warningEnabled()) {
-                    debugger.warning("DSConfigMgr.getDSConfigMgr: " 
-                            + "serverconfig.xml file not found. May be " 
-                            + "running in client mode  ", fnfex);
-                }
-                throw new LDAPServiceException(
-                    LDAPServiceException.FILE_NOT_FOUND, fnfex.getMessage());
+                String configFile = path
+                        + System.getProperty("file.separator")
+                        + SystemProperties.CONFIG_FILE_NAME;
+                is = new FileInputStream(configFile);
             } catch (IOException ex) {                
                 
                 if (debugger.warningEnabled()) {
@@ -176,6 +163,12 @@ public class DSConfigMgr {
             thisInstance.loadServerConfiguration(is);
         }
         return thisInstance;
+    }
+
+    public static synchronized void initInstance(InputStream is) 
+        throws LDAPServiceException {
+        thisInstance = new DSConfigMgr();
+        thisInstance.loadServerConfiguration(is);
     }
 
     /**
@@ -480,7 +473,6 @@ public class DSConfigMgr {
             }
 
             try {
-
                 if ((authID != null) && (passwd != null)) {
                     conn.connect(3, hostName, port, authID, passwd);
                 } else {

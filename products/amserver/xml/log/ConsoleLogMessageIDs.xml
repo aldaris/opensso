@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: ConsoleLogMessageIDs.xml,v 1.2 2006-04-27 07:53:39 veiming Exp $
+    $Id: ConsoleLogMessageIDs.xml,v 1.3 2007-10-17 23:00:52 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2866,7 +2866,7 @@
             <item>Look under service management log for more information.</item>
         </actions>
     </logmessage>
-    <logmessage name="SSO_EXCEPTION_MODIFY_AUTH_INSTANCE_PROFILE" id="864"         loglevel="LL_SEVERE"
+    <logmessage name="SSO_EXCEPTION_MODIFY_AUTH_INSTANCE_PROFILE" id="865"         loglevel="LL_SEVERE"
         description="Modification of authentication instance profile failed.">
         <datainfo>
             <item>name of realm</item>
@@ -3795,7 +3795,7 @@
             <item>Look under federation log for more information.</item>
         </actions>
     </logmessage>
-    <logmessage name="FEDERATION_EXCEPTION_CREATE_PROVIDER" id="1303"
+    <logmessage name="FEDERATION_EXCEPTION_CREATE_PROVIDER" id="1304"
         loglevel="LL_SEVERE"
         description="Creation of provider failed.">
         <datainfo>
@@ -3811,7 +3811,7 @@
             <item>Look under federation log for more information.</item>
         </actions>
     </logmessage>
-    <logmessage name="INVOCATION_TARGET_EXCEPTION_CREATE_PROVIDER" id="1304"
+    <logmessage name="INVOCATION_TARGET_EXCEPTION_CREATE_PROVIDER" id="1305"
         loglevel="LL_SEVERE"
         description="Creation of provider failed.">
         <datainfo>
@@ -8317,5 +8317,1032 @@
     </logmessage>
                                                                                 
 
+    <logmessage name="ATTEMPT_GET_SITE_NAMES" id="12001"
+        loglevel="LL_INFO"
+        description="Attempt to get site names">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>View site and server management page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SITE_NAMES" id="12002"
+        loglevel="LL_INFO"
+        description="Site names are returned.">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>View site and server management page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_GET_SITE_NAMES" id="12003"
+        loglevel="LL_SEVERE"
+        description="Get site names.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get site names. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_GET_SITE_NAMES" id="12004"
+        loglevel="LL_SEVERE"
+        description="Get site names.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get site names due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
 
+    <logmessage name="ATTEMPT_GET_SITE_PRIMARY_URL" id="12011"
+        loglevel="LL_INFO"
+        description="Attempt to get primary URL of site.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>View site profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SITE_PRIMARY_URL" id="12012"
+        loglevel="LL_INFO"
+        description="Primary URL of site is returned.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>View site profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_GET_SITE_PRIMARY_URL" id="12013"
+        loglevel="LL_SEVERE"
+        description="Get primary URL of site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get primary URL of site. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_GET_SITE_PRIMARY_URL" id="12014"
+        loglevel="LL_SEVERE"
+        description="Get primary URL of site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get primary URL of site due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_GET_SITE_FAILOVER_URLS" id="12021"
+        loglevel="LL_INFO"
+        description="Attempt to get failover URLs of site.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>View site profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SITE_FAILOVER_URLS" id="12022"
+        loglevel="LL_INFO"
+        description="Failover URLs of site is returned.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>View site profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_GET_SITE_FAILOVER_URLS" id="12023"
+        loglevel="LL_SEVERE"
+        description="Get failover URLs of site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get failover URLs of site. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_GET_SITE_FAILOVER_URLS" id="12024"
+        loglevel="LL_SEVERE"
+        description="Get failover URLs of site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get failover URLs of site due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_GET_SITE_MEMBERS" id="12031"
+        loglevel="LL_INFO"
+        description="Attempt to get members of site.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>View site profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SITE_MEMBERS" id="12032"
+        loglevel="LL_INFO"
+        description="Members of site is returned.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>View site profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_GET_SITE_MEMBERS" id="12033"
+        loglevel="LL_SEVERE"
+        description="Get members of site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get members of site. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_GET_SITE_MEMBERS" id="12034"
+        loglevel="LL_SEVERE"
+        description="Get members of site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get members of site due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_CREATE_SITE" id="12041"
+        loglevel="LL_INFO"
+        description="Attempt to create site.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>View create site page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CREATE_SITE" id="12042"
+        loglevel="LL_INFO"
+        description="Site is created.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on create button on creation page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_CREATE_SITE" id="12043"
+        loglevel="LL_SEVERE"
+        description="Create site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to create site. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_CREATE_SITE" id="12044"
+        loglevel="LL_SEVERE"
+        description="Create site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to create site due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_CREATE_SERVER" id="12051"
+        loglevel="LL_INFO"
+        description="Attempt to create server.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>View create server page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CREATE_SERVER" id="12052"
+        loglevel="LL_INFO"
+        description="Server is created.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on create button on creation page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_CREATE_SERVER" id="12053"
+        loglevel="LL_SEVERE"
+        description="Create server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to create server. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_CREATE_SERVER" id="12054"
+        loglevel="LL_SEVERE"
+        description="Create server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to create server due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="CONFIGURATION_EXCEPTION_CREATE_SERVER" id="12055"
+        loglevel="LL_SEVERE"
+        description="Create server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to create server due the incorrect data format error.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="IO_EXCEPTION_CREATE_SERVER" id="12056"
+        loglevel="LL_SEVERE"
+        description="Create server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to create server due the incorrect data format error.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_DELETE_SITE" id="12061"
+        loglevel="LL_INFO"
+        description="Attempt to delete site.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on delete site button.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_DELETE_SITE" id="12062"
+        loglevel="LL_INFO"
+        description="Site is deleted.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on delete button.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_DELETE_SITE" id="12063"
+        loglevel="LL_SEVERE"
+        description="Delete site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to delete site. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_DELETE_SITE" id="12064"
+        loglevel="LL_SEVERE"
+        description="Delete site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to delete site due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_MODIFY_SITE" id="12071"
+        loglevel="LL_INFO"
+        description="Attempt to modify site.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on OK button in site profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_MODIFY_SITE" id="12072"
+        loglevel="LL_INFO"
+        description="Site is nodified.">
+        <datainfo>
+            <item>Site Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on OK button in site profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_MODIFY_SITE" id="12073"
+        loglevel="LL_SEVERE"
+        description="Modify site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify site. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_MODIFY_SITE" id="12074"
+        loglevel="LL_SEVERE"
+        description="Modify site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify site due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="CONFIGURATION_EXCEPTION_MODIFY_SITE" id="12075"
+        loglevel="LL_SEVERE"
+        description="Modify site.">
+        <datainfo>
+            <item>Site Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify site due the incorrect data format.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_GET_SERVER_NAMES" id="12081"
+        loglevel="LL_INFO"
+        description="Attempt to get server names.">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>View site and server management page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SERVER_NAMES" id="12082"
+        loglevel="LL_INFO"
+        description="Server names are returned.">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>View site and server management page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_GET_SERVER_NAMES" id="12083"
+        loglevel="LL_SEVERE"
+        description="Get server name.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server names. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_GET_SERVER_NAMES" id="12084"
+        loglevel="LL_SEVERE"
+        description="Get server name.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server names due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_GET_SERVER_SITE" id="12091"
+        loglevel="LL_INFO"
+        description="Attempt to get server's site.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>View server profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SERVER_SITE" id="12092"
+        loglevel="LL_INFO"
+        description="Server's site name is returned.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>View server profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_GET_SERVER_SITE" id="12093"
+        loglevel="LL_SEVERE"
+        description="Get server's site name.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server's site. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_GET_SERVER_SITE" id="12094"
+        loglevel="LL_SEVERE"
+        description="Get server's site name.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server's site due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_DELETE_SERVER" id="12101"
+        loglevel="LL_INFO"
+        description="Attempt to delete server.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on delete button in server management page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_DELETE_SERVER" id="12102"
+        loglevel="LL_INFO"
+        description="Server is delete.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on delete button in server management page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_DELETE_SERVER" id="12103"
+        loglevel="LL_SEVERE"
+        description="Delete server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to delete server. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_DELETE_SERVER" id="12104"
+        loglevel="LL_SEVERE"
+        description="Delete server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to delete server due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_CLONE_SERVER" id="12201"
+        loglevel="LL_INFO"
+        description="Attempt to clone server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>Cloned Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on clone button in server management page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CLONE_SERVER" id="12202"
+        loglevel="LL_INFO"
+        description="Server is cloned.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>Cloned Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on clone button in server management page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_CLONE_SERVER" id="12203"
+        loglevel="LL_SEVERE"
+        description="clone server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>Cloned Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to clone server. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_CLONE_SERVER" id="12204"
+        loglevel="LL_SEVERE"
+        description="clone server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>Cloned Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to clone server due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="CONFIGURATION_EXCEPTION_CLONE_SERVER" id="12205"
+        loglevel="LL_SEVERE"
+        description="clone server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>Cloned Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to clone server due the data format error.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_GET_SERVER_CONFIG" id="12211"
+        loglevel="LL_INFO"
+        description="Attempt to get server's configuration.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>View server profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SERVER_CONFIG" id="12212"
+        loglevel="LL_INFO"
+        description="Server's configuration is returned.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>View server profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_GET_SERVER_CONFIG" id="12213"
+        loglevel="LL_SEVERE"
+        description="Get server's configuration.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server's configuration. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_GET_SERVER_CONFIG" id="12214"
+        loglevel="LL_SEVERE"
+        description="Get server's configuration.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server's configuration due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="IO_EXCEPTION_GET_SERVER_CONFIG" id="12215"
+        loglevel="LL_SEVERE"
+        description="get server's configuration.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server's configuration due the data parsing error.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_GET_SERVER_DEFAULT_CONFIG" id="12221"
+        loglevel="LL_INFO"
+        description="Attempt to get server default configuration.">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>View server profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SERVER_DEFAULT_CONFIG" id="12222"
+        loglevel="LL_INFO"
+        description="Server default configuration is returned.">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>View server profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+
+    <logmessage name="ATTEMPT_MODIFY_SERVER" id="12231"
+        loglevel="LL_INFO"
+        description="Attempt to modify server.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on OK button in server profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_MODIFY_SERVER" id="12232"
+        loglevel="LL_INFO"
+        description="Server is modified.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on OK button in server profile page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_MODIFY_SERVER" id="12233"
+        loglevel="LL_SEVERE"
+        description="modify server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify server. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_MODIFY_SERVER" id="12234"
+        loglevel="LL_SEVERE"
+        description="modify server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify server due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="IO_EXCEPTION_MODIFY_SERVER" id="12235"
+        loglevel="LL_SEVERE"
+        description="modify server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify server due the data parsing error.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="CONFIGURATION_EXCEPTION_MODIFY_SERVER" id="12236"
+        loglevel="LL_SEVERE"
+        description="modify server.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify server due the incorrect data format error.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_MODIFY_SERVER_INHERITANCE" id="12241"
+        loglevel="LL_INFO"
+        description="Attempt to modify server's inheritance.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on OK button in server inheritance setting page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_MODIFY_SERVER_INHERITANCE" id="12242"
+        loglevel="LL_INFO"
+        description="Server's inheritance setting is modified.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on OK button in server inheritance setting page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_MODIFY_SERVER_INHERITANCE" id="12243"
+        loglevel="LL_SEVERE"
+        description="Modify server's inheritance.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify server's inheritance. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_MODIFY_SERVER_INHERITANCE" id="12244"
+        loglevel="LL_SEVERE"
+        description="Modify server's inheritance.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify server's inheritance due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="IO_EXCEPTION_MODIFY_SERVER_INHERITANCE" id="12245"
+        loglevel="LL_SEVERE"
+        description="modify server's inheritance.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify server's inheritance due the data parsing error.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="CONFIGURATION_EXCEPTION_MODIFY_SERVER_INHERITANCE" id="12246"
+        loglevel="LL_SEVERE"
+        description="modify server's inheritance.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to modify server's inheritance due the incorrect data format error.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_GET_SERVER_CONFIG_XML" id="12251"
+        loglevel="LL_INFO"
+        description="Attempt to get server's configuration XML.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>View server's server configuration XML profile  page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SERVER_CONFIG_XML" id="12252"
+        loglevel="LL_INFO"
+        description="Server's configuration XML is returned.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>View server's server configuration XML profile  page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_GET_SERVER_CONFIG_XML" id="12253"
+        loglevel="LL_SEVERE"
+        description="Get server's configuration XML.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server's configuration XML. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_GET_SERVER_CONFIG_XML" id="12254"
+        loglevel="LL_SEVERE"
+        description="sGget server's configuration XML.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server's configuration XML due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="GENERIC_EXCEPTION_GET_SERVER_CONFIG_XML" id="12255"
+        loglevel="LL_SEVERE"
+        description="sGget server's configuration XML.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to get server's configuration XML due the data parsing error.</item>
+        </triggers>
+        <actions>
+            <item>Look under console log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SET_SERVER_CONFIG_XML" id="12261"
+        loglevel="LL_INFO"
+        description="Attempt to set server's configuration XML.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on OK button in server's server configuration XML profile  page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SET_SERVER_CONFIG_XML" id="12262"
+        loglevel="LL_INFO"
+        description="Server's configuration XML is modified.">
+        <datainfo>
+            <item>Server Name</item>
+        </datainfo>
+        <triggers>
+            <item>Click on OK button in server's server configuration XML profile  page.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SSO_EXCEPTION_SET_SERVER_CONFIG_XML" id="12263"
+        loglevel="LL_SEVERE"
+        description="set server's configuration XML.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to set server's configuration XML. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under access management SDK log for more information.</item>
+       </actions>
+    </logmessage>
+    <logmessage name="SMS_EXCEPTION_SET_SERVER_CONFIG_XML" id="12264"
+        loglevel="LL_SEVERE"
+        description="sGset server's configuration XML.">
+        <datainfo>
+            <item>Server Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to set server's configuration XML due the SMS API error.</item>
+        </triggers>
+        <actions>
+            <item>Look under service management SDK log for more information.</item>
+       </actions>
+    </logmessage>
 </logmessages>

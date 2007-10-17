@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmDisco.xml,v 1.1 2007-08-24 16:43:28 bina Exp $
+   $Id: fmDisco.xml,v 1.2 2007-10-17 23:00:59 veiming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -182,7 +182,7 @@
                     syntax="xml"
                     i18nKey="">
                     <DefaultValues>
-                        <Value>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;DiscoEntry xmlns="urn:com:sun:identityserver:liberty:ws:disco:discoentry"&gt;&lt;ResourceOffering xmlns="urn:liberty:disco:2003-08"&gt;&lt;ResourceID&gt;&lt;/ResourceID&gt;&lt;ServiceInstance&gt;&lt;ServiceType&gt;urn:liberty:disco:2003-08&lt;/ServiceType&gt;&lt;ProviderID&gt;@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@/@SERVER_URI@/Liberty/disco&lt;/ProviderID&gt;&lt;Description&gt;&lt;SecurityMechID&gt;urn:liberty:security:2003-08:null:null&lt;/SecurityMechID&gt;&lt;Endpoint&gt;@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@/@SERVER_URI@/Liberty/disco&lt;/Endpoint&gt;&lt;/Description&gt;&lt;/ServiceInstance&gt;&lt;/ResourceOffering&gt;&lt;/DiscoEntry&gt;</Value>
+                        <Value>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;DiscoEntry xmlns="urn:com:sun:identityserver:liberty:ws:disco:discoentry"&gt;&lt;ResourceOffering xmlns="urn:liberty:disco:2003-08"&gt;&lt;ResourceID&gt;&lt;/ResourceID&gt;&lt;ServiceInstance&gt;&lt;ServiceType&gt;urn:liberty:disco:2003-08&lt;/ServiceType&gt;&lt;ProviderID&gt;%SERVER_PROTO%://%SERVER_HOST%:%SERVER_PORT%%SERVER_URI%/Liberty/disco&lt;/ProviderID&gt;&lt;Description&gt;&lt;SecurityMechID&gt;urn:liberty:security:2003-08:null:null&lt;/SecurityMechID&gt;&lt;Endpoint&gt;%SERVER_PROTO%://%SERVER_HOST%:%SERVER_PORT%%SERVER_URI%/Liberty/disco&lt;/Endpoint&gt;&lt;/Description&gt;&lt;/ServiceInstance&gt;&lt;/ResourceOffering&gt;&lt;/DiscoEntry&gt;</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="sunIdentityServerBootstrappingSessionContext"

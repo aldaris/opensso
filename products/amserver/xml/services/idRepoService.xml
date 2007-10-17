@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.9 2007-10-15 17:55:06 rajeevangal Exp $
+   $Id: idRepoService.xml,v 1.10 2007-10-17 23:00:53 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2286,9 +2286,6 @@
                         syntax = "string"
                         isSearchable="yes"
                         i18nKey = "a109">
-                        <DefaultValues>
-                            <Value>@SERVER_HOST@</Value>
-                        </DefaultValues>
                     </AttributeSchema>
                 </OrganizationAttributeSchema>
             </Organization>

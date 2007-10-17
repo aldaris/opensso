@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemConfigurationUtil.java,v 1.3 2007-09-13 19:10:29 veiming Exp $
+ * $Id: SystemConfigurationUtil.java,v 1.4 2007-10-17 23:00:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,11 +130,17 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
      * @param protocol The service protocol.
      * @param hostname The service host name.
      * @param port The service listening port.
+     * @param uri The service URI.
      * @return The URL of the specified service on the specified host.
      * @throws SystemConfigurationException if the URL could not be found.
      */
-    public static URL getServiceURL(String serviceName, String protocol,
-        String hostname, int port) throws SystemConfigurationException {
+    public static URL getServiceURL(
+        String serviceName,
+        String protocol,
+        String hostname,
+        int port,
+        String uri
+    ) throws SystemConfigurationException {
 
         if (!platformNamingInitialized) {
             initPlatformNaming();
@@ -161,7 +167,7 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
         String url = (String)values.iterator().next();
         if (url != null) {
             if ((url.indexOf("%") != -1) &&
-                (!validate(protocol, hostname, port))) {
+                (!validate(protocol, hostname, port, uri))) {
 
                 Object[] data = { serviceName };
                 throw new SystemConfigurationException("noServiceURL", data);
@@ -182,6 +188,11 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
                 url = url.substring(0,idx) + port +
                       url.substring(idx + "%port".length(), url.length());
             }
+
+            if ((uri != null) && (idx =url.indexOf("%uri")) != -1) {
+                url = url.substring(0,idx) + uri +
+                      url.substring(idx + "%uri".length(), url.length());
+            }
             try {
                 return new URL(url);
             } catch (MalformedURLException muex) {
@@ -200,12 +211,17 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
      * @param protocol The service protocol of the server instance.
      * @param hostname The service host name of the server instance.
      * @param port The service listening port of the server instance.
+     * @param uri The service URI of the server instance.
      * @return the server id corresponding to the server instance
      * @throws SystemConfigurationException if the server id corresponding to
      *     the server instance could not be found.
      */
-    public static String getServerID(String protocol, String hostname,int port)
-        throws SystemConfigurationException {
+    public static String getServerID(
+        String protocol,
+        String hostname,
+        int port,
+        String uri
+    ) throws SystemConfigurationException {
 
         if (!platformNamingInitialized) {
             initPlatformNaming();
@@ -217,7 +233,10 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
             throw new SystemConfigurationException("missingProtHost");
         }
 
-        String server = protocol + ":" + "//" + hostname + ":" + port;
+        
+        String server = (uri != null) ?
+            protocol + ":" + "//" + hostname + ":" + port + uri :
+            protocol + ":" + "//" + hostname + ":" + port;
         server = server.toLowerCase();
         String serverID = (String)serverToIdTable.get(server);
         if (serverID == null) {
@@ -345,8 +364,16 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
         }
     }
 
-    private static boolean validate(String protocol, String host, int port) {
-        String server = (protocol + "://" + host + ":" + port).toLowerCase();
+    private static boolean validate(
+        String protocol,
+        String host,
+        int port,
+        String uri
+    ) {
+        String server = (uri != null) ? 
+            protocol + "://" + host + ":" + port + uri :
+            protocol + "://" + host + ":" + port;
+        server = server.toLowerCase();
         return (serverList.contains(server));
     }
 

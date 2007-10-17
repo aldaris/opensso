@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.8 2007-10-05 19:16:38 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.9 2007-10-17 23:00:52 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -4112,7 +4112,746 @@
         </actions>
     </logmessage>
 
-    <logmessage name="ATTEMPT_GET_SUPPORTED_DATA_TYPES" id="3040"
+    <logmessage name="ATTEMPT_LIST_SERVER_CONFIG" id="3040"
+        loglevel="LL_INFO"
+        description="Attempt to list server configuration.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list server configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_LIST_SERVER_CONFIG" id="3041"
+        loglevel="LL_INFO"
+        description="Server configuration is displayed.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list server configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_SERVER_CONFIG" id="3042"
+        loglevel="LL_INFO"
+        description="Unable to list server configuration.">
+        <datainfo>
+            <item>name of server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list server configuration Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Check if servername is correct.</item>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_UPDATE_SERVER_CONFIG" id="3050"
+        loglevel="LL_INFO"
+        description="Attempt to update server configuration.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update server configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_UPDATE_SERVER_CONFIG" id="3051"
+        loglevel="LL_INFO"
+        description="Server configuration is updated.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update server configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_UPDATE_SERVER_CONFIG" id="3052"
+        loglevel="LL_INFO"
+        description="Unable to update server configuration.">
+        <datainfo>
+            <item>name of server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update server configuration Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Check if servername is correct.</item>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    
+    <logmessage name="ATTEMPT_REMOVE_SERVER_CONFIG" id="3060"
+        loglevel="LL_INFO"
+        description="Attempt to remove server configuration.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove server configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_REMOVE_SERVER_CONFIG" id="3061"
+        loglevel="LL_INFO"
+        description="Server configuration is removed.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove server configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_REMOVE_SERVER_CONFIG" id="3062"
+        loglevel="LL_INFO"
+        description="Remove server configuration.">
+        <datainfo>
+            <item>name of server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove server configuration Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Check if servername is correct.</item>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    
+    <logmessage name="ATTEMPT_CREATE_SERVER" id="3070"
+        loglevel="LL_INFO"
+        description="Attempt to create server.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create server Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CREATE_SERVER" id="3071"
+        loglevel="LL_INFO"
+        description="Server is created.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create server Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_SERVER" id="3072"
+        loglevel="LL_INFO"
+        description="Unable to create server.">
+        <datainfo>
+            <item>name of server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create server Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_DELETE_SERVER" id="3080"
+        loglevel="LL_INFO"
+        description="Attempt to delete server.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete server Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_DELETE_SERVER" id="3081"
+        loglevel="LL_INFO"
+        description="Server is deleted.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete server Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_SERVER" id="3082"
+        loglevel="LL_INFO"
+        description="Unable to delete server.">
+        <datainfo>
+            <item>name of server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete server Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Check the name of the server.</item>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_LIST_SERVERS" id="3090"
+        loglevel="LL_INFO"
+        description="Attempt to list servers.">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>Execute list servers Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_LIST_SERVERS" id="3091"
+        loglevel="LL_INFO"
+        description="Servers are displayed.">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>Execute list servers Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_SERVERS" id="3092"
+        loglevel="LL_INFO"
+        description="Unable to list servers.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list servers Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_CREATE_SITE" id="3100"
+        loglevel="LL_INFO"
+        description="Attempt to create site.">
+        <datainfo>
+            <item>name of site</item>
+            <item>primary URL of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create site Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CREATE_SITE" id="3101"
+        loglevel="LL_INFO"
+        description="Site is created.">
+        <datainfo>
+            <item>name of site</item>
+            <item>primary URL of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create site Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_SITE" id="3102"
+        loglevel="LL_INFO"
+        description="Unable to create site.">
+        <datainfo>
+            <item>name of site</item>
+            <item>primary URL of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create site Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_LIST_SITES" id="3110"
+        loglevel="LL_INFO"
+        description="Attempt to list sites.">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>Execute list sites Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_LIST_SITES" id="3111"
+        loglevel="LL_INFO"
+        description="Sites are displayed.">
+        <datainfo>
+            <item />
+        </datainfo>
+        <triggers>
+            <item>Execute list sites Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_SITES" id="3112"
+        loglevel="LL_INFO"
+        description="Unable to list sites.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list sites Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SHOW_SITE_MEMBERS" id="3120"
+        loglevel="LL_INFO"
+        description="Attempt to show site members.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show site members Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SHOW_SITE_MEMBERS" id="3121"
+        loglevel="LL_INFO"
+        description="Site members are displayed.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show site members Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SHOW_SITE_MEMBERS" id="3122"
+        loglevel="LL_INFO"
+        description="Unable to show site members.">
+        <datainfo>
+            <item>name of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show site members Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_ADD_SITE_MEMBERS" id="3130"
+        loglevel="LL_INFO"
+        description="Attempt to add members to site.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add members to site Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_ADD_SITE_MEMBERS" id="3131"
+        loglevel="LL_INFO"
+        description="Members are added to site.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add members to site Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_ADD_SITE_MEMBERS" id="3132"
+        loglevel="LL_INFO"
+        description="Unable to add members to site.">
+        <datainfo>
+            <item>name of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add members to site Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_REMOVE_SITE_MEMBERS" id="3140"
+        loglevel="LL_INFO"
+        description="Attempt to remove members from site.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove members from site Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_REMOVE_SITE_MEMBERS" id="3141"
+        loglevel="LL_INFO"
+        description="Members are removed from site.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove members from site Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_REMOVE_SITE_MEMBERS" id="3142"
+        loglevel="LL_INFO"
+        description="Unable to remove members from site.">
+        <datainfo>
+            <item>name of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove members from site Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_DELETE_SITE" id="3150"
+        loglevel="LL_INFO"
+        description="Attempt to delete site.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete site Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_DELETE_SITE" id="3151"
+        loglevel="LL_INFO"
+        description="Site is deleted.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete site Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_SITE" id="3152"
+        loglevel="LL_INFO"
+        description="Unable to delete members from site.">
+        <datainfo>
+            <item>name of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete site Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SET_SITE_PRIMARY_URL" id="3160"
+        loglevel="LL_INFO"
+        description="Attempt to set site primary URL.">
+        <datainfo>
+            <item>name of site</item>
+            <item>primary URL of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set site primary URL Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SET_SITE_PRIMARY_URL" id="3161"
+        loglevel="LL_INFO"
+        description="Site primary URL is set.">
+        <datainfo>
+            <item>name of site</item>
+            <item>primary URL of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set site primary URL Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SET_SITE_PRIMARY_URL" id="3162"
+        loglevel="LL_INFO"
+        description="Unable to set site primary URL.">
+        <datainfo>
+            <item>name of site</item>
+            <item>primary URL of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set site primary URL Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SHOW_SITE" id="3170"
+        loglevel="LL_INFO"
+        description="Attempt to show site profile.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show site profile Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SHOW_SITE" id="3171"
+        loglevel="LL_INFO"
+        description="Site profile is displayed.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show site profile Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SHOW_SITE" id="3172"
+        loglevel="LL_INFO"
+        description="Unable to show site profile.">
+        <datainfo>
+            <item>name of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show site profile Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SET_SITE_FAILOVER_URLS" id="3180"
+        loglevel="LL_INFO"
+        description="Attempt to set site failover URLs.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set site failover URLs Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SET_SITE_FAILOVER_URLS" id="3181"
+        loglevel="LL_INFO"
+        description="Site failover URLs are set.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set site failover URLs Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SET_SITE_FAILOVER_URLS" id="3182"
+        loglevel="LL_INFO"
+        description="Unable to set site failover URLs.">
+        <datainfo>
+            <item>name of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set site failover URLs Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_ADD_SITE_FAILOVER_URLS" id="3190"
+        loglevel="LL_INFO"
+        description="Attempt to add site failover URLs.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add site failover URLs Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_ADD_SITE_FAILOVER_URLS" id="3191"
+        loglevel="LL_INFO"
+        description="Site failover URLs are added.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add site failover URLs Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_ADD_SITE_FAILOVER_URLS" id="3192"
+        loglevel="LL_INFO"
+        description="Unable to add site failover URLs.">
+        <datainfo>
+            <item>name of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add site failover URLs Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_REMOVE_SITE_FAILOVER_URLS" id="3200"
+        loglevel="LL_INFO"
+        description="Attempt to remove site failover URLs.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove site failover URLs Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_REMOVE_SITE_FAILOVER_URLS" id="3201"
+        loglevel="LL_INFO"
+        description="Site failover URLs are removed.">
+        <datainfo>
+            <item>name of site</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove site failover URLs Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_REMOVE_SITE_FAILOVER_URLS" id="3202"
+        loglevel="LL_INFO"
+        description="Unable to remove site failover URLs.">
+        <datainfo>
+            <item>name of site</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove site failover URLs Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_CLONE_SERVER" id="3210"
+        loglevel="LL_INFO"
+        description="Attempt to clone server.">
+        <datainfo>
+            <item>name of server</item>
+            <item>name of cloned server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute clone server Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CLONE_SERVER" id="3211"
+        loglevel="LL_INFO"
+        description="Server is cloned.">
+        <datainfo>
+            <item>name of server</item>
+            <item>name of cloned server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute clone server Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CLONE_SERVER" id="3212"
+        loglevel="LL_INFO"
+        description="Unable to clone server.">
+        <datainfo>
+            <item>name of server</item>
+            <item>name of cloned server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute clone server Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_EXPORT_SERVER" id="3220"
+        loglevel="LL_INFO"
+        description="Attempt to export server.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export server Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_EXPORT_SERVER" id="3221"
+        loglevel="LL_INFO"
+        description="Server is cloned.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export server Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_EXPORT_SERVER" id="3222"
+        loglevel="LL_INFO"
+        description="Unable to export server.">
+        <datainfo>
+            <item>name of server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export server Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_IMPORT_SERVER" id="3230"
+        loglevel="LL_INFO"
+        description="Attempt to import server configuration.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute import server configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_IMPORT_SERVER" id="3231"
+        loglevel="LL_INFO"
+        description="Server configuration is imported.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute import server configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_IMPORT_SERVER" id="3232"
+        loglevel="LL_INFO"
+        description="Unable to import server configuration.">
+        <datainfo>
+            <item>name of server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute import server configuration Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_GET_SUPPORTED_DATA_TYPES" id="4040"
         loglevel="LL_INFO"
         description="Attempt to get the supported data types of a realm.">
         <datainfo>
@@ -4123,7 +4862,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="SUCCEED_GET_SUPPORTED_DATA_TYPES" id="3041"
+    <logmessage name="SUCCEED_GET_SUPPORTED_DATA_TYPES" id="4041"
         loglevel="LL_INFO"
         description="The supported data types are retrieved.">
         <datainfo>
@@ -4134,7 +4873,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="FAILED_GET_SUPPORTED_DATA_TYPES" id="3042"
+    <logmessage name="FAILED_GET_SUPPORTED_DATA_TYPES" id="4042"
         loglevel="LL_INFO"
         description="Unable to get the supported data types of realm.">
         <datainfo>
@@ -4150,4 +4889,3 @@
     </logmessage>
 
 </logmessages>
-

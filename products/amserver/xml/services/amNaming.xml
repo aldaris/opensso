@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amNaming.xml,v 1.5 2007-10-12 23:12:51 mrudul_uchil Exp $
+   $Id: amNaming.xml,v 1.6 2007-10-17 23:00:53 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,7 +50,7 @@
                     syntax="url"
                     i18nKey="a101">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/profileservice</Value>
+                        <Value>%protocol://%host:%port%uri/profileservice</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-session-url"
@@ -58,7 +58,7 @@
                     syntax="url"
                     i18nKey="a102">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/sessionservice</Value>
+                        <Value>%protocol://%host:%port%uri/sessionservice</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-logging-url"
@@ -66,7 +66,7 @@
                     syntax="url"
                     i18nKey="a103">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/loggingservice</Value>
+                        <Value>%protocol://%host:%port%uri/loggingservice</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-policy-url"
@@ -74,7 +74,7 @@
                     syntax="url"
                     i18nKey="a105">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/policyservice</Value>
+                        <Value>%protocol://%host:%port%uri/policyservice</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-auth-url"
@@ -82,7 +82,7 @@
                     syntax="url"
                     i18nKey="a106">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/authservice</Value>
+                        <Value>%protocol://%host:%port%uri/authservice</Value>
                     </DefaultValues>
                 </AttributeSchema>
                  <AttributeSchema name="iplanet-am-naming-samlawareservlet-url"
@@ -90,7 +90,7 @@
                     syntax="url"
                     i18nKey="a107">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/SAMLAwareServlet</Value>
+                        <Value>%protocol://%host:%port%uri/SAMLAwareServlet</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-samlsoapreceiver-url"
@@ -98,7 +98,7 @@
                     syntax="url"
                     i18nKey="a108">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/SAMLSOAPReceiver</Value>
+                        <Value>%protocol://%host:%port%uri/SAMLSOAPReceiver</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-samlpostservlet-url"
@@ -106,7 +106,7 @@
                     syntax="url"
                     i18nKey="a109">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/SAMLPOSTProfileServlet</Value>
+                        <Value>%protocol://%host:%port%uri/SAMLPOSTProfileServlet</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-samlassertionmanager-url"
@@ -114,7 +114,7 @@
                     syntax="url"
                     i18nKey="a110">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/AssertionManagerServlet/AssertionManagerIF</Value>
+                        <Value>%protocol://%host:%port%uri/AssertionManagerServlet/AssertionManagerIF</Value>
                     </DefaultValues>
                 </AttributeSchema>
 
@@ -123,7 +123,7 @@
                     syntax="url"
                     i18nKey="a114">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/jaxrpc/</Value>
+                        <Value>%protocol://%host:%port%uri/jaxrpc/</Value>
                     </DefaultValues>
                 </AttributeSchema>
 
@@ -150,7 +150,7 @@
                     syntax="url"
                     i18nKey="a111">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/FSAssertionManagerServlet/FSAssertionManagerIF</Value>
+                        <Value>%protocol://%host:%port%uri/FSAssertionManagerServlet/FSAssertionManagerIF</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-securitytokenmanager-url"
@@ -158,7 +158,7 @@
                     syntax="url"
                     i18nKey="a113">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/SecurityTokenManagerServlet/SecurityTokenManagerIF</Value>
+                        <Value>%protocol://%host:%port%uri/SecurityTokenManagerServlet/SecurityTokenManagerIF</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="sun-naming-sts-url"

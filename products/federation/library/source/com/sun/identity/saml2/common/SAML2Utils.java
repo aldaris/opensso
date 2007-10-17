@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.10 2007-10-04 04:30:43 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.11 2007-10-17 23:00:57 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,13 +141,15 @@ public class SAML2Utils extends SAML2SDKUtils {
     private static KeyProvider keyProvider = KeyUtil.getKeyProviderInstance();
     
     private static String server_protocol =
-            SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL);
+        SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL);
     private static String server_host =
-            SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
+        SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
     private static String server_port =
-            SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
+        SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
+    private static String server_uri = SystemPropertiesManager.get(
+        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
     private static String localURL = server_protocol + "://" + server_host +
-            ":" + server_port;
+            ":" + server_port + server_uri;
     private static int int_server_port = 0;
     
     public static SOAPConnectionFactory scf = null;
@@ -1241,7 +1243,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         
         try {
             String localServerID = SystemConfigurationUtil.getServerID(
-                server_protocol, server_host, int_server_port);
+                server_protocol, server_host, int_server_port, server_uri);
             if (serverID.equals(localServerID)) {
                 return null;
             }
@@ -1339,7 +1341,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         String serverId = null;
         try {
             serverId = SystemConfigurationUtil.getServerID(
-                server_protocol, server_host, int_server_port);
+                server_protocol, server_host, int_server_port, server_uri);
             
             // serverId is 2 digit string
             if (serverId != null && serverId.length() == 2) {

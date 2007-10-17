@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.19 2007-09-10 21:56:36 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.20 2007-10-17 23:00:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1374,14 +1374,13 @@ public class IdServicesImpl implements IdServices {
                     Class thisClass = Class.forName(p);
                     pluginClass = (IdRepo) thisClass.newInstance();
                     pluginClass.initialize(amsdkConfig);
-                    idRepoMap.put(cacheKey, pluginClass);                                    
-
+                    idRepoMap.put(cacheKey, pluginClass);
                 } catch (Exception e) {
                     getDebug().error("IdServicesImpl.getConfiguredPlugins: "
                             + "Unable to instantiate plugin: " + p, e);
                 }
                 
-                if (pluginClass != null) { // Was initialized successfully                
+                if (pluginClass != null) { // Was initialized successfully
                     // Add listener to this plugin class!
                     Map listenerConfig = new HashMap();
                     listenerConfig.put("realm", orgName);
@@ -2386,7 +2385,7 @@ public class IdServicesImpl implements IdServices {
         if (ServiceManager.isConfigMigratedTo70()
                 && ServiceManager.getBaseDN().equalsIgnoreCase(orgName)) {
             // add the "SpecialUser plugin            
-            IdRepo specialRepo = getSpecialRepoPlugin(token, orgName);            
+            IdRepo specialRepo = getSpecialRepoPlugin(token, orgName);
             pluginClasses.add(specialRepo);            
         }
 

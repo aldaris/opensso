@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.7 2007-02-07 20:25:40 beomsuk Exp $
+ * $Id: AuthContext.java,v 1.8 2007-10-17 23:00:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,13 +94,16 @@ import org.w3c.dom.NodeList;
  * @supported.api
  */
 public class AuthContext extends Object implements java.io.Serializable {
-    private String   server_proto =
+    private String server_proto =
         SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
-    private String   server_host  =
+    private String server_host  =
         SystemProperties.get(Constants.AM_SERVER_HOST);
-    private String   server_port  =
+    private String server_port  =
         SystemProperties.get(Constants.AM_SERVER_PORT);
-    private static final String amAuthContext        = "amAuthContext";
+    private String server_uri  =
+        SystemProperties.get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+
+    private static final String amAuthContext = "amAuthContext";
     
     private static final String JSS_PASSWORD_UTIL =
         "com.sun.identity.authentication.util.JSSPasswordUtil";
@@ -465,14 +468,15 @@ public class AuthContext extends Object implements java.io.Serializable {
         
         if (authURL != null) {
             authServiceURL = getAuthServiceURL(authURL.getProtocol(),
-            authURL.getHost(), Integer.toString(authURL.getPort()));
+                authURL.getHost(), Integer.toString(authURL.getPort()),
+                authURL.getPath());
         }
         
         AuthLoginException authException = null;
         try {
             if (authServiceURL == null) {
                 authServiceURL = getAuthServiceURL( server_proto,
-                    server_host, server_port);
+                    server_host, server_port, server_uri);
             }
             if (authServiceURL != null) {
             	if (authDebug.messageEnabled()) {
@@ -1185,8 +1189,11 @@ public class AuthContext extends Object implements java.io.Serializable {
      */
     public Set getModuleInstanceNames() {
         if (authURL != null) {
-            authServiceURL = getAuthServiceURL(authURL.getProtocol(),
-            authURL.getHost(), Integer.toString(authURL.getPort()));
+            authServiceURL = getAuthServiceURL(
+                authURL.getProtocol(),
+                authURL.getHost(), 
+                Integer.toString(authURL.getPort()),
+                authURL.getPath());
         }
         if (!localFlag) {
             setLocalFlag(authServiceURL);
@@ -1197,7 +1204,7 @@ public class AuthContext extends Object implements java.io.Serializable {
             if (authServiceURL == null) {
                 try {
                     authServiceURL = getAuthServiceURL(server_proto,
-                    server_host, server_port);
+                        server_host, server_port, server_uri);
                 } catch (Exception e) {
                     return Collections.EMPTY_SET;
                 }
@@ -1854,12 +1861,13 @@ public class AuthContext extends Object implements java.io.Serializable {
     private static URL getAuthServiceURL(
         String protocol,
         String host,
-        String port
+        String port,
+        String uri
     ) {
         URL authservice = null;
         try {
             authservice = WebtopNaming.getServiceURL(AuthXMLTags.AUTH_SERVICE,
-            protocol, host, port);
+                protocol, host, port, uri);
         } catch (Exception e) {
             authDebug.error("Failed to obtain auth service url from server: " +
             protocol + "://" + host + ":" + port);

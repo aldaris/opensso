@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.js,v 1.1 2006-05-04 06:56:23 veiming Exp $
+ * $Id: am.js,v 1.2 2007-10-17 23:00:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,10 +56,27 @@ function resetForm() {
  * @param trigger Object that triggers this event.
  */
 function toggleTblButtonState(formName, tblName, counterName, btn, trigger) {
+    toggleTblButtonStateEx(formName, tblName, counterName, btn, trigger, false);
+}
+
+/**
+ * Enables and Disables the Delete button of a table.
+ *
+ * @param formName Name of form.
+ * @param tblName Name of table.
+ * @param counterName Name of counter.
+ * @param btn Button object.
+ * @param trigger Object that triggers this event.
+ * @param singleCheckbox true if button is enable is only one checkbox iss
+ * selected.
+ */
+function toggleTblButtonStateEx(formName, tblName, counterName, btn, trigger,
+    singleCheckbox) {
     if (tblBtnCounter[counterName] == undefined) {
 	tblBtnCounter[counterName] = 0;
     }
-    var prevState = (tblBtnCounter[counterName] <= 0);
+    var prevState = (singleCheckbox) ? (tblBtnCounter[counterName] != 1) :
+        (tblBtnCounter[counterName] <= 0);
 
     if (trigger.name.indexOf('DeselectAllHref') != -1) {
 	tblBtnCounter[counterName] = 0;
@@ -73,7 +90,8 @@ function toggleTblButtonState(formName, tblName, counterName, btn, trigger) {
 	}
     }
 
-    var currState = (tblBtnCounter[counterName] <= 0);
+    var currState = (singleCheckbox) ? (tblBtnCounter[counterName] != 1) :
+        (tblBtnCounter[counterName] <= 0);
 
     if (btn) {
 	if (prevState != currState) {

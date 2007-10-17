@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerClient.java,v 1.4 2007-10-16 21:49:11 exu Exp $
+ * $Id: FSAssertionManagerClient.java,v 1.5 2007-10-17 23:00:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,7 +101,9 @@ public final class FSAssertionManagerClient {
                         SAMLConstants.SERVER_PROTOCOL),
                     InetAddress.getLocalHost().getHostName(),
                     Integer.parseInt(SystemConfigurationUtil.getProperty(
-                        SAMLConstants.SERVER_PORT)));
+                        SAMLConstants.SERVER_PORT)),
+                    SystemConfigurationUtil.getProperty(
+                        SAMLConstants.SERVER_URI));
                 remoteStub.send("checkForLocal", null, null);
                 if (FSAssertionManagerImpl.isLocal) {
                     isLocal = true;
@@ -156,12 +158,12 @@ public final class FSAssertionManagerClient {
     
     // Private method to get the service endpoint URL
     private static SOAPClient getServiceEndPoint(
-        String protocol, String hostname, int port)
+        String protocol, String hostname, int port, String uri)
         throws Exception 
     {
         // Obtain the URL for the service endpoint
         URL weburl = SystemConfigurationUtil.getServiceURL(
-            SERVICE_NAME, protocol, hostname, port);
+            SERVICE_NAME, protocol, hostname, port, uri);
         String iurl = weburl.toString();
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("FSAssertionManagerClient with URL: " + iurl);

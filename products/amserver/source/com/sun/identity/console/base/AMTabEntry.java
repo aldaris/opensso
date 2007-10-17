@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTabEntry.java,v 1.1 2007-02-07 20:19:35 jonnelson Exp $
+ * $Id: AMTabEntry.java,v 1.2 2007-10-17 23:00:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.base;
 
+import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.console.base.model.AccessControlModel;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMConsoleException;
@@ -375,8 +376,13 @@ public class AMTabEntry {
             Node child = childrenNodes.item(i);
             if (child.getNodeName().equalsIgnoreCase("tab")) {
                 AMTabEntry childTab = new AMTabEntry(child);
-                childTab.parentNode = this;
-                children.add(childTab);
+                /// 42 is Site and Server Sub tab
+                if (!ServerConfiguration.isLegacy() ||
+                    (childTab.getID() != 42)
+                ){
+                    childTab.parentNode = this;
+                    children.add(childTab);
+                }
             }
         }
     }

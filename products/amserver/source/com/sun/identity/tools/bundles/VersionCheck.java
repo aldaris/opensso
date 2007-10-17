@@ -17,18 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VersionCheck.java,v 1.3 2007-08-29 21:18:45 exu Exp $
+ * $Id: VersionCheck.java,v 1.4 2007-10-17 23:00:48 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.tools.bundles;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Properties;
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.setup.Bootstrap;
 import java.util.ResourceBundle;
 
 public class VersionCheck implements SetupConstants{
@@ -39,32 +36,16 @@ public class VersionCheck implements SetupConstants{
      * @param bundle The ResourceBundle contains the prompt message.
      */
     public static int isValid(ResourceBundle bundle) {
-        Properties configProperties = new Properties();
-        String amExpectedVersion = null;
-        String javaExpectedVersion = null;
-        InputStream configFile = null;
-        javaExpectedVersion = System.getProperty(JAVA_VERSION_EXPECTED);
-        amExpectedVersion = System.getProperty(AM_VERSION_EXPECTED);
+        String javaExpectedVersion = System.getProperty(JAVA_VERSION_EXPECTED);
+        String amExpectedVersion = System.getProperty(AM_VERSION_EXPECTED);
         try {
-            configFile = new FileInputStream(System.getProperty(VERSION_FILE));
-            configProperties.load(configFile);
-        } catch (IOException ex) {
-            //ex.printStackTrace();
+            Bootstrap.load();
+        } catch (Exception ex) {
             System.out.println(bundle.getString("message.error.amconfig") + " "
-                + System.getProperty(VERSION_FILE));
-            return 1;
-        } finally {
-            try {
-                configFile.close();
-            } catch (IOException ignored) {
-            }
-        }
-        if (! ((new File(System.getProperty(XML_CONFIG))).exists())) {
-            System.out.println(System.getProperty(XML_CONFIG) + " " +
-                bundle.getString("message.error.serverconfig"));
+                + System.getProperty(Bootstrap.JVM_OPT_BOOTSTRAP));
             return 1;
         }
-        String configVersion = configProperties.getProperty(System.getProperty(
+        String configVersion = SystemProperties.get(System.getProperty(
             AM_VERSION_CURRENT));
         if (!versionCompatible(System.getProperty(JAVA_VERSION_CURRENT),
             javaExpectedVersion)) {

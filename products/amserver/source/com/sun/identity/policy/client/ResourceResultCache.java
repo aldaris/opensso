@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.6 2007-02-07 20:26:20 beomsuk Exp $
+ * $Id: ResourceResultCache.java,v 1.7 2007-10-17 23:00:45 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1072,6 +1072,8 @@ class ResourceResultCache implements SSOTokenListener {
             String protocol =  sessionServiceURL.getProtocol();
             String host = sessionServiceURL.getHost();
             int port = sessionServiceURL.getPort();
+            String uri = sessionServiceURL.getPath();
+
             String portString = null;
             if ( port == -1) {
                 portString = "";
@@ -1079,8 +1081,8 @@ class ResourceResultCache implements SSOTokenListener {
                 portString = Integer.toString(port);
             }
             policyServiceURL = WebtopNaming.getServiceURL(
-                    POLICY_SERVICE_ID_FOR_NAMING,
-                    protocol, host, portString);
+                POLICY_SERVICE_ID_FOR_NAMING,
+                protocol, host, portString, uri);
         } catch (SessionException se) {
             debug.error("ResourceResultCache.getPolicyServiceURL():"
                     + "Can not find policy service URL", se);

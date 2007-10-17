@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGenerateServerID.java,v 1.2 2006-08-25 21:19:30 veiming Exp $
+ * $Id: AMGenerateServerID.java,v 1.3 2007-10-17 23:00:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,12 +27,10 @@ package com.iplanet.am.util;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -69,15 +67,11 @@ public class AMGenerateServerID {
             String password = args[3];
             SSOTokenManager ssom = SSOTokenManager.getInstance();
             SSOToken token = ssom.createSSOToken(new AuthPrincipal(bindDN),
-                    password);
-            ServiceSchemaManager scm = new ServiceSchemaManager(
-                    "iPlanetAMPlatformService", token);
-            ServiceSchema sc = scm.getGlobalSchema();
-            Map attrs = sc.getAttributeDefaults();
-            Set servers = (Set) attrs.get("iplanet-am-platform-server-list");
-            Iterator iter = servers.iterator();
-            while (iter.hasNext()) {
-                String server = (String) iter.next();
+                password);
+            Set servers = ServerConfiguration.getServerInfo(token);
+            
+            for (Iterator iter = servers.iterator(); iter.hasNext(); ) {
+                String server = (String)iter.next();
                 if (server.startsWith(serverUrl)) {
                     debug.message("server already exists., exiting");
                     System.exit(0);
@@ -85,20 +79,14 @@ public class AMGenerateServerID {
             }
 
             if (opt.equalsIgnoreCase("create")) {
-                Set serverIds = AMGenerateServerID.returnServerIds(servers);
-                String newId = AMGenerateServerID.getTwoByteString(serverIds);
-                String newServer = serverUrl + delimiter + newId;
-                debug.message("New server entry:" + newServer);
-                servers.add(newServer);
-                attrs.put("iplanet-am-platform-server-list", servers);
+                if (debug.messageEnabled()) {
+                    debug.message("New server entry:" + serverUrl);
+                }
+                ServerConfiguration.createServerInstance(token, serverUrl, 
+                    Collections.EMPTY_SET, "");
             } else if (opt.equalsIgnoreCase("delete")) {
-                String serverId = AMGenerateServerID.returnId(servers,
-                        serverUrl);
-                if (serverId != null) {
-                    String removeServer = serverUrl + delimiter + serverId;
-                    debug.message("Server entry to be removed:" + removeServer);
-                    servers.remove(removeServer);
-                    attrs.put("iplanet-am-platform-server-list", servers);
+                if (ServerConfiguration.deleteServerInstance(token, serverUrl)){
+                    debug.message("Server entry to be removed:" + serverUrl);
                 } else {
                     debug.message("Can not find server in server's list:"
                             + serverUrl);
@@ -108,29 +96,9 @@ public class AMGenerateServerID {
                 debug.message("Unknown option in AMGenerateServerID");
                 System.exit(1);
             }
-            sc.setAttributeDefaults(attrs);
         } catch (Exception e) {
             debug.error("Exception occured:", e);
         }
-    }
-
-    /**
-     * This method basically parses server entries and returns corresponding
-     * server ids in a set
-     */
-    public static Set returnServerIds(Set servers) {
-        Set ids = new HashSet();
-        Iterator iter = servers.iterator();
-        while (iter.hasNext()) {
-            String serverEntry = (String) iter.next();
-            int index = serverEntry.indexOf(delimiter);
-            if (index != -1) {
-                String serverId = serverEntry.substring(index + 1, serverEntry
-                        .length());
-                ids.add(serverId);
-            }
-        }
-        return ids;
     }
 
     /**

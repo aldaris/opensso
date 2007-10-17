@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManager.java,v 1.5 2007-10-16 21:49:11 exu Exp $
+ * $Id: FSAssertionManager.java,v 1.6 2007-10-17 23:00:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1216,10 +1216,9 @@ public final class FSAssertionManager {
         String result = null;
         try {
             URL u = new URL(shortUrl);
-            URL weburl = SystemConfigurationUtil.getServiceURL(SERVICE_NAMING,
-                                                u.getProtocol(),
-                                                u.getHost(),
-                                                u.getPort());
+            URL weburl = SystemConfigurationUtil.getServiceURL(
+                SERVICE_NAMING, u.getProtocol(), u.getHost(), u.getPort(),
+                u.getPath());
             result = weburl.toString();
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(

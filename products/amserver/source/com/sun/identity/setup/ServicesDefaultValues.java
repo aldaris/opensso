@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.14 2007-09-06 17:41:26 rajeevangal Exp $
+ * $Id: ServicesDefaultValues.java,v 1.15 2007-10-17 23:00:46 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -156,6 +156,7 @@ public class ServicesDefaultValues {
                     map.put(SetupConstants.DIT_LOADED, dsConfig.isDITLoaded());
                 }
             } 
+            map.put(SetupConstants.DATASTORE_NOTIFICATION, "false");
         } else {
             map.put(SetupConstants.DATASTORE_NOTIFICATION, "true");
         }
@@ -345,7 +346,6 @@ public class ServicesDefaultValues {
 
     /**
      * Validates Admin passwords.
-     *
      */
     private static void validatePassword(Locale locale) {
         Map map = instance.defValues;
@@ -357,6 +357,7 @@ public class ServicesDefaultValues {
             SystemProperties.initializeProperties(
                 SetupConstants.ENC_PWD_PROPERTY, (((String) map.get(
                     SetupConstants.CONFIG_VAR_ENCRYPTION_KEY)).trim()));
+            Crypt.reinitialize();
             map.put(SetupConstants.HASH_ADMIN_PWD, (String)Hash.hash(adminPwd));
         }
         String dbOption = (String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE);

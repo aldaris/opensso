@@ -17,28 +17,38 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.5 2007-10-09 19:02:35 veiming Exp $
+ * $Id: SystemProperties.java,v 1.6 2007-10-17 23:00:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.common.AttributeStruct;
 import com.sun.identity.common.PropertiesFinder;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.SMSException;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
+import java.security.AccessController;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * This class provides functionality that allows single-point-of-access to all
@@ -61,6 +71,8 @@ import java.util.ResourceBundle;
  * @supported.all.api
  */
 public class SystemProperties {
+    private static String instanceName;
+    
     private static Map attributeMap = new HashMap();
     
     static {
@@ -114,11 +126,25 @@ public class SystemProperties {
 
     public static final String NEWCONFDIR = "NEW_CONF_DIR";
 
+    private static Map mapTagswap = new HashMap();
+    private static Map tagswapValues;
+
+    private static Map cacheServerDefaults;
+    private static Map cacheSiteDefaults;
+    
     /**
      * Initialization to load the properties file for config information before
      * anything else starts.
      */
     static {
+        mapTagswap.put("%SERVER_PORT%", "com.iplanet.am.server.port");
+        mapTagswap.put("%SERVER_URI%",
+            "com.iplanet.am.services.deploymentDescriptor");
+        mapTagswap.put("%SERVER_HOST%", "com.iplanet.am.server.host");
+        mapTagswap.put("%SERVER_PROTO%", 
+            "com.iplanet.am.server.protocol");
+        mapTagswap.put("%BASE_DIR%", CONFIG_PATH);
+        
         try {
             // Initialize properties
             props = new Properties();
@@ -234,28 +260,56 @@ public class SystemProperties {
             if (answer == null) {
                 answer = props.getProperty(key);
             }
+            if (answer == null) {
+                if (cacheServerDefaults != null) {
+                    answer = (String)cacheServerDefaults.get(key);
+                }
+            }
+
+            if (answer != null) {
+                Set set = new HashSet();
+                set.addAll(tagswapValues.keySet());
+                
+                for (Iterator i = set.iterator(); i.hasNext(); ) {
+                    String k = (String)i.next();
+                    String val = (String)tagswapValues.get(k);
+                    answer = answer.replaceAll(k, val);
+                }
+
+                if (answer.indexOf("%ROOT_SUFFIX%") != -1) {
+                    answer = answer.replaceAll("%ROOT_SUFFIX%",
+                        SMSEntry.getRootSuffix());
+                }
+            }
         }
         
         return (answer);
     }
-
+    
     /**
      * This method lets you query for a system property whose value is same as
      * <code>String</code> key.
      * 
-     * @param key
-     *            type <code>String</code> , the key whose value one is
-     *            looking for.
-     * @param def
-     *            type <code>String</code> , the default value the method
-     *            returns if the key does not exist.
-     * @return the value if the key exists; otherwise returns <code>null</code>
+     * @param key Yhe key whose value one is looking for.
+     * @param def the default value if the key does not exist.
+     * @return the value if the key exists; otherwise returns default value.
      */
     public static String get(String key, String def) {
         String value = get(key);
         return ((value == null) ? def : value);
     }
-
+    
+    /**
+     * Returns all the properties defined and their values.
+     * 
+     * @return Properties object with all the key value pairs.
+     */
+    public static Properties getProperties() {
+        Properties properties = new Properties();
+        properties.putAll(props);
+        return properties;
+    }
+    
     /**
      * This method lets you get all the properties defined and their values. The
      * method first tries to load the properties from java.lang.System followed
@@ -292,6 +346,19 @@ public class SystemProperties {
         return getAll();
     }
 
+    private static void updateTagswapMap(Properties properties) {
+        tagswapValues = new HashMap();
+        for (Iterator i = mapTagswap.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            String rgKey = (String)mapTagswap.get(key);
+            String val = System.getProperty(rgKey);
+            if (val == null) {
+                val = (String)properties.get(rgKey);
+            }
+            tagswapValues.put(key, val);
+        }
+    }
+
     /**
      * Initializes properties bundle from the <code>file<code> 
      * passed.
@@ -312,24 +379,63 @@ public class SystemProperties {
         }
         // Reset the last modified time
         props = newProps;
+        updateTagswapMap(props);
         lastModified = System.currentTimeMillis();
     }
 
+    public static synchronized void initializeProperties(Properties properties){
+        initializeProperties(properties, false);
+    }
+    
     /**
      * Initializes the properties to be used by Access Manager. Ideally this
      * must be called first before any other method is called within Access
      * Manager. This method provides a programmatic way to set the properties,
      * and will override similar properties if loaded for a properties file.
      * 
-     * @param properties
-     *            properties for access manager
+     * @param properties properties for access manager
+     * @param reset <code>true</code> to reset existing properties.
      */
-    public static synchronized void initializeProperties(Properties properties) 
+    public static synchronized void initializeProperties(
+        Properties properties,
+        boolean reset) 
+    {
+        initializeProperties(properties, reset, false);
+    }
+    
+    /**
+     * Initializes the properties to be used by Access Manager. Ideally this
+     * must be called first before any other method is called within Access
+     * Manager. This method provides a programmatic way to set the properties,
+     * and will override similar properties if loaded for a properties file.
+     * 
+     * @param properties properties for access manager
+     * @param reset <code>true</code> to reset existing properties.
+     * @param withDefaults <code>true</code> to include default properties.
+     */
+    public static synchronized void initializeProperties(
+        Properties properties,
+        boolean reset,
+        boolean withDefaults) 
     {
         Properties newProps = new Properties();
-        newProps.putAll(props);
+        
+        if (withDefaults) {
+            SSOToken appToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            Properties defaultProp = ServerConfiguration.getDefaults(appToken);
+            if (defaultProp != null) {
+                newProps.putAll(defaultProp);
+            }
+        }
+
+        if (!reset) {
+            newProps.putAll(props);
+        }
+
         newProps.putAll(properties);
         props = newProps;
+        updateTagswapMap(props);
         lastModified = System.currentTimeMillis();
     }
 
@@ -339,10 +445,8 @@ public class SystemProperties {
      * This method provides a programmatic way to set a specific property, and
      * will override similar property if loaded for a properties file.
      * 
-     * @param propertyName
-     *            property name
-     * @param propertyValue
-     *            property value
+     * @param propertyName property name.
+     * @param propertyValue property value.
      */
     public static synchronized void initializeProperties(String propertyName,
             String propertyValue) {
@@ -350,6 +454,7 @@ public class SystemProperties {
         newProps.putAll(props);
         newProps.put(propertyName, propertyValue);
         props = newProps;
+        updateTagswapMap(props);
         lastModified = System.currentTimeMillis();
     }
 
@@ -382,5 +487,25 @@ public class SystemProperties {
      */
     public static String getSecondaryInitializationError() {
         return (initSecondaryError);
+    }
+    
+    /**
+     * Sets the server instance name of which properties are retrieved
+     * to initialized this object.
+     *
+     * @param name Server instance name.
+     */
+    public static void setServerInstanceName(String name) {
+        instanceName = name;
+    }
+
+    /**
+     * Returns the server instance name of which properties are retrieved
+     * to initialized this object.
+     *
+     * @return Server instance name.
+     */
+    public static String getServerInstanceName() {
+        return instanceName;
     }
 }

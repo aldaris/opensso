@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCConfigViewBean.java,v 1.1 2007-02-07 20:26:35 jonnelson Exp $
+ * $Id: SCConfigViewBean.java,v 1.2 2007-10-17 23:00:36 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,35 +43,21 @@ import com.sun.web.ui.view.propertysheet.CCPropertySheet;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
-public class SCConfigViewBean extends AMPrimaryMastHeadViewBean {
-
-    public static final String DEFAULT_DISPLAY_URL =
-        "/console/service/SCConfig.jsp";
+public abstract class SCConfigViewBean extends AMPrimaryMastHeadViewBean {
 
     private static final String PAGETITLE = "pgtitle";
-    private static final String SEC_AUTH = SCConfigModel.SEC_AUTH;
-    private static final String SEC_CONSOLE = SCConfigModel.SEC_CONSOLE;
-    private static final String SEC_GLOBAL = SCConfigModel.SEC_GLOBAL;
-    private static final String SEC_SYSTEM = SCConfigModel.SEC_SYSTEM;
-    private static final String TBL_AUTH = "tblAuth";
-    private static final String TBL_CONSOLE = "tblConsole";
-    private static final String TBL_GLOBAL = "tblGlobal";
-    private static final String TBL_SYSTEM = "tblSystem";
     private static final String TBL_COL_NAME = "tblColName";
     private static final String TBL_DATA_NAME_PREFIX = "tblDataName";
-    private static final String TBL_HREF_PREFIX = "tblHref";
     private static final String PROPERTY_SHEET_NAME = "psSections";
 
-    private CCPageTitleModel ptModel;
-    private CCPropertySheetModel psModel;
-    private CCActionTableModel tblModelAuth;
-    private CCActionTableModel tblModelConsole;
-    private CCActionTableModel tblModelGlobal;
-    private CCActionTableModel tblModelSystem;
+    protected static final String TBL_HREF_PREFIX = "tblHref";
 
-    public SCConfigViewBean() {
-        super("SCConfig");
-        setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
+    private CCPageTitleModel ptModel;
+    protected CCPropertySheetModel psModel;
+
+    public SCConfigViewBean(String name, String url) {
+        super(name);
+        setDefaultDisplayURL(url);
     }
 
     protected void initialize() {
@@ -85,7 +71,6 @@ public class SCConfigViewBean extends AMPrimaryMastHeadViewBean {
             initialized = true;
         }
     }
-
 
     protected void registerChildren() {
         super.registerChildren();
@@ -115,46 +100,9 @@ public class SCConfigViewBean extends AMPrimaryMastHeadViewBean {
         return new SCConfigModelImpl(req, getPageSessionAttributes());
     }
 
-    protected void createPropertyModel() {
-        psModel = new CCPropertySheetModel(
-            getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/propertySCConfig.xml"));
-        createTableModels();
-        psModel.setModel(TBL_AUTH, tblModelAuth);
-        psModel.setModel(TBL_CONSOLE, tblModelConsole);
-        psModel.setModel(TBL_GLOBAL, tblModelGlobal);
-        psModel.setModel(TBL_SYSTEM, tblModelSystem);
-    }
-
-    protected void createTableModels() {
-        SCConfigModel model = (SCConfigModel)getModel();
-
-        tblModelAuth = new CCActionTableModel(
-            getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/tblSCConfigAuth.xml"));
-        List authSvcNames = model.getServiceNames(SEC_AUTH);
-        populateTableModel(tblModelAuth, authSvcNames, SEC_AUTH);
-
-        tblModelConsole = new CCActionTableModel(
-            getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/tblSCConfigConsole.xml"));
-        List conSvcNames = model.getServiceNames(SEC_CONSOLE);
-        populateTableModel(tblModelConsole, conSvcNames, SEC_CONSOLE);
-
-        tblModelGlobal = new CCActionTableModel(
-            getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/tblSCConfigGlobal.xml"));
-        List gblSvcNames = model.getServiceNames(SEC_GLOBAL);
-        populateTableModel(tblModelGlobal, gblSvcNames, SEC_GLOBAL);
-
-        tblModelSystem = new CCActionTableModel(
-            getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/tblSCConfigSystem.xml"));
-        List sysSvcNames = model.getServiceNames(SEC_SYSTEM);
-        populateTableModel(tblModelSystem, sysSvcNames, SEC_SYSTEM);
-    }
-
-    private void populateTableModel(CCActionTableModel tblModel,
+    
+    
+    protected void populateTableModel(CCActionTableModel tblModel,
         List serviceNames, String section)
     {
         tblModel.setTitleLabel("label.items");
@@ -174,27 +122,6 @@ public class SCConfigViewBean extends AMPrimaryMastHeadViewBean {
         }
     }
 
-    public void handleTblHrefAuthenticationRequest(RequestInvocationEvent event)
-    {
-        String name = (String)getDisplayFieldValue(TBL_HREF_PREFIX+SEC_AUTH);
-        forwardToProfile(name);
-    }
-
-    public void handleTblHrefConsoleRequest(RequestInvocationEvent event) {
-        String name = (String)getDisplayFieldValue(TBL_HREF_PREFIX+SEC_CONSOLE);
-        forwardToProfile(name);
-    }
-
-    public void handleTblHrefGlobalRequest(RequestInvocationEvent event) {
-        String name = (String)getDisplayFieldValue(TBL_HREF_PREFIX+SEC_GLOBAL);
-        forwardToProfile(name);
-    }
-
-    public void handleTblHrefSystemRequest(RequestInvocationEvent event) {
-        String name = (String)getDisplayFieldValue(TBL_HREF_PREFIX+SEC_SYSTEM);
-        forwardToProfile(name);
-    }
-
     protected void forwardToProfile(String serviceName) {
         SCConfigModel model = (SCConfigModel)getModel();
         setPageSessionAttribute(AMServiceProfile.SERVICE_NAME, serviceName);
@@ -212,6 +139,9 @@ public class SCConfigViewBean extends AMPrimaryMastHeadViewBean {
             if (model.hasConfigAttributes(serviceName)) {
                 SCServiceProfileViewBean vb = (SCServiceProfileViewBean)
                     getViewBean(SCServiceProfileViewBean.class);
+                setPageSessionAttribute(
+                    SCServiceProfileViewBean.PG_RETURN_HOME_PAGE, 
+                    getClass().getName());
                 passPgSessionMap(vb);
                 vb.forwardTo(getRequestContext());
             } else {                
@@ -228,4 +158,8 @@ public class SCConfigViewBean extends AMPrimaryMastHeadViewBean {
     protected String getBreadCrumbDisplayName() {
         return "breadcrumbs.services.config";
     }
+    
+    protected abstract void createPropertyModel();
+    
+    protected abstract void createTableModels();
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.12 2007-06-01 17:34:02 kenwho Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.13 2007-10-17 23:00:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,7 +154,7 @@ public class IdRemoteServicesImpl implements IdServices {
             if (debug.errorEnabled()) {
                 getDebug().error(
                     "IdRemoteServicesImpl.processException(): " +
-                    "caught remote/un-known exception - ", exception);                
+                    "caught remote/un-known exception - ", exception);
             }
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
         }                               
@@ -195,7 +195,7 @@ public class IdRemoteServicesImpl implements IdServices {
                     name, attrMap, amOrgName };
             univid = (String) client.send(client.encodeMessage(
                     "create_idrepo", objs), 
-                    Session.getLBCookie(token.getTokenID().toString()), null);            
+                    Session.getLBCookie(token.getTokenID().toString()), null);
         } catch (Exception ex) {
             processException(ex);
         }
@@ -417,9 +417,8 @@ public class IdRemoteServicesImpl implements IdServices {
 
         } catch (RemoteException rex) {
             getDebug().error(
-                "IdRemoteServicesImpl.getBinaryServiceAttributes_idrepo: caught " +
-                "exception=",
-                rex);
+                "IdRemoteServicesImpl.getBinaryServiceAttributes_idrepo: " +
+                "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
             processException(ex);
@@ -463,7 +462,8 @@ public class IdRemoteServicesImpl implements IdServices {
             resultMap = ((Map)client.send(
                     client.encodeMessage(
                         "getServiceAttributesAscending_idrepo", objs),
-                        Session.getLBCookie(token.getTokenID().toString()), null));
+                        Session.getLBCookie(
+                            token.getTokenID().toString()), null));
 
         } catch (Exception ex) {
             processException(ex);

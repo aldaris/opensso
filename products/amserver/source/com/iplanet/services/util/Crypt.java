@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Crypt.java,v 1.3 2006-08-25 21:19:58 veiming Exp $
+ * $Id: Crypt.java,v 1.4 2007-10-17 23:00:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,12 +82,19 @@ public class Crypt {
     private static AMEncryption hardcodedKeyEncryptor;
 
     static {
+        initialize();
+    }
+
+    public static synchronized void reinitialize() {
+        initialize();
+    }
+
+    private static void initialize() {
         encryptor = createInstance(SystemProperties.get(PROPERTY_PWD,
                 DEFAULT_PWD));
         localEncryptor = createInstance(SystemProperties.get(
                 PROPERTY_PWD_LOCAL, SystemProperties.get(PROPERTY_PWD,
                         DEFAULT_PWD)));
-
         hardcodedKeyEncryptor = createInstance(DEFAULT_PWD);
 
         // check if caller needs to be validated

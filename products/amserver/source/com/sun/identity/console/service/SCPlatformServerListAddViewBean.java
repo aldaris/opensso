@@ -17,15 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCPlatformServerListAddViewBean.java,v 1.1 2007-02-07 20:26:36 jonnelson Exp $
+ * $Id: SCPlatformServerListAddViewBean.java,v 1.2 2007-10-17 23:00:36 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.service;
 
-import com.iplanet.am.util.OrderedSet;
 import com.sun.identity.console.service.model.SCPlatformModelImpl;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import java.util.Map;
 import java.util.Set;
 

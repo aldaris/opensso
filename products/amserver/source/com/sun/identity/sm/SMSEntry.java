@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.25 2007-06-07 20:23:29 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.26 2007-10-17 23:00:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -201,6 +201,7 @@ public class SMSEntry implements Cloneable {
         // Initialize for checking delegation permissions
         readActionSet.add(READ);
         modifyActionSet.add(MODIFY);
+        initSMSObject();
         // Cache internal users
         String adminUser = SystemProperties.get(AUTH_SUPER_USER, "");
         if (adminUser != null && adminUser.length() != 0) {
@@ -265,8 +266,9 @@ public class SMSEntry implements Cloneable {
         AMResourceBundleCache amCache = AMResourceBundleCache.getInstance();
         bundle = amCache.getResBundle(IUMSConstants.UMS_BUNDLE_NAME,
                 java.util.Locale.ENGLISH);
-
-        // Get an instance of SMSObject
+    }
+    
+    private static void initSMSObject() {
         String smsClassName = SystemProperties.get(SMS_OBJECT_PROPERTY,
                 DEFAULT_SMS_CLASS_NAME);
         Object[] args = { smsClassName };
@@ -577,9 +579,14 @@ public class SMSEntry implements Cloneable {
     }
     
     /**
-     * Remove the attribute value from the attribute.
+     * Removes the attribute value from the attribute.
+     *
+     * @param attrName Name of attribute.
+     * @param value Value to be removed.
+     * @throws SMSException if value cannot be removed.
      */
-    public void removeAttribute(String attrName, String value) throws SMSException {
+    public void removeAttribute(String attrName, String value)
+        throws SMSException {
         Set attr = null;
         if ((attrSet == null) || ((attr = (Set) attrSet.get(attrName)) == null)
                 || (!attr.contains(value))) {
@@ -1905,9 +1912,8 @@ public class SMSEntry implements Cloneable {
                             .iterator();
                     while (sl != null && sl.hasNext()) {
                         URL url = new URL((String) sl.next());
-                        URL weburl = WebtopNaming.getServiceURL("jaxrpc", url
-                                .getProtocol(), url.getHost(), Integer
-                                .toString(url.getPort()), false);
+                        URL weburl = WebtopNaming.getServiceURL("jaxrpc", 
+                            url, false);
                         String surl = weburl.toString();
                         if (!surl.endsWith("/")) {
                             surl += "/SMSObjectIF";

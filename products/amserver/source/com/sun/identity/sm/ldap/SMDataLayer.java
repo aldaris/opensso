@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.5 2007-04-09 23:20:22 goodearth Exp $
+ * $Id: SMDataLayer.java,v 1.6 2007-10-17 23:00:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -187,34 +187,28 @@ class SMDataLayer {
                 debug.error("SMDataLayer:initLdapPool()-"
                         + "Error getting server config.");
             }
-        } catch (LDAPServiceException ex) {
-            debug.error("SMDataLayer:initLdapPool()-"
-                    + "Error initializing connection pool " + ex.getMessage());
-            ex.printStackTrace();
-        }
 
-        int poolMin = svrCfg.getMinConnections();
-        int poolMax = svrCfg.getMaxConnections();
-        int maxBackLog = svrCfg.getIntValue(LDAP_MAXBACKLOG, MAX_BACKLOG);
-        m_releaseConnectionBeforeSearchCompletes = svrCfg.getBooleanValue(
+            int poolMin = svrCfg.getMinConnections();
+            int poolMax = svrCfg.getMaxConnections();
+            int maxBackLog = svrCfg.getIntValue(LDAP_MAXBACKLOG, MAX_BACKLOG);
+            m_releaseConnectionBeforeSearchCompletes = svrCfg.getBooleanValue(
                 LDAP_RELEASECONNBEFORESEARCH, false);
-        boolean referrals = svrCfg.getBooleanValue(LDAP_REFERRAL, true);
+            boolean referrals = svrCfg.getBooleanValue(LDAP_REFERRAL, true);
 
-        if (debug.messageEnabled()) {
-            debug.message("SMDataLayer:initLdapPool()-"
-                    + "Creating ldap connection pool with :");
-            debug.message("SMDataLayer:initLdapPool()-poolMin : " + poolMin);
-            debug.message("SMDataLayer:initLdapPool()-poolMax : " + poolMax);
-            debug.message("SMDataLayer:getConnection()-maxBackLog : "
-                    + maxBackLog);
-        }
+            if (debug.messageEnabled()) {
+                debug.message("SMDataLayer:initLdapPool()-"
+                        + "Creating ldap connection pool with :");
+                debug.message("SMDataLayer:initLdapPool()-poolMin : " + poolMin);
+                debug.message("SMDataLayer:initLdapPool()-poolMax : " + poolMax);
+                debug.message("SMDataLayer:getConnection()-maxBackLog : "
+                        + maxBackLog);
+            }
 
-        try {
             // establish one good connection before the pool
             _trialConn.setOption(LDAPConnection.MAXBACKLOG, new Integer(
-                    maxBackLog));
+                maxBackLog));
             _trialConn.setOption(LDAPConnection.REFERRALS, Boolean.valueOf(
-                    referrals));
+                referrals));
 
             // Default rebind method is to provide the same authentication
             // in the rebind to the server being referred.
@@ -251,11 +245,14 @@ class SMDataLayer {
                 hostName, 389, _trialConn.getAuthenticationDN(),
                 _trialConn.getAuthenticationPassword(), connOptions);
 
+        } catch (LDAPServiceException ex) {
+            debug.error("SMDataLayer:initLdapPool()-"
+                    + "Error initializing connection pool " + ex.getMessage());
+            ex.printStackTrace();
         } catch (LDAPException e) {
             debug.error("SMDataLayer:initLdapPool()-"
                     + "Exception in SMDataLayer.initLdapPool:", e);
             e.printStackTrace();
-
         }
     }
 

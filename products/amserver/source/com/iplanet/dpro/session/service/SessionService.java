@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.10 2007-09-18 00:18:53 ericow Exp $
+ * $Id: SessionService.java,v 1.11 2007-10-17 23:00:18 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -166,13 +166,6 @@ public class SessionService {
 
     protected static final String securityCookieName = "DSAMESecurityCookie";
 
-    private static final String webContainer = SystemProperties
-            .get(Constants.WEBCONTAINER);
-
-    private static boolean isWeblogicFlag = false;
-
-    private static boolean isSunAppServerFlag = false;
-
     protected static final String defaultApplicationMaxCachingTime = String
             .valueOf(Long.MAX_VALUE / 60);
 
@@ -257,50 +250,49 @@ public class SessionService {
         sessionDebug = Debug.getInstance("amSession");
         stats = Stats.getInstance("amMasterSessionTableStats");
 
-        int poolSize;
-        int threshold;
+        int poolSize = DEFAULT_POOL_SIZE;
+        int threshold = DEFAULT_THRESHOLD;
 
-        try {
-            poolSize = Integer.parseInt(SystemProperties
-                    .get(Constants.NOTIFICATION_THREADPOOL_SIZE));
-        } catch (Exception e) {
-            poolSize = DEFAULT_POOL_SIZE;
+        String size = SystemProperties.get(
+            Constants.NOTIFICATION_THREADPOOL_SIZE);
+        if (size != null) {
+            try {
+                poolSize = Integer.parseInt(size);
+            } catch (NumberFormatException e) {
+                sessionDebug.error(
+                    "SessionService.<init>: incorrect thread pool size" + size +
+                    "defaulting to " + DEFAULT_POOL_SIZE);
+            }
         }
 
-        try {
-            threshold = Integer.parseInt(SystemProperties
-                    .get(Constants.NOTIFICATION_THREADPOOL_THRESHOLD));
-        } catch (Exception e) {
-            threshold = DEFAULT_THRESHOLD;
+        String thres = SystemProperties.get(
+            Constants.NOTIFICATION_THREADPOOL_THRESHOLD);
+        if (thres != null) {
+            try {
+                threshold = Integer.parseInt(thres);
+            } catch (Exception e) {
+                sessionDebug.error(
+                    "SessionService.<init>: incorrect thread threshold" + thres
+                    + "defaulting to " + DEFAULT_THRESHOLD);
+            }
         }
 
         threadPool = new ThreadPool("amSession", poolSize, threshold, true,
                 sessionDebug);
-
-        try {
-            maxSessions = Integer.parseInt(SystemProperties
+        if (threadPool != null) {
+            try {
+                maxSessions = Integer.parseInt(SystemProperties
                     .get(Constants.AM_SESSION_MAX_SESSIONS));
-        } catch (Exception ex) {
-            maxSessions = 10000;
+            } catch (Exception ex) {
+                maxSessions = 10000;
+            }
         }
 
-        String status = null;
-
-        status = SystemProperties.get(Constants.AM_LOGSTATUS);
+        String status = SystemProperties.get(Constants.AM_LOGSTATUS);
         if (status == null) {
             status = "INACTIVE";
         }
-        if (status.equalsIgnoreCase("ACTIVE")) {
-            logStatus = true;
-        }
-
-        if (webContainer.startsWith("BEA")) {
-            isWeblogicFlag = true;
-        }
-
-        if (webContainer.startsWith("IAS")) {
-            isSunAppServerFlag = true;
-        }
+        logStatus = status.equalsIgnoreCase("ACTIVE");
     }
 
     private static boolean returnAppSession = Boolean
@@ -323,6 +315,8 @@ public class SessionService {
     private String sessionServerPort;
 
     private String sessionServerProtocol;
+    
+    private String sessionServerURI;
 
     private String sessionServerID;
 
@@ -351,6 +345,8 @@ public class SessionService {
     private String thisSessionServerPortAsString;
 
     private int thisSessionServerPort;
+    
+    private String thisSessionURI;
 
     private String thisSessionServerProtocol;
 
@@ -676,17 +672,7 @@ public class SessionService {
      * @return http session id
      */
     private static String extractHttpSessionId(HttpSession httpSession) {
-        String httpSessionId = httpSession.getId();
-        if (isWeblogicFlag) {
-            // strip extra tail to make sure that
-            // the value is identical to Weblogic JSESSIONID cookie
-            // otherwise Weblogic request router gets confused
-            int index = httpSessionId.lastIndexOf('!');
-            if (index != -1) {
-                httpSessionId = httpSessionId.substring(0, index);
-            }
-        }
-        return httpSessionId;
+        return httpSession.getId();
     }
 
     /**
@@ -1569,6 +1555,8 @@ public class SessionService {
                     .get(Constants.AM_SERVER_PROTOCOL);
             sessionServer = SystemProperties.get(Constants.AM_SERVER_HOST);
             sessionServerPort = SystemProperties.get(Constants.AM_SERVER_PORT);
+            sessionServerURI = SystemProperties.get(
+                Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
 
             /*
              * We need to get the session server unique id from the platform
@@ -1578,14 +1566,13 @@ public class SessionService {
              * id to find the respective session while decrypting the session id
              */
             sessionServerID = WebtopNaming.getServerID(sessionServerProtocol,
-                    sessionServer, sessionServerPort);
-
+                    sessionServer, sessionServerPort, sessionServerURI);
             isSiteEnabled = WebtopNaming.isSiteEnabled(sessionServerProtocol,
-                    sessionServer, sessionServerPort);
+                    sessionServer, sessionServerPort, sessionServerURI);
 
             if (isSiteEnabled) {
                 sessionServerID = WebtopNaming.getSiteID(sessionServerProtocol,
-                        sessionServer, sessionServerPort);
+                        sessionServer, sessionServerPort, sessionServerURI);
 
                 sessionServiceID = new URL(WebtopNaming
                         .getServerFromID(sessionServerID));
@@ -1642,10 +1629,14 @@ public class SessionService {
                         .get(Constants.AM_SERVER_HOST);
                 thisSessionServerPortAsString = SystemProperties
                         .get(Constants.AM_SERVER_PORT);
+                thisSessionURI = SystemProperties
+                        .get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
 
-                if (thisSessionServerProtocol == null
-                        || thisSessionServerPortAsString == null
-                        || thisSessionServer == null) {
+                if ((thisSessionServerProtocol == null) || 
+                    (thisSessionServerPortAsString == null) ||
+                    (thisSessionServer == null) ||
+                    (thisSessionURI == null)
+                ) {
                     throw new SessionException(SessionBundle.rbName,
                             "propertyMustBeSet", null);
                 }
@@ -1654,15 +1645,15 @@ public class SessionService {
 
                 thisSessionServerID = WebtopNaming.getServerID(
                         thisSessionServerProtocol, thisSessionServer,
-                        thisSessionServerPortAsString);
+                        thisSessionServerPortAsString, thisSessionURI);
 
-                thisSessionServerURL = thisSessionServerProtocol + "://"
-                        + thisSessionServer + ":"
-                        + thisSessionServerPortAsString;
+                thisSessionServerURL = thisSessionServerProtocol + "://" +
+                    thisSessionServer + ":" + thisSessionServerPortAsString +
+                    thisSessionURI;
 
                 thisSessionServiceURL = Session.getSessionServiceURL(
                         thisSessionServerProtocol, thisSessionServer,
-                        thisSessionServerPortAsString);
+                        thisSessionServerPortAsString, thisSessionURI);
                 if (isSessionFailoverEnabled) {
 
                     int timeout = ClusterStateService.DEFAULT_TIMEOUT;
@@ -2207,31 +2198,9 @@ public class SessionService {
 
             String routingCookie = null;
 
-            URL url = null;
-
-            if (isSunAppServerFlag && !getUseInternalRequestRouting()) {
-                // in this case we go to the LB, while passing an extra
-                // routing cookie to make the LB route back to this same
-                // server instance with properly generated HTTP session id
-
-                InetAddress address = InetAddress.getByName(thisSessionServer);
-                routingCookie = sunAppServerLBRoutingCookieName + "="
-                        + address.getHostAddress() + ":"
-                        + thisSessionServerPort;
-
-                if (thisSessionServerProtocol.equalsIgnoreCase("https")) {
-                    routingCookie = routingCookie + "https:";
-                }
-
-                url = new URL(sessionServerProtocol, sessionServer, Integer
-                        .parseInt(sessionServerPort), deploymentURI
-                        + "/GetHttpSession" + query);
-            } else {
-                url = new URL(thisSessionServerProtocol, thisSessionServer,
-                        thisSessionServerPort, deploymentURI
-                                + "/GetHttpSession" + query);
-            }
-
+            URL url = new URL(thisSessionServerProtocol, thisSessionServer,
+                thisSessionServerPort, deploymentURI
+                + "/GetHttpSession" + query);
             HttpURLConnection conn = invokeRemote(url, null, routingCookie);
             in = new DataInputStream(conn.getInputStream());
 

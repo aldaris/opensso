@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManagerClient.java,v 1.5 2007-04-23 16:53:21 hengming Exp $
+ * $Id: SecurityTokenManagerClient.java,v 1.6 2007-10-17 23:00:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,7 +116,8 @@ public final class SecurityTokenManagerClient {
                 remoteStub = getServiceEndPoint(
                     SystemPropertiesManager.get(SAMLConstants.SERVER_PROTOCOL),
                     SystemPropertiesManager.get(SAMLConstants.SERVER_HOST),
-                    SystemPropertiesManager.get(SAMLConstants.SERVER_PORT));
+                    SystemPropertiesManager.get(SAMLConstants.SERVER_PORT),
+                    SystemPropertiesManager.get(SAMLConstants.SERVER_URI));
                 remoteStub.send("checkForLocal", null, null, null);
                 if (SecurityTokenManagerImpl.isLocal) {
                     isLocal = true;
@@ -185,11 +186,11 @@ public final class SecurityTokenManagerClient {
 
     // Private method to get the service endpoint URL
     private static SOAPClient getServiceEndPoint(String protocol,
-        String hostname, String port) throws Exception {
+        String hostname, String port, String uri) throws Exception {
         // Obtain the URL for the service endpoint
         int intPort = Integer.parseInt(port);
         URL weburl = SystemConfigurationUtil.getServiceURL(SERVICE_NAME,
-            protocol, hostname, intPort);
+            protocol, hostname, intPort, uri);
         String iurl = weburl.toString();
         if (SecurityTokenManager.debug.messageEnabled()) {
             SecurityTokenManager.debug.message(
@@ -213,7 +214,7 @@ public final class SecurityTokenManagerClient {
 	    while (serverList.hasNext() && !foundServer) {
 		URL u = new URL((String) serverList.next());
 		remoteStub = getServiceEndPoint(u.getProtocol(), u.getHost(),
-		    Integer.toString(u.getPort()));
+		    Integer.toString(u.getPort()), u.getPath());
 		// Check if the server is active
 		try {
 		    // this call will throw an exception if server is down

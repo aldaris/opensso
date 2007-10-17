@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCPlatformViewBean.java,v 1.1 2007-02-07 20:26:38 jonnelson Exp $
+ * $Id: SCPlatformViewBean.java,v 1.2 2007-10-17 23:00:37 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -469,8 +469,8 @@ public class SCPlatformViewBean
      */
     public void handleButton3Request(RequestInvocationEvent event) {
         backTrail();
-        SCConfigViewBean vb = (SCConfigViewBean)
-            getViewBean(SCConfigViewBean.class);
+        SCConfigSystemViewBean vb = (SCConfigSystemViewBean)
+            getViewBean(SCConfigSystemViewBean.class);
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }

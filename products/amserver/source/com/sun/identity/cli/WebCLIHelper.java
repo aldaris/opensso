@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.8 2007-07-27 05:56:19 veiming Exp $
+ * $Id: WebCLIHelper.java,v 1.9 2007-10-17 23:00:25 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,7 +117,6 @@ public class WebCLIHelper {
                             temp.add(str);
                         }
                     }
-                                                                                          
                     if (!temp.isEmpty()) {
                         list.add("--" + key);
                         list.addAll(temp);
@@ -166,7 +165,7 @@ public class WebCLIHelper {
         ResourceBundle rb = cmdMgr.getResourceBundle();
         StringBuffer buff = new StringBuffer();
         String[] paramCmdName = {cmdName};
-                                                                                          
+
         buff.append(MessageFormat.format(rb.getString("web-interface-cmd-name"),
             (Object[])paramCmdName))
             .append("<br />");
@@ -185,14 +184,14 @@ public class WebCLIHelper {
             .append("&submit=\" method=\"post\" ")
             .append("onSubmit=\"selectListBoxes(this)\">");
         buff.append("<table border=0>");
-                                                                                          
+
         for (Iterator i = cmd.getMandatoryOptions().iterator(); i.hasNext(); ) {
             genUI(cmd, (String)i.next(), true, buff);
         }
         for (Iterator i = cmd.getOptionalOptions().iterator(); i.hasNext(); ) {
             genUI(cmd, (String)i.next(), false, buff);
         }
-                                                                                          
+
         buff.append("<tr><td colspan=2 align=\"center\">")
             .append("<input type=\"submit\" value=\"submit\"/>&nbsp;")
             .append("<input type=\"reset\" value=\"reset\"/></td></tr>");
@@ -221,7 +220,7 @@ public class WebCLIHelper {
                 buff.append("<font color=\"red\">*</font>");
             }
             buff.append("</td>");
-                                                                                          
+
             if (cmd.textareaUI(opt)) {
                 buff.append("<td><textarea cols=75 rows=30 name=\"")
                     .append(opt)
@@ -286,7 +285,7 @@ public class WebCLIHelper {
             (opt.equals("datafile") &&
                 cmd.isSupportedOption("choicevalues"));
     }
-                                                                                          
+
     private static String escapeTags(String html) {
         html = html.replaceAll("&", "&amp;");
         return html.replaceAll("<", "&lt;");

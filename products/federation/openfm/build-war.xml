@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.29 2007-09-27 00:24:54 qcheng Exp $
+   $Id: build-war.xml,v 1.30 2007-10-17 23:00:58 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -74,7 +74,7 @@
 
         <copy todir="${war.package.dir}/WEB-INF/classes">
             <fileset dir="${library.res.dir}" includes="*.properties" 
-                excludes="FederationConfig.properties" />
+                excludes="FederationConfig.properties,FederationPerServer.properties" />
             <fileset dir="${library.res.i18n.dir}" includes="*.properties" />
             <fileset dir="${openfm.res.i18n.dir}" includes="*.properties" />
             <fileset dir="${openfm.res.dir}" includes="*.properties" />
@@ -189,8 +189,14 @@
         <java classname="com.sun.identity.setup.ConsolidateConfig" fork="true">
             <classpath refid="build.class.path"/>
             <arg value="${war.package.dir}/WEB-INF/classes/AMConfig.properties" />
-            <arg value="${library.res.dir}/FederationConfig.properties" />
+            <arg value="${library.res.dir}/FederationPerServer.properties" />
             <arg value="${war.package.dir}/WEB-INF/classes/AMConfig.properties" />
+        </java>
+        <java classname="com.sun.identity.setup.ConsolidateConfig" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="${war.package.dir}/WEB-INF/classes/serverdefaults.properties" />
+            <arg value="${library.res.dir}/FederationConfig.properties" />
+            <arg value="${war.package.dir}/WEB-INF/classes/serverdefaults.properties" />
         </java>
 
 	<!-- update amConsoleConfig with federation tabs -->

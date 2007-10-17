@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.7 2006-12-08 01:37:10 bigfatrat Exp $
+ * $Id: RemoteHandler.java,v 1.8 2007-10-17 23:00:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -230,6 +230,7 @@ public class RemoteHandler extends Handler {
         String sessionProtocol = sid.getSessionServerProtocol();
         String sessionHost = sid.getSessionServer();
         String sessionPort = sid.getSessionServerPort();
+        String sessionURI = sid.getSessionServerURI();
 
         //
         //  if remote logging service and protocol, host, and port
@@ -251,15 +252,14 @@ public class RemoteHandler extends Handler {
             Debug.message("RemoteHandler.getLogHostURL(): " + 
                 " sessionProtocol: " + sessionProtocol + 
                 " sessionHost: " + sessionHost + 
-                " sessionPort: " + sessionPort);
+                " sessionPort: " + sessionPort +
+                " sessionURI: " + sessionURI);
         }
         URL loggingURL = null;
         try {
             loggingURL =  WebtopNaming.getServiceURL(
-                                                LogConstants.LOGGING_SERVICE, 
-                                                sessionProtocol, 
-                                                sessionHost, 
-                                                sessionPort);
+                LogConstants.LOGGING_SERVICE, 
+                sessionProtocol, sessionHost, sessionPort, sessionURI);
             
             if (Debug.messageEnabled()) {
                 Debug.message(

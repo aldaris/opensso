@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.10 2007-01-24 23:21:32 arviranga Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.11 2007-10-17 23:00:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.jaxrpc.JAXRPCUtil;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.CachedSMSEntry;
@@ -114,17 +115,19 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                 }
             }
             // Construct server URL
-            String namingURL = SystemProperties.get(
-                "com.iplanet.am.naming.url").toLowerCase();
+            String namingURL = SystemProperties.get(Constants.AM_NAMING_URL);
             if (namingURL != null) {
-                int index = namingURL.indexOf("/namingservice");
+                int index = namingURL.toLowerCase().indexOf("/namingservice");
                 if (index != -1) {
                     serverURL = namingURL.substring(0, index);
                 } else {
                     serverURL = "";
                 }
             } else {
-                serverURL = "";
+                serverURL = SystemProperties.getServerInstanceName();
+                if (serverURL == null) {
+                    serverURL = "";
+                }
             }
             initialized = true;
         }
@@ -281,7 +284,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         
         CachedSubEntries ce = CachedSubEntries.getInstance(
                 getToken(tokenID), dn);
-        return (ce.getSchemaSubEntries(getToken(tokenID), filter, sidFilter));        
+        return (ce.getSchemaSubEntries(getToken(tokenID), filter, sidFilter));
     }
 
     /**

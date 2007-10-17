@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionID.java,v 1.2 2006-08-25 21:19:37 veiming Exp $
+ * $Id: SessionID.java,v 1.3 2007-10-17 23:00:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,8 @@ public class SessionID implements Serializable {
     private String sessionServer = "";
 
     private String sessionServerPort = "";
+    
+    private String sessionServerURI = "";
 
     protected String sessionDomain = "";
 
@@ -155,7 +157,19 @@ public class SessionID implements Serializable {
     }
 
     /**
-     * Gets the session server name in this object.
+     * Returns the session server URI in this object.
+     * 
+     * @return The session server URI in this object.
+     */
+    public String getSessionServerURI() {
+        if (isNull(sessionServerURI)) {
+            parseSessionString();
+        }
+        return sessionServerURI;
+    }
+    
+    /**
+     * Returns the session server name in this object.
      * 
      * @return The session server protocol in this object.
      */
@@ -325,6 +339,13 @@ public class SessionID implements Serializable {
             sessionServerProtocol = url.getProtocol();
             sessionServer = url.getHost();
             sessionServerPort = String.valueOf(url.getPort());
+            sessionServerURI = url.getPath();
+
+            int idx = sessionServerURI.lastIndexOf('/');
+            while (idx > 0) {
+                sessionServerURI = sessionServerURI.substring(0, idx);
+                idx = sessionServerURI.lastIndexOf('/');
+            }
         } catch (Exception e) {
             debug.error("Could not get server info from sessionid", e);
             throw new IllegalArgumentException(

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedLibSystemProperties.java,v 1.3 2007-09-13 19:10:29 veiming Exp $
+ * $Id: FedLibSystemProperties.java,v 1.4 2007-10-17 23:00:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,6 +108,7 @@ public class FedLibSystemProperties implements ISystemProperties {
      * @param protocol The service protocol.
      * @param hostname The service host name.
      * @param port The service listening port.
+     * @param uri The service URI.
      * @return The URL of the specified service on the specified host.
      * @throws Exception if the URL could not be found.
      */
@@ -115,10 +116,11 @@ public class FedLibSystemProperties implements ISystemProperties {
         String serviceName, 
         String protocol,
         String hostname,
-        int port
+        int port,
+        String uri
     ) throws Exception {
         return SystemConfigurationUtil.getServiceURL(
-            serviceName, protocol, hostname, port);
+            serviceName, protocol, hostname, port, uri);
     }
 
     /**

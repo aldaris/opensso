@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMG11NViewBean.java,v 1.1 2007-02-07 20:26:41 jonnelson Exp $
+ * $Id: SMG11NViewBean.java,v 1.2 2007-10-17 23:00:38 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.service;
 
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.jato.NavigationException;
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.RequestContext;
@@ -43,6 +42,7 @@ import com.sun.identity.console.realm.ServicesEditViewBean;
 import com.sun.identity.console.service.model.CharsetAliasEntry;
 import com.sun.identity.console.service.model.LocaleSupportedCharsetsEntry;
 import com.sun.identity.console.service.model.SMG11NModelImpl;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.table.CCActionTable;
@@ -568,8 +568,8 @@ public class SMG11NViewBean
         throws ModelControlException
     {        
         backTrail();
-        SCConfigViewBean vb = (SCConfigViewBean)
-            getViewBean(SCConfigViewBean.class);
+        SCConfigConsoleViewBean vb = (SCConfigConsoleViewBean)
+            getViewBean(SCConfigConsoleViewBean.class);
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }

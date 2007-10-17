@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.4 2007-05-01 21:25:28 veiming Exp $
+   $Id: amAccessControl.xml,v 1.5 2007-10-17 23:00:51 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -188,6 +188,10 @@
 	<actionhandler name="button1,button2,Button3,tblSiteListButtonAdd,tblSiteListButtonDelete,tblServerListButtonAdd,tblServerListButtonDelete,tblClientCharSetsButtonAdd,tblClientCharSetsButtonDelete" />
 	<table name="iplanet-am-platform-site-list,iplanet-am-platform-server-list,iplanet-am-platform-client-charsets" />
     </viewbean>
+    <viewbean classname="com.sun.identity.console.service.SCPlatform30ViewBean" view="iPlanetAMPlatformService" modify="iPlanetAMPlatformService">
+	<actionhandler name="button1,button2,Button3,tblClientCharSetsButtonAdd,tblClientCharSetsButtonDelete" />
+	<table name="iplanet-am-platform-client-charsets" />
+    </viewbean>
     <viewbean classname="com.sun.identity.console.service.SCPlatformServerListEditViewBean" view="iPlanetAMPlatformService" modify="iPlanetAMPlatformService">
 	<actionhandler name="button1,button2" />
     </viewbean>
@@ -305,7 +309,10 @@
     <neednodealwith classname="com.sun.identity.console.policy.PolicySelectTypeViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.SelectSubjectTypeViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.SubjectAddViewBean" /> 
-    <neednodealwith classname="com.sun.identity.console.service.SCConfigViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCConfigAuthViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCConfigConsoleViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCConfigSystemViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCConfigGlobalViewBean" />
     <neednodealwith classname="com.sun.identity.console.service.SCCoreViewBean" />
     <neednodealwith classname="com.sun.identity.console.service.SCGeneralViewBean" />
     <neednodealwith classname="com.sun.identity.console.service.SCAuthenticationViewBean" />
@@ -327,4 +334,19 @@
     <neednodealwith classname="com.sun.identity.console.user.UMChangeUserPasswordViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.PMAuthenticatedUsersSubjectAddViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.SelectRealmViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerCloneViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerConfigInheritViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SiteAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SiteEditiewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerSiteViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerConfigXMLAddServerViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerConfigXMLViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerEditGeneralViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerEditSDKViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerEditSessionViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerEditSecurityViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerEditAdvancedViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.ServerConfigXMLViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SiteEditViewBean" />
 </accesscontrols>

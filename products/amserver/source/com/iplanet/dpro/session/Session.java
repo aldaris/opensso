@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.7 2007-01-09 06:52:38 veiming Exp $
+ * $Id: Session.java,v 1.8 2007-10-17 23:00:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -870,6 +870,7 @@ public class Session {
         String protocol = sessionID.getSessionServerProtocol();
         String host = server;
         String port = sessionID.getSessionServerPort();
+        String uri = sessionID.getSessionServerURI();
         int pos = host.indexOf("://");
         if (pos != -1) {
             protocol = host.substring(0, pos);
@@ -879,9 +880,13 @@ public class Session {
         if (pos != -1) {
             port = host.substring(pos + 1);
             host = host.substring(0, pos);
+            int pos1 = host.indexOf("/", pos);
+            if (pos1 != -1 ) {
+               uri = host.substring(pos1);
+            }
         }
-        URL svcurl = getSessionServiceURL(protocol, host, port);
-
+        
+        URL svcurl = getSessionServiceURL(protocol, host, port, uri);
         return getValidSessions(svcurl, pattern);
     }
 
@@ -937,8 +942,9 @@ public class Session {
             }
         }
 
-        return getSessionServiceURL(sid.getSessionServerProtocol(), sid
-                .getSessionServer(), sid.getSessionServerPort());
+        return getSessionServiceURL(sid.getSessionServerProtocol(), 
+            sid.getSessionServer(), sid.getSessionServerPort(), 
+            sid.getSessionServerURI());
     }
 
     /**
@@ -947,19 +953,22 @@ public class Session {
      * @param protocol Session Server protocol.
      * @param server Session Server host name.
      * @param port Session Server port.
+     * @param uri Session Server URI.
      * @return Session Service URL.
      * @exception SessionException.
      */
-    static public URL getSessionServiceURL(String protocol, String server,
-            String port) throws SessionException {
-
-        String key = protocol + "://" + server + ":" + port;
+    static public URL getSessionServiceURL(
+        String protocol, 
+        String server,
+        String port, 
+        String uri
+    ) throws SessionException {
+        String key = protocol + "://" + server + ":" + port + uri;
         URL url = (URL) sessionServiceURLTable.get(key);
         if (url == null) {
             try {
                 url = WebtopNaming.getServiceURL(SESSION_SERVICE, protocol,
-                        server, port);
-
+                    server, port, uri);
                 sessionServiceURLTable.put(key, url);
                 return url;
             } catch (Exception e) {
@@ -981,9 +990,11 @@ public class Session {
         try {
             URL parsedServerURL = new URL(WebtopNaming
                     .getServerFromID(serverID));
-            return getSessionServiceURL(parsedServerURL.getProtocol(),
-                    parsedServerURL.getHost(), Integer.toString(parsedServerURL
-                            .getPort()));
+            return getSessionServiceURL(
+                parsedServerURL.getProtocol(),
+                parsedServerURL.getHost(), 
+                Integer.toString(parsedServerURL.getPort()),
+                parsedServerURL.getPath());
         } catch (Exception e) {
             throw new SessionException(e);
         }

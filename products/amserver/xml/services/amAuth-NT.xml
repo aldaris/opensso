@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth-NT.xml,v 1.4 2007-01-25 00:45:07 pawand Exp $
+    $Id: amAuth-NT.xml,v 1.5 2007-10-17 23:00:53 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -97,7 +97,7 @@
                           <Value>@USER_PROFILE_CHOICE@</Value>
                      </DefaultValues>
                 </AttributeSchema>
-                <AttributeSchema name="iplanet-am-auth-admin-auth-module" 
+                <!-- AttributeSchema name="iplanet-am-auth-admin-auth-module" 
                     type="single" 
                     syntax="string"
                     propertiesViewBeanURL="@OLDCON_DEPLOY_URI@/auth/ACModuleList" 
@@ -106,7 +106,7 @@
                     <DefaultValues>
                         <Value>ldapService</Value>
                     </DefaultValues>
-                </AttributeSchema>
+                </AttributeSchema  -->
                 <AttributeSchema name="iplanet-am-auth-default-role" 
                     type="list"
                     syntax="string" 

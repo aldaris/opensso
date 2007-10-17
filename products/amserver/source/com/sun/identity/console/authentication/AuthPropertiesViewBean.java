@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthPropertiesViewBean.java,v 1.2 2007-02-14 21:36:20 jonnelson Exp $
+ * $Id: AuthPropertiesViewBean.java,v 1.3 2007-10-17 23:00:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.authentication;
 
-import com.sun.identity.shared.datastruct.OrderedSet;
 
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.RequestContext;
@@ -47,6 +46,7 @@ import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.delegation.model.DelegationConfig;
 import com.sun.identity.console.realm.RealmPropertiesBase;
+import com.sun.identity.shared.datastruct.OrderedSet;
 
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;

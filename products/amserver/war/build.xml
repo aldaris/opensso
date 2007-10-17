@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.30 2007-10-15 17:55:04 rajeevangal Exp $
+   $Id: build.xml,v 1.31 2007-10-17 23:00:49 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -56,8 +56,12 @@
             <format property="war.time.stamp" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
         <filter token="DATESTAMP" value="${war.time.stamp}" />
+        <filter token="VERSION" value="8.0" />
         <copy file="${war.xml.dir}/template/sms/AMConfig.properties"
             tofile="${amserver.built.res.dir}/AMConfig.properties"
+            filtering="true"/>
+        <copy file="${war.xml.dir}/template/sms/serverdefaults.properties"
+            tofile="${amserver.built.res.dir}/serverdefaults.properties"
             filtering="true"/>
 
         <war destfile="${amserver.dist.dir}/opensso.war" webxml="${war.xml.dir}/web.xml">

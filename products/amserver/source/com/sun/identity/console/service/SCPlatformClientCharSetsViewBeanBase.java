@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCPlatformClientCharSetsViewBeanBase.java,v 1.1 2007-02-07 20:26:36 jonnelson Exp $
+ * $Id: SCPlatformClientCharSetsViewBeanBase.java,v 1.2 2007-10-17 23:00:36 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,10 @@ import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.AMPropertySheet;
+import com.sun.identity.console.base.AMViewBeanBase;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
@@ -136,8 +138,7 @@ public abstract class SCPlatformClientCharSetsViewBeanBase
      * @param event Request Invocation Event.
      */
     public void handleButton2Request(RequestInvocationEvent event) {
-        SCPlatformViewBean vb = (SCPlatformViewBean)getViewBean(
-            SCPlatformViewBean.class);
+        AMViewBeanBase vb = getPlatformViewBean();
         backTrail();
         unlockPageTrailForSwapping();
         passPgSessionMap(vb);
@@ -186,6 +187,12 @@ public abstract class SCPlatformClientCharSetsViewBeanBase
             handleButton1Request(values);
         }
     }
-
+    
+    protected AMViewBeanBase getPlatformViewBean() {
+        return (ServerConfiguration.isLegacy()) ?
+            (AMViewBeanBase)getViewBean(SCPlatformViewBean.class) :
+            (AMViewBeanBase)getViewBean(SCPlatform30ViewBean.class);
+    }
+    
     protected abstract void handleButton1Request(Map values);
 }

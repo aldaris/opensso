@@ -17,21 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCPlatformClientCharSetsEditViewBean.java,v 1.1 2007-02-07 20:26:36 jonnelson Exp $
+ * $Id: SCPlatformClientCharSetsEditViewBean.java,v 1.2 2007-10-17 23:00:36 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.service;
 
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.sun.identity.console.base.AMViewBeanBase;
 import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.delegation.model.DelegationConfig;
 import com.sun.identity.console.service.model.SCPlatformModelImpl;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.model.CCPageTitleModel;
 import java.util.Map;
 
@@ -106,8 +107,7 @@ public class SCPlatformClientCharSetsEditViewBean
     }
 
     protected void handleButton1Request(Map values) {
-        SCPlatformViewBean vb = (SCPlatformViewBean)getViewBean(
-            SCPlatformViewBean.class);
+        AMViewBeanBase vb = getPlatformViewBean();
 
         Map mapAttrs = (Map)getPageSessionAttribute(
             SCPlatformViewBean.PROPERTY_ATTRIBUTE);

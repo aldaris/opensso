@@ -17,65 +17,65 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.2 2007-07-20 20:33:57 veiming Exp $
+ * $Id: Main.java,v 1.3 2007-10-17 23:00:48 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.tools.bundles;
 
-import java.io.File;
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.setup.Bootstrap;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class Main implements SetupConstants{
-    
     public static void main(String[] args) {
-        boolean loadConfig = false;
-        String configPropertiesFile = null;
-        String configPath = null;
-        String currentOS = null;
-        Properties configProp = null;
         ResourceBundle bundle = ResourceBundle.getBundle(System.getProperty(
             SETUP_PROPERTIES_FILE, DEFAULT_PROPERTIES_FILE));
-        if (System.getProperty(CHECK_VERSION) != null) {
-            if (System.getProperty(CHECK_VERSION).equals(YES)) {
-                System.exit(VersionCheck.isValid(bundle));
-            }
-        }
+
         if ((System.getProperty(PRINT_HELP) != null) &&
             System.getProperty(PRINT_HELP).equals(YES)){
             SetupUtils.printUsage(bundle);
             System.exit(0);
         }
-        if ((System.getProperty(CONFIG_LOAD) != null) &&
-            System.getProperty(CONFIG_LOAD).equals(YES)){
-            loadConfig = true;
+
+        if (System.getProperty(CHECK_VERSION) != null) {
+            if (System.getProperty(CHECK_VERSION).equals(YES)) {
+                System.exit(VersionCheck.isValid(bundle));
+            }
         }
-        currentOS = SetupUtils.determineOS();
+
+        boolean loadConfig = (System.getProperty(CONFIG_LOAD) != null) &&
+            System.getProperty(CONFIG_LOAD).equals(YES);
+        String configPath = null;
+        String currentOS = SetupUtils.determineOS();
+        Properties configProp = null;
+        
         if (loadConfig) {
             configPath = System.getProperty(AMCONFIG_PATH);
-            configPropertiesFile = bundle.getString(CONFIG_FILE);
             try {
                 if ((configPath == null) || (configPath.length() == 0)) {
                     configPath = SetupUtils.getUserInput(bundle.getString(
                         currentOS + QUESTION));
                 }
-                if (!configPath.endsWith(FILE_SEPARATOR)) {
-                    configPath = configPath + FILE_SEPARATOR;
-                }
-                if (! (new File(configPath + bundle.getString(XML_CONFIG)))
-                    .exists()) {
+                
+                configProp = Bootstrap.load(configPath);
+
+                if (configProp == null) {
                     System.out.println(bundle.getString("message.error.dir"));
                     System.exit(1);
                 }
-                configProp = SetupUtils.loadProperties(configPath +
-                    configPropertiesFile);
+
+                if (!configPath.endsWith(FILE_SEPARATOR)) {
+                    configPath = configPath + FILE_SEPARATOR;
+                }
+
                 configProp.setProperty(USER_INPUT,
                     configPath.substring(0, configPath.length() - 1));
                 configProp.setProperty(CURRENT_PLATFORM, currentOS);
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 System.out.println(bundle.getString("message.error.dir"));
                 System.exit(1);
             }
@@ -91,7 +91,7 @@ public class Main implements SetupConstants{
                     bundle.getString(TOOLS_VERSION));
                 System.out.println(
                     bundle.getString("message.info.version.am") +
-                    " " + configProp.getProperty(AM_VERSION));
+                    " " + SystemProperties.get("com.iplanet.am.version"));
             }
         } catch (IOException ex) {
             System.out.println(bundle.getString("message.error.copy"));

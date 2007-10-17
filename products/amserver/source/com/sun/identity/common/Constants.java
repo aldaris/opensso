@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.9 2007-03-09 05:50:59 veiming Exp $
+ * $Id: Constants.java,v 1.10 2007-10-17 23:00:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -359,28 +359,11 @@ public interface Constants {
         "com.iplanet.am.ldap.connection.ldap.error.codes.retries";
 
     /**
-     * property string for installation directory
-     */
-    public static final String AM_INSTALL_DIR = "com.iplanet.am.installdir";
-
-    /**
-     * property string for installation base directory
-     */
-    public static final String AM_INSTALL_BASEDIR = 
-        "com.iplanet.am.install.basedir";
-
-    /**
      * property string for new configuraton file in case of single war
      * deployment
      */
     public static final String AM_NEW_CONFIGFILE_PATH = 
         "com.sun.identity.configFilePath";
-
-    /**
-     * property string for installation config directory
-     */
-    public static final String AM_INSTALL_VARDIR = 
-        "com.iplanet.am.install.vardir";
 
     /**
      * property string for shared secret for application authentication module
@@ -923,14 +906,15 @@ public interface Constants {
 
     /**
      * Key name for platform server list in naming table
-     */
+     
     public static final String PLATFORM_LIST = 
         "iplanet-am-platform-server-list";
 
     /**
      * Key name for site list in naming table
-     */
+     
     public static final String SITE_LIST = "iplanet-am-platform-site-list";
+    */
 
     /**
      * Key name for site ID list in naming table

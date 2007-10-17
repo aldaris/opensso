@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.14 2007-07-20 20:33:56 veiming Exp $
+ * $Id: CommandManager.java,v 1.15 2007-10-17 23:00:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,10 @@
 package com.sun.identity.cli;
 
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
 import com.sun.identity.security.AdminTokenAction;
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.setup.Bootstrap;
 import com.sun.identity.shared.debug.Debug;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -50,8 +51,7 @@ import java.util.Vector;
 public class CommandManager {
     private final static String RESOURCE_BUNDLE_NAME = "cliBase";
     public static ResourceBundle resourceBundle;
-    private static Debug debugger = Debug.getInstance("amCLI");
-        
+    private static Debug debugger;        
     private ResourceBundle rbMessages;
     private Map environment;
     private String commandName;
@@ -64,12 +64,19 @@ public class CommandManager {
 
     static {
         resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
+        debugger = Debug.getInstance("amCLI");
     }
     
     /**
      * Entry point to the engine.
      */
     public static void main(String[] argv) {
+        try {
+            Bootstrap.load();
+        } catch (Exception e) {
+            System.err.println("Cannot bootstrap the system" + e.getMessage());
+            System.exit(1);
+        }
         getIsInstallTime();
         Crypt.checkCaller();
         new CommandManager(argv);

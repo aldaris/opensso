@@ -17,27 +17,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMProfileModelImpl.java,v 1.1 2007-02-07 20:27:50 jonnelson Exp $
+ * $Id: SMProfileModelImpl.java,v 1.2 2007-10-17 23:00:42 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.session.model;
 
-import com.sun.identity.shared.locale.Locale;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.common.SearchResults;
+import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
-import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.SchemaType;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -327,23 +323,14 @@ public class SMProfileModelImpl extends AMModelBase
     public Map getServerNames() {
         if (serverNamesMap == null || serverNamesMap.isEmpty()) {
             try {
-                ServiceSchemaManager mgr = 
-                    new ServiceSchemaManager(PLATFORM_SERVICE, 
-                        getUserSSOToken());
-                ServiceSchema schema = mgr.getSchema(SchemaType.GLOBAL);
-
-                if (schema != null) {
-                    Map map = schema.getAttributeDefaults();
-                    if (map != null && !map.isEmpty()) {
-                        Set names = (Set)map.get(SERVER_LIST);
-                        names = parseServerNames(names);
-                        serverNamesMap = getMapValues(names);
-                    }
-                }
-            } catch (SSOException ssoe) {
-                debug.warning("SMProfileModelImpl.getServerNames", ssoe);
-            } catch (SMSException smse ){
-                debug.error("SMProfileModelImpl.getServerNames", smse);
+                Set names = ServerConfiguration.getServerInfo(
+                    getUserSSOToken());
+                names = parseServerNames(names);
+                serverNamesMap = getMapValues(names);
+            } catch (SSOException e) {
+                debug.error("SMProfileModelImpl.getServerNames", e);
+            } catch (SMSException e) {
+                debug.error("SMProfileModelImpl.getServerNames", e);                
             }
         }
         return serverNamesMap;

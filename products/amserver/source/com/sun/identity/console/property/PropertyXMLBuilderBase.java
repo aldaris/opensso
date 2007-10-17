@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.2 2007-02-14 21:35:03 jonnelson Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.3 2007-10-17 23:00:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -266,6 +266,30 @@ public abstract class PropertyXMLBuilderBase
         return xml;
     }
 
+    /**
+     * Inserts XML to a property XML.
+     *
+     * @param xml Original property XML.
+     * @param insertXML XML to be inserted to <code>xml</code>.
+     * @param marker A marker where <code>insertXML</code> will be inserted.
+     * @param afterMarker <code>true</code> to insert XML after marker.
+     * @return the modified XML.
+     */
+    public static String insertXML(
+        String xml,
+        String insertXML,
+        String marker,
+        boolean afterMarker
+    ) {
+        int idx = xml.indexOf(marker);
+        if (idx != -1) {
+            int start = (afterMarker) ? idx + marker.length() : idx;
+            xml = xml.substring(0, start) + insertXML +
+                xml.substring(start);
+        }
+        return xml;
+    }
+    
     /**
      * Inserts XML to a property XML.
      *

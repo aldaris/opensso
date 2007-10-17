@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteAwareInteractionConfig.java,v 1.2 2007-08-07 17:18:32 qcheng Exp $
+ * $Id: SiteAwareInteractionConfig.java,v 1.3 2007-10-17 23:00:59 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,14 +68,15 @@ public class SiteAwareInteractionConfig extends InteractionConfig {
         }
 
         try {
-            String serverId = WebtopNaming.getServerID(protocol, host, port);
+            String serverId = WebtopNaming.getServerID(protocol, host, port,
+                contextPath);
             String server = WebtopNaming.getServerFromID(serverId);
             wspRedirectHandler = server + "/" + contextPath + "/" 
                     + WSP_REDIRECT_HANDLER_SERVLET;
 
 
-            boolean siteEnabled 
-                    = WebtopNaming.isSiteEnabled(protocol, host, port);
+            boolean siteEnabled = WebtopNaming.isSiteEnabled(
+                protocol, host, port, contextPath);
 
             if (debug.messageEnabled()) {
                 debug.message("SiteAwareInteractionConfig.initialise():"

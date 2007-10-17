@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jars.xml,v 1.3 2007-06-06 05:55:40 veiming Exp $
+   $Id: build-jars.xml,v 1.4 2007-10-17 23:00:10 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -53,6 +53,9 @@
             </fileset>
             <zipfileset dir="${amserver.built.dir}/classes" excludes="com/sun/identity/console" />
             <zipfileset dir="${amserver.www.dir}" prefix="www" />
+            <fileset dir="${amserver.xml.dir}">
+                <include name="serverconfig.xml" />
+            </fileset>
         </jar>
 
         <antcall target="jar-legacy" />

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLServiceManager.java,v 1.3 2007-03-10 00:29:22 qcheng Exp $
+ * $Id: SAMLServiceManager.java,v 1.4 2007-10-17 23:00:57 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,6 +71,7 @@ public class SAMLServiceManager implements ConfigurationListener {
     private static String serverProtocol = null;
     private static String serverHost = null;
     private static String serverPort = null;
+    private static String serverURI;
     private static String serverURL = null;
     private static boolean removeAssertion = false;
     private static String DEFAULT_PARTNER_ACCOUNT_MAPPER =
@@ -460,8 +461,19 @@ public class SAMLServiceManager implements ConfigurationListener {
     }
 
     /**
+     * Returns server URI.
+     * @return server URI.
+     */
+    public static String getServerURI() {
+        if (instance == null) {
+            init();
+        }
+        return serverURI;
+    }
+
+    /**
      * Returns server url. It is in the format of
-     * serverProtocol://serverhost:serverPort.
+     * serverProtocol://serverhost:serverPort/serverURI.
      *
      * @return String server url.
      */
@@ -634,8 +646,11 @@ public class SAMLServiceManager implements ConfigurationListener {
                     SAMLConstants.SERVER_HOST);
                 serverPort = SystemConfigurationUtil.getProperty(
                     SAMLConstants.SERVER_PORT);
+                serverURL = SystemConfigurationUtil.getProperty(
+                    SAMLConstants.SERVER_URI);
                 serverURL =
-                    serverProtocol + "://" + serverHost + ":" + serverPort;
+                    serverProtocol + "://" + serverHost + ":" + serverPort +
+                    serverURI;
                 String sb = serverURL;
                     
                 Map siteidMap = new HashMap();

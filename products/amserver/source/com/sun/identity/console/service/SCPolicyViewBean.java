@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCPolicyViewBean.java,v 1.1 2007-02-07 20:26:40 jonnelson Exp $
+ * $Id: SCPolicyViewBean.java,v 1.2 2007-10-17 23:00:38 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.service;
 
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
@@ -44,6 +43,7 @@ import com.sun.identity.console.service.model.SCPolicyModel;
 import com.sun.identity.console.service.model.SCPolicyModelImpl;
 import com.sun.identity.console.service.model.SCModel;
 import com.sun.identity.policy.PolicyConfig;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.table.CCActionTable;

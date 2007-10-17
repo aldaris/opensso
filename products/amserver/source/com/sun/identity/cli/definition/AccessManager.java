@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.41 2007-10-04 06:09:39 veiming Exp $
+ * $Id: AccessManager.java,v 1.42 2007-10-17 23:00:25 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,8 @@ public class AccessManager {
         string={"resourcebundle-not-found=Resource Bundle not found.",
             "realm-does-not-exist=Cannot process the request because realm {0} does not exist.",
         "missing-attributevalues=attributevalues and datafile options are missing.",
-        "missing-choicevalues=choicevalues and datafile options are missing."}
+        "missing-choicevalues=choicevalues and datafile options are missing.",
+        "serverconfig-no-supported=This sub command is not supported because platform service is not upgraded."}
     )
     private String resourcestrings;
 
@@ -1662,6 +1663,7 @@ public class AccessManager {
         optionalOptions={
             "dshost|t|s|Directory Server host name",
             "dsport|p|s|Directory Server port number",
+            "basedn|b|s|Directory Server base distinguished name.",
             "dsadmin|a|s|Directory Server administrator distinguished name",
             "dspassword|x|s|Directory Server administrator password",
             "outfile|o|s|File name where serverconfig XML is written."
@@ -1671,6 +1673,341 @@ public class AccessManager {
         }
     )
     private String create_serverconfig_xml;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.ListServerConfig",
+        description="List server configuration.",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name, e.g. http://samples.com:8080/fam"
+        },
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "list-server-config-succeeded=The followings are the configuration of {0}.",
+            "list-server-config-no-results=There are no configuration."
+        }
+    )
+    private String list_server_configuration;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.UpdateServerConfig",
+        description="Update server configuration.",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name, e.g. http://samples.com:8080/fam"
+        },
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains attribute values data."},
+        resourceStrings={
+            "update-server-config-succeeded=The configuration of {0} is updated.",
+            "update-server-config-does-not-exists={0} does not exist."
+        }
+    )
+    private String update_server_configuration;
+    
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.RemoveServerConfig",
+        description="Remove server configuration.",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name, e.g. http://samples.com:8080/fam",
+            "propertynames|a|m|Name of properties to be removed."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "remove-server-config-succeeded=Properties are removed.",
+            "remove-server-config-does-not-exists={0} does not exist."
+        }
+    )
+    private String remove_server_configuration;
+    
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.CreateServer",
+        description="Create a server instance.",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name, e.g. http://samples.com:8080/fam",
+            "serverconfigxml|X|s|Server Configuration XML file name."},
+        optionAliases={},
+        optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains attribute values data."},
+        macro="authentication",
+        resourceStrings={
+            "create-server-config-succeeded=Server is created.",
+            "create-server-config-already-exists=Server already exists."
+        }
+    )
+    private String create_server;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.DeleteServer",
+        description="Delete a server instance.",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name, e.g. http://samples.com:8080/fam"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "delete-server-config-succeeded=Server is deleted.",
+            "delete-server-config-dont-exists=Server does not exist."
+        }
+    )
+    private String delete_server;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.ListServers",
+        description="List all server instances.",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "list-servers-succeeded=The followings are the servers",
+            "list-servers-no-instances=There are no servers."
+        }
+    )
+    private String list_servers;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.CreateSite",
+        description="Create a site.",
+        webSupport="true",
+        mandatoryOptions={
+            "sitename|s|s|Site name, e.g. mysite",
+            "siteurl|i|s|Site's primary URL, e.g. http://site.samples.com:8080"},
+        optionAliases={},
+        optionalOptions={"secondaryurls|a|m|Secondary URLs"},
+        macro="authentication",
+        resourceStrings={
+            "create-site-succeeded=Site is created.",
+            "create-site-already-exists=Site already exists."
+        }
+    )
+    private String create_site;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.DeleteSite",
+        description="Delete a site.",
+        webSupport="true",
+        mandatoryOptions={
+            "sitename|s|s|Site name, e.g. mysite"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "delete-site-succeeded=Site is deleted.",
+            "delete-site-no-exists=Site does not exist."
+        }
+    )
+    private String delete_site;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.ListSites",
+        description="List all sites.",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "list-sites-succeeded=The followings are the sites",
+            "list-sites-no-instances=There are no sites."
+        }
+    )
+    private String list_sites;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.ShowSiteMembers",
+        description="Display members of a site.",
+        webSupport="true",
+        mandatoryOptions={"sitename|s|s|Site name, e.g. mysite"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "show-site-members-succeeded=The followings are the members",
+            "show-site-members-no-members=There are no members."
+        }
+    )
+    private String show_site_members;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.AddSiteMembers",
+        description="Add members to a site.",
+        webSupport="true",
+        mandatoryOptions={"sitename|s|s|Site name, e.g. mysite",
+            "servernames|e|m|Server names, e.g. http://samples.com:8080/fam"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "add-site-members-succeeded=Servers are added to site",
+            "add-site-members-site-not-exist=Site does not exist."
+        }
+    )
+    private String add_site_members;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.RemoveSiteMembers",
+        description="Remove members from a site.",
+        webSupport="true",
+        mandatoryOptions={"sitename|s|s|Site name, e.g. mysite",
+            "servernames|e|m|Server names, e.g. http://samples.com:8080/fam"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "remove-site-members-succeeded=Servers are removed from site",
+            "remove-site-members-site-not-exist=Site does not exist."
+        }
+    )
+    private String remove_site_members;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.SetSitePrimaryURL",
+        description="Set the primary URL of a site.",
+        webSupport="true",
+        mandatoryOptions={
+            "sitename|s|s|Site name, e.g. mysite",
+            "siteurl|i|s|Site's primary URL, e.g. http://site.samples.com:8080"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "set-site-primary-url-succeeded=Site primary URL is modified.",
+            "set-site-primary-url-no-exists=Site does not exists."
+        }
+    )
+    private String set_site_primary_url;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.ShowSite",
+        description="Show site profile.",
+        webSupport="true",
+        mandatoryOptions={
+            "sitename|s|s|Site name, e.g. mysite"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "show-site-primaryURL=Site primary URL: {0}.",
+            "show-site-no-secondaryURL=There are no secondary URLs.",
+            "show-site-secondaryURL=Site secondary URLs:",
+            "show-site-no-exists=Site does not exists."
+        }
+    )
+    private String show_site;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.SetSiteFailoverURLs",
+        description="Set Site Secondary URLs.",
+        webSupport="true",
+        mandatoryOptions={
+            "sitename|s|s|Site name, e.g. mysite",
+            "secondaryurls|a|m|Secondary URLs"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "set-site-secondary-urls-succeeded=Site secondary URLs are set.",
+            "set-site-secondary-urls-no-exists=Site does not exists."
+        }
+    )
+    private String set_site_secondary_urls;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.AddSiteFailoverURLs",
+        description="Add Site Secondary URLs.",
+        webSupport="true",
+        mandatoryOptions={
+            "sitename|s|s|Site name, e.g. mysite",
+            "secondaryurls|a|m|Secondary URLs"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "add-site-secondary-urls-succeeded=Site secondary URLs are added.",
+            "add-site-secondary-urls-no-exists=Site does not exists."
+        }
+    )
+    private String add_site_secondary_urls;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.RemoveSiteFailoverURLs",
+        description="Remove Site Secondary URLs.",
+        webSupport="true",
+        mandatoryOptions={
+            "sitename|s|s|Site name, e.g. mysite",
+            "secondaryurls|a|m|Secondary URLs"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "remove-site-secondary-urls-succeeded=Site secondary URLs are removed.",
+            "remove-site-secondary-urls-no-exists=Site does not exists."
+        }
+    )
+    private String remove_site_secondary_urls;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.CloneServer",
+        description="Clone a server instance.",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name",
+            "cloneservername|o|s|Clone server name"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "clone-server-succeeded=Server is cloned.",
+            "clone-server-exists=Clone server already exists.",
+            "clone-server-no-exists=Server does not exists."
+        }
+    )
+    private String clone_server;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.ExportServer",
+        description="Export a server instance.",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name"},
+        optionAliases={},
+        optionalOptions={"outfile|o|s|Filename where configuration is written."},
+        macro="authentication",
+        resourceStrings={
+            "export-server-succeeded=Server is exported.",
+            "export-server-no-exists=Server does not exists."
+        }
+    )
+    private String export_server;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.ImportServer",
+        description="Import a server instance.",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name",
+            "xmlfile|X|m|XML file that contains configuration."},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "import-server-succeeded=Server is imported.",
+            "import-server-already-exists=Server already exists."
+        }
+    )
+    private String import_server;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.GetSupportedAuthModules",
@@ -1685,5 +2022,4 @@ public class AccessManager {
             "get-supported-authtypes-succeed=The following authenticated modules are supported.",
             "get-supported-no-supported-authtype=There are no supported authentication modules."})
     private String show_auth_modules;
-
 }

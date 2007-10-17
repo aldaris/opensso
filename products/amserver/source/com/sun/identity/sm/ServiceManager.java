@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.11 2007-09-19 18:20:03 goodearth Exp $
+ * $Id: ServiceManager.java,v 1.12 2007-10-17 23:00:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.security.AdminTokenAction;
@@ -67,17 +68,15 @@ public class ServiceManager {
 
     private static boolean loadedAuthServices;
 
-    private static SSOTokenManager ssoTokenManager = SMSEntry.tm;
-
     protected static final String serviceDN = SMSEntry.SERVICES_RDN
-            + SMSEntry.COMMA + SMSEntry.baseDN;
+            + "," + SMSEntry.baseDN;
 
     // For realms and co-existance support
     protected static final String COEXISTENCE_ATTR_NAME = "coexistenceMode";
 
     protected static final String REALM_ATTR_NAME = "realmMode";
 
-    protected static final String REALM_SERVICE = 
+    public static final String REALM_SERVICE = 
         "sunidentityrepositoryservice";
 
     protected static final String DEFAULT_SERVICES_FOR_REALMS = 
@@ -158,7 +157,7 @@ public class ServiceManager {
         initialize(token);
 
         // Validate SSOToken
-        ssoTokenManager.validateToken(token);
+        SSOTokenManager.getInstance().validateToken(token);
         this.token = token;
     }
 
@@ -643,25 +642,10 @@ public class ServiceManager {
             try {
                 SSOToken token = (SSOToken) AccessController
                         .doPrivileged(AdminTokenAction.getInstance());
-                ServiceSchemaManagerImpl ssmi = ServiceSchemaManagerImpl
-                        .getInstance(token, PLATFORM_SERVICE, SERVICE_VERSION);
-                ServiceSchemaImpl ssi = ssmi.getSchema(SchemaType.GLOBAL);
-                AttributeSchemaImpl as = ssi
-                        .getAttributeSchema(ATTR_SERVER_LIST);
-                Set values = as.getDefaultValues();
-                Set answer = new HashSet();
-                for (Iterator items = values.iterator(); items.hasNext();) {
-                    String value = (String) items.next();
-                    int index = value.indexOf("|");
-                    if (index != -1) {
-                        value = value.substring(0, index);
-                    }
-                    answer.add(value);
-                }
-                accessManagerServers = answer;
+                accessManagerServers = ServerConfiguration.getServers(token);
                 if (debug.messageEnabled()) {
                     debug.message("ServiceManager.getAMServerInstances: "
-                        + "server list: " + answer);
+                        + "server list: " + accessManagerServers);
                 }
             } catch (SMSException e) {
                 if (debug.warningEnabled()) {

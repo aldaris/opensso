@@ -17,16 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginLogoutMapping.java,v 1.5 2007-04-10 17:38:16 pawand Exp $
+ * $Id: LoginLogoutMapping.java,v 1.6 2007-10-17 23:00:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.authentication.UI;           
 
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.common.RequestUtils;
+import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.shared.locale.L10NMessageImpl;
 import com.sun.identity.shared.debug.Debug;
 import java.util.Locale;
@@ -41,8 +43,7 @@ import javax.servlet.http.*;
  * '/logout' to '/UI/Logout'
  */
 public class LoginLogoutMapping extends HttpServlet {
-
-    private static boolean isProductInitialize = true;
+    private static boolean isProductInitialize = false;
     private static final String bundleName = "amAuthUI";
     private static final String CANNOT_INIT_AUTH = "cannotInitAuth";
 

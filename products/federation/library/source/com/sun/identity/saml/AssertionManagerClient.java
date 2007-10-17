@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManagerClient.java,v 1.3 2006-12-21 18:48:28 bina Exp $
+ * $Id: AssertionManagerClient.java,v 1.4 2007-10-17 23:00:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,11 +92,13 @@ public final class AssertionManagerClient {
                 // is not part of Naming platform list
                 remoteStub = getServiceEndPoint(
                     SystemConfigurationUtil.getProperty(
-                    SAMLConstants.SERVER_PROTOCOL),
+                        SAMLConstants.SERVER_PROTOCOL),
                     SystemConfigurationUtil.getProperty(
-                    SAMLConstants.SERVER_HOST),
+                        SAMLConstants.SERVER_HOST),
                     SystemConfigurationUtil.getProperty(
-                    SAMLConstants.SERVER_PORT));
+                        SAMLConstants.SERVER_PORT),
+                    SystemConfigurationUtil.getProperty(
+                        SAMLConstants.SERVER_URI));
                     
                 // The following call will throw one of the following
                 // exception if service does not exist or does not have
@@ -210,10 +212,10 @@ public final class AssertionManagerClient {
 
     // Private method to get the service endpoint URL
     private static SOAPClient getServiceEndPoint(String protocol,
-        String hostname, String port) throws Exception {
+        String hostname, String port, String uri) throws Exception {
         // Obtain the URL for the service endpoint
         URL weburl = SystemConfigurationUtil.getServiceURL(
-            SERVICE_NAME, protocol, hostname, Integer.parseInt(port));
+            SERVICE_NAME, protocol, hostname, Integer.parseInt(port), uri);
         String iurl = weburl.toString();
         if (SAMLUtils.debug.messageEnabled()) {
             SAMLUtils.debug.message("AssertionManagerClient with URL: " + iurl);
@@ -231,7 +233,7 @@ public final class AssertionManagerClient {
             // Exception if no servers are found
             URL u = new URL(JAXRPCHelper.getValidURL(SERVICE_NAME));
             remoteStub = getServiceEndPoint(u.getProtocol(), u.getHost(),
-                Integer.toString(u.getPort()));
+                Integer.toString(u.getPort()), u.getPath());
 
             // The following call will check if the JVM contains the
             // the service instance also. If this is a server instance also

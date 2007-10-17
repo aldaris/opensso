@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JAXRPCHelper.java,v 1.2 2006-12-13 20:54:49 beomsuk Exp $
+ * $Id: JAXRPCHelper.java,v 1.3 2007-10-17 23:01:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,7 +117,7 @@ public class JAXRPCHelper {
                     URL url = new URL((String)serverList.iterator().next());
                     URL weburl = SystemPropertiesManager.getSystemProperties().
                         getServiceURL(JAXRPC_SERVICE, url.getProtocol(), 
-                            url.getHost(), url.getPort());
+                            url.getHost(), url.getPort(), url.getPath());
                     String surl = weburl.toString();
                     if (!surl.endsWith("/"))
                         surl += "/";

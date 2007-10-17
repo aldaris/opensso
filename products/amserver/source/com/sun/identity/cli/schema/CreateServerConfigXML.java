@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServerConfigXML.java,v 1.1 2007-03-21 22:33:42 veiming Exp $
+ * $Id: CreateServerConfigXML.java,v 1.2 2007-10-17 23:00:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,31 +26,38 @@ package com.sun.identity.cli.schema;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.cli.AccessManagerConstants;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CLIUtil;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.DNUtils;
 import com.sun.identity.log.Level;
 import com.sun.identity.security.EncodeAction;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.AccessController;
+import java.util.Vector;
+import netscape.ldap.LDAPDN;
+import netscape.ldap.util.DN;
+import netscape.ldap.util.RDN;
 
 public class CreateServerConfigXML extends AuthenticatedCommand {
     static final String DS_HOST = "dshost";
     static final String DS_PORT = "dsport";
     static final String DS_ADMIN = "dsadmin";
     static final String DS_PWD = "dspassword";
+    static final String DS_BASEDN = "basedn";
     
     private String dsHost;
     private String dsPort;
     private String dsAdmin;
     private String dsPassword;
+    private String basedn;
     
     /**
      * Handles request.
@@ -68,10 +75,11 @@ public class CreateServerConfigXML extends AuthenticatedCommand {
         String[] param = {"tty"};
         String[] paramException = {"tty", ""};
         
-        dsHost = this.getStringOptionValue(DS_HOST);
-        dsPort = this.getStringOptionValue(DS_PORT);
-        dsAdmin = this.getStringOptionValue(DS_ADMIN);
-        dsPassword = this.getStringOptionValue(DS_PWD);
+        dsHost = getStringOptionValue(DS_HOST);
+        dsPort = getStringOptionValue(DS_PORT);
+        dsAdmin = getStringOptionValue(DS_ADMIN);
+        dsPassword = getStringOptionValue(DS_PWD);
+        basedn = getStringOptionValue(DS_BASEDN);
         
         if ((dsHost == null) || (dsHost.length() == 0)) {
             dsHost = "ds.opensso.java.net";
@@ -85,6 +93,9 @@ public class CreateServerConfigXML extends AuthenticatedCommand {
         if ((dsPassword == null) || (dsPassword.length() == 0)) {
             dsPassword = "11111111";
         }
+        if ((basedn == null) || (basedn.length() == 0)) {
+            basedn = "dc=opensso,dc=java,dc=net";
+        }
         dsPassword = (String)AccessController.doPrivileged(
             new EncodeAction(dsPassword));
         
@@ -97,7 +108,7 @@ public class CreateServerConfigXML extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_CREATE_SERVERCONFIG_XML", param);
             
-            String template = getServerConfigXMLTemplate(paramException);
+            String template = getResource("serverconfig.xml");
             String modified = modifyXML(template);
             
             if (fout != null) {
@@ -123,51 +134,64 @@ public class CreateServerConfigXML extends AuthenticatedCommand {
         }
     }
     
-    private String getServerConfigXMLTemplate(String[] paramException) 
-        throws CLIException  {
-        BufferedReader reader = null;
-        StringBuffer buff = new StringBuffer();
-        
-        String path = SystemProperties.get(SystemProperties.CONFIG_PATH);
-        String configFile = path + File.separator + 
-            SystemProperties.CONFIG_FILE_NAME;
+    private static String getResource(String file)
+        throws IOException
+    {
+        InputStreamReader fin = null;
+        StringBuffer sbuf = new StringBuffer();
 
         try {
-            reader = new BufferedReader(new FileReader(configFile));
-            String line = reader.readLine();
-            while (line != null) {
-                buff.append(line).append("\n");
-                line = reader.readLine();
+            fin = new InputStreamReader(
+                ClassLoader.getSystemResourceAsStream(file));
+            char[] cbuf = new char[1024];
+            int len;
+            while ((len = fin.read(cbuf)) > 0) {
+                sbuf.append(cbuf, 0, len);
             }
-        } catch (IOException e) {
-            paramException[1] = e.getMessage();
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "FAILED_CREATE_SERVERCONFIG_XML", paramException);
-            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } finally {
-            if (reader != null) {
+            if (fin != null) {
                 try {
-                    reader.close();
-                } catch (IOException ex) {
-                    //ignored
+                    fin.close();
+                } catch (Exception ex) {
+                    //No handling requried
                 }
             }
         }
-        
-        return buff.toString();
+        return sbuf.toString();
     }
     
-    private String modifyXML(String xml) {
-        int start = xml.indexOf("<ServerGroup name=\"sms");
-        int end = xml.indexOf("<BaseDN>", start);
-        
-        return xml.substring(0, start) +
-            "<ServerGroup name=\"sms\" minConnPool=\"1\" maxConnPool=\"10\">\n"+
-            "    <Server name=\"Server1\" host=\"" + dsHost + "\" port=\"" +
-            dsPort + "\"\n        type=\"SIMPLE\" />\n" +
-            "        <User name=\"User2\" type=\"admin\">\n" +
-            "             <DirDN>" + dsAdmin + "</DirDN>\n" +
-            "             <DirPassword>" + dsPassword + "</DirPassword>\n" + 
-            "        </User>\n        " + xml.substring(end);
+    private String modifyXML(String xml)
+        throws CLIException {
+        String amadminPwds = CLIUtil.getFileContent(getStringOptionValue(
+            AccessManagerConstants.ARGUMENT_PASSWORD_FILE), true);
+        amadminPwds = (String)AccessController.doPrivileged(
+            new EncodeAction(amadminPwds));
+        String canRootSuffix = canonicalize(basedn);
+        xml = xml.replaceAll("@DIRECTORY_SERVER@", dsHost);
+        xml = xml.replaceAll("@DIRECTORY_PORT@", dsPort);
+        xml = xml.replaceAll("@NORMALIZED_ORGBASE@", 
+            DNUtils.normalizeDN(basedn));
+        xml = xml.replaceAll("@DS_DIRMGRDN@", dsAdmin);
+        xml = xml.replaceAll("@ENCADMINPASSWD@", dsPassword);
+        xml = xml.replaceAll("@ENCADADMINPASSWD@", amadminPwds);
+        xml = xml.replaceAll("@SM_CONFIG_BASEDN@", canRootSuffix);
+        xml = xml.replaceAll("@ORG_BASE@", canRootSuffix);
+        return xml;
     }
+    
+    private String canonicalize(String nSuffix) {
+        StringBuffer buff = new StringBuffer(1024);
+        DN dn = new DN(nSuffix);
+        Vector rdns = dn.getRDNs();
+        int sz = rdns.size();
+        for (int i = 0; i < sz; i++) {
+            RDN rdn = (RDN)rdns.get(i);
+            buff.append(LDAPDN.escapeRDN(rdn.toString()));
+            if (i < sz - 1) {
+                buff.append(",");
+            }
+        }
+        return buff.toString();
+    }
+
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLI.java,v 1.1 2006-07-17 18:11:02 veiming Exp $
+ * $Id: WebCLI.java,v 1.2 2007-10-17 23:00:25 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class WebCLI extends HttpServlet {
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and
+     * <code>POST</code> methods.
+     *
      * @param request servlet request
      * @param response servlet response
      */

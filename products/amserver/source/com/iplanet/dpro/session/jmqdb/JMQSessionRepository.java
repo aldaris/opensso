@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JMQSessionRepository.java,v 1.2 2006-08-25 21:19:40 veiming Exp $
+ * $Id: JMQSessionRepository.java,v 1.3 2007-10-17 23:00:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -195,6 +195,8 @@ public class JMQSessionRepository implements AMSessionRepository, Runnable {
                 .get(Constants.AM_SERVER_HOST);
         String thisSessionServerPortAsString = SystemProperties
                 .get(Constants.AM_SERVER_PORT);
+        String thisSessionURI = SystemProperties
+                .get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
 
         if (thisSessionServerProtocol == null
                 || thisSessionServerPortAsString == null
@@ -204,7 +206,8 @@ public class JMQSessionRepository implements AMSessionRepository, Runnable {
         }
 
         serverId = WebtopNaming.getServerID(thisSessionServerProtocol,
-                thisSessionServer, thisSessionServerPortAsString);
+                thisSessionServer, thisSessionServerPortAsString,
+                thisSessionURI);
 
         initPersistSession();
 
