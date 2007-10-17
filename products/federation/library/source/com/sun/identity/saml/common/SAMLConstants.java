@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.5 2007-07-11 06:16:59 mrudul_uchil Exp $
+ * $Id: SAMLConstants.java,v 1.6 2007-10-17 06:02:12 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -588,6 +588,13 @@ public final class SAMLConstants
      * @supported.api
      */
     public static final String SOURCEID = "SOURCEID"; 
+
+    /**
+     * A SAML service attribute parameter that defines partner's name.
+     *
+     * iPlanet-PUBLIC-STATIC
+     */
+    public static final String PARTNERNAME = "PARTNERNAME"; 
 
     /**
      * A SAML service attribute parameter that defines the URL that provides
