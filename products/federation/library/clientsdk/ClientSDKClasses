@@ -338,6 +338,8 @@ com/sun/identity/saml/common/SAMLServiceManager.class
 com/sun/identity/saml/common/SAMLServiceManager$SiteEntry.class
 com/sun/identity/saml/common/SAMLServiceManager$SOAPEntry.class
 com/sun/identity/saml/common/SAMLSiteID.class
+com/sun/identity/saml/common/HexToBase64.class
+com/sun/identity/saml/common/Base64ToHex.class
 com/sun/identity/saml/common/SAMLUtils.class
 com/sun/identity/saml/common/SAMLUtilsCommon.class
 com/sun/identity/saml/common/SAMLVersionMismatchException.class

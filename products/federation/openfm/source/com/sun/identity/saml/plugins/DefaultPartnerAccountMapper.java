@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultPartnerAccountMapper.java,v 1.1 2007-03-10 00:29:24 qcheng Exp $
+ * $Id: DefaultPartnerAccountMapper.java,v 1.2 2007-10-17 21:40:51 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,11 +52,15 @@ import netscape.ldap.util.DN;
  * The class <code>DefaultPartnerAccountMapper</code> provide a default
  * implementation of the <code>PartnerAccountMapper</code> interface. 
  * <p>
- * The implementation assume two sites have exactly the same DIT structure.
+ * The implementation assumes two sites have exactly the same DIT structure,
+ * and it maps remote user to the anonymous user by default if the DIT 
+ * structure could not be determined.
  */
 
 public class DefaultPartnerAccountMapper implements PartnerAccountMapper {
 
+    static String ANONYMOUS_USER = "anonymous";
+ 
     /**
      * Default Constructor
      */
@@ -165,7 +169,7 @@ public class DefaultPartnerAccountMapper implements PartnerAccountMapper {
         return map;
     }
 
-    private void getUser(Subject subject, String sourceID, Map map) {
+    protected void getUser(Subject subject, String sourceID, Map map) {
         // No need to check SSO in SubjectConfirmation here
         // since AssertionManager will handle it without calling account mapper
         NameIdentifier nameIdentifier = subject.getNameIdentifier();
@@ -186,13 +190,25 @@ public class DefaultPartnerAccountMapper implements PartnerAccountMapper {
                             sb.append(rdns[i]).append(",");
                         }
                         sb.append(rootSuffix);
+                        if (SAMLUtils.debug.messageEnabled()) {
+                            SAMLUtils.debug.message("DefaultPAccountMapper: " 
+                                + "name = " + sb.toString());
+                        }
                         map.put(NAME, sb.toString()); 
+                    } else {
+                        SAMLUtils.debug.warning("DefaultPAMapper:to anonymous");
+                        // map to anonymous user
+                        map.put(NAME, ANONYMOUS_USER); 
                     }
                 } else {
-                    SAMLUtils.debug.error("DefaultAccountMapper: Org is null.");           
+                    SAMLUtils.debug.warning("DefaultAccountMapper: Org null.");
+                    // map to anonymous user
+                    map.put(NAME, ANONYMOUS_USER); 
                 } 
             } else {
-                SAMLUtils.debug.error("DefaultAccountMapper: Name is null");
+                SAMLUtils.debug.warning("DefaultAccountMapper: Name is null");
+                // map to anonymous user
+                map.put(NAME, ANONYMOUS_USER); 
             }
             map.put(ORG, rootSuffix); 
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationSPAdapter.java,v 1.2 2007-10-16 21:49:10 exu Exp $
+ * $Id: FederationSPAdapter.java,v 1.3 2007-10-17 21:40:24 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -187,7 +187,7 @@ public interface FederationSPAdapter {
      * @exception FederationException if user want to fail the process.
      */
     public void preSSOFederationProcess(
-        String hostedProviderID, 
+        String hostedEntityID, 
         HttpServletRequest request, 
         HttpServletResponse response, 
         FSAuthnRequest authnRequest, 
@@ -197,10 +197,10 @@ public interface FederationSPAdapter {
 
     /**
      * Invokes after Single-Sign-On and Federation processing is successful.
-     * @param hostedProviderID provider ID for the hosted SP
+     * @param hostedEntityID Entity ID for the hosted SP
      * @param request servlet request
      * @param response servlet response
-     * @ssoToken   user's SSO token
+     * @param ssoToken   user's SSO Token 
      * @param authnRequest the original authentication request sent from SP 
      * @param authnResponse response from IDP if Browser POST or LECP profile
      *		is used for the request, value will be null if Browser Artifact
@@ -212,7 +212,7 @@ public interface FederationSPAdapter {
      * @exception FederationException if user want to fail the process.
      */
     public boolean postSSOFederationSuccess(
-        String hostedProviderID, 
+        String hostedEntityID, 
         HttpServletRequest request, 
         HttpServletResponse response, 
         Object ssoToken,
@@ -224,7 +224,7 @@ public interface FederationSPAdapter {
 
     /**
      * Invokes after Single-Sign-On or Federation processing is failed.
-     * @param hostedProviderID provider ID for the hosted SP
+     * @param hostedEntityID Entity ID for the hosted SP
      * @param request servlet request
      * @param response servlet response
      * @param authnRequest the original authentication request sent from SP
@@ -237,7 +237,7 @@ public interface FederationSPAdapter {
      *          failure codes are defined in this interface.
      * @return true if browser redirection happened, false otherwise.
      */
-    public boolean postSSOFederationFailure(String hostedProviderID,
+    public boolean postSSOFederationFailure(String hostedEntityID,
                                 HttpServletRequest request,
                                 HttpServletResponse response,
                                 FSAuthnRequest authnRequest,
@@ -248,7 +248,7 @@ public interface FederationSPAdapter {
 
     /**
      * Invokes after Register Name Identifier processing is successful 
-     * @param hostedProviderID provider ID for the hosted SP
+     * @param hostedEntityID Entity ID for the hosted SP
      * @param request servlet request
      * @param response servlet response
      * @param userDN DN of the user with whom name identifier registration
@@ -264,7 +264,7 @@ public interface FederationSPAdapter {
      *		IFSConstants.NAME_REGISTRATION_IDP_SOAP_PROFILE
      */
     public void postRegisterNameIdentifierSuccess(
-        String hostedProviderID,
+        String hostedEntityID,
         HttpServletRequest request,
         HttpServletResponse response,
         String userDN,
@@ -275,7 +275,7 @@ public interface FederationSPAdapter {
     /**
      * Invokes after the service provider successfully terminates federation 
      * with IDP.
-     * @param hostedProviderID provider ID for the hosted SP
+     * @param hostedEntityID Entity ID for the hosted SP
      * @param request servlet request
      * @param response servlet response
      * @param userDN DN of the user with whom name identifier registration
@@ -288,7 +288,7 @@ public interface FederationSPAdapter {
      *		IFSConstants.TERMINATION_IDP_SOAP_PROFILE
      */
     public void postTerminationNotificationSuccess(
-        String hostedProviderID, 
+        String hostedEntityID, 
         HttpServletRequest request, 
         HttpServletResponse response,
         String userDN,
@@ -299,7 +299,7 @@ public interface FederationSPAdapter {
      * Invokes before single logout process started on FM side. This method
      * is called before the user token is invalidated on the service provider
      * side. 
-     * @param hostedProviderID provider ID for the hosted SP
+     * @param hostedEntityID Entity ID for the hosted SP
      * @param request servlet request
      * @param response servlet response
      * @param userDN user DN
@@ -313,7 +313,7 @@ public interface FederationSPAdapter {
      *		IFSConstants.LOGOUT_IDP_SOAP_PROFILE
      */
     public void preSingleLogoutProcess(
-        String hostedProviderID,
+        String hostedEntityID,
         HttpServletRequest request,
         HttpServletResponse response,
         String userDN,
@@ -324,8 +324,7 @@ public interface FederationSPAdapter {
     /**
      * Invokes after single logout is successful completed, i.e. user token
      * has been invalidated.
-     * @param hostedProviderID provider ID for the hosted SP
-     * @param hostedProviderID provider ID for the hosted SP
+     * @param hostedEntityID Entity ID for the hosted SP
      * @param request servlet request
      * @param response servlet response
      * @param userDN user DN
@@ -340,7 +339,7 @@ public interface FederationSPAdapter {
      *          IFSConstants.LOGOUT_IDP_SOAP_PROFILE
      */
     public void postSingleLogoutSuccess(
-        String hostedProviderID, 
+        String hostedEntityID, 
         HttpServletRequest request, 
         HttpServletResponse response, 
         String userDN,
