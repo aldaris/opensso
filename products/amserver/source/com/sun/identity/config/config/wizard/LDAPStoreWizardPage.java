@@ -60,10 +60,10 @@ public class LDAPStoreWizardPage extends AjaxPage {
     public void onInit() {
         addModel( "type", getType() );
         addModel( "typeTitle", getTypeTitle() );
-        addModel( "pageNum", getPageNum() );
+        addModel( "pageNum", new Integer( getPageNum() ) );
 
         store = getConfig();
-        addModel( "usingCustomStore", store != null );
+        addModel( "usingCustomStore", Boolean.valueOf( store != null) );
 
         store = ensureConfig();
         addModel( "store", store );

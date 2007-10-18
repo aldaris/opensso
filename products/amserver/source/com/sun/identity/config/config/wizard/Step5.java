@@ -46,7 +46,7 @@ public class Step5 extends AjaxPage {
                 //TODO - validate Host and Port via backend call here
                 //for now, just assume valid and store in the session for later access at the end of the wizard:
                 getContext().setSessionAttribute( LOAD_BALANCER_HOST_SESSION_KEY, host );
-                getContext().setSessionAttribute( LOAD_BALANCER_PORT_SESSION_KEY, port );
+                getContext().setSessionAttribute( LOAD_BALANCER_PORT_SESSION_KEY, Integer.valueOf(port) );
                 writeToResponse("true");
             }
         }

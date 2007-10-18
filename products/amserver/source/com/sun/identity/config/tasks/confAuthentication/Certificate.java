@@ -28,10 +28,10 @@ public class Certificate extends AjaxPage {
 
     public void onPost() {
         certificateStore.setUserId(toString("userId"));
-        certificateStore.setCheckAgainstLDAP(toBoolean("checkAgainstLDAP"));
-        certificateStore.setCheckAgainstCRL(toBoolean("checkAgainstCRL"));
+        certificateStore.setCheckAgainstLDAP(Boolean.valueOf( toBoolean("checkAgainstLDAP") ) );
+        certificateStore.setCheckAgainstCRL( Boolean.valueOf( toBoolean("checkAgainstCRL")) );
         certificateStore.setSearchAttribute(toString("searchAttribute"));
-        certificateStore.setCheckAgainstOSCP(toBoolean("checkAgainstOSCP"));
+        certificateStore.setCheckAgainstOSCP(Boolean.valueOf( toBoolean("checkAgainstOSCP") ) );
         certificateStore.getUserStore().setName(toString("user_storeName"));
         certificateStore.getUserStore().setHostName(toString("user_hostName"));
         certificateStore.getUserStore().setHostPort(toInt("user_hostPort"));

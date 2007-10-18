@@ -12,8 +12,8 @@ public class Options extends TemplatedPage {
     public ActionLink testUrlLink = new ActionLink("coexistLink", this, "coexist" );
     public ActionLink pushConfigLink = new ActionLink("olderUpgradeLink", this, "olderUpgrade" );
 
-    protected boolean passwordUpdateRequired = Boolean.TRUE;
-    protected boolean upgrade = false;
+    protected Boolean passwordUpdateRequired = Boolean.TRUE;
+    protected Boolean upgrade = Boolean.FALSE;
 
     protected String getTitle() {
         return "configOptions.title";
@@ -22,12 +22,12 @@ public class Options extends TemplatedPage {
     public void doInit() {
         //TODO - Determine if a password update is required by checking w/ back-end.
         //remove the session access (and corresponding setting logic in NewPassword class)
-        passwordUpdateRequired = getContext().getSessionAttribute( NewPassword.PASSWORD_SET_KEY ) == null;
+        passwordUpdateRequired = Boolean.valueOf( getContext().getSessionAttribute( NewPassword.PASSWORD_SET_KEY ) == null );
         addModel("passwordUpdateRequired", passwordUpdateRequired );
 
         //TODO - determine upgrade case from back-end call
         //only using request param as an easy toggle for testing
-        upgrade = toBoolean("upgrade");
+        upgrade = Boolean.valueOf( toBoolean("upgrade") );
         addModel( "upgrade", upgrade );
     }
 
