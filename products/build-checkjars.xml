@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-checkjars.xml,v 1.2 2007-02-07 14:51:41 jonnelson Exp $
+   $Id: build-checkjars.xml,v 1.3 2007-10-18 06:01:17 lhazlewood Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,6 +49,10 @@
         property="saaj.api.jar.present"/>
     <available file="${extlib.dir}/saaj-impl.jar" type="file" 
         property="saaj.impl.jar.present"/>
+    <available file="${extlib.dir}/click.jar" type="file" 
+        property="click.jar.present"/>
+    <available file="${extlib.dir}/click-extras.jar" type="file"
+        property="click-extras.jar.present"/>
 
     <target name="all">
 
@@ -65,7 +69,9 @@
             <isset property="mail.jar.present" />
             <isset property="saaj.api.jar.present" />
             <isset property="saaj.impl.jar.present" />
-	    </and>
+            <isset property="click.jar.present" />
+            <isset property="click-extras.jar.present" />
+        </and>
 	</condition>
     
 
@@ -120,6 +126,16 @@
         </condition>
     </fail>
     <fail message="*** missing  ${extlib.dir}/saaj-impl.jar ***">
+        <condition>
+            <not><isset property="saaj.impl.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/click.jar.  Download Click 1.4 beta from http://click.sourceforge.net.  The .jar file should be renamed to click.jar (without the version number in the filename) ***">
+        <condition>
+            <not><isset property="saaj.impl.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/click-extras.jar.  Download Click 1.4 beta from http://click.sourceforge.net and include the 'extras' .jar file.  It should be renamed to click-extras.jar (without the version number in the filename)***">
         <condition>
             <not><isset property="saaj.impl.jar.present" /></not>
         </condition>

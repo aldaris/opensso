@@ -1,0 +1,213 @@
+/* CSS Document */
+/***********************************************************
+					   Div Generic
+***********************************************************/
+div.width_160{
+	width:160px;
+	float: left;
+	padding:5px;
+}
+div.tabs{
+	float: left;	
+	padding:10px;
+	border-bottom:1px solid;
+	border-bottom-color:#999999;
+	height:22px;
+}
+div.borderPopUpGray{
+	background:#FFFFFF;
+	border-top:1px solid #999999;		
+	border-left:1px solid #999999;		
+	border-right:1px solid #999999;		
+	border-bottom:1px solid #999999;	
+	padding:10px;
+}
+
+/***********************************************************
+					   Round Corners
+***********************************************************/
+/*div.rbxtopOne_Blue{
+	font-size: 1px; 
+	height: 1px; 
+	background: #60a2e1;
+	margin: 0 5px;	
+}
+
+div.rbxtopTwo_Blue{
+	font-size: 1px; 
+	height: 1px; 
+	border: 2px solid #60a2e1; 
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 3px;
+	background: #60a2e1;
+}
+
+div.rbxtopThree_Blue{
+	font-size: 1px; 
+	height: 2px; 
+	border: 1px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 2px;
+	background: #60a2e1;
+
+}
+
+div.rbxtopFour_Blue{
+	font-size: 1px; 
+	height: 1px; 
+	border: 1px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 1px;
+	background: #60a2e1;
+
+}
+
+div.rbxbottomFour_Blue{
+	font-size: 1px;
+	height: 1px; 
+	border: 1px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 1px;
+	background: #60a2e1;
+}
+
+div.rbxbottomThree_Blue{
+	font-size: 1px;
+	height: 0;
+	border: 1px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 1px;
+	background: #60a2e1;
+}
+
+div.rbxbottomTwo_Blue{
+	font-size: 1px;
+	height: 1px;
+	border: 2px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 2px;
+	background: #60a2e1;
+
+}
+
+div.rbxbottomOne_Blue{
+	font-size: 1px;
+	height: 1px; 
+	background: #60a2e1;
+	margin: 0 4px;
+}
+
+div.rbxtopOne{
+	font-size: 1px; 
+	height: 1px; 
+	background: #60a2e1;
+	margin: 0 5px;
+}
+
+div.rbxtopTwo{
+	font-size: 1px; 
+	height: 1px; 
+	border: 2px solid #60a2e1; 
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 2px;
+
+}
+
+div.rbxtopThree{
+	font-size: 1px; 
+	height: 2px; 
+	border: 1px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 1px;
+}
+
+div.rbxtopFour{
+	font-size: 1px; 
+	height: 1px; 
+	border: 1px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 1px;
+}
+
+div.rbxbottomFour{
+	font-size: 1px;
+	height: 1px; 
+	border: 1px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 1px;
+}
+
+div.rbxbottomThree{
+	font-size: 1px;
+	height: 2px; 
+	border: 1px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 2px;
+}
+
+div.rbxbottomTwo{
+	font-size: 1px;
+	height: 1px;
+	border: 2px solid #60a2e1;
+	border-top: 0 none;
+	border-bottom: 0 none;
+	margin: 0 3px;
+}
+
+div.rbxbottomOne{
+	font-size: 1px;
+	height: 1px; 
+	background: #60a2e1;
+	margin: 0 5px;
+}
+*/
+/*************************************************************
+					Tool tip
+**************************************************************/
+
+#ajax_tooltipObj{
+	z-index:1000000;
+	text-align:left;
+}
+#ajax_tooltipObj div{
+	position:relative;
+}
+
+/* If you don't want the arrow - Just set the width of this div to 1 or something like that and drop the background selectors from the CSS below */
+
+#ajax_tooltipObj .ajax_tooltip_arrow{	/* Left div for the small arrow */
+	background-image:url('../images/arrow.gif');
+	width:40px;
+	position:absolute;
+	left:0px;
+	top:0px;
+	background-repeat:no-repeat;
+	background-position:center left;
+	z-index:1000005;
+	height:190px;
+}
+
+#ajax_tooltipObj .ajax_tooltip_content{
+	border:4px solid #60a2e1;	/* Border width */
+	left:28px;	/* Same as border thickness */
+	top:0px;
+	position:absolute;
+	width:320px;	/* Width of tooltip content */
+	height:190px;	/* Height of tooltip content */
+	background-color:#FFF;	/* Background color */
+	padding:5px;	/* Space between border and content */
+	font-size:0.8em;	/* Font size of content */
+	overflow:hidden;	/* Hide overflow content */
+	z-index:1000001;
+}

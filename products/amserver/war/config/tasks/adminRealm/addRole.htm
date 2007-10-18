@@ -1,0 +1,37 @@
+<style>
+	#panel{
+		background:#FFFFFF;
+		padding:10px;
+		border:1px solid #000000;		
+	}
+	p{
+		padding-left:10px;
+		padding-right:10px;
+	}
+	#links{
+		color:#000099;
+		text-align:right;
+	}
+</style>
+<script language="javascript">
+	function cancel{
+		YAHOO.sun.container.addrole.hide();	
+	}
+</script>
+<div id="panel">
+	<div id="mainPanel" align="center">
+		<div id="createPanel bodySpace" class="createpanel" align="left" style="width:370px;">
+			<p><strong>Enter a name for this new role:</strong><br />
+			<input type="text" id="role" name="role"/></p>
+			<p>Select the administrative privileges for this new role</p>
+			<div class="bodywhite">
+				<p><input type="checkbox"/>&nbsp;Read & write to all log files</p>
+				<p><input type="checkbox"/>&nbsp;Read access to all log files</p>
+				<p><input type="checkbox"/>&nbsp;Write access to all log files</p>
+				<p><input type="checkbox"/>&nbsp;Read & write access for policy properties only</p>
+				<p><input type="checkbox"/>&nbsp;Read & write access to all realm & policy properties</p>			
+			</div>
+			<p id="links"><a class="pointer" onclick="cancel();">Cancel</a>&nbsp;|&nbsp;<a class="pointer">Save</a><p>			
+		</div>
+	</div>
+</div>

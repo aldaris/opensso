@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.31 2007-10-17 23:00:49 veiming Exp $
+   $Id: build.xml,v 1.32 2007-10-18 06:01:17 lhazlewood Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -148,6 +148,14 @@
             <zipfileset dir="${war.xml.dir}/template/sms" prefix="WEB-INF/template/sms">
                 <include name="SunAMClientData.xml" />
                 <include name="defaultDelegationPolicies.xml" />
+            </zipfileset>
+            <!-- Include configuration gui into main webapp: -->
+            <zipfileset dir="${amserver.warbase.dir}/config">
+                <include name="**/*" />
+                <!-- useful for standalone testing, but we don't want to 
+                     include these in the master .war file: -->
+                <exclude name="**/web.xml"/>
+                <exclude name="**/index.jsp"/>
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/ldif" prefix="WEB-INF/template/sms">
                 <include name="am_sm_ds_schema.ldif" />

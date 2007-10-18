@@ -1,0 +1,49 @@
+<style>
+	.OrangeSmall{
+		color:#ec9c2b;
+		font-family:Helvetica, sans-serif;
+		font-size:15px;
+	}
+	.bodySpace{
+		padding:10px;
+	}
+</style>
+<script language="javascript">
+function cancel(){
+	document.location = "$context/commonTasks.htm";
+}
+</script>
+<div align="left">
+<div class="firsttitle">
+    <h2>Configure an Agent</h2>
+    <small>Si quaedam nimis antique, si peraque dure dicere credit eos, ignave multa fatetur, et sapit et mecum facit et Iova iudicat aequo.</small>
+</div>
+<br />
+<div class="bodywhite bodySpace">
+    <font class="commonTextblack">Where will this configuration be written to:</font><br />
+    <select id="selectAuthenticaion" style="width:200px">
+        <option value="0">Select ...</option>
+    </select><br /><br />
+    <font class="OrangeSmall">Deployment details</font><div align="right"><font class="OrangeSmall">* ALL Fields are Required</font></div><br />
+		<div id="createPanel" class="createpanel" align="left">
+        	<br />
+			<div class="bodywhite bodySpace">
+                <font class="OrangeSmall">Agent Server URL:</font><br />
+                <input type="text" id="url" name="url"><br>
+                <a class="blue">Check URL</a><br /><br />
+
+                <font class="OrangeSmall">Agent Server URL:</font><br />
+                <input type="text" id="url" name="url"><br>
+                <a class="blue">Check URL</a><br /><br />
+
+                <font class="OrangeSmall">Agent Notification URL (optional):</font><br />
+                <input type="text" id="notificationUrl" name="notificationUrl"><br>
+                <a class="blue">Check URL</a><br />
+            </div>
+			<div style="padding:10px;" align="right">
+				<button type="button" value="Cancel" onClick="javascript:cancel();">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+				<button type="button" value="addStore" onClick="javascript:deployAgent();">Deploy Agent</button>
+			</div>
+			<br />
+		</div>
+</div>

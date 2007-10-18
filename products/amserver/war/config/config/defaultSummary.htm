@@ -1,0 +1,107 @@
+<script type="text/javascript">
+
+    YAHOO.namespace( "sun.identity.config.options.defaultSummary" );
+
+    function back() {
+        document.location = "$context/index.jsp";
+    }
+
+    function submitResult( response ) {
+        if ( response.responseText == "true" ) {
+            //creation was successful, hide the writing dialog, show the confComplete:
+
+            //in actuality, this usually happens very fast, so put a delay when removing the writeConf window.
+            //if we don't do this, the window blinks and looks unsightly, so we actually impose an unnecessary
+            //gui delay for a slightly cleaner 'expected' UI experience:
+            setTimeout( "YAHOO.sun.identity.config.options.defaultSummary.writeConf.hide()", 1500 );
+            setTimeout( "YAHOO.sun.identity.config.options.defaultSummary.confComplete.show()", 1500 )
+        } else {
+            //TODO - show a specific (nice looking) error message dialog that explains why writing config failed.
+            //for now, just alert:
+            alert( "Unexpected error: [" + response.responseText + "].  Please contact your System " +
+                   "Administrator.  If you are the System Administrator, please direct your questions to the " +
+                   "OpenSSO user's mailing list for help.");
+        }
+    }
+
+    function createConf() {
+        YAHOO.sun.identity.config.options.defaultSummary.writeConf.show();
+        AjaxUtils.call( "$context$path?actionLink=createDefaultConfig", submitResult );
+    }
+
+    function launchConsole() {
+        document.location = "$context/commonTasks.htm";
+    }
+
+    function init() {
+        YAHOO.sun.identity.config.options.defaultSummary.userStoreDetailsModule = new YAHOO.widget.Module( "userStoreDetailsModule" );
+
+        YAHOO.sun.identity.config.options.defaultSummary.writeConf = new YAHOO.widget.Panel("writeConf", { width:"240px", fixedcenter:true, close:false, draggable:false, zindex:4, modal:true, visible:false });
+        YAHOO.sun.identity.config.options.defaultSummary.writeConf.setHeader("Writing configuration.  Please wait...");
+        YAHOO.sun.identity.config.options.defaultSummary.writeConf.setBody('<img src="$context/assets/images/rel_interstitial_loading.gif" />');
+        YAHOO.sun.identity.config.options.defaultSummary.writeConf.render(document.body);
+
+        YAHOO.sun.identity.config.options.defaultSummary.confComplete = new YAHOO.widget.Panel("confComplete", { fixedcenter: true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.defaultSummary.confComplete.render();
+    }
+    YAHOO.util.Event.onDOMReady(init);
+
+</script>
+<style type="text/css">
+    /* local overrides for the two summary boxes: */
+    #userStoreDetailsModule, #dataStoreDetailsModule {
+        width: 250px;
+    }
+    #userStoreDetailsModule {
+        float: left;
+    }
+    #dataStoreDetailsModule {
+        margin-left: 25em;
+        margin-bottom: 2em;
+    }
+</style>
+<div align="center">
+    <div align="left" style="width:700px">
+        <h1>Default Configuration Summary</h1>
+        <p>Please take a moment to confirm that these settings are correct.</p>
+
+        <div id="userStoreDetailsModule" class="yui-panel">
+            <div class="hd">User Store Details</div>
+            <div class="bd" style="background-color: white">Default Configuration <img class="pointer" src="$context/assets/images/message.gif"/></div>
+        </div>
+
+        <div id="dataStoreDetailsModule" class="yui-panel">
+            <div class="hd">Data Store Details</div>
+            <div class="bd" style="background-color: white">Default Configuration <a id="ttprealm" href="#" onmouseover="AjaxUtils.ajax_showTooltip('$context/tooltip/tooltipDataStoreDetails.htm',this);return false;" onmouseout="AjaxUtils.ajax_hideTooltip()" ><img class="pointer" src="$context/assets/images/message.gif"/></a></div>
+        </div>
+
+        <p>This demo is for evaluation purposes. FAM will automatically configure the config store and the user store
+           to your local system.</p>
+        <p>If you intend on placing this on a production server then you should return to the
+           <a href="$context/config/options.htm">configuration options page</a> and click <b>Create a New Configuration</b>
+           instead.</p>
+
+        <div align="right">
+            <button type="button" id="btnBack" name="btnBack" value="Back" onClick="back();">Back</button>
+            &nbsp;&nbsp;
+            <button type="button" id="btnCreateConf" name="btnCreateConf" value="Create_Configuration" onclick="createConf();">Create Configuration</button>
+        </div>
+
+        <div id="confComplete" style="visibility:hidden">
+            <div class="hd">Configuration Complete</div>
+            <div class="bd">
+                <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
+                    <br/>
+                    <br/>
+                    <br/>
+                    <h1>Configuration Complete!</h1>
+                    <br/>
+                    <div align="center">
+                        <a class="blueSmall" href="#" onclick="launchConsole(); return false">Launch the console</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,52 @@
+<style>
+    #tittle {
+        background: #60a2e1;
+        border: 1px solid;
+        border-color: #999999;
+        font-family: Helvetica, sans-serif;
+        font-size: 14px;
+        color: #FFFFFF;
+        font-weight: bold;
+        padding-left: 10px;
+        padding-right: 10px;
+        width: 450px;
+    }
+
+    .border {
+        font-family: Helvetica, sans-serif;
+        font-size: 12px;
+        border: 1px solid #60a2e1;
+        padding: 5px;
+        width: 460px;
+    }
+</style>
+<script language="javascript">
+    function Cancel() {
+        document.location = "$context/config/options.htm";
+    }
+
+    function createConf() {
+        YAHOO.sun.identity.config.options.wizard.writeConf.show();
+        setTimeout("YAHOO.sun.identity.config.options.wizard.writeConf.hide()", 1500);
+        setTimeout("YAHOO.sun.identity.config.options.wizard.confComplete.show()", 1500);
+    }
+</script>
+<div align="left" style="width:700px">
+    <h1>Use an existing configuration</h1>
+
+    <h2>Select the configuration you are adding to</h2>
+
+    <div id="tittle">Configurations</div>
+    <div class="border">
+        <p>&nbsp;<input type="checkbox"/>&nbsp;http://fam.company.com:808/fam/<br/></p>
+        <p>&nbsp;<input type="checkbox"/>&nbsp;http://fam.sun.com:808/fam/<br/></p>
+        <p>&nbsp;<input type="checkbox"/>&nbsp;http://fam.something.com:808/fam/<br/></p>
+    </div>
+    <br/>
+
+    <div align="right" style="width:460px">
+        <button type="button" value="Cancel" onClick="Cancel();">Cancel</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" value="AcddConf" onClick="createConf();">Add to Configuration</button>
+    </div>
+</div>

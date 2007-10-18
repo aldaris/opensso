@@ -1,0 +1,559 @@
+<script type="text/javascript">
+
+    YAHOO.namespace("sun.identity.config.options.wizard");
+
+    //convenient alias:
+    var $ = YAHOO.util.Dom.get;
+
+    var startingTab = $startingTab; //determined by Click Wizard.java control based on user cookie
+
+    var currentTab = startingTab;
+    var previousTab = 1;
+    var nextTab = currentTab + 1;
+    var firstFAMInstance = true;
+
+    var usingCustomConfigStore = false;
+    var configStoreNameValid = false;
+    var configStoreHostValid = false;
+    var configStoreBaseDNValid = false;
+    var configStoreLoginIdValid = false;
+
+    var usingCustomUserStore = false;
+    var userStoreNameValid = false;
+    var userStoreHostValid = false;
+    var userStoreBaseDNValid = false;
+    var userStoreLoginIdValid = false;
+
+    function adjustTabButtons() {
+        $('saveTabButton').style.display = "none";
+        if ( currentTab == 1 ) {
+            $('previousTabButton').style.display = "none";
+            $('nextTabButton').style.display = "";
+            $('writeConfigButton').style.display = "none";
+        } else if ( currentTab == 6 ) {
+            $('previousTabButton').style.display = "";
+            $('nextTabButton').style.display = "none";
+            $('writeConfigButton').style.display = "";
+        } else {
+            $('previousTabButton').style.display = "";
+            $('nextTabButton').style.display = "";
+            $('writeConfigButton').style.display = "none";
+        }
+    }
+
+    function rangeCheck( tabNum ) {
+        if ( tabNum < 1 ) {
+            return 1;
+        } else if ( tabNum > 6 ) {
+            return 6;
+        } else {
+            return tabNum;
+        }
+    }
+
+    //showTab helper function - do not call directly.
+    function _tabLoaded( tabNum ) {
+        $('wizardStep' + currentTab).style.display = "none";
+        $('wizardStep' + tabNum).style.display = "";
+        $('tab' + currentTab).className = "";
+        $('tab' + tabNum).className = "currentTab";
+        currentTab = tabNum;
+        $('nextTabButton').disabled = false;
+        if ( !firstFAMInstance && currentTab == 2 ) {
+            nextTab = 6;
+        } else {
+            nextTab = rangeCheck(currentTab + 1);
+        }
+        if ( !firstFAMInstance && currentTab == 6 ) {
+            previousTab = 2;
+        } else {
+            previousTab = rangeCheck(currentTab - 1);
+        }
+        adjustTabButtons();
+    }
+    function showTab( tabNum ) {
+        tabNum = rangeCheck(tabNum);
+        var callback = new Function( _tabLoaded( tabNum ) );
+        var tab = 'wizardStep' + tabNum;
+        var url = "$context/config/wizard/step" + tabNum + ".htm";
+        AjaxUtils.load(tab, url, callback);
+    }
+
+    function editTab( tabNum ) {
+        showTab(tabNum);
+        $('previousTabButton').style.display = "none";
+        $('nextTabButton').style.display = "none";
+        $('writeConfigButton').style.display = "none";
+        $('saveTabButton').style.display = "";
+    }
+    function nextWizardTab() {
+        showTab(nextTab);
+    }
+    function previousWizardTab() {
+        showTab(previousTab);
+    }
+    function resetWizard() {
+        showTab(startingTab);
+    }
+    function cancelWizard() {
+        YAHOO.sun.identity.config.options.wizard.hide();
+        resetWizard();
+    }
+    function startNewConfig() {
+        YAHOO.sun.identity.config.options.wizard.confComplete.hide();
+        firstFAMInstance = false;
+        startingTab = 2;
+        resetWizard();
+    }
+
+    function onPushNewInstanceConfigResponse( response ) {
+        if ( response.responseText == "true" ) {
+            //operation was successful, hide the writing dialog, show the confComplete:
+
+            //in actuality, this usually happens very fast, so put a delay when removing the testUrlPanel.
+            //if we don't do this, the window blinks and looks unsightly, so we actually impose an unnecessary
+            //gui delay for a slightly cleaner 'expected' UI experience:
+            setTimeout("YAHOO.sun.identity.config.options.wizard.pushingConfig.hide()", 1500);
+            setTimeout("YAHOO.sun.identity.config.options.wizard.confComplete.show()", 1500);
+        } else {
+            //TODO - show a specific (nice looking) error message dialog that explains why pushing the config failed.
+            //for now, just alert:
+            alert( "Unexpected error: [" + response.responseText + "].  Please contact your System " +
+                   "Administrator.  If you are the System Administrator, please direct your questions to the " +
+                   "OpenSSO user's mailing list for help.");
+        }
+    }
+
+    function pushNewInstanceConfig() {
+        YAHOO.sun.identity.config.options.wizard.pushConfigDialog.hide();
+        YAHOO.sun.identity.config.options.wizard.pushingConfig.show();
+        AjaxUtils.call( "$context$path?actionLink=pushConfig", onPushNewInstanceConfigResponse );
+    }
+    function cancelPushNewInstanceConfig() {
+        document.location = "$context/commonTasks.htm";
+    }
+
+    function onTestNewInstanceUrlResponse( response ) {
+        if ( response.responseText == "true" ) {
+            //operation was successful, hide the writing dialog, show the confComplete:
+
+            //in actuality, this usually happens very fast, so put a delay when removing the testUrlPanel.
+            //if we don't do this, the window blinks and looks unsightly, so we actually impose an unnecessary
+            //gui delay for a slightly cleaner 'expected' UI experience:
+            setTimeout("YAHOO.sun.identity.config.options.wizard.testUrlPanel.hide()", 1500);
+            setTimeout("YAHOO.sun.identity.config.options.wizard.pushConfigDialog.show()", 1500 );
+        } else {
+            //TODO - show a specific (nice looking) error message dialog that explains why testing failed.
+            //for now, just alert:
+            alert( "Unexpected error: [" + response.responseText + "].  Please contact your System " +
+                   "Administrator.  If you are the System Administrator, please direct your questions to the " +
+                   "OpenSSO user's mailing list for help.");
+        }
+    }
+
+    function testNewInstanceUrl() {
+        YAHOO.sun.identity.config.options.wizard.testUrlPanel.show();
+        AjaxUtils.call( "$context$path?actionLink=testNewInstanceUrl", onTestNewInstanceUrlResponse );
+    }
+
+    function onWriteConfigurationResponse( response ) {
+        if ( response.responseText == "true" ) {
+            //operation was successful, hide the writing dialog, show the confComplete:
+
+            //in actuality, this usually happens very fast, so put a delay when removing the writeConf window.
+            //if we don't do this, the window blinks and looks unsightly, so we actually impose an unnecessary
+            //gui delay for a slightly cleaner 'expected' UI experience:
+            setTimeout("YAHOO.sun.identity.config.options.wizard.writeConf.hide()", 1500);
+            if ( !firstFAMInstance ) {
+                setTimeout("testNewInstanceUrl()", 1500);
+            } else {
+                setTimeout("YAHOO.sun.identity.config.options.wizard.confComplete.show()", 1500);
+            }
+        } else {
+            //TODO - show a specific (nice looking) error message dialog that explains why writing config failed.
+            //for now, just alert:
+            alert( "Unexpected error: [" + response.responseText + "].  Please contact your System " +
+                   "Administrator.  If you are the System Administrator, please direct your questions to the " +
+                   "OpenSSO user's mailing list for help.");
+        }
+    }
+
+    function writeConfiguration() {
+        YAHOO.sun.identity.config.options.wizard.writeConf.show();
+        AjaxUtils.call( "$context$path?actionLink=createConfig", onWriteConfigurationResponse );
+    }
+
+    /* =============================
+       STEP 3 AND 4 SHARED FUNCTIONS
+       ============================= */
+
+    function isCustomConfigStoreValid() {
+        return configStoreNameValid &&
+               configStoreHostValid &&
+               configStoreBaseDNValid &&
+               configStoreLoginIdValid;
+    }
+
+    function isCustomUserStoreValid() {
+        return userStoreNameValid &&
+               userStoreHostValid &&
+               userStoreBaseDNValid &&
+               userStoreLoginIdValid;
+    }
+
+    function validateStore( type ) {
+        validateStoreName(type);
+        validateStoreServer(type);
+        validateStoreBaseDN(type);
+        validateStoreLoginId(type);
+    }
+
+    function enableCustomConfig( storeType ) {
+        $(storeType + 'StoreModule').style.display = "";
+        $(storeType + 'StoreCustom').checked = true;
+        $(storeType + 'StoreDefault').checked = false;
+        if ( storeType == "config" ) {
+            usingCustomConfigStore = true;
+            //if ( $('userStoreCustom').checked ) {
+            //    $('userStoreSameAsConfigStoreDiv').style.display = "";
+            //}
+        } else {
+            usingCustomUserStore = true;
+        }
+        if ( usingCustomConfigStore && storeType == "user" ) {
+            $('userStoreSameAsConfigStoreDiv').style.display = "";
+        }
+        $('nextTabButton').disabled = true;
+    }
+
+    function disableCustomConfig( storeType ) {
+        $(storeType + 'StoreModule').style.display = "none";
+        $(storeType + 'StoreCustom').checked = false;
+        $(storeType + 'StoreDefault').checked = true;
+        if ( storeType == "config" ) {
+            usingCustomConfigStore = false;
+            //$('userStoreSameAsConfigStoreDiv').style.display = "none";
+        }
+        if ( storeType == "user" ) {
+            usingCustomUserStore = false;
+            $('userStoreSameAsConfigStoreDiv').style.display = "none";
+        }
+        clearStore( storeType );
+        $('nextTabButton').disabled = false;
+    }
+
+    function changeUserStoreConfiguration( type ) {
+        if ( type == 1 ) {
+            $('userStoreModule').style.display = "none";
+            $('typeConfiguration1').checked = true;
+        } else {
+            $('userStoreModule').style.display = "";
+            $('typeConfiguration2').checked = true;
+        }
+    }
+
+    function copyConfigStoreFieldsToUserStoreFields() {
+        $('userStoreName').value = $('configStoreName').value;
+        $('userStoreHost').value = $('configStoreHost').value;
+        $('userStoreSecurePortNo').checked = $('configStoreSecurePortNo').checked;
+        $('userStoreSecurePortYes').checked = $('configStoreSecurePortYes').checked;
+        $('userStorePort').value = $('configStorePort').value;
+        $('userStoreLoginId').value = $('configStoreLoginId').value;
+        $('userStorePassword').value = $('configStorePassword').value;
+        $('userStoreBaseDN').value = $('configStoreBaseDN').value;
+        validateStore('user');
+    }
+
+    function enableStandardPort( storeType ) {
+        $(storeType + 'StoreSecurePortNo').checked = true;
+        $(storeType + 'StoreSecurePortYes').checked = false;
+        $(storeType + 'StorePort').value = '389';
+    }
+    function enableSecurePort( storeType ) {
+        $(storeType + 'StoreSecurePortNo').checked = false;
+        $(storeType + 'StoreSecurePortYes').checked = true;
+        $(storeType + 'StorePort').value = '636';
+    }
+
+    function adjustNextTabButton( type ) {
+        var allValidated = false;
+        if ( type == 'config' ) {
+            allValidated = isCustomConfigStoreValid();
+        } else {
+            allValidated = isCustomUserStoreValid();
+        }
+        $('nextTabButton').disabled = !allValidated;
+    }
+
+    function storeNameValidated( type, response ) {
+        if ( response.responseText == "true" ) {
+            eval( type + "StoreNameValid = true;" );
+            $(type + 'StoreNameStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
+                                                   '<small>Store name provided</small>';
+        } else {
+            eval( type + "StoreNameValid = false;" );
+            $(type + 'StoreNameStatus').innerHTML = response.responseText;
+        }
+        adjustNextTabButton(type);
+    }
+
+    function storeServerValidated( type, response ) {
+        if( response.responseText == "true" ) {
+            eval( type + "StoreHostValid = true;" );
+            $(type + 'StoreHostStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
+                                                   '<small>Located Directory</small>';
+        } else {
+            eval( type + "StoreHostValid = true;" );
+            $(type + 'StoreHostStatus').innerHTML = response.responseText;
+        }
+        adjustNextTabButton(type);
+    }
+
+    function storeBaseDNValidated( type, response ) {
+        if( response.responseText == "true" ) {
+            eval( type + "StoreBaseDNValid = true;" );
+            $(type + 'StoreBaseDNStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
+                                                   '<small>Located Base DN</small>';
+        } else {
+            eval( type + "StoreBaseDNValid = false;" );
+            $(type + 'StoreBaseDNStatus').innerHTML = response.responseText;
+        }
+        adjustNextTabButton(type);
+    }
+
+    function storeLoginIdValidated( type, response ) {
+        if( response.responseText == "true" ) {
+            eval( type + "StoreLoginIdValid = true;" );
+            $(type + 'StoreLoginIdStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
+                                                   '<small>Logged in.</small>';
+        } else {
+            eval( type + "StoreLoginIdValid = false;" );
+            $(type + 'StoreLoginIdStatus').innerHTML = response.responseText;
+        }
+        adjustNextTabButton(type);
+    }
+    function toPath( type ) {
+        return "/config/wizard/step" + (type == 'config' ? 3 : 4 ) + ".htm";
+    }
+    function validateStoreName( type ) {
+        var callUrl = "$context" + toPath(type) + "?actionLink=checkName&name=" + $(type + 'StoreName').value
+        var callbackFunction = null;
+        eval( "callbackFunction = " + type + "StoreNameValidated;" );
+        AjaxUtils.call( callUrl, callbackFunction );
+    }
+
+    function validateStoreServer( type ) {
+        var host = $(type + 'StoreHost').value;
+        var port = $(type + 'StorePort').value;
+
+        var callUrl = "$context" + toPath(type) + "?actionLink=checkServer&";
+        callUrl += "host=" + host;
+        callUrl += "&port=" + port;
+        callUrl += "&securePort=" + ($(type + 'StoreSecurePortYes').checked ? "true" : "false");
+        var callbackFunction = null;
+        eval( "callbackFunction = " + type + "StoreServerValidated;" );
+        AjaxUtils.call( callUrl, callbackFunction );
+    }
+
+    function validateStoreBaseDN( type ) {
+        var callUrl = "$context" + toPath(type) + "?actionLink=checkBaseDN&baseDN=" + $(type + 'StoreBaseDN').value
+        var callbackFunction = null;
+        eval( "callbackFunction = " + type + "StoreBaseDNValidated;" );
+        AjaxUtils.call( callUrl, callbackFunction );
+    }
+
+    function validateStoreLoginId( type ) {
+        var loginId = $(type + 'StoreLoginId').value;
+        var password = $(type + 'StorePassword').value;
+
+        var callUrl = "$context" + toPath(type) + "?actionLink=checkLoginId&";
+        callUrl += "loginId=" + loginId;
+        callUrl += "&password=" + password;
+        var callbackFunction = null;
+        eval( "callbackFunction = " + type + "StoreLoginIdValidated;" );
+        AjaxUtils.call( callUrl, callbackFunction );
+    }
+
+    function clearStore( type ) {
+        $(type + 'StoreName').value = null;
+        $(type + 'StoreNameStatus').innerHTML = "";
+        eval( type + "StoreNameValid = false;" );
+
+        $(type + 'StoreHost').value = null;
+        enableStandardPort( type );
+        $(type + 'StoreHostStatus').innerHTML = "";
+        eval( type + "StoreHostValid = false;" );
+
+        $(type + 'StoreBaseDN').value = null;
+        $(type + 'StoreBaseDNStatus').innerHTML = "";
+        eval( type + "StoreBaseDNValid = false;" );
+
+        $(type + 'StoreLoginId').value = null;
+        $(type + 'StorePassword').value = null;
+        $(type + 'StoreLoginIdStatus').innerHTML = "";
+        eval( type + "StoreLoginIdValid = false;" );
+
+        var callUrl = "$context" + toPath(type) + "?actionLink=clearStore";
+        AjaxUtils.call( callUrl );
+    }
+
+    function wizardInit() {
+        YAHOO.sun.identity.config.options.wizard.writeConf = new YAHOO.widget.Panel("writeConf", { width:"240px", fixedcenter:true, close:false, draggable:false, zindex:4, modal:true, visible:false });
+        YAHOO.sun.identity.config.options.wizard.writeConf.setHeader("Writing configuration.  Please wait...");
+        YAHOO.sun.identity.config.options.wizard.writeConf.setBody('<img src="$context/assets/images/rel_interstitial_loading.gif" />');
+        YAHOO.sun.identity.config.options.wizard.writeConf.render(document.body);
+
+        YAHOO.sun.identity.config.options.wizard.testUrlPanel = new YAHOO.widget.Panel("testUrlPanel", { width:"270px", fixedcenter:true, close:false, draggable:false, zindex:4, modal:true, visible:false });
+        YAHOO.sun.identity.config.options.wizard.testUrlPanel.setHeader("Testing new instance URL.  Please wait...");
+        YAHOO.sun.identity.config.options.wizard.testUrlPanel.setBody('<img src="$context/assets/images/rel_interstitial_loading.gif" />');
+        YAHOO.sun.identity.config.options.wizard.testUrlPanel.render(document.body);
+
+        YAHOO.sun.identity.config.options.wizard.pushingConfig = new YAHOO.widget.Panel("pushingConfig", { width:"260px", fixedcenter:true, close:false, draggable:false, zindex:4, modal:true, visible:false });
+        YAHOO.sun.identity.config.options.wizard.pushingConfig.setHeader("Pushing configuration to new instance.  Please wait...");
+        YAHOO.sun.identity.config.options.wizard.pushingConfig.setBody('<img src="$context/assets/images/rel_interstitial_loading.gif" />');
+        YAHOO.sun.identity.config.options.wizard.pushingConfig.render(document.body);
+
+
+        YAHOO.sun.identity.config.options.wizard.pushConfigDialog = new YAHOO.widget.SimpleDialog("pushConfigDialog", {
+            width: "260px",
+            effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.25},
+            fixedcenter:true,
+            modal:true,
+            visible:false,
+            draggable:false });
+
+        var dlg = YAHOO.sun.identity.config.options.wizard.pushConfigDialog; //alias for convenience
+        dlg.setHeader("Push Configuration?")
+        dlg.setBody("Do you want to push configuration data to the new instance?");
+        dlg.cfg.setProperty("icon", YAHOO.widget.SimpleDialog.ICON_INFO);
+
+        var pushConfigButtons = [ { text:"Yes",
+            handler:pushNewInstanceConfig,
+            isDefault:true },
+        { text:"No",
+            handler:cancelPushNewInstanceConfig } ];
+        dlg.cfg.queueProperty("buttons", pushConfigButtons);
+        dlg.render(document.body);
+
+        YAHOO.sun.identity.config.options.wizard.confComplete = new YAHOO.widget.Panel("confComplete", { fixedcenter: true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.wizard.confComplete.render();
+
+        YAHOO.util.Event.addListener("wizardCancelButton", "click", cancelWizard);
+
+        var showCurrentTab = new Function( showTab(currentTab) );
+        AjaxUtils.load('wizardStep' + currentTab, "$context/config/wizard/step" + currentTab + ".htm", showCurrentTab);
+    }
+    YAHOO.util.Event.onDOMReady(wizardInit);
+</script>
+<style type="text/css">
+    #tabList {
+        margin-left: 5px;
+        margin-bottom: 1em;
+        padding-bottom: 1em;
+    }
+
+    #tablist ol {
+        margin: 0;
+    }
+
+    #tabList li {
+        display: inline;
+        float: left;
+        margin: 0;
+        padding: 0.7em;
+        font-size: 108%;
+        border-bottom: 1px solid #999999;
+    }
+
+    #tab1, #tab2, #tab3, #tab4, #tab5 {
+        border-right: 1px solid #999999;
+    }
+
+    .currentTab {
+        color: #ec9c2b;
+        font-weight: bold;
+        font-size: 123.1%;
+    }
+
+    #wizardFooter {
+        height: 30px;
+        background: #d4deec;
+        padding: 10px;
+        vertical-align: middle;
+    }
+
+    #tabContents {
+        padding: 2em 1em 1em 1em;
+    }
+
+    #tab1RequiredInfoPanel li {
+        color: black;
+        padding: 0;
+    }
+
+    .tabContent {
+        height: 450px;
+    }
+
+    .tabContent h1 {
+        margin: 0 0 .5em 0;
+    }
+
+    .panel h1 {
+        padding: 0 1em 0.2em 1em;
+    }
+
+
+</style>
+<div id="wizard" style="width:800px">
+    <div class="hd">FAM Custom Configuration</div>
+    <div class="bd" style="background-color: #FFFFFF">
+        <ol id="tabList">
+            <li id="tab1">1 Introduction</li>
+            <li id="tab2">2 FAM Association</li>
+            <li id="tab3">3 Configuration Store</li>
+            <li id="tab4">4 User Store</li>
+            <li id="tab5">5 Load Balancing</li>
+            <li id="tab6">6 Summary</li>
+        </ol>
+
+        <div id="tabContents">
+            <div id="wizardStep1" class="tabContent" style="display:none"></div>
+            <div id="wizardStep2" class="tabContent" style="display:none"></div>
+            <div id="wizardStep3" class="tabContent" style="display:none"></div>
+            <div id="wizardStep4" class="tabContent" style="display:none"></div>
+            <div id="wizardStep5" class="tabContent" style="display:none"></div>
+            <div id="wizardStep6" class="tabContent" style="display:none"></div>
+        </div>
+        <!-- end tabContents -->
+    </div>
+    <div id="wizardFooter" class="ft">
+        <div align="left" style="float:left">
+            <button id="wizardCancelButton" type="button" onclick="cancelWizard();">Cancel</button>
+        </div>
+        <div align="right">
+            <button id="previousTabButton" type="button" style="display:none" onclick="previousWizardTab();">Previous</button>
+            <button id="nextTabButton" type="button" onclick="nextWizardTab();">Next</button>
+            <button id="saveTabButton" type="button" style="display:none" onclick="showTab(6);">Save</button>
+            <button id="writeConfigButton" type="button" style="display:none" onclick="writeConfiguration();">Create Configuration</button>
+        </div>
+    </div>
+    <div id="confComplete" style="visibility:hidden">
+        <div class="hd">Configuration Complete</div>
+        <div class="bd">
+            <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
+                <br/>
+                <br/>
+                <br/>
+
+                <h1>Configuration Complete!</h1>
+                <br/>
+
+                <small>What would you like to do next?</small>
+                <p align="center" class="blueSmall">
+                    <a class="pointer" href="#" onclick="launchConsole(); return false">Launch the console</a>&nbsp;|&nbsp;<a class="pointer" href="#" onclick="startNewConfig(); return false">Create another FAM instance</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

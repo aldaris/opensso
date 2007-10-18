@@ -1,0 +1,260 @@
+<style>
+	.widthTab{
+		width:300px;
+	}
+	select{
+		width:200px;
+	}
+	.bodySpace{
+		padding:10px;
+	}
+	.bodySpace2{
+		padding:3px;
+	}
+	.links{
+		width:200px;
+		text-align:right;
+	}
+	#option10{
+		background-color:#FFFFFF;
+		text-align:left;
+		border:1px solid #999999;
+	}
+</style>
+<script language="javascript">
+/*remenber validate the system have a condition, this page have a two parts, but the page 181 is hidden in the div
+"haveCondition" and for dafault "donthavecondition"*/
+function closed(){
+	document.location = "$context/commonTasks.htm";
+}
+function next(){
+	//AjaxUtils.load('container', '$context/tasks/protectResource/protectResource2.htm');
+	AjaxUtils.load('container', '$context/tasks/protectResource/protectResourceSummary.htm');
+}
+function OnChangeSubject(){
+	document.getElementById("divUser").style.display = (document.getElementById("subject").options[document.getElementById("subject").selectedIndex].value=="1") ? "" : "none";
+}
+function changeChecks(type){
+	document.getElementById("option"+type).style.display = (document.getElementById("condition"+type).checked) ? "" : "none";
+}
+
+function changeChecksAddCondition(){
+	if(document.getElementById("conditionNew9").checked){
+		document.getElementById("option10").style.display = "";
+		document.getElementById("contentTabs2").style.top = "-455px";
+	}else{
+		document.getElementById("option10").style.display = "none";
+		document.getElementById("contentTabs2").style.top = "-263px";
+	}
+}
+
+/*Add New*/
+function mostrar(type,element,name){
+	document.getElementById(name).style.display = (type==1) ? "none" : "";
+	document.getElementById(name).style.left=element.offsetLeft+"px";
+}
+function cancelPopUp(name){
+	document.getElementById(name).style.display = "none";
+}
+function SavePopUp1(){
+	/*Put here the code*/
+	document.getElementById("contentTabs1").style.display = "none";
+}
+function SavePopUp2(){
+	/*Put here the code*/
+	document.getElementById("contentTabs2").style.display = "none";
+}
+</script>
+<div id="mainPanel" align="center">
+    <div id="createPanel" class="createpanel">
+        <br />
+        <div class="bodywhite">
+            <h2>Protect a Resource</h2>
+            <small>Si quaedam nimis antique, si peraque dure dicere credit eos, ignave multa fatetur, et sapit et mecum facit et Iova</small>
+        </div>
+        <br />
+        <div class="bodywhite">
+            <p class="OrangeSmall">Select or create a URL pattern:</p>
+            <select multiple size="3"></select><br>
+            <!--<p class="blue links"><a class="pointer">Delete</a>&nbsp;|&nbsp;<a class="pointer">Add New</a></p-->
+			<div id="options1" class="yui-navset links">
+				<div id="contentTabs1" class="yui-content" style="z-index:20;display:none;position:absolute;top:-86px;">
+					<div id="tabOption1">
+					</div>
+					<div id="tabOption2" style="width:220px">
+						<p align="left"><b>New URL Pattern:</b><br />
+						<input id="newNameGroup" name="newNameGroup" style="width:200px"/></p>
+						<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs1');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="SavePopUp1();">Save</a></p>
+					</div>
+				</div>
+				<ul class="yui-nav" style="text-align:right">
+					<li><a href="#tab1" onclick="mostrar(1,this,'contentTabs1')"><em>Delete</em></a></li>
+					<li><a href="#tab2" onclick="mostrar(2,this,'contentTabs1')"><em>Add New</em></a></li>
+				</ul>
+			</div>
+        </div>
+        <div class="bodywhite">
+            <font class="OrangeSmall">Add a subject</font><br />
+            <font class="OrangeSmall">Select a subject type:</font><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+            <select id="subject" onchange="OnChangeSubject()">
+                <option value="0">Select ...</option>
+                <option value="1">Users</option>
+                <option value="2">Group</option>
+                <option value="3">Role</option>
+            </select><br><br />
+            <div id="divUser" style="display:none" class="bodySpace" align="left">
+                <div id="demo" class="yui-navset widthTab">
+                    <ul class="yui-nav">
+                        <li class="selected"><a href="#tab1"><em>Select user(s)</em></a></li>
+                    </ul>
+                    <div class="yui-content">
+                        <div>
+                            <div class="bodywhite bodySpace2">
+                            <input type="text" id="search"/><button type="button">search</button>
+                            </div>
+                            <div class="bodywhite bodySpace2">
+                                <font class="commonblack">Displaying: 1-N of N realm users</font>
+                            </div>
+                            <!--This prosses need be Automatically, that is a example, with the css it need,
+                            look the example of yui for a generate tab with javascript-->
+                            <div id="contentSearch">
+                                <div id="search1" class="yui-navset">
+                                    <div class="yui-content large">
+                                        <div>
+                                            <div class="colunmsheader">
+                                                <div class="insideColunm">&nbsp;First Name</div>
+                                                Last Name
+                                            </div>
+                                            <div class="colunms">
+                                                <input type="checkbox"/>&nbsp;First Name<br />
+                                                <input type="checkbox"/>&nbsp;First Name
+                                            </div>
+                                            <div class="colunms">Last Name<br />Last Name</div>
+                                        </div>
+                                        <div>
+                                            <div class="colunmsheader">
+                                                <div class="insideColunm">&nbsp;First Name</div>
+                                                Last Name
+                                            </div>
+                                            <div class="colunms">sds</div>
+                                            <div class="colunms">sds</div><br />
+                                        </div>
+                                        <div>
+                                            <div class="colunmsheader">
+                                                <div class="insideColunm">&nbsp;First Name</div>
+                                                Last Name
+                                            </div>
+                                            <div class="colunms">sds</div>
+                                            <div class="colunms">sds</div>
+                                        </div>
+                                    </div>
+                                    <ul class="yui-nav" style="text-align:right">
+                                        <li class="selected"><a href="#tab1"><em>1</em></a></li>
+                                        <li><a href="#tab2"><em>2</em></a></li>
+                                        <li><a href="#tab3"><em>3</em></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bodywhite" id="donthaveCondition">
+            <p class="OrangeSmall">Select the conditions:</p>
+            <input type="checkbox" id="condition1" />&nbsp;Active Session Time<br />
+            <input type="checkbox" id="condition2"/>&nbsp;Authentication by Module Chain<br />
+            <input type="checkbox" id="condition3"/>&nbsp;Authentication by type<br />
+            <input type="checkbox" id="condition4"/>&nbsp;Minimum Authentication Level<br />
+            <input type="checkbox" id="condition5"/>&nbsp;Maximum Authentication Level<br />
+            <input type="checkbox" id="condition6"/>&nbsp;Authentication to a Realm<br />
+            <input type="checkbox" id="condition7"/>&nbsp;Current Session Properties<br />
+            <input type="checkbox" id="condition8"/>&nbsp;Identity Membership<br />
+            <input type="checkbox" id="condition9" onclick="changeChecks(9);"/>&nbsp;IP Address<br />
+            <div id="option9" style="display:none">
+                <p class="OrangeSmall">Enter the IP Address Information:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
+				<p>Name:</font><input  type="text"/></p>
+				<p>IP Address from&nbsp;
+				<input type="text" style="width:30px;"/>
+				<input type="text" style="width:30px;"/>
+				<input type="text" style="width:30px;"/>
+				<input type="text" style="width:30px;"/></p>
+				<p>IP Address to&nbsp;
+				<input type="text" style="width:30px;"/>&nbsp;
+				<input type="text" style="width:30px;"/>&nbsp;
+				<input type="text" style="width:30px;"/>
+				<input type="text" style="width:30px;"/></p>
+				<p>DNS Name&nbsp;
+				<input  type="text"/></p>
+				<p class="OrangeSmall">Parameter Type:</p>
+				<input type="radio" id="type1" name="type"/>&nbsp;Static&nbsp;&nbsp;
+				<input type="radio" id="type1" name="type"/>&nbsp;Dinamic<br/>
+            </div>
+            <input type="checkbox" id="condition10"/>&nbsp;DNS Name<br />
+            <input type="checkbox" id="condition11"/>&nbsp;LDAP Filter Condition<br />
+            <input type="checkbox" id="condition12"/>&nbsp;Time (day, date, time, and timezone)<br />
+        </div>
+        <div class="bodywhite" id="haveCondition" >
+			<p class="OrangeSmall">Select the conditions:</p>
+                <select multiple size="3" style="width:200px"></select><br>
+                <!--<p class="blue links"><a class="pointer">Delete</a>&nbsp;|&nbsp;<a class="pointer">Add New</a></p>-->
+				<div id="options2" class="yui-navset links">
+					<div id="contentTabs2" class="yui-content" style="z-index:20;display:none;position:absolute;top:-263px;_top:-310px;">
+						<div id="tabOption1">
+						</div>
+						<div id="tabOption2" style="width:300px" align="left">
+							<p class="OrangeSmall">Select the type of condition(s):</p>
+							<input type="checkbox" id="conditionNew1" />&nbsp;Active Session Time<br />
+							<input type="checkbox" id="conditionNew2"/>&nbsp;Authentication by Module Chain<br />
+							<input type="checkbox" id="conditionNew3"/>&nbsp;Authentication by type<br />
+							<input type="checkbox" id="conditionNew4"/>&nbsp;Minimum Authentication Level<br />
+							<input type="checkbox" id="conditionNew5"/>&nbsp;Maximum Authentication Level<br />
+							<input type="checkbox" id="conditionNew6"/>&nbsp;Authentication to a Realm<br />
+							<input type="checkbox" id="conditionNew7"/>&nbsp;Current Session Properties<br />
+							<input type="checkbox" id="conditionNew8"/>&nbsp;Identity Membership<br />
+							<input type="checkbox" id="conditionNew9" onclick="changeChecksAddCondition();"/>&nbsp;IP Address<br />
+							<div id="option10" style="display:none">
+								<p class="OrangeSmall">Enter the IP Address Information:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
+								<p>Name:</font><input  type="text"/></p>
+								<p>IP Address from&nbsp;
+								<input type="text" style="width:30px;"/>
+								<input type="text" style="width:30px;"/>
+								<input type="text" style="width:30px;"/>
+								<input type="text" style="width:30px;"/></p>
+								<p>IP Address to&nbsp;
+								<input type="text" style="width:30px;"/>&nbsp;
+								<input type="text" style="width:30px;"/>&nbsp;
+								<input type="text" style="width:30px;"/>
+								<input type="text" style="width:30px;"/></p>
+								<p>DNS Name&nbsp;
+								<input  type="text"/></p>
+								<p class="OrangeSmall">Parameter Type:</p>
+								<input type="radio" id="type1" name="type"/>&nbsp;Static&nbsp;&nbsp;
+								<input type="radio" id="type1" name="type"/>&nbsp;Dinamic<br/>
+							</div>
+							<input type="checkbox" id="conditionNew10"/>&nbsp;DNS Name<br />
+							<input type="checkbox" id="conditionNew11"/>&nbsp;LDAP Filter Condition<br />
+							<input type="checkbox" id="conditionNew12"/>&nbsp;Time (day, date, time, and timezone)<br />
+							<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs2');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="SavePopUp2();">Save</a></p>
+						</div>
+					</div>
+					<ul class="yui-nav" style="text-align:right">
+						<li><a href="#tab1" onclick="mostrar(1,this,'contentTabs2')"><em>Delete</em></a></li>
+						<li><a href="#tab2" onclick="mostrar(2,this,'contentTabs2')"><em>Add New</em></a></li>
+					</ul>
+				</div>
+            </div>
+        <div class="subbody">
+            <button type="button" value="close" onClick="javascript:closed();">Close</button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" value="next" onClick="javascript:next();">Next</button>
+        </div>
+    </div>
+</div>
+<!--Tabs-->
+<script>
+(function() {
+    var tabView = new YAHOO.widget.TabView('demo');
+	var tabView2 = new YAHOO.widget.TabView('search1');
+})();
+
+</script>

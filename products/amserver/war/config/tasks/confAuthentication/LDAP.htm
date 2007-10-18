@@ -1,0 +1,230 @@
+<style>
+	  #tittle {
+        background: #60a2e1;
+        border: 1px solid;
+        border-color: #999999;
+        font-family: Helvetica, sans-serif;
+        font-size: 14px;
+        color: #FFFFFF;
+        font-weight: bold;
+        padding-left: 10px;
+        padding-right: 10px;
+		width:450px;
+    }
+	.border{
+		font-family: Helvetica, sans-serif;
+        font-size: 12px;
+		border:1px solid #60a2e1;
+		padding:5px;
+		width:460px;
+		height:100px;
+		overflow:auto;
+	}
+</style>
+<script language="javascript">
+YAHOO.namespace("sun.container");
+AjaxUtils.load( 'addStore', '$context/tasks/dlg/popupAuthenticationUserStore.htm');
+YAHOO.sun.container.addStore = new YAHOO.widget.Panel("addStore", { width:"280px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true } );
+YAHOO.sun.container.addStore.render();	
+
+    var pageURI = "$context/tasks/confAuthentication/LDAP.htm";
+    var DOM = YAHOO.util.Dom;
+
+    var userStoreNameValid = false;
+    var userHostNameValid = false;
+    var userHostPortValid = true;
+    var userLoginValid = false;
+    var userPasswordValid = false;
+    var userBaseDNValid = false;
+
+    function init() {
+        DOM.get("addStoreButton").disabled = true;
+    }
+
+    YAHOO.util.Event.onDOMReady(init);
+
+    function AddStoreEvent() {
+        AjaxUtils.doPost("container", "$context/tasks/confAuthentication/LDAP.htm", AjaxUtils.serializeForm("LDAPForm"), AfterAddStoreEvent, null);
+    }
+
+    function AfterAddStoreEvent() {
+        YAHOO.sun.container.addStore.show();
+        setTimeout("YAHOO.sun.container.addStore.hide()",1250);
+        setTimeout("AjaxUtils.load( 'container', '$context/tasks/confAuthentication/Ldap2Added.htm')",1250);
+    }
+
+    function cancel(){
+        document.location = "$context/commonTasks.htm";
+    }
+    
+
+    function validateUserStoreName() {
+        var callUrl = pageURI + "?actionLink=validateStoreName&storeName=" + DOM.get("user_storeName").value;
+        AjaxUtils.call(callUrl, userStoreNameValidated);
+    }
+
+    function validateUserHostName() {
+        var callUrl = pageURI + "?actionLink=validateHost&hostName=" + DOM.get("user_hostName").value;
+        AjaxUtils.call(callUrl, userHostNameValidated);
+    }
+
+    function validateUserHostPort() {
+        var callUrl = pageURI + "?actionLink=validatePort&hostPort=" + DOM.get("user_hostPort").value;
+        AjaxUtils.call(callUrl, userHostPortValidated);
+    }
+
+    function validateUserLogin() {
+        var callUrl = pageURI + "?actionLink=validateLogin&login=" + DOM.get("user_login").value;
+        AjaxUtils.call(callUrl, userLoginValidated);
+    }
+
+    function validateUserPassword() {
+        var callUrl = pageURI + "?actionLink=validatePassword&password=" + DOM.get("user_password").value;
+        AjaxUtils.call(callUrl, userPasswordValidated);
+    }
+
+    function validateUserBaseDN() {
+        var callUrl = pageURI + "?actionLink=validateBaseDN&baseDN=" + DOM.get("user_baseDN").value;
+        AjaxUtils.call(callUrl, userBaseDNValidated);
+    }
+
+    function userStoreNameValidated(response) {
+        userStoreNameValid = (response.responseText == "true");
+        if (userStoreNameValid) {
+            DOM.get("user_storeNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Store name provided</small>";
+       }
+        else {
+            DOM.get("user_storeNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userHostNameValidated(response) {
+        userHostNameValid = (response.responseText == "true");
+        if (userHostNameValid) {
+            DOM.get("user_hostNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Directory</small>";
+       }
+        else {
+            DOM.get("user_hostNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userHostPortValidated(response) {
+        userHostPortValid = (response.responseText == "true");
+        if (userHostPortValid) {
+            DOM.get("user_hostPortStatus").innerHTML = "";
+       }
+        else {
+            DOM.get("user_hostPortStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userLoginValidated(response) {
+        userLoginValid = (response.responseText == "true");
+        if (userLoginValid) {
+            DOM.get("user_loginStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Logged in</small>";
+       }
+        else {
+            DOM.get("user_loginStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userPasswordValidated(response) {
+        userPasswordValid = (response.responseText == "true");
+        if (userPasswordValid) {
+            DOM.get("user_passwordStatus").innerHTML = "";
+       }
+        else {
+            DOM.get("user_passwordStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userBaseDNValidated(response) {
+        userBaseDNValid = (response.responseText == "true");
+        if (userBaseDNValid) {
+            DOM.get("user_baseDNStatus").innerHTML = "<img alt='info' class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Base DN</small><br/>";
+       }
+        else {
+            DOM.get("user_baseDNStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function adjustAddStoreButton() {
+        var allValid = (userStoreNameValid && userHostNameValid  && userHostPortValid
+                        && userLoginValid && userPasswordValid && userBaseDNValid);
+        DOM.get("addStoreButton").disabled = !allValid;
+    }
+
+</script>
+
+<div id="mainPanel" align="center">
+	<div id="createPanel" class="createpanel" align="left" style="width:600px;">
+		<form id="LDAPForm" >
+		<br />
+		<div class="bodywhite">
+			<h2>Add an Authentication Store</h2>
+			<small>Fusce rhoncus rutrum nunc. Ut ut pede vel sem scelerisque commodo. Vestibulum non libero vulputate arcu gravida auctor. Phasellus quis felis in nulla laoreet ornare.</small>
+		</div>
+		<br />				
+		<div class="bodywhite">
+			<font class="commonTextblack">Select the realm that this store will be added to.</font>
+			<div id="tittle">Realms</div>
+			<div class="border">						
+				<p>&nbsp;<input type="checkbox"/>&nbsp;Realm Name 2<br /></p>								
+				<p>&nbsp;<input type="checkbox"/>&nbsp;. . . <br /></p>
+				<!--Name of the Realm-->						
+			</div>
+			<br/>					
+		</div>			
+		<div class="bodywhite">				
+			<p class="OrangeSmall">Select authentication source:</p>
+			<select id="selectAuthentication" style="width:200px">					
+				<option value="1">LDAP (Including Active Directory)</option>					
+			</select>	
+		</div>			
+		<div class="bodywhite">
+			<div class="middletitle">Enter the store details</div><div class="OrangeVerySmall" align="right">* ALL Fields are Required</div>				
+			<div class="width_160"><font class="commonTextblack">User Store Name:</font></div>
+			<input class="inputsBlue" type="text" id="user_storeName" name="user_storeName" style="width:150px" value="$!userStore.name" onkeyup="APP.callDelayed(this, validateUserStoreName);"/>
+            <span id="user_storeNameStatus"></span>
+		</div>
+		<div class="bodywhite">
+			<div class="width_160"><font class="commonTextblack">Directory Host Name:</font></div>
+			<input class="inputsBlue" type="text" id="user_hostName" name="user_hostName" style="width:150px" value="$!userStore.hostName" onkeyup="APP.callDelayed(this, validateUserHostName);"/>
+            <span id="user_hostNameStatus"></span><br/><br/>
+
+            <div class="width_160"><font class="commonTextblack">Port:</font></div>
+			<input class="inputsBlue" type="text" id="user_hostPort" name="user_hostPort" style="width:40px" value="$!userStore.hostPort" onkeyup="APP.callDelayed(this, validateUserHostPort);"/>
+            <span id="user_hostPortStatus"></span><br/><br/>
+
+            <div class="width_160"><font class="commonTextblack">Is this a secure port?:</font></div>
+            <input type="radio" id="user_hostPortSecureNo" name="user_hostPortSecure" checked="checked" value="No"/>&nbsp;No&nbsp;
+            <input type="radio" id="user_hostPortSecureYes" name="user_hostPortSecure" value="Yes"/>Yes<br/>
+		</div>
+		<div class="bodywhite">
+			<div class="width_160"><font class="commonTextblack">Directory Login ID:</font></div>
+			<input class="inputsBlue" type="text" id="user_login" name="user_login" style="width:150px" value="$!userStore.username" onkeyup="APP.callDelayed(this, validateUserLogin);"/>
+            <span id="user_loginStatus"></span><br/><br/>
+
+            <div class="width_160"><font class="commonTextblack">Directory Password:</font></div>
+			<input class="inputsBlue" type="text" id="user_password" name="user_password" style="width:150px" onkeyup="APP.callDelayed(this, validateUserPassword);"/>
+            <span id="user_passwordStatus"></span><br/>
+        </div>
+		<div class="bodywhite">
+			<div class="width_160"><font class="commonTextblack">Directory Base DN:</font></div>
+			<input class="inputsBlue" type="text" id="user_baseDN" name="user_baseDN" style="width:150px" value="$!userStore.baseDN" onkeyup="APP.callDelayed(this, validateUserBaseDN);"/>
+            <span id="user_baseDNStatus"></span><br/>
+		</div>
+		<div class="subbody">
+			<button type="button" value="Cancel" onClick="javascript:cancel();">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+			<button type="button" id="addStoreButton" value="addStore" onClick="AddStoreEvent();">ADD THIS STORE</button>
+		</div>
+		</form>
+	</div>
+</div>
+<div id="addStore" style="visibility:hidden"></div>

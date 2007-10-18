@@ -1,0 +1,137 @@
+<style type="text/css">
+    .summaryPanel {
+        float: left;
+        margin-right: 10px;
+    }
+
+    .summaryPanel .bd {
+        height: 100px;
+    }
+
+    .summaryPanel ol {
+        padding: 0;
+        margin: 0;
+        font-size: smaller;
+    }
+
+    .summaryPanel li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .summaryPanel label {
+        float: left;
+        margin-right: 0.5em;
+        width: 55px;
+    }
+    #loadBalancingSummary label {
+        width: 25px;    
+    }
+</style>
+    
+<h1>Summary</h1>
+<p>Please take a moment to confirm that your settings are correct.</p>
+
+<div class="summaryPanel" style="width:120px">
+    <div class="hd">FAM Association</div>
+    <div class="bd">
+        <span>
+            #if ( $newInstanceUrl )
+            This instance is being added to the existing site as '$newInstanceUrl'
+            #else
+            This is the first FAM instance of a new deployment.
+            #end
+        </span>
+    </div>
+</div>
+
+<div class="summaryPanel">
+    <div class="hd">Configuration Store Details</div>
+    <div class="bd">
+        #if ( $newInstanceUrl )
+        <span>Previously configured</span>
+        #elseif ( $configStore )
+        <ol>
+            <li>
+                <label>Name:</label>
+                <span>$configStore.name</span>
+            </li>
+            <li>
+                <label>Host:</label>
+                <span>$configStore.hostName</span>
+            </li>
+            <li>
+                <label>Port:</label>
+                <span>$configStore.hostPort</span>
+            </li>
+            <li>
+                <label>Base DN:</label>
+                <span>$configStore.baseDN</span>
+            </li>
+            <li>
+                <label>Credentials:</label>
+                <span>Provided</span>
+            </li>
+        </ol>
+        #else
+        <span>Default Configuration</span>
+        #end
+    </div>
+</div>
+
+<div class="summaryPanel">
+    <div class="hd">User Store Details</div>
+    <div class="bd">
+        #if ( $newInstanceUrl )
+        <span>Previously configured</span>
+        #elseif ( $userStore )
+        <ol>
+            <li>
+                <label>Name:</label>
+                <span>$userStore.name</span>
+            </li>
+            <li>
+                <label>Host:</label>
+                <span>$userStore.hostName</span>
+            </li>
+            <li>
+                <label>Port:</label>
+                <span>$userStore.hostPort</span>
+            </li>
+            <li>
+                <label>Base DN:</label>
+                <span>$userStore.baseDN</span>
+            </li>
+            <li>
+                <label>Credentials:</label>
+                <span>Provided</span>
+            </li>
+        </ol>
+        #else
+        <span>Default Configuration</span>
+        #end
+    </div>
+</div>
+
+<div class="summaryPanel" style="margin-right:0;width:140px">
+    <div class="hd">Load Balancing</div>
+    <div id="loadBalancingSummary" class="bd">
+        #if ( $newInstanceUrl )
+        <span>Previously configured</span>
+        #elseif ( $loadBalancerHost )
+        <ol>
+            <li>
+                <label>Host:</label>
+                <span>$loadBalancerHost</span>
+            </li>
+            <li>
+                <label>Port:</label>
+                <span>$loadBalancerPort</span>
+            </li>
+        </ol>
+        #else
+        <span>This instance will not be deployed behind a load balancer.</span>
+        #end
+    </div>
+</div>

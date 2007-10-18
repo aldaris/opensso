@@ -1,0 +1,493 @@
+/* ============================
+   Main template styles
+   ============================ */
+#doc3 {
+    margin: auto;
+}
+
+#hd {
+    background-color: #d9d8d8;
+    padding: 40px 0 10px 10px;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+#hd h1 {
+    color: #999999;
+    font-size: 123.1%;
+    margin: 0;
+    padding: 0;
+}
+
+#bd {
+    padding: 0 2em 1em 2em;
+}
+
+#ft {
+    background-color: #d9d8d8;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding: 10px 0 10px 0;
+}
+
+#ft p {
+    margin: 0;
+    text-align: center;
+}
+
+/* ================================
+   Site-wide styles
+   ================================ */
+a:link {
+    color: #4993dd;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+a:visited {
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+a:hover, a:active {
+    text-decoration: underline;
+    white-space: nowrap;
+}
+
+.panel {
+}
+
+.panel .body {
+    padding: 1em;
+    border: 1px solid #4993dd;
+    border-bottom: none;
+}
+
+.panel h1 {
+    background-color: #4993dd;
+    color: white;
+    border: 1px solid #4993dd;
+    border-top: none;
+    font-size: 100%;
+    font-weight: bold;
+    padding: 0 1em 0.2em 1em;
+    margin: 0;
+}
+
+/*.panel h2 {
+    color: #ff9933;
+    font-size: 123.1%;
+    font-weight: normal;
+    margin: 0.3em 0;
+}*/
+
+.panel ul,ol {
+    margin-left: 1.5em;
+}
+
+/* Rounded Corners div styling */
+.xtop, .xbottom {display:block; background:transparent;}
+.xt1, .xt2, .xt3, .xt4, .xb1, .xb2, .xb3, .xb4 { display: block; overflow: hidden; height: 1px; border-left:1px solid #4993dd; border-right:1px solid #4993dd;}
+.xt1, .xt2, .xt3, .xt4 {background:#4993dd;}
+.xt1, .xb4 {margin:0 4px; border: 0;}
+.xt2, .xb3 {margin:0 3px;}
+.xt3, .xb2 {margin:0 2px;}
+.xt4, .xb1 {height:2px; margin:0 1px;}
+.xb4 {background:#4993dd;}
+
+.balloonIcon {
+    width: 14px;
+    height: 12px;
+    padding-left: 0.3em;
+    padding-bottom: 0.5em;
+}
+
+/*  Form CSS */
+/* Most of this was acquired & adapted from http://www.sitepoint.com/article/fancy-form-design-css/ */
+fieldset {
+    position: relative;
+    float: left;
+    clear: both;
+    width: 100%;
+    margin: 0 0 1.5em 0;
+    padding: 0;
+    border-style: none;
+}
+legend {
+    margin-left: 1em;
+    color: #000000;
+    font-weight: bold;
+}
+fieldset ol {
+    margin: 0;
+    list-style: none;
+}
+fieldset li {
+    list-style: none;
+    float: left;
+    clear: left;
+    width: 100%;  
+    padding-bottom: 1em;
+}
+fieldset.submit {
+    float: none;
+    width: auto;
+    border: none;
+}
+label {
+    position: relative;
+    float: left;
+    text-align: right;
+    margin-right: 1em;
+}
+
+label em img {
+    vertical-align: top;
+}
+
+select {
+    border: 1px solid #4993dd;
+}
+
+
+/*********************************
+Common Tasks
+
+************************************/
+
+.createpanel{
+	width:600px;
+	background-color:#cce0f5;
+}
+
+.createpanel .firsttitle{
+	margin-left:10px;
+	margin-right:10px;
+	background-color:white;
+}
+
+
+.createpanel .titleorangre{
+	font-family:Helvetica, sans-serif;
+	font-size:16px;
+	text-align:left;
+	font-weight:bold;
+	color: #ec9c2b; 
+	margin-left:5px;
+	margin-right:5px;
+	padding-top:10px;
+}
+
+.createpanel .littletitle{
+	margin-left:5px;
+	margin-right:5px;
+	text-align:left;
+	font-size:10px;
+	padding-bottom:10px;
+}
+
+.createpanel .middletitle{
+	width:330px;
+	color: #ec9c2b;
+	font-size:13px;
+	text-align:left;
+	float:left;
+	margin-left:10px;
+}
+
+.createpanel .bodywhitetop{
+	margin-left:10px;
+	margin-right:10px;
+	background-color:white;
+
+}
+
+.createpanel .bodywhite{
+	margin-top:5px;
+	margin-left:10px;
+	margin-right:10px;
+	background-color:white;
+	padding:10px;
+	text-align:left;
+}
+
+.createpanel .subbody{
+	padding:10px;
+	line-height:25px;
+	text-align:right;
+}
+.createpanel .smalltitle{
+	font-size:smaller;
+	color: #ec9c2b;
+}
+
+.createpanel .divlabelfirst{
+	width:140px;
+	float:left;
+	text-align:right;
+}
+
+.createpanel .divlabelfirst165{
+	width:170px;
+	float:left;
+	text-align:right;
+}
+
+.createpanel .divinput{
+	width:160px;
+	float:left;
+	text-align:left;
+}
+
+.createpanel .divinput1
+{
+	float:left;
+	text-align:left;
+}
+
+.createpanel .divinput2
+{	
+	margin-left:10px;
+	text-align:left;
+}
+.bodySpace{		
+	padding:10px;
+}
+/*******************************************************
+						TABs
+********************************************************/
+.colunmsheader{
+	background:#EBEBEB;				
+}
+.insideColunm{
+	width:50%;
+	float:left;
+	color:#60a2e1;
+}
+.colunms{
+	width:49.2%;
+	height:300px;
+	float:left;
+	border-right:2px solid #60a2e1;
+	background:#FFFFFF;
+}
+.large{
+	height:320px;
+}
+.tab{
+	width:280px;
+	float:left;
+}
+/*
+Generic*/
+h1 {
+    color: #ff9933;
+    font-size: 1.75em;
+    font-weight: normal;
+    margin: 1em 0;
+    padding: 0 0 0 0;
+}
+
+h2{
+	color: #ff9933;
+    font-size: 18px;    
+    margin: 0.3em 0;
+}
+.OrangeSmall{
+	color:#ec9c2b;
+	font-family:Helvetica, sans-serif;
+	font-size:15px;	
+	text-align:left;
+}
+.OrangeVerySmall{
+	color:#ec9c2b;
+	font-family:Helvetica, sans-serif;
+	font-size:11px;	
+	text-align:left;
+}
+
+/*All Button*/
+button{
+	background:#60a2e1;
+	font-family: Helvetica, sans-serif;
+	font-size:14px;
+	color:#FFFFFF;	
+	font-weight:bold;
+}
+button:disabled{
+	background:#CCCCCC;
+	font-family: Helvetica, sans-serif;
+	font-size:14px;
+	color:#FFFFFF;	
+	font-weight:bold;
+}
+.blue{
+	color:#60a2e1;
+	font-family:Helvetica, sans-serif;
+	font-size:15px;	
+}
+.blueSmall{
+	color:#60a2e1;
+	font-family:Helvetica, sans-serif;
+	font-size:12px;		
+}
+.pointer{
+	cursor:pointer;
+}
+.black{
+	font-family:Helvetica, sans-serif;
+	font-size:15px;	
+}
+/***********************************************************
+					   Click Styles
+***********************************************************/
+a.error {
+	color: red;
+}
+a:visited.error {
+	color: red;
+}
+input.disabled {
+	background: lightgray;
+}
+input.error {
+	background: #FFFF80;
+}
+
+select.error {
+	background: #FFFF80;
+}
+span.disabled {
+	color: #808080;
+}
+span.error {
+	color: red;
+}
+span.required {
+	color: red;
+}
+textarea.error {
+	background: #FFFF80;
+}
+table.form {
+	border-width: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+table.fields {
+	border-width: 0px;
+	margin: 0px;
+	padding: 0px;
+	vertical-align: baseline;
+	white-space: nowrap;
+}
+table.errors {
+	border-width: 0px;
+	margin: 0px;
+	padding: 0px;
+	vertical-align: baseline;
+}
+table.buttons {
+	border-width: 0px;
+	padding: 0px;
+	margin-top: 0.5em;
+	vertical-align: baseline;
+	white-space: pre;
+}
+label {
+  white-space: nowrap;
+}
+form table {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+form tr {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+form td {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+input.inputs{
+	border-color:#A9A9A9;
+	border:1px solid;
+	height:14px;
+	font-family:Helvetica, sans-serif;
+	font-size:10px;
+}
+input.inputsBlue{
+	border-color:#60a2e1;
+	border:1px solid;
+	height:14px;
+	font-family:Helvetica, sans-serif;
+	font-size:10px;	
+}
+
+#allfields{
+	text-align:right;
+	padding-right:10px;
+}
+
+/*************************************************************
+					Tool tip
+**************************************************************/
+
+#ajax_tooltipObj{
+	z-index:1000000;
+	text-align:left;
+}
+#ajax_tooltipObj div{
+	position:relative;
+}
+
+/* If you don't want the arrow - Just set the width of this div to 1 or something like that and drop the background selectors from the CSS below */
+
+#ajax_tooltipObj .ajax_tooltip_arrow{	/* Left div for the small arrow */
+	background-image:url('../images/arrow.gif');
+	width:40px;
+	position:absolute;
+	left:0px;
+	top:0px;
+	background-repeat:no-repeat;
+	background-position:center left;
+	z-index:1000005;
+	height:190px;
+}
+
+#ajax_tooltipObj .ajax_tooltip_content{
+	border:4px solid #60a2e1;	/* Border width */
+	left:28px;	/* Same as border thickness */
+	top:0px;
+	position:absolute;
+	width:320px;	/* Width of tooltip content */
+	height:190px;	/* Height of tooltip content */
+	background-color:#FFF;	/* Background color */
+	padding:5px;	/* Space between border and content */
+	font-size:0.8em;	/* Font size of content */
+	overflow:hidden;	/* Hide overflow content */
+	z-index:1000001;
+}
+
+/***********************************************************
+					   Div Generic
+***********************************************************/
+div.width_160{
+	width:160px;
+	float: left;
+	padding:5px;
+}
+
+div.borderPopUpGray{
+	background:#FFFFFF;
+	border-top:1px solid #999999;		
+	border-left:1px solid #999999;		
+	border-right:1px solid #999999;		
+	border-bottom:1px solid #999999;	
+	padding:10px;
+}

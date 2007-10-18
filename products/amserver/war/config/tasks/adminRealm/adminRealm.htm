@@ -1,0 +1,255 @@
+
+<style>
+	  #tittle {
+        background: #60a2e1;
+        border: 1px solid;
+        border-color: #999999;
+        font-family: Helvetica, sans-serif;
+        font-size: 14px;
+        color: #FFFFFF;
+        font-weight: bold;
+        padding-left: 10px;
+        padding-right: 10px;
+		width:450px;
+    }
+	.border{
+		font-family: Helvetica, sans-serif;
+        font-size: 12px;
+		border:1px solid #60a2e1;
+		padding:5px;
+		width:460px;
+		height:100px;
+		overflow:auto;
+	}
+	.bodySpace{
+		padding:10px;
+	}
+	.bodySpace2{
+		padding:5px;
+	}
+	.createpanel{
+		width:600px;
+	}
+
+
+      /* customized css for scrolling */
+      .yui-dt-scrollable  {
+          width:20em; /* SET OVERALL WIDTH HERE for ie (make sure columns add up to this total) */
+          height:22em; /* SET HEIGHT HERE for ie */
+      }
+      .yui-dt-scrollbody {
+          height:22em; /* SET HEIGHT HERE for non-ie */
+          *height:auto; /* for ie */
+      }
+      .yui-dt-scrollable  thead {
+          background:#696969; /*dark gray*/ /* ie needs a background color */
+          color:#fff;
+      }
+
+      /* SET WIDTHS FOR EACH TH TO HELP ALIGN COLUMNS */
+      /* IF ALL COLS CAN BE SAME WIDTH USE THIS: */
+      .yui-dt-scrollable th, .yui-dt-scrollbody td {
+          width:10em;
+      }
+
+</style>
+
+<script>
+
+    var tableColumnDefs = [
+        {key:"firstName", label:"First Name", sortable:true},
+        {key:"lastName", label:"Last Name", sortable:true}
+    ];
+    var responseSchema = {
+        resultsList: "records",
+        fields: ["firstName", "lastName"]
+    };
+    // Realm Users Table
+    var RealmUsersTable = new APP.util.PaginatedTable("realmUsersTable", "$context/tasks/adminRealm/realmUsers.htm?",
+            "startIndex=1&results=500", tableColumnDefs, responseSchema);
+    YAHOO.util.Event.addListener(YAHOO.util.Dom.get("prevLink"), "click", RealmUsersTable.getPreviousPage, RealmUsersTable, true);
+    YAHOO.util.Event.addListener(YAHOO.util.Dom.get("nextLink"), "click", RealmUsersTable.getNextPage, RealmUsersTable, true);
+    // Administrators Table
+    var AdminsTable = new APP.util.PaginatedTable("adminsTable", "$context/tasks/adminRealm/realmUsers.htm?",
+            "startIndex=1&results=500", tableColumnDefs, responseSchema);
+    YAHOO.util.Event.addListener(YAHOO.util.Dom.get("adminsTable_prevLink"), "click", AdminsTable.getPreviousPage, AdminsTable, true);
+    YAHOO.util.Event.addListener(YAHOO.util.Dom.get("adminsTable_nextLink"), "click", AdminsTable.getNextPage, AdminsTable, true);
+
+
+
+    YAHOO.namespace("sun.container");
+
+    function init() {
+        AjaxUtils.load( 'addrole', '$context/tasks/adminRealm/addRole.htm');
+        YAHOO.sun.container.addrole = new YAHOO.widget.Panel("addrole", { width:"390px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true } );
+        YAHOO.sun.container.addrole.render();
+    }
+    YAHOO.util.Event.onDOMReady( init );
+
+    function cancel() {
+        document.location = "$context/commonTasks.htm";
+    }
+    function save(){
+
+    }
+    function checkOption(){
+        /*Validate the position of "Create a new role" */
+        if ((document.getElementById("role").options.length-1)==document.getElementById("role").selectedIndex)
+            YAHOO.sun.container.addrole.show();
+    }
+
+</script>
+
+<div id="mainPanel" align="center">
+	<div id="createPanel" class="createpanel" align="left">
+		<br />
+		<div class="firsttitle bodySpace">
+			<h2>Assign an administrator to a realm</h2>
+			<small>Locate your new admin and drag their name to the realm administrators box.</small>
+		</div>
+		<div class="bodySpace">
+			<div id="demo" class="yui-navset tab">
+				<ul class="yui-nav">
+					<li class="selected"><a href="#tab1"><em>Realm Users</em></a></li>
+				</ul>
+				<div class="yui-content" style="height:465px">
+					<div>
+						<div class="bodywhite bodySpace2">
+						<input type="text" id="search"/><button type="button">search</button>
+						</div>
+						<div class="bodywhite bodySpace2">
+							<font class="commonblack">
+                                <div id="dt-pag-nav">
+                            	    <span id="prevLink"><</span> Displaying
+                                    <span id="startIndex">0</span> - <span id="endIndex">50</span>
+                            	    <span id="ofTotal"></span> realm users <span id="nextLink">></span>
+                            	</div>
+                            </font>
+						</div>
+						<!--This prosses need be Automatically, that is a example, with the css it need,
+							look the example of yui for a generate tab with javascript-->
+						<div id="contentSearch">
+
+                            <div id="realmUsersTable"></div>
+
+                            <!--
+                            <div id="search1" class="yui-navset">
+                                <div class="yui-content large">
+                                    <div>
+										<div class="colunmsheader">
+											<div class="insideColunm">&nbsp;First Name</div>
+											Last Name
+										</div>
+										<div class="colunms">First Name<br />First Name</div>
+										<div class="colunms">Last Name<br />Last Name</div>
+									</div>
+									<div>
+										<div class="colunmsheader">
+											<div class="insideColunm">&nbsp;First Name</div>
+											Last Name
+										</div>
+										<div class="colunms">sds</div>
+										<div class="colunms">sds</div><br />
+									</div>
+                                    <div>
+										<div class="colunmsheader">
+											<div class="insideColunm">&nbsp;First Name</div>
+											Last Name
+										</div>
+										<div class="colunms">sds</div>
+										<div class="colunms">sds</div>
+									</div>
+								</div>
+                                <ul class="yui-nav" style="text-align:right">
+									<li class="selected"><a href="#tab1"><em>1</em></a></li>
+									<li><a href="#tab2"><em>2</em></a></li>
+									<li><a href="#tab3"><em>3</em></a></li>
+								</ul>
+                            </div>
+                            -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="width:20px;float:left">&nbsp;</div>
+			<div id="demo" class="yui-navset tab">
+				<ul class="yui-nav">
+					<li class="selected"><a href="#tab1"><em>Realm Administrators</em></a></li>
+				</ul>
+				<div class="yui-content" style="height:465px">
+					<div>
+						<div class="bodywhite bodySpace2">
+							<font class="commonblack">Select a role</font>&nbsp;
+							<select id="role" name="role" style="width:150px" onchange="checkOption();">
+								<option>Administrators</option>
+								<option><b>Create a New role</b></option>
+							</select>
+						</div>
+						<div class="bodywhite bodySpace2">
+							<font class="commonblack">
+                                <div id="adminsTable_navigation">
+                            	    <span id="adminsTable_prevLink"><</span> Displaying
+                                    <span id="adminsTable_startIndex">0</span> - <span id="adminsTable_endIndex">50</span>
+                            	    <span id="adminsTable_ofTotal"></span> administrators <span id="adminsTable_nextLink">></span>
+                            	</div>
+                            </font>
+						</div>
+						<div id="contentSearch">
+                            <div id="adminsTable"></div>
+                            <!--
+                            <div id="search2" class="yui-navset">
+								<div class="yui-content large">
+									<div>
+										<div class="colunmsheader">
+											<div class="insideColunm">&nbsp;First Name</div>
+											Last Name
+										</div>
+										<div class="colunms">First Name<br />First Name</div>
+										<div class="colunms">Last Name<br />Last Name</div>
+									</div>
+									<div>
+										<div class="colunmsheader">
+											<div class="insideColunm">&nbsp;First Name</div>
+											Last Name
+										</div>
+										<div class="colunms">sds</div>
+										<div class="colunms">sds</div><br />
+									</div>
+									<div>
+										<div class="colunmsheader">
+											<div class="insideColunm">&nbsp;First Name</div>
+											Last Name
+										</div>
+										<div class="colunms">sds</div>
+										<div class="colunms">sds</div>
+									</div>
+								</div>
+								<ul class="yui-nav" style="text-align:right">
+									<li class="selected"><a href="#tab1"><em>1</em></a></li>
+									<li><a href="#tab2"><em>2</em></a></li>
+									<li><a href="#tab3"><em>3</em></a></li>
+								</ul>
+							</div>
+							-->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="subbody">
+			<button type="button" value="Cancel" onClick="javascript:cancel();">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+			<button type="button" value="addStore" onClick="javascript:save();">Save</button>
+		</div>
+		<br />
+	</div>
+</div>
+
+<div id="addrole"></div>
+<script>
+(function() {
+    var tabView = new YAHOO.widget.TabView('demo');
+	var tabView2 = new YAHOO.widget.TabView('search1');
+	var tabView3 = new YAHOO.widget.TabView('search2');
+})();
+
+</script>

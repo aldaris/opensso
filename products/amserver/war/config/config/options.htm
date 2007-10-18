@@ -1,0 +1,269 @@
+<script type="text/javascript">
+    YAHOO.namespace("sun.identity.config.options");
+
+    //convenient alias:
+    var $ = YAHOO.util.Dom.get;
+
+    function launchConsole() {
+        document.location = "$context/commonTasks.htm";
+    }
+
+    /* #if ( $upgrade )
+     */
+
+    function downloadInstructions() {
+        /* TODO - enable download - where does this file reside? */
+        alert( "Not implemented!" );
+    }
+
+    function onUpgradeOlderResponse( response ) {
+        //for now, these methods are the same:
+        onCoexistResponse( response );
+    }
+    function upgradeOlder() {
+        YAHOO.sun.identity.config.options.upgrading.show();
+        AjaxUtils.call( "$context$path?actionLink=olderUpgradeLink", onUpgradeOlderResponse );
+    }
+
+    function onCoexistResponse( response ) {
+        if ( response.responseText == "true" ) {
+            //operation was successful, hide the writing dialog, show the confComplete:
+
+            //in actuality, this usually happens very fast, so put a delay when removing the testUrlPanel.
+            //if we don't do this, the window blinks and looks unsightly, so we actually impose an unnecessary
+            //gui delay for a slightly cleaner 'expected' UI experience:
+            setTimeout("YAHOO.sun.identity.config.options.upgrading.hide()", 1500);
+            setTimeout("YAHOO.sun.identity.config.options.upgradePartiallyComplete.show()", 1500);
+        } else {
+            //TODO - show a specific (nice looking) error message dialog that explains why the upgrade failed.
+            //for now, just alert:
+            alert( "Unexpected error: [" + response.responseText + "].  Please contact your System " +
+                   "Administrator.  If you are the System Administrator, please direct your questions to the " +
+                   "OpenSSO user's mailing list for help.");
+        }
+    }
+    function coexist() {
+        YAHOO.sun.identity.config.options.upgrading.show();
+        AjaxUtils.call( "$context$path?actionLink=coexistLink", onCoexistResponse );
+    }
+
+    function onUpgradeResponse( response ) {
+        if ( response.responseText == "true" ) {
+            //operation was successful, hide the writing dialog, show the confComplete:
+
+            //in actuality, this usually happens very fast, so put a delay when removing the testUrlPanel.
+            //if we don't do this, the window blinks and looks unsightly, so we actually impose an unnecessary
+            //gui delay for a slightly cleaner 'expected' UI experience:
+            setTimeout("YAHOO.sun.identity.config.options.upgrading.hide()", 1500);
+            setTimeout("YAHOO.sun.identity.config.options.upgradeComplete.show()", 1500);
+        } else {
+            //TODO - show a specific (nice looking) error message dialog that explains why the upgrade failed.
+            //for now, just alert:
+            alert( "Unexpected error: [" + response.responseText + "].  Please contact your System " +
+                   "Administrator.  If you are the System Administrator, please direct your questions to the " +
+                   "OpenSSO user's mailing list for help.");
+        }
+
+    }
+    function upgrade() {
+        YAHOO.sun.identity.config.options.confirmUpgrade.hide();
+        YAHOO.sun.identity.config.options.upgrading.show();
+        AjaxUtils.call( "$context$path?actionLink=upgradeLink", onUpgradeResponse );
+    }
+    function showConfirmUpgradePanel() {
+        YAHOO.sun.identity.config.options.confirmUpgrade.show();
+    }
+    function cancelUpgrade() {
+        YAHOO.sun.identity.config.options.confirmUpgrade.hide();
+    }
+    /* #else
+     */
+    var passwordUpdateRequired = $passwordUpdateRequired;
+    var configOption = 1;
+
+    function onNewPasswordSubmitSuccess( response ) {
+        var formError = (response != null && (response.getResponseHeader["formError"] != null));
+        if ( !formError ) {
+            YAHOO.sun.identity.config.options.passwordDialog.hide();
+            passwordUpdateRequired = false;
+            if ( configOption == 1 ) {
+                document.location = '$context/config/defaultSummary.htm';
+            } else if ( configOption == 2 ) {
+                //AjaxUtils.load('wizardContainer', "$context/config/wizard/wizard.htm", showWizard);
+                YAHOO.sun.identity.config.options.wizard.show();
+            } else if ( configOption == 3 ) {
+                AjaxUtils.load('container', '$context/config/existConf.htm');
+            }
+        }
+    }
+
+    function submitNewPasswordForm() {
+        AjaxUtils.doPost("passwordDialog", "$context/config/newPassword.htm", AjaxUtils.serializeForm("newPasswordForm"), onNewPasswordSubmitSuccess, null);
+    }
+
+    function setOption( inOption ) {
+        configOption = inOption;
+        if ( passwordUpdateRequired ) {
+            YAHOO.sun.identity.config.options.passwordDialog.show();
+        } else {
+            onNewPasswordSubmitSuccess(null);
+        }
+    }
+
+    function renderPasswordDialog() {
+        YAHOO.sun.identity.config.options.passwordDialog = new YAHOO.widget.Dialog("passwordDialog", { width:"280px", fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.passwordDialog.render();
+    }
+
+    function showWizard() {
+        renderWizard();
+        YAHOO.sun.identity.config.options.wizard.show();
+    }
+    function renderWizard() {
+        YAHOO.sun.identity.config.options.wizard = new YAHOO.widget.Panel("wizard", { fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.wizard.render();
+    }
+
+    /* #end
+     */
+
+    function init() {
+        /* #if ( $upgrade )
+         */
+        YAHOO.sun.identity.config.options.confirmUpgrade = new YAHOO.widget.Panel("confirmUpgrade", { fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.confirmUpgrade.render();
+
+        YAHOO.sun.identity.config.options.upgradePartiallyComplete = new YAHOO.widget.Panel("upgradePartiallyComplete", { fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.upgradePartiallyComplete.render();
+
+        YAHOO.sun.identity.config.options.upgradeComplete = new YAHOO.widget.Panel("upgradeComplete", { fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.upgradeComplete.render();
+
+        YAHOO.sun.identity.config.options.upgrading = new YAHOO.widget.Panel("upgrading", { width:"240px", fixedcenter:true, close:false, draggable:false, zindex:4, modal:true, visible:false });
+        YAHOO.sun.identity.config.options.upgrading.setHeader("Upgrading configuration.  Please wait...");
+        YAHOO.sun.identity.config.options.upgrading.setBody('<img src="$context/assets/images/rel_interstitial_loading.gif" />');
+        YAHOO.sun.identity.config.options.upgrading.render(document.body);
+
+        YAHOO.util.Event.addListener("upgradeLink", "click", showConfirmUpgradePanel );
+        YAHOO.util.Event.addListener("confirmUpgradeLink", "click", upgrade );
+        YAHOO.util.Event.addListener("cancelUpgradeLink", "click", cancelUpgrade );
+
+        YAHOO.util.Event.addListener("coexistLink", "click", coexist );
+        YAHOO.util.Event.addListener("upgradeOlderLink", "click", upgradeOlder );
+
+        YAHOO.util.Event.addListener("downloadInstructionsLink", "click", downloadInstructions );
+
+        YAHOO.util.Event.addListener("launchConsoleLink1", "click", launchConsole );
+        YAHOO.util.Event.addListener("launchConsoleLink2", "click", launchConsole );
+
+        /* #else 
+        */
+        AjaxUtils.load('passwordDialogContainer', "$context/config/newPassword.htm", renderPasswordDialog);
+        AjaxUtils.load('wizardContainer', "$context/config/wizard/wizard.htm", renderWizard);
+        /* #end
+        */
+    }
+        
+    YAHOO.util.Event.onDOMReady(init);
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="$context/assets/css/Specific/optionUpgrade.css" />
+
+<div id="container" align="center">
+    
+    <div id="options" align="left" style="width:800px">
+        #if ( $upgrade )
+        <h1>Upgrade Available</h1>
+        <h2>Please select an upgrade option.</h2>
+        #else
+        <h1>Configuration Options</h1>
+        <h2>Please select a configuration option.</h2>
+        #end
+
+        <div class="borderRight">
+            #if ( $upgrade )
+            <h3>Upgrade to FAM 8.0</h3>
+            <p>Enhancements include WS-Federation and STS.</p>
+            <p>NOTE: you should NOT upgrade if there are still AM7.0 or FM7.0 servers in the deployment that are sharing the configuration.</p>
+            <a id="upgradeLink" class="blue pointer">Upgrade to FAM 8.0</a>
+            #else
+            <h3>Demo & Evaluation</h3>
+            <p>This demo is for evaluation purposes. FAM will automatically configure the config store and the user
+               store to your local system.</p>
+            <p>If you intend on placing this on a production server then you should select 'Custom Configuration' instead.</p>
+            <a id="DemoConfiguration" class="blue pointer" onclick="setOption(1);">Demo Configuration</a>
+            #end
+        </div>
+        <div class="borderRight">
+            #if( $upgrade )
+            <h3>Use an existing configuration</h3>
+            <p>Enable this instance to co-exist with your existing AM7.1/FM7.0 instances.</p>
+            <a id="coexistLink" class="blue pointer">Use an existing configuration</a>
+            #else
+            <h3>Custom Configuration</h3>
+            <p>Lorem ipsum dolor sit amet, nunc suspendisse quisque venenatis non, rhoncus magna ullamcorper eget nunc sit libero, luctus donec ut wisi felis.</p>
+            <a id="CreateNewConf" class="blue pointer" onclick="setOption(2);">Create a New Configuration</a>
+            #end
+        </div>
+        <div>
+            #if( $upgrade )
+            <h3>Upgrade from an older version</h3>
+            <p>If your previous deployment is AM 7.0 or older you will need to upgrade to FAM 8.0 since co-existence with older versions is not supported.</p>
+            <a id="upgradeOlderLink" class="blue pointer">Upgrade from an older version</a>
+            #else
+            <h3>Use an Existing Configuration</h3>
+            <p>Lorem ipsum dolor sit amet, nunc suspendisse quisque venenatis non, rhoncus magna ullamcorper eget nunc sit libero, luctus donec ut wisi felis est, at sed.</p>
+            <a id="ExistingConfiguration" class="blue pointer" onclick="setOption(3);">Add to an Existing Configuration</a>
+            #end
+        </div>
+    </div>
+</div>
+#if ( $upgrade )
+<style type="text/css">
+	div.colum{
+		width:280px;
+		float:left;
+		padding:5px;
+		text-align:left;
+	}
+</style>
+<div id="confirmUpgrade" align="center" style="width:600px;visibility:hidden">
+    <div class="hd">Confirm Upgrade</div>
+    <div class="bd" style="background-color: white; height: 150px">
+		<h2>Are you certain that there are no AM 7.0 or FM 7.0 servers in deployment that are sharing the configuration?</h2>
+        <div class="colum">
+            <p>Yes, I am positive that there are no AM 7.0 or FM 7.0 servers sharing this configuration.</p>
+		    <a id="confirmUpgradeLink" class="blueSmall pointer">Continue with the upgrade</a>
+		</div>
+		<div class="colum">
+            <p>No, I am not sure. I should check before I ruin everything.</p>
+            <a id="cancelUpgradeLink" class="blueSmall pointer">Show me the other options again.</a>
+        </div>
+    </div>
+</div>
+<div id="upgradePartiallyComplete" style="width:400px;visibility:hidden">
+    <div class="hd">Upgrade Complete!</div>
+    <div class="bd" style="background-color: white">
+	    <h2>Upgrade Complete!</h2>
+	    <p>You will not be able to have the full FAM 8.0 functionality until the shared configuration is complete.</p>
+	    <p>This is the gist of the message but I need more information and then I will create more of an alert look and feel to the message</p>
+	    <p align="center" class="blue">
+            <a id="downloadInstructionsLink" class="blueSmall pointer">Download these instructions</a> |
+            <a id="launchConsoleLink1" class="blueSmall pointer">Launch the console</a>
+        </p>
+    </div>
+</div>
+<div id="upgradeComplete" style="width:400px;visibility:hidden">
+    <div class="hd">Upgrade Complete</div>
+    <div class="bd" style="background-color: white; text-align: center">
+	    <h2>Upgrade to FAM8.0 Successful</h2>
+	    <a id="launchConsoleLink2" class="blueSmall pointer">Launch the console</a>
+    </div>
+</div>
+#else
+<div id="passwordDialogContainer"></div>
+<div id="wizardContainer"></div>
+#end
+
+

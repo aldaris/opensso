@@ -1,0 +1,34 @@
+<script type="text/javascript">
+    var skipStep1 = "$wizardStep1Form.fields.skipStep1.value";
+    function toggleSkipStep1() {
+        if ( skipStep1 == "true" ) {
+            $('wizardStep1Form_skipStep1').value = "false";
+            skipStep1 = "false";
+            startingTab = 1;
+        } else {
+            $('wizardStep1Form_skipStep1').value = "true";
+            skipStep1 = "true";
+            startingTab = 2;
+        }
+
+        AjaxUtils.doPost("wizardStep1", "$context/config/wizard/step1.htm", AjaxUtils.serializeForm("wizardStep1Form"), null, null);
+    }
+</script>
+<div style="float: left; width:500px">
+    <h1>Welcome to the FAM Custom Configuration Wizard</h1>
+    <p>Condimentum lorem est tempus enim gravida quam, vel mollis vulputate, sed tristique tristique nulla.
+       Vestibulum dolor vulputate, arcu fusce ipsum a, nulla risus diam. Velit habitasse tincidunt tristique,
+       maecenas eget tortor sed eu sagittis mauris, orci aliquam ac. Urna ante.</p>
+    <small>$wizardStep1Form</small>
+</div>
+<div id="tab1RequiredInfoPanel" style="width:230px;float:right">
+    <div class="hd">Required Information</div>
+    <div class="bd">
+        <p>You may need the following information to complete this process:</p>
+        <ol>
+            <li>Something</li>
+            <li>Something else</li>
+            <li>Still need something else</li>
+        </ol>
+    </div>
+</div>

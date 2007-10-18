@@ -1,0 +1,157 @@
+<style>	 
+	input{
+	 width:250px;
+	}
+</style>
+
+<script language="javascript">
+
+    YAHOO.namespace("sun.container");
+    AjaxUtils.load( 'addStore', '$context/tasks/dlg/popupAuthenticationUserStore.htm');
+    YAHOO.sun.container.addStore = new YAHOO.widget.Panel("addStore", { width:"280px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true } );
+    YAHOO.sun.container.addStore.render();
+
+    var pageURI = "$context/tasks/confAuthentication/window.htm";
+    var DOM = YAHOO.util.Dom;
+
+    var servicePrincipalValid = false;
+    var fileNameValid = false;
+    var realmValid = false;
+    var serviceNameValid = false;
+    var domainNameValid = false;
+
+    YAHOO.util.Event.onDOMReady(init);
+
+    function init() {
+        DOM.get("addStoreButton").disabled = true;
+    }
+
+    function addStore() {
+        AjaxUtils.doPost("container", "$context/tasks/confAuthentication/window.htm", AjaxUtils.serializeForm("windowDesktopForm"), afterAddStore, null);
+    }
+
+    function afterAddStore(){
+        YAHOO.sun.container.addStore.show();
+        setTimeout("YAHOO.sun.container.addStore.hide()",1250);
+        setTimeout("document.location = '$context/commonTasks.htm'",1250);
+    }
+
+    function cancel(){
+        document.location = "$context/commonTasks.htm";
+    }
+
+    function validateServicePrincipal() {
+        var callUrl = pageURI + "?actionLink=validateServicePrincipal&servicePrincipal=" + DOM.get("servicePrincipal").value;
+        AjaxUtils.call(callUrl, servicePrincipalValidated);
+    }
+
+    function validateFileName() {
+        var callUrl = pageURI + "?actionLink=validateFileName&fileName=" + DOM.get("fileName").value;
+        AjaxUtils.call(callUrl, fileNameValidated);
+    }
+
+    function validateRealm() {
+        var callUrl = pageURI + "?actionLink=validateRealm&realm=" + DOM.get("realm").value;
+        AjaxUtils.call(callUrl, realmValidated);
+    }
+
+    function validateServiceName() {
+        var callUrl = pageURI + "?actionLink=validateServiceName&serviceName=" + DOM.get("serviceName").value;
+        AjaxUtils.call(callUrl, serviceNameValidated);
+    }
+
+    function validateDomainName() {
+        var callUrl = pageURI + "?actionLink=validateDomainName&domainName=" + DOM.get("domainName").value;
+        AjaxUtils.call(callUrl, domainNameValidated);
+    }            
+
+    function servicePrincipalValidated(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        servicePrincipalValid = (response.isValid);
+        DOM.get("servicePrincipalStatus").innerHTML = "<small>" + response.errorMessage + "</small>";
+        adjustAddStoreButton();
+    }
+
+    function fileNameValidated(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        fileNameValid = (response.isValid);
+        DOM.get("fileNameStatus").innerHTML = "<small>" + response.errorMessage + "</small>";
+        adjustAddStoreButton();
+    }
+
+    function realmValidated(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        realmValid = (response.isValid);
+        DOM.get("realmStatus").innerHTML = "<small>" + response.errorMessage + "</small>";
+        adjustAddStoreButton();
+    }
+
+    function serviceNameValidated(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        serviceNameValid = (response.isValid);
+        DOM.get("serviceNameStatus").innerHTML = "<small>" + response.errorMessage + "</small>";
+        adjustAddStoreButton();
+    }
+
+    function domainNameValidated(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        domainNameValid = (response.isValid);
+        DOM.get("domainNameStatus").innerHTML = "<small>" + response.errorMessage + "</small>";
+        adjustAddStoreButton();
+    }
+
+    function adjustAddStoreButton() {
+        var allValid = (servicePrincipalValid
+                        && servicePrincipalValid
+                        && fileNameValid
+                        && realmValid
+                        && serviceNameValid
+                        && domainNameValid);
+        DOM.get("addStoreButton").disabled = !allValid;
+    }
+
+</script>
+<div id="mainPanel" align="center">
+    <div id="createPanel" class="createpanel" style="width:550px;">
+        <form id="windowDesktopForm" >
+        <br />
+        <div class="bodywhite">
+            <h2>Add an Authentication Store</h2>
+            <small>Fusce rhoncus rutrum nunc. Ut ut pede vel sem scelerisque commodo. Vestibulum non libero vulputate arcu gravida auctor. Phasellus quis felis in nulla laoreet ornare.</small>
+        </div>				
+        <div class="bodywhite">				
+            <font class="OrangeSmall">Select authentication source:</font><br />
+            <select id="selectAuthentication" style="width:200px">					
+                <option value="1">Window Desktop SSO</option>					
+            </select>	
+        </div>
+        <div class="bodywhite">				
+            <div class="middletitle">Enter the store details</div><div class="OrangeVerySmall" align="right">* ALL Fields are Required</div><br />
+            <p class="OrangeSmall">Kerberos service principal:</p>
+            <input type="text" id="servicePrincipal" name="servicePrincipal" value="$!windowStore.servicePrincipal" onkeyup="APP.callDelayed(this, validateServicePrincipal);"/>
+            <span id="servicePrincipalStatus"></span><br />
+            
+            <p class="OrangeSmall">Key tab file name:&nbsp;<a id="ttprealm" href="#" onmouseover="AjaxUtils.ajax_showTooltip('$context/tooltip/tooltipKeytabfile.html',this);return false;"  onmouseout="AjaxUtils.ajax_hideTooltip();" ><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></a></p>
+            <input type="text" id="fileName" name="fileName" value="$!windowStore.fileName" onkeyup="APP.callDelayed(this, validateFileName);"/>
+            <span id="fileNameStatus"></span><br />
+            
+             <p class="OrangeSmall">Kerberos realm:&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
+            <input type="text" id="realm" name="realm" value="$!windowStore.realm" onkeyup="APP.callDelayed(this, validateRealm);"/>
+            <span id="realmStatus"></span><br />
+            
+            <p class="OrangeSmall">Kerberos service name:&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
+            <input type="text" id="serviceName" name="serviceName" value="$!windowStore.serviceName" onkeyup="APP.callDelayed(this, validateServiceName);"/>
+            <span id="serviceNameStatus"></span><br />
+
+            <p class="OrangeSmall">Return principal with domain name:&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
+            <input type="text" id="domainName" name="domainName" value="$!windowStore.domainName" onkeyup="APP.callDelayed(this, validateDomainName);"/>
+            <span id="domainNameStatus"></span><br />
+        </div>
+        <div class="subbody">
+            <button type="button" value="Cancel" onClick="javascript:cancel();">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" id="addStoreButton" value="addStore" onClick="addStore();">ADD THIS STORE</button>
+        </div>
+        </form>
+    </div>
+</div>
+<div id="addStore" style="visibility:hidden"></div>

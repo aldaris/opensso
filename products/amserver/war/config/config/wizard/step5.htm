@@ -1,0 +1,88 @@
+<script type="text/javascript">
+
+    var loadBalancerValid = #if((!$host && !$port) || ($host && $port))true#{else}false#{end};
+
+    function disableLoadBalancer() {
+        $('loadBalancerModule').style.display = "none";
+        $('loadBalancerEnable').checked = false;
+        $('loadBalancerDisable').checked = true;
+        $('loadBalancerHostName').value = null;
+        $('loadBalancerPort').value = null;
+        $('loadBalancerStatus').innerHTML = "";
+        loadBalancerValid = false;
+        $('nextTabButton').disabled = false;
+        AjaxUtils.call("$context$path?actionLink=clear");
+    }
+
+    function enableLoadBalancer() {
+        $('loadBalancerModule').style.display = "";
+        $('loadBalancerEnable').checked = true;
+        $('loadBalancerDisable').checked = false;
+        $('nextTabButton').disabled = true;
+    }
+
+    function loadBalancerValidated( response ) {
+        if ( response.responseText == "true" ) {
+            $('nextTabButton').disabled = false;
+            loadBalancerValid = true;
+            $('loadBalancerStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
+                                                  '<small>Load Balancer found</small>';
+        } else {
+            $('nextTabButton').disabled = true;
+            loadBalancerValid = false;
+            $('loadBalancerStatus').innerHTML = response.responseText;
+        }
+    }
+    function validateLoadBalancer() {
+        var callUrl = "$context$path?actionLink=validate&host=" + $('loadBalancerHostName').value +
+                      "&port=" + $('loadBalancerPort').value;
+        AjaxUtils.call(callUrl, loadBalancerValidated );
+    }
+
+    function wizardStep5Init() {
+        YAHOO.util.Event.addListener('loadBalancerDisable', "click", disableLoadBalancer );
+        YAHOO.util.Event.addListener('loadBalancerEnable', "click", enableLoadBalancer );
+        if ( loadBalancerValid ) {
+            $('nextTabButton').disabled = false;
+            if( $('loadBalancerEnable').checked ) {
+                validateLoadBalancer();
+            }
+        } else {
+            $('nextTabButton').disabled = true;
+        }
+    }
+
+    YAHOO.util.Event.onDOMReady( wizardStep5Init );
+
+</script>
+
+<style type="text/css">
+    #loadBalancerFieldset label {
+        width: 12em;
+    }
+</style>
+
+<h1>Load Balancing<img class="pointer" alt="info" src="$context/assets/images/message.gif"/></h1>
+<p>Will this instance be deployed behind a load balancer?</p>
+<input type="radio" id="loadBalancerDisable" #if (!$host && !$port) checked="checked"#{end}/><span>No</span><br/>
+<input type="radio" id="loadBalancerEnable" #if ($host || $port) checked="checked"#{end}/><span>Yes</span>
+
+<div id="loadBalancerModule" style="width:500px;#if(!$host && !$port)display:none#{end}">
+	<p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
+    <div class="hd">Load Balancer Details</div>
+    <div class="bd" style="height:70px">
+        <fieldset id="loadBalancerFieldset">
+            <ol>
+                <li>
+                    <label for="loadBalancerHostName">Load Balancer Host Name<em>*</em></label>
+                    <input id="loadBalancerHostName" name="loadBalancerHostName" type="text" value="#if($host)$host#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this,validateLoadBalancer)"/>
+                    <span id="loadBalancerStatus"></span>
+                </li>
+                <li>
+                    <label for="loadBalancerPort">Port<em>*</em></label>
+                    <input id="loadBalancerPort" name="loadBalancerPort" type="text" value="#if($port)$port#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this,validateLoadBalancer)"/>
+                </li>
+            </ol>
+        </fieldset>
+    </div>
+</div>

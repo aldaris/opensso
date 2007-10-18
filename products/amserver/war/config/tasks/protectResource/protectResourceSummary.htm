@@ -1,0 +1,54 @@
+<script language="javascript">
+
+YAHOO.namespace("sun.container");
+
+function init() {
+    AjaxUtils.load( 'resource', '$context/tasks/dlg/popupResource.htm');
+    YAHOO.sun.container.resource = new YAHOO.widget.Panel("resource", { width:"280px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true } );
+    YAHOO.sun.container.resource.render();	
+}
+
+YAHOO.util.Event.onDOMReady( init );
+
+function closed(){
+	document.location = "$context/commonTasks.htm";
+}
+function protectresource(){
+	YAHOO.sun.container.resource.show();
+	setTimeout("YAHOO.sun.container.resource.hide()",1250);
+	setTimeout("AjaxUtils.load('container', '$context/tasks/protectResource/resourceProtected.htm')",1250);
+}
+</script>
+<div id="mainPanel" align="center">
+    <div id="createPanel" class="createpanel" align="left">
+        <br />
+        <div class="bodywhite">
+            <h2>Protect a Resource - Summary</h2>
+            <small>Si quaedam nimis antique, si peraque dure dicere credit eos, ignave multa fatetur, et sapit et mecum facit et Iova</small>
+        </div>
+        <br />
+        <div class="bodywhite">
+            <div style="float:left" align="right">
+                <p class="OrangeSmall">Selected URL pattern:</p>
+                <p class="OrangeSmall">2 Users:</p>
+                <br>
+                <p class="OrangeSmall">Condition:</p>
+            </div>
+            
+            <div style="float:left">HTTP://someserver.com/finance/*</div>
+            <div align="right"><a class="blue">Edit</a></div>
+              
+            <p>User FirstName, Lastname</p>
+            
+            <p>User FirstName, Lastname</p>
+            
+            <p>The condition name is displayed here</p>
+                                            
+        </div>				
+        <div class="subbody">
+            <button type="button" value="close" onClick="javascript:closed();">CLOSE</button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" value="next" onClick="javascript:protectresource();">PROTECT THIS RESOURCE</button>
+        </div>		
+    </div>
+</div>
+<div id="resource" style="visibility:hidden"></div>
