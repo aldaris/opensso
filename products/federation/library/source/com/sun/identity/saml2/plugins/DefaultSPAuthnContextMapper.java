@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAuthnContextMapper.java,v 1.2 2006-12-13 19:03:20 weisun2 Exp $
+ * $Id: DefaultSPAuthnContextMapper.java,v 1.3 2007-10-18 23:53:54 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Set;
@@ -61,6 +62,7 @@ import java.util.HashSet;
 public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
 
     static SAML2MetaManager sm = SAML2Utils.getSAML2MetaManager();;
+    static String DEFAULT = "default";
 
     /**
      * Returns the <code>RequestedAuthnContext</code> object.
@@ -140,12 +142,10 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
          if (authContextClassRef != null && !authContextClassRef.isEmpty()) {
             Iterator i = authContextClassRef.iterator();
             while (i.hasNext()) {
-                String authClassRef = (String) i.next();
-                if ((authClassRef.indexOf(
-                    SAML2Constants.AUTH_CTX_PREFIX)) == -1) {
-                    authClassRef = new StringBuffer()
-                        .append(SAML2Constants.AUTH_CTX_PREFIX)
-                        .append(authClassRef).toString();
+                String authClassRef = prefixIfRequired((String) i.next());
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("DefaultSPAuthnContextMapper: "
+                        + "authClassRef=" + authClassRef);
                 }
                 authCtxList.add(authClassRef);
             }
@@ -155,6 +155,9 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
              Iterator i = authCtxSet.iterator();
              while (i.hasNext()) {
                   String className = (String)i.next();
+                  if (DEFAULT.equals(className)) {
+                      continue;
+                  }
                   try {
                       Integer aLevel = 
                         new Integer((String) authRefMap.get(className));
@@ -182,7 +185,7 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
               Iterator i = authCtxSet.iterator();
               while (i.hasNext()) {
                   String val = (String) i.next();
-                  if (val != null && !val.equals("default")) {
+                  if (val != null && !val.equals(DEFAULT)) {
                       authCtxList.add(val);
                   }
               }
@@ -269,12 +272,12 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                 if (authRefMap.containsKey(authnClassRef)) {
                     authLevelStr =  (String) authRefMap.get(authnClassRef);
                 } else {
-                    authLevelStr = (String)authRefMap.get("default");
+                    authLevelStr = (String)authRefMap.get(DEFAULT);
                 }
             }
         } else {
              if ((authRefMap != null) && (!authRefMap.isEmpty())) {
-                    authLevelStr = (String)authRefMap.get("default");
+                    authLevelStr = (String)authRefMap.get(DEFAULT);
              }
         }
 
@@ -311,7 +314,7 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
             SAML2Utils.debug.message("DefaultSPAuthnContextMapper: List:"
                         +authContextClassRefConfig);
         }
-        HashMap authRefMap =  new HashMap();
+        HashMap authRefMap =  new LinkedHashMap();
         String authLevel = null;
 
         if (authContextClassRefConfig != null && 
@@ -321,7 +324,7 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
             while (i.hasNext()) { 
                 boolean isDefault = false;
                 String authRef = (String)i.next();
-                int idx = authRef.indexOf("default");
+                int idx = authRef.indexOf(DEFAULT);
                 String authRefVal = authRef;
                 if (idx != -1) {
                     authRefVal = authRef.substring(0,idx);
@@ -349,22 +352,17 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                     SAML2Utils.debug.message("AuthLevel is :" + authLevel);
                 }
                 if (authRefVal != null) {
-                    if ( isDefault && !authRefMap.containsKey("default")) {
-                        authRefMap.put("default",authLevel);
+                    if (isDefault && !authRefMap.containsKey(DEFAULT)) {
+                        authRefMap.put(DEFAULT, authLevel);
                     }
-                    if (authClass != null && authClass.indexOf(
-                                SAML2Constants.AUTH_CTX_PREFIX) == -1) {
-                        authRefMap.put(
-                            SAML2Constants.AUTH_CTX_PREFIX+authClass,
-                            authLevel);
-                    } else {
-                        authRefMap.put(authClass,authLevel);
+                    if (authClass != null) {
+                        authRefMap.put(prefixIfRequired(authClass), authLevel);
                     }
                 }
             }
         }
 
-        return authRefMap;
+        return Collections.unmodifiableMap(authRefMap);
     }
 
 
@@ -430,4 +428,15 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
         return authRefMap;
     }
 
+    /**
+     * Adds prefix to the authn class reference only when there is 
+     * no ":" present.
+     */ 
+    private static String prefixIfRequired(String authClassRef) {
+        if ((authClassRef != null) && (authClassRef.indexOf(':') == -1)) {
+            return SAML2Constants.AUTH_CTX_PREFIX + authClassRef;
+        } else {
+            return authClassRef;
+        }
+    }
  }
