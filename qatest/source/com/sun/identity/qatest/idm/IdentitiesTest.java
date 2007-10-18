@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentitiesTest.java,v 1.3 2007-09-25 17:36:30 bt199000 Exp $
+ * $Id: IdentitiesTest.java,v 1.4 2007-10-18 21:12:55 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,6 +67,7 @@ public class IdentitiesTest extends IDMCommon {
     private String testExpectedErrMsg;
     private String testExpectedResult;
     private String testMemberName;
+    private String testMemberType;
     
     /**
      * Empty Class constructor.
@@ -98,8 +99,8 @@ public class IdentitiesTest extends IDMCommon {
         Reporter.log("========== BEGIN TEST CASE ==========");
         Reporter.log("Test Name: " + prefixTestName);
         Reporter.log("Description: " + testDescription);
-        Reporter.log("Realm: " + testRealm);      
-        Reporter.log("Number of Items: " + testCount); 
+        Reporter.log("Realm: " + testRealm);
+        Reporter.log("Number of Items: " + testCount);
         try {
             ssoToken = getToken(adminUser, adminPassword, basedn);
             if (!validateToken(ssoToken)) {
@@ -134,6 +135,8 @@ public class IdentitiesTest extends IDMCommon {
                     getParams(IDMConstants.IDM_KEY_EXPECTED_RESULT, i);
             testMemberName =
                     getParams(IDMConstants.IDM_KEY_IDENTITY_MEMBER_NAME, i);
+            testMemberType =
+                    getParams(IDMConstants.IDM_KEY_IDENTITY_MEMBER_TYPE, i);
             log(Level.FINEST, "testIdentities", "Action = " + testAction);
             log(Level.FINEST, "testIdentities", "ID Name = " + testIdName);
             log(Level.FINEST, "testIdentities", "ID Type = " + testIdType);
@@ -142,19 +145,19 @@ public class IdentitiesTest extends IDMCommon {
             Reporter.log("Type " + i + " : " + testIdName);
             Reporter.log("Attributes " + i + " : " + testIdAttr);
             Reporter.log("Member Name " + i + " : " + testMemberName);
-            Reporter.log("Expected Error Code " + i + " : " + 
+            Reporter.log("Expected Error Code " + i + " : " +
                     testExpectedErrCode);
-            Reporter.log("Expected Error Message " + i + " : " + 
+            Reporter.log("Expected Error Message " + i + " : " +
                     testExpectedErrMsg);
             Reporter.log("Expected Results " + i + " : " + testExpectedResult);
             if (testIdType == null) {
-                log(Level.FINE, "testIdentities", "Invalid IDType " + 
+                log(Level.FINE, "testIdentities", "Invalid IDType " +
                         testIdType);
                 assert false;
                 break;
             } else if (!isIdTypeSupported(ssoToken, testRealm, testIdType)) {
                 log(Level.FINE, "testIdentities", "IDType " + testIdType +
-                    " is not supported in this deployment.");
+                        " is not supported in this deployment.");
                 break;
             }
             if (testAction.equals("create")) {
@@ -270,6 +273,25 @@ public class IdentitiesTest extends IDMCommon {
                     e.printStackTrace();
                     throw e;
                 }
+            } else if (testAction.equals("getmember")) {
+                try {
+                    assert(getMembers(testIdName, testIdType, testMemberType));
+                } catch (IdRepoException idre) {
+                    if (checkIDMExpectedErrorMessageCode(idre,
+                            testExpectedErrMsg, testExpectedErrCode))
+                        assert true;
+                    else {
+                        log(Level.SEVERE, "testIdentities::getmember",
+                                idre.getMessage());
+                        idre.printStackTrace();
+                        throw idre;
+                    }
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testIdentities::getmember",
+                            e.getMessage());
+                    e.printStackTrace();
+                    throw e;
+                }
             } else {
                 log(Level.SEVERE, "testIdentities", "Invalid test action, " +
                         testAction + ", for test index " + i);
@@ -288,11 +310,11 @@ public class IdentitiesTest extends IDMCommon {
     throws Exception {
         entering("cleanup", null);
         Reporter.log("=========== END TEST CASE ===========");
-        AMIdentityRepository idrepo = 
+        AMIdentityRepository idrepo =
                 new AMIdentityRepository(ssoToken, testRealm);
         Set types = idrepo.getSupportedIdTypes();
         Iterator iter = types.iterator();
-        while (iter.hasNext()) 
+        while (iter.hasNext())
             cleanupIdentities((IdType)iter.next());
         exiting("cleanup");
     }
@@ -304,21 +326,21 @@ public class IdentitiesTest extends IDMCommon {
     private void cleanupIdentities(IdType idType)
     throws Exception {
         entering("cleanupIdentities", null);
-        Set result = searchIdentities(ssoToken, "*", idType, 
+        Set result = searchIdentities(ssoToken, "*", idType,
                 testRealm);
         if (!result.isEmpty()) {
-            log(Level.FINEST,"cleanupIdentities", 
-                    "Identities found. Start the clean up " + 
+            log(Level.FINEST,"cleanupIdentities",
+                    "Identities found. Start the clean up " +
                     result.toString());
             Iterator iter = result.iterator();
             AMIdentity id;
             while (iter.hasNext()) {
                 id = (AMIdentity)iter.next();
-                log(Level.FINEST, "cleanupIdentities", "Deleting " + 
+                log(Level.FINEST, "cleanupIdentities", "Deleting " +
                         idType.getName() + " " + id.getName());
                 delete(id.getName(), idType.getName());
-           }
-        }  
+            }
+        }
         exiting("cleanupIdentities");
     }
     
@@ -336,7 +358,7 @@ public class IdentitiesTest extends IDMCommon {
         log(Level.FINE, "create", "Creating identity " + idType +
                 " name " + idName + "...");
         Map userAttrMap;
-        if (userAttr == null) 
+        if (userAttr == null)
             userAttrMap = setDefaultIdAttributes(idType, idName);
         else
             userAttrMap = setIDAttributes(userAttr);
@@ -355,7 +377,7 @@ public class IdentitiesTest extends IDMCommon {
         exiting("create");
         return (opSuccess);
     }
-        
+    
     /**
      * This method searches for an identity with given identity name and type
      * @param idName identity name or pattern
@@ -537,7 +559,7 @@ public class IdentitiesTest extends IDMCommon {
     }
     
     /**
-     * This method removes an user member from an identity with identity name, 
+     * This method removes an user member from an identity with identity name,
      * type, and member name.
      * @param idName identity name
      * @param idType identity type
@@ -565,6 +587,66 @@ public class IdentitiesTest extends IDMCommon {
         else
             log(Level.FINE, "removeMembers", "Failed to remove member");
         exiting("removeMembers");
+        return opSuccess;
+    }
+    
+    /**
+     * This method retrieve a list of member based on member type
+     * @param idName identity name
+     * @param idType identity type
+     * @param memberType member type
+     * @return true if all members are retrieved successfully
+     */
+    public boolean getMembers(String idName, String idType, String memberType)
+    throws Exception {
+        entering("getMembers", null);
+        boolean opSuccess = false;
+        log(Level.FINE, "getMembers", "Listing members with identity type " +
+                memberType + "...");
+        // Remove user member to role or group identity
+        Set idNameSet = getMembers(ssoToken, idName, getIdType(idType),
+                getIdType(memberType), testRealm);
+        // Verification step.  Check to make sure member matches with idtype
+        // and with expectedc result
+        Iterator iter = idNameSet.iterator();
+        AMIdentity amIdentity;
+        List idNameList = getAttributeList(testExpectedResult,
+                IDMConstants.IDM_KEY_SEPARATE_CHARACTER);
+        String actualType;
+        log(Level.FINEST, "getMembers", "List of members : " + 
+                idNameSet.toString());
+        if (idNameSet.isEmpty() && idNameList.isEmpty())
+            opSuccess = true;
+        else {
+            while (iter.hasNext()) {
+                amIdentity = (AMIdentity) iter.next();
+                actualType = amIdentity.getType().getName();
+                log(Level.FINEST, "getMembers", "Identity name = " + 
+                    amIdentity.getName() +  " .Identity type = " + actualType);
+                if (!actualType.equals(memberType)) {
+                log(Level.SEVERE, "getMembers", "Member " + 
+                        amIdentity.getName() + " has a wrong identity type " + 
+                        actualType);
+                    opSuccess = false;
+                    break;
+                } else 
+                    opSuccess = true;
+                if (!idNameList.contains(amIdentity.getName())) {
+                    log(Level.SEVERE, "getMembers", "Member " + 
+                        amIdentity.getName() + 
+                        " is not in expected result list");
+                    opSuccess = false;
+                    break;
+                } else
+                    opSuccess = true;
+            }
+        }
+        if (opSuccess)
+            log(Level.FINE, "getMembers", "All members in " + idType + " " +
+                    idName + " is retrieved successfully");
+        else
+            log(Level.FINE, "getMembers", "Failed to retrieve members");
+        exiting("listMembers");
         return opSuccess;
     }
     
@@ -702,8 +784,7 @@ public class IdentitiesTest extends IDMCommon {
             putSetIntoMap("nsRoleFilter", tempMap,
                     "(objectclass=inetorgperson)");
         } else if (siaType.equals("role") || siaType.equals("group")) {
-            log(Level.FINEST, "setIdAttributes", "Type is " + siaType +
-                    ". No attribute is set");
+            putSetIntoMap("description", tempMap, siaType + " description");
         } else {
             log(Level.SEVERE, "setIdAttributes", "Invalid identity type " +
                     siaType);

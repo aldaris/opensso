@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.5 2007-09-25 17:35:15 bt199000 Exp $
+ * $Id: IDMCommon.java,v 1.6 2007-10-18 21:11:51 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -261,7 +261,7 @@ public class IDMCommon extends TestCommon {
      */
     public void addUserMember(SSOToken ssotoken, String userName,
             String memberName, IdType memberType)
-            throws Exception {
+    throws Exception {
         addUserMember(ssotoken, userName, memberName, memberType, realm);
     }
     
@@ -270,7 +270,7 @@ public class IDMCommon extends TestCommon {
      */
     public void addUserMember(SSOToken ssotoken, String userName,
             String memberName, IdType memberType, String tRealm)
-            throws Exception {
+    throws Exception {
         Set setUser = getAMIdentity(ssotoken, userName, IdType.USER, tRealm);
         Set setMember = getAMIdentity(ssotoken, memberName, memberType, tRealm);
         AMIdentity amidUser = null;
@@ -295,7 +295,7 @@ public class IDMCommon extends TestCommon {
      */
     public void removeUserMember(SSOToken ssotoken, String userName,
             String memberName, IdType memberType, String tRealm)
-            throws Exception {
+    throws Exception {
         Set setUser = getAMIdentity(ssotoken, userName, IdType.USER, tRealm);
         Set setMember = getAMIdentity(ssotoken, memberName, memberType, tRealm);
         AMIdentity amidUser = null;
@@ -308,6 +308,26 @@ public class IDMCommon extends TestCommon {
             amidMember = (AMIdentity)itr.next();
         }
         amidMember.removeMember(amidUser);
+    }
+    
+    /**
+     * Retrieve a list of members
+     * @param ssotoken SSO token
+     * @param idName identity name that retrieve a list of members
+     * @param idType identity type
+     * @param memberType member type
+     * @param tRealm realm name
+     */
+    public Set<AMIdentity> getMembers(SSOToken ssotoken, String idName, 
+            IdType idType, IdType memberType, String tRealm)
+    throws Exception {
+        Set setId = getAMIdentity(ssotoken, idName, idType, tRealm);
+        AMIdentity amid = null;
+        Iterator itr;
+        for (itr = setId.iterator(); itr.hasNext();) {
+            amid = (AMIdentity)itr.next();
+        }
+        return amid.getMembers(memberType);
     }
     
     /**

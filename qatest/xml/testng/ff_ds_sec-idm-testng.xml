@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-idm-testng.xml,v 1.3 2007-10-05 23:57:00 bt199000 Exp $
+ $Id: ff_ds_sec-idm-testng.xml,v 1.4 2007-10-18 21:11:10 bt199000 Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -639,6 +639,30 @@
             <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
         </classes>
     </test>
+    <test name="UpdateIdentitiesTest6">
+        <parameter name="testNum" value="6"/>
+        <parameter name="testName" value="IDMUpdateIdentitiesTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="UpdateIdentitiesTest7">
+        <parameter name="testNum" value="7"/>
+        <parameter name="testName" value="IDMUpdateIdentitiesTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
     <test name="AddMembersTest1">
     	<parameter name="testNum" value="1"/>
     	<parameter name="testName" value="IDMAddMembersTest"/>
@@ -750,6 +774,81 @@
     <test name="RemoveMembersTest4">
     	<parameter name="testNum" value="4"/>
     	<parameter name="testName" value="IDMRemoveMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="GetMembersTest1">
+        <parameter name="testNum" value="1"/>
+        <parameter name="testName" value="IDMGetMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="GetMembersTest2">
+        <parameter name="testNum" value="2"/>
+        <parameter name="testName" value="IDMGetMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="GetMembersTest3">
+        <parameter name="testNum" value="3"/>
+        <parameter name="testName" value="IDMGetMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="GetMembersTest4">
+        <parameter name="testNum" value="4"/>
+        <parameter name="testName" value="IDMGetMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="GetMembersTest5">
+        <parameter name="testNum" value="5"/>
+        <parameter name="testName" value="IDMGetMembersTest"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idm.IdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="GetMembersTest6">
+        <parameter name="testNum" value="6"/>
+        <parameter name="testName" value="IDMGetMembersTest"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
