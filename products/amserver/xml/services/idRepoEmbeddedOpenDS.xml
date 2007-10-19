@@ -51,6 +51,9 @@
             <Value>organizationalPerson</Value>
             <Value>person</Value>
             <Value>top</Value>
+            <Value>sunFederationManagerDataStore</Value>
+            <Value>sunIdentityServerLibertyPPService</Value>
+            <Value>sunFMSAML2NameIdentifier</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-user-attributes"/>
@@ -98,6 +101,44 @@
             <Value>uid</Value>
             <Value>userpassword</Value>
             <Value>userCertificate</Value>
+            <Value>iplanet-am-user-federation-info-key</Value>
+            <Value>iplanet-am-user-federation-info</Value>
+            <Value>sunIdentityServerDiscoEntries</Value>
+            <Value>sunIdentityServerPPCommonNameCN</Value>
+            <Value>sunIdentityServerPPCommonNameFN</Value>
+            <Value>sunIdentityServerPPCommonNameSN</Value>
+            <Value>sunIdentityServerPPCommonNameMN</Value>
+            <Value>sunIdentityServerPPCommonNameAltCN</Value>
+            <Value>sunIdentityServerPPCommonNamePT</Value>
+            <Value>sunIdentityServerPPInformalName</Value>
+            <Value>sunIdentityServerPPLegalIdentityLegalName</Value>
+            <Value>sunIdentityServerPPLegalIdentityDOB</Value>
+            <Value>sunIdentityServerPPLegalIdentityMaritalStatus</Value>
+            <Value>sunIdentityServerPPLegalIdentityGender</Value>
+            <Value>sunIdentityServerPPLegalIdentityAltIdType</Value>
+            <Value>sunIdentityServerPPLegalIdentityAltIdValue</Value>
+            <Value>sunIdentityServerPPLegalIdentityVATIdType</Value>
+            <Value>sunIdentityServerPPLegalIdentityVATIdValue</Value>
+            <Value>sunIdentityServerPPEmploymentIdentityJobTitle</Value>
+            <Value>sunIdentityServerPPEmploymentIdentityOrg</Value>
+            <Value>sunIdentityServerPPEmploymentIdentityAltO</Value>
+            <Value>sunIdentityServerPPAddressCard</Value>
+            <Value>sunIdentityServerPPMsgContact</Value>
+            <Value>sunIdentityServerPPFacadeMugShot</Value>
+            <Value>sunIdentityServerPPFacadeWebSite</Value>
+            <Value>sunIdentityServerPPFacadeNamePronounced</Value>
+            <Value>sunIdentityServerPPFacadeGreetSound</Value>
+            <Value>sunIdentityServerPPFacadegreetmesound</Value>
+            <Value>sunIdentityServerPPDemographicsDisplayLanguage</Value>
+            <Value>sunIdentityServerPPDemographicsLanguage</Value>
+            <Value>sunIdentityServerPPDemographicsAge</Value>
+            <Value>sunIdentityServerPPDemographicsBirthDay</Value>
+            <Value>sunIdentityServerPPDemographicsTimeZone</Value>
+            <Value>sunIdentityServerPPSignKey</Value>
+            <Value>sunIdentityServerPPEncryPTKey</Value>
+            <Value>sunIdentityServerPPEmergencyContact</Value>
+            <Value>sun-fm-saml2-nameid-infokey</Value>
+            <Value>sun-fm-saml2-nameid-info</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-group-objectclass"/>

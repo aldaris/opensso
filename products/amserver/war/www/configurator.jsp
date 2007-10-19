@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.16 2007-10-15 17:55:05 rajeevangal Exp $
+   $Id: configurator.jsp,v 1.17 2007-10-19 00:21:01 rajeevangal Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -575,7 +575,7 @@
             </tr>
 
             <!-- Root Suffix -->
-            <tr id="smdsrsuffix">
+            <tr id="smrootsuffix">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
                         <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.configdatasuffix"/></span></div>
@@ -587,7 +587,7 @@
             </tr>
 
             <!-- Root Suffix for Service Management-->
-            <tr id="smrootsuffix">
+            <tr id="smdsrsuffix">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
                         <div class="ConTblCl1Div">
