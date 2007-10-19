@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.6 2007-10-17 23:00:16 veiming Exp $
+ * $Id: SystemProperties.java,v 1.7 2007-10-19 20:03:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -266,7 +266,7 @@ public class SystemProperties {
                 }
             }
 
-            if (answer != null) {
+            if ((answer != null) && (tagswapValues != null)) {
                 Set set = new HashSet();
                 set.addAll(tagswapValues.keySet());
                 
