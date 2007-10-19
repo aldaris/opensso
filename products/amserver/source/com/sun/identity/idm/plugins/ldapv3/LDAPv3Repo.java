@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.27 2007-10-17 23:00:43 veiming Exp $
+ * $Id: LDAPv3Repo.java,v 1.28 2007-10-19 00:46:14 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1417,6 +1417,15 @@ public class LDAPv3Repo extends IdRepo {
                  }
             }
         }
+        if (type.equals(IdType.GROUP)) {
+            String rdn = getNamingAttr(type);
+            Set rdnValue = (Set) attrMap.get(rdn);
+            if ((rdnValue == null) || rdnValue.isEmpty()) {
+                Set cnAttrValue = new HashSet();
+                cnAttrValue.add(name);
+                attrMap.put(rdn, cnAttrValue);
+            }
+        }
 
         if (debug.messageEnabled()) {
             debug.message("exit addAttrMapping: ");
@@ -1800,6 +1809,9 @@ public class LDAPv3Repo extends IdRepo {
                         }
                     }
                     attrNamesCase = allowedAttrNames;
+                    if (attrNamesCase.isEmpty()) {
+                        return theAttrMap;  // nothing to read.
+                    }
                 }
                 if (debug.messageEnabled()) {
                     debug.message("  LDAPv3Repo: before read: attrNames="
