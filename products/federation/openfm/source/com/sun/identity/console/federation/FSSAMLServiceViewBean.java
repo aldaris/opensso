@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLServiceViewBean.java,v 1.2 2007-07-11 22:05:50 veiming Exp $
+ * $Id: FSSAMLServiceViewBean.java,v 1.3 2007-10-19 05:01:16 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -219,14 +219,14 @@ public class FSSAMLServiceViewBean
     
     void setValues() {
         Map attrValues = (Map)getPageSessionAttribute(PROPERTY_ATTRIBUTE);
-        
+        FSSAMLServiceModel model = (FSSAMLServiceModel)getModel();
         if (attrValues == null) {
-            FSSAMLServiceModel model = (FSSAMLServiceModel)getModel();
             attrValues = model.getAttributeValues();
         }
         
         Map displayValues = new HashMap(attrValues.size() *2);
         
+        // set tables
         for (Iterator iter = attrValues.keySet().iterator(); iter.hasNext(); ){
             String name = (String)iter.next();
             Set values = (Set)attrValues.get(name);
@@ -237,21 +237,13 @@ public class FSSAMLServiceViewBean
                 ordered.addAll(values);
                 displayValues.put(name, ordered);
             } else {
-                try {
-                    View view = getChild(name);
-                    
-                    if (DisplayField.class.isInstance(view)) {
-                        String val = ((values != null) && !values.isEmpty()) ?
-                            (String)values.iterator().next() : "";
-                        ((DisplayField)view).setValue(val);
-                        displayValues.put(name, values);
-                    }
-                } catch (IllegalArgumentException e) {
-                    // do nothing.
-                    // child is not a display field.
-                }
+                displayValues.put(name, values);
             }
         }
+        
+        // set other attributes
+        AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
+        ps.setAttributeValues(attrValues, model);
         
         setPageSessionAttribute(PROPERTY_ATTRIBUTE, (HashMap)displayValues);
     }

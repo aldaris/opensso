@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFSSAMLProfile.xml,v 1.1 2007-07-10 09:50:04 asyhuang Exp $
+   $Id: propertyFSSAMLProfile.xml,v 1.2 2007-10-19 05:03:09 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -68,7 +68,37 @@
             </cc>
         </property>            
     </section>    
-    <section name="assertion" defaultValue="saml.profile.assertion.header">
+    
+    <section name="protocol" defaultValue="saml.profile.protocol.header">
+        <property>
+            <label name="lblProtocolVersion" defaultValue="saml.profile.protocol.version" labelFor="lblProtocolVersion" />          
+            <cc name="DefaultProtocolVersion" 
+                tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
+                <option label="saml.profile.protocol.version.1.1" value="1.1" />
+                <option label="saml.profile.protocol.version.1.0" value="1.0" />                               
+            </cc>                      
+        </property>       
+    </section>    
+    
+    <section name="assertion" defaultValue="saml.profile.assertion.header">        
+        <property>
+            <label name="lbliplanet-am-saml-assertion-version" 
+                   defaultValue="saml.profile.assertion.version"
+                   labelFor="lbliplanet-am-saml-assertion-version" />            
+            <cc name="DefaultAssertionVersion" 
+                tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
+                <option label="saml.profile.assertion.version.1.1" value="1.1" />
+                <option label="saml.profile.assertion.version.1.0" value="1.0" />                               
+            </cc>                      
+        </property>        
+        <property>
+            <label name="lbliplanet-am-saml-assertion-remove" 
+                   defaultValue="saml.profile.assertion.remove"
+                   labelFor="iplanet-am-saml-assertion-remove" />                   
+            <cc name="RemoveAssertion" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+                <attribute name="label" value="label.Yes" />
+            </cc>  
+        </property>                                       
         <property>
             <label name="lbliplanet-am-saml-assertion-timeout" labelFor="iplanet-am-saml-assertion-timeout" />
             <cc name="iplanet-am-saml-assertion-timeout" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
@@ -127,4 +157,23 @@
             </cc>
         </property>
     </section>   
+    
+    <section name="AttributeQuery" defaultValue="saml.profile.attribute.query.header">
+        <property>
+            <label name="lblAttributeListForAttributeQuery" 
+                   defaultValue="saml.profile.attribute.query.label"
+                   labelFor="lblAttributeListForAttributeQuery" />                        
+            <ccgroup>
+                <property>                
+                    <cc name="AttributeListForAttributeQuery" 
+                        tagclass="com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                        <attribute name="name" value="list" />
+                        <attribute name="listboxLabel" value="label.current.value" />
+                        <attribute name="textboxLabel" value="label.new.value" />
+                    </cc>
+                </property>
+            </ccgroup>
+        </property>
+    </section> 
+    
 </propertysheet>
