@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.6 2007-10-16 22:13:29 rmisra Exp $
+ * $Id: AuthTest.java,v 1.7 2007-10-22 19:27:10 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,9 +27,11 @@ package com.sun.identity.qatest.authentication;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.Reporter;
@@ -56,7 +58,6 @@ public class AuthTest extends TestCommon {
     private ResourceBundle rb;
     private String module_servicename;
     private String module_subconfigname;
-    private String module_datafile;
     private String module_subconfigid;
     private String service_servicename;
     private String service_subconfigname;
@@ -71,6 +72,8 @@ public class AuthTest extends TestCommon {
     private String logoutURL;
     private String amadmURL;
     private List list;
+    private AuthTestConfigUtil moduleConfigData;
+    private String configrbName = "authenticationConfigData";
 
     /**
      * Constructor for the class.
@@ -78,6 +81,7 @@ public class AuthTest extends TestCommon {
     public AuthTest() {
         super("AuthTest");
         ac = new AuthenticationCommon();
+        moduleConfigData = new AuthTestConfigUtil(configrbName);
     }
 
     /**
@@ -90,7 +94,7 @@ public class AuthTest extends TestCommon {
      * This is called only once per auth module.
      */
     @Parameters({"testModule","testMode"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void setup(String testModule, String testMode)
     throws Exception {
         Object[] params = {testModule, testMode};
@@ -99,41 +103,45 @@ public class AuthTest extends TestCommon {
             locTestModule = testModule;
             locTestMode = testMode;
             rb = ResourceBundle.getBundle("AuthTest");
-            module_servicename = (String)rb.getString(locTestModule + ".module_servicename");
-            module_subconfigname = (String)rb.getString(locTestModule + ".module_subconfigname");
-            module_datafile = (String)rb.getString(locTestModule + ".module_datafile");
-            module_subconfigid = (String)rb.getString(locTestModule + ".module_subconfigid");
+            list = moduleConfigData.getModuleDataAsList(locTestModule);
+            module_servicename = (String)rb.getString(locTestModule +
+                    ".module_servicename");
+            module_subconfigname = (String)rb.getString(locTestModule +
+                    ".module_subconfigname");
+            module_subconfigid = (String)rb.getString(locTestModule +
+                    ".module_subconfigid");
 
-            service_servicename = (String)rb.getString(locTestModule + ".service_servicename");
-            service_subconfigname = (String)rb.getString(locTestModule + ".service_subconfigname");
-            service_subconfigid = (String)rb.getString(locTestModule + ".service_subconfigid");
+            service_servicename = (String)rb.getString(locTestModule +
+                    ".service_servicename");
+            service_subconfigname = (String)rb.getString(locTestModule +
+                    ".service_subconfigname");
+            service_subconfigid = (String)rb.getString(locTestModule +
+                    ".service_subconfigid");
 
             rolename = (String)rb.getString(locTestModule + ".rolename");
             user = (String)rb.getString(locTestModule + ".user");
             password = (String)rb.getString(locTestModule + ".password");
 
-            log(logLevel, "setup", "module_servicename:" +
+            log(Level.FINEST, "setup", "module_servicename:" +
                         module_servicename);
-            log(logLevel, "setup", "module_subconfigname:" +
+            log(Level.FINEST, "setup", "module_subconfigname:" +
                         module_subconfigname);
-            log(logLevel, "setup", "module_datafile:" + module_datafile);
-            log(logLevel, "setup", "module_subconfigid:" +
+            log(Level.FINEST, "setup", "module_subconfigid:" +
                         module_subconfigid);
 
-            log(logLevel, "setup", "service_servicename:" +
+            log(Level.FINEST, "setup", "service_servicename:" +
                         service_servicename);
-            log(logLevel, "setup", "service_subconfigname:" +
+            log(Level.FINEST, "setup", "service_subconfigname:" +
                         service_subconfigname);
-            log(logLevel, "setup", "service_subconfigid:" +
+            log(Level.FINEST, "setup", "service_subconfigid:" +
                         service_subconfigid);
 
-            log(logLevel, "setup", "rolename:" + rolename);
-            log(logLevel, "setup", "username:" + user);
-            log(logLevel, "setup", "userpassword:" + password);
+            log(Level.FINEST, "setup", "rolename:" + rolename);
+            log(Level.FINEST, "setup", "username:" + user);
+            log(Level.FINEST, "setup", "userpassword:" + password);
 
             Reporter.log("ModuleServiceName" + module_servicename);
             Reporter.log("ModuleSubConfigName" + module_subconfigname);
-            Reporter.log("ModuleDataFile" + module_datafile);
             Reporter.log("ModuleSubConfigId" + module_subconfigid);
 
             Reporter.log("ServiceServiceName" + service_servicename);
@@ -150,13 +158,9 @@ public class AuthTest extends TestCommon {
                         uri + "/UI/Logout";
             amadmURL = protocol + ":" + "//" + host + ":" + port +
                         uri;
-            log(logLevel, "setup", loginURL);
-            log(logLevel, "setup", logoutURL);
-            log(logLevel, "setup", amadmURL);
-            String absFileName = getBaseDir() + "/xml/authentication/" +
-                        module_datafile;
-            log(logLevel, "setup", absFileName);
-            list = getListFromFile(absFileName);
+            log(Level.FINEST, "setup", loginURL);
+            log(Level.FINEST, "setup", logoutURL);
+            log(Level.FINEST, "setup", amadmURL);
             if (module_servicename.equals("iPlanetAMAuthAnonymousService"))
                 list.add("iplanet-am-auth-anonymous-users-list=" + user);
             FederationManager am = new FederationManager(amadmURL);
@@ -169,7 +173,7 @@ public class AuthTest extends TestCommon {
             String svcData = "iplanet-am-auth-configuration=" + 
                     "<AttributeValuePair><Value>" + module_subconfigname +
                     " REQUIRED</Value></AttributeValuePair>";
-            log(logLevel, "setup", svcData);
+            log(Level.FINEST, "setup", svcData);
             list.add(svcData);
             am.createSubConfiguration(webClient, service_servicename,
                     service_subconfigname, list, realm,
@@ -178,7 +182,7 @@ public class AuthTest extends TestCommon {
             int iIdx = service_subconfigname.indexOf("/");
             svcName = service_subconfigname.substring(iIdx+1,
                         service_subconfigname.length());
-            log(logLevel, "setup", "svcName:" + svcName);
+            log(Level.FINEST, "setup", "svcName:" + svcName);
 
             list.clear();
             list.add("sn=" + user);
@@ -197,7 +201,7 @@ public class AuthTest extends TestCommon {
                     service_servicename, list);
             consoleLogout(webClient, logoutURL);
         } catch(Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -208,7 +212,7 @@ public class AuthTest extends TestCommon {
      * Tests for successful login into the system using correct
      * credentials
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void testLoginPositive()
     throws Exception {
         entering("testLoginPositive", null);
@@ -216,10 +220,12 @@ public class AuthTest extends TestCommon {
             String user = (String)rb.getString(locTestModule + ".user");
             String password = (String)rb.getString(locTestModule + ".password");
             String mode = locTestMode;
-            String modevalue = (String)rb.getString(locTestModule + ".modevalue." + locTestMode);
+            String modevalue = (String)rb.getString(locTestModule +
+                    ".modevalue." + locTestMode);
             String msg = (String)rb.getString(locTestModule + ".passmsg");
             String module_servicename =
-                        (String)rb.getString(locTestModule + ".module_servicename");
+                        (String)rb.getString(locTestModule +
+                        ".module_servicename");
             WebClient wc = new WebClient();
             if (module_servicename.equals("iPlanetAMAuthAnonymousService"))
                 ac.testZeroPageLoginAnonymousPositive(wc, user, password, mode,
@@ -229,8 +235,7 @@ public class AuthTest extends TestCommon {
                         modevalue, msg);
             consoleLogout(wc, logoutURL);
         } catch (Exception e) {
-            log(Level.SEVERE, "testLoginPositive", e.getMessage(),
-                    null);
+            log(Level.SEVERE, "testLoginPositive", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -241,7 +246,7 @@ public class AuthTest extends TestCommon {
      * Tests for unsuccessful login into the system using incorrect
      * credentials
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void testLoginNegative()
     throws Exception {
         entering("testLoginNegative", null);
@@ -249,10 +254,12 @@ public class AuthTest extends TestCommon {
             String user = (String)rb.getString(locTestModule + ".user");
             String password = (String)rb.getString(locTestModule + ".password");
             String mode = locTestMode;
-            String modevalue = (String)rb.getString(locTestModule + ".modevalue." + locTestMode);
+            String modevalue = (String)rb.getString(locTestModule +
+                    ".modevalue." + locTestMode);
             String msg = (String)rb.getString(locTestModule + ".failmsg");
             String module_servicename =
-                        (String)rb.getString(locTestModule + ".module_servicename");
+                        (String)rb.getString(locTestModule +
+                        ".module_servicename");
             WebClient wc = new WebClient();
             if (module_servicename.equals("iPlanetAMAuthAnonymousService"))
                 ac.testZeroPageLoginAnonymousNegative(wc, user, password, mode,
@@ -262,8 +269,7 @@ public class AuthTest extends TestCommon {
                         modevalue, msg);
             consoleLogout(wc, logoutURL);
         } catch (Exception e) {
-            log(Level.SEVERE, "testLoginNegative", e.getMessage(),
-                    null);
+            log(Level.SEVERE, "testLoginNegative", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -277,7 +283,7 @@ public class AuthTest extends TestCommon {
      * (3) Delete all users and roles
      * This is called only once per auth module.
      */
-    //@AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -285,19 +291,22 @@ public class AuthTest extends TestCommon {
             user = (String)rb.getString(locTestModule + ".user");
             rolename = (String)rb.getString(locTestModule + ".rolename");
             service_servicename =
-                    (String)rb.getString(locTestModule + ".service_servicename");
+                    (String)rb.getString(locTestModule +
+                    ".service_servicename");
             service_subconfigname =
-                    (String)rb.getString(locTestModule + ".service_subconfigname");
+                    (String)rb.getString(locTestModule +
+                    ".service_subconfigname");
             module_subconfigname =
-                    (String)rb.getString(locTestModule + ".module_subconfigname");
+                    (String)rb.getString(locTestModule +
+                    ".module_subconfigname");
 
-            log(logLevel, "setup", "UserName:" + user);
-            log(logLevel, "setup", "RoleName:" + rolename);
-            log(logLevel, "setup", "service_servicename:" +
+            log(Level.FINEST, "setup", "UserName:" + user);
+            log(Level.FINEST, "setup", "RoleName:" + rolename);
+            log(Level.FINEST, "setup", "service_servicename:" +
                     service_servicename);
-            log(logLevel, "setup", "module_subconfigname:" +
+            log(Level.FINEST, "setup", "module_subconfigname:" +
                     module_subconfigname);
-            log(logLevel, "setup", "svcName:" + svcName);
+            log(Level.FINEST, "setup", "svcName:" + svcName);
 
             Reporter.log("UserName:" + user);
             Reporter.log("RoleName:" + rolename);
@@ -320,9 +329,9 @@ public class AuthTest extends TestCommon {
             list.add(module_subconfigname);
             am.deleteAuthInstances(webClient, realm, list); 
             consoleLogout(webClient, logoutURL);
+            Thread.sleep(5000);
         } catch (Exception e) {
-            log(Level.SEVERE, "cleanup", e.getMessage(),
-                    null);
+            log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         }

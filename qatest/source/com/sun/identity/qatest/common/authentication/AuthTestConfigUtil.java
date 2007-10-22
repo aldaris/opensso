@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.4 2007-06-22 21:52:28 sridharev Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.5 2007-10-22 19:27:51 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 /**
  * Authentication Test Utility class <code>AuthTestUtil</code>
@@ -68,10 +69,9 @@ public class AuthTestConfigUtil extends TestCommon {
     }
     
     /**
-     *
      * Returns the module configuration data
      * @param moduleName
-     * @return module configuration data map
+     * @return module configuration data as a Map
      */
     public Map getModuleData(String modName){
         moduleName = modName;
@@ -88,8 +88,35 @@ public class AuthTestConfigUtil extends TestCommon {
                 mapModData.put(key, value);
             }
         }
-        log(logLevel, "getModuleData", "ModuleData:" + mapModData);
+        log(Level.FINEST, "getModuleData", "ModuleData:" + mapModData);
         return mapModData;
+    }
+
+    /**
+     * Returns the module configuration data
+     * @param moduleName
+     * @return module configuration data as a List
+     */
+    public List getModuleDataAsList(String modName) {
+        moduleName = modName;
+        List mapModDataList = new ArrayList();
+        moduleService = configdata.getString(modName
+                + ".module-service-name");
+        moduleSubConfigName = configdata.getString(modName
+                + ".module-subconfig-name");
+        Enumeration bundleKeys = configdata.getKeys();
+        while (bundleKeys.hasMoreElements()) {
+            String key = (String)bundleKeys.nextElement();
+            if (key.startsWith(moduleName) && !(key.contains("module-"))) {
+                String actualKey  = key.substring(key.indexOf(".") + 1,
+                        key.length());
+                String value  = configdata.getString(key);
+                mapModDataList.add(actualKey + "=" + value);
+            }
+        }
+        log(Level.FINEST, "getModuleDataAsList", "ModuleData:" +
+                mapModDataList);
+        return mapModDataList;
     }
     
     /**
@@ -139,15 +166,15 @@ public class AuthTestConfigUtil extends TestCommon {
      * @param moduleServicename
      * @param moduleSubconfig
      * @param moduleConfigdata
-     **@param moduleConfigId
+     * @param moduleConfigId
      */
     public void createModuleInstances(String modServname, String modSubconf,
             List modConfdata, String modConfId) throws Exception {
-        log(logLevel, "createModuleInstances", "moduleServicename:" +
+        log(Level.FINEST, "createModuleInstances", "moduleServicename:" +
                 modServname);
-        log(logLevel, "createModuleInstances", "moduleServicename:" +
+        log(Level.FINEST, "createModuleInstances", "moduleServicename:" +
                 modSubconf);
-        log(logLevel, "createModuleInstances", "moduleServicename:" +
+        log(Level.FINEST, "createModuleInstances", "moduleServicename:" +
                 modConfId);
         FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
@@ -167,9 +194,9 @@ public class AuthTestConfigUtil extends TestCommon {
         String servicename = "iPlanetAMAuthConfiguration";
         String subconfigid = "NamedConfiguration";
         String subconfigname = "Configurations/" + chainname;
-        log(logLevel, "createServices", "servicename:" + servicename);
-        log(logLevel, "createServices", "subconfig " + subconfigid);
-        log(logLevel, "createServices", "subconfigname:" + subconfigname);
+        log(Level.FINEST, "createServices", "servicename:" + servicename);
+        log(Level.FINEST, "createServices", "subconfig " + subconfigid);
+        log(Level.FINEST, "createServices", "subconfigname:" + subconfigname);
         FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
@@ -189,7 +216,7 @@ public class AuthTestConfigUtil extends TestCommon {
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
         am.createIdentity(webClient, realm, uname, "User", userList);
-        log(logLevel, "createUser", "User:" + userList);
+        log(Level.FINEST, "createUser", "User:" + userList);
         consoleLogout(webClient, logoutURL);
     }
     
@@ -203,7 +230,7 @@ public class AuthTestConfigUtil extends TestCommon {
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
         am.createRealm(webClient, realmName);
-        log(logLevel, "createRealms", "Realm:" + realmName);
+        log(Level.FINEST, "createRealms", "Realm:" + realmName);
         consoleLogout(webClient, logoutURL);
     }
     
@@ -232,7 +259,7 @@ public class AuthTestConfigUtil extends TestCommon {
             String uadd = userkey + "=" + userval;
             uadd.trim();
             list.add(uadd);
-            log(logLevel, "getListFromMap", "UserList" + list);
+            log(Level.FINEST, "getListFromMap", "UserList" + list);
         }
         return list;
     }
