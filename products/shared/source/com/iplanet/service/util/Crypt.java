@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Crypt.java,v 1.2 2007-10-22 16:52:56 beomsuk Exp $
+ * $Id: Crypt.java,v 1.3 2007-10-22 17:19:44 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import java.io.UnsupportedEncodingException;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.security.ISSecurityPermission;
 
 /**
@@ -90,15 +90,15 @@ public class Crypt {
     }
 
     private static void initialize() {
-        encryptor = createInstance(SystemProperties.get(PROPERTY_PWD,
+        encryptor = createInstance(SystemPropertiesManager.get(PROPERTY_PWD,
                 DEFAULT_PWD));
-        localEncryptor = createInstance(SystemProperties.get(
-                PROPERTY_PWD_LOCAL, SystemProperties.get(PROPERTY_PWD,
+        localEncryptor = createInstance(SystemPropertiesManager.get(
+                PROPERTY_PWD_LOCAL, SystemPropertiesManager.get(PROPERTY_PWD,
                         DEFAULT_PWD)));
         hardcodedKeyEncryptor = createInstance(DEFAULT_PWD);
 
         // check if caller needs to be validated
-        String cCaller = SystemProperties.get(CHECK_CALLER_PROPERTY);
+        String cCaller = SystemPropertiesManager.get(CHECK_CALLER_PROPERTY);
         if ((cCaller != null) && (cCaller.equalsIgnoreCase("true"))) {
             checkCaller = true;
             securityManager = System.getSecurityManager();
@@ -108,7 +108,7 @@ public class Crypt {
     private static AMEncryption createInstance(String password) {
         AMEncryption instance;
         // Construct the encryptor class
-        String encClass = SystemProperties.get(ENCRYPTOR_CLASS_PROPERTY,
+        String encClass = SystemPropertiesManager.get(ENCRYPTOR_CLASS_PROPERTY,
                 DEFAULT_ENCRYPTOR_CLASS);
         
         try {
