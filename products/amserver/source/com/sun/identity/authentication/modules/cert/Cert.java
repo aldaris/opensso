@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.5 2007-06-07 18:58:18 beomsuk Exp $
+ * $Id: Cert.java,v 1.6 2007-10-22 15:39:18 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,8 +68,6 @@ import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.SSLSocketFactoryManager;
 import com.sun.identity.security.cert.CRLValidator;
 import com.sun.identity.security.cert.OCSPValidator;
-import com.sun.identity.security.cert.X509CRLValidatorFactory;
-import com.sun.identity.security.cert.X509OCSPValidatorFactory;
 import com.iplanet.security.x509.X500Name;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
@@ -114,6 +112,8 @@ public class Cert extends AMLoginModule {
     private String amAuthCert_subjectAltExtMapper;
     // check user cert against revoke list in LDAP.
     private String amAuthCert_chkCRL;        
+    // check CA cert against revoke list in LDAP.
+    private String amAuthCert_validateCA;        
     // attr to use in search for user cert in CRL in LDAP
     private String amAuthCert_chkAttrCRL = null;
     // params to use in accessing CRL DP
@@ -213,6 +213,8 @@ public class Cert extends AMLoginModule {
                     throw new AuthLoginException(amAuthCert, "noCRLAttr", null);
                 }
             }
+            amAuthCert_validateCA = CollectionHelper.getMapAttr(
+                options, "sunAMValidateCACert"); 
 
             amAuthCert_uriParamsCRL = CollectionHelper.getMapAttr(
                 options, "iplanet-am-auth-cert-param-get-crl");
@@ -412,72 +414,103 @@ public class Cert extends AMLoginModule {
                 return ISAuthConstants.LOGIN_SUCCEED;
         }
 
-        if (ocspEnabled) {
-            OCSPValidator ocsp = 
-                X509OCSPValidatorFactory.getInstance().createOCSPValidator();
-            if ((ocsp == null) || 
-                (ocsp.validateCertificate(thecert) == false)) {
-                       debug.error("OCSP cert validation failed");
-                setFailureID(userTokenId);
-                throw new AuthLoginException(amAuthCert, 
-                                "CertIsNotValid", null);
-            }
-        }
-
         /*
         * Based on the certificates presented, find the registered
         * (representation) of the certificate. If no certificates
         * match in the LDAP certificate directory return a failure
         * status.
         */
+        if (ldapParam == null) {
+            setLdapStoreParam();
+        }
+        
         if (amAuthCert_chkCertInLDAP.equalsIgnoreCase("true")) { 
-            X509Certificate ldapcert = getRegisteredCertificate(thecert);
+            X509Certificate ldapcert = 
+                AMCertStore.getRegisteredCertificate(
+                    ldapParam, thecert, amAuthCert_chkAttrCertInLDAP);
             if (ldapcert == null) {
                 debug.error("X509Certificate: getRegCertificate is null");
                 setFailureID(userTokenId);
                 throw new AuthLoginException(amAuthCert, "CertNoReg", null);
             }
         }
-        
-        if (amAuthCert_chkCRL.equalsIgnoreCase("true")) {
-            boolean valid = false;
-            CRLValidator validator =  
-                    X509CRLValidatorFactory.getInstance().createCRLValidator();
-            if (validator != null) {
-                if (ldapParam == null) {
-                    setLdapStoreParam();   
-                }
-            
-                validator.setLdapParams(ldapParam);
-                valid = 
-                  validator.validateCertificate(thecert, amAuthCert_chkAttrCRL);
-            }
-            
-            if (valid == false) {
-                debug.error("X509Certificate:CRL verify failed.");
-                    setFailureID(userTokenId);
-                throw new AuthLoginException(amAuthCert, 
-                                "CertVerifyFailed", null);
-            }
+
+        int ret = doRevocationValidation(thecert);
+
+        if (ret != ISAuthConstants.LOGIN_SUCCEED) {
+            debug.error("X509Certificate:CRL / OCSP verify failed.");
+    	    setFailureID(userTokenId);
+            throw new AuthLoginException(amAuthCert, "CertVerifyFailed", null);
         }
         
         return ISAuthConstants.LOGIN_SUCCEED;
     }
 
+    private int doRevocationValidation(X509Certificate cert) {
+        boolean crlEnabled = amAuthCert_chkCRL.equalsIgnoreCase("true");
+        boolean validateCA = amAuthCert_validateCA.equalsIgnoreCase("true");
+
+	int ret = ISAuthConstants.LOGIN_IGNORE;
+		
+    	try {
+            Vector crls = new Vector();
+            if (crlEnabled) {
+                X509CRL crl = 
+                   AMCRLStore.getCRL(ldapParam, cert, amAuthCert_chkAttrCRL);
+                
+                if (crl != null) {
+                    crls.add(crl);
+                }
+                if (debug.messageEnabled()) {
+                    debug.message("Cert.doRevocationValidation: crls size = " +
+                              crls.size());
+                    if (crls.size() > 0) {
+                        debug.message("CRL = " + crls.toString());
+                    }
+                }
+            }
+
+            AMCertPath certpath = new AMCertPath(crls);
+            X509Certificate certs[] = { cert }; 
+            if (!certpath.verify(certs, crlEnabled, ocspEnabled)) {
+                debug.error("CertPath:verify failed.");
+                return ret;
+            } else {
+                if (debug.messageEnabled()) {
+                    debug.message("CertPath:verify success.");
+                }
+            }
+            ret = ISAuthConstants.LOGIN_SUCCEED;
+    	}catch (Exception e) {
+            debug.error("Cert.doRevocationValidation: verify failed.", e);
+            return ret;
+    	}
+
+        if ((ret == ISAuthConstants.LOGIN_SUCCEED) 
+            && crlEnabled
+            && validateCA
+            && !AMCertStore.isRootCA(cert)) {
+            ret = doRevocationValidation(
+                AMCertStore.getIssuerCertificate(
+                    ldapParam, cert, amAuthCert_chkAttrCertInLDAP));
+        }
+
+        return ret;
+    }
+    
     private void setLdapStoreParam() throws AuthLoginException {
     /*
      * Setup the LDAP certificate directory service context for
      * use in verification of the users certificates.
      */
-        ldapParam = new AMLDAPCertStoreParameters
-                            (amAuthCert_serverHost, amAuthCert_serverPort);
         try {
-            AMLDAPCertStoreParameters.setLdapStoreParam(ldapParam,
-                                    amAuthCert_principleUser,
-                                       amAuthCert_principlePasswd,
-                                    amAuthCert_startSearchLoc,
-                                    amAuthCert_uriParamsCRL, 
-                                    amAuthCert_useSSL.equalsIgnoreCase("true"));
+            ldapParam = AMCertStore.setLdapStoreParam(amAuthCert_serverHost,
+                       amAuthCert_serverPort,
+                       amAuthCert_principleUser,
+                       amAuthCert_principlePasswd,
+                       amAuthCert_startSearchLoc,
+                       amAuthCert_uriParamsCRL,
+                       amAuthCert_useSSL.equalsIgnoreCase("true"));
         } catch (Exception e) {
             debug.error("validate.SSLSocketFactory", e);
             setFailureID(userTokenId);
@@ -613,67 +646,13 @@ public class Cert extends AMLoginModule {
             return;
         } catch (Exception e) {
             if (debug.messageEnabled()) {
-                debug.message("Certificate - Error in getTokenFromSubjectDN = " , e);
+                debug.message("Certificate - " + 
+                    "Error in getTokenFromSubjectDN = " , e);
             }
             throw new AuthLoginException(amAuthCert, "CertNoReg", null);
         }
     }
 
-    private X509Certificate getRegisteredCertificate (X509Certificate cert) {
-                X509Certificate ldapcert = null;
-            /*
-         * Get the CN of the input certificate
-         */
-        String attrValue = null;
-        
-        try {
-            X500Name dn = AMCertStore.getSubjectDN(cert);
-            // Retrieve attribute value of amAuthCert_chkAttrCertInLDAP
-            if (dn != null) {
-                attrValue = dn.getAttributeValue(amAuthCert_chkAttrCertInLDAP);
-            }
-        }
-        catch (Exception ex) {
-            if (debug.messageEnabled()) {
-                debug.message("Certificate - cn substring: " + ex); 
-            }
-            return null;
-        }
-
-        if (attrValue == null)
-            return null;
-        
-        if (debug.messageEnabled()) {
-            debug.message("Certificate - cn substring: " + attrValue); 
-        }
-
-        /*
-         * Lookup the certificate in the LDAP certificate
-         * directory and compare the values.
-         */ 
-
-        try {
-            String searchFilter = 
-                    AMCertStore.setSearchFilter(amAuthCert_chkAttrCertInLDAP, 
-                                                attrValue);
-
-            if (ldapParam == null) {
-                    setLdapStoreParam();
-                }
-
-            ldapParam.setSearchFilter(searchFilter);
-            AMCertStore store = new AMCertStore(ldapParam);
-            ldapcert = store.getCertificate(cert);
-        } catch (Exception e) {
-            if (debug.messageEnabled()) {
-                debug.message("Certificate - " +
-                                "Error finding registered certificate = " , e);
-            }
-        }
-
-        return ldapcert;
-    }
-    
     public java.security.Principal getPrincipal() {
         if (userPrincipal != null) {
             return userPrincipal;
@@ -718,7 +697,7 @@ public class Cert extends AMLoginModule {
     public String getUriParamsCRL() {
        return amAuthCert_uriParamsCRL;
     }
-        
+
     /**
      * Return value of LDAP Search loc for directory server 
      *
