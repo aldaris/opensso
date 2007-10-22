@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.11 2007-10-22 21:51:59 kenwho Exp $
+   $Id: idRepoService.xml,v 1.12 2007-10-22 23:40:43 goodearth Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,7 @@
     <Service name="sunIdentityRepositoryService" version="1.0">
         <Schema
             i18nFileName="amIdRepoService"
-            revisionNumber="30"
+            revisionNumber="40"
             i18nKey="">
             
             <Global>
@@ -2404,6 +2404,25 @@
                 <SubConfiguration name="agent" id="SupportedIdentities" >
                         <AttributeValuePair> <Attribute name="servicename" />
                                 <Value>sunIdentityAgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="canBeMemberOf" />
+                                <Value>agentgroup</Value>
+                        </AttributeValuePair>
+                </SubConfiguration>
+                <SubConfiguration name="agentonly" id="SupportedIdentities" >
+                        <AttributeValuePair> <Attribute name="servicename" />
+                                <Value>AgentService</Value>
+                        </AttributeValuePair>
+                </SubConfiguration>
+                <SubConfiguration name="agentgroup" id="SupportedIdentities" >
+                        <AttributeValuePair> <Attribute name="servicename" />
+                                <Value>AgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="canHaveMembers" />
+                                <Value>agent</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="canAddMembers" />
+                                <Value>agent</Value>
                         </AttributeValuePair>
                 </SubConfiguration>
                 <SubConfiguration name="filteredrole" id="SupportedIdentities" >
