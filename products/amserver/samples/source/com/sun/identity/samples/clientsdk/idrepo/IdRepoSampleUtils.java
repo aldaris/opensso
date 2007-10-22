@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleUtils.java,v 1.1 2006-12-21 00:56:40 bigfatrat Exp $
+ * $Id: IdRepoSampleUtils.java,v 1.2 2007-10-22 23:18:16 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -203,13 +203,13 @@ public class IdRepoSampleUtils {
     }
 
     /*
-     *  can only create or delete AMIdentities of IdType user or agent
+     *  can only create or delete AMIdentities of IdType user or agentonly
      */
     public IdType getIdTypeToCreateOrDelete()
     {
         IdType tType = null;
         System.out.println ("    Supported IdTypes:\n" +
-            "\t0: user\n\t1: agent\n\t2: realm\n\t3: No selection");
+            "\t0: user\n\t1: agent\n\t2: agentonly\n\t3: realm\n\t4: No selection");
         String answer = getLine ("Select type: [0..3]: ");
         int i = getIntValue(answer);
         switch (i) {
@@ -219,10 +219,13 @@ public class IdRepoSampleUtils {
             case 1:  // agent
                 tType = IdType.AGENT;
                 break;
-            case 2:  // realm
+            case 2:  // agentonly
+                tType = IdType.AGENTONLY;
+                break;
+            case 3:  // realm
                 tType = IdType.REALM;
                 break;
-            case 3:  // no selection
+            case 4:  // no selection
                 break;
             default:  // invalid selection
                 System.err.println(answer + " is an invalid selection.");

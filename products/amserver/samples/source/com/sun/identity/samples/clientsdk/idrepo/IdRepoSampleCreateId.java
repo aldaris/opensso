@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.1 2006-12-21 00:56:39 bigfatrat Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.2 2007-10-22 23:18:16 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,6 +66,13 @@ public class IdRepoSampleCreateId {
             return;
         }
 
+        if (idtype.equals(IdType.AGENT)) {
+            System.out.println("Use IdType 'agentonly' for creation of "+
+                "agents.\nOnly operation supported for IdType 'agent' is "+
+                "READ");
+            return;
+        }
+
         try {
             /*
              * get and display list of identities of idtype
@@ -91,10 +98,24 @@ public class IdRepoSampleCreateId {
             AMIdentity tmpId = null;
 
             if (idtype.equals(IdType.AGENT)) {
-                String tmpS = sampleUtils.getLine(idName + "'s password: ");
+                System.out.println("Use IdType 'agentonly' for creation of "+
+                    "agents.Only operation supported for IdType 'agent' is "+
+                    "READ");
+            } else if (idtype.equals(IdType.AGENTONLY)) {
+                String tmpS = sampleUtils.getLine(idName + "'s agentType: ");
+                 vals.add(tmpS);
+                attrs.put("AgentType", vals);
+
+                vals = new HashSet();
+                 vals.add(idName);
+                attrs.put("agentusername", vals);
+
+                vals = new HashSet();
+                tmpS = sampleUtils.getLine(idName + "'s password: ");
                  vals.add(tmpS);
                 attrs.put("userpassword", vals);
-                tmpId = idRepo.createIdentity(IdType.AGENT, idName, attrs);
+
+                tmpId = idRepo.createIdentity(IdType.AGENTONLY, idName, attrs);
             } else if (idtype.equals(IdType.USER)) {
                 String tmpS = sampleUtils.getLine(idName + "'s password: ");
                 vals.add(tmpS);

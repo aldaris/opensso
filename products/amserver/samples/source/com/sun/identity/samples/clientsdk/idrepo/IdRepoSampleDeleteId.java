@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleDeleteId.java,v 1.1 2006-12-21 00:56:39 bigfatrat Exp $
+ * $Id: IdRepoSampleDeleteId.java,v 1.2 2007-10-22 23:18:16 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,14 @@ public class IdRepoSampleDeleteId {
         if (idtype == null) {
             return;
         }
+
+        if (idtype.equals(IdType.AGENT)) {
+            System.out.println("Use IdType 'agentonly' for deletion of "+
+                "agents.\nOnly operation supported for IdType 'agent' is "+
+                "READ");
+            return;
+        }
+
         try {
             /*
              *  get and display list of identities of idtype
