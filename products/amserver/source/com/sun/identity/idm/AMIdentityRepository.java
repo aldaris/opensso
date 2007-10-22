@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.14 2007-06-29 22:30:55 goodearth Exp $
+ * $Id: AMIdentityRepository.java,v 1.15 2007-10-22 23:19:03 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -288,8 +288,8 @@ public final class AMIdentityRepository {
                     }
                 }
             } catch (SMSException sme) {
-                debug.error("AMIdentityRepository.createIdentity() - "
-                        + "Error occurred while creating " + type.getName()
+                debug.error("AMIdentityRepository.searchIdentities() - "
+                        + "Error occurred while searching " + type.getName()
                         + ":", sme);
                 throw new IdRepoException(sme.getMessage());
             }
