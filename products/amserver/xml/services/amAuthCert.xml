@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthCert.xml,v 1.5 2007-01-09 18:45:42 manish_rustagi Exp $
+    $Id: amAuthCert.xml,v 1.6 2007-10-22 15:41:11 beomsuk Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -58,6 +58,14 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="a102">
+                    <DefaultValues>
+                        <Value>false</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="sunAMValidateCACert"
+                    type="single"
+                    syntax="boolean"
+                    i18nKey="a1023">
                     <DefaultValues>
                         <Value>false</Value>
                     </DefaultValues>
@@ -221,6 +229,14 @@
                         type="single"
                         syntax="boolean"
                         i18nKey="a102">
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunAMValidateCACert"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a1023">
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
