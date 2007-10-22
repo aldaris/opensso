@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdType.java,v 1.4 2006-12-13 02:01:45 kenwho Exp $
+ * $Id: IdType.java,v 1.5 2007-10-22 23:19:54 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,6 +60,8 @@ public class IdType {
 
     /**
      * Identity type of AGENT
+     * Also from FAM 8.0 onwards, this is the Identity type of the union 
+     * of agents and those under the agent groups.
      */
     public static final IdType AGENT = new IdType("agent");
 
@@ -69,6 +71,16 @@ public class IdType {
     public static final IdType FILTEREDROLE = new IdType("filteredrole");
 
     public static final IdType REALM = new IdType("realm");
+
+    /**
+     * Identity type of fam agent only.
+     */
+    public static final IdType AGENTONLY = new IdType("agentonly");
+
+    /**
+     * Identity type of fam agents under the fam agent groups.
+     */
+    public static final IdType AGENTGROUP = new IdType("agentgroup");
 
     public boolean equals(Object type) {
         if (type instanceof IdType) {

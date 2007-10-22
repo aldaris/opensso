@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdConstants.java,v 1.4 2006-12-13 00:27:14 rarcot Exp $
+ * $Id: IdConstants.java,v 1.5 2007-10-22 23:19:54 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,9 @@ public interface IdConstants {
     public static final String SPECIAL_PLUGIN = 
         "com.sun.identity.idm.plugins.internal.SpecialRepo";
 
+    public static final String AGENTREPO_PLUGIN = 
+        "com.sun.identity.idm.plugins.internal.AgentsRepo";
+
     public static final String AMSDK_PLUGIN_NAME = "amSDK";
 
     public static final String ATTR_MEMBER_OF = "canBeMemberOf";
@@ -83,5 +86,11 @@ public interface IdConstants {
      *  anonymous user from SunIdentityRepositoryService
      */
     public static final String ANONYMOUS_USER = "anonymous";
+
+    // The properties below are FAM Agent service config attributes to be
+    // read by the SDK when it needs to determine which configs to call.
+    public static final String AGENT_SERVICE = "AgentService";
+
+    public static final String AGENT_TYPE = "AgentType";
 
 }
