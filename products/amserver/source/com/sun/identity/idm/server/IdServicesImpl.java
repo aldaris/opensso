@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.20 2007-10-17 23:00:44 veiming Exp $
+ * $Id: IdServicesImpl.java,v 1.21 2007-10-22 23:21:32 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,6 +99,8 @@ public class IdServicesImpl implements IdServices {
 
     private static IdServices _instance;
 
+    private static int svcRevisionNumber;
+
     static {
         READ_ACTION.add("READ");
         WRITE_ACTION.add("MODIFY");
@@ -152,6 +154,9 @@ public class IdServicesImpl implements IdServices {
                 IdRepoServiceListener sListener = new IdRepoServiceListener();
                 notificationID = idRepoServiceSchemaManager
                         .addListener(sListener);
+
+                svcRevisionNumber = idRepoServiceSchemaManager
+                        .getRevisionNumber();
 
                 // Should we just ignore these exceptions or throw them?
                 // Are'nt they Fatal that we should not start the system ??
@@ -1349,7 +1354,52 @@ public class IdServicesImpl implements IdServices {
         
         return pluginClass;
     }
-    
+
+    protected IdRepo getAgentRepoPlugin(SSOToken token, String orgName) 
+        throws SSOException, IdRepoException 
+    {
+        
+        IdRepo pluginClass = null;
+        boolean pluginInitialized = false;
+        synchronized (idRepoMap) {
+            // Checking for the presence of the plugin & adding it to the
+            // plugin cache should be in the critical section 
+            // hence synchronized.
+            Object o = idRepoMap.get(IdConstants.AGENTREPO_PLUGIN);
+            if (o instanceof IdRepo) {
+                pluginClass = (IdRepo) o;
+            }
+        
+            if (pluginClass == null) {                    
+                try {                    
+                    Class thisClass = 
+                        Class.forName(IdConstants.AGENTREPO_PLUGIN);
+                    pluginClass = (IdRepo) thisClass.newInstance();
+                    pluginClass.initialize(new HashMap());
+                    idRepoMap.put(IdConstants.AGENTREPO_PLUGIN, pluginClass);
+                    pluginInitialized = true;
+                } catch (Exception e) {
+                    getDebug().error("IdServicesImpl.getAgentRepoPlugin: "
+                        + "Unable to instantiate plugin: " 
+                        + IdConstants.AGENTREPO_PLUGIN, e);
+                }
+            }
+        }
+        
+        if (pluginInitialized) {
+            // Ideally, this add listener part should also be in the
+            // synchronized block. Here it is not to avoid a deadlock that
+            // can happen when the addListener is called on Agent Repo
+            // and it acquires a lock to ServiceSchemaManagerImpl. 
+            Map listenerConfig = new HashMap();
+            listenerConfig.put("realm", orgName);
+            IdRepoListener lter = new IdRepoListener();
+            lter.setConfigMap(listenerConfig);
+            pluginClass.addListener(token, lter);                       
+        }
+        
+        return pluginClass;
+    }
     
     protected IdRepo getAMRepoPlugin(SSOToken token, String orgName) 
         throws SSOException, IdRepoException 
@@ -2338,6 +2388,19 @@ public class IdServicesImpl implements IdServices {
             if (opSet != null && opSet.contains(op)) {
                 pluginClasses.add(specialRepo);
             }
+
+            // add the "AgentRepoUser" plugin only if revision number of
+            // sunIdentityRepository service is greater than or equal to 40.
+            // This is for backward compatibility.
+
+            if (svcRevisionNumber >= 40) {
+                IdRepo agentRepo = getAgentRepoPlugin(token, orgName);
+            
+                Set agOpSet = agentRepo.getSupportedOperations(type);
+                if (agOpSet != null && agOpSet.contains(op)) {
+                    pluginClasses.add(agentRepo);
+                }
+            }
         }
 
         if (ServiceManager.isCoexistenceMode()) { 
@@ -2384,9 +2447,18 @@ public class IdServicesImpl implements IdServices {
         
         if (ServiceManager.isConfigMigratedTo70()
                 && ServiceManager.getBaseDN().equalsIgnoreCase(orgName)) {
-            // add the "SpecialUser plugin            
+            // add the "SpecialUser plugin
             IdRepo specialRepo = getSpecialRepoPlugin(token, orgName);
             pluginClasses.add(specialRepo);            
+
+            // add the "AgentRepoUser" plugin only if revision number of
+            // sunIdentityRepository service is greater than or equal to 40.
+            // This is for backward compatibility.
+
+            if (svcRevisionNumber >= 40) {
+                IdRepo agentRepo = getAgentRepoPlugin(token, orgName);
+                pluginClasses.add(agentRepo);            
+            }
         }
 
         if (ServiceManager.isCoexistenceMode()) {
@@ -2837,5 +2909,4 @@ public class IdServicesImpl implements IdServices {
         }
         return isExist;
     }
-
 }
