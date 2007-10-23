@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationInstanceImpl.java,v 1.6 2007-08-30 06:29:37 mrudul_uchil Exp $
+ * $Id: ConfigurationInstanceImpl.java,v 1.7 2007-10-23 16:57:36 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,9 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.plugin.configuration.ConfigurationInstance;
 import com.sun.identity.plugin.configuration.ConfigurationListener;
+import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.common.configuration.SiteConfiguration;
+import com.sun.identity.shared.Constants; 
 
 /**
  * <code>ConfigurationInstanceImpl</code> is the implementation that provides
@@ -191,7 +194,16 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
                         "noConfig", data);
                 }
 
-                return ss.getAttributeDefaults();
+                Map retMap = ss.getAttributeDefaults();
+                if (componentName.equals("PLATFORM")) {
+                    SSOToken token = (SSOToken) AccessController.doPrivileged(
+                        AdminTokenAction.getInstance());
+                    retMap.put(Constants.PLATFORM_LIST, 
+                        ServerConfiguration.getServerInfo(token));
+                    retMap.put(Constants.SITE_LIST, 
+                        SiteConfiguration.getSiteInfo(token));
+                 }
+                 return retMap;
             }
         } catch (SMSException smsex) {
             debug.error("ConfigurationInstanceImpl.getConfiguration:", smsex);
