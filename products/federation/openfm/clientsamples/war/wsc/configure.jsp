@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.2 2007-10-05 17:57:11 qcheng Exp $
+   $Id: configure.jsp,v 1.3 2007-10-23 22:52:33 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -37,7 +37,7 @@ java.util.Properties"
 %>
 
 <%
-    String bootstrapFile = System.getProperty("java.io.tmpdir") +
+    String bootstrapFile = System.getProperty("user.home") +
         File.separator + "ClientSampleWSC.properties";
 
     boolean configured = false;
@@ -49,7 +49,7 @@ java.util.Properties"
     String idpDeploymenturi = request.getParameter("idpDeploymenturi");
     String submit = request.getParameter("submit");
     String servletPath = request.getServletPath();
-    String configDir = System.getProperty("java.io.tmpdir");
+    String configDir = System.getProperty("user.home");
 
     if (submit != null) {
         File configDirF = new File(configDir);

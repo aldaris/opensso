@@ -13,47 +13,33 @@
 
     <servlet>
 	<servlet-name>notificationservice</servlet-name>
-	<servlet-class>
-	    com.iplanet.services.comm.client.PLLNotificationServlet
-	</servlet-class>
+	<servlet-class>com.iplanet.services.comm.client.PLLNotificationServlet</servlet-class>
     </servlet>
 
     <servlet>
 	<servlet-name>ServiceConfigServlet</servlet-name>
-	<servlet-class>
-            com.sun.identity.samples.clientsdk.ServiceConfigServlet
-	</servlet-class>
+	<servlet-class>com.sun.identity.samples.clientsdk.ServiceConfigServlet</servlet-class>
     </servlet>
 
     <servlet>
 	<servlet-name>UserProfileServlet</servlet-name>
-	<servlet-class>
-	    com.sun.identity.samples.clientsdk.UserProfileServlet
-	</servlet-class>
+	<servlet-class>com.sun.identity.samples.clientsdk.UserProfileServlet</servlet-class>
     </servlet>
     
     <servlet>
 	<servlet-name>PolicyClientServlet</servlet-name>
-	<servlet-class>
-	    com.sun.identity.samples.clientsdk.PolicyClientServlet
-	</servlet-class>
+	<servlet-class>com.sun.identity.samples.clientsdk.PolicyClientServlet</servlet-class>
     </servlet>
 
     <!-- SSO Samples -->
     <servlet>
     <servlet-name>SSOTokenSampleServlet</servlet-name>
-    <servlet-class>
-        com.sun.identity.samples.sso.SSOTokenSampleServlet
-    </servlet-class>
+    <servlet-class>com.sun.identity.samples.sso.SSOTokenSampleServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-	<servlet-name>
-	    notificationservice
-	</servlet-name>
-	<url-pattern>
-	    /notificationservice
-	</url-pattern>
+	<servlet-name>notificationservice</servlet-name>
+	<url-pattern>/notificationservice</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

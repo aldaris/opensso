@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-query.jsp,v 1.1 2007-08-30 20:20:28 qcheng Exp $
+   $Id: discovery-query.jsp,v 1.2 2007-10-23 22:52:33 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -52,7 +52,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
         
             String providerID = request.getParameter("providerID");
             if ((providerID == null) || (providerID.length() == 0)) {
-                String bootstrapFile = System.getProperty("java.io.tmpdir") +
+                String bootstrapFile = System.getProperty("user.home") +
                     File.separator + "ClientSampleWSC.properties";
                 FileInputStream fin = new FileInputStream(bootstrapFile);
                 Properties props = new Properties();
@@ -152,7 +152,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
                                 .replace(':','_');
                             String entryID = offer.getEntryID();
                             String resOffFN = System.getProperty(
-                                "java.io.tmpdir") + File.separator + 
+                                "user.home") + File.separator + 
                                 "RO_"+ fnSuffix + "_" + i;
                             String secAssertion = null;
                             try {

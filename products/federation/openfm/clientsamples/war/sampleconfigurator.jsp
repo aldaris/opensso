@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sampleconfigurator.jsp,v 1.2 2007-10-16 22:09:36 exu Exp $
+   $Id: sampleconfigurator.jsp,v 1.3 2007-10-23 22:52:32 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -32,6 +32,7 @@
 
 
 <%@ page import="
+com.iplanet.am.util.SystemProperties,
 com.sun.identity.security.EncodeAction,
 com.sun.identity.setup.SetupClientWARSamples,
 java.io.*,
@@ -40,7 +41,7 @@ java.util.Properties"
 %>
 
 <%
-    String configFile = System.getProperty("java.io.tmpdir") +
+    String configFile = System.getProperty("user.home") +
         File.separator + "AMConfig.properties";
     String configTemplate = "/WEB-INF/classes/AMConfig.properties.template";
     String errorMsg = null;
@@ -50,6 +51,7 @@ java.util.Properties"
     String famPort = null;
     String famDeploymenturi = null;
     String debugDir = null;
+    String appUser = null;
     String appPassword = null;
 
     File configF = new File(configFile);
@@ -57,6 +59,10 @@ java.util.Properties"
         errorMsg = "The Client Samples have already been configued.<br>" +
             "Configuration file : " + configFile + "<br><p><br>" +
             "Click <a href=\"index.html\">here</a> to go to samples.";
+        // reinitialize properties
+        Properties props = new Properties();
+        props.load(new FileInputStream(configFile));
+        SystemProperties.initializeProperties(props);
         configured = true;
     } else {
         famProt = request.getParameter("famProt");
@@ -64,6 +70,7 @@ java.util.Properties"
         famPort = request.getParameter("famPort");
         famDeploymenturi = request.getParameter("famDeploymenturi");
         debugDir = request.getParameter("debugDir");
+        appUser = request.getParameter("appUser");
         appPassword = request.getParameter("appPassword");
         String submit = request.getParameter("submit");
         String servletPath = request.getServletPath();
@@ -74,6 +81,7 @@ java.util.Properties"
                 (famPort != null) && !famPort.equals("") && 
                 (famDeploymenturi != null) && !famDeploymenturi.equals("") && 
                 (debugDir != null) && !debugDir.equals("") &&
+                (appUser != null) && !appUser.equals("") &&
                 (appPassword != null) && !appPassword.equals("")) {
                 Properties props = new Properties();
                 props.setProperty("SERVER_PROTOCOL", famProt);
@@ -84,9 +92,9 @@ java.util.Properties"
                 props.setProperty("NAMING_URL", famProt + "://" + famHost + ":"
                     + famPort + famDeploymenturi + "/namingservice");
                 props.setProperty("DEBUG_LEVEL", "message");
-                props.setProperty("APPLICATION_USER", "UrlAccessAgent");
-                //props.setProperty("ENCODED_APPLICATION_PASSWORD", (String) 
-                //   AccessController.doPrivileged(new EncodeAction(appPassword)));
+                props.setProperty("APPLICATION_USER", appUser);
+                props.setProperty("ENCODED_APPLICATION_PASSWORD", (String) 
+                  AccessController.doPrivileged(new EncodeAction(appPassword)));
                 props.setProperty("APPLICATION_PASSWD", appPassword); 
                 props.setProperty("AM_COOKIE_NAME", "iPlanetDirectoryPro");
                 props.setProperty("ENCRYPTION_KEY", "SAMPLE_RAND");
@@ -182,6 +190,10 @@ java.util.Properties"
     <tr>
     <td>Debug directory</td>
     <td><input name="debugDir" type="text" size="15" value="<%= debugDir == null ? "" : debugDir %>" /></td>
+    </tr>
+    <tr>
+    <td>Application user name</td>
+    <td><input name="appUser" type="text" size="15" value="<%= appUser == null ? "" : appUser %>" /></td>
     </tr>
     <tr>
     <td>Application user password</td>

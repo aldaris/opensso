@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.1 2007-08-30 20:20:29 qcheng Exp $
+   $Id: index.jsp,v 1.2 2007-10-23 22:52:33 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -54,7 +54,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
 
 public void jspInit() {
     try {
-        String bootstrapFile = System.getProperty("java.io.tmpdir") +
+        String bootstrapFile = System.getProperty("user.home") +
             File.separator + "ClientSampleWSC.properties";
         FileInputStream fin = new FileInputStream(bootstrapFile);
         Properties props = new Properties();
@@ -69,13 +69,6 @@ public void jspInit() {
             props.setProperty(Constants.SERVER_MODE, "false");
             props.setProperty("com.sun.identity.sm.sms_object_class_name",
                 "com.sun.identity.sm.jaxrpc.SMSJAXRPCObject");
-            SystemProperties.initializeProperties(props);
-            fin.close();
-
-            fin = new FileInputStream(configDir +
-                "/FederationConfig.properties");
-            props = new Properties();
-            props.load(fin);
             props.setProperty(Constants.AM_LOGSTATUS, "INACTIVE");
             SystemProperties.initializeProperties(props);
             fin.close();
@@ -87,7 +80,7 @@ public void jspInit() {
 %>
 <%
     try {
-        String bootstrapFile = System.getProperty("java.io.tmpdir") +
+        String bootstrapFile = System.getProperty("user.home") +
             File.separator + "ClientSampleWSC.properties";
         FileInputStream fin = new FileInputStream(bootstrapFile);
         Properties props = new Properties();
@@ -111,7 +104,7 @@ public void jspInit() {
                        offering.getServiceInstance().getProviderID(); 
 		String fnSuffix = remoteProvider.replace('/','_')
                     .replace(':','_');
-		String fileName = System.getProperty("java.io.tmpdir") +
+		String fileName = System.getProperty("user.home") +
                     File.separator + "RO_" + fnSuffix;
 		PrintWriter pw = new PrintWriter(new FileWriter(fileName));
                 pw.print(offering.toString());

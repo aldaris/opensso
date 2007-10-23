@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfiguratorFilter.java,v 1.1 2007-10-05 17:57:11 qcheng Exp $
+ * $Id: ClientConfiguratorFilter.java,v 1.2 2007-10-23 22:52:31 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,7 +52,7 @@ public final class ClientConfiguratorFilter implements Filter {
     public static boolean isConfigured = false;
     private static final String SETUP_URI = "/sampleconfigurator.jsp";
     private static final String configFile = 
-        System.getProperty("java.io.tmpdir") + File.separator + 
+        System.getProperty("user.home") + File.separator + 
         "AMConfig.properties"; 
     private boolean passThrough = false;
 

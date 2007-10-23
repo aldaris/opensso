@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-modify.jsp,v 1.1 2007-08-30 20:20:28 qcheng Exp $
+   $Id: discovery-modify.jsp,v 1.2 2007-10-23 22:52:33 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -63,7 +63,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
         String submit = request.getParameter("Submit");
         if ((submit != null) && submit.equals("Add PP Resource Offering")) {
 
-            String bootstrapFile = System.getProperty("java.io.tmpdir") +
+            String bootstrapFile = System.getProperty("user.home") +
             File.separator + "ClientSampleWSC.properties";
             FileInputStream fin = new FileInputStream(bootstrapFile);
             Properties props = new Properties();
