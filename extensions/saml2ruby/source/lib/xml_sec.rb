@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: xml_sec.rb,v 1.5 2007-08-31 00:22:32 todddd Exp $
+# $Id: xml_sec.rb,v 1.6 2007-10-24 00:28:41 todddd Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 # Portions Copyrighted 2007 Todd W Saxton.
@@ -36,7 +36,7 @@ module XMLSecurity
 
   class SignedDocument < REXML::Document
 
-    def validate_cert (idp_cert_fingerprint, logger)
+    def validate (idp_cert_fingerprint, logger)
         
       # get cert from response
       base64_cert = self.elements["//X509Certificate"].text
@@ -50,7 +50,7 @@ module XMLSecurity
       
       return valid_flag if !valid_flag 
       
-      validate_doc
+      validate_doc(base64_cert, logger)
     end
     
     def validate_doc(base64_cert, logger)
@@ -64,7 +64,7 @@ module XMLSecurity
       sig_element.remove
       
       #check digests
-      logger.info("checking digests")
+      logger.info("checking digests") if !logger.nil?
       XPath.each(sig_element, "//ds:Reference", {"ds"=>"http://www.w3.org/2000/09/xmldsig#"}) do | ref |          
         uri = ref.attributes.get_attribute("URI").value
         logger.info("URI = " + uri[1,uri.size]) if !logger.nil?
@@ -85,7 +85,7 @@ module XMLSecurity
       #
       # verify dig sig
       # 
-      logger.info("checking dig sig")
+      logger.info("checking dig sig") if !logger.nil?
 
       # signed_info_element.add_namespace("http://www.w3.org/2000/09/xmldsig#") if signed_info_element.namespace.nil? || signed_info_element.namespace.empty?
       canoner = XML::Util::XmlCanonicalizer.new(false, true)
