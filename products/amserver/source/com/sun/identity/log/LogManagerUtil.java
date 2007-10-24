@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManagerUtil.java,v 1.2 2006-04-27 07:53:30 veiming Exp $
+ * $Id: LogManagerUtil.java,v 1.3 2007-10-24 20:51:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.log;
 import java.util.logging.LogManager;
 
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.naming.WebtopNaming;
 
 /**
  * This class is a work around for situations where our
@@ -43,7 +42,7 @@ public class LogManagerUtil {
         */
        String compatMode = SystemProperties.get("LOG_COMPATMODE", "Off");
        if ((compatMode.trim().equalsIgnoreCase("Off")) ||
-           WebtopNaming.isServerMode()) {
+           SystemProperties.isServerMode()) {
            lmgr = new com.sun.identity.log.LogManager();
        }
     }

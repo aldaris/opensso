@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.1 2007-10-17 23:00:31 veiming Exp $
+ * $Id: ServerConfiguration.java,v 1.2 2007-10-24 20:51:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -340,6 +340,7 @@ public class ServerConfiguration extends ConfigurationBase {
             }
         }
     }
+    
     /**
      * Returns the configuration of a server instance.
      *

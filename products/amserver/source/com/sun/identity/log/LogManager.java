@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.4 2007-06-12 17:46:04 bigfatrat Exp $
+ * $Id: LogManager.java,v 1.5 2007-10-24 20:51:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,6 @@ import java.util.HashSet;
 import java.util.logging.Formatter;
 
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.log.s1is.LogConfigReader;
 
@@ -197,7 +196,7 @@ public class LogManager extends java.util.logging.LogManager {
                      * JVM property is set, the remote handlers will
                      * be used.
                      */
-                    if (WebtopNaming.isServerMode()) {
+                    if (SystemProperties.isServerMode()) {
                         LogConfigReader logConfigReader =
                             new LogConfigReader();
                     } else {

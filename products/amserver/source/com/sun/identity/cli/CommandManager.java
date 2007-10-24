@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.15 2007-10-17 23:00:24 veiming Exp $
+ * $Id: CommandManager.java,v 1.16 2007-10-24 20:51:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,6 @@ public class CommandManager {
 
     static {
         resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
-        debugger = Debug.getInstance("amCLI");
     }
     
     /**
@@ -77,6 +76,7 @@ public class CommandManager {
             System.err.println("Cannot bootstrap the system" + e.getMessage());
             System.exit(1);
         }
+        debugger = Debug.getInstance("amCLI");
         getIsInstallTime();
         Crypt.checkCaller();
         new CommandManager(argv);

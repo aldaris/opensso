@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.1 2007-10-17 23:00:45 veiming Exp $
+ * $Id: Bootstrap.java,v 1.2 2007-10-24 20:51:04 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,6 +101,8 @@ public class Bootstrap {
         "com.iplanet.services.util.JCEEncryption";
     private final static String BOOTSTRAP = "bootstrap";
 
+    private static boolean isBootstrap;
+
     private Bootstrap() {
     }
     
@@ -110,11 +112,15 @@ public class Bootstrap {
      *
      * @throws Exception if properties cannot be loaded.
      */
-    public static Properties load()
+    public synchronized static void load()
         throws Exception
-    {
-        String basedir = System.getProperty(JVM_OPT_BOOTSTRAP);
-        return load(basedir);
+    {   
+        if (!isBootstrap) {
+            String basedir = System.getProperty(JVM_OPT_BOOTSTRAP);
+            load(basedir);
+            SystemProperties.initializeProperties("com.iplanet.am.naming.url",
+                SystemProperties.getServerInstanceName() + "/namingservice");
+        }
     }
 
     /**
@@ -146,10 +152,12 @@ public class Bootstrap {
                 propIn.close();
             }
         } else {
+            isBootstrap = true;
             String bootstrapFile = basedir + BOOTSTRAP;
             String urlBootstrap = readFile(bootstrapFile);
             prop = getConfiguration(urlBootstrap, true);
         }
+        
         return prop;
     }
 
@@ -167,6 +175,7 @@ public class Bootstrap {
             } else {
                 configured = bootstrap(bootstrap, reinit);
             }
+            isBootstrap = true;
         }
         return configured;
     }
@@ -230,6 +239,8 @@ public class Bootstrap {
                 instanceName = instanceName.substring(idx+1);
             }
             instanceName = URLDecoder.decode(instanceName, "UTF-8");
+            initializeSystemComponents(prop, dsbasedn, reinit, isLdap, dshost,
+                dsport, dsmgr, dspwd, pwd);
         } else {
             prop.setProperty(PROP_SMS_OBJECT, PROP_SMS_OBJECT_LDAP);
             dshost = url.getHost();
@@ -241,6 +252,9 @@ public class Bootstrap {
             if (instanceName.startsWith("/")) {
                 instanceName = instanceName.substring(1);
             }
+            
+            initializeSystemComponents(prop, dsbasedn, reinit, isLdap, dshost,
+                dsport, dsmgr, dspwd, pwd);
 
             String embeddedDS = (String)mapQuery.get(EMBEDDED_DS);
             if ((embeddedDS != null) && (embeddedDS.length() > 0)) {
@@ -251,27 +265,6 @@ public class Bootstrap {
 
         if (proceed) {
             String dsameUser = "cn=dsameuser,ou=DSAME Users," + dsbasedn;
-        
-            prop.setProperty(PROP_DEBUG_LEVEL, "error");
-            prop.setProperty("com.sun.identity.authentication.special.users",
-                dsameUser);
-            SystemProperties.initializeProperties(prop, true);
-        
-            String template = (isLdap) ? BOOTSTRAP_SERVER_CONFIG_LDAP :
-                BOOTSTRAP_SERVER_CONFIG_FILE;
-            template = template.replaceAll("@" + DS_HOST + "@", dshost);
-            template = template.replaceAll("@" + DS_PORT + "@", dsport);
-            template = template.replaceAll("@" + DS_MGR + "@", dsmgr);
-            template = template.replaceAll("@" + DS_BASE_DN + "@", dsbasedn);
-            template = template.replaceAll("@" + DS_PWD + "@", dspwd);
-            template = template.replaceAll("@" + PWD + "@", pwd);
-            Crypt.reinitialize();
-            loadServerConfigXML(template);
-
-            if (reinit) {
-                AdminUtils.initialize();            
-                SMSAuthModule.initialize();
-            }
             SSOToken ssoToken = getSSOToken(dsbasedn, dsameUser,
                 Crypt.decode(pwd, Crypt.getHardcodedKeyEncryptor()));
             try {
@@ -302,6 +295,43 @@ public class Bootstrap {
             }
         }
         return properties;
+    }
+    
+    private static void initializeSystemComponents(
+        Properties prop,
+        String dsbasedn, 
+        boolean reinit,
+        boolean isLdap,
+        String dshost,
+        String dsport,
+        String dsmgr,
+        String dspwd,
+        String pwd
+    ) throws LDAPServiceException {
+        String dsameUser = "cn=dsameuser,ou=DSAME Users," + dsbasedn;
+        
+        prop.setProperty(PROP_DEBUG_LEVEL, "error");
+        prop.setProperty("com.sun.identity.authentication.special.users",
+            dsameUser);
+        prop.setProperty("com.sun.identity.authentication.super.user",
+            dsameUser);
+        SystemProperties.initializeProperties(prop, true);
+        
+        String template = (isLdap) ? BOOTSTRAP_SERVER_CONFIG_LDAP :
+            BOOTSTRAP_SERVER_CONFIG_FILE;
+        template = template.replaceAll("@" + DS_HOST + "@", dshost);
+        template = template.replaceAll("@" + DS_PORT + "@", dsport);
+        template = template.replaceAll("@" + DS_MGR + "@", dsmgr);
+        template = template.replaceAll("@" + DS_BASE_DN + "@", dsbasedn);
+        template = template.replaceAll("@" + DS_PWD + "@", dspwd);
+        template = template.replaceAll("@" + PWD + "@", pwd);
+        Crypt.reinitialize();
+        loadServerConfigXML(template);
+        
+        if (reinit) {
+            AdminUtils.initialize();
+            SMSAuthModule.initialize();
+        }
     }
 
     private static void startEmbeddedDS(String odsDir) {

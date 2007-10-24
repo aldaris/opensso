@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.11 2007-10-17 23:00:18 veiming Exp $
+ * $Id: SessionService.java,v 1.12 2007-10-24 20:50:59 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.NoSuchProviderException;
@@ -390,7 +389,7 @@ public class SessionService {
      * 
      */
     public static SessionService getSessionService() {
-        if (WebtopNaming.isServerMode()) {
+        if (SystemProperties.isServerMode()) {
             synchronized (SessionService.class) {
                 if (sessionService == null) {
                     sessionService = new SessionService();

@@ -17,26 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.8 2007-03-18 06:55:41 bigfatrat Exp $
+ * $Id: LogConfigReader.java,v 1.9 2007-10-24 20:51:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-
-
 package com.sun.identity.log.s1is;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.AccessController;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -48,10 +35,20 @@ import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.security.AdminDNAction;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.AccessController;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <tt>LogConfigReader</TT> is used to load the configuration from the
@@ -64,7 +61,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
  */
 public class LogConfigReader implements ServiceListener{
     
-    private static Debug debug = Debug.getInstance("amLog");
+    private static Debug debug;
     private static ServiceSchema smsLogSchema           = null;
     private static ServiceSchema smsPlatformSchema      = null;
     private static ServiceSchema smsNamingSchema        = null;
@@ -97,6 +94,8 @@ public class LogConfigReader implements ServiceListener{
      * @throws IOException
      */
     public LogConfigReader() throws IOException {
+        debug = Debug.getInstance("amLog");
+
         localProtocol = SystemProperties.get("com.iplanet.am.server.protocol");
         localHost = SystemProperties.get("com.iplanet.am.server.host");
         localPort = SystemProperties.get(Constants.AM_SERVER_PORT);

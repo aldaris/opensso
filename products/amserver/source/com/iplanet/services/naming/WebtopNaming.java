@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.7 2007-10-17 23:00:19 veiming Exp $
+ * $Id: WebtopNaming.java,v 1.8 2007-10-24 20:51:00 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.PLLClient;
 import com.iplanet.services.comm.client.SendRequestException;
@@ -47,6 +46,8 @@ import com.iplanet.services.naming.share.NamingBundle;
 import com.iplanet.services.naming.share.NamingRequest;
 import com.iplanet.services.naming.share.NamingResponse;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+
 
 /**
  * The <code>WebtopNaming</code> class is used to get URLs for various
@@ -83,9 +84,9 @@ public class WebtopNaming {
 
     private static Vector platformServerIDs = new Vector();
 
-    protected static Debug debug = Debug.getInstance("amNaming");
+    protected static Debug debug;
 
-    private static boolean serverMode = false;
+    private static boolean serverMode;
 
     private static String amServerProtocol = null;
 
@@ -103,6 +104,7 @@ public class WebtopNaming {
                         Constants.SERVER_MODE, "false"))).booleanValue();
         try {
             getAMServer();
+            debug = Debug.getInstance("amNaming");
         } catch (Exception ex) {
             debug.error("Failed to initialize server properties", ex);
         }
@@ -144,7 +146,7 @@ public class WebtopNaming {
         try {
             // Initilaize the list of naming URLs
             getNamingServiceURL();
-            if ((isServerMode() == false) && (namingServiceURL.length > 1)) {
+            if (!serverMode && (namingServiceURL.length > 1)) {
                 startSiteMonitor(namingServiceURL);
             }
         } catch (Exception ex) {
@@ -168,8 +170,7 @@ public class WebtopNaming {
      */
     public static URL getServiceURL(String service, String protocol,
             String host, String port, String uri) throws URLNotFoundException {
-        boolean validate = isServerMode();
-        return (getServiceURL(service, protocol, host, port, uri, validate));
+        return (getServiceURL(service, protocol, host, port, uri, serverMode));
     }
 
         /**
@@ -724,7 +725,7 @@ public class WebtopNaming {
 
     private static void updateNamingTable() throws Exception {
 
-        if (!isServerMode()) {
+        if (!serverMode) {
             if (namingServiceURL == null) {
                 initializeNamingService();
             }
@@ -1182,7 +1183,7 @@ static public class SiteMonitor extends Thread {
     }
 
     private static void updateCurrentSite(Vector list) {
-        if (isServerMode() == true) {
+        if (serverMode) {
             return;
         }
 

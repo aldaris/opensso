@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.7 2007-10-19 20:03:21 veiming Exp $
+ * $Id: SystemProperties.java,v 1.8 2007-10-24 20:50:58 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -507,5 +507,15 @@ public class SystemProperties {
      */
     public static String getServerInstanceName() {
         return instanceName;
+    }
+    
+    /**
+     * Returns <code>true</code> if instance is running in server mode.
+     *
+     * @return <code>true</code> if instance is running in server mode.
+     */
+    public static boolean isServerMode() {
+        return Boolean.valueOf(get(
+            Constants.SERVER_MODE, "false")).booleanValue();
     }
 }

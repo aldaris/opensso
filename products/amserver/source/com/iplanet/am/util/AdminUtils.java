@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminUtils.java,v 1.4 2007-10-17 23:00:16 veiming Exp $
+ * $Id: AdminUtils.java,v 1.5 2007-10-24 20:50:58 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@ public class AdminUtils {
             }
 
         } catch (LDAPServiceException e) {
-            if (WebtopNaming.isServerMode()) {
+            if (SystemProperties.isServerMode()) {
                 debug.error("AdminUtils.initialize: Initialize admin info ", e);
             } else if (debug.messageEnabled()) {
                 debug.message(

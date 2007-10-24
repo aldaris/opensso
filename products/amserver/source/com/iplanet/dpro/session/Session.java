@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.8 2007-10-17 23:00:16 veiming Exp $
+ * $Id: Session.java,v 1.9 2007-10-24 20:50:58 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1570,7 +1570,7 @@ public class Session {
      * @return true if running in core server mode, false otherwise
      */
     static boolean isServerMode() {
-        return WebtopNaming.isServerMode();
+        return SystemProperties.isServerMode();
     }
 
     /**

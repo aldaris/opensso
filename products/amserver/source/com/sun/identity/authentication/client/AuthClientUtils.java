@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.3 2007-10-04 22:05:32 veiming Exp $
+ * $Id: AuthClientUtils.java,v 1.4 2007-10-24 20:51:00 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,7 @@
 
 package com.sun.identity.authentication.client;
 
-import java.io.File;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -38,10 +36,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.HashSet;
 import java.util.Enumeration;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -50,20 +45,15 @@ import java.util.ResourceBundle;
 
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.net.MalformedURLException;
 import java.net.HttpURLConnection;
 
 import java.security.AccessController;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
-
-import netscape.ldap.util.DN;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -78,8 +68,6 @@ import com.iplanet.am.util.AMClientDetector;
 import com.iplanet.am.util.AMURLEncDec;
 import com.iplanet.am.util.Locale;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.Stats;
-import com.sun.identity.common.Constants;
 
 import com.iplanet.services.cdm.Client;
 import com.iplanet.services.cdm.AuthClient;
@@ -95,7 +83,6 @@ import com.sun.identity.security.EncodeAction;
 
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.authentication.util.AMAuthUtils;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 
@@ -111,7 +98,6 @@ import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSEntry;
-import com.sun.identity.sm.DNMapper;
 
 import com.sun.identity.policy.PolicyUtils;
 import com.sun.identity.policy.plugins.AuthSchemeCondition;
@@ -191,7 +177,7 @@ public class AuthClientUtils {
                 setRequestEncoding = true;
             }
         }
-        if (WebtopNaming.isServerMode()) {
+        if (SystemProperties.isServerMode()) {
             loadBalanceCookieName =
                 SystemProperties.get(Constants.AM_LB_COOKIE_NAME,"amlbcookie");
         } else {
@@ -1055,7 +1041,7 @@ public class AuthClientUtils {
     }
 
     public static String getlbCookieValue() {
-        if (WebtopNaming.isServerMode()) {
+        if (SystemProperties.isServerMode()) {
             try {
                 return (WebtopNaming.getAMServerID());
             } catch (Exception e) {

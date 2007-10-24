@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.7 2007-01-09 18:52:03 manish_rustagi Exp $
+ * $Id: AdminTokenAction.java,v 1.8 2007-10-24 20:51:03 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,6 @@ import java.security.PrivilegedAction;
 import com.iplanet.am.util.AdminUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -165,7 +164,7 @@ public class AdminTokenAction implements PrivilegedAction {
 	// Try getting the token from serverconfig.xml
 	SSOToken answer = this.getSSOToken(); 
 	if (answer != null) {
-	    if (!WebtopNaming.isServerMode() || authInitialized) {
+	    if (!SystemProperties.isServerMode() || authInitialized) {
 		appSSOToken = answer;
 	    }
 	    return answer;
@@ -236,7 +235,7 @@ public class AdminTokenAction implements PrivilegedAction {
 		"\nCheck AMConfig.properties for the following properties" +
 		"\n\tcom.sun.identity.agents.app.username" +
 		"\n\tcom.iplanet.am.service.password");
-        } else if (!WebtopNaming.isServerMode() || authInitialized) {
+        } else if (!SystemProperties.isServerMode() || authInitialized) {
 	    // Cache the SSOToken if not in server mode (i.e., in the
 	    // case of client sdk) or if the authN has been initialized
 	    appSSOToken = answer;
@@ -254,7 +253,7 @@ public class AdminTokenAction implements PrivilegedAction {
             if (AdminUtils.getAdminPassword() != null) {
                 String adminDN = AdminUtils.getAdminDN();
                 String adminPassword = new String(AdminUtils.getAdminPassword());
-	        if (!authInitialized && (WebtopNaming.isServerMode() ||
+	        if (!authInitialized && (SystemProperties.isServerMode() ||
 		    SystemProperties.get(AMADMIN_MODE) != null)) {
 		    // Use internal auth context to get the SSOToken
 		    AuthContext ac = new AuthContext(new AuthPrincipal(adminDN),
