@@ -32,7 +32,6 @@
 #include "service_info.h"
 
 #include "thread_pool.h"
-#include "attrs_fetch.h"
 #include "auth_svc.h"
 
 
