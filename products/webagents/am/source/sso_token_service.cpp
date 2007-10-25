@@ -82,20 +82,18 @@ SSOTokenService::SSOTokenService(const char *serviceName,
 		   initParams.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY,""),
 		   initParams.get(AM_AUTH_CERT_ALIAS_PROPERTY,""),
                    mAlwaysTrustServerCert),
-    mDefSessionURL(initParams.get(AM_SSO_DEFAULT_SESSION_URL, "")),
+    mDefSessionURL(""),
     mSessionServiceInfo(mDefSessionURL),
     mNotifEnabled(initParams.getBool(
                       AM_COMMON_NOTIFICATION_ENABLE_PROPERTY, false)),
     mNotifURL(initParams.get(AM_COMMON_NOTIFICATION_URL_PROPERTY, "")),
-    mSSOTokenListenerTable(mServiceParams.getUnsigned( // reuse sso hash size
-                           AM_SSO_HASH_BUCKET_SIZE_PROPERTY, DEFAULT_HASH_SIZE),
+    mSSOTokenListenerTable(DEFAULT_HASH_SIZE,
                            LL_MAXINT), // entry never times out
     mSSOTokenListenerTableLock(),
     mCookieName(initParams.get(AM_COMMON_COOKIE_NAME_PROPERTY, DEF_COOKIENAME)),
     mLoadBalancerEnabled(initParams.getBool(
                              AM_COMMON_LOADBALANCE_PROPERTY, true)),
-    mSSOTokenTable(mServiceParams.getUnsigned(
-                      AM_SSO_HASH_BUCKET_SIZE_PROPERTY, DEFAULT_HASH_SIZE),
+    mSSOTokenTable(DEFAULT_HASH_SIZE,
 		   mServiceParams.getPositiveNumber(
                       AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY, DEFAULT_TIMEOUT)),
     mHTCleaner(NULL),
@@ -189,8 +187,7 @@ SSOTokenService::initialize()
     // each notification is passed to a thread to be processed.
     int numThreads = START_THREADS;
     if (mNotifEnabled) {
-	numThreads += mServiceParams.getUnsigned(
-			  AM_SSO_MAX_THREADS_PROPERTY, DEFAULT_MAX_THREADS);
+	numThreads += DEFAULT_MAX_THREADS;
     }
 
     try {

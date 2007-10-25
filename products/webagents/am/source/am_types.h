@@ -71,38 +71,41 @@ typedef enum {
 } am_bool_t;
 
 typedef enum {
-    AM_SUCCESS = 0,
-    AM_FAILURE,
-    AM_INIT_FAILURE,
-    AM_AUTH_FAILURE,
-    AM_NAMING_FAILURE,
-    AM_SESSION_FAILURE,
-    AM_POLICY_FAILURE,
-    AM_NO_POLICY,
-    AM_INVALID_ARGUMENT,
-    AM_INVALID_VALUE,
-    AM_NOT_FOUND,
-    AM_NO_MEMORY,
-    AM_NSPR_ERROR,
-    AM_END_OF_FILE,
-    AM_BUFFER_TOO_SMALL,
-    AM_NO_SUCH_SERVICE_TYPE,
-    AM_SERVICE_NOT_AVAILABLE,
-    AM_ERROR_PARSING_XML,
-    AM_INVALID_SESSION,
-    AM_INVALID_ACTION_TYPE,
-    AM_ACCESS_DENIED,
-    AM_HTTP_ERROR,
-    AM_INVALID_FQDN_ACCESS,
-    AM_FEATURE_UNSUPPORTED,
-    AM_AUTH_CTX_INIT_FAILURE,
-    AM_SERVICE_NOT_INITIALIZED,
-    AM_INVALID_RESOURCE_FORMAT,
-    AM_NOTIF_NOT_ENABLED,
-    AM_ERROR_DISPATCH_LISTENER,
-    AM_REMOTE_LOG_FAILURE,
-    AM_LOG_FAILURE,
-    AM_REMOTE_LOG_NOT_INITIALIZED,
+    AM_SUCCESS = 0, /* error code 0 */
+    AM_FAILURE, /* error code 1 */
+    AM_INIT_FAILURE, /* error code 2 */
+    AM_AUTH_FAILURE, /* error code 3 */
+    AM_NAMING_FAILURE, /* error code 4 */
+    AM_SESSION_FAILURE, /* error code 5 */
+    AM_POLICY_FAILURE, /* error code 6 */
+    AM_NO_POLICY, /* error code 7 */
+    AM_INVALID_ARGUMENT, /* error code 8 */
+    AM_INVALID_VALUE, /* error code 9 */
+    AM_NOT_FOUND, /* error code 10 */
+    AM_NO_MEMORY, /* error code 11 */
+    AM_NSPR_ERROR, /* error code 12 */
+    AM_END_OF_FILE, /* error code 13 */
+    AM_BUFFER_TOO_SMALL, /* error code 14 */
+    AM_NO_SUCH_SERVICE_TYPE, /* error code 15 */
+    AM_SERVICE_NOT_AVAILABLE, /* error code 16 */
+    AM_ERROR_PARSING_XML, /* error code 17 */
+    AM_INVALID_SESSION, /* error code 18 */
+    AM_INVALID_ACTION_TYPE, /* error code 19 */
+    AM_ACCESS_DENIED, /* error code 20 */
+    AM_HTTP_ERROR, /* error code 21 */
+    AM_INVALID_FQDN_ACCESS, /* error code 22 */
+    AM_FEATURE_UNSUPPORTED, /* error code 23 */
+    AM_AUTH_CTX_INIT_FAILURE, /* error code 24 */
+    AM_SERVICE_NOT_INITIALIZED, /* error code 25 */
+    AM_INVALID_RESOURCE_FORMAT, /* error code 26 */
+    AM_NOTIF_NOT_ENABLED, /* error code 27 */
+    AM_ERROR_DISPATCH_LISTENER, /* error code 28 */
+    AM_REMOTE_LOG_FAILURE, /* error code 29 */
+    AM_LOG_FAILURE, /* error code 30 */
+    AM_REMOTE_LOG_NOT_INITIALIZED, /* error code 31 */
+    AM_REST_ATTRS_SERVICE_FAILURE, /* error code 32 */
+    AM_REST_SERVICE_NOT_AVAILABLE, /* error code 33 */
+    AM_REPOSITORY_TYPE_INVALID, /* error code 34, valid values: local, centralized */
     AM_NUM_ERROR_CODES	/* This should always be the last. */
 } am_status_t;
 

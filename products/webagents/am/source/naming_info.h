@@ -41,7 +41,7 @@ class NamingInfo {
 public:
     NamingInfo(bool valid = false)
 	: infoValid(valid), loggingSvcInfo(), policySvcInfo(),
-	  profileSvcInfo(), sessionSvcInfo(), extraProperties()
+	  profileSvcInfo(), sessionSvcInfo(), restSvcInfo(), extraProperties()
     {
     }
 
@@ -49,6 +49,7 @@ public:
     const ServiceInfo& getPolicySvcInfo() const { return policySvcInfo; }
     const ServiceInfo& getProfileSvcInfo() const { return profileSvcInfo; }
     const ServiceInfo& getSessionSvcInfo() const { return sessionSvcInfo; }
+    const ServiceInfo& getRESTSvcInfo() const { return restSvcInfo; }
 
     const Properties& getExtraProperties() const { return extraProperties; }
     const std::string getlbCookieStr() const { return lbCookieStr; }
@@ -64,16 +65,19 @@ public:
 	policySvcInfo.setHostPort(serverInfo);
 	profileSvcInfo.setHostPort(serverInfo);
 	sessionSvcInfo.setHostPort(serverInfo);
+	restSvcInfo.setHostPort(serverInfo);
     }
     
 private:
     bool infoValid;
     friend class NamingService;
+    friend class AgentProfileService;
 
     ServiceInfo loggingSvcInfo;
     ServiceInfo policySvcInfo;
     ServiceInfo profileSvcInfo;
     ServiceInfo sessionSvcInfo;
+    ServiceInfo restSvcInfo;
     Properties extraProperties;
     std::string lbCookieStr; 
     std::string lbCookieName;

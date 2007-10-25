@@ -1,5 +1,6 @@
 SUNW_1.0 {
 	global:
+		am_agent_init_cac;
 		am_cleanup;
 
 		am_http_cookie_encode;

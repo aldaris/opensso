@@ -95,10 +95,6 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_ANONYMOUS_USER_OLD AM_WEB_PROPERTY_PREFIX_OLD "unauthenticatedUser"
 #define AM_WEB_ANON_REMOTE_USER_ENABLE AM_WEB_PROPERTY_PREFIX "anonymous_user.enable"
 #define AM_WEB_ANON_REMOTE_USER_ENABLE_OLD AM_WEB_PROPERTY_PREFIX_OLD "anonRemoteUserEnabled"
-#define AM_WEB_URL_REDIRECT_PARAM AM_WEB_PROPERTY_PREFIX "url.redirect.param"
-#define AM_WEB_URL_REDIRECT_PARAM_OLD AM_WEB_PROPERTY_PREFIX_OLD "urlRedirectParam"
-#define AM_WEB_INSTANCE_NAME_PROPERTY	AM_WEB_PROPERTY_PREFIX "instance.name"
-#define AM_WEB_INSTANCE_NAME_PROPERTY_OLD	AM_WEB_PROPERTY_PREFIX_OLD "instanceName"
 #define AM_WEB_NOT_ENFORCED_LIST_PROPERTY AM_WEB_PROPERTY_PREFIX "notenforced_list"
 #define AM_WEB_NOT_ENFORCED_LIST_PROPERTY_OLD AM_WEB_PROPERTY_PREFIX_OLD "notenforcedList"
 #define AM_WEB_REVERSE_NOT_ENFORCED_LIST AM_WEB_PROPERTY_PREFIX "notenforced_list.invert"
@@ -164,7 +160,6 @@ AM_BEGIN_EXTERN_C
 #define AM_COMMON_LOG_FILE_PROPERTY	AM_WEB_PROPERTY_PREFIX "local.log.file"
 #define AM_COMMON_LOG_ROTATION		AM_WEB_PROPERTY_PREFIX "local.log.rotate"
 #define AM_COMMON_LOG_FILE_SIZE		AM_WEB_PROPERTY_PREFIX "local.log.size"
-#define AM_COMMON_LOG_REMOTE_BUFFER_SIZE_PROPERTY	AM_WEB_PROPERTY_PREFIX "remote.log.buffer.size"
 #define AM_COMMON_SERVER_LOG_FILE_PROPERTY   AM_WEB_PROPERTY_PREFIX "remote.log"
 
 /* Followings are for the attribute related properties */
@@ -198,6 +193,11 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_OWA_ENABLED AM_WEB_PROPERTY_PREFIX  "iis.owa_enabled"
 #define AM_WEB_OWA_ENABLED_CHANGE_PROTOCOL AM_WEB_PROPERTY_PREFIX  "iis.owa_enabled_change_protocol"
 #define AM_WEB_OWA_ENABLED_SESSION_TIMEOUT_URL AM_WEB_PROPERTY_PREFIX  "iis.owa_enabled_session_timeout_url"
+
+
+#define AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY           AM_WEB_PROPERTY_PREFIX "repository.location"
+#define AGENT_PROPERTIES_LOCAL "local"
+#define AGENT_PROPERTIES_CENTRALIZED "centralized"
 
 /*
  * Enough space to hold PRTime key in a string
@@ -434,10 +434,18 @@ typedef struct {
  */
 AM_WEB_EXPORT am_status_t am_web_init(const char *config_file);
 
+
+AM_WEB_EXPORT am_status_t am_web_init_cac(const char *agent_bootstrap_file, 
+                                          const char *agent_config_file);
+
+AM_WEB_EXPORT am_status_t am_agent_init_cac(boolean_t *pAgentAuthenticated, 
+                                          boolean_t* pIsRESTServiceAvailable);
+
 /**
  * Method to clean up the Agent Toolkit
  */
 AM_WEB_EXPORT am_status_t am_web_cleanup();
+AM_WEB_EXPORT am_status_t am_web_cleanup_cac(boolean_t isLocalRepo);
 
 /*
  * Evaluates the access control policies for a specified web-resource and

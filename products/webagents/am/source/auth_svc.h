@@ -46,6 +46,7 @@ class AuthService: public BaseService {
     void getModuleInstanceNames(AuthContext &, am_string_set_t**); 
 
     void create_auth_context(AuthContext &); 
+    void create_auth_context_cac(AuthContext &); 
 
     void login(AuthContext &,
 	       am_auth_index_t index_type,

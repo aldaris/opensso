@@ -36,12 +36,13 @@
 #include "utils.h"
 #include "url.h"
 
+#include "service.h"
+
 BEGIN_PRIVATE_NAMESPACE
 static PolicyEngine *enginePtr;
 DEFINE_BASE_INIT;
 void policy_cleanup();
 END_PRIVATE_NAMESPACE
-
 
 USING_PRIVATE_NAMESPACE
 
@@ -573,5 +574,23 @@ am_policy_invalidate_session(am_policy_t policy_handle,
 		 "Unknown Exception encountered.");
         status = AM_FAILURE;
     }
+    return status;
+}
+
+/**
+ * This function gets used by CAC enabled agents.
+ * If agent already authenticated during agent initialization, 
+ * app ssotoken needs to be passed to service's initialize() 
+ * to set policy_entry object.
+ */
+extern "C" am_status_t
+am_policy_service_initialize_cac(am_policy_t policy_handle, 
+                                 const char* ssoTokenId) {
+
+    am_status_t status = AM_SUCCESS;
+    SSOToken ssot;
+    std::string ssoTokenStr(ssoTokenId); 
+    Service *serviceInstance = enginePtr->getServicePublic(policy_handle);
+    serviceInstance->init_from_agent_cac(ssoTokenStr);
     return status;
 }

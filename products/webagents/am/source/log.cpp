@@ -213,9 +213,7 @@ am_status_t Log::initializeRemoteLog(const Properties& propertiesRef)
 			       AM_AUTH_CERT_ALIAS_PROPERTY, ""),
 			   propertiesRef.getBool(
 			       AM_COMMON_TRUST_SERVER_CERTS_PROPERTY, false),
-			   propertiesRef.getUnsigned(
-			       AM_COMMON_LOG_REMOTE_BUFFER_SIZE_PROPERTY, 1));
-
+			   1);
 	Log::setRemoteInfo(newLogSvc);
     }
     catch (std::bad_alloc& exb) {

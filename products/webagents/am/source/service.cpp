@@ -1,3 +1,4 @@
+
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -113,8 +114,7 @@ Service::Service(const char *svcName,
                               AM_COMMON_NOTIFICATION_ENABLE_PROPERTY, false)),
       do_sso_only(svcParams.getBool(AM_WEB_DO_SSO_ONLY, false)),
       notificationURL(),
-      policyTable(svcParams.getUnsigned(AM_POLICY_HASH_BUCKET_SIZE_PROPERTY,
-				      DEFAULT_HASH_SIZE),
+      policyTable(DEFAULT_HASH_SIZE,
 	       svcParams.getPositiveNumber(AM_POLICY_HASH_TIMEOUT_MINS_PROPERTY,
 				      DEFAULT_TIMEOUT)),
       fetchProfileAttrs(false),
@@ -302,8 +302,7 @@ Service::initialize() {
 	if(tPool == NULL) {
 		try {
 		    tPool = new ThreadPool(1, 1 + notificationEnabled?
-			    svcParams.getUnsigned(AM_POLICY_MAX_THREADS_PROPERTY,
-						  DEFAULT_MAX_THREADS):0);
+                                DEFAULT_MAX_THREADS:0);
 		} catch(std::bad_alloc &bae) {
 		    throw InternalException(func,
 					    "Memory allocation failure while"
@@ -405,6 +404,156 @@ Service::initialize() {
     Log::setRemoteInfo(newLogSvc);
 
     initialized = true;
+    isLocalRepo = true;
+    Log::log(logID, Log::LOG_MAX_DEBUG,
+	     "Service communication with finished successfully.");
+    return;
+}
+
+
+/*
+ * This function is used by CAC enabled agents.
+ * If Agent already authenticated, then 
+ * just app ssotoken gets set to policy_entry.
+ *
+ * Throws:
+ *	std::invalid_argument if any argument is invalid
+ *	XMLTree::ParseException upon XML parsing error
+ *	NSPRException upon NSPR error
+ *	InternalException upon other errors
+ */
+void
+Service::initialize_cac(SSOToken ssoToken) {
+    string func("Service::initialize_cac()");
+    ScopeLock myLock(lock);
+    if(initialized == true) {
+	return;
+    }
+    if (htCleaner == NULL) {
+        try {
+            htCleaner = new HTCleaner<PolicyEntry>(&policyTable,
+                                      svcParams.getPositiveNumber(
+                                           AM_POLICY_HASH_TIMEOUT_MINS_PROPERTY,
+				           DEFAULT_TIMEOUT),
+		                           "policy cache cleanup");
+        } catch(std::bad_alloc &bae) {
+            throw InternalException(func,
+                                    "Memory allocation failure while "
+                                    "creating hash table cleaner.",
+                                    AM_NO_MEMORY);
+        } catch(InternalException &ie) {
+	    throw ie;
+	}
+    }
+
+    if(threadPoolCreated == false) {
+	if(tPool == NULL) {
+		try {
+		    tPool = new ThreadPool(1, 1 + notificationEnabled?
+                                DEFAULT_MAX_THREADS:0);
+		} catch(std::bad_alloc &bae) {
+		    throw InternalException(func,
+					    "Memory allocation failure while"
+					    " creating thread pool.",
+					    AM_NO_MEMORY);
+		}
+	}
+
+	/* Adding cleanup thread for the policyEntry hash table */
+        /* thread pool will free htCleaner pointer when it is done
+         * executing, when am_cleanup() is called. */
+	if(tPool->dispatch(htCleaner) == false) {
+	    string msg("Cleaner thread dispatch failed.");
+	    Log::log(logID, Log::LOG_ERROR, msg.c_str());
+	    throw InternalException(func, msg, AM_INIT_FAILURE);
+	}
+	threadPoolCreated = true;
+    }
+
+    Log::log(logID, Log::LOG_MAX_DEBUG,
+	     "Service communication with server started.");
+    am_status_t status;
+    mPolicyEntry = new PolicyEntry(rsrcTraits, profileAttributesMap);
+    SSOToken& ssoTok = mPolicyEntry->getSSOToken();
+    ssoTok = ssoToken;
+
+    // Do naming query
+    if(AM_SUCCESS !=
+       (status = namingSvc.getProfile(namingSvcInfo,
+			      mPolicyEntry->getSSOToken().getString(),
+			      mPolicyEntry->cookies,
+			      mPolicyEntry->namingInfo))) {
+
+	string msg("Naming query failed during service creation.");
+	throw InternalException(func, msg, status);
+    }
+    
+    // Do session query
+    if((status = mSSOTokenSvc.getSessionInfo(
+			    mPolicyEntry->namingInfo.getSessionSvcInfo(),
+			    mPolicyEntry->getSSOToken().getString(),
+                            mPolicyEntry->cookies,
+			    true,
+			    mAppSessionInfo, false, false)) != AM_SUCCESS) {
+	string msg("Session query failed during service creation.");
+	throw InternalException(func, msg, status);
+    }
+
+   if (do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs) {
+       Log::log(logID, Log::LOG_INFO,"do_sso_only is set to true, profile and response attributes fetch mode is set to NONE");
+   } else {
+    // Do policy init.
+    string policydata;
+    KeyValueMap env;
+    policySvc = new PolicyService(
+		    mPolicyEntry->getSSOToken(),
+		    svcParams,
+		    svcParams.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY,""),
+                    svcParams.get(AM_AUTH_CERT_ALIAS_PROPERTY,""),
+		    alwaysTrustServerCert);
+
+	policySvc->sendNotificationMsg(false,
+			mPolicyEntry->namingInfo.getPolicySvcInfo(),
+			serviceName, mPolicyEntry->cookies,
+			notificationURL);
+
+    if(notificationURL.size() > 0) {
+	policySvc->sendNotificationMsg(true,
+				  mPolicyEntry->namingInfo.getPolicySvcInfo(),
+				  serviceName,
+				  mPolicyEntry->cookies,
+				  notificationURL);
+    }
+
+    if(policySvc->getRevisionNumber() >= 30) {
+	KeyValueMap advicesMap;
+	policySvc->getAdvicesList(mPolicyEntry->namingInfo.getPolicySvcInfo(),
+				  serviceName, mPolicyEntry->cookies,
+				  advicesMap);
+	KeyValueMap::const_iterator result = advicesMap.find(SERVER_HANDLED_ADVICES);
+	const std::vector<std::string> adviceNames = (*result).second;
+	serverHandledAdvicesList.insert(serverHandledAdvicesList.begin(),
+				       adviceNames.begin(), adviceNames.end());
+    }
+   }
+
+    string remoteLogName = svcParams.get(AM_COMMON_SERVER_LOG_FILE_PROPERTY,
+					 "");
+
+    LogService *newLogSvc =
+	   new LogService(mPolicyEntry->namingInfo.getLoggingSvcInfo(),
+			  mPolicyEntry->getSSOToken(),
+			  mPolicyEntry->cookies, remoteLogName,
+			  svcParams,
+                          svcParams.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY,""),
+                          svcParams.get(AM_AUTH_CERT_ALIAS_PROPERTY,""),
+                          alwaysTrustServerCert);
+
+
+    Log::setRemoteInfo(newLogSvc);
+
+    initialized = true;
+    isLocalRepo = false;
     Log::log(logID, Log::LOG_MAX_DEBUG,
 	     "Service communication with finished successfully.");
     return;
@@ -610,7 +759,10 @@ Service::~Service() {
     Log::log(logID, Log::LOG_MAX_DEBUG, "Service::~Service(): "
 	    "Cleaning up %s service.",
 	    serviceName.c_str());
-    (void)do_agent_auth_logout();
+    if(isLocalRepo == true){
+	(void)do_agent_auth_logout();
+    }
+    
     // Thread pool will free htCleaner pointer when it has stopped
     // executing.
     if (htCleaner != NULL) {
@@ -1457,5 +1609,19 @@ Service::add_attribute_value_pair_xml(const KeyValueMap::const_iterator &entry,
     }
     adviceStr.append("</AttributeValuePair>\n");
     return;
+}
+
+/**
+ * This function gets used by CAC enabled agents.
+ * If agent already authenticated during agent initialization, 
+ * app ssotoken needs to be passed to service's initialize() 
+ * to set policy_entry object.
+ */
+void Service::init_from_agent_cac(std::string ssoTokenStr){
+    SSOToken ssoToken;
+    if(initialized == false){
+        ssoToken = SSOToken(ssoTokenStr, Http::encode(ssoTokenStr));
+        initialize_cac(ssoToken);
+    }
 }
 

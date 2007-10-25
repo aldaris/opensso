@@ -46,6 +46,7 @@ vpath libamsdk.mapfile $(REAL_SRC_DIR)
 OBJS := action_decision.o \
 	am_auth.o \
 	auth_context.o \
+        agent_profile_service.o \
 	am_log.o \
 	am_main.o \
 	am_map.o \

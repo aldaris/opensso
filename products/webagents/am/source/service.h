@@ -103,6 +103,7 @@ class Service {
     SSOTokenService &mSSOTokenSvc;
     bool mCookieEncoded;
     bool do_sso_only;
+    bool isLocalRepo;
 
     /* 
      * All functions throw:
@@ -121,6 +122,7 @@ class Service {
     am_status_t do_agent_auth_logout();
 
     void initialize();
+    void initialize_cac(SSOToken); 
 
 
     void update_policy(const SSOToken &, const std::string &,
@@ -130,8 +132,8 @@ class Service {
 		       policy_fetch_scope_t scope,
 		       bool refetchPolicy,
                        PolicyEntryRefCntPtr &);
-bool
-Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
+
+    bool do_update_policy(const SSOToken &ssoTok, const string &resName,
 		       const string &actionName,
 		       const KeyValueMap &env,
                        SessionInfo &sessionInfo,
@@ -225,6 +227,9 @@ Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
 			 am_policy_result_t * /*policy_result*/,
 			 am_bool_t /*ignorePolicyResult*/,
 			 char ** /*am revision number*/);
+
+    void init_from_agent_cac(std::string);
+
 private:
     std::vector<std::string> serverHandledAdvicesList;
     void construct_advice_string(const KeyValueMap &, std::string &) const;
@@ -236,3 +241,4 @@ private:
 END_PRIVATE_NAMESPACE
 
 #endif	// not __SERVICE_H__
+

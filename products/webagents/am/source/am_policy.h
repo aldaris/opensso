@@ -211,6 +211,10 @@ am_policy_invalidate_session(am_policy_t policy_handle,
                              const char *ssoTokenId);
 
 
+AM_EXPORT am_status_t
+am_policy_service_initialize_cac(am_policy_t policy_handle, 
+                                 const char* ssoTokenId);
+
 AM_END_EXTERN_C
 
 #endif	/* not AM_POLICY_H */

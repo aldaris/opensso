@@ -139,6 +139,10 @@ class PolicyEngine {
 
     ~PolicyEngine();
     bool isAccessAllowed();
+
+    inline Service *getServicePublic(am_policy_t hdl){
+	return getService(hdl);
+    }	
 };
 
 END_PRIVATE_NAMESPACE

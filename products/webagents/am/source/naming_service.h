@@ -48,6 +48,9 @@ public:
 			      const std::string& ssoToken,
 			      Http::CookieList& cookieList,
 			      NamingInfo& namingInfo);
+    am_status_t doNamingRequest(const ServiceInfo& service,
+			      Http::CookieList& cookieList,
+			      NamingInfo& namingInfo);
 
 private:
 
@@ -55,11 +58,13 @@ private:
     std::string namingURL;
 
     void processAttribute(const std::string& name, const std::string& value,
-			  NamingInfo& namingInfo) const;
+			  NamingInfo& namingInfo,
+                          bool isAppSSOTokenPresent) const;
     /* Throws XMLTree::ParseException */
     am_status_t parseNamingResponse(const std::string& data,
 				       const std::string& ssoToken,
-				       NamingInfo& namingInfo) const;
+				       NamingInfo& namingInfo,
+                                       bool isAppSSOTokenPresent) const;
     am_status_t check_server_alive(std::string hostname, unsigned short portnumber);
     
     void addLoadBalancerCookie(NamingInfo& namingInfo, Http::CookieList& cookieList);
@@ -73,6 +78,7 @@ private:
     static const std::string policyAttribute;
     static const std::string profileAttribute;
     static const std::string sessionAttribute;
+    static const std::string restAttribute;
     static const std::string loadbalancerCookieAttribute;
     static const std::string invalidSessionMsgPrefix;
     static const std::string invalidSessionMsgSuffix;

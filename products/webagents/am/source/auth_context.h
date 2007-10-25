@@ -79,6 +79,7 @@ class AuthContext {
     std::vector<am_auth_callback_t> callbacks;
     void cleanupCharArray(const char* &char_array);
     void cleanupStringList(const char** &string_list, size_t list_size);
+    friend class AgentProfileService;
 
 };
 

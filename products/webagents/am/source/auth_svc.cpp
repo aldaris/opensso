@@ -754,7 +754,7 @@ AuthService::AuthService(const Properties &config)
 		config.getBool(AM_COMMON_TRUST_SERVER_CERTS_PROPERTY, false)),
     logID(Log::addModule(AUTH_SVC_MODULE)),
     cdbPasswd(config.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY, "")),
-    orgName(config.get(AM_AUTH_ORGANIZATION_NAME_PROPERTY, "")),
+    orgName(""),
     namingURL(config.get(AM_COMMON_NAMING_URL_PROPERTY, "")),
     cookieList()
 {
@@ -2548,4 +2548,93 @@ AuthService::addTextInputCallbackRequirements(
 
     return;
 } // addTextInputCallbackRequirements
+
+/*
+ * create_auth_context_cac
+ * Throws: InternalException upon error
+ */
+void
+AuthService::create_auth_context_cac(AuthContext &auth_ctx)
+{
+
+    am_status_t status;
+
+    Request request(*this, xmlRequestPrefixChunk, authContextPrefixChunk,
+                    10, false);
+
+    Http::Response response;
+
+    BodyChunkList &bodyChunkList = request.getBodyChunkList();
+    BodyChunk firstAuthIdentifier("0", 1);
+
+    if(auth_ctx.orgName.size() == 0) {
+        auth_ctx.orgName = orgName; // no org passed in so use property
+    }
+
+    // Do entity Reference conversions
+    Utils::expandEntityRefs(auth_ctx.orgName);
+
+    if(auth_ctx.orgName.size() == 0) {
+        Log::log(logID, Log::LOG_ERROR,
+                "AuthService::create_auth_context_cac() "
+                "No org name specified in properties file or input parameter.");
+        throw InternalException("AuthService::create_auth_context_cac() ",
+                "No org name specified in properties file or input parameter.",
+                AM_AUTH_FAILURE);
+    }
+
+    if(auth_ctx.namingURL.size() == 0) {
+        auth_ctx.namingURL = namingURL; // no url passed in so use property
+    }
+
+    // Do entity Reference conversions
+    Utils::expandEntityRefs(auth_ctx.namingURL);
+
+    if(auth_ctx.namingURL.size() == 0) {
+        Log::log(logID, Log::LOG_ERROR,
+                "AuthService::create_auth_context_cac() "
+                "No Naming URL specified in properties file or "
+                "input parameter.");
+        throw InternalException("AuthService::create_auth_context_cac() ",
+                "No Naming URL specified in properties file or "
+                "input parameter.",
+                AM_AUTH_FAILURE);
+    }
+
+    BodyChunk orgNameBodyChunk(auth_ctx.orgName);
+    bodyChunkList.push_back(firstAuthIdentifier);
+    bodyChunkList.push_back(newAuthContextPrefixChunk);
+    bodyChunkList.push_back(orgNameBodyChunk);
+    bodyChunkList.push_back(newAuthContextSuffixChunk);
+    bodyChunkList.push_back(authContextSuffixChunk);
+    bodyChunkList.push_back(xmlRequestSuffixChunk);
+    status = doHttpPost(auth_ctx.authSvcInfo, std::string(), Http::CookieList(),
+                        bodyChunkList, response, READ_INIT_BUF_LEN,
+                        auth_ctx.certNickName);
+    if(status != AM_SUCCESS) {
+        throw InternalException("AuthService::create_auth_context_cac()",
+                "Error sending request for authentication context from server.",
+                status);
+    }
+
+    std::vector<std::string> authCtxResponses;
+    authCtxResponses = parseGenericResponse(response,
+                                            request.getGlobalId());
+
+    if(authCtxResponses.empty()) {
+        throw InternalException("AuthService::create_auth_context_cac()",
+                                "Received empty response set from server.",
+                                AM_AUTH_CTX_INIT_FAILURE);
+    }
+
+    Log::log(logID, Log::LOG_MAX_DEBUG, authCtxResponses[0].c_str());
+    XMLTree authCtxTree(false, authCtxResponses[0].c_str(),
+                        authCtxResponses[0].size());
+
+    XMLElement rootElem = authCtxTree.getRootElement();
+    processResponse(auth_ctx, rootElem);
+    cookieList = response.getCookieList();
+
+    return;
+} // create_auth_context_cac
 

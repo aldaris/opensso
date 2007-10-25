@@ -538,3 +538,35 @@ am_properties_iter_get_value(am_properties_iter_t properties_iter)
 
     return result;
 }
+
+/**
+ * This function sets null terminator "\0" to a property. This is
+ * needed in certain situations where a property is present, but no
+ * value set to it. Particually useful in CAC, where certain properties
+ * returned by AM, may not hold a value, but they are present.
+ *
+*/
+extern "C" am_status_t
+am_properties_set_null(am_properties_t properties, const char *key,
+		     const char *value)
+{
+    am_status_t status;
+    Properties *propPtr = reinterpret_cast<Properties *>(properties);
+
+    if (propPtr && key) {
+	try {
+	    propPtr->set(key, value);
+	    status = AM_SUCCESS;
+	} catch (const std::bad_alloc&) {
+	    status = AM_NO_MEMORY;
+	} catch (const std::exception&) {
+	    status = AM_FAILURE;
+	} catch (...) {
+	    status = AM_FAILURE;
+	}
+    } else {
+	status = AM_INVALID_ARGUMENT;
+    }
+
+    return status;
+}

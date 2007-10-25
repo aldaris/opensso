@@ -331,6 +331,18 @@ void get_status_info(am_status_t status, const char ** name, const char ** msg)
             if (name) *name = "AM_REMOTE_LOG_NOT_INITIALIZED";
 	    if (msg) *msg = "Remote Log Service is not initialized";
 	    break;
+        case AM_REST_SERVICE_NOT_AVAILABLE:
+            if (name) *name = "AM_REST_SERVICE_NOT_AVAILABLE";
+	    if (msg) *msg = "REST service url not available";
+	    break;
+        case AM_REPOSITORY_TYPE_INVALID:
+            if (name) *name = "AM_REPOSITORY_TYPE_INVALID";
+	    if (msg) *msg = "Repository location value is invalid";
+	    break;
+        case AM_REST_ATTRS_SERVICE_FAILURE:
+            if (name) *name = "AM_REST_ATTRS_SERVICE_FAILURE";
+	    if (msg) *msg = "REST attributes service encountered an error";
+	    break;
 	default:
 	    if (name) *name = "unrecognized status code";
 	    if (msg) *msg = "unknown error";

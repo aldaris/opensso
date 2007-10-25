@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.5 2007-08-01 20:52:43 robertis Exp $
+ * $Id: iws_agent.c,v 1.6 2007-10-25 19:04:35 subbae Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -45,26 +45,35 @@
 
 #include "am_properties.h"
 #include "am_web.h"
+//#include <prlock.h>
 
 #include <stdio.h>
 #if     defined(WINNT)
 #define snprintf        _snprintf
 #endif
 
-#define AMCONFIG_FILE "/AMAgent.properties"
+#define AGENT_BOOTSTRAP_FILE "/AMAgent.properties"
+#define AGENT_CONFIG_FILE "/AMAgentConfiguration.properties"
 #define DSAME_CONF_DIR "dsameconfdir"
 
 #define	MAGIC_STR		"sunpostpreserve"
 #define	POST_PRESERVE_URI	"/dummypost/"MAGIC_STR
 
 typedef struct agent_info {
-    am_properties_t conf_params;
+    am_properties_t agent_bootstrap_props;
+    am_properties_t agent_config_props;
 } agent_info_t;
 
 static agent_info_t agent_info = {
     AM_PROPERTIES_NULL
 };
 
+boolean_t agentInitialized = B_FALSE;
+boolean_t isRESTServiceAvailable = B_FALSE;
+char* gtemp_buff = NULL;
+static CRITICAL initLock;
+
+void init_at_request_cac();
 
 int send_data(const char *msg, Session *sn, Request *rq) {
     int len = msg != NULL?strlen(msg):0;
@@ -112,7 +121,8 @@ static int do_redirect(Session *sn, Request *rq, am_status_t status,
     if(ret == AM_SUCCESS && redirect_url != NULL) {
 	char *advice_txt = NULL;
     char *am_rev_number = am_web_get_am_revision_number();
-	if ((am_rev_number != NULL) && (!strcmp(am_rev_number,"7.0")) && (policy_result->advice_string != NULL)) {
+	if ((am_rev_number != NULL) && (!strcmp(am_rev_number,"7.0")) && 
+        (policy_result->advice_string != NULL)) {
 	    ret = am_web_build_advice_response(policy_result, redirect_url,
 					       &advice_txt);
 	    am_web_log_debug("do_redirect(): policy status=%s, "
@@ -161,6 +171,14 @@ static int do_redirect(Session *sn, Request *rq, am_status_t status,
     return retVal;
 }
 
+static int do_deny(Session *sn, Request *rq, am_status_t status) {
+    int retVal = REQ_ABORTED;
+    /* Set the return code 403 Forbidden */
+    protocol_status(sn, rq, PROTOCOL_FORBIDDEN, NULL);
+    am_web_log_info("do_redirect() Status code= %s.",
+        am_status_to_string(status));
+    return retVal;
+}
 
 /**
   * Method to register POST data in agent cache
@@ -419,8 +437,13 @@ NSAPI_PUBLIC int process_notification(pblock *param, Session *sn, Request *rq)
 }
 
 NSAPI_PUBLIC void agent_cleanup(void *args) {
-    am_properties_destroy(agent_info.conf_params);
-    am_web_cleanup();
+    if(gtemp_buff!= NULL){
+	free(gtemp_buff);
+	gtemp_buff= NULL;
+    }
+    am_properties_destroy(agent_info.agent_bootstrap_props);
+    am_web_cleanup_cac(isRESTServiceAvailable);
+    crit_terminate(initLock);
 }
 
 /*
@@ -442,27 +465,52 @@ NSAPI_PUBLIC int web_agent_init(pblock *param, Session *sn, Request *rq)
     am_status_t status;
     int nsapi_status = REQ_PROCEED;
     char *temp_buf = NULL;
-    char *conf_file = NULL;
+    char *agent_bootstrap_file = NULL;
+    char *agent_config_file = NULL;
+
+    initLock = crit_init();
 
     temp_buf = pblock_findval(DSAME_CONF_DIR, param);
+
+    gtemp_buff = malloc(strlen(temp_buf)+1);
+    if(gtemp_buff!=NULL){
+	strcpy(gtemp_buff,temp_buf);
+    }
+
     if (temp_buf != NULL) {
-        conf_file = system_malloc(strlen(temp_buf) + sizeof(AMCONFIG_FILE));
-	if (conf_file != NULL) {
-	    strcpy(conf_file, temp_buf);
-	    strcat(conf_file, AMCONFIG_FILE);
+        agent_bootstrap_file = 
+            system_malloc(strlen(temp_buf) + sizeof(AGENT_BOOTSTRAP_FILE));
+        agent_config_file = 
+            system_malloc(strlen(temp_buf) + sizeof(AGENT_CONFIG_FILE));
+	if (agent_bootstrap_file != NULL) {
+	    strcpy(agent_bootstrap_file, temp_buf);
+	    strcat(agent_bootstrap_file, AGENT_BOOTSTRAP_FILE);
 	} else {
 	    log_error(LOG_FAILURE, "URL Access Agent: ", sn, rq,
-		      "web_agent_init() unable to allocate memory for config "
+		      "web_agent_init() unable to allocate memory for bootstrap "
 		      "file name", DSAME_CONF_DIR);
 	    nsapi_status = REQ_ABORTED;
 	}
 
-	status = am_properties_create(&agent_info.conf_params);
+	if (agent_config_file != NULL) {
+	    strcpy(agent_config_file, temp_buf);
+	    strcat(agent_config_file, AGENT_CONFIG_FILE);
+	} else {
+	    log_error(LOG_FAILURE, "URL Access Agent: ", sn, rq,
+		      "web_agent_init() unable to allocate memory for local config "
+		      "file name", DSAME_CONF_DIR);
+	    nsapi_status = REQ_ABORTED;
+	}
+
+	status = am_properties_create(&agent_info.agent_bootstrap_props);
 	if(status == AM_SUCCESS) {
-	    status = am_properties_load(agent_info.conf_params, conf_file);
+	    status = am_properties_load(agent_info.agent_bootstrap_props, 
+                                    agent_bootstrap_file);
 	    if(status == AM_SUCCESS) {
-		status = am_web_init(conf_file);
-		system_free(conf_file);
+		status = am_web_init_cac(agent_bootstrap_file, 
+                                         agent_config_file);
+		system_free(agent_bootstrap_file);
+		system_free(agent_config_file);
 		if (AM_SUCCESS != status) {
 		    log_error(LOG_FAILURE, "URL Access Agent: ", sn, rq,
 			      "Initialization of the agent failed: "
@@ -811,10 +859,38 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     char *orig_req = NULL ;
     char *path_info = NULL;
     char * response = NULL;
-	char *clf_req =NULL;
+    char *clf_req =NULL;
     const char *query = pblock_findval(REQUEST_QUERY, rq->reqpb);
-	const char *uri = pblock_findval(REQUEST_URI, rq->reqpb);
+    const char *uri = pblock_findval(REQUEST_URI, rq->reqpb);
     const char *protocol = pblock_findval(REQUEST_PROTOCOL, rq->reqpb); 
+
+    // check if agent is initialized.
+    // if not initialized, then call agent init function
+    // This needs to be synchronized as only one time agent
+    // initialization needs to be done.
+  
+    if(agentInitialized != B_TRUE){
+        //Start critical section
+        crit_enter(initLock);
+        if(agentInitialized != B_TRUE){
+            am_web_log_debug("validate_session_policy : "
+                "Will call init");
+            init_at_request_cac(); 
+            if(agentInitialized != B_TRUE){
+                am_web_log_error("validate_session_policy : "
+                   " Agent is still not intialized");
+                //deny the access
+                requestResult =  do_deny(sn, rq, status);
+                return requestResult;
+            }  else {
+                am_web_log_debug("validate_session_policy : "
+                    "Agent intialized");
+            }
+        }
+        //end critical section
+        crit_exit(initLock);
+    }
+
 
     if (am_web_is_max_debug_on()) {
 	/* Dump the entire set of request headers */
@@ -1049,3 +1125,21 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     }
     return requestResult;
 }
+
+
+/**
+* This function is invoked to initialize the agent 
+* during the first request.  
+*/
+
+void init_at_request_cac()
+{
+    am_status_t status;
+    status = am_agent_init_cac(&agentInitialized,
+                               &isRESTServiceAvailable);
+    if (status != AM_SUCCESS) {
+        log_error(LOG_FAILURE, "URL Access Agent: ", NULL, NULL,
+            "Initialization of the agent failed: "
+            "status = %s (%d)", am_status_to_string(status), status);
+    } 
+} 
