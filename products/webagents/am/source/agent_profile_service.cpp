@@ -43,6 +43,7 @@
 #include "url.h"
 #include "naming_info.h"
 #include "naming_service.h"
+#include "am_web.h"
 
 
 USING_PRIVATE_NAMESPACE
