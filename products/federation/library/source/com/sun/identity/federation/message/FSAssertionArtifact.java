@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifact.java,v 1.1 2006-10-30 23:14:08 qcheng Exp $
+ * $Id: FSAssertionArtifact.java,v 1.2 2007-10-25 09:22:30 mchlbgs Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,14 +86,12 @@ public class FSAssertionArtifact extends AssertionArtifact {
             FSUtils.debug.message("FSAssertionArtifact: empty input.");
             throw new FSMsgException("nullInput",null);
         }
+        
         // decode the artifact
-        byte raw[] = null;
-        try {
-            raw = Base64.decode(theArtifact);
-        } catch (Exception e) {
+        byte raw[] = Base64.decode(theArtifact);
+        if(raw == null) {
             if (FSUtils.debug.messageEnabled()) {
-                FSUtils.debug.message("FSAssertionArtifact: exception decode"
-                        + " input:", e);
+                FSUtils.debug.message("FSAssertionArtifact: decode error");
             }
             throw new FSMsgException("wrongInput",null);
         }
