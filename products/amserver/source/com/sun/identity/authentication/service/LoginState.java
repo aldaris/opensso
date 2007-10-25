@@ -1,3 +1,4 @@
+
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -17,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.14 2007-10-09 18:54:38 pawand Exp $
+ * $Id: LoginState.java,v 1.15 2007-10-25 05:56:06 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -4312,9 +4313,22 @@ public class LoginState {
      *
      * @return the X509 certificate.
      */
-    public X509Certificate getX509Certificate() {
-        return cert;
-    }
+    public X509Certificate getX509Certificate(HttpServletRequest servletrequest) {
+       if ((servletrequest != null) && (servletrequest.isSecure())) {
+           Object obj = servletrequest.getAttribute(
+               "javax.servlet.request.X509Certificate");
+           X509Certificate[] allCerts = (X509Certificate[]) obj;
+           if ((allCerts != null) && (allCerts.length != 0) ) {
+               if (debug.messageEnabled()) {
+                   debug.message("LoginState.getX509Certificate :" +
+                       "length of cert array " + allCerts.length);
+               }
+               cert = allCerts[0];
+           }
+       }
+       
+       return cert;
+   }     
     
     /**
      * TODO-JAVADOC

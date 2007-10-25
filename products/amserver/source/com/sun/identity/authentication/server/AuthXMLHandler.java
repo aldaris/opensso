@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.6 2007-06-07 18:59:41 beomsuk Exp $
+ * $Id: AuthXMLHandler.java,v 1.7 2007-10-25 05:56:06 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -617,16 +617,18 @@ public class AuthXMLHandler implements RequestHandler {
                 if (reqdCallbacks[i] instanceof X509CertificateCallback) {
                     X509CertificateCallback certCallback =
                     (X509CertificateCallback) reqdCallbacks[i];
-                    LoginState loginState = AuthUtils.getLoginState(authContext);
+                    LoginState loginState = 
+                            AuthUtils.getLoginState(authContext);
                     if (loginState != null) {
-                        X509Certificate cert = loginState.getX509Certificate();
+                        X509Certificate cert = 
+                                loginState.getX509Certificate(servletRequest);
                         if (cert != null) {
                             certCallback.setCertificate(cert);
                             certCallback.setReqSignature(false);
                         } else {
                             allCallbacksAreSet = false;
                         }
-                    }
+                    }                    
                 } else { 
                     param = null;
                     if (reqdCallbacks[i] instanceof NameCallback) {

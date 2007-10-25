@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.6 2007-10-22 15:39:18 beomsuk Exp $
+ * $Id: Cert.java,v 1.7 2007-10-25 05:56:05 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -385,7 +385,7 @@ public class Cert extends AMLoginModule {
             }
 
             if (thecert == null) {
-                debug.message("Certificate: no cert passed in.");
+                debug.message(">>>>>>>>>>>>>> Certificate: no cert passed in.");
                 throw new AuthLoginException(amAuthCert, "noCert", null);
             }
 
