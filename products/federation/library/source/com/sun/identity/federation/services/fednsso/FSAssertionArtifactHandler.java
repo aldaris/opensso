@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.7 2007-10-16 21:49:14 exu Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.8 2007-10-26 00:06:58 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1349,18 +1349,15 @@ public class FSAssertionArtifactHandler {
             if (attrStatements.size() != 0) {
                 session.setAttributeStatements(attrStatements);
                 Map attributeMap = null;
-                realmAttributeMapper = getRealmAttributeMapper();
+                setAttributeMapper();
                 if (realmAttributeMapper != null) { 
                     attributeMap = realmAttributeMapper.getAttributes(
                         attrStatements, realm, hostEntityId, 
                         idpEntityId, ssoToken);
-                } else {
-                    attributeMapper = getAttributeMapper();
-                    if (attributeMapper != null) {
-                        attributeMap = attributeMapper.getAttributes(
-                            attrStatements, hostEntityId, 
-                            idpEntityId, ssoToken);
-                    }
+                } else if (attributeMapper != null) {
+                    attributeMap = attributeMapper.getAttributes(
+                        attrStatements, hostEntityId, 
+                        idpEntityId, ssoToken);
                 }
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSAssertionArtifactHandler." +
@@ -1617,18 +1614,15 @@ public class FSAssertionArtifactHandler {
             
             if (attrStatements.size() != 0) {
                 Map attributeMap = null;
-                realmAttributeMapper = getRealmAttributeMapper();
+                setAttributeMapper();
                 if (realmAttributeMapper != null) {
                     attributeMap = realmAttributeMapper.getAttributes(
                         attrStatements, realm, hostEntityId,
                         idpEntityId, ssoToken);
-                } else {
-                    attributeMapper = getAttributeMapper();
-                    if (attributeMapper != null) {
-                        attributeMap = attributeMapper.getAttributes(
-                            attrStatements, hostEntityId,
-                            idpEntityId, ssoToken);
-                    }
+                } else if (attributeMapper != null) {
+                    attributeMap = attributeMapper.getAttributes(
+                        attrStatements, hostEntityId,
+                        idpEntityId, ssoToken);
                 }
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSAssertionArtifactHandler." +
@@ -1966,49 +1960,30 @@ public class FSAssertionArtifactHandler {
         } catch (Exception e) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(
-                    "FSAssertionArtifactHandler.setAttributeMapper:" +
+                    "FSAssertionArtifactHandler.setAttributeMap:" +
                     "Cannot set attributes to session:", e);
             }
         }
     }
 
-    private FSAttributeMapper getAttributeMapper() {
-
-        if (attributeMapper != null) {
-            return attributeMapper;
-        }
+    private void setAttributeMapper() {
 
         String mapperStr = IDFFMetaUtils.getFirstAttributeValueFromConfig(
             hostConfig, IFSConstants.ATTRIBUTE_MAPPER_CLASS);
-        try {
-            Class mapperClass = Class.forName(mapperStr);
-            attributeMapper = (FSAttributeMapper) mapperClass.newInstance();
-        } catch (Exception e) {
-            FSUtils.debug.error(
-                "FSAssertionArtifactHandler.getAttributeMapper:", e);
-        }
-        
-        return attributeMapper;
+        if ((mapperStr != null) && (mapperStr.length() != 0)) {
+            try {
+                Object mapperClass = 
+                    Thread.currentThread().getContextClassLoader().loadClass(
+                        mapperStr).newInstance();
+                if (mapperClass instanceof FSRealmAttributeMapper) {
+                    realmAttributeMapper = (FSRealmAttributeMapper) mapperClass;
+                } else if (mapperClass instanceof FSAttributeMapper) {
+                    attributeMapper = (FSAttributeMapper) mapperClass;
+                }
+            } catch (Exception e) {
+                FSUtils.debug.error(
+                    "FSAssertionArtifactHandler.getAttributeMapper:", e);
+            }
+        }    
     }
-
-    private FSRealmAttributeMapper getRealmAttributeMapper() {
-
-        if (realmAttributeMapper != null) {
-            return realmAttributeMapper;
-        }
-
-        String mapperStr = IDFFMetaUtils.getFirstAttributeValueFromConfig(
-            hostConfig, IFSConstants.REALM_ATTRIBUTE_MAPPER_CLASS);
-        try {
-            Class mapperClass = Class.forName(mapperStr);
-            realmAttributeMapper = 
-                (FSRealmAttributeMapper) mapperClass.newInstance();
-        } catch (Exception e) {
-            FSUtils.debug.error(
-                "FSAssertionArtifactHandler.getRealmAttributeMapper:", e);
-        }
-        
-        return realmAttributeMapper;
-    }
-
 }

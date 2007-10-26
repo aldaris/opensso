@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.9 2007-10-16 21:49:08 exu Exp $
+ * $Id: IFSConstants.java,v 1.10 2007-10-26 00:06:57 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2277,11 +2277,6 @@ public interface IFSConstants {
     public String ATTRIBUTE_PLUGIN = "attributePlugin";
 
     /**
-     * Realm Attribute Plugin 
-     */ 
-    public String REALM_ATTRIBUTE_PLUGIN = "realmAttributePlugin";
-
-    /**
      * IDP Attribute Map 
      */ 
     public String IDP_ATTRIBUTE_MAP = "idpAttributeMap";
@@ -2322,11 +2317,6 @@ public interface IFSConstants {
      * Attribute Mapper Class 
      */ 
     public String ATTRIBUTE_MAPPER_CLASS = "attributeMapperClass";
-
-    /**
-     * Realm Attribute Mapper Class 
-     */ 
-    public String REALM_ATTRIBUTE_MAPPER_CLASS = "realmAttributeMapperClass";
 
     /**
      * Circle-of-trust list 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManager.java,v 1.6 2007-10-17 23:00:55 veiming Exp $
+ * $Id: FSAssertionManager.java,v 1.7 2007-10-26 00:06:57 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -716,19 +716,32 @@ public final class FSAssertionManager {
         }
 
         String attributePluginImpl = IDFFMetaUtils.getFirstAttributeValue(
-            attributes, IFSConstants.REALM_ATTRIBUTE_PLUGIN);
+            attributes, IFSConstants.ATTRIBUTE_PLUGIN);
         if ((attributePluginImpl != null) && 
             (attributePluginImpl.length() != 0)) 
         {
             try {
-                Class pluginClass = Class.forName(attributePluginImpl);
-                FSRealmAttributePlugin attributePlugin =
-                    (FSRealmAttributePlugin)pluginClass.newInstance();
-                List attribStatements =
-                    attributePlugin.getAttributeStatements(
-                        realm, hostEntityId, destID, sub, token);
+                Object pluginClass = 
+                    Thread.currentThread().getContextClassLoader().loadClass(
+                        attributePluginImpl).newInstance();
+                List attribStatements = null;
+                if (pluginClass instanceof FSRealmAttributePlugin) {
+                    FSRealmAttributePlugin attributePlugin =
+                        (FSRealmAttributePlugin)pluginClass;
+                    attribStatements =
+                        attributePlugin.getAttributeStatements(
+                            realm, hostEntityId, destID, sub, token);
+                } else if (pluginClass instanceof FSAttributePlugin) {
+                    FSAttributePlugin attributePlugin =
+                        (FSAttributePlugin)pluginClass;
+                    attribStatements =
+                        attributePlugin.getAttributeStatements(
+                            hostEntityId, destID, sub, token);
+                }
 
-                if (attribStatements != null && attribStatements.size() != 0) {
+                if ((attribStatements != null) && 
+                    (attribStatements.size() != 0)) 
+                {
                     Iterator iter = attribStatements.iterator();
                     while (iter.hasNext()) {
                         statements.add((AttributeStatement)iter.next()); 
@@ -737,34 +750,6 @@ public final class FSAssertionManager {
             } catch (Exception ex) {
                 FSUtils.debug.error(
                     "FSAssertion.createAssertion(id):getAttributePlugin:", ex);
-            }
-        } else {
-            attributePluginImpl = IDFFMetaUtils.getFirstAttributeValue(
-                attributes, IFSConstants.ATTRIBUTE_PLUGIN);
-            if ((attributePluginImpl != null) && 
-                (attributePluginImpl.length() != 0)) 
-            {
-                try {
-                    Class pluginClass = Class.forName(attributePluginImpl);
-                    FSAttributePlugin attributePlugin =
-                        (FSAttributePlugin)pluginClass.newInstance();
-                    List attribStatements =
-                        attributePlugin.getAttributeStatements(
-                            hostEntityId, destID, sub, token);
-
-                    if ((attribStatements != null) && 
-                        (attribStatements.size() != 0)) 
-                    {
-                        Iterator iter = attribStatements.iterator();
-                        while (iter.hasNext()) {
-                            statements.add((AttributeStatement)iter.next()); 
-                        }
-                    }
-                } catch (Exception ex) {
-                    FSUtils.debug.error(
-                        "FSAssertion.createAssertion(id):getAttributePlugin:",
-                        ex);
-                }
             }
         }
 

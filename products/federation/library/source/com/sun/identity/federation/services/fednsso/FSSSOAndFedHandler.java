@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.5 2007-10-16 21:49:16 exu Exp $ 
+ * $Id: FSSSOAndFedHandler.java,v 1.6 2007-10-26 00:06:58 exu Exp $ 
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,25 +114,22 @@ public abstract class FSSSOAndFedHandler {
     protected FSAccountManager accountManager = null;
 
     static {
+        metaManager = FSUtils.getIDFFMetaManager();
         try {
             String proxyFinderClass = SystemConfigurationUtil.getProperty(
-                "com.sun.identity.federation.realmproxyfinder");
+                "com.sun.identity.federation.proxyfinder");
             if ((proxyFinderClass != null) &&
                 (proxyFinderClass.length() != 0))
             {
-                Class proxyClass = Class.forName(proxyFinderClass);
-                realmProxyFinder = (FSRealmIDPProxy)proxyClass.newInstance();
-            } else {
-                proxyFinderClass = SystemConfigurationUtil.getProperty(
-                    "com.sun.identity.federation.proxyfinder");
-                if ((proxyFinderClass != null) &&
-                    (proxyFinderClass.length() != 0))
-                {
-                    Class proxyClass = Class.forName(proxyFinderClass);
-                    proxyFinder = (FSIDPProxy)proxyClass.newInstance();
+                Object proxyClass = 
+                    Thread.currentThread().getContextClassLoader().loadClass(
+                        proxyFinderClass).newInstance();
+                if (proxyClass instanceof FSRealmIDPProxy) {
+                    realmProxyFinder = (FSRealmIDPProxy)proxyClass;
+                } else if (proxyClass instanceof FSIDPProxy) {
+                    proxyFinder = (FSIDPProxy)proxyClass;
                 }
             }
-            metaManager = FSUtils.getIDFFMetaManager();
         } catch (Exception ex) {
             FSUtils.debug.error("FSSSOAndFedHandler:Static Init Failed", ex);
         }
