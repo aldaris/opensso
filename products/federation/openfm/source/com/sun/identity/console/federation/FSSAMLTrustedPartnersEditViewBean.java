@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLTrustedPartnersEditViewBean.java,v 1.1 2007-07-10 09:54:12 asyhuang Exp $
+ * $Id: FSSAMLTrustedPartnersEditViewBean.java,v 1.2 2007-10-26 00:08:09 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,10 +130,9 @@ public class FSSAMLTrustedPartnersEditViewBean
     /**
      * Handles save request.
      *
-     * @param event Request Invocation Event.
+     * @param values to be saved for the entry.
      */
-    protected void handleButton1Request(Map values)
-    throws AMConsoleException {
+    protected void handleButton1Request(Map values) throws AMConsoleException {
         editEntry(values);
     }
     

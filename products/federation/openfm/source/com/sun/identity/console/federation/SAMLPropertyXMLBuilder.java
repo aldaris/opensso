@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLPropertyXMLBuilder.java,v 1.2 2007-10-17 06:11:08 hengming Exp $
+ * $Id: SAMLPropertyXMLBuilder.java,v 1.3 2007-10-26 00:08:09 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,10 +92,10 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.POSTURL
         };
         
-        SAMLProperty samlProp = new SAMLProperty (
+        SAMLProperty samlProp = new SAMLProperty(
             DESTINATION_POST, SAMLProperty.ROLE_DESTINATION,
             SAMLProperty.METHOD_POST, attrs, mand);
-        profiles.put (DESTINATION_POST, samlProp);
+        profiles.put(DESTINATION_POST, samlProp);
         profileList.add (samlProp);
     }
     
@@ -173,10 +173,9 @@ public class SAMLPropertyXMLBuilder
     /**
      * get samlv1.x Instance.
      *
-     * @param
      * @return samlv1.x instance
      */
-    public static SAMLPropertyXMLBuilder getInstance () {
+    public static SAMLPropertyXMLBuilder getInstance() {
         return instance;
     }
     
@@ -186,7 +185,7 @@ public class SAMLPropertyXMLBuilder
      * @param name
      * @return samlv1.x Property
      */
-    public static SAMLProperty getSAMLProperty (String name) {
+    public static SAMLProperty getSAMLProperty(String name) {
         return (SAMLProperty)profiles.get (name);
     }
     
@@ -234,10 +233,10 @@ public class SAMLPropertyXMLBuilder
     /**
      * get samlv1.x Properties
      *
-     * @param values a Map of attribute values
-     * @return List a list of SAMLProperty
+     * @param samlProperties a Map of attribute values.
+     * @return a set of SAMLProperty.
      */
-    public Set getMandatoryAttributeNames (List samlProperties) {
+    public Set getMandatoryAttributeNames(List samlProperties) {
         Set attributes = new HashSet ();
         for (Iterator i = samlProperties.iterator (); i.hasNext (); ) {
             SAMLProperty p = (SAMLProperty)i.next ();
@@ -319,8 +318,8 @@ public class SAMLPropertyXMLBuilder
         String role,
         List samlProperties,
         List attributes
-        ) {
-        List selected = getSAMLProperty (role, samlProperties);
+    ) {
+        List selected = getSAMLProperty(role, samlProperties);
         
         if (!selected.isEmpty ()) {
             buff.append (SAMLPropertyTemplate.getSection (role));
@@ -337,7 +336,7 @@ public class SAMLPropertyXMLBuilder
         }
     }
     
-    private List getSAMLProperty (String role, List samlProperties) {
+    private List getSAMLProperty(String role, List samlProperties) {
         List selected = new ArrayList ();
         for (Iterator iter = samlProperties.iterator (); iter.hasNext (); ) {
             SAMLProperty p = (SAMLProperty)iter.next ();

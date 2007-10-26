@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthDomainsModel.java,v 1.1 2007-06-11 22:06:16 asyhuang Exp $
+ * $Id: FSAuthDomainsModel.java,v 1.2 2007-10-26 00:08:10 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,15 +76,13 @@ public interface FSAuthDomainsModel
     /**
      * Returns authentication domains 
      *
-     * @param 
      * @return authentication domains 
      */
     Set getAuthenticationDomains();
 
-      /**
+    /**
      * Returns a Set of COT descriptors 
      *
-     * @param 
      * @return Set of COT descriptors
      */
     Set getCircleOfTrustDescriptors();        
@@ -177,13 +175,12 @@ public interface FSAuthDomainsModel
         throws AMConsoleException;
        
     /**
-     * Returns realm that has name matching 
+     * Returns the realm associated with the given circle of trust.
      *
-     * @param cot name
-     * @return realm based on cot name  
+     * @param name  circle of trust name.
+     * @return realm where the circle of trust exists.
      * @throws AMConsoleException if search fails.
      */
-    String getRealm(String name)
-        throws AMConsoleException;
+    String getRealm(String name) throws AMConsoleException;
 
 }

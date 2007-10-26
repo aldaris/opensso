@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.14 2007-10-19 05:21:45 asyhuang Exp $
+ * $Id: FederationViewBean.java,v 1.15 2007-10-26 00:08:09 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -750,11 +750,9 @@ public  class FederationViewBean
             vb = (SAMLv2GeneralViewBean)
                 getViewBean(SAMLv2GeneralViewBean.class);           
         } else if (protocol.equals(EntityModel.IDFF)) {
-            vb = (IDFFGeneralViewBean)
-                getViewBean(IDFFGeneralViewBean.class);
+            vb = (IDFFGeneralViewBean)getViewBean(IDFFGeneralViewBean.class);
         } else if (protocol.equals(EntityModel.WSFED)) {
-            vb = (WSFedGeneralViewBean)
-                getViewBean(WSFedGeneralViewBean.class);
+            vb = (WSFedGeneralViewBean)getViewBean(WSFedGeneralViewBean.class);
         }
 
         if (vb != null) { 

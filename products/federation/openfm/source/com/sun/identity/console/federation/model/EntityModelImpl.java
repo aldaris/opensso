@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.9 2007-10-16 22:09:39 exu Exp $
+ * $Id: EntityModelImpl.java,v 1.10 2007-10-26 00:08:10 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -347,14 +348,12 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         return roles;
     }
     
-    public List getWSFedRoles(String entity, String realm) 
-     {
-        String classMethod = "EntityModelImpl.getWSFedRoles:";
+    public List getWSFedRoles(String entity, String realm) {
         List roles = new ArrayList(4);
         boolean isSP = true;
         int cnt = 0;
         try {
-            if (WSFederationMetaManager.getIDPSSOConfig(realm, entity) != null) {
+            if (WSFederationMetaManager.getIDPSSOConfig(realm,entity) != null) {
                 roles.add(IDENTITY_PROVIDER);
             }
             if (WSFederationMetaManager.getSPSSOConfig(realm, entity) != null) {
@@ -366,28 +365,28 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 FederationElement fedElem =
                     WSFederationMetaManager.getEntityDescriptor(realm, entity);
                 if (fedElem != null) {
-                    for (Iterator iter = fedElem.getAny().iterator();                  
-                      iter.hasNext(); ) {
-                          Object o = iter.next();
-                          if (o instanceof UriNamedClaimTypesOfferedElement) {
-                              roles.add(IDENTITY_PROVIDER);
-                              isSP = false; 
-                          } else if (o instanceof TokenIssuerEndpointElement) {
-                              cnt++;
-                          }
+                    for (Iterator iter = fedElem.getAny().iterator(); 
+                        iter.hasNext(); ) 
+                    {
+                        Object o = iter.next();
+                        if (o instanceof UriNamedClaimTypesOfferedElement) {
+                            roles.add(IDENTITY_PROVIDER);
+                            isSP = false; 
+                        } else if (o instanceof TokenIssuerEndpointElement) {
+                            cnt++;
+                        }
                     }
                     if ((isSP) || (cnt >1)) {  
                         roles.add(SERVICE_PROVIDER);
                     } 
                 }
             }
-        } catch (WSFederationMetaException w) {
-            debug.warning(classMethod + w); 
+        } catch (WSFederationMetaException e) {
+            debug.warning("EntityModelImpl.getWSFedRoles", e); 
         }
-        return (roles != null) ?
-            roles : Collections.EMPTY_LIST;
+        return (roles != null) ? roles : Collections.EMPTY_LIST;
     }
-    
+
     /*
      * This is used to determine what 'roles' a particular entity is
      * acting as. It will producs a list of role names which can then
@@ -403,7 +402,6 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             
             if (d != null) {
                 // find out what role this dude is playing
-                StringBuffer role = new StringBuffer(32);
                 if (SAML2MetaUtils.getSPSSODescriptor(d) != null) {
                     roles.add(SERVICE_PROVIDER);
                 }
@@ -424,17 +422,17 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             }
         }
         
-        return (roles != null) ?
-            roles : Collections.EMPTY_LIST;
+        return (roles != null) ? roles : Collections.EMPTY_LIST;
     }
     
     private Map createTabEntry(String type) {
-        Map tab = new HashMap(10);
+        Map tab = new HashMap(12);
         tab.put("label", "federation." + type + ".label");
         tab.put("status", "federation." + type + ".status");
         tab.put("tooltip", "federation." + type + ".tooltip");
         tab.put("url", "../federation/" + type);
-        tab.put("viewbean", "com.sun.identity.console.federation." + type + "ViewBean");
+        tab.put("viewbean", 
+            "com.sun.identity.console.federation." + type + "ViewBean");
         tab.put("permissions", "sunAMRealmService");
         
         return tab;
@@ -492,5 +490,77 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             throw new AMConsoleException(getErrorString(e));
         }
         return isAffiliate;
+    }
+
+
+    protected Set returnEmptySetIfValueIsNull(boolean b) {
+        Set set = new HashSet(2);
+        set.add(Boolean.toString(b));
+        return set;
+    }
+    
+    protected Set returnEmptySetIfValueIsNull(String str) {
+        Set set = Collections.EMPTY_SET;
+        if (str != null) {
+            set = new HashSet(2);
+            set.add(str);
+        }
+        return set;
+    }
+    
+    protected Set returnEmptySetIfValueIsNull(Set set) {
+        return (set != null) ? set : Collections.EMPTY_SET;
+    }
+    
+    protected Set returnEmptySetIfValueIsNull(List l) {
+        Set set = new HashSet();
+        int size = l.size();
+        for (int i=0;i<size;i++){
+            set.add(l.get(i));
+        }
+        return set;
+    }
+
+    protected List returnEmptyListIfValueIsNull(String str) {
+        List list = Collections.EMPTY_LIST;
+        if (str != null) {
+            list = new ArrayList(2);
+            list.add(str);
+        }
+        return list;
+    }
+    
+    protected List returnEmptyListIfValueIsNull(List list) {
+        return (list != null) ? list : Collections.EMPTY_LIST;
+    }
+    
+    protected Set convertListToSet(List list) {
+        Set s = new HashSet();
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            s.add(it.next());
+        }
+        return s;
+    }
+    
+    protected List convertSetToList(Set set) {
+        List list = new ArrayList();
+        Iterator it = set.iterator();
+        while (it.hasNext()) {
+            list.add(it.next());
+        }
+        return list;
+    }
+
+    protected Map convertSetToListInMap(Map map) {
+        Map tmpMap = new HashMap();
+        Set entries = map.entrySet();
+        Iterator iterator = entries.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry)iterator.next();
+            tmpMap.put((String)entry.getKey(),
+                convertSetToList((Set)entry.getValue()));
+        }
+        return tmpMap;
     }
 }

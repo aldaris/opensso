@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.2 2007-10-16 20:15:06 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.3 2007-10-26 00:08:11 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
 public interface SAMLv2Model
-    extends AMModel {
+    extends EntityModel {
     
     //SAMLv2 IDP Standard attributes
      public static final String WANT_AUTHN_REQ_SIGNED = 
@@ -259,7 +259,7 @@ public interface SAMLv2Model
     /**
      * Returns a Map of PDP Config data.(Extended Metadata)
      *
-     * @param realm realm of Entity
+     * @param realm where entity exists.
      * @param entityName entity name of Entity Descriptor.
      * @param location entity is remote or hosted
      */
@@ -268,18 +268,18 @@ public interface SAMLv2Model
     /**
      * save data for PDP descriptor data.(Standard Metadata)
      *
-     * @param realm realm of Entity
+     * @param realm where entity exists.
      * @param entityName entity name of Entity Descriptor.
      * @param attrValues key-value pair Map of PDP standed data.
      * throws AMConsoleException if there is an error
      */    
     public void updatePDPDescriptor(
-         String realm,
+        String realm,
         String entityName,        
         Map attrValues
-        ) throws AMConsoleException ;
+    ) throws AMConsoleException;
     
-     /**
+    /**
      * save data for PDP Config data.(Extended Metadata)
      *
      * @param realm realm of Entity
@@ -288,39 +288,39 @@ public interface SAMLv2Model
      * @param attrValues key-value pair Map of PDP extended config.
      */
     public void updatePDPConfig(
-         String realm,
-        String name,        
+        String realm,
+        String entityName,        
         String location,
         Map attrValues
-        ) throws AMConsoleException, JAXBException ;
+    ) throws AMConsoleException, JAXBException;
     
     /**
      * save data for PEP descriptor data.(Standard Metadata)
      *
      * @param realm realm of Entity
-     * @param entityName entity name of Entity Descriptor.
+     * @param entityName name of Entity Descriptor.
      * @param attrValues key-value pair Map of PEP descriptor data.
      * throws AMConsoleException if there is an error
      */    
     public void updatePEPDescriptor(
-         String realm,
+        String realm,
         String entityName,       
         Map attrValues
-        ) throws AMConsoleException ;
+    ) throws AMConsoleException ;
     
         
-     /**
-     * save data for PEP Config data.(Extended Metadata)
+    /**
+     * Save the configuration data for the policy enforcment point (PEP) entity.
      *
-     * @param realm realm of Entity
-     * @param entityName entity name of Entity Descriptor.
-     * @param location entity is remote or hosted
+     * @param realm where entity exists.
+     * @param entityName name of Entity Descriptor.
+     * @param location entity is remote or hosted.
      * @param attrValues key-value pair Map of PEP extended config.
      */
     public void updatePEPConfig(
-         String realm,
-        String name,       
+        String realm,
+        String entityName,       
         String location,
         Map attrValues
-        ) throws AMConsoleException, JAXBException ;
+    ) throws AMConsoleException, JAXBException;
 }

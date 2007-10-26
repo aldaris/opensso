@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFEntityProviderModel.java,v 1.5 2007-10-16 22:09:40 exu Exp $
+ * $Id: IDFFEntityProviderModel.java,v 1.6 2007-10-26 00:08:10 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
 public interface IDFFEntityProviderModel
-    extends AMModel {
+    extends EntityModel {
     
     public static final String ATTR_PROVIDER_ALIAS = "tfAlias";
     public static final String ATTR_PROVIDER_TYPE = "tfProviderType";
@@ -267,34 +267,34 @@ public interface IDFFEntityProviderModel
     public String getProviderType(String name, String realm, String role);
     
     /**
-     * Returns IDPDescriptorType
+     * Returns IDPDescriptorType.
      *
      * @param name Name of Entity Descriptor.
-     * @param realm Realm of Entity   
+     * @param realm Realm of Entity.
      */
     public IDPDescriptorType getIdentityProvider(String name, String realm);
     
-     /**
-     * Returns SPDescriptorType
+    /**
+     * Returns SPDescriptorType.
      *
      * @param name Name of Entity Descriptor.
-     * @param realm Realm of Entity   
+     * @param realm Realm of Entity.
      */
     public SPDescriptorType getServiceProvider(String name, String realm);
     
-     /**
-     * Returns Map values of IDP Descriptor
+    /**
+     * Returns Map values of IDP Descriptor.
      *
-     * @param name Name of Entity Descriptor.
-     * @param realm Realm of Entity   
+     * @param entityName name of Entity Descriptor.
+     * @param realm Realm of Entity.
      */
     public Map getEntityIDPDescriptor(String entityName, String realm);
     
-     /**
-     * Returns Map values of SP Descriptor
+    /**
+     * Returns Map values of SP Descriptor.
      *
-     * @param name Name of Entity Descriptor.
-     * @param realm Realm of Entity   
+     * @param entityName name of Entity Descriptor.
+     * @param realm Realm of Entity.
      */
     public Map getEntitySPDescriptor(String entityName, String realm);
     
@@ -328,13 +328,13 @@ public interface IDFFEntityProviderModel
         String realm,
         String role,
         Map attrValues
-        ) throws AMConsoleException ;
+    ) throws AMConsoleException;
     
     /**
      * updateEntityConfig
      * Modifies a provider's extended metadata.
      *
-     * @param entityName Name of Entity Descriptor.
+     * @param entityID Name of Entity Descriptor.
      * @param realm Realm of Entity
      * @param role Role of provider. (SP or IDP)
      * @param attrValues Map of attribute name to set of values.
@@ -344,8 +344,8 @@ public interface IDFFEntityProviderModel
         String entityID,
         String realm,
         String role,
-        Map attrValues)
-        throws AMConsoleException, JAXBException;
+        Map attrValues
+    ) throws AMConsoleException, JAXBException;
     
      /**
      * createEntityConfig
@@ -354,7 +354,7 @@ public interface IDFFEntityProviderModel
      * @param entityName Name of Entity Descriptor.
      * @param realm Realm of Entity
      * @param role Role of provider. (SP or IDP)
-     * @param attrValues Map of attribute name to set of values.
+     * @param location if the entity is remote or hosted.
      * @throws AMConsoleException if provider cannot be modified.
      */
     public void createEntityConfig(

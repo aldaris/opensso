@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.2 2007-10-16 20:15:24 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.3 2007-10-26 00:08:11 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {    
+public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {    
     private SAML2MetaManager metaManager;
     
     public SAMLv2ModelImpl(HttpServletRequest req, Map map) {
@@ -82,8 +82,8 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      *     attrubutes based on the realm and entityName passed.
      */
     public Map getStandardIdentityProviderAttributes(
-            String realm,
-            String entityName
+        String realm,
+        String entityName
     ) throws AMConsoleException {
         Map map = new HashMap();
         IDPSSODescriptorElement idpssoDescriptor = null;
@@ -181,8 +181,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                 }
             }
         } catch (SAML2MetaException e) {
-            debug.warning
-                    ("SAMLv2ModelImpl.getIdentityProviderAttributes:", e);
+            debug.warning("SAMLv2ModelImpl.getIdentityProviderAttributes", e);
             throw new AMConsoleException(e.getMessage());
         }
         return map;
@@ -198,8 +197,8 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      *     attrubutes based on the realm and entityName passed.
      */
     public Map getExtendedIdentityProviderAttributes(
-            String realm,
-            String entityName
+        String realm,
+        String entityName
     ) throws AMConsoleException {
         Map map = null;
         IDPSSOConfigElement idpssoConfig = null;
@@ -210,7 +209,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
             map = SAML2MetaUtils.getAttributes(baseConfig);
         } catch (SAML2MetaException e) {
             debug.warning
-                    ("SAMLv2ModelImpl.getExtIdentityProviderAttributes:", e);
+                    ("SAMLv2ModelImpl.getExtIdentityProviderAttributes", e);
             throw new AMConsoleException(e.getMessage());
         }
         return (map != null) ? map : Collections.EMPTY_MAP;
@@ -226,8 +225,8 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      *     attrubutes based on the realm and entityName passed.
      */
     public Map getStandardServiceProviderAttributes(
-            String realm,
-            String entityName
+        String realm,
+        String entityName
     ) throws AMConsoleException {
         Map map = new HashMap();
         SPSSODescriptorElement spssoDescriptor = null;
@@ -337,8 +336,8 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      *     attrubutes based on the realm and entityName passed.
      */
     public Map getExtendedServiceProviderAttributes(
-            String realm,
-            String entityName
+        String realm,
+        String entityName
     ) throws AMConsoleException {
         Map map = null;
         SPSSOConfigElement spssoConfig = null;
@@ -348,8 +347,8 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
             BaseConfigType baseConfig = (BaseConfigType)spssoConfig;
             map = SAML2MetaUtils.getAttributes(baseConfig);
         } catch (SAML2MetaException e) {
-            debug.warning (
-                "SAMLv2ModelImpl.getExtendedServiceProviderAttributes:", e);
+            debug.warning(
+                "SAMLv2ModelImpl.getExtendedServiceProviderAttributes", e);
             throw new AMConsoleException(e.getMessage());
         }
         return (map != null) ? map : Collections.EMPTY_MAP;
@@ -364,9 +363,9 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setIDPStdAttributeValues(
-            String realm,
-            String entityName,
-            Map idpStdValues 
+        String realm,
+        String entityName,
+        Map idpStdValues 
     )  throws AMConsoleException {
         IDPSSODescriptorElement idpssoDescriptor = null;
         try {
@@ -375,7 +374,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                     samlManager.getEntityDescriptor(realm,entityName);
             idpssoDescriptor = samlManager.getIDPSSODescriptor(realm,entityName);
             if (idpssoDescriptor != null) {
-                boolean value = Settoboolean(
+                boolean value = setToBoolean(
                         idpStdValues, WANT_AUTHN_REQ_SIGNED);
                 idpssoDescriptor.setWantAuthnRequestsSigned(value);
                 
@@ -383,11 +382,11 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                 String artLocation = getResult(
                         idpStdValues, ART_RES_LOCATION);
                 String indexValue = getResult(idpStdValues, ART_RES_INDEX);
-                boolean isDef = Settoboolean(idpStdValues, ART_RES_ISDEFAULT);
+                boolean isDef = setToBoolean(idpStdValues, ART_RES_ISDEFAULT);
                 List artList = idpssoDescriptor.getArtifactResolutionService();
                 if (!artList.isEmpty()) {
                     ArtifactResolutionServiceElement elem =
-                            (ArtifactResolutionServiceElement)artList.get(0);
+                        (ArtifactResolutionServiceElement)artList.get(0);
                     elem.setLocation(artLocation);
                     elem.setIndex(Integer.parseInt(indexValue));
                     elem.setIsDefault(isDef);
@@ -447,7 +446,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                     while (itt.hasNext()) {
                         String tmp =(String) itt.next();
                         StringBuffer nameid = new StringBuffer(
-                                "urn:oasis:names:tc:SAML:2.0:nameid-format:");
+                            "urn:oasis:names:tc:SAML:2.0:nameid-format:");
                         nameid.insert(42,tmp);
                         idpssoDescriptor.getNameIDFormat().add(nameid.toString());
                     }
@@ -479,8 +478,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
         } catch (SAML2MetaException e) {
-            debug.warning
-                    ("SAMLv2ModelImpl.setIDPStdAttributeValues:", e);
+            debug.warning("SAMLv2ModelImpl.setIDPStdAttributeValues", e);
             throw new AMConsoleException(e.getMessage());
         }
     }
@@ -495,10 +493,10 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setIDPExtAttributeValues(
-            String realm,
-            String entityName,
-            Map idpExtValues,
-            String location
+        String realm,
+        String entityName,
+        Map idpExtValues,
+        String location
     ) throws AMConsoleException {
         String role = EntityModel.IDENTITY_PROVIDER;
         try {
@@ -523,8 +521,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
             //saves the attributes by passing the new entityConfig object
             samlManager.setEntityConfig(realm,entityConfig);
         } catch (SAML2MetaException e) {
-            debug.warning
-                    ("SAMLv2ModelImpl.setIDPExtAttributeValues:", e);
+            debug.warning("SAMLv2ModelImpl.setIDPExtAttributeValues", e);
             throw new AMConsoleException(e.getMessage());
         }
     }
@@ -538,15 +535,15 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setSPStdAttributeValues(
-            String realm,
-            String entityName,
-            Map spStdValues 
+        String realm,
+        String entityName,
+        Map spStdValues 
     ) throws AMConsoleException {
         SPSSODescriptorElement spssoDescriptor = null;
         try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
-                    samlManager.getEntityDescriptor(realm,entityName);
+                samlManager.getEntityDescriptor(realm,entityName);
             spssoDescriptor = samlManager.getSPSSODescriptor(realm,entityName);
             if (spssoDescriptor != null) {
                 
@@ -594,7 +591,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                     spssoDescriptor.getManageNameIDService().add(mniElem2);
                 }
                 //save for Assertion Consumer Service
-                boolean isassertDefault = Settoboolean(
+                boolean isassertDefault = setToBoolean(
                         spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT);
                 String httpIndex = getResult(
                         spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX);
@@ -634,12 +631,12 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                 }
                 
                 //save AuthenRequestsSigned
-                boolean authnValue = Settoboolean(
+                boolean authnValue = setToBoolean(
                         spStdValues, IS_AUTHN_REQ_SIGNED);
                 spssoDescriptor.setAuthnRequestsSigned(authnValue);
                 
                 //save WantAssertionsSigned
-                boolean assertValue = Settoboolean(
+                boolean assertValue = setToBoolean(
                         spStdValues, WANT_ASSERTIONS_SIGNED);
                 spssoDescriptor.setWantAssertionsSigned(assertValue);
                 entityDescriptor.
@@ -651,8 +648,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
         } catch (SAML2MetaException e) {
-            debug.warning
-                    ("SAMLv2ModelImpl.setSPStdAttributeValues:", e);
+            debug.warning("SAMLv2ModelImpl.setSPStdAttributeValues", e);
             throw new AMConsoleException(e.getMessage());
         }
     }
@@ -667,10 +663,10 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setSPExtAttributeValues(
-            String realm,
-            String entityName,
-            Map spExtValues,
-            String location
+        String realm,
+        String entityName,
+        Map spExtValues,
+        String location
     ) throws AMConsoleException {
         String role = EntityModel.SERVICE_PROVIDER;
         try {
@@ -686,7 +682,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                 fed = WSFederationMetaManager.getEntityConfig(realm,fedId);
             }*/
             SPSSOConfigElement  spssoConfig = samlManager.getSPSSOConfig(
-                    realm,entityName);
+                realm,entityName);
             if (spssoConfig != null){
                 updateBaseConfig(spssoConfig, spExtValues);
             }
@@ -694,8 +690,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
             //saves the attributes by passing the new entityConfig object
             samlManager.setEntityConfig(realm,entityConfig);
         } catch (SAML2MetaException e) {
-            debug.warning
-                    ("SAMLv2ModelImpl.setSPExtAttributeValues:", e);
+            debug.warning("SAMLv2ModelImpl.setSPExtAttributeValues", e);
             throw new AMConsoleException(e.getMessage());
         }
     }
@@ -708,8 +703,8 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      * @throws AMConsoleException if update of baseConfig object fails.
      */
     private void updateBaseConfig(
-            BaseConfigType baseConfig,
-            Map values 
+        BaseConfigType baseConfig,
+        Map values 
     ) throws AMConsoleException {
         ObjectFactory objFactory = new ObjectFactory();
         try {
@@ -732,7 +727,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                 baseConfig.getAttribute().add(avp);
             }
         } catch (JAXBException e) {
-            debug.warning("SAMLv2ModelImpl.updateBaseConfig:", e);
+            debug.warning("SAMLv2ModelImpl.updateBaseConfig", e);
             throw new AMConsoleException(e.getMessage());
         }
     }
@@ -744,7 +739,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      * @param entityName entity name of Entity Descriptor.
      * @return key-value pair Map of PEP descriptor data.
      */
-    public Map getPEPDescriptor(String realm, String entityName){
+    public Map getPEPDescriptor(String realm, String entityName) {
         Map data = null;
         try {
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
@@ -758,17 +753,14 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                 data.put(ATTR_TXT_PROTOCOL_SUPPORT_ENUM,
                         returnEmptySetIfValueIsNull(
                         xacmlAuthzDescriptor.getProtocolSupportEnumeration()));                
-                if(xacmlAuthzDescriptor.isWantAssertionsSigned())
+                if (xacmlAuthzDescriptor.isWantAssertionsSigned()) {
                     data.put(ATTR_WANT_ASSERTION_SIGNED, "true");
-                else{
+                } else {
                     data.put(ATTR_WANT_ASSERTION_SIGNED, "false");
                 }
             }
         } catch (SAML2MetaException e) {
-            if (debug.warningEnabled()) {
-            debug.warning("SAMLv2ModelImpl.getPEPDescriptor : " + 
-                    getErrorString(e));
-            }
+            debug.warning("SAMLv2ModelImpl.getPEPDescriptor", e);
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
     }
@@ -780,8 +772,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      * @param entityName entity name of Entity Descriptor.
      * @return key-value pair Map of PDP descriptor data.
      */
-    
-    public Map getPDPDescriptor(String realm, String entityName){
+    public Map getPDPDescriptor(String realm, String entityName) {
         Map data = null;
         try {
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
@@ -795,39 +786,38 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                 //ProtocolSupportEnum
                 data.put(ATTR_TXT_PROTOCOL_SUPPORT_ENUM,
                     returnEmptySetIfValueIsNull(
-                        xacmlPDPDescriptor.getProtocolSupportEnumeration()));                
+		    xacmlPDPDescriptor.getProtocolSupportEnumeration()));                
                 List authzServiceList = 
-                        xacmlPDPDescriptor.getXACMLAuthzService();
-                if ( authzServiceList.size() != 0) {
+                    xacmlPDPDescriptor.getXACMLAuthzService();
+                if (authzServiceList.size() != 0) {
                     XACMLAuthzServiceElement authzService =
                         (XACMLAuthzServiceElement) authzServiceList.get(0);
                     data.put(ATTR_XACML_AUTHZ_SERVICE_BINDING,
-                            returnEmptySetIfValueIsNull(
-                            authzService.getBinding()));
+                        returnEmptySetIfValueIsNull(
+                        authzService.getBinding()));
                     data.put(ATTR_XACML_AUTHZ_SERVICE_LOCATION,
-                            returnEmptySetIfValueIsNull(
-                            authzService.getLocation()));
+                        returnEmptySetIfValueIsNull(
+                        authzService.getLocation()));
                 }
             }
         } catch (SAML2MetaException e) {
-            if (debug.warningEnabled()) {
-            debug.warning("SAMLv2ModelImpl.getPDPDescriptor : " +
-                    getErrorString(e));
-            }
+            debug.warning("SAMLv2ModelImpl.getPDPDescriptor", e); 
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
     }
+
     /**
-     * Returns a Map of PEP Config data. (Extended Metadata)
+     * Returns a <code>Map</code> containing the extended metadata for the PEP.
      *
-     * @param realm realm of Entity
-     * @param entityName entity name of Entity Descriptor.
+     * @param realm where entity exists.
+     * @param entityName name of entity descriptor.
+     * @param location if the entity is remote or hosted.
      * @return key-value pair Map of PEP config data.
      */
     public Map getPEPConfig (
-            String realm, 
-            String entityName, 
-            String location
+        String realm, 
+        String entityName, 
+        String location
     ) {
         Map data = null;
         List configList = null;
@@ -838,26 +828,22 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                     saml2Manager.getPolicyEnforcementPointConfig(
                     realm, entityName);
             
-            if (xacmlAuthzConfigElement != null){
+            if (xacmlAuthzConfigElement != null) {
                 data = new HashMap();
-                configList = xacmlAuthzConfigElement.getAttribute() ;
+                configList = xacmlAuthzConfigElement.getAttribute();
                 metaAlias = xacmlAuthzConfigElement.getMetaAlias();
                 int size = configList.size();
                 for (int i=0; i< size; i++) {
                     AttributeType atype = (AttributeType) configList.get(i);
                     String name = atype.getName();
                     java.util.List value = atype.getValue();
-                    debug.error("getPEPConfig :  "+name+"="+value);
                     data.put(atype.getName(),
-                            returnEmptySetIfValueIsNull(atype.getValue()));
+                        returnEmptySetIfValueIsNull(atype.getValue()));
                 }
                 data.put("metaAlias", metaAlias);
             }
         } catch (SAML2MetaException e) {
-            if (debug.warningEnabled()) {
-            debug.warning("SAMLv2ModelImpl.getPEPConfig : "  +
-                    getErrorString(e));
-            }
+            debug.warning("SAMLv2ModelImpl.getPEPConfig", e);
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
     }
@@ -869,7 +855,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      * @param entityName entity name of Entity Descriptor.
      * @return key-value pair Map of PPP config data.
      */
-    public Map getPDPConfig(String realm, String entityName, String location){
+    public Map getPDPConfig(String realm, String entityName, String location) {
         Map data = null;
         List configList = null;
         String metaAlias = null;
@@ -878,7 +864,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
             XACMLPDPConfigElement xacmlPDPConfigElement =
                     saml2Manager.getPolicyDecisionPointConfig(
                     realm, entityName);
-            if (xacmlPDPConfigElement != null){
+            if (xacmlPDPConfigElement != null) {
                 data = new HashMap();
                 configList = xacmlPDPConfigElement.getAttribute() ;
                 metaAlias = xacmlPDPConfigElement.getMetaAlias();
@@ -888,91 +874,82 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                     String name = atype.getName();
                     java.util.List value = atype.getValue();
                     data.put(atype.getName(),
-                            returnEmptySetIfValueIsNull(atype.getValue()));
+		        returnEmptySetIfValueIsNull(atype.getValue()));
                 }
                 data.put("metaAlias", metaAlias);
             }
         } catch (SAML2MetaException e) {
-            if (debug.warningEnabled()) {
-            debug.warning("SAMLv2ModelImpl.getPDPConfig : " +
-                    getErrorString(e));
-            }
+            debug.warning("SAMLv2ModelImpl.getPDPConfig", e);
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
     }
     
     /**
-     * save data for PDP descriptor data.(Standard Metadata)
+     * Save standard metadata for PDP descriptor.
      *
-     * @param realm realm of Entity
+     * @param realm realm of Entity.
      * @param entityName entity name of Entity Descriptor.
      * @param attrValues key-value pair Map of PDP standed data.
-     * throws AMConsoleException if there is an error
+     * throws AMConsoleException if there is an error.
      */
     public void updatePDPDescriptor(
-            String realm, 
-            String entityName, 
-            Map attrValues
+        String realm,
+        String entityName,
+        Map attrValues
     ) throws AMConsoleException {
-        try{
+        try {
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
-                    saml2Manager.getEntityDescriptor(realm, entityName) ;
+                saml2Manager.getEntityDescriptor(realm, entityName) ;
             XACMLPDPDescriptorElement pdpDescriptor =
-                    saml2Manager.getPolicyDecisionPointDescriptor(
+                saml2Manager.getPolicyDecisionPointDescriptor(
                     realm,
                     entityName);
             
             if (pdpDescriptor != null) {
                 List authzServiceList = pdpDescriptor.getXACMLAuthzService();
-                if ( authzServiceList.size() != 0) {
+                if (authzServiceList.size() != 0) {
                     XACMLAuthzServiceElement authzService =
-                            (XACMLAuthzServiceElement) authzServiceList.get(0);
+                        (XACMLAuthzServiceElement)authzServiceList.get(0);
                     authzService.setLocation((String)AMAdminUtils.getValue(
-                            (Set)attrValues.get(
+                        (Set)attrValues.get(
                             ATTR_XACML_AUTHZ_SERVICE_LOCATION)));
                 }
             }
         } catch (SAML2MetaException e) {
-            if (debug.warningEnabled()) {
-            debug.warning("SAMLv2ModelImpl.updatePDPDescriptor : " +
-                    getErrorString(e));
-            }
+            debug.warning("SAMLv2ModelImpl.updatePDPDescriptor", e);
         }
     }
     
     /**
-     * save data for PDP Config data.(Extended Metadata)
+     * Save extended metadata for PDP Config.
      *
-     * @param realm realm of Entity
+     * @param realm realm of Entity.
      * @param entityName entity name of Entity Descriptor.
-     * @param location entity is remote or hosted
+     * @param location entity is remote or hosted.
      * @param attrValues key-value pair Map of PDP extended config.
      */
     public void updatePDPConfig(
-            String realm,
-            String entityName,
-            String location,
-            Map attrValues
-   ) throws AMConsoleException, JAXBException {
-        Map values = convertSetToListInMap(attrValues);
+        String realm,
+        String entityName,
+        String location,
+        Map attrValues
+    ) throws AMConsoleException, JAXBException {
         try {
             ObjectFactory objFactory = new ObjectFactory();
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
             XACMLPDPConfigElement pdpEntityConfig =
-                    saml2Manager.getPolicyDecisionPointConfig(
-                    realm, entityName);            
+                saml2Manager.getPolicyDecisionPointConfig(
+                realm, entityName);            
             if (pdpEntityConfig == null) {
-                throw new AMConsoleException("updatePDPConfig : " +
-                        "invalid XACMLPDPConfigElement : realm = " + realm +
-                        ", entityName = "+entityName);
+                throw new AMConsoleException("invalid.xacml.configuration");
             } else {
                 List list = pdpEntityConfig.getAttribute();
                 list.clear();
-                for (Iterator iter = values.keySet().iterator();
-                iter.hasNext(); ) {
+                Map values = convertSetToListInMap(attrValues);
+                for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
+                    String key = (String)i.next();
                     AttributeType atype = objFactory.createAttributeType();
-                    String key = (String)iter.next();
                     atype.setName(key);
                     atype.getValue().addAll((List)values.get(key));
                     list.add(atype);
@@ -985,25 +962,25 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
             }
         }
     }
-        
+    
     /**
-     * save data for PEP descriptor data.(Standard Metadata)
+     * Save the standard metadata for PEP descriptor.
      *
-     * @param realm realm of Entity
+     * @param realm realm of Entity.
      * @param entityName entity name of Entity Descriptor.
      * @param attrValues key-value pair Map of PEP descriptor data.
-     * throws AMConsoleException if there is an error
+     * throws AMConsoleException if there is an error.
      */
     public void updatePEPDescriptor(
-            String realm,
-            String entityName,
-            Map attrValues
+        String realm,
+        String entityName,
+        Map attrValues
     ) throws AMConsoleException {
         // TBD : currently, there is nothing to save
     }
     
     /**
-     * save data for PEP Config data.(Extended Metadata)
+     * Save the extended metadata for PEP Config.
      *
      * @param realm realm of Entity
      * @param entityName entity name of Entity Descriptor.
@@ -1011,12 +988,11 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
      * @param attrValues key-value pair Map of PEP extended config.
      */
     public void updatePEPConfig(
-            String realm,
-            String entityName,
-            String location,
-            Map attrValues
+        String realm,
+        String entityName,
+        String location,
+        Map attrValues
     ) throws AMConsoleException, JAXBException {
-        Map values = convertSetToListInMap(attrValues);
         try {
             ObjectFactory objFactory = new ObjectFactory();
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
@@ -1024,38 +1000,32 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
                     saml2Manager.getPolicyEnforcementPointConfig(
                     realm, entityName);            
             if (pepEntityConfig == null) {
-                throw new AMConsoleException(
-                        "SAMLv2ModelImpl.updatePEPConfig : " +
-                        "invalid XACMLPDPConfigElement : realm = " + realm +
-                        ", entityName = "+entityName);
+                throw new AMConsoleException("invalid.xacml.configuration");
             } else {
                 List list = pepEntityConfig.getAttribute();
                 list.clear();
-                for (Iterator iter = values.keySet().iterator();
-                iter.hasNext(); ) {
+                Map values = convertSetToListInMap(attrValues);
+                for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
+                    String key = (String)i.next();
                     AttributeType atype = objFactory.createAttributeType();
-                    String key = (String)iter.next();
                     atype.setName(key);
                     atype.getValue().addAll((List)values.get(key));
                     list.add(atype);
                 }
             }
         } catch (SAML2MetaException e) {
-            if (debug.warningEnabled()) {
-            throw new AMConsoleException("SAMLv2ModelImpl.updatePEPConfig : "+
-                    getErrorString(e));
-            }
+            throw new AMConsoleException(getErrorString(e));
         }
     }
     
-    protected SAML2MetaManager getSAML2MetaManager()
-    throws SAML2MetaException {
+    protected SAML2MetaManager getSAML2MetaManager() throws SAML2MetaException {
         if (metaManager == null) {
             metaManager = new SAML2MetaManager();
         }
         return metaManager;
     }
     
+    /*
     private Set returnEmptySetIfValueIsNull(boolean b) {
         Set set = new HashSet(2);
         set.add(Boolean.toString(b));
@@ -1074,14 +1044,17 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
         }
         return set;
     }
+    */
     
-    private boolean Settoboolean(Map map, String Valueof) {
-     Set set = (Set)map.get(Valueof);
-     return ((set != null) && !set.isEmpty()) ?
-          Boolean.parseBoolean((String)set.iterator().next()) : false;
+    private boolean setToBoolean(Map map, String value) {
+        Set set = (Set)map.get(value);
+        return ((set != null) && !set.isEmpty()) ?
+            Boolean.parseBoolean((String)set.iterator().next()) : false;
     }
     
-    private Set returnEmptySetIfValueIsNull(List l) {
+ 
+    
+    /*    private Set returnEmptySetIfValueIsNull(List l) {
         Set set = new HashSet();
         int size = l.size();
         for (int i=0;i<size;i++){
@@ -1089,7 +1062,9 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
         }
         return set;
     }
-    
+
+
+   
     private List returnEmptyListIfValueIsNull(String str) {
         List list = Collections.EMPTY_LIST;
         if (str != null) {
@@ -1098,8 +1073,8 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
         }
         return list;
     }
-    
-    private List returnEmptyListIfValueIsNull(List list){
+  
+    private List returnEmptyListIfValueIsNull(List list) {
         return (list != null) ? list : Collections.EMPTY_LIST;
     }
     
@@ -1121,7 +1096,7 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
         return list;
     }
     
-    private Map convertSetToListInMap(Map map){
+    private Map convertSetToListInMap(Map map) {
         Map tmpMap = new HashMap();
         Set entries = map.entrySet();
         Iterator iterator = entries.iterator();
@@ -1133,13 +1108,15 @@ public class SAMLv2ModelImpl extends AMModelBase implements SAMLv2Model {
         }
         return tmpMap;
     }
-    
-    private String getResult(Map map, String Valueof) {
-        Set set = (Set)map.get(Valueof);
+         */
+
+
+    private String getResult(Map map, String value) {
+        Set set = (Set)map.get(value);
         Iterator  i = set.iterator();
         String val = null;
-        while ((i !=  null)&& (i.hasNext())) {
-            val = (String) i.next();
+        while ((i !=  null) && (i.hasNext())) {
+            val = (String)i.next();
         }
         return val;
     }

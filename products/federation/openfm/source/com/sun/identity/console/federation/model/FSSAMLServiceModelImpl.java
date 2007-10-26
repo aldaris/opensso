@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLServiceModelImpl.java,v 1.1 2007-07-10 09:54:56 asyhuang Exp $
+ * $Id: FSSAMLServiceModelImpl.java,v 1.2 2007-10-26 00:08:10 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,17 +67,14 @@ public class FSSAMLServiceModelImpl
     }
     
     /**
-     * Returns localized label for an attribute.
+     * Returns localized labels for all attributes.
      *
-     * @param name Name of attribute.
-     * @return localized label for an attribute.
+     * @return localized labels for all attributes.
      */
     public Map getAttributeLabels() {
         Map labels = new HashMap(attributeSchemas.size() *2);
-        for (Iterator iter = attributeSchemas.keySet().iterator();
-        iter.hasNext();
-        ) {
-            String name = (String)iter.next();
+        for (Iterator i = attributeSchemas.keySet().iterator(); i.hasNext();) {
+            String name = (String)i.next();
             AttributeSchema as = (AttributeSchema)attributeSchemas.get(name);
             String i18nKey = as.getI18NKey();
             
@@ -92,7 +89,7 @@ public class FSSAMLServiceModelImpl
     
     /**
      * Returns localized inline help for all attributes.
-     * @param 
+     * 
      * @return localized inline help for all attributes.
      */
     public Map getAttributeInlineHelps() {
@@ -115,9 +112,9 @@ public class FSSAMLServiceModelImpl
     }
     
     /**
-     * Returns SAMLv1.x attribute values.
-     * @param 
-     * @return a Map of SAMLv1.x attribute values.
+     * Returns a Map SAMLv1.x attribute values.
+     *
+     * @return SAMLv1.x attribute values.
      */
     public Map getAttributeValues() {
         Map values = new HashMap(attributeSchemas.size() *2);
@@ -135,8 +132,7 @@ public class FSSAMLServiceModelImpl
      * @param values Attribute values. Map of attribute name to set of values.
      * @throws AMConsoleException if values cannot be set.
      */
-    public void setAttributeValues(Map values)
-    throws AMConsoleException {
+    public void setAttributeValues(Map values) throws AMConsoleException {
         String[] params = new String[3];
         params[0] = SAML_SERVICE_NAME;
         params[1] = "-";

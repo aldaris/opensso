@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthDomainsModelImpl.java,v 1.5 2007-10-16 22:09:39 exu Exp $
+ * $Id: FSAuthDomainsModelImpl.java,v 1.6 2007-10-26 00:08:10 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -194,10 +194,11 @@ public class FSAuthDomainsModelImpl extends AMModelBase
     }
     
     /**
-     * Deletes authentication domains.
+     * Deletes an authentication domain (circle of trust) within a given realm.
      *
-     * @param names Name of authentication domains.
-     * @throws AMConsoleException if authentication domains cannot be deleted.
+     * @param realm name of realm where authentication domain exists.
+     * @param cotName name of the authentication domain.
+     * @throws AMConsoleException if authentication domain cannot be deleted.
      */
     public void deleteAuthenticationDomain(String realm, String cotName)
         throws AMConsoleException 
@@ -320,7 +321,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
      * Returns a &lt;code>Set&lt;/code> of provider names that exist in the
      * specified realm.
      *
-     * @param name of the realm to search.
+     * @param realm name of the realm to search.
      * @return a set of provider names.
      * @throws AMConsoleException if provider names cannot be obtained.
      */
@@ -470,7 +471,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
     /**
      * Returns realm that have name matching
      *
-     * @param base Base realm name for this search. null indicates root
+     * @param name Base realm name for this search. null indicates root
      *        suffix.
      * @return realm that have name matching
      * @throws AMConsoleException if search fails.

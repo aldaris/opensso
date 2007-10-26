@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModelImpl.java,v 1.4 2007-09-12 23:38:40 babysunil Exp $
+ * $Id: WSFedPropertiesModelImpl.java,v 1.5 2007-10-26 00:08:11 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,8 +53,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class WSFedPropertiesModelImpl extends AMModelBase
-        implements WSFedPropertiesModel {
+public class WSFedPropertiesModelImpl extends EntityModelImpl 
+    implements WSFedPropertiesModel 
+{
     private static Map GEN_DATA_MAP = new HashMap(6);
     private static Map GEN_DUAL_DATA_MAP = new HashMap(8);
     private static Map SPEX_DATA_MAP = new HashMap(24);
@@ -117,83 +118,80 @@ public class WSFedPropertiesModelImpl extends AMModelBase
      * Returns a map with service provider attributes and values.
      *
      * @param realm to which the entity belongs.
-     * @param fedid is the Federation Id otherwise known as the entity id.
-     * @return attribute values of SP based on realm and fedid passed.
+     * @param fedId is the Federation Id otherwise known as the entity id.
+     * @return attribute values of SP based on realm and fedId passed.
      * @throws AMConsoleException if unable to retreive the Service Provider
-     *     attrubutes based on the realm and fedid passed.
+     *     attrubutes based on the realm and fedId passed.
      */
-    public Map getServiceProviderAttributes(String realm, String fedid)
-    throws AMConsoleException {
-        String classMethod =
-                "WSFedPropertiesModelImpl.getServiceProviderAttributes:";
-        SPSSOConfigElement spconfig = null;
+    public Map getServiceProviderAttributes(String realm, String fedId)
+        throws AMConsoleException 
+    {
         Map SPAttributes = null;
         try {
-            spconfig = WSFederationMetaManager.getSPSSOConfig(realm,fedid);
+            SPSSOConfigElement spconfig = 
+                WSFederationMetaManager.getSPSSOConfig(realm,fedId);
             if (spconfig != null) {
                 SPAttributes =  WSFederationMetaUtils.getAttributes(spconfig);
             }
         } catch (WSFederationMetaException e) {
-            debug.warning
-                    (classMethod +e);
-            throw new AMConsoleException(e.getMessage());
+            debug.warning(
+                "WSFedPropertiesModelImpl.getServiceProviderAttributes", e);
+            throw new AMConsoleException(getErrorString(e));
         }
         return (SPAttributes != null) ? SPAttributes : Collections.EMPTY_MAP;
     }
     
     /**
-     * Returns a map with identity provider attributes and values.
+     * Returns a <code>Map</code> with identity provider attributes and values.
      *
      * @param realm to which the entity belongs.
-     * @param fedid is the Federation Id otherwise known as the entity id.
-     * @return attribute values of IDP based on realm and fedid passed.
+     * @param fedId is the Federation Id otherwise known as the entity id.
+     * @return attribute values of IDP based on realm and fedId passed.
      * @throws AMConsoleException if unable to retreive the Identity Provider
-     *     attrubutes based on the realm and fedid passed.
+     *     attrubutes based on the realm and fedId passed.
      */
-    public Map getIdentityProviderAttributes(String realm, String fedid)
-    throws AMConsoleException {
-        String classMethod =
-                "WSFedPropertiesModelImpl.getIdentityProviderAttributes:";
-        IDPSSOConfigElement idpconfig = null;
+    public Map getIdentityProviderAttributes(String realm, String fedId)
+        throws AMConsoleException 
+    {
         Map IDPAttributes = null;
         try {
-            idpconfig = WSFederationMetaManager.getIDPSSOConfig(realm,fedid);
+            IDPSSOConfigElement idpconfig = 
+                WSFederationMetaManager.getIDPSSOConfig(realm,fedId);
             if (idpconfig != null) {
                 IDPAttributes = WSFederationMetaUtils.getAttributes(idpconfig);
             }
         } catch (WSFederationMetaException e) {
-            debug.warning
-                    (classMethod+ e);
+            debug.warning(
+                "WSFedPropertiesModelImpl.getIdentityProviderAttributes", e);
             throw new AMConsoleException(e.getMessage());
         }
         return (IDPAttributes != null) ? IDPAttributes : Collections.EMPTY_MAP;
-        
     }
     
     /**
-     * Returns FederationElement Object for the realm and fedid passed.
+     * Returns the <code>FederationElement</code> for the given realm and 
+     * federation ID.
      *
      * @param realm to which the entity belongs.
-     * @param fedid is the Federation Id otherwise known as the entity id.
-     * @return FederationElement Object for the realm and fedid passed.
+     * @param fedId is the Federation ID otherwise known as the entity id.
+     * @return FederationElement Object for the realm and fedId passed.
      * @throws AMConsoleException if unable to retrieve the FederationElement
      *     Object.
      */
     public FederationElement getEntityDesc(String realm, String fedId)
-    throws AMConsoleException {
-        String classMethod = "WSFedPropertiesModelImpl.getEntityDesc:";
+        throws AMConsoleException 
+    {
+        
         FederationElement fedElem = null;
         try {
             fedElem =
-                    WSFederationMetaManager.getEntityDescriptor(realm, fedId);
+                WSFederationMetaManager.getEntityDescriptor(realm, fedId);
             if (fedElem == null) {
-                throw new AMConsoleException(classMethod +
-                        "invalid FederationElement : " +
-                        fedId);
+                throw new AMConsoleException("invalid.federation.element");
             }
         } catch (WSFederationMetaException e) {
-            debug.warning(classMethod + e);
-            throw new AMConsoleException(e.getMessage());
+            debug.warning("WSFedPropertiesModelImpl.getEntityDesc", e);
+            throw new AMConsoleException(getErrorString(e));
         }
         return fedElem;
     }
@@ -230,7 +228,7 @@ public class WSFedPropertiesModelImpl extends AMModelBase
      */
     public Map getClaimType(FederationElement fedElem) {
         UriNamedClaimTypesOfferedElement claimTypes =
-                WSFederationMetaManager.getUriNamedClaimTypesOffered(fedElem);
+            WSFederationMetaManager.getUriNamedClaimTypesOffered(fedElem);
         DescriptionType desc = null;
         List claimList = null;
         List stringList  = new ArrayList();
@@ -263,7 +261,7 @@ public class WSFedPropertiesModelImpl extends AMModelBase
     }
     
     /**
-     * Returns Signing Certificate for the FederationElement passed.
+     * Returns Signing Certificate for the given <code>FederationElement</code>.
      *
      * @param fedElem is the FederationElement Object.
      * @return Signing Certificate for the FederationElement passed.
@@ -278,17 +276,19 @@ public class WSFedPropertiesModelImpl extends AMModelBase
      * Saves the attribute values from the General page.
      *
      * @param realm to which the entity belongs.
-     * @param fedid is the entity id.
-     * @param idpStdvalues has the General standard attribute value pairs.
+     * @param fedId is the entity id.
+     * @param idpStdValues has the General standard attribute value pairs.
+     * @param role of the entity ID.
+     * @param location specifies if the entity is remote or local.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setGenAttributeValues(
-            String realm,
-            String fedId,
-            Map idpStdValues,
-            String role,
-            String location
-            ) throws AMConsoleException {
+        String realm,
+        String fedId,
+        Map idpStdValues,
+        String role,
+        String location
+    ) throws AMConsoleException {
         String tknissEndPt = null;
         String tknissName = null;
         Iterator it = idpStdValues.entrySet().iterator();
@@ -328,21 +328,24 @@ public class WSFedPropertiesModelImpl extends AMModelBase
             }
         }
         try {
-            
             //fedElem is standard metadata federation element under the realm.
             FederationElement fedElem =
-                    WSFederationMetaManager.getEntityDescriptor(realm, fedId);
-            if (fedElem == null) {
-                throw new AMConsoleException("WSFedPropertiesModelImpl.setGenAttributeValues:" +
-                        "invalid FederationElement : " +
-                        fedId);
-            }else {
+                WSFederationMetaManager.getEntityDescriptor(realm, fedId);
+            if (fedElem == null) {  
+                if (debug.warningEnabled()) {
+                    debug.warning(
+                        "WSFedPropertiesModelImpl.setGenAttributeValues:"+
+                        " found invalid  federation element " + fedId);
+                }
+                throw new AMConsoleException("invalid.federation.element");
+            } else {
                 for (Iterator iter = fedElem.getAny().iterator();
-                iter.hasNext(); ) {
+                    iter.hasNext(); ) 
+                {
                     Object o = iter.next();
                     if (o instanceof TokenIssuerEndpointElement) {
                         ((TokenIssuerEndpointElement)o).getAddress().
-                                setValue(tknissEndPt);
+                            setValue(tknissEndPt);
                     } else if (o instanceof TokenIssuerNameElement) {
                         ((TokenIssuerNameElement)o).setValue(tknissName);
                     }
@@ -352,7 +355,7 @@ public class WSFedPropertiesModelImpl extends AMModelBase
             
         } catch (WSFederationMetaException e) {
             debug.warning
-                    ("WSFedPropertiesModelImpl.setGenAttributeValues:" + e);
+                ("WSFedPropertiesModelImpl.setGenAttributeValues", e);
             throw new AMConsoleException(e.getMessage());
         }
     }
@@ -361,42 +364,36 @@ public class WSFedPropertiesModelImpl extends AMModelBase
      * Saves the extended metadata attribute values for the SP.
      *
      * @param realm to which the entity belongs.
-     * @param fedid is the entity id.
+     * @param fedId is the entity id.
      * @param spExtvalues has the extended attribute value pairs of SP.
      * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setSPExtAttributeValues(
-            String realm,
-            String fedId,
-            Map spExtvalues,
-            String location
-            ) throws AMConsoleException {
-        String classMethod =
-                "WSFedPropertiesModelImpl.setSPExtAttributeValues:";
-        String role = "SP";
+        String realm,
+        String fedId,
+        Map spExtvalues,
+        String location
+    ) throws AMConsoleException {
         try {
-            
             //fed is the extended entity configuration object under the realm
             FederationConfigElement fed =
-                    WSFederationMetaManager.getEntityConfig(realm,fedId);
+                WSFederationMetaManager.getEntityConfig(realm,fedId);
             if (fed == null) {
-                createExtendedObject(realm, fedId, location, role);
+                createExtendedObject(realm, fedId, location, SERVICE_PROVIDER);
                 fed = WSFederationMetaManager.getEntityConfig(realm,fedId);
             }
             SPSSOConfigElement  spsso = getspsso(fed);
-            if (spsso != null){
+            if (spsso != null) {
                 BaseConfigType bcon = updateSPBaseConfig(spsso, spExtvalues);
             }
             //saves the attributes by passing the new fed object
             WSFederationMetaManager.setEntityConfig(realm,fed);
-        }catch (JAXBException e) {
-            debug.warning
-                    (classMethod + e);
+        } catch (JAXBException e) {
+            debug.warning("WSFedPropertiesModelImpl.setSPExtAttributeValues",e);
             throw new AMConsoleException(e.getMessage());
         } catch (WSFederationMetaException e) {
-            debug.warning
-                    (classMethod + e);
+            debug.warning("WSFedPropertiesModelImpl.setSPExtAttributeValues",e);
             throw new AMConsoleException(e.getMessage());
         }
     }
@@ -405,70 +402,56 @@ public class WSFedPropertiesModelImpl extends AMModelBase
      * Saves the standard attribute values for the SP.
      *
      * @param realm to which the entity belongs.
-     * @param fedid is the entity id.
-     * @param idpExtvalues has the extended attribute value pairs of IDP.
+     * @param fedId is the entity id.
+     * @param idpExtValues has the extended attribute value pairs of IDP.
      * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setIDPExtAttributeValues(
-            String realm,
-            String fedId,
-            Map idpExtValues,
-            String location
-            ) throws AMConsoleException {
-        String classMethod =
-                "WSFedPropertiesModelImpl.setIDPExtAttributeValues:";
-        String role = "IDP";
+        String realm,
+        String fedId,
+        Map idpExtValues,
+        String location
+    ) throws AMConsoleException {
         try {
-            
             // fed is the extended entity configuration under the realm
             FederationConfigElement fed =
                     WSFederationMetaManager.getEntityConfig(realm,fedId);
             if (fed == null) {
-                createExtendedObject(realm, fedId, location, role);
+                createExtendedObject(realm, fedId, location, IDENTITY_PROVIDER);
                 fed = WSFederationMetaManager.getEntityConfig(realm,fedId);
             }
             IDPSSOConfigElement  idpsso = getidpsso(fed);
             if (idpsso != null){
-                BaseConfigType bcon =
-                        updateIDPBaseConfig(idpsso, idpExtValues);
+                BaseConfigType bcon = updateIDPBaseConfig(idpsso, idpExtValues);
             }
             
             //saves the new configuration by passing new fed element created
             WSFederationMetaManager.setEntityConfig(realm,fed);
-        }catch (JAXBException e) {
-            debug.warning
-                    (classMethod + e);
-            throw new AMConsoleException(e.getMessage());
+        } catch (JAXBException e) {
+            debug.warning(
+                "WSFedPropertiesModelImpl.setIDPExtAttributeValues", e);
+            throw new AMConsoleException(getErrorString(e));
         } catch (WSFederationMetaException e) {
-            debug.warning
-                    (classMethod + e);
-            throw new AMConsoleException(e.getMessage());
+            debug.warning(
+                "WSFedPropertiesModelImpl.setIDPExtAttributeValues", e);
+            throw new AMConsoleException(getErrorString(e));
         }
     }
     
     /**
      * Saves the standard attribute values for the IDP.
      *
-     * @param fedElem is standard metadata object
-     * @param Map idpStdValues contain standard attribute values.
+     * @param fedElem is standard metadata object.
+     * @param idpStdValues Map of standard attribute values.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setIDPSTDAttributeValues(
-            FederationElement fedElem,
-            Map idpStdValues
-            ) throws AMConsoleException {
+        FederationElement fedElem,
+        Map idpStdValues
+    ) throws AMConsoleException {
         
         //TBD once backend is completed
-    }
-    
-    private String SettoString(Set clSet) {
-        String value = null;
-        Iterator i = clSet.iterator();
-        while ((i !=  null)&& (i.hasNext())) {
-            value = (String) i.next();
-        }
-        return value;
     }
     
     /**
@@ -494,7 +477,7 @@ public class WSFedPropertiesModelImpl extends AMModelBase
     }
     
     /**
-     * Retrieves the SPSSOConfigElement .
+     * Retrieves the SPSSOConfigElement.
      *
      * @param fed is the FederationConfigElement.
      * @return the corresponding SPSSOConfigType Object.
@@ -524,33 +507,29 @@ public class WSFedPropertiesModelImpl extends AMModelBase
      * @throws AMConsoleException if update of idpsso object fails.
      */
     private BaseConfigType updateIDPBaseConfig(
-            IDPSSOConfigElement idpsso,
-            Map values
-            ) throws AMConsoleException {
-        String classMethod =
-                "WSFedPropertiesModelImpl.updateIDPBaseConfig:";
+        IDPSSOConfigElement idpsso,
+        Map values
+    ) throws AMConsoleException {
         BaseConfigType bcon = (BaseConfigType)idpsso;
         ObjectFactory objFactory = new ObjectFactory();
         try {
-            for (Iterator iter=values.keySet().iterator();
-            iter.hasNext();) {
+            for (Iterator iter=values.keySet().iterator(); iter.hasNext();) {
                 // each key value pair has to be set in Attribute element
                 AttributeElement avp = objFactory.createAttributeElement();
                 String key = (String)iter.next();
-                
+
                 avp.setName(key);
                 Set set = (Set) values.get(key);
                 Iterator i = set.iterator();
-                while ((i !=  null)&& (i.hasNext())) {
+                while ((i !=  null) && (i.hasNext())) {
                     String val = (String) i.next();
-                    
                     avp.getValue().add(val);
                 }
                 //add Attribute element object to the BaseConfig Object
                 bcon.getAttribute().add(avp);
             }
         } catch (JAXBException e) {
-            debug.warning(classMethod + e);
+            debug.warning("WSFedPropertiesModelImpl.updateIDPBaseConfig", e);
             throw new AMConsoleException(e.getMessage());
         }
         return bcon;
@@ -565,11 +544,9 @@ public class WSFedPropertiesModelImpl extends AMModelBase
      * @throws AMConsoleException if update of spsso object fails.
      */
     private BaseConfigType updateSPBaseConfig(
-            SPSSOConfigElement spsso,
-            Map values
-            ) throws AMConsoleException {
-        String classMethod =
-                "WSFedPropertiesModelImpl.updateSPBaseConfig:";
+        SPSSOConfigElement spsso,
+        Map values
+    ) throws AMConsoleException {
         BaseConfigType bcon = (BaseConfigType)spsso;
         ObjectFactory objFactory = new ObjectFactory();
         try {
@@ -589,12 +566,12 @@ public class WSFedPropertiesModelImpl extends AMModelBase
                 bcon.getAttribute().add(avp);
             }
         } catch (JAXBException e) {
-            debug.warning(classMethod + e);
+            debug.warning(
+                "WSFedPropertiesModelImpl.updateSPBaseConfig", e);
             throw new AMConsoleException(e.getMessage());
         }
         return bcon;
-    }
-    
+    }   
     
     /**
      * Creates the extended config object when it does not exist.
@@ -606,35 +583,35 @@ public class WSFedPropertiesModelImpl extends AMModelBase
      *     AMConsoleException if saving of attribute value fails.
      */
     private void createExtendedObject(
-            String realm,
-            String fedId,
-            String location,
-            String role)
-            throws WSFederationMetaException,
-            JAXBException, AMConsoleException {
-        String classMethod = "WSFedPropertiesModelImpl.createExtendedObject: ";
+        String realm,
+        String fedId,
+        String location,
+        String role
+    ) throws WSFederationMetaException, JAXBException, AMConsoleException {
         try {
             ObjectFactory objFactory = new ObjectFactory();
             FederationElement edes =
-                    WSFederationMetaManager.getEntityDescriptor(realm, fedId);
+                WSFederationMetaManager.getEntityDescriptor(realm, fedId);
             if (edes == null) {
-                debug.error(classMethod +"No such entity: " + fedId);
+	        if (debug.warningEnabled()) {
+                    debug.warning(
+                        "WSFedPropertiesModelImpl.createExtendedObject: " + 
+		        "No such entity: " + fedId);
+                }
                 String[] data = {realm, fedId};
                 throw new WSFederationMetaException("fedId_invalid", data);
             }
             FederationConfigElement eConfig =
-                    WSFederationMetaManager.getEntityConfig(realm, fedId);
+                WSFederationMetaManager.getEntityConfig(realm, fedId);
             if (eConfig == null) {
                 BaseConfigType bctype = null;
                 FederationConfigElement ele =
-                        objFactory.createFederationConfigElement();
+                    objFactory.createFederationConfigElement();
                 ele.setFederationID(fedId);
                 if (location.equals("remote")) {
                     ele.setHosted(false);
                 }
-                List ll =
-                        ele.getIDPSSOConfigOrSPSSOConfig();
-                
+                List ll = ele.getIDPSSOConfigOrSPSSOConfig();
                 // Decide which role EntityDescriptorElement includes
                 // Right now, it is either an SP or an IdP or dual role
                 if (isDualRole(edes)) {
@@ -646,11 +623,11 @@ public class WSFedPropertiesModelImpl extends AMModelBase
                     bctype_sp = objFactory.createSPSSOConfigElement();
                     ll.add(bctype_idp);
                     ll.add(bctype_sp);
-                }else if (role.equals("IDP")) {
+                } else if (role.equals(IDENTITY_PROVIDER)) {
                     bctype = objFactory.createIDPSSOConfigElement();
                     // bctype.getAttribute().add(atype);
                     ll.add(bctype);
-                } else if (role.equals("SP")) {
+                } else if (role.equals(SERVICE_PROVIDER)) {
                     bctype = objFactory.createSPSSOConfigElement();
                     
                     //bctype.getAttribute().add(atype);
@@ -660,12 +637,12 @@ public class WSFedPropertiesModelImpl extends AMModelBase
                 FederationConfigElement jdfg =
                         WSFederationMetaManager.getEntityConfig(realm,fedId);
             }
-        }catch (JAXBException e) {
-            debug.warning(classMethod + e);
-            throw new AMConsoleException(e.getMessage());
-        }catch (WSFederationMetaException e) {
-            debug.warning(classMethod + e);
-            throw new AMConsoleException(e.getMessage());
+        } catch (JAXBException e) {
+            debug.warning("WSFedPropertiesModelImpl.createExtendedObject", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (WSFederationMetaException e) {
+            debug.warning("WSFedPropertiesModelImpl.createExtendedObject", e);
+            throw new AMConsoleException(getErrorString(e));
         }
     }
     
@@ -687,8 +664,7 @@ public class WSFedPropertiesModelImpl extends AMModelBase
                 }
             }
         }
-        if (cnt>1)
-        {
+        if (cnt > 1) {
             dual = true;
         }
         return dual;
@@ -738,5 +714,4 @@ public class WSFedPropertiesModelImpl extends AMModelBase
     public Map getIDPSTDDataMap() {
         return IDPSTD_DATA_MAP;
     }
-    
 }

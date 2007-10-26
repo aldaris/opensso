@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModel.java,v 1.4 2007-09-12 23:38:26 babysunil Exp $
+ * $Id: WSFedPropertiesModel.java,v 1.5 2007-10-26 00:08:11 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.Set;
 
-public interface WSFedPropertiesModel extends AMModel {
+public interface WSFedPropertiesModel extends EntityModel {
     
     public static final String DUAL = "dual";     
     
@@ -170,7 +170,7 @@ public interface WSFedPropertiesModel extends AMModel {
      *     attrubutes based on the realm and fedid passed.
      */
     Map getServiceProviderAttributes(String realm, String fedid)
-    throws AMConsoleException;
+        throws AMConsoleException;
     
     /**
      * Returns a map with identity provider attributes and values.
@@ -232,46 +232,61 @@ public interface WSFedPropertiesModel extends AMModel {
      * Saves the extended metadata attribute values for the SP.
      *
      * @param realm to which the entity belongs.
-     * @param fedid is the entity id.
-     * @param Map spExtvalues contain the extended attribute values.
+     * @param fedId is the entity id.
+     * @param spExtvalues contain the extended attribute values.
      * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
-    void setSPExtAttributeValues(String realm, String fedId, Map spExtvalues,
-            String location) throws AMConsoleException;
+    void setSPExtAttributeValues(
+        String realm, 
+        String fedId, 
+        Map spExtvalues,
+        String location
+    ) throws AMConsoleException;
     
     /**
      * Saves the extended metadata attribute values for the IDP.
      *
      * @param realm to which the entity belongs.
-     * @param fedid is the entity id.
-     * @param Map idpExtValues contain attribute values.
+     * @param fedId is the entity id.
+     * @param idpExtValues contain attribute values.
      * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
-    void setIDPExtAttributeValues(String realm, String fedId, Map idpExtValues,
-            String location) throws AMConsoleException;
+    void setIDPExtAttributeValues(
+        String realm, 
+        String fedId, 
+        Map idpExtValues,
+        String location
+    ) throws AMConsoleException;
     
     /**
      * Saves the standard attribute values for the IDP.
      *
      * @param fedElem is standard metadata object
-     * @param Map idpStdValues contain standard attribute values.
+     * @param spStdValues contain standard attribute values.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     void setIDPSTDAttributeValues(FederationElement fedElem, Map spStdValues)
-            throws AMConsoleException;
+        throws AMConsoleException;
     
     /**
      * Saves the standard attribute values from the General page.
      *
      * @param realm to which the entity belongs.
-     * @param fedid is the entity id.
-     * @param Map idpStdValues contain standard attribute values.
+     * @param fedId is the entity id.
+     * @param idpStdValues contain standard attribute values.
+     * @param role is this entity an sp or idp.
+     * @param location defines whether it is local or remote.
      * @throws AMConsoleException if saving of attribute value fails.
      */
-    void setGenAttributeValues(String realm, String fedId, Map idpStdValues, String role, String location)
-            throws AMConsoleException;
+    void setGenAttributeValues(
+        String realm, 
+        String fedId, 
+        Map idpStdValues, 
+        String role, 
+        String location
+    ) throws AMConsoleException;
     
     /**
      * Returns a map of wsfed general attribute values.

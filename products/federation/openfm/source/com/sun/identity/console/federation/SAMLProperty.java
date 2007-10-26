@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLProperty.java,v 1.1 2007-07-10 09:54:17 asyhuang Exp $
+ * $Id: SAMLProperty.java,v 1.2 2007-10-26 00:08:09 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class SAMLProperty implements Serializable {
         String bindMethod,
         String[] attributeNames,
         String[] mandNames
-        ) {
+    ) {
         this.name = name;
         this.role = role;
         this.bindMethod = bindMethod;
@@ -78,7 +78,7 @@ public class SAMLProperty implements Serializable {
         }
     }
     
-    List getAttributeNames () {
+    List getAttributeNames() {
         int sz = attributeNames.length;
         List attributes = new ArrayList (sz);
         for (int i = 0; i < sz; i++) {
@@ -87,26 +87,25 @@ public class SAMLProperty implements Serializable {
         return attributes;
     }
     
-    Set getMandatoryAttributeNames () {
+    Set getMandatoryAttributeNames() {
         return mandatory;
     }
+
     /**
      * getRole.
      *
-     * @param
      * @return role
      */
-    public String getRole () {
+    public String getRole() {
         return role;
     }
     
     /**
      * getBindMethod.
      *
-     * @param
      * @return bindMethod
      */
-    public String getBindMethod () {
+    public String getBindMethod() {
         return bindMethod;
     }
 
@@ -117,7 +116,7 @@ public class SAMLProperty implements Serializable {
      * @return true if attribute name is in mandatory.
      *         false if attribute name is not in mandatory.
      */
-    public boolean isMandatoryAttribute (String name) {
-        return mandatory.contains (name);
+    public boolean isMandatoryAttribute(String name) {
+        return mandatory.contains(name);
     }
 }
