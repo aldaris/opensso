@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.21 2007-10-26 00:07:53 exu Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.22 2007-10-26 18:06:40 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -906,8 +906,17 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "       <Attribute name=\"" + SAML2Constants.ECP_REQUEST_IDP_LIST + "\">\n" +
                 "           <Value></Value>\n" +
                 "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.ECP_REQUEST_IDP_LIST_GET_COMPLETE + "\">\n" +
+                "       <Attribute name=\"" + SAML2Constants.ENABLE_IDP_PROXY + "\">\n" +
+                "           <Value>false</Value>\n" +
+                "       </Attribute>\n" +
+                "       <Attribute name=\"" + SAML2Constants.IDP_PROXY_LIST + "\">\n" +
                 "           <Value></Value>\n" +
+                "       </Attribute>\n" +
+                "       <Attribute name=\"" + SAML2Constants.IDP_PROXY_COUNT + "\">\n" +
+                "           <Value>0</Value>\n" +
+                "       </Attribute>\n" +
+                "       <Attribute name=\"" + SAML2Constants.USE_INTRODUCTION_FOR_IDP_PROXY + "\">\n" +
+                "           <Value>false</Value>\n" +
                 "       </Attribute>\n" +
                 "    </SPSSOConfig>\n");
     }
