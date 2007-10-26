@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.9 2007-10-17 23:00:52 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.10 2007-10-26 17:28:29 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -4851,7 +4851,7 @@
         </actions>
     </logmessage>
 
-    <logmessage name="ATTEMPT_GET_SUPPORTED_DATA_TYPES" id="4040"
+    <logmessage name="ATTEMPT_GET_SUPPORTED_DATA_TYPES" id="5000"
         loglevel="LL_INFO"
         description="Attempt to get the supported data types of a realm.">
         <datainfo>
@@ -4862,7 +4862,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="SUCCEED_GET_SUPPORTED_DATA_TYPES" id="4041"
+    <logmessage name="SUCCEED_GET_SUPPORTED_DATA_TYPES" id="5001"
         loglevel="LL_INFO"
         description="The supported data types are retrieved.">
         <datainfo>
@@ -4873,7 +4873,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="FAILED_GET_SUPPORTED_DATA_TYPES" id="4042"
+    <logmessage name="FAILED_GET_SUPPORTED_DATA_TYPES" id="5002"
         loglevel="LL_INFO"
         description="Unable to get the supported data types of realm.">
         <datainfo>
@@ -4882,6 +4882,543 @@
         </datainfo>
         <triggers>
             <item>Execute get the supported data types of realm Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_CREATE_AGENT" id="4000"
+        loglevel="LL_INFO"
+        description="Attempt to create an agent.">
+        <datainfo>
+            <item>realm</item>
+            <item>agent type</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create agent Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CREATE_AGENT" id="4001"
+        loglevel="LL_INFO"
+        description="Agent is created.">
+        <datainfo>
+            <item>realm</item>
+            <item>agent type</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create agent Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_AGENT" id="4002"
+        loglevel="LL_INFO"
+        description="Unable to create agent.">
+        <datainfo>
+            <item>realm</item>
+            <item>agent type</item>
+            <item>name of agent</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create agent Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_DELETE_AGENTS" id="4010"
+        loglevel="LL_INFO"
+        description="Attempt to delete agents.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agents</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete agents Commandline interface.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_DELETE_AGENTS" id="4011"
+        loglevel="LL_INFO"
+        description="Agents are deleted.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agents</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete agents Commandline interface.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_AGENTS" id="4012"
+        loglevel="LL_INFO"
+        description="Unable to delete agents.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agents</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete agents Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_UPDATE_AGENT" id="4020"
+        loglevel="LL_INFO"
+        description="Attempt to set attribute values of an agent.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update agent Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_UPDATE_AGENT" id="4021"
+        loglevel="LL_INFO"
+        description="Agent profile is modified.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update agent Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_UPDATE_AGENT" id="4022"
+        loglevel="LL_INFO"
+        description="Unable to update an agent.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update agent Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_LIST_AGENTS" id="4030"
+        loglevel="LL_INFO"
+        description="Attempt to list agents.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list agents Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_LIST_AGENTS" id="4031"
+        loglevel="LL_INFO"
+        description="Search Result is returned.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list agents Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_AGENTS" id="4032"
+        loglevel="LL_INFO"
+        description="Unable to list agents.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list agents Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_SHOW_AGENT" id="4040"
+        loglevel="LL_INFO"
+        description="Attempt to get attribute values of an agent.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get the attribute values of an agent Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SHOW_AGENT" id="4041"
+        loglevel="LL_INFO"
+        description="Attribute values are returned.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get the attribute values of an agent Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SHOW_AGENT" id="4042"
+        loglevel="LL_INFO"
+        description="Unable to get the attribute values of an agent.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get the attribute values of an agent Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_CREATE_AGENT_GROUP" id="4050"
+        loglevel="LL_INFO"
+        description="Attempt to create an agent group.">
+        <datainfo>
+            <item>realm</item>
+            <item>agent type</item>
+            <item>name of agent group</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create agent group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CREATE_AGENT_GROUP" id="4051"
+        loglevel="LL_INFO"
+        description="Agent group is created.">
+        <datainfo>
+            <item>realm</item>
+            <item>agent type</item>
+            <item>name of agent group</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create agent group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_AGENT_GROUP" id="4052"
+        loglevel="LL_INFO"
+        description="Unable to create agent group.">
+        <datainfo>
+            <item>realm</item>
+            <item>agent type</item>
+            <item>name of agent group</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create agent group Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_DELETE_AGENT_GROUPS" id="4060"
+        loglevel="LL_INFO"
+        description="Attempt to delete agent groups.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent groups</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete agent groups Commandline interface.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_DELETE_AGENT_GROUPS" id="4061"
+        loglevel="LL_INFO"
+        description="Agent groups are deleted.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent groups</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete agent groups Commandline interface.</item>
+       </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_AGENT_GROUPS" id="4062"
+        loglevel="LL_INFO"
+        description="Unable to delete agent groups.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent groups</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete agent groups Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_LIST_AGENT_GROUPS" id="4070"
+        loglevel="LL_INFO"
+        description="Attempt to list agent groups.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list agent groups Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_LIST_AGENT_GROUPS" id="4071"
+        loglevel="LL_INFO"
+        description="Search Result is returned.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list agent groups Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_AGENT_GROUPS" id="4072"
+        loglevel="LL_INFO"
+        description="Unable to list agent groups.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list agent groups Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_ADD_AGENT_TO_GROUP" id="4080"
+        loglevel="LL_INFO"
+        description="Attempt to add agent to group.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add agents to group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_ADD_AGENT_TO_GROUP" id="4081"
+        loglevel="LL_INFO"
+        description="Agent is added to group.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add agent to group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_ADD_AGENT_TO_GROUP" id="4082"
+        loglevel="LL_INFO"
+        description="Unable to add agent to group.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+            <item>name of agent</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add agent to group Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_REMOVE_AGENT_FROM_GROUP" id="4090"
+        loglevel="LL_INFO"
+        description="Attempt to remove agent from group.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove agent from group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_REMOVE_AGENT_FROM_GROUP" id="4091"
+        loglevel="LL_INFO"
+        description="Agent is removed to group.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove agent from group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_REMOVE_AGENT_FROM_GROUP" id="4092"
+        loglevel="LL_INFO"
+        description="Unable to remove agent from group.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+            <item>name of agent</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove agent from group Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_SET_AGENT_PWD" id="4100"
+        loglevel="LL_INFO"
+        description="Attempt to set agent password.">
+        <datainfo>
+            <item>realm</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set agent password Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SET_AGENT_PWD" id="4101"
+        loglevel="LL_INFO"
+        description="Agent password is modified.">
+        <datainfo>
+            <item>realm</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set agent password Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SET_AGENT_PWD" id="4102"
+        loglevel="LL_INFO"
+        description="Unable to set agent password.">
+        <datainfo>
+            <item>realm</item>
+            <item>name of agent</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set agent password Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_SHOW_AGENT_GROUP" id="4110"
+        loglevel="LL_INFO"
+        description="Attempt to get attribute values of an agent group.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get the attribute values of an agent group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SHOW_AGENT_GROUP" id="4111"
+        loglevel="LL_INFO"
+        description="Attribute values are returned.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get the attribute values of an agent group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SHOW_AGENT_GROUP" id="4112"
+        loglevel="LL_INFO"
+        description="Unable to get the attribute values of an agent group.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get the attribute values of an agent group Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_UPDATE_AGENT_GROUP" id="4120"
+        loglevel="LL_INFO"
+        description="Attempt to set attribute values of an agent group.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update agent group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_UPDATE_AGENT_GROUP" id="4121"
+        loglevel="LL_INFO"
+        description="Agent group profile is modified.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update agent group Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_UPDATE_AGENT_GROUP" id="4122"
+        loglevel="LL_INFO"
+        description="Unable to update an agent.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent group</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update agent group Commandline interface.</item>
         </triggers>
         <actions>
             <item>Look under debug file for more information.</item>
