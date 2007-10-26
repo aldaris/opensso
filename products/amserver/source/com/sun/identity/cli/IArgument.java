@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IArgument.java,v 1.5 2007-10-17 23:00:24 veiming Exp $
+ * $Id: IArgument.java,v 1.6 2007-10-26 17:14:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -148,6 +148,31 @@ public interface IArgument {
      * Secret key for encrypting and decrypting password.
      */
     String ENCRYPT_SECRET = "encryptsecret";
+
+    /**
+     * Agent name.
+     */
+    String AGENT_NAME = "agentname";
+
+    /**
+     * Agent group  name.
+     */
+    String AGENT_GROUP_NAME = "agentgroupname";
+
+    /**
+     * Agent names.
+     */
+    String AGENT_NAMES = "agentnames";
+
+    /**
+     * Agent group names.
+     */
+    String AGENT_GROUP_NAMES = "agentgroupnames";
+
+    /**
+     * Agent type.
+     */
+    String AGENT_TYPE = "agenttype";
 
     /**
      * Server name.

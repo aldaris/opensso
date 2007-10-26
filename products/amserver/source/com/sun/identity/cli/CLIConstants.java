@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.5 2007-07-27 05:56:19 veiming Exp $
+ * $Id: CLIConstants.java,v 1.6 2007-10-26 17:14:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -265,4 +265,14 @@ public interface CLIConstants {
      * Web resource string marker.
      */
     String WEB_RES_MARKER = "__web__";
+
+    /**
+     * Agent Type attribute name.
+     */
+    String ATTR_NAME_AGENT_TYPE = "AgentType";
+    
+    /**
+     * Agent Password Attribute Schema name
+     */
+    String ATTR_SCHEMA_AGENT_PWD = "userpassword";
 }

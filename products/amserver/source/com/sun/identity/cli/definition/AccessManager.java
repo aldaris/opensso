@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.42 2007-10-17 23:00:25 veiming Exp $
+ * $Id: AccessManager.java,v 1.43 2007-10-26 17:14:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1673,6 +1673,94 @@ public class AccessManager {
         }
     )
     private String create_serverconfig_xml;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.CreateAgent",
+        description="Create a new agent configuration.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentname|b|s|Name of agent.",
+            "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"
+            },
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|properties e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains properties."},
+        resourceStrings={
+            "does-not-support-agent-creation={0} does not support agent creation.",
+            "create-agent-succeeded=Agent configuration is created."
+        }
+    )
+    private String create_agent;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.DeleteAgents",
+        description="Delete agent configurations.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentnames|s|m|Names of agent."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "delete-agent-succeeded=The following agents are deleted."
+        }
+    )
+    private String delete_agents;
+    
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.UpdateAgent",
+        description="Update agent configuration.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentname|b|s|Name of agent."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|properties e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains properties."},
+        resourceStrings={
+            "update-agent-succeeded=Agent configuration is updated."
+        }
+    )
+    private String update_agent;
+    
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.ListAgents",
+        description="List agent configurations.",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "filter|x|s|Filter (Pattern).",
+            "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"},
+        resourceStrings={
+            "list-agent-succeeded=The followings are the agent names.",
+            "search-agent-no-entries=There are no agents.",
+            "format-search-agent-results={0} ({1})"
+        }
+    )
+    private String list_agents;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.ShowAgent",
+        description="Show agent profile.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentname|b|s|Name of agent."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "outfile|o|s|Filename where configuration is written to."},
+        resourceStrings={
+            "show-agent-succeeded=The followings are the agent properties.",
+            "show-agent-to-file=Agent properties are written to file.",
+            "show-agent-no-attributes=There are no attribute values."
+        }
+    )
+    private String show_agent;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.ListServerConfig",
