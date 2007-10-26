@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2General.xml,v 1.1 2007-08-03 22:29:04 jonnelson Exp $
+   $Id: propertySAMLv2General.xml,v 1.2 2007-10-26 21:35:14 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,9 +27,12 @@
 
 <propertysheet>
     <section name="dummy" defaultValue="">
-        <property >
-            <label name="lblName" defaultValue="This will have the general Entity properties..." labelFor="tfName" />
-            <cc name="tfName" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+        <property>
+            <label name="lblName" 
+                   defaultValue="samlv2.attribute.label.name" 
+                   labelFor="tfName" />
+            <cc name="tfName" 
+                tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
         </property>
     </section>
 </propertysheet>

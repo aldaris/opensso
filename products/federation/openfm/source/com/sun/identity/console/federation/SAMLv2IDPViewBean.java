@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPViewBean.java,v 1.2 2007-10-16 20:14:15 babysunil Exp $
+ * $Id: SAMLv2IDPViewBean.java,v 1.3 2007-10-26 21:39:42 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,8 +41,6 @@ import java.util.List;
 public class SAMLv2IDPViewBean extends SAMLv2Base {
     public static final String DEFAULT_DISPLAY_URL =
             "/console/federation/SAMLv2IDP.jsp";
-    protected static final String PROPERTIES =
-            "propertyAttributes";
     
     public SAMLv2IDPViewBean() {
         super("SAMLv2IDP");
@@ -57,6 +55,8 @@ public class SAMLv2IDPViewBean extends SAMLv2Base {
         SAMLv2Model model = (SAMLv2Model)getModel();
         ps.setAttributeValues(getStandardValues(), model);
         ps.setAttributeValues(getExtendedValues(), model);
+        setDisplayFieldValue(model.TF_KEY_NAME, KEYNAMES);
+        setDisplayFieldValue(model.TF_ALGORITHM, ALGORITHM);
     }
     
     protected void createPropertyModel() {
@@ -91,11 +91,13 @@ public class SAMLv2IDPViewBean extends SAMLv2Base {
             
             //retrieve the extended metadata values from the property sheet
             Map idpExtValues = ps.getAttributeValues(
-                    getExtendedValues(), false, model);
+                model.getIDPEXDataMap(), false, model);
             
             //save the extended metadata values for the Idp
             model.setIDPExtAttributeValues(realm, entityName, idpExtValues,
                     location);
+            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                    "samlv2.idp.property.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage());

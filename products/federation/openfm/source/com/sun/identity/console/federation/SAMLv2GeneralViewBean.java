@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2GeneralViewBean.java,v 1.1 2007-08-03 22:29:03 jonnelson Exp $
+ * $Id: SAMLv2GeneralViewBean.java,v 1.2 2007-10-26 21:39:06 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,8 +29,7 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
-import com.sun.identity.console.federation.model.EntityModel;
-import com.sun.identity.console.federation.model.EntityModelImpl;
+import com.sun.identity.console.federation.model.SAMLv2Model;
 import com.sun.web.ui.view.alert.CCAlert;
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,7 +46,9 @@ public class SAMLv2GeneralViewBean extends SAMLv2Base {
     public void beginDisplay(DisplayEvent event)
 	throws ModelControlException
     {
-	super.beginDisplay(event);
+	SAMLv2Model samlModel = (SAMLv2Model)getModel();
+        super.beginDisplay(event);
+        setDisplayFieldValue(samlModel.TF_NAME, entityName);
     }
 
     protected void createPropertyModel() {

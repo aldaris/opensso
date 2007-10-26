@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.3 2007-10-26 00:08:11 jonnelson Exp $
+ * $Id: SAMLv2Model.java,v 1.4 2007-10-26 21:40:54 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,11 @@ import javax.xml.bind.JAXBException;
 
 public interface SAMLv2Model
     extends EntityModel {
+    
+    //SAMLv2 General attributes
+    public static final String TF_NAME = "tfName";
+    public static final String TF_KEY_NAME = "keySize";
+    public static final String TF_ALGORITHM = "Algorithm";
     
     //SAMLv2 IDP Standard attributes
      public static final String WANT_AUTHN_REQ_SIGNED = 
@@ -91,6 +96,73 @@ public interface SAMLv2Model
              "httpPostIndex";     
      public static final String HTTP_POST_ASSRT_CONS_SERVICE_LOCATION = 
              "httpPostLocation";
+     
+     //SAML2 IDP Extended Attributes
+     public static final String IDP_SIGN_CERT_ALIAS = "signingCertAlias";
+     public static final String IDP_ENCRYPT_CERT_ALIAS = 
+             "encryptionCertAlias";
+     public static final String IDP_BASIC_AUTH_ON = "basicAuthOn";
+     public static final String IDP_BASIC_AUTH_USER = "basicAuthUser";
+     public static final String IDP_BASIC_AUTH_PWD = "basicAuthPassword";
+     public static final String IDP_AUTO_FED_ENABLED = "autofedEnabled";
+     public static final String IDP_AUTO_FED_ATTR = "autofedAttribute";
+     public static final String IDP_ATTR_MAP = "attributeMap";
+     public static final String IDP_NAMEID_ENCRYPTED = "wantNameIDEncrypted";
+     public static final String IDP_LOGOUT_REQ_SIGN =
+             "wantLogoutRequestSigned";
+     public static final String IDP_LOGOUT_RESP_SIGN =
+             "wantLogoutResponseSigned";
+     public static final String IDP_MNI_REQ_SIGN = "wantMNIRequestSigned";
+     public static final String IDP_MNI_RESP_SIGN = "wantMNIResponseSigned";
+     public static final String ASSERT_EFFECT_TIME = "assertionEffectiveTime";
+     public static final String IDP_ACCT_MAPPER = "idpAccountMapper";
+     public static final String IDP_AUTHN_CONT_MAPPER = 
+             "idpAuthncontextMapper";
+     public static final String IDP_AUTHN_CONTCLASS_REF_MAPPING =
+             "idpAuthncontextClassrefMapping";
+     public static final String IDP_ATTR_MAPPER = "idpAttributeMapper";
+     public static final String ASSERT_NOT_BEFORE_TIMESKEW = 
+             "assertionNotBeforeTimeSkew";
+     public static final String BOOT_STRAP_ENABLED = 
+             "discoveryBootstrappingEnabled";
+     public static final String ARTIF_RESOLVE_SIGN = 
+             "wantArtifactResolveSigned";
+     
+      //SAML2 SP Extended Attributes
+     public static final String SP_SIGN_CERT_ALIAS = "signingCertAlias";
+     public static final String SP_ENCRYPT_CERT_ALIAS = "encryptionCertAlias";
+     public static final String SP_BASIC_AUTH_ON = "basicAuthOn";
+     public static final String SP_BASIC_AUTH_USER = "basicAuthUser";
+     public static final String SP_BASIC_AUTH_PWD = "basicAuthPassword";
+     public static final String SP_AUTO_FED_ENABLED = "autofedEnabled";
+     public static final String SP_AUTO_FED_ATTR = "autofedAttribute";
+     public static final String SP_ATTR_MAP = "attributeMap";
+     public static final String SP_NAMEID_ENCRYPTED = "wantNameIDEncrypted";
+     public static final String SP_LOGOUT_REQ_SIGN =
+             "wantLogoutRequestSigned";
+     public static final String SP_LOGOUT_RESP_SIGN =
+             "wantLogoutResponseSigned";
+     public static final String SP_MNI_REQ_SIGN = "wantMNIRequestSigned";
+     public static final String SP_MNI_RESP_SIGN = "wantMNIResponseSigned";
+     public static final String TRANSIENT_USER = "transientUser";
+     public static final String SP_ACCT_MAPPER = "spAccountMapper";
+     public static final String SP_AUTHN_CONT_MAPPER = "spAuthncontextMapper";
+     public static final String SP_ATTR_MAPPER = "spAttributeMapper";
+     public static final String SP_AUTHN_CONTEXT_CLASS_REF_MAPPING = 
+             "spAuthncontextClassrefMapping";
+     public static final String SP_AUTHN_CONTEXT_COMPARISON =
+             "spAuthncontextComparisonType";
+     public static final String SAML2_AUTH_MODULE = "saml2AuthModuleName";
+     public static final String LOCAL_AUTH_URL = "localAuthURL";
+     public static final String INTERMEDIATE_URL = "intermediateUrl";
+     public static final String DEFAULT_RELAY_STATE = "defaultRelayState";
+     public static final String ASSERT_TIME_SKEW = "assertionTimeSkew";
+     public static final String WANT_ATTR_ENCRYPTED = 
+             "wantAttributeEncrypted";
+     public static final String WANT_ASSERTION_ENCRYPTED =
+             "wantAssertionEncrypted";
+     public static final String WANT_ARTIF_RESP_SIGN =
+             "wantArtifactResponseSigned";
          
     // XACML PDP/PEP 
     public static final String ATTR_TXT_PROTOCOL_SUPPORT_ENUM =
@@ -228,6 +300,20 @@ public interface SAMLv2Model
             Map spExtValues, 
             String location
     ) throws AMConsoleException;
+    
+    /**
+     * Returns SAMLv2 Extended Service Provider attribute values.
+     *
+     * @return SAMLv2 Extended Service Provider attribute values.
+     */
+    Map getSPEXDataMap();
+    
+    /**
+     * Returns SAMLv2 Extended Identity Provider attribute values.
+     *
+     * @return SAMLv2 Extended Identity Provider attribute values.
+     */
+    Map getIDPEXDataMap();
        
     /**
      * Returns a Map of PEP descriptor data.(Standard Metadata)

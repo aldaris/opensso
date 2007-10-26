@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SPViewBean.java,v 1.2 2007-10-16 20:14:34 babysunil Exp $
+ * $Id: SAMLv2SPViewBean.java,v 1.3 2007-10-26 21:40:20 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,8 +42,6 @@ import java.util.ArrayList;
 public class SAMLv2SPViewBean extends SAMLv2Base {
     public static final String DEFAULT_DISPLAY_URL =
             "/console/federation/SAMLv2SP.jsp";
-    protected static final String PROPERTIES =
-            "propertyAttributes";
     
     public SAMLv2SPViewBean() {
         super("SAMLv2SP");
@@ -52,12 +50,14 @@ public class SAMLv2SPViewBean extends SAMLv2Base {
     
     public void beginDisplay(DisplayEvent event)
     throws ModelControlException {
+        super.beginDisplay(event);
         AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);
         ps.init();
         SAMLv2Model model = (SAMLv2Model)getModel();
         ps.setAttributeValues(getStandardValues(), model);
         ps.setAttributeValues(getExtendedValues(), model);
-        super.beginDisplay(event);
+        setDisplayFieldValue(model.TF_KEY_NAME, KEYNAMES);
+        setDisplayFieldValue(model.TF_ALGORITHM, ALGORITHM);
     }
     
     protected void createPropertyModel() {
@@ -91,11 +91,13 @@ public class SAMLv2SPViewBean extends SAMLv2Base {
             
             //retrieve the extended metadata values from the property sheet
             Map spExtValues = ps.getAttributeValues(
-                    getExtendedValues(), false, model);
+                    model.getSPEXDataMap(), false, model);
             
             //save the extended metadata values for the Idp
             model.setSPExtAttributeValues(realm, entityName, spExtValues,
                     location);
+            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                    "samlv2.sp.property.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage());

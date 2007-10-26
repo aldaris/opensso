@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPRemote.xml,v 1.2 2007-10-16 20:10:56 babysunil Exp $
+   $Id: propertySAMLv2SPRemote.xml,v 1.3 2007-10-26 21:36:17 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,14 +27,6 @@
 
 <propertysheet>
     <section name="dummy" defaultValue="">        
-        <property>
-            <label name="lblspProtocolSupportEnumeration"
-                   defaultValue="samlv2sp.attribute.label.protocolsupportenumeration"
-                   labelFor="protocolSupportEnumeration" />
-            <cc name="protocolSupportEnumeration" 
-                tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" >
-            </cc>
-        </property>
         <property>
             <label name="lblSingleLogout" defaultValue="samlv2idp.attribute.label.singlelogout" />
             <ccgroup>         
@@ -225,33 +217,25 @@
             </ccgroup>
         </property>
         <property>
-            <label name="lblSignCertiAlias" defaultValue="samlv2idp.attribute.label.signcertialias" />
-            <ccgroup> 
-                <property>
-                    <label name="lblSigncertAlias"
-                           defaultValue="samlv2sp.attribute.label.signcertAlias"
-                           labelFor="signingCertAlias" />
-                    <cc name="signingCertAlias" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-            </ccgroup>
+            <label name="lblEncrpytDet" defaultValue="samlv2.attribute.label.EncryptDetails" />
             <ccgroup>
-                <property>
-                    <label name="lblEncryptioncertAlias"
-                           defaultValue="samlv2sp.attribute.label.encryptionCertAlias"
-                           labelFor="encryptionCertAlias" />
-                    <cc name="encryptionCertAlias" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-            </ccgroup>
+        <property>
+            <label name="lblEncrptionKeySize" 
+                   defaultValue="samlv2.attribute.label.keysize" 
+                   labelFor="keySize" />
+            <cc name="keySize" 
+                tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+        </property>
+        </ccgroup>
+        <ccgroup>
+        <property>
+            <label name="lblEncrptionAlgorithm" 
+                   defaultValue="samlv2.attribute.label.algorithm" 
+                   labelFor="Algorithm" />
+            <cc name="Algorithm" 
+                tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+        </property>
+        </ccgroup>
         </property>
         <property>
             <label name="lblBasicAuthentication" defaultValue="samlv2idp.attribute.label.basicauthentication" />
@@ -287,125 +271,6 @@
                         <attribute name="size" value="15" />
                         <attribute name="autoSubmit" value="false" />
                         <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-            </ccgroup>
-        </property>
-        <property>
-            <label name="lblAutoFederation" defaultValue="samlv2idp.attribute.label.autofederation" />
-            <ccgroup>  
-                <property>
-                    <label name="lblSPAutofedEnabled"
-                           defaultValue="samlv2sp.attribute.label.spautofedEnabled"
-                           labelFor="autofedEnabled" />
-                    <cc name="autofedEnabled" 
-                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
-                </property>
-            </ccgroup>
-            <ccgroup>        
-                <property>
-                    <label name="lblspAutofedAttribute"
-                           defaultValue="samlv2sp.attribute.label.spautofedAttribute"
-                           labelFor="autofedAttribute" />
-                    <cc name="autofedAttribute" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-            </ccgroup>
-        </property>
-        <property>
-            <label name="lblAuthncontext" defaultValue="samlv2idp.attribute.label.authncontext" />
-            <ccgroup>
-                <property>
-                    <label name="lblSPAuthncontextMapper"
-                           defaultValue="samlv2sp.attribute.label.spAuthncontextMapper"
-                           labelFor="spAuthncontextMapper" />
-                    <cc name="spAuthncontextMapper" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-            </ccgroup>
-            <ccgroup>
-                <property>
-                    <label name="lblSPAuthncontextClassrefMapping"
-                           defaultValue=
-                           "samlv2sp.attribute.label.spAuthncontextClassrefMapping" 
-                           labelFor="spAuthncontextClassrefMapping" />
-                    <cc name="spAuthncontextClassrefMapping" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-            </ccgroup>
-            <ccgroup>        
-                <property>
-                    <label name="lblSPAuthncontextComparisonType"
-                           defaultValue=
-                           "samlv2sp.attribute.label.spAuthncontextComparisonType" 
-                           labelFor="spAuthncontextComparisonType" />
-                    <cc name="spAuthncontextComparisonType" 
-                        tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
-                        <attribute name="onChange" value="switchView1('actionMenu')" />
-                        <option label="wsfed.actions.label" value="ignore" />
-                        <option label="wsfed.sp.label1" value="exact" />
-                        <option label="wsfed.sp.label2" value="minimum" />
-                        <option label="wsfed.sp.label3" value="maximum" />
-                        <option label="wsfed.sp.label4" value="better" />
-                    </cc>
-                </property>
-            </ccgroup>
-        </property>
-        <property>
-            <label name="lblPlugins" defaultValue="samlv2idp.attribute.label.plugins" />
-            <ccgroup> 
-                <property>
-                    <label name="lblSPAccountMapper"
-                           defaultValue="samlv2sp.attribute.label.spAccountMapper"
-                           labelFor="spAccountMapper" />
-                    <cc name="spAccountMapper" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-            </ccgroup>
-            <ccgroup>
-                <property>
-                    <label name="lblSPAttributeMapper"
-                           defaultValue="samlv2sp.attribute.label.spAttributeMapper"
-                           labelFor="spAttributeMapper" />
-                    <cc name="spAttributeMapper" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-            </ccgroup>
-        </property>
-        <property>
-            <label name="lblSPAttributeMap"
-                   defaultValue="samlv2sp.attribute.label.spattributeMap"
-                   labelFor="attributeMap" />
-            <ccgroup>
-                <property>
-                    <cc name="attributeMap" 
-                        tagclass=
-                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
-                        <attribute name="name" value="list" />
-                        <attribute name="listboxLabel" 
-                                   value="label.current.value" />
-                        <attribute name="textboxLabel"
-                                   value="label.new.value" />
                     </cc>
                 </property>
             </ccgroup>
@@ -545,7 +410,7 @@
                    labelFor="transientUser" />
             <cc name="transientUser" 
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="5" />
+                <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
@@ -561,19 +426,6 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>
-        <property>
-            <label name="lblSPAassertionTimeSkew"
-                   defaultValue=
-                   "samlv2sp.attribute.label.spassertiontimeskew"
-                   labelFor="assertionTimeSkew" />
-            <cc name="assertionTimeSkew" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="5" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-            <fieldhelp name="helpAssertionInterval" defaultValue="help.inSeconds" />
         </property>
         <property>
             <label name="lblSPsaml2AuthModuleName"
