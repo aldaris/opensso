@@ -7,6 +7,7 @@ public class RealmUser {
 
     private String firstName;
     private String lastName;
+    private RealmRole realmRole = null;
 
 
     public String getFirstName() {
@@ -23,6 +24,14 @@ public class RealmUser {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public RealmRole getRealmRole() {
+        return realmRole;
+    }
+
+    public void setRealmRole(RealmRole realmRole) {
+        this.realmRole = realmRole;
     }
 
 }

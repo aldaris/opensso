@@ -1,0 +1,143 @@
+<script type="text/javascript">
+
+    YAHOO.namespace("sun.identity.config.agent");
+
+    //convenient alias:
+    var $ = YAHOO.util.Dom.get;
+
+    function mostrar( type, element, name ) {
+        $(name).style.display = (type == 1) ? "none" : "";
+        $(name).style.left = element.offsetLeft + "px";
+    }
+    function cancelPopUp( name ) {
+        $(name).style.display = "none";
+    }
+
+    function cancel() {
+        document.location = "$context/commonTasks.htm";
+    }
+    function confAgent() {
+        AjaxUtils.load('container', '$context/config/agent/created.htm');
+    }
+    function changeselectAgent() {
+        if ( $("selectAgent").options[$("selectAgent").selectedIndex].value == "0" )
+            $("btnAdd").disabled = true;
+        else
+            $("btnAdd").disabled = false;
+    }
+    function partGroup() {
+        $("optionYes").style.display = $("yes").checked ? "" : "none";
+    }
+</script>
+<style type="text/css">
+    .links {
+        width: 200px;
+        text-align: right;
+    }
+
+    .input {
+        width: 200px;
+    }
+</style>
+
+<div id="mainPanel" align="center" style="z-index:0">
+    <div id="createPanel" class="createpanel">
+        <br/>
+
+        <div class="bodywhite">
+            <h2>Configure an Agent</h2>
+            <small>Si quaedam nimis antique, si peraque dure dicere credit eos, ignave multa fatetur, et sapit et mecum facit et Iova iudicat aequo.</small>
+        </div>
+        <br/>
+
+        <div class="bodywhite">
+            <p>Select the agent type.<br/>
+                <select id="selectAgent" style="width:200px" onchange="changeselectAgent();">
+                    <option value="0">Select ...</option>
+                    <option value="1">Web Agents</option>
+                    <option value="2">Sun Java System Web Server</option>
+                    <option value="3">Sun Java System Web Proxy Server</option>
+                    <option value="4">Apache Web Server</option>
+                    <option value="5">IBM Lotus Domino</option>
+                    <option value="6">Microsoft Internet Information Service (IIS)</option>
+                    <option value="7">JAVA EE Agents</option>
+                    <option value="8">Sun Java System Application Server (Glassfish)</option>
+                    <option value="9">Apache Tomcat</option>
+                    <option value="10">BEA Weblogic Server</option>
+                    <option value="11">IBM Websphere Application Server</option>
+                    <option value="12">JBoss Application Server</option>
+                    <option value="13">Oracle Application Server</option>
+                    <option value="14">SAP Web Application Server/Enterprise Portal</option>
+                    <option value="15">Web Services Agents</option>
+                    <option value="16">Web Service Consumer</option>
+                    <option value="17">Web Service Provider</option>
+                </select>
+            <p>
+            <p class="OrangeSmall">Will this agent be part of a group?</p>
+            <input type="radio" id="yes" name="partgroup" onclick="partGroup();" checked="checked"/>Yes&nbsp;&nbsp;
+            <input type="radio" id="No" name="partgroup" onclick="partGroup();"/>No<br><br>
+
+            <div id="optionYes">
+                <p class="OrangeSmall">Select the group or create a new one</p>
+                <select multiple size="3" style="width:200px"></select><br>
+
+                <div id="options1" class="yui-navset links">
+                    <div id="contentTabs1" class="yui-content" style="z-index:20;display:none;position:absolute;top:-111px;">
+                        <div id="tabOption2" style="width:220px">
+                            <p align="left"><b>Name Group:</b><br/>
+                                <input id="newNameGroup" name="newNameGroup"/></p>
+                            <p align="right" style="color:#000066">
+                                <a class="pointer" onclick="cancelPopUp('contentTabs1');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer">Save</a>
+                            </p>
+                            <p class="OrangeVerySmall">Validation will go here</p>
+                        </div>
+                    </div>
+                    <ul class="yui-nav" style="text-align:right">
+                        <li><a href="#tab1" onclick="mostrar(1,this,'contentTabs1')"><em>Delete</em></a></li>
+                        <li><a href="#tab2" onclick="mostrar(2,this,'contentTabs1')"><em>Add New</em></a></li>
+                    </ul>
+                </div>
+                <br/>
+                <p class="OrangeSmall">Select an agent profile or create a new one</p>
+                <select multiple size="3" style="width:200px;z-index:0"></select><br>
+                <!--<p class="blue links"><a class="pointer">Delete</a>&nbsp;|&nbsp;<a class="pointer">Add New</a></p>-->
+                <div id="options2" class="yui-navset links">
+                    <div id="contentTabs2" class="yui-content" style="z-index:20;display:none;position:absolute;top:-111px;">
+                        <div id="tabOption2" style="width:220px">
+                            <p align="left"><b>Name Agent profile :</b><br/>
+                                <input id="newName" name="newName"/></p>
+                            <p align="right" style="color:#000066">
+                                <a class="pointer" onclick="cancelPopUp('contentTabs2');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer">Save</a>
+                            </p>
+                            <p class="OrangeVerySmall">Validation will go here</p>
+                        </div>
+                    </div>
+                    <ul class="yui-nav" style="text-align:right">
+                        <li><a href="#tab1" onclick="mostrar(1,this,'contentTabs2')"><em>Delete</em></a></li>
+                        <li><a href="#tab2" onclick="mostrar(2,this,'contentTabs2')"><em>Add New</em></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="bodywhite">
+            <div class="middletitle OrangeSmall">Password</div>
+            <div class="OrangeVerySmall" id="allfields">* ALL Fields are Required</div>
+            <br/>
+            <p><input class="input" type="text" id="pass1" name="pass1"></p>
+            <p><input class="input" type="text" id="pass2" name="pass2"></p>
+
+            <p class="OrangeSmall">Agent Server URL:<br/>
+                <input class="input" type="text" id="url" name="url"></p>
+            <p class="blue links"><a class="pointer">Check URL</a></p>
+
+            <p class="OrangeSmall">Agent Notification URL (optional):<br/>
+                <input class="input" type="text" id="notificationUrl" name="notificationUrl"></p>
+            <p class="blue links"><a class="pointer">Check URL</a></p>
+        </div>
+        <div class="subbody">
+            <button type="button" value="Cancel" onClick="javascript:cancel();">Cancel</button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="btnAdd" type="button" value="addStore" onClick="javascript:confAgent();" disabled="disabled">Configure Agent</button>
+        </div>
+    </div>
+</div>

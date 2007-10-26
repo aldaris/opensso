@@ -3,9 +3,9 @@ package com.sun.identity.config.pojos;
 /**
  * @author Jeffrey Bermudez
  */
-public class AnonymousStore {
+public class AnonymousStore extends AuthenticationStore {
 
-    private String anonymousName;
+    private String anonymousName = "anonymous";
 
 
     public String getAnonymousName() {

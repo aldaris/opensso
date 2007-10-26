@@ -3,45 +3,45 @@ package com.sun.identity.config.pojos;
 /**
  * @author Jeffrey Bermudez
  */
-public class WindowStore {
+public class WindowStore extends AuthenticationStore {
 
-    private String servicePrincipal;
-    private String fileName;
-    private String realm;
-    private String serviceName;
+    private String kerberosServicePrincipal;
+    private String kerberosFileName;
+    private String kerberosRealm;
+    private String kerberosServiceName;
     private String domainName;
 
 
-    public String getServicePrincipal() {
-        return servicePrincipal;
+    public String getKerberosServicePrincipal() {
+        return kerberosServicePrincipal;
     }
 
-    public void setServicePrincipal(String servicePrincipal) {
-        this.servicePrincipal = servicePrincipal;
+    public void setKerberosServicePrincipal(String kerberosServicePrincipal) {
+        this.kerberosServicePrincipal = kerberosServicePrincipal;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getKerberosFileName() {
+        return kerberosFileName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setKerberosFileName(String kerberosFileName) {
+        this.kerberosFileName = kerberosFileName;
     }
 
-    public String getRealm() {
-        return realm;
+    public String getKerberosRealm() {
+        return kerberosRealm;
     }
 
-    public void setRealm(String realm) {
-        this.realm = realm;
+    public void setKerberosRealm(String kerberosRealm) {
+        this.kerberosRealm = kerberosRealm;
     }
 
-    public String getServiceName() {
-        return serviceName;
+    public String getKerberosServiceName() {
+        return kerberosServiceName;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setKerberosServiceName(String kerberosServiceName) {
+        this.kerberosServiceName = kerberosServiceName;
     }
 
     public String getDomainName() {

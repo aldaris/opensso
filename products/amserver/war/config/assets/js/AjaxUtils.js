@@ -33,24 +33,24 @@ var AjaxUtils = {
     * callback method will be executed when the response is returned.  This callback is expected to interpret
     * YUI's Response object, e.g. parse the response.responseText and manipulate the DOM accordingly.
     */
-    call: function(url, successCallback) {
-        AjaxUtils.doGet( null, url, successCallback );
+    call: function(url, successCallback, callbackArgs ) {
+        AjaxUtils.doGet( null, url, successCallback, null, callbackArgs );
     },
 
-    load: function(elementId, url, successCallback ) {
-        AjaxUtils.doGet( elementId, url, successCallback, null );
+    load: function(elementId, url, successCallback, callbackArgs ) {
+        AjaxUtils.doGet( elementId, url, successCallback, null, callbackArgs );
     },
 
-    doGet: function( elementId, url, successCallback, failureCallback ) {
-        AjaxUtils.doAjaxCall(elementId, 'GET', url, null, successCallback, failureCallback );
+    doGet: function( elementId, url, successCallback, failureCallback, callbackArgs ) {
+        AjaxUtils.doAjaxCall(elementId, 'GET', url, null, successCallback, failureCallback, callbackArgs );
     },
 
-    doPost: function(elementId, url, postData, callbackSuccess, callbackFailure) {
+    doPost: function(elementId, url, postData, callbackSuccess, callbackFailure, callbackArgs ) {
         YAHOO.util.Connect.resetFormState();    // Resets HTML form properties
-        AjaxUtils.doAjaxCall(elementId, 'POST', url, postData, callbackSuccess, callbackFailure);
+        AjaxUtils.doAjaxCall(elementId, 'POST', url, postData, callbackSuccess, callbackFailure, callbackArgs);
     },
 
-    doAjaxCall: function(elementId, method, url, postData, callbackSuccess, callbackFailure) {
+    doAjaxCall: function(elementId, method, url, postData, callbackSuccess, callbackFailure, callbackArgs ) {
         //AjaxUtils.showLoading();
 
         var el = YAHOO.util.Dom.get(elementId);
@@ -93,7 +93,8 @@ var AjaxUtils = {
 
         var callback = {
             success: handleSuccess,
-            failure: handleFailure
+            failure: handleFailure,
+            argument: callbackArgs
         };
 
         YAHOO.util.Connect.asyncRequest(method, url, callback, postData);

@@ -15,7 +15,7 @@ public abstract class TemplatedPage extends AjaxPage {
 
     public int currentYear = Calendar.getInstance().get( Calendar.YEAR );
 
-    public List statusMessages = new ArrayList(); //list of Strings
+    public List statusMessages = new ArrayList(); //of Strings
 
     public String getTemplate() {
         return "assets/templates/main.html";
@@ -33,7 +33,7 @@ public abstract class TemplatedPage extends AjaxPage {
     }
 
     protected void addStatusMessageCode( String statusMessageCode ) {
-        List codes = getStatusMessageCodes(); //strings
+        List codes = getStatusMessageCodes();
         if ( codes == null ) {
             codes = new ArrayList();
         }
@@ -62,7 +62,7 @@ public abstract class TemplatedPage extends AjaxPage {
         List sessionStatusMessages = getStatusMessageCodes();
         if ( sessionStatusMessages != null && !sessionStatusMessages.isEmpty() ) {
             Iterator i = sessionStatusMessages.iterator();
-            while( i.hasNext() ) {
+            while ( i.hasNext() ) {
                 String messageCode = (String)i.next();
                 statusMessages.add( i18n( messageCode ) );
             }

@@ -3,7 +3,7 @@ package com.sun.identity.config.pojos;
 /**
  * @author Les Hazlewood
  */
-public class LDAPStore {
+public class LDAPStore extends AuthenticationStore {
 
     private String name;
     private String hostName;
@@ -70,4 +70,5 @@ public class LDAPStore {
     public void setPassword( String password ) {
         this.password = password;
     }
+    
 }

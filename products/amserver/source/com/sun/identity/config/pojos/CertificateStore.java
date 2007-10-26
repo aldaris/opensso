@@ -3,14 +3,15 @@ package com.sun.identity.config.pojos;
 /**
  * @author Jeffrey Bermudez
  */
-public class CertificateStore {
+public class CertificateStore extends AuthenticationStore {
 
     private String userId;
-    private Boolean checkAgainstLDAP;
-    private Boolean checkAgainstCRL;
+    private boolean checkAgainstLDAP;
+    private boolean checkAgainstCRL;
     private String searchAttribute;
-    private Boolean checkAgainstOSCP;
+    private boolean checkAgainstOSCP;
     private LDAPStore userStore = new LDAPStore();
+
 
     public String getUserId() {
         return userId;
@@ -20,19 +21,19 @@ public class CertificateStore {
         this.userId = userId;
     }
 
-    public Boolean getCheckAgainstLDAP() {
+    public boolean isCheckAgainstLDAP() {
         return checkAgainstLDAP;
     }
 
-    public void setCheckAgainstLDAP(Boolean checkAgainstLDAP) {
+    public void setCheckAgainstLDAP(boolean checkAgainstLDAP) {
         this.checkAgainstLDAP = checkAgainstLDAP;
     }
 
-    public Boolean getCheckAgainstCRL() {
+    public boolean isCheckAgainstCRL() {
         return checkAgainstCRL;
     }
 
-    public void setCheckAgainstCRL(Boolean checkAgainstCRL) {
+    public void setCheckAgainstCRL(boolean checkAgainstCRL) {
         this.checkAgainstCRL = checkAgainstCRL;
     }
 
@@ -44,11 +45,11 @@ public class CertificateStore {
         this.searchAttribute = searchAttribute;
     }
 
-    public Boolean getCheckAgainstOSCP() {
+    public boolean isCheckAgainstOSCP() {
         return checkAgainstOSCP;
     }
 
-    public void setCheckAgainstOSCP(Boolean checkAgainstOSCP) {
+    public void setCheckAgainstOSCP(boolean checkAgainstOSCP) {
         this.checkAgainstOSCP = checkAgainstOSCP;
     }
 

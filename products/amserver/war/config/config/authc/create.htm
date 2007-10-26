@@ -1,0 +1,136 @@
+<link href="$context/assets/css/Specific/confUserStore.css" rel="stylesheet" type="text/css" />
+<script>
+
+    YAHOO.namespace("sun.container");
+
+    YAHOO.util.Event.onDOMReady(init);
+
+    AjaxUtils.load('addStore', '$context/config/dlg/popupAuthenticationUserStore.htm');
+    YAHOO.sun.container.addStore = new YAHOO.widget.Panel("addStore", { width:"280px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true });
+    YAHOO.sun.container.addStore.render();
+
+    var DOM = YAHOO.util.Dom;
+
+    var pageURI = null;
+    var afterAddToStoreSuccessFunction = null;
+    var validateFormFunction = null;
+
+    var isAuthenticationSelected = false;
+    var isRealmSelected = false;
+    var selectedRealm = null;
+
+    var tableColumnDefs = [
+        {key:"realmName", label:"Realms", sortable:true}
+    ];
+    var responseSchema = {
+        resultsList: "records",
+        fields: ["realmName"]
+    };
+    var realmsTable = new APP.util.SimpleTable("realmsTable", "$context/authc/realmList.htm", null, tableColumnDefs, responseSchema, true);
+
+
+    function init() {
+        DOM.get("addStoreButton").disabled = true;
+        realmsTable.dataTable.subscribe("rowSelectEvent", selectRealm, false);
+    }
+
+    function addToStore() {
+        var requestData = AjaxUtils.serializeForm("authenticationStoreForm");
+        requestData = requestData + "&realmName=" + selectedRealm;
+        AjaxUtils.doPost(null, pageURI, requestData, afterAddToStoreSuccessFunction, null);
+    }
+
+    function cancel() {
+        document.location = "$context/commonTasks.htm";
+    }
+
+    function selectRealm() {
+        var selectedRow = realmsTable.dataTable.getSelectedTrEls()[0];
+        var value = DOM.getChildren(selectedRow)[0].innerHTML;
+        selectedRealm = value;
+        isRealmSelected = (value != null);
+        adjustAddStoreButton();
+    }
+
+    function selectAuthentication() {
+        var authenticationPagePath = null;
+        var optionField = DOM.get("authenticationSource");
+        var optionFieldValue = optionField.options[optionField.selectedIndex].value;
+        isAuthenticationSelected = (optionField.selectedIndex > 0);
+        adjustAddStoreButton();
+
+        switch (optionFieldValue) {
+            case "LDAP":
+                authenticationPagePath = "$context/config/authc/LDAP.htm"; break;
+            case "Certificate":
+                authenticationPagePath = "$context/config/authc/certificate.htm"; break;
+            case "Windows Desktop SSO":
+                authenticationPagePath = "$context/config/authc/window.htm"; break;
+            case "Data Store":
+                authenticationPagePath = "$context/config/authc/dataStore.htm"; break;
+            case "Federation":
+                authenticationPagePath = "$context/config/authc/federation.htm"; break;
+            case "HTTP Basic":
+                authenticationPagePath = "$context/config/authc/HTTP.htm"; break;
+            case "JDBC":
+                authenticationPagePath = "$context/config/authc/JDBC.htm"; break;
+            case "Anonymous":
+                authenticationPagePath = "$context/config/authc/anonymous.htm"; break;
+        }
+
+        if (authenticationPagePath != null) {
+            AjaxUtils.doGet("configureAuthenticationStoreBody", authenticationPagePath, null, null, null);
+        }
+        else {
+            DOM.get("configureAuthenticationStoreBody").innerHTML = "";
+        }
+    }
+
+    function adjustAddStoreButton() {
+        var allValid = (isAuthenticationSelected && isRealmSelected && ((validateFormFunction) ? validateFormFunction() : true));
+        DOM.get("addStoreButton").disabled = !allValid;
+    }
+
+</script>
+
+<div id="mainPanel" align="center">
+    <div id="createPanel" class="createpanel">
+        <form id="authenticationStoreForm" >
+            <br />
+            <div class="bodywhite">
+                <h2>Configure an Authentication Store</h2>
+                <small>Fusce rhoncus rutrum nunc. Ut ut pede vel sem scelerisque commodo. Vestibulum non libero vulputate arcu gravida auctor. Phasellus quis felis in nulla laoreet orn.</small>
+            </div>
+            <br />
+            <div class="bodywhite">
+                Select the realm that this store will be added to
+                <div id="realmsTable"></div>
+                <br/>
+				<br/>
+            </div>
+            <br />
+            <div class="bodywhite">
+                <br/>
+                <p class="OrangeSmall">Select authentication source</p>
+                <select name="authenticationSource" id="authenticationSource" style="width:200px" onchange="selectAuthentication();">
+                    <option value="None">Select One</option>
+                    <option value="LDAP">LDAP (Including Active Directory)</option>
+                    <option value="Certificate">Certificate</option>
+                    <option value="Windows Desktop SSO">Windows Desktop SSO</option>
+                    <option value="Data Store">Data Store</option>
+                    <option value="Federation">Federation</option>
+                    <option value="HTTP Basic">HTTP Basic</option>
+                    <option value="JDBC">JDBC</option>
+                    <option value="Anonymous">Anonymous</option>
+                </select><br/><br/>
+            </div>
+            <div id="configureAuthenticationStoreBody"></div>
+            <div class="subbody">
+                <button type="button" value="Cancel" onClick="cancel();">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="addStoreButton" type="button" value="addStore" onClick="addToStore();">ADD TO STORE</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="addStore" style="visibility:hidden"></div>
+

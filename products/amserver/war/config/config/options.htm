@@ -5,7 +5,7 @@
     var $ = YAHOO.util.Dom.get;
 
     function launchConsole() {
-        document.location = "$context/commonTasks.htm";
+        document.location = "$context/config/commonTasks.htm";
     }
 
     /* #if ( $upgrade )
@@ -92,7 +92,7 @@
                 //AjaxUtils.load('wizardContainer', "$context/config/wizard/wizard.htm", showWizard);
                 YAHOO.sun.identity.config.options.wizard.show();
             } else if ( configOption == 3 ) {
-                AjaxUtils.load('container', '$context/config/existConf.htm');
+                document.location = '$context/config/existConf.htm';
             }
         }
     }
@@ -175,10 +175,10 @@
     <div id="options" align="left" style="width:800px">
         #if ( $upgrade )
         <h1>Upgrade Available</h1>
-        <h2>Please select an upgrade option.</h2>
+        <h4>Please select an upgrade option.</h4>
         #else
         <h1>Configuration Options</h1>
-        <h2>Please select a configuration option.</h2>
+        <h4>Please select a configuration option.</h4>
         #end
 
         <div class="borderRight">

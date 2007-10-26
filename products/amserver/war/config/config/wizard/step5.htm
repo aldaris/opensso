@@ -21,22 +21,21 @@
         $('nextTabButton').disabled = true;
     }
 
-    function loadBalancerValidated( response ) {
-        if ( response.responseText == "true" ) {
-            $('nextTabButton').disabled = false;
-            loadBalancerValid = true;
-            $('loadBalancerStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                                                  '<small>Load Balancer found</small>';
-        } else {
-            $('nextTabButton').disabled = true;
-            loadBalancerValid = false;
-            $('loadBalancerStatus').innerHTML = response.responseText;
-        }
+    function loadBalancerValidated( body ) {
+        loadBalancerValid = true;
+        $('nextTabButton').disabled = false;
+        $('loadBalancerStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
+                                            '<small>' + body + '</small>';
     }
+    function loadBalancerInvalidated( body ) {
+        loadBalancerValid = false;
+        $('nextTabButton').disabled = true;
+        $('loadBalancerStatus').innerHTML = body;
+    }
+
     function validateLoadBalancer() {
-        var callUrl = "$context$path?actionLink=validate&host=" + $('loadBalancerHostName').value +
-                      "&port=" + $('loadBalancerPort').value;
-        AjaxUtils.call(callUrl, loadBalancerValidated );
+        var params = "host=" + $('loadBalancerHostName').value + "&port=" + $('loadBalancerPort').value;
+        APP.call( "$context$path", "validate", params, loadBalancerValidated, loadBalancerInvalidated );
     }
 
     function wizardStep5Init() {

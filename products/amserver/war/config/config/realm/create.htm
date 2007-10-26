@@ -1,0 +1,268 @@
+<script type="text/javascript">
+/*Windows pop up Upgrade options*/
+YAHOO.namespace("sun.container");
+
+function init() {
+    AjaxUtils.load( 'confirmation', '$context/config/dlg/popuprealmhasbeen.htm');
+    YAHOO.sun.container.confirmation = new YAHOO.widget.Panel("confirmation", { width:"320px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true } );
+    YAHOO.sun.container.confirmation.render();
+
+	YAHOO.util.Event.addListener("btnAdd", "click", YAHOO.sun.container.confirmation.show, YAHOO.sun.container.confirmation, true);
+}
+
+YAHOO.util.Event.onDOMReady( init );
+
+
+function showoptions(element, option){
+	if (element.checked)
+		document.getElementById(option).style.display = "";
+}
+
+function hideoptions(element, option){
+	if (element.checked)
+		document.getElementById(option).style.display = "none";
+}
+
+function Cancel(){
+	document.location = "$context/commonTasks.htm";
+}
+
+</script>
+<style>
+	p{
+		height:20px;
+	}
+
+</style>
+<div id="mainPanel">
+	<div id="createPanel" class="createpanel">
+		<form action="create.htm">
+			<br />
+			<div class="bodywhite">
+				<h2>Create a Realm</h2>
+				<small>Si quaedam nimis antique, si peraque dure dicere credit eos, ignave multa fatetur, et sapit et mecum facit et Iova.</small>
+			</div>
+			<br />
+			<p class="OrangeVerySmall" id="allfields">* ALL Fields are Required</p>
+			<div class="bodywhite">
+					<p class="OrangeSmall">Enter the new realm name:</p>
+					<input type="text" name="txtrealmname" id="txtrealmname" size="20" />
+			</div>
+			<div class="bodywhite">
+				<p class="OrangeSmall">Do you want to constrain the policies within this realm?</p>
+					<input type="radio" name="policies" id="policiesYes" value="Yes" onclick="showoptions(this,'constrainpolicies');"/>Yes &nbsp;
+					<input type="radio" name="policies" id="policiesNo" value="No" onclick="hideoptions(this,'constrainpolicies');"/>No
+				<div id="constrainpolicies" style="display:none">
+					<p class="OrangeSmall">Host Name Constraints:&nbsp;
+					<input type="text" name="nameconstraints" id="nameconstraints" size="20" /></p>
+					<p class="blue" style="padding-left:260px">Add another</p>
+					<p class="OrangeSmall">Enter URL Pattern: <img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/>&nbsp;
+					<input type="text" name="urlpattern" id="urlpattern" size="20" /></p>
+				</div>
+			</div>
+			<div class="bodywhite">
+				<p class="OrangeSmall">Do you want to configure a user store for this realm?</p>
+				<input type="radio" name="configureuserstore" id="UserYes" value="Yes" onclick="showoptions(this,'User');" />Yes&nbsp;&nbsp;
+				<input type="radio" name="configureuserstore" id="UserNo" value="No" onclick="hideoptions(this,'User');"/>No
+				<div id="User" style="display:none">
+					<div class="bodywhite">
+						<div class="middletitle">Enter the store details</div><div class="OrangeVerySmall">* ALL Fields are Required</div>
+					</div>
+					<div class="bodywhite">
+						<div class="width_160">
+						<p>User Store Name:</p>
+						<p>Directory Host Name:</p>
+						<p>Port:</p>
+						<p>Is this a secure port?:</p>
+						<p>Directory Login ID:</p>
+						<p>Directory Password:</p>
+						<p>Directory Base DN:</p>
+						</div>
+						<p><input class="inputsBlue" type="text" id="userStoreName" name="userStoreName" style="width:150px"/>
+						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Store name provided</small></p>
+						<p><input class="inputsBlue" type="text" id="directory" name="directory" style="width:150px"/>
+						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Located Directory</small></p>
+						<p><input class="inputsBlue" type="text" id="port" name="port" style="width:40px"/></p>
+						<p><input type="radio" id="securePortNo" name="securePort" checked="checked" value="No"/>&nbsp;No&nbsp;
+						<input type="radio" id="securePortYes" name="securePort" value="Yes"/>Yes</p>
+						<p><input class="inputsBlue" type="text" id="login" name="login" style="width:150px"/>
+						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Logged in</small></p>
+						<p><input class="inputsBlue" type="text" id="password" name="password" style="width:150px"/></p>
+						<p><input class="inputsBlue" type="text" id="baseDN" name="baseDN" style="width:150px"/>
+						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Located Base DN</small></p>
+					</div>
+				</div>
+			</div>
+			<div class="bodywhite">
+				<p class="OrangeSmall">Do you want to configure the authentication store?</p>
+				<input type="radio" name="configureauthentication" id="authenticationYes" value="Yes" onclick="showoptions(this,'Authentication');"/>Yes&nbsp;&nbsp;
+				<input type="radio" name="configureauthentication" id="authenticationNo" value="No" onclick="hideoptions(this,'Authentication');"/>No
+				<div id="Authentication" style="display:none">
+					<p><input type="checkbox" name="chkLocated" id="chkLocated" size="20" />&nbsp;Use the same configuration as the user store:</p>
+					<div class="bodywhite">
+						<div class="middletitle">Enter the store details</div><div class="OrangeVerySmall" align="right">* ALL Fields are Required</div>
+					</div>
+					<div class="bodywhite">
+						<div class="width_160">
+						<p>User Store Name:</p>
+						<p>Directory Host Name:</p>
+						<p>Port:</p>
+						<p>Is this a secure port?:</p>
+						<p>Directory Login ID:</p>
+						<p>Directory Password:</p>
+						<p>Directory Base DN:</p>
+						</div>
+						<p><input class="inputsBlue" type="text" id="userStoreName" name="userStoreName" style="width:150px"/>
+						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Store name provided</small></p>
+						<p><input class="inputsBlue" type="text" id="directory" name="directory" style="width:150px"/>
+						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Located Directory</small></p>
+						<p><input class="inputsBlue" type="text" id="port" name="port" style="width:40px"/></p>
+						<p><input type="radio" id="securePortNo" name="securePort" checked="checked" value="No"/>&nbsp;No&nbsp;
+						<input type="radio" id="securePortYes" name="securePort" value="Yes"/>Yes</p>
+						<p><input class="inputsBlue" type="text" id="login" name="login" style="width:150px"/>
+						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Logged in</small></p>
+						<p><input class="inputsBlue" type="text" id="password" name="password" style="width:150px"/></p>
+						<p><input class="inputsBlue" type="text" id="baseDN" name="baseDN" style="width:150px"/>
+						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Located Base DN</small></p>
+					</div>
+				</div>
+			</div>
+			<div class="bodywhite">
+				<p class="OrangeSmall">Do you want to Assign an admin for this realm?</p>
+				<input type="radio" name="admin" id="adminYes" value="Yes" onclick="showoptions(this,'Assignadmin');"/>Yes&nbsp;&nbsp;
+				<input type="radio" name="admin" id="adminNo" value="No" onclick="hideoptions(this,'Assignadmin');"/>No
+			</div>
+			<div id="Assignadmin" style="display:none" class="bodySpace" align="left">
+				<p>Locate your new admin and drag their name to the realm administrators box</p>
+				<div id="demo" class="yui-navset tab">
+					<ul class="yui-nav">
+						<li class="selected"><a href="#tab1"><em>Realm Users</em></a></li>
+					</ul>
+					<div class="yui-content">
+						<div>
+							<div class="bodywhite bodySpace2">
+							<input type="text" id="search"/><button type="button">search</button>
+							</div>
+							<div class="bodywhite bodySpace2">
+								<font class="commonblack">Displaying: 1-N of N realm users</font>
+							</div>
+							<!--This prosses need be Automatically, that is a example, with the css it need,
+							look the example of yui for a generate tab with javascript-->
+							<div id="contentSearch">
+								<div id="search1" class="yui-navset">
+									<div class="yui-content large">
+										<div>
+											<div class="colunmsheader">
+												<div class="insideColunm">&nbsp;First Name</div>
+												Last Name
+											</div>
+											<div class="colunms">First Name<br />First Name</div>
+											<div class="colunms">Last Name<br />Last Name</div>
+										</div>
+										<div>
+											<div class="colunmsheader">
+												<div class="insideColunm">&nbsp;First Name</div>
+												Last Name
+											</div>
+											<div class="colunms">sds</div>
+											<div class="colunms">sds</div><br />
+										</div>
+										<div>
+											<div class="colunmsheader">
+												<div class="insideColunm">&nbsp;First Name</div>
+												Last Name
+											</div>
+											<div class="colunms">sds</div>
+											<div class="colunms">sds</div>
+										</div>
+									</div>
+									<ul class="yui-nav" style="text-align:right">
+										<li class="selected"><a href="#tab1"><em>1</em></a></li>
+										<li><a href="#tab2"><em>2</em></a></li>
+										<li><a href="#tab3"><em>3</em></a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="width:20px;float:left">&nbsp;</div>
+				<div id="demo" class="yui-navset tab">
+					<ul class="yui-nav">
+						<li class="selected"><a href="#tab1"><em>Realm Administrators</em></a></li>
+					</ul>
+					<div class="yui-content">
+						<div>
+							<div class="bodywhite bodySpace2">
+								<font class="commonblack">Select a role</font>&nbsp;
+								<select id="role" name="role" style="width:150px" onchange="checkOption();">
+									<option>Administrators</option>
+									<option><b>Create a New role</b></option>
+								</select>
+							</div>
+							<div class="bodywhite bodySpace2">
+								<font class="commonblack">Displaying: 1-N of N Administrators</font>
+							</div>
+							<!--This prosses need be Automatically, that is a example, with the css it need,
+							look the example of yui for a generate tab with javascript-->
+							<div id="contentSearch">
+								<div id="search2" class="yui-navset">
+									<div class="yui-content large">
+										<div>
+											<div class="colunmsheader">
+												<div class="insideColunm">&nbsp;First Name</div>
+												Last Name
+											</div>
+											<div class="colunms">First Name<br />First Name</div>
+											<div class="colunms">Last Name<br />Last Name</div>
+										</div>
+										<div>
+											<div class="colunmsheader">
+												<div class="insideColunm">&nbsp;First Name</div>
+												Last Name
+											</div>
+											<div class="colunms">sds</div>
+											<div class="colunms">sds</div><br />
+										</div>
+										<div>
+											<div class="colunmsheader">
+												<div class="insideColunm">&nbsp;First Name</div>
+												Last Name
+											</div>
+											<div class="colunms">sds</div>
+											<div class="colunms">sds</div>
+										</div>
+									</div>
+									<ul class="yui-nav" style="text-align:right">
+										<li class="selected"><a href="#tab1"><em>1</em></a></li>
+										<li><a href="#tab2"><em>2</em></a></li>
+										<li><a href="#tab3"><em>3</em></a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="subbody" align="right">
+				<br />
+				<button id="btnCancel" type="button" value="Cancel" onclick="Cancel();">Cancel</button>
+				<button id="btnAdd" type="button" value="ADD THIS STORE">CREATE REALM</button>
+			</div>
+		</form>
+	</div>
+</div>
+<!--Pop Up-->
+<div id="confirmation" style="visibility:hidden;width:600px;height:200px"></div>
+
+</div>
+
+<script>
+(function() {
+    var tabView = new YAHOO.widget.TabView('demo');
+	var tabView2 = new YAHOO.widget.TabView('search1');
+	var tabView3 = new YAHOO.widget.TabView('search2');
+})();
+
+</script>

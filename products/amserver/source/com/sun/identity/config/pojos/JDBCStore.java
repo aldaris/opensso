@@ -3,7 +3,7 @@ package com.sun.identity.config.pojos;
 /**
  * @author Jeffrey Bermudez
  */
-public class JDBCStore {
+public class JDBCStore extends AuthenticationStore {
 
     private String connectionType;
     private String storeDetails;

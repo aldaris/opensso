@@ -3,35 +3,17 @@ package com.sun.identity.config.pojos;
 /**
  * @author Jeffrey Bermudez
  */
-public class AuthenticationStore {
+public abstract class AuthenticationStore {
 
-    private String realmName;
-    private String authenticationSource;
-    private String authenticationSourcePage;
+    private Realm realm = new Realm();
 
 
-    public String getRealmName() {
-        return realmName;
+    public Realm getRealm() {
+        return realm;
     }
 
-    public void setRealmName(String realmName) {
-        this.realmName = realmName;
+    public void setRealm(Realm realm) {
+        this.realm = realm;
     }
 
-    public String getAuthenticationSource() {
-        return authenticationSource;
-    }
-
-    public void setAuthenticationSource(String authenticationSource) {
-        this.authenticationSource = authenticationSource;
-    }
-
-    public String getAuthenticationSourcePage() {
-        return authenticationSourcePage;
-    }
-
-    public void setAuthenticationSourcePage(String authenticationSourcePage) {
-        this.authenticationSourcePage = authenticationSourcePage;
-    }
-    
 }
