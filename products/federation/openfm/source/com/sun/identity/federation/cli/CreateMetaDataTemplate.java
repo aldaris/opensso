@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.20 2007-10-16 22:09:40 exu Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.21 2007-10-26 00:07:53 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1086,7 +1086,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + IFSConstants.ASSERTION_ISSUER + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.REALM_ATTRIBUTE_PLUGIN + "\">\n" +
+                "        <Attribute name=\"" + IFSConstants.ATTRIBUTE_PLUGIN + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.IDP_ATTRIBUTE_MAP + "\">\n" +
@@ -1104,7 +1104,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + IFSConstants.AUTO_FEDERATION_ATTRIBUTE + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.REALM_ATTRIBUTE_MAPPER_CLASS + "\">\n" +
+                "        <Attribute name=\"" + IFSConstants.ATTRIBUTE_MAPPER_CLASS + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "       <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
@@ -1213,7 +1213,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <Attribute name=\"" + IFSConstants.AUTO_FEDERATION_ATTRIBUTE + "\">\n"+
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.REALM_ATTRIBUTE_MAPPER_CLASS + "\">\n" +
+                "        <Attribute name=\"" + IFSConstants.ATTRIBUTE_MAPPER_CLASS + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.SP_ATTRIBUTE_MAP + "\">\n" +

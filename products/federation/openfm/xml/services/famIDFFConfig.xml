@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famIDFFConfig.xml,v 1.1 2007-10-09 19:02:42 veiming Exp $
+   $Id: famIDFFConfig.xml,v 1.2 2007-10-26 00:07:53 exu Exp $
                                                                                 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -52,7 +52,7 @@
                     syntax="string" 
                     i18nKey="a101">
                     <DefaultValues>
-                        <Value>com.sun.identity.federation.services.FSIDPProxyImpl</Value>
+                        <Value>com.sun.identity.federation.services.FSRealmIDPProxyImpl</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="RequestCacheCleanupInterval" 
