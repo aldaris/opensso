@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.1 2007-10-22 23:24:00 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.2 2007-10-27 00:31:54 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,7 @@ import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Hash;
+import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
@@ -71,9 +72,14 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         "com.sun.identity.idm.plugins.internal.AgentsRepo";
 
     // Status attribute
-    private static final String statusAttribute = "inetUserStatus";
+    private static final String statusAttribute = 
+        "sunIdentityServerDeviceStatus";
     private static final String statusActive = "Active";
     private static final String statusInactive = "Inactive";
+    private static final String version = "1.0";
+    private static final String comma = ",";
+    private static final String agentserviceName = IdConstants.AGENT_SERVICE;
+    private static final String agentGroupNode = "agentgroup";
 
     IdRepoListener repoListener = null;
 
@@ -100,10 +106,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message(": AgentsRepo adding Listener");
         }
         try {
-            ssm = new ServiceSchemaManager(adminToken,
-                    IdConstants.AGENT_SERVICE, "1.0");
-            scm = new ServiceConfigManager(adminToken,
-                    IdConstants.AGENT_SERVICE, "1.0");
+            ssm = new ServiceSchemaManager(adminToken, agentserviceName, 
+                version);
+            scm = new ServiceConfigManager(adminToken, agentserviceName, 
+                version);
+                    
             if (!registeredForNotifications) {
                 ssmListenerId = ssm.addListener(this);
                 scmListenerId = scm.addListener(this);
@@ -328,6 +335,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             if (aCfg != null) {
                 answer = aCfg.getAttributes();
             }
+            // Send the agenttype of that agent.
+            answer.put(IdConstants.AGENT_TYPE, aCfg.getSchemaID());
         } catch (SMSException sme) {
             debug.error("AgentsRepo.getAgentAttrs(): "
                 + "Error occurred while getting " + agentName, sme);
@@ -909,8 +918,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         try {
             if (orgConfig == null) {
                 if (scm == null) {
-                    scm = new ServiceConfigManager(token,
-                        IdConstants.AGENT_SERVICE, "1.0");
+                    scm = new ServiceConfigManager(token, agentserviceName, 
+                        version);
                 }
                 orgConfig = scm.getOrganizationConfig("/", null);
             }
@@ -936,11 +945,14 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         try {
             if (agentGroupConfig == null) {
                 if (scm == null) {
-                    scm = new ServiceConfigManager(token,
-                        IdConstants.AGENT_SERVICE, "1.0");
+                    scm = new ServiceConfigManager(token, agentserviceName, 
+                        version);
                 }
-                agentGroupConfig = 
-                    scm.getOrganizationConfig("/", "agentgroup");
+                String agentGroupDN = constructDN(agentGroupNode,
+                    "ou=OrganizationConfig,", "/", version, agentserviceName);
+                ServiceConfig orgConfig = getOrgConfig(token);
+                orgConfig.checkAndCreateGroup(agentGroupDN, agentGroupNode);
+                agentGroupConfig = orgConfig;
             }
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
@@ -1013,5 +1025,18 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             throw new IdRepoException(sme.getMessage());
         }
         return (agentRes);
+    }
+
+    String constructDN(String groupName, String configName, String orgName, 
+        String version, String serviceName) throws SMSException {
+       
+        StringBuffer sb = new StringBuffer(50);
+        sb.append("ou=").append(groupName).append(comma).append(
+                configName).append("ou=").append(version)
+                .append(comma).append("ou=").append(serviceName)
+                .append(comma).append("ou=services").append(comma);
+        orgName = DNMapper.orgNameToDN(orgName);
+        sb.append(orgName);
+        return (sb.toString());
     }
 }
