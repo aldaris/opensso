@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.6 2007-04-26 17:40:31 veiming Exp $
+ * $Id: ServiceConfig.java,v 1.7 2007-10-27 00:29:26 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -761,6 +761,28 @@ public class ServiceConfig {
         }
         e.save(token);
         sc.refresh(e);
+    }
+
+    public void checkAndCreateGroup(String dn, String groupName) 
+        throws SMSException, SSOException {
+
+        CachedSMSEntry entry = CachedSMSEntry.getInstance(token, dn, null);
+        if (entry.isNewEntry()) {
+            // Check if parent exisits
+            String pDN = (new DN(dn)).getParent().toString();
+            CachedSMSEntry pEntry = CachedSMSEntry
+                    .getInstance(token, pDN, null);
+            if (pEntry.isNewEntry()) {
+                checkAndCreateComponents(pDN);
+            }
+            // Create this entry
+            SMSEntry e = entry.getClonedSMSEntry();
+            e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
+            e.addAttribute(SMSEntry.ATTR_OBJECTCLASS,SMSEntry.OC_SERVICE_COMP);
+            e.addAttribute(SMSEntry.ATTR_SERVICE_ID, groupName);
+            e.save(token);
+            entry.refresh(e);
+        }
     }
 
     void checkAndCreateComponents(String dn) throws SMSException, SSOException {
