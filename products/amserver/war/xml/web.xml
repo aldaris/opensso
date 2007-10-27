@@ -191,6 +191,12 @@
     	    </init-param>
         </servlet>
 
+    <!-- Config GUI -->
+    <servlet>
+        <servlet-name>click-servlet</servlet-name>
+        <servlet-class>net.sf.click.ClickServlet</servlet-class>
+    </servlet>
+
         <!-- servlet declaration -->
 
 
@@ -316,6 +322,12 @@
     	    <servlet-name>IdentityServicesHandler</servlet-name>
     	    <url-pattern>/identity/*</url-pattern>
         </servlet-mapping>
+
+    <!-- Config GUI: -->
+    <servlet-mapping>
+        <servlet-name>click-servlet</servlet-name>
+        <url-pattern>/config/*.htm</url-pattern>
+    </servlet-mapping>
 
         <!-- servlet mapping -->
 
