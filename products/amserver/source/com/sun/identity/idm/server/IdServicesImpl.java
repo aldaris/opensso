@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.21 2007-10-22 23:21:32 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.22 2007-10-27 00:30:46 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1327,7 +1327,9 @@ public class IdServicesImpl implements IdServices {
         
             if (pluginClass == null) {                    
                 try {                    
-                    Class thisClass = Class.forName(IdConstants.SPECIAL_PLUGIN);
+                    Class thisClass = Thread.currentThread().
+                        getContextClassLoader().
+                            loadClass(IdConstants.SPECIAL_PLUGIN);
                     pluginClass = (IdRepo) thisClass.newInstance();
                     pluginClass.initialize(new HashMap());
                     idRepoMap.put(IdConstants.SPECIAL_PLUGIN, pluginClass);
@@ -1372,8 +1374,9 @@ public class IdServicesImpl implements IdServices {
         
             if (pluginClass == null) {                    
                 try {                    
-                    Class thisClass = 
-                        Class.forName(IdConstants.AGENTREPO_PLUGIN);
+                    Class thisClass = Thread.currentThread().
+                        getContextClassLoader().
+                            loadClass(IdConstants.AGENTREPO_PLUGIN);
                     pluginClass = (IdRepo) thisClass.newInstance();
                     pluginClass.initialize(new HashMap());
                     idRepoMap.put(IdConstants.AGENTREPO_PLUGIN, pluginClass);
@@ -1420,8 +1423,8 @@ public class IdServicesImpl implements IdServices {
                 vals.add(DNMapper.realmNameToAMSDKName(orgName));
                 amsdkConfig.put("amSDKOrgName", vals);
                 try {
-                    
-                    Class thisClass = Class.forName(p);
+                    Class thisClass = Thread.currentThread().
+                        getContextClassLoader().loadClass(p);
                     pluginClass = (IdRepo) thisClass.newInstance();
                     pluginClass.initialize(amsdkConfig);
                     idRepoMap.put(cacheKey, pluginClass);
@@ -2331,8 +2334,9 @@ public class IdServicesImpl implements IdServices {
                                 String className = (String) vals.iterator()
                                         .next();
                                 try {
-
-                                    Class thisClass = Class.forName(className);
+                                    Class thisClass = Thread.currentThread().
+                                        getContextClassLoader().
+                                            loadClass(className);
                                     IdRepo thisPlugin = (IdRepo) thisClass
                                             .newInstance();
                                     thisPlugin.initialize(configMap);
