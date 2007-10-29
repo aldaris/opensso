@@ -1,0 +1,147 @@
+# Properties utilized for configuration and execution.
+
+# The exact domain in which test host is residing.
+cookiedomain=
+
+# The naming service of the server aganist which qatest is being executed. This
+# should have the following form:
+# '<protocol>://<fqdn>:<port>/<deploy-uri>/namingservice'
+namingservice=
+
+# The configuration directory for server. This is used only at the time of 
+# configuring the war.
+config_dir=
+
+# The encryption key to use for server configuration and by IDM test to fill in the
+# value of am.encryption.pwd in AMClient.properties.
+encryption_key=
+
+# The name of datastore created under root realm when system is configured. This
+# is used if umdatastore property is set to dirServer. This is used each time
+# qatest is executed.
+defaultdatastorename=
+
+# User Management Datastore. This can take only two values: embedded or
+# dirServer. If embedded it uses the default datatsore configured when embedded 
+# configuration is selected. If dirServer is used, qatest deletes the default 
+# datastore and creates new datastore(s). The data to create this datastore(s)
+# is picked from the resources/config/configGlobalData.properties file.
+# This value is used each time qatest is executed. This is used each time
+# qatest is executed.
+umdatastore=
+
+# Service Management Datastore. This can take only two values: embedded or
+# dirServer. If set to embedded, embedded OpenDS is used as the datastore. If
+# set to dirServer, remote directory is used as the datastore. This is used
+# only at the time of configuring the war.
+datastore=
+
+#
+# Following properties list the details of the directory server, where services
+# data will be stored. These are used, both for embedded and dirServer. For 
+# embedded, only directory_port and config_root_suffix are used. For dirServer
+# all the properties are used. These are used only at the time of configuring
+# the war.
+#
+# FQDN of directory server.
+directory_server=
+
+# Port on which directory is running.
+directory_port=
+
+# Configuration root suffix.
+config_root_suffix=
+
+# SM root sufix.
+sm_root_suffix=
+
+# User DN to use for directory configuration.
+ds_dirmgrdn=
+
+# Password for user dn used above.
+ds_dirmgrpasswd=
+
+# Whether to load User schema or not. Values can be yes or no.
+load_ums=
+
+#
+# Properties utilized globally
+#
+# amadmin user name
+amadmin_username=
+
+# amadmin password
+amadmin_password=
+
+# Root realm (default is set to "/")
+realm=/
+
+# Logging level for the framework. Framework user the following log levels:
+# SEVERE, CONFIG, FINE and FINEST
+log_level=
+
+# Flag used internally by qatest. Not to be changed.
+productSetupResult=pass
+
+#
+# Properties utilized for coupled configurations like saml, idff, multi protocol
+# etc. By default the values for these properties are set using the values
+# listed above but they can be changed to whatever the end user desires. User
+# defined values will override the default values. These properties do not
+# become part of client side AMConfig.properties file. This is becuase multi 
+# server tests do not use client sdk to talk to the server. Currently that 
+# communication happens through famadm.jsp.
+#
+# Meta alias to use when configurating the metadata. By default it is set to 
+# FQDN of the host name.
+metaalias=@COPY_FROM_CONFIG@
+
+# The name of entity to be created. By default it is set to FQDN of the host
+# name.
+entity_name=@COPY_FROM_CONFIG@
+
+# Name of circle of trust. By default it is set as spcot for SP and idpcot for
+# IDP.
+cot=@COPY_FROM_CONFIG@
+
+# Certificate alias used for XML signing and encryption.
+certalias=
+
+# Protocol for SP or IDP. By default the protcocl is picked from the
+# namingservice attribute.
+protocol=@COPY_FROM_CONFIG@
+
+# Host name for SP or IDP. By default the protcocl is picked from the
+# namingservice attribute.
+host=@COPY_FROM_CONFIG@
+
+# Port for SP or IDP. By default the protcocl is picked from the
+# namingservice attribute.
+port=@COPY_FROM_CONFIG@
+
+# Deployment URI for SP or IDP. By default the protcocl is picked from the
+# namingservice attribute.
+deployment_uri=@COPY_FROM_CONFIG@
+
+#
+# Properties utilized by tests which use keystore configuration (WSS). These 
+# properties become part of AMConfig.properties and used by client sdk.
+#
+# Location of the keystore file.
+com.sun.identity.saml.xmlsig.keystore=
+
+# Location of keypass file.
+com.sun.identity.saml.xmlsig.keypass=
+
+# Location of storepass file.
+com.sun.identity.saml.xmlsig.storepass=
+
+# Certificate alias used for XML signing and encryption.
+com.sun.identity.saml.xmlsig.certalias=
+
+# Default certificate alias for issuing web service security token for this
+# web service client
+com.sun.identity.liberty.ws.wsc.certalias=
+
+# Enable client side idm caching or not.
+com.sun.identity.idm.cache.enabled=
