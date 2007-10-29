@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthDomainsModelImpl.java,v 1.6 2007-10-26 00:08:10 jonnelson Exp $
+ * $Id: FSAuthDomainsModelImpl.java,v 1.7 2007-10-29 22:16:37 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -250,9 +250,9 @@ public class FSAuthDomainsModelImpl extends AMModelBase
             values.put(TF_IDFF_READER_SERVICE_URL, AMAdminUtils.wrapInSet(
                     desc.getIDFFReaderServiceURL()));
             values.put(TF_SAML2_WRITER_SERVICE_URL, AMAdminUtils.wrapInSet(
-                    desc.getIDFFWriterServiceURL()));
+                    desc.getSAML2WriterServiceURL()));
             values.put(TF_SAML2_READER_SERVICE_URL, AMAdminUtils.wrapInSet(
-                    desc.getIDFFReaderServiceURL()));
+                    desc.getSAML2ReaderServiceURL()));
             values.put(SINGLE_CHOICE_REALM, AMAdminUtils.wrapInSet(
                     desc.getCircleOfTrustRealm()));
             values.put(SINGLE_CHOICE_STATUS, AMAdminUtils.wrapInSet(
