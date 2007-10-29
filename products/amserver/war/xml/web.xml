@@ -326,7 +326,7 @@
     <!-- Config GUI: -->
     <servlet-mapping>
         <servlet-name>click-servlet</servlet-name>
-        <url-pattern>/config/*.htm</url-pattern>
+        <url-pattern>/config/*</url-pattern>
     </servlet-mapping>
 
         <!-- servlet mapping -->
