@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.6 2007-09-21 21:58:08 rmisra Exp $
+ * $Id: SMSCommon.java,v 1.7 2007-10-29 23:38:07 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -354,8 +354,14 @@ public class SMSCommon extends TestCommon {
                             get(SMSConstants.SMS_DATASTORE_ADMINPW);
                     String dsRootSuffix = (String)cdsiMap.
                             get(SMSConstants.SMS_LDAPv3_ORGANIZATION_NAME);
+                    String sslmode = (String)cdsiMap.
+                            get(SMSConstants.SMS_LDAPv3_LDAP_SSL_ENABLED);
+                    String keystore = null;
+                    if (sslmode.equals("true"))
+                        keystore = (String)cdsiMap.
+                            get(SMSConstants.SMS_DATASTORE_KEYSTORE);
                     LDAPCommon ldc = new LDAPCommon(dsHost, dsPort,
-                            dsDirmgrdn, dsDirmgrpwd, dsRootSuffix);
+                            dsDirmgrdn, dsDirmgrpwd, dsRootSuffix, keystore);
                     String schemaString = (String)globalCfgMap.
                             get(SMSConstants.SMS_SCHEMNA_LIST + "." + dsType);
                     String schemaAttributes = (String)globalCfgMap.

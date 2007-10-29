@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCommon.java,v 1.3 2007-09-18 00:35:06 bt199000 Exp $
+ * $Id: LDAPCommon.java,v 1.4 2007-10-29 23:38:51 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
 
+import netscape.ldap.factory.JSSESocketFactory;
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPAttributeSchema;
 import netscape.ldap.LDAPAttributeSet;
@@ -40,6 +41,7 @@ import netscape.ldap.util.LDIFContent;
 import netscape.ldap.util.LDIFModifyContent;
 import netscape.ldap.util.LDIFRecord;
 import java.io.IOException;
+import java.security.Security;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,7 @@ public class LDAPCommon extends TestCommon {
     private String dsdirmgrpwd;
     private String dsrootsuffix;
     private String basedir;
+    private String keystore;
     private static LDAPConnection ld = null;
     private String fileSeparator = System.getProperty("file.separator");
     
@@ -74,8 +77,10 @@ public class LDAPCommon extends TestCommon {
      * @param    du  Directory Server admin dn
      * @param    dw  Directory Server password
      * @param    dr  Directory Server root suffix dn
+     * @param    ks  keystore file
      */
-    public LDAPCommon(String dh, String dp, String du, String dw, String dr)
+    public LDAPCommon(String dh, String dp, String du, String dw, String dr, 
+            String ks)
     throws Exception {
         super("LDAPCommon");
         try {
@@ -84,6 +89,34 @@ public class LDAPCommon extends TestCommon {
             dsdirmgrdn = du;
             dsdirmgrpwd = dw;
             dsrootsuffix = dr;
+            keystore = ks;
+            basedir = getBaseDir();
+            log(Level.FINEST, "LDAPCommon", "LDAP info : " + dshost +
+                    ":" + dsport + ":" + dsdirmgrdn + ":" + dsdirmgrpwd);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    /**
+     * Create new instant for LDAPCommon
+     * @param    dh  Directory Server hostname
+     * @param    dp  Directory Server port number
+     * @param    du  Directory Server admin dn
+     * @param    dw  Directory Server password
+     * @param    dr  Directory Server root suffix dn
+     */
+    public LDAPCommon(String dh, String dp, String du, String dw, String dr) 
+    throws Exception {
+        super("LDAPCommon");
+        try {
+            dshost = dh;
+            dsport = dp;
+            dsdirmgrdn = du;
+            dsdirmgrpwd = dw;
+            dsrootsuffix = dr;
+            keystore = null;
             basedir = getBaseDir();
             log(Level.FINEST, "LDAPCommon", "LDAP info : " + dshost +
                     ":" + dsport + ":" + dsdirmgrdn + ":" + dsdirmgrpwd);
@@ -156,10 +189,12 @@ public class LDAPCommon extends TestCommon {
                             log(Level.FINE, "loadAMUserSchema", 
                                     "AM user schema " +  schemaFile + 
                                     " was loaded successful.");
-                        else
+                        else {
                             log(Level.SEVERE, "loadAMUserSchema", 
                                     "Failed to load AM user schema " + 
                                     schemaFile);
+                            assert false;
+                        }
                     } else
                         log(Level.FINE, "loadAMUserSchema", 
                                 "AM user schema file " +  schemaFile + 
@@ -257,16 +292,22 @@ public class LDAPCommon extends TestCommon {
                     ld.add(amEntry);
                 }
             } catch (LDAPException e) {
-                log(Level.FINEST, "createSchemaFromLDIF", "LDAP error " + 
-                        e.getLDAPResultCode() + " " + e.getLDAPErrorMessage());
+                log(Level.FINEST, "createSchemaFromLDIF", "LDAP return code " + 
+                        e.getLDAPResultCode());
+                if (e.getLDAPErrorMessage() != null)
+                    log(Level.FINEST, "createSchemaFromLDIF", "LDAP message " + 
+                        e.getLDAPErrorMessage());
                 switch (e.getLDAPResultCode()) {
                     case LDAPException.ATTRIBUTE_OR_VALUE_EXISTS:
-                        //throw e;
+                        log(Level.FINE, "createSchemaFromLDIF", 
+                                "Attribute already exists");
 			break;
                     case LDAPException.NO_SUCH_ATTRIBUTE:
                         // Ignore some attributes need to be deleted if present
                         break;
                     case LDAPException.ENTRY_ALREADY_EXISTS:
+                        log(Level.FINE, "createSchemaFromLDIF", 
+                                "Entry already exists");
                         LDAPModificationSet modSet = new LDAPModificationSet();
                         attrs = (content instanceof LDIFAttributeContent) ?
                             ((LDIFAttributeContent)
@@ -279,8 +320,8 @@ public class LDAPCommon extends TestCommon {
                             ld.modify(DN, modSet);
                         } catch (LDAPException ex) {
                             //Ignore the exception
-                            log(Level.FINEST, "createSchemaFromLDIF",
-                                    ex.getMessage());
+                            //log(Level.FINEST, "createSchemaFromLDIF",
+                                    //ex.getMessage());
                         }
                         break;
                     default:
@@ -297,7 +338,14 @@ public class LDAPCommon extends TestCommon {
     throws Exception {
         if (ld == null) {
             try {
-                ld = new LDAPConnection();
+                if (keystore != null) {
+                    Security.addProvider(
+                            new com.sun.net.ssl.internal.ssl.Provider());
+                    System.setProperty("javax.net.ssl.trustStore",keystore);
+                    JSSESocketFactory lds = new JSSESocketFactory(null);
+                    ld = new LDAPConnection(lds);
+                } else
+                    ld = new LDAPConnection();
                 ld.setConnectTimeout(300);
                 ld.connect(3, dshost,
                         Integer.parseInt(dsport), dsdirmgrdn, dsdirmgrpwd);

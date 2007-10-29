@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSConstants.java,v 1.3 2007-09-18 00:24:47 bt199000 Exp $
+ * $Id: SMSConstants.java,v 1.4 2007-10-29 23:37:17 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,6 +72,11 @@ public interface SMSConstants {
      * Datastore type
      */
     static final String SMS_DATASTORE_TYPE = "datastore-type";
+    
+    /**
+     * Datastore keystore
+     */
+    static final String SMS_DATASTORE_KEYSTORE = "datastore-keystore";
     
     /**
      * Datastore type key for Sun DS with AM schema

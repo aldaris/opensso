@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.7 2007-10-16 22:16:21 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.8 2007-10-29 23:36:48 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,6 +137,7 @@ public class SetupProduct extends TestCommon {
                             String roleAtt;
                             String userObjClass;
                             String userAtt;
+                            String keystore;
 
                             for (int i = 0; i < dCount; i++) {
                                 dsType = cfg1Data.getString(SMSConstants.
@@ -274,9 +275,16 @@ public class SetupProduct extends TestCommon {
                                     famadm.createDatastore(webClient, dsRealm,
                                             dsName, dsType, list);
                                 list.clear();
+                                if (sslEnabled.equals("true"))
+                                    keystore = cfg1Data.getString(SMSConstants.
+                                        SMS_DATASTORE_PARAMS_PREFIX + "0." +
+                                        SMSConstants.SMS_DATASTORE_KEYSTORE
+                                        + "." + i);
+                                else
+                                    keystore = null;
                                 LDAPCommon ldc = new LDAPCommon(ldapServer,
                                         ldapPort, adminId, dsAdminPassword,
-                                        orgName);
+                                        orgName, keystore);
                                 ResourceBundle smsGblCfg = ResourceBundle.
                                         getBundle("SMSGlobalConfig");
                                 String schemaString = (String)smsGblCfg.
