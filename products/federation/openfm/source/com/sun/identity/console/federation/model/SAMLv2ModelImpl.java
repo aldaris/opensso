@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.4 2007-10-26 21:41:27 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.5 2007-10-29 23:41:06 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,7 +70,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private SAML2MetaManager metaManager;
     private static Map extendedMetaIdpMap = new HashMap(42);
     private static Map extendedMetaSpMap = new HashMap(54);
-    
+    private static Map xacmlPDPExtendedMeta = new HashMap(12);
+    private static Map xacmlPEPExtendedMeta = new HashMap(12);
+
     //extended metadata attributes for idp only
     static {
         extendedMetaIdpMap.put(IDP_SIGN_CERT_ALIAS, Collections.EMPTY_SET);
@@ -130,6 +132,47 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaSpMap.put(WANT_ASSERTION_ENCRYPTED, 
                 Collections.EMPTY_SET);
         extendedMetaSpMap.put(WANT_ARTIF_RESP_SIGN, Collections.EMPTY_SET);
+    }
+
+    static {
+        xacmlPDPExtendedMeta.put(ATTR_WANT_ASSERTION_SIGNED,
+            Collections.EMPTY_LIST);
+        xacmlPDPExtendedMeta.put(ATTR_SIGNING_CERT_ALIAS,
+            Collections.EMPTY_LIST);
+        xacmlPDPExtendedMeta.put(ATTR_ENCRYPTION_CERT_ALIAS,
+            Collections.EMPTY_LIST);
+        xacmlPDPExtendedMeta.put(ATTR_BASIC_AUTH_ON,
+            Collections.EMPTY_LIST);
+        xacmlPDPExtendedMeta.put(ATTR_BASIC_AUTH_USER,
+            Collections.EMPTY_LIST);
+        xacmlPDPExtendedMeta.put(ATTR_BASIC_AUTH_PASSWORD,
+            Collections.EMPTY_LIST);
+        xacmlPDPExtendedMeta.put(ATTR_WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED,
+            Collections.EMPTY_LIST);
+        xacmlPDPExtendedMeta.put(ATTR_WANT_ASSERTION_ENCRYPTED,
+            Collections.EMPTY_LIST);
+        xacmlPDPExtendedMeta.put(ATTR_COTLIST,
+            Collections.EMPTY_LIST);
+    }
+    static {
+        xacmlPEPExtendedMeta.put(ATTR_WANT_ASSERTION_SIGNED,
+            Collections.EMPTY_LIST);
+        xacmlPEPExtendedMeta.put(ATTR_SIGNING_CERT_ALIAS,
+            Collections.EMPTY_LIST);
+        xacmlPEPExtendedMeta.put(ATTR_ENCRYPTION_CERT_ALIAS,
+            Collections.EMPTY_LIST);
+        xacmlPEPExtendedMeta.put(ATTR_BASIC_AUTH_ON,
+            Collections.EMPTY_LIST);
+        xacmlPEPExtendedMeta.put(ATTR_BASIC_AUTH_USER,
+            Collections.EMPTY_LIST);
+        xacmlPEPExtendedMeta.put(ATTR_BASIC_AUTH_PASSWORD,
+            Collections.EMPTY_LIST);
+        xacmlPEPExtendedMeta.put(ATTR_WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED,
+            Collections.EMPTY_LIST);
+        xacmlPEPExtendedMeta.put(ATTR_WANT_ASSERTION_ENCRYPTED,
+            Collections.EMPTY_LIST);
+        xacmlPEPExtendedMeta.put(ATTR_COTLIST,
+            Collections.EMPTY_LIST);
     }
     
     public SAMLv2ModelImpl(HttpServletRequest req, Map map) {
@@ -861,8 +904,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param realm realm of Entity
      * @param entityName entity name of Entity Descriptor.
      * @return key-value pair Map of PEP descriptor data.
+     * @throws AMConsoleException if unable to retrieve the PEP 
+     *         standard metadata attributes      
      */
-    public Map getPEPDescriptor(String realm, String entityName) {
+    public Map getPEPDescriptor(
+        String realm,
+        String entityName
+    ) throws AMConsoleException {
+        String[] params = {realm, entityName,"SAMLv2", "XACML PEP"};
+        logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
+        
         Map data = null;
         try {
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
@@ -882,9 +933,14 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     data.put(ATTR_WANT_ASSERTION_SIGNED, "false");
                 }
             }
+            logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
-            debug.warning("SAMLv2ModelImpl.getPEPDescriptor", e);
-        }
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "XACML PEP", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", paramsEx);
+            throw new AMConsoleException(strError);
+        } 
         return (data != null) ? data : Collections.EMPTY_MAP;
     }
     
@@ -894,8 +950,15 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param realm realm of Entity
      * @param entityName entity name of Entity Descriptor.
      * @return key-value pair Map of PDP descriptor data.
+     * @throws AMConsoleException if unable to retrieve the PDP 
+     *         standard metadata attribute   
      */
-    public Map getPDPDescriptor(String realm, String entityName) {
+    public Map getPDPDescriptor(String realm, String entityName) 
+        throws AMConsoleException 
+    {
+        String[] params = {realm, entityName,"SAMLv2", "XACML PDP"};
+        logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
+         
         Map data = null;
         try {
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
@@ -923,9 +986,14 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         authzService.getLocation()));
                 }
             }
+            logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
-            debug.warning("SAMLv2ModelImpl.getPDPDescriptor", e); 
-        }
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "XACML PDP", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", paramsEx);
+            throw new AMConsoleException(strError);
+        } 
         return (data != null) ? data : Collections.EMPTY_MAP;
     }
 
@@ -936,12 +1004,17 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param entityName name of entity descriptor.
      * @param location if the entity is remote or hosted.
      * @return key-value pair Map of PEP config data.
+     * @throws AMConsoleException if unable to retrieve the PEP 
+     *         extended metadata attribute     
      */
-    public Map getPEPConfig (
-        String realm, 
-        String entityName, 
+    public Map getPEPConfig(
+        String realm,
+        String entityName,
         String location
-    ) {
+    ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "XACML PEP"};
+        logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
+        
         Map data = null;
         List configList = null;
         String metaAlias = null;
@@ -964,9 +1037,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         returnEmptySetIfValueIsNull(atype.getValue()));
                 }
                 data.put("metaAlias", metaAlias);
-            }
+            }  else {
+                createEntityConfig(realm, entityName, "PEP", location);
+            }            
+            logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
-            debug.warning("SAMLv2ModelImpl.getPEPConfig", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "XACML PEP", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", paramsEx);
+            throw new AMConsoleException(strError);
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
     }
@@ -975,10 +1055,20 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * Returns a Map of PDP Config data. (Extended Metadata)
      *
      * @param realm realm of Entity
-     * @param entityName entity name of Entity Descriptor.
+     * @param entityName entity name of Entity Descriptor
+     * @param location location of entity(hosted or remote) 
      * @return key-value pair Map of PPP config data.
+     * @throws AMConsoleException if unable to retrieve the PDP 
+     *         extended metadata attribute   
      */
-    public Map getPDPConfig(String realm, String entityName, String location) {
+    public Map getPDPConfig(
+        String realm,
+        String entityName,
+        String location
+    ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "XACML PDP"};
+        logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
+        
         Map data = null;
         List configList = null;
         String metaAlias = null;
@@ -1000,9 +1090,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
 		        returnEmptySetIfValueIsNull(atype.getValue()));
                 }
                 data.put("metaAlias", metaAlias);
+            } else {
+                createEntityConfig(realm, entityName, "PDP", location);
             }
+            logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
-            debug.warning("SAMLv2ModelImpl.getPDPConfig", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "XACML PDP", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", paramsEx);
+            throw new AMConsoleException(strError);
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
     }
@@ -1013,13 +1110,17 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param realm realm of Entity.
      * @param entityName entity name of Entity Descriptor.
      * @param attrValues key-value pair Map of PDP standed data.
-     * throws AMConsoleException if there is an error.
+     * @throws AMConsoleException if fails to modify/save the PDP 
+     *         standard metadata attribute   
      */
     public void updatePDPDescriptor(
         String realm,
         String entityName,
         Map attrValues
     ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "XACML PDP"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
+      
         try {
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
@@ -1039,11 +1140,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             ATTR_XACML_AUTHZ_SERVICE_LOCATION)));
                 }
             }
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
         } catch (SAML2MetaException e) {
-            debug.warning("SAMLv2ModelImpl.updatePDPDescriptor", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "XACML PDP", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
         }
     }
-    
+ 
     /**
      * Save extended metadata for PDP Config.
      *
@@ -1051,13 +1157,18 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param entityName entity name of Entity Descriptor.
      * @param location entity is remote or hosted.
      * @param attrValues key-value pair Map of PDP extended config.
+     * @throws AMConsoleException if fails to modify/save the PDP 
+     *         extended metadata attribute      
      */
     public void updatePDPConfig(
         String realm,
         String entityName,
         String location,
         Map attrValues
-    ) throws AMConsoleException, JAXBException {
+    ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "XACML PDP"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
+           
         try {
             ObjectFactory objFactory = new ObjectFactory();
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
@@ -1068,7 +1179,6 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 throw new AMConsoleException("invalid.xacml.configuration");
             } else {
                 List list = pdpEntityConfig.getAttribute();
-                list.clear();
                 Map values = convertSetToListInMap(attrValues);
                 for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
                     String key = (String)i.next();
@@ -1078,13 +1188,21 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     list.add(atype);
                 }
             }
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
+        } catch (JAXBException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "XACML PDP", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
         } catch (SAML2MetaException e) {
-            if (debug.warningEnabled()) {
-            throw new AMConsoleException(getErrorString(e));
-            }
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "XACML PDP", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
         }
-    }
-    
+    } 
     /**
      * Save the standard metadata for PEP descriptor.
      *
@@ -1108,13 +1226,18 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param entityName entity name of Entity Descriptor.
      * @param location entity is remote or hosted
      * @param attrValues key-value pair Map of PEP extended config.
+     * @throws AMConsoleException if fails to modify/save the PEP 
+     *         extended metadata attributes   
      */
     public void updatePEPConfig(
         String realm,
         String entityName,
         String location,
         Map attrValues
-    ) throws AMConsoleException, JAXBException {
+    ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "XACML PEP"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
+            
         try {
             ObjectFactory objFactory = new ObjectFactory();
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
@@ -1125,7 +1248,6 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 throw new AMConsoleException("invalid.xacml.configuration");
             } else {
                 List list = pepEntityConfig.getAttribute();
-                list.clear();
                 Map values = convertSetToListInMap(attrValues);
                 for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
                     String key = (String)i.next();
@@ -1135,11 +1257,102 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     list.add(atype);
                 }
             }
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
+        } catch (JAXBException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "XACML PEP", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
         } catch (SAML2MetaException e) {
-            throw new AMConsoleException(getErrorString(e));
+            String strError = getErrorString(e);
+            String[] paramsEx =
+                {realm, entityName, "SAMLv2", "XACML PEP", strError}; 
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
+        }
+    } 
+    /**
+     * create Entity Config Object.(Extended Metadata)
+     *
+     * @param realm realm of Entity
+     * @param entityName entity name of Entity Descriptor.
+     * @param role role of provider (SP, IDP, PDP or PEP)
+     * @param location entity is remote or hosted
+     * @throws AMConsoleException if creation fails
+     */
+    private void createEntityConfig(
+        String realm,
+        String entityName,
+        String role,
+        String location
+    ) throws AMConsoleException {
+        String classMethod = "SAMLv2ModelImpl.createEntityConfig: ";
+        
+        try {
+            SAML2MetaManager manager = getSAML2MetaManager();
+            ObjectFactory objFactory = new ObjectFactory();
+            // Check whether the entity id existed in the DS
+            EntityDescriptorElement entityDesc =
+                manager.getEntityDescriptor(realm, entityName);
+            
+            if (entityDesc == null) {
+                throw new AMConsoleException(classMethod +
+                    "invalid EntityName : " +
+                    entityName);
+            }
+            EntityConfigElement entityConfig =
+                manager.getEntityConfig(realm, entityName);
+            if (entityConfig == null) {
+                entityConfig =
+                    objFactory.createEntityConfigElement();
+                // add to entityConfig
+                entityConfig.setEntityID(entityName);
+                if (location.equals("remote")) {
+                    entityConfig.setHosted(false);
+                } else {
+                    entityConfig.setHosted(true);
+                }
+            }
+            
+            // create entity config and add the attribute
+            BaseConfigType baseCfgType = null;
+            
+            // Decide which role EntityDescriptorElement includes
+            // It could have one PDP and one PEP.
+            if ((role.equals("PDP")) &&
+                (SAML2MetaUtils.getPolicyDecisionPointDescriptor(entityDesc) != null)) {
+                baseCfgType = objFactory.createXACMLPDPConfigElement();
+                for (Iterator iter = xacmlPDPExtendedMeta.keySet().iterator();
+                iter.hasNext(); ) {
+                    AttributeType atype = objFactory.createAttributeType();
+                    String key = (String)iter.next();
+                    atype.setName(key);
+                    atype.getValue().addAll((List)xacmlPDPExtendedMeta.get(key));
+                    baseCfgType.getAttribute().add(atype);
+                }
+                entityConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig().add(baseCfgType);
+            } else if ((role.equals("PEP")) &&
+                (SAML2MetaUtils.getPolicyEnforcementPointDescriptor(entityDesc) != null)) {
+                baseCfgType = objFactory.createXACMLAuthzDecisionQueryConfigElement();
+                for (Iterator iter = xacmlPEPExtendedMeta.keySet().iterator();
+                iter.hasNext(); ) {
+                    AttributeType atype = objFactory.createAttributeType();
+                    String key = (String)iter.next();
+                    atype.setName(key);
+                    atype.getValue().addAll((List)xacmlPEPExtendedMeta.get(key));
+                    baseCfgType.getAttribute().add(atype);
+                }
+                entityConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig().add(baseCfgType);
+            }
+            manager.setEntityConfig(realm, entityConfig);
+        } catch (JAXBException e) {
+            throw new AMConsoleException(e);
+        } catch (SAML2MetaException e){
+            throw new AMConsoleException(e);
         }
     }
-    
+
     protected SAML2MetaManager getSAML2MetaManager() throws SAML2MetaException {
         if (metaManager == null) {
             metaManager = new SAML2MetaManager();

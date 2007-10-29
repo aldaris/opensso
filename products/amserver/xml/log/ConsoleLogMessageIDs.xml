@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: ConsoleLogMessageIDs.xml,v 1.3 2007-10-17 23:00:52 veiming Exp $
+    $Id: ConsoleLogMessageIDs.xml,v 1.4 2007-10-29 23:40:07 asyhuang Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -3168,7 +3168,9 @@
         loglevel="LL_INFO"
         description="Attempt to create entity descriptor.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
             <item>descriptor type</item>
         </datainfo>
         <triggers>
@@ -3179,7 +3181,9 @@
         loglevel="LL_INFO"
         description="Creation entity descriptor succeeded">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
             <item>descriptor type</item>
         </datainfo>
         <triggers>
@@ -3191,7 +3195,9 @@
         loglevel="LL_SEVERE"
         description="Creation entity descriptor failed.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
             <item>descriptor type</item>
             <item>error message</item>
         </datainfo>
@@ -3246,7 +3252,9 @@
         loglevel="LL_INFO"
         description="Attempt to get attribute values of an affiliate entity descriptor.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
         </datainfo>
         <triggers>
             <item>View affiliate entity descriptor profile page.</item>
@@ -3257,7 +3265,9 @@
         loglevel="LL_INFO"
         description="Getting of attribute values of an affiliate entity descriptor succeeded.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
         </datainfo>
         <triggers>
             <item>View affiliate entity descriptor profile page.</item>
@@ -3268,7 +3278,9 @@
         loglevel="LL_SEVERE"
         description="Getting of attribute values of an affiliate entity descriptor failed.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
             <item>error message</item>
         </datainfo>
         <triggers>
@@ -3284,7 +3296,9 @@
         loglevel="LL_INFO"
 	description="Attempt to modify an affiliate entity descriptor.">
 	<datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
         </datainfo>
         <triggers>
             <item>Click on Save button of affiliate entity descriptor profile page.</item>
@@ -3295,7 +3309,9 @@
         loglevel="LL_INFO"
         description="Modification of an affiliate entity descriptor succeeded.">
         <datainfo>
-	    <item>descriptor name</item>
+	    <item>descriptor realm</item>
+            <item>descriptor name</item>
+            <item>descriptor protocol</item>
 	</datainfo>
         <triggers>
             <item>Click on Save button of affiliate entity descriptor profile page.</item>
@@ -3306,7 +3322,9 @@
 	loglevel="LL_SEVERE"
         description="Modification of an affiliate entity descriptor failed.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
             <item>error message</item>
         </datainfo>
         <triggers>
@@ -3335,8 +3353,11 @@
     <logmessage name="ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES" id="1051"
 	loglevel="LL_INFO"
         description="Attempt to get attribute values of an entity descriptor.">
-        <datainfo>
+        <datainfo>            
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
+            <item>descriptor type</item>
         </datainfo>
         <triggers>
             <item>View entity descriptor profile page.</item>
@@ -3347,7 +3368,10 @@
         loglevel="LL_INFO"
 	description="Getting attribute values of entity descriptor succeeded.">
         <datainfo>
-	    <item>descriptor name</item>
+	    <item>descriptor realm</item>
+            <item>descriptor name</item>
+            <item>descriptor protocol</item>
+            <item>descriptor type</item>
         </datainfo>
         <triggers>
             <item>View entity descriptor profile page.</item>
@@ -3358,7 +3382,10 @@
         loglevel="LL_SEVERE"
         description="Getting attribute values of entity descriptor failed.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
+            <item>descriptor type</item>
             <item>error message</item>
         </datainfo>
         <triggers>
@@ -3374,7 +3401,10 @@
         loglevel="LL_INFO"
         description="Attempt to modify entity descriptor.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
+            <item>descriptor type</item>
         </datainfo>
         <triggers>
             <item>Click on Save button in entity descriptor profile page.</item>       </triggers>
@@ -3384,7 +3414,10 @@
         loglevel="LL_INFO"
         description="Modification of entity descriptor succeeded.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
+            <item>descriptor type</item>
         </datainfo>
         <triggers>
             <item>Click on Save button in entity descriptor profile page.</item>
@@ -3395,7 +3428,10 @@
         loglevel="LL_SEVERE"
         description="Modification of entity descriptor failed.">
         <datainfo>
+            <item>descriptor realm</item>
             <item>descriptor name</item>
+            <item>descriptor protocol</item>
+            <item>descriptor type</item>
             <item>error message</item>
         </datainfo>
         <triggers>

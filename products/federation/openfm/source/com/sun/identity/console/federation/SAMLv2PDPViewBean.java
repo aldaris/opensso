@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2PDPViewBean.java,v 1.1 2007-10-09 01:10:04 asyhuang Exp $
+ * $Id: SAMLv2PDPViewBean.java,v 1.2 2007-10-29 23:40:44 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,11 +58,16 @@ public class SAMLv2PDPViewBean extends SAMLv2Base {
                 
     private void populateValue() {      
         SAMLv2Model model =
-            (SAMLv2Model)getModelInternal();              
-        Map values = model.getPDPDescriptor(realm, entityName);                 
-        values.putAll(model.getPDPConfig(realm, entityName, location));
-        AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
-        ps.setAttributeValues(values, model);      
+            (SAMLv2Model)getModelInternal();   
+        try {           
+            Map values = model.getPDPDescriptor(realm, entityName);                 
+            values.putAll(model.getPDPConfig(realm, entityName, location));
+            AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+            ps.setAttributeValues(values, model);      
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                e.getMessage());
+        }
     } 
     
     protected void createPropertyModel() {
@@ -107,11 +112,7 @@ public class SAMLv2PDPViewBean extends SAMLv2Base {
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());
-        } catch (JAXBException e){
-            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
-        }
-        
+        } 
         forwardTo();
     }
 }

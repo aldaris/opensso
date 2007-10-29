@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.4 2007-10-26 21:40:54 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.5 2007-10-29 23:41:06 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -321,26 +321,37 @@ public interface SAMLv2Model
      * @param realm realm of Entity
      * @param entityName entity name of Entity Descriptor.
      * @return key-value pair Map of PEP descriptor data.
+     * @throws AMConsoleException if unable to retrieve the PEP 
+     *         standard metadata attribute 
      */
-    public Map getPEPDescriptor(String realm, String entityName);
-    
+    public Map getPEPDescriptor(String realm, String entityName)
+        throws AMConsoleException;  
     /**
      * Returns a Map of PDP descriptor data.(Standard Metadata)
      *
      * @param realm realm of Entity
      * @param entityName entity name of Entity Descriptor.
      * @return key-value pair Map of PDP descriptor data.
+     * @throws AMConsoleException if unable to retrieve the PDP 
+     *         standard metadata attribute 
      */
-    public Map getPDPDescriptor(String realm, String entityName);
+    public Map getPDPDescriptor(String realm, String entityName)
+        throws AMConsoleException; 
     
     /**
      * Returns a Map of PEP config data.(Extended Metadata)
      *
      * @param realm realm of Entity
      * @param entityName entity name of Entity Descriptor.
-     * @param location entity is remote or hosted     
+     * @param location entity is remote or hosted    
+     * @throws AMConsoleException if unable to retrieve the PEP 
+     *         extended metadata attribute      
      */
-    public Map getPEPConfig(String realm, String entityName, String location);
+    public Map getPEPConfig(
+        String realm, 
+        String entityName, 
+        String location
+    ) throws AMConsoleException; 
     
     /**
      * Returns a Map of PDP Config data.(Extended Metadata)
@@ -348,8 +359,14 @@ public interface SAMLv2Model
      * @param realm where entity exists.
      * @param entityName entity name of Entity Descriptor.
      * @param location entity is remote or hosted
+     * @throws AMConsoleException if unable to retrieve the PEP 
+     *         extended metadata attribute     
      */
-    public Map getPDPConfig(String realm, String entityName, String location);
+    public Map getPDPConfig(
+        String realm, 
+        String entityName, 
+        String location
+    ) throws AMConsoleException; 
     
     /**
      * save data for PDP descriptor data.(Standard Metadata)
@@ -357,7 +374,7 @@ public interface SAMLv2Model
      * @param realm where entity exists.
      * @param entityName entity name of Entity Descriptor.
      * @param attrValues key-value pair Map of PDP standed data.
-     * throws AMConsoleException if there is an error
+     * @throws AMConsoleException if there is an error
      */    
     public void updatePDPDescriptor(
         String realm,
@@ -378,7 +395,7 @@ public interface SAMLv2Model
         String entityName,        
         String location,
         Map attrValues
-    ) throws AMConsoleException, JAXBException;
+    ) throws AMConsoleException;
     
     /**
      * save data for PEP descriptor data.(Standard Metadata)
@@ -386,13 +403,13 @@ public interface SAMLv2Model
      * @param realm realm of Entity
      * @param entityName name of Entity Descriptor.
      * @param attrValues key-value pair Map of PEP descriptor data.
-     * throws AMConsoleException if there is an error
+     * @throws AMConsoleException if there is an error
      */    
     public void updatePEPDescriptor(
         String realm,
         String entityName,       
         Map attrValues
-    ) throws AMConsoleException ;
+    ) throws AMConsoleException;
     
         
     /**
@@ -402,11 +419,12 @@ public interface SAMLv2Model
      * @param entityName name of Entity Descriptor.
      * @param location entity is remote or hosted.
      * @param attrValues key-value pair Map of PEP extended config.
+     * @throws AMConsoleException if there is an error
      */
     public void updatePEPConfig(
         String realm,
         String entityName,       
         String location,
         Map attrValues
-    ) throws AMConsoleException, JAXBException;
+    ) throws AMConsoleException;
 }
