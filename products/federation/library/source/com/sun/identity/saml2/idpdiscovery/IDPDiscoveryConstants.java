@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPDiscoveryConstants.java,v 1.1 2006-10-30 23:16:18 qcheng Exp $
+ * $Id: IDPDiscoveryConstants.java,v 1.2 2007-10-29 16:56:10 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,9 +52,9 @@ public interface IDPDiscoveryConstants {
                         "com.sun.identity.saml2.idpdiscovery.cookiedomain";
     public static final String HTTPS = "https"; 
     public static final String DEBUG_LEVEL = 
-                        "com.sun.identity.services.debug.level";  
+                        "com.iplanet.services.debug.level";  
     public static final String DEBUG_DIR = 
-                        "com.sun.identity.services.debug.directory";
+                        "com.iplanet.services.debug.directory";
     public static final String NO_DIR = 
                         "com.sun.identity.services.debug.nodir";    
     public static final String AM_COOKIE_SECURE = 

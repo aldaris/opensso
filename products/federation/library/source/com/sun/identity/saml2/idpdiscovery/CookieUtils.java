@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.2 2007-02-15 21:47:42 qcheng Exp $
+ * $Id: CookieUtils.java,v 1.3 2007-10-29 16:56:09 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,6 @@ package com.sun.identity.saml2.idpdiscovery;
 import java.util.StringTokenizer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.encode.URLEncDec;
 
 /**
@@ -39,15 +38,15 @@ import com.sun.identity.shared.encode.URLEncDec;
 
 public class CookieUtils {
     static boolean secureCookie =
-        (SystemPropertiesManager.get(IDPDiscoveryConstants.AM_COOKIE_SECURE)
-        != null &&
-        SystemPropertiesManager.get(IDPDiscoveryConstants.AM_COOKIE_SECURE).
-        equalsIgnoreCase("true"));
+        (SystemProperties.get(IDPDiscoveryConstants.AM_COOKIE_SECURE)
+            != null &&
+        SystemProperties.get(IDPDiscoveryConstants.AM_COOKIE_SECURE).
+           equalsIgnoreCase("true"));
     static boolean cookieEncoding =
-        (SystemPropertiesManager.get(IDPDiscoveryConstants.AM_COOKIE_ENCODE)
-        != null &&
-        SystemPropertiesManager.get(IDPDiscoveryConstants.AM_COOKIE_ENCODE).
-        equalsIgnoreCase("true"));
+        (SystemProperties.get(IDPDiscoveryConstants.AM_COOKIE_ENCODE)
+           != null &&
+        SystemProperties.get(IDPDiscoveryConstants.AM_COOKIE_ENCODE).
+           equalsIgnoreCase("true"));
     private static int defAge = -1;
     public static Debug debug = Debug.getInstance("libIDPDiscovery");
 
@@ -85,7 +84,7 @@ public class CookieUtils {
                 // Check property value and it decode value
                 // Bea, IBM
                 if (cookieEncoding && (cookieValue != null)) {
-                    cookieValue= AMURLEncDec.decode(cookieValue);
+                    cookieValue= URLEncDec.decode(cookieValue);
                 }
             } else {
                 debug.message("No Cookie is in the request");
@@ -127,152 +126,152 @@ public class CookieUtils {
     }
               
         
-        /**
-         * Constructs a cookie with a specified name and value.
-         *
-         * @param name  a String specifying the name of the cookie
-         *
-         * @param value  a String specifying the value of the cookie
-         *
-         * @return constructed cookie
-         */
-        public static Cookie newCookie(String name, String value) {
-            return newCookie(name, value, defAge, null, null);
-        }
+    /**
+     * Constructs a cookie with a specified name and value.
+     *
+     * @param name  a String specifying the name of the cookie
+     *
+     * @param value  a String specifying the value of the cookie
+     *
+     * @return constructed cookie
+     */
+    public static Cookie newCookie(String name, String value) {
+        return newCookie(name, value, defAge, null, null);
+    }
+    
+    /**
+     * Constructs a cookie with a specified name and value and sets
+     * the maximum age of the cookie in seconds.
+     *
+     * @param name  a String specifying the name of the cookie
+     *
+     * @param value  a String specifying the value of the cookie
+     *
+     * @param maxAge an integer specifying the maximum age of the cookie in 
+     * seconds; if negative, means the cookie is not stored; 
+     * if zero, deletes the cookie
+     *
+     * @return constructed cookie
+     */
+    public static Cookie newCookie(String name, String value, int maxAge) {
+        return newCookie(name, value, maxAge, null, null);
+    }
+
+    /**
+     * Constructs a cookie with a specified name and value and sets
+     * a path for the cookie to which the client should return the cookie.
+     *
+     * @param name  a String specifying the name of the cookie
+     *
+     * @param value  a String specifying the value of the cookie
+     *
+     * @param path a String specifying a path 
+     *
+     * @return constructed cookie
+     */
+    public static Cookie newCookie(String name, String value, String path) {
+        return newCookie(name, value, defAge, path, null);
+    }
+
+    /**
+     * Constructs a cookie with a specified name and value and sets
+     * a path for the cookie to which the client should return the cookie
+     * and sets the domain within which this cookie should be presented.
+     *
+     * @param name  a String specifying the name of the cookie
+     *
+     * @param value  a String specifying the value of the cookie
+     *
+     * @param path a String specifying a path 
+     *
+     * @param domain a String containing the domain name within which 
+     * this cookie is visible; form is according to <code>RFC 2109</code>
+     *
+     * @return constructed cookie
+     */
+    public static Cookie newCookie
+                  (String name, String value, String path, String domain) {
+        return newCookie(name, value, defAge, path, domain);
+    }
+
+    /**
+     * Constructs a cookie with a specified name and value and sets
+     * the maximum age of the cookie in seconds and sets
+     * a path for the cookie to which the client should return the cookie
+     * and sets the domain within which this cookie should be presented.
+     *
+     * @param name  a String specifying the name of the cookie
+     *
+     * @param value  a String specifying the value of the cookie
+     *
+     * @param maxAge an integer specifying the maximum age of the cookie in 
+     * seconds; if negative, means the cookie is not stored; 
+     * if zero, deletes the cookie
+     *
+     * @param path a String specifying a path 
+     *
+     * @param domain a String containing the domain name within which 
+     * this cookie is visible; form is according to RFC 2109
+     *
+     * @return constructed cookie
+     */
+    public static Cookie newCookie
+      (String name, String value, int maxAge, String path, String domain) {
+        Cookie cookie = null;
         
-        /**
-         * Constructs a cookie with a specified name and value and sets
-         * the maximum age of the cookie in seconds.
-         *
-         * @param name  a String specifying the name of the cookie
-         *
-         * @param value  a String specifying the value of the cookie
-         *
-         * @param maxAge an integer specifying the maximum age of the cookie in 
-         * seconds; if negative, means the cookie is not stored; 
-         * if zero, deletes the cookie
-         *
-         * @return constructed cookie
-         */
-        public static Cookie newCookie(String name, String value, int maxAge) {
-            return newCookie(name, value, maxAge, null, null);
+        // Based on property value it does url encoding.
+        // BEA, IBM
+        if (cookieEncoding) {
+            cookie = new Cookie(name, URLEncDec.encode(value));
+        } else {
+            cookie = new Cookie(name, value);
         }
 
-        /**
-         * Constructs a cookie with a specified name and value and sets
-         * a path for the cookie to which the client should return the cookie.
-         *
-         * @param name  a String specifying the name of the cookie
-         *
-         * @param value  a String specifying the value of the cookie
-         *
-         * @param path a String specifying a path 
-         *
-         * @return constructed cookie
-         */
-        public static Cookie newCookie(String name, String value, String path) {
-            return newCookie(name, value, defAge, path, null);
-        }
+        cookie.setMaxAge(maxAge);
 
-        /**
-         * Constructs a cookie with a specified name and value and sets
-         * a path for the cookie to which the client should return the cookie
-         * and sets the domain within which this cookie should be presented.
-         *
-         * @param name  a String specifying the name of the cookie
-         *
-         * @param value  a String specifying the value of the cookie
-         *
-         * @param path a String specifying a path 
-         *
-         * @param domain a String containing the domain name within which 
-         * this cookie is visible; form is according to <code>RFC 2109</code>
-         *
-         * @return constructed cookie
-         */
-        public static Cookie newCookie
-                      (String name, String value, String path, String domain) {
-            return newCookie(name, value, defAge, path, domain);
+        if ((path != null) && (path.length() > 0)) {
+            cookie.setPath(path);
+        } else {
+            cookie.setPath("/");
         }
-
-        /**
-         * Constructs a cookie with a specified name and value and sets
-         * the maximum age of the cookie in seconds and sets
-         * a path for the cookie to which the client should return the cookie
-         * and sets the domain within which this cookie should be presented.
-         *
-         * @param name  a String specifying the name of the cookie
-         *
-         * @param value  a String specifying the value of the cookie
-         *
-         * @param maxAge an integer specifying the maximum age of the cookie in 
-         * seconds; if negative, means the cookie is not stored; 
-         * if zero, deletes the cookie
-         *
-         * @param path a String specifying a path 
-         *
-         * @param domain a String containing the domain name within which 
-         * this cookie is visible; form is according to RFC 2109
-         *
-         * @return constructed cookie
-         */
-        public static Cookie newCookie
-          (String name, String value, int maxAge, String path, String domain) {
-            Cookie cookie = null;
             
-            // Based on property value it does url encoding.
-            // BEA, IBM
-            if (cookieEncoding) {
-                cookie = new Cookie(name, URLEncDec.encode(value));
-            } else {
-                cookie = new Cookie(name, value);
-            }
-
-            cookie.setMaxAge(maxAge);
-
-            if ((path != null) && (path.length() > 0)) {
-                cookie.setPath(path);
-            } else {
-                cookie.setPath("/");
-            }
-                
-            if ((domain != null) && (domain.length() > 0)) {
-                cookie.setDomain(domain);
-            }
-
-            cookie.setSecure(isCookieSecure());
-                
-            return cookie;
+        if ((domain != null) && (domain.length() > 0)) {
+            cookie.setDomain(domain);
         }
-        
-        /**
-         * Gets the preferred cookie name based on the HttpRequest URI. 
-         *
-         * @param reqURI  a String specifying the HttpRequest URI.
-         *
-         * @return the preferred cookie name.
-         *         _saml_idp if the HttpRequest URI matches the SAML2 
-         *         reader or writer servlet uri. 
-         *         _liberty_idp if the HttpRequest URI matches the IDFF 
-         *         reader or writer servlet uri. 
-         *         return empty string if no above match found. 
-         *         return null if the input HttpRequest uri is null or empty.
-         */
-        public static String getPreferCookieName( String reqURI) 
-        {
-           if (reqURI != null &&  !reqURI.equals("")) { 
-               if (reqURI.endsWith(IDPDiscoveryConstants.IDFF_READER_URI) ||
-                   reqURI.endsWith(IDPDiscoveryConstants.IDFF_WRITER_URI)) { 
-                   return(IDPDiscoveryConstants.IDFF_COOKIE_NAME); 
-               } else if (reqURI.endsWith(
-                   IDPDiscoveryConstants.SAML2_READER_URI) ||
-                   reqURI.endsWith(IDPDiscoveryConstants.SAML2_WRITER_URI)) { 
-                   return(IDPDiscoveryConstants.SAML2_COOKIE_NAME);
-               } else {
-                   return "";
-               }
-            } else {
-                return null;
-            }
-        }       
+
+        cookie.setSecure(isCookieSecure());
+            
+        return cookie;
+    }
+    
+    /**
+     * Gets the preferred cookie name based on the HttpRequest URI. 
+     *
+     * @param reqURI  a String specifying the HttpRequest URI.
+     *
+     * @return the preferred cookie name.
+     *         _saml_idp if the HttpRequest URI matches the SAML2 
+     *         reader or writer servlet uri. 
+     *         _liberty_idp if the HttpRequest URI matches the IDFF 
+     *         reader or writer servlet uri. 
+     *         return empty string if no above match found. 
+     *         return null if the input HttpRequest uri is null or empty.
+     */
+    public static String getPreferCookieName( String reqURI) 
+    {
+       if (reqURI != null &&  !reqURI.equals("")) { 
+           if (reqURI.endsWith(IDPDiscoveryConstants.IDFF_READER_URI) ||
+               reqURI.endsWith(IDPDiscoveryConstants.IDFF_WRITER_URI)) { 
+               return(IDPDiscoveryConstants.IDFF_COOKIE_NAME); 
+           } else if (reqURI.endsWith(
+               IDPDiscoveryConstants.SAML2_READER_URI) ||
+               reqURI.endsWith(IDPDiscoveryConstants.SAML2_WRITER_URI)) { 
+               return(IDPDiscoveryConstants.SAML2_COOKIE_NAME);
+           } else {
+               return "";
+           }
+        } else {
+            return null;
+        }
+    }       
 }

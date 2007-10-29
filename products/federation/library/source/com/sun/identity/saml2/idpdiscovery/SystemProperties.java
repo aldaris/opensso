@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.2 2006-11-30 05:47:39 qcheng Exp $
+ * $Id: SystemProperties.java,v 1.3 2007-10-29 16:56:10 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,16 +25,16 @@
 
 package com.sun.identity.saml2.idpdiscovery;
 
-import java.io.*;
-import java.util.Properties;
-import java.util.Enumeration;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
-/** This class provides functionality that allows single-point-of-access
+/** 
+ * This class provides functionality that allows single-point-of-access
  * to all related system properties.
  * 
- * The class tries to find a file <code>IDPDiscoveryConfig.properties</code> in
+ * The class tries to retrieve IDP discovery related properties in services,
+ * if not exists, find a file <code>IDPDiscoveryConfig.properties</code> in
  * the CLASSPATH accessible to this code.
  *
  * If multiple servers are running, each may have their own configuration file.
@@ -64,62 +64,23 @@ public class SystemProperties {
     }
 
     /**
-     * Returns system property of a given key.
+     * Returns system property of a given key. The method will get the property
+     * using SystemPropertiesManager first (server mode), if not found,  
+     * get it from the locale file (IDP discovery WAR only mode). 
      *
-     * @param key the key whose value one is looking for.
+     * @param key the key whose value to be returned.
      * @return the value if the key exists; otherwise returns <code>null</code>.
     */
     public static String get(String key) {
         try {
-            return properties.getString(key);
+            String val = SystemPropertiesManager.get(key);
+            if (val == null) {
+                return properties.getString(key);
+            } else {
+                return val;
+            }
         } catch (MissingResourceException e) {
             return null;
         }
-    }
-
-    /**
-     * Returns system property of a given key.
-     *
-     * @param key the key whose value one is looking for.
-     * @param def the default value. This value is returned if the key does not
-     *        exist.
-     * @return system property of <code>key</code>.
-     */
-    public static String get(String key, String def) {
-        try {
-            return properties.getString(key);
-        } catch (MissingResourceException e) {
-            return def;
-        }
-    }
-
-    /** This method lets you get all the properties defined and their 
-     * values.
-     * @return Properties object with all the key value pairs.
-     */
-    public static Properties getAll() {
-        Enumeration enumerator = properties.getKeys();
-        Properties returnProperties = new Properties();
-        while (enumerator.hasMoreElements()) {
-            try {
-                String key =  (String) enumerator.nextElement();
-                String value = (String) properties.getString(key);
-                returnProperties.setProperty(key, value);
-            } catch (MissingResourceException e) {
-                CookieUtils.debug.error("SystemPropertiesManager.getAll:"
-                    + e.getMessage()); 
-            }
-        }
-
-        return returnProperties;
-    }
-
-    /** This method lets you query for all the platform properties defined 
-     * and their values. Returns a Properties object with all the key value 
-     * pairs.
-     * @return the platform properties
-     */
-    public static Properties getPlatform() {
-        return getAll();
     }
 }

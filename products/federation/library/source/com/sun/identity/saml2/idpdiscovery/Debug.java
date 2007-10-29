@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Debug.java,v 1.3 2007-02-15 21:47:43 qcheng Exp $
+ * $Id: Debug.java,v 1.4 2007-10-29 16:56:09 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,12 +162,10 @@ public class Debug {
                     dateFormat = new SimpleDateFormat(
                         "MM/dd/yyyy hh:mm:ss:SSS a zzz");
                     try {
-                        ResourceBundle bundle =
-                            ResourceBundle.getBundle("libIDPDiscoveryConfig");
-                        defaultDebugLevel = bundle.getString(
-                            "com.sun.identity.services.debug.level");
-                        outputDirectory = bundle.getString(
-                            "com.sun.identity.services.debug.directory");
+                        defaultDebugLevel = SystemProperties.get(
+                            IDPDiscoveryConstants.DEBUG_LEVEL);
+                        outputDirectory = SystemProperties.get(
+                            IDPDiscoveryConstants.DEBUG_DIR);
                         if (outputDirectory != null ) {
                             File createDir = new File(outputDirectory);
                             if ((!createDir.exists()) && (!createDir.mkdirs()))

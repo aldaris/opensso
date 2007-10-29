@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieWriterServlet.java,v 1.1 2006-10-30 23:16:17 qcheng Exp $
+ * $Id: CookieWriterServlet.java,v 1.2 2007-10-29 16:56:09 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.saml2.idpdiscovery;
 
-import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import com.sun.identity.shared.encode.Base64;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.servlet.ServletConfig;
@@ -49,13 +49,13 @@ import javax.servlet.http.Cookie;
  */
 public class CookieWriterServlet extends HttpServlet {
     private static String INTRODUCTION_COOKIE_TYPE =
-        SystemPropertiesManager.get(
+        SystemProperties.get(
             IDPDiscoveryConstants.IDPDISCOVERY_COOKIE_TYPE);
     private static String INTRODUCTION_URL_SCHEME =
-        SystemPropertiesManager.get(
+        SystemProperties.get(
             IDPDiscoveryConstants.IDPDISCOVERY_URL_SCHEME);
     private static String INTRODUCTION_COOKIE_DOMAIN =
-        SystemPropertiesManager.get(
+        SystemProperties.get(
             IDPDiscoveryConstants.IDPDISCOVERY_COOKIE_DOMAIN);
    
     private String preferred_cookie_name = null; 
