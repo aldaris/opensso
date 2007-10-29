@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredAuthServices.java,v 1.3 2007-03-09 05:50:58 veiming Exp $
+ * $Id: ConfiguredAuthServices.java,v 1.4 2007-10-29 17:55:20 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,14 +32,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.authentication.config.AMAuthConfigUtils;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ChoiceValues;
 import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
 
 /**
  * The class determines the configured Identity Types for Identity Repository.
@@ -85,8 +85,18 @@ public class ConfiguredAuthServices extends ChoiceValues {
         Set namedConfigs = Collections.EMPTY_SET;
         Map answer = new HashMap();
         try {
-            namedConfigs = AMAuthConfigUtils.getAllNamedConfig(orgDN, 
-                    adminToken);
+            // Get the named config node
+            ServiceConfigManager scm = new ServiceConfigManager(
+                SERVICE_NAME, adminToken);
+            ServiceConfig oConfig = scm.getOrganizationConfig(orgDN, null);
+            if (oConfig != null) {
+                ServiceConfig namedConfig = oConfig.getSubConfig(
+                    NAMED_CONFIGURATION);
+                if (namedConfig != null) {
+                    // get all sub config names
+                    namedConfigs = namedConfig.getSubConfigNames("*");
+                }
+            }
         } catch (Exception e) {
             // do nothing as namedConfigs will be empty.
         }
@@ -103,4 +113,7 @@ public class ConfiguredAuthServices extends ChoiceValues {
         //return the choice values map
         return (answer);
     }
+    
+    protected static final String SERVICE_NAME = "iPlanetAMAuthConfiguration";
+    protected static final String NAMED_CONFIGURATION = "Configurations";
 }
