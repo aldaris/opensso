@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.12 2007-10-05 17:57:08 qcheng Exp $
+   $Id: build.xml,v 1.13 2007-10-29 18:38:15 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -80,7 +80,7 @@
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib"
               file="${fm.dist.dir}/famclientsdk.jar"/>
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib">
-            <fileset dir="${extlib.dir}" includes="jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xmlsec.jar,xsdlib.jar" />
+            <fileset dir="${extlib.dir}" includes="ldapjdk.jar jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xmlsec.jar,xsdlib.jar" />
         </copy>
         <copy todir="${clientsamples.war.packages.dir}">
             <fileset dir="${openfm.clientsamples.dir}/war"
@@ -195,7 +195,7 @@
         <copy todir="${clientsamples.sdk.packages.dir}/lib"
               file="${fm.dist.dir}/famclientsdk.jar"/>
         <copy todir="${clientsamples.sdk.packages.dir}/lib">
-            <fileset dir="${extlib.dir}" includes="j2ee.jar,jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xmlsec.jar,xsdlib.jar,webservices-rt.jar,webservices-api.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar" />
+            <fileset dir="${extlib.dir}" includes="ldapjdk.jar j2ee.jar,jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xmlsec.jar,xsdlib.jar,webservices-rt.jar,webservices-api.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar" />
         </copy>
         <copy todir="${clientsamples.sdk.packages.dir}/resources"
               file="${clientsamples.packages.temp2.dir}/AMConfig.properties.template"/>

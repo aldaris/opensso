@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.8 2007-10-24 20:51:00 veiming Exp $
+ * $Id: WebtopNaming.java,v 1.9 2007-10-29 18:38:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,9 @@ public class WebtopNaming {
     private static Hashtable siteIdTable = null;
 
     private static Vector platformServers = new Vector();
+
+    //This is created for ignore case comparison
+    private static Vector lcPlatformServers = new Vector();
 
     private static String namingServiceURL[] = null;
 
@@ -758,9 +761,11 @@ public class WebtopNaming {
         if (servers != null) {
             StringTokenizer st = new StringTokenizer(servers, ",");
             platformServers.clear();
+            lcPlatformServers.clear();
             while (st.hasMoreTokens()) {
                 String svr = st.nextToken();
-                platformServers.add(svr.toLowerCase());
+                lcPlatformServers.add(svr.toLowerCase());
+                platformServers.add(svr);
             }
         }
         updateServerIdMappings();
@@ -835,7 +840,7 @@ public class WebtopNaming {
             URL url = new URL(plaformURL);
             String serverID = getServerID(url.getProtocol(), url.getHost(),
                 Integer.toString(url.getPort()), url.getPath());
-            if (platformServerIDs.contains(serverID) == false) {
+            if (!platformServerIDs.contains(serverID)) {
                 platformServerIDs.add(serverID);
             }
         }
@@ -859,7 +864,7 @@ public class WebtopNaming {
             if (protocol.equalsIgnoreCase(amServerProtocol) &&
                 host.equalsIgnoreCase(amServer) && 
                 port.equals(amServerPort) &&
-                ((uri == null) || uri.equals(amServerURI))
+                ((uri == null) || uri.equalsIgnoreCase(amServerURI))
             ) {
                 return;
             }
@@ -867,7 +872,8 @@ public class WebtopNaming {
                 debug.message("WebtopNaming.validate: platformServers= " + 
                     platformServers);
             }
-            if (!platformServers.contains(server)) {
+
+            if (!lcPlatformServers.contains(server)) {
                 getNamingProfile(true);
                 if (!platformServers.contains(server)) {
                     throw new URLNotFoundException(NamingBundle
