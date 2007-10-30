@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.6 2007-10-26 17:14:24 veiming Exp $
+ * $Id: CLIConstants.java,v 1.7 2007-10-30 22:27:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,6 +139,16 @@ public interface CLIConstants {
      * Short name of version argument/option.
      */
     String SHORT_ARGUMENT_VERSION = "n";
+
+    /**
+     * Name of tool information argument/option.
+     */
+    String ARGUMENT_INFORMATION = "information";
+
+    /**
+     * Short name of information argument/option.
+     */
+    String SHORT_ARGUMENT_INFORMATION = "O";
 
     /**
      * Name of debug argument/option.

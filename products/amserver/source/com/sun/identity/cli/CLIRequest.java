@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.10 2007-10-17 23:00:24 veiming Exp $
+ * $Id: CLIRequest.java,v 1.11 2007-10-30 22:27:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,6 +142,10 @@ public class CLIRequest {
                 CLIConstants.SHORT_ARGUMENT_VERSION)
         ) {
             processVersion(mgr);
+        } else if (matchOption(arg, CLIConstants.ARGUMENT_INFORMATION,
+                CLIConstants.SHORT_ARGUMENT_INFORMATION)
+        ) {
+            processToolInfoRequest(mgr);
         } else if (arg.startsWith(CLIConstants.PREFIX_ARGUMENT_SHORT)) {
             Object[] param = {commandName + " " + arg};
             throw new CLIException(MessageFormat.format(
@@ -220,10 +224,29 @@ public class CLIRequest {
     private void processVersion(CommandManager mgr) {
         IOutput outputWriter = mgr.getOutputWriter();
         outputWriter.printlnMessage("");
-        outputWriter.printlnMessage("");
         outputWriter.printlnMessage(mgr.getProductName() + " " +
             SystemProperties.get(Constants.AM_VERSION));
         outputWriter.printlnMessage("");
     }
-
+    
+    private void processToolInfoRequest(CommandManager mgr) {
+        ResourceBundle rb = mgr.getResourceBundle();
+        IOutput outputWriter = mgr.getOutputWriter();
+        outputWriter.printlnMessage("");
+        
+        String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
+        {
+            Object[] param = {SystemProperties.getServerInstanceName()};
+            outputWriter.printlnMessage(MessageFormat.format(
+                rb.getString("info-host-name"), param));
+        }
+        {
+            Object[] param = {baseDir};
+            outputWriter.printlnMessage(MessageFormat.format(
+                rb.getString("info-base-dir"), param));
+            outputWriter.printlnMessage(MessageFormat.format(
+                rb.getString("info-bootstrap-with"), param));
+        }
+        outputWriter.printlnMessage("");
+    }
 }

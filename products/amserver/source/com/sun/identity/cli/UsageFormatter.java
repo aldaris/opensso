@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UsageFormatter.java,v 1.3 2007-03-21 22:33:40 veiming Exp $
+ * $Id: UsageFormatter.java,v 1.4 2007-10-30 22:27:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ public class UsageFormatter {
         globalOptions.add("VERBOSE");
 
         globalArgs.add("VERSION");
+        globalArgs.add("INFORMATION");
         globalArgs.add("HELP");
     }
 
