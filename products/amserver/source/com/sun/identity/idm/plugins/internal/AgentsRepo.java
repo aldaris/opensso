@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.2 2007-10-27 00:31:54 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.3 2007-10-30 06:21:16 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -336,7 +336,9 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 answer = aCfg.getAttributes();
             }
             // Send the agenttype of that agent.
-            answer.put(IdConstants.AGENT_TYPE, aCfg.getSchemaID());
+            Set vals = new HashSet(2);
+            vals.add(aCfg.getSchemaID());
+            answer.put(IdConstants.AGENT_TYPE, vals);
         } catch (SMSException sme) {
             debug.error("AgentsRepo.getAgentAttrs(): "
                 + "Error occurred while getting " + agentName, sme);
@@ -516,7 +518,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.search() called: " + type + ": " +
                 pattern);
         }
-        Set agentRes = new HashSet();
+        Set agentRes = new HashSet(2);
         Map agentAttrs = new HashMap();
         int errorCode = RepoSearchResults.SUCCESS;
         ServiceConfig aCfg = null;
@@ -683,7 +685,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         throws IdRepoException, SSOException {
 
         Map attrs = new HashMap();
-        Set vals = new HashSet();
+        Set vals = new HashSet(2);
         if (active) {
             vals.add(statusActive);
         } else {
@@ -704,7 +706,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     }
 
     private void loadSupportedOps() {
-        Set opSet = new HashSet();
+        Set opSet = new HashSet(2);
         opSet.add(IdOperation.EDIT);
         opSet.add(IdOperation.READ);
         opSet.add(IdOperation.CREATE);
