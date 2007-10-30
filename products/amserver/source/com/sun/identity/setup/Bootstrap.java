@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.2 2007-10-24 20:51:04 veiming Exp $
+ * $Id: Bootstrap.java,v 1.3 2007-10-30 17:35:47 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -258,8 +258,7 @@ public class Bootstrap {
 
             String embeddedDS = (String)mapQuery.get(EMBEDDED_DS);
             if ((embeddedDS != null) && (embeddedDS.length() > 0)) {
-                startEmbeddedDS(embeddedDS);
-                proceed = true;
+                proceed = startEmbeddedDS(embeddedDS);
             }
         }
 
@@ -334,19 +333,25 @@ public class Bootstrap {
         }
     }
 
-    private static void startEmbeddedDS(String odsDir) {
+    private static boolean startEmbeddedDS(String odsDir) {
+        boolean started = false;
         File odsDirFile = new File(odsDir);
 
-        if (odsDirFile.exists() && !EmbeddedOpenDS.isStarted()) {
-            try {
-                SetupProgress.reportStart("emb.startemb", null);
-                EmbeddedOpenDS.startServer(odsDir);
-                //Thread.sleep(5000);
-                SetupProgress.reportEnd("emb.success", null);
-            } catch (Exception ex) {
-                //ignore, it maybe started.
+        if (odsDirFile.exists()) {
+            if (!EmbeddedOpenDS.isStarted()) {
+                try {
+                    SetupProgress.reportStart("emb.startemb", null);
+                    started = true;
+                    EmbeddedOpenDS.startServer(odsDir);
+                    SetupProgress.reportEnd("emb.success", null);
+                } catch (Exception ex) {
+                    //ignore, it maybe started.
+                }
+            } else {
+                started = true;
             }
         }
+        return started;
     }
     
     private static boolean loadAMConfigProperties(String fileLocation)
