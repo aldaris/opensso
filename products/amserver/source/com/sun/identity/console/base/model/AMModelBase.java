@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.4 2007-06-29 19:47:20 jonnelson Exp $
+ * $Id: AMModelBase.java,v 1.5 2007-10-30 19:30:16 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -716,7 +716,11 @@ public class AMModelBase
 
             for (Iterator iter = supportedTypes.iterator(); iter.hasNext(); ) {
                 IdType type = (IdType)iter.next();
-                map.put(type.getName(), getLocalizedString(type.getName()));
+                if (!type.equals(IdType.AGENTONLY) &&
+                    !type.equals(IdType.AGENTGROUP)
+                ) {
+                    map.put(type.getName(), getLocalizedString(type.getName()));
+                }
             }
         } catch (IdRepoException e) {
             debug.warning("AMModelBase.getSupportedTypes", e);
