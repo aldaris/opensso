@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCommand.java,v 1.3 2007-04-10 20:47:39 veiming Exp $
+ * $Id: SessionCommand.java,v 1.4 2007-10-30 21:47:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import com.sun.identity.common.SearchResults;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -213,12 +214,13 @@ public class SessionCommand extends AuthenticatedCommand {
     private List displaySessions(SSOToken ssoToken)
         throws CLIException
     {
-        String host = trimTrailingSlash(
-            getStringOptionValue(ARGUMENT_HOST_NAME));
+        String origHost = getStringOptionValue(ARGUMENT_HOST_NAME);
+        String host = trimTrailingSlash(origHost);
         StringTokenizer st = new StringTokenizer(host, ":"); 
         if (st.countTokens() != 3) {
-            throw new CLIException(
-                getResourceString("session-invalid-host-name"),
+            Object[] params = {origHost};
+            throw new CLIException(MessageFormat.format(
+                getResourceString("session-invalid-host-name"), params),
                 ExitCodes.INVALID_OPTION_VALUE);
 
         }
