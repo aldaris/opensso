@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JKSKeyProvider.java,v 1.2 2007-08-11 11:25:39 stanguy Exp $
+ * $Id: JKSKeyProvider.java,v 1.3 2007-10-31 16:14:36 mchlbgs Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,29 +52,42 @@ public class JKSKeyProvider implements KeyProvider {
     private KeyStore ks = null; 
     //TODO: move the below two password to AMConfig.properties
     private String privateKeyPass = null;
-    private String keystorePass   = ""; 
+    private String keystorePass   = "";
     private String keystoreFile = "";
     private String keystoreType = "JKS";
+    private final static String DEFAULT_KEYSTORE_FILE_PROP = 
+            "com.sun.identity.saml.xmlsig.keystore";
+    private final static String DEFAULT_KEYSTORE_PASS_FILE_PROP = 
+            "com.sun.identity.saml.xmlsig.storepass";
+    private final static String DEFAULT_KEYSTORE_TYPE_PROP = 
+            "com.sun.identity.saml.xmlsig.storetype";
+    private final static String DEFAULT_PRIVATE_KEY_PASS_FILE_PROP  = 
+            "com.sun.identity.saml.xmlsig.keypass";
+    
     HashMap keyTable = new HashMap();
 
-    private void initialize() {
+    
+ 
+    private void initialize(
+            String keyStoreFilePropName, String keyStorePassFilePropName,
+            String keyStoreTypePropName, String privateKeyPassFilePropName) {
         FileInputStream fis = null;
         InputStreamReader isr = null;
         BufferedReader br = null;
         
         keystoreFile = SystemConfigurationUtil.getProperty(
-            "com.sun.identity.saml.xmlsig.keystore");
+            keyStoreFilePropName);
 
         if (keystoreFile == null || keystoreFile.length() == 0) {
             SAMLUtilsCommon.debug.error(
-		"XML Siganture: keystore file does not exist"); 
+		"JKSKeyProvider: keystore file does not exist"); 
         }
 
         String kspfile = SystemConfigurationUtil.getProperty(
-            "com.sun.identity.saml.xmlsig.storepass");
+            keyStorePassFilePropName);
 
         String tmp_ksType = SystemConfigurationUtil.getProperty(
-            "com.sun.identity.saml.xmlsig.storetype");
+            keyStoreTypePropName);
         if ( null != tmp_ksType ) {
             keystoreType = tmp_ksType.trim();
         }
@@ -93,12 +106,12 @@ public class JKSKeyProvider implements KeyProvider {
                     " Unable to read keystore password file " + kspfile);
             }
         } else {
-            SAMLUtilsCommon.debug.error("XML signature: keystore" +
+            SAMLUtilsCommon.debug.error("JKSKeyProvider: keystore" +
                 " password is null");
         }
 
         String pkpfile = SystemConfigurationUtil.getProperty(
-            "com.sun.identity.saml.xmlsig.keypass");
+            privateKeyPassFilePropName);
 
         if (pkpfile != null) {
             try {
@@ -116,11 +129,8 @@ public class JKSKeyProvider implements KeyProvider {
         } 
     }
     
-    /**
-     * Constructor
-     */
-    public JKSKeyProvider() {
-        initialize(); 
+    
+    private void mapPk2Cert(){
         try {
             ks = KeyStore.getInstance(keystoreType);
             FileInputStream fis = new FileInputStream(keystoreFile);
@@ -138,9 +148,31 @@ public class JKSKeyProvider implements KeyProvider {
 	    SAMLUtilsCommon.debug.message("KeyTable size = " +
                 keyTable.size());
         } catch (Exception e) {
-            SAMLUtilsCommon.debug.error("JKSKeyProvider.JKSKeyProvider:", e);
-        }
+            SAMLUtilsCommon.debug.error("mapPk2Cert.JKSKeyProvider:", e);
+        }        
     }
+    
+    /**
+     * Constructor
+     */
+    public JKSKeyProvider() {
+        this(DEFAULT_KEYSTORE_FILE_PROP,DEFAULT_KEYSTORE_PASS_FILE_PROP,
+               DEFAULT_KEYSTORE_TYPE_PROP, DEFAULT_PRIVATE_KEY_PASS_FILE_PROP);
+
+    }
+    
+    
+       /**
+     * Constructor
+     */
+    public JKSKeyProvider(
+            String keyStoreFilePropName,String keyStorePassFilePropName,
+            String keyStoreTypePropName, String privateKeyPassFilePropName) {
+        initialize(keyStoreFilePropName, keyStorePassFilePropName,
+                keyStoreTypePropName, privateKeyPassFilePropName); 
+        mapPk2Cert();
+    }
+    
     
     /**
      * Set the key to access key store database. This method will only need to 

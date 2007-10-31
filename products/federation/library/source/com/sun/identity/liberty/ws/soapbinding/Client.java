@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Client.java,v 1.2 2006-12-23 05:09:59 hengming Exp $
+ * $Id: Client.java,v 1.3 2007-10-31 16:12:32 mchlbgs Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.liberty.ws.soapbinding; 
+package com.sun.identity.liberty.ws.soapbinding;
 
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 
 import com.sun.identity.liberty.ws.common.wsse.WSSEConstants;
@@ -40,6 +41,8 @@ import java.net.URLConnection;
 
 import java.security.cert.X509Certificate;
 import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
+import java.security.KeyStoreException;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -61,25 +64,37 @@ import org.w3c.dom.Node;
 /**
  * The <code>Client</code> class provides web service clients with a method to
  * send requests using SOAP connection to web service servers.
- * 
+ *
  * @supported.all.api
  */
 public class Client {
-
+    
     private static TransformerFactory tfactory =
-                       TransformerFactory.newInstance();
+            TransformerFactory.newInstance();
     private static KeyManager[] kms = null;
     private static TrustManager[] tms = null;
     private static X509KeyManager defaultX509km = null;
     private static String defaultCertAlias = null;
-
+    private final static String SOAP_KEYSTORE_FILE_PROP =
+            "com.sun.identity.liberty.ws.soap.truststore";
+    private final static String SOAP_KEYSTORE_PASS_FILE_PROP =
+            "com.sun.identity.liberty.ws.soap.storepass";
+    private final static String SOAP_KEYSTORE_TYPE_PROP =
+            "com.sun.identity.liberty.ws.soap.storetype";
+    private final static String SOAP_PRIVATE_KEY_PASS_FILE_PROP  =
+            "com.sun.identity.liberty.ws.soap.keypass";
+    private final static String SOAP_TRUST_MNGR_PROP =
+            "com.sun.identity.liberty.ws.soap.trustmanager";
+    private final static String SOAP_TRUST_SECMNGR_ALGO_PROP =
+            "com.sun.identity.liberty.ws.soap.securitymanager.algorithm";
+    
     static {
         defaultCertAlias = SystemPropertiesManager.get(
-            "com.sun.identity.liberty.ws.soap.certalias");
+                "com.sun.identity.liberty.ws.soap.certalias");
     }
-
+    
     private Client() {}
-
+    
     /**
      * Sends a request to a SOAP endpoint and returns the response. The server
      * only contains one servlet for different web services. So the SOAP
@@ -93,10 +108,10 @@ public class Client {
      * @throws SOAPFaultException if the response is a SOAP Fault
      */
     public static Message sendRequest(Message req,String connectTo)
-                           throws SOAPBindingException, SOAPFaultException {
+    throws SOAPBindingException, SOAPFaultException {
         return sendRequest(req, connectTo, null, null);
     }
-
+    
     /**
      * Sends a request to a SOAP endpoint and returns the response. The server
      * only contains one servlet for different web services. So the SOAP
@@ -112,10 +127,10 @@ public class Client {
      * @throws SOAPFaultException if the response is a SOAP Fault
      */
     public static Message sendRequest(Message req,String connectTo,
-           String certAlias) throws SOAPBindingException, SOAPFaultException {
+            String certAlias) throws SOAPBindingException, SOAPFaultException {
         return sendRequest(req, connectTo, certAlias, null);
     }
-
+    
     /**
      * Sends a request to a SOAP endpoint and returns the response. The server
      * only contains one servlet for different web services. So the SOAP
@@ -131,32 +146,32 @@ public class Client {
      *                                 sending or receiving Message
      */
     public static Message sendRequest(Message req,String connectTo,
-                           String certAlias,String soapAction) 
-                           throws SOAPBindingException, SOAPFaultException {
+            String certAlias,String soapAction)
+            throws SOAPBindingException, SOAPFaultException {
         URLConnection con = null;
-
+        
         try {
             con = getConnection(connectTo, certAlias);
         } catch (Exception e) {
-            Utils.debug.error("Client:sendRequest", e); 
+            Utils.debug.error("Client:sendRequest", e);
             throw new SOAPBindingException(e.getMessage());
-        }      
-
-	if(soapAction == null || soapAction.length() == 0) {
-	    soapAction = "";
-	}
-
-	con.setRequestProperty(SOAPBindingConstants.SOAP_ACTION_HEADER,
-			       soapAction);
-
-
+        }
+        
+        if(soapAction == null || soapAction.length() == 0) {
+            soapAction = "";
+        }
+        
+        con.setRequestProperty(SOAPBindingConstants.SOAP_ACTION_HEADER,
+                soapAction);
+        
+        
         Document doc = null;
         int securityProfileType = req.getSecurityProfileType();
         if (securityProfileType == Message.ANONYMOUS ||
-            securityProfileType == Message.BEARER_TOKEN) {
+                securityProfileType == Message.BEARER_TOKEN) {
             doc  = req.toDocument(true);
         } else {
-
+            
             Element sigElem = SecurityUtils.signMessage(req);
             if (sigElem == null) {
                 String msg = Utils.bundle.getString("cannotSignRequest");
@@ -168,27 +183,27 @@ public class Client {
         if (Utils.debug.messageEnabled()) {
             Utils.debug.message("Client.sendRequest: signed request\n" + req);
         }
-
+        
         OutputStream os = null;
         try {
-            os = con.getOutputStream(); 
-	    Transformer transformer = tfactory.newTransformer();
+            os = con.getOutputStream();
+            Transformer transformer = tfactory.newTransformer();
             transformer.setOutputProperty("omit-xml-declaration", "yes");
-	    transformer.transform(new DOMSource(doc.getDocumentElement()),
-		new StreamResult(os));
+            transformer.transform(new DOMSource(doc.getDocumentElement()),
+                    new StreamResult(os));
         } catch (Exception e) {
-            Utils.debug.error("Client:sendRequest", e); 
+            Utils.debug.error("Client:sendRequest", e);
             throw new SOAPBindingException(e.getMessage());
         } finally {
             if (os != null) {
                 try {
                     os.close();
                 } catch (Exception e) {
-                    Utils.debug.error("Client:sendRequest", e); 
+                    Utils.debug.error("Client:sendRequest", e);
                 }
             }
         }
-
+        
         Message resp = null;
         InputStream is = null;
         try {
@@ -198,31 +213,31 @@ public class Client {
                 throw new SOAPFaultException(resp);
             }
             Utils.enforceProcessingRules(resp,
-                             req.getCorrelationHeader().getMessageID(), false);
+                    req.getCorrelationHeader().getMessageID(), false);
         } catch (IOException e) {
-            Utils.debug.error("Client:sendRequest", e); 
+            Utils.debug.error("Client:sendRequest", e);
             throw new SOAPBindingException(e.getMessage());
         } finally {
             if (is != null) {
                 try {
                     is.close();
                 } catch (Exception e) {
-                    Utils.debug.error("Client:sendRequest", e); 
+                    Utils.debug.error("Client:sendRequest", e);
                 }
             }
         }
-
+        
         resp.setProtocol(con.getURL().getProtocol());
         if (resp.getSecurityProfileType() != Message.ANONYMOUS &&
-            !SecurityUtils.verifyMessage(resp)) {
-
+                !SecurityUtils.verifyMessage(resp)) {
+            
             String msg = Utils.bundle.getString("cannotVerifySignature");
             Utils.debug.error("Client.sendRequest: " + msg);
             throw new SOAPBindingException(msg);
         }
         return resp;
     }
-
+    
     /**
      * Gets URLConnection associated with the endpoint. If it is a SSL
      * connection, the certAlias will be used to get the client certificate.
@@ -232,15 +247,15 @@ public class Client {
      * @return a URLConnection object
      * @throws Exception if an error occurs while connecting to server
      */
-    private static URLConnection getConnection(String endpoint,String certAlias) 
-                                               throws Exception {
-	URLConnection con = new URL(endpoint).openConnection();
-
+    private static URLConnection getConnection(String endpoint,String certAlias)
+    throws Exception {
+        URLConnection con = new URL(endpoint).openConnection();
+        
         if (Utils.debug.messageEnabled()) {
             Utils.debug.message("Client.getConnection: con class = " +
-                                con.getClass());
+                    con.getClass());
         }
-
+        
         if (con instanceof HttpsURLConnection) {
             if (kms == null) {
                 initializeJSSE();
@@ -250,24 +265,27 @@ public class Client {
             } else {
                 kms[0] = new WSX509KeyManager(defaultX509km, defaultCertAlias);
             }
-
+            
             SSLContext ctx = SSLContext.getInstance("TLS");
             ctx.init(kms, tms, null);
             HttpsURLConnection scon = (HttpsURLConnection) con;
             scon.setSSLSocketFactory(ctx.getSocketFactory());
-        } else { 
+        } else {
             if (Utils.debug.warningEnabled()) {
                 Utils.debug.warning("Client.getConnection: not instance of " +
-                    "HttpsURLConnection, client cert not selected.");  
+                        "HttpsURLConnection, client cert not selected.");
             }
         }
-
-	con.setDoInput(true);
-	con.setDoOutput(true);
-	con.setRequestProperty("content-type", "text/xml");
-
+        
+        con.setDoInput(true);
+        con.setDoOutput(true);
+        con.setRequestProperty("content-type", "text/xml");
+        
         return con;
     }
+    
+    
+    
     
     /**
      * Initializes JSSE enviroment.
@@ -280,16 +298,115 @@ public class Client {
         java.security.Security.insertProviderAt(
                 new com.sun.net.ssl.internal.ssl.Provider(), 1);
         
-        JKSKeyProvider jkskp = new JKSKeyProvider();
-        KeyStore ks = jkskp.getKeyStore();
-        KeyManagerFactory kf = KeyManagerFactory.getInstance("SunX509");
-        kf.init(ks, jkskp.getPrivateKeyPass().toCharArray());
+        String algorithm =  SystemPropertiesManager.get(
+                SOAP_TRUST_SECMNGR_ALGO_PROP);
+        if(algorithm == null || algorithm.length() <= 0) {
+            algorithm = "SunX509";
+        }
+        JKSKeyProvider jkskp = createKeyProvider() ;
+        KeyStore trustStore = jkskp.getKeyStore();
+        KeyManagerFactory kf = KeyManagerFactory.getInstance(algorithm);
+        kf.init(trustStore,jkskp.getPrivateKeyPass().toCharArray() );
         
         kms = kf.getKeyManagers();
         defaultX509km = (X509KeyManager)kms[0];
         
-        TrustManagerFactory tf = TrustManagerFactory.getInstance("SunX509");
-        tf.init(ks);
-        tms = tf.getTrustManagers();
+        defineTrustManager(trustStore, algorithm);
+        
     }
+    
+    /**
+     * Define a Trust manager
+     *
+     * @param trustStore the keystore used to store certificates
+     * @param algorithm the algorithm to user
+     * @throws Exception if an error occurs while instantiating the custom
+     * class or using the keystore
+     */
+    private static void defineTrustManager(KeyStore trustStore,
+            String algorithm)
+            throws SOAPBindingException{
+        boolean error = false ;
+        try{
+            TrustManagerFactory tf =
+                    TrustManagerFactory.getInstance(algorithm);
+            tf.init(trustStore);
+            TrustManager[] defaultTrustManagers = tf.getTrustManagers();
+            String trustManagerDefinition = SystemPropertiesManager.get(
+                    SOAP_TRUST_MNGR_PROP);
+            if(trustManagerDefinition != null
+                    && trustManagerDefinition.length() > 0) {
+                tms = new TrustManager[defaultTrustManagers.length + 1];
+                tms[0] = (TrustManager)
+                Class.forName(trustManagerDefinition).newInstance();
+                for(int i = 0; i < defaultTrustManagers.length; i++) {
+                    tms[i + 1 ] = defaultTrustManagers[i];
+                }
+            } else {                
+                tms = defaultTrustManagers;
+            }
+        }catch(ClassNotFoundException cnfe){
+            Utils.debug.error(
+                    "Client.defineTrustManager class not found: " ,cnfe);
+            error = true ;
+        }catch(InstantiationException ie){
+            Utils.debug.error(
+                    "Client.defineTrustManager cannot instantiate: " , ie);
+            error = true ;
+        }catch(NoSuchAlgorithmException nsae){
+            Utils.debug.error(
+                    "Client.defineTrustManager no algorithm: " , nsae);
+            error = true ;
+        }catch(IllegalAccessException iae){
+            Utils.debug.error(
+                    "Client.defineTrustManager illegal access: " , iae);
+            error = true ;
+        }catch(KeyStoreException kse){
+            Utils.debug.error(
+                    "Client.defineTrustManager keystore: " , kse);
+            error = true ;
+        }
+        if(error  ){
+            String msg = Utils.bundle.getString("cannotDefineTrustManager");
+            throw new SOAPBindingException(msg);
+        }
+        
+    }
+    
+    
+    
+    
+    /**
+     * Checks if  Trust Keystore properties are defined
+     * @return true if a specific trust store is to be used
+     **/
+    
+    private static boolean useSpecificTrustStore(){
+        return(
+                (SystemConfigurationUtil.getProperty(SOAP_KEYSTORE_FILE_PROP)!= null)&&
+                (SystemConfigurationUtil.getProperty(SOAP_KEYSTORE_PASS_FILE_PROP)!= null)&&
+                (SystemConfigurationUtil.getProperty(SOAP_KEYSTORE_TYPE_PROP)!= null)&&
+                (SystemConfigurationUtil.getProperty(SOAP_PRIVATE_KEY_PASS_FILE_PROP)!= null));
+    }
+    
+     /**
+     * Create a JKSKeyProvider using either default properties or specific properties 
+     * @return the JKSKeyProvider
+     **/
+       
+    private static JKSKeyProvider createKeyProvider() {
+        JKSKeyProvider jksKp  ;
+        if (useSpecificTrustStore()) {
+            jksKp = new JKSKeyProvider(
+                    SOAP_KEYSTORE_FILE_PROP,SOAP_KEYSTORE_PASS_FILE_PROP,
+                    SOAP_KEYSTORE_TYPE_PROP, SOAP_PRIVATE_KEY_PASS_FILE_PROP);
+        } else {
+            jksKp = new JKSKeyProvider();
+        }
+        return jksKp ;
+    }
+    
+    
+    
+    
 }
