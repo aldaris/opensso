@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.28 2007-10-19 00:46:14 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.29 2007-10-31 02:21:20 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1709,7 +1709,7 @@ public class LDAPv3Repo extends IdRepo {
     public Map getAttributes(SSOToken token, IdType type, String name,
             Set attrNames) throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("LDAPv3Repo: getAttributes called" + ": " + type
+            debug.message("LDAPv3Repo: getAttributes 1 called " + ": " + type
                     + ": " + name + " ; attrName=" + attrNames);
         }
 
@@ -1727,7 +1727,7 @@ public class LDAPv3Repo extends IdRepo {
             Set attrNames, boolean isString) throws IdRepoException,
             SSOException {
         if (debug.messageEnabled()) {
-            debug.message("LDAPv3Repo: getAttributes called" + ": " + type
+            debug.message("LDAPv3Repo: getAttributes 2 called" + ": " + type
                     + ": " + name + " ; attrName=" + attrNames);
         }
 
@@ -1810,6 +1810,7 @@ public class LDAPv3Repo extends IdRepo {
                     }
                     attrNamesCase = allowedAttrNames;
                     if (attrNamesCase.isEmpty()) {
+                        connPool.close(ld);
                         return theAttrMap;  // nothing to read.
                     }
                 }
@@ -1918,7 +1919,7 @@ public class LDAPv3Repo extends IdRepo {
     public Map getAttributes(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("LDAPv3Repo: getAttributes called" + ": " + type
+            debug.message("LDAPv3Repo: getAttributes 3 called" + ": " + type
                     + ": " + name);
         }
 
