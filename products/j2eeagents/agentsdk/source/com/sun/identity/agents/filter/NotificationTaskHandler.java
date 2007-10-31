@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationTaskHandler.java,v 1.1 2006-09-28 23:34:29 huacui Exp $
+ * $Id: NotificationTaskHandler.java,v 1.2 2007-10-31 00:43:23 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,7 +49,7 @@ import com.sun.identity.agents.arch.Manager;
 public class NotificationTaskHandler extends AmFilterTaskHandler
         implements INotificationTaskHandler {
     /**
-     * The constructor that takes a <code>Manager</code> intance in order
+     * The constructor that takes a <code>Manager</code> instance in order
      * to gain access to the infrastructure services such as configuration
      * and log access.
      *
@@ -65,6 +65,7 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         super.initialize(context, mode);
         initSessionNotificationEnabledFlagAndURI();
         initPolicyNoticiationEnabledFlagAndURI();
+        initConfigNotificationEnabledFlagAndURI();
     }
     
     /**
@@ -87,10 +88,11 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         if ((isSessionNotificationEnabled() 
                 && requestURI.equals(getSessionNotificationURI()))
                 || (isPolicyNotificationEnabled() 
-                && requestURI.equals(getPolicyNotificationURI()))) {
+                && requestURI.equals(getPolicyNotificationURI()) )
+                || isConfigNotificationEnabled() 
+                && requestURI.equals(getConfigNotificationURI())) {
             result = handleNotification(ctx);
-        }
-        
+        }        
         return result;
     }
     
@@ -100,7 +102,9 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
      * @return true if Notifications are enabled, false otherwise
      */
     public boolean isActive() {
-        return isNotificationEnabled();
+        return (isSessionNotificationEnabled() ||
+                isPolicyNotificationEnabled()  ||
+                isConfigNotificationEnabled());   
     }
     
     /**
@@ -167,22 +171,6 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         return result;
     }
     
-    private void setSessionNotificationEnabledFlag(boolean flag) {
-        _sessionNotificationEnabled = flag;
-    }
-    
-    private void setSessionNotificationURI(String uri) {
-        _sessionNotificationURI = uri;
-    }
-    
-    private void setPolicyNotificationEnabledFlag(boolean flag) {
-        _policyNotificationEnabled = flag;
-    }
-    
-    private void setPolicyNotificationURI(String uri) {
-        _policyNotificationURI = uri;
-    }
-    
     private void initSessionNotificationEnabledFlagAndURI() {
         boolean flag = AgentConfiguration.isSessionNotificationEnabled();
         if (flag) {
@@ -206,7 +194,7 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
                 if (isLogMessageEnabled()) {
                     logMessage(
                             "NotificationTaskHandler: Session Notification "
-                            + "Enabled, URI => "+ _policyNotificationURI);
+                            + "Enabled, URI => "+ _sessionNotificationURI);
                 }
             } else {
                 logError("NotificationTaskHandler: Session Notification is "
@@ -218,8 +206,7 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
                    "NotificationTaskHandler: Session Notification is disabled");
             }
         }
-    }
-    
+    }    
     
     private void initPolicyNoticiationEnabledFlagAndURI() {
         boolean flag = AgentConfiguration.isPolicyNotificationEnabled();
@@ -258,29 +245,106 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         }
     }
     
-    private String getSessionNotificationURI() {
-        return _sessionNotificationURI;
+    /** 
+     * For receiving agent configuration properties xml notifications 
+     * when in centralized mode.
+     */ 
+    private void initConfigNotificationEnabledFlagAndURI() {
+        //uses Manager instead of AgentConfiguration since hotswap property
+        boolean flag = getConfigurationBoolean(
+                CONFIG_CENTRALIZED_NOTIFICATION_ENABLE,
+                DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE); 
+        
+        if (flag) {
+            //later ALL (policy/session/config) will use same uri
+            String url = AgentConfiguration.getSessionNotificationURL();
+            String notificationURI = null;
+            if (( url == null) || (url.trim().length() == 0)) {
+                url = null;
+            }
+            if (url != null) {
+                try {
+                    URL notificationURL = new URL(url);
+                    notificationURI = notificationURL.getPath();
+                } catch (MalformedURLException ex) {
+                    logError("Invalid Agent Centralized Configuration" +
+                             " Notification URL specified: " + url, 
+                            ex);
+                }
+            }
+            if (notificationURI != null) {
+                setConfigNotificationEnabledFlag(true);
+                setConfigNotificationURI(notificationURI);
+                if (isLogMessageEnabled()) {
+                    logMessage("NotificationTaskHandler: Centralized" +
+                            " Configuration Notification Enabled, URI => " + 
+                            _configNotificationURI);
+                }
+            } else {
+                logError("NotificationTaskHandler: Centralized Configuration" +
+                         " Notification is disabled due to errors");
+            }
+        } else {
+            if (isLogMessageEnabled()) {
+                logMessage(
+                    "NotificationTaskHandler: Centralized Configuration" +
+                    " Notifications is disabled");
+            }
+        }
     }
     
-    private String getPolicyNotificationURI() {
-        return _policyNotificationURI;
+    private void setSessionNotificationEnabledFlag(boolean flag) {
+        _sessionNotificationEnabled = flag;
     }
     
     private boolean isSessionNotificationEnabled() {
         return _sessionNotificationEnabled;
     }
     
+    private void setSessionNotificationURI(String uri) {
+        _sessionNotificationURI = uri;
+    }
+    
+    private String getSessionNotificationURI() {
+        return _sessionNotificationURI;
+    }
+    
+    private void setPolicyNotificationEnabledFlag(boolean flag) {
+        _policyNotificationEnabled = flag;
+    }
+    
     private boolean isPolicyNotificationEnabled() {
         return _policyNotificationEnabled;
     }
     
-    private boolean isNotificationEnabled() {
-        return (isSessionNotificationEnabled() ||
-                isPolicyNotificationEnabled());
+    private void setPolicyNotificationURI(String uri) {
+        _policyNotificationURI = uri;
     }
     
-    private boolean                         _sessionNotificationEnabled;
+    private String getPolicyNotificationURI() {
+        return _policyNotificationURI;
+    }
+    
+    private void  setConfigNotificationEnabledFlag(boolean flag) {
+        _configNotificationEnabled = flag;
+    }
+    
+    private boolean isConfigNotificationEnabled() {
+        return _configNotificationEnabled;
+    }
+    
+    private void setConfigNotificationURI(String uri) {
+         _configNotificationURI = uri;
+    }
+    
+    private String getConfigNotificationURI() {
+        return _configNotificationURI;
+    }
+    
+    private boolean                         _sessionNotificationEnabled = false;
     private String                          _sessionNotificationURI;
-    private boolean                         _policyNotificationEnabled;
+    private boolean                         _policyNotificationEnabled  = false;
     private String                          _policyNotificationURI;
+    private boolean                         _configNotificationEnabled  = false;
+    private String                          _configNotificationURI;
 }

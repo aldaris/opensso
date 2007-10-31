@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFilterConfigurationConstants.java,v 1.5 2007-09-26 17:43:46 dknab Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.6 2007-10-31 00:43:23 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -248,6 +248,12 @@ public interface IFilterConfigurationConstants {
 
     public static final String CONFIG_AM_SSO_CACHE_ENABLE =
         "amsso.cache.enable";
+    
+    public static final String CONFIG_CENTRALIZED_NOTIFICATION_ENABLE =
+        "centralized.notification.enable";
+    
+    public static final boolean DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE = true;    
+    
 
     public static final boolean DEFAULT_AM_SSO_CACHE_ENABLE = true;
 

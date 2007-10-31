@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.4 2007-10-13 00:07:20 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.5 2007-10-31 00:43:22 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,18 +33,19 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
-import com.sun.identity.shared.debug.Debug;
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.comm.client.AlreadyRegisteredException;
+import com.iplanet.services.comm.client.PLLClient;
 import com.iplanet.services.naming.URLNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 
-import com.sun.identity.agents.util.AgentRemoteConfigUtils;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.IApplicationSSOTokenProvider;
-
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.agents.util.AgentRemoteConfigUtils;
 /**
  * <p>
  * Provides access to the configuration as set in the system. Underneath the
@@ -316,6 +317,31 @@ public class AgentConfiguration implements
      public static String getAnonymousUserName() {
          return _anonymousUserName;
      }
+    
+   /**
+    * Would be called by agent configuration notification handler when the 
+    * agent housekeeping app receives configuration update notifications from
+    * the fam server
+    */
+    public static void updatePropertiesUponNotification() {       
+        if(isAgentConfigurationRemote()) {
+            hotSwapAgentConfiguration();
+            if (isLogMessageEnabled()) {
+                logMessage(
+                    "AgentConfiguration.updatePropertiesUponNotification():" +
+                    " updating configuration from a notification while" +
+                    " in centralized mode.");
+            }      
+        } else {
+            if (isLogMessageEnabled()) {
+                logMessage(
+                    "AgentConfiguration.updatePropertiesUponNotification():" +
+                    " caller trying to update configuration from a" +
+                    " notification while in local mode." +
+                    " Should only be called when in centralized mode.");
+            }     
+        }
+    }
     
    /**
     * Returns the configuration value corresponding to the specified 
@@ -640,6 +666,39 @@ public class AgentConfiguration implements
         }
     }
    
+   /**
+    * Registers the agent config notification handler with PLLClient. The 
+    * handler is registered once and exists for continuous hot swaps if an 
+    * agent is configured to enable agent configuration updates from the fam
+    * server. The handler is used by notification filter task handler when 
+    * the filter receives agent configuration XML notifications. This method
+    * only needs to be called once when the agent boots up and initializes.
+    */
+    private static void registerAgentNotificationHandler () {       
+        AgentConfigNotificationHandler handler =
+                new AgentConfigNotificationHandler();
+        try {
+            PLLClient.addNotificationHandler(
+                    AgentConfigNotificationHandler.AGENT_CONFIG_SERVICE, 
+                    handler);   
+            if (isLogMessageEnabled()) {
+                logMessage(
+                    "AgentConfiguration.registerAgentNotificationHandler():" +
+                    " registered handler for accepting agent configuration" +
+                    " notifications while in centralized mode.");
+                } 
+        } catch (AlreadyRegisteredException arex) {
+            //should only be one handler per VM since static & global
+            //so probably will never happen
+            if(isLogWarningEnabled()){
+              logWarning("AgentConfiguration.registerAgentNotificationHandler" +
+                    " Tried to register the AgentConfigNotificationHandler" +
+                    " with PLL Client but PLL client already has it" +
+                    " registered." , arex );
+            }         
+        }
+    }
+       
     private static synchronized void setServiceResolver() {
         if (!isInitialized()) {
             String serviceResolverClassName =
@@ -935,7 +994,8 @@ public class AgentConfiguration implements
     
     private static synchronized void initializeConfiguration() {
         if (!isInitialized()) {
-            bootStrapClientConfiguration();
+            bootStrapClientConfiguration();  
+            registerAgentNotificationHandler();
             setUserMappingMode();
             setAuditLogMode();
             setUserAttributeName();
@@ -986,7 +1046,7 @@ public class AgentConfiguration implements
         return getDebug().messageEnabled();
     }    
     
-    private static void updateProperties() {
+    private static void updatePropertiesUponPolling() {
         if (needToRefresh()) {
             if (!isAgentConfigurationRemote()) {
                 File configFile = new File(getConfigFilePath());
@@ -995,9 +1055,13 @@ public class AgentConfiguration implements
                     return; 
                 } 
             }
-            if (loadProperties()) {
-                notifyModuleConfigurationListeners();
-            }
+            hotSwapAgentConfiguration();
+        }
+    }
+    
+    private static void hotSwapAgentConfiguration() {
+        if (loadProperties()) {
+            notifyModuleConfigurationListeners();
         }
     }
     
@@ -1101,7 +1165,7 @@ public class AgentConfiguration implements
             }
 
             while(getModInterval() > 0L) {
-                updateProperties();
+                updatePropertiesUponPolling();
 
                 try {
                     Thread.sleep(getModInterval());
