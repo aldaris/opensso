@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.3 2007-10-30 06:21:16 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.4 2007-10-31 04:49:57 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.security.auth.callback.Callback;
@@ -37,12 +38,21 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 
+import com.iplanet.am.util.AdminUtils;
+import com.iplanet.services.ldap.DSConfigMgr;
+import com.iplanet.services.ldap.LDAPServiceException;
+import com.iplanet.services.ldap.LDAPUser;
+import com.iplanet.services.ldap.Server;
+import com.iplanet.services.ldap.ServerInstance;
 import com.iplanet.services.ldap.ServerConfigMgr;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.AuthSubject;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
+import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
+import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
@@ -58,6 +68,8 @@ import com.sun.identity.idm.RepoSearchResults;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSException;
@@ -66,6 +78,9 @@ import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceSchemaManager;
+import netscape.ldap.LDAPDN;
+import netscape.ldap.LDAPv2;
+import netscape.ldap.util.DN;
 
 public class AgentsRepo extends IdRepo implements ServiceListener {
     public static final String NAME = 
@@ -80,6 +95,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     private static final String comma = ",";
     private static final String agentserviceName = IdConstants.AGENT_SERVICE;
     private static final String agentGroupNode = "agentgroup";
+    private static final String instancesNode = "ou=Instances,";
 
     IdRepoListener repoListener = null;
 
@@ -98,6 +114,10 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     // To determine if notification object has been registered for schema
     // changes.
     private static boolean registeredForNotifications;
+
+    private String amAuthLDAP = "amAuthLDAP";
+
+    private int searchScope = LDAPv2.SCOPE_SUB;
 
     public AgentsRepo() {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -950,11 +970,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     scm = new ServiceConfigManager(token, agentserviceName, 
                         version);
                 }
-                String agentGroupDN = constructDN(agentGroupNode,
-                    "ou=OrganizationConfig,", "/", version, agentserviceName);
+                String agentGroupDN = constructDN(agentGroupNode, 
+                    instancesNode, "/", version, agentserviceName);
                 ServiceConfig orgConfig = getOrgConfig(token);
                 orgConfig.checkAndCreateGroup(agentGroupDN, agentGroupNode);
-                agentGroupConfig = orgConfig;
+                agentGroupConfig = 
+                    scm.getOrganizationConfig("/", agentGroupNode);
             }
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
