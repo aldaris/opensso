@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.12 2007-10-22 23:40:43 goodearth Exp $
+   $Id: idRepoService.xml,v 1.13 2007-10-31 22:27:00 exu Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -450,6 +450,9 @@
                             <Value>person</Value>
                             <Value>top</Value>
                             <Value>inetUser</Value>
+                            <Value>sunFederationManagerDataStore</Value>
+                            <Value>sunIdentityServerLibertyPPService</Value>
+                            <Value>sunFMSAML2NameIdentifier</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -504,6 +507,44 @@
                             <Value>uid</Value>
                             <Value>userPassword</Value>
                             <Value>userCertificate</Value>
+                            <Value>iplanet-am-user-federation-info-key</Value>
+                            <Value>iplanet-am-user-federation-info</Value>
+                            <Value>sunIdentityServerDiscoEntries</Value>
+                            <Value>sunIdentityServerPPCommonNameCN</Value>
+                            <Value>sunIdentityServerPPCommonNameFN</Value>
+                            <Value>sunIdentityServerPPCommonNameSN</Value>
+                            <Value>sunIdentityServerPPCommonNameMN</Value>
+                            <Value>sunIdentityServerPPCommonNameAltCN</Value>
+                            <Value>sunIdentityServerPPCommonNamePT</Value>
+                            <Value>sunIdentityServerPPInformalName</Value>
+                            <Value>sunIdentityServerPPLegalIdentityLegalName</Value>
+                            <Value>sunIdentityServerPPLegalIdentityDOB</Value>
+                            <Value>sunIdentityServerPPLegalIdentityMaritalStatus</Value>
+                            <Value>sunIdentityServerPPLegalIdentityGender</Value>
+                            <Value>sunIdentityServerPPLegalIdentityAltIdType</Value>
+                            <Value>sunIdentityServerPPLegalIdentityAltIdValue</Value>
+                            <Value>sunIdentityServerPPLegalIdentityVATIdType</Value>
+                            <Value>sunIdentityServerPPLegalIdentityVATIdValue</Value>
+                            <Value>sunIdentityServerPPEmploymentIdentityJobTitle</Value>
+                            <Value>sunIdentityServerPPEmploymentIdentityOrg</Value>
+                            <Value>sunIdentityServerPPEmploymentIdentityAltO</Value>
+                            <Value>sunIdentityServerPPAddressCard</Value>
+                            <Value>sunIdentityServerPPMsgContact</Value>
+                            <Value>sunIdentityServerPPFacadeMugShot</Value>
+                            <Value>sunIdentityServerPPFacadeWebSite</Value>
+                            <Value>sunIdentityServerPPFacadeNamePronounced</Value>
+                            <Value>sunIdentityServerPPFacadeGreetSound</Value>
+                            <Value>sunIdentityServerPPFacadegreetmesound</Value>
+                            <Value>sunIdentityServerPPDemographicsDisplayLanguage</Value>
+                            <Value>sunIdentityServerPPDemographicsLanguage</Value>
+                            <Value>sunIdentityServerPPDemographicsAge</Value>
+                            <Value>sunIdentityServerPPDemographicsBirthDay</Value>
+                            <Value>sunIdentityServerPPDemographicsTimeZone</Value>
+                            <Value>sunIdentityServerPPSignKey</Value>
+                            <Value>sunIdentityServerPPEncryPTKey</Value>
+                            <Value>sunIdentityServerPPEmergencyContact</Value>
+                            <Value>sun-fm-saml2-nameid-infokey</Value>
+                            <Value>sun-fm-saml2-nameid-info</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1116,6 +1157,9 @@
                             <Value>person</Value>
                             <Value>sunAMAuthAccountLockout</Value>
                             <Value>top</Value>
+                            <Value>sunFederationManagerDataStore</Value>
+                            <Value>sunIdentityServerLibertyPPService</Value>
+                            <Value>sunFMSAML2NameIdentifier</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1170,6 +1214,44 @@
                             <Value>uid</Value>
                             <Value>userPassword</Value>
                             <Value>userCertificate</Value>
+                            <Value>iplanet-am-user-federation-info-key</Value>
+                            <Value>iplanet-am-user-federation-info</Value>
+                            <Value>sunIdentityServerDiscoEntries</Value>
+                            <Value>sunIdentityServerPPCommonNameCN</Value>
+                            <Value>sunIdentityServerPPCommonNameFN</Value>
+                            <Value>sunIdentityServerPPCommonNameSN</Value>
+                            <Value>sunIdentityServerPPCommonNameMN</Value>
+                            <Value>sunIdentityServerPPCommonNameAltCN</Value>
+                            <Value>sunIdentityServerPPCommonNamePT</Value>
+                            <Value>sunIdentityServerPPInformalName</Value>
+                            <Value>sunIdentityServerPPLegalIdentityLegalName</Value>
+                            <Value>sunIdentityServerPPLegalIdentityDOB</Value>
+                            <Value>sunIdentityServerPPLegalIdentityMaritalStatus</Value>
+                            <Value>sunIdentityServerPPLegalIdentityGender</Value>
+                            <Value>sunIdentityServerPPLegalIdentityAltIdType</Value>
+                            <Value>sunIdentityServerPPLegalIdentityAltIdValue</Value>
+                            <Value>sunIdentityServerPPLegalIdentityVATIdType</Value>
+                            <Value>sunIdentityServerPPLegalIdentityVATIdValue</Value>
+                            <Value>sunIdentityServerPPEmploymentIdentityJobTitle</Value>
+                            <Value>sunIdentityServerPPEmploymentIdentityOrg</Value>
+                            <Value>sunIdentityServerPPEmploymentIdentityAltO</Value>
+                            <Value>sunIdentityServerPPAddressCard</Value>
+                            <Value>sunIdentityServerPPMsgContact</Value>
+                            <Value>sunIdentityServerPPFacadeMugShot</Value>
+                            <Value>sunIdentityServerPPFacadeWebSite</Value>
+                            <Value>sunIdentityServerPPFacadeNamePronounced</Value>
+                            <Value>sunIdentityServerPPFacadeGreetSound</Value>
+                            <Value>sunIdentityServerPPFacadegreetmesound</Value>
+                            <Value>sunIdentityServerPPDemographicsDisplayLanguage</Value>
+                            <Value>sunIdentityServerPPDemographicsLanguage</Value>
+                            <Value>sunIdentityServerPPDemographicsAge</Value>
+                            <Value>sunIdentityServerPPDemographicsBirthDay</Value>
+                            <Value>sunIdentityServerPPDemographicsTimeZone</Value>
+                            <Value>sunIdentityServerPPSignKey</Value>
+                            <Value>sunIdentityServerPPEncryPTKey</Value>
+                            <Value>sunIdentityServerPPEmergencyContact</Value>
+                            <Value>sun-fm-saml2-nameid-infokey</Value>
+                            <Value>sun-fm-saml2-nameid-info</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1806,6 +1888,9 @@
                             <Value>person</Value>
                             <Value>top</Value>
                             <Value>user</Value>
+                            <Value>sunFederationManagerDataStore</Value>
+                            <Value>sunIdentityServerLibertyPPService</Value>
+                            <Value>sunFMSAML2NameIdentifier</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1847,6 +1932,44 @@
                             <Value>sn</Value>
                             <Value>userpassword</Value>
                             <Value>userPrincipalname</Value>
+                            <Value>iplanet-am-user-federation-info-key</Value>
+                            <Value>iplanet-am-user-federation-info</Value>
+                            <Value>sunIdentityServerDiscoEntries</Value>
+                            <Value>sunIdentityServerPPCommonNameCN</Value>
+                            <Value>sunIdentityServerPPCommonNameFN</Value>
+                            <Value>sunIdentityServerPPCommonNameSN</Value>
+                            <Value>sunIdentityServerPPCommonNameMN</Value>
+                            <Value>sunIdentityServerPPCommonNameAltCN</Value>
+                            <Value>sunIdentityServerPPCommonNamePT</Value>
+                            <Value>sunIdentityServerPPInformalName</Value>
+                            <Value>sunIdentityServerPPLegalIdentityLegalName</Value>
+                            <Value>sunIdentityServerPPLegalIdentityDOB</Value>
+                            <Value>sunIdentityServerPPLegalIdentityMaritalStatus</Value>
+                            <Value>sunIdentityServerPPLegalIdentityGender</Value>
+                            <Value>sunIdentityServerPPLegalIdentityAltIdType</Value>
+                            <Value>sunIdentityServerPPLegalIdentityAltIdValue</Value>
+                            <Value>sunIdentityServerPPLegalIdentityVATIdType</Value>
+                            <Value>sunIdentityServerPPLegalIdentityVATIdValue</Value>
+                            <Value>sunIdentityServerPPEmploymentIdentityJobTitle</Value>
+                            <Value>sunIdentityServerPPEmploymentIdentityOrg</Value>
+                            <Value>sunIdentityServerPPEmploymentIdentityAltO</Value>
+                            <Value>sunIdentityServerPPAddressCard</Value>
+                            <Value>sunIdentityServerPPMsgContact</Value>
+                            <Value>sunIdentityServerPPFacadeMugShot</Value>
+                            <Value>sunIdentityServerPPFacadeWebSite</Value>
+                            <Value>sunIdentityServerPPFacadeNamePronounced</Value>
+                            <Value>sunIdentityServerPPFacadeGreetSound</Value>
+                            <Value>sunIdentityServerPPFacadegreetmesound</Value>
+                            <Value>sunIdentityServerPPDemographicsDisplayLanguage</Value>
+                            <Value>sunIdentityServerPPDemographicsLanguage</Value>
+                            <Value>sunIdentityServerPPDemographicsAge</Value>
+                            <Value>sunIdentityServerPPDemographicsBirthDay</Value>
+                            <Value>sunIdentityServerPPDemographicsTimeZone</Value>
+                            <Value>sunIdentityServerPPSignKey</Value>
+                            <Value>sunIdentityServerPPEncryPTKey</Value>
+                            <Value>sunIdentityServerPPEmergencyContact</Value>
+                            <Value>sun-fm-saml2-nameid-infokey</Value>
+                            <Value>sun-fm-saml2-nameid-info</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
