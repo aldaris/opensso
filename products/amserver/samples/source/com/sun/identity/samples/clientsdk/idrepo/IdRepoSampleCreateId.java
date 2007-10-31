@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.3 2007-10-30 06:20:15 goodearth Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.4 2007-10-31 04:51:28 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,9 +67,9 @@ public class IdRepoSampleCreateId {
         }
 
         if (idtype.equals(IdType.AGENT)) {
-            System.out.println("Use IdType 'agentonly' for creation of "+
-                "agents.\nOnly operation supported for IdType 'agent' is "+
-                "READ");
+            System.out.println("Use IdType 'agentonly' and 'agentgroup' for" +
+                " creation of agents."+
+                "\nOnly operation supported for IdType 'agent' is READ");
             return;
         }
 
@@ -101,9 +101,11 @@ public class IdRepoSampleCreateId {
                 System.out.println("Use IdType 'agentonly' for creation of "+
                     "agents.Only operation supported for IdType 'agent' is "+
                     "READ");
-            } else if (idtype.equals(IdType.AGENTONLY)) {
+            } else if (idtype.equals(IdType.AGENTONLY) || 
+                idtype.equals(IdType.AGENTGROUP)) {
+
                 String tmpS = sampleUtils.getLine(idName + "'s agentType: ");
-                 vals.add(tmpS);
+                vals.add(tmpS);
                 attrs.put("AgentType", vals);
 
                 tmpS = sampleUtils.getLine(idName + "'s password: ");
@@ -116,7 +118,7 @@ public class IdRepoSampleCreateId {
                 vals.add(tmpS);
                 attrs.put("com.sun.am.policy.am.polling.interval", vals);
 
-                tmpId = idRepo.createIdentity(IdType.AGENTONLY, idName, attrs);
+                tmpId = idRepo.createIdentity(idtype, idName, attrs);
             } else if (idtype.equals(IdType.USER)) {
                 String tmpS = sampleUtils.getLine(idName + "'s password: ");
                 vals.add(tmpS);
