@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.8 2007-09-05 22:06:44 mallas Exp $
+ * $Id: AgentProvider.java,v 1.9 2007-11-01 17:25:56 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,7 +79,8 @@ public class AgentProvider extends ProviderConfig {
      private static final String REQUEST_HEADER_ENCRYPT = 
          "isRequestHeaderEncrypt";
      private static final String KEY_ALIAS = "keyAlias";
-     private static final String TRUST_AUTHORITY = "TrustAuthority";
+     private static final String STS_TRUST_AUTHORITY = "STS";
+     private static final String DISCOVERY_TRUST_AUTHORITY = "Discovery";
      private static final String PROPERTY = "Property:";
      private static final String USER_NAME = "UserName";
      private static final String USER_PASSWORD = "UserPassword";
@@ -200,20 +201,22 @@ public class AgentProvider extends ProviderConfig {
            this.serviceType = value;
         } else if(attr.equals(USE_DEFAULT_KEYSTORE)) {
            this.isDefaultKeyStore = Boolean.valueOf(value).booleanValue();
-        } else if(attr.equals(TRUST_AUTHORITY)) {
+        } else if(attr.equals(DISCOVERY_TRUST_AUTHORITY)) {
            try {
-               if(trustAuthorities == null) {
-                  trustAuthorities = new ArrayList();
-               }
-               TrustAuthorityConfig ta = TrustAuthorityConfig.getConfig(value, 
-                    TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY); 
-               if(ta != null) {
-                  trustAuthorities.add(ta);
-               }
+               taconfig = TrustAuthorityConfig.getConfig(value, 
+                       TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY);                                              
            } catch (ProviderException pe) {
                ProviderUtils.debug.error("AgentProvider.setAttribute:error",pe);
            }
-
+        } else if (attr.equals(STS_TRUST_AUTHORITY)) {
+            try {
+                taconfig = TrustAuthorityConfig.getConfig(value, 
+                       TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY);
+           
+           } catch (ProviderException pe) {
+               ProviderUtils.debug.error("AgentProvider.setAttribute:error",pe);
+           }
+                
         } else if(attr.startsWith(PROPERTY)) {
            properties.put(attr.substring(PROPERTY.length()), value);
 
@@ -357,14 +360,25 @@ public class AgentProvider extends ProviderConfig {
            }
         }
 
-        if((trustAuthorities != null) && (!trustAuthorities.isEmpty())) {
-           Iterator iter = trustAuthorities.iterator();
-           while(iter.hasNext()) {
-               TrustAuthorityConfig taConfig = 
-                          (TrustAuthorityConfig)iter.next();
-               set.add(getKeyValue(TRUST_AUTHORITY, taConfig.getName()));
+        String stsTA = null;
+        String discoTA = null;
+        if(taconfig != null) {
+           if(taconfig.getType().equals(STS_TRUST_AUTHORITY)) {
+              stsTA = taconfig.getName();                  
            }
+           
+           if(taconfig.getType().equals(DISCOVERY_TRUST_AUTHORITY)) {
+              discoTA = taconfig.getName();                  
+           } 
         }
+                
+        if(stsTA != null) {
+           set.add(getKeyValue(STS_TRUST_AUTHORITY, stsTA));
+        }
+        if(discoTA != null) {
+           set.add(getKeyValue(DISCOVERY_TRUST_AUTHORITY, discoTA)); 
+        }
+        
 
         // Save the entry in Agent's profile
         try {

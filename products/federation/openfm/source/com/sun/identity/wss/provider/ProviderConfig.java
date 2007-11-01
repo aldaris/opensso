@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.8 2007-09-13 07:24:20 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.9 2007-11-01 17:25:56 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,9 +93,8 @@ public abstract class ProviderConfig {
      protected boolean isDefaultKeyStore = false;
      protected boolean forceAuthn = false;
      protected boolean preserveSecHeaders = false;
-     protected String authenticationChain = null;
-     protected String stsEndpoint = null;
-     protected String stsMexEndpoint = null;
+     protected String authenticationChain = null;    
+     protected TrustAuthorityConfig taconfig = null;
 
      private static Class adapterClass;
 
@@ -345,24 +344,24 @@ public abstract class ProviderConfig {
     public void setDefaultKeyStore(boolean set) {
         this.isDefaultKeyStore = set;
     }
-
+  
     /**
      * Returns the provider's trusted authorities list.
      *
      * @return the list of the <code>TrustAuthorityConfig</code> s. 
      */
-    public List getTrustAuthorityConfigList() {
-        return trustAuthorities;
+    public TrustAuthorityConfig getTrustAuthorityConfig() {
+        return taconfig;
     }
-
+    
     /**
      * Sets the trusted authority configurations.
      * 
      * @param trustedAuthorities the list of 
      *            <code>TrustAuthorityConfig</code> s. 
      */
-    public void setTrustAuthorityConfigList(List trustedAuthorities) {
-       trustAuthorities  = trustedAuthorities;
+    public void setTrustAuthorityConfig(TrustAuthorityConfig taconfig) {
+        this.taconfig = taconfig;
     }
 
     /**
@@ -504,39 +503,7 @@ public abstract class ProviderConfig {
      */
     public void setAuthenticationChain(String authenticationChain) {
         this.authenticationChain = authenticationChain;
-    }                       
-    
-    /**
-     * Returns the Security Token Service Endpoint.
-     * @return returns the security token service end point
-     */
-    public String getSTSEndpoint() {
-        return stsEndpoint;
-    }
-    
-    /**
-     * Returns the Security Token Service Metadata exchange endpoint.
-     * @return returns the security token service metadata exchange endpoint.
-     */
-    public String getSTSMexEndpoint() {
-        return stsMexEndpoint;
-    }
-    
-    /**
-     * Sets the Security token service end point.
-     * @param stsEndpoint security token service end point
-     */
-    public void setSTSEndpoint(String stsEndpoint) {
-        this.stsEndpoint = stsEndpoint;
-    }
-    
-    /**
-     * Sets the Security token service metadata end point.
-     * @param stsEndpoint security token service metadata end point
-     */
-    public void setSTSMexEndpoint(String stsMexEndpoint) {
-        this.stsMexEndpoint = stsMexEndpoint;
-    }
+    }                                
     
     /**
      * Stores the provider configuration

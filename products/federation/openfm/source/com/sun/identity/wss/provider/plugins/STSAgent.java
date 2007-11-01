@@ -17,36 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryAgent.java,v 1.2 2007-11-01 17:25:57 mallas Exp $
+ * $Id: STSAgent.java,v 1.1 2007-11-01 17:25:57 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
-package com.sun.identity.wss.provider.plugins; 
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.util.Iterator;
-import java.util.List;
-import java.util.HashSet;
+package com.sun.identity.wss.provider.plugins;
+
 import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Hashtable;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.wss.provider.DiscoveryConfig;
-import com.sun.identity.wss.provider.ProviderConfig;
-import com.sun.identity.wss.provider.ProviderUtils;
-import com.sun.identity.wss.provider.TrustAuthorityConfig;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.wss.provider.STSConfig;
 import com.sun.identity.wss.provider.ProviderException;
-import com.sun.identity.wss.security.PasswordCredential;
-
+import com.sun.identity.wss.provider.ProviderUtils;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdSearchResults;
@@ -55,28 +44,28 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdRepoException;
 
 
-public class DiscoveryAgent extends DiscoveryConfig {
-
-     private static final String AGENT_CONFIG_ATTR = 
+public class STSAgent extends STSConfig {
+    
+    
+    private static Set agentConfigAttribute;
+    private static final String AGENT_CONFIG_ATTR = 
                        "sunIdentityServerDeviceKeyValue";
-     private static final String NAME = "Name";
-     private static final String TYPE = "Type";
-     private static final String ENDPOINT = "Endpoint";
-     private static final String KEY_ALIAS = "KeyAlias";
-
-     private AMIdentityRepository idRepo;
-     private static Set agentConfigAttribute;
-     private static Debug debug = ProviderUtils.debug;
-
-     // Instance variables
-     private SSOToken token;
-     private boolean profilePresent;
-     
-     public DiscoveryAgent() {
-         
-     }
-     
-     public DiscoveryAgent(AMIdentity amIdentity) throws ProviderException {
+    
+    private static final String NAME = "Name";
+    private static final String TYPE = "Type";
+    private static final String ENDPOINT = "Endpoint";
+    private static final String MEX_ENDPOINT = "MexEndpoint";
+    private static Debug debug = ProviderUtils.debug;
+    
+    private AMIdentityRepository idRepo;
+    private boolean profilePresent = false;
+    private SSOToken token = null;
+    
+    /** Creates a new instance of STSAgent */
+    public STSAgent() {
+    }
+    
+    public STSAgent(AMIdentity amIdentity) throws ProviderException {
         try {
             Set attributeValues = amIdentity.getAttribute(AGENT_CONFIG_ATTR);
             if(attributeValues != null && !attributeValues.isEmpty()) {
@@ -90,14 +79,13 @@ public class DiscoveryAgent extends DiscoveryConfig {
             debug.error("STSAgent.constructor: SSO exception", se);
             throw new ProviderException(se.getMessage());            
         }
-         
-     }
-
-     public void init (String name, String type, SSOToken token) 
-               throws ProviderException {
-
+    }
+    
+    public void init(String name, String type, SSOToken token) 
+        throws ProviderException {
+        
         this.name = name;
-        this.type = type;
+        this.type = type;                
         this.token = token;
 
         // Obtain the provider from Agent profile
@@ -113,7 +101,7 @@ public class DiscoveryAgent extends DiscoveryConfig {
             IdSearchControl control = new IdSearchControl();
             control.setReturnAttributes(agentConfigAttribute);
             IdSearchResults results = idRepo.searchIdentities(IdType.AGENT,
-               name, control);
+                name, control);
             Set agents = results.getSearchResults();
             if (!agents.isEmpty()) {
                 Map attrs = (Map) results.getResultAttributes();
@@ -128,48 +116,65 @@ public class DiscoveryAgent extends DiscoveryConfig {
                 }
             }
         } catch (Exception e) {
-            debug.error("DiscoveryAgent.init: Unable to get idRepo", e);
+            debug.error("STSAgent.init: Unable to get idRepo", e);
             throw (new ProviderException("idRepo exception: "+ e.getMessage()));
-        }
+        }        
+         
     }
-
-    private void parseAgentKeyValues(Set keyValues) throws ProviderException {
+    
+     private void parseAgentKeyValues(Set keyValues) throws ProviderException {
         if(keyValues == null || keyValues.isEmpty()) {
            return;
         }
         Iterator iter = keyValues.iterator(); 
         while(iter.hasNext()) {
            String entry = (String)iter.next();
-           StringTokenizer st = new StringTokenizer(entry, "=");
-           if(st.countTokens() != 2) {
+           int index = entry.indexOf("=");
+           if(index == -1) {
               continue;
            }
-           setConfig(st.nextToken(), st.nextToken());
+           setConfig(entry.substring(0, index),
+                      entry.substring(index+1, entry.length()));
         }
     }
 
     private void setConfig(String attr, String value) {
- 
-        debug.message("Attribute name: " + attr + "Value: "+ value);
-
+        
         if(attr.equals(NAME)) {
            this.name = value;
         } else if(attr.equals(TYPE)) {
            this.type = value; 
         } else if(attr.equals(ENDPOINT)) {
-           this.endpoint = value;
-        } else if(attr.equals(KEY_ALIAS)) {
-           this.keyAlias = value;
-        } else {
-           if(ProviderUtils.debug.messageEnabled()) {
-              ProviderUtils.debug.message("DiscoveryAgent.setConfig: Invalid " +
-              "Attribute configured." + attr);
-           }
+            this.endpoint = value;
+        } else if(attr.equals(MEX_ENDPOINT)) {
+            this.mexEndpoint = value;
         }
     }
-
+        
+    public void delete() throws ProviderException {
+        if (!profilePresent) {
+            return;
+        }
+        // Delete the agent profile
+        try {
+            if (idRepo == null) {
+                idRepo = new AMIdentityRepository(token, "/");
+            }
+            // Construct AMIdentity object to delete
+            AMIdentity id = new AMIdentity(token, name,
+                            IdType.AGENT, "/", null);
+            Set identities = new HashSet();
+            identities.add(id);
+            idRepo.deleteIdentities(identities);
+        } catch (Exception e) {
+            debug.error("STSAgent.delete: Unable to get idRepo", e);
+            throw (new ProviderException("idRepo exception: "+ e.getMessage()));
+        }
+        
+    }
+    
     public void store() throws ProviderException {
-
+        
         Set set = new HashSet();
         
         if(name != null) {
@@ -182,11 +187,11 @@ public class DiscoveryAgent extends DiscoveryConfig {
 
         if(endpoint != null) {
            set.add(getKeyValue(ENDPOINT, endpoint));
-        }
-        if(keyAlias != null) {
-           set.add(getKeyValue(KEY_ALIAS, keyAlias));
-        }
+        }        
 
+        if(mexEndpoint != null) {
+           set.add(getKeyValue(MEX_ENDPOINT, mexEndpoint));
+        }
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();
@@ -194,8 +199,7 @@ public class DiscoveryAgent extends DiscoveryConfig {
             if (profilePresent) {
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
-                   name, IdType.AGENT, "/", null);
-                debug.message("Attributes to be stored: " + attributes);
+                    name, IdType.AGENT, "/", null);                
                 id.setAttributes(attributes);
                 id.store();
             } else {
@@ -206,35 +210,14 @@ public class DiscoveryAgent extends DiscoveryConfig {
                 idRepo.createIdentity(IdType.AGENT, name, attributes);
             }
         } catch (Exception e) {
-            debug.error("DiscoveryAgent.store: Unable to get idRepo", e);
+            debug.error("STSAgent.store: Unable to get idRepo", e);
             throw (new ProviderException("idRepo exception: "+ e.getMessage()));
         }
+        
     }
-
-    public void delete() throws ProviderException {
-        if (!profilePresent) {
-            return;
-        }
-
-        // Delete the agent profile
-        try {
-            if (idRepo == null) {
-                idRepo = new AMIdentityRepository(token, "/");
-            }
-            // Construct AMIdentity object to delete
-            AMIdentity id = new AMIdentity(token,name, IdType.AGENT, "/", null);
-            Set identities = new HashSet();
-            identities.add(id);
-            idRepo.deleteIdentities(identities);
-        } catch (Exception e) {
-            debug.error("DiscoveryAgent.delete: Unable to get idRepo", e);
-            throw (new ProviderException("idRepo exception: "+ e.getMessage()));
-        }
-    }
-
+    
     private String getKeyValue(String key, String value) {
         return key + "=" + value;
     }
-   
 
 }

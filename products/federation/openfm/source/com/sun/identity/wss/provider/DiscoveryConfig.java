@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryConfig.java,v 1.1 2007-03-23 00:01:49 mallas Exp $
+ * $Id: DiscoveryConfig.java,v 1.2 2007-11-01 17:25:56 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,6 @@ import com.sun.identity.liberty.ws.common.wsse.BinarySecurityToken;
 import com.sun.identity.liberty.ws.common.Status;
 import com.sun.identity.wss.security.SecurityMechanism;
 
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This class has information about the discovery as the 
@@ -66,6 +65,7 @@ public abstract class DiscoveryConfig extends TrustAuthorityConfig {
        * Constructor
        */
       public DiscoveryConfig() {}
+           
 
       /**
        * Registers the provider configuration with trusted authority.

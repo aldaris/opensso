@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.5 2007-10-01 05:39:45 qcheng Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.6 2007-11-01 17:25:56 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,8 +59,9 @@ public abstract class TrustAuthorityConfig {
     protected String keyAlias;
     protected String name;
     protected String type;
-    protected String metadataEndpoint;
+    
     private static Class discoveryConfigClass;
+    private static Class stsConfigClass;
     private static Debug debug = ProviderUtils.debug;
 
     /**
@@ -68,6 +69,12 @@ public abstract class TrustAuthorityConfig {
     */
     public static final String WSS_DISCOVERY_CONFIG_PLUGIN =
         "com.sun.identity.wss.discovery.config.plugin";
+    
+    /**
+     * Property string for the web services sts configuration plugin.
+     */
+    public static final String WSS_STS_CONFIG_PLUGIN = 
+        "com.sun.identity.wss.sts.config.plugin";
  
     /**
      * Discovery service configuration type.
@@ -83,6 +90,10 @@ public abstract class TrustAuthorityConfig {
     public String getName() {
         return name;
     }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Returns the trust authority type.
@@ -96,7 +107,7 @@ public abstract class TrustAuthorityConfig {
      * Sets the trust authority type.
      * @param type the type of the trust authority.
      */
-    private void setType(String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -135,10 +146,7 @@ public abstract class TrustAuthorityConfig {
     public void setKeyAlias(String keyAlias) {
         this.keyAlias = keyAlias; 
     }
-
-    public String getMetadataEndpoint() {
-        return metadataEndpoint;
-    }
+    
     /**
      * Initialize the trust authority.
      * @param name the name of the trust authority.
@@ -169,6 +177,7 @@ public abstract class TrustAuthorityConfig {
      * @param type the type of the trust authority. The type must have
      *         one of the following values.
      *         <p> {@link #DISCOVERY_TRUST_AUTHORITY}
+     *         <p> {@link #STS_TRUST_AUTHORITY}
      * @exception ProviderException if any failure in 
      *                retrieving the trust authority configuration.
      */
@@ -179,7 +188,10 @@ public abstract class TrustAuthorityConfig {
         if (DISCOVERY_TRUST_AUTHORITY.equals(type)) {
             config = getDiscoveryConfig();
             config.init(name, type, getAdminToken());
-        } else {
+        } else  if(STS_TRUST_AUTHORITY.equals(type)) {
+            config = getSTSConfig();
+            config.init(name, type, getAdminToken());
+        }else {
             throw new ProviderException(
                ProviderUtils.bundle.getString("unsupportedConfigType"));
         }
@@ -233,6 +245,29 @@ public abstract class TrustAuthorityConfig {
             return ((DiscoveryConfig) discoveryConfigClass.newInstance());
         } catch (Exception ex) {
             debug.error("TrustAuthorityConfig.getDiscoveryConfig: " +
+                "Failed in initialization", ex);
+            throw new ProviderException(ex.getMessage());
+        }
+    }
+    
+    private static STSConfig getSTSConfig() throws ProviderException {
+        if (stsConfigClass == null) {
+            String adapterName = SystemConfigurationUtil.getProperty(
+                WSS_STS_CONFIG_PLUGIN, 
+                "com.sun.identity.wss.provider.plugins.STSAgent");
+            try {
+                stsConfigClass = Class.forName(adapterName);
+            }  catch (Exception ex) {
+                debug.error("TrustAuthorityConfig.getSTSConfig: " +
+                    " Failed in creating the STS config class.");
+                throw new ProviderException(ex.getMessage());
+            }
+        }
+        
+        try {
+            return ((STSConfig) stsConfigClass.newInstance());
+        } catch (Exception ex) {
+            debug.error("TrustAuthorityConfig.getSTSConfig: " +
                 "Failed in initialization", ex);
             throw new ProviderException(ex.getMessage());
         }
