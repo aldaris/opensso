@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIRequestInit.jsp,v 1.3 2007-09-11 22:02:16 weisun2 Exp $
+   $Id: spMNIRequestInit.jsp,v 1.4 2007-11-01 20:12:01 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -107,7 +107,7 @@
         paramsMap.put(SAML2Constants.ROLE, SAML2Constants.SP_ROLE);
         paramsMap.put(SAML2Constants.BINDING, binding);
 
-        if (RelayState != null) {
+        if (RelayState != null && !RelayState.equals("")) {
             paramsMap.put(SAML2Constants.RELAY_STATE, RelayState);
         }
 
@@ -121,7 +121,7 @@
                                           metaAlias, idpEntityID, paramsMap);
 
         if (binding.equalsIgnoreCase(SAML2Constants.SOAP)) {
-            if (RelayState != null) {
+            if (RelayState != null && !RelayState.equals("")) {
                 response.sendRedirect(RelayState);
             } else {
                 %>
