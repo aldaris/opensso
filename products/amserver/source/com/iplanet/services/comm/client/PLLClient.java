@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLClient.java,v 1.5 2007-09-18 00:18:18 ericow Exp $
+ * $Id: PLLClient.java,v 1.6 2007-11-01 17:30:24 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -129,6 +129,7 @@ public class PLLClient {
             HashMap cookieTable) throws SendRequestException {
         HttpURLConnection conn = null;
         OutputStream out = null;
+        BufferedReader in = null;
         try {
             if ((SiteMonitor.keepMonitoring == true) && 
                 !SiteMonitor.isAvailable(url)) {
@@ -181,7 +182,7 @@ public class PLLClient {
             out.flush();
 
             // Input ...
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn
+            in = new BufferedReader(new InputStreamReader(conn
                     .getInputStream(), "UTF-8"));
             StringBuffer in_buf = new StringBuffer();
             int len;
@@ -210,6 +211,13 @@ public class PLLClient {
                     throw new SendRequestException(e.getMessage());
                 }
             }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    throw new SendRequestException(e.getMessage());
+                }
+            }    
         }
     }
 
