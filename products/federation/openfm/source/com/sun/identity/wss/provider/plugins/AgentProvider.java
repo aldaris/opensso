@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.9 2007-11-01 17:25:56 mallas Exp $
+ * $Id: AgentProvider.java,v 1.10 2007-11-01 20:43:58 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -257,10 +257,6 @@ public class AgentProvider extends ProviderConfig {
            this.preserveSecHeaders = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(AUTHENTICATION_CHAIN)) {
            this.authenticationChain = value;
-        } else if(attr.equals(STS_ENDPOINT)) {
-           this.stsEndpoint = value;
-        } else if(attr.equals(STS_MEX_ENDPOINT)) {
-           this.stsMexEndpoint = value;
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
@@ -323,14 +319,6 @@ public class AgentProvider extends ProviderConfig {
                        Boolean.toString(preserveSecHeaders)));
         if(authenticationChain != null) {
            set.add(getKeyValue(AUTHENTICATION_CHAIN, authenticationChain));
-        }
-        
-        if(stsEndpoint != null) {
-           set.add(getKeyValue(STS_ENDPOINT, stsEndpoint)); 
-        }
-        
-        if(stsMexEndpoint != null) {
-           set.add(getKeyValue(STS_MEX_ENDPOINT, stsMexEndpoint)); 
         }
         
         if(keyAlias != null) {
