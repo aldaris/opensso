@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SchemaCommand.java,v 1.1 2006-05-31 21:50:05 veiming Exp $
+ * $Id: SchemaCommand.java,v 1.2 2007-11-01 05:05:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,9 +50,14 @@ public class SchemaCommand extends AuthenticatedCommand {
 
     protected ServiceSchemaManager getServiceSchemaManager()
         throws CLIException {
+        String serviceName = getStringOptionValue(IArgument.SERVICE_NAME);
+        return getServiceSchemaManager(serviceName);
+    }
+
+    protected ServiceSchemaManager getServiceSchemaManager(String serviceName)
+        throws CLIException {
         ServiceSchemaManager mgr = null;
         SSOToken adminSSOToken = getAdminSSOToken();
-        String serviceName = getStringOptionValue(IArgument.SERVICE_NAME);
 
         if (serviceName != null) {
             try {
@@ -72,13 +77,21 @@ public class SchemaCommand extends AuthenticatedCommand {
     
     protected ServiceSchema getServiceSchema()
         throws CLIException {
+        String serviceName = getStringOptionValue(IArgument.SERVICE_NAME);
         String subSchemaName = getStringOptionValue(IArgument.SUBSCHEMA_NAME);
         String schemaType = getStringOptionValue(IArgument.SCHEMA_TYPE);
+        return getServiceSchema(serviceName, subSchemaName, schemaType);
+    }
+
+    protected ServiceSchema getServiceSchema(
+        String serviceName,
+        String subSchemaName,
+        String schemaType
+    ) throws CLIException {
         ServiceSchema ss = null;
-        ServiceSchemaManager ssm = getServiceSchemaManager();
+        ServiceSchemaManager ssm = getServiceSchemaManager(serviceName);
 
         if ((ssm != null) && (schemaType != null)) {
-            
             try {
                 ss = ssm.getSchema(getSchemaType(schemaType));
 

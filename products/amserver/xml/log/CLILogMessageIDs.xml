@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.10 2007-10-26 17:28:29 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.11 2007-11-01 05:06:05 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -5425,4 +5425,77 @@
         </actions>
     </logmessage>
 
+    <logmessage name="ATTEMPT_REGISTER_AUTH_MODULE" id="4500"
+        loglevel="LL_INFO"
+        description="Attempt to register authentication module.">
+        <datainfo>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute register authentication module Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_REGISTER_AUTH_MODULE" id="4501"
+        loglevel="LL_INFO"
+        description="Authentication module is registered.">
+        <datainfo>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute register authentication module Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_REGISTER_AUTH_MODULE" id="4502"
+        loglevel="LL_INFO"
+        description="Unable to register authentication module.">
+        <datainfo>
+            <item>name of service</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute register authentication module Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_UNREGISTER_AUTH_MODULE" id="4510"
+        loglevel="LL_INFO"
+        description="Attempt to unregister authentication module.">
+        <datainfo>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute unregister authentication module Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_UNREGISTER_AUTH_MODULE" id="4511"
+        loglevel="LL_INFO"
+        description="Authentication module is unregistered.">
+        <datainfo>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute unregister authentication module Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_UNREGISTER_AUTH_MODULE" id="4512"
+        loglevel="LL_INFO"
+        description="Unable to unregister authentication module.">
+        <datainfo>
+            <item>name of service</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute unregister authentication module Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
 </logmessages>

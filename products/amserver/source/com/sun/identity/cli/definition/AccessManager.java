@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.43 2007-10-26 17:14:23 veiming Exp $
+ * $Id: AccessManager.java,v 1.44 2007-11-01 05:05:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2099,7 +2099,7 @@ public class AccessManager {
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.GetSupportedAuthModules",
-        description="Show the supported authenitcation modules in a realm",
+        description="Show the supported authentication modules in a realm",
         webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm."},
@@ -2110,4 +2110,35 @@ public class AccessManager {
             "get-supported-authtypes-succeed=The following authenticated modules are supported.",
             "get-supported-no-supported-authtype=There are no supported authentication modules."})
     private String show_auth_modules;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.RegisterAuthModule",
+        description="Registers authentication module.",
+        webSupport="true",
+        mandatoryOptions={
+            "authmodule|a|s|Java class name of authentication module."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "register-auth-module-succeeded=Authentication module is registered."
+        }
+    )
+    private String register_auth_module;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.UnregisterAuthModule",
+        description="Unregisters authentication module.",
+        webSupport="true",
+        mandatoryOptions={
+            "authmodule|a|s|Java class name of authentication module."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "unregister-auth-module-succeeded=Authentication module is unregistered.",
+            "unregister-auth-module-notfound=Authentication module is not registered."
+        }
+    )
+    private String unregister_auth_module;
 }
