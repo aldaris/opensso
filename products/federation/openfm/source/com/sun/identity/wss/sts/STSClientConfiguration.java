@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientConfiguration.java,v 1.2 2007-10-10 06:15:54 mrudul_uchil Exp $
+ * $Id: STSClientConfiguration.java,v 1.3 2007-11-01 17:24:16 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.wss.sts;
 
 import com.sun.xml.ws.api.security.trust.client.STSIssuedTokenConfiguration;
+import com.sun.xml.ws.security.Token;
 
 /**
  * This class implements WSIT <code>STSIssuedTokenConfiguration</code> to
@@ -47,6 +48,8 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
     
     private String keyWrapAlg = null;
     
+    private Token userToken = null;
+    
     
     
     public STSClientConfiguration(String stsEndpoint, String stsMEXAddress){
@@ -66,6 +69,10 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
               stsNamespace);
         
         keyType = STSConstants.PUBLIC_KEY;
+    }
+    
+    public void setOBOToken(Token userToken) {
+        this.userToken = userToken;
     }
         
     public String getTokenType() {
@@ -94,6 +101,10 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
     
     public String getKeyWrapAlgorithm() {
         return keyWrapAlg;
+    }
+    
+    public Token getOBOToken() {
+        return userToken;
     }
     
 }

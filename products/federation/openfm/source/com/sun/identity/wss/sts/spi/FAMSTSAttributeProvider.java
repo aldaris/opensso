@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.2 2007-09-13 16:19:29 mallas Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.3 2007-11-01 17:24:47 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,29 +31,73 @@ import java.util.*;
 import javax.xml.namespace.*;
 import com.iplanet.security.x509.CertUtils;
 import java.security.cert.X509Certificate;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import com.sun.identity.wss.sts.STSConstants;
+import com.sun.identity.wss.sts.STSUtils;
+import com.sun.identity.wss.sts.STSClientUserToken;
+import com.sun.identity.wss.sts.FAMSTSException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.sso.SSOException;
+import com.sun.identity.shared.xml.XMLUtils;
 
 public class FAMSTSAttributeProvider implements STSAttributeProvider {
     
     public Map<QName, List<String>> getClaimedAttributes(Subject subject, String appliesTo, String tokenType, Claims claims)
     {
         String name = null; 
-
-        Iterator iter = subject.getPublicCredentials().iterator();
-        Object  object = iter.next();
-        if(object instanceof X509Certificate) {
-           X509Certificate cert = (X509Certificate)object;
-           name = CertUtils.getSubjectName(cert); 
-        }
         
-        Set<Principal> principals = subject.getPrincipals();
-        if (principals != null){
-            final Iterator iterator = principals.iterator();
-            while (iterator.hasNext()){
-                String cnName = principals.iterator().next().getName();
-                int pos = cnName.indexOf("=");
-                name = cnName.substring(pos+1);
-                break;
-            }       
+        Iterator iter = subject.getPublicCredentials().iterator();
+        boolean isFAMTokenFound = false;
+        while(iter.hasNext()) {
+        Object  object = iter.next();
+                
+        if(object instanceof Element) {
+           Element credential = (Element)object;
+           STSUtils.debug.message("Credential: " + XMLUtils.print(credential));
+           if(credential.getLocalName().equals("FAMToken")) {           
+              try {
+                  STSClientUserToken userToken = 
+                          new STSClientUserToken(credential);
+                  String tokenId = userToken.getTokenId();
+                  if(userToken.getTokenType().equals(
+                          STSConstants.SSO_TOKEN_TYPE)) {
+                     SSOToken ssoToken = SSOTokenManager.getInstance().
+                             createSSOToken(userToken.getTokenId());
+                     name = ssoToken.getPrincipal().getName();
+                     isFAMTokenFound = true;
+                  }
+                  
+              } catch (FAMSTSException fae) {
+                  STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed" +
+                          "Attributes: Error in retrieving user token", fae);
+              } catch (SSOException se) {
+                  STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed" +
+                          "Attributes: Error in retrieving user token", se);
+              }              
+           }          
+          }
+        }
+        iter = subject.getPublicCredentials().iterator();
+        Object  object = iter.next();
+        if(!isFAMTokenFound) {
+            
+           if(object instanceof X509Certificate) {
+              X509Certificate cert = (X509Certificate)object;
+              name = CertUtils.getSubjectName(cert); 
+           }
+        
+           Set<Principal> principals = subject.getPrincipals();
+           if (principals != null){
+               final Iterator iterator = principals.iterator();
+               while (iterator.hasNext()){
+                    String cnName = principals.iterator().next().getName();
+                    int pos = cnName.indexOf("=");
+                    name = cnName.substring(pos+1);
+                    break;
+               }       
+           }
         }
         
 	Map<QName, List<String>> attrs = new HashMap<QName, List<String>>();

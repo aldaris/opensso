@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.3 2007-09-13 16:19:29 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.4 2007-11-01 17:24:46 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,13 +37,14 @@ import com.sun.identity.wss.security.SecurityToken;
 import com.sun.identity.wss.security.SecurityException;
 import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.provider.TrustAuthorityConfig;
+import com.sun.identity.wss.provider.STSConfig;
 import com.sun.xml.ws.api.security.trust.client.IssuedTokenManager;
 import com.sun.xml.ws.security.IssuedTokenContext;
 import com.sun.xml.ws.security.Token;
 import com.sun.identity.wss.security.AssertionToken;
 import com.sun.xml.ws.api.security.trust.WSTrustException;
-import com.sun.identity.shared.Constants;
-import com.sun.identity.common.SystemConfigurationUtil;
+
+
 
 /**
  * The class <code>TrustAuthorityClient</code> is used to obtain the 
@@ -137,21 +138,28 @@ public class TrustAuthorityClient {
     private SecurityToken getSTSToken(ProviderConfig pc, 
             SSOToken ssoToken) throws FAMSTSException {
         
-/*
-  //TODO - we have to change this to use have multiple STS configuration
-        String stsEndpoint = pc.getSTSEndpoint();
-        String stsMexAddress = pc.getSTSMexEndpoint();
-*/
-        String stsEndpoint = getSTSEndpoint(); 
-        String stsMexAddress = getSTSMexEndpoint();
+        STSConfig stsConfig = null;
+        TrustAuthorityConfig taconfig = pc.getTrustAuthorityConfig();
+        if(taconfig instanceof TrustAuthorityConfig) {
+           stsConfig = (STSConfig)taconfig;
+        } else {
+           throw new FAMSTSException("invalid trust authorityconfig");
+        }
+        
+        String stsEndpoint = stsConfig.getEndpoint();        
+        String stsMexAddress = stsConfig.getMexEndpoint();
         STSClientConfiguration config = 
                 new STSClientConfiguration(stsEndpoint, stsMexAddress);        
+        if(ssoToken != null) {
+           config.setOBOToken(new STSClientUserToken(ssoToken));
+        }
         try {
             IssuedTokenManager manager = IssuedTokenManager.getInstance();            
             IssuedTokenContext ctx = 
-                    manager.createIssuedTokenContext(config, pc.getWSPEndpoint());
+                    manager.createIssuedTokenContext(config, pc.getWSPEndpoint());          
             manager.getIssuedToken(ctx);
-            Token issuedToken = ctx.getSecurityToken();
+            Token issuedToken = ctx.getSecurityToken();            
+            
             Element element = (Element)issuedToken.getTokenValue();
             if(debug.messageEnabled()) {
                debug.message("TrustAuthorityClient.getSTSToken:: Assertion" +
@@ -177,26 +185,13 @@ public class TrustAuthorityClient {
      */
     private SecurityToken getLibertyToken(ProviderConfig pc,
             SSOToken ssoToken) throws FAMSTSException {
+        
         // TODO - to be implemented
         return null;
     }
 
     // Temporary static method
-    private static String getSTSEndpoint() {
-        String protocol =  SystemConfigurationUtil.getProperty(
-                           Constants.AM_SERVER_PROTOCOL);        
-        String host = SystemConfigurationUtil.getProperty(
-                       Constants.AM_SERVER_HOST);
-        String port = SystemConfigurationUtil.getProperty(
-                       Constants.AM_SERVER_PORT);
-        String deployuri = SystemConfigurationUtil.getProperty(
-                       Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-        return protocol + "://" + host + ":" + port + deployuri + "/sts";
-    }
 
-    private static String getSTSMexEndpoint() {
-        return getSTSEndpoint() + "/mex";
-    }
             
             
 }

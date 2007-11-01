@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.3 2007-10-10 06:15:54 mrudul_uchil Exp $
+ * $Id: STSConstants.java,v 1.4 2007-11-01 17:24:46 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,11 @@ public class STSConstants {
 
     public static final String SAML20_ASSERTION_TOKEN_TYPE = 
         "urn:oasis:names:tc:SAML:2.0:assertion";
+    
+    public static final String SSO_TOKEN_TYPE = "FAMSSOToken";
+    
+    public static final String FAM_TOKEN_NS = 
+                              "http://www.sun.com/identity/famtoken";
 
 }
 
