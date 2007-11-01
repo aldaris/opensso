@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amLogging.xml,v 1.5 2007-10-16 23:47:59 veiming Exp $
+    $Id: amLogging.xml,v 1.6 2007-11-01 03:43:13 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,7 +31,7 @@
     <Service name="iPlanetAMLoggingService" version="1.0">
         <Schema serviceHierarchy="/DSAMEConfig/iPlanetAMLoggingService"
             i18nFileName="amLogging"
-            revisionNumber="30"
+            revisionNumber="50"
             i18nKey="iplanet-am-logging-service-description">
             <Global>
                 <AttributeSchema name="serviceObjectClasses"

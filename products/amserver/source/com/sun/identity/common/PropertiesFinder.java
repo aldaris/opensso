@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertiesFinder.java,v 1.1 2007-10-09 19:02:36 veiming Exp $
+ * $Id: PropertiesFinder.java,v 1.2 2007-11-01 03:43:13 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,10 +54,15 @@ public class PropertiesFinder {
             
             if (ssm.getRevisionNumber() >= ast.revisionNumber) {
                 ServiceSchema ss = ssm.getGlobalSchema();
-                AttributeSchema as = ss.getAttributeSchema(ast.attributeName);
-                Set values = as.getDefaultValues();
-                if ((values != null) && !values.isEmpty()) {
-                    value = (String)values.iterator().next();
+                if (ss != null) {
+                    AttributeSchema as =
+                        ss.getAttributeSchema(ast.attributeName);
+                    if (as != null) {
+                        Set values = as.getDefaultValues();
+                        if ((values != null) && !values.isEmpty()) {
+                            value = (String)values.iterator().next();
+                        }
+                    }
                 }
             }
         } catch (SSOException ex) {
