@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2007-10-12 22:53:18 madan_ranganath Exp $
+   $Id: build.xml,v 1.8 2007-11-02 19:25:01 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,6 +50,8 @@
                 <include name=".version"/>
             </fileset>
         </copy>
+
+        <concat destfile="${j2eeagents.container.classes.dir}/.version" append="true">Build Date: ${nightly.date}&#10;&#10;</concat>
 
         <jar destfile="${j2eeagents.container.archive.dir}/agent.jar" basedir="${j2eeagents.container.classes.dir}"/>
         <copy todir="${j2eeagents.container.lib.dir}">
