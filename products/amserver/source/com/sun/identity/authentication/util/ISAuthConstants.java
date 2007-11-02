@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.8 2007-10-17 23:00:23 veiming Exp $
+ * $Id: ISAuthConstants.java,v 1.9 2007-11-02 01:41:40 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -466,6 +466,9 @@ public interface ISAuthConstants {
     public static final String TRUE_VALUE = "true";
 
     public static final String FALSE_VALUE = "false";
+
+    public static final String POST_AUTH_PROCESS_INSTANCE = 
+            "PostAuthProcessInstance";
 
     /**
      * Delimiters

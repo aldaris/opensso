@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.15 2007-10-25 05:56:06 beomsuk Exp $
+ * $Id: LoginState.java,v 1.16 2007-11-02 01:42:55 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -4937,8 +4937,12 @@ public class LoginState {
 
         if ((postLoginClassSet != null) && (!postLoginClassSet.isEmpty())) {
             postLoginInstanceSet = new HashSet();
+            StringBuffer sb = new StringBuffer();
             for(Iterator iter = postLoginClassSet.iterator(); iter.hasNext();) {
                 postLoginClassName = (String)iter.next();
+                if (sb.length() > 0) {
+                    sb.append("|");
+                }
                 if (messageEnabled) {
                     debug.message("setPostLoginInstances : " 
                     + postLoginClassName);
@@ -4949,10 +4953,12 @@ public class LoginState {
                 = getPostLoginProcessInstance(postLoginClassName);
                 if (postProcessInstance != null) {
                     postLoginInstanceSet.add(postProcessInstance);
+                    sb.append(postLoginClassName);
                 }
             }
+            session.putProperty(ISAuthConstants.POST_AUTH_PROCESS_INSTANCE,
+                    sb.toString()); 
         }
-        
     }
     
     /**

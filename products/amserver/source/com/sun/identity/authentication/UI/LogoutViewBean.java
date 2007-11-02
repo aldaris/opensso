@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.5 2007-01-21 10:34:14 mrudul_uchil Exp $
+ * $Id: LogoutViewBean.java,v 1.6 2007-11-02 01:40:50 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -48,8 +49,13 @@ import com.iplanet.jato.view.event.ChildDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.StaticTextField;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.shared.locale.L10NMessage;
 
 /**
@@ -180,9 +186,37 @@ public class LogoutViewBean extends AuthViewBeanBase {
             SessionService.getSessionService().isSessionFailoverEnabled()) {
                 try {
                     Session session = Session.getSession(sid);
+                    String plis = session.getProperty(
+                            ISAuthConstants.POST_AUTH_PROCESS_INSTANCE);
+                    if (plis != null && plis.length() > 0) {
+                        StringTokenizer st = new StringTokenizer(plis, "|");
+                        SSOToken token = null;
+                        try {
+                            token = SSOTokenManager.getInstance().
+                                    createSSOToken(sid.toString());
+                        } catch (SSOException e) {
+                            if (logoutDebug.messageEnabled()) {
+                                logoutDebug.message("Failed to get token for post process ", e);
+                            }
+                        }
+                        if (token != null) {
+                            while (st.hasMoreTokens()) {
+                                String pli = (String)st.nextToken();
+                                try {
+                                    AMPostAuthProcessInterface postProcess = 
+                                            (AMPostAuthProcessInterface)
+                                            Thread.currentThread().
+                                            getContextClassLoader().
+                                            loadClass(pli).newInstance();
+                                    postProcess.onLogout(request, response, token);
+                                } catch (Exception e) {
+                                    logoutDebug.error("Failed in post logout process of " + pli, e);
+                                }
+                            }
+                        }
+                    }
                     session.logout();
-                    logoutDebug.message("logout successfully in " +
-                    "Site Enabled/Session failover mode");
+                    logoutDebug.message("logout successfully in Site Enabled/Session failover mode");
                     ResultVal = rb.getString("logout.successful");
                 } catch (SessionException se) {
                     try {
