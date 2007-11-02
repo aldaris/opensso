@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.7 2007-10-27 00:29:26 goodearth Exp $
+ * $Id: ServiceConfig.java,v 1.8 2007-11-02 21:59:39 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -441,7 +441,7 @@ public class ServiceConfig {
          * OrganizationName, since the plugins use organization names to compute
          * the choice values
          */
-        ss.validateAttributes(newAttrs, true, sc.getOrganizationName());
+        ss.validateAttributes(token, newAttrs, true, sc.getOrganizationName());
         SMSEntry e = sc.getSMSEntry();
         SMSUtils.setAttributeValuePairs(e, newAttrs, ss
                 .getSearchableAttributeNames());
@@ -473,7 +473,7 @@ public class ServiceConfig {
             newVals.addAll(oldVals);
         }
         ss
-                .validateAttrValues(attrName, newVals, true, sc
+                .validateAttrValues(token, attrName, newVals, true, sc
                         .getOrganizationName());
         // Store the entry
         SMSEntry e = sc.getSMSEntry();
@@ -567,7 +567,7 @@ public class ServiceConfig {
         }
         newVals.add(newValue);
         ss
-                .validateAttrValues(attrName, newVals, true, sc
+                .validateAttrValues(token, attrName, newVals, true, sc
                         .getOrganizationName());
         // Store the entry
         SMSEntry e = sc.getSMSEntry();
@@ -604,7 +604,7 @@ public class ServiceConfig {
         }
         newVals.addAll(newValues);
         ss
-                .validateAttrValues(attrName, newVals, true, sc
+                .validateAttrValues(token, attrName, newVals, true, sc
                         .getOrganizationName());
         // Store the entry
         SMSEntry e = sc.getSMSEntry();

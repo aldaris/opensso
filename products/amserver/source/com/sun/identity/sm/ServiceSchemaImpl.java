@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaImpl.java,v 1.3 2006-09-12 00:47:48 goodearth Exp $
+ * $Id: ServiceSchemaImpl.java,v 1.4 2007-11-02 21:59:39 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
+import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
 import java.util.Collections;
 import java.util.HashMap;
@@ -243,8 +244,19 @@ class ServiceSchemaImpl {
      * the validation. Iterates though the set checking each element to see if
      * there is a validator that needs to execute.
      */
-    boolean validateAttributes(Map attributeSet, boolean encodePassword,
-            String orgName) throws SMSException {
+    boolean validateAttributes(Map attributeSet, boolean encodePassword, 
+        String orgName) throws SMSException {
+        return (validateAttributes(null, attributeSet, encodePassword, orgName));
+    }
+
+    /**
+     * Determines whether each attribute in the attribute set is valid. This
+     * method additionally takes the organization name and SSOToken that would 
+     * be passed to the validation. Iterates though the set checking each element 
+     * to see if there is a validator that needs to execute.
+     */
+    boolean validateAttributes(SSOToken ssoToken, Map attributeSet, boolean 
+        encodePassword, String orgName) throws SMSException {
         if (validate != null && validate.equalsIgnoreCase("no")) {
             // Do not validate attributes in this subschema
             return (true);
@@ -266,7 +278,8 @@ class ServiceSchemaImpl {
             }
             if (!attrName.equalsIgnoreCase(SMSUtils.COSPRIORITY)) {
                 Set vals = (Set) attributeSet.get(attrName);
-                validateAttrValues(attrName, vals, encodePassword, orgName);
+                validateAttrValues(ssoToken, attrName, vals, 
+                    encodePassword, orgName);
             }
         }
         return (true);
@@ -407,7 +420,7 @@ class ServiceSchemaImpl {
 
     // Validates the values for the attribute, for the
     // given organization name
-    void validateAttrValues(String attrName, Set values,
+    void validateAttrValues(SSOToken ssoToken, String attrName, Set values,
             boolean encodePassword, String orgName) throws SMSException {
         if (validate != null && validate.equalsIgnoreCase("no")) {
             // Do not validate attributes in this subschema
@@ -455,6 +468,9 @@ class ServiceSchemaImpl {
         if (orgName != null) {
             HashMap env = new HashMap();
             env.put(Constants.ORGANIZATION_NAME, orgName);
+            if (ssoToken != null) {
+                env.put(Constants.SSO_TOKEN, ssoToken); 
+            }
             String i18nFileName = (ssm != null) ? ssm.getI18NFileName() : null;
             av.validate(values, i18nFileName, encodePassword, env);
         } else {

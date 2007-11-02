@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchema.java,v 1.8 2007-02-20 22:51:21 goodearth Exp $
+ * $Id: ServiceSchema.java,v 1.9 2007-11-02 21:59:39 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -387,6 +387,7 @@ public class ServiceSchema {
         if (orgName != null) {
             envMap = new HashMap();
             envMap.put(Constants.ORGANIZATION_NAME, orgName);
+            envMap.put(Constants.SSO_TOKEN, ssm.getSSOToken());
         }
         Iterator ass = ss.getAttributeSchemaNames().iterator();
         while (ass.hasNext()) {
@@ -676,7 +677,8 @@ public class ServiceSchema {
      */
     public boolean validateAttributes(Map attributeSet) throws SMSException {
         SMSEntry.validateToken(ssm.getSSOToken());
-        return (ss.validateAttributes(attributeSet, false));
+        return (ss.validateAttributes(ssm.getSSOToken(), attributeSet, false,
+            null));
     }
 
     /**
@@ -696,7 +698,8 @@ public class ServiceSchema {
     public boolean validateAttributes(Map attributeSet, String orgName)
             throws SMSException {
         SMSEntry.validateToken(ssm.getSSOToken());
-        return (ss.validateAttributes(attributeSet, false, orgName));
+        return (ss.validateAttributes(ssm.getSSOToken(), attributeSet, false, 
+            orgName));
     }
 
     /**

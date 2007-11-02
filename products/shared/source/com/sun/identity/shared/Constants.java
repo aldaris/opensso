@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.12 2007-10-17 23:01:00 veiming Exp $
+ * $Id: Constants.java,v 1.13 2007-11-02 21:57:00 pawand Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -680,6 +680,11 @@ public interface Constants {
      * Default cache polling interval (1 minute).
      */
     int DEFAULT_CACHE_POLLING_TIME = 1;
+
+    /**
+     * Key for SSOToken Object in envMap passed from SM
+     */
+    String SSO_TOKEN = "SSOToken";
 
     /**
      * Tag for server protocol.

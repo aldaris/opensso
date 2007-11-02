@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginConfig.java,v 1.1 2005-11-01 00:31:26 arvindp Exp $
+ * $Id: PluginConfig.java,v 1.2 2007-11-02 21:59:39 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -183,7 +183,7 @@ public class PluginConfig {
             newVals.addAll(values);
         }
         ps
-                .validateAttrValues(attrName, newVals, true, pc
+                .validateAttrValues(token, attrName, newVals, true, pc
                         .getOrganizationName());
         // Store the entry
         SMSEntry e = pc.getSMSEntry();
@@ -247,7 +247,7 @@ public class PluginConfig {
         }
         newVals.add(newValue);
         ps
-                .validateAttrValues(attrName, newVals, true, pc
+                .validateAttrValues(token, attrName, newVals, true, pc
                         .getOrganizationName());
         // Store the entry
         SMSEntry e = pc.getSMSEntry();
@@ -281,7 +281,7 @@ public class PluginConfig {
         }
         newVals.addAll(newValues);
         ps
-                .validateAttrValues(attrName, newVals, true, pc
+                .validateAttrValues(token, attrName, newVals, true, pc
                         .getOrganizationName());
         // Store the entry
         SMSEntry e = pc.getSMSEntry();

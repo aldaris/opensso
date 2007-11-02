@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.7 2007-05-31 02:13:12 goodearth Exp $
+ * $Id: CreateServiceConfig.java,v 1.8 2007-11-02 21:59:39 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -278,7 +278,7 @@ public class CreateServiceConfig {
 
         if (attrs != null) {
             // Validate the attributes
-            ss.validateAttributes(attrs, true, orgDN);
+            ss.validateAttributes(token, attrs, true, orgDN);
             SMSUtils.setAttributeValuePairs(entry, attrs, ss
                     .getSearchableAttributeNames());
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredAuthServices.java,v 1.4 2007-10-29 17:55:20 pawand Exp $
+ * $Id: ConfiguredAuthServices.java,v 1.5 2007-11-02 22:00:18 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,16 +71,19 @@ public class ConfiguredAuthServices extends ChoiceValues {
      */
     public Map getChoiceValues(Map envParams) {
         String orgDN = null;
+        SSOToken adminToken = null;
         
         if (envParams != null) {
             orgDN = (String)envParams.get(Constants.ORGANIZATION_NAME);
+            adminToken = (SSOToken)envParams.get(Constants.SSO_TOKEN);
         }
         if (orgDN == null || orgDN.length() == 0) {
             orgDN = SMSEntry.getRootSuffix();
         }
-
-        SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+        if (adminToken == null) {
+            adminToken = (SSOToken)AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+        }
 
         Set namedConfigs = Collections.EMPTY_SET;
         Map answer = new HashMap();
