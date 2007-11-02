@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: README,v 1.1 2006-09-06 18:25:18 veiming Exp $
+   $Id: README,v 1.2 2007-11-02 01:08:05 veiming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,8 +31,10 @@ Steps:
  2. Setup the test
      - unzip amserver/built/test/dist/opensso-server-test.zip to a directory
        in the same machine where opensso.war is deployed.
-     - copy the AMConfig.properties that was generated in Step One to
-       the test <directory>/classes directory
  3. Run the test
-     - type "ant" to run all test suites; or to selectively run individually
+     - type
+       ant -D""bootstrap.dir=<base dir of your FAM installation>"
+       e.g.
+       ant -D"bootstrap.dir=/opt/fam"
+       to run all test suites; or to selectively run individually
        test suite, invoke the specific target in the ant build XML.

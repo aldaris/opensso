@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MockCLI.java,v 1.5 2007-04-04 00:26:09 veiming Exp $
+ * $Id: MockCLI.java,v 1.6 2007-11-02 01:08:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,7 @@ public class MockCLI {
         macro="",
         optionalOptions={
             "optional|o|s|Optional option.",
-            "testmatch|t|b|Set this flag to test options"},
+            "testmatch|t|u|Set this flag to test options"},
         resourceStrings={
             "mandatory=Mandatory."})
     private String test_command;

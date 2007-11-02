@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FormatUtils.java,v 1.3 2007-10-17 23:00:24 veiming Exp $
+ * $Id: FormatUtils.java,v 1.4 2007-11-02 01:08:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,12 +32,10 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SchemaType;
 import java.text.MessageFormat;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -131,17 +129,17 @@ public class FormatUtils {
         return buff.toString();
     }
 
-    public static String formatProperties(Properties prop) {
+    public static String formatProperties(Map prop) {
         StringBuffer buff = new StringBuffer();
         if (prop != null) {
             Set sorted = new TreeSet();
-            for (Enumeration e = prop.propertyNames(); e.hasMoreElements(); ) {
-                sorted.add(e.nextElement());
+            for (Iterator i = prop.keySet().iterator(); i.hasNext(); ) {
+                sorted.add((String)i.next());
             }
 
             for (Iterator i = sorted.iterator(); i.hasNext(); ) {
                 String key = (String)i.next();
-                String value = prop.getProperty(key);
+                String value = (String)prop.get(key);
                 buff.append(key).append("=").append(value).append("\n");
             }
         }

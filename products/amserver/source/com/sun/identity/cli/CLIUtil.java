@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtil.java,v 1.4 2007-10-17 23:00:24 veiming Exp $
+ * $Id: CLIUtil.java,v 1.5 2007-11-02 01:08:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -123,13 +123,17 @@ public class CLIUtil {
             AdminTokenAction.getInstance());
         ServiceSchemaManager ssm = new ServiceSchemaManager(
             serviceName, ssoToken);
-        ServiceSchema schema = ssm.getOrganizationSchema();
-        Set attributeSchemas = schema.getAttributeSchemas();
-        
-        for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
-            AttributeSchema as = (AttributeSchema)i.next();
-            if (as.getSyntax().equals(AttributeSchema.Syntax.PASSWORD)) {
-                setPasswords.add(as.getName());
+        if (ssm != null) {
+            ServiceSchema schema = ssm.getOrganizationSchema();
+            if (schema != null) {
+                Set attributeSchemas = schema.getAttributeSchemas();
+                
+                for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
+                    AttributeSchema as = (AttributeSchema)i.next();
+                    if (as.getSyntax().equals(AttributeSchema.Syntax.PASSWORD)){
+                        setPasswords.add(as.getName());
+                    }
+                }
             }
         }
         return setPasswords;

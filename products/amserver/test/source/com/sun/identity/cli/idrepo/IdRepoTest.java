@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoTest.java,v 1.2 2007-04-10 20:47:40 veiming Exp $
+ * $Id: IdRepoTest.java,v 1.3 2007-11-02 01:08:05 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -279,7 +279,9 @@ public class IdRepoTest extends TestBase{
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
-            "iPlanetAMUserService"};
+            "iPlanetAMSessionService",
+            CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.ATTRIBUTE_VALUES,
+            "iplanet-am-session-quota-limit=10"};
 
         SSOToken adminSSOToken = getAdminSSOToken();
         CLIRequest req = new CLIRequest(null, args, adminSSOToken);
@@ -289,7 +291,7 @@ public class IdRepoTest extends TestBase{
         AMIdentity amid = new AMIdentity(
             adminSSOToken, uid, IdType.USER, realm, null);
         Set services = amid.getAssignedServices();
-        assert services.contains("iPlanetAMUserService");
+        assert services.contains("iPlanetAMSessionService");
         exiting("assignServices");
     }
 
@@ -312,7 +314,7 @@ public class IdRepoTest extends TestBase{
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
-            "iPlanetAMUserService"};
+            "iPlanetAMSessionService"};
 
         SSOToken adminSSOToken = getAdminSSOToken();
         CLIRequest req = new CLIRequest(null, args, adminSSOToken);
@@ -324,7 +326,7 @@ public class IdRepoTest extends TestBase{
         Set services = amid.getAssignedServices();
         for (Iterator i = services.iterator(); i.hasNext(); ) {
             String svc = (String)i.next();
-            assert (!svc.equals("iPlanetAMUserService"));
+            assert (!svc.equals("iPlanetAMSessionService"));
         }
         exiting("unassignServices");
     }
@@ -347,7 +349,7 @@ public class IdRepoTest extends TestBase{
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
-            "iPlanetAMUserService"};
+            "iPlanetAMSessionService"};
 
         SSOToken adminSSOToken = getAdminSSOToken();
         CLIRequest req = new CLIRequest(null, args, adminSSOToken);
@@ -374,9 +376,9 @@ public class IdRepoTest extends TestBase{
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
-            "iPlanetAMUserService",
+            "iPlanetAMSessionService",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.ATTRIBUTE_VALUES,
-            "givenname=test"
+            "iplanet-am-session-quota-limit=1"
         };
 
         SSOToken adminSSOToken = getAdminSSOToken();
@@ -386,10 +388,10 @@ public class IdRepoTest extends TestBase{
         
         AMIdentity user = new AMIdentity(
             adminSSOToken, uid, IdType.USER, realm, null);
-        Map attrValues = user.getServiceAttributes("iPlanetAMUserService");
-        Set values = (Set)attrValues.get("givenname");
+        Map attrValues = user.getServiceAttributes("iPlanetAMSessionService");
+        Set values = (Set)attrValues.get("iplanet-am-session-quota-limit");
         String val = (String)values.iterator().next();
-        assert val.equals("test");
+        assert val.equals("1");
         exiting("setServiceAttributes");
     }
     

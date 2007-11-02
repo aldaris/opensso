@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2007-05-01 19:22:24 dillidorai Exp $
+   $Id: build.xml,v 1.11 2007-11-02 01:08:05 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,6 +50,12 @@
         <mkdir dir="${output.dir}" />
         <delete dir="${logs.dir}" />
         <mkdir dir="${logs.dir}" />
+
+        <java classname="com.sun.identity.test.common.Bootstrap" fork="true">
+            <jvmarg value="-Dbootstrap.dir=${bootstrap.dir}" />
+            <arg value="${classes.dir}" />
+            <classpath refid="build.class.path"/>
+        </java>
 
         <java classname="org.testng.TestNG" fork="true">
             <jvmarg value="-Dlog.level=${log.level}"/>
