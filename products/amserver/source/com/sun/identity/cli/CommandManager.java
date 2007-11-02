@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.16 2007-10-24 20:51:01 veiming Exp $
+ * $Id: CommandManager.java,v 1.17 2007-11-02 05:43:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -194,6 +194,7 @@ public class CommandManager {
         if (webEnabledURL != null) {
             environment.put(CLIConstants.WEB_ENABLED_URL, webEnabledURL);
         }
+        debugger = Debug.getInstance("amCLI");
     }
 
     private void init(String[] argv)
@@ -235,6 +236,7 @@ public class CommandManager {
         ) {
             environment.put(CLIConstants.ARGUMENT_NOLOG, Boolean.TRUE);
         }
+        debugger = Debug.getInstance("amCLI");
     }
 
     private void setupDefinitions(String defintionFiles)
