@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.11 2007-10-16 22:15:55 rmisra Exp $
+ * $Id: TestConstants.java,v 1.12 2007-11-02 00:44:13 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -226,7 +226,27 @@ public interface TestConstants {
      * Property key for <code>certalias</code>.
      */
     String KEY_ATT_CERTALIAS = "certalias";
+    
+    /**
+     * Property key for <code>multiprotocol_enabled</code>
+     */
+    String KEY_ATT_MULTIPROTOCOL_ENABLED="multiprotocol_enabled";
 
+    /**
+     * Property key for <code>idff_sp</code>
+     */
+    String KEY_ATT_IDFF_SP="idff_sp";
+    
+    /**
+     * Property key for <code>samlv2_sp</code>
+     */
+    String KEY_ATT_SAMLV2_SP="samlv2_sp";
+    
+    /**
+     * Property key for <code>wsfed_sp</code>
+     */
+    String KEY_ATT_WSFED_SP="wsfed_sp";
+    
     /**
      * Property key for <code>protocol</code>.
      */
@@ -589,4 +609,34 @@ public interface TestConstants {
         "<FederationTerminationNotificationProtocolProfile>" +
             "http://projectliberty.org/profiles/fedterm-idp-soap" +
             "</FederationTerminationNotificationProtocolProfile>";
+
+    /** 
+     * MultiProtocol Property key for <code>idff_sp_user</code>
+     */
+    String KEY_IDFF_SP_USER = "idff_sp_user";  
+
+    /** 
+     * MultiProtocol Property key for <code>idff_sp_userpw</code>
+     */
+    String KEY_IDFF_SP_USER_PASSWORD = "idff_sp_userpw";  
+
+    /** 
+     * MultiProtocol Property key for <code>samlv2_sp_user</code>
+     */
+    String KEY_SAMLv2_SP_USER = "samlv2_sp_user";  
+
+    /** 
+     * MultiProtocol Property key for <code>samlv2_sp_userpw</code>
+     */
+    String KEY_SAMLv2_SP_USER_PASSWORD = "samlv2_sp_userpw";  
+
+    /** 
+     * MultiProtocol Property key for <code>wsfed_sp_user</code>
+     */
+    String KEY_WSFed_SP_USER = "wsfed_sp_user";  
+
+    /** 
+     * MultiProtocol Property key for <code>wsfed_sp_userpw</code>
+     */
+    String KEY_WSFed_SP_USER_PASSWORD = "wsfed_sp_userpw";  
 } 

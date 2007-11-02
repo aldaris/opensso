@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.3 2007-10-05 18:24:05 mrudulahg Exp $
+ * $Id: MultiProtocolCommon.java,v 1.4 2007-11-02 00:44:13 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,8 @@ package com.sun.identity.qatest.common;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -333,5 +335,145 @@ public class MultiProtocolCommon extends TestCommon {
         return metadata;
     }
 
+    /**
+     * This method creates xml for Wsfed SP init SSO 
+     * The flow is as follows
+     * If the SSO has been already established for the user with different 
+     * provider then SSO with WSFed will succeed without prompting to enter 
+     * user details
+     * @param xmlFileName is the file to be created.
+     * @param Map m contains all the data for xml generation
+     */
+    public static void getxmlWSFedSPInitSSO(String xmlFileName, Map m)
+    throws Exception {
+        FileWriter fstream = new FileWriter(xmlFileName);
+        BufferedWriter out = new BufferedWriter(fstream);
+        String sp_proto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
+        String sp_port = (String)m.get(TestConstants.KEY_SP_PORT);
+        String sp_host = (String)m.get(TestConstants.KEY_SP_HOST);
+        String sp_deployment_uri = (String)m.get(
+                TestConstants.KEY_SP_DEPLOYMENT_URI);
+        String sp_alias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
+        String idp_entity_name = (String)m.get(
+                TestConstants.KEY_IDP_ENTITY_NAME);
+        String sp_user = (String)m.get(TestConstants.KEY_SP_USER);
+        String sp_userpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
+        String idp_user = (String)m.get(TestConstants.KEY_IDP_USER);
+        String idp_userpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
+        String strResult = (String)m.get(TestConstants.KEY_SSO_RESULT);
+        
+        out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
+                + sp_port + sp_deployment_uri
+                + "/WSFederationServlet/metaAlias/" + sp_alias
+                + "?goto=" + sp_proto +"://" + sp_host + ":"
+                + sp_port + sp_deployment_uri);
+        out.write("\">");
+        out.write(newline);
+        out.write("<form>");
+        out.write("<result text=\"" + strResult + "\" />");
+        out.write(newline);
+        out.write("</form>");
+        out.write(newline);
+        out.write("</url>");
+        out.write(newline);
+        out.close();
+    }
+
+    /**
+     * This method creates xml for IDFF sp init sso
+     * The flow is as follows
+     * If the SSO has been already established for the user with different 
+     * provider then SSO with IDFF will succeed without prompting to enter 
+     * user details
+     * @param xmlFileName is the file to be created.
+     * @param Map m contains all the data for xml generation
+     */
+    public static void getxmlIDFFSPInitSSO(String xmlFileName, Map m)
+    throws Exception {
+        FileWriter fstream = new FileWriter(xmlFileName);
+        BufferedWriter out = new BufferedWriter(fstream);
+        String spProto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
+        String spPort = (String)m.get(TestConstants.KEY_SP_PORT);
+        String spHost = (String)m.get(TestConstants.KEY_SP_HOST);
+        String spDeploymentURI = (String)m.get(
+                TestConstants.KEY_SP_DEPLOYMENT_URI);
+        String spMetaalias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
+        String idpEntityName = (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME);
+        String spUser = (String)m.get(TestConstants.KEY_SP_USER);
+        String spUserpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
+        String idpUser = (String)m.get(TestConstants.KEY_IDP_USER);
+        String idpUserpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
+        String strResult = (String)m.get(TestConstants.KEY_SSO_RESULT);
+        
+        out.write("<url href=\"" + spProto +"://" + spHost + ":"
+                + spPort + spDeploymentURI
+                + "/config/federation/default/Federate.jsp?metaAlias=/"
+                + spMetaalias + "&amp;idpEntityID=" + idpEntityName );
+        out.write("\">");
+        out.write(System.getProperty("line.separator"));
+        out.write("<form>");
+        out.write(System.getProperty("line.separator"));
+        out.write("<result text=\"" + strResult + "\" />");
+        out.write(System.getProperty("line.separator"));
+        out.write("</form>");
+        out.write(System.getProperty("line.separator"));
+        out.write("</url>");
+        out.write(System.getProperty("line.separator"));
+        out.close();
+    }     
+    
+    /**
+     * This method creates xml for SAMLv2 sp init sso
+     * The flow is as follows
+     * If the SSO has been already established for the user with different 
+     * provider then SSO with SAMLv2 will succeed without prompting to enter 
+     * user details
+     * 4. After successful sp login, "Single sign-on succeeded" msg is displayed.
+     * @param xmlFileName is the file to be created.
+     * @param Map m contains all the data for xml generation
+     * @param bindingType can be artifact or post
+     */
+    public static void getxmlSAMLv2SPInitSSO(String xmlFileName, Map m,
+            String bindingType)
+    throws Exception {
+        FileWriter fstream = new FileWriter(xmlFileName);
+        BufferedWriter out = new BufferedWriter(fstream);
+        String sp_proto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
+        String sp_port = (String)m.get(TestConstants.KEY_SP_PORT);
+        String sp_host = (String)m.get(TestConstants.KEY_SP_HOST);
+        String sp_deployment_uri = (String)m.get(
+                TestConstants.KEY_SP_DEPLOYMENT_URI);
+        String sp_alias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
+        String idp_entity_name = (String)m.get(
+                TestConstants.KEY_IDP_ENTITY_NAME);
+        String sp_user = (String)m.get(TestConstants.KEY_SP_USER);
+        String sp_userpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
+        String idp_user = (String)m.get(TestConstants.KEY_IDP_USER);
+        String idp_userpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
+        String strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
+        
+        out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
+                + sp_port + sp_deployment_uri
+                + "/saml2/jsp/spSSOInit.jsp?metaAlias=/" + sp_alias
+                + "&amp;idpEntityID=" + idp_entity_name );
+        if (bindingType == "post") {
+            out.write("&amp;binding=HTTP-POST");
+        }
+        if (m.get("urlparams") != null) {
+            out.write("&amp;" + m.get("urlparams"));
+        }
+        out.write("\">");
+        out.write(newline);
+        out.write("<form >");
+        out.write(newline);
+        out.write("<result text=\"" + strResult + "\" />");
+        out.write(newline);
+        out.write("</form>");
+        out.write(newline);
+        out.write("</url>");
+        out.write(newline);
+        out.close();
+    }
+    
 }
 
