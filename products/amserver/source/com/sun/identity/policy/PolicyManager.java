@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.5 2007-09-25 17:37:23 dillidorai Exp $
+ * $Id: PolicyManager.java,v 1.6 2007-11-02 04:24:37 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1460,8 +1460,12 @@ public final class PolicyManager {
             orgAlias = url.getHost();
         } catch (MalformedURLException mfe) {
             String[] objs = { resourceName };
-            throw (new PolicyException(ResBundleUtils.rbName,
-                    "malformed_url_unable_to_get_org_alias", objs, mfe));
+            if (debug.messageEnabled()) {
+                debug.message("PolicyManager.getOrgAliasWithResource(): "
+                        + " orgName = " + org
+                        + ", resourceName = " + resourceName
+                        + " is invalid URL, no org alias mapping can be found");
+            }
         }
         return orgAlias;
     }
