@@ -107,6 +107,20 @@ cot=@COPY_FROM_CONFIG@
 # Certificate alias used for XML signing and encryption.
 certalias=
 
+# If this flag is set to true, Multiprotocol testcases will use one IDP 
+# & three SP's. 
+multiprotocol_enabled=false
+
+# SP points to the hostname. Configurator-<hostname>.properties file should 
+# exist under resources directory
+# These properties should be mentioned in IDP's Configurator file, 
+# i.e. SERVER_NAME1's Configurator file
+# SERVER_NAME2 will be used as samklv2 SP. 
+# idff_sp points to the SP where IDFF SP metadata will be hosted.
+# wsfed_sp points to the SP where WSFed SP metadata will be hosted.
+idff_sp=
+wsfed_sp=
+
 # Protocol for SP or IDP. By default the protcocl is picked from the
 # namingservice attribute.
 protocol=@COPY_FROM_CONFIG@

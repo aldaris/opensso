@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.10 2007-10-15 20:35:57 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.11 2007-11-02 00:43:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,28 @@ public class ClientConfigCreator {
         if ((serverName2.indexOf("SERVER_NAME2")) != -1) {
             getDefaultValues(testDir, serverName1);
         } else {
-            getDefaultValues(testDir, serverName1, serverName2);
+            PropertyResourceBundle configDef1 = new PropertyResourceBundle(
+                    new FileInputStream(testDir + fileseparator + "resources" +
+                    fileseparator + "Configurator-" +
+                    serverName1 + ".properties"));
+            if (configDef1.getString(TestConstants.
+                    KEY_ATT_MULTIPROTOCOL_ENABLED).equalsIgnoreCase("true")) {
+                getDefaultValues(testDir, serverName1, 
+                        configDef1.getString(TestConstants.KEY_ATT_IDFF_SP), 
+                        properties_idff);
+                getDefaultValues(testDir, serverName1, 
+                        configDef1.getString(TestConstants.KEY_ATT_WSFED_SP), 
+                        properties_wsfed);
+                getDefaultValues(testDir, serverName1, serverName2, 
+                        properties_saml);
+            } else {
+                getDefaultValues(testDir, serverName1, serverName2, 
+                        properties_saml);
+                getDefaultValues(testDir, serverName1, serverName2, 
+                        properties_idff);
+                getDefaultValues(testDir, serverName1, serverName2, 
+                        properties_wsfed);
+            }
             createFileFromMap(properties_saml, SAML_FILE_CLIENT_PROPERTIES);
             createFileFromMap(properties_idff, IDFF_FILE_CLIENT_PROPERTIES);
             createFileFromMap(properties_wsfed, WSFED_FILE_CLIENT_PROPERTIES);
@@ -201,7 +222,7 @@ public class ClientConfigCreator {
      * file.
      */
     private void getDefaultValues(String testDir, String serverName1,
-            String serverName2)
+            String serverName2, Map properties_protocol)
         throws Exception {
 
         PropertyResourceBundle configDef1 = new PropertyResourceBundle(
@@ -249,9 +270,7 @@ public class ClientConfigCreator {
                     !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
                     !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
                     !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
-            properties_saml.put("idp_" + key, value);
-            properties_idff.put("idp_" + key, value);
-            properties_wsfed.put("idp_" + key, value);
+            properties_protocol.put("idp_" + key, value);
         }
 
         PropertyResourceBundle configDef2 = new PropertyResourceBundle(
@@ -373,9 +392,7 @@ public class ClientConfigCreator {
                     !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
                     !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
                     !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
-            properties_saml.put("sp_" + key, value);
-            properties_idff.put("sp_" + key, value);
-            properties_wsfed.put("sp_" + key, value);
+            properties_protocol.put("sp_" + key, value);
         }
     }
 
