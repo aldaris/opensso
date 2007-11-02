@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.4 2007-10-31 04:49:57 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.5 2007-11-02 21:56:56 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,24 +36,10 @@ import java.util.Set;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.login.LoginException;
 
 import com.iplanet.am.util.AdminUtils;
-import com.iplanet.services.ldap.DSConfigMgr;
-import com.iplanet.services.ldap.LDAPServiceException;
-import com.iplanet.services.ldap.LDAPUser;
-import com.iplanet.services.ldap.Server;
-import com.iplanet.services.ldap.ServerInstance;
-import com.iplanet.services.ldap.ServerConfigMgr;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.authentication.internal.AuthSubject;
-import com.sun.identity.authentication.internal.server.SMSAuthModule;
-import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
-import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
-import com.sun.identity.authentication.spi.AuthLoginException;
-import com.sun.identity.authentication.spi.InvalidPasswordException;
-import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.idm.IdConstants;
@@ -68,9 +54,6 @@ import com.sun.identity.idm.RepoSearchResults;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.locale.AMResourceBundleCache;
-import com.sun.identity.shared.locale.Locale;
-import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
@@ -79,7 +62,6 @@ import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceSchemaManager;
 import netscape.ldap.LDAPDN;
-import netscape.ldap.LDAPv2;
 import netscape.ldap.util.DN;
 
 public class AgentsRepo extends IdRepo implements ServiceListener {
@@ -115,9 +97,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     // changes.
     private static boolean registeredForNotifications;
 
-    private String amAuthLDAP = "amAuthLDAP";
-
-    private int searchScope = LDAPv2.SCOPE_SUB;
 
     public AgentsRepo() {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -354,11 +333,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             ServiceConfig aCfg = svcConfig.getSubConfig(agentName);
             if (aCfg != null) {
                 answer = aCfg.getAttributes();
+                // Send the agenttype of that agent.
+                Set vals = new HashSet(2);
+                vals.add(aCfg.getSchemaID());
+                answer.put(IdConstants.AGENT_TYPE, vals);
             }
-            // Send the agenttype of that agent.
-            Set vals = new HashSet(2);
-            vals.add(aCfg.getSchemaID());
-            answer.put(IdConstants.AGENT_TYPE, vals);
         } catch (SMSException sme) {
             debug.error("AgentsRepo.getAgentAttrs(): "
                 + "Error occurred while getting " + agentName, sme);
@@ -563,13 +542,21 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     aCfg = agentGroupConfig;
                     agentRes = getAgentPattern(aCfg, pattern);
                 }
+            } else if (type.equals(IdType.AGENT)) {
+                    agentRes.add(pattern);
             }
             if (agentRes != null) {
                 Iterator it = agentRes.iterator();
                 while (it.hasNext()) {
                     String agName = (String) it.next();
                     Map attrsMap = getAttributes(token, type, agName);
-                    agentAttrs.put(agName, attrsMap);
+                    if (attrsMap != null && !attrsMap.isEmpty()) {
+                        agentAttrs.put(agName, attrsMap);
+                    } else {
+                        return new RepoSearchResults(new HashSet(),
+                            RepoSearchResults.SUCCESS, Collections.EMPTY_MAP, 
+                                type);
+                    }
                 }
             }
         } catch (SSOException sse) {
@@ -804,14 +791,15 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         return (true);
     }
 
-    public boolean authenticate(Callback[] credentials) throws IdRepoException,
-            AuthLoginException {
+    public boolean authenticate(Callback[] credentials) 
+        throws IdRepoException {
 
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.authenticate() called");
         }
 
-        // Obtain user name and password from credentials and authenticate
+        // Obtain user name and password from credentials and compare
+        // with the ones from the agent profile to authorize the agent.
         String username = null;
         String password = null;
         for (int i = 0; i < credentials.length; i++) {
@@ -833,33 +821,52 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 }
             }
         }
-        if (username == null || password == null) {
-            return (false);
+        if (username == null || (username.length() == 0) || 
+            password == null) {
+            Object args[] = { NAME };
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "221", args);
         }
-        Map sharedState = new HashMap();
-        sharedState.put(ISAuthConstants.SHARED_STATE_USERNAME, username);
-        sharedState.put(ISAuthConstants.SHARED_STATE_PASSWORD, password);
-        if (debug.messageEnabled()) {
-            debug.message("AgentsRepo.authenticate() inst. SMSAuthModule");
-        }
-        SMSAuthModule module = new SMSAuthModule();
-        if (debug.messageEnabled()) {
-            debug.message("AgentsRepo.authenticate() SMSAuthModule:init");
-        }
-        module.initialize(new AuthSubject(), null, sharedState,
-                Collections.EMPTY_MAP);
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+
         boolean answer = false;
+        String baseDN = null;
+        String userid = username;
         try {
-            answer = module.login();
+            /* Only agents with IdType.AGENTONLY is used for authentication,
+             * not the agents with IdType.AGENTGROUP.
+             * AGENTGROUP is for storing common properties.
+             * So use the AGENTONLY's baseDN.
+             */
+            baseDN = constructDN("default", "ou=OrganizationConfig,",
+                    "/", version, agentserviceName);
+            if (DN.isDN(username)) {
+                userid = LDAPDN.explodeDN(username, true)[0];
+            }
+            Set pSet = new HashSet(2);
+            pSet.add("userpassword");
+            Map ansMap = new HashMap(2);
+            String userPwd = null;
+            ansMap = getAttributes(adminToken, IdType.AGENTONLY, userid, pSet);
+            Set userPwdSet = (HashSet) ansMap.get("userpassword"); 
+            if ((userPwdSet != null) && (!userPwdSet.isEmpty())) {
+                userPwd = (String) userPwdSet.iterator().next();
+            }
+            if (password.equals(userPwd)) {
+                answer = true;
+            }
             if (debug.messageEnabled()) {
-                debug.message("AgentsRepo.authenticate() login: " + answer);
+                debug.message("AgentsRepo.authenticate() result: " + answer);
             }
-        } catch (LoginException le) {
+        } catch (SSOException ssoe) {
             if (debug.warningEnabled()) {
-                debug.warning("AgentsRepo.authenticate(): login exception", le);
+                debug.warning("AgentsRepo.authenticate(): "
+                        + "Unable to authenticate SSOException:" + ssoe);
             }
-            if (le instanceof AuthLoginException) {
-                throw ((AuthLoginException) le);
+        } catch (SMSException smse) {
+            if (debug.warningEnabled()) {
+                debug.warning("AgentsRepo.authenticate: "
+                        + "Unable to construct agent DN " + smse);
             }
         }
         return (answer);
