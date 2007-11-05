@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Login.java,v 1.1 2006-08-04 21:07:00 veiming Exp $
+ * $Id: Login.java,v 1.2 2007-11-05 17:59:24 ericow Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,17 +41,28 @@ import com.iplanet.am.util.Debug;
 public class Login {
     private String loginIndexName;
     private String orgName;
+    private String locale;
     
     private Login(String loginIndexName, String orgName) {
         this.loginIndexName = loginIndexName;
         this.orgName = orgName;
     }
     
+    private Login(String loginIndexName, String orgName, String locale) {
+        this.loginIndexName = loginIndexName;
+        this.orgName = orgName;
+        this.locale = locale;
+    }
+    
     protected AuthContext getAuthContext()
         throws AuthLoginException {
         AuthContext lc = new AuthContext(orgName);
         AuthContext.IndexType indexType = AuthContext.IndexType.MODULE_INSTANCE;
-        lc.login(indexType, loginIndexName);
+        if (locale == null || locale.length() == 0) {
+            lc.login(indexType, loginIndexName);
+        } else {
+            lc.login(indexType, loginIndexName, locale);
+        }
         debugMessage(loginIndexName + ": Obtained login context");
         return lc;
     }
@@ -187,7 +198,11 @@ public class Login {
             String moduleName = (new BufferedReader(
                 new InputStreamReader(System.in))).readLine();
             
-            Login login = new Login(moduleName, orgName);
+            System.out.print("Login locale (e.g. en_US or fr_FR): ");
+            String locale = (new BufferedReader(
+                new InputStreamReader(System.in))).readLine();
+            
+            Login login = new Login(moduleName, orgName, locale);
             AuthContext lc = login.getAuthContext();
             if (login.login(lc)) {
                 login.logout(lc);
