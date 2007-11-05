@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLTags.java,v 1.5 2007-10-17 23:00:23 veiming Exp $
+ * $Id: AuthXMLTags.java,v 1.6 2007-11-05 17:55:27 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ public interface AuthXMLTags {
     public static final String INDEX_TYPE_PAIR = "IndexTypeNamePair";
     public static final String INDEX_NAME = "IndexName";
     public static final String INDEX_TYPE = "indexType";
+    public static final String LOCALE = "Locale";
     public static final String SUBJECT = "Subject";
     public static final String PASSWORD = "Password";
     public static final String PRINCIPAL = "Principal";
@@ -217,7 +218,7 @@ public interface AuthXMLTags {
     public static final String PAGEP_CALLBACK_END="</PagePropertiesCallback>";
     public static final String LANGUAGE_CALLBACK_BEGIN="<LanguageCallback>";
     public static final String LANGUAGE_CALLBACK_END="</LanguageCallback>";
-    public static final String LOCALE_BEGIN="<Locale";
+    public static final String LOCALE_BEGIN="<Locale>";
     public static final String LOCALE_END ="</Locale>";
 
     public static final String MODULE_NAME_BEGIN="<ModuleName>";

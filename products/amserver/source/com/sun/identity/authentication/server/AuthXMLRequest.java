@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequest.java,v 1.3 2007-01-09 19:04:24 manish_rustagi Exp $
+ * $Id: AuthXMLRequest.java,v 1.4 2007-11-05 17:57:45 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,6 +98,7 @@ public class AuthXMLRequest {
     private boolean isPCookie=false;
     private AuthContext.IndexType indexType=null;
     private String indexName=null;
+    private String locale=null;
     private Principal principal;
     private char[] password;
     private Callback[] submittedCallbacks;
@@ -218,6 +219,15 @@ public class AuthXMLRequest {
    }
 
     /**
+     * Sets the locale
+     *
+     * @param locale locale setting.
+     */
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    /**
      * Sets the index name.
      *
      * @param indexName Index Name.
@@ -324,6 +334,15 @@ public class AuthXMLRequest {
      */
     public AuthContext.IndexType getIndexType() {
         return indexType;
+    }
+
+    /**
+     * Returns the locale.
+     *
+     * @return the locale.
+     */
+    public String getLocale() {
+        return locale;
     }
 
     /**

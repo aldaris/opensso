@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLocal.java,v 1.6 2007-04-02 06:02:08 veiming Exp $
+ * $Id: AuthContextLocal.java,v 1.7 2007-11-05 17:57:45 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -285,6 +285,36 @@ public final class AuthContextLocal extends Object
      *
      * @param type authentication index type.
      * @param indexName authentication index name.
+     * @param locale locale setting.
+     * @throws AuthLoginException if an error occurred during 
+     *            login process.
+     */
+    public void login(
+        AuthContext.IndexType type,
+        String indexName,
+        String locale
+    ) throws AuthLoginException {
+        if (authDebug.messageEnabled()) {
+            authDebug.message("AuthContextLocal::login() called " +
+            "with IndexType : " + type + " & Indexname : " + indexName +
+            " & locale : " + locale);
+        }
+
+        login(type, indexName, null, null, null, false, locale);
+    }
+
+    /**
+     * Starts the login process for the given <code>AuthContextLocal</code>
+     * object identified by the index type and index name.
+     * The <code>IndexType</code> defines the possible kinds
+     * of "objects" or "resources" for which an authentication can
+     * be performed.Currently supported index types are
+     * users, roles, services (or application), levels and mechanism.
+     * The pCookieMode indicates that a persistent cookie exists
+     * for this request.
+     *
+     * @param type authentication index type.
+     * @param indexName authentication index name.
      * @param pCookieMode <code>true</code> if persistent Cookie exists,
      *        <code>false</code> otherwise
      * @throws AuthLoginException if an error occurred during 
@@ -297,10 +327,44 @@ public final class AuthContextLocal extends Object
     ) throws AuthLoginException {
         if (authDebug.messageEnabled()) {
             authDebug.message("AuthContextLocal::login() called " +
-            "with IndexType : " + type + " & Indexname : " + indexName);
+            "with IndexType : " + type + " & Indexname : " + indexName +
+            " & pCookieMode : " + pCookieMode);
         }
 
         login(type, indexName, null, null, null, pCookieMode);
+    }
+
+    /**
+     * Starts the login process for the given <code>AuthContextLocal</code>
+     * object identified by the index type and index name.
+     * The <code>IndexType</code> defines the possible kinds
+     * of "objects" or "resources" for which an authentication can
+     * be performed.Currently supported index types are
+     * users, roles, services (or application), levels and mechanism.
+     * The pCookieMode indicates that a persistent cookie exists
+     * for this request.
+     * The locale specifies the user preferred locale setting.
+     *
+     * @param type authentication index type.
+     * @param indexName authentication index name.
+     * @param pCookieMode <code>true</code> if persistent Cookie exists,
+     *        <code>false</code> otherwise
+     * @param locale locale setting.
+     * @throws AuthLoginException if an error occurred during 
+     *            login process.
+     */
+    public void login(
+        AuthContext.IndexType type,
+        String indexName,
+        boolean pCookieMode,
+        String locale
+    ) throws AuthLoginException {
+        if (authDebug.messageEnabled()) {
+            authDebug.message("AuthContextLocal::login() called " +
+            "with IndexType : " + type + " & Indexname : " + indexName +
+            " & pCookieMode : " + pCookieMode + " & locale : " + locale);
+        }
+        login(type, indexName, null, null, null, pCookieMode, locale);
     }
 
     /**
@@ -317,6 +381,24 @@ public final class AuthContextLocal extends Object
     protected void login(AuthContext.IndexType type, String indexName, 
         Principal principal, char[] password, Subject subject, 
         boolean pCookieMode) throws AuthLoginException {
+        login(type, indexName, principal, password, subject, pCookieMode, null);
+    }
+
+    /**
+     * Performs the Login for the given AuthContext
+     * @param type authentication index type
+     * @param indexName authentication index name
+     * @param principal principal name of the user to be authenticated
+     * @param password password for the user
+     * @param subject authentication subject
+     * @param pCookieMode <code>true</code>persistent Cookie exists,
+     *        <code>false</code> otherwise
+     * @param locale locale setting
+     * @throws AuthLoginException if error occurs during login
+     */
+    protected void login(AuthContext.IndexType type, String indexName, 
+        Principal principal, char[] password, Subject subject, 
+        boolean pCookieMode, String locale) throws AuthLoginException {
         try {
             /*if (!getStatus().equals(AuthContext.Status.NOT_STARTED)) {
                 if (authDebug.messageEnabled()) {
@@ -338,6 +420,7 @@ public final class AuthContextLocal extends Object
             loginParamsMap.put(PASSWORD, password);
             loginParamsMap.put(SUBJECT, subject);
             loginParamsMap.put(PCOOKIE, Boolean.valueOf(pCookieMode));
+            loginParamsMap.put(LOCALE, locale);
 
             if (authDebug.messageEnabled()) {
                 authDebug.message(
@@ -884,4 +967,9 @@ public final class AuthContextLocal extends Object
      * authentication index name
      */
     public final static String INDEX_NAME = "indexName";
+
+    /**
+     * locale setting
+     */
+    public final static String LOCALE = "locale";
 }

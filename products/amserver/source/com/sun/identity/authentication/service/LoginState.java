@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.16 2007-11-02 01:42:55 ericow Exp $
+ * $Id: LoginState.java,v 1.17 2007-11-05 17:56:36 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -309,7 +309,7 @@ public class LoginState {
     String tempDefaultURL = null;
     String sessionSuccessURL = null;
     Set postLoginInstanceSet = null;
-    boolean isRemote=false;
+    boolean isLocaleSet=false;
     boolean cookieDetect=false;
     HashMap userCreationAttributes = null;
     Set externalAliasList = null;
@@ -1387,18 +1387,24 @@ public class LoginState {
     public String getQueryOrg() {
         return queryOrg;
     }
-    
+
+    /**
+     * Sets locale
+     *
+     * @param locale locale setting
+     */
+    public void setLocale(String locale) {
+        localeContext.setUserLocale(locale);
+        isLocaleSet = true;
+    }
+
     /**
      * Returns locale.
      *
      * @return locale.
      */
     public String getLocale() {
-        /*
-         * called by AMLoginModule SPI and UI if its a remote call then make
-         * sure the locale from AMConfig.properties is picked up.
-         */
-        if (isRemote) {
+        if (!isLocaleSet) {
             return ad.platLocale;
         } else {
             return localeContext.getLocale().toString();
@@ -4203,7 +4209,7 @@ public class LoginState {
         }
         amIdRepo = ad.getAMIdentityRepository(getOrgDN());
         populateOrgProfile();
-        isRemote=true;
+        isLocaleSet=false;
         return authContext;
     }
     

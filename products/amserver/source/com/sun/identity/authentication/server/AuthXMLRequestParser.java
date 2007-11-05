@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequestParser.java,v 1.4 2007-01-09 19:04:24 manish_rustagi Exp $
+ * $Id: AuthXMLRequestParser.java,v 1.5 2007-11-05 17:57:45 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -313,6 +313,11 @@ public class AuthXMLRequestParser {
             }
             authXMLRequest.setRequestType(AuthXMLRequest.LoginIndex);
         } 
+
+        Node localeNode = XMLUtils.getChildNode(loginNode, AuthXMLTags.LOCALE);
+        if (localeNode != null) {
+            authXMLRequest.setLocale(XMLUtils.getValueOfValueNode(localeNode));
+        }
 
         // get the default values for callbacks if any.
         Node paramsNode = XMLUtils.getChildNode(loginNode,AuthXMLTags.PARAMS);

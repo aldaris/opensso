@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.5 2007-05-24 23:13:08 manish_rustagi Exp $
+ * $Id: AMLoginContext.java,v 1.6 2007-11-05 17:56:36 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1045,7 +1045,11 @@ public class AMLoginContext {
             if (pCookieObject != null) {
                 pCookieMode = pCookieObject.booleanValue();
             }
-            
+
+            String locale = (String)loginParamsMap.get("locale");  
+            if (locale != null && locale.length() > 0) {
+                loginState.setLocale(locale);
+            }
         } catch (Exception e) {
             if (debug.messageEnabled()) {
                 debug.message("Error parsing login Params");

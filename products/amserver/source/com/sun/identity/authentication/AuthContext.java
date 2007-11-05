@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.8 2007-10-17 23:00:21 veiming Exp $
+ * $Id: AuthContext.java,v 1.9 2007-11-05 17:54:42 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -359,6 +359,26 @@ public class AuthContext extends Object implements java.io.Serializable {
     
     /**
      * Starts the login process for the given <code>AuthContext</code> object
+     * identified by the index type and index name.
+     * The <code>IndexType</code> defines the possible kinds of "objects"
+     * or "resources" for which an authentication can
+     * be performed. Currently supported index types are
+     * users, roles, services (or application), levels and mechanism.
+     * It allows the caller to pass in the desired locale for this request.
+     *
+     * @param type authentication index type
+     * @param indexName authentication index name
+     * @param locale locale setting
+     *
+     * @exception AuthLoginException if an error occurred during login
+     */
+    public void login(IndexType type, String indexName, String locale)
+            throws AuthLoginException {
+        login(type, indexName, null, false, locale);
+    }
+
+    /**
+     * Starts the login process for the given <code>AuthContext</code> object
      * identified by the index type and index name and also completes
      * the login process by submitting the given User credentials
      * in the form of Callbacks.
@@ -454,6 +474,16 @@ public class AuthContext extends Object implements java.io.Serializable {
         String[] params,
         boolean pCookie
     ) throws AuthLoginException {
+        login(indexType, indexName, params, false, null);
+    }
+
+    private void login(
+        IndexType indexType,
+        String indexName,
+        String[] params,
+        boolean pCookie,
+        String locale
+    ) throws AuthLoginException {
         if (ssoToken != null) {
             try {
                 organizationName = ssoToken.getProperty(
@@ -483,7 +513,7 @@ public class AuthContext extends Object implements java.io.Serializable {
             	    authDebug.message("AuthContext.login : runLogin against "
             		    + authServiceURL);
             	}
-                runLogin(indexType, indexName, params, pCookie);
+                runLogin(indexType, indexName, params, pCookie, locale);
                 return;
             }
         } catch (AuthLoginException e) {
@@ -517,7 +547,7 @@ public class AuthContext extends Object implements java.io.Serializable {
                 e.hasMoreElements(); ) {
                     authServiceURL = (URL)e.nextElement();
                     try {
-                        runLogin(indexType, indexName, params, pCookie);
+                        runLogin(indexType, indexName, params, pCookie, locale);
                         return;
                     } catch (AuthLoginException ex) {
                         authException = ex;
@@ -540,7 +570,8 @@ public class AuthContext extends Object implements java.io.Serializable {
         IndexType indexType,
         String indexName,
         String[] params,
-        boolean pCookie
+        boolean pCookie,
+        String locale
     ) throws AuthLoginException {
         if (!localFlag) {
             setLocalFlag(authServiceURL);
@@ -580,7 +611,7 @@ public class AuthContext extends Object implements java.io.Serializable {
                     acLocal = com.sun.identity.authentication.service.AuthUtils.
                         getAuthContext(organizationName, ssoTokenID);
                 }
-                acLocal.login(indexType, indexName, pCookie);
+                acLocal.login(indexType, indexName, pCookie, locale);
             } catch (AuthException e) {
                 throw new AuthLoginException(e);
             }
@@ -596,7 +627,7 @@ public class AuthContext extends Object implements java.io.Serializable {
             }
         }
         // Run Login
-        runRemoteLogin(indexType, indexName, params, pCookie);
+        runRemoteLogin(indexType, indexName, params, pCookie, locale);
         
         if (authDebug.messageEnabled()) {
             authDebug.message("useNewStyleRemoteAuthentication : " 
@@ -628,7 +659,7 @@ public class AuthContext extends Object implements java.io.Serializable {
                 throw loginException;
             }
             // Re-try login process with AuthIdentifier
-            runRemoteLogin(indexType, indexName, params, pCookie);
+            runRemoteLogin(indexType, indexName, params, pCookie, locale);
         } else if (!useNewStyleRemoteAuthentication) {
             useNewStyleRemoteAuthentication = true;
         }
@@ -638,7 +669,8 @@ public class AuthContext extends Object implements java.io.Serializable {
     }
 
     private void runRemoteLogin(IndexType indexType, String indexName,
-        String[] params, boolean pCookie) throws AuthLoginException {
+        String[] params, boolean pCookie, String locale)
+        throws AuthLoginException {
         try {
             String xmlString = null;
             // remote auth
@@ -707,6 +739,12 @@ public class AuthContext extends Object implements java.io.Serializable {
                     .append(indexName)
                     .append(AuthXMLTags.INDEX_NAME_END)
                     .append(AuthXMLTags.INDEX_TYPE_PAIR_END);
+            }
+
+            if (locale != null && locale.length() > 0) {
+                request.append(AuthXMLTags.LOCALE_BEGIN);
+                request.append(locale);
+                request.append(AuthXMLTags.LOCALE_END);
             }
 
             if (params != null) {

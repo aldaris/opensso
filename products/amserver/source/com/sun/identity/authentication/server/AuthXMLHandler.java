@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.7 2007-10-25 05:56:06 beomsuk Exp $
+ * $Id: AuthXMLHandler.java,v 1.8 2007-11-05 17:57:45 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -419,7 +419,15 @@ public class AuthXMLHandler implements RequestHandler {
                         clientHost = servletRequest.getRemoteAddr();
                     }
                     loginState.setClient(clientHost);
-                    authContext.login(indexType,indexName);
+                    String locale = authXMLRequest.getLocale();
+                    if (locale != null && locale.length() > 0) {
+                        if (debug.messageEnabled()) {
+                            debug.message("locale is : " + locale);
+                        }
+                        authContext.login(indexType,indexName,locale);
+                    } else {
+                        authContext.login(indexType,indexName);
+                    }
                     processRequirements(authContext,authResponse, params,
                         servletRequest);
                     postProcess(loginState, authResponse);
