@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.3 2007-10-30 06:19:49 goodearth Exp $
+   $Id: AgentService.xml,v 1.4 2007-11-05 21:45:28 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,37 +33,44 @@
     <Service name="AgentService" version="1.0">
         <Schema i18nFileName="agentService" revisionNumber="10">
             <Organization>
-              <SubSchema name="WebAgent" inheritance="multiple">
-                <AttributeSchema
-                    name="userpassword"
-                    type="single"
-                    syntax="password"
-                    validator="RequiredValueValidator"
-                    i18nKey="userpassword">
-                    <DefaultValues>
-                        <Value>&#160;</Value>
-                    </DefaultValues>
-                </AttributeSchema>
-                <AttributeSchema name="sunIdentityServerDeviceStatus"
-                    type="single_choice"
-                    syntax="string"
-                    validator="RequiredValueValidator"
-                    i18nKey="sunIdentityServerDeviceStatus">
-                    <ChoiceValues>
-                        <ChoiceValue i18nKey="Active">Active</ChoiceValue>
-                        <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
-                    </ChoiceValues>
-                    <DefaultValues>
-                        <Value>Active</Value>
-                    </DefaultValues>
-                </AttributeSchema>
-                <AttributeSchema name="RequiredValueValidator"
-                    type="validator"
-                    syntax="string">
-                    <DefaultValues>
-                        <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-                    </DefaultValues>
-                </AttributeSchema>
+                <SubSchema name="WebAgent" inheritance="multiple">
+                    <AttributeSchema
+                        name="userpassword"
+                        type="single"
+                        syntax="password"
+                        validator="RequiredValueValidator"
+                        i18nKey="userpassword">
+                        <DefaultValues>
+                            <Value>&#160;</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceStatus"
+                        type="single_choice"
+                        syntax="string"
+                        validator="RequiredValueValidator"
+                        i18nKey="sunIdentityServerDeviceStatus">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
+                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Active</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="ListValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.common.configuration.ListValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.repository.location"
                         type="single_choice"
@@ -746,6 +753,7 @@
                         name="com.sun.am.policy.agents.config.freeformproperties"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.am.policy.agents.config.freeformproperties">
                         <DefaultValues>
                             <Value></Value>
@@ -782,7 +790,14 @@
                          <DefaultValues>
                              <Value>com.sun.identity.sm.RequiredValueValidator</Value>
                          </DefaultValues>
-                     </AttributeSchema>
+                    </AttributeSchema>
+                    <AttributeSchema name="ListValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.common.configuration.ListValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.repository.location"
                         type="single_choice"
@@ -965,6 +980,7 @@
                         name="com.sun.identity.agents.config.webservice.endpoint"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.webservice.endpoint">
                         <DefaultValues>
                             <Value>[0]=</Value>
@@ -1023,6 +1039,7 @@
                         name="com.sun.identity.agents.config.login.form"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.login.form">
                         <DefaultValues>
                             <Value>[0]=</Value>
@@ -1032,6 +1049,7 @@
                         name="com.sun.identity.agents.config.login.error.uri"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.login.error.uri">
                         <DefaultValues>
                             <Value>[0]=</Value>
@@ -1063,6 +1081,7 @@
                         name="com.sun.identity.agents.config.auth.handler"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.auth.handler">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1072,6 +1091,7 @@
                         name="com.sun.identity.agents.config.logout.handler"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.logout.handler">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1081,6 +1101,7 @@
                         name="com.sun.identity.agents.config.verification.handler"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.verification.handler">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1112,6 +1133,7 @@
                         name="com.sun.identity.agents.config.login.url"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.login.url">
                         <DefaultValues>
                             <Value>[0]=@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Login</Value>
@@ -1231,6 +1253,7 @@
                         name="com.sun.identity.agents.config.cookie.reset.name"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.cookie.reset.name">
                         <DefaultValues>
                             <Value>[0]=</Value>
@@ -1240,6 +1263,7 @@
                         name="com.sun.identity.agents.config.cookie.reset.domain"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.cookie.reset.domain">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1249,6 +1273,7 @@
                         name="com.sun.identity.agents.config.cookie.reset.path"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.cookie.reset.path">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1280,6 +1305,7 @@
                         name="com.sun.identity.agents.config.cdsso.cdcservlet.url"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.cdsso.cdcservlet.url">
                         <DefaultValues>
                             <Value>[0]=@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet</Value>
@@ -1298,28 +1324,30 @@
                         name="com.sun.identity.agents.config.cdsso.trusted.id.provider"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.cdsso.trusted.id.provider">
                         <DefaultValues>
                             <Value>[0]=@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                      name="com.sun.identity.agents.config.cdsso.secure.enable"
-                      type="single_choice"
-                      syntax="string"
-                      i18nKey="com.sun.identity.agents.config.cdsso.secure.enable">
-                      <ChoiceValues>
-                          <ChoiceValue i18nKey="true">true</ChoiceValue>
-                          <ChoiceValue i18nKey="false">false</ChoiceValue>
-                      </ChoiceValues>
-                      <DefaultValues>
-                          <Value>false</Value>
-                      </DefaultValues>
-                  </AttributeSchema> 
+                        name="com.sun.identity.agents.config.cdsso.secure.enable"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="com.sun.identity.agents.config.cdsso.secure.enable">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="true">true</ChoiceValue>
+                            <ChoiceValue i18nKey="false">false</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                           <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema> 
                     <AttributeSchema
                         name="com.sun.identity.agents.config.logout.application.handler"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.logout.application.handler">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1329,6 +1357,7 @@
                         name="com.sun.identity.agents.config.logout.uri"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.logout.uri">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1338,6 +1367,7 @@
                         name="com.sun.identity.agents.config.logout.request.param"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.logout.request.param">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1360,6 +1390,7 @@
                         name="com.sun.identity.agents.config.logout.entry.uri"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.logout.entry.uri">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1391,6 +1422,7 @@
                         name="com.sun.identity.agents.config.fqdn.mapping"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.fqdn.mapping">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1413,6 +1445,7 @@
                         name="com.sun.identity.agents.config.legacy.user.agent"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.legacy.user.agent">
                         <DefaultValues>
                             <Value>[0]=Mozilla/4.7*</Value>
@@ -1431,6 +1464,7 @@
                         name="com.sun.identity.agents.config.response.header"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.response.header">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1471,6 +1505,7 @@
                         name="com.sun.identity.agents.config.port.check.setting"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.port.check.setting">
                         <DefaultValues>
                             <Value>[@AGENT_PREF_PORT@]=@AGENT_PREF_PROTO@</Value>
@@ -1480,6 +1515,7 @@
                         name="com.sun.identity.agents.config.notenforced.uri"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.notenforced.uri">
                         <DefaultValues>
                             <Value>[0]=</Value>
@@ -1524,6 +1560,7 @@
                         name="com.sun.identity.agents.config.notenforced.ip"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.notenforced.ip">
                         <DefaultValues>
                             <Value>[0]=</Value>
@@ -1608,6 +1645,7 @@
                         name="com.sun.identity.agents.config.profile.attribute.mapping"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.profile.attribute.mapping">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1626,6 +1664,7 @@
                         name="com.sun.identity.agents.config.session.attribute.mapping"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.session.attribute.mapping">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1644,6 +1683,7 @@
                         name="com.sun.identity.agents.config.response.attribute.mapping"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.response.attribute.mapping">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1653,6 +1693,7 @@
                         name="com.sun.identity.agents.config.bypass.principal"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.bypass.principal">
                         <DefaultValues>
                             <Value>[0]=</Value>
@@ -1662,6 +1703,7 @@
                         name="com.sun.identity.agents.config.default.privileged.attribute"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.default.privileged.attribute">
                         <DefaultValues>
                             <Value>[0]=AUTHENTICATED_USERS</Value>
@@ -1671,6 +1713,7 @@
                         name="com.sun.identity.agents.config.privileged.attribute.type"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.privileged.attribute.type">
                         <DefaultValues>
                             <Value>[0]=Role</Value>
@@ -1680,6 +1723,7 @@
                         name="com.sun.identity.agents.config.privileged.attribute.tolowercase"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.privileged.attribute.tolowercase">
                         <DefaultValues>
                             <Value>[Role]=false</Value>
@@ -1689,6 +1733,7 @@
                         name="com.sun.identity.agents.config.privileged.session.attribute"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.privileged.session.attribute">
                         <DefaultValues>
                             <Value>[0]=</Value>
@@ -1711,6 +1756,7 @@
                         name="com.sun.identity.agents.config.privileged.attribute.mapping"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.privileged.attribute.mapping">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1970,6 +2016,7 @@
                         name="com.sun.identity.agents.config.freeformproperties"
                         type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="com.sun.identity.agents.config.freeformproperties">
                         <DefaultValues>
                             <Value></Value>
