@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowAgent.java,v 1.1 2007-10-26 17:15:17 veiming Exp $
+ * $Id: ShowAgent.java,v 1.2 2007-11-05 21:43:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,13 +33,18 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.SMSException;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -70,20 +75,32 @@ public class ShowAgent extends AuthenticatedCommand {
         try {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, "ATTEMPT_SHOW_AGENT",
                 params);
+            Map values = AgentConfiguration.getAgentAttributes(
+                adminSSOToken, agentName);
             AMIdentity amid = new AMIdentity(adminSSOToken, agentName,
                 IdType.AGENTONLY, realm, null); 
-            Map values = amid.getAttributes();
+            Set passwords = AgentConfiguration.getAttributesSchemaNames(
+                amid, AttributeSchema.Syntax.PASSWORD);
 
             if ((values != null) && !values.isEmpty()) {
                 StringBuffer buff = new StringBuffer();
                 for (Iterator i = values.keySet().iterator(); i.hasNext();) {
                     String attrName = (String)i.next();
-                    Set attrValues = (Set)values.get(attrName);
 
-                    for (Iterator j = attrValues.iterator(); j.hasNext(); ){
-                        String val = (String)j.next();
-                        buff.append(attrName).append("=").append(val)
-                            .append("\n");
+                    if (passwords.contains(attrName)) {
+                        buff.append(attrName).append("=********\n");
+                    } else {
+                        Set vals = (Set)values.get(attrName);
+                        
+                        if (vals.isEmpty()) {
+                            buff.append(attrName).append("=").append("\n");
+                        } else {
+                            for (Iterator j = vals.iterator(); j.hasNext(); ) {
+                                String val = (String)j.next();
+                                buff.append(attrName).append("=").append(val)
+                                    .append("\n");
+                            }
+                        }
                     }
                 }
                 if (outfile == null) {
@@ -101,6 +118,12 @@ public class ShowAgent extends AuthenticatedCommand {
             }
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, "SUCCEED_SHOW_AGENT",
                 params);
+        } catch (SMSException e) {
+            String[] args = {realm, agentName, e.getMessage()};
+            debugError("ShowAgent.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_SHOW_AGENT", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IdRepoException e) {
             String[] args = {realm, agentName, e.getMessage()};
             debugError("ShowAgent.handleRequest", e);
@@ -125,6 +148,7 @@ public class ShowAgent extends AuthenticatedCommand {
             fout = new FileOutputStream(outfile, true);
             pwout = new PrintWriter(fout, true);
             pwout.write(content);
+            pwout.flush();
         } catch (FileNotFoundException e) {
             debugError("ShowAgent.writeToFile", e);
             throw new CLIException(e, ExitCodes.IO_EXCEPTION);

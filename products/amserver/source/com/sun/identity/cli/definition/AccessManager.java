@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.44 2007-11-01 05:05:39 veiming Exp $
+ * $Id: AccessManager.java,v 1.45 2007-11-05 21:43:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1761,6 +1761,21 @@ public class AccessManager {
         }
     )
     private String show_agent;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.ShowAgentTypes",
+        description="Show agent types.",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "show-agent-type-succeeded=The followings are the supported agent types.",
+            "show-agent-type-no-results=There are no supported agent types."
+        }
+    )
+    private String show_agent_types;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.ListServerConfig",

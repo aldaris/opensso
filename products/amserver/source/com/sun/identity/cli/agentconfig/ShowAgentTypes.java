@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAgent.java,v 1.2 2007-11-05 21:43:44 veiming Exp $
+ * $Id: ShowAgentTypes.java,v 1.1 2007-11-05 21:44:08 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,25 +26,23 @@ package com.sun.identity.cli.agentconfig;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
-import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.common.configuration.AgentConfiguration;
-import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.sm.SMSException;
-import java.util.List;
-import java.util.Map;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
- * This command sets the attribute values of an agent.
+ * This command shows the suppported agent types.
  */
-public class UpdateAgent extends AuthenticatedCommand {
+public class ShowAgentTypes extends AuthenticatedCommand {
     /**
      * Services a Commandline Request.
      *
@@ -59,46 +57,36 @@ public class UpdateAgent extends AuthenticatedCommand {
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
         String realm = "/";
-        String agentName = getStringOptionValue(IArgument.AGENT_NAME);
-        String datafile = getStringOptionValue(IArgument.DATA_FILE);
-        List attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
-
-        if ((datafile == null) && (attrValues == null)) {
-            throw new CLIException(
-                getResourceString("missing-attributevalues"),
-                ExitCodes.INCORRECT_OPTION, rc.getSubCommand().getName());
-        }
-
-        Map attributeValues = AttributeValues.parse(getCommandManager(),
-            datafile, attrValues);
-        String[] params = {realm, agentName};
+        String[] params = {realm};
 
         try {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "ATTEMPT_UPDATE_AGENT", params);
-            AgentConfiguration.updateAgent(adminSSOToken, agentName, 
-                attributeValues);
-            outputWriter.printlnMessage(getResourceString(
-                "update-agent-succeeded"));
+                "ATTEMPT_SHOW_AGENT_TYPES", params);
+            Set agentTypes = AgentConfiguration.getAgentTypes();
+
+            if (!agentTypes.isEmpty()) {
+                outputWriter.printlnMessage(getResourceString(
+                    "show-agent-type-succeeded"));
+                for (Iterator i = agentTypes.iterator(); i.hasNext();) {
+                    outputWriter.printlnMessage((String)i.next());
+                }
+            } else {
+                outputWriter.printlnMessage(getResourceString(
+                    "show-agent-type-no-results"));
+            }
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "SUCCEED_UPDATE_AGENT", params);
-        } catch (IdRepoException e) {
-            String[] args = {realm, agentName, e.getMessage()};
-            debugError("UpdateAgent.handleRequest", e);
-            writeLog(LogWriter.LOG_ERROR, Level.INFO, "FAILED_UPDATE_AGENT",
-                args);
-            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "SUCCEED_SHOW_AGENT_TYPES", params);
         } catch (SMSException e) {
-            String[] args = {realm, agentName, e.getMessage()};
-            debugError("UpdateAgent.handleRequest", e);
-            writeLog(LogWriter.LOG_ERROR, Level.INFO, "FAILED_UPDATE_AGENT",
-                args);
+            String[] args = {realm, e.getMessage()};
+            debugError("ShowAgentTypes.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_SHOW_AGENT_TYPES", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
-            String[] args = {realm, agentName, e.getMessage()};
-            debugError("UpdateAgent.handleRequest", e);
-            writeLog(LogWriter.LOG_ERROR, Level.INFO, "FAILED_UPDATE_AGENT",
-                args);
+            String[] args = {realm, e.getMessage()};
+            debugError("ShowAgentTypes.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_SHOW_AGENT_TYPES", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
     }

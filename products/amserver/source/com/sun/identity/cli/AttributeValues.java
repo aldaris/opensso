@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValues.java,v 1.6 2007-09-29 05:06:12 veiming Exp $
+ * $Id: AttributeValues.java,v 1.7 2007-11-05 21:43:43 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,20 +94,32 @@ public class AttributeValues {
         if ((listAttributeValues != null) && !listAttributeValues.isEmpty()) {
             for (Iterator i = listAttributeValues.iterator(); i.hasNext(); ) {
                 String s = (String)i.next();
-                int idx = s.indexOf('=');
-                if (idx == -1) {
-                    throw createIncorrectFormatException(mgr, s);
+                boolean retry = true;
+                int idx = 0;
+                
+                while (retry) {
+                    idx = s.indexOf('=', idx+1);
+                    if (idx == -1) {
+                        throw createIncorrectFormatException(mgr, s);
+                    }
+                    retry = (s.charAt(idx-1) == '\\');
                 }
 
                 String attrName = s.substring(0, idx);
-                String attrValue =  s.substring(idx+1);
-
-                Set set = (Set)attrValues.get(attrName);
-                if (set == null) {
-                    set = new HashSet();
-                    attrValues.put(attrName, set);
+                String attrValue = s.substring(idx+1);
+                
+                if (!attrName.startsWith("#")) {
+                    attrName = attrName.trim();
+                    attrValue = attrValue.trim();
+                    attrName = stripEscapeChars(attrName);
+                    
+                    Set set = (Set)attrValues.get(attrName);
+                    if (set == null) {
+                        set = new HashSet();
+                        attrValues.put(attrName, set);
+                    }
+                    set.add(attrValue);
                 }
-                set.add(attrValue);
             }
         }
         return attrValues;
@@ -132,15 +144,22 @@ public class AttributeValues {
             String line = in.readLine();
             while (line != null) {
                 line = line.trim();
-                if (line.length() > 0) {
-                    int idx = line.indexOf('=');
-                    if ((idx == -1) || (idx == 0)) {
-                        throw createIncorrectFormatException(mgr, line);
+                if ((line.length() > 0) && !line.startsWith("#")) {
+                    boolean retry = true;
+                    int idx = 0;
+
+                    while (retry) {
+                        idx = line.indexOf('=', idx+1);
+                        if (idx == -1) {
+                            throw createIncorrectFormatException(mgr, line);
+                        }
+                        retry = (line.charAt(idx-1) == '\\');
                     }
 
                     String key = line.substring(0, idx).trim();
-                    String value = (idx == (line.length() -1)) ? "" :
-                        line.substring(idx+1).trim();
+                    String value = line.substring(idx+1).trim();
+                    
+                    key = stripEscapeChars(key);
                     Set values = (Set)attrValues.get(key);
                     if (values == null) {
                         values = new HashSet();
@@ -162,6 +181,20 @@ public class AttributeValues {
             }
         }
         return attrValues;
+    }
+    
+    private static String stripEscapeChars(String key) {
+        StringBuffer buff = new StringBuffer();
+        int idx = key.indexOf('\\');
+        
+        while (idx != -1) {
+            buff.append(key.substring(0, idx));
+            key = key.substring(idx +1);
+            idx = key.indexOf('\\');
+        }
+        
+        buff.append(key);
+        return buff.toString();
     }
 
     /**

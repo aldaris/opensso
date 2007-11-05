@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgent.java,v 1.1 2007-10-26 17:15:17 veiming Exp $
+ * $Id: CreateAgent.java,v 1.2 2007-11-05 21:43:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,21 +28,20 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.AuthenticatedCommand;
-import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
-import com.sun.identity.cli.CLIUtil;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,7 +76,7 @@ public class CreateAgent extends AuthenticatedCommand {
                 datafile, attrValues);        
         }
         
-        if ((attributeValues == null) || !attributeValues.isEmpty()) {
+        if ((attributeValues == null) || attributeValues.isEmpty()) {
             attributeValues = new HashMap();
         }
         
@@ -96,12 +95,8 @@ public class CreateAgent extends AuthenticatedCommand {
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
 
-            Set setAgentType = new HashSet(2);
-            setAgentType.add(agentType);
-            attributeValues.put(CLIConstants.ATTR_NAME_AGENT_TYPE, 
-                setAgentType);
-
-            amir.createIdentity(IdType.AGENTONLY, agentName, attributeValues);
+            AgentConfiguration.createAgent(adminSSOToken, agentName, 
+                agentType, attributeValues);
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("create-agent-succeeded"),
                 (Object[])params));
@@ -113,6 +108,12 @@ public class CreateAgent extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ERROR, Level.INFO, "FAILED_CREATE_AGENT",
                 args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SMSException e) {
+            String[] args = {realm, agentType, agentName, e.getMessage()};
+            debugError("CreateAgent.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO, "FAILED_CREATE_AGENT",
+                args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);            
         } catch (SSOException e) {
             String[] args = {realm, agentType, agentName, e.getMessage()};
             debugError("CreateAgent.handleRequest", e);
