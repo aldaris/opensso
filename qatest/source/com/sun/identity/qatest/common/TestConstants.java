@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.12 2007-11-02 00:44:13 mrudulahg Exp $
+ * $Id: TestConstants.java,v 1.13 2007-11-05 21:18:46 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,6 +116,11 @@ public interface TestConstants {
      * Property key for <code>com.sun.identity.liberty.authnsvc.url</code>.
      */
     String KEY_AMC_AUTHNSVC_URL = "com.sun.identity.liberty.authnsvc.url";
+
+    /**
+     * Property key for <code>com.iplanet.am.notification.url</code>.
+     */
+    String KEY_AMC_NOTIFICATION_URL = "com.iplanet.am.notification.url";
 
     /**
      * Property key for <code>realm</code>.
@@ -266,6 +271,11 @@ public interface TestConstants {
      * Property key for <code>deployment_uri</code>.
      */
     String KEY_ATT_DEPLOYMENT_URI = "deployment_uri";
+
+    /**
+     * Property key for <code>notification_port</code>.
+     */
+    String KEY_ATT_NOTIFICATION_PORT = "notification_port";
     
     /** 
      * SAMLv2, IDFF SP related constants 

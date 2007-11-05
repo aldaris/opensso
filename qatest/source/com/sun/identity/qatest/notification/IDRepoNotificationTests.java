@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoNotificationTests.java,v 1.1 2007-09-01 00:11:25 mrudulahg Exp $
+ * $Id: IDRepoNotificationTests.java,v 1.2 2007-11-05 21:16:08 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,7 +60,7 @@ public class IDRepoNotificationTests extends TestCommon implements IdEventListen
     String attrToModify;
     String valToModify;
     boolean result = false;
-    int sleepTime = 190000;
+    int sleepTime = 2000;
     private IDMCommon idmc;
 
     /**

@@ -3,6 +3,10 @@
 # The exact domain in which test host is residing.
 cookiedomain=
 
+# The port on which the client server (jetty) will listen for notifications
+# from server. Ensure that the port is not in use.
+notification_port=
+
 # The naming service of the server aganist which qatest is being executed. This
 # should have the following form:
 # '<protocol>://<fqdn>:<port>/<deploy-uri>/namingservice'

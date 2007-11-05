@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.11 2007-11-02 00:43:06 mrudulahg Exp $
+ * $Id: ClientConfigCreator.java,v 1.12 2007-11-05 21:19:05 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.sun.identity.qatest.common.TestConstants;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.net.InetAddress;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,6 +58,7 @@ public class ClientConfigCreator {
     private String newline = System.getProperty("line.separator");
     private String fileseparator = System.getProperty("file.separator");
     private String uriseparator = "/";
+    private String hostname;
     private Map properties_ss = new HashMap();
     private Map properties_saml = new HashMap();
     private Map properties_idff = new HashMap();
@@ -82,6 +84,10 @@ public class ClientConfigCreator {
     public ClientConfigCreator(String testDir, String serverName1,
             String serverName2, String executionMode)
         throws Exception {
+
+        InetAddress addr = InetAddress.getLocalHost();
+        hostname = addr.getCanonicalHostName();
+
         if ((serverName2.indexOf("SERVER_NAME2")) != -1) {
             getDefaultValues(testDir, serverName1);
         } else {
@@ -190,6 +196,9 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_AMC_AUTHNSVC_URL))
                     value = strProtocol + "://" + strHost + ":" + strPort +
                             strURI + "/" + "Liberty/authnsvc";
+                else if (key.equals(TestConstants.KEY_AMC_NOTIFICATION_URL))
+                    value = "http://" + hostname + ":" + configDef.getString(
+                            TestConstants.KEY_ATT_NOTIFICATION_PORT);
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName);
@@ -342,6 +351,9 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_AMC_AUTHNSVC_URL))
                     value = strProtocol + "://" + strHost + ":" + strPort +
                             strURI + "/" + "Liberty/authnsvc";
+                else if (key.equals(TestConstants.KEY_AMC_NOTIFICATION_URL))
+                    value = "http://" + hostname + ":" + configDef2.getString(
+                            TestConstants.KEY_ATT_NOTIFICATION_PORT);
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName1 + "_" + serverName2);

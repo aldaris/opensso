@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.30 2007-10-16 22:14:44 rmisra Exp $
+ * $Id: TestCommon.java,v 1.31 2007-11-05 21:18:45 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,9 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.ServletHolder;
 import org.testng.Reporter;
 
 /**
@@ -80,6 +83,7 @@ public class TestCommon implements TestConstants {
     static protected String serverName;
     static protected Level logLevel;
     static private Logger logger;
+    static private Server server;
     private String productSetupResult;
     
     protected static String newline = System.getProperty("line.separator");
@@ -128,7 +132,8 @@ public class TestCommon implements TestConstants {
         productSetupResult = rb_amconfig.getString(
                 TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT);
         if (productSetupResult.equals("fail")) {
-            log(Level.SEVERE, "TestCommon", "Product setup failed. Check logs for more detail...");
+            log(Level.SEVERE, "TestCommon", "Product setup failed. Check logs" +
+                    " for more detail...");
             assert false;
         }
     }
@@ -310,7 +315,8 @@ public class TestCommon implements TestConstants {
         log(Level.FINEST, "consoleLogin", "URL: " + amUrl);
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
-        log(Level.FINEST, "consoleLogin", "BEFORE CONSOLE LOGIN:" + page.getTitleText());
+        log(Level.FINEST, "consoleLogin", "BEFORE CONSOLE LOGIN:" +
+                page.getTitleText());
         HtmlForm form = page.getFormByName("Login");
         HtmlHiddenInput txt1 =
                 (HtmlHiddenInput)form.getInputByName("IDToken1");
@@ -319,7 +325,8 @@ public class TestCommon implements TestConstants {
                 (HtmlHiddenInput)form.getInputByName("IDToken2");
         txt2.setValueAttribute(amadmPassword);
         page = (HtmlPage)form.submit();
-        log(Level.FINEST, "consoleLogin", "AFTER CONSOLE LOGIN: " + page.getTitleText());
+        log(Level.FINEST, "consoleLogin", "AFTER CONSOLE LOGIN: " +
+                page.getTitleText());
         exiting("consoleLogin");
         return (page);
     }
@@ -425,7 +432,8 @@ public class TestCommon implements TestConstants {
             }
         } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
         {
-            log(Level.SEVERE, "configureProduct", strURL + " cannot be reached.");
+            log(Level.SEVERE, "configureProduct", strURL +
+                    " cannot be reached.");
             return false;
         }
 
@@ -974,5 +982,34 @@ public class TestCommon implements TestConstants {
             }
         }
         return (stok);
+    }
+
+    /**
+     * Start the notification (jetty) server for getting notifications from the
+     * server.
+     */
+    protected void startNotificationServer()
+    throws Exception {
+        int port  = new Integer(rb_amconfig.getString(
+                TestConstants.KEY_ATT_NOTIFICATION_PORT)).intValue();
+        server = new Server(port);
+        Context root = new Context(server, "/", Context.SESSIONS);
+        root.addServlet(new ServletHolder(
+                new com.iplanet.services.comm.client.PLLNotificationServlet()),
+                "/*");
+        log(Level.FINE, "startNotificationServer", "Starting the notification" +
+                " (jetty) server");
+        server.start();
+    }
+
+    /**
+     * Stop the notification (jetty) server for getting notifications from the
+     * server.
+     */
+    protected void stopNotificationServer()
+    throws Exception {
+        log(Level.FINE, "stopNotificationServer", "Stopping the notification" +
+                " (jetty) server");
+        server.stop();
     }
 }

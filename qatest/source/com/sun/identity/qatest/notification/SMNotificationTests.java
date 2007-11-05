@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMNotificationTests.java,v 1.1 2007-09-24 20:40:08 mrudulahg Exp $
+ * $Id: SMNotificationTests.java,v 1.2 2007-11-05 21:16:25 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
     String attrToModify;
     String valToModify;
     boolean result = false;
-    int sleepTime = 190000;
+    int sleepTime = 2000;
     
     /** Creates a new instance of SMNotificationTests */
     public SMNotificationTests() {

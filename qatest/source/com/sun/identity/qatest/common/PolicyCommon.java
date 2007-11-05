@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.6 2007-09-13 16:39:39 arunav Exp $
+ * $Id: PolicyCommon.java,v 1.7 2007-11-05 21:15:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -265,7 +265,7 @@ public class PolicyCommon extends TestCommon {
                         map.put(strDynamicAttribute, list);
                         modifyDynamicRespAttribute(strSubRealm, dynSetlist,
                                 "add");
-                        Thread.sleep(50000);
+                        Thread.sleep(5000);
                         createRPXML(out, "ResponseProvider", name, type, map);
                     }
                 }
