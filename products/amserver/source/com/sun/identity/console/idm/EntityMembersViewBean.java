@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityMembersViewBean.java,v 1.1 2007-02-07 20:21:53 jonnelson Exp $
+ * $Id: EntityMembersViewBean.java,v 1.2 2007-11-05 22:41:32 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -160,11 +160,14 @@ public class EntityMembersViewBean
                 break;
             }
 
+            // assignable will contain users which shouldn't be displayed in
+            // the console (amldapuser, dsameuser, etc...)
             Set assignable = results.getSearchResults();
+            assignable.removeAll(model.getSpecialUsers(curRealm));
+
             String universalId = (String)getPageSessionAttribute(
                 EntityEditViewBean.UNIVERSAL_ID);
             removeAlreadyAssignedMembers(assignable);
-            removeSpecialUsers(assignable, curRealm, searchType);
             avail = getOptionListForEntities(assignable);
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
@@ -196,25 +199,6 @@ public class EntityMembersViewBean
                         removed = true;
                     }
                 }
-            }
-        }
-    }
-
-    /*
-     * Remove the special users as returned from the SDK. These users are
-     * required for the product to run but should not be exposed to the users.
-     * These users are typically amldapuser, dsameuser, and
-     * amService-URLAccessAgent.
-     */
-    private void removeSpecialUsers(Set users, String realm, String type){
-        EntitiesModel model = (EntitiesModel)getModel();
-        Set specialIds = model.getSpecialUsers(realm);
-
-        for (Iterator iter = users.iterator(); iter.hasNext(); ) {
-            AMIdentity entity = (AMIdentity)iter.next();
-
-            if (specialIds.contains(entity.getName().toLowerCase())) {
-                iter.remove();
             }
         }
     }

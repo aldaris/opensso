@@ -17,15 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EndUserViewBean.java,v 1.1 2007-02-07 20:21:52 jonnelson Exp $
+ * $Id: EndUserViewBean.java,v 1.2 2007-11-05 22:41:32 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.idm;
 
+import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.RequestManager;
+import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.base.AuthenticatedViewBean;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.idm.model.EntitiesModel;
@@ -52,6 +54,11 @@ public class EndUserViewBean
                 "com/sun/identity/console/twoBtnsPageTitle.xml"));
         ptModel.setValue("button1", "button.save");
         ptModel.setValue("button2", "button.reset");
+    }
+
+    public void beginDisplay(DisplayEvent event) throws ModelControlException {
+        super.beginDisplay(event);
+        ptModel.setPageTitleText(identityDisplayName);
     }
 
     public void forwardTo(RequestContext rc) {

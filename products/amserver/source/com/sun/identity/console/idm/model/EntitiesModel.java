@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModel.java,v 1.2 2007-06-07 18:48:43 veiming Exp $
+ * $Id: EntitiesModel.java,v 1.3 2007-11-05 22:41:32 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,17 +58,6 @@ public interface EntitiesModel
         String pattern
     ) throws AMConsoleException;
 
-    /**
-     * Returns a list of special identity name (in lower case) that 
-     * cannot be removed.
-     *
-     * @param realmName Name of Realm.
-     * @param strType Entity Type.
-     * @return a list of special identity name (in lower case) that 
-     * cannot be removed.
-     *
-    Set getSpecialIdentities(String realmName, String strType);
-/
     /**
      * Returns property sheet XML for Entity Profile.
      *

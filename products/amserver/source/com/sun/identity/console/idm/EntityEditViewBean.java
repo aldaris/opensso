@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityEditViewBean.java,v 1.3 2007-06-07 18:48:43 veiming Exp $
+ * $Id: EntityEditViewBean.java,v 1.4 2007-11-05 22:41:32 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */ 
@@ -72,6 +72,8 @@ public class EntityEditViewBean
     private static final int TAB_ID_TYPE_MEMBER_OF_SUFFIX = 1;
     private static final int TAB_ID_TYPE_BE_MEMBER_OF_SUFFIX = 2;
 
+    protected String identityDisplayName;
+
     EntityEditViewBean(String name, String defaultDisplayURL) {
         super(name, defaultDisplayURL);
     }
@@ -124,8 +126,10 @@ public class EntityEditViewBean
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
         propertySheetModel.setValue(PROPERTY_UUID, universalId);
 
-        String[] param = {i18nName,
-            AMFormatUtils.getIdentityDisplayName(model, universalId)};
+        // identityDisplayName also used be EndUserViewBean
+        identityDisplayName = 
+           AMFormatUtils.getIdentityDisplayName(model, universalId);
+        String[] param = { i18nName, identityDisplayName };
         ptModel.setPageTitleText(MessageFormat.format(title, param));
         
         checkForAttributesToDisplay(type);

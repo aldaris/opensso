@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.7 2007-08-29 06:25:15 jonnelson Exp $
+ * $Id: EntitiesModelImpl.java,v 1.8 2007-11-05 22:41:32 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -211,44 +211,6 @@ public class EntitiesModelImpl
     }
 
     /**
-     * Returns a list of special identity name (in lower case) that cannot be
-     * removed.
-     *
-     * @param realmName Name of Realm.
-     * @param strType Entity Type.
-     * @return a list of special identity name (in lower case) that cannot be
-     *         removed.
-     *
-    public Set getSpecialIdentities(String realmName, String strType) {
-        Set names = null;
-        try {
-            IdType type = IdUtils.getType(strType);
-            // only check special identities for user entries
-            if (!type.equals(IdType.USER)) {
-                return Collections.EMPTY_SET;
-            }
-
-            AMIdentityRepository repo = new AMIdentityRepository(
-                getUserSSOToken(), realmName);
-            IdSearchResults results = repo.getSpecialIdentities(type);
-            Set identities = results.getSearchResults();
-
-            if ((identities != null) && !identities.isEmpty()) {
-                names = new HashSet(identities.size() *2);
-                for (Iterator i = identities.iterator(); i.hasNext(); ) {
-                    names.add(((AMIdentity)i.next()).getName().toLowerCase());
-                }
-            }
-        } catch (IdRepoException e) {
-            debug.warning("EntitiesModelImpl.getSpecialIdentities", e);
-        } catch (SSOException e) {
-            debug.warning("EntitiesModelImpl.getSpecialIdentities", e);
-        }
-        return (names == null) ? Collections.EMPTY_SET : names;
-    }
-     /
-
-    /**
      * Returns attribute values of an entity object.
      *
      * @param universalId Universal ID of the entity.
@@ -337,19 +299,22 @@ public class EntitiesModelImpl
         try {
             Set attributeSchemas = getAttributeSchemas(idType, bCreate);
             String serviceName = getSvcNameForIdType(idType);
-            PropertyXMLBuilder builder = new PropertyXMLBuilder(
-                serviceName, this, attributeSchemas);
-            cacheAttributeValidators(attributeSchemas);
-            if (!bCreate) {
-                DelegationConfig dConfig = DelegationConfig.getInstance();
-                if (!dConfig.hasPermission(realmName, null, 
-                    AMAdminConstants.PERMISSION_MODIFY, this, viewbeanClassName)
-                ) {
-                    builder.setAllAttributeReadOnly(true);
+            if (serviceName != null) {
+                PropertyXMLBuilder builder = new PropertyXMLBuilder(
+                    serviceName, this, attributeSchemas);
+                cacheAttributeValidators(attributeSchemas);
+                if (!bCreate) {
+                    DelegationConfig dConfig = DelegationConfig.getInstance();
+                    if (!dConfig.hasPermission(realmName, null, 
+                        AMAdminConstants.PERMISSION_MODIFY, this, 
+                        viewbeanClassName)
+                    ) {
+                        builder.setAllAttributeReadOnly(true);
+                    }
                 }
-            }
 
-            xml = builder.getXML();
+                xml = builder.getXML();
+            }
         } catch (AMConsoleException e) {
             debug.warning("EntitiesModelImpl.getPropertyXMLString", e); 
         } catch (IdRepoException e) {
