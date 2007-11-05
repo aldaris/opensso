@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionStatement.java,v 1.2 2007-10-01 05:39:08 qcheng Exp $
+ * $Id: XACMLAuthzDecisionStatement.java,v 1.3 2007-11-05 06:16:35 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,7 @@ public interface XACMLAuthzDecisionStatement extends Statement {
 
     /**
      * Sets <code>Response</code> element of this object
-     * @parameter response XACML context <code>Response</code> element to be 
+     * @param response XACML context <code>Response</code> element to be 
      * set in this object
      *
      * @exception XACMLException if the object is immutable
@@ -96,7 +96,7 @@ public interface XACMLAuthzDecisionStatement extends Statement {
 
     /**
      * Sets <code>Request</code> element of this object
-     * @parameter request XACML context <code>Request</code> element to be 
+     * @param request XACML context <code>Request</code> element to be 
      * set in this object
      *
      * @exception XACMLException if the object is immutable

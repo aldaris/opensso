@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserNameTokenSpec.java,v 1.1 2007-03-23 00:02:06 mallas Exp $
+ * $Id: UserNameTokenSpec.java,v 1.2 2007-11-05 06:17:16 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,7 +91,7 @@ public class UserNameTokenSpec implements SecurityTokenSpec {
 
     /**
      * Sets the username 
-     * @parma username the username to be used in username token.
+     * @param username the username to be used in username token.
      */
     public void setUserName(String username) {
         this.username = username;

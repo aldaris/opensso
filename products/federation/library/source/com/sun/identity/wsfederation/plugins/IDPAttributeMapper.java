@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAttributeMapper.java,v 1.2 2007-08-01 21:04:06 superpat7 Exp $
+ * $Id: IDPAttributeMapper.java,v 1.3 2007-11-05 06:15:28 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import com.sun.identity.wsfederation.common.WSFederationException;
  * The implementation of this interface can read the configured
  * attributes or the attributes that are available through the Single
  * Sign On Token and returns the SAML <code>Attribute</code>s.
- * @see com.sun.identity.esfederation.plugins.SPAttributeMapper
+ * @see com.sun.identity.wsfederation.plugins.SPAttributeMapper
  *
  * @supported.all.api
  */

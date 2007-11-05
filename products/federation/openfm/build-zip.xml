@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.5 2007-10-17 21:40:50 qcheng Exp $
+   $Id: build-zip.xml,v 1.6 2007-11-05 06:17:01 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -54,6 +54,8 @@
             
         <copy file="${openfm.dir}/docs/README"
             tofile="${zip.temp.dir}/docs/README" />
+        <copy file="${fm.dist.dir}/fam-public-javadocs.jar"
+            tofile="${zip.temp.dir}/docs/fam-public-javadocs.jar" />
  
         <copy todir="${zip.temp.dir}/ldif">
             <fileset dir="${openfm.dir}/ldif" includes="**/*"/>

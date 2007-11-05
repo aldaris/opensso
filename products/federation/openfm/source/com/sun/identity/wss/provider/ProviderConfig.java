@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.9 2007-11-01 17:25:56 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.10 2007-11-05 06:17:16 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -182,7 +182,7 @@ public abstract class ProviderConfig {
 
     /**
      * Sets the user credentials list.
-     * @param list of <code>PasswordCredential</code>objects.
+     * @param usercredentials list of <code>PasswordCredential</code>objects.
      */
     public void setUsers(List usercredentials) {
         this.usercredentials = usercredentials;
@@ -357,8 +357,7 @@ public abstract class ProviderConfig {
     /**
      * Sets the trusted authority configurations.
      * 
-     * @param trustedAuthorities the list of 
-     *            <code>TrustAuthorityConfig</code> s. 
+     * @param taconfig instance of the <code>TrustAuthorityConfig</code>.
      */
     public void setTrustAuthorityConfig(TrustAuthorityConfig taconfig) {
         this.taconfig = taconfig;
@@ -464,7 +463,7 @@ public abstract class ProviderConfig {
     
     /**
      * Sets the user force authentication attribute.
-     * @param forceAuthenticate the user force authentication attribute.
+     * @param forceAuthn the user force authentication attribute.
      */
     public void setForceUserAuthentication(boolean forceAuthn) {
         this.forceAuthn = forceAuthn;
@@ -480,7 +479,8 @@ public abstract class ProviderConfig {
 
     /**
      * Sets if security header needs to be preserved.
-     * @return true if the security header needs to be preserved.
+     * @param preserve value to be set, true if the security header needs 
+     *    to be preserved, false otherwise.
      */
     public void setPreserveSecurityHeader(boolean preserve) {
         this.preserveSecHeaders = preserve;
@@ -498,7 +498,7 @@ public abstract class ProviderConfig {
     /**
      * Sets the authentication chain mechanism. This method is used only by
      * the WSP configuration.
-     * @param authChainMechanism the name of the authentication chain
+     * @param authenticationChain the name of the authentication chain
      *        mechanism.
      */
     public void setAuthenticationChain(String authenticationChain) {

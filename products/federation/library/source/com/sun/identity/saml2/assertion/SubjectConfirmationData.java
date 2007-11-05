@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectConfirmationData.java,v 1.2 2007-05-17 18:51:31 mallas Exp $
+ * $Id: SubjectConfirmationData.java,v 1.3 2007-11-05 06:15:03 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -165,7 +165,7 @@ public interface SubjectConfirmationData {
      *  @param attribute attribute type value for the content that will be 
      *         added
      *  @exception SAML2Exception if the object is immutable
-     *  @see #getAnyAttribute
+     *  @see #getContentType()
      */
     public void setContentType(String attribute) throws SAML2Exception;
 

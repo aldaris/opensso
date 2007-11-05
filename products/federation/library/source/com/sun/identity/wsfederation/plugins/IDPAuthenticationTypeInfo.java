@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAuthenticationTypeInfo.java,v 1.2 2007-08-01 21:04:04 superpat7 Exp $
+ * $Id: IDPAuthenticationTypeInfo.java,v 1.3 2007-11-05 06:15:58 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,7 +43,7 @@ public class IDPAuthenticationTypeInfo {
    /** 
     * The constructor. 
     *
-    * @param authnContext The <code>AuthnContext</code> that is returned
+    * @param authenticationType The <code>AuthnContext</code> that is returned
     *  to the requester.
     * @param authnTypeAndValues The set of authentication mechanism
     */ 

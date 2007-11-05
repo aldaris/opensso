@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyManager.java,v 1.5 2007-10-16 21:50:21 exu Exp $
+ * $Id: LibertyManager.java,v 1.6 2007-11-05 06:17:01 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1104,7 +1104,7 @@ public class LibertyManager {
      * @return the provider's error page.
      * @deprecated This method is deprecated. Please use
      *  <code>getErrorPageURL(String,String,String,HttpServletRequest)</code>
-     * @see #getErrorPageUrl(String,String,String,HttpServletReuqest
+     * @see #getErrorPageURL(String,String,String,HttpServletRequest)
      */
     public static String getErrorPageURL(
         String providerId, 
@@ -1552,7 +1552,7 @@ public class LibertyManager {
      * @deprecated This method is deprecated. Please use
      *  <code>getNameRegistrationDonePageURL(
      *  String,String,String,HttpServletRequest)</code>
-     * @see #getnameRegistrationDonePageURL(String,String,String,HttpServletRequest)
+     * @see #getNameRegistrationDonePageURL(String,String,String,HttpServletRequest)
      */
     public static String getNameRegistrationDonePageURL(
         String providerID, String providerRole, HttpServletRequest request) 

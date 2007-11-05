@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.31 2007-10-17 23:00:58 veiming Exp $
+   $Id: build.xml,v 1.32 2007-11-05 06:17:01 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -140,7 +140,7 @@
         <copy file="${openfm.docs.dir}/nightly.html" tofile="${fm.dist.dir}/index.html" filtering="true" />
     </target>
 
-    <target name="zip" depends="war,clientsamples,tools">
+    <target name="zip" depends="war,clientsamples,tools,publicdoc">
         <ant antfile="${openfm.dir}/build-zip.xml" inheritRefs="true"/>
     </target>
     
@@ -159,7 +159,7 @@
 
         <jar destfile="${fm.dist.dir}/fam.jar">
             <manifest>
-                <attribute name="Version" value="${version}"/>
+                <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
             <fileset dir=".">
@@ -226,6 +226,26 @@
         <javadoc maxmemory="512m" destdir="${openfm.built.publicapidocs.dir}"
                  windowtitle="Federated Access Manager Public API" failonerror="true">
             <classpath refid="build.class.path"/>
+            <packageset dir="${amserver.src.dir}">
+                <include name="com/iplanet/am/sdk/**"/>
+                <include name="com/iplanet/sso/**"/>
+                <include name="com/iplanet/dpro/**"/>
+                <include name="com/sun/identity/session/**"/>
+                <include name="com/sun/identity/policy/**"/>
+                <include name="com/sun/identity/authentication/**"/>
+                <include name="com/sun/identity/idm/**"/>
+            </packageset>
+            <packageset dir="${library.src.dir}">
+                <include name="com/sun/identity/federation/**"/>
+                <include name="com/sun/identity/liberty/ws/**"/>
+                <include name="com/sun/identity/plugin/**"/>
+                <include name="com/sun/identity/saml/**"/>
+                <include name="com/sun/identity/saml2/**"/>
+                <include name="com/sun/identity/sae/**"/>
+                <include name="com/sun/identity/wsfederation/**"/>
+                <include name="com/sun/identity/xacml/**"/>
+                <include name="com/sun/liberty/**"/>
+            </packageset>
             <packageset dir="${openfm.src.dir}">
                 <include name="com/sun/identity/wss/provider/**"/>
                 <include name="com/sun/identity/wss/security/**"/>
@@ -238,6 +258,21 @@
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
             <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
         </javadoc>
+
+        <tstamp>
+            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
+        </tstamp>
+
+        <jar destfile="${fm.dist.dir}/fam-public-javadocs.jar">
+            <manifest>
+                <attribute name="Version" value="${openfm.version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <zipfileset dir="${openfm.built.publicapidocs.dir}"/>
+        </jar>
     </target>
 
     <target name="checklib">

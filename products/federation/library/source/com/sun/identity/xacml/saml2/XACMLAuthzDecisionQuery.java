@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQuery.java,v 1.1 2007-08-29 23:41:05 dillidorai Exp $
+ * $Id: XACMLAuthzDecisionQuery.java,v 1.2 2007-11-05 06:16:35 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -140,7 +140,7 @@ public interface XACMLAuthzDecisionQuery extends RequestAbstract {
 
     /**
      * Sets the boolean value for this XML attribute
-     * @see getReturnContext()
+     * @see #getReturnContext()
      *
      * @param returnContext <code>boolean</code> indicating the value
      * of this attribute.

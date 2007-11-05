@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptedResourceID.java,v 1.2 2007-04-23 03:32:11 hengming Exp $
+ * $Id: EncryptedResourceID.java,v 1.3 2007-11-05 06:15:03 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -255,7 +255,6 @@ public class EncryptedResourceID {
      * @param ri The resource ID instance that needs to be encrypted.
      * @param providerID The provider ID whose encryption key needs to be used
      *        for encryption.
-     * @param providerManager <code>ProviderManager</code>.
      * @throws DiscoveryException if error occurs during this operation.
      */ 
     public static EncryptedResourceID getEncryptedResourceID(

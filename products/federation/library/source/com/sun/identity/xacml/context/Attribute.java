@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Attribute.java,v 1.1 2007-08-29 23:39:34 dillidorai Exp $
+ * $Id: Attribute.java,v 1.2 2007-11-05 06:16:16 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,7 +127,7 @@ public interface Attribute {
     /**
      * Sets the attribute values for this object
      *
-     * @param values a <code>List</code> containing <code>String<code> values
+     * @param attrValues <code>List</code> containing <code>String<code> values
      * of this object.
      *
      * @exception XACMLException if the object is immutable

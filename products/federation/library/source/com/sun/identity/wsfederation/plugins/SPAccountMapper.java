@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPAccountMapper.java,v 1.1 2007-08-01 21:04:37 superpat7 Exp $
+ * $Id: SPAccountMapper.java,v 1.2 2007-11-05 06:16:16 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,8 +50,7 @@ public interface SPAccountMapper {
      *
      * @param rstr the incoming <code>RequestSecurityTokenResponse</code>
      * @param hostEntityID <code>EntityID</code> of the hosted provider.
-     * @param realm realm or the organization name that may be used to find
-     *        the user information.
+     * @param targetURL final target URL.
      * @return user's disntinguished name or the universal ID.
      * @exception WSFederationException if any failure.
      */
