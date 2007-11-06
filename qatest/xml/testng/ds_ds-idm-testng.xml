@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-idm-testng.xml,v 1.4 2007-10-18 21:11:09 bt199000 Exp $
+ $Id: ds_ds-idm-testng.xml,v 1.5 2007-11-06 23:35:31 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -837,9 +837,6 @@
         <groups>
             <run>
                 <include name="ds_ds"/>
-            </run>
-        </groups>
-
             </run>
         </groups>
         <classes>

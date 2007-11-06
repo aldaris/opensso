@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-idm-testng.xml,v 1.4 2007-10-18 21:11:10 bt199000 Exp $
+ $Id: ff_ds_sec-idm-testng.xml,v 1.5 2007-11-06 23:35:32 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -837,9 +837,6 @@
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
-            </run>
-        </groups>
-
             </run>
         </groups>
         <classes>
