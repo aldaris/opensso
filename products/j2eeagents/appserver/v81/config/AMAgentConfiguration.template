@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.1 2007-10-12 21:41:47 madan_ranganath Exp $
+# $Id: AMAgentConfiguration.template,v 1.2 2007-11-06 21:00:19 sean_brydon Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -831,3 +831,22 @@ com.sun.identity.policy.client.cacheMode=subtree
 com.sun.identity.policy.client.booleanActionValues=iPlanetAMWebAgentService|GET|allow|deny:iPlanetAMWebAgentService|POST|allow|deny
 com.sun.identity.policy.client.resourceComparators=serviceType=iPlanetAMWebAgentService|class=com.sun.identity.policy.plugins.HttpURLResourceName|wildcard=*|delimiter=/|caseSensitive=false
 com.sun.identity.policy.client.clockSkew=10
+
+#
+# AGENT CENTRALIZED NOTIFICATIONS PROPERTIES
+#   -com.sun.identity.agents.config.centralized.notification.enable: allows 
+#    agents to receive ntofication messages from fam server, so that
+#    when a user changes an agents properties configuration on fam server, 
+#    agent can be notified at agent housekeeping application url, and then
+#    agent can go and get the latest configuration and hotswap to use the 
+#    new properties.
+#    Can only be used in centralized mode when agent properties are controlled 
+#    by fam server
+# Note: for the notification url, it currently uses session notification 
+# property com.iplanet.am.notification.url
+# This will be changed soon when all notificatons convert to using a single 
+# notification url and property, so this is TEMPORARY
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.centralized.notification.enable=true
