@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: saml-lib.php,v 1.2 2007-06-11 17:33:15 superpat7 Exp $
+ * $Id: saml-lib.php,v 1.3 2007-11-06 16:58:33 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,7 +52,40 @@ require_once($LIGHTBULB_CONFIG['basedir'] . 'config/saml-metadata-IdP.php');
 		return NULL;
 	}
 
-	
+	function signXML($token, $privkey) {
+        $sigdoc = new DOMDocument();
+        if(!$sigdoc->loadXML($token)){
+            throw new Exception("Invalid XML!");
+        }
+        $sigNode = $sigdoc->firstChild;
+
+        $enc = new XMLSecurityDSig();
+        $enc->idKeys[] = 'ID';
+        $enc->setCanonicalMethod(XMLSecurityDSig::EXC_C14N);
+        $enc->addReference(
+            $sigNode,
+            XMLSecurityDSig::SHA1,
+            array(
+                'http://www.w3.org/2000/09/xmldsig#enveloped-signature',
+                XMLSecurityDSig::EXC_C14N
+            )
+        );
+
+        $key = new XMLSecurityKey(
+            XMLSecurityKey::RSA_SHA1,
+            array(
+                'type' => 'private',
+                'library' => 'openssl'
+            )
+        );
+
+        $key->loadKey($privkey, false, false);
+
+        $enc->sign($key);
+        $enc->appendSignature($sigNode);
+        return $sigdoc->saveXML();
+    }
+
 	function processResponse($params, $validate=TRUE, $postBinding=TRUE, $samlParam="SAMLResponse") {
 		global $idpMetadata;
 

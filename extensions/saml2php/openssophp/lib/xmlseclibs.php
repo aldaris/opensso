@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: xmlseclibs.php,v 1.1 2007-05-22 05:38:41 andreas1980 Exp $
+ * $Id: xmlseclibs.php,v 1.2 2007-11-06 16:58:33 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -729,11 +729,21 @@ class XMLSecurityDSig {
         $refNode = $this->createNewSignNode('Reference');
         $sinfoNode->appendChild($refNode);
 
+        $addId = 'Id';
+        if (is_array($this->idKeys)) {
+            $addId = $this->idKeys[0];
+        }
+
         if ($node instanceof DOMDocument) {
             $uri = NULL;
         } else {
 /* Do wer really need to set a prefix? */
-            $uri = XMLSecurityDSig::generate_GUID();
+            $IdNode = new DOMXPath($node->ownerDocument);
+            $id = $IdNode->evaluate("//@$addId", $node)->item(0)->nodeValue;
+            if(is_string($id))
+                $uri = $id;
+            else
+                $uri = XMLSecurityDSig::generate_GUID();
             $refNode->setAttribute("URI", '#'.$uri);
         }
 
@@ -751,18 +761,18 @@ class XMLSecurityDSig {
             $transNodes->appendChild($transNode);
             $transNode->setAttribute('Algorithm', $this->canonicalMethod);
         }
-        
+
         if (! empty($uri)) {
-            $attname = 'Id';
+            $attname = $addId;
             if (! empty($prefix)) {
                 $attname = $prefix.':'.$attname;
             }
             $node->setAttributeNS($prefix_ns, $attname, $uri);
         }
-        
+
         $canonicalData = $this->processTransforms($refNode, $node);
         $digValue = $this->calculateDigest($algorithm, $canonicalData);
-        
+
         $digestMethod = $this->createNewSignNode('DigestMethod');
         $refNode->appendChild($digestMethod);
         $digestMethod->setAttribute('Algorithm', $algorithm);
