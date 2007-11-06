@@ -20,13 +20,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.6 2007-11-05 06:17:01 qcheng Exp $
+   $Id: build-zip.xml,v 1.7 2007-11-06 00:17:48 kevinserwin Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<project name="openfmzip" default="all" basedir=".">
-    <description>Open Federation: fam.zip Creation</description>
+<project name="openssozip" default="all" basedir=".">
+    <description>Open SSO: opensso.zip Creation</description>
 
     <!-- enforce invocation via top level build only -->
     <fail message="*** zip may be built from top level only ***">
@@ -49,8 +49,8 @@
         <copy todir="${zip.temp.dir}/deployable-war">
              <fileset dir="${openfm.dir}/deployable-war" includes="**/*"/>
         </copy>
-        <copy file="${fm.dist.dir}/fam.war"
-            tofile="${zip.temp.dir}/deployable-war/fam.war" />
+        <copy file="${fm.dist.dir}/opensso.war"
+            tofile="${zip.temp.dir}/deployable-war/opensso.war" />
             
         <copy file="${openfm.dir}/docs/README"
             tofile="${zip.temp.dir}/docs/README" />
@@ -64,15 +64,17 @@
         <copy file="${openfm.dir}/docs/README.libraries"
             tofile="${zip.temp.dir}/libraries/README" />
         <copy file="${openfm.dir}/docs/README.dll"
-            tofile="${zip.temp.dir}/libraries/dll/README" />
+            tofile="${zip.temp.dir}/libraries/native/dll/README" />
+        <copy file="${extlib.dir}/agent-csdk/README"
+             tofile="${zip.temp.dir}/libraries/native/agent-csdk/README" />
+        <copy file="${extlib.dir}/agent-csdk/agent-csdk.zip"
+             tofile="${zip.temp.dir}/libraries/native/agent-csdk/agent-csdk.zip" />
         <copy file="${extlib.dir}/fmsae.dll"
-             tofile="${zip.temp.dir}/libraries/dll/fmsae.dll" />            
+             tofile="${zip.temp.dir}/libraries/native/dll/fmsae.dll" />              
         <copy file="${openfm.dir}/docs/README.jars"
             tofile="${zip.temp.dir}/libraries/jars/README" />
         <copy todir="${zip.temp.dir}/libraries/jars">
             <fileset file="${fm.dist.dir}/famclientsdk.jar" />
-            <fileset file="${fm.dist.dir}/famsae.jar" />
-            <fileset dir="${extlib.dir}" includes="jsr173_api.jar" />
         </copy>
         
         <copy file="${openfm.dir}/docs/README.migration"
@@ -98,7 +100,7 @@
         </copy>
 
 
-        <zip destfile="${fm.dist.dir}/fam.zip" whenempty="create">
+        <zip destfile="${fm.dist.dir}/opensso.zip" whenempty="create">
             <zipfileset dir="${zip.temp.dir}" filemode="755">
                 <include name="setup"/>
             </zipfileset>
@@ -107,7 +109,7 @@
             </zipfileset>
         </zip>
 
-        <checksum file="${fm.dist.dir}/fam.zip"
+        <checksum file="${fm.dist.dir}/opensso.zip"
             algorithm="SHA" fileext=".sha" />
     </target>
 

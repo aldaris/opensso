@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.30 2007-10-17 23:00:58 veiming Exp $
+   $Id: build-war.xml,v 1.31 2007-11-06 00:17:48 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -352,12 +352,12 @@
                  excludes="**/CVS" />
         </copy>
 
-        <war destfile="${fm.dist.dir}/fam.war" webxml="${war.packageweb.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/opensso.war" webxml="${war.packageweb.dir}/web.xml">
             <zipfileset dir="${war.package.dir}" />
         </war>
         <move file="${war.packageweb.dir}/web.xml" tofile="${war.package.dir}/WEB-INF/web.xml" />
         <delete dir="${war.packageweb.dir}" />
-        <checksum file="${fm.dist.dir}/fam.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
 
     </target>
 

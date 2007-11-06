@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.19 2007-09-27 00:37:54 veiming Exp $
+   $Id: build.xml,v 1.20 2007-11-06 00:17:48 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,11 +32,6 @@
     <import file="federation/openfm/openfm.xml" />
     <import file="installtools/installtools.xml" />
     <import file="j2eeagents/j2eeagents.xml" />
-
-    <tstamp>
-        <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
-            unit="day"/>
-    </tstamp>
 
     <target name="nightly">
         <delete dir="${prd.nightly.dist.dir}" />
@@ -57,47 +52,14 @@
         <antcall target="j2ee-agents-nightly" />
     </target>
 
-    <target name="full-nightly">
-        <mkdir dir="${prd.nightly.dist.dir}" />
-        <antcall target="update-am-index" />
-        <antcall target="update-fmlib-index" />
-        <antcall target="update-openfm-index" />
-        <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true" />
-        <antcall target="update-j2ee-index" />
-    </target>
-
-    <target name="update-am-index" depends="amserver-nightly">
-        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
-            <classpath>
-                <pathelement location="${amserver.classes.dir}" />
-            </classpath>
-            <arg value="${prd.nightly.dist.dir}/amserver" />
-            <arg value="${nightly.date}" />
-            <arg value="http://download.java.net/general/opensso/nightly/amserver/index.html" />
-        </java>
-        <move file="${prd.nightly.dist.dir}/amserver/top.index.html" tofile="${prd.nightly.dist.dir}/amserver/index.html" />
-    </target>
-    
     <target name="amserver-nightly">
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
             target="nightly" />
-        <mkdir dir="${prd.nightly.dist.dir}/amserver/${nightly.date}" />
-        <copy todir="${prd.nightly.dist.dir}/amserver/${nightly.date}">
+        <mkdir dir="${prd.nightly.dist.dir}/amserver" />
+        <copy todir="${prd.nightly.dist.dir}/amserver">
             <fileset dir="${amserver.dist.dir}"/>
         </copy>
 
-    </target>
-
-    <target name="update-fmlib-index" depends="fedlibrary-nightly">
-        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
-            <classpath>
-                <pathelement location="${amserver.classes.dir}" />
-            </classpath>
-            <arg value="${prd.nightly.dist.dir}/fedlibrary" />
-            <arg value="${nightly.date}" />
-            <arg value="http://download.java.net/general/opensso/nightly/fedlibrary/index.html" />
-        </java>
-        <move file="${prd.nightly.dist.dir}/fedlibrary/top.index.html" tofile="${prd.nightly.dist.dir}/fedlibrary/index.html" />
     </target>
     
     <target name="fedlibrary-nightly">
@@ -106,23 +68,11 @@
 
         <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
             target="nightly" />
-        <mkdir dir="${prd.nightly.dist.dir}/fedlibrary/${nightly.date}" />
-        <copy todir="${prd.nightly.dist.dir}/fedlibrary/${nightly.date}">
+        <mkdir dir="${prd.nightly.dist.dir}/fedlibrary" />
+        <copy todir="${prd.nightly.dist.dir}/fedlibrary">
             <fileset dir="${fedlibrary.dist.dir}"/>
         </copy>
    </target>
-
-    <target name="update-openfm-index" depends="openfm-nightly">
-        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
-            <classpath>
-                <pathelement location="${amserver.classes.dir}" />
-            </classpath>
-            <arg value="${prd.nightly.dist.dir}/openfm" />
-            <arg value="${nightly.date}" />
-            <arg value="http://download.java.net/general/opensso/nightly/openfm/index.html" />
-        </java>
-        <move file="${prd.nightly.dist.dir}/openfm/top.index.html" tofile="${prd.nightly.dist.dir}/openfm/index.html" />
-    </target>
         
     <target name="openfm-nightly">
         <copy file="${amserver.dist.dir}/amAdminTools.zip"
@@ -140,26 +90,14 @@
             
         <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
             target="nightly" />
-        <mkdir dir="${prd.nightly.dist.dir}/openfm/${nightly.date}" />
-        <copy todir="${prd.nightly.dist.dir}/openfm/${nightly.date}">
+        <mkdir dir="${prd.nightly.dist.dir}/openfm" />
+        <copy todir="${prd.nightly.dist.dir}/openfm">
             <fileset dir="${fm.dist.dir}"/>
         </copy>
     </target>
     
-     <target name="update-j2ee-index" depends="j2ee-agents-nightly">   
-            <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
-            <classpath>
-                <pathelement location="${amserver.classes.dir}" />
-            </classpath>
-            <arg value="${prd.nightly.dist.dir}/j2eeagents" />
-            <arg value="${nightly.date}" />
-            <arg value="http://download.java.net/general/opensso/nightly/j2eeagents/index.html" />
-        </java>
-        <move file="${prd.nightly.dist.dir}/j2eeagents/top.index.html" tofile="${prd.nightly.dist.dir}/j2eeagents/index.html" />
-    </target>
-    
     <target name="j2ee-agents-nightly">
-        <mkdir dir="${prd.nightly.dist.dir}/j2eeagents/${nightly.date}" />
+        <mkdir dir="${prd.nightly.dist.dir}/j2eeagents" />
         <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="prenightly" />
         <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="nightly" />
         <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="postnightly" />
@@ -246,7 +184,6 @@
         <echo message=" "/>
         <echo message=" clean        : cleans generated files for all products"/>
         <echo message=" cvsdiff      : generates diffs under diffs subdirectory"/>
-        <echo message=" full-nightly : nightly target with index.html updates"/>
         <echo message=" nightly      : performs nightly builds for all products"/>
         <echo message=" server-nightly: performs nightly builds for server products"/>
         <echo message=" agents-nightly: performs nightly builds for agents products"/>

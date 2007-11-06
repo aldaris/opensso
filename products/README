@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.14 2007-09-17 22:09:29 qcheng Exp $
+$Id: README,v 1.15 2007-11-06 00:17:48 kevinserwin Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ Copyright 2006 Sun Microsystems Inc. All Rights Reserved
         %% 2.3 Obtaining ldapjdk.jar
         %% 2.4 Obtaining db.jar
         %% 2.5 Obtaining testng-5.1-jdk15.jar
-        %% 2.6 Obtaining fmsae.dll
+        %% 2.6 Obtaining fmsae.dll and agent-csdk
     %% 3. Building the workspace
         %% 3.1 build target
         %% 3.2 doc target
@@ -208,13 +208,14 @@ under the db-4.2.52.NC/build_unix directory.
 Download testng-5.1.zip from http://testng.org/testng-5.1.zip; unzip it and 
 testng-5.1-jdk15.jar in the base directory.
 
-%% 2.6 Obtaining fmsae.dll
+%% 2.6 Obtaining fmsae.dll and agent-cdsk
 
-Download fam.zip from 
-http://download.java.net/general/opensso/nightly/openfm/latest/fam.zip
-Save the zip file locally, unzip it, then get fmsae.dll from 
-libraries/dll and copy it into the opensso/products/extlib directory
-in your workspace.
+Download opensso.zip from 
+http://download.java.net/general/opensso/nightly/opensso/latest/opensso.zip
+Save the zip file locally, unzip it, then get fmsae.dll  from 
+libraries/native/dll and copy it into the opensso/products/extlib directory
+in your workspace. Copy the agent-csdk subdirectory, and contents from 
+libraries/native to opensso/products/extlib.
 
 
 %% 3. Building the workspace
