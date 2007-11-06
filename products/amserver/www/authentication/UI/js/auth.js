@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: auth.js,v 1.4 2006-07-17 18:11:45 veiming Exp $
+ * $Id: auth.js,v 1.5 2007-11-06 00:22:10 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,7 +92,7 @@ function markupButton(label, href) {
     label = "&nbsp;" + strTrim(label) + "&nbsp;";
     document.write("<td>");
     document.write("<div class=\"logBtn\">");
-    document.write("<input name=\"Login.Submit\" type=\"submit\"");
+    document.write("<input name=\"Login.Submit\" type=\"button\"");
     document.write(" class=\"Btn1Def\" value=\"");
     document.write(label);
     document.write("\" onclick=\"");
