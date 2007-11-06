@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.5 2007-10-29 23:41:06 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.6 2007-11-06 00:02:47 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,8 +70,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private SAML2MetaManager metaManager;
     private static Map extendedMetaIdpMap = new HashMap(42);
     private static Map extendedMetaSpMap = new HashMap(54);
-    private static Map xacmlPDPExtendedMeta = new HashMap(12);
-    private static Map xacmlPEPExtendedMeta = new HashMap(12);
+    private static Map xacmlPDPExtendedMeta = new HashMap(18);
+    private static Map xacmlPEPExtendedMeta = new HashMap(18);
 
     //extended metadata attributes for idp only
     static {
@@ -98,6 +98,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 Collections.EMPTY_SET);
         extendedMetaIdpMap.put(BOOT_STRAP_ENABLED, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ARTIF_RESOLVE_SIGN, Collections.EMPTY_SET);
+        // ECP
+        extendedMetaIdpMap.put(ATTR_IDP_ECP_SESSION_MAPPER, 
+            Collections.EMPTY_SET);
+        
     }
     
     //extended metadata attributes for sp only
@@ -132,6 +136,14 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaSpMap.put(WANT_ASSERTION_ENCRYPTED, 
                 Collections.EMPTY_SET);
         extendedMetaSpMap.put(WANT_ARTIF_RESP_SIGN, Collections.EMPTY_SET);
+        
+        //ECP
+        extendedMetaSpMap.put(ATTR_ECP_REQUEST_IDP_LIST_FINDER_IMPL, 
+            Collections.EMPTY_SET);
+        extendedMetaSpMap.put(ATTR_ECP_REQUEST_IDP_LIST, 
+            Collections.EMPTY_SET);
+        extendedMetaSpMap.put(ATTR_ECP_REQUEST_IDP_LIST_GET_COMPLETE, 
+            Collections.EMPTY_SET);
     }
 
     static {

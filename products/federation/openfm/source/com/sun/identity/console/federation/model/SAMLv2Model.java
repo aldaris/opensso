@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.5 2007-10-29 23:41:06 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.6 2007-11-06 00:02:47 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,7 +163,19 @@ public interface SAMLv2Model
              "wantAssertionEncrypted";
      public static final String WANT_ARTIF_RESP_SIGN =
              "wantArtifactResponseSigned";
-         
+     
+    //ECP IDP
+     public static final String ATTR_IDP_ECP_SESSION_MAPPER = 
+         "idpECPSessionMapper";
+     
+    //ECP SP
+    public static final String ATTR_ECP_REQUEST_IDP_LIST_FINDER_IMPL = 
+        "ECPRequestIDPListFinderImpl";
+    public static final String ATTR_ECP_REQUEST_IDP_LIST = 
+        "ECPRequestIDPList";
+    public static final String ATTR_ECP_REQUEST_IDP_LIST_GET_COMPLETE = 
+        "ECPRequestIDPListGetComplete";    
+    
     // XACML PDP/PEP 
     public static final String ATTR_TXT_PROTOCOL_SUPPORT_ENUM =
         "txtProtocolSupportEnum";
