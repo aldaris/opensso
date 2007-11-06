@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2007-09-05 21:02:11 mallas Exp $
+   $Id: build.xml,v 1.5 2007-11-06 20:16:18 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,13 +46,6 @@
     <!-- build class path -->
     <path id="build.class.path">
         <pathelement location="${wssagents.classes.dir}"/>
-        <fileset dir="${wssagents.glassfish.extlib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
-        
-        <fileset dir="${wssagents.weblogic.extlib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
         
         <fileset dir="${wssagents.extlib.dir}">
             <include name="**/*.jar"/>
