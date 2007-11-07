@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.2 2007-11-06 21:01:18 sean_brydon Exp $
+# $Id: AMAgentConfiguration.template,v 1.3 2007-11-07 00:50:05 sean_brydon Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -349,14 +349,15 @@ com.sun.identity.agents.config.auth.handler[] =
 com.sun.identity.agents.config.logout.handler[] =
 com.sun.identity.agents.config.verification.handler[] =
 
+#
 # HTTP SESSION BINDING
-# Its default value is true, in which case the agent will invalidate
-# the http session when agent identifies that login has failed,
-# user does not have SSO session or pincipal user name does not
-# match SSO user name.
-# If its value is false, agent will not be invloved in invalidating 
-# http session.
-# Hot-Swap Enabled: NO
+#   Its default value is true, in which case the agent will invalidate
+#   the http session when agent identifies that login has failed,
+#   user does not have SSO session or pincipal user name does not
+#   match SSO user name.
+#   If its value is false, agent will not be invloved in invalidating 
+#   http session.
+# Hot-Swap Enabled: Yes
 com.sun.identity.agents.config.httpsession.binding = true 
 
 #

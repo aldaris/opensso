@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFilterConfigurationConstants.java,v 1.6 2007-10-31 00:43:23 sean_brydon Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.7 2007-11-07 00:50:05 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,6 +163,9 @@ public interface IFilterConfigurationConstants {
      */
     public static final String CONFIG_HTTPSESSION_BINDING =
         "httpsession.binding";
+    
+    public static final boolean DEFAULT_CONFIG_HTTPSESSION_BINDING = true;
+
 
     public static final String CONFIG_LOGOUT_HANDLER_MAP = "logout.handler";
 
