@@ -20,30 +20,23 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-srczip.xml,v 1.1 2007-08-28 16:19:48 kevinserwin Exp $
+   $Id: build-srczip.xml,v 1.2 2007-11-07 20:31:48 kevinserwin Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <project name="srczip" default="all" basedir=".">
-    <description>Open Federation: famsrc.zip Creation</description>
+    <description>Open SSO openssosrc.zip Creation</description>
     <import file="products.xml" />
     <property name="zip.temp.dir" value="${prd.nightly.dir}/.zip" />
 
     <target name="all">
-        <zip destfile="${prd.nightly.dir}/dist/famsrc.zip" whenempty="create">
-           <zipfileset dir="amserver" prefix="amserver" excludes="**/built/**,**/extlib/**" >
+        <zip destfile="${prd.nightly.dir}/dist/openssosrc.zip" whenempty="create">
+            <zipfileset dir="." excludes="**/built/**,**/extlib/**,**/diffs/**" >
             </zipfileset>
-           <zipfileset dir="federation" prefix="federation" excludes="**/built/**,**/extlib/**" >
-            </zipfileset>
-           <zipfileset dir="j2eeagents" prefix="j2eeagents" excludes="**/built/**,**/extlib/**" >
-            </zipfileset>    
-            <zipfileset dir="webagents" prefix="webagents" excludes="**/built/**,**/extlib/**" >
-            </zipfileset>             
-
         </zip>
 
-        <checksum file="${prd.nightly.dir}/dist/famsrc.zip"
+        <checksum file="${prd.nightly.dir}/dist/openssosrc.zip"
             algorithm="SHA" fileext=".sha" />
     </target>
 
