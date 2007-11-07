@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.25 2007-10-17 23:00:45 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.26 2007-11-07 19:13:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.iplanet.services.ldap.LDAPServiceException;
 import com.sun.identity.authentication.UI.LoginLogoutMapping;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
+import com.sun.identity.common.DebugPropertiesObserver;
 import com.sun.identity.common.configuration.ConfigurationObserver;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.common.configuration.ServerConfiguration;
@@ -316,7 +317,7 @@ public class AMSetupServlet extends HttpServlet {
                 ServiceConfigManager scm = new ServiceConfigManager(
                     Constants.SVC_NAME_PLATFORM, (SSOToken)AccessController.
                         doPrivileged(AdminTokenAction.getInstance()));
-                scm.addListener(new ConfigurationObserver());
+                scm.addListener(ConfigurationObserver.getInstance());
             }
             SystemProperties.setServerInstanceName(serverInstanceName);
 
@@ -498,7 +499,8 @@ public class AMSetupServlet extends HttpServlet {
         AdminUtils.initialize();
         SMSAuthModule.initialize();
         SystemProperties.initializeProperties(prop, true, true);
-
+        DebugPropertiesObserver.getInstance().notifyChanges();
+        
         List plugins = getConfigPluginClasses();
         Map map = ServicesDefaultValues.getDefaultValues();
         String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);

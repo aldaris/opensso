@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationObserver.java,v 1.1 2007-10-17 23:00:31 veiming Exp $
+ * $Id: ConfigurationObserver.java,v 1.2 2007-11-07 19:13:58 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,23 +27,78 @@ package com.sun.identity.common.configuration;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.AttributeStruct;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import java.io.IOException;
 import java.security.AccessController;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * This class listens to changes in configuration changes
  */
 public class ConfigurationObserver implements ServiceListener {
-    private static int PARENT_LEN = ConfigurationBase.CONFIG_SERVERS.length() 
-        + 2;
+    private static ConfigurationObserver instance = new ConfigurationObserver();
+    private static int PARENT_LEN = ConfigurationBase.CONFIG_SERVERS.length()
+    + 2;
+    private Set migratedServiceNames = new HashSet();
+    private Set listeners = new HashSet();
+    private static boolean hasRegisteredListeners;
     
+    private ConfigurationObserver() {
+        createAttributeMapping();
+    }
+    
+    private void createAttributeMapping() {
+        if (!ServerConfiguration.isLegacy()) {
+            Map attributeMap = SystemProperties.getAttributeMap();
+            for (Iterator i = attributeMap.values().iterator(); i.hasNext(); ) {
+                AttributeStruct a = (AttributeStruct)i.next();
+                migratedServiceNames.add(a.getServiceName());
+            }
+        }
+    }
+    
+    private synchronized void registerListeners() {
+        if (!hasRegisteredListeners) {
+            SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            for (Iterator i = migratedServiceNames.iterator(); i.hasNext(); ) {
+                try {
+                    ServiceConfigManager scm = new ServiceConfigManager(
+                        (String)i.next(), adminToken);
+                    scm.addListener(instance);
+                } catch (SSOException ex) {
+                    Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                        "ConfigurationObserver.registeringListeners", ex);
+                } catch (SMSException ex) {
+                    Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                        "ConfigurationObserver.registeringListeners", ex);
+                }
+           }
+           hasRegisteredListeners = true;
+        }
+    }
+    
+    /**
+     * Returns an instance of <code>ConfigurationObserver</code>.
+     *
+     * @return an instance of <code>ConfigurationObserver</code>.
+     */    
+    public static ConfigurationObserver getInstance() {
+        instance.registerListeners();
+        return instance;
+    }
+
     /**
      * This method will be invoked when a service's schema has been changed.
      * 
@@ -86,7 +141,7 @@ public class ConfigurationObserver implements ServiceListener {
                     Properties newProp = ServerConfiguration.getServerInstance(
                         adminToken, serverName);
                     SystemProperties.initializeProperties(newProp, true, true);
-                    
+                    notifies();                    
                 } catch (SSOException ex) {
                     //ingored
                 } catch (IOException ex) {
@@ -95,9 +150,30 @@ public class ConfigurationObserver implements ServiceListener {
                     //ingored
                 }
             }
+        } else {
+            /* need to do this else bcoz some of the property have been moved
+             * to services
+             */
+            notifies();
         }
     }
     
+    /**
+     * Adds listeners
+     *
+     * @param l Listener to be added
+     */
+    public void addListener(ConfigurationListener l) {
+        listeners.add(l);
+    }
+
+    private void notifies() {
+        for (Iterator i = listeners.iterator(); i.hasNext(); ) {
+            ConfigurationListener l = (ConfigurationListener)i.next();
+            l.notifyChanges();
+        }
+    }
+
     /**
      * This method will be invoked when a service's organization configuration
      * data has been changed. The parameters <code>orgName</code>,

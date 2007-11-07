@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.8 2007-10-24 20:50:58 veiming Exp $
+ * $Id: SystemProperties.java,v 1.9 2007-11-07 19:13:58 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -517,5 +517,14 @@ public class SystemProperties {
     public static boolean isServerMode() {
         return Boolean.valueOf(get(
             Constants.SERVER_MODE, "false")).booleanValue();
+    }
+    
+    /**
+     * Returns the property name to service attribute schema name mapping.
+     *
+     * @return Property name to service attribute schema name mapping.
+     */
+    public static Map getAttributeMap() {
+        return attributeMap;
     }
 }

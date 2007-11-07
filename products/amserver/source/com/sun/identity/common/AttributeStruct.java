@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeStruct.java,v 1.1 2007-10-09 19:02:36 veiming Exp $
+ * $Id: AttributeStruct.java,v 1.2 2007-11-07 19:13:57 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ import java.util.StringTokenizer;
  * in configuration properties file to attribute in service.
  */
 public class AttributeStruct {
-    String serviceName;
+     String serviceName;
     int revisionNumber;
     String attributeName;
 
@@ -51,5 +51,14 @@ public class AttributeStruct {
                 attributeName = st.nextToken().trim();
             }
         }
+    }
+    
+    /**
+     * Returns service name.
+     *
+     * @return service name.
+     */
+    public String getServiceName() {
+        return serviceName;
     }
 }

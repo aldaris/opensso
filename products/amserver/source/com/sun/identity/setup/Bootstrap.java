@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.3 2007-10-30 17:35:47 veiming Exp $
+ * $Id: Bootstrap.java,v 1.4 2007-11-07 19:13:59 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.authentication.internal.InvalidAuthContextException;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
+import com.sun.identity.common.DebugPropertiesObserver;
 import com.sun.identity.common.configuration.ConfigurationObserver;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.security.AdminTokenAction;
@@ -48,7 +49,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -281,12 +281,13 @@ public class Bootstrap {
                     SMSAuthModule.initialize();
                     SystemProperties.initializeProperties(
                         properties, true, true);
+                    DebugPropertiesObserver.getInstance().notifyChanges();
                     SystemProperties.setServerInstanceName(instanceName);
 
                     ServiceConfigManager scm = new ServiceConfigManager(
                         Constants.SVC_NAME_PLATFORM, (SSOToken)AccessController.
                         doPrivileged(AdminTokenAction.getInstance()));
-                    scm.addListener(new ConfigurationObserver());
+                    scm.addListener(ConfigurationObserver.getInstance());
                 }
             } catch (SMSException e) {
                 //ignore. product is not configured yet.
