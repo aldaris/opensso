@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.3 2007-11-07 00:50:05 sean_brydon Exp $
+# $Id: AMAgentConfiguration.template,v 1.4 2007-11-07 21:07:01 madan_ranganath Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -861,3 +861,12 @@ com.sun.identity.policy.client.clockSkew=10
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.centralized.notification.enable=true
+
+#
+# DEBUG SERVICE PROPERTIES
+#   - com.iplanet.services.debug.level: Specifies the debug level to be used.
+#     The value is one of: off, error, warning, message.
+# Hot-Swap Enabled: No
+#
+com.iplanet.services.debug.level=@DEBUG_LEVEL@
+

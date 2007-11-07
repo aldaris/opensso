@@ -60,6 +60,45 @@ com.sun.am.cookie.name = iPlanetDirectoryPro
 com.sun.am.cookie.secure = false
 
 #
+# Set the logging level for the specified logging categories.
+# The format of the values is
+#
+#	<ModuleName>[:<Level>][,<ModuleName>[:<Level>]]*
+#
+# The currently used module names are: AuthService, NamingService,
+# PolicyService, SessionService, PolicyEngine, ServiceEngine,
+# Notification, PolicyAgent, RemoteLog and all.
+#
+# The all module can be used to set the logging level for all currently
+# none logging modules.  This will also establish the default level for
+# all subsequently created modules.
+#
+# The meaning of the 'Level' value is described below:
+#
+#	0	Disable logging from specified module*
+#	1	Log error messages
+#	2	Log warning and error messages
+#	3	Log info, warning, and error messages
+#	4	Log debug, info, warning, and error messages
+#	5	Like level 4, but with even more debugging messages
+# 128	log url access to log file on AM server. 
+# 256	log url access to log file on local machine. 
+#
+# If level is omitted, then the logging module will be created with
+# the default logging level, which is the logging level associated with
+# the 'all' module.
+#
+# for level of 128 and 256, you must also specify a value of either 
+# LOG_ALLOW, LOG_DENY or LOG_BOTH for the property
+# com.sun.am.policy.agents.config.audit.accesstype
+# 
+#
+# *Even if the level is set to zero, some messages may be produced for
+# a module if they are logged with the special level value of 'always'.
+#
+com.sun.am.log.level = 
+
+#
 # This property is used for Log Rotation. The value of the property specifies 
 # whether the agent deployed on the server supports the feature of not. If set 
 # to false all log messages are written to the same file.
