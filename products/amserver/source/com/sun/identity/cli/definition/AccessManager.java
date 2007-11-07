@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.45 2007-11-05 21:43:44 veiming Exp $
+ * $Id: AccessManager.java,v 1.46 2007-11-07 06:56:15 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.SessionCommand",
         description="List Sessions.",
-        webSupport="true",
+        webSupport="false",
         mandatoryOptions={
             "host|t|s|Host Name."},
         optionAliases={},
