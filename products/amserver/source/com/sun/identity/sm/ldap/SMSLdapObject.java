@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.11 2007-04-09 23:20:22 goodearth Exp $
+ * $Id: SMSLdapObject.java,v 1.12 2007-11-08 06:17:21 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,7 +79,7 @@ import com.sun.identity.sm.SMSObjectListener;
  * <p>
  * There can be only three types of SMS entries in the directory (i) entry with
  * organizationUnit object class (attribute: ou) (ii) entry with sunService
- * object class (attributes: ou, labeleduri, sunServiceSchema, sunPluginSchema,
+ * object class (attributes: ou, labeledURI, sunServiceSchema, sunPluginSchema,
  * and sunKeyValue (sunXMLKeyValue, in the future) (iii) entry with
  * sunServiceComponent object class (attributes: ou, sunServiceID,
  * sunSMSPriority, sunKeyValue. All the schema, configuration and plugin entries
