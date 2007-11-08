@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.13 2007-11-02 21:57:00 pawand Exp $
+ * $Id: Constants.java,v 1.14 2007-11-08 05:48:42 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -710,4 +710,46 @@ public interface Constants {
      * Platform service name.
      */
     String SVC_NAME_PLATFORM = "iPlanetAMPlatformService";
+    
+    /**
+     * LDAP server host name for saml2 crl cache
+     */
+    public static final String CRL_CACHE_DIR_HOST =
+        "com.sun.identity.crl.cache.directory.host";
+
+    /**
+     * LDAP server port number for saml2 crl cache
+     */
+    public static final String CRL_CACHE_DIR_PORT =
+        "com.sun.identity.crl.cache.directory.port";
+
+    /**
+     * LDAP server ssl config for saml2 crl cache
+     */
+    public static final String CRL_CACHE_DIR_SSL_ENABLED =
+        "com.sun.identity.crl.cache.directory.ssl";
+
+    /**
+     * LDAP Server bind user name for saml2 crl cache
+     */
+    public static final String CRL_CACHE_DIR_USER =
+        "com.sun.identity.crl.cache.directory.user";
+
+    /**
+     * LDAP Server bind password for saml2 crl cache
+     */
+    public static final String CRL_CACHE_DIR_PASSWD =
+        "com.sun.identity.crl.cache.directory.password";
+
+    /**
+     * LDAP Server search base dn for saml2 crl cache
+     */
+    public static final String CRL_CACHE_DIR_SEARCH_LOC =
+        "com.sun.identity.crl.cache.directory.searchloc";
+
+    /**
+     * LDAP attribute name for searching crl entry
+     */
+    public static final String CRL_CACHE_DIR_SEARCH_ATTR =
+        "com.sun.identity.crl.cache.directory.searchattr";        
 }

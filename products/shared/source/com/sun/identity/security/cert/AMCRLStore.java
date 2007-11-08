@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCRLStore.java,v 1.1 2007-10-22 15:06:30 beomsuk Exp $
+ * $Id: AMCRLStore.java,v 1.2 2007-11-08 05:47:19 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -230,6 +230,10 @@ public class AMCRLStore extends AMCertStore {
              debug.message("AMCRLStore.getCRLFromEntry:");
          }
 
+         if (crlEntry == null) {
+             return null;
+         }
+         
          LDAPAttributeSet attributeSet = crlEntry.getAttributeSet();
          LDAPAttribute crlAttribute = null;
          X509CRL crl = null;
@@ -475,10 +479,13 @@ public class AMCRLStore extends AMCertStore {
      * @param String uri
      */
     private byte[] getCRLByURI(String uri) {
+        if (debug.messageEnabled()) {
+            debug.message("AMCRLStore.getCRLByURI : uri = " + uri);
+        }
     	if (uri == null) {
-    		return null;
+            return null;
     	}
-    	
+            	
     	String protocol = uri.trim().toLowerCase();
         if (protocol.startsWith("http") || protocol.startsWith("https")) {
             return getCRLByHttpURI(uri);
@@ -555,7 +562,7 @@ public class AMCRLStore extends AMCertStore {
             crl = (byte[])crlAttribute.getByteValues().nextElement();
             
         } catch (Exception e) {
-            debug.error("Error in getting CRL",e);
+            debug.error("getCRLByLdapURI : Error in getting CRL",e);
         }
 
         return crl;
@@ -633,7 +640,7 @@ public class AMCRLStore extends AMCertStore {
                               crl.length);
             }
         } catch (Exception e) {
-            debug.error("Error in getting CRL",e);
+            debug.error("getCRLByHttpURI : Error in getting CRL",e);
         }
         
         return crl;

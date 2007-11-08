@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.11 2007-10-17 23:00:57 veiming Exp $
+ * $Id: SAML2Utils.java,v 1.12 2007-11-08 05:41:46 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,9 +69,11 @@ import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.Status;
 import com.sun.identity.saml2.protocol.StatusCode;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.security.cert.CRLValidator;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
@@ -102,6 +104,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
+import java.util.Vector;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -153,6 +156,11 @@ public class SAML2Utils extends SAML2SDKUtils {
     private static int int_server_port = 0;
     
     public static SOAPConnectionFactory scf = null;
+    
+    // Dir server info for CRL entry
+    private static boolean checkCertStatus = false;
+    private static boolean checkCAStatus = false;
+    
     static {
         try {
             scf = SOAPConnectionFactory.newInstance();
@@ -164,6 +172,34 @@ public class SAML2Utils extends SAML2SDKUtils {
             int_server_port = Integer.parseInt(server_port);
         } catch (NumberFormatException nfe) {
             debug.error("Unable to parse port " + server_port, nfe);
+        }
+        
+        /*
+         * Setup the LDAP certificate directory service context for
+         * use in verification of signing certificates.
+         */
+        String checkCertStatusStr = SystemConfigurationUtil.getProperty(
+                   SAML2Constants.CHECK_SAML2_CERTIFICATE_STATUS, null);
+                        
+        if (checkCertStatusStr != null) {
+            checkCertStatus = 
+                Boolean.valueOf(checkCertStatusStr).booleanValue();
+            checkCAStatus = 
+                Boolean.valueOf(SystemConfigurationUtil.getProperty(
+                    SAML2Constants.CHECK_SAML2_CA_STATUS, "false"))
+                    .booleanValue();
+            if (debug.messageEnabled()) {
+                debug.message("SAML2 :  CRL check is configured to " 
+                    + checkCertStatus);
+                debug.message("SAML2 :  CRL check for CA is configured to " 
+                    + checkCAStatus);
+            }
+        } else {
+            checkCertStatus = CRLValidator.isCRLCheckEnabled();
+            if (debug.messageEnabled()) {
+                debug.message("SAML2 : CRL check is configured " + 
+                    "with old config style.");
+            }
         }
     }
     
@@ -3045,5 +3081,29 @@ public class SAML2Utils extends SAML2SDKUtils {
         return wantSigned.equalsIgnoreCase("true") ? true : false;
     }
     
-    
+    /**
+     * Checks certificate validity with configured CRL 
+     * @param x509 certificate 
+     * @return <code>true</code> if the certificate is not in CRL, 
+     *         otherwise, return <code>false</code> 
+     */
+    public static boolean validateCertificate(X509Certificate cert) {
+        String method = "validateCertificate : ";
+        boolean certgood = true;
+        if (checkCertStatus == false) {
+            if (debug.messageEnabled()) {
+                debug.message(method + 
+                     " CRL check is not configured. Just return it is good.");
+            }
+            return certgood = true;
+        }
+
+        certgood = 
+            CRLValidator.validateCertificate(cert, checkCAStatus);
+        if (debug.messageEnabled()) {
+            debug.message(method + " certificate is validated to " + certgood);
+        }
+
+        return certgood;
+    }
 }

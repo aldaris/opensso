@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.16 2007-10-04 04:30:42 hengming Exp $
+ * $Id: SAML2Constants.java,v 1.17 2007-11-08 05:41:47 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1147,4 +1147,16 @@ public interface SAML2Constants {
      */
     public static final String SOAP_ACTOR_NEXT =
         "http://schemas.xmlsoap.org/soap/actor/next";
+    
+    /**
+     * Check Certificate status
+     */
+    public static final String CHECK_SAML2_CERTIFICATE_STATUS =
+        "com.sun.identity.saml2.crl.check";
+
+    /**
+     * Check CA Certificate status
+     */
+    public static final String CHECK_SAML2_CA_STATUS =
+        "com.sun.identity.saml2.crl.check.ca";
 } 

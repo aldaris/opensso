@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertPath.java,v 1.1 2007-10-22 15:06:30 beomsuk Exp $
+ * $Id: AMCertPath.java,v 1.2 2007-11-08 05:47:19 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,7 +132,7 @@ public class AMCertPath {
             }
         }
         catch (Throwable t) {
-            debug.message("AMCertPath.verify: FAILED", t);
+            debug.error("AMCertPath.verify: FAILED", t);
             return false;
         }
 
