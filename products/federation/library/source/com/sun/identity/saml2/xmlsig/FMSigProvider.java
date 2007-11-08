@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSigProvider.java,v 1.2 2007-08-23 00:33:01 hengming Exp $
+ * $Id: FMSigProvider.java,v 1.3 2007-11-08 05:43:36 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,7 @@ import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.common.SAML2Utils;
 
 /**
  * <code>FMSigProvider</code> is an class for signing
@@ -326,10 +327,18 @@ public final class FMSigProvider implements SigProvider {
 	if (certToUse == null) {
 	    certToUse = senderCert;
 	}
-	boolean result = true;
+
+        boolean certgood = SAML2Utils.validateCertificate(certToUse);
+        if (certgood != true) {
+	    SAML2SDKUtils.debug.error(
+			classMethod +
+			"Signing Certificate is validated as bad.");
+            return false;
+        }
+
+	boolean result = false;
 	try {
-	    result =
-		signature.checkSignatureValue(certToUse);
+	    result = signature.checkSignatureValue(certToUse);
 	} catch (XMLSignatureException xse) {
 	    throw new SAML2Exception(xse);
 	}
