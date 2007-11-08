@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.15 2007-11-06 00:17:48 kevinserwin Exp $
+$Id: README,v 1.16 2007-11-08 00:22:23 kevinserwin Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -128,8 +128,8 @@ copying it to the "opensso/products/extlib" directory of your workspace.
      webservices-extra-api.jar, OpenDS.jar, je.jar,
      mfwk_instrum_tk-2.0.jar, xercesImpl.jar
 
-Those libraries can be obtained by downloading fam8-sun-extlib.zip from
-http://download.java.net/general/opensso/extlib/latest/fam8-sun-extlib.zip
+Those libraries can be obtained by downloading opensso-sun-extlib.zip from
+http://download.java.net/general/opensso/extlib/latest/opensso-sun-extlib.zip
 
 Extract the zip, you can get all those shared library jars.
 
