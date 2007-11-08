@@ -47,6 +47,7 @@
             <Attribute name="sun-idrepo-ldapv3-config-user-objectclass"/>
             <Value>inetorgperson</Value>
             <Value>inetuser</Value>
+            <Value>iplanet-am-user-service</Value>
             <Value>iPlanetPreferences</Value>
             <Value>organizationalPerson</Value>
             <Value>person</Value>
