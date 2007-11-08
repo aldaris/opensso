@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.5 2007-11-02 21:56:56 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.6 2007-11-08 06:12:16 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,6 +78,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     private static final String agentserviceName = IdConstants.AGENT_SERVICE;
     private static final String agentGroupNode = "agentgroup";
     private static final String instancesNode = "ou=Instances,";
+    private static final String labeledURI = "labeledURI";
 
     IdRepoListener repoListener = null;
 
@@ -96,6 +97,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     // To determine if notification object has been registered for schema
     // changes.
     private static boolean registeredForNotifications;
+
+    // Role membership attribute
+    private String roleMembershipAttribute = "nsRoleDN";
+
+    // Group members attribute
+    private String groupMembersAttribute = "memberOfGroup";
 
 
     public AgentsRepo() {
@@ -164,6 +171,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.create() called: " + type + ": "
                     + agentName);
+        }
+        if (attrMap == null || attrMap.isEmpty()) {
+            if (debug.messageEnabled()) {
+                debug.message("AgentsRepo.create(): Attribute Map is empty ");
+            }
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
         String agentType = null;
         ServiceConfig aTypeConfig = null;
@@ -306,6 +319,10 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                         }
                     }
                 }
+                if (debug.messageEnabled()) {
+                    debug.message("AgentsRepo.getAttributes() agentsAttrMap: " 
+                        + agentsAttrMap);
+                }
                 return agentsAttrMap;
             } catch (IdRepoException idpe) {
                 debug.error("AgentsRepo.getAttributes(): Unable to read agent"
@@ -344,6 +361,9 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             throw new IdRepoException(sme.getMessage());
         }
 
+        if (debug.messageEnabled()) {
+            debug.message("AgentsRepo.getAgentAttrs() answer: " + answer);
+        }
         return (answer);
     }
                             
@@ -389,9 +409,61 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     public Set getMembers(SSOToken token, IdType type, String name,
             IdType membersType) throws IdRepoException, SSOException {
 
-        Object args[] = { NAME, IdOperation.READ.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        /*
+         * name would be the name of the agentgroup.
+         * membersType would be the IdType of the agent to be retrieved.
+         * type would be the IdType of the agentgroup.
+         */
+        if (debug.messageEnabled()) {
+            debug.message("AgentsRepo.getMembers called" + type + ": " + name
+                    + ": " + membersType);
+        }
+        Set results = new HashSet();
+        if (type.equals(IdType.USER) || type.equals(IdType.AGENT)) {
+            debug.error("AgentsRepo.getMembers: Membership operation is "
+                + "not supported for Users or Agents");
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "203", null);
+        }
+        if (!membersType.equals(IdType.AGENTONLY) && 
+            !membersType.equals(IdType.AGENT)) {
+            debug.error("AgentsRepo.getMembers: Cannot get member from a "
+                + "non-agent type "+ membersType.getName());
+            Object[] args = { NAME };
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args);
+        }
+        if (type.equals(IdType.AGENTGROUP)) {
+            try {
+                // Search and get the serviceconfig of the agents and get
+                // the value of the attribute 'labeledURI' and if the agent
+                // belongs to the agentgroup, add the agent/member to the 
+                // result set. 
+                orgConfig = getOrgConfig(token);
+                for (Iterator items = orgConfig.getSubConfigNames()
+                    .iterator(); items.hasNext();) {
+                    String agent = (String) items.next();
+                    ServiceConfig aCfg = null;
+                    aCfg = orgConfig.getSubConfig(agent);
+                    if (aCfg !=null) {
+                        String lUri = aCfg.getLabeledUri();
+                        if ((lUri != null) && lUri.equalsIgnoreCase(name)) {
+                            results.add(agent);
+                        }
+                    }
+                }
+            } catch (SMSException sme) {
+                debug.error("AgentsRepo.getMembers: Caught "
+                        + "exception while getting agents"
+                        + " from groups", sme);
+                Object args[] = { NAME, type.getName(), name };
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "212", 
+                    args);
+            }
+        } else {
+            Object args[] = { NAME, IdOperation.READ.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, 
+                "305", args);
+        }
+        return (results);
     }
 
     /*
@@ -404,10 +476,59 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     public Set getMemberships(SSOToken token, IdType type, String name,
             IdType membershipType) throws IdRepoException, SSOException {
 
-        Object args[] = { NAME, IdOperation.READ.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        /*
+         * name would be the name of the agent.
+         * membersType would be the IdType of the agentgroup to be retrieved.
+         * type would be the IdType of the agent.
+         */
+        if (debug.messageEnabled()) {
+            debug.message("AgentsRepo.getMemberships called " + type + ": " +
+                name + ": " + membershipType);
+        }
+
+        // Memberships can be returned for agents.
+        if (!type.equals(IdType.AGENT) && !type.equals(IdType.AGENTONLY)) {
+            debug.message(
+                "AgentsRepo:getMemberships supported only for agents");
+            Object args[] = { NAME };
+            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args));
+        }
+
+        // Set to maintain the members
+        Set results = new HashSet();
+        if (membershipType.equals(IdType.AGENTGROUP)) {
+            try {
+                // Search and get the serviceconfig of the agent and get
+                // the value of the attribute 'labeledURI' and if the agent
+                // belongs to the agentgroup, add the agentgroup to the 
+                // result set. 
+                orgConfig = getOrgConfig(token);
+                ServiceConfig aCfg = null;
+                aCfg = orgConfig.getSubConfig(name);
+                if (aCfg !=null) {
+                    String lUri = aCfg.getLabeledUri();
+                    if ((lUri != null) && (lUri.length() > 0)) {
+                        results.add(lUri);
+                    }
+                }
+            } catch (SMSException sme) {
+                debug.error("AgentsRepo.getMemberships: Caught "
+                        + "exception while getting memberships"
+                        + " for Agent", sme);
+                Object args[] = { NAME, type.getName(), name };
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "212", 
+                    args);
+            }
+        } else {
+            // throw unsupported operation exception
+            Object args[] = { NAME, IdOperation.READ.getName(),
+                membershipType.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        }
+        return (results);
     }
+
 
     /*
      * (non-Javadoc)
@@ -475,10 +596,75 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             Set members, IdType membersType, int operation)
             throws IdRepoException, SSOException {
 
-        Object args[] = { NAME, IdOperation.EDIT.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        /*
+         * name would be the name of the agentgroup.
+         * members would include the name of the agents to be added/removed 
+         * to/from the group.
+         * membersType would be the IdType of the agent to be added/removed.
+         * type would be the IdType of the agentgroup.
+         */
+
+         if (debug.messageEnabled()) {
+             debug.message("AgentsRepo: modifyMemberShip called " + type + ": "
+                    + name + ": " + members + ": " + membersType);
+         }
+         if (members == null || members.isEmpty()) {
+             debug.error("AgentsRepo.modifyMemberShip: Members set is empty");
+             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
+         }
+         if (type.equals(IdType.USER) || type.equals(IdType.AGENT)) {
+             debug.error("AgentsRepo.modifyMembership: Membership to users "
+                 + "and agents is not supported");
+             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "203", null);
+         }
+         if (!membersType.equals(IdType.AGENTONLY)) {
+             debug.error("AgentsRepo.modifyMembership: A non-agent type"
+                 + " cannot be made a member of any identity"
+                    + membersType.getName());
+             Object[] args = { NAME };
+             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args);
+         }
+         if (type.equals(IdType.AGENTGROUP)) {
+             try {
+                 // Search and get the serviceconfig of the agent and set 
+                 // the 'labeledURI' with the value of the agentgroup name 
+                 // eg., 'AgentGroup1'.
+
+                 Set nameSet = new HashSet();
+                 nameSet.add(name);
+                 orgConfig = getOrgConfig(token);
+                 Iterator it = members.iterator();
+                 ServiceConfig aCfg = null;
+                 while (it.hasNext()) {
+                     String agent = (String) it.next();
+                     aCfg = orgConfig.getSubConfig(agent);
+                     if (aCfg !=null) {
+                         switch (operation) {
+                         case ADDMEMBER:
+                             aCfg.setLabeledUri(name);
+                             break;
+                         case REMOVEMEMBER:
+                             aCfg.removeAttributeValues(labeledURI, nameSet);
+                         }
+                     }
+                 }
+            } catch (SMSException sme) {
+                debug.error("AgentsRepo.modifyMembership: Caught "
+                        + "exception while " + " adding/removing agents"
+                        + " to groups", sme);
+                Object args[] = { NAME, type.getName(), name };
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "212", 
+                    args);
+            }
+        } else {
+            // throw an exception
+            debug.error("AgentsRepo.modifyMembership: Memberships cannot be"
+                    + "modified for type= " + type.getName());
+            Object[] args = { NAME, type.getName() };
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "209", args);
+        }
     }
+
 
     /*
      * (non-Javadoc)
@@ -845,15 +1031,13 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             }
             Set pSet = new HashSet(2);
             pSet.add("userpassword");
-            Map ansMap = new HashMap(2);
+            Map ansMap = new HashMap();
             String userPwd = null;
             ansMap = getAttributes(adminToken, IdType.AGENTONLY, userid, pSet);
-            Set userPwdSet = (HashSet) ansMap.get("userpassword"); 
+            Set userPwdSet = (Set) ansMap.get("userpassword"); 
             if ((userPwdSet != null) && (!userPwdSet.isEmpty())) {
                 userPwd = (String) userPwdSet.iterator().next();
-            }
-            if (password.equals(userPwd)) {
-                answer = true;
+                answer = password.equals(userPwd);
             }
             if (debug.messageEnabled()) {
                 debug.message("AgentsRepo.authenticate() result: " + answer);
