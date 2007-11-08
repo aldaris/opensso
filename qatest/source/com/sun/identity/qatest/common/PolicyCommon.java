@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.7 2007-11-05 21:15:21 rmisra Exp $
+ * $Id: PolicyCommon.java,v 1.8 2007-11-08 18:16:22 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -297,7 +297,7 @@ public class PolicyCommon extends TestCommon {
     public void createSubXML(ResourceBundle rbg, ResourceBundle rbp,
             BufferedWriter out, String nameType, String name, String type,
             String includeType, List list, String subRealm)
-    throws Exception {
+            throws Exception {
         
         if (nameType != null) {
             if (includeType != null)
@@ -401,7 +401,7 @@ public class PolicyCommon extends TestCommon {
      */
     public void createRPXML(BufferedWriter out, String nameType, String name,
             String type, Map map)
-    throws Exception {
+            throws Exception {
         if (nameType != null) {
             out.write("<" + nameType + " name=\"" + name + "\"" + " type=\"" +
                     type + "\">");
@@ -548,7 +548,7 @@ public class PolicyCommon extends TestCommon {
      */
     public void deleteIdentities(String strLocRB, int gPolIdx,
             String strLocRealm)
-    throws Exception {
+            throws Exception {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
             String glbPolIdx = strLocRB + gPolIdx;
@@ -953,8 +953,9 @@ public class PolicyCommon extends TestCommon {
             HtmlPage orgServiceAtt = fmadm.setAttributeDefaults(webClient,
                     "iPlanetAMPolicyConfigService", "global", null,
                     dnsAliasEnable);
-            log(logLevel, "setDynamicReferral", "enabled the org parameter" +
-                    orgServiceAtt.getWebResponse().getContentAsString());
+            log(logLevel, "setDynamicReferral", "configured the global " +
+                    "parameter" + orgServiceAtt.getWebResponse().
+                    getContentAsString());
         } catch (Exception e) {
             log(Level.SEVERE, "setDynamicReferral", e.getMessage(), null);
             e.printStackTrace();
@@ -1006,7 +1007,7 @@ public class PolicyCommon extends TestCommon {
                         realmAtt.getWebResponse().getContentAsString());
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "setDynamicReferral", e.getMessage(), null);
+            log(Level.SEVERE, "createDynamicReferral", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         } finally {
@@ -1067,7 +1068,7 @@ public class PolicyCommon extends TestCommon {
      */
     public void deleteDynamicAttr(String strLocRB, int policyIdx,
             String subRealm)
-    throws Exception {
+            throws Exception {
         strLocalRB = strLocRB;
         ResourceBundle rbp = ResourceBundle.getBundle(strLocalRB);
         String glbPolIdx = strLocalRB + policyIdx + ".";
@@ -1122,7 +1123,7 @@ public class PolicyCommon extends TestCommon {
     throws Exception  {
         log(logLevel, "createIds" ,"Starting to create Identities");
         String logoutUrl = protocol + ":" + "//" + host + ":" + port
-                    + uri + "/UI/Logout";
+                + uri + "/UI/Logout";
         WebClient webClient = new WebClient();
         try {
             int i ;
@@ -1132,7 +1133,7 @@ public class PolicyCommon extends TestCommon {
             String url = protocol + ":" + "//" + host + ":" + port +
                     uri ;
             //String logoutUrl = protocol + ":" + "//" + host + ":" + port
-                  //  + uri + "/UI/Logout";
+            //  + uri + "/UI/Logout";
             //WebClient webClient = new WebClient();
             consoleLogin(webClient, url, adminUser, adminPassword);
             HtmlPage userCheckPage;
@@ -1290,7 +1291,7 @@ public class PolicyCommon extends TestCommon {
     throws Exception{
         identityMap = testIdentityMap;
         String logoutUrl = protocol + ":" + "//" + host + ":" + port
-                    + uri + "/UI/Logout";
+                + uri + "/UI/Logout";
         WebClient webClient = new WebClient();
         log(logLevel, "deleteIds" ,"Starting deleteIds");
         try{
@@ -1403,8 +1404,8 @@ public class PolicyCommon extends TestCommon {
     throws Exception {
         String scenarioname = sceName;
         String logoutUrl = protocol + ":" + "//" + host + ":" + port
-                    + uri + "/UI/Logout";
-        WebClient webClient = new WebClient(); 
+                + uri + "/UI/Logout";
+        WebClient webClient = new WebClient();
         try{
             String url = protocol + ":" + "//" + host + ":"
                     + port + uri ;
@@ -1462,7 +1463,7 @@ public class PolicyCommon extends TestCommon {
         String policyName = poliName;
         Integer pCount = poliCount;
         String logoutUrl = protocol + ":" + "//" + host + ":" + port
-                    + uri + "/UI/Logout";
+                + uri + "/UI/Logout";
         WebClient webClient = new WebClient();
         try{
             List pList = new ArrayList();
