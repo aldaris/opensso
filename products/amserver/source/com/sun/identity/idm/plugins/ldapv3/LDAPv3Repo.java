@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.29 2007-10-31 02:21:20 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.30 2007-11-08 17:30:19 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -4207,6 +4207,8 @@ public class LDAPv3Repo extends IdRepo {
         if (changeType == LDAPPersistSearchControl.ADD) {
             flushStatus = ldapCache.flushEntries(null, LDAPv2.SCOPE_SUB);
         } else if (changeType == LDAPPersistSearchControl.MODIFY) {
+            flushStatus = ldapCache.flushEntries(null, LDAPv2.SCOPE_SUB);
+            /*
             DN fqdn = new DN(dn);
             DN parentDN = fqdn.getParent();
             String parent = parentDN.toString();
@@ -4275,6 +4277,7 @@ public class LDAPv3Repo extends IdRepo {
                         grandParent + " " + flushStatus);
                 }
             } while (flushStatus);
+            */
 
         } else if (changeType == LDAPPersistSearchControl.MODDN) {
             DN fqdn = new DN(dn);
