@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.8 2007-11-02 21:59:39 pawand Exp $
+ * $Id: ServiceConfig.java,v 1.9 2007-11-08 06:16:36 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,6 +133,33 @@ public class ServiceConfig {
         String[] priorities = { sb.append(priority).toString() };
         SMSEntry e = sc.getSMSEntry();
         e.setAttribute(SMSEntry.ATTR_PRIORITY, priorities);
+        saveSMSEntry(e);
+    }
+
+    /**
+     * Returns the labeled uri assigned to the service configuration.
+     * 
+     * @return the labeled uri assigned to the service configuration
+     */
+    public String getLabeledUri() {
+        return (sc.getLabeledUri());
+    }
+
+    /**
+     * Sets the labeled uri to the service configuration.
+     * 
+     * @param labeled uri
+     *            the labeled uri to be assigned to the configuration
+     * @throws SMSException
+     *             if there is an error occurred while performing the operation
+     * @throws SSOException
+     *             if the user's single sign-on is invalid or expired
+     */
+    public void setLabeledUri(String luri) throws SSOException, SMSException {
+        StringBuffer sb = new StringBuffer(8);
+        String[] lUris = { sb.append(luri).toString() };
+        SMSEntry e = sc.getSMSEntry();
+        e.setAttribute(SMSEntry.ATTR_LABELED_URI, lUris);
         saveSMSEntry(e);
     }
 

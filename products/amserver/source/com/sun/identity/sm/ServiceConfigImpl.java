@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.5 2007-03-21 22:33:48 veiming Exp $
+ * $Id: ServiceConfigImpl.java,v 1.6 2007-11-08 06:16:36 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,6 +70,8 @@ class ServiceConfigImpl implements ServiceListener {
     private CachedSMSEntry smsEntry;
 
     private CachedSubEntries subEntries = null;
+
+    private String labeledUri = null;
 
     /**
      * Private constructor
@@ -136,6 +138,13 @@ class ServiceConfigImpl implements ServiceListener {
      */
     int getPriority() {
         return (priority);
+    }
+
+    /**
+     * Returns the labeled uri assigned to the service configuration.
+     */
+    String getLabeledUri() {
+        return (labeledUri);
     }
 
     /**
@@ -344,6 +353,12 @@ class ServiceConfigImpl implements ServiceListener {
             configID = ids[0];
         } else {
             configID = compName;
+        }
+
+        // Read the labeled uri
+        String[] lUri = entry.getAttributeValues(SMSEntry.ATTR_LABELED_URI);
+        if (lUri != null) {
+            labeledUri = lUri[0];
         }
 
         // Replace the class instance attribute Maps
