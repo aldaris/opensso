@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.27 2007-10-24 20:51:05 veiming Exp $
+ * $Id: SMSEntry.java,v 1.28 2007-11-08 06:15:49 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1800,7 +1800,7 @@ public class SMSEntry implements Cloneable {
 
     public static final String ATTR_SERVICE_ID = "sunserviceID";
 
-    public static final String ATTR_LABELED_URI = "labeleduri";
+    public static final String ATTR_LABELED_URI = "labeledURI";
 
     public static final String ATTR_MODIFY_TIMESTAMP = "modifytimestamp";
 
