@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.7 2007-10-25 05:56:05 beomsuk Exp $
+ * $Id: Cert.java,v 1.8 2007-11-08 05:50:18 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
