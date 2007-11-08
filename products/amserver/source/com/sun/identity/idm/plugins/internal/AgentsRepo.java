@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.6 2007-11-08 06:12:16 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.7 2007-11-08 06:14:52 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -629,6 +629,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                  // Search and get the serviceconfig of the agent and set 
                  // the 'labeledURI' with the value of the agentgroup name 
                  // eg., 'AgentGroup1'.
+                 // One agent instance should belong to at most one group.
 
                  Set nameSet = new HashSet();
                  nameSet.add(name);
