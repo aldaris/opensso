@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyTests.java,v 1.5 2007-11-05 21:18:13 rmisra Exp $
+ * $Id: PolicyTests.java,v 1.6 2007-11-09 00:26:01 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,11 +58,11 @@ public class PolicyTests extends TestCommon {
     private String strLocRB = "PolicyTests";
     private String strGblRB = "PolicyGlobal";
     private String strRefRB = "PolicyReferral";
-   
+    
     /**
      * Class constructor. No arguments
-     */  
-    public PolicyTests() 
+     */
+    public PolicyTests()
     throws Exception {
         super("PolicyTests");
         mpc = new PolicyCommon();
@@ -71,11 +71,11 @@ public class PolicyTests extends TestCommon {
         rbr = ResourceBundle.getBundle(strRefRB);
     }
     
-   /**
-    * This method sets up all the required identities, generates the xmls and
-    * creates the policies in the server
-    */
-    @Parameters({"policyIdx","evaluationIdx","setup","cleanup", "peAtOrg", 
+    /**
+     * This method sets up all the required identities, generates the xmls and
+     * creates the policies in the server
+     */
+    @Parameters({"policyIdx","evaluationIdx","setup","cleanup", "peAtOrg",
     "dynamic"})
     @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup
@@ -90,36 +90,37 @@ public class PolicyTests extends TestCommon {
             strSetup = setup;
             strCleanup = cleanup;
             strPeAtOrg = peAtOrg;
-            strDynamic = dynamic;           
+            strDynamic = dynamic;
             if (strSetup.equals("true")) {
                 if (strPeAtOrg.equals(realm)) {
                     mpc.createIdentities(strLocRB, polIdx,  strPeAtOrg );
                     mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
-                        ".xml", strPeAtOrg);
+                            ".xml", strPeAtOrg);
                     mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
                     Thread.sleep(2000);
-                } else { 
+                } else {
                     mpc.createRealm("/" + strPeAtOrg);
                     mpc.createIdentities(strLocRB, polIdx, strPeAtOrg);
                     
                     if (strDynamic.equals("false")) {
-                        mpc.createReferralPolicyXML(strGblRB, strRefRB, 
+                        mpc.createReferralPolicyXML(strGblRB, strRefRB,
                                 strLocRB, polIdx, strRefRB +  ".xml");
-                        strReferringOrg = rbr.getString(strLocRB + polIdx + 
-                             ".referringOrg");
+                        strReferringOrg = rbr.getString(strLocRB + polIdx +
+                                ".referringOrg");
                         mpc.createPolicy(strRefRB + ".xml", strReferringOrg );
                         Thread.sleep(2000);
                     } else {
                         strDynamicRefValue = "true";
                         mpc.setDynamicReferral(strDynamicRefValue);
-                        mpc.createDynamicReferral(strGblRB, strRefRB, strLocRB,  
+                        mpc.createDynamicReferral(strGblRB, strRefRB, strLocRB,
                                 polIdx, strPeAtOrg);
-                    }   
-                    mpc.createPolicyXML(strGblRB, strLocRB, polIdx, 
-                        strLocRB + ".xml", strPeAtOrg);
+                        Thread.sleep(80000);
+                    }
+                    mpc.createPolicyXML(strGblRB, strLocRB, polIdx,
+                            strLocRB + ".xml", strPeAtOrg);
                     mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
-                    Thread.sleep(2000);                                      
-                } 
+                    Thread.sleep(2000);
+                }
             }
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
@@ -128,14 +129,14 @@ public class PolicyTests extends TestCommon {
         }
         exiting("setup");
     }
-         
-   /**
-    * This method evaluates the policies using the client policy evaluation API
-    * Policy_sub, Policy_ldapFilter, Policy_sub_exclude, Policy_Wildcard, Subre
-    * alm, Combination policies, policy response attributes
-    */
-    @Parameters({ "peAtOrg"}) 
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})      
+    
+    /**
+     * This method evaluates the policies using the client policy evaluation API
+     * Policy_sub, Policy_ldapFilter, Policy_sub_exclude, Policy_Wildcard, Subre
+     * alm, Combination policies, policy response attributes
+     */
+    @Parameters({ "peAtOrg"})
+    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void evaluatePolicyAPI(String peAtOrg)
     throws Exception {
         Object[] params = {peAtOrg};
@@ -168,24 +169,30 @@ public class PolicyTests extends TestCommon {
         exiting("evaluatePolicyAPI");
     }
     
-   /**
-    * This method cleans all the identities and policies  that were setup
-    */
-    @Parameters({"peAtOrg"})
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})    
-    public void cleanup(String peAtOrg)
+    /**
+     * This method cleans all the identities and policies  that were setup
+     */
+    @Parameters({"peAtOrg", "dynamic"})
+    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    public void cleanup(String peAtOrg, String dynamic)
     throws Exception {
-        Object[] params = {peAtOrg};
+        Object[] params = {peAtOrg, dynamic};
         entering("cleanup", params);
+        strDynamic = dynamic;
         try {
             if (strCleanup.equals("true")) {
                 if (peAtOrg.equals(realm)) {
                     mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
                     mpc.deletePolicies(strLocRB, polIdx, peAtOrg);
                 } else {
-                    mpc.deleteReferralPolicies(strLocRB, strRefRB, polIdx);
-                    mpc.deleteIdentities(strLocRB, polIdx, peAtOrg); 
-		    mpc.deleteRealm(peAtOrg); 
+                    mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
+                    mpc.deleteRealm(peAtOrg);
+                    if (strDynamic.equals("false")) {
+                        mpc.deleteReferralPolicies(strLocRB, strRefRB, polIdx);                       
+                    } else {
+                        strDynamicRefValue = "false";
+                        mpc.setDynamicReferral(strDynamicRefValue);
+                    }                   
                 }
             }
         } catch (Exception e) {
