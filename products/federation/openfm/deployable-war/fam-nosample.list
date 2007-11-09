@@ -194,6 +194,7 @@
 ./WEB-INF/lib/ldapjdk.jar
 ./WEB-INF/lib/mail.jar
 ./WEB-INF/lib/mfwk_instrum_tk-2.0.jar
+./WEB-INF/lib/idpdiscovery.jar
 ./WEB-INF/lib/openfedlib.jar
 ./WEB-INF/lib/opensso-sharedlib.jar
 ./WEB-INF/lib/opensso.jar

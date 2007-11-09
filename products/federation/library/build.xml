@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.18 2007-10-02 00:40:40 dillidorai Exp $
+   $Id: build.xml,v 1.19 2007-11-09 17:56:07 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -155,10 +155,26 @@
                 <include name="license.txt" />
             </fileset>
             <fileset dir="${library.xml.dir}" includes="*.xml" />
-            <zipfileset dir="${library.classes.dir}" />
+            <zipfileset dir="${library.classes.dir}"
+                excludes="com/sun/identity/saml2/idpdiscovery/*.class" />
         </jar>
 
         <checksum file="${fedlibrary.dist.dir}/openfedlib.jar" 
+            algorithm="SHA" fileext=".sha" />
+
+        <jar destfile="${fedlibrary.dist.dir}/idpdiscovery.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <zipfileset dir="${library.classes.dir}"
+                includes="com/sun/identity/saml2/idpdiscovery/*.class" />
+        </jar>
+
+        <checksum file="${fedlibrary.dist.dir}/idpdiscovery.jar"
             algorithm="SHA" fileext=".sha" />
     </target>
 
