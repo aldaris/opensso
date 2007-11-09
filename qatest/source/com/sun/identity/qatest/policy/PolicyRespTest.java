@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRespTest.java,v 1.2 2007-11-05 21:18:12 rmisra Exp $
+ * $Id: PolicyRespTest.java,v 1.3 2007-11-09 00:47:58 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,6 +118,7 @@ public class PolicyRespTest extends TestCommon {
                         mpc.setDynamicReferral(strDynamicRefValue);
                         mpc.createDynamicReferral(strGblRB, strRefRB, strLocRB,
                                 polIdx, strPeAtOrg);
+                        Thread.sleep(50000);
                     }
                     mpc.createPolicyXML(strGblRB, strLocRB, polIdx,
                             strLocRB + ".xml", strPeAtOrg);
@@ -193,23 +194,28 @@ public class PolicyRespTest extends TestCommon {
      * Cleans up the policies
      *
      */
-    @Parameters({"peAtOrg"})
+    @Parameters({"peAtOrg", "dynamic"})
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void cleanup(String peAtOrg)
+    public void cleanup(String peAtOrg, String dynamic)
     throws Exception {
-        Object[] params = {peAtOrg};
+        Object[] params = {peAtOrg, dynamic};
         entering("cleanup", params);
+        strDynamic = dynamic;
         try {
             if (strCleanup.equals("true")) {
                 if (peAtOrg.equals(realm)) {
                     mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
                     mpc.deletePolicies(strLocRB, polIdx, peAtOrg);
-                    mpc.deleteDynamicAttr(strLocRB, polIdx, peAtOrg);
-                    
+                    mpc.deleteDynamicAttr(strLocRB, polIdx, peAtOrg);                    
                 } else {
-                    mpc.deleteReferralPolicies(strLocRB, strRefRB, polIdx);
                     mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
                     mpc.deleteRealm(peAtOrg);
+                    if (strDynamic.equals("false")) {
+                        mpc.deleteReferralPolicies(strLocRB, strRefRB, polIdx);
+                    } else {
+                        strDynamicRefValue = "false";
+                        mpc.setDynamicReferral(strDynamicRefValue);
+                    }                   
                 }
             }
         } catch (Exception e) {
