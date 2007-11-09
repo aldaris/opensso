@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.7 2007-11-08 06:14:52 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.8 2007-11-09 23:05:58 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,13 +97,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     // To determine if notification object has been registered for schema
     // changes.
     private static boolean registeredForNotifications;
-
-    // Role membership attribute
-    private String roleMembershipAttribute = "nsRoleDN";
-
-    // Group members attribute
-    private String groupMembersAttribute = "memberOfGroup";
-
 
     public AgentsRepo() {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -631,8 +624,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                  // eg., 'AgentGroup1'.
                  // One agent instance should belong to at most one group.
 
-                 Set nameSet = new HashSet();
-                 nameSet.add(name);
                  orgConfig = getOrgConfig(token);
                  Iterator it = members.iterator();
                  ServiceConfig aCfg = null;
@@ -645,7 +636,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                              aCfg.setLabeledUri(name);
                              break;
                          case REMOVEMEMBER:
-                             aCfg.removeAttributeValues(labeledURI, nameSet);
+                             aCfg.setLabeledUri("");
                          }
                      }
                  }
