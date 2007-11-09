@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.5 2007-11-08 06:11:44 goodearth Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.6 2007-11-09 23:06:26 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -192,26 +192,6 @@ public class IdRepoSampleCreateId {
                     agroupIdentity.getMembers(IdType.AGENTONLY));
 
                 // Test for getMemberships()
-                Set rolesOfAgent = tmpId.getMemberships(IdType.ROLE);
-                System.out.println("Agent's Role memberships = ");
-                Iterator riter = rolesOfAgent.iterator();
-                while (riter.hasNext() ){
-                    AMIdentity id = (AMIdentity) riter.next();
-                    System.out.println("Role of agent = " + id.getName() );
-                    System.out.println("Role of agent isExists: " + 
-                        id.isExists());
-                }
-
-                Set groupsOfAgent = tmpId.getMemberships(IdType.GROUP);
-                System.out.println("Agent's Group memberships = ");
-                Iterator giter = groupsOfAgent.iterator();
-                while (giter.hasNext() ){
-                    AMIdentity id = (AMIdentity) giter.next();
-                    System.out.println("Group of agent = " + id.getName() );
-                    System.out.println("Group of agent isExists: " + 
-                        id.isExists());
-                }
-
                 Set agentgroupsOfAgent = 
                     tmpId.getMemberships(IdType.AGENTGROUP);
                 System.out.println("Agent's agentGroup memberships = ");
@@ -223,6 +203,13 @@ public class IdRepoSampleCreateId {
                     System.out.println("AgentGroup of agent isExists: " + 
                         id.isExists());
                 }
+
+                System.out.println("\nRemoving member from agent group: " + 
+                    tmpId.getName());
+                agroupIdentity.removeMember(tmpId);
+                System.out.println("\nAfter removeMember : Getting member " +
+                    "from agent group: " + 
+                    agroupIdentity.getMembers(IdType.AGENTONLY));
 
             }
         } catch (IdRepoException ire) {
