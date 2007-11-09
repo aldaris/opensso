@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SAMLv2IDP.jsp,v 1.1 2007-10-10 00:51:42 asyhuang Exp $
+   $Id: SAMLv2IDP.jsp,v 1.2 2007-11-09 18:40:07 babysunil Exp $
    
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -74,7 +74,7 @@
     showPageButtonsTop="true" 
     showPageButtonsBottom="true"> 
 
-    <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
+    <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="true"/>
 </cc:pagetitle
 >
 </cc:form>

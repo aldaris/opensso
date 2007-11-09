@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPRemote.xml,v 1.6 2007-11-06 00:03:15 asyhuang Exp $
+   $Id: propertySAMLv2IDPRemote.xml,v 1.7 2007-11-09 18:38:30 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,7 +26,7 @@
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
 
 <propertysheet>
-    <section name="dummy" defaultValue=""> 
+    <section name="services" defaultValue="samlv2idp.provider.section.title.idpcommonServices" >
         <property>
             <label name="lblArtifactResolution" defaultValue="samlv2idp.attribute.label.artifactresolution" />
             <ccgroup>
@@ -35,8 +35,6 @@
                            labelFor="isDefault" />
                     <cc name="isDefault" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
                 </property>
-            </ccgroup>
-            <ccgroup>
                 <property>
                     <label name="lblArtifactLocation" defaultValue="samlv2idp.attribute.label.artifactlocation" labelFor="artLocation" />
                     <cc name="artLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
@@ -45,8 +43,6 @@
                         <attribute name="localizeDisplayFieldValue" value="false" />
                     </cc>
                 </property>
-            </ccgroup>
-            <ccgroup>
                 <property>
                     <label name="lblArtifactIndex" defaultValue="samlv2idp.attribute.label.artifactindex" labelFor="index" />
                     <cc name="index" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
@@ -59,7 +55,7 @@
         </property>
         <property>
             <label name="lblHttpRedirSingleLogout" defaultValue="samlv2idp.attribute.label.singlelogout" />
-            <ccgroup> 
+            <ccgroup>
                 <property>
                     <label name="lblHttpRedirSingleLogout" defaultValue="samlv2idp.attribute.label.httpredirectsinglelogout" />
                     <ccgroup>
@@ -72,8 +68,6 @@
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
                         </property>
-                    </ccgroup>
-                    <ccgroup>
                         <property>
                             <label name="lblHttpRedirectRespLocation" defaultValue="samlv2idp.attribute.label.httpredirectresplocation" 
                                    labelFor="slohttpResponseLocation" />
@@ -85,8 +79,6 @@
                         </property>
                     </ccgroup>
                 </property>
-            </ccgroup>
-            <ccgroup>
                 <property>
                     <label name="lblSoapSingleLogout" defaultValue="samlv2idp.attribute.label.soapsinglelogout" />
                     <ccgroup>
@@ -100,7 +92,7 @@
                         </property>
                     </ccgroup>            
                 </property>        
-            </ccgroup>   
+            </ccgroup>
         </property>
         <property>
             <label name="lblManageNameId" defaultValue="samlv2idp.attribute.label.managenameid" />
@@ -117,8 +109,6 @@
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
                         </property>
-                    </ccgroup>
-                    <ccgroup>
                         <property>
                             <label name="lblHttpRedirectManagerNameIDServiceRespLocation" defaultValue="samlv2idp.attribute.label.httpredirectmanagenameidserviceresplocation" 
                                    labelFor="mnihttpResponseLocation" />
@@ -130,8 +120,6 @@
                         </property>
                     </ccgroup>
                 </property>
-            </ccgroup>
-            <ccgroup>
                 <property>
                     <label name="lblSoapManageNameIDService" defaultValue="samlv2idp.attribute.label.soapmanagenameidservice" />
                     <ccgroup>
@@ -147,27 +135,6 @@
                     </ccgroup>
                 </property>
             </ccgroup>   
-        </property>
-        <property>
-            <label name="lblEncrpytDet" defaultValue="samlv2.attribute.label.EncryptDetails" />
-            <ccgroup>
-        <property>
-            <label name="lblEncrptionKeySize" 
-                   defaultValue="samlv2.attribute.label.keysize" 
-                   labelFor="keySize" />
-            <cc name="keySize" 
-                tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
-        </property>
-        </ccgroup>
-        <ccgroup>
-        <property>
-            <label name="lblEncrptionAlgorithm" 
-                   defaultValue="samlv2.attribute.label.algorithm" 
-                   labelFor="Algorithm" />
-            <cc name="Algorithm" 
-                tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
-        </property>
-        </ccgroup>
         </property>
         <property>
             <label name="lblSingleSignOn" defaultValue="samlv2idp.attribute.label.singlesignon" />
@@ -186,8 +153,6 @@
                         </property>
                     </ccgroup>
                 </property>
-            </ccgroup>
-            <ccgroup> 
                 <property>
                     <label name="lblHttpPostSingleSignOnBi" defaultValue="samlv2idp.attribute.label.httppostsinglesignon" />
                     <ccgroup>
@@ -204,10 +169,9 @@
                 </property>
             </ccgroup>   
         </property>
+    </section>
+    <section name="attributes" defaultValue="samlv2idp.provider.section.title.nameidformat" >
         <property>
-            <label name="lblnameidFormatlist"
-                   defaultValue="samlv2idp.attribute.label.addRemoveNameIdFormat"
-                   labelFor="nameidlist" />
             <ccgroup>
                 <property>
                     <cc name="nameidlist" 
@@ -222,8 +186,86 @@
                 </property>
             </ccgroup>
         </property>
+    </section>
+    <section name="remsignnencrypt" defaultValue="samlv2idp.provider.section.title.remsignnencrypt" >        
         <property>
-            <label name="lblBasicAuthentication" defaultValue="samlv2idp.attribute.label.basicauthentication" />            
+            <label name="lblSigned" defaultValue="samlv2idp.attribute.label.sign" />
+            <fieldhelp name="helpSigning" defaultValue="help.signing" />
+            <ccgroup>
+                <property>
+                    <label name="lblIDPWantAuthnRequestsSigned"
+                           defaultValue="samlv2idp.attribute.label.idpwantauthnrequestssigned"
+                           labelFor="WantAuthnRequestsSigned" />
+                    
+                    <cc name="WantAuthnRequestsSigned" 
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                </property>        
+                <property>
+                    <label name="lblIDPwantArtifactResolveSigned"
+                           defaultValue="samlv2idp.attribute.label.idpwantartifactresolvesigned"
+                           labelFor="wantArtifactResolveSigned" />
+                    <cc name="wantArtifactResolveSigned" 
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                </property>
+                <property>
+                    <label name="lblIDPwantLogoutRequestSigned"
+                           defaultValue="samlv2idp.attribute.label.idpwantlogoutrequestsigned"
+                           labelFor="wantLogoutRequestSigned" />
+                    <cc name="wantLogoutRequestSigned" 
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                </property>
+                <property>
+                    <label name="lblIDPwantLogoutResponseSigned"
+                           defaultValue="samlv2idp.attribute.label.idpwantlogoutresponsesigned"
+                           labelFor="wantLogoutResponseSigned" />
+                    <cc name="wantLogoutResponseSigned" 
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                </property>
+                <property>
+                    <label name="lblIDPwantMNIRequestSigned"
+                           defaultValue="samlv2idp.attribute.label.idpwantmnirequestsigned"
+                           labelFor="wantMNIRequestSigned" />
+                    <cc name="wantMNIRequestSigned" 
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                </property>
+                <property>
+                    <label name="lblIDPwantMNIResponseSigned"
+                           defaultValue="samlv2idp.attribute.label.idpwantmniresponsesigned"
+                           labelFor="wantMNIResponseSigned" />
+                    <cc name="wantMNIResponseSigned" 
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                </property>
+            </ccgroup>
+        </property>
+        <property>
+            <label name="lblEncrpytDet" defaultValue="samlv2.attribute.label.EncryptDetails" />
+            <ccgroup>
+                <property>
+                    <label name="lblIDPwantNameIDEncrypted"
+                           defaultValue="samlv2idp.attribute.label.idpwantnameidencrypted"
+                           labelFor="wantNameIDEncrypted" />
+                    <cc name="wantNameIDEncrypted" 
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                </property>
+                <property>
+                    <label name="lblEncrptionKeySize" 
+                           defaultValue="samlv2.attribute.label.keysize" 
+                           labelFor="keySize" />
+                    <cc name="keySize" 
+                        tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+                </property>
+                <property>
+                    <label name="lblEncrptionAlgorithm" 
+                           defaultValue="samlv2.attribute.label.algorithm" 
+                           labelFor="Algorithm" />
+                    <cc name="Algorithm" 
+                        tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+                </property>
+            </ccgroup>
+        </property>
+    </section>
+    <section name="auth" defaultValue="samlv2idp.provider.section.title.basicauth" > 
+        <property>
             <ccgroup>
                 <property>
                     <label name="lblIDPbasicAuthOn"
@@ -232,8 +274,6 @@
                     <cc name="basicAuthOn" 
                         tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
                 </property>
-            </ccgroup>
-            <ccgroup>
                 <property>
                     <label name="lblIDPbasicAuthUser"
                            defaultValue="samlv2idp.attribute.label.idpbasicauthuser"
@@ -245,8 +285,6 @@
                         <attribute name="localizeDisplayFieldValue" value="false" />
                     </cc>
                 </property>
-            </ccgroup>
-            <ccgroup>
                 <property>
                     <label name="lblIDPbasicAuthPassword"
                            defaultValue="samlv2idp.attribute.label.idpbasicauthpassword"
@@ -260,73 +298,7 @@
                 </property>
             </ccgroup>
         </property> 
-        <property>
-            <label name="lblSigned" defaultValue="samlv2idp.attribute.label.sign" />
-            <fieldhelp name="helpSigning" defaultValue="help.signing" />
-            <ccgroup>
-                <property>
-                    <label name="lblIDPWantAuthnRequestsSigned"
-                           defaultValue="samlv2idp.attribute.label.idpwantauthnrequestssigned"
-                           labelFor="WantAuthnRequestsSigned" />
-                    <cc name="WantAuthnRequestsSigned" 
-                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
-                </property>        
-            </ccgroup>
-            <ccgroup>
-                <property>
-                    <label name="lblIDPwantArtifactResolveSigned"
-                           defaultValue="samlv2idp.attribute.label.idpwantartifactresolvesigned"
-                           labelFor="wantArtifactResolveSigned" />
-                    <cc name="wantArtifactResolveSigned" 
-                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
-                </property>
-            </ccgroup>
-            <ccgroup>
-                <property>
-                    <label name="lblIDPwantLogoutRequestSigned"
-                           defaultValue="samlv2idp.attribute.label.idpwantlogoutrequestsigned"
-                           labelFor="wantLogoutRequestSigned" />
-                    <cc name="wantLogoutRequestSigned" 
-                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
-                </property>
-            </ccgroup>
-            <ccgroup>
-                <property>
-                    <label name="lblIDPwantLogoutResponseSigned"
-                           defaultValue="samlv2idp.attribute.label.idpwantlogoutresponsesigned"
-                           labelFor="wantLogoutResponseSigned" />
-                    <cc name="wantLogoutResponseSigned" 
-                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
-                </property>
-            </ccgroup>
-            <ccgroup>
-                <property>
-                    <label name="lblIDPwantMNIRequestSigned"
-                           defaultValue="samlv2idp.attribute.label.idpwantmnirequestsigned"
-                           labelFor="wantMNIRequestSigned" />
-                    <cc name="wantMNIRequestSigned" 
-                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
-                </property>
-            </ccgroup>
-            <ccgroup>
-                <property>
-                    <label name="lblIDPwantMNIResponseSigned"
-                           defaultValue="samlv2idp.attribute.label.idpwantmniresponsesigned"
-                           labelFor="wantMNIResponseSigned" />
-                    <cc name="wantMNIResponseSigned" 
-                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
-                </property>
-            </ccgroup>
-        </property>
-        <property>
-            <label name="lblIDPwantNameIDEncrypted"
-                   defaultValue="samlv2idp.attribute.label.idpwantnameidencrypted"
-                   labelFor="wantNameIDEncrypted" />
-            <cc name="wantNameIDEncrypted" 
-                tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
-        </property>
-    </section>
-        
+    </section> 
     <section name="ECP" defaultValue="samlv2idp.attribute.label.ecp">
           <property>
             <label name="lblDdpECPSessionMapper" defaultValue="samlv2idp.attribute.label.ecp.idpECPSessionMapper" labelFor="idpECPSessionMapper" />

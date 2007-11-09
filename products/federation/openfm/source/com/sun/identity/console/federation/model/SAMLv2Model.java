@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.6 2007-11-06 00:02:47 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.7 2007-11-09 18:37:03 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,6 +163,13 @@ public interface SAMLv2Model
              "wantAssertionEncrypted";
      public static final String WANT_ARTIF_RESP_SIGN =
              "wantArtifactResponseSigned";
+     
+     //IDP PROXY
+     public static final String ENABLE_IDP_PROXY = "enableIDPProxy";
+     public static final String IDP_PROXY_LIST = "idpProxyList";
+     public static final String IDP_PROXY_COUNT = "idpProxyCount";
+     public static final String IDP_PROXY_INTROD = 
+             "useIntroductionForIDPProxy";
      
     //ECP IDP
      public static final String ATTR_IDP_ECP_SESSION_MAPPER = 

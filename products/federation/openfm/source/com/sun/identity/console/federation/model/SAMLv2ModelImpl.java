@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.6 2007-11-06 00:02:47 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.7 2007-11-09 18:36:47 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,6 +137,12 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 Collections.EMPTY_SET);
         extendedMetaSpMap.put(WANT_ARTIF_RESP_SIGN, Collections.EMPTY_SET);
         
+        //IDP PROXY
+        extendedMetaSpMap.put(ENABLE_IDP_PROXY, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(IDP_PROXY_LIST, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(IDP_PROXY_COUNT, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(IDP_PROXY_INTROD, Collections.EMPTY_SET);
+        
         //ECP
         extendedMetaSpMap.put(ATTR_ECP_REQUEST_IDP_LIST_FINDER_IMPL, 
             Collections.EMPTY_SET);
@@ -204,6 +210,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String realm,
         String entityName
     ) throws AMConsoleException {
+        String[] params = {realm, entityName,"SAMLv2", "IDP-Standard"};
+        logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         Map map = new HashMap();
         IDPSSODescriptorElement idpssoDescriptor = null;
         try {
@@ -290,12 +298,18 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             signElem2.getLocation()));
                 }
             }
+            logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
             debug.warning
                 ("SAMLv2ModelImpl.getIdentityProviderAttributes:", e);
-            throw new AMConsoleException(getErrorString(e));
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "IDP-Standard", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
         }
-        return map;
+        return map;       
     }
     
     /**
@@ -311,7 +325,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String realm,
         String entityName
     ) throws AMConsoleException {
-         Map map = null;
+        String[] params = {realm, entityName, "SAMLv2", "IDP-Extended"};
+        logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
+        Map map = null;
         IDPSSOConfigElement idpssoConfig = null;
         try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
@@ -320,10 +336,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 BaseConfigType baseConfig = (BaseConfigType)idpssoConfig;
                 map = SAML2MetaUtils.getAttributes(baseConfig);
             }
+            logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
             debug.warning
                 ("SAMLv2ModelImpl.getExtIdentityProviderAttributes:", e);
-            throw new AMConsoleException(getErrorString(e));
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "IDP-Extended", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
         }
         return (map != null) ? map : Collections.EMPTY_MAP;
     }
@@ -341,6 +363,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String realm,
         String entityName
     ) throws AMConsoleException {
+        String[] params = {realm, entityName,"SAMLv2", "SP-Standard"};
+        logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         Map map = new HashMap();
         SPSSODescriptorElement spssoDescriptor = null;
         try {
@@ -423,10 +447,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             convertListToSet(NameIdFormatList)));
                 }
             }
+            logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
             debug.warning
                 ("SAMLv2ModelImpl.getStandardServiceProviderAttribute:", e);
-            throw new AMConsoleException(getErrorString(e));
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "SP-Standard", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
         }
         return map;
     }
@@ -444,6 +474,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String realm,
         String entityName
     ) throws AMConsoleException {
+        String[] params = {realm, entityName,"SAMLv2", "SP-Extended"};
+        logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
        Map map = null;
         SPSSOConfigElement spssoConfig = null;
         try {
@@ -453,10 +485,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 BaseConfigType baseConfig = (BaseConfigType)spssoConfig;
                 map = SAML2MetaUtils.getAttributes(baseConfig);
             }
+            logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
             debug.warning(
                 "SAMLv2ModelImpl.getExtendedServiceProviderAttributes:", e);
-            throw new AMConsoleException(getErrorString(e));
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "SP-Extended", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
         }
         return (map != null) ? map : Collections.EMPTY_MAP;
     }
@@ -474,6 +512,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String entityName,
         Map idpStdValues 
     )  throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "IDP-Standard"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         IDPSSODescriptorElement idpssoDescriptor = null;
         try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
@@ -572,10 +612,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
         } catch (SAML2MetaException e) {
             debug.warning
                     ("SAMLv2ModelImpl.setIDPStdAttributeValues:", e);
-            throw new AMConsoleException(getErrorString(e));
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "IDP-Standard", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
+            throw new AMConsoleException(strError);
         }
     }
     
@@ -594,6 +640,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map idpExtValues,
         String location
     ) throws AMConsoleException {
+         String[] params = {realm, entityName, "SAMLv2", "IDP-Extended"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         String role = EntityModel.IDENTITY_PROVIDER;
         try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
@@ -616,12 +664,28 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             
             //saves the attributes by passing the new entityConfig object
             samlManager.setEntityConfig(realm,entityConfig);
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
         } catch (SAML2MetaException e) {
             debug.error("SAMLv2ModelImpl.setIDPExtAttributeValues:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "IDP-Extended", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
         } catch (JAXBException e) {
             debug.error("SAMLv2ModelImpl.setIDPExtAttributeValues:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "IDP-Extended", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
         } catch (AMConsoleException e) {
             debug.error("SAMLv2ModelImpl.setIDPExtAttributeValues:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "IDP-Extended", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
         }
     }
     
@@ -638,6 +702,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String entityName,
         Map spStdValues 
     ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "SP-Standard"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         SPSSODescriptorElement spssoDescriptor = null;
         try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
@@ -734,10 +800,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 spssoDescriptor.setWantAssertionsSigned(assertValue);
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
         } catch (SAML2MetaException e) {
             debug.warning
                     ("SAMLv2ModelImpl.setSPStdAttributeValues:", e);
-            throw new AMConsoleException(getErrorString(e));
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "SP-Standard", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
+            throw new AMConsoleException(strError);
         }
     }
     
@@ -756,6 +828,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map spExtValues,
         String location
     ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "SP-Extended"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         String role = EntityModel.SERVICE_PROVIDER;
         try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
@@ -778,12 +852,28 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             
             //saves the attributes by passing the new entityConfig object
             samlManager.setEntityConfig(realm,entityConfig);
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
         } catch (SAML2MetaException e) {
             debug.error("SAMLv2ModelImpl.setSPExtAttributeValues:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+                {realm, entityName, "SAMLv2", "SP Ext", strError}; 
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
         } catch (JAXBException e) {
             debug.error("SAMLv2ModelImpl.setSPExtAttributeValues:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+                {realm, entityName, "SAMLv2", "SP Ext", strError}; 
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
         } catch (AMConsoleException e) {
             debug.error("SAMLv2ModelImpl.setSPExtAttributeValues:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+                {realm, entityName, "SAMLv2", "SP Ext", strError}; 
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
         }
     }
         
