@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.46 2007-11-07 06:56:15 veiming Exp $
+ * $Id: AccessManager.java,v 1.47 2007-11-10 06:14:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1776,6 +1776,162 @@ public class AccessManager {
         }
     )
     private String show_agent_types;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.ShowAgentGroup",
+        description="Show agent group profile.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentgroupname|b|s|Name of agent group."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "outfile|o|s|Filename where configuration is written to."},
+        resourceStrings={
+            "show-agent-group-succeeded=The followings are the agent group properties.",
+            "show-agent-group-to-file=Agent group properties are written to file.",
+            "show-agent-group-no-attributes=There are no attribute values."
+        }
+    )
+    private String show_agent_group;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.CreateAgentGroup",
+        description="Create a new agent group.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentgroupname|b|s|Name of agent group.",
+            "agenttype|t|s|Type of agent group. e.g. WebLogicAgent, WebAgent"},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|properties e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains properties."},
+        resourceStrings={
+            "does-not-support-agent-group-creation={0} does not support agent group creation.",
+            "create-agent-group-succeeded=Agent group is created."
+        }
+    )
+    private String create_agent_group;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.DeleteAgentGroups",
+        description="Delete agent groups.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentgroupnames|s|m|Names of agent group."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "delete-agent-group-succeeded=The following agent groups are deleted."
+        }
+    )
+    private String delete_agent_groups;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.ListAgentGroups",
+        description="List agent groups.",
+          webSupport="true",
+          mandatoryOptions={},
+          optionAliases={},
+          macro="authentication",
+        optionalOptions={
+            "filter|x|s|Filter (Pattern).",
+            "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"},
+        resourceStrings={
+            "list-agent-group-succeeded=The followings are the agent group names.",
+            "search-agent-group-no-entries=There are no agent groups.",
+            "format-search-agent-group-results={0} ({1})"
+        }
+    )
+    private String list_agent_groups;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.ListAgentGroupMembers",
+        description="List agents in agent group.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentgroupname|b|s|Name of agent group."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "filter|x|s|Filter (Pattern)."},
+        resourceStrings={
+            "list-agent-group-members-succeeded=The followings are the agents in the group.",
+            "list-agent-group-members-no-members=There are no members.",
+             "format-list-agent-group-members-results={0} ({1})"
+        }
+    )
+    private String list_agent_group_members;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.ListAgentMembership",
+        description="List agent's membership.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentname|b|s|Name of agent."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "list-agent-membership-succeeded=Agent belongs to {0} ({1}).",
+            "list-agent-membership-no-members=Agent has no memberships."
+        }
+    )
+    private String show_agent_membership;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.AddAgentsToGroup",
+        description="Add agents to a agent group.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentgroupname|b|s|Name of agent group.",
+            "agentnames|s|m|Names of agents."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "add-agent-to-group-succeeded=Agent is added to group.",
+            "add-agent-to-group-succeeded-pural=Agents are added to group."
+        }
+    )
+    private String add_agent_to_group;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.RemoveAgentsFromGroup",
+        description="Remove agents from a agent group.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentgroupname|b|s|Name of agent group.",
+            "agentnames|s|m|Names of agents."},
+        optionAliases={},
+        macro="authentication",
+          optionalOptions={},
+          resourceStrings={
+            "remove-agent-to-group-succeeded=Agent is removed from group.",
+            "remove-agent-to-group-succeeded-pural=Agents are removed from group."
+          }
+      )
+    private String remove_agent_from_group;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.UpdateAgentGroup",
+        description="Update agent group configuration.",
+        webSupport="true",
+        mandatoryOptions={
+            "agentgroupname|b|s|Name of agent group."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|properties e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains properties."},
+        resourceStrings={
+            "update-agent=group-succeeded=Agent group configuration is updated."
+        }
+    )
+    private String update_agent_group;
+
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.ListServerConfig",

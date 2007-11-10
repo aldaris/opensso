@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDiscoveryServiceViewBean.java,v 1.1 2007-03-14 19:33:32 jonnelson Exp $
+ * $Id: SMDiscoveryServiceViewBean.java,v 1.2 2007-11-10 06:14:03 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,7 +114,7 @@ public class SMDiscoveryServiceViewBean
     /**
      * Forwards to user service view bean if user parameter exists.
      *
-     * @param reqContext Request Context.
+     * @param rc Request Context.
      */
     public void forwardTo(RequestContext rc) {
 	HttpServletRequest req = rc.getRequest();

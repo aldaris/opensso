@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.12 2007-11-05 21:45:02 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.13 2007-11-10 06:14:02 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -5501,6 +5501,44 @@
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>
+
+    <logmessage name="ATTEMPT_LIST_AGENT_MEMBERSHIP" id="4150"
+        loglevel="LL_INFO"
+        description="Attempt to show agent's membership.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show agent's membership Commandline interface.</item>        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_LIST_AGENT_MEMBERSHIP" id="4151"
+        loglevel="LL_INFO"
+        description="Agent's membership are displayed.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show agent's membership Commandline interface.</item>        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_AGENT_MEMBERSHIP" id="4152"
+        loglevel="LL_INFO"
+        description="Unable to show agent's membership.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show agent's membership Commandline interface.</item>        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
 
     <logmessage name="ATTEMPT_REGISTER_AUTH_MODULE" id="4500"
         loglevel="LL_INFO"
