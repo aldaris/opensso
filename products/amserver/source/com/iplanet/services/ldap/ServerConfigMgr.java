@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.4 2006-10-24 19:40:54 rarcot Exp $
+ * $Id: ServerConfigMgr.java,v 1.5 2007-11-10 04:38:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.ldap;
 
+import com.sun.identity.authentication.spi.AuthLoginException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.security.AccessController;
 import java.text.MessageFormat;
@@ -45,17 +45,40 @@ import org.w3c.dom.NodeList;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.XMLException;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.Guid;
 import com.iplanet.ums.IUMSConstants;
 import com.iplanet.ums.PersistentObject;
 import com.iplanet.ums.UMSObject;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
+import com.sun.identity.setup.Bootstrap;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSSchema;
+import com.sun.identity.sm.ServiceManager;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import netscape.ldap.util.DN;
 
 /**
  * The class <code>ServiceConfigMgr</code> provides interfaces to set the
@@ -63,326 +86,524 @@ import com.sun.identity.sm.SMSSchema;
  * password, and proxy user DN and password.
  */
 public class ServerConfigMgr {
-
+    
     // Private static varibales
     private static final String HELP = "--help";
-
+    
     private static final String S_HELP = "-h";
-
+    
     private static final String Q_HELP = "?";
-
+    
     private static final String SQ_HELP = "-?";
-
+    
     private static final String ADMIN = "--admin";
-
+    
     private static final String S_ADMIN = "-a";
-
+    
     private static final String PROXY = "--proxy";
-
+    
     private static final String S_PROXY = "-p";
-
+    
     private static final String OLD = "--old";
-
+    
     private static final String S_OLD = "-o";
-
+    
     private static final String NEW = "--new";
-
+    
     private static final String S_NEW = "-n";
-
+    
     private static final String ENCRYPT = "--encrypt";
-
+    
     private static final String S_ENCRYPT = "-e";
     
     private static final String RESOURCE_BUNDLE_NAME = "DSConfig";
-
+    
     private static final int MIN_PASSWORD_LEN = 8;
-
+    
     // Run time property key to obtain serverconfig.xml path
-    private static final String RUN_TIME_CONFIG_PATH = 
+    private static final String RUN_TIME_CONFIG_PATH =
         "com.iplanet.coreservices.configpath";
-
-    private String configFile = null;
-
-    private Document document = null;
-
-    private Node root = null;
-
-    private Node defaultServerGroup = null;
-
+    private static boolean isAMSDKConfigured;
+    
+    private boolean isLegacy;
+    
     private static ResourceBundle i18n = ResourceBundle.getBundle(
-            RESOURCE_BUNDLE_NAME);
-
-    private static Debug debug = Debug.getInstance(IUMSConstants.UMS_DEBUG);
-
+        RESOURCE_BUNDLE_NAME);
+    private static Debug debug;
+    
+    private String configFile;
+    private Node root;
+    private Node defaultServerGroup;
+    private String strXMLDeclarationHdr;
+    private SSOToken ssoToken;
+    
+    
     /**
      * Constructor that get the serverconfig.xml file and gets the XML document.
      */
     public ServerConfigMgr() throws Exception {
-        // Get the config file name
-        String path = SystemProperties.get(SystemProperties.CONFIG_PATH);
-        if (path == null) { // For Backward compatibility obtain from runtime
-                            // flag
-            path = System.getProperty(RUN_TIME_CONFIG_PATH);
-        }
-        configFile = path + System.getProperty("file.separator")
-                + SystemProperties.CONFIG_FILE_NAME;
-        if (debug.messageEnabled()) {
-            debug.message("Server config file: " + configFile);
-        }
-
-        // Check if the user has read/write privileges on the file
-        File file = new File(configFile);
-        if (!file.exists() || !file.canRead() || !file.canWrite()) {
-            if (debug.warningEnabled()) {
-                debug.warning("User does not have read/write privileges "
-                        + "for file: " + configFile);
-            }
-            String objs[] = { configFile };
-            throw (new Exception(MessageFormat.format(
-                i18n.getString("dscfg-no-file-permission"), (Object[])objs)));
-        }
-
-        // Read the file and get the XML document, root node
-        // and default server group
-        Exception exception = null;
-        FileInputStream fis = null;
+        ssoToken = (SSOToken)AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        isLegacy = ServerConfiguration.isLegacy();
+        isAMSDKConfigured = ServiceManager.isAMSDKConfigured();
+        getServerConfigXMLDoc();
+    }
+    
+    private void getServerConfigXMLDoc()
+    throws Exception {
+        InputStream is = null;
+        
         try {
-            fis = new FileInputStream(file);
-            if ((document = XMLUtils.getXMLDocument(fis)) == null) {
-                debug.error("Unable to read server config file: " + configFile
-                        + " error in getting the document");
-                throw (new XMLException(
-                    i18n.getString("dscfg-error-reading-config-file") + "\n" +
-                    i18n.getString("dscfg-corrupted-serverconfig")));
+            if (isLegacy) {
+                configFile = getServiceConfigXMLFileLocation();
+                is = new FileInputStream(configFile);
+            } else {
+                String strXML = ServerConfiguration.getServerConfigXML(ssoToken,
+                    SystemProperties.getServerInstanceName());
+                is = new ByteArrayInputStream(strXML.getBytes());
             }
-
-            if ((root = XMLUtils.getRootNode(document, DSConfigMgr.ROOT)) 
-                    == null) {
-                debug.error("Unable to get root node: " + configFile
-                        + " error in parsing the document");
+            
+            Document document = XMLUtils.getXMLDocument(is);
+            if (document == null) {
                 throw (new XMLException(
+                    i18n.getString("dscfg-error-reading-config-file") +
+                    "\n" + i18n.getString("dscfg-corrupted-serverconfig")));
+            }
+            
+            root = XMLUtils.getRootNode(document, DSConfigMgr.ROOT);
+            if (root == null) {
+                throw new XMLException(
                     i18n.getString("dscfg-unable-to-find-root-node") + "\n" +
-                    i18n.getString("dscfg-corrupted-serverconfig")));
+                    i18n.getString("dscfg-corrupted-serverconfig"));
             }
-
-            if ((defaultServerGroup = XMLUtils.getNamedChildNode(root,
-                    DSConfigMgr.SERVERGROUP, DSConfigMgr.NAME,
-                    DSConfigMgr.DEFAULT)) == null) {
-                debug.error("Misconfigured server config file: " + configFile
-                        + " unable to get default server group");
-                throw (new XMLException(
+            
+            defaultServerGroup = XMLUtils.getNamedChildNode(root,
+                DSConfigMgr.SERVERGROUP, DSConfigMgr.NAME, DSConfigMgr.DEFAULT);
+            if (defaultServerGroup == null) {
+                throw new XMLException(
                     i18n.getString("dscfg-unable-to-find-default-servergroup")
-                    + "\n" + i18n.getString("dscfg-corrupted-serverconfig")));
+                    + "\n" + i18n.getString("dscfg-corrupted-serverconfig"));
             }
-        } catch (Exception e) {
-            exception = e;
+            strXMLDeclarationHdr = getXMLDeclarationHeader(
+                ssoToken, configFile);
         } finally {
-            if (fis != null) {
-                fis.close();
+            if (is != null) {
+                is.close();
             }
-        }
-
-        // Check if an exception has occured and throw it
-        if (exception != null) {
-            throw (exception);
         }
     }
-
-    // ----------------------------------------------------------------------
-    // Main method
-    // ----------------------------------------------------------------------
-    public static void main(String args[]) {
-
-        // Check the initial arguments
-        if ((args.length == 0) || args[0].equals(HELP)
-                || (args[0].equals(S_HELP)) || (args[0].equals(Q_HELP))
-                || (args[0].equals(SQ_HELP))) {
-            System.err.println(i18n.getString("dscfg-usage"));
-            System.exit(1);
-        } else if (!args[0].equals(ADMIN) && !args[0].equals(S_ADMIN)
-                && !args[0].equals(PROXY) && !args[0].equals(S_PROXY)
-                && !args[0].equals(ENCRYPT) && !args[0].equals(S_ENCRYPT)) {
-            // Invalid subcommand
-            String[] objs = { args[0] };
-            System.err.println(MessageFormat.format(
-                i18n.getString("dscfg-invalid-option"), (Object[])objs));
-            System.err.println(i18n.getString("dscfg-usage"));
-            System.exit(1);
-        } else if ((args.length != 1) && (args.length != 2)
-                && (args.length != 5)) {
-            // Illegal number of arguments
-            System.err.println(i18n.getString("dscfg-illegal-args"));
-            System.err.println(i18n.getString("dscfg-usage"));
-            System.exit(1);
+    
+    private String getXMLDeclarationHeader(SSOToken ssoToken, String configFile)
+    throws Exception {
+        StringBuffer xml = new StringBuffer();
+        InputStream is = null;
+        
+        try {
+            if (isLegacy) {
+                is = new FileInputStream(configFile);
+            } else {
+                String strXML = ServerConfiguration.getServerConfigXML(ssoToken,
+                    SystemProperties.getServerInstanceName());
+                is = new ByteArrayInputStream(strXML.getBytes());
+            }
+            
+            BufferedReader in = new BufferedReader(new InputStreamReader(is));
+            String line = in.readLine();
+            
+            while (line != null) {
+                int index = line.indexOf(DSConfigMgr.ROOT);
+                if (index == -1) {
+                    xml.append(line).append("\n");
+                } else {
+                    if (--index > 0) {
+                        xml.append(line.substring(0, index)).append("\n");
+                    }
+                    break;
+                }
+                line = in.readLine();
+            }
+        } finally {
+            is.close();
         }
-
-        // Encrypt the password and print it out
+        
+        return xml.toString();
+    }
+    
+    private static String getServiceConfigXMLFileLocation()
+    throws Exception {
+        String path = SystemProperties.get(SystemProperties.CONFIG_PATH);
+        if (path == null) { // For Backward compatibility obtain from runtime
+            path = System.getProperty(RUN_TIME_CONFIG_PATH);
+        }
+        String fileLoc = path + System.getProperty("file.separator")
+        + SystemProperties.CONFIG_FILE_NAME;
+        File file = new File(fileLoc);
+        if (!file.exists() || !file.canRead() || !file.canWrite()) {
+            String objs[] = {fileLoc};
+            throw new Exception(MessageFormat.format(
+                i18n.getString("dscfg-no-file-permission"), (Object[])objs));
+        }
+        return fileLoc;
+    }
+    
+    
+    
+    private static void validateArguments(String[] args) {
+        if (args.length == 0) {
+            System.err.println(i18n.getString("dscfg-usage"));
+            System.exit(1);
+        } else {
+            String action = args[0];
+            if (!action.equals(HELP) && !action.equals(S_HELP) &&
+                !action.equals(Q_HELP) && !action.equals(SQ_HELP) &&
+                !action.equals(ADMIN) && !action.equals(S_ADMIN) &&
+                !action.equals(PROXY) && !action.equals(S_PROXY) &&
+                !action.equals(ENCRYPT) && !action.equals(S_ENCRYPT)
+                ) {
+                Object[] objs = {action};
+                System.err.println(MessageFormat.format(
+                    i18n.getString("dscfg-invalid-option"), objs));
+                System.err.println(i18n.getString("dscfg-usage"));
+                System.exit(1);
+            }
+            
+            if (action.equals(ADMIN) || action.equals(S_ADMIN) ||
+                action.equals(PROXY) || action.equals(S_PROXY)
+                ) {
+                if (args.length != 5) {
+                    System.err.println(i18n.getString("dscfg-illegal-args"));
+                    System.err.println(i18n.getString("dscfg-usage"));
+                    System.exit(1);
+                }
+            } else if (action.equals(ENCRYPT) || action.equals(S_ENCRYPT)) {
+                if (args.length != 2) {
+                    System.err.println(i18n.getString("dscfg-illegal-args"));
+                    System.err.println(i18n.getString("dscfg-usage"));
+                    System.exit(1);
+                }
+            } else {
+                if (args.length != 1) {
+                    System.err.println(i18n.getString("dscfg-illegal-args"));
+                    System.err.println(i18n.getString("dscfg-usage"));
+                    System.exit(1);
+                }
+            }
+        }
+    }
+    
+    private static boolean printHelpMessage(String[] args) {
+        boolean processed = false;
+        if (args[0].equals(HELP) || args[0].equals(S_HELP) ||
+            args[0].equals(Q_HELP) || args[0].equals(SQ_HELP)
+            ) {
+            processed = true;
+            System.out.println(i18n.getString("dscfg-usage"));
+        }
+        return processed;
+    }
+    
+    private static boolean encryptPassword(String[] args) {
+        boolean processed = false;
         if (args[0].equals(S_ENCRYPT) || args[0].equals(ENCRYPT)) {
+            processed = true;
             String password = null;
-            if (args.length > 1) {             
-                // prompt for the password
+            
+            if (args.length > 1) {
                 try {
-                    password = readPasswordFromFile(args[1]);
+                    password = readOneLinerFromFile(args[1]);
+                    if ((password == null) || (password.length() == 0)) {
+                        Object messageArgs[] = { args[1] };
+                        System.err.println(MessageFormat.format(i18n.getString(
+                            "dscfg-null-password"), messageArgs));
+                        System.err.println(i18n.getString("dscfg-usage"));
+                        System.exit(1);
+                    }
+                    
+                    System.out.println((String) AccessController
+                        .doPrivileged(new EncodeAction(password)));
                 } catch (FileNotFoundException e) {
                     Object messageArgs[] = { args[1] };
                     System.err.println(MessageFormat.format(i18n.getString(
-                            "dscfg-passwd-file-not-found"), messageArgs));
+                        "dscfg-passwd-file-not-found"), messageArgs));
                     System.exit(1);
                 } catch (IOException ioe) {
                     Object messageArgs[] = { args[1] };
                     System.err.println(MessageFormat.format(i18n.getString(
-                            "dscfg-passwd-file-not-found"), messageArgs));
+                        "dscfg-passwd-file-not-found"), messageArgs));
                     System.exit(1);
                 }
-                if ((password == null) || (password.length() == 0)) {
-                    Object messageArgs[] = { args[1] };
-                    System.err.println(MessageFormat.format(i18n.getString(
-                            "dscfg-null-password"), messageArgs));
-                    System.err.println(i18n.getString("dscfg-usage"));
-                    System.exit(1);
-                }
-                // output the encrypted password
-                System.out.println((String) AccessController
-                        .doPrivileged(new EncodeAction(password)));
-                System.exit(0);
             } else {
                 Object messageArgs[] = { args[0] };
                 System.err.println(MessageFormat.format(i18n.getString(
-                        "dscfg-incorrect-usage"), messageArgs));
+                    "dscfg-incorrect-usage"), messageArgs));
                 System.err.println(i18n.getString("dscfg-usage"));
-                System.exit(1);                           
+                System.exit(1);
             }
-        } else {            
-            Object messageArgs[] = { args[0] };
-            System.err.println(MessageFormat.format(i18n.getString(
-                    "dscfg-option_not_supported"), messageArgs));
-            System.err.println(i18n.getString("dscfg-usage"));
-            System.exit(1);            
+        }
+        return processed;
+    }
+    
+    private static boolean changePassword(String[] args)
+    throws Exception {
+        boolean adminPassword = false;
+        boolean proxyPassword = false;
+        
+        if (args[0].equals(S_ADMIN) || args[0].equals(ADMIN)) {
+            adminPassword = true;
+        } else {
+            proxyPassword = true;
+        }
+
+        isAMSDKConfigured = ServiceManager.isAMSDKConfigured();
+        if (proxyPassword && !isAMSDKConfigured) {
+            System.err.println(i18n.getString("dscfg-proxy-no-suppport"));;
+            System.exit(1);
+        }
+        
+        String oldPassword = null;
+        String newPassword = null;
+        for (int i = 1; i < args.length; i++) {
+            if (args[i].equals(OLD) || args[i].equals(S_OLD)) {
+                oldPassword = readOneLinerFromFile(args[++i]);
+            } else if (args[i].equals(NEW) || args[i].equals(S_NEW)) {
+                newPassword = readOneLinerFromFile(args[++i]);
+            } else {
+                Object[] objs = { args[i] };
+                System.err.println(MessageFormat.format(i18n.getString(
+                    "dscfg-invalid-option"),objs));
+                System.err.println(i18n.getString("dscfg-usage"));
+                System.exit(1);
+            }
+        }
+        validatePasswords(oldPassword, newPassword);
+        
+        if (adminPassword && !isAMSDKConfigured) {
+            SSOToken ssoToken = (SSOToken)AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            if (!authenticateDsameUser(ssoToken, oldPassword, newPassword)) {
+                throw new Exception(i18n.getString("dscfg-invalid-password"));
+            }
+            String dsameuserDN = "cn=dsameuser,ou=DSAME Users," +
+                SMSEntry.getRootSuffix();
+            AMIdentity dsameuser = IdUtils.getIdentity(ssoToken, dsameuserDN);
+            
+            Set setNewPwd = new HashSet(2);
+            setNewPwd.add(newPassword);
+            Map mapPassword = new HashMap(2);
+            mapPassword.put("userpassword", setNewPwd);
+            dsameuser.setAttributes(mapPassword);
+            dsameuser.store();
+        } else {
+            ServerConfigMgr scm = new ServerConfigMgr();
+            DN adminDN = new DN(scm.getUserDN(DSConfigMgr.VAL_AUTH_ADMIN));
+            DN proxyDN = new DN(scm.getUserDN(DSConfigMgr.VAL_AUTH_PROXY));
+            if (adminDN.equals(proxyDN)) {
+                adminPassword = true;
+                proxyPassword = true;
+            }
+            
+            if (adminPassword) {
+                scm.setAdminUserPassword(oldPassword, newPassword);
+            }
+            if (proxyPassword) {
+                scm.setProxyUserPassword(oldPassword, newPassword);
+            }
+            scm.save();
+        }
+        System.out.println(i18n.getString("dscfg-passwd-success"));
+        
+        return true;
+    }
+    
+    private static boolean authenticateDsameUser(
+        SSOToken ssoToken,
+        String oldPassword,
+        String newPassword
+    ) {
+        Callback[] idCallbacks = new Callback[2];
+        NameCallback nameCallback = new NameCallback("dummy");
+        nameCallback.setName("dsameuser");
+        idCallbacks[0] = nameCallback;
+        PasswordCallback passwordCallback = new PasswordCallback(
+            "dummy", false);
+        passwordCallback.setPassword(oldPassword.toCharArray());
+        idCallbacks[1] = passwordCallback;
+        
+        try {
+            AMIdentityRepository amir = new AMIdentityRepository(ssoToken, "/");
+            if (!amir.authenticate(idCallbacks)) {
+                passwordCallback.setPassword(newPassword.toCharArray());
+                return amir.authenticate(idCallbacks);
+            }
+            return true;
+        } catch (SSOException ex) {
+            return false;
+        } catch (AuthLoginException ex) {
+            return false;
+        } catch (IdRepoException ex) {
+            return false;
         }
     }
-
+    
+    public static void main(String args[]) {
+        try {
+            Bootstrap.load();
+            debug = Debug.getInstance(IUMSConstants.UMS_DEBUG);
+            validateArguments(args);
+            boolean proceeded = printHelpMessage(args) || encryptPassword(args) ||
+                changePassword(args);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
+    }
+    
+    
     // ----------------------------------------------------------------------
     // Currently supported methods
     // ----------------------------------------------------------------------
-
+    
     /**
      * Sets the admin user's password.
      */
     public void setAdminUserPassword(String oldPassword, String newPassword)
-            throws Exception {
+    throws Exception {
         changePassword(DSConfigMgr.VAL_AUTH_ADMIN, oldPassword, newPassword);
+        if (!isLegacy) {
+            Bootstrap.modifyDSAMEUserPassword(newPassword);
+        }
     }
-
+    
     /**
      * Sets the proxy user's password.
      */
     protected void setProxyUserPassword(String oldPassword, String newPassword)
-            throws Exception {
+    throws Exception {
         changePassword(DSConfigMgr.VAL_AUTH_PROXY, oldPassword, newPassword);
     }
-
+    
     /**
      * Stores the directory server configuration information to the file system.
      */
     public void save() throws Exception {
-        // Read the server config until we get the root node
-        String line = null;
-        StringBuffer prefix = new StringBuffer(100);
-        BufferedReader in = new BufferedReader(new FileReader(configFile));
-        while ((line = in.readLine()) != null) {
-            int index;
-            if ((index = line.indexOf(DSConfigMgr.ROOT)) == -1) {
-                // Root node not yet found
-                prefix.append(line);
-                prefix.append("\n");
-            } else {
-                // Found the root node
-                if (--index > 0) {
-                    prefix.append(line.substring(0, index));
-                    prefix.append("\n");
+        String xml = strXMLDeclarationHdr + SMSSchema.nodeToString(root);
+        
+        if (isLegacy) {
+            PrintWriter out = new PrintWriter(new FileOutputStream(configFile));
+            out.print(xml);
+            out.close();
+        } else {
+            ServerConfiguration.setServerConfigXML(ssoToken,
+                SystemProperties.getServerInstanceName(), xml);
+        }
+    }
+    
+    /**
+     * Checks and sets the password
+     */
+    private void changePassword(
+        String userType,
+        String oldPassword,
+        String newPassword
+    ) throws Exception {
+        String fileEncPassword = getUserPassword(userType);
+        String userDN = getUserDN(userType);
+        
+        if ((fileEncPassword == null) || (fileEncPassword.length() == 0) ||
+            (userDN == null) || (userDN.length() == 0)
+            ) {
+            debug.error("Null password or user DN for user type: " + userType +
+                " from file: " + configFile);
+            throw new XMLException(
+                i18n.getString("dscfg-corrupted-serverconfig"));
+        }
+        
+        // Verify old password
+        if (!oldPassword.equals(AccessController.doPrivileged(
+            new DecodeAction(fileEncPassword)))
+            ) {
+            throw new Exception(i18n.getString("dscfg-old-passwd-donot-match"));
+        }
+        
+        if (isAMSDKConfigured) {
+            // this is to check if updating of DS is required.
+            try {
+                new AuthContext(new AuthPrincipal(userDN),
+                    newPassword.toCharArray());
+                if (debug.messageEnabled()) {
+                    debug.message("DN: " + userDN +
+                        " new password is already updated in the directory");
                 }
-                break;
-            }
-        }
-        in.close();
-
-        // Debug messages
-        if (debug.messageEnabled()) {
-            debug.message("Prefix read from old serverconfig.xml: " + prefix);
-        }
-
-        // Write the server config file
-        PrintWriter out = new PrintWriter(new FileOutputStream(configFile));
-        // Debug messages
-        if (debug.messageEnabled()) {
-            debug.message("Prefix being added to serverconfig.xml: " + prefix);
-        }
-        out.print(prefix.toString());
-        // Debug messages
-        if (debug.messageEnabled()) {
-            debug.message("Config info being added to serverconfig.xml: "
-                    + SMSSchema.nodeToString(root));
-        }
-        out.println(SMSSchema.nodeToString(root));
-        out.close();
-    }
-
-    // ----------------------------------------------------------------------
-    // Methods for future implementation
-    // ----------------------------------------------------------------------
-
-    /**
-     * Sets the admin user. The Admin user (DN) will be used by DSAME to perform
-     * administrative operations, like searching for users, services, etc.
-     */
-    protected void setAdminUser(String adminDN) {
-        // %%%
-    }
-
-    /**
-     * Sets the proxy user. The proxy user (DN) must have proxy privileges for
-     * the directory server. The proxy DN will be used by DSAME to perform
-     * directory operations ob behalf of the users.
-     */
-    protected void setProxyDN(String adminDN) {
-        // %%%
-    }
-
-    /**
-     * Adds a directory server to the list of servers.
-     */
-    protected void setServer(String name, String hostname, int port, 
-            String type) 
-    {
-
-    }
-
-    // ----------------------------------------------------------------------
-    // Private methods
-    // ----------------------------------------------------------------------
-
-    private static String readPasswordFromFile(String fileName) 
-        throws FileNotFoundException, IOException 
-    {        
-        BufferedReader br = null;
-        String lineData = null;
-        try {
-            FileReader fr = new FileReader(fileName);
-            br = new BufferedReader(fr);
-            
-            // Password should be in the first line.                         
-            lineData = br.readLine();
-            
-        } finally {
-            if (br != null) {
+            } catch (LoginException lee) {
                 try {
-                    br.close();
-                } catch (IOException ie) {
-                    // Ignore
+                    AuthContext ac = new AuthContext(new AuthPrincipal(userDN),
+                        oldPassword.toCharArray());
+                    PersistentObject user = UMSObject.getObject(ac.getSSOToken(),
+                        new Guid(userDN));
+                    if (debug.messageEnabled()) {
+                        debug.message("For DN: " + userDN +
+                            " changing password in directory");
+                    }
+                    user.setAttribute(new Attr("userPassword", newPassword));
+                    user.save();
+                } catch (LoginException le) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("For DN: " + userDN +
+                            " new and old passwords donot match with directory");
+                    }
+                    throw new Exception(i18n.getString("dscfg-invalid-password") +
+                        "\n" + le.getMessage());
                 }
             }
-        }        
-        return lineData;
+        }
+        
+        setUserPassword(userType, newPassword);
+    }
+    
+    /**
+     * Returns the user DN for the given user type
+     */
+    private String getUserDN(String userType) throws Exception {
+        Node dnNode = XMLUtils.getChildNode(getUserNode(userType),
+            DSConfigMgr.AUTH_ID);
+        if (dnNode == null) {
+            throw (new XMLException(i18n.getString(
+                "dscfg-corrupted-serverconfig")));
+        }
+        return (XMLUtils.getValueOfValueNode(dnNode));
+    }
+    
+    /**
+     * Returns the user password for the given user type
+     */
+    private String getUserPassword(String userType) throws Exception {
+        Node pwdNode = XMLUtils.getChildNode(getUserNode(userType),
+            DSConfigMgr.AUTH_PASSWD);
+        if (pwdNode == null) {
+            throw (new XMLException(i18n.getString(
+                "dscfg-corrupted-serverconfig")));
+        }
+        return (XMLUtils.getValueOfValueNode(pwdNode));
+    }
+    
+    private void setUserPassword(String userType, String password)
+    throws Exception {
+        Node pwdNode = XMLUtils.getChildNode(getUserNode(userType),
+            DSConfigMgr.AUTH_PASSWD);
+        if (pwdNode == null) {
+            throw (new XMLException(i18n.getString(
+                "dscfg-corrupted-serverconfig")));
+        }
+        // Encrypt the new password and store
+        String encPassword = (String) AccessController.doPrivileged(
+            new EncodeAction(password));
+        NodeList textNodes = pwdNode.getChildNodes();
+        Node textNode = textNodes.item(0);
+        textNode.setNodeValue(encPassword);
+        // Delete the remaining text nodes
+        for (int i = 1; i < textNodes.getLength(); i++) {
+            pwdNode.removeChild(textNodes.item(i));
+        }
     }
     
     /**
@@ -390,143 +611,31 @@ public class ServerConfigMgr {
      */
     private Node getUserNode(String userType) throws Exception {
         Node userNode = XMLUtils.getNamedChildNode(defaultServerGroup,
-                DSConfigMgr.USER, DSConfigMgr.AUTH_TYPE, userType);
+            DSConfigMgr.USER, DSConfigMgr.AUTH_TYPE, userType);
         if (userNode == null) {
             debug.error("Unable to get user type: " + userType
-                    + " node from file: " + configFile);
+                + " node from file: " + configFile);
             throw (new XMLException(i18n
-                    .getString("dscfg-corrupted-serverconfig")));
+                .getString("dscfg-corrupted-serverconfig")));
         }
         return (userNode);
     }
-
-    /**
-     * Returns the user DN for the given user type
-     */
-    private String getUserDN(String userType) throws Exception {
-        Node dnNode = XMLUtils.getChildNode(getUserNode(userType),
-                DSConfigMgr.AUTH_ID);
-        if (dnNode == null) {
-            debug.error("Unable to get user DN for type: " + userType
-                    + " from file: " + configFile);
-            throw (new XMLException(i18n
-                    .getString("dscfg-corrupted-serverconfig")));
-        }
-        return (XMLUtils.getValueOfValueNode(dnNode));
-    }
-
-    /**
-     * Checks and sets the password
-     */
-    private void changePassword(String userType, String oldPassword,
-            String newPassword) throws Exception {
-        // Get the User, Password & DN node
-        Node passwdNode = null;
-        if ((passwdNode = XMLUtils.getChildNode(getUserNode(userType),
-                DSConfigMgr.AUTH_PASSWD)) == null) {
-            debug.error("Unable to get Password for type: " + userType
-                    + " from file: " + configFile);
-            throw (new XMLException(i18n
-                    .getString("dscfg-corrupted-serverconfig")));
-        }
-
-        // Get the information from the serverconfig.xml
-        String fileEncPassword = XMLUtils.getValueOfValueNode(passwdNode);
-        String userDN = getUserDN(userType);
-        if ((fileEncPassword == null) || (fileEncPassword.length() == 0)
-                || (userDN == null) || (userDN.length() == 0)) {
-            debug.error("Null password or user DN for user type: " + userType
-                    + " from file: " + configFile);
-            throw (new XMLException(i18n
-                    .getString("dscfg-corrupted-serverconfig")));
-        }
-
-        // Verify old password
-        if (!oldPassword.equals(AccessController.doPrivileged(new DecodeAction(
-                fileEncPassword)))) {
-            throw (new Exception(i18n.getString(
-                    "dscfg-old-passwd-donot-match")));
-        }
-
-        // Check with iDS and change if necessary
-        try {
-            // Try new password
-            new AuthContext(new AuthPrincipal(userDN), newPassword
-                    .toCharArray());
-            // Password has already been changed
-            if (debug.messageEnabled()) {
-                debug.message("DN: " + userDN + " new password is already "
-                        + "updated in the directory");
-            }
-        } catch (LoginException lee) {
-            try {
-                // Try with the old password
-                AuthContext ac = new AuthContext(new AuthPrincipal(userDN),
-                        oldPassword.toCharArray());
-                if (debug.messageEnabled()) {
-                    debug.message("For DN: " + userDN
-                            + " old password matchs with directory");
-                }
-                // Get the user object
-                PersistentObject user = UMSObject.getObject(ac.getSSOToken(),
-                        new Guid(userDN));
-                // set the password
-                if (debug.messageEnabled()) {
-                    debug.message("For DN: " + userDN
-                            + " changing password in directory");
-                }
-                user.setAttribute(new Attr("userPassword", newPassword));
-                user.save();
-            } catch (LoginException le) {
-                if (debug.warningEnabled()) {
-                    debug
-                            .warning("For DN: "
-                                    + userDN
-                                    + " new and old passwords donot match " +
-                                            "with directory");
-                }
-                throw (new Exception(i18n.getString("dscfg-invalid-password")
-                        + "\n" + le.getMessage()));
-            }
-        }
-
-        // Encrypt the new password and store
-        String encPassword = (String) AccessController
-                .doPrivileged(new EncodeAction(newPassword));
-
-        // Add it to the XML, the text nodes must exist
-        // else obtaining the oldEncPassword would have failed
-        if (debug.messageEnabled()) {
-            debug.message("Updating the XML document with new password");
-        }
-        NodeList textNodes = passwdNode.getChildNodes();
-        Node textNode = textNodes.item(0);
-        textNode.setNodeValue(encPassword);
-        // Delete the remaining text nodes
-        for (int i = 1; i < textNodes.getLength(); i++) {
-            passwdNode.removeChild(textNodes.item(i));
-        }
-    }
-
-    /**
-     * Checks the old and new passwords provided
-     */
-    private static void checkPassword(String oldPassword, String newPassword) {
-        // Check if old password is null or empty, it is not allowed
+    
+    private static void validatePasswords(
+        String oldPassword,
+        String newPassword
+        ) {
         if ((oldPassword == null) || (oldPassword.length() == 0)) {
             System.err.println(i18n.getString("dscfg-null-old-password"));
             System.err.println(i18n.getString("dscfg-usage"));
             System.exit(1);
         }
-
-        // Check if new password is null or empty, it is not allowed
         if ((newPassword == null) || (newPassword.length() == 0)) {
             System.err.println(i18n.getString("dscfg-null-new-password"));
             System.err.println(i18n.getString("dscfg-usage"));
             System.exit(1);
         }
-
-        // Both passwords are present, check them
+        
         if (newPassword.length() < MIN_PASSWORD_LEN) {
             String objs[] = { Integer.toString(MIN_PASSWORD_LEN) };
             System.err.println(MessageFormat.format(
@@ -538,56 +647,24 @@ public class ServerConfigMgr {
             System.exit(1);
         }
     }
-
-    /**
-     * Reads the user entered password
-     */
-    private static String readPassword() {
-        // Try using the native method
-        if (!libraryLoaded) {
-            synchronized (loadLibrary) {
-                if (!libraryLoaded) {
-                    try {
-                        System.loadLibrary(loadLibrary);
-                        libraryLoaded = true;
-                    } catch (UnsatisfiedLinkError e) {
-                        debug.error("Error in loading library", e);
-                    }
+    
+    private static String readOneLinerFromFile(String fileName)
+    throws FileNotFoundException, IOException {
+        BufferedReader br = null;
+        String lineData = null;
+        try {
+            FileReader fr = new FileReader(fileName);
+            br = new BufferedReader(fr);
+            lineData = br.readLine();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException ie) {
+                    // Ignore
                 }
             }
         }
-        // If library was successfully loaded
-        // read the password
-        if (libraryLoaded) {
-            try {
-                String password = jniReadPassword();
-                if (password != null) {
-                    return (password);
-                }
-            } catch (UnsatisfiedLinkError e) {
-                debug.error("Error in loading library", e);
-            }
-        }
-
-        // If JNI did not work, use the Java
-        while (true) {
-            try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(
-                        System.in));
-                return (br.readLine());
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-            }
-        }
+        return lineData;
     }
-
-    /**
-     * Try using JNI to read password and not echoing it. Returns null if it
-     * failed.
-     */
-    public static native String jniReadPassword();
-
-    private static String loadLibrary = "amutils";
-
-    private static boolean libraryLoaded = false;
 }

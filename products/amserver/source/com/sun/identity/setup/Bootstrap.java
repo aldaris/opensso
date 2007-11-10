@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.4 2007-11-07 19:13:59 veiming Exp $
+ * $Id: Bootstrap.java,v 1.5 2007-11-10 04:38:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -212,7 +212,7 @@ public class Bootstrap {
 
         boolean isLdap = false;
         // need to do this because URL class does not understand ldap://
-        if (bootstrapInfo.startsWith("ldap://")) {
+        if (bootstrapInfo.startsWith(PROTOCOL_LDAP)) {
             bootstrapInfo = "http://" +  bootstrapInfo.substring(7);
             isLdap = true;            
         }
@@ -533,6 +533,40 @@ public class Bootstrap {
                 s.substring(idx +1), "UTF-8"));
         }
         return map;
+    }
+    
+    /**
+     * Modifies the <code>dsameuser</code> password in bootstrap file.
+     *
+     * @param password New Password.
+     * @throws IOException if modification fails.
+     */
+    public static void modifyDSAMEUserPassword(String password) 
+        throws IOException {
+        String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
+        String bootstrapFile = baseDir + "/" + AMSetupServlet.BOOTSTRAP_EXTRA;
+        String url = readFile(bootstrapFile);
+        int start = url.indexOf("&" + PWD + "=");
+        
+        if (start == -1) {
+            start = url.indexOf("?" + PWD + "=");
+        }
+
+        if (start != -1) {
+            String encPassword = URLEncoder.encode(Crypt.encode(password, 
+                Crypt.getHardcodedKeyEncryptor()), "UTF-8");
+            int end = url.indexOf("&", start+1);
+            if (end == -1) {
+                url = url.substring(0, start + 5) + encPassword;
+            } else {
+                url = url.substring(0, start + 5) + encPassword + 
+                    url.substring(end);
+            }
+        }
+        
+        AMSetupServlet.writeToFile(bootstrapFile, url);
+        AMSetupServlet.writeToFile(
+            SystemProperties.get(AMSetupServlet.BOOTSTRAP_FILE_LOC), url);
     }
 
     private static final String BOOTSTRAP_SERVER_CONFIG_COMMON =

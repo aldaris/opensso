@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoServiceListener.java,v 1.3 2006-08-25 21:20:48 veiming Exp $
+ * $Id: IdRepoServiceListener.java,v 1.4 2007-11-10 04:38:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,7 +46,11 @@ public class IdRepoServiceListener implements ServiceListener {
                     + " called");
         }
         // FIXME: Clients don't have to call this !!
-        idServices.clearIdRepoPlugins();
+        if (!serviceComponent.startsWith("/users/") && 
+            !serviceComponent.startsWith("/roles/")
+        ) {
+            idServices.clearIdRepoPlugins();
+        }
 
         // Clear IdUtils.getOrganization(...) cache
         IdUtils.clearOrganizationNamesCache();

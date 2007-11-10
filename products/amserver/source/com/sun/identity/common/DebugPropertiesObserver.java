@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugPropertiesObserver.java,v 1.1 2007-11-07 19:13:57 veiming Exp $
+ * $Id: DebugPropertiesObserver.java,v 1.2 2007-11-10 04:38:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.common;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.common.configuration.ConfigurationListener;
 import com.sun.identity.common.configuration.ConfigurationObserver;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import java.util.Collection;
 import java.util.Iterator;

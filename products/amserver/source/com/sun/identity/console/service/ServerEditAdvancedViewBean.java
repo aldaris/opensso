@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerEditAdvancedViewBean.java,v 1.1 2007-10-17 23:00:39 veiming Exp $
+ * $Id: ServerEditAdvancedViewBean.java,v 1.2 2007-11-10 04:38:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -79,6 +80,7 @@ public class ServerEditAdvancedViewBean
     private static final String PGTITLE_THREE_BTNS = "pgtitleThreeBtns";
     
     private static Set dealtWithProperties;
+    private static Set hiddenProperties;
     
     private CCPageTitleModel ptModel;
     private CCActionTableModel tblModel;
@@ -93,6 +95,7 @@ public class ServerEditAdvancedViewBean
         set.add("propertyServerEditSDK.xml");
         set.add("propertyServerEditGeneral.xml");
         getDealtWithProperties(set);
+        getHiddenProperties();
     }
 
     /**
@@ -222,6 +225,7 @@ public class ServerEditAdvancedViewBean
                 properties = new TreeSet();
                 Map map = model.getServerConfiguration(serverName);
                 discardDealtWithProperties(map);
+                discardHiddenProperties(map);
                 for (Iterator i = map.entrySet().iterator(); i.hasNext(); ){
                     Map.Entry entry = (Map.Entry)i.next();
                     properties.add((String)entry.getKey() + "=" + 
@@ -234,11 +238,20 @@ public class ServerEditAdvancedViewBean
         }
         populateTableModel(properties);
     }
-    
+
     private void discardDealtWithProperties(Map map) {
         for (Iterator i = map.entrySet().iterator(); i.hasNext(); ){
             Map.Entry entry = (Map.Entry)i.next();
             if (dealtWithProperties.contains(entry.getKey())) {
+                i.remove();
+            }
+        }
+    }
+
+    private void discardHiddenProperties(Map map) {
+        for (Iterator i = map.entrySet().iterator(); i.hasNext(); ){
+            Map.Entry entry = (Map.Entry)i.next();
+            if (hiddenProperties.contains(entry.getKey())) {
                 i.remove();
             }
         }
@@ -400,6 +413,16 @@ public class ServerEditAdvancedViewBean
 
     protected String getTrackingTabIDName() {
         return ServerEditViewBeanBase.TAB_TRACKER;
+    }
+
+    private static void getHiddenProperties() {
+        hiddenProperties = new HashSet();
+        ResourceBundle rb = ResourceBundle.getBundle("hiddenserverconfig");
+        String hidden = rb.getString("hidden");
+        StringTokenizer st = new StringTokenizer(hidden, " ");
+        while (st.hasMoreTokens()) {
+            hiddenProperties.add(st.nextToken().trim());
+        }
     }
 
     private static void getDealtWithProperties(Set uiXML) {

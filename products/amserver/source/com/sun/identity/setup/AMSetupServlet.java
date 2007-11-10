@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.26 2007-11-07 19:13:58 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.27 2007-11-10 04:38:28 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,9 +104,11 @@ public class AMSetupServlet extends HttpServlet {
     private static boolean isConfiguredFlag = false;
 
     private final static String AMCONFIG = "AMConfig";
-    private final static String BOOTSTRAP_EXTRA = "bootstrap";
     private final static String SMS_STR = "sms";
     private static SSOToken adminToken = null;
+    
+    final static String BOOTSTRAP_EXTRA = "bootstrap";    
+    final static String BOOTSTRAP_FILE_LOC = "bootstrap.file";
     
     /*
      * Initializes the servlet.
@@ -199,11 +201,22 @@ public class AMSetupServlet extends HttpServlet {
             if (isConfiguredFlag) {
                 boolean legacy = ServerConfiguration.isLegacy();
                 bootstrapRes = createBootstrapResource(legacy);
-                String url = Bootstrap.create(getBootStrapFile(), 
-                    bootstrapRes, legacy);
+                String fileBootstrap = getBootStrapFile();
+                String url = Bootstrap.create(fileBootstrap, bootstrapRes, 
+                    legacy);
 
                 if (!legacy) {
                     createExtraBootstrapFile(url);
+                    
+                    // this is to store the bootstrap location
+                    SSOToken adminToken = (SSOToken)AccessController.
+                        doPrivileged(AdminTokenAction.getInstance());
+                    Map mapBootstrap = new HashMap(2);
+                    Set set = new HashSet(2);
+                    set.add(fileBootstrap);
+                    mapBootstrap.put(BOOTSTRAP_FILE_LOC, set);
+                    ServerConfiguration.setServerInstance(adminToken,
+                        SystemProperties.getServerInstanceName(), mapBootstrap);
                 }
             }
         } catch (Exception e) {
@@ -427,7 +440,7 @@ public class AMSetupServlet extends HttpServlet {
         writeToFile(basedir + "/" + BOOTSTRAP_EXTRA, url);
     }
 
-    private static String getBootstrap() {
+    static String getBootstrap() {
         String res = null;
         String bootstrap = getBootStrapFile();
         FileReader frdr = null;
@@ -436,7 +449,7 @@ public class AMSetupServlet extends HttpServlet {
             BufferedReader brdr = new BufferedReader(frdr);
             res = brdr.readLine();
         } catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
+            // ignore bootstrap file is missing if war is not configured.
         } catch (IOException e) {
             System.err.println(e.getMessage());
         } finally {
@@ -555,26 +568,6 @@ public class AMSetupServlet extends HttpServlet {
         return configDir;
     }
     
-
-    private static void createBootstrapFile(Map configMap)
-        throws ConfiguratorException, IOException {
-        String configDir = getPresetConfigDir();
-        if ((configDir != null) && (configDir.length() > 0)) {
-            configMap.put(SetupConstants.CONFIG_VAR_BASE_DIR, configDir);
-        } else {
-            String bootstrap = getBootStrapFile();
-            File btsFile = new File(bootstrap);
-            if (!btsFile.getParentFile().exists()) {
-                btsFile.getParentFile().mkdirs();
-            }
-            String basedir = (String)configMap.get(
-                SetupConstants.CONFIG_VAR_BASE_DIR);
-            FileWriter bfout = new FileWriter(bootstrap);
-            bfout.write(basedir + "\n");
-            bfout.close();
-        }
-    }
-
     /**
      * Returns location of the bootstrap file.
      *
@@ -583,7 +576,7 @@ public class AMSetupServlet extends HttpServlet {
      * @throws ConfiguratorException if servlet context is null or deployment
      *         application real path cannot be determined.
      */
-    private static String getBootStrapFile()
+    static String getBootStrapFile()
         throws ConfiguratorException {
         String bootFile = null;
         if (servletCtx != null) {
@@ -774,8 +767,7 @@ public class AMSetupServlet extends HttpServlet {
     }
     
     private static StringBuffer readFile(String file) 
-        throws IOException
-    {
+        throws IOException {
         InputStreamReader fin = null;
         StringBuffer sbuf = new StringBuffer();
         

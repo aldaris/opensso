@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.12 2007-10-17 23:00:46 veiming Exp $
+ * $Id: ServiceManager.java,v 1.13 2007-11-10 04:38:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -771,6 +771,31 @@ public class ServiceManager {
             }
         }
         return (realmCache);
+    }
+    
+    
+    /**
+     * Returns <code>true</code> if AMSDK IdRepo plugin is
+     * configured in any of the realms
+     */
+    public static boolean isAMSDKConfigured() throws SMSException {
+        if (!isRealmEnabled() || OrgConfigViaAMSDK.isAMSDKConfigured("/")) {
+            // Legacy mode, AMSDK is configured by default
+            return (true);
+        }
+
+        // Iterate through all the realms to check if AMSDK is configured
+        SSOToken token = (SSOToken) AccessController
+            .doPrivileged(AdminTokenAction.getInstance());
+        Set realms = (new OrganizationConfigManager(token, "/"))
+            .getSubOrganizationNames("*", true);
+        for (Iterator items = realms.iterator(); items.hasNext();) {
+            String realm = items.next().toString();
+            if (OrgConfigViaAMSDK.isAMSDKConfigured(realm)) {
+                return (true);
+            }
+        }
+        return (false);
     }
 
     /**
