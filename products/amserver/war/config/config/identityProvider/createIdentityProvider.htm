@@ -1,0 +1,274 @@
+<link href="$context/assets/css/Specific/identityService.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+YAHOO.namespace("sun.container");
+YAHOO.util.Event.onDOMReady( init );
+var DOM = YAHOO.util.Dom;
+
+function init() {
+    loadFederalProtocols();
+}
+
+function createIdentityProvider() {
+    var postData = AjaxUtils.serializeForm("identityProviderForm");
+    AjaxUtils.doPost("container", "$context$path", postData);
+}
+
+function cancel(){
+	window.location = '$context/config/commonTasks.htm';
+}
+
+function activateMetadataFileSection(activate){
+    activateSection(activate, "metadataFileSection");
+}
+
+function activateServiceProviderMetadataFileSection(activate){
+    activateSection(activate, "serviceProviderMetadataFileSection");
+}
+
+function activateServiceProviderMetadataSection(activate){
+    activateSection(activate, "serviceProviderMetadataSection");
+}
+
+function activateCirclesOfTrustSection(activate){
+    activateSection(activate, "circlesOfTrustSection");
+}
+
+function activateOutgoingAssertionsSignatureSection(activate){
+    activateSection(activate, "outgoingAssertionsSignatureSection");
+}
+
+function activateIncomingAssertionsSignatureSection(activate){
+    activateSection(activate, "incomingAssertionsSignatureSection");
+}
+
+
+function activateKeyAliasSection(activate){
+    activateSection(activate, "keyAliasSection");
+}
+
+function activateServiceExtraInfo(activate){
+    activateSection(activate, "serviceExtraInfo");
+}
+
+function activateSection(activate, elementId){
+    var section = DOM.get(elementId);
+    if (activate)
+		section.style.display="";
+	else
+		section.style.display="none";
+}
+
+
+function enableFileMetadata(){
+    DOM.get('metadataFile').disabled='';
+    DOM.get('metadataUrl').disabled='disabled';
+}
+
+function enableUrlMetadata(){
+    DOM.get('metadataFile').disabled='disabled';
+    DOM.get('metadataUrl').disabled='';
+}
+
+function enableServiceProviderFileMetadata(){
+    DOM.get('serviceProviderMetadataFile').disabled='';
+    DOM.get('serviceProviderMetadataUrl').disabled='disabled';
+}
+
+function enableServiceProviderUrlMetadata(){
+    DOM.get('serviceProviderMetadataFile').disabled='disabled';
+    DOM.get('serviceProviderMetadataUrl').disabled='';
+}
+
+
+function appearOption(element,name,div){
+	if (document.getElementById(name+"1").checked)
+		document.getElementById(div).style.display="";
+	else
+		document.getElementById(div).style.display="none";
+}
+function federalProtocolChange(combo){
+    var selectedValue = combo.value;
+    if (selectedValue != "none"){
+        DOM.get("btnConfigure").disabled=false;
+        DOM.get("metadataSection").style.display="";
+        DOM.get("federalProtocolNameSpan").innerHTML = selectedValue;
+        DOM.get("federalProtocolNameSpan2").innerHTML = selectedValue;
+        loadCirclesOfTrust();
+    }
+}
+function next(){
+	if (document.getElementById("sam1").checked)
+		setTimeout(" AjaxUtils.load('container', '$context/config/dlg/popupConfigureRemoteIdentity.htm');",1250);
+	else
+		setTimeout(" AjaxUtils.load('container', '$context/config/serviceProvider/configureSystem.htm');",1250);
+}
+/*Add New*/
+function addNewCircle(){
+    AjaxUtils.load('newCircleSection', '$context/config/circle/createCircle.htm', addNewCircleCallback);
+}
+
+function deleteCircle(){
+    var circleName = DOM.get('circlesOfTrust').value;
+    AjaxUtils.doPost(null, '$context/config/circle/deleteCircle.htm','circleName='+circleName, loadCirclesOfTrust);
+}
+
+function addNewCircleCallback(){
+    CreateCircle.onCancel = onCancelCreateCircle;
+    CreateCircle.onSave = onSaveCreateCircle;
+    DOM.get('newCircleSection').style.display = '';
+}
+
+function onCancelCreateCircle(){
+    DOM.get('newCircleSection').style.display = 'none';
+}
+
+function onSaveCreateCircle(){
+    DOM.get('newCircleSection').style.display = 'none';
+    loadCirclesOfTrust();
+}
+
+function loadFederalProtocols() {
+    AjaxUtils.call("$context/config/serviceProvider/federalProtocols.htm", paintFederalProtocolsCombo);
+}
+
+function paintFederalProtocolsCombo(pResponse) {
+    var response = pResponse.responseText.parseJSON();
+    var combo = DOM.get("federalProtocol");
+    var length = combo.options.length;
+
+    for (var i = 0; i < length; i++) {
+        combo.remove(0);
+    }
+
+    var option = document.createElement('OPTION');
+    option.value = 'none';
+    option.text = 'Select...';
+    combo.options.add(option, combo.options.length);
+    for (var i = 0; i < response.records.length; i++) {
+        option = document.createElement('OPTION');
+        option.value = response.records[i].protocolName;
+        option.text = response.records[i].protocolName;
+        combo.options.add(option, combo.options.length);
+    }
+
+}
+
+function loadCirclesOfTrust() {
+    AjaxUtils.call("$context/config/circle/circlesOfTrust.htm", paintCirclesOfTrustCombo);
+}
+
+function paintCirclesOfTrustCombo(pResponse) {
+    var response = pResponse.responseText.parseJSON();
+    var combo = DOM.get("circlesOfTrust");
+    var length = combo.options.length;
+
+    for (var i = 0; i < length; i++) {
+        combo.remove(0);
+    }
+
+    var option = null;
+    for (var i = 0; i < response.records.length; i++) {
+        option = document.createElement('OPTION');
+        option.value = response.records[i].circleName;
+        option.text = response.records[i].circleDisplayName;
+        combo.options.add(option, combo.options.length);
+    }
+
+
+
+}
+
+</script>
+<form name="identityProviderForm" id="identityProviderForm">
+<div id="identityProvider">
+	<div id="mainPanel" align="center">
+		<div id="createPanel" class="createpanel">
+			<br />
+			<div class="bodywhite">
+				<h2>Configure this system as a identity provider</h2>
+				<small>Lorem ipsum dolor sit amet consectateur nonummy lorenzino. Interdum volgus videt, est ubi peccat ita miratur laudatque poetas, ut nihil anteferat, nihil illis.</small>
+			</div>
+			<div class="bodywhite">
+				<p class="OrangeSmall">Select a Federation Protocol<br />
+				<select name="federalProtocolName" id="federalProtocol" onchange="federalProtocolChange(this);">
+				</select></p>
+				<div id="metadataSection" style="display:none">
+					<p class="OrangeSmall">Do you have a <span id="federalProtocolNameSpan">SAML 2.0</span> metadata file for this hosted service?</p>
+					<input type="radio" name="metadata" value="true" onclick="activateCirclesOfTrustSection(true);activateMetadataFileSection(true);activateServiceProviderMetadataSection(false);"/>Yes&nbsp;&nbsp;
+                    <input type="radio" name="metadata" value="false" onclick="activateMetadataFileSection(false);activateCirclesOfTrustSection(false);activateServiceProviderMetadataSection(true);"/>No
+					<div id="metadataFileSection" style="display:none">
+						<p class="OrangeSmall">Is the metadata available in a file or at a URL?</p>
+						<p><input type="radio" name="metadataType" value="file" onclick="enableFileMetadata()"/>&nbsp;File&nbsp;&nbsp;<input type="file" value="Browse" name="metadataFile" id="metadataFile" disabled="disabled"/></p>
+						<p><input type="radio" name="metadataType" value="url" onclick="enableUrlMetadata()"/>&nbsp;URL&nbsp;<input type="text" id="metadataUrl" name="metadataUrl" disabled="disabled"/></p>
+					</div>
+                    <div id="serviceProviderMetadataSection" style="display:none">
+                        <p class="OrangeSmall">Do you want to use a remote service provider's <span id="federalProtocolNameSpan2">SAML 2.0</span> metadata file as a template?</p>
+                        <input type="radio" name="serviceProviderMetadata" value="true" onclick="activateCirclesOfTrustSection(true);activateServiceProviderMetadataFileSection(true);activateServiceExtraInfo(true)"/>Yes&nbsp;&nbsp;
+                        <input type="radio" name="serviceProviderMetadata" value="false" onclick="activateServiceProviderMetadataFileSection(false);activateCirclesOfTrustSection(true);activateServiceExtraInfo(true)"/>No
+                        <div id="serviceProviderMetadataFileSection" style="display:none">
+                            <p class="OrangeSmall">Is the metadata available in a file or at a URL?</p>
+                            <p><input type="radio" name="serviceProviderMetadataType" value="file"
+                                      onclick="enableServiceProviderFileMetadata()"/>&nbsp;File&nbsp;&nbsp;
+                                <input type="file" value="Browse" name="serviceProviderMetadataFile" id="serviceProviderMetadataFile" disabled="disabled"/></p>
+                            <p><input type="radio" name="serviceProviderMetadataType" value="url"
+                                      onclick="enableServiceProviderUrlMetadata()"/>&nbsp;URL&nbsp;
+                                <input type="text" id="serviceProviderMetadataUrl" name="serviceProviderMetadataUrl" disabled="disabled"/></p>
+                        </div>
+                    </div>
+                    <div id="circlesOfTrustSection" style="display:none">
+                        <p class="OrangeSmall">Select or create a circle of trust</p>
+                        <select name="circleName" id="circlesOfTrust" size="3"></select>
+
+                        <!--<div class="links blue"><a class="pointer">Delete</a>&nbsp;|&nbsp;<a class="pointer">Create New</a></div>-->
+                        <div id="options1" class="yui-navset links">
+                            <div id="newCircleSection" class="yui-content" style="z-index:20;display:none;position:absolute;top:-168px;"></div>
+                            <ul class="yui-nav" style="text-align:right">
+                                <li><a href="#tab1" onclick="deleteCircle()"><em>Delete</em></a></li>
+                                <li><a href="#tab2" onclick="addNewCircle()"><em>Add New</em></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+				<div id="serviceExtraInfo" style="display:none">
+					<p class="OrangeSmall">Display name (optional)<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+					<input type="text" name="displayName"/></p>
+					<p class="OrangeSmall">Enter the metaalias<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+					<input type="text" name="metaAlias"/></p>
+
+
+                    <p class="OrangeSmall">Select type of binding</p>
+					<input type="checkbox" name="postBinding" value="true" onclick="activateOutgoingAssertionsSignatureSection(this.checked);activateIncomingAssertionsSignatureSection(this.checked);"/>&nbsp;Post&nbsp;&nbsp;&nbsp;
+					<input type="checkbox" name="artifactBinding" value="true" onclick="activateKeyAliasSection(this.checked);"/>&nbsp;Artifact&nbsp;<br />
+
+                    <div id="incomingAssertionsSignatureSection" style="display:none">
+                        <p class="OrangeSmall">Require signature for incoming assertions?</p>
+                        <input type="radio" name="incomingAssertionsSignature" value="true" />&nbsp;Yes&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="incomingAssertionsSignature" value="false"/>&nbsp;No&nbsp;<br />
+                    </div>
+
+                    <div id="keyAliasSection" style="display:none">
+                        <p class="OrangeSmall">Please select a signing key alias<br />
+                            <select name="keyAlias" id="keyAlias">
+                                <option value="-1">Select one key alias</option>
+                                <option value="1">Key alias 1</option>
+                                <option value="2">Key alias 2</option>
+                            </select></p>
+                    </div>
+
+                    <div id="outgoingAssertionsSignatureSection" style="display:none">
+                        <p class="OrangeSmall">Require signature for outgoing assertions?<br />
+                            This default is set to match your Service Provider metadata</p>
+                        <input type="radio" name="outgoingAssertionSignature" value="true"/>&nbsp;Yes&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="outgoingAssertionSignature" value="false"/>&nbsp;No&nbsp;<br />
+                    </div>
+
+				</div>
+			</div>
+			<div class="subbody">
+					<button id="btnCancel" type="button" onclick="cancel();">Cancel</button>
+					<button id="btnConfigure" type="button" onclick="createIdentityProvider();" disabled="disabled">CONFIGURE PROVIDER</button>
+			</div>
+		</div>
+	</div>
+</div>
+</form>

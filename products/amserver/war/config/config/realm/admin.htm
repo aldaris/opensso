@@ -1,7 +1,48 @@
 <link href="$context/assets/css/Specific/adminRealm.css" rel="stylesheet" type="text/css" />
 
+<style type="text/css">
+    #realmUsersTable {
+        height:25em;
+    }
+
+    #realmUsersPaginator {
+        text-align:right;
+    }
+
+    #adminsTable {
+        height:25em;
+    }
+
+    #adminsTablePaginator {
+        text-align:right;
+    }
+</style>
+
 <script>
 
+    YAHOO.namespace("sun.container");
+    YAHOO.util.Event.onDOMReady(init);
+
+    var DOM = YAHOO.util.Dom;            
+
+    var isRealmSelected = false;
+    var selectedRealm = null;
+    var selectedRole = null;
+
+    var realmsTableColumnDefs = [
+        {key:"realmName", label:"Realms", sortable:true}
+    ];
+    var realmsResponseSchema = {
+        resultsList: "records",
+        fields: ["realmName"]
+    };
+    var realmsTable = new APP.util.SimpleTable("realmsTable", "$context/config/authc/realmList.htm", null, realmsTableColumnDefs, realmsResponseSchema, true);
+
+
+    var tableChanges = {
+        realmUsers: {},
+        admins: {}
+    };
     var tableColumnDefs = [
         {key:"firstName", label:"First Name", sortable:true},
         {key:"lastName", label:"Last Name", sortable:true}
@@ -11,37 +52,132 @@
         fields: ["firstName", "lastName"]
     };
     // Realm Users Table
-    var RealmUsersTable = new APP.util.PaginatedTable("realmUsersTable", "$context/config/realm/users.htm?", "startIndex=1&results=500", tableColumnDefs, responseSchema, "G1");
-    YAHOO.util.Event.addListener(YAHOO.util.Dom.get("prevLink"), "click", RealmUsersTable.getPreviousPage, RealmUsersTable, true);
-    YAHOO.util.Event.addListener(YAHOO.util.Dom.get("nextLink"), "click", RealmUsersTable.getNextPage, RealmUsersTable, true);
+    var realmUsersTable = new APP.util.PaginatedTable("realmUsersTable", "$context/config/realm/users.htm?", "realmName=&filter=*", tableColumnDefs, responseSchema, "G1", tableChanges);
+    realmUsersTable.paginator = new APP.util.Paginator("realmUsersPaginator", "$context/assets/images/");            
+    realmUsersTable.loadData();
     // Administrators Table
-    var AdminsTable = new APP.util.PaginatedTable("adminsTable", "$context/config/realm/users.htm?", "startIndex=1&results=500", tableColumnDefs, responseSchema, "G2");
-    YAHOO.util.Event.addListener(YAHOO.util.Dom.get("adminsTable_prevLink"), "click", AdminsTable.getPreviousPage, AdminsTable, true);
-    YAHOO.util.Event.addListener(YAHOO.util.Dom.get("adminsTable_nextLink"), "click", AdminsTable.getNextPage, AdminsTable, true);
+    var adminsTable = new APP.util.PaginatedTable("adminsTable", "$context/config/realm/users.htm?", "realmName=&getAdmins=true&roleName=", tableColumnDefs, responseSchema, "G2", tableChanges);
+    adminsTable.paginator = new APP.util.Paginator("adminsTablePaginator", "$context/assets/images/");
+    adminsTable.loadData();
 
     new YAHOO.util.DDTarget("realmUsersTable", "G2");
     new YAHOO.util.DDTarget("adminsTable", "G1");
 
-    YAHOO.namespace("sun.container");
+
+    function reloadRealmUsersTable() {
+        var searchValue = YAHOO.util.Dom.get("search").value;
+        var realmName = "realmName=" + (selectedRealm ? selectedRealm : "");
+        var filter = "filter=" + searchValue;
+        var realmUsersTable = new APP.util.PaginatedTable("realmUsersTable", "$context/config/realm/users.htm?", realmName + "&" + filter, tableColumnDefs, responseSchema, "G1");
+        realmUsersTable.paginator = new APP.util.Paginator("realmUsersPaginator", "$context/assets/images/");
+        realmUsersTable.loadData();
+    }
+
+    function reloadAdminsTable() {
+        var searchValue = YAHOO.util.Dom.get("search").value;
+        var realmName = "realmName=" + (selectedRealm ? selectedRealm : "");
+        var getAdmins = "getAdmins=true";
+        var roleName = "roleName=" + (selectedRole ? selectedRole : "");
+        var adminsTable = new APP.util.PaginatedTable("adminsTable", "$context/config/realm/users.htm?", realmName + "&" + getAdmins + "&" + roleName, tableColumnDefs, responseSchema, "G2", tableChanges);
+        adminsTable.paginator = new APP.util.Paginator("adminsTablePaginator", "$context/assets/images/");
+        adminsTable.loadData();
+    }
 
     function init() {
-        AjaxUtils.load( 'addrole', '$context/config/realm/addRole.htm');
-        YAHOO.sun.container.addrole = new YAHOO.widget.Panel("addrole", { width:"390px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true } );
-        YAHOO.sun.container.addrole.render();
+        DOM.get("saveButton").disabled = true;
+        realmsTable.dataTable.subscribe("rowSelectEvent", selectRealm, false);
+
+        loadRoleComboInfo();
     }
-    YAHOO.util.Event.onDOMReady( init );
+
+    function selectRealm() {
+        var selectedRow = realmsTable.dataTable.getSelectedTrEls()[0];
+        var value = DOM.getChildren(selectedRow)[0].innerHTML;
+        selectedRealm = value;
+        isRealmSelected = (value != null);
+        adjustSaveButton();
+    }
 
     function cancel() {
         document.location = "$context/commonTasks.htm";
     }
-    function save(){
 
+    function save() {
+        //var selectedRealm = "hehe";
+        //var selectedRole = "hoho";
+        var pageURI = "$context$path";
+        var adminsArray = "";
+        for (var element in tableChanges.admins) {
+            if (element != "toJSONString") {
+                adminsArray += element + ",";
+            }
+        }
+        var realmUsersArray = "";
+        for (var element in tableChanges.realmUsers) {
+            if (element != "toJSONString") {
+                realmUsersArray += element + ",";
+            }
+        }
+        var requestData = "realmName=" + selectedRealm;
+        requestData += "&roleName=" + selectedRole;
+        requestData += "&adminsArray=" + adminsArray;
+        requestData += "&realmUsersArray=" + realmUsersArray;
+
+        AjaxUtils.doPost(null, pageURI, requestData, null, null);
     }
-    function checkOption(){
-        /*Validate the position of "Create a new role" */
-        if ((document.getElementById("role").options.length-1)==document.getElementById("role").selectedIndex)
-            YAHOO.sun.container.addrole.show();
+
+    function changeRole(select){
+        if (select.value == "_create_new_role_") {
+            AjaxUtils.load("createRolePanel", "$context/config/realm/addRole.htm");
+            YAHOO.sun.container.createRolePanel = new YAHOO.widget.Panel("createRolePanel", { width:"390px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true});
+            YAHOO.sun.container.createRolePanel.render();
+            YAHOO.sun.container.createRolePanel.show();
+        }
+        else {
+            selectedRole = select.value;
+            reloadAdminsTable();            
+        }
     }
+
+    function adjustSaveButton() {
+        var allValid = (isRealmSelected);
+        DOM.get("saveButton").disabled = !allValid;
+    }
+
+    function loadRoleComboInfo() {
+        AjaxUtils.call("$context/config/realm/roles.htm", paintRoleCombo);
+    }
+
+    function paintRoleCombo(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        var combo = DOM.get("role");
+        var length = combo.options.length;
+
+        for (var i = 0; i < length; i++) {
+            combo.remove(0);
+        }
+
+        var option = document.createElement('OPTION');
+        option.value = "administrators";
+        option.text = "Administrators";
+        option.selected = "selected";
+        combo.options.add(option, combo.options.length);
+
+        for (var i = 0; i < response.records.length; i++) {
+            option = document.createElement('OPTION');
+            option.value = response.records[i].roleName;
+            option.text = response.records[i].roleName;
+            combo.options.add(option, combo.options.length);            
+        }
+
+        option = document.createElement('OPTION');
+        option.value = "_create_new_role_";
+        option.text = "Create a New Role";
+        combo.options.add(option, combo.options.length);
+    }
+
+
+
 
 </script>
 
@@ -54,7 +190,14 @@
 			<h2>Assign an administrator to a realm</h2>
 			<small>Locate your new admin and drag their name to the realm administrators box.</small>
 		</div>
-		<div class="bodySpace">
+
+        <div class="bodywhite">
+            Select the realm that this store will be added to
+            <div id="realmsTable"></div>
+            <br/><br/>
+        </div>
+
+        <div class="bodySpace">
 			<div id="demo" class="yui-navset tab">
 				<ul class="yui-nav">
 					<li class="selected"><a href="#tab1"><em>Realm Users</em></a></li>
@@ -62,52 +205,14 @@
 				<div class="yui-content" style="height:465px">
 					<div>
 						<div class="bodywhite">
-						<input type="text" id="search"/><button type="button">search</button>
+						<input type="text" id="search" value="*"/><button type="button" onclick="reloadRealmUsersTable();">search</button>
 						</div>
 						<div class="bodywhite">
-							<span id="prevLink"><img class="pointer" src="$context/assets/images/left.GIF" alt="#"/></span>
-                            Displaying <span id="startIndex"></span> - <span id="endIndex"></span> of <span id="ofTotal"></span> realm users
-                            <span id="nextLink"><img class="pointer" src="$context/assets/images/right.GIF" alt="#"/></span>
+                            Displaying <span id="realmUsersTable_startIndex"></span> - <span id="realmUsersTable_endIndex"></span> of <span id="realmUsersTable_ofTotal"></span> realm users
 						 </div>
-						<!--This prosses need be Automatically, that is a example, with the css it need,
-							look the example of yui for a generate tab with javascript-->
-						<div id="contentSearch">
+						<div id="realmUsersContentSearch" >
                             <div id="realmUsersTable"></div>
-                            <!--
-                            <div id="search1" class="yui-navset">
-                                <div class="yui-content large">
-                                    <div>
-										<div class="colunmsheader">
-											<div class="insideColunm">&nbsp;First Name</div>
-											Last Name
-										</div>
-										<div class="colunms">First Name<br />First Name</div>
-										<div class="colunms">Last Name<br />Last Name</div>
-									</div>
-									<div>
-										<div class="colunmsheader">
-											<div class="insideColunm">&nbsp;First Name</div>
-											Last Name
-										</div>
-										<div class="colunms">sds</div>
-										<div class="colunms">sds</div><br />
-									</div>
-                                    <div>
-										<div class="colunmsheader">
-											<div class="insideColunm">&nbsp;First Name</div>
-											Last Name
-										</div>
-										<div class="colunms">sds</div>
-										<div class="colunms">sds</div>
-									</div>
-								</div>
-                                <ul class="yui-nav" style="text-align:right">
-									<li class="selected"><a href="#tab1"><em>1</em></a></li>
-									<li><a href="#tab2"><em>2</em></a></li>
-									<li><a href="#tab3"><em>3</em></a></li>
-								</ul>
-                            </div>
-                            -->
+                            <div id="realmUsersPaginator"></div>
 						</div>
 					</div>
 				</div>
@@ -121,53 +226,15 @@
 					<div>
 						<div class="bodywhite">
 							<font class="commonblack">Select a role</font>&nbsp;
-							<select id="role" name="role" style="width:150px" onchange="checkOption();">
-								<option>Administrators</option>
-								<option><b>Create a New role</b></option>
+							<select id="role" name="role" style="width:150px" onchange="changeRole(this);">
 							</select>
 						</div>
 						<div class="bodywhite">
-							<span id="adminsTable_prevLink"><img class="pointer" src="$context/assets/images/left.GIF" alt="#"/></span> Displaying
-							<span id="adminsTable_startIndex">0</span>-<span id="adminsTable_endIndex">50</span>
-							<span id="adminsTable_ofTotal"></span> administrators <span id="adminsTable_nextLink"><img class="pointer" src="$context/assets/images/right.GIF" alt="#"/></span>
+                            Displaying <span id="adminsTable_startIndex"></span> - <span id="adminsTable_endIndex"></span> of <span id="adminsTable_ofTotal"></span> administrators 
 						</div>
 						<div id="contentSearch">
                             <div id="adminsTable"></div>
-                            <!--
-                            <div id="search2" class="yui-navset">
-								<div class="yui-content large">
-									<div>
-										<div class="colunmsheader">
-											<div class="insideColunm">&nbsp;First Name</div>
-											Last Name
-										</div>
-										<div class="colunms">First Name<br />First Name</div>
-										<div class="colunms">Last Name<br />Last Name</div>
-									</div>
-									<div>
-										<div class="colunmsheader">
-											<div class="insideColunm">&nbsp;First Name</div>
-											Last Name
-										</div>
-										<div class="colunms">sds</div>
-										<div class="colunms">sds</div><br />
-									</div>
-									<div>
-										<div class="colunmsheader">
-											<div class="insideColunm">&nbsp;First Name</div>
-											Last Name
-										</div>
-										<div class="colunms">sds</div>
-										<div class="colunms">sds</div>
-									</div>
-								</div>
-								<ul class="yui-nav" style="text-align:right">
-									<li class="selected"><a href="#tab1"><em>1</em></a></li>
-									<li><a href="#tab2"><em>2</em></a></li>
-									<li><a href="#tab3"><em>3</em></a></li>
-								</ul>
-							</div>
-							-->
+                            <div id="adminsTablePaginator"></div>
 						</div>
 					</div>
 				</div>
@@ -175,13 +242,13 @@
 		</div>
 		<div class="subbody">
 			<button type="button" value="Cancel" onClick="javascript:cancel();">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
-			<button type="button" value="addStore" onClick="javascript:save();">Save</button>
+			<button type="button" id="saveButton" onclick="save();">Save</button>
 		</div>
 		<br />
 	</div>
 </div>
 
-<div id="addrole"></div>
+<div id="createRolePanel"></div>
 <script>
 (function() {
     var tabView = new YAHOO.widget.TabView('demo');

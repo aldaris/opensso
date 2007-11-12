@@ -1,9 +1,68 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: RemoteIdentityProvider.java,v 1.2 2007-11-12 14:51:17 lhazlewood Exp $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
 package com.sun.identity.config.serviceProvider;
 
-import net.sf.click.Page;
+import com.sun.identity.config.pojos.IdentityProvider;
+import com.sun.identity.config.pojos.ServiceProvider;
+import com.sun.identity.config.util.AjaxPage;
 
 /**
  * @author Les Hazlewood
  */
-public class RemoteIdentityProvider extends Page {
+public class RemoteIdentityProvider extends AjaxPage {
+
+    private final String SUCCESS_PATH = "config/serviceProvider/remoteIdentityProviderSuccess.htm";
+    public ServiceProvider serviceProvider;
+
+
+    public void onGet(){
+        serviceProvider = getConfigurator().getServiceProvider(toInt("serviceProviderId"));
+    }
+
+   public void onPost(){
+       IdentityProvider identityProvider = new IdentityProvider();
+
+       serviceProvider = getConfigurator().getServiceProvider(toInt("serviceProviderId"));
+
+
+       identityProvider.setMetadata(toBoolean("metadata"));
+       if (identityProvider.hasMetadata()){
+           identityProvider.setMetadataType(toString("metadataType"));
+           identityProvider.setMetadataUrl(toString("metadataUrl"));
+           //todo get file content multipart
+       }
+
+       identityProvider.setDisplayName(toString("displayName"));
+       identityProvider.setArtifactResolutionUrl(toString("artifactResolutionUrl"));
+       identityProvider.setAssertionSigningCertificate(toString("assertionSigningCertificate"));
+       identityProvider.setEntityId(toString("entityId"));
+       identityProvider.setLogoutUrl(toString("logoutUrl"));
+       identityProvider.setSsoUrl(toString("ssoUrl"));
+
+       getConfigurator().createIdentityProvider(serviceProvider, identityProvider);
+       setPath(SUCCESS_PATH);
+   }
+
+
 }

@@ -26,6 +26,8 @@
 .createpanel{
 	width:600px;
 }
+
+
 /* customized css for scrolling */
 .yui-dt-scrollable  {
   width:20em; /* SET OVERALL WIDTH HERE for ie (make sure columns add up to this total) */
@@ -39,7 +41,6 @@
   background:#696969; /*dark gray*/ /* ie needs a background color */
   color:#fff;
 }
-
 /* SET WIDTHS FOR EACH TH TO HELP ALIGN COLUMNS */
 /* IF ALL COLS CAN BE SAME WIDTH USE THIS: */
 .yui-dt-scrollable th, .yui-dt-scrollbody td {

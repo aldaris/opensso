@@ -6,7 +6,7 @@
     YAHOO.util.Event.onDOMReady(init);
 
     AjaxUtils.load('addStore', '$context/config/dlg/popupAuthenticationUserStore.htm');
-    YAHOO.sun.container.addStore = new YAHOO.widget.Panel("addStore", { width:"280px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true });
+    YAHOO.sun.container.addStore = new YAHOO.widget.Panel("addStore", { width:"280px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true});
     YAHOO.sun.container.addStore.render();
 
     var DOM = YAHOO.util.Dom;
@@ -26,7 +26,8 @@
         resultsList: "records",
         fields: ["realmName"]
     };
-    var realmsTable = new APP.util.SimpleTable("realmsTable", "$context/authc/realmList.htm", null, tableColumnDefs, responseSchema, true);
+
+    var realmsTable = new APP.util.SimpleTable("realmsTable", "$context/config/authc/realmList.htm", null, tableColumnDefs, responseSchema, true);
 
 
     function init() {

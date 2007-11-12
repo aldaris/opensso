@@ -41,13 +41,15 @@ APP.call = function call( url, methodName, params, successCallback, failureCallb
     AjaxUtils.call( callUrl, APP.onCallReturn, args );
 }
 
-APP.util.PaginatedTable = function(container, urlRequest, initialRequestValues, columnDefs, responseSchema, ddGroup) {
+
+APP.util.PaginatedTable = function(container, urlRequest, initialRequestValues, columnDefs, responseSchema, ddGroup, tableChanges) {
     this.container = container;
     this.urlRequest = urlRequest;
     this.initialRequestValues = initialRequestValues;
     this.columnDefs = columnDefs;
     this.responseSchema = responseSchema;
     this.ddGroup = ddGroup;
+    this.tableChanges = tableChanges;
     this.init();
 };
 
@@ -63,9 +65,14 @@ APP.util.PaginatedTable.prototype = {
     totalRecords: 0,
     rowsPerPage: 50,
     ddGroup: null,
+    paginator: null,
+    tableChanges: null,
 
 
     init: function() {
+    },
+
+    loadData: function() {
         var dataTableConfigs = {
             paginated: true,
             paginator: {
@@ -80,58 +87,94 @@ APP.util.PaginatedTable.prototype = {
         this.dataSource.responseSchema = this.responseSchema;
         this.dataSource.doBeforeCallback = this._parseData;
         this.dataTable = new YAHOO.widget.DataTable(this.container, this.columnDefs, this.dataSource, dataTableConfigs);
+
+        this.dataTable.subscribe("initEvent", this.initPaginator, this, true);
         this.dataTable.subscribe("refreshEvent", this.destroyDragDrops, this, true);
         this.dataTable.subscribe("refreshEvent", this.createDragDrops, this, true);
     },
 
     _parseData: function(pRequest, pRawResponse, pParsedResponse) {
-        // Get Paginator values
-        var rawResponse = pRawResponse.parseJSON();
-        var totalRecords = rawResponse.totalRecords;
-        var startIndex = 1;
-        var endIndex = (totalRecords < 50) ? totalRecords : 50;
-        
-        YAHOO.util.Dom.get("startIndex").innerHTML = startIndex;
-        YAHOO.util.Dom.get("endIndex").innerHTML = endIndex;
-        YAHOO.util.Dom.get("ofTotal").innerHTML = totalRecords;
-
         // Let the DataSource parse the rest of the response
         return pParsedResponse;
+    },
+
+    initPaginator: function() {
+        var dataTablePaginator = this.dataTable.get("paginator");
+        var startIndex = (dataTablePaginator.currentPage - 1) * 50 + 1;
+        var endIndex = (dataTablePaginator.currentPage) * 50;
+        endIndex = endIndex > dataTablePaginator.totalRecords ? dataTablePaginator.totalRecords : endIndex;
+
+        YAHOO.util.Dom.get(this.container + "_startIndex").innerHTML = startIndex;
+        YAHOO.util.Dom.get(this.container + "_endIndex").innerHTML = endIndex;
+        YAHOO.util.Dom.get(this.container + "_ofTotal").innerHTML = dataTablePaginator.totalRecords;        
+
+        if (this.paginator) {
+            this.paginator.paginatedTable = this;
+            this.paginator.init();
+        }
     },
 
     refreshPage: function() {
         var dataTable = this.dataTable;
         dataTable.refreshView();
+        var dataTablePaginator = this.dataTable.get("paginator");
+        var startIndex = (dataTablePaginator.currentPage - 1) * 50 + 1;
+        var endIndex = (dataTablePaginator.currentPage) * 50;
+        endIndex = endIndex > dataTablePaginator.totalRecords ? dataTablePaginator.totalRecords : endIndex;
+
+        YAHOO.util.Dom.get(this.container + "_startIndex").innerHTML = startIndex;
+        YAHOO.util.Dom.get(this.container + "_endIndex").innerHTML = endIndex;
+        YAHOO.util.Dom.get(this.container + "_ofTotal").innerHTML = dataTablePaginator.totalRecords;
     },
 
-    getPreviousPage: function( e ) {
+    getPreviousPage: function(e) {
         YAHOO.util.Event.stopEvent(e);
-        var dataTable = this.dataTable;
-        var paginator = dataTable.get("paginator");
+        var dataTablePaginator = this.dataTable.get("paginator");
         // Already at first page
-        if ( paginator.currentPage - 1 < 1 ) {
+        if (dataTablePaginator.currentPage - 1 < 1) {
             return;
         }
-        paginator.currentPage--;    // Move to previous page
+        dataTablePaginator.currentPage--;
+        // Move to previous page
         this.refreshPage();
+
+        if (this.paginator) {
+            this.paginator.moveToPrevPage();
+        }
     },
 
-    getNextPage: function( e ) {
+    getNextPage: function(e) {
         YAHOO.util.Event.stopEvent(e);
-        var dataTable = this.dataTable;
-        var paginator = dataTable.get("paginator");
+        var dataTablePaginator = this.dataTable.get("paginator");
         // Already at last page
-        if ( paginator.currentPage + 1 > paginator.totalPages ) {
+        if (dataTablePaginator.currentPage + 1 > dataTablePaginator.totalPages) {
             return;
         }
-        paginator.currentPage++;    // Move to next page
+        // Move to next page
+        dataTablePaginator.currentPage++;
         this.refreshPage();
+
+        if (this.paginator) {
+            this.paginator.moveToNextPage();
+        }
+    },
+
+    getPage: function(e) {
+        YAHOO.util.Event.stopEvent(e);
+        var pageNumber = parseInt(YAHOO.util.Event.getTarget(e).innerHTML);
+        var dataTablePaginator = this.dataTable.get("paginator");
+        dataTablePaginator.currentPage = pageNumber;
+        this.refreshPage();
+
+        if (this.paginator) {
+            this.paginator.moveToPage(dataTablePaginator.currentPage);
+        }        
     },
 
     createDragDrops: function() {
         var nextTrEl = this.dataTable.getTrEl(0);
         while (nextTrEl) {
-            new APP.util.CustomDDProxy(nextTrEl.id, this.ddGroup, {resizeFrame:true});
+            new APP.util.CustomDDProxy(nextTrEl.id, this.ddGroup, {resizeFrame:true}, this);
             nextTrEl = nextTrEl.nextSibling;
         }
     },
@@ -155,12 +198,62 @@ APP.util.PaginatedTable.prototype = {
 };
 
 
-APP.util.CustomDDProxy = function(id, sGroup, config) {
+APP.util.SimpleTable = function(container, urlRequest, initialRequestValues, columnDefs, responseSchema, enableSelection) {
+    this.container = container;
+    this.urlRequest = urlRequest;
+    this.initialRequestValues = initialRequestValues;
+    this.columnDefs = columnDefs;
+    this.responseSchema = responseSchema;
+    this.selectionEnabled = enableSelection;
+    this.init();
+};
+
+APP.util.SimpleTable.prototype = {
+
+    container: null,
+    urlRequest: null,
+    initialRequestValues: null,
+    columnDefs: null,
+    responseSchema: null,
+    selectionEnabled: false,
+    dataStore: null,
+    dataTable: null,
+
+    init: function() {
+        var dataTableConfigs = {
+            paginated: true,
+            paginator: {
+                rowsPerPage: 50,
+                pageLinks: -1
+            },
+            initialRequest: this.initialRequestValues,
+            scrollable: true
+        };
+        this.dataSource = new YAHOO.util.DataSource(this.urlRequest);
+        this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+        this.dataSource.responseSchema = this.responseSchema;
+        this.dataTable = new YAHOO.widget.DataTable(this.container, this.columnDefs, this.dataSource, dataTableConfigs);
+
+        if (this.selectionEnabled) {
+            this.dataTable.set("selectionMode", "single");
+            this.dataTable.subscribe("rowMouseoverEvent", this.dataTable.onEventHighlightRow);
+            this.dataTable.subscribe("rowMouseoutEvent", this.dataTable.onEventUnhighlightRow);
+            this.dataTable.subscribe("rowClickEvent", this.dataTable.onEventSelectRow);
+        }
+    }
+
+};
+
+
+APP.util.CustomDDProxy = function(id, sGroup, config, paginatedTableRef) {
     APP.util.CustomDDProxy.superclass.constructor.call(this, id, sGroup, config);
     this.isTarget = false;
+    this.paginatedTableRef = paginatedTableRef;
 };
 
 YAHOO.extend(APP.util.CustomDDProxy, YAHOO.util.DDProxy, {
+
+    paginatedTableRef: null,
 
     startDrag: function( x, y ) {
         var DOM = YAHOO.util.Dom;
@@ -204,6 +297,7 @@ YAHOO.extend(APP.util.CustomDDProxy, YAHOO.util.DDProxy, {
         var targetEl = DOM.get(id);
         var parentEl = targetEl.getElementsByTagName("tbody")[1];
         var firstRowEl = parentEl.getElementsByTagName("tr")[0];
+        var sourceElValue = sourceEl.childNodes[0].innerHTML + "." + sourceEl.childNodes[1].innerHTML;
 
         parentEl.insertBefore(sourceEl, firstRowEl);
         DOM.setStyle(targetEl, "opacity", 1);
@@ -211,10 +305,20 @@ YAHOO.extend(APP.util.CustomDDProxy, YAHOO.util.DDProxy, {
         if (this.groups["G1"]) {
             this.addToGroup("G2");
             this.removeFromGroup("G1");
+
+            if (this.paginatedTableRef.tableChanges.realmUsers[sourceElValue]) {
+                delete this.paginatedTableRef.tableChanges.realmUsers[sourceElValue];
+            }
+            this.paginatedTableRef.tableChanges.admins[sourceElValue] = true;
         }
         else {
             this.addToGroup("G1");
-            this.removeFromGroup("G2");            
+            this.removeFromGroup("G2");
+
+            if (this.paginatedTableRef.tableChanges.admins[sourceElValue]) {
+                delete this.paginatedTableRef.tableChanges.admins[sourceElValue];
+            }
+            this.paginatedTableRef.tableChanges.realmUsers[sourceElValue] = true;
         }
     },
 
@@ -237,52 +341,125 @@ YAHOO.extend(APP.util.CustomDDProxy, YAHOO.util.DDProxy, {
 });
 
 
-
-APP.util.SimpleTable = function( container, urlRequest, initialRequestValues, columnDefs, responseSchema, enableSelection ) {
+APP.util.Paginator = function(container, imagesDir) {
     this.container = container;
-    this.urlRequest = urlRequest;
-    this.initialRequestValues = initialRequestValues;
-    this.columnDefs = columnDefs;
-    this.responseSchema = responseSchema;
-    this.selectionEnabled = enableSelection;
-    this.init();
+    this.imagesDir = imagesDir;
 };
 
-APP.util.SimpleTable.prototype = {
+
+APP.util.Paginator.prototype = {
 
     container: null,
-    urlRequest: null,
-    initialRequestValues: null,
-    columnDefs: null,
-    responseSchema: null,
-    selectionEnabled: false,
-    dataStore: null,
-    dataTable: null,
+    paginatedTable: null,
+    imagesDir: null,
+    currentPage: 1,
+    visiblePages: 5,
+    minVisiblePage: 1,
+    totalPages: 0,
 
     init: function() {
-        var dataTableConfigs = {
-            paginated: true,
-            paginator: {
-                rowsPerPage: 50,
-                pageLinks: -1
-            },
-            initialRequest: this.initialRequestValues,
-            scrollable: true
-        };
-        this.dataSource = new YAHOO.util.DataSource(this.urlRequest);
-        this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
-        this.dataSource.responseSchema = this.responseSchema;
-        this.dataTable = new YAHOO.widget.DataTable(this.container, this.columnDefs, this.dataSource, dataTableConfigs);
+        var tablePaginator = this.paginatedTable.dataTable.get("paginator");
+        this.currentPage = 1;
+        this.totalPages = tablePaginator.totalPages;
+        this.visiblePages = (this.totalPages < 5) ? this.totalPages : 5;
+        this.minVisiblePage = 1;
+        this._paintPaginator();
+    },
 
-        if (this.selectionEnabled) {
-            this.dataTable.set("selectionMode","single");
-            this.dataTable.subscribe("rowMouseoverEvent", this.dataTable.onEventHighlightRow);
-	        this.dataTable.subscribe("rowMouseoutEvent", this.dataTable.onEventUnhighlightRow);
-	        this.dataTable.subscribe("rowClickEvent", this.dataTable.onEventSelectRow);
+    _paintPaginator: function() {
+        var DOM = YAHOO.util.Dom;
+        var paginatorDiv = DOM.get(this.container);
+
+        var node = DOM.get(this.container + "_prevLink");
+        if (node) {
+            node.parentNode.removeChild(node);
         }
+        for(var i = 1; i <= 5; i++) {
+            node = DOM.get(this.container + "_page_" + i + "_link");
+            if (node) {
+                node.parentNode.removeChild(node);
+            }
+        }
+        node = DOM.get(this.container + "_nextLink");
+        if (node) {
+            node.parentNode.removeChild(node);
+        }
+        
+        var prevLink = paginatorDiv.appendChild(document.createElement("span"));
+        var prevLinkImg = prevLink.appendChild(document.createElement("img"));
+        prevLink.id = this.container + "_prevLink";
+        prevLinkImg.setAttribute("class", "pointer");
+        prevLinkImg.setAttribute("src", this.imagesDir + "left.GIF");
+        prevLinkImg.setAttribute("alt", "#");
+        YAHOO.util.Event.addListener(prevLink, "click", this.paginatedTable.getPreviousPage, this.paginatedTable, true);
+        DOM.setStyle(prevLink, "visibility", "hidden");
+
+        for(var i = 1; i <= this.visiblePages; i++) {
+            var pageLink = paginatorDiv.appendChild(document.createElement("span"));
+            pageLink.id = this.container + "_page_" + i + "_link";
+            pageLink.setAttribute("class", "pointer");
+            pageLink.innerHTML = i;
+
+            DOM.setStyle(pageLink, "padding", "10px");
+            DOM.setStyle(pageLink, "color", i == 1 ? "#000000" : "#60a2e1");
+            DOM.setStyle(pageLink, "fontFamily", "Helvetica, sans-serif");
+            DOM.setStyle(pageLink, "fontSize", "12px");
+            DOM.setStyle(pageLink, "fontWeight", "bold");
+            
+            if (i < this.visiblePages) {
+                DOM.setStyle(pageLink, "borderRight", "1px #000000 solid");
+            }
+
+            YAHOO.util.Event.addListener(pageLink, "click", this.paginatedTable.getPage, this.paginatedTable, true);
+        }
+
+        var nextLink = paginatorDiv.appendChild(document.createElement("span"));
+        var nextLinkImg = nextLink.appendChild(document.createElement("img"));
+        nextLink.id = this.container + "_nextLink";
+        nextLinkImg.setAttribute("class", "pointer");
+        nextLinkImg.setAttribute("src", this.imagesDir + "right.GIF");
+        nextLinkImg.setAttribute("alt", "#");
+        YAHOO.util.Event.addListener(nextLink, "click", this.paginatedTable.getNextPage, this.paginatedTable, true);
+        if (this.totalPages <= this.visiblePages) {
+            DOM.setStyle(nextLink, "visibility", "hidden");
+        }
+    },
+
+    moveToPrevPage: function() {
+        this.currentPage--;
+        this.minVisiblePage = this.currentPage < this.minVisiblePage ? this.minVisiblePage - 1 : this.minVisiblePage;
+        this.refreshPaginator();
+    },
+
+    moveToNextPage: function() {
+        this.currentPage++;
+        this.minVisiblePage = this.currentPage - this.minVisiblePage >= this.visiblePages ? this.currentPage - this.visiblePages + 1 : this.minVisiblePage;
+        this.refreshPaginator();
+    },
+
+    moveToPage: function(page) {
+        this.currentPage = page;
+        this.refreshPaginator();
+    },
+
+    refreshPaginator: function() {
+        var DOM = YAHOO.util.Dom;
+        for(var i = 1; i <= this.visiblePages; i++) {
+            var pageLink = DOM.get(this.container + "_page_" + i + "_link");
+            var pageNumber = this.minVisiblePage + i - 1;
+            pageLink.innerHTML = pageNumber;
+            DOM.setStyle(pageLink, "color", (pageNumber == this.currentPage ? "#000000" : "#60a2e1"));
+        }
+
+        var prevLink = DOM.get(this.container + "_prevLink");
+        var nextLink = DOM.get(this.container + "_nextLink");
+        DOM.setStyle(prevLink, "visibility", (this.currentPage > 1 ? "" : "hidden"));
+        DOM.setStyle(nextLink, "visibility", ((this.totalPages > this.visiblePages && this.currentPage < this.totalPages) ? "" : "hidden"));
     }
 
+
 };
+
 
 
 

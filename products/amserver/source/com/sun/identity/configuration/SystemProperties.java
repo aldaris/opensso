@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.3 2007-10-17 23:00:32 veiming Exp $
+ * $Id: SystemProperties.java,v 1.4 2007-11-12 14:51:19 lhazlewood Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.configuration;

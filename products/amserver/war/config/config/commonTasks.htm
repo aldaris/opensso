@@ -43,11 +43,13 @@
                 AjaxUtils.load('container', '$context/config/existConf.htm');
                 break;
 			case 8:
-				AjaxUtils.load('container', '$context/config/serviceProvider/enable.htm');
-                break;         
-			case 9:
-				AjaxUtils.load('container', '$context/config/identityProvider/enable.htm');
+				AjaxUtils.load('container', '$context/config/serviceProvider/createServiceProvider.htm');
                 break;
+			case 9:
+				AjaxUtils.load('container', '$context/config/identityProvider/createIdentityProvider.htm');
+                break;
+            case 10:
+                AjaxUtils.load('container', '$context/config/agent/deploy.htm');
         }
     }
 </script>

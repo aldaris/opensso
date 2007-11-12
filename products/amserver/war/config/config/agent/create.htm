@@ -9,9 +9,6 @@
         $(name).style.display = (type == 1) ? "none" : "";
         $(name).style.left = element.offsetLeft + "px";
     }
-    function cancelPopUp( name ) {
-        $(name).style.display = "none";
-    }
 
     function cancel() {
         document.location = "$context/commonTasks.htm";
@@ -28,6 +25,77 @@
     function partGroup() {
         $("optionYes").style.display = $("yes").checked ? "" : "none";
     }
+
+    function show( elId ) {
+        $(elId).style.display = "";
+    }
+
+    function hide( elId ) {
+        $(elId).style.display = "none";
+    }
+
+    function showAddGroupDialog() {
+        $('addGroupDialog').style.display = "";
+    }
+
+    function showAddProfileDialog() {
+        $('addProfileDialog').style.display = "";
+    }
+
+    function handleAddGroupSubmit() {
+        alert("Submitted!");
+        YAHOO.sun.identity.config.agent.addGroupDialog.hide();
+
+    }
+    function handleAddGroupCancel() {
+        YAHOO.sun.identity.config.agent.addGroupDialog.hide();
+    }
+
+    function handleAddProfileSubmit() {
+        alert("Submitted!");
+        YAHOO.sun.identity.config.agent.addProfileDialog.hide();
+    }
+    function handleAddProfileCancel() {
+        YAHOO.sun.identity.config.agent.addProfileDialog.hide();
+    }
+
+    function pageInit() {
+        YAHOO.sun.identity.config.agent.addGroupDialog = new YAHOO.widget.Dialog("addGroupDialog",
+        {
+            width : "300px",
+            fixedcenter : true,
+            visible : false,
+            constraintoviewport : true,
+            buttons : [
+            { text:"Cancel", handler:handleAddGroupCancel },
+            { text:"Submit", handler:handleAddGroupSubmit, isDefault:true } ]
+        });
+
+        // Render the Dialog
+        YAHOO.sun.identity.config.agent.addGroupDialog.render();
+
+        YAHOO.util.Event.addListener("addGroupLink", "click", YAHOO.sun.identity.config.agent.addGroupDialog.show, YAHOO.sun.identity.config.agent.addGroupDialog, true);
+
+        YAHOO.sun.identity.config.agent.addProfileDialog = new YAHOO.widget.Dialog("addProfileDialog",
+        {
+            width : "300px",
+            fixedcenter : true,
+            visible : false,
+            constraintoviewport : true,
+            buttons : [
+            { text:"Cancel", handler:handleAddProfileCancel },
+            { text:"Submit", handler:handleAddProfileSubmit, isDefault:true } ]
+        });
+
+        // Render the Dialog
+        YAHOO.sun.identity.config.agent.addProfileDialog.render();
+
+        YAHOO.util.Event.addListener("addProfileLink", "click", YAHOO.sun.identity.config.agent.addProfileDialog.show, YAHOO.sun.identity.config.agent.addProfileDialog, true);
+
+
+    }
+    YAHOO.util.Event.onDOMReady(pageInit);
+
 </script>
 <style type="text/css">
     .links {
@@ -38,9 +106,13 @@
     .input {
         width: 200px;
     }
+
+    .actions {
+        padding: 10px 0 10px 100px;
+    }
 </style>
 
-<div id="mainPanel" align="center" style="z-index:0">
+<div id="mainPanel" align="center">
     <div id="createPanel" class="createpanel">
         <br/>
 
@@ -74,57 +146,63 @@
                 </select>
             <p>
             <p class="OrangeSmall">Will this agent be part of a group?</p>
-            <input type="radio" id="yes" name="partgroup" onclick="partGroup();" checked="checked"/>Yes&nbsp;&nbsp;
-            <input type="radio" id="No" name="partgroup" onclick="partGroup();"/>No<br><br>
+            <input type="radio" id="yes" name="partgroup" onclick="partGroup();"/>Yes&nbsp;&nbsp;
+            <input type="radio" id="no" name="partgroup" onclick="partGroup();" checked="checked"/>No<br><br>
 
-            <div id="optionYes">
-                <p class="OrangeSmall">Select the group or create a new one</p>
-                <select multiple size="3" style="width:200px"></select><br>
+            <div id="optionYes" style="display:none">
 
-                <div id="options1" class="yui-navset links">
-                    <div id="contentTabs1" class="yui-content" style="z-index:20;display:none;position:absolute;top:-111px;">
-                        <div id="tabOption2" style="width:220px">
-                            <p align="left"><b>Name Group:</b><br/>
-                                <input id="newNameGroup" name="newNameGroup"/></p>
-                            <p align="right" style="color:#000066">
-                                <a class="pointer" onclick="cancelPopUp('contentTabs1');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer">Save</a>
-                            </p>
-                            <p class="OrangeVerySmall">Validation will go here</p>
-                        </div>
+                #if ( $groups.empty )
+                <p class="OrangeSmall">Add a New Group</p>
+                #else
+                <p class="OrangeSmall">Select a group or create a new one</p>
+                <select style="width:200px">
+                    #foreach ( $group in $groups )
+                    <option value="$group">$group</option>
+                    #end
+                </select>
+                #end
+
+                <div class="actions">#if ( !$groups.empty )<a id="deleteGroupLink">Delete</a> | #{end}<a id="addGroupLink">Add New</a></div>
+
+                <div id="addGroupDialog" style="visibility:hidden">
+                    <div class="hd">Add new Group</div>
+                    <div class="bd">
+                        <p id="groupNameStatus" class="OrangeVerySmall" style="display:none">Validation msg here</p>
+
+                        <form method="POST" action="create.htm">
+                            <label for="groupName">Group Name:</label><input id="groupName" type="text" name="groupName"/>
+                        </form>
                     </div>
-                    <ul class="yui-nav" style="text-align:right">
-                        <li><a href="#tab1" onclick="mostrar(1,this,'contentTabs1')"><em>Delete</em></a></li>
-                        <li><a href="#tab2" onclick="mostrar(2,this,'contentTabs1')"><em>Add New</em></a></li>
-                    </ul>
                 </div>
+
                 <br/>
+
                 <p class="OrangeSmall">Select an agent profile or create a new one</p>
-                <select multiple size="3" style="width:200px;z-index:0"></select><br>
-                <!--<p class="blue links"><a class="pointer">Delete</a>&nbsp;|&nbsp;<a class="pointer">Add New</a></p>-->
-                <div id="options2" class="yui-navset links">
-                    <div id="contentTabs2" class="yui-content" style="z-index:20;display:none;position:absolute;top:-111px;">
-                        <div id="tabOption2" style="width:220px">
-                            <p align="left"><b>Name Agent profile :</b><br/>
-                                <input id="newName" name="newName"/></p>
-                            <p align="right" style="color:#000066">
-                                <a class="pointer" onclick="cancelPopUp('contentTabs2');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer">Save</a>
-                            </p>
-                            <p class="OrangeVerySmall">Validation will go here</p>
-                        </div>
+                <select style="width:200px;"></select>
+
+                <div class="actions"><a id="deleteProfileLink">Delete</a> | <a id="addProfileLink">Add New</a></div>
+
+                <div id="addProfileDialog" style="visibility:hidden">
+                    <div class="hd">Add new Profile</div>
+                    <div class="bd">
+                        <p id="profileNameStatus" class="OrangeVerySmall" style="display:none">Validation msg here</p>
+
+                        <form method="POST" action="create.htm">
+                            <label for="profileName">Profile Name:</label><input id="profileName" type="text" name="profileName"/>
+                        </form>
                     </div>
-                    <ul class="yui-nav" style="text-align:right">
-                        <li><a href="#tab1" onclick="mostrar(1,this,'contentTabs2')"><em>Delete</em></a></li>
-                        <li><a href="#tab2" onclick="mostrar(2,this,'contentTabs2')"><em>Add New</em></a></li>
-                    </ul>
                 </div>
+
             </div>
+
         </div>
+
         <div class="bodywhite">
             <div class="middletitle OrangeSmall">Password</div>
             <div class="OrangeVerySmall" id="allfields">* ALL Fields are Required</div>
             <br/>
-            <p><input class="input" type="text" id="pass1" name="pass1"></p>
-            <p><input class="input" type="text" id="pass2" name="pass2"></p>
+            <p>Password: <input class="input" type="password" id="pass1" name="pass1"></p>
+            <p>Confirm: &nbsp;&nbsp; <input class="input" type="password" id="pass2" name="pass2"></p>
 
             <p class="OrangeSmall">Agent Server URL:<br/>
                 <input class="input" type="text" id="url" name="url"></p>
@@ -139,5 +217,7 @@
             &nbsp;&nbsp;&nbsp;&nbsp;
             <button id="btnAdd" type="button" value="addStore" onClick="javascript:confAgent();" disabled="disabled">Configure Agent</button>
         </div>
+
     </div>
+
 </div>

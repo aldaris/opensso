@@ -1,58 +1,304 @@
 <link href="$context/assets/css/Specific/protectResource.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+
+    #usersTable {
+        height:25em;
+    }
+
+    #usersPaginator {
+        text-align:right;
+    }
+
+     /* customized css for scrolling */
+    .yui-dt-scrollable  {
+      width:20em; /* SET OVERALL WIDTH HERE for ie (make sure columns add up to this total) */
+      height:22em; /* SET HEIGHT HERE for ie */
+    }
+    .yui-dt-scrollbody {
+      height:22em; /* SET HEIGHT HERE for non-ie */
+      *height:auto; /* for ie */
+    }
+    .yui-dt-scrollable  thead {
+      background:#696969; /*dark gray*/ /* ie needs a background color */
+      color:#fff;
+    }
+    /* SET WIDTHS FOR EACH TH TO HELP ALIGN COLUMNS */
+    /* IF ALL COLS CAN BE SAME WIDTH USE THIS: */
+    .yui-dt-scrollable th, .yui-dt-scrollbody td {
+      width:10em;
+    }
+
+</style>
+
+
+
 <script language="javascript">
 /*remenber validate the system have a condition, this page have a two parts, but the page 181 is hidden in the div
 "haveCondition" and for dafault "donthavecondition"*/
-function closed(){
-	document.location = "$context/commonTasks.htm";
-}
-function next(){
-	AjaxUtils.load('container', '$context/config/resource/summary.htm');
-}
-function OnChangeSubject(){
-	document.getElementById("divUser").style.display = (document.getElementById("subject").options[document.getElementById("subject").selectedIndex].value=="1") ? "" : "none";
-}
-function changeChecks(type){
-	document.getElementById("option"+type).style.display = (document.getElementById("condition"+type).checked) ? "" : "none";
-}
+    YAHOO.namespace("sun.container");
+    YAHOO.util.Event.onDOMReady(init);
+    var DOM = YAHOO.util.Dom;
+    var pageURI = "$context$path";
 
-function changeChecksAddCondition(){
-	if(document.getElementById("conditionNew9").checked){
-		document.getElementById("option10").style.display = "";
-		document.getElementById("contentTabs2").style.top = "-692px";
-	}else{
-		document.getElementById("option10").style.display = "none";
-		document.getElementById("contentTabs2").style.top = "-472px";
-	}
-}
+    function closed(){
+        document.location = "$context/config/commonTasks.htm";
+    }
 
-/*Add New*/
-function mostrar(type,element,name){
-	document.getElementById(name).style.display = (type==1) ? "none" : "";
-	document.getElementById(name).style.left=element.offsetLeft+"px";
-}
-function cancelPopUp(name){
-	document.getElementById(name).style.display = "none";
-}
-function SavePopUp1(){
-	/*Put here the code*/
-	document.getElementById("contentTabs1").style.display = "none";
-}
-function SavePopUp2(){
-	/*Put here the code*/
-	document.getElementById("contentTabs2").style.display = "none";
-}
+    function next(){
+        AjaxUtils.load('container', '$context/config/resource/summary.htm');
+    }
+
+    function changeSubject(){
+        document.getElementById("divUser").style.display = (document.getElementById("subject").options[document.getElementById("subject").selectedIndex].value=="1") ? "" : "none";
+        evaluateNextEnabling();
+    }
+
+    function changeChecks(type){
+        document.getElementById("option"+type).style.display = (document.getElementById("condition"+type).checked) ? "" : "none";
+    }
+
+    function changeChecksAddCondition(){
+        if(document.getElementById("conditionNew9").checked){
+            document.getElementById("option10").style.display = "";
+            document.getElementById("contentTabs2").style.top = "-692px";
+        }else{
+            document.getElementById("option10").style.display = "none";
+            document.getElementById("contentTabs2").style.top = "-472px";
+        }
+    }
+
+    /*Add New*/
+    function show(type,element,name){
+        document.getElementById(name).style.display = (type==1) ? "none" : "";
+        document.getElementById(name).style.left=element.offsetLeft+"px";
+    }
+
+    function cancelPopUp(name){
+        document.getElementById(name).style.display = "none";
+    }
+
+    function resetAfterAddUrlPattern(field) {
+        document.getElementById("contentTabs1").style.display = "none";
+        field.value = "";
+    }
+
+    function resetAfterAddCondition() {
+        var field = DOM.get("name");
+        field.value = "";
+        field = DOM.get("fromIP1");
+        field.value = "";
+        field = DOM.get("fromIP2");
+        field.value = "";
+        field = DOM.get("fromIP3");
+        field.value = "";
+        field = DOM.get("fromIP4");
+        field.value = "";
+        field = DOM.get("toIP1");
+        field.value = "";
+        field = DOM.get("toIP2");
+        field.value = "";
+        field = DOM.get("toIP3");
+        field.value = "";
+        field = DOM.get("toIP4");
+        field.value = "";
+        field = DOM.get("dnsName");
+        field.value = "";
+        var parameterTypes = document.getElementsByName("parameterType");
+        for(var i = 0; i < parameterTypes.length; i++) {
+            parameterTypes[i].checked = false;
+        }
+    }
+
+    function init() {
+        DOM.get("nextButton").disabled = true;
+        loadUrlPatterns();
+        loadExistentConditions();
+    }
+
+    function loadUrlPatterns() {
+        AjaxUtils.call("$context/config/resource/urlPatterns.htm", paintUrlPatternCombo);
+    }
+
+    function loadExistentConditions() {
+        AjaxUtils.call("$context/config/resource/existentConditions.htm", paintExistentConditionsCombo);
+    }
+
+    function paintUrlPatternCombo(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        var combo = DOM.get("urlPattern");
+        combo.options.length = 0;
+        for (var i = 0; i < response.records.length; i++) {
+            var option = new Option(response.records[i].urlPattern, response.records[i].id);
+            combo.options.add(option, combo.options.length);
+        }
+    }
+
+    function paintExistentConditionsCombo(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        var combo = DOM.get("existentConditions");
+        combo.options.length = 0;
+        for (var i = 0; i < response.records.length; i++) {
+            var option = new Option(response.records[i].name, response.records[i].id);
+            combo.options.add(option, combo.options.length);
+        }
+    }
+
+    function evaluateNextEnabling() {
+        var patterns = DOM.get("urlPattern");
+        var conditions = DOM.get("existentConditions");
+        var subject = DOM.get("subject");
+        DOM.get("nextButton").disabled = !(patterns.options.length > 0 && subject.selectedIndex > 0 && conditions.options.length > 0);
+    }
+
+    function addUrlPattern() {
+        var field = DOM.get("newUrlPattern");
+        var callUrl = pageURI + "?actionLink=addUrlPattern&newUrlPattern=" + field.value;
+        AjaxUtils.call(callUrl, loadUrlPatterns);
+        resetAfterAddUrlPattern(field);
+        document.getElementById("contentTabs1").style.display = "none";
+        evaluateNextEnabling();
+    }
+
+    function addCondition() {
+        var callUrl = pageURI + "?actionLink=addCondition&conditionType=" + prepareConditionValues(document.getElementsByName("conditionType"));
+        AjaxUtils.call(callUrl, loadExistentConditions);
+        resetAfterAddCondition();
+        document.getElementById("contentTabs2").style.display = "none";
+        evaluateNextEnabling();
+    }
+
+    function removeUrlPattern() {
+        var callUrl = pageURI + "?actionLink=removeUrlPattern&urlPattern=" + prepareDropDownValues(DOM.get("urlPattern"));
+        AjaxUtils.call(callUrl, loadUrlPatterns);
+        evaluateNextEnabling();
+    }
+
+    function removeCondition() {
+        var callUrl = pageURI + "?actionLink=removeCondition&condition=" + prepareDropDownValues(DOM.get("existentConditions"));
+        AjaxUtils.call(callUrl, loadExistentConditions);
+        evaluateNextEnabling();
+    }
+
+    function prepareDropDownValues(dropDown) {
+        var result = "";
+        for(var i = 0; i < dropDown.options.length; i++) {
+            if (dropDown.options[i].selected) {
+                result += (result == "" ? "" : ",") + dropDown.options[i].value;
+            }
+        }
+        return result;
+    }
+
+    function prepareConditionValues(checkboxes) {
+        var result = "";
+        var extraData = "";
+        for(var i = 0; i < checkboxes.length; i++) {
+            var checkbox = checkboxes[i];
+            if (checkbox.checked) {
+                result += (result == "" ? "" : ",") + checkbox.value;
+                if (checkbox.value == "ipAddress") {
+                    extraData += getIPAddressData();
+                }
+            }
+        }
+        return result + extraData;
+    }
+
+    function getIPAddressData() {
+        var result = "";
+        var field = DOM.get("name");
+        if (field.value.trim != "") {
+            result += "&name=" + field.value;
+        }
+        field = DOM.get("fromIP1");
+        if (field.value.trim != "") {
+            result += "&fromIP1=" + field.value;
+        }
+        field = DOM.get("fromIP2");
+        if (field.value.trim != "") {
+            result += "&fromIP2=" + field.value;
+        }
+        field = DOM.get("fromIP3");
+        if (field.value.trim != "") {
+            result += "&fromIP3=" + field.value;
+        }
+        field = DOM.get("fromIP4");
+        if (field.value.trim != "") {
+            result += "&fromIP4=" + field.value;
+        }
+        field = DOM.get("toIP1");
+        if (field.value.trim != "") {
+            result += "&toIP1=" + field.value;
+        }
+        field = DOM.get("toIP2");
+        if (field.value.trim != "") {
+            result += "&toIP2=" + field.value;
+        }
+        field = DOM.get("toIP3");
+        if (field.value.trim != "") {
+            result += "&toIP3=" + field.value;
+        }
+        field = DOM.get("toIP4");
+        if (field.value.trim != "") {
+            result += "&toIP4=" + field.value;
+        }
+        field = DOM.get("dnsName");
+        if (field.value.trim != "") {
+            result += "&dnsName=" + field.value;
+        }
+        return result + getParameterType(document.getElementsByName("parameterType"));
+    }
+
+    function getParameterType(parameterTypes) {
+        var result = "&";
+        for(var i = 0; i < parameterTypes.length; i++) {
+            var parameterType = parameterTypes[i];
+            if (parameterType.checked) {
+                result += "parameterType=" + parameterType.value;
+            }
+        }
+        return result;
+    }
+
+
+    var tableColumnDefs = [
+        {key:"firstName", label:"First Name", sortable:true},
+        {key:"lastName", label:"Last Name", sortable:true}
+    ];
+    var responseSchema = {
+        resultsList: "records",
+        fields: ["firstName", "lastName"]
+    };
+    // Users Table
+    var usersTable = new APP.util.PaginatedTable("usersTable", "$context/config/realm/users.htm?", "realmName=&filter=*", tableColumnDefs, responseSchema, null, null);
+    usersTable.paginator = new APP.util.Paginator("usersPaginator", "$context/assets/images/");
+    usersTable.loadData();
+
+
+    function reloadRealmUsersTable() {
+        var searchValue = YAHOO.util.Dom.get("search").value;
+        var realmName = "realmName=";
+        var filter = "filter=" + searchValue;
+        var usersTable = new APP.util.PaginatedTable("usersTable", "$context/config/realm/users.htm?", realmName + "&" + filter, tableColumnDefs, responseSchema, null);
+        usersTable.paginator = new APP.util.Paginator("usersPaginator", "$context/assets/images/");
+        usersTable.loadData();
+    }
+
+
 </script>
+
 <div id="mainPanel" align="center">
     <div id="createPanel" class="createpanel">
         <br />
-        <div class="bodywhite">
+            <div class="bodywhite">
             <h2>Protect a Resource</h2>
             <small>Si quaedam nimis antique, si peraque dure dicere credit eos, ignave multa fatetur, et sapit et mecum facit et Iova</small>
         </div>
         <br />
         <div class="bodywhite">
             <p class="OrangeSmall">Select or create a URL pattern:</p>
-            <select multiple size="3"></select><br>
+            <select multiple size="3" name="urlPattern" id="urlPattern"></select><br>
             <!--<p class="blue links"><a class="pointer">Delete</a>&nbsp;|&nbsp;<a class="pointer">Add New</a></p-->
 			<div id="options1" class="yui-navset links">
 				<div id="contentTabs1" class="yui-content" style="z-index:20;display:none;position:absolute;top:-86px;">
@@ -60,20 +306,20 @@ function SavePopUp2(){
 					</div>
 					<div id="tabOption2" style="width:220px">
 						<p align="left"><b>New URL Pattern:</b><br />
-						<input id="newNameGroup" name="newNameGroup" style="width:200px"/></p>
-						<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs1');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="SavePopUp1();">Save</a></p>
+						<input id="newUrlPattern" name="newUrlPattern" style="width:200px"/></p>
+						<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs1');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="addUrlPattern();">Save</a></p>
 					</div>
 				</div>
 				<ul class="yui-nav" style="text-align:right">
-					<li><a href="#tab1" onclick="mostrar(1,this,'contentTabs1')"><em>Delete</em></a></li>
-					<li><a href="#tab2" onclick="mostrar(2,this,'contentTabs1')"><em>Add New</em></a></li>
+					<li><a href="javascript:void(0);" onclick="removeUrlPattern();"><em>Delete</em></a></li>
+					<li><a href="#tab2" onclick="show(2,this,'contentTabs1')"><em>Add New</em></a></li>
 				</ul>
 			</div>
         </div>
         <div class="bodywhite">
             <font class="OrangeSmall">Add a subject</font><br />
             <font class="OrangeSmall">Select a subject type:</font><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
-            <select id="subject" onchange="OnChangeSubject()">
+            <select id="subject" onchange="changeSubject()">
                 <option value="0">Select ...</option>
                 <option value="1">Users</option>
                 <option value="2">Group</option>
@@ -84,96 +330,26 @@ function SavePopUp2(){
                     <ul class="yui-nav">
                         <li class="selected"><a href="#tab1"><em>Select user(s)</em></a></li>
                     </ul>
-                    <div class="yui-content">
+                    <div class="yui-content" style="height:465px">
                         <div>
-                            <div class="bodywhite bodySpace2">
-                            <input type="text" id="search"/><button type="button">search</button>
+                            <div class="bodywhite">
+                            <input type="text" id="search" value="*"/><button type="button" onclick="reloadRealmUsersTable();">search</button>
                             </div>
-                            <div class="bodywhite bodySpace2">
-                                <font class="commonblack">Displaying: 1-N of N realm users</font>
-                            </div>
-                            <!--This prosses need be Automatically, that is a example, with the css it need,
-                            look the example of yui for a generate tab with javascript-->
-                            <div id="contentSearch">
-                                <div id="search1" class="yui-navset">
-                                    <div class="yui-content large">
-                                        <div>
-                                            <div class="colunmsheader">
-                                                <div class="insideColunm">&nbsp;First Name</div>
-                                                Last Name
-                                            </div>
-                                            <div class="colunms">
-                                                <input type="checkbox"/>&nbsp;First Name<br />
-                                                <input type="checkbox"/>&nbsp;First Name
-                                            </div>
-                                            <div class="colunms">Last Name<br />Last Name</div>
-                                        </div>
-                                        <div>
-                                            <div class="colunmsheader">
-                                                <div class="insideColunm">&nbsp;First Name</div>
-                                                Last Name
-                                            </div>
-                                            <div class="colunms">sds</div>
-                                            <div class="colunms">sds</div><br />
-                                        </div>
-                                        <div>
-                                            <div class="colunmsheader">
-                                                <div class="insideColunm">&nbsp;First Name</div>
-                                                Last Name
-                                            </div>
-                                            <div class="colunms">sds</div>
-                                            <div class="colunms">sds</div>
-                                        </div>
-                                    </div>
-                                    <ul class="yui-nav" style="text-align:right">
-                                        <li class="selected"><a href="#tab1"><em>1</em></a></li>
-                                        <li><a href="#tab2"><em>2</em></a></li>
-                                        <li><a href="#tab3"><em>3</em></a></li>
-                                    </ul>
-                                </div>
+                            <div class="bodywhite">
+                                Displaying <span id="usersTable_startIndex"></span> - <span id="usersTable_endIndex"></span> of <span id="usersTable_ofTotal"></span> realm users
+                             </div>
+                            <div id="realmUsersContentSearch" >
+                                <div id="usersTable"></div>
+                                <div id="usersPaginator"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="bodywhite" id="donthaveCondition">
-            <p class="OrangeSmall">Select the conditions:</p>
-            <input type="checkbox" id="condition1" />&nbsp;Active Session Time<br />
-            <input type="checkbox" id="condition2"/>&nbsp;Authentication by Module Chain<br />
-            <input type="checkbox" id="condition3"/>&nbsp;Authentication by type<br />
-            <input type="checkbox" id="condition4"/>&nbsp;Minimum Authentication Level<br />
-            <input type="checkbox" id="condition5"/>&nbsp;Maximum Authentication Level<br />
-            <input type="checkbox" id="condition6"/>&nbsp;Authentication to a Realm<br />
-            <input type="checkbox" id="condition7"/>&nbsp;Current Session Properties<br />
-            <input type="checkbox" id="condition8"/>&nbsp;Identity Membership<br />
-            <input type="checkbox" id="condition9" onclick="changeChecks(9);"/>&nbsp;IP Address<br />
-            <div id="option9" style="display:none">
-                <p class="OrangeSmall">Enter the IP Address Information:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
-				<p>Name:</font><input  type="text"/></p>
-				<p>IP Address from&nbsp;
-				<input type="text" style="width:30px;"/>
-				<input type="text" style="width:30px;"/>
-				<input type="text" style="width:30px;"/>
-				<input type="text" style="width:30px;"/></p>
-				<p>IP Address to&nbsp;
-				<input type="text" style="width:30px;"/>&nbsp;
-				<input type="text" style="width:30px;"/>&nbsp;
-				<input type="text" style="width:30px;"/>
-				<input type="text" style="width:30px;"/></p>
-				<p>DNS Name&nbsp;
-				<input  type="text"/></p>
-				<p class="OrangeSmall">Parameter Type:</p>
-				<input type="radio" id="type1" name="type"/>&nbsp;Static&nbsp;&nbsp;
-				<input type="radio" id="type1" name="type"/>&nbsp;Dinamic<br/>
-            </div>
-            <input type="checkbox" id="condition10"/>&nbsp;DNS Name<br />
-            <input type="checkbox" id="condition11"/>&nbsp;LDAP Filter Condition<br />
-            <input type="checkbox" id="condition12"/>&nbsp;Time (day, date, time, and timezone)<br />
-        </div>
         <div class="bodywhite" id="haveCondition" >
 			<p class="OrangeSmall">Select the conditions:</p>
-                <select multiple size="3" style="width:200px"></select><br>
+                <select multiple id="existentConditions" name="existentConditions" size="3" style="width:200px"></select><br>
                 <!--<p class="blue links"><a class="pointer">Delete</a>&nbsp;|&nbsp;<a class="pointer">Add New</a></p>-->
 				<div id="options2" class="yui-navset links">
 					<div id="contentTabs2" class="yui-content" style="z-index:20;display:none;position:absolute;top:-472px">
@@ -181,49 +357,49 @@ function SavePopUp2(){
 						</div>
 						<div id="tabOption2" style="width:300px" align="left">
 							<p class="OrangeSmall">Select the type of condition(s):</p>
-							<p><input type="checkbox" id="conditionNew1" />&nbsp;Active Session Time</p>
-							<p><input type="checkbox" id="conditionNew2"/>&nbsp;Authentication by Module Chain</p>
-							<p><input type="checkbox" id="conditionNew3"/>&nbsp;Authentication by type</p>
-							<p><input type="checkbox" id="conditionNew4"/>&nbsp;Minimum Authentication Level</p>
-							<p><input type="checkbox" id="conditionNew5"/>&nbsp;Maximum Authentication Level</p>
-							<p><input type="checkbox" id="conditionNew6"/>&nbsp;Authentication to a Realm</p>
-							<p><input type="checkbox" id="conditionNew7"/>&nbsp;Current Session Properties</p>
-							<p><input type="checkbox" id="conditionNew8"/>&nbsp;Identity Membership</p>
-							<p><input type="checkbox" id="conditionNew9" onclick="changeChecksAddCondition();"/>&nbsp;IP Address</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew1" value="activeSessionTime"/>&nbsp;Active Session Time</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew2" value="authByModuleChain"/>&nbsp;Authentication by Module Chain</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew3" value="authByType"/>&nbsp;Authentication by type</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew4" value="minAuthLevel"/>&nbsp;Minimum Authentication Level</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew5" value="maxAuthLEvel"/>&nbsp;Maximum Authentication Level</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew6" value="authToRealm"/>&nbsp;Authentication to a Realm</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew7" value="currentSessionProperties"/>&nbsp;Current Session Properties</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew8" value="identityMembership"/>&nbsp;Identity Membership</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew9" value="ipAddress" onclick="changeChecksAddCondition();"/>&nbsp;IP Address</p>
 							<div id="option10" style="display:none">
 								<p class="OrangeSmall">Enter the IP Address Information:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
-								<p>Name:</font><input  type="text"/></p>
+								<p>Name:</font><input name="name" id="name" type="text"/></p>
 								<p>IP Address from&nbsp;
-								<input type="text" style="width:30px;"/>
-								<input type="text" style="width:30px;"/>
-								<input type="text" style="width:30px;"/>
-								<input type="text" style="width:30px;"/></p>
+								<input type="text" name="fromIP1" id="fromIP1" style="width:30px;"/>
+								<input type="text" name="fromIP2" id="fromIP2" style="width:30px;"/>
+								<input type="text" name="fromIP3" id="fromIP3" style="width:30px;"/>
+								<input type="text" name="fromIP4" id="fromIP4" style="width:30px;"/></p>
 								<p>IP Address to&nbsp;
-								<input type="text" style="width:30px;"/>&nbsp;
-								<input type="text" style="width:30px;"/>&nbsp;
-								<input type="text" style="width:30px;"/>
-								<input type="text" style="width:30px;"/></p>
+								<input type="text" name="toIP1" id="toIP1" style="width:30px;"/>&nbsp;
+								<input type="text" name="toIP2" id="toIP2" style="width:30px;"/>&nbsp;
+								<input type="text" name="toIP3" id="toIP3" style="width:30px;"/>
+								<input type="text" name="toIP4" id="toIP4" style="width:30px;"/></p>
 								<p>DNS Name&nbsp;
-								<input  type="text"/></p>
+								<input  type="text" name="dnsName" id="dnsName"/></p>
 								<p class="OrangeSmall">Parameter Type:</p>
-								<input type="radio" id="type1" name="type"/>&nbsp;Static&nbsp;&nbsp;
-								<input type="radio" id="type1" name="type"/>&nbsp;Dinamic<br/>
+								<input type="radio" id="staticType" name="paramterType" value="static"/>&nbsp;Static&nbsp;&nbsp;
+								<input type="radio" id="dynamicType" name="parameterType" value="dynamic"/>&nbsp;Dinamic<br/>
 							</div>
-							<p><input type="checkbox" id="conditionNew10"/>&nbsp;DNS Name</p>
-							<p><input type="checkbox" id="conditionNew11"/>&nbsp;LDAP Filter Condition</p>
-							<p><input type="checkbox" id="conditionNew12"/>&nbsp;Time (day, date, time, and timezone)</p>
-							<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs2');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="SavePopUp2();">Save</a></p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew10" value="dnsName"/>&nbsp;DNS Name</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew11" value="ldapFilter"/>&nbsp;LDAP Filter Condition</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew12" value="time"/>&nbsp;Time (day, date, time, and timezone)</p>
+							<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs2');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="addCondition();">Save</a></p>
 						</div>
 					</div>
 					<ul class="yui-nav" style="text-align:right">
-						<li><a href="#tab1" onclick="mostrar(1,this,'contentTabs2')"><em>Delete</em></a></li>
-						<li><a href="#tab2" onclick="mostrar(2,this,'contentTabs2')"><em>Add New</em></a></li>
+						<li><a href="javascript:void(0);" onclick="removeCondition(1,this,'contentTabs2');"><em>Delete</em></a></li>
+						<li><a href="#tab2" onclick="show(2,this,'contentTabs2')"><em>Add New</em></a></li>
 					</ul>
 				</div>
             </div>
         <div class="subbody">
-            <button type="button" value="close" onClick="javascript:closed();">Close</button>&nbsp;&nbsp;&nbsp;&nbsp;
-            <button type="button" value="next" onClick="javascript:next();">Next</button>
+            <button type="button" name="closeButton" id="closeButton" value="close" onClick="javascript:closed();">Close</button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" name="nextButton" id="nextButton" value="next" onClick="javascript:next();">Next</button>
         </div>
     </div>
 </div>

@@ -1,60 +1,105 @@
 <script type="text/javascript">
 YAHOO.namespace("sun.container");
+var DOM = YAHOO.util.Dom;
 
-function init() {
-    AjaxUtils.load( 'createNew', '$context/config/dlg/popupCreatingProvider.htm');
-    YAHOO.sun.container.createNew = new YAHOO.widget.Panel("createNew", { width:"320px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true } );
-    YAHOO.sun.container.createNew.render();
+function createIdentityProvider(){
+    var postData = AjaxUtils.serializeForm("identityProviderForm");
+    AjaxUtils.doPost("container", "$context$path", postData);
 
 }
-YAHOO.util.Event.onDOMReady( init );
+function exit(){
+	window.location = "$context/config/commonTasks.htm";
+}
 
-function configureclick(element, value){
-	if (document.getElementById("serviceNo").checked){
-	 	document.getElementById('btnCreate').disabled=true;
-		document.getElementById('optionYes').style.display="none"
-	}
-	else{
-		document.getElementById('btnCreate').disabled=false;
-		document.getElementById('optionYes').style.display=""
-	}
+
+function activateMetadataFileSection(activate){
+    activateSection(activate, "metadataFileSection");
 }
-function createProvider(){
-	YAHOO.sun.container.createNew.show();
-	setTimeout("YAHOO.sun.container.createNew.hide()",1250);
-	setTimeout(" AjaxUtils.load('container', '$context/config/dlg/popupRemoteIdenCreated.htm');",1250);
+
+function activateMetadataSection(activate){
+    activateSection(activate, "metadataSection");
 }
-function Exit(){
-	document.location = "$context/commonTasks.htm";
+
+
+function enableFileMetadata(){
+    DOM.get('metadataFile').disabled='';
+    DOM.get('metadataUrl').disabled='disabled';
+}
+
+function enableUrlMetadata(){
+    DOM.get('metadataFile').disabled='disabled';
+    DOM.get('metadataUrl').disabled='';
+}
+
+function enableIdentityProviderFileMetadata(){
+    DOM.get('identityProviderMetadataFile').disabled='';
+    DOM.get('identityProviderMetadataUrl').disabled='disabled';
+}
+
+function activateSection(activate, elementId){
+    var section = DOM.get(elementId);
+    if (activate)
+		section.style.display="";
+	else
+		section.style.display="none";
 }
 </script>
+<form name="identityProviderForm" id="identityProviderForm">
 <div id="mainPanel" align="center">
 	<div id="createPanel" class="createpanel">
 		<br />
 		<div class="bodywhite" align="left">
 			<p class="OrangeSmall">Do you want to configure a remote identity provider now?</p>
-			<input type="radio" name="service" id="serviceYes" value="Yes" onclick="configureclick();" checked="checked"/>Yes
-			<input type="radio" name="service" id="serviceNo" value="No" onclick="configureclick();" />No
-			<div id="optionYes">
-				<br />
-				<p class="OrangeSmall">Entity ID:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
-				<input type="text" id="entiry"/></p>
-				<p class="OrangeSmall">Display name (optional)<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
-				<input type="text" id="name"/></p>
-				<p class="OrangeSmall">Single signon service URL:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
-				<input type="text" id="singon"/></p>
-				<p class="OrangeSmall">Single logout service URL(Optional):<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
-				<input type="text" id="name"/></p>
-				<p class="OrangeSmall">Artifact resolution service(Optional):<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
-				<input type="text" id="Artifact"/></p>
-				<p class="OrangeSmall">Assertion signing certificate:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
-				<textarea id="certificate"></textarea></p>
-			</div>
-		</div>
+			<input type="radio" name="service" value="true" onclick="activateMetadataSection(true);"/>Yes
+			<input type="radio" name="service" value="false" onclick="activateMetadataSection(false);" />No
+
+
+            <div id="metadataSection" style="display:none">
+                #if($serviceProvider.hasMetadata())
+                <p class="OrangeSmall">Do you have a <span id="federalProtocolNameSpan">$serviceProvider.federalProtocol.name</span> metadata file for this hosted service?</p>
+                <input type="radio" name="metadata" value="true" onclick="activateMetadataFileSection(true);"/>Yes&nbsp;&nbsp;
+                <input type="radio" name="metadata" value="false" onclick="activateMetadataFileSection(false);"/>No
+                <div id="metadataFileSection" style="display:none">
+                    <p class="OrangeSmall">Is the metadata available in a file or at a URL?</p>
+                    <p><input type="radio" name="metadataType" value="file" onclick="enableFileMetadata()"/>&nbsp;File&nbsp;&nbsp;<input type="file" value="Browse" name="metadataFile" id="metadataFile" disabled="disabled"/></p>
+                    <p><input type="radio" name="metadataType" value="url" onclick="enableUrlMetadata()"/>&nbsp;URL&nbsp;<input type="text" id="metadataUrl" name="metadataUrl" disabled="disabled"/></p>
+                </div>
+                #end
+                
+                #if($serviceProvider.hasIdentityProviderMetadata() && !$serviceProvider.hasMetadata())
+                <div id="identityProviderExtraInfo">
+                    <br />
+                    <p class="OrangeSmall">Display name (optional)<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                    <input type="text" name="displayName"/></p>
+                </div>
+                #end
+
+                #if(!$serviceProvider.hasIdentityProviderMetadata() && !$serviceProvider.hasMetadata())
+                <div id="identityProviderExtraInfo">
+                    <br />
+                    <p class="OrangeSmall">Entity ID:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                    <input type="text" name="entityId"/></p>
+                    <p class="OrangeSmall">Display name (optional)<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                    <input type="text" name="displayName"/></p>
+                    <p class="OrangeSmall">Single signon service URL:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                    <input type="text" name="ssoUrl"/></p>
+                    <p class="OrangeSmall">Single logout service URL(Optional):<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                    <input type="text" name="logoutUrl"/></p>
+                    <p class="OrangeSmall">Artifact resolution service(Optional):<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                    <input type="text" name="artifactResolutionUrl"/></p>
+                    <p class="OrangeSmall">Assertion signing certificate:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                    <textarea id="assertionSigningCertificate"></textarea></p>
+                </div>
+                #end
+            </div>
+
+        </div>
 		<div class="subbody">
-			<button id="btnExit" type="button" value="Exit" onclick="Exit();">Exit</button>
-			<button id="btnCreate" type="button" value="CREATE PROVIDER" onclick="createProvider();">CREATE PROVIDER</button>
+			<button id="btnExit" type="button" value="Exit" onclick="exit();">Exit</button>
+			<button id="btnCreate" type="button" value="CREATE PROVIDER" onclick="createIdentityProvider();">CREATE PROVIDER</button>
 		</div>
 	</div>
 </div>
-<div id="createNew"></div>
+</form>
+<!--
+<div id="createNew"></div>-->

@@ -1,33 +1,493 @@
+<style type="text/css">
+
+    /* customized css for scrolling */
+    .yui-dt-scrollable  {
+      width:20em; /* SET OVERALL WIDTH HERE for ie (make sure columns add up to this total) */
+      height:22em; /* SET HEIGHT HERE for ie */
+    }
+    .yui-dt-scrollbody {
+      height:22em; /* SET HEIGHT HERE for non-ie */
+      *height:auto; /* for ie */
+    }
+    .yui-dt-scrollable  thead {
+      background:#696969; /*dark gray*/ /* ie needs a background color */
+      color:#fff;
+    }
+    /* SET WIDTHS FOR EACH TH TO HELP ALIGN COLUMNS */
+    /* IF ALL COLS CAN BE SAME WIDTH USE THIS: */
+    .yui-dt-scrollable th, .yui-dt-scrollbody td {
+      width:10em;
+    }
+
+    #realmUsersTable {
+        height:25em;
+    }
+
+    #realmUsersPaginator {
+        text-align:right;
+    }
+
+    #adminsTable {
+        height:25em;
+    }
+
+    #adminsTablePaginator {
+        text-align:right;
+    }
+    
+</style>
+
+
 <script type="text/javascript">
-/*Windows pop up Upgrade options*/
-YAHOO.namespace("sun.container");
 
-function init() {
-    AjaxUtils.load( 'confirmation', '$context/config/dlg/popuprealmhasbeen.htm');
-    YAHOO.sun.container.confirmation = new YAHOO.widget.Panel("confirmation", { width:"320px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true } );
-    YAHOO.sun.container.confirmation.render();
+    YAHOO.namespace("sun.container");
+    YAHOO.util.Event.onDOMReady(init);
 
-	YAHOO.util.Event.addListener("btnAdd", "click", YAHOO.sun.container.confirmation.show, YAHOO.sun.container.confirmation, true);
-}
+    var DOM = YAHOO.util.Dom;
+    var pageURI = "$context$path";
 
-YAHOO.util.Event.onDOMReady( init );
+    var validRealmName = false;
+
+    var constrainPolicies = false;
+    var validHostName = false;
+
+    var configureUserStore = false;
+    var validUserStoreStoreName = false;
+    var validUserStoreHostName = false;
+    var validUserStoreHostPort = true;
+    var validUserStoreLogin = false;
+    var validUserStorePassword = true;
+    var validUserStoreBaseDN = false;
+
+    var configureAuthStore = false;            
+    var validAuthStoreStoreName = false;
+    var validAuthStoreHostName = false;
+    var validAuthStoreHostPort = true;
+    var validAuthStoreLogin = false;
+    var validAuthStorePassword = true;
+    var validAuthStoreBaseDN = false;
+
+    var assignAdmin = false;
+            
+    
+    function init() {
+        AjaxUtils.load( 'confirmation', '$context/config/dlg/popuprealmhasbeen.htm');
+        YAHOO.sun.container.confirmation = new YAHOO.widget.Panel("confirmation", { width:"320px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true } );
+        YAHOO.sun.container.confirmation.render();
+
+        YAHOO.util.Event.addListener("btnAdd", "click", YAHOO.sun.container.confirmation.show, YAHOO.sun.container.confirmation, true);
+
+        loadRoleComboInfo();
+        adjustAddStoreButton();
+    }
+
+    function showoptions(element, option){
+        if (element.checked)
+            document.getElementById(option).style.display = "";
+    }
+
+    function hideoptions(element, option){
+        if (element.checked)
+            document.getElementById(option).style.display = "none";
+    }
+
+    function displayConstrainPolicies(show) {
+        var div = DOM.get("constrainPolicies");
+        DOM.setStyle(div, "display", (show) ? "" : "none");
+        constrainPolicies = show;
+        adjustAddStoreButton();
+    }
+
+    function displayConfigureUserStore(show) {
+        var div = DOM.get("userStore");
+        DOM.setStyle(div, "display", (show) ? "" : "none");
+        configureUserStore = show;
+        adjustAddStoreButton();
+    }
+
+    function displayConfigureAuthStore(show) {
+        var div = DOM.get("authStore");
+        DOM.setStyle(div, "display", (show) ? "" : "none");
+        configureAuthStore = show;
+        adjustAddStoreButton();
+    }
+
+    function displayAssignAdmin(show) {
+        var div = DOM.get("assignAdmin");
+        DOM.setStyle(div, "display", (show) ? "" : "none");
+        assignAdmin = show;
+    }
+
+    function Cancel(){
+        document.location = "$context/commonTasks.htm";
+    }
 
 
-function showoptions(element, option){
-	if (element.checked)
-		document.getElementById(option).style.display = "";
-}
+    function validateRealmName() {
+        var callUrl = pageURI + "?actionLink=validateRealmName&realmName=" + DOM.get("realmName").value;
+        AjaxUtils.call(callUrl, realmNameValidated);
+    }
 
-function hideoptions(element, option){
-	if (element.checked)
-		document.getElementById(option).style.display = "none";
-}
+    function validateHostName() {
+        var callUrl = pageURI + "?actionLink=validateHostName&hostName=" + DOM.get("hostName").value;
+        AjaxUtils.call(callUrl, hostNameValidated);                                              
+    }
 
-function Cancel(){
-	document.location = "$context/commonTasks.htm";
-}
+    function realmNameValidated(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        validRealmName = (response.valid);
+        DOM.get("realmNameStatus").innerHTML = "<small>" + response.body + "</small>";
+        adjustAddStoreButton();
+    }
+
+    function hostNameValidated(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        validHostName = (response.valid);
+        DOM.get("hostNameStatus").innerHTML = "<small>" + response.body + "</small>";
+        adjustAddStoreButton();
+    }
+
+
+
+    function validateUserStoreStoreName() {
+        var callUrl = pageURI + "?actionLink=validateStoreName&storeName=" + DOM.get("userStore_storeName").value;
+        AjaxUtils.call(callUrl, userStoreStoreNameValidated);
+    }
+
+    function validateUserStoreHostName() {
+        var callUrl = pageURI + "?actionLink=validateHost&hostName=" + DOM.get("userStore_hostName").value;
+        AjaxUtils.call(callUrl, userStoreHostNameValidated);
+    }
+
+    function validateUserStoreHostPort() {
+        var callUrl = pageURI + "?actionLink=validatePort&hostPort=" + DOM.get("userStore_hostPort").value;
+        AjaxUtils.call(callUrl, userStoreHostPortValidated);
+    }
+
+    function validateUserStoreLogin() {
+        var callUrl = pageURI + "?actionLink=validateLogin&login=" + DOM.get("userStore_login").value;
+        AjaxUtils.call(callUrl, userStoreLoginValidated);
+    }
+
+    function validateUserStorePassword() {
+        var callUrl = pageURI + "?actionLink=validatePassword&password=" + DOM.get("userStore_password").value;
+        AjaxUtils.call(callUrl, userStorePasswordValidated);
+    }
+
+    function validateUserStoreBaseDN() {
+        var callUrl = pageURI + "?actionLink=validateBaseDN&baseDN=" + DOM.get("userStore_baseDN").value;
+        AjaxUtils.call(callUrl, userStoreBaseDNValidated);
+    }
+
+    function userStoreStoreNameValidated(response) {
+        validUserStoreStoreName = (response.responseText == "true");
+        if (validUserStoreStoreName) {
+            DOM.get("userStore_storeNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Store name provided</small>";
+       }
+        else {
+            DOM.get("userStore_storeNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userStoreHostNameValidated(response) {
+        validUserStoreHostName = (response.responseText == "true");
+        if (validUserStoreHostName) {
+            DOM.get("userStore_hostNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Directory</small>";
+       }
+        else {
+            DOM.get("userStore_hostNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userStoreHostPortValidated(response) {
+        validUserStoreHostPort = (response.responseText == "true");
+        if (validUserStoreHostPort) {
+            DOM.get("userStore_hostPortStatus").innerHTML = "";
+       }
+        else {
+            DOM.get("userStore_hostPortStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userStoreLoginValidated(response) {
+        validUserStoreLogin = (response.responseText == "true");
+        if (validUserStoreLogin) {
+            DOM.get("userStore_loginStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Logged in</small>";
+       }
+        else {
+            DOM.get("userStore_loginStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userStorePasswordValidated(response) {
+        validUserStorePassword = (response.responseText == "true");
+        if (validUserStorePassword) {
+            DOM.get("userStore_passwordStatus").innerHTML = "";
+       }
+        else {
+            DOM.get("userStore_passwordStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function userStoreBaseDNValidated(response) {
+        validUserStoreBaseDN = (response.responseText == "true");
+        if (validUserStoreBaseDN) {
+            DOM.get("userStore_baseDNStatus").innerHTML = "<img alt='info' class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Base DN</small><br/>";
+       }
+        else {
+            DOM.get("userStore_baseDNStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+
+    function validateAuthStoreStoreName() {
+        var callUrl = pageURI + "?actionLink=validateStoreName&storeName=" + DOM.get("authStore_storeName").value;
+        AjaxUtils.call(callUrl, authStoreStoreNameValidated);
+    }
+
+    function validateAuthStoreHostName() {
+        var callUrl = pageURI + "?actionLink=validateHost&hostName=" + DOM.get("authStore_hostName").value;
+        AjaxUtils.call(callUrl, authStoreHostNameValidated);
+    }
+
+    function validateAuthStoreHostPort() {
+        var callUrl = pageURI + "?actionLink=validatePort&hostPort=" + DOM.get("authStore_hostPort").value;
+        AjaxUtils.call(callUrl, authStoreHostPortValidated);
+    }
+
+    function validateAuthStoreLogin() {
+        var callUrl = pageURI + "?actionLink=validateLogin&login=" + DOM.get("authStore_login").value;
+        AjaxUtils.call(callUrl, authStoreLoginValidated);
+    }
+
+    function validateAuthStorePassword() {
+        var callUrl = pageURI + "?actionLink=validatePassword&password=" + DOM.get("authStore_password").value;
+        AjaxUtils.call(callUrl, authStorePasswordValidated);
+    }
+
+    function validateAuthStoreBaseDN() {
+        var callUrl = pageURI + "?actionLink=validateBaseDN&baseDN=" + DOM.get("authStore_baseDN").value;
+        AjaxUtils.call(callUrl, authStoreBaseDNValidated);
+    }
+
+    function authStoreStoreNameValidated(response) {
+        validAuthStoreStoreName = (response.responseText == "true");
+        if (validAuthStoreStoreName) {
+            DOM.get("authStore_storeNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Store name provided</small>";
+       }
+        else {
+            DOM.get("authStore_storeNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function authStoreHostNameValidated(response) {
+        validAuthStoreHostName = (response.responseText == "true");
+        if (validAuthStoreHostName) {
+            DOM.get("authStore_hostNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Directory</small>";
+       }
+        else {
+            DOM.get("authStore_hostNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function authStoreHostPortValidated(response) {
+        validAuthStoreHostPort = (response.responseText == "true");
+        if (validAuthStoreHostPort) {
+            DOM.get("authStore_hostPortStatus").innerHTML = "";
+       }
+        else {
+            DOM.get("authStore_hostPortStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function authStoreLoginValidated(response) {
+        validAuthStoreLogin = (response.responseText == "true");
+        if (validAuthStoreLogin) {
+            DOM.get("authStore_loginStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Logged in</small>";
+       }
+        else {
+            DOM.get("authStore_loginStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function authStorePasswordValidated(response) {
+        validAuthStorePassword = (response.responseText == "true");
+        if (validAuthStorePassword) {
+            DOM.get("authStore_passwordStatus").innerHTML = "";
+       }
+        else {
+            DOM.get("authStore_passwordStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+    function authStoreBaseDNValidated(response) {
+        validAuthStoreBaseDN = (response.responseText == "true");
+        if (validAuthStoreBaseDN) {
+            DOM.get("authStore_baseDNStatus").innerHTML = "<img alt='info' class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Base DN</small><br/>";
+       }
+        else {
+            DOM.get("authStore_baseDNStatus").innerHTML = "<small>" + response.responseText + "</small>";
+        }
+        adjustAddStoreButton();
+    }
+
+
+
+
+    var tableChanges = {
+        realmUsers: {},
+        admins: {}
+    };
+    var tableColumnDefs = [
+        {key:"firstName", label:"First Name", sortable:true},
+        {key:"lastName", label:"Last Name", sortable:true}
+    ];
+    var responseSchema = {
+        resultsList: "records",
+        fields: ["firstName", "lastName"]
+    };
+    // Realm Users Table
+    var realmUsersTable = new APP.util.PaginatedTable("realmUsersTable", "$context/config/realm/users.htm?", "realmName=&filter=*", tableColumnDefs, responseSchema, "G1", tableChanges);
+    realmUsersTable.paginator = new APP.util.Paginator("realmUsersPaginator", "$context/assets/images/");
+    realmUsersTable.loadData();
+    // Administrators Table
+    var adminsTable = new APP.util.PaginatedTable("adminsTable", "$context/config/realm/users.htm?", "realmName=&getAdmins=true&roleName=", tableColumnDefs, responseSchema, "G2", tableChanges);
+    adminsTable.paginator = new APP.util.Paginator("adminsTablePaginator", "$context/assets/images/");
+    adminsTable.loadData();
+
+    new YAHOO.util.DDTarget("realmUsersTable", "G2");
+    new YAHOO.util.DDTarget("adminsTable", "G1");
+
+    function reloadRealmUsersTable() {
+        var searchValue = YAHOO.util.Dom.get("search").value;
+        var realmName = "realmName=";
+        var filter = "filter=" + searchValue;
+        var realmUsersTable = new APP.util.PaginatedTable("realmUsersTable", "$context/config/realm/users.htm?", realmName + "&" + filter, tableColumnDefs, responseSchema, "G1");
+        realmUsersTable.paginator = new APP.util.Paginator("realmUsersPaginator", "$context/assets/images/");
+        realmUsersTable.loadData();
+    }
+
+    function reloadAdminsTable() {
+        var searchValue = YAHOO.util.Dom.get("search").value;
+        var realmName = "realmName=";
+        var getAdmins = "getAdmins=true";
+        var roleName = "roleName=" + (selectedRole ? selectedRole : "");
+        var adminsTable = new APP.util.PaginatedTable("adminsTable", "$context/config/realm/users.htm?", realmName + "&" + getAdmins + "&" + roleName, tableColumnDefs, responseSchema, "G2", tableChanges);
+        adminsTable.paginator = new APP.util.Paginator("adminsTablePaginator", "$context/assets/images/");
+        adminsTable.loadData();
+    }
+
+    function changeRole(select){
+        if (select.value == "_create_new_role_") {
+            AjaxUtils.load("createRolePanel", "$context/config/realm/addRole.htm");
+            YAHOO.sun.container.createRolePanel = new YAHOO.widget.Panel("createRolePanel", { width:"390px", fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true});
+            YAHOO.sun.container.createRolePanel.render();
+            YAHOO.sun.container.createRolePanel.show();
+        }
+        else {
+            selectedRole = select.value;
+            reloadAdminsTable();
+        }
+    }
+
+    function loadRoleComboInfo() {
+        AjaxUtils.call("$context/config/realm/roles.htm", paintRoleCombo);
+    }
+
+    function paintRoleCombo(pResponse) {
+        var response = pResponse.responseText.parseJSON();
+        var combo = DOM.get("role");
+        var length = combo.options.length;
+
+        for (var i = 0; i < length; i++) {
+            combo.remove(0);
+        }
+
+        var option = document.createElement('OPTION');
+        option.value = "administrators";
+        option.text = "Administrators";
+        option.selected = "selected";
+        combo.options.add(option, combo.options.length);
+
+        for (var i = 0; i < response.records.length; i++) {
+            option = document.createElement('OPTION');
+            option.value = response.records[i].roleName;
+            option.text = response.records[i].roleName;
+            combo.options.add(option, combo.options.length);
+        }
+
+        option = document.createElement('OPTION');
+        option.value = "_create_new_role_";
+        option.text = "Create a New Role";
+        combo.options.add(option, combo.options.length);
+    }
+
+    function save() {
+        var pageURI = "$context$path";
+        var adminsArray = "";
+        for (var element in tableChanges.admins) {
+            if (element != "toJSONString") {
+                adminsArray += element + ",";
+            }
+        }
+        var realmUsersArray = "";
+        for (var element in tableChanges.realmUsers) {
+            if (element != "toJSONString") {
+                realmUsersArray += element + ",";
+            }
+        }
+
+        var requestData = AjaxUtils.serializeForm("createRealmForm");
+        requestData += "&adminsArray=" + adminsArray;
+        requestData += "&realmUsersArray=" + realmUsersArray;
+
+        AjaxUtils.doPost(null, pageURI, requestData, null, null);
+    }
+
+    function adjustAddStoreButton() {
+        var allValid = validRealmName;
+
+        if (constrainPolicies) {
+            allValid = allValid && validHostName;
+        }
+
+        if (configureUserStore) {
+            allValid = allValid && (validUserStoreStoreName
+                                    && validUserStoreHostName
+                                    && validUserStoreHostPort
+                                    && validUserStoreLogin
+                                    && validUserStorePassword
+                                    && validUserStoreBaseDN);
+        }
+
+        if (configureAuthStore) {
+            allValid = allValid && (validAuthStoreStoreName
+                                    && validAuthStoreHostName
+                                    && validAuthStoreHostPort
+                                    && validAuthStoreLogin
+                                    && validAuthStorePassword
+                                    && validAuthStoreBaseDN);
+        }
+
+        DOM.get("createRealmButton").disabled = !allValid;
+    }
+    
+
 
 </script>
+
+
 <style>
 	p{
 		height:20px;
@@ -36,7 +496,7 @@ function Cancel(){
 </style>
 <div id="mainPanel">
 	<div id="createPanel" class="createpanel">
-		<form action="create.htm">
+		<form id="createRealmForm" action="create.htm">
 			<br />
 			<div class="bodywhite">
 				<h2>Create a Realm</h2>
@@ -46,25 +506,27 @@ function Cancel(){
 			<p class="OrangeVerySmall" id="allfields">* ALL Fields are Required</p>
 			<div class="bodywhite">
 					<p class="OrangeSmall">Enter the new realm name:</p>
-					<input type="text" name="txtrealmname" id="txtrealmname" size="20" />
-			</div>
+					<input type="text" name="realmName" id="realmName" size="20" onkeyup="APP.callDelayed(this, validateRealmName);"/>
+                    <span id="realmNameStatus"></span>
+            </div>
 			<div class="bodywhite">
 				<p class="OrangeSmall">Do you want to constrain the policies within this realm?</p>
-					<input type="radio" name="policies" id="policiesYes" value="Yes" onclick="showoptions(this,'constrainpolicies');"/>Yes &nbsp;
-					<input type="radio" name="policies" id="policiesNo" value="No" onclick="hideoptions(this,'constrainpolicies');"/>No
-				<div id="constrainpolicies" style="display:none">
+                <input type="radio" name="constrainPolicies" id="constrainPoliciesYes" value="Yes" onclick="displayConstrainPolicies(true);"/>Yes &nbsp;
+                <input type="radio" name="constrainPolicies" id="constrainPoliciesNo" value="No" onclick="displayConstrainPolicies(false);"/>No
+				<div id="constrainPolicies" style="display:none">
 					<p class="OrangeSmall">Host Name Constraints:&nbsp;
-					<input type="text" name="nameconstraints" id="nameconstraints" size="20" /></p>
-					<p class="blue" style="padding-left:260px">Add another</p>
+					<input type="text" name="hostName" id="hostName" size="20" onkeyup="APP.callDelayed(this, validateHostName);"/>
+                    <span id="hostNameStatus"></span></p>
+                    <p class="blue" style="padding-left:260px">Add another</p>
 					<p class="OrangeSmall">Enter URL Pattern: <img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/>&nbsp;
-					<input type="text" name="urlpattern" id="urlpattern" size="20" /></p>
+					<input type="text" name="urlPattern" id="urlPattern" size="20" /></p>
 				</div>
 			</div>
 			<div class="bodywhite">
 				<p class="OrangeSmall">Do you want to configure a user store for this realm?</p>
-				<input type="radio" name="configureuserstore" id="UserYes" value="Yes" onclick="showoptions(this,'User');" />Yes&nbsp;&nbsp;
-				<input type="radio" name="configureuserstore" id="UserNo" value="No" onclick="hideoptions(this,'User');"/>No
-				<div id="User" style="display:none">
+				<input type="radio" name="configureUserStore" id="configureUserStoreYes" value="Yes" onclick="displayConfigureUserStore(true);" />Yes&nbsp;&nbsp;
+				<input type="radio" name="configureUserStore" id="configureUserStoreNo" value="No" onclick="displayConfigureUserStore(false);"/>No
+				<div id="userStore" style="display:none">
 					<div class="bodywhite">
 						<div class="middletitle">Enter the store details</div><div class="OrangeVerySmall">* ALL Fields are Required</div>
 					</div>
@@ -78,26 +540,41 @@ function Cancel(){
 						<p>Directory Password:</p>
 						<p>Directory Base DN:</p>
 						</div>
-						<p><input class="inputsBlue" type="text" id="userStoreName" name="userStoreName" style="width:150px"/>
-						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Store name provided</small></p>
-						<p><input class="inputsBlue" type="text" id="directory" name="directory" style="width:150px"/>
-						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Located Directory</small></p>
-						<p><input class="inputsBlue" type="text" id="port" name="port" style="width:40px"/></p>
-						<p><input type="radio" id="securePortNo" name="securePort" checked="checked" value="No"/>&nbsp;No&nbsp;
-						<input type="radio" id="securePortYes" name="securePort" value="Yes"/>Yes</p>
-						<p><input class="inputsBlue" type="text" id="login" name="login" style="width:150px"/>
-						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Logged in</small></p>
-						<p><input class="inputsBlue" type="text" id="password" name="password" style="width:150px"/></p>
-						<p><input class="inputsBlue" type="text" id="baseDN" name="baseDN" style="width:150px"/>
-						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Located Base DN</small></p>
+						<p>
+                            <input class="inputsBlue" type="text" id="userStore_storeName" name="userStore_storeName" style="width:150px" onkeyup="APP.callDelayed(this, validateUserStoreStoreName);"/>
+                            <span id="userStore_storeNameStatus"></span>
+                        </p>
+						<p>
+                            <input class="inputsBlue" type="text" id="userStore_hostName" name="userStore_hostName" style="width:150px" onkeyup="APP.callDelayed(this, validateUserStoreHostName);"/>
+                            <span id="userStore_hostNameStatus"></span>
+                        </p>
+						<p>
+                            <input class="inputsBlue" type="text" id="userStore_hostPort" name="userStore_hostPort" style="width:40px" onkeyup="APP.callDelayed(this, validateUserStoreHostPort);"/>
+                            <span id="userStore_hostPortStatus"></span>
+                        </p>
+						<p>
+                            <input type="radio" id="userStore_securePortNo" name="userStore_securePort" checked="checked" value="No"/>&nbsp;No&nbsp;
+						    <input type="radio" id="userStore_securePortYes" name="userStore_securePort" value="Yes"/>Yes
+                        </p>
+						<p>
+                            <input class="inputsBlue" type="text" id="userStore_login" name="userStore_login" style="width:150px" onkeyup="APP.callDelayed(this, validateUserStoreLogin);"/>
+                            <span id="userStore_loginStatus"></span>
+                        </p>
+						<p>
+                            <input class="inputsBlue" type="text" id="userStore_password" name="userStore_password" style="width:150px"/>
+                        </p>
+						<p>
+                            <input class="inputsBlue" type="text" id="userStore_baseDN" name="userStore_baseDN" style="width:150px" onkeyup="APP.callDelayed(this, validateUserStoreBaseDN);"/>
+                            <span id="userStore_baseDNStatus"></span>
+                        </p>
 					</div>
 				</div>
 			</div>
 			<div class="bodywhite">
 				<p class="OrangeSmall">Do you want to configure the authentication store?</p>
-				<input type="radio" name="configureauthentication" id="authenticationYes" value="Yes" onclick="showoptions(this,'Authentication');"/>Yes&nbsp;&nbsp;
-				<input type="radio" name="configureauthentication" id="authenticationNo" value="No" onclick="hideoptions(this,'Authentication');"/>No
-				<div id="Authentication" style="display:none">
+				<input type="radio" name="configureAuthStore" id="configureAuthStoreYes" value="Yes" onclick="displayConfigureAuthStore(true);"/>Yes&nbsp;&nbsp;
+				<input type="radio" name="configureAuthStore" id="authenticationNo" value="No" onclick="displayConfigureAuthStore(false);"/>No
+				<div id="authStore" style="display:none">
 					<p><input type="checkbox" name="chkLocated" id="chkLocated" size="20" />&nbsp;Use the same configuration as the user store:</p>
 					<div class="bodywhite">
 						<div class="middletitle">Enter the store details</div><div class="OrangeVerySmall" align="right">* ALL Fields are Required</div>
@@ -112,78 +589,60 @@ function Cancel(){
 						<p>Directory Password:</p>
 						<p>Directory Base DN:</p>
 						</div>
-						<p><input class="inputsBlue" type="text" id="userStoreName" name="userStoreName" style="width:150px"/>
-						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Store name provided</small></p>
-						<p><input class="inputsBlue" type="text" id="directory" name="directory" style="width:150px"/>
-						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Located Directory</small></p>
-						<p><input class="inputsBlue" type="text" id="port" name="port" style="width:40px"/></p>
-						<p><input type="radio" id="securePortNo" name="securePort" checked="checked" value="No"/>&nbsp;No&nbsp;
-						<input type="radio" id="securePortYes" name="securePort" value="Yes"/>Yes</p>
-						<p><input class="inputsBlue" type="text" id="login" name="login" style="width:150px"/>
-						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Logged in</small></p>
-						<p><input class="inputsBlue" type="text" id="password" name="password" style="width:150px"/></p>
-						<p><input class="inputsBlue" type="text" id="baseDN" name="baseDN" style="width:150px"/>
-						<img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Located Base DN</small></p>
+						<p>
+                            <input class="inputsBlue" type="text" id="authStore_storeName" name="authStore_storeName" style="width:150px" onkeyup="APP.callDelayed(this, validateAuthStoreStoreName);"/>
+                            <span id="authStore_storeNameStatus"></span>
+                        </p>
+						<p>
+                            <input class="inputsBlue" type="text" id="authStore_hostName" name="authStore_hostName" style="width:150px" onkeyup="APP.callDelayed(this, validateAuthStoreHostName);"/>
+                            <span id="authStore_hostNameStatus"></span>
+                        </p>
+						<p>
+                            <input class="inputsBlue" type="text" id="authStore_hostPort" name="authStore_hostPort" style="width:40px" onkeyup="APP.callDelayed(this, validateAuthStoreHostPort);"/>
+                            <span id="authStore_hostPortStatus"></span>
+                        </p>
+						<p>
+                            <input type="radio" id="authStore_securePortNo" name="authStore_securePort" checked="checked" value="No"/>&nbsp;No&nbsp;
+						    <input type="radio" id="authStore_securePortYes" name="authStore_securePort" value="Yes"/>Yes
+                        </p>
+						<p>
+                            <input class="inputsBlue" type="text" id="authStore_login" name="authStore_login" style="width:150px" onkeyup="APP.callDelayed(this, validateAuthStoreLogin);"/>
+                            <span id="authStore_loginStatus"></span>
+                        </p>
+                        <p>
+                            <input class="inputsBlue" type="text" id="authStore_password" name="authStore_password" style="width:150px"/>
+                        </p>
+						<p>
+                            <input class="inputsBlue" type="text" id="authStore_baseDN" name="authStore_baseDN" style="width:150px" onkeyup="APP.callDelayed(this, validateAuthStoreBaseDN);"/>
+                            <span id="authStore_baseDNStatus"></span>
+                        </p>
 					</div>
 				</div>
 			</div>
 			<div class="bodywhite">
 				<p class="OrangeSmall">Do you want to Assign an admin for this realm?</p>
-				<input type="radio" name="admin" id="adminYes" value="Yes" onclick="showoptions(this,'Assignadmin');"/>Yes&nbsp;&nbsp;
-				<input type="radio" name="admin" id="adminNo" value="No" onclick="hideoptions(this,'Assignadmin');"/>No
+				<input type="radio" name="assignAdmin" id="assignAdminYes" value="Yes" onclick="displayAssignAdmin(true);"/>Yes&nbsp;&nbsp;
+				<input type="radio" name="assignAdmin" id="assignAdminNo" value="No" onclick="displayAssignAdmin(false);"/>No
 			</div>
-			<div id="Assignadmin" style="display:none" class="bodySpace" align="left">
+			<div id="assignAdmin" style="display:none" class="bodySpace" align="left">
 				<p>Locate your new admin and drag their name to the realm administrators box</p>
 				<div id="demo" class="yui-navset tab">
 					<ul class="yui-nav">
 						<li class="selected"><a href="#tab1"><em>Realm Users</em></a></li>
 					</ul>
 					<div class="yui-content">
-						<div>
-							<div class="bodywhite bodySpace2">
-							<input type="text" id="search"/><button type="button">search</button>
-							</div>
-							<div class="bodywhite bodySpace2">
-								<font class="commonblack">Displaying: 1-N of N realm users</font>
-							</div>
-							<!--This prosses need be Automatically, that is a example, with the css it need,
-							look the example of yui for a generate tab with javascript-->
-							<div id="contentSearch">
-								<div id="search1" class="yui-navset">
-									<div class="yui-content large">
-										<div>
-											<div class="colunmsheader">
-												<div class="insideColunm">&nbsp;First Name</div>
-												Last Name
-											</div>
-											<div class="colunms">First Name<br />First Name</div>
-											<div class="colunms">Last Name<br />Last Name</div>
-										</div>
-										<div>
-											<div class="colunmsheader">
-												<div class="insideColunm">&nbsp;First Name</div>
-												Last Name
-											</div>
-											<div class="colunms">sds</div>
-											<div class="colunms">sds</div><br />
-										</div>
-										<div>
-											<div class="colunmsheader">
-												<div class="insideColunm">&nbsp;First Name</div>
-												Last Name
-											</div>
-											<div class="colunms">sds</div>
-											<div class="colunms">sds</div>
-										</div>
-									</div>
-									<ul class="yui-nav" style="text-align:right">
-										<li class="selected"><a href="#tab1"><em>1</em></a></li>
-										<li><a href="#tab2"><em>2</em></a></li>
-										<li><a href="#tab3"><em>3</em></a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
+                        <div>
+                            <div class="bodywhite bodySpace2">
+                                <input type="text" id="search" value="*"/><button type="button" onclick="reloadRealmUsersTable();">search</button>
+                            </div>
+                            <div class="bodywhite">
+                                Displaying <span id="realmUsersTable_startIndex"></span> - <span id="realmUsersTable_endIndex"></span> of <span id="realmUsersTable_ofTotal"></span> realm users
+                             </div>
+                            <div id="realmUsersContentSearch" >
+                                <div id="realmUsersTable"></div>
+                                <div id="realmUsersPaginator"></div>
+                            </div>
+                        </div>
 					</div>
 				</div>
 				<div style="width:20px;float:left">&nbsp;</div>
@@ -191,64 +650,29 @@ function Cancel(){
 					<ul class="yui-nav">
 						<li class="selected"><a href="#tab1"><em>Realm Administrators</em></a></li>
 					</ul>
-					<div class="yui-content">
-						<div>
-							<div class="bodywhite bodySpace2">
-								<font class="commonblack">Select a role</font>&nbsp;
-								<select id="role" name="role" style="width:150px" onchange="checkOption();">
-									<option>Administrators</option>
-									<option><b>Create a New role</b></option>
-								</select>
-							</div>
-							<div class="bodywhite bodySpace2">
-								<font class="commonblack">Displaying: 1-N of N Administrators</font>
-							</div>
-							<!--This prosses need be Automatically, that is a example, with the css it need,
-							look the example of yui for a generate tab with javascript-->
-							<div id="contentSearch">
-								<div id="search2" class="yui-navset">
-									<div class="yui-content large">
-										<div>
-											<div class="colunmsheader">
-												<div class="insideColunm">&nbsp;First Name</div>
-												Last Name
-											</div>
-											<div class="colunms">First Name<br />First Name</div>
-											<div class="colunms">Last Name<br />Last Name</div>
-										</div>
-										<div>
-											<div class="colunmsheader">
-												<div class="insideColunm">&nbsp;First Name</div>
-												Last Name
-											</div>
-											<div class="colunms">sds</div>
-											<div class="colunms">sds</div><br />
-										</div>
-										<div>
-											<div class="colunmsheader">
-												<div class="insideColunm">&nbsp;First Name</div>
-												Last Name
-											</div>
-											<div class="colunms">sds</div>
-											<div class="colunms">sds</div>
-										</div>
-									</div>
-									<ul class="yui-nav" style="text-align:right">
-										<li class="selected"><a href="#tab1"><em>1</em></a></li>
-										<li><a href="#tab2"><em>2</em></a></li>
-										<li><a href="#tab3"><em>3</em></a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
-					</div>
+                    <div class="yui-content" style="height:465px">
+                        <div>
+                            <div class="bodywhite">
+                                <font class="commonblack">Select a role</font>&nbsp;
+                                <select id="role" name="role" style="width:150px" onchange="changeRole(this);">
+                                </select>
+                            </div>
+                            <div class="bodywhite">
+                                Displaying <span id="adminsTable_startIndex"></span> - <span id="adminsTable_endIndex"></span> of <span id="adminsTable_ofTotal"></span> administrators
+                            </div>
+                            <div id="contentSearch">
+                                <div id="adminsTable"></div>
+                                <div id="adminsTablePaginator"></div>
+                            </div>
+                        </div>
+                    </div>
 				</div>
 			</div>
 
 			<div class="subbody" align="right">
 				<br />
 				<button id="btnCancel" type="button" value="Cancel" onclick="Cancel();">Cancel</button>
-				<button id="btnAdd" type="button" value="ADD THIS STORE">CREATE REALM</button>
+				<button id="createRealmButton" type="button" value="CREATE REALM" onclick="save();">CREATE REALM</button>
 			</div>
 		</form>
 	</div>
@@ -256,7 +680,9 @@ function Cancel(){
 <!--Pop Up-->
 <div id="confirmation" style="visibility:hidden;width:600px;height:200px"></div>
 
-</div>
+<div id="createRolePanel"></div>        
+
+
 
 <script>
 (function() {

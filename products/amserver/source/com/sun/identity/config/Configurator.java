@@ -1,9 +1,30 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: Configurator.java,v 1.2 2007-11-12 14:51:14 lhazlewood Exp $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
 package com.sun.identity.config;
 
-import com.sun.identity.config.pojos.AuthenticationStore;
-import com.sun.identity.config.pojos.LDAPStore;
-import com.sun.identity.config.pojos.Realm;
-import com.sun.identity.config.pojos.RealmRole;
+import com.sun.identity.config.pojos.*;
+import com.sun.identity.config.pojos.condition.Condition;
 
 import java.util.List;
 
@@ -152,6 +173,13 @@ public interface Configurator {
     List getRealms();
 
     /**
+     * Returns a Realm object corresponding to the realm name passed as parameter or null if doesn't exist a realm with the specified name.
+     * @param name is the name of the realm we want to get from the back-end.
+     * @return
+     */
+    Realm getRealm(String name);
+
+    /**
      * Returns a list of {@link com.sun.identity.config.pojos.RealmUser} objects for a specified Realm.
      * @param realm
      * @param filter
@@ -167,10 +195,118 @@ public interface Configurator {
      */
     List getAdministrators(Realm realm, RealmRole role);
 
+    void assignAdministrators(Realm realm, List administrators);
+
+    void removeAdministrators(Realm realm, List administrators);
+
     /**
      * Saves the AuthenticationStore object passed as parameter.
      * @param authenticationStore the object to save
      */
     void addAuthenticationStore(AuthenticationStore authenticationStore);
 
+
+    /**
+     * Returns agent groups in the system.
+     * This method supports wireframes page 124.
+     *
+     * @return a collection of String group names.
+     */
+    List getAgentGroups();
+    void deleteAgentGroup( String group );
+    void createAgentGroup( String group );
+
+    List getAgentProfiles();
+    void deleteAgentProfile( String profile );
+    void createAgentProfile( String profile );
+
+    /**
+     * Saves the RealRole object passed as paremeter.
+     * @param realmRole RealRole object
+     */
+    void createRole(RealmRole realmRole);
+
+    List getRoles();
+
+    /**
+     * Returns a list of {@link com.sun.identity.config.pojos.AgentType} objects.
+     * @return agent type list.
+     */
+    List getAgentTypes();
+
+    /**
+     * Checks whether the FAM Server URL is valid
+     * @param url text representing the URL
+     * @return true if it's valid
+     */
+    boolean checkFAMServerURL(String url);
+
+    /**
+     * Checks whether the Profile name and password are valid
+     * @param profileName profile name
+     * @param profilePassword profile password
+     * @return true it they're valid
+     */
+    boolean checkCredentials(String profileName, String profilePassword);
+
+    /**
+     * Returns a list of {@link com.sun.identity.config.pojos.UrlPattern} objects.
+     * @return url pattern list
+     */
+    List getUrlPatterns();
+
+    /**
+     * Deletes a {@link com.sun.identity.config.pojos.UrlPattern} object array.
+     * @param urlPatterns url pattern
+     */
+    void removeUrlPatterns(UrlPattern[] urlPatterns);
+
+    /**
+     * Adds a {@link com.sun.identity.config.pojos.UrlPattern} object.
+     * @param urlPattern url pattern to add
+     */
+    void addUrlPattern(UrlPattern urlPattern);
+
+    /**
+     * Returns a list of {@link com.sun.identity.config.pojos.condition.Condition} objects.
+     * @return existent conditions list
+     */
+    List getExistentConditions();
+    /**
+     * Deletes a {@link com.sun.identity.config.pojos.condition.Condition} object array.
+     * @param conditions conditions
+     */
+    void removeConditions(Condition[] conditions);
+
+    /**
+     * Adds a {@link com.sun.identity.config.pojos.condition.Condition} object.
+     * @param condition condition to add
+     */
+    void addCondition(Condition condition);
+
+    List getFederalProtocols();
+    List getCirclesOfTrust();
+    void createServiceProvider(ServiceProvider serviceProvider);
+
+    void createCircleOfTrust(CircleTrust circleTrust);
+
+    void deleteCircleOfTrust(String circleName);
+
+    CircleTrust getCircleOfTrust(String circleName);
+
+    FederalProtocol getFederalProtocol(String protocolName);
+
+    boolean validateHostName(String hostName);
+
+    boolean resolveHostName(String hostName);
+
+    ServiceProvider getServiceProvider(int serviceProviderId);
+
+    void createIdentityProvider(ServiceProvider serviceProvider, IdentityProvider identityProvider);
+
+    void createIdentityProvider(IdentityProvider identityProvider);
+
+    IdentityProvider getIdentityProvider(int providerId);
+
+    void createServiceProvider(IdentityProvider identityProvider, ServiceProvider serviceProvider);
 }
