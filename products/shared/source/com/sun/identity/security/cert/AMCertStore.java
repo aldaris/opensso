@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertStore.java,v 1.1 2007-10-22 15:06:30 beomsuk Exp $
+ * $Id: AMCertStore.java,v 1.2 2007-11-12 22:13:04 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
+import javax.security.auth.x500.X500Principal;
 
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPAttributeSet;
@@ -277,9 +278,9 @@ public class AMCertStore {
         X500Name dn = null;
 
         try {
-            sun.security.x509.X500Name dname = 
-                     (sun.security.x509.X500Name)certificate.getIssuerDN();
-            dn = new X500Name(dname.getEncoded());
+            X500Principal issuerPrincipal =
+                 certificate.getIssuerX500Principal();
+            dn = new X500Name(issuerPrincipal.getEncoded());
         } catch (IOException e) {
             debug.error("AMCertStore.getIssuerDN : " +
                 "Error in getting issuer DN : ", e);
@@ -298,9 +299,9 @@ public class AMCertStore {
         X500Name dn = null;
 
         try {
-            sun.security.x509.X500Name dname = 
-                       (sun.security.x509.X500Name)certificate.getSubjectDN();
-            dn = new X500Name(dname.getEncoded());
+            X500Principal subjectPrincipal =
+                 certificate.getSubjectX500Principal();
+            dn = new X500Name(subjectPrincipal.getEncoded());
         } catch (Exception e) {
             debug.error("AMCertStore.getSubjectDN : " +
                 "Error in getting subject DN : " + e.toString());

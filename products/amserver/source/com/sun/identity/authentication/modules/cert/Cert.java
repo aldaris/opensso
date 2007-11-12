@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.8 2007-11-08 05:50:18 beomsuk Exp $
+ * $Id: Cert.java,v 1.9 2007-11-12 22:12:37 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletRequest;
 
 import netscape.ldap.LDAPConnection;
@@ -597,9 +598,8 @@ public class Cert extends AMLoginModule {
         /*
          * Get the Attribute value of the input certificate
          */
-            sun.security.x509.X500Name certDNname = 
-                            (sun.security.x509.X500Name)cert.getSubjectDN();
-            X500Name certDN = new X500Name(certDNname.getEncoded());
+            X500Principal subjectPrincipal = cert.getSubjectX500Principal();
+            X500Name certDN = new X500Name(subjectPrincipal.getEncoded());
             if (debug.messageEnabled()) {
                 debug.message("getTokenFromCert: Subject DN : " + 
                                 certDN.getName());
