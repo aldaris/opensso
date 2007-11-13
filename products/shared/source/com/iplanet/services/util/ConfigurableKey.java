@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurableKey.java,v 1.1 2007-10-22 14:58:29 beomsuk Exp $
+ * $Id: ConfigurableKey.java,v 1.1 2007-11-13 18:36:52 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */

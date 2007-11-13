@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Crypt.java,v 1.3 2007-10-22 17:19:44 beomsuk Exp $
+ * $Id: Crypt.java,v 1.1 2007-11-13 18:36:52 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
