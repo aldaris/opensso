@@ -1,6 +1,5 @@
 #!/bin/sh
 
-#
 # The contents of this file are subject to the terms
 # of the Common Development and Distribution License
 # (the License). You may not use this file except in
@@ -20,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsessiondb,v 1.2 2007-01-17 19:39:44 bhavnab Exp $
+# $Id: amsessiondb,v 1.3 2007-11-13 23:12:45 manish_rustagi Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -32,38 +31,40 @@ JAVA_HOME=/usr/jdk/entsys-j2se
 
 OS_ARCH=`/bin/uname -s`
 
+#####hpux-dev#####
+if [ "$OS_ARCH" = "HP-UX" ]; then
+	JAVA_HOME=/usr/jdk/entsys-j2se
+fi
+
+
 IMQ_JAR_PATH=/usr/share/lib
 JMS_JAR_PATH=/usr/share/lib
-BDB_JAR_PATH=/usr/share
-BDB_SO_PATH=/usr/lib
 
 if [ "$OS_ARCH" = "Linux" ]; then
 	IMQ_JAR_PATH=/opt/sun/mq/share/lib
 	JMS_JAR_PATH=/opt/sun/mq/share/lib
 	BDB_JAR_PATH=/usr/share/bdb
 	BDB_SO_PATH=/opt/sun/private/lib
-	AM_HOME=${AM_HOME_LINUX}
+        AM_HOME=${AM_HOME_LINUX}
+#####hpux-dev#####
+elif [ "$OS_ARCH" = "HP-UX" ]; then
+	IMQ_JAR_PATH=/opt/sun/mq/share/lib
+	JMS_JAR_PATH=/opt/sun/mq/share/lib
+	BDB_JAR_PATH=/opt/sun/share/lib/bdb
+	BDB_SO_PATH=/opt/sun/private/lib
+### CR 6233176.Sets AM installation path at runtime to support AM
+### relocatability
+	INSTALL_HOME=`/usr/sbin/swlist -a software_spec sun-identity-sfodb |grep -v "#" | tr -sd "\n" "" | awk -F ',' '{print $2}'| sed 's/l\=//'`
+	AM_HOME=$INSTALL_HOME/identity
 fi
 
 
 
-CLASSPATH=${IMQ_JAR_PATH}/imq.jar:${JMS_JAR_PATH}/jms.jar:${BDB_JAR_PATH}/db.jar:${AM_HOME}/locale:${AM_HOME}/lib/am_sessiondb.jar:.
+CLASSPATH=${IMQ_JAR_PATH}/imq.jar:${JMS_JAR_PATH}/jms.jar:${AM_HOME}/ext/je.jar:${AM_HOME}/locale:${AM_HOME}/lib/am_sessiondb.jar:.
 
 OS_ARCH=`/bin/uname -s`
 
-if [ -z "$LD_LIBRARY_PATH" ] ; then
-	LD_LIBRARY_PATH=${BDB_SO_PATH}
-else
-	LD_LIBRARY_PATH=${BDB_SO_PATH}:$LD_LIBRARY_PATH
-fi
-
-if [ "$OS_ARCH" = "Linux" ]; then
-	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${JAVA_HOME}/jre/lib/i386/native_threads
-fi
-
-export LD_LIBRARY_PATH
-
-JAVA_OPTS="-Xms128m -Xmx512m -Dsleepycat.db.libname=db_java"
+JAVA_OPTS="-Xms128m -Xmx512m"
 RESTART=true
 
 shutdown_amsessiondb() {
@@ -79,7 +80,7 @@ trap "shutdown_amsessiondb" TERM INT QUIT
 
 RESTART=true
 while [ "$RESTART" = "true" ]; do
-     echo "Starting...  $RESTART" >> /tmp/test
+     echo "Starting...  $RESTART"
     _javapid=""
      echo "$JAVA_HOME/bin/java $JAVA_OPTS -classpath $CLASSPATH com.iplanet.dpro.session.jmqdb.client.AMSessionDB"
      $JAVA_HOME/bin/java $JAVA_OPTS -classpath "$CLASSPATH" com.iplanet.dpro.session.jmqdb.client.AMSessionDB "$@" &

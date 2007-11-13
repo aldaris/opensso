@@ -1,6 +1,5 @@
 #!/bin/sh
 
-#
 # The contents of this file are subject to the terms
 # of the Common Development and Distribution License
 # (the License). You may not use this file except in
@@ -20,13 +19,14 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsfo,v 1.2 2007-01-17 19:39:45 bhavnab Exp $
+# $Id: amsfo,v 1.3 2007-11-13 23:13:49 manish_rustagi Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
 
-CONF_FILE="/opt/SUNWam/lib/amsfo.conf"
-CONF_FILE_LINUX="/opt/sun/identity/lib/amsfo.conf"
+CONF_FILE=/opt/SUNWam/lib/amsfo.conf
+CONF_FILE_LINUX=/opt/sun/identity/lib/amsfo.conf
+CONF_FILE_HPUX=/opt/sun/identity/lib/amsfo.conf
 
 ### To Debug this script set AMDEBUG to true ####
 AMDEBUG=false
@@ -35,21 +35,27 @@ OS_ARCH=`/bin/uname -s`
 
 if [ "$OS_ARCH" = "Linux" ]; then
     CONF_FILE=${CONF_FILE_LINUX}
+elif [ "$OS_ARCH" = "HP-UX" ]; then
+    CONF_FILE=${CONF_FILE_HPUX}
 fi
 
 ##### sourceing amsfo config file #### 
-. $CONF_FILE 
-
+. $CONF_FILE
 
 AM_BIN_DIR=$AM_HOME_DIR/bin
 if [ "$OS_ARCH" = "Linux" ]; then
     AM_BIN_DIR=$AM_HOME_LINUX/bin
+elif [ "$OS_ARCH" = "HP-UX" ]; then
+    AM_BIN_DIR=$AM_HOME_HPUX/bin
 fi
 JMQ_BIN_DIR=/usr/bin
 JMQ_PID_FILE="$LOG_DIR/jmq.pid"
 AM_PID_FILE="$LOG_DIR/amdb.pid"
 
+#####hpux-dev#####
 if [ "$OS_ARCH" = "Linux" ]; then
+    JMQ_BIN_DIR=/opt/sun/mq/bin
+elif [ "$OS_ARCH" = "HP-UX" ]; then
     JMQ_BIN_DIR=/opt/sun/mq/bin
 fi
 
@@ -81,7 +87,7 @@ stop_jmq() {
         rm $JMQ_PID_FILE
    else
         if [ "$AMDEBUG" = "true" ]; then
-            echo server not running
+            echo "JMQ Broker not running"
         fi 
         exit 1
    fi
@@ -110,14 +116,14 @@ start_jmq() {
 
     if [ "$brok_status" != "" ]; then
         if [ "$AMDEBUG" = "true" ] ; then
-             echo "$JMQEXECUTABLE is already running."
+             echo "JMQ Broker is already running."
         fi
     else
         if [ "$AMDEBUG" = "true" ]; then 
              echo " $JMQEXECUTABLE -bgnd $BROKER_OPTIONS -vmargs $BROKER_VM_ARGS -name $BROKER_INSTANCE_NAME -port $BROKER_PORT -cluster $CLUSTER_LIST"
         fi
 
-        $JMQEXECUTABLE -bgnd $BROKER_OPTIONS -vmargs "$BROKER_VM_ARGS" -port $BROKER_PORT -cluster $CLUSTER_LIST &
+        $JMQEXECUTABLE -bgnd $BROKER_OPTIONS -vmargs "$BROKER_VM_ARGS" -name $BROKER_INSTANCE_NAME -port $BROKER_PORT -cluster $CLUSTER_LIST &
         _jmqpid=$!
         echo $_jmqpid > $JMQ_PID_FILE
     fi
@@ -144,15 +150,19 @@ start_am() {
          
      if [ "$amdb_status" != "" ]; then
         if [ "$AMDEBUG" = "true" ] ; then
-            echo "$AMEXECUTABLE is already running."
+            echo "AM Session DB client is already running."
         fi
      else
         if [ "$DELETE_DATABASE" = true ] ; then
             rm -rf $DATABASE_DIR
         fi
+
+        if [ "$AMDEBUG" = "true" ] ; then
+            echo "$AMEXECUTABLE -a $CLUSTER_LIST -u $USER_NAME -f $PASSWORDFILE -b $DATABASE_DIR $AMSESSIONDB_ARGS"
+        fi        
            
         mkdir -p $DATABASE_DIR
-        $AMEXECUTABLE -a $CLUSTER_LIST -u $USER_NAME -f $PASSWORDFILE -b $DATABASE_DIR >> $LOG_DIR/amsessiondb.log & 
+        $AMEXECUTABLE -a $CLUSTER_LIST -u $USER_NAME -f $PASSWORDFILE -b $DATABASE_DIR $AMSESSIONDB_ARGS >> $LOG_DIR/amsessiondb.log & 
         _ampid=$!
         echo $_ampid > $AM_PID_FILE
      fi
@@ -175,7 +185,7 @@ stop_am() {
         rm $AM_PID_FILE
    else
         if [ "$AMDEBUG" = "true" ]; then
-            echo amsessiondb not running
+            echo "amsessiondb not running"
         fi
    fi
 
