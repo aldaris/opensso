@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.1 2007-11-05 21:41:03 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.2 2007-11-13 21:56:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -210,6 +210,51 @@ public class AgentConfiguration {
     ) throws IdRepoException, SSOException, SMSException {
         AMIdentity amid = new AMIdentity(ssoToken, agentName, 
             IdType.AGENTONLY, realm, null); 
+        Map attributeValues = parseAttributeMap(getAgentType(amid), 
+            attrValues);
+        amid.setAttributes(attributeValues);
+        amid.store();
+    }
+    
+    /**
+     * Updates agent group attribute values.
+     *
+     * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param agentName Name group of agent.
+     * @param values Map of attribute name to its values.
+     * @throws IdRepoException if there are Id Repository related errors.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     */
+    public static void updateAgentGroup(
+        SSOToken ssoToken,
+        String agentGroupName,
+        Map attrValues
+    ) throws IdRepoException, SSOException, SMSException {
+        updateAgentGroup(ssoToken, "/", agentGroupName, attrValues);
+    }
+    
+    /**
+     * Updates agent group attribute values.
+     *
+     * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param realm Name of realm where agent resides.
+     * @param agentGroupName Name of agent group.
+     * @param values Map of attribute name to its values.
+     * @throws IdRepoException if there are Id Repository related errors.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     */
+    private static void updateAgentGroup(
+        SSOToken ssoToken,
+        String realm,
+        String agentGroupName,
+        Map attrValues
+    ) throws IdRepoException, SSOException, SMSException {
+        AMIdentity amid = new AMIdentity(ssoToken, agentGroupName, 
+            IdType.AGENTGROUP, realm, null); 
         Map attributeValues = parseAttributeMap(getAgentType(amid), 
             attrValues);
         amid.setAttributes(attributeValues);
