@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [ of copyright owner]"
  *
- * $Id: SecurityTokenTest.java,v 1.1 2007-09-18 19:48:46 rmisra Exp $
+ * $Id: SecurityTokenTest.java,v 1.2 2007-11-13 22:01:07 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -372,10 +372,7 @@ public class SecurityTokenTest extends TestCommon {
                 taconfig.setEndpoint(protocol + ":" + "//" + host + ":" +
                         port + uri + "/Liberty/disco");
                 TrustAuthorityConfig.saveConfig(taconfig);
-
-                List listTA = new ArrayList();
-                listTA.add(taconfig);
-                pc.setTrustAuthorityConfigList(listTA);
+                pc.setTrustAuthorityConfig(taconfig);
             }
         }
         ProviderConfig.saveProvider(pc);
