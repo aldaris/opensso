@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.10 2007-10-26 00:08:10 jonnelson Exp $
+ * $Id: EntityModelImpl.java,v 1.11 2007-11-13 19:18:38 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,6 +66,12 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         }
     }
     
+    /**
+     * Returns a map with all entities including data about
+     * what realm, the roles, and location of each entity.
+     *
+     * @throws AMConsoleException if unable to retrieve the entities.
+     */
     public Map getEntities()
         throws AMConsoleException 
     {
@@ -76,11 +82,13 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         return allEntities;
     }
     
-    /*
+    /**
      * Returns a map of all the samlv2 entities including data about
      * what realm, the roles, and location of each entity.
+     *
+     * @throws AMConsoleException if unable to retrieve the Samlv2 entities.
      */
-    private Map getSAMLv2Entities()
+    public Map getSAMLv2Entities()
         throws AMConsoleException 
     {
         Map samlv2Map = new HashMap();
@@ -123,11 +131,13 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         return (samlv2Map != null) ? samlv2Map : Collections.EMPTY_MAP;
     }
     
-    /*
+    /**
      * Returns a map of all the idff entities including data about
      * what realm, the roles, and location of each entity.
+     *
+     * @throws AMConsoleException if unable to retrieve the IDFF entities.
      */
-    private Map getIDFFEntities()
+    public Map getIDFFEntities()
         throws AMConsoleException 
     {
         Map idffMap = new HashMap();
@@ -167,11 +177,13 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         return (idffMap != null) ? idffMap : Collections.EMPTY_MAP;
     }
     
-    /*
-     * Returns a map of all the idff entities including data about
+    /**
+     * Returns a map of all the wsfed entities including data about
      * what realm, the roles, and location of each entity.
+     *
+     * @throws AMConsoleException if unable to retrieve the WSFED entities.
      */
-    private Map getWSFedEntities()
+    public Map getWSFedEntities()
         throws AMConsoleException 
     {
         Map wsfedMap = new HashMap();
@@ -224,6 +236,12 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         return sb.toString();
     }
     
+    /**
+     * Creates an entity.
+     *
+     * @param data which contains the attributes of the entity to be created.
+     * @throws AMConsoleException if unable to create entity.
+     */
     public void createEntity(Map data) throws AMConsoleException {
         String protocol = (String)data.remove(PROTOCOL);
         if (protocol.equals(SAMLV2)) {
@@ -253,6 +271,13 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         throw new AMConsoleException("create IDFF not implemented yet");
     }
     
+    /**
+     * Deletes the entity specified.
+     *
+     * @param data Map of name of entity to its information which is in this
+     * format <code>&lt;type&gt;|&lt;realm&gt;|&lt;location&gt;</code>.
+     * @throws AMConsoleException if unable to delete entitiy.
+     */
     public void deleteEntities(Map data)
         throws AMConsoleException 
     {
@@ -441,6 +466,10 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
     /*
      * Creates a list of tab entries dynamically based on the roles supported
      * for an entity.
+     *
+     *@param protocol the protocl which the entity belongs to.
+     *@param entity Name of entity descriptor.
+     *@param realm the realm in which the entity resides.
      */
     public List getTabMenu(String protocol, String entity, String realm) {
         List entries = new ArrayList();

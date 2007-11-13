@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModel.java,v 1.5 2007-10-16 22:09:39 exu Exp $
+ * $Id: EntityModel.java,v 1.6 2007-11-13 19:18:28 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,10 +52,72 @@ public interface EntityModel
     public static final String GENERAL = "General";
     public static final String AFFILIATE = "Affiliate";
         
+   /**
+     * Returns a map with all entities including data about
+     * what realm, the roles, and location of each entity.
+     *
+     * @throws AMConsoleException if unable to retrieve the entities.
+     */
     public Map getEntities() throws AMConsoleException;
+    
+    /**
+     * Returns a map of all the samlv2 entities including data about
+     * what realm, the roles, and location of each entity.
+     *
+     * @throws AMConsoleException if unable to retrieve the Samlv2 entities.
+     */
+    public Map getSAMLv2Entities() throws AMConsoleException;
+    
+    /**
+     * Returns a map of all the idff entities including data about
+     * what realm, the roles, and location of each entity.
+     *
+     * @throws AMConsoleException if unable to retrieve the IDFF entities.
+     */
+    public Map getIDFFEntities() throws AMConsoleException;
+    
+    /**
+     * Returns a map of all the wsfed entities including data about
+     * what realm, the roles, and location of each entity.
+     *
+     * @throws AMConsoleException if unable to retrieve the WSFED entities.
+     */
+    public Map getWSFedEntities() throws AMConsoleException;
+    
+    /**
+     * Deletes the entity specified.
+     *
+     * @param entities Map of name of entity to its information which is in this
+     * format <code>&lt;type&gt;|&lt;realm&gt;|&lt;location&gt;</code>.
+     * @throws AMConsoleException if unable to delete entitiy.
+     */
     public void deleteEntities(Map entities) throws AMConsoleException;
+    
+    /**
+     * Creates an entity.
+     *
+     * @param data which contains the attributes of the entity to be created.
+     * @throws AMConsoleException if unable to create entity.
+     */
     public void createEntity(Map data) throws AMConsoleException;
+    
+    /*
+     * Creates a list of tab entries dynamically based on the roles supported
+     * for an entity.
+     *
+     *@param protocol the protocl which the entity belongs to.
+     *@param name Name of entity descriptor.
+     *@param realm the realm in which the entity resides.
+     */
     public List getTabMenu(String protocol, String name, String realm);
+    
+    /**
+     * Returns true if entity descriptor is an affiliate.
+     *
+     * @param realm the realm in which the entity resides.
+     * @param name Name of entity descriptor.
+     * @return true if entity descriptor is an affiliate.
+     */
     public boolean isAffiliate(String realm, String name) 
         throws AMConsoleException;
 }

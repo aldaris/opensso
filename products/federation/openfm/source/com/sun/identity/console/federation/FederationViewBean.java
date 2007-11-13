@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.15 2007-10-26 00:08:09 jonnelson Exp $
+ * $Id: FederationViewBean.java,v 1.16 2007-11-13 19:19:29 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -298,18 +298,40 @@ public  class FederationViewBean
         CCActionTableModel tableModel = (CCActionTableModel)
         propertySheetModel.getModel (ENTITY_TABLE);
         tableModel.clearAll ();
-        
+        boolean firstRow = true;
         EntityModel eModel = getEntityModel ();
         Map entities = Collections.EMPTY_MAP;
         try {
-            entities = eModel.getEntities ();
+            entities = eModel.getSAMLv2Entities ();
+            if (!entities.isEmpty()) {
+                addRows(entities, eModel, tableModel, firstRow);
+                firstRow = false;
+            }
+            entities.clear();            
+            entities = eModel.getIDFFEntities ();
+            if (!entities.isEmpty()) {
+                addRows(entities, eModel, tableModel, firstRow);
+                firstRow = false;
+            }
+            entities.clear();
+            entities = eModel.getWSFedEntities ();
+            if (!entities.isEmpty()) {
+                addRows(entities, eModel, tableModel, firstRow);
+                firstRow = false;
+            }
         } catch (AMConsoleException e) {
             debug.error ("FederationViewBean.populateEntityTable", e);
             return;
         }
-        
-        List entityList = new ArrayList (entities.size() *2);
-        boolean firstRow = true;
+    }
+    
+  private void addRows (
+          Map entities,  
+          EntityModel eModel, 
+          CCActionTableModel tableModel, 
+          boolean firstRow 
+  ) {  
+    List entityList = new ArrayList (entities.size() *2);        
         for (Iterator i = entities.keySet().iterator(); i.hasNext(); ) {
             if (!firstRow) {
                 tableModel.appendRow();
@@ -317,13 +339,12 @@ public  class FederationViewBean
                 firstRow = false;
             }
 
-            String name = (String)i.next();                     
+            String name = (String)i.next();
             Map data = (Map)entities.get(name);
             String protocol = (String)data.get(EntityModel.PROTOCOL);
             String realm = (String)data.get(EntityModel.REALM);
             String location = (String)data.get(eModel.LOCATION);
-            String completeValue = name+"|"+protocol+"|"+realm+"|"+location;
-           
+            String completeValue = name+"|"+protocol+"|"+realm+"|"+location;           
             tableModel.setValue(ENTITY_NAME_HREF, completeValue);
             tableModel.setValue(ENTITY_NAME_VALUE, name);
             tableModel.setValue(ENTITY_REALM_VALUE, realm);
@@ -350,9 +371,9 @@ public  class FederationViewBean
         
         // set the instances in the page session so when a request comes in
         // we can prepopulate the table model.
-        setPageSessionAttribute (ENTITY_TABLE,(Serializable)entityList);
-    }
-    
+        setPageSessionAttribute (ENTITY_TABLE,(Serializable)entityList);        
+}
+
     private void populateCOTTable () {
         tablePopulated=true;
         FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();
