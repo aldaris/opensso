@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.4 2007-11-01 17:24:46 mallas Exp $
+ * $Id: STSConstants.java,v 1.5 2007-11-13 19:46:55 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,9 @@ public class STSConstants {
     
     public static final String FAM_TOKEN_NS = 
                               "http://www.sun.com/identity/famtoken";
+        
+    public static final String STS_CLIENT_USER_TOKEN_PLUGIN =
+                               "com.sun.identity.wss.sts.clientusertoken";            
 
 }
 

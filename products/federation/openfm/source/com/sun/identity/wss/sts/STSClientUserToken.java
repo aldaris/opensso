@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientUserToken.java,v 1.1 2007-11-01 17:24:16 mallas Exp $
+ * $Id: STSClientUserToken.java,v 1.2 2007-11-13 19:46:25 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wss.sts;
 
-import com.sun.xml.ws.security.Token;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -37,17 +36,21 @@ import javax.xml.parsers.ParserConfigurationException;
 
 
 /**
- * This class implements JAX-WS Token for on behalf of token that will be used 
- * to pass end user FAM SSO Token to the STS service.
+ * This class implements ClientUserToken for on behalf of token that will be 
+ * used to pass end user FAM SSO Token to the STS service.
  */
-public class STSClientUserToken implements Token {
+public class STSClientUserToken implements ClientUserToken {
         
     String tokenId = null;
     String tokenType = null;
     
-    /** Creates a new instance of STSClientUserToken */
-    public STSClientUserToken(SSOToken ssoToken) throws FAMSTSException {
+    /** Creates a new instance of STSClientUserToken */    
+    public STSClientUserToken() {        
+    }
+    
+    public void init (Object credential) throws FAMSTSException {        
         try {
+            SSOToken ssoToken = (SSOToken)credential;
             SSOTokenManager.getInstance().validateToken(ssoToken);
             tokenId = ssoToken.getTokenID().toString();
             tokenType = STSConstants.SSO_TOKEN_TYPE;
@@ -90,11 +93,7 @@ public class STSClientUserToken implements Token {
     public Element getTokenValue() {        
         Document document = XMLUtils.toDOMDocument(toString(), STSUtils.debug);        
         return document.getDocumentElement();
-    }
-    
-    public String getTokenType() {
-        return tokenType;
-    }
+    }     
     
     public String getTokenId() {
         return tokenId;

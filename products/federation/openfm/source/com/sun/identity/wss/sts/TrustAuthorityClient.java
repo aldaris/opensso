@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.4 2007-11-01 17:24:46 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.5 2007-11-13 19:46:56 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ import com.sun.xml.ws.security.IssuedTokenContext;
 import com.sun.xml.ws.security.Token;
 import com.sun.identity.wss.security.AssertionToken;
 import com.sun.xml.ws.api.security.trust.WSTrustException;
+import com.sun.identity.common.SystemConfigurationUtil;
 
 
 
@@ -55,6 +56,8 @@ import com.sun.xml.ws.api.security.trust.WSTrustException;
 public class TrustAuthorityClient {
     
     private static Debug debug = STSUtils.debug;
+    private static Class clientTokenClass;
+    
     
     /** Creates a new instance of TrustAuthorityClient */
     public TrustAuthorityClient() {
@@ -140,7 +143,7 @@ public class TrustAuthorityClient {
         
         STSConfig stsConfig = null;
         TrustAuthorityConfig taconfig = pc.getTrustAuthorityConfig();
-        if(taconfig instanceof TrustAuthorityConfig) {
+        if(taconfig instanceof STSConfig) {
            stsConfig = (STSConfig)taconfig;
         } else {
            throw new FAMSTSException("invalid trust authorityconfig");
@@ -149,9 +152,10 @@ public class TrustAuthorityClient {
         String stsEndpoint = stsConfig.getEndpoint();        
         String stsMexAddress = stsConfig.getMexEndpoint();
         STSClientConfiguration config = 
-                new STSClientConfiguration(stsEndpoint, stsMexAddress);        
+                new STSClientConfiguration(stsEndpoint, stsMexAddress);
+        
         if(ssoToken != null) {
-           config.setOBOToken(new STSClientUserToken(ssoToken));
+           config.setOBOToken(getClientUserToken(ssoToken));
         }
         try {
             IssuedTokenManager manager = IssuedTokenManager.getInstance();            
@@ -190,8 +194,35 @@ public class TrustAuthorityClient {
         return null;
     }
 
-    // Temporary static method
-
+    private static Token getClientUserToken(SSOToken ssoToken) 
+                throws FAMSTSException {
+                
+        if (clientTokenClass == null) {
+            String className =   SystemConfigurationUtil.getProperty(
+                STSConstants.STS_CLIENT_USER_TOKEN_PLUGIN, 
+                "com.sun.identity.wss.sts.STSClientUserToken");
+            try {                
+                clientTokenClass = Class.forName(className);
+ //                       Thread.currentThread().
+ //                       getContextClassLoader().loadClass(className);                                
+            } catch (Exception ex) {
+                 debug.error("TrustAuthorityClient.getClientUserToken:"
+                           +  "Failed in obtaining class", ex);
+                 throw new FAMSTSException("initializationFailed");
+            }
+        }
+        
+        try {
+            ClientUserToken userToken = 
+                    (ClientUserToken) clientTokenClass.newInstance();
+            userToken.init(ssoToken);
+            return userToken;
+        } catch (Exception ex) {
+            debug.error("TrustAuthorityClient.getClientUserToken: " +
+                 "Failed in initialization", ex);
+             throw new FAMSTSException("initializationFailed");
+        }
+    }
             
             
 }

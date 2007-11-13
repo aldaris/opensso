@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.3 2007-11-01 17:24:47 mallas Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.4 2007-11-13 19:46:57 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,8 @@ import com.sun.identity.shared.xml.XMLUtils;
 
 public class FAMSTSAttributeProvider implements STSAttributeProvider {
     
-    public Map<QName, List<String>> getClaimedAttributes(Subject subject, String appliesTo, String tokenType, Claims claims)
+    public Map<QName, List<String>> getClaimedAttributes(Subject subject, 
+            String appliesTo, String tokenType, Claims claims)
     {
         String name = null; 
         
@@ -61,7 +62,7 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                   STSClientUserToken userToken = 
                           new STSClientUserToken(credential);
                   String tokenId = userToken.getTokenId();
-                  if(userToken.getTokenType().equals(
+                  if(userToken.getType().equals(
                           STSConstants.SSO_TOKEN_TYPE)) {
                      SSOToken ssoToken = SSOTokenManager.getInstance().
                              createSSOToken(userToken.getTokenId());

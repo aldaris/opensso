@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.10 2007-11-01 20:43:58 mallas Exp $
+ * $Id: AgentProvider.java,v 1.11 2007-11-13 19:47:34 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -211,7 +211,7 @@ public class AgentProvider extends ProviderConfig {
         } else if (attr.equals(STS_TRUST_AUTHORITY)) {
             try {
                 taconfig = TrustAuthorityConfig.getConfig(value, 
-                       TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY);
+                       TrustAuthorityConfig.STS_TRUST_AUTHORITY);
            
            } catch (ProviderException pe) {
                ProviderUtils.debug.error("AgentProvider.setAttribute:error",pe);
