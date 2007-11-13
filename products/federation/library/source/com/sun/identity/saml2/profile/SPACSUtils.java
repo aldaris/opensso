@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.10 2007-10-04 04:34:51 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.11 2007-11-13 20:35:09 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -908,15 +908,7 @@ public class SPACSUtils {
         Assertion authnAssertion =
             (Assertion) smap.get(SAML2Constants.POST_ASSERTION);
         String sessionIndex = (String)smap.get(SAML2Constants.SESSION_INDEX);
-        /** TODO: deal with this and session upgrade later
         Integer authLevel = (Integer) smap.get(SAML2Constants.AUTH_LEVEL);
-        if (authLevel != null) {
-            int value = authLevel.intValue();
-            if (value >= 0) {
-                setAuthLevel(value);
-            }
-        }
-        */
         Long maxSessionTime = (Long) smap.get(SAML2Constants.MAX_SESSION_TIME);
         String inRespToResp = (String) smap.get(SAML2Constants.IN_RESPONSE_TO);
         List assertions = (List) smap.get(SAML2Constants.ASSERTIONS);
@@ -932,10 +924,7 @@ public class SPACSUtils {
         Map attributes = SAML2MetaUtils.getAttributes(spssoconfig);
 
         // get mappers
-        SPAccountMapper acctMapper = null;
-        if (session == null) {
-            acctMapper = getSPAccountMapper(attributes);
-        }
+        SPAccountMapper acctMapper = getSPAccountMapper(attributes);
         SPAttributeMapper attrMapper =
             getSPAttributeMapper(attributes);
         
@@ -977,7 +966,7 @@ public class SPACSUtils {
         if (encId != null) {
             nameId = encId.decrypt(decryptionKey);
         }
-        String userName = null;
+        String existUserName = null;
         SessionProvider sessionProvider = null;
         try {
             sessionProvider = SessionManager.getProvider();
@@ -986,16 +975,18 @@ public class SPACSUtils {
         }
         if (session != null) {
             try {
-                userName = sessionProvider.
+                existUserName = sessionProvider.
                     getPrincipalName(session);
             } catch (SessionException se) {
                 throw new SAML2Exception(se);
             }
         }
-        if (userName == null) {
-            userName = acctMapper.getIdentity(
+        String userName = acctMapper.getIdentity(
                 authnAssertion, hostEntityId, realm);
+        if (userName == null) {
+            userName = existUserName;
         }
+        // TODO: take care of session upgrade and different user case
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message(
                 classMethod + "process: userName =[" + userName + "]");
@@ -1066,7 +1057,8 @@ public class SPACSUtils {
         String clientAddr = request.getRemoteAddr();
         sessionInfoMap.put(SessionProvider.HOST, clientAddr);
         sessionInfoMap.put(SessionProvider.HOST_NAME, clientAddr);
-        //TODO: sessionInfoMap.put(SessionProvider.AUTH_LEVEL, "0");
+        sessionInfoMap.put(SessionProvider.AUTH_LEVEL, 
+            String.valueOf(authLevel));
         try {
             session = sessionProvider.createSession(
                 sessionInfoMap, request, response, null);
