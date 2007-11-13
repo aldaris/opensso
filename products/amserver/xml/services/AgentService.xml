@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.4 2007-11-05 21:45:28 veiming Exp $
+   $Id: AgentService.xml,v 1.5 2007-11-13 20:08:30 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -472,7 +472,7 @@
                         syntax="string"
                         i18nKey="com.sun.am.policy.agents.config.notenforced_list">
                         <DefaultValues>
-                            <Value>SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/UI/* SERVER_PROTO://SERVER_HOST:SERVER_PORTCONSOLE_DEPLOY_URI/* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/login_images/* SERVER_PROTO://SERVER_HOST:SERVER_PORT/docs* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/namingservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/sessionservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/loggingservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/profileservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/policyservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/config* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/js/* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/css/* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/authservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/SAMLAwareServlet SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/SAMLSOAPReceiver SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/SAMLPOSTProfileServlet</Value>
+                            <Value></Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -1768,16 +1768,7 @@
                         syntax="string"
                         i18nKey="com.iplanet.services.debug.level">
                         <DefaultValues>
-                            <Value>@DEBUG_LEVEL@</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.iplanet.services.debug.directory"
-                        type="single"
-                        syntax="string"
-                        i18nKey="com.iplanet.services.debug.directory">
-                        <DefaultValues>
-                            <Value>@DEBUG_LOGS_DIR@</Value>
+                            <Value>error</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
