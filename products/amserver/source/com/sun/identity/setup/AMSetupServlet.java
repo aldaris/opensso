@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.28 2007-11-14 01:43:35 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.29 2007-11-14 07:15:44 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1220,16 +1220,19 @@ public class AMSetupServlet extends HttpServlet {
         AMIdentityRepository idrepo = new AMIdentityRepository(token, "/");
         createUser(idrepo, "jsmith", "John", "Smith");
         createUser(idrepo, "jondoe", "Jon", "Doe");
-        HashSet config = new HashSet();
+        Map config = new HashMap();
 
         // Add WSC configuration
-        config.add("SecurityMech=urn:sun:wss:security:null:UserNameToken");
-        config.add("UserCredential=UserName:testuser|UserPassword:test");
-        config.add("useDefaultStore=true");
-        config.add("isResponseSign=true");
+        config.put("SecurityMech","urn:sun:wss:security:null:UserNameToken");
+        config.put("UserCredential","UserName:testuser|UserPassword:test");
+        config.put("useDefaultStore","true");
+        config.put("isResponseSign","true");
+        config.put("AgentType","WSCAgent");
         createAgent(idrepo, "wsc", "WSC", "", config);
 
-        // Add WSC configuration
+        // Add WSP configuration
+        config.remove("AgentType");
+        config.put("AgentType","WSPAgent");
         createAgent(idrepo, "wsp", "WSP", "", config);
 
         // Add UsernameToken profile
@@ -1237,49 +1240,48 @@ public class AMSetupServlet extends HttpServlet {
             "WS-I BSP UserName Token Profile Configuration", config);
 
         // Add SAML-HolderOfKey
-        config.remove("SecurityMech=urn:sun:wss:security:null:UserNameToken");
-        config.remove("UserCredential=UserName:testuser|UserPassword:test");
-        config.add("SecurityMech=urn:sun:wss:security:null:SAMLToken-HK");
+        config.remove("SecurityMech");
+        config.remove("UserCredential");
+        config.put("SecurityMech","urn:sun:wss:security:null:SAMLToken-HK");
         createAgent(idrepo, "SAML-HolderOfKey", "WSP",
             "WS-I BSP SAML Holder Of Key Profile Configuration", config);
 
         // Add SAML-SenderVouches
-        config.remove("SecurityMech=urn:sun:wss:security:null:SAMLToken-HK");
-        config.add("SecurityMech=urn:sun:wss:security:null:SAMLToken-SV");
+        config.remove("SecurityMech");
+        config.put("SecurityMech","urn:sun:wss:security:null:SAMLToken-SV");
         createAgent(idrepo, "SAML-SenderVouches", "WSP",
             "WS-I BSP SAML Sender Vouches Token Profile Configuration", config);
 
         // Add X509Token
-        config.remove("SecurityMech=urn:sun:wss:security:null:SAMLToken-SV");
-        config.add("SecurityMech=urn:sun:wss:security:null:X509Token");
+        config.remove("SecurityMech");
+        config.put("SecurityMech","urn:sun:wss:security:null:X509Token");
         createAgent(idrepo, "X509Token", "WSP",
             "WS-I BSP X509 Token Profile Configuration", config);
 
         // Add LibertyX509Token
-        config.add("TrustAuthority=LocalDisco");
-        config.add("WSPEndpoint=http://wsp.com");
-        config.remove("SecurityMech=urn:sun:wss:security:null:X509Token");
-        config.add("SecurityMech=urn:liberty:security:2005-02:null:X509");
+        config.put("TrustAuthority","LocalDisco");
+        config.put("WSPEndpoint","http://wsp.com");
+        config.remove("SecurityMech");
+        config.put("SecurityMech","urn:liberty:security:2005-02:null:X509");
         createAgent(idrepo, "LibertyX509Token", "WSP",
             "Liberty X509 Token Profile Configuration", config);
 
         // Add LibertyBearerToken
-        config.remove("SecurityMech=urn:liberty:security:2005-02:null:X509");
-        config.add("SecurityMech=urn:liberty:security:2005-02:null:Bearer");
+        config.remove("SecurityMech");
+        config.put("SecurityMech","urn:liberty:security:2005-02:null:Bearer");
         createAgent(idrepo, "LibertyBearerToken", "WSP",
             "Liberty SAML Bearer Token Profile Configuration", config);
 
         // Add LibertySAMLToken
-        config.remove("SecurityMech=urn:liberty:security:2005-02:null:Bearer");
-        config.add("SecurityMech=urn:liberty:security:2005-02:null:SAML");
+        config.remove("SecurityMech");
+        config.put("SecurityMech","urn:liberty:security:2005-02:null:SAML");
         createAgent(idrepo, "LibertySAMLToken", "WSP",
             "Liberty SAML Token Profile Configuration", config);
 
         // Add local discovery service
         config.clear();
-        config.add("Name=LocalDisco");
-        config.add("Type=Discovery");
-        config.add("Endpoint=" + serverURL + deployuri + "/Liberty/disco");
+        config.put("AgentType","DiscoveryAgent");
+        config.put("Endpoint", serverURL + deployuri + "/Liberty/disco");
         createAgent(idrepo, "LocalDisco", "Discovery",
             "Local Liberty Discovery Service Configuration", config);
     }
@@ -1318,21 +1320,24 @@ public class AMSetupServlet extends HttpServlet {
         String name,
         String type,
         String desc,
-        Set config
+        Map config
     ) throws IdRepoException, SSOException 
     {
         Map attributes = new HashMap();
+
         Set values = new HashSet();
-        values.add(name+type);
-        attributes.put("uid", values);
-        values = new HashSet();
         values.add(name);
         attributes.put("userpassword", values);
-        values = new HashSet();
-        values.add(desc);
-        attributes.put("description", values);
-        attributes.put("sunIdentityServerDeviceKeyValue", config);
-        idrepo.createIdentity(IdType.AGENT, name+type, attributes);
+
+        for (Iterator i = config.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            String value = (String)config.get(key);
+            values = new HashSet();
+            values.add(value);
+            attributes.put(key, values);
+        }
+        
+        idrepo.createIdentity(IdType.AGENTONLY, name, attributes);
     }
     
     private static void initDSConfigMgr(String str) 

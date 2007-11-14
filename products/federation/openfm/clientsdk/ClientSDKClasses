@@ -21,3 +21,5 @@ com/sun/identity/wss/sts/STSUtils.class
 com/sun/identity/wss/sts/TrustAuthorityClient.class
 com/sun/identity/wss/sts/STSClientUserToken.class
 com/sun/identity/wss/sts/ClientUserToken.class
+com/sun/identity/wss/security/ConfiguredWSCSecurityMech.class
+com/sun/identity/wss/security/ConfiguredWSPSecurityMech.class

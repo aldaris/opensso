@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.5 2007-11-13 20:08:30 huacui Exp $
+   $Id: AgentService.xml,v 1.6 2007-11-14 07:15:44 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2014,6 +2014,660 @@
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
+                
+                <SubSchema name="WSCAgent" inheritance="multiple">
+                    <AttributeSchema name="userpassword"
+                        type="single"
+                        syntax="password"
+                        validator="RequiredValueValidator"
+                        i18nKey="userpassword">
+                        <DefaultValues>
+                            <Value>&#160;</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceStatus"
+                        type="single_choice"
+                        syntax="string"
+                        validator="RequiredValueValidator"
+                        i18nKey="sunIdentityServerDeviceStatus">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
+                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Active</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.am.policy.agents.config.repository.location"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="com.sun.am.policy.agents.config.repository.location">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="centralized">centralized</ChoiceValue>
+                            <ChoiceValue i18nKey="local">local</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>centralized</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="SecurityMech"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="securityMechanism">
+	     	            <ChoiceValues>
+			            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.security.ConfiguredWSCSecurityMech" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Anonymous</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="forceUserAuthn"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="forceUserAuthn">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isRequestSign"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isRequestSign">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isRequestHeaderEncrypt"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isRequestHeaderEncrypt">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isRequestEncrypt"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isRequestEncrypt">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isResponseSign"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isResponseSignVerify">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isResponseEncrypt"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isResponseDecrypt">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="keepSecurityHeaders"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="keepSecurityHeaders">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="privateKeyAlias"
+                        type="single"
+                        syntax="string"
+                        i18nKey="privateKeyAlias">
+                        <DefaultValues>
+                            <Value>amclientWSC</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="publicKeyAlias"
+                        type="single"
+                        syntax="string"
+                        i18nKey="publicKeyAliasOfWSP">
+                        <DefaultValues>
+                            <Value>amclientWSP</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="WSPEndpoint"
+                        type="single"
+                        syntax="string"
+                        i18nKey="WSPEndpoint">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="WSPProxyEndpoint"
+                        type="single"
+                        syntax="string"
+                        i18nKey="WSPProxyEndpoint">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="serviceType"
+                        type="single"
+                        syntax="string"
+                        i18nKey="serviceTypeURN">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="UserCredential"
+                        type="single"
+                        syntax="string"
+                        i18nKey="userCredential">
+                        <DefaultValues>
+                            <Value>UserName=test:UserPassword=test</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                </SubSchema>
+                
+                
+                <SubSchema name="WSPAgent" inheritance="multiple">
+                    <AttributeSchema name="userpassword"
+                        type="single"
+                        syntax="password"
+                        validator="RequiredValueValidator"
+                        i18nKey="userpassword">
+                        <DefaultValues>
+                            <Value>&#160;</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceStatus"
+                        type="single_choice"
+                        syntax="string"
+                        validator="RequiredValueValidator"
+                        i18nKey="sunIdentityServerDeviceStatus">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
+                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Active</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.am.policy.agents.config.repository.location"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="com.sun.am.policy.agents.config.repository.location">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="centralized">centralized</ChoiceValue>
+                            <ChoiceValue i18nKey="local">local</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>centralized</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="SecurityMech"
+                        type="multiple_choice"
+                        syntax="string"
+                        i18nKey="securityMechanism">
+	     	            <ChoiceValues>
+			            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.security.ConfiguredWSPSecurityMech" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Anonymous</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="authenticationChain"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="authenticationChain">
+	     	            <ChoiceValues>
+			            <ChoiceValuesClassName
+                            className="com.sun.identity.authentication.service.ConfiguredAuthServices" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>[Empty]</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isRequestSign"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isRequestSignVerify">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isRequestHeaderEncrypt"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isRequestHeaderDecrypt">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isRequestEncrypt"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isRequestDecrypt">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isResponseSign"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isResponseSign">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isResponseEncrypt"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isResponseEncrypt">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="keepSecurityHeaders"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="keepSecurityHeaders">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="privateKeyAlias"
+                        type="single"
+                        syntax="string"
+                        i18nKey="privateKeyAlias">
+                        <DefaultValues>
+                            <Value>amclientWSP</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="privateKeyType"
+                        type="single"
+                        syntax="string"
+                        i18nKey="privateKeyType">
+                        <DefaultValues>
+                            <Value>PublicKey</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="publicKeyAlias"
+                        type="single"
+                        syntax="string"
+                        i18nKey="publicKeyAliasOfWSC">
+                        <DefaultValues>
+                            <Value>amclientWSC</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="WSPEndpoint"
+                        type="single"
+                        syntax="string"
+                        i18nKey="WSPEndpoint">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="WSPProxyEndpoint"
+                        type="single"
+                        syntax="string"
+                        i18nKey="WSPProxyEndpoint">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="serviceType"
+                        type="single"
+                        syntax="string"
+                        i18nKey="serviceTypeURN">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="UserCredential"
+                        type="list"
+                        syntax="string"
+                        i18nKey="userCredential">
+                        <DefaultValues>
+                            <Value>UserName=test:UserPassword=test</Value>
+                            <Value>UserName=TestUser:UserPassword=TestUser</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                </SubSchema>
+                
+                <SubSchema name="STSAgent" inheritance="multiple">
+                    <AttributeSchema name="userpassword"
+                        type="single"
+                        syntax="password"
+                        validator="RequiredValueValidator"
+                        i18nKey="userpassword">
+                        <DefaultValues>
+                            <Value>&#160;</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceStatus"
+                        type="single_choice"
+                        syntax="string"
+                        validator="RequiredValueValidator"
+                        i18nKey="sunIdentityServerDeviceStatus">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
+                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Active</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.am.policy.agents.config.repository.location"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="com.sun.am.policy.agents.config.repository.location">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="centralized">centralized</ChoiceValue>
+                            <ChoiceValue i18nKey="local">local</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>centralized</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="SecurityMech"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="securityMechanism">
+	     	            <ChoiceValues>
+			            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.security.ConfiguredWSCSecurityMech" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Anonymous</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="forceUserAuthn"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="forceUserAuthn">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isRequestSign"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isRequestSign">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isRequestHeaderEncrypt"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isRequestHeaderEncrypt">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isRequestEncrypt"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isRequestEncrypt">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isResponseSign"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isResponseSignVerify">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isResponseEncrypt"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="isResponseDecrypt">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="keepSecurityHeaders"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="keepSecurityHeaders">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="privateKeyAlias"
+                        type="single"
+                        syntax="string"
+                        i18nKey="privateKeyAlias">
+                        <DefaultValues>
+                            <Value>amclientWSC</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="publicKeyAlias"
+                        type="single"
+                        syntax="string"
+                        i18nKey="publicKeyAliasOfSTS">
+                        <DefaultValues>
+                            <Value>amclientSTS</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="STSEndpoint"
+                        type="single"
+                        syntax="string"
+                        i18nKey="STSEndpoint">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="STSMexEndpoint"
+                        type="single"
+                        syntax="string"
+                        i18nKey="STSMexEndpoint">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="UserCredential"
+                        type="single"
+                        syntax="string"
+                        i18nKey="userCredential">
+                        <DefaultValues>
+                            <Value>UserName=test:UserPassword=test</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                </SubSchema>
+                
+                <SubSchema name="DiscoveryAgent" inheritance="multiple">
+                    <AttributeSchema name="userpassword"
+                        type="single"
+                        syntax="password"
+                        validator="RequiredValueValidator"
+                        i18nKey="userpassword">
+                        <DefaultValues>
+                            <Value>&#160;</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceStatus"
+                        type="single_choice"
+                        syntax="string"
+                        validator="RequiredValueValidator"
+                        i18nKey="sunIdentityServerDeviceStatus">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
+                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Active</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.am.policy.agents.config.repository.location"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="com.sun.am.policy.agents.config.repository.location">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="centralized">centralized</ChoiceValue>
+                            <ChoiceValue i18nKey="local">local</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>centralized</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="privateKeyAlias"
+                        type="single"
+                        syntax="string"
+                        i18nKey="privateKeyAlias">
+                        <DefaultValues>
+                            <Value>amclient</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="DiscoveryEndpoint"
+                        type="single"
+                        syntax="string"
+                        i18nKey="DiscoveryEndpoint">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="AuthNServiceEndpoint"
+                        type="single"
+                        syntax="string"
+                        i18nKey="AuthNServiceEndpoint">
+                    </AttributeSchema>
+                </SubSchema>
+                
             </Organization>
         </Schema>
         <Configuration>
