@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.4 2007-10-24 20:51:00 veiming Exp $
+ * $Id: AuthClientUtils.java,v 1.5 2007-11-14 01:43:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,6 @@ import com.sun.identity.session.util.SessionUtils;
 
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.AMClientDetector;
-import com.iplanet.am.util.AMURLEncDec;
 import com.iplanet.am.util.Locale;
 import com.iplanet.am.util.SystemProperties;
 
@@ -94,6 +93,7 @@ import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.common.RequestUtils;
 import com.sun.identity.common.ISLocaleContext;
 
+import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.SMSException;
@@ -510,8 +510,8 @@ public class AuthClientUtils {
             logoutURL = url;
         } else {
             StringBuffer cookieString = new StringBuffer();
-            cookieString.append(AMURLEncDec.encode(getCookieName()))
-            .append("=").append(AMURLEncDec.encode(logoutCookie));
+            cookieString.append(URLEncDec.encode(getCookieName()))
+            .append("=").append(URLEncDec.encode(logoutCookie));
 
             StringBuffer encodedURL = new StringBuffer();
             if (url.indexOf("?") != -1) {
@@ -2013,9 +2013,9 @@ public class AuthClientUtils {
         while (requestEnum.hasMoreElements()) {
             String name = (String) requestEnum.nextElement();
             String value = request.getParameter(name);
-            buffer.append(AMURLEncDec.encode(name));
+            buffer.append(URLEncDec.encode(name));
             buffer.append('=');
-            buffer.append(AMURLEncDec.encode(value));
+            buffer.append(URLEncDec.encode(value));
             if (requestEnum.hasMoreElements()) {
                 buffer.append('&');
             }

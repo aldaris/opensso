@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.14 2007-10-04 22:05:33 veiming Exp $
+ * $Id: AuthUtils.java,v 1.15 2007-11-14 01:43:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,6 @@ import com.sun.identity.session.util.SessionUtils;
 
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.AMClientDetector;
-import com.iplanet.am.util.AMURLEncDec;
 import com.iplanet.am.util.Locale;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.am.util.Stats;
@@ -118,6 +117,7 @@ import com.sun.identity.common.FQDNUtils;
 import com.sun.identity.common.RequestUtils;
 import com.sun.identity.common.ISLocaleContext;
 
+import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.SMSException;
@@ -1522,7 +1522,7 @@ public class AuthUtils extends AuthClientUtils {
         Map returnAuthInstances = null;
         Set returnModuleInstances = null;
         try {
-            String decodedAdviceXML = AMURLEncDec.decode(xmlCompositeAdvice);
+            String decodedAdviceXML = URLEncDec.decode(xmlCompositeAdvice);
             Map adviceMap = PolicyUtils.parseAdvicesXML(decodedAdviceXML);
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("processCompositeAdviceXML - decoded XML : "

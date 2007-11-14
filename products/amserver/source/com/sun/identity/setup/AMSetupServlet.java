@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.27 2007-11-10 04:38:28 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.28 2007-11-14 01:43:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,6 +85,7 @@ import java.net.Socket;
 
 import java.security.AccessController;
 import java.security.SecureRandom;
+import java.util.Enumeration;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -106,10 +107,11 @@ public class AMSetupServlet extends HttpServlet {
     private final static String AMCONFIG = "AMConfig";
     private final static String SMS_STR = "sms";
     private static SSOToken adminToken = null;
-    
+    private final static String LEGACY_PROPERTIES = "legacy";
+
     final static String BOOTSTRAP_EXTRA = "bootstrap";    
     final static String BOOTSTRAP_FILE_LOC = "bootstrap.file";
-    
+
     /*
      * Initializes the servlet.
      */  
@@ -308,6 +310,11 @@ public class AMSetupServlet extends HttpServlet {
             if (ServerConfiguration.isLegacy(adminSSOToken)) {
                 Map mapProp = ServerConfiguration.getDefaultProperties();
                 mapProp.putAll(propAMConfig);
+                appendLegacyProperties(mapProp);
+                Properties tmp = new Properties();
+                tmp.putAll(mapProp);
+                SystemProperties.initializeProperties(tmp, true, false);
+
                 writeToFile(basedir + "/" + SetupConstants.AMCONFIG_PROPERTIES,
                     mapToString(mapProp));
                 writeToFile(basedir + "/serverconfig.xml", strServerConfigXML);
@@ -368,6 +375,14 @@ public class AMSetupServlet extends HttpServlet {
             e.printStackTrace();
         }
         return configured;
+    }
+    
+    private static void appendLegacyProperties(Map prop) {
+        ResourceBundle res = ResourceBundle.getBundle(LEGACY_PROPERTIES);
+        for (Enumeration i = res.getKeys(); i.hasMoreElements(); ) {
+            String key = (String)i.nextElement();
+            prop.put(key, (String)res.getString(key));
+        }
     }
 
     private static void postInitialize(SSOToken adminSSOToken)
@@ -437,7 +452,13 @@ public class AMSetupServlet extends HttpServlet {
             SetupConstants.CONFIG_VAR_BASE_DIR);
         String deployuri = (String)map.get(
             SetupConstants.CONFIG_VAR_SERVER_URI);
-        writeToFile(basedir + "/" + BOOTSTRAP_EXTRA, url);
+        String fileName = basedir + "/" + BOOTSTRAP_EXTRA; 
+        writeToFile(fileName, url);
+
+        // Do "chmod" only if it is on UNIX/Linux platform
+        if (System.getProperty("path.separator").equals(":")) {
+            Runtime.getRuntime().exec("chmod 400" + fileName);
+        }
     }
 
     static String getBootstrap() {
@@ -1120,48 +1141,69 @@ public class AMSetupServlet extends HttpServlet {
         AttributeSchema as = ss.getAttributeSchema(
             "iplanet-am-platform-server-list");
         Set values = as.getDefaultValues();
-        int instanceNumber, maxNumber = 1;
-        // Iterate through the values to find the max. instance names
+        if (!isInPlatformList(values, serverURL)) {
+            String instanceName = getNextAvailableServerId(values);
+            values.add(serverURL + "|" + instanceName);
+            as.setDefaultValues(values);
+
+            // Update Organization Aliases
+            OrganizationConfigManager ocm =
+                new OrganizationConfigManager(token, "/");
+        
+            Map attrs = ocm.getAttributes("sunIdentityRepositoryService");
+            Set origValues = (Set)attrs.get("sunOrganizationAliases");
+            if (!origValues.contains(hostName)) {
+                values = new HashSet();
+                values.add(hostName);
+                ocm.addAttributeValues("sunIdentityRepositoryService",
+                    "sunOrganizationAliases", values);
+            }
+        }
+    }
+
+    private static String getNextAvailableServerId(Set values) {
+        int instanceNumber = 1;
+        int maxNumber = 1;
+
         for (Iterator items = values.iterator(); items.hasNext();) {
             String item = (String) items.next();
             int index1 = item.indexOf('|');
-            if (index1 == -1) {
-                continue;
-            }
-            int index2 = item.indexOf('|', index1 + 1);
-            if (index2 == -1) {
-                item = item.substring(index1 + 1);
-            } else {
-                item = item.substring(index1 + 1, index2);
-            }
-            try {
-                int n = Integer.parseInt(item);
-                if (n > maxNumber) {
-                    maxNumber = n;
+
+            if (index1 != -1) {
+                int index2 = item.indexOf('|', index1 + 1);
+                item = (index2 == -1) ? item.substring(index1 + 1) :
+                    item.substring(index1 + 1, index2);
+
+                try {
+                    int n = Integer.parseInt(item);
+                    if (n > maxNumber) {
+                        maxNumber = n;
+                    }
+                } catch (NumberFormatException nfe) {
+                    // Ignore and continue
                 }
-            } catch (NumberFormatException nfe) {
-                // Ignore and continue
             }
         }
         String instanceName = Integer.toString(maxNumber + 1);
+        
         if (instanceName.length() == 1) {
             instanceName = "0" + instanceName;
         }
-        values.add(serverURL + "|" + instanceName);
-        as.setDefaultValues(values);
-
-        // Update Organization Aliases
-        OrganizationConfigManager ocm =
-            new OrganizationConfigManager(token, "/");
         
-        Map attrs = ocm.getAttributes("sunIdentityRepositoryService");
-        Set origValues = (Set)attrs.get("sunOrganizationAliases");
-        if (!origValues.contains(hostName)) {
-            values = new HashSet();
-            values.add(hostName);
-            ocm.addAttributeValues("sunIdentityRepositoryService",
-                "sunOrganizationAliases", values);
+        return instanceName;
+    }
+    
+    private static boolean isInPlatformList(Set values, String hostname) {
+        boolean found = false;
+        for (Iterator items = values.iterator(); items.hasNext() && !found;) {
+            String item = (String) items.next();
+            int idx = item.indexOf('|');
+            if (idx != -1) {
+                String svr = item.substring(0, idx);
+                found = svr.equals(hostname);
+            }
         }
+        return found;
     }
 
     /**

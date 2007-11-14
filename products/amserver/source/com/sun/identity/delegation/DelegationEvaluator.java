@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.6 2006-12-20 00:24:38 bhavnab Exp $
+ * $Id: DelegationEvaluator.java,v 1.7 2007-11-14 01:43:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,6 @@ import com.sun.identity.delegation.interfaces.DelegationInterface;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdUtils;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
@@ -48,27 +47,26 @@ public class DelegationEvaluator {
 
     static final Debug debug = DelegationManager.debug;
 
-    static AMIdentity privilegedUser;
+    private static AMIdentity privilegedUser;
 
-     // Provide allow permission for super admin during install
-     static boolean installTime = Boolean.valueOf(
+    // Provide allow permission for super admin during install
+    private static boolean installTime = Boolean.valueOf(
          SystemProperties.get("com.sun.identity.security.amadmin",
          "false")).booleanValue();
-     static Set adminUserSet = new HashSet();
-     static {
-         String adminUser = SystemProperties.get(
-             "com.sun.identity.authentication.super.user");
-         if (adminUser != null) {
-             adminUserSet.add(DNUtils.normalizeDN(adminUser));
-         }
-     }
+    static Set adminUserSet = new HashSet();
+    static {
+        String adminUser = SystemProperties.get(
+            "com.sun.identity.authentication.super.user");
+        if (adminUser != null) {
+            adminUserSet.add(DNUtils.normalizeDN(adminUser));
+        }
+    }
  
     private DelegationInterface pluginInstance = null;
 
     static {
         try {
-            privilegedUser = IdUtils.getIdentity(
-                DelegationManager.getAdminToken());
+            privilegedUser = new AMIdentity(DelegationManager.getAdminToken());
         } catch (Exception e) {
             debug.error("DelegationEvaluator:", e);
         }
