@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.1 2007-06-06 05:55:56 veiming Exp $
+ * $Id: Main.java,v 1.2 2007-11-14 18:53:39 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSMigration70;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.setup.Bootstrap;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -157,84 +158,90 @@ class Main
     private String entryDN;
     private String outputFileName = null;
     private Authenticator auth = null;
-
-    private String libertyDN=SystemProperties.get("com.iplanet.am.defaultOrg");
-
+    private static String libertyDN;
     private static final String DEBUGDIR =
         "com.iplanet.services.debug.directory";
-    private static String debugDir = SystemProperties.get(DEBUGDIR);
-    private static String admDbugDir =
-        debugDir + Constants.FILE_SEPARATOR + "amadmincli";
+    private static String debugDir;
+    private static String admDbugDir;
 
     static {
-        arguments.put("--debug", new Integer(DEBUG));
-        arguments.put("-d", new Integer(DEBUG));
-        arguments.put("--verbose", new Integer(VERBOSE));
-        arguments.put("-v", new Integer(VERBOSE));
-        arguments.put("--nolog", new Integer(NOLOG));
-        arguments.put("-O", new Integer(NOLOG));
-        arguments.put("--schema", new Integer(SCHEMA));
-        arguments.put("-s", new Integer(SCHEMA));
-        arguments.put("--data", new Integer(DATA));
-        arguments.put("-t", new Integer(DATA));
-        arguments.put("--runasdn", new Integer(RUN_AS_DN));
-        arguments.put("-u", new Integer(RUN_AS_DN));
-        arguments.put("--password", new Integer(PASSWORD));
-        arguments.put("-w", new Integer(PASSWORD));
-        arguments.put("--passwordfile", new Integer(PASSWORDFILE));
-        arguments.put("-f", new Integer(PASSWORDFILE));
-        arguments.put("--locale", new Integer(LOCALE_NAME));
-        arguments.put("-l", new Integer(LOCALE_NAME));
-        arguments.put("--help", new Integer(HELP));
-        arguments.put("-h", new Integer(HELP));
-        arguments.put("--deleteservice", new Integer(DELETE));
-        arguments.put("-r", new Integer(DELETE));
-        arguments.put("--version", new Integer(VERSION));
-        arguments.put("-n", new Integer(VERSION));
-        arguments.put("--session", new Integer(SESSION));
-        arguments.put("-m", new Integer(SESSION));
-        arguments.put("--continue", new Integer(CONTINUE));
-        arguments.put("-c", new Integer(CONTINUE));
-        arguments.put("--importRemote", new Integer(IMPORT_REMOTE));
-        arguments.put("-I", new Integer(IMPORT_REMOTE));
-        arguments.put("--importHosted", new Integer(IMPORT_HOSTED));
-        arguments.put("-p", new Integer(IMPORT_HOSTED));
-        arguments.put("--addAttribute", new Integer(ADD_ATTRIBUTES));
-        arguments.put("-a", new Integer(ADD_ATTRIBUTES));
-        arguments.put("--import", new Integer(LIBERTY_DATA));
-        arguments.put("-g", new Integer(LIBERTY_DATA));
-        arguments.put("--entityname", new Integer(ENTITY_NAME));
-        arguments.put("-e", new Integer(ENTITY_NAME));
-        arguments.put("--verifysig", new Integer(VERIFY_SIG));
-        arguments.put("-y", new Integer(VERIFY_SIG)); 
-        arguments.put("--export", new Integer(OUTPUT));
-        arguments.put("-o", new Integer(OUTPUT));
-        arguments.put("--xmlsig", new Integer(XML_SIG));
-        arguments.put("-x", new Integer(XML_SIG));
-        arguments.put("--defaulturlprefix", new Integer(DEFAULT_URL_PREFIX));
-        arguments.put("-k", new Integer(DEFAULT_URL_PREFIX)); 
-        arguments.put("--metaalias", new Integer(META_ALIAS));
-        arguments.put("-q", new Integer(META_ALIAS));
-        arguments.put("--addresourcebundle", new Integer(ADD_RESOURCE_BUNDLE));
-        arguments.put("-b", new Integer(ADD_RESOURCE_BUNDLE));
-        arguments.put("--resourcebundlefilename",
-                new Integer(RESOURCE_BUNDLE_FILE));
-        arguments.put("-i", new Integer(RESOURCE_BUNDLE_FILE));
-        arguments.put("--resourcelocale", new Integer(RESOURCE_LOCALE));
-        arguments.put("-R", new Integer(RESOURCE_LOCALE));
-        arguments.put("--getresourcestrings", new Integer(GET_RESOURCE_STRING));
-        arguments.put("-z", new Integer(GET_RESOURCE_STRING));
-        arguments.put("--deleteresourcebundle",
-                new Integer(DELETE_RESOURCE_BUNDLE));
-        arguments.put("-j", new Integer(DELETE_RESOURCE_BUNDLE));
-        arguments.put("-C",new Integer(DELETE_POLICY_RULE));
-        arguments.put("--cleanpolicyrules",new Integer(DELETE_POLICY_RULE));
-        arguments.put("-M", new Integer(MIGRATE70TOREALMS));
-        arguments.put("--migrate70torealms", new Integer(MIGRATE70TOREALMS));
-        arguments.put("-ofilename", new Integer(OUTPUTFILENAME));
-        arguments.put("--ofilename", new Integer(OUTPUTFILENAME));
-        arguments.put("-F", new Integer(OUTPUTFILENAME));
-        SystemProperties.initializeProperties (DEBUGDIR, admDbugDir);
+        try {
+            Bootstrap.load();
+            debugDir = SystemProperties.get(DEBUGDIR);
+            admDbugDir = debugDir + Constants.FILE_SEPARATOR + "amadmincli";
+            libertyDN = SystemProperties.get("com.iplanet.am.defaultOrg");
+            
+            arguments.put("--debug", new Integer(DEBUG));
+            arguments.put("-d", new Integer(DEBUG));
+            arguments.put("--verbose", new Integer(VERBOSE));
+            arguments.put("-v", new Integer(VERBOSE));
+            arguments.put("--nolog", new Integer(NOLOG));
+            arguments.put("-O", new Integer(NOLOG));
+            arguments.put("--schema", new Integer(SCHEMA));
+            arguments.put("-s", new Integer(SCHEMA));
+            arguments.put("--data", new Integer(DATA));
+            arguments.put("-t", new Integer(DATA));
+            arguments.put("--runasdn", new Integer(RUN_AS_DN));
+            arguments.put("-u", new Integer(RUN_AS_DN));
+            arguments.put("--password", new Integer(PASSWORD));
+            arguments.put("-w", new Integer(PASSWORD));
+            arguments.put("--passwordfile", new Integer(PASSWORDFILE));
+            arguments.put("-f", new Integer(PASSWORDFILE));
+            arguments.put("--locale", new Integer(LOCALE_NAME));
+            arguments.put("-l", new Integer(LOCALE_NAME));
+            arguments.put("--help", new Integer(HELP));
+            arguments.put("-h", new Integer(HELP));
+            arguments.put("--deleteservice", new Integer(DELETE));
+            arguments.put("-r", new Integer(DELETE));
+            arguments.put("--version", new Integer(VERSION));
+            arguments.put("-n", new Integer(VERSION));
+            arguments.put("--session", new Integer(SESSION));
+            arguments.put("-m", new Integer(SESSION));
+            arguments.put("--continue", new Integer(CONTINUE));
+            arguments.put("-c", new Integer(CONTINUE));
+            arguments.put("--importRemote", new Integer(IMPORT_REMOTE));
+            arguments.put("-I", new Integer(IMPORT_REMOTE));
+            arguments.put("--importHosted", new Integer(IMPORT_HOSTED));
+            arguments.put("-p", new Integer(IMPORT_HOSTED));
+            arguments.put("--addAttribute", new Integer(ADD_ATTRIBUTES));
+            arguments.put("-a", new Integer(ADD_ATTRIBUTES));
+            arguments.put("--import", new Integer(LIBERTY_DATA));
+            arguments.put("-g", new Integer(LIBERTY_DATA));
+            arguments.put("--entityname", new Integer(ENTITY_NAME));
+            arguments.put("-e", new Integer(ENTITY_NAME));
+            arguments.put("--verifysig", new Integer(VERIFY_SIG));
+            arguments.put("-y", new Integer(VERIFY_SIG)); 
+            arguments.put("--export", new Integer(OUTPUT));
+            arguments.put("-o", new Integer(OUTPUT));
+            arguments.put("--xmlsig", new Integer(XML_SIG));
+            arguments.put("-x", new Integer(XML_SIG));
+            arguments.put("--defaulturlprefix", new Integer(DEFAULT_URL_PREFIX));
+            arguments.put("-k", new Integer(DEFAULT_URL_PREFIX)); 
+            arguments.put("--metaalias", new Integer(META_ALIAS));
+            arguments.put("-q", new Integer(META_ALIAS));
+            arguments.put("--addresourcebundle", new Integer(ADD_RESOURCE_BUNDLE));
+            arguments.put("-b", new Integer(ADD_RESOURCE_BUNDLE));
+            arguments.put("--resourcebundlefilename",
+                    new Integer(RESOURCE_BUNDLE_FILE));
+            arguments.put("-i", new Integer(RESOURCE_BUNDLE_FILE));
+            arguments.put("--resourcelocale", new Integer(RESOURCE_LOCALE));
+            arguments.put("-R", new Integer(RESOURCE_LOCALE));
+            arguments.put("--getresourcestrings", new Integer(GET_RESOURCE_STRING));
+            arguments.put("-z", new Integer(GET_RESOURCE_STRING));
+            arguments.put("--deleteresourcebundle",
+                    new Integer(DELETE_RESOURCE_BUNDLE));
+            arguments.put("-j", new Integer(DELETE_RESOURCE_BUNDLE));
+            arguments.put("-C",new Integer(DELETE_POLICY_RULE));
+            arguments.put("--cleanpolicyrules",new Integer(DELETE_POLICY_RULE));
+            arguments.put("-M", new Integer(MIGRATE70TOREALMS));
+            arguments.put("--migrate70torealms", new Integer(MIGRATE70TOREALMS));
+            arguments.put("-ofilename", new Integer(OUTPUTFILENAME));
+            arguments.put("--ofilename", new Integer(OUTPUTFILENAME));
+            arguments.put("-F", new Integer(OUTPUTFILENAME));
+            SystemProperties.initializeProperties (DEBUGDIR, admDbugDir);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     Main() {
