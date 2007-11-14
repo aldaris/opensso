@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.12 2007-11-08 05:41:46 beomsuk Exp $
+ * $Id: SAML2Utils.java,v 1.13 2007-11-14 18:55:28 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 package com.sun.identity.saml2.common;
 
 import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.cot.COTException;
@@ -60,7 +62,7 @@ import com.sun.identity.saml2.plugins.SAML2IDPFinder;
 import com.sun.identity.saml2.plugins.SPAccountMapper;
 import com.sun.identity.saml2.plugins.SPAuthnContextMapper;
 import com.sun.identity.saml2.profile.AuthnRequestInfo;
-import com.sun.identity.saml2.profile.CacheCleanUpThread;
+import com.sun.identity.saml2.profile.CacheCleanUpScheduler;
 import com.sun.identity.saml2.profile.IDPCache;
 import com.sun.identity.saml2.profile.SPCache;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
@@ -136,8 +138,7 @@ import org.w3c.dom.NodeList;
  */
 public class SAML2Utils extends SAML2SDKUtils {
     
-    private static Thread cThread = null;
-    
+        
     // SAML2MetaManager
     private static SAML2MetaManager saml2MetaManager = null;
     private static CircleOfTrustManager cotManager = null;
@@ -227,8 +228,7 @@ public class SAML2Utils extends SAML2SDKUtils {
             debug.error("Error retreiving COT ",sme);
         }
         if (SystemConfigurationUtil.isServerMode()) {
-            cThread = new CacheCleanUpThread();
-            cThread.start();
+            CacheCleanUpScheduler.doSchedule();
         }
     }
     

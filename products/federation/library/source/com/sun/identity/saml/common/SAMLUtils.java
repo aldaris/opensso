@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.4 2007-10-17 23:00:57 veiming Exp $
+ * $Id: SAMLUtils.java,v 1.5 2007-11-14 18:55:26 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 
 package com.sun.identity.saml.common;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Vector;
@@ -53,8 +54,13 @@ import org.w3c.dom.*;
 
 import netscape.ldap.util.DN;
 import netscape.ldap.util.RDN;
+import com.sun.identity.common.PeriodicGroupRunnable;
+import com.sun.identity.common.ScheduleableGroupAction;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.common.SystemConfigurationException;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.encode.Base64;
@@ -80,10 +86,12 @@ import com.sun.identity.saml.assertion.Condition;
 import com.sun.identity.saml.assertion.Conditions;
 import com.sun.identity.saml.assertion.Statement;
 import com.sun.identity.saml.assertion.SubjectStatement;
+import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml.common.SAMLServiceManager;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager; 
 import com.sun.identity.saml.plugins.PartnerAccountMapper;
 import com.sun.identity.saml.protocol.*;
-import com.sun.identity.saml.servlet.POSTCleanUpThread;
+import com.sun.identity.saml.servlet.POSTCleanUpRunnable;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
@@ -123,14 +131,29 @@ public class SAMLUtils  extends SAMLUtilsCommon {
     String.valueOf(defaultMaxLength);
     
     private static int maxContentLength = 0;
-    private static Map idTimeMap = new HashMap();
-    private static Thread cThread = null;
+    private static Map idTimeMap = Collections.synchronizedMap(new HashMap());
+    private static TaskRunnable cGoThrough = null;
+    private static TaskRunnable cPeriodic = null;
     private static Object ssoToken;
  
     static {
         if (SystemConfigurationUtil.isServerMode()) {
-            cThread = new POSTCleanUpThread(idTimeMap);
-            cThread.start();
+            long period = ((Integer) SAMLServiceManager.getAttribute(
+                        SAMLConstants.CLEANUP_INTERVAL_NAME)).intValue() * 1000;
+            cGoThrough = new POSTCleanUpRunnable(period, idTimeMap);
+            TimerPool timerPool = SystemTimerPool.getTimerPool();
+            timerPool.schedule(cGoThrough, new Date(((System.currentTimeMillis()
+                + period) / 1000) * 1000));
+            ScheduleableGroupAction periodicAction = new
+                ScheduleableGroupAction() {
+                public void doGroupAction(Object obj) {
+                    idTimeMap.remove(obj);
+                }
+            };
+            cPeriodic = new PeriodicGroupRunnable(periodicAction, period,
+                180000, true);
+            timerPool.schedule(cPeriodic, new Date(((System.currentTimeMillis() +
+                period) / 1000) * 1000));
         }
         try {
             maxContentLength = Integer.parseInt(SystemConfigurationUtil.
@@ -1099,8 +1122,6 @@ public class SAMLUtils  extends SAMLUtilsCommon {
         Set confMethods = null;
         String confMethod = null;
         Date date = null;
-        // set default. TODO: which number to use for this period?
-        long time = System.currentTimeMillis() + 180000;
         while (iter.hasNext()) {
             assertion = (Assertion) iter.next();
             aIDString = assertion.getAssertionID();
@@ -1179,15 +1200,17 @@ public class SAMLUtils  extends SAMLUtilsCommon {
             }
             
             // add the assertion to idTimeMap
-            Conditions conds = assertion.getConditions();
-            if ((conds != null) && ((date = conds.getNotOnorAfter()) != null)) {
-                time = date.getTime();
-            }
             if (debug.messageEnabled()) {
                 debug.message("Adding " + aIDString + " to idTimeMap.");
             }
-            synchronized(idTimeMap) {
-                idTimeMap.put(aIDString, new Long(time));
+            Conditions conds = assertion.getConditions();
+            if ((conds != null) && ((date = conds.getNotOnorAfter()) != null)) {
+                cGoThrough.addElement(aIDString);
+                idTimeMap.put(aIDString, new Long(date.getTime()));
+            } else {
+                cPeriodic.addElement(aIDString);
+                // it doesn't matter what we store for the value.
+                idTimeMap.put(aIDString, aIDString);
             }
         }
         

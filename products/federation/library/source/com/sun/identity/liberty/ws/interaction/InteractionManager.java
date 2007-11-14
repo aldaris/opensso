@@ -17,13 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionManager.java,v 1.2 2007-06-23 05:08:58 dillidorai Exp $
+ * $Id: InteractionManager.java,v 1.3 2007-11-14 18:55:24 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.liberty.ws.interaction;
 
+import com.sun.identity.common.PeriodicCleanUpMap;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.liberty.ws.common.LogUtil;
@@ -51,6 +55,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1225,27 +1230,14 @@ public class InteractionManager {
         private static final int SWEEP_INTERVAL = 60 * 1000;
         private static final int CACHE_ENTRY_MAX_IDLE_TIME = 120 * 1000;
 
-        private boolean sweepEnabled = true;
-
-        Map cache = Collections.synchronizedMap(new HashMap());
+        PeriodicCleanUpMap cache = new PeriodicCleanUpMap(SWEEP_INTERVAL,
+            CACHE_ENTRY_MAX_IDLE_TIME);
 
         InteractionCache() {
             if (debug.messageEnabled()) {
                 debug.message("InteactionCache.InteractionCache() "
                         + " - entering constructor");
             }
-            Thread sweeperThread = new Thread() {
-                public void run() {
-                    while (sweepEnabled) {
-                        sweep();
-                        try {
-                            Thread.sleep(SWEEP_INTERVAL);
-                        } catch (InterruptedException ie) {
-                        }
-                    }
-                }
-            };
-            sweeperThread.setDaemon(true);
             if (debug.messageEnabled()) {
                 debug.message("InteactionCache.InteractionCache() "
                         + " - starting sweeper thread");
@@ -1255,11 +1247,13 @@ public class InteractionManager {
                         + " CACHE_ENTRY_MAX_IDLE_TIME = " 
                         + CACHE_ENTRY_MAX_IDLE_TIME);
             }
+            SystemTimerPool.getTimerPool().schedule((TaskRunnable) cache,
+                new Date(((System.currentTimeMillis() + SWEEP_INTERVAL) / 1000)
+                * 1000));
             if (debug.messageEnabled()) {
                 debug.message("InteactionCache.InteractionCache() "
                         + " - returning from constructor");
             }
-            sweeperThread.start();
         }
 
         CacheEntry getCacheEntry(String messageID) {
@@ -1269,7 +1263,12 @@ public class InteractionManager {
                 debug.message("InteractionCache.getCacheEntry():"
                         + " cached messageIDs=" + cache.keySet());
             }
-            return (CacheEntry)cache.get(messageID);
+            CacheEntry entry = (CacheEntry)cache.get(messageID);
+            if (entry != null) {
+                cache.removeElement(messageID);
+                cache.addElement(messageID);
+            }
+            return entry;
         }
 
         void putCacheEntry(String messageID, CacheEntry cacheEntry) {
@@ -1278,44 +1277,6 @@ public class InteractionManager {
                 debug.message("InteractionCache.putCacheEntry():"
                         + " cached cacheEntry for messageID=" + messageID);
             }
-        }
-
-        void sweep() {
-
-            /*  commenting out because: generates too much data
-            if (debug.messageEnabled()) {
-                debug.message("InteractionCache.sweep() - entering:"
-                        + "entries in cache=" + cache.size());
-            }
-            */
-
-            try {
-                Iterator iter = cache.keySet().iterator();
-                while (iter.hasNext()) {
-                    String messageID = (String)iter.next();
-                    CacheEntry cacheEntry = (CacheEntry)cache.get(messageID);
-                    if ( cacheEntry != null 
-                            && ( (System.currentTimeMillis() 
-                            - cacheEntry.getLastAccessTime()) 
-                            > CACHE_ENTRY_MAX_IDLE_TIME)) {
-                        iter.remove();
-                    }
-                }
-            } catch (ConcurrentModificationException cme) {
-                if (debug.messageEnabled()) {
-                    debug.message("InteractionCache.sweep() - returning"
-                            + " due to ConcurrentModificationException:"
-                            + "entries in cache=" + cache.size());
-                }
-            }
-
-            /*
-            if (debug.messageEnabled()) {
-                debug.message("InteractionCache.sweep() - returning:"
-                        + "entries in cache=" + cache.size());
-            }
-            */
-
         }
 
     }
@@ -1332,125 +1293,95 @@ public class InteractionManager {
         String returnToURL;
         String requestHost;
         String language;
-        long createTime;
-        long lastAccessTime;
 
         CacheEntry(String messageID) {
             this.messageID= messageID;
-            createTime = System.currentTimeMillis();
-            lastAccessTime = createTime;
         }
 
         CacheEntry(String messageID, Message message) {
             this.messageID= messageID;
             this.requestMessage= message;
-            createTime = System.currentTimeMillis();
-            lastAccessTime = createTime;
         }
 
         void setRequestMessage(Message requestMessage) {
             this.requestMessage = requestMessage;
-            lastAccessTime = System.currentTimeMillis();
         }
 
         Message getRequestMessage() {
-            lastAccessTime = System.currentTimeMillis();
             return requestMessage;
         }
 
         void setRequestMessageID(String requestMessageID) {
-            lastAccessTime = System.currentTimeMillis();
             this.requestMessageID = requestMessageID;
         }
 
         String getRequestMessageID() {
-            lastAccessTime = System.currentTimeMillis();
             return requestMessageID;
         }
 
         void setInquiryElement(InquiryElement inquiryElement) {
-            lastAccessTime = System.currentTimeMillis();
             this.inquiryElement = inquiryElement;
         }
 
         InquiryElement getInquiryElement() {
-            lastAccessTime = System.currentTimeMillis();
             return inquiryElement;
         }
 
         void setInteractionResponseElement(
                 InteractionResponseElement interactionResponseElement) {
-            lastAccessTime = System.currentTimeMillis();
             this.interactionResponseElement = interactionResponseElement;
         }
 
         InteractionResponseElement getInteractionResponseElement() {
-            lastAccessTime = System.currentTimeMillis();
             return interactionResponseElement;
         }
 
         void setConnectTo(String connectTo) {
-            lastAccessTime = System.currentTimeMillis();
             this.connectTo = connectTo;
         }
 
         String getConnectTo() {
-            lastAccessTime = System.currentTimeMillis();
             return connectTo;
         }
 
         void setClientCert(String certAlias) {
-            lastAccessTime = System.currentTimeMillis();
             this.certAlias = certAlias;
         }
 
         String getClientCert() {
-            lastAccessTime = System.currentTimeMillis();
             return certAlias;
         }
 
         void setSoapAction(String soapAction) {
-            lastAccessTime = System.currentTimeMillis();
             this.soapAction = soapAction;
         }
 
         String getSoapAction() {
-            lastAccessTime = System.currentTimeMillis();
             return soapAction;
         }
 
         void setReturnToURL(String returnToURL) {
-            lastAccessTime = System.currentTimeMillis();
             this.returnToURL = returnToURL;
         }
 
         String getReturnToURL() {
-            lastAccessTime = System.currentTimeMillis();
             return returnToURL;
         }
 
         void setRequestHost(String requestHost) {
-            lastAccessTime = System.currentTimeMillis();
             this.requestHost = requestHost;
         }
 
         String getRequestHost() {
-            lastAccessTime = System.currentTimeMillis();
             return requestHost;
         }
 
         void setLanguage(String language) {
-            lastAccessTime = System.currentTimeMillis();
             this.language = language;
         }
 
         String getLanguage() {
-            lastAccessTime = System.currentTimeMillis();
             return language;
-        }
-
-        long getLastAccessTime() {
-            return lastAccessTime;
         }
 
     }

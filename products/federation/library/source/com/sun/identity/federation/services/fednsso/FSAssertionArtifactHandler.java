@@ -17,14 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.8 2007-10-26 00:06:58 exu Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.9 2007-11-14 18:55:23 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.services.fednsso;
 
+import com.sun.identity.common.PeriodicGroupRunnable;
+import com.sun.identity.common.ScheduleableGroupAction;
+import com.sun.identity.common.SystemTimerPool;
 import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
 import com.sun.identity.federation.accountmgmt.FSAccountFedInfoKey;
 import com.sun.identity.federation.accountmgmt.FSAccountManager;
@@ -72,8 +77,9 @@ import com.sun.identity.saml.assertion.SubjectConfirmation;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml.common.SAMLResponderException;
+import com.sun.identity.saml.common.SAMLServiceManager;
 import com.sun.identity.saml.protocol.Response;
-import com.sun.identity.saml.servlet.POSTCleanUpThread;
+import com.sun.identity.saml.servlet.POSTCleanUpRunnable;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.CookieUtils;
@@ -81,6 +87,7 @@ import com.sun.identity.shared.DateUtils;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -112,8 +119,9 @@ public class FSAssertionArtifactHandler {
     protected FSAuthnRequest authnRequest = null;
     protected String relayState= null;
     
-    protected static Map idTimeMap = new HashMap();
-    protected static Thread cThread = new POSTCleanUpThread(idTimeMap);
+    protected static Map idTimeMap = Collections.synchronizedMap(new HashMap());
+    private static TaskRunnable cGoThrough = null;
+    private static TaskRunnable cPeriodic = null;
     protected boolean doFederate = false;
     protected String nameIDPolicy = null;
     
@@ -136,7 +144,21 @@ public class FSAssertionArtifactHandler {
     protected FSResponse samlResponse = null;
     
     static {
-        cThread.start();
+        long period = ((Integer) SAMLServiceManager.getAttribute(
+            SAMLConstants.CLEANUP_INTERVAL_NAME)).intValue() * 1000;
+        cGoThrough = new POSTCleanUpRunnable(period, idTimeMap);
+        TimerPool timerPool = SystemTimerPool.getTimerPool();
+        timerPool.schedule(cGoThrough, new Date(((System.currentTimeMillis()
+            + period) / 1000) * 1000));
+        ScheduleableGroupAction periodicAction = new ScheduleableGroupAction() {
+            public void doGroupAction(Object obj) {
+                idTimeMap.remove(obj);
+            }
+        };
+        cPeriodic = new PeriodicGroupRunnable(periodicAction, period, 180000,
+            true);
+        timerPool.schedule(cPeriodic, new Date(((System.currentTimeMillis() +
+            period) / 1000) * 1000));
     }
     
     /**
@@ -821,20 +843,21 @@ public class FSAssertionArtifactHandler {
                 }
                 return null;
             }
-            
-            // add the assertion to idTimeMap
-            if ((date = conds.getNotOnorAfter()) != null) {
-                time = date.getTime();
-            }
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSAssertionArtifactHandler."
                     + "validateAssertion: Adding " 
                     + aIDString 
                     + " to idTimeMap.");
             }
-            synchronized(idTimeMap) {
-                idTimeMap.put(aIDString, new Long(time));
-            }
+            // add the assertion to idTimeMap
+            if ((date = conds.getNotOnorAfter()) != null) {
+                cGoThrough.addElement(aIDString);
+                idTimeMap.put(aIDString, new Long(date.getTime()));
+            } else {
+                cPeriodic.addElement(aIDString);
+                // it doesn't matter what we store for the value.
+                idTimeMap.put(aIDString, aIDString);
+            }            
             securityAssertions = assertion.getDiscoveryCredential();
         }
         

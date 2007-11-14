@@ -17,13 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Stats.java,v 1.2 2006-12-08 21:02:43 veiming Exp $
+ * $Id: Stats.java,v 1.3 2007-11-14 18:55:35 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.shared.stats;
 
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import java.io.BufferedWriter;
@@ -94,7 +98,7 @@ import java.util.Vector;
  * </p>
  * @supported.all.api
  */
-public class Stats {
+public class Stats implements ShutdownListener {
     /** flags the disabled stats state. */
     public static final int OFF = 0;
 
@@ -140,9 +144,7 @@ public class Stats {
 
     private int statsState;
 
-    private static Thread sr = null;
-
-    static Vector statsListeners = new Vector();
+    private static StatsRunner statsListeners = new StatsRunner();
 
     /**
      * Initializes the Stats service so that Stats objects can be created. At
@@ -210,12 +212,11 @@ public class Stats {
                     } catch (SecurityException se) {
                         System.err.println(se.getMessage());
                     }
+                    
+                    SystemTimer.getTimer().schedule(statsListeners, new Date(((
+                        System.currentTimeMillis() +
+                        statsListeners.getRunPeriod()) / 1000) * 1000));
 
-                    if (sr == null) {
-                        sr = new StatsRunner();
-                        sr.setName("amStats");
-                        sr.start();
-                    }
                     serviceInitialized = true;
                 }
             }
@@ -252,6 +253,7 @@ public class Stats {
             // explicitly ignore any duplicate instances.
             statsMap.put(statsName, this);
         }
+        ShutdownManager.getInstance().addShutdownListener(this);
     }
 
     /**
@@ -482,6 +484,10 @@ public class Stats {
     public void destroy() {
         finalize();
     }
+    
+    public void shutdown() {
+        finalize();
+    }
 
     /** Flushes and then closes the stats file. */
     protected void finalize() {
@@ -502,8 +508,6 @@ public class Stats {
     }
 
     public void addStatsListener(StatsListener listener) {
-        synchronized (statsListeners) {
-            statsListeners.addElement(listener);
-        }
+        statsListeners.addElement(listener);
     }
 }

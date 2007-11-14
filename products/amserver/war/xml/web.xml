@@ -71,6 +71,9 @@
 	</filter-mapping>
     
     <!-- listener declaration -->
+	<listener>
+		<listener-class>com.sun.identity.common.ShutdownServletContextListener</listener-class>
+	</listener>
 
 	<!-- Add one servlet entry like this per module -->
 	<servlet>

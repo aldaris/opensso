@@ -17,18 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatsRunner.java,v 1.1 2006-08-25 21:21:56 veiming Exp $
+ * $Id: StatsRunner.java,v 1.2 2007-11-14 18:55:35 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.shared.stats;
 
+import com.sun.identity.common.InstantGroupRunnable;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import java.util.Vector;
 
-public class StatsRunner extends Thread {
+public class StatsRunner extends InstantGroupRunnable {
     static long period = 3600000; // in milliseconds
 
     static {
@@ -44,31 +45,22 @@ public class StatsRunner extends Thread {
         }
     }
 
-    public StatsRunner() {
-        setDaemon(true);
-    }
-
-    /**
-     * Runs the stat listeners to print statistics.
-     */
-    public void run() {
-        while (true) {
-            long nextRun = System.currentTimeMillis() + period;
-            try {
-                long sleeptime = nextRun - System.currentTimeMillis();
-                if (sleeptime > 0) {
-                    sleep(sleeptime);
-                }
-            } catch (Exception ex) {
-            }
-
-            if (Stats.statsListeners.size() != 0) {
-                Vector lsnrs = Stats.statsListeners;
-                for (int i = 0; i < lsnrs.size(); i++) {
-                    StatsListener lsnr = (StatsListener) (lsnrs.elementAt(i));
-                    lsnr.printStats();
-                }
-            }
+    public boolean addElement(Object obj) {
+        synchronized (actions) {
+            return actions.add(obj);
         }
     }
+    
+    public StatsRunner() {
+        super(null, false);
+    }
+    
+    public long getRunPeriod() {
+        return period;
+    }
+
+    public void doGroupAction(Object obj) {
+        ((StatsListener) obj).printStats();
+    }
+
 }

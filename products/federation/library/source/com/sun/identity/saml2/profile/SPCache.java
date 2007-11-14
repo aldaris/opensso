@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.7 2007-10-04 04:34:51 hengming Exp $
+ * $Id: SPCache.java,v 1.8 2007-11-14 18:55:30 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,11 @@
 
 package com.sun.identity.saml2.profile;
 
+import com.sun.identity.common.PeriodicCleanUpMap;
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -42,29 +46,53 @@ import netscape.ldap.util.DN;
 
 public class SPCache {
 
+    public static int interval = SAML2Constants.CACHE_CLEANUP_INTERVAL_DEFAULT;
+    
+    static {
+        String intervalStr = SystemPropertiesManager.get(
+            SAML2Constants.CACHE_CLEANUP_INTERVAL);
+        try {
+            if (intervalStr != null && intervalStr.length() != 0) {
+                interval = Integer.parseInt(intervalStr);
+                if (interval < 0) {
+                    interval = 
+                        SAML2Constants.CACHE_CLEANUP_INTERVAL_DEFAULT;
+                }
+            }
+        } catch (NumberFormatException e) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("SPCache.constructor: "
+                    + "invalid cleanup interval. Using default.");
+            }
+        }
+    }
+    
     private SPCache() {
     }
 
     /**
-     * Hashtable saves the request info.
+     * Map saves the request info.
      * Key   :   requestID String
      * Value : AuthnRequestInfo object
      */
-    public static Hashtable requestHash = new Hashtable(); 
+    public static PeriodicCleanUpMap requestHash = new PeriodicCleanUpMap(
+        interval * 1000, interval * 1000); 
 
     /**
-     * Hashtable saves the MNI request info.
+     * Map saves the MNI request info.
      * Key   :   requestID String
      * Value : ManageNameIDRequestInfo object
      */
-    protected static Hashtable mniRequestHash = new Hashtable(); 
+    protected static PeriodicCleanUpMap mniRequestHash = new PeriodicCleanUpMap(
+        interval * 1000, interval * 1000);
 
     /**
-     * Hashtable to save the relayState URL.
+     * Map to save the relayState URL.
      * Key  : a String the relayStateID 
      * Value: a String the RelayState Value 
      */
-    public static Hashtable relayStateHash= new Hashtable(); 
+    public static PeriodicCleanUpMap relayStateHash= new PeriodicCleanUpMap(
+        interval * 1000, interval * 1000); 
 
     /**
      * Hashtable stores information required for LogoutRequest consumption.
@@ -84,11 +112,12 @@ public class SPCache {
          Collections.synchronizedSet(new HashSet());
 
     /**
-     * Hashtable saves response info for local auth.
+     * Map saves response info for local auth.
      * Key: requestID String
      * Value: ResponseInfo object
      */
-    protected static Hashtable responseHash = new Hashtable();
+    protected static PeriodicCleanUpMap responseHash = new PeriodicCleanUpMap(
+        interval * 1000, interval * 1000);
 
     /**
      * Hashtable saves AuthnContext Mapper object.

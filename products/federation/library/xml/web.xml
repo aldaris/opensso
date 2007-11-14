@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.8 2007-10-04 04:38:25 hengming Exp $
+   $Id: web.xml,v 1.9 2007-11-14 18:55:31 ww203982 Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -273,6 +273,10 @@
             <servlet-name>LoggedOut</servlet-name>
             <jsp-file>/wsfederation/jsp/loggedOut.jsp</jsp-file>
         </servlet>
+
+	<listener>
+		<listener-class>com.sun.identity.common.ShutdownServletContextListener</listener-class>
+	</listener>
 
         <servlet-mapping>
             <servlet-name>SPMniSoap</servlet-name>

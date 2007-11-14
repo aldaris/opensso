@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSessionManager.java,v 1.2 2007-10-16 21:49:14 exu Exp $
+ * $Id: FSSessionManager.java,v 1.3 2007-11-14 18:54:53 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,8 @@ package com.sun.identity.federation.services;
 import com.sun.identity.shared.stats.Stats;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.message.FSAuthnRequest;
 import com.sun.identity.federation.meta.IDFFMetaManager;
@@ -38,6 +40,7 @@ import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -72,8 +75,6 @@ public final class FSSessionManager {
         Collections.synchronizedMap(new HashMap ());
     private Map idAuthnRequestMap = 
         Collections.synchronizedMap(new HashMap ());
-    private Map idAuthnRequestTimeoutMap =
-        Collections.synchronizedMap(new HashMap ());
     private Map idLocalSessionTokenMap = 
         Collections.synchronizedMap(new HashMap ()); 
     private Map idDestnMap = 
@@ -89,11 +90,10 @@ public final class FSSessionManager {
 
     private static long cleanupInterval = 0;
     private static long requestTimeout = 0;
-    private Thread cThread = null;
+    private FSRequestCleanUpRunnable cRunnable = null;
 
     private FSSessionMapStats dnStats;
     private FSSessionMapStats reqStats;
-    private FSSessionMapStats reqTimeoutStats;
     private FSSessionMapStats tokenStats;
     private FSSessionMapStats idStats;
     private FSSessionMapStats relayStats;
@@ -194,9 +194,8 @@ public final class FSSessionManager {
         }
         removeAuthnRequest (requestID);
         idAuthnRequestMap.put (requestID, authnRequest);
-        if (cThread != null) {
-            idAuthnRequestTimeoutMap.put(requestID, 
-                new Long(System.currentTimeMillis() + requestTimeout));
+        if (cRunnable != null) {
+            cRunnable.addElement(requestID);
         }
     }
     
@@ -211,8 +210,8 @@ public final class FSSessionManager {
         }
         idAuthnRequestMap.remove(requestID);
         idDestnMap.remove(requestID);
-        if (cThread != null) {
-            idAuthnRequestTimeoutMap.remove(requestID);
+        if (cRunnable != null) {
+            cRunnable.removeElement(requestID);
         }
     }
 
@@ -531,10 +530,6 @@ public final class FSSessionManager {
                 "idAuthnRequestMap", realm, hostEntityId);
             sessStats.addStatsListener(reqStats);
 
-            reqTimeoutStats = new FSSessionMapStats(idAuthnRequestTimeoutMap, 
-                "idAuthnRequestTimeoutMap", realm, hostEntityId);
-            sessStats.addStatsListener(reqTimeoutStats);
-
             tokenStats = new FSSessionMapStats(idLocalSessionTokenMap,
                 "idLocalSessionTokenMap", realm, hostEntityId);
             sessStats.addStatsListener(tokenStats);
@@ -557,14 +552,11 @@ public final class FSSessionManager {
                     "start cleanup thread for " + hostEntityId +
                     " in realm " + realm);
             }
-            cThread = new FSRequestCleanUpThread(
-                hostEntityId, 
-                idAuthnRequestTimeoutMap,
-                idAuthnRequestMap, 
-                idDestnMap,
-                cleanupInterval);
-            cThread.setDaemon(true);
-            cThread.start();
+            cRunnable = new FSRequestCleanUpRunnable(idAuthnRequestMap,
+                idDestnMap, cleanupInterval, requestTimeout);
+            SystemTimerPool.getTimerPool().schedule(cRunnable, new Date(
+                ((System.currentTimeMillis() + cleanupInterval) / 1000) *
+                1000));
         }
     }
     

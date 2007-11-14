@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.3 2007-03-10 00:29:21 qcheng Exp $
+ * $Id: AssertionManager.java,v 1.4 2007-11-14 18:55:26 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.net.InetAddress;
 import org.w3c.dom.Element;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.PeriodicGroupRunnable;
+import com.sun.identity.common.ScheduleableGroupAction;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.saml.assertion.*;
 import com.sun.identity.saml.protocol.*;
 import com.sun.identity.saml.common.*;
@@ -82,6 +88,11 @@ public final class AssertionManager {
     private static String superUser = null;
     private static SessionProvider sessionProvider = null;
     
+    private static long cleanUpInterval;
+    private static long assertionTimeout;
+    private static long artifactTimeout;
+    private static long notBeforeSkew;
+    
     static {
         assStats = Stats.getInstance("amAssertionMap");
         artStats = Stats.getInstance("amArtifactMap");
@@ -93,6 +104,14 @@ public final class AssertionManager {
                 se);
             sessionProvider = null; 
         }
+        cleanUpInterval = ((Integer) SAMLServiceManager.getAttribute(
+            SAMLConstants.CLEANUP_INTERVAL_NAME)).intValue() * 1000;
+        artifactTimeout = ((Integer) SAMLServiceManager.getAttribute(
+            SAMLConstants.ARTIFACT_TIMEOUT_NAME)).intValue() * 1000;
+        assertionTimeout = ((Integer) SAMLServiceManager.getAttribute(
+            SAMLConstants.ASSERTION_TIMEOUT_NAME)).intValue() * 1000;
+        notBeforeSkew = ((Integer) SAMLServiceManager.getAttribute(
+            SAMLConstants.NOTBEFORE_TIMESKEW_NAME)).intValue() * 1000;
     }
     
     // Singleton instance of AssertionManager
@@ -102,9 +121,14 @@ public final class AssertionManager {
     private static Map artEntryMap = null;
     // used to store assertionIDString to entry mapping
     private static Map idEntryMap = null;
+    
+    private static TaskRunnable assertionTimeoutRunnable;
+    private static TaskRunnable artifactTimeoutRunnable;
+    private static TaskRunnable goThroughRunnable;
 
     private static String assertionVersion = null; 
     private static String protocolVersion = null; 
+    
 
     private class Entry {
         private String destID = null;
@@ -164,8 +188,6 @@ public final class AssertionManager {
         }
     }
 
-    private static Thread cThread  = null;
-
     /**
      * Default Constructor
      */
@@ -181,18 +203,44 @@ public final class AssertionManager {
             assertionVersion = SAMLConstants.ASSERTION_VERSION_1_0; 
             protocolVersion = SAMLConstants.PROTOCOL_VERSION_1_0; 
         }
+        TimerPool timerPool = SystemTimerPool.getTimerPool();
+        ScheduleableGroupAction assertionTimeoutAction = new
+            ScheduleableGroupAction() {
+            public void doGroupAction(Object obj) {
+                deleteAssertion((String) obj, null);
+            }
+        };
         
+        assertionTimeoutRunnable = new PeriodicGroupRunnable(
+            assertionTimeoutAction, cleanUpInterval, assertionTimeout, true);
+        timerPool.schedule(assertionTimeoutRunnable, new Date(((
+            System.currentTimeMillis() + cleanUpInterval) / 1000) * 1000));
+        
+        ScheduleableGroupAction artifactTimeoutAction = new
+            ScheduleableGroupAction() {
+            public void doGroupAction(Object obj) {
+                deleteAssertion(null, (String) obj);
+            }
+        };
+        
+        artifactTimeoutRunnable = new PeriodicGroupRunnable(
+            artifactTimeoutAction, cleanUpInterval, artifactTimeout, true);
+        
+        timerPool.schedule(artifactTimeoutRunnable, new Date(((
+            System.currentTimeMillis() + cleanUpInterval) / 1000) * 1000));
+        
+        goThroughRunnable = new GoThroughRunnable(cleanUpInterval);
+        
+        timerPool.schedule(goThroughRunnable, new Date(((
+            System.currentTimeMillis() + cleanUpInterval) / 1000) * 1000));
         
         if (assStats.isEnabled()) {
-                artifactStats = new ArtifactStats(artEntryMap);
-                artStats.addStatsListener(artifactStats);
-                assertionStats = new AssertionStats(idEntryMap);
-                assStats.addStatsListener(assertionStats);
-            }
+            artifactStats = new ArtifactStats(artEntryMap);
+            artStats.addStatsListener(artifactStats);
+            assertionStats = new AssertionStats(idEntryMap);
+            assStats.addStatsListener(assertionStats);
+        }
 
-        
-        cThread = new CleanUpThread();
-        cThread.start();
     }
 
     /**
@@ -344,6 +392,7 @@ public final class AssertionManager {
                 synchronized (idEntryMap) {
                     idEntryMap.put(aID, entry);
                 }
+                goThroughRunnable.addElement(aID);
             } catch (Exception e) {
                 SAMLUtils.debug.error("AssertionManager.createAssertion"
                         + "Artifact(Assertion,String): couldn't add to "
@@ -377,14 +426,17 @@ public final class AssertionManager {
             entry.setArtifactString(artString);
         }
         // add to artEntry map
-        Integer artTimeout = (Integer) SAMLServiceManager.getAttribute(
-                                SAMLConstants.ARTIFACT_TIMEOUT_NAME);
-        long expiretime = System.currentTimeMillis() +
-                                         (artTimeout.intValue() * 1000);
         try {
+            Object oldEntry = null;
             synchronized (artEntryMap) {
-                artEntryMap.put(artString, new ArtEntry(aID, expiretime));
+                oldEntry = artEntryMap.put(artString, new
+                    ArtEntry(aID, System.currentTimeMillis() +
+                    artifactTimeout));
             }
+            if (oldEntry != null) {
+                artifactTimeoutRunnable.removeElement(artString);
+            }
+            artifactTimeoutRunnable.addElement(artString);
         } catch (Exception e) {
             SAMLUtils.debug.error("AssertionManager.createAssertionArt"
                     + "fact(Assertion,String): couldn't add artifact to the "
@@ -688,17 +740,9 @@ public final class AssertionManager {
             statements.add(new AttributeStatement(sub, attributes));
         }
         Date issueInstant = new Date();
-        // get this notbefore skew period from the config
-        Integer notBeforeSkew = (Integer) SAMLServiceManager.getAttribute(
-                                        SAMLConstants.NOTBEFORE_TIMESKEW_NAME);
-        long skewPeriod = (notBeforeSkew.intValue()) * 1000;
-        Date notBefore = new Date(issueInstant.getTime() - skewPeriod);
-        // get this period from the config
-        Integer assertionTimeout = (Integer) SAMLServiceManager.getAttribute(
-                                        SAMLConstants.ASSERTION_TIMEOUT_NAME);
+        Date notBefore = new Date(issueInstant.getTime() - notBeforeSkew);
         // TODO: this period will be different for bearer
-        long period = (assertionTimeout.intValue()) * 1000;
-        Date notAfter = new Date(issueInstant.getTime() + period);
+        Date notAfter = new Date(issueInstant.getTime() + assertionTimeout);
         Conditions cond = new Conditions(notBefore, notAfter);
         String issuer = (String) SAMLServiceManager.getAttribute(
                                         SAMLConstants.ISSUER_NAME);
@@ -717,9 +761,14 @@ public final class AssertionManager {
 
         Entry entry = new Entry(assertion, destID, artString, token);
         try {
+            Object oldEntry = null;
             synchronized (idEntryMap) {
-                idEntryMap.put(aIDString, entry);
+                oldEntry = idEntryMap.put(aIDString, entry);
             }
+            if (oldEntry != null) {
+                assertionTimeoutRunnable.removeElement(aIDString);
+            }
+            assertionTimeoutRunnable.addElement(aIDString);
         } catch (Exception e) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager: couldn't add "
@@ -742,15 +791,18 @@ public final class AssertionManager {
         }
 
         if (artString != null) {
-            Integer artifactTimeout = (Integer) SAMLServiceManager.getAttribute(
-                SAMLConstants.ARTIFACT_TIMEOUT_NAME);
-            period = (artifactTimeout.intValue()) * 1000;
             // put artifact in artEntryMap
             try {
+                Object oldEntry = null;
                 synchronized (artEntryMap) {
-                    artEntryMap.put(artString, new ArtEntry(aIDString, 
-                                (System.currentTimeMillis() + period)));
+                    oldEntry = artEntryMap.put(artString, new
+                        ArtEntry(aIDString,
+                        (System.currentTimeMillis() + artifactTimeout)));
                 }
+                if (oldEntry != null) {
+                    artifactTimeoutRunnable.removeElement(artString);
+                }
+                artifactTimeoutRunnable.addElement(artString);
             } catch (Exception e) {
                 if (SAMLUtils.debug.messageEnabled()) {
                     SAMLUtils.debug.message("AssertionManager: couldn't add "
@@ -797,6 +849,7 @@ public final class AssertionManager {
             // this is the case when Session expired, and the assertion
             // was created for artifact
             artEntry = (ArtEntry) artEntryMap.remove(artifact);
+            artifactTimeoutRunnable.removeElement(artifact);
             String[] data = {SAMLUtils.bundle.getString(
                 "assertionArtifactRemoved"), artifact};
             LogUtils.access(java.util.logging.Level.FINE, 
@@ -806,6 +859,7 @@ public final class AssertionManager {
         if (assertionID != null) {
             Entry entry = null;
             entry = (Entry) idEntryMap.remove(assertionID);
+            assertionTimeoutRunnable.removeElement(assertionID);
             if (entry != null) {
                 String[] data = {SAMLUtils.bundle.getString("assertionRemoved"),
                     assertionID};
@@ -819,6 +873,7 @@ public final class AssertionManager {
                         synchronized (artEntryMap) {
                             artEntryMap.remove(artString);
                         }
+                        artifactTimeoutRunnable.removeElement(artString);
                         String[] data2 = {SAMLUtils.bundle.getString(
                             "assertionArtifactRemoved"), artifact};
                         LogUtils.access(java.util.logging.Level.FINE,
@@ -831,6 +886,7 @@ public final class AssertionManager {
                 synchronized (idEntryMap) {
                     idEntryMap.remove(artEntry.getAssertionID());
                 }
+                assertionTimeoutRunnable.removeElement(artEntry.getAssertionID());
             }
         }
     }
@@ -951,6 +1007,7 @@ public final class AssertionManager {
         synchronized (artEntryMap) {
             artEntryMap.remove(artString);
         }
+        artifactTimeoutRunnable.removeElement(artString);
         String[] data = {SAMLUtils.bundle.getString(
             "assertionArtifactVerified"), artString};
         LogUtils.access(java.util.logging.Level.INFO,
@@ -960,6 +1017,7 @@ public final class AssertionManager {
             synchronized(idEntryMap) {
                 idEntryMap.remove(aIDString);
             }
+            assertionTimeoutRunnable.removeElement(aIDString);
         }
         
         // check the time of the assertion
@@ -1236,14 +1294,8 @@ public final class AssertionManager {
         Set stmtSet = new HashSet();
         stmtSet.add(new AttributeStatement(subject, attributes));
         Date issueInstant = new Date();
-        Integer assertionTimeout = (Integer) SAMLServiceManager.getAttribute(
-                                        SAMLConstants.ASSERTION_TIMEOUT_NAME);
-        Integer notBeforeSkew = (Integer) SAMLServiceManager.getAttribute(
-                                        SAMLConstants.NOTBEFORE_TIMESKEW_NAME);
-        long skewPeriod = (notBeforeSkew.intValue()) * 1000;
-        Date notBefore = new Date(issueInstant.getTime() - skewPeriod);
-        long period = (assertionTimeout.intValue()) * 1000;
-        Date notAfter = new Date(issueInstant.getTime() + period);
+        Date notBefore = new Date(issueInstant.getTime() - notBeforeSkew);
+        Date notAfter = new Date(issueInstant.getTime() + assertionTimeout);
         Conditions cond = new Conditions(notBefore, notAfter);
         Assertion newAssertion = new Assertion(null, issuerName, issueInstant,
                                         cond, stmtSet);
@@ -1258,9 +1310,14 @@ public final class AssertionManager {
 
         // add newEntry to idEntryMap
         try {
+            Object oldEntry = null;
             synchronized (idEntryMap) {
-                idEntryMap.put(aIDString, newEntry);
+                oldEntry = idEntryMap.put(aIDString, newEntry);
             }
+            if (oldEntry != null) {
+                assertionTimeoutRunnable.removeElement(aIDString);
+            }
+            assertionTimeoutRunnable.addElement(aIDString);
         } catch (Exception e) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager.getAttributeAssertion"
@@ -1421,15 +1478,8 @@ public final class AssertionManager {
                 subjLocality, null);
         Date issueInstant = new Date();
         // get this period from the config
-        Integer assertionTimeout = (Integer) SAMLServiceManager.getAttribute(
-                                        SAMLConstants.ASSERTION_TIMEOUT_NAME);
-        long period = (assertionTimeout.intValue()) * 1000;
-        Date notAfter = new Date(issueInstant.getTime() + period);
-        // get this notbefore skew period from the config
-        Integer notBeforeSkew = (Integer) SAMLServiceManager.getAttribute(
-                                        SAMLConstants.NOTBEFORE_TIMESKEW_NAME);
-        long skewPeriod = (notBeforeSkew.intValue()) * 1000;
-        Date notBefore = new Date(issueInstant.getTime() - skewPeriod);
+        Date notAfter = new Date(issueInstant.getTime() + assertionTimeout);
+        Date notBefore = new Date(issueInstant.getTime() - notBeforeSkew);
         Conditions cond = new Conditions(notBefore, notAfter);
         String issuer = (String) SAMLServiceManager.getAttribute(
                                 SAMLConstants.ISSUER_NAME);
@@ -1448,9 +1498,14 @@ public final class AssertionManager {
 
         // add entry to idEntryMap
         try {
+            Object oldEntry = null;
             synchronized (idEntryMap) {
-                idEntryMap.put(aIDString, entry);
+                oldEntry = idEntryMap.put(aIDString, entry);
             }
+            if (oldEntry != null) {
+                assertionTimeoutRunnable.removeElement(aIDString);
+            }
+            assertionTimeoutRunnable.addElement(aIDString);
         } catch (Exception e) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager.getAuthNAssertion:"
@@ -1878,15 +1933,8 @@ public final class AssertionManager {
                         newActions, query.getEvidence());
 
         Date issueInstant = new Date();
-        Integer assertionTimeout = (Integer) SAMLServiceManager.getAttribute(
-                                        SAMLConstants.ASSERTION_TIMEOUT_NAME);
-        long period = (assertionTimeout.intValue()) * 1000;
-        Date notAfter = new Date(issueInstant.getTime() + period);
-        // get this notbefore skew period from the config
-        Integer notBeforeSkew = (Integer) SAMLServiceManager.getAttribute(
-                                        SAMLConstants.NOTBEFORE_TIMESKEW_NAME);
-        long skewPeriod = (notBeforeSkew.intValue()) * 1000;
-        Date notBefore = new Date(issueInstant.getTime() - skewPeriod);
+        Date notAfter = new Date(issueInstant.getTime() + assertionTimeout);
+        Date notBefore = new Date(issueInstant.getTime() - notBeforeSkew);
         Conditions cond = new Conditions(notBefore, notAfter);
         String issuer = (String) SAMLServiceManager.getAttribute(
                                                 SAMLConstants.ISSUER_NAME);
@@ -1923,9 +1971,14 @@ public final class AssertionManager {
 
             // put assertion in idEntryMap
             try {
+                Object oldEntry = null;
                 synchronized (idEntryMap) {
-                    idEntryMap.put(aIDString, entry);
+                    oldEntry = idEntryMap.put(aIDString, entry);
                 }
+                if (oldEntry != null) {
+                    assertionTimeoutRunnable.removeElement(aIDString);
+                }
+                assertionTimeoutRunnable.addElement(aIDString);
             } catch (Exception e) {
                 if (SAMLUtils.debug.messageEnabled()) {
                     SAMLUtils.debug.message("AssertionManager.getAuthZAssertion"
@@ -2295,112 +2348,81 @@ public final class AssertionManager {
         }
     }
 
-    boolean removeAssertion(Assertion assertion) {
-        if (assertion.getConditions() != null) {
-            return !assertion.isTimeValid();
-        } else {
-            long currentTime = System.currentTimeMillis();
-            // if conditions are absent, calculate time validity of 
-            // assertion as if notBefore is issueInstant - notBeforeSkew
-            // and notOnOrAfter is assertion time out + issueInstant
-   
-            // get the notbefore skew period from the config
-            Integer notBeforeSkew = (Integer) SAMLServiceManager.
-                getAttribute(SAMLConstants.NOTBEFORE_TIMESKEW_NAME);
-            long skewPeriod = (notBeforeSkew.intValue()) * 1000;
-            Date issueInstant = assertion.getIssueInstant();
-            Date notBefore = new Date(issueInstant.getTime() - skewPeriod);
-            Integer assertionTimeout = (Integer)SAMLServiceManager.
-                getAttribute(SAMLConstants.ASSERTION_TIMEOUT_NAME);
-            long period = (assertionTimeout.intValue()) * 1000;
-            Date notOnOrAfter = new Date(issueInstant.getTime() + period);
-            if ((currentTime >= notBefore.getTime()) &&
-                (currentTime < notOnOrAfter.getTime())) {
-                return false;
-            } else {
-                return true;
+    private class GoThroughRunnable extends GeneralTaskRunnable {
+        private Set keys;
+        private long runPeriod;
+        
+        public GoThroughRunnable(long runPeriod) {
+            this.keys = new HashSet();
+            this.runPeriod = runPeriod;
+        }
+        
+        public boolean addElement(Object obj) {
+           synchronized (keys) {
+                return keys.add(obj);
             }
         }
-    }
-
-    private class CleanUpThread extends Thread {
+    
+        public boolean removeElement(Object obj) {
+            synchronized (keys) {
+                return keys.remove(obj);
+            }
+        }
+    
+        public boolean isEmpty() {
+            return false;
+        }
+    
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
         public void run() {
-            Iterator keyIter = null;
-            Integer interval = (Integer) SAMLServiceManager.getAttribute(
-                                SAMLConstants.CLEANUP_INTERVAL_NAME);
-            long period = (interval.intValue()) * 1000;
-            String keyString = null;
-            Entry entry = null;
-            ArtEntry artEntry = null;
-            Assertion assertion = null;
-            Set expiredSet = null;
-            long currentTime;
-
-            while (true) {
-                // clean up the artEntryMap
-                currentTime = System.currentTimeMillis();
-                SAMLUtils.debug.message("Clean up thread wakes up..");
-                expiredSet = new HashSet();
-                synchronized(artEntryMap) {
-                    keyIter = artEntryMap.keySet().iterator();
-                    while (keyIter.hasNext()) {
-                        keyString = (String) keyIter.next();
-                        artEntry = (ArtEntry) artEntryMap.get(keyString);
-                        if ((artEntry != null) && 
-                            (artEntry.getExpireTime() <= currentTime)) {
-                            expiredSet.add(keyString);
-                        }
-                    }
-                    if (SAMLUtils.debug.messageEnabled()) {
-                        SAMLUtils.debug.message("AssertionManager::"
-                            +"CleanUpThread::artifacts to be removed:"
-                            +expiredSet.size());
-                    }
-                    keyIter = expiredSet.iterator();
-                    while (keyIter.hasNext()) {
-                        deleteAssertion(null, (String) keyIter.next());
-                    }
+            long currentTime = System.currentTimeMillis();
+            String keyString;
+            Entry entry;
+            Assertion assertion;
+            SAMLUtils.debug.message("Clean up runnable wakes up..");
+            synchronized (keys) {
+                Iterator keyIter = keys.iterator();
+                if (SAMLUtils.debug.messageEnabled()) {
+                    SAMLUtils.debug.message("AssertionManager::"
+                        +"CleanUpThread::number of assertions in "
+                        + "IdEntryMap:"+idEntryMap.size());
                 }
-                
-                // clean up the idEntryMap
-                synchronized (idEntryMap) {
-                    keyIter = idEntryMap.keySet().iterator();
-                    if (SAMLUtils.debug.messageEnabled()) {
-                        SAMLUtils.debug.message("AssertionManager::"
-                            +"CleanUpThread::number of assertions in "
-                            + "IdEntryMap:"+idEntryMap.size());
-                    }
-                    expiredSet = new HashSet();
-                    while (keyIter.hasNext()) {
-                        keyString = (String) keyIter.next();
-                        entry = (Entry) idEntryMap.get(keyString);
-                        if (entry != null) {
-                            assertion = entry.getAssertion();
-                            if ((assertion != null) && 
-                               (removeAssertion(assertion))) {
-                               expiredSet.add(keyString);
+                while (keyIter.hasNext()) {
+                    keyString = (String) keyIter.next();
+                    entry = (Entry) idEntryMap.get(keyString);
+                    if (entry != null) {
+                        assertion = entry.getAssertion();
+                        if (assertion != null) {
+                            if (assertion.getConditions() != null) {
+                                if (!assertion.isTimeValid()) {
+                                    keyIter.remove();
+                                    deleteAssertion(keyString, null);
+                                }
+                            } else {
+                                // if conditions are absent, calculate time
+                                // validity of assertion as if notBefore is
+                                // issueInstant - notBeforeSkew and notOnOrAfter
+                                // is assertion time out + issueInstant
+   
+                                Date issueInstant = assertion.getIssueInstant();
+                                Date notBefore = new Date(issueInstant.getTime()
+                                    - notBeforeSkew);
+                                Date notOnOrAfter = new Date(
+                                    issueInstant.getTime() + assertionTimeout);
+                                if (!((currentTime >= notBefore.getTime()) &&
+                                    (currentTime < notOnOrAfter.getTime()))) {
+                                    keyIter.remove();
+                                    deleteAssertion(keyString, null);
+                                }
                             }
                         }
                     }
-                    if (SAMLUtils.debug.messageEnabled()) {
-                        SAMLUtils.debug.message("AssertionManager::"
-                            +"CleanUpThread::assertions to be removed from "
-                            +"IdEntryMap:"+expiredSet.size());
-                    }
-                    keyIter = expiredSet.iterator();
-                    while (keyIter.hasNext()) {
-                        deleteAssertion((String) keyIter.next(), null);
-                    }
-                }
-
-                try {
-                    sleep(period);
-                } catch (Exception e) {
-                    if (SAMLUtils.debug.messageEnabled()) {
-                        SAMLUtils.debug.message("CleanUpThread::run", e);
-                    }
                 }
             }
         }
     }
+
 }

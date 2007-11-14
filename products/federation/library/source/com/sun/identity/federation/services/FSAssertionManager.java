@@ -17,14 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManager.java,v 1.7 2007-10-26 00:06:57 exu Exp $
+ * $Id: FSAssertionManager.java,v 1.8 2007-11-14 18:54:21 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.services;
 
+import com.sun.identity.common.PeriodicGroupRunnable;
+import com.sun.identity.common.ScheduleableGroupAction;
 import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.federation.common.FSException;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.common.IFSConstants;
@@ -96,8 +100,13 @@ public final class FSAssertionManager {
     
     private Map artIdMap = null;
     private Map idEntryMap = null;
+    private PeriodicGroupRunnable assertionTimeoutRunnable;
+    private PeriodicGroupRunnable artifactTimeoutRunnable;
     private static String SERVICE_NAMING = "fsassertionmanager";
     
+    private int cleanupInterval;
+    private int assertionTimeout;
+    private int artifactTimeout;
     private FSArtifactStats artIdStats;
     private FSAssertionStats assrtIdStats;
 
@@ -135,8 +144,6 @@ public final class FSAssertionManager {
             return token;
         }
     }
-
-    private static Thread cThread  = null;
     
     private String hostEntityId = null;
     private String realm = null;
@@ -161,7 +168,73 @@ public final class FSAssertionManager {
         if (hostEntityId == null) {
             throw new FSException("nullProviderID", null);
         }
-
+        Map attributes;
+        cleanupInterval = IFSConstants.CLEANUP_INTERVAL_DEFAULT * 1000;
+        assertionTimeout = IFSConstants.ASSERTION_TIMEOUT_DEFAULT * 1000;
+        artifactTimeout = IFSConstants.ARTIFACT_TIMEOUT_DEFAULT * 1000;
+        try {
+            BaseConfigType idpConfig = FSUtils.getIDFFMetaManager().
+                getIDPDescriptorConfig(realm, hostEntityId);
+            attributes = IDFFMetaUtils.getAttributes(idpConfig);
+            try {
+                cleanupInterval = Integer.parseInt(
+                    IDFFMetaUtils.getFirstAttributeValue(attributes,
+                    IFSConstants.CLEANUP_INTERVAL)) * 1000;
+            } catch (Exception e) {
+                FSUtils.debug.error("FSAssertionManager: "
+                    + "Exception while parsing interval", e);
+            }
+            try {
+                assertionTimeout = Integer.parseInt(
+                    IDFFMetaUtils.getFirstAttributeValue(attributes, 
+                    IFSConstants.ASSERTION_INTERVAL)) * 1000;
+            } catch (Exception e) {
+                FSUtils.debug.error("AssertionManager: "
+                    + "Exception while parsing timeout", e);
+            }
+            if (assertionTimeout <
+                IFSConstants.ASSERTION_TIMEOUT_ALLOWED_DIFFERENCE) {
+                assertionTimeout =
+                    IFSConstants.ASSERTION_TIMEOUT_ALLOWED_DIFFERENCE;
+            }
+            try {
+                artifactTimeout = Integer.parseInt(
+                    IDFFMetaUtils.getFirstAttributeValue(attributes,
+                    IFSConstants.ARTIFACT_TIMEOUT)) * 1000;
+            } catch(Exception ex){
+                if (FSUtils.debug.messageEnabled()) {
+                    FSUtils.debug.message(
+                        "FSAssertionManager: "
+                        + "ArtifactTimeOut configuration not found in FSConfig."
+                        + " Using Default");
+                }
+            }
+        } catch(Exception e){
+            FSUtils.debug.error("FSAssertionManager: "
+                + "Exception while parsing cleanup assertion :", e);
+        }
+        ScheduleableGroupAction timeoutAction = new
+            ScheduleableGroupAction() {
+            public void doGroupAction(Object obj) {
+                Entry entry = (Entry) idEntryMap.remove(obj);
+                if (entry != null) {
+                    String artString = entry.getArtifactString();
+                    if (artString != null) {
+                        artIdMap.remove(artString);
+                    }
+                }
+            }
+        };
+        assertionTimeoutRunnable = new PeriodicGroupRunnable(timeoutAction,
+            cleanupInterval, assertionTimeout, true);
+        artifactTimeoutRunnable = new PeriodicGroupRunnable(timeoutAction,
+            cleanupInterval, artifactTimeout, true);
+        TimerPool pool = SystemTimerPool.getTimerPool();
+        pool.schedule(assertionTimeoutRunnable, new Date(((
+            System.currentTimeMillis() + cleanupInterval) / 1000) * 1000));
+        pool.schedule(artifactTimeoutRunnable, new Date(((
+            System.currentTimeMillis() + cleanupInterval) / 1000) * 1000));
+        
         if (assrtStats.isEnabled()) {
             assrtIdStats = new FSAssertionStats(idEntryMap, realm,hostEntityId);
             assrtStats.addStatsListener(assrtIdStats);
@@ -170,10 +243,6 @@ public final class FSAssertionManager {
             artStats.addStatsListener(artIdStats);
         }
 
-        if (cThread == null) {
-            cThread = new CleanUpThread();
-            cThread.start();
-        }
     }
     
     /**
@@ -601,60 +670,13 @@ public final class FSAssertionManager {
         Date issueInstant = new Date();
         // get this period from the config
         
-        
-        long period;
-        if (artifact != null){
-            Integer artifactTimeout;
-            try {
-                int temp = Integer.parseInt(
-                    IDFFMetaUtils.getFirstAttributeValue(
-                        attributes, IFSConstants.ARTIFACT_TIMEOUT));
-                artifactTimeout = new Integer(temp);
-            } catch(Exception ex){
-                if (FSUtils.debug.messageEnabled()) {
-                    FSUtils.debug.message(
-                        "FSAssertionManager.createAssertion(id): "
-                        + "ArtifactTimeOut configuration not found in FSConfig."
-                        + " Using Default");
-                }
-                artifactTimeout = null;
-            }
-            if (artifactTimeout == null) {
-                artifactTimeout = 
-                    new Integer(IFSConstants.ARTIFACT_TIMEOUT_DEFAULT);
-            }
-            period = (artifactTimeout.intValue()) * 1000;
-        } else {
-            Integer assertionTimeout;
-            try {
-                int temp = Integer.parseInt(
-                    IDFFMetaUtils.getFirstAttributeValue(
-                        attributes, IFSConstants.ASSERTION_INTERVAL));
-                assertionTimeout = new Integer(temp);
-            } catch(Exception ex){
-                if (FSUtils.debug.messageEnabled()) {
-                    FSUtils.debug.message(
-                        "FSAssertionManager.createAssertion(id): "
-                        + "AtrifactTimeOut configuration not found in FSConfig."
-                        + " Using Default");
-                }
-                assertionTimeout = null;
-            }
-            if (assertionTimeout == null) {
-                assertionTimeout = 
-                    new Integer(IFSConstants.ASSERTION_TIMEOUT_DEFAULT);
-            }
-            FSUtils.debug.message("here before assertion time");
-            period = (assertionTimeout.intValue()) * 1000;
-            if (period < IFSConstants.ASSERTION_TIMEOUT_ALLOWED_DIFFERENCE) {
-                period = IFSConstants.ASSERTION_TIMEOUT_ALLOWED_DIFFERENCE;
-            }
-            FSUtils.debug.message("here after assertion time");
-
-        }
-
         FSUtils.debug.message("here before date");
-        Date notAfter = new Date(issueInstant.getTime() + period);
+        Date notAfter;
+        if (artifact != null) {
+            notAfter = new Date(issueInstant.getTime() + artifactTimeout);
+        } else {
+            notAfter = new Date(issueInstant.getTime() + assertionTimeout);
+        }
         FSUtils.debug.message("here after date");
         statement.setReauthenticateOnOrAfter(notAfter);
         
@@ -802,9 +824,10 @@ public final class FSAssertionManager {
                 + "reached maxNumber of assertions.");
             throw new FSException("errorCreateAssertion", null);
         }
+        Object oldEntry = null;
         try {
             synchronized(idEntryMap) {
-                idEntryMap.put(aIDString, entry);
+                oldEntry = idEntryMap.put(aIDString, entry);
             }
         } catch(Exception e) {
             if (FSUtils.debug.messageEnabled()) {
@@ -823,7 +846,7 @@ public final class FSAssertionManager {
         if (artString != null) {
             try {
                 synchronized(artIdMap) {
-                    artIdMap.put(artString, aIDString);
+                    oldEntry = artIdMap.put(artString, aIDString);
                 }
             } catch(Exception e) {
                 if (FSUtils.debug.messageEnabled()) {
@@ -832,6 +855,15 @@ public final class FSAssertionManager {
                 }
                 throw new FSException("errorCreateArtifact",null);
             }
+            if (oldEntry != null) {
+                artifactTimeoutRunnable.removeElement(aIDString);
+            }
+            artifactTimeoutRunnable.addElement(aIDString);
+        } else {
+            if (oldEntry != null) {
+                assertionTimeoutRunnable.removeElement(aIDString);
+            }
+            assertionTimeoutRunnable.addElement(aIDString);
         }
         
         if (FSUtils.debug.messageEnabled()) {
@@ -923,9 +955,11 @@ public final class FSAssertionManager {
         synchronized(artIdMap) {
             artIdMap.remove(artString);
         }
+        artifactTimeoutRunnable.removeElement(aIDString);
         synchronized(idEntryMap) {
             idEntryMap.remove(aIDString);
         }
+        assertionTimeoutRunnable.removeElement(aIDString);
        
         Assertion assertion = entry.getAssertion();
         if (assertion == null) {
@@ -1022,180 +1056,6 @@ public final class FSAssertionManager {
         }
         return dest;
     }
-    
-    private class CleanUpThread extends Thread {
-        public CleanUpThread() {
-            super();
-            // make this a Daemon thread
-            setDaemon(true);
-        }
-
-        public void run() {
-            // cleanup every FSAssertionManager instance in the map
-            while (true) {
-                Integer interval = null;
-                if (!instanceMap.isEmpty()) {
-                    synchronized (instanceMap) {
-                        Iterator instances = instanceMap.values().iterator();
-                        while (instances.hasNext()) {
-                            FSAssertionManager manager = 
-                                (FSAssertionManager) instances.next();
-                            String providerId = manager.getEntityId();
-                            if (FSUtils.debug.messageEnabled()) {
-                                FSUtils.debug.message("cleanup instance " + 
-                                    providerId); 
-                            }
-                            Map attributes = new HashMap();
-                            try {
-                                BaseConfigType idpConfig =
-                                    FSUtils.getIDFFMetaManager().
-                                        getIDPDescriptorConfig(
-                                            manager.getRealm(), providerId);
-                                attributes = IDFFMetaUtils.getAttributes(
-                                    idpConfig);
-                            } catch(Exception e){
-                                FSUtils.debug.error("CleanUpThread.run(): "
-                                    + "Exception while cleanup assertion :", e);
-                                continue;
-                            }
-                            Integer temp = null;
-                            try {
-                                int tmp = Integer.parseInt(
-                                    IDFFMetaUtils.getFirstAttributeValue(
-                                        attributes,
-                                        IFSConstants.CLEANUP_INTERVAL));
-                                temp = new Integer(tmp);
-                            } catch (Exception e) {
-                                FSUtils.debug.error("CleanUpThread.run(): "
-                                    + "Exception while parsing interval", e);
-                                temp = DEFAULT_CLEANUP_INTERVAL; 
-                            }
-                            // get the minimal thread cleanup internal
-                            if (interval == null || 
-                                interval.compareTo(temp) > 0) {
-                                interval = temp;
-                            }
-                            // get the Assertion timeout 
-                            Integer assrtTimeout = null;
-                            try {
-                                int tmp = Integer.parseInt(
-                                    IDFFMetaUtils.getFirstAttributeValue(
-                                        attributes, 
-                                        IFSConstants.ASSERTION_INTERVAL));
-                                assrtTimeout = new Integer(tmp);
-                            } catch (Exception e) {
-                                FSUtils.debug.error("CleanUpThread.run(): "
-                                    + "Exception while parsing timeout", e);
-                                assrtTimeout = DEFAULT_ASSERTION_TIMEOUT;
-                            }
-                            cleanUpInstance(providerId, manager, assrtTimeout);
-                        }
-                    }
-                }
-
-                // sleep through cleanup interval
-                if (interval == null) { 
-                    interval = DEFAULT_CLEANUP_INTERVAL;
-                }
-                long period = (interval.intValue()) * 1000;
-                try {
-                    sleep(period);
-                } catch(Exception e) {
-                }
-            }
-        }
-
-        /**
-         * Cleans up assertion and artifact map in one
-         * <code>FSAssertionManager</code> instance.
-         * @param providerId provider ID
-         * @param manager <code>FSassertionManager</code> instance
-         * @param defaultTimeout default time out in seconds for Assertion
-         *  if condition is not present
-         */
-        private void cleanUpInstance(
-            String providerId,
-            FSAssertionManager manager,
-            Integer defaultTimeout)
-        {
-
-            if (FSUtils.debug.messageEnabled()) {
-                FSUtils.debug.message("CleanUpInstance: provider=" + providerId 
-                    + ", defaultAssertionTimeout=" + defaultTimeout.intValue());
-            }
-            Map idEntryMap = manager.getIdEntryMap();
-            if (idEntryMap.isEmpty()) {
-                return;
-            }
-            Set expiredSet = new HashSet();
-            synchronized (idEntryMap) {
-                Iterator keyIter = idEntryMap.keySet().iterator();
-                while (keyIter.hasNext()) {
-                    String aIDString = (String) keyIter.next();
-                    Entry entry = (Entry) idEntryMap.get(aIDString);
-                    if (entry != null) {
-                        Assertion assertion = entry.getAssertion();
-                        if (assertion != null) {
-                            if (removeAssertion(assertion, defaultTimeout)) {
-                                expiredSet.add(aIDString);
-                            }
-                        }
-                    }
-                }
-                
-                keyIter = expiredSet.iterator();
-                Map artIdMap = manager.getArtIdMap();
-                while (keyIter.hasNext()) {
-                    String aIDString = (String) keyIter.next();
-                    // remove it from assertion map
-                    Entry entry = (Entry) idEntryMap.remove(aIDString);
-                    // see if needs to remove artifact from artifact map
-                    if (entry != null) {
-                        if (FSUtils.debug.messageEnabled()) {
-                            FSUtils.debug.message("CleanUpThread:deleted " +
-                                aIDString);
-                         }
-                        String artString = entry.getArtifactString();
-                        if (artString != null) {
-                             synchronized(artIdMap) {
-                                 if (FSUtils.debug.messageEnabled()) {
-                                     FSUtils.debug.message(
-                                         "CleanUpThread:deleting artifact" +
-                                         artString);
-                                 }
-                                 artIdMap.remove(artString);
-                             }
-                        }
-                    }
-                }
-            }
-        } 
-
-        /**
-         * Checks if we need to remove assertion
-         * @return true if the assertion should be removed
-         */
-        private boolean removeAssertion (Assertion assertion,
-                                        Integer defaultTimeout) 
-        {
-            if (assertion.getConditions() != null) {
-                return !assertion.isTimeValid();
-            } else {
-                long currentTime = System.currentTimeMillis();
-                // if conditions are absent, calculate time validity of
-                // assertion as if notOnOrAfter < assertion time out 
-                // + issueInstant
-                Date issueInstant = assertion.getIssueInstant();
-                long period = (defaultTimeout.intValue()) * 1000;
-                Date notOnOrAfter = new Date(issueInstant.getTime() + period);
-                if (currentTime < notOnOrAfter.getTime()) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        }
-    }
 
     private String getFullServiceURL(String shortUrl) {
         String result = null;
@@ -1248,9 +1108,14 @@ public final class FSAssertionManager {
         String artString = aa.getAssertionArtifact();
         Assertion assertion = new ErrorAssertion( new java.util.Date(), s );
         Entry e = new Entry( assertion, null, artString, null );
+        Object oldEntry = null;
         synchronized (idEntryMap) {
-            idEntryMap.put( artString, e );
+            oldEntry = idEntryMap.put( artString, e );
         }
+        if (oldEntry != null) {
+            assertionTimeoutRunnable.removeElement(artString);
+        }
+        assertionTimeoutRunnable.addElement(artString);
     }
     /**
      * Retrieve the original status of a reference artifact.

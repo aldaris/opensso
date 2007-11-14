@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.8 2007-10-17 18:46:36 weisun2 Exp $
+ * $Id: SPSSOFederate.java,v 1.9 2007-11-14 18:55:31 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -957,15 +957,18 @@ public class SPSSOFederate {
         String relayStateID = null;
         
         if (SPCache.relayStateHash != null) {
-            Enumeration e = SPCache.relayStateHash.keys();
-            while (e.hasMoreElements() && (relayStateID == null)) {
-                String id = (String)e.nextElement();
-                CacheObject cacheObj = (CacheObject)SPCache.relayStateHash.get(
-                    id);
-                if (cacheObj != null) {
-                    String value = (String)cacheObj.getObject();
-                    if ((value != null) && value.equals(relayState)) {
-                        relayStateID = id;
+            synchronized (SPCache.relayStateHash) {
+                Iterator iter = SPCache.relayStateHash.keySet().iterator();
+                while (iter.hasNext() && (relayStateID == null)) {
+                    String id = (String) iter.next();
+                    CacheObject cacheObj = (CacheObject)
+                        SPCache.relayStateHash.get(id);
+                    if (cacheObj != null) {
+                        String value = (String)cacheObj.getObject();
+                        if ((value != null) && value.equals(relayState)) {
+                            relayStateID = id;
+                            
+                        }
                     }
                 }
             }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Utils.java,v 1.5 2007-09-13 07:41:20 stanguy Exp $
+ * $Id: Utils.java,v 1.6 2007-11-14 18:55:25 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,10 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MimeHeaders;
 import java.util.ResourceBundle;
+import com.sun.identity.common.PeriodicCleanUpMap;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.liberty.ws.util.ProviderManager;
 import com.sun.identity.liberty.ws.util.ProviderUtil;
 import com.sun.identity.shared.debug.Debug;
@@ -128,8 +132,10 @@ public class Utils {
         "com.sun.identity.liberty.wsf.version";
     static Set supportedActors = new HashSet();
 
-    private static Map messageIDMap = new HashMap();
-    private static Thread cThread  = null;
+    static final String MESSAGE_ID_CACHE_CLEANUP_INTERVAL_PROP =
+        "com.sun.identity.liberty.ws.soap.messageIDCacheCleanupInterval";
+    static int message_ID_cleanup_interval = 60000; // millisec    
+    private static Map messageIDMap = null;
 
     static {
         bundle = Locale.getInstallResourceBundle("libSOAPBinding");
@@ -206,10 +212,24 @@ public class Utils {
                 }
 	    }
 	}
-
-	cThread = new CleanUpThread();
-	cThread.setDaemon(true);
-	cThread.start();
+        tmpstr =
+            SystemPropertiesManager.get(MESSAGE_ID_CACHE_CLEANUP_INTERVAL_PROP);
+        if (tmpstr != null) {
+            try {
+                message_ID_cleanup_interval = Integer.parseInt(tmpstr);
+            } catch (Exception ex) {
+                if (debug.warningEnabled()) {
+                    debug.warning("Utils.CleanUpThread.static: Unable to" +
+                            " get stale time limit. Default value " +
+                            "will be used");
+                }
+            }
+        }
+        messageIDMap = new PeriodicCleanUpMap(
+            message_ID_cleanup_interval, stale_time_limit);
+        SystemTimerPool.getTimerPool().schedule((TaskRunnable) messageIDMap,
+            new Date(((System.currentTimeMillis() + message_ID_cleanup_interval)
+            / 1000) * 1000));
     }
 
     /**
@@ -822,64 +842,4 @@ public class Utils {
             SOAPBindingConstants.WSF_11_VERSION);
     }
 
-    /**
-     * This thread is to cleanup messageIDMap.
-     */
-    private static class CleanUpThread extends Thread {
-        static final String MESSAGE_ID_CACHE_CLEANUP_INTERVAL_PROP =
-                "com.sun.identity.liberty.ws.soap.messageIDCacheCleanupInterval";
-        static int message_ID_cleanup_interval = 60000; // millisec
-        
-        static {
-            String tmpstr =
-                    SystemPropertiesManager.get(MESSAGE_ID_CACHE_CLEANUP_INTERVAL_PROP);
-            if (tmpstr != null) {
-                try {
-                    message_ID_cleanup_interval = Integer.parseInt(tmpstr);
-                } catch (Exception ex) {
-                    if (debug.warningEnabled()) {
-                        debug.warning("Utils.CleanUpThread.static: Unable to" +
-                                " get stale time limit. Default value " +
-                                "will be used");
-                    }
-                }
-            }
-        }
-        
-        public void run() {
-            while (true) {
-                long currentTime = System.currentTimeMillis();
-                Set expiredSet = new HashSet();
-                synchronized (messageIDMap) {
-                    Iterator iter = messageIDMap.keySet().iterator();
-                    while (iter.hasNext()) {
-                        String messageID = (String)iter.next();
-                        Long messageIDTime = (Long)messageIDMap.get(messageID);
-                        if (currentTime - messageIDTime.longValue() >
-                                stale_time_limit) {
-                            expiredSet.add(messageID);
-                        }
-                    }
-                    
-                    iter = expiredSet.iterator();
-                    while (iter.hasNext()) {
-                        String messageID = (String)iter.next();
-                        if (debug.messageEnabled()) {
-                            debug.message("Utils.CleanUpThread.run: removing" +
-                                    " expired messageID: " + messageID);
-                        }
-                        messageIDMap.remove(messageID);
-                    }
-                }
-                
-                try {
-                    sleep(message_ID_cleanup_interval);
-                } catch (Exception e) {
-                    if (debug.messageEnabled()) {
-                        debug.message("Utils.CleanUpThread.run:", e);
-                    }
-                }
-            }
-        }
-    }
 }

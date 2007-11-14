@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.7 2007-10-17 18:46:35 weisun2 Exp $
+ * $Id: IDPCache.java,v 1.8 2007-11-14 18:55:30 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 
 package com.sun.identity.saml2.profile;
 
+import com.sun.identity.common.PeriodicCleanUpMap;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.HashSet;
@@ -39,7 +40,7 @@ import java.util.Set;
  */
 
 public class IDPCache {
-
+    
     private IDPCache() {
     }
 
@@ -48,7 +49,8 @@ public class IDPCache {
      * Key : request ID String
      * Value : AuthnRequest object
      */
-    public static Hashtable authnRequestCache = new Hashtable(); 
+    public static PeriodicCleanUpMap authnRequestCache = new PeriodicCleanUpMap(
+        SPCache.interval * 1000, SPCache.interval * 1000); 
 
     /**
      * Cache saves the relay state strings.

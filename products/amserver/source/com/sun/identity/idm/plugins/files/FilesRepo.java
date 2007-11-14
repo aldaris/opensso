@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.19 2007-10-17 23:00:43 veiming Exp $
+ * $Id: FilesRepo.java,v 1.20 2007-11-14 18:54:18 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.AccessController;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,6 +53,8 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
@@ -121,7 +124,7 @@ public class FilesRepo extends IdRepo {
     // Cache of time last modified identity objects
     private Map identityTimeCache = new HashMap();
 
-    // Flag to run a daemon thread to validate the cache
+    // Flag to run a thread to validate the cache
     boolean cacheUpdateEnabled;
     int updateCacheInterval;
 
@@ -231,7 +234,10 @@ public class FilesRepo extends IdRepo {
                         updateCacheInterval = 10;
                      }
                 }
-                (new CacheUpdateThread(this)).start();
+                SystemTimer.getTimer().schedule(
+                    new CacheUpdateRunnable(this), new Date(
+                        ((System.currentTimeMillis() + (updateCacheInterval *
+                        60 * 1000)) / 1000) * 1000));
             }
         }
 
@@ -1431,10 +1437,6 @@ public class FilesRepo extends IdRepo {
         return attributes;
     }
 
-    public void shutdown() {
-        updateCacheInterval = 0;
-    }
-
     // -----------------------------------------------
     // private methods to manage directory structure
     // -----------------------------------------------
@@ -1700,63 +1702,62 @@ public class FilesRepo extends IdRepo {
     }
 
     // Cache update thread
-    class CacheUpdateThread extends Thread {
+    class CacheUpdateRunnable extends GeneralTaskRunnable {
         FilesRepo repo;
 
-        CacheUpdateThread(FilesRepo r) {
-            setDaemon(true);
+        CacheUpdateRunnable(FilesRepo r) {
             repo = r;
-            debug.message("CacheUpdateThread initialized");
+            debug.message("CacheUpdateRunnable initialized");
         }
 
         public void run() {
-            while (true) {
-                try {
-                    sleep(repo.updateCacheInterval*60*1000);
-                    if (repo.updateCacheInterval == 0) {
-                        break;
-                    }
-                    // Get the file name and check the time stamps
-                    Set fileNames = new HashSet(
-                        repo.identityTimeCache.keySet());
-                    for (Iterator i = fileNames.iterator(); i.hasNext();) {
-                        String fileName = i.next().toString();
-                        Long lastModified =
-                            (Long) repo.identityTimeCache.get(fileName);
-                        File file = new File(fileName);
-                        if (!file.exists() || (lastModified.longValue() !=
-                            file.lastModified())) {
-                            if (debug.messageEnabled()) {
-                                debug.message("CacheUpdateThread: " +
-                                    "File modified: " + fileName);
-                            }
-                            identityCache.remove(fileName);
-                            repo.identityTimeCache.remove(fileName);
-                            // Send notification
-                            if (file.exists()) {
-                                repo.repoListener.objectChanged(file.getName(),
-                                    AMEvent.OBJECT_CHANGED,
-                                    repo.repoListener.getConfigMap());
-                            } else {
-                                repo.repoListener.objectChanged(file.getName(),
-                                    AMEvent.OBJECT_REMOVED,
-                                    repo.repoListener.getConfigMap());
-                            }
-                            if (debug.messageEnabled()) {
-                                debug.message("CacheUpdateThread: " +
-                                    "Notification Sent: " + fileName);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
+            Set fileNames = new HashSet(repo.identityTimeCache.keySet());
+            for (Iterator i = fileNames.iterator(); i.hasNext();) {
+                String fileName = i.next().toString();
+                Long lastModified =
+                    (Long) repo.identityTimeCache.get(fileName);
+                File file = new File(fileName);
+                if (!file.exists() || (lastModified.longValue() !=
+                    file.lastModified())) {
                     if (debug.messageEnabled()) {
-                        debug.message("CacheUpdateThread Exception", e);
+                        debug.message("CacheUpdateRunnable: " +
+                            "File modified: " + fileName);
+                    }
+                    identityCache.remove(fileName);
+                    repo.identityTimeCache.remove(fileName);
+                    // Send notification
+                    if (file.exists()) {
+                        repo.repoListener.objectChanged(file.getName(),
+                            AMEvent.OBJECT_CHANGED,
+                            repo.repoListener.getConfigMap());
+                    } else {
+                        repo.repoListener.objectChanged(file.getName(),
+                            AMEvent.OBJECT_REMOVED,
+                            repo.repoListener.getConfigMap());
+                    }
+                    if (debug.messageEnabled()) {
+                        debug.message("CacheUpdateRunnable: " +
+                            "Notification Sent: " + fileName);
                     }
                 }
             }
-            if (debug.messageEnabled()) {
-                debug.message("CacheUpdateThread exiting");
-            }
         }
+        
+        public boolean addElement(Object key) {
+            return false;
+        }
+        
+        public boolean removeElement(Object key) {
+            return false;
+        }
+        
+        public boolean isEmpty() {
+            return false;
+        }
+        
+        public long getRunPeriod() {
+            return repo.updateCacheInterval * 60 * 1000;
+        }
+        
     }
 }

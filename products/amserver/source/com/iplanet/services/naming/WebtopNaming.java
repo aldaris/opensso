@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.9 2007-10-29 18:38:14 veiming Exp $
+ * $Id: WebtopNaming.java,v 1.10 2007-11-14 18:53:47 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.iplanet.services.naming;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -35,6 +36,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TimerPool;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.PLLClient;
 import com.iplanet.services.comm.client.SendRequestException;
@@ -944,9 +948,8 @@ public class WebtopNaming {
         // Start naming service monitor if more than 1 naming URLs are found
         if (urlList.length > 1) {
             monitorThread = new SiteMonitor(urlList);
-            monitorThread.setDaemon(true);
-            monitorThread.setPriority(Thread.MIN_PRIORITY);
-            monitorThread.start();
+            SystemTimer.getTimer().schedule(monitorThread, new Date(
+                System.currentTimeMillis() / 1000 * 1000));
         } else {
             if (debug.messageEnabled()) {
                 debug.message("Only one naming service URL specified."
@@ -983,7 +986,7 @@ public class WebtopNaming {
         return;
     }
 
-static public class SiteMonitor extends Thread {
+static public class SiteMonitor extends GeneralTaskRunnable {
     static long sleepInterval;
     static Vector availableSiteList = new Vector();
     static String currentSiteID = null;
@@ -1016,18 +1019,28 @@ static public class SiteMonitor extends Thread {
         siteUrlList = urlList;
     }
 
+    public boolean addElement(Object obj) {
+        return false;
+    }
+    
+    public boolean removeElement(Object obj) {
+        return false;
+    }
+    
+    public boolean isEmpty() {
+        return true;
+    }
+    
+    public long getRunPeriod() {
+        return sleepInterval;
+    }
+    
     public void run() {
-        if (debug.messageEnabled()) {
-            debug.message("SiteMonitor started");
-        }
         keepMonitoring = true;
-        while(keepMonitoring) {
-            try {
-                runCheckValidSite();
-                Sleep();
-            } catch (Exception e) {
-                debug.error("SiteMonitor run failed : ", e);
-            }
+        try {
+            runCheckValidSite();
+        } catch (Exception e) {
+            debug.error("SiteMonitor run failed : ", e);
         }
     }
 
@@ -1068,15 +1081,6 @@ static public class SiteMonitor extends Thread {
         }
 
         return siteList;
-    }
-
-    static void Sleep() {
-        try {
-            Thread.sleep(sleepInterval);
-        } catch (InterruptedException ex) {
-            debug.error("SiteMonitor: monitor interrupted", ex);
-        }
-        return;
     }
 
     public static boolean isAvailable(URL url) throws Exception {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CramMD5MechanismHandler.java,v 1.3 2007-03-09 05:51:05 veiming Exp $
+ * $Id: CramMD5MechanismHandler.java,v 1.4 2007-11-14 18:55:32 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +43,10 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 
+import com.sun.identity.common.PeriodicCleanUpMap;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOToken;
@@ -91,12 +96,49 @@ public class CramMD5MechanismHandler implements MechanismHandler {
                                       'c' , 'd' , 'e' , 'f' };
 
     private static SecureRandom secureRandom = new SecureRandom();
-    private static Map challengeMap = new HashMap();
-    private static Thread cThread  = null;
+
+    static final String CHALLENGE_CLEANUP_INTERVAL_PROP =
+        "com.sun.identity.liberty.ws.authnsvc.challengeCleanupInterval";
+    static int challenge_cleanup_interval = 60000; // millisec
+    static final String STALE_TIME_LIMIT_PROP =
+        "com.sun.identity.liberty.ws.soap.staleTimeLimit";
+    static int stale_time_limit = 300000; // millisec
+    
+    private static Map challengeMap = new PeriodicCleanUpMap(
+        (long) challenge_cleanup_interval, (long) stale_time_limit);
 
     static {
-        cThread = new CleanUpThread();
-        cThread.start();
+        String tmpstr =
+            SystemPropertiesManager.get(CHALLENGE_CLEANUP_INTERVAL_PROP);
+        if (tmpstr != null) {
+            try {
+                challenge_cleanup_interval = Integer.parseInt(tmpstr);
+            } catch (Exception ex) {
+                if (debug.warningEnabled()) {
+                    debug.warning(
+                        "CramMD5MechanismHandler.static:" +
+                        " Unable to get stale time limit. Default" +
+                        " value will be used", ex);
+                }
+            }
+        }
+
+        tmpstr = SystemPropertiesManager.get(STALE_TIME_LIMIT_PROP);
+        if (tmpstr != null) {
+            try {
+                stale_time_limit = Integer.parseInt(tmpstr);
+            } catch (Exception ex) {
+                if (debug.warningEnabled()) {
+                    debug.warning(
+                         "CramMD5MechanismHandler.static:" +
+                         " Unable to get stale time limit. Default " +
+                         "value will be used");
+                }
+            }
+        }
+        SystemTimerPool.getTimerPool().schedule((TaskRunnable) challengeMap, 
+            new Date(((System.currentTimeMillis() + challenge_cleanup_interval)
+            / 1000) * 1000));
     }
 
     /**
@@ -133,17 +175,11 @@ public class CramMD5MechanismHandler implements MechanismHandler {
                 saslResp.setServerMechanism(
                                 AuthnSvcConstants.MECHANISM_CRAMMD5);
                 byte[] challenge = generateChallenge();
-                synchronized (challengeMap) {
-                    if (debug.messageEnabled()) {
-                        debug.message(
-                            "CramMD5MechanismHandler.processSASLRequest:" +
-                            " add respMessageID: " + respMessageID);
-                    }
-                    List list = new ArrayList();
-                    list.add(challenge);
-                    list.add(new Long(System.currentTimeMillis()));
-                    challengeMap.put(respMessageID, list);
+                if (debug.messageEnabled()) {
+                    debug.message("CramMD5MechanismHandler.processSASLRequest:"
+                        + " add respMessageID: " + respMessageID);
                 }
+                challengeMap.put(respMessageID, challenge);
                 saslResp.setData(challenge);
             } else {
                 saslResp = new SASLResponse(SASLResponse.ABORT);
@@ -210,18 +246,13 @@ public class CramMD5MechanismHandler implements MechanismHandler {
         }
 
         byte[] challengeBytes = null;
-        synchronized (challengeMap) {
-            if (debug.messageEnabled()) {
-                debug.message("CramMD5MechanismHandler.authenticate:" +
-                    " remove refToMessageID: " + refToMessageID);
-            }
-
-            List list = (List)challengeMap.remove(refToMessageID);
-            if (list != null) {
-                challengeBytes = (byte[])list.get(0);
-            }
+        if (debug.messageEnabled()) {
+            debug.message("CramMD5MechanismHandler.authenticate:" +
+                " remove refToMessageID: " + refToMessageID);
         }
 
+        challengeBytes = (byte[])challengeMap.remove(refToMessageID);
+        
         if (challengeBytes == null) {
             if (debug.messageEnabled()) {
                 debug.message(
@@ -434,94 +465,4 @@ public class CramMD5MechanismHandler implements MechanismHandler {
         return sb.toString();
     }
 
-    /**
-     * This thread is to cleanup challengeMap.
-     */
-    private static class CleanUpThread extends Thread {
-        static final String CHALLENGE_CLEANUP_INTERVAL_PROP =
-          "com.sun.identity.liberty.ws.authnsvc.challengeCleanupInterval";
-        static int challenge_cleanup_interval = 60000; // millisec
-        static final String STALE_TIME_LIMIT_PROP =
-                "com.sun.identity.liberty.ws.soap.staleTimeLimit";
-        static int stale_time_limit = 300000; // millisec
-
-        static {
-            String tmpstr =
-                  SystemPropertiesManager.get(CHALLENGE_CLEANUP_INTERVAL_PROP);
-            if (tmpstr != null) {
-                try {
-                    challenge_cleanup_interval = Integer.parseInt(tmpstr);
-                } catch (Exception ex) {
-                    if (debug.warningEnabled()) {
-                        debug.warning(
-                            "CramMD5MechanismHandler.CleanUpThread.static:" +
-                            " Unable to get stale time limit. Default" +
-                            " value will be used", ex);
-                    }
-                }
-            }
-
-            tmpstr = SystemPropertiesManager.get(STALE_TIME_LIMIT_PROP);
-            if (tmpstr != null) {
-                try {
-                    stale_time_limit = Integer.parseInt(tmpstr);
-                } catch (Exception ex) {
-                    if (debug.warningEnabled()) {
-                        debug.warning(
-                             "CramMD5MechanismHandler.CleanUpThread.static:" +
-                             " Unable to get stale time limit. Default " +
-                             "value will be used");
-                    }
-                }
-            }
-        }
-
-        /**
-         * Cleans up cache.
-         */
-        public void run() {
-            while (true) {
-                long currentTime = System.currentTimeMillis();
-                Iterator iter = challengeMap.keySet().iterator();
-                List expiredSet = new ArrayList();
-                synchronized (challengeMap) {
-                    if (debug.messageEnabled()) {
-                        debug.message(
-                            "CramMD5MechanismHandler.CleanUpThread.run:" +
-                            " challengeMap size = " + challengeMap.size());
-                    }
-                    while (iter.hasNext()) {
-                        String refMessageID = (String)iter.next();
-                        List list = (List)challengeMap.get(refMessageID);
-                        Long refMessageIDTime = (Long)list.get(1);
-                        if (currentTime - refMessageIDTime.longValue() >
-                            stale_time_limit) {
-                            expiredSet.add(refMessageID);
-                        }
-                    }
-
-                    iter = expiredSet.iterator();
-                    while (iter.hasNext()) {
-                        String refMessageID = (String)iter.next();
-                        if (debug.messageEnabled()) {
-                            debug.message(
-                                "CramMD5MechanismHandler.CleanUpThread.run:" +
-                                " removing expired refMessageID: " +
-                                refMessageID);
-                        }
-                        challengeMap.remove(refMessageID);
-                    }
-                }
-
-                try {
-                    sleep(challenge_cleanup_interval);
-                } catch (Exception e) {
-                    if (debug.messageEnabled()) {
-                        debug.message(
-                            "CramMD5MechanismHandler.CleanUpThread.run:", e);
-                    }
-                }
-            }
-        }
-    }
 }

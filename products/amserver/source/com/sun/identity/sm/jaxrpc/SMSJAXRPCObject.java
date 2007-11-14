@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.13 2007-10-17 23:00:47 veiming Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.14 2007-11-14 18:54:19 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.sm.jaxrpc;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,6 +48,9 @@ import com.iplanet.services.comm.share.Notification;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.jaxrpc.JAXRPCUtil;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
@@ -140,7 +144,7 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             try {
                 cachePollingInterval = Integer.parseInt(cachePollingTimeStr);
             } catch (NumberFormatException nfe) {
-                debug.error("EventListener::NotificationThread:: "
+                debug.error("EventListener::NotificationRunnable:: "
                         + "Invalid Polling Time: " + cachePollingTimeStr + 
                         " Defaulting to " +
                         Constants.DEFAULT_CACHE_POLLING_TIME  + " minute");
@@ -156,9 +160,11 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
                         "Starting the polling thread..");
             }
             // Run in polling mode
-            NotificationThread nt = new NotificationThread(
+            NotificationRunnable nr = new NotificationRunnable(
                     cachePollingInterval);
-            nt.start();            
+            SystemTimerPool.getTimerPool().schedule(nr, new Date(
+                    ((System.currentTimeMillis() + nr.getRunPeriod()) / 1000)
+                    * 1000));
         } else {
             if (debug.warningEnabled()) {
                 debug.warning("EventListener: Polling mode DISABLED. " +
@@ -592,63 +598,77 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
     private static final String SERVICE_NAME = "SMSJAXRPCObject";
 
     // Inner class to check for notifications
-    static class NotificationThread extends Thread {
+    static class NotificationRunnable extends GeneralTaskRunnable {
 
+        // 1 minute
+        static long WAIT_BEFORE_RETRY = 1 * 1000 * 60;
+        
         int pollingTime;
 
-        int sleepTime;
+        volatile long sleepTime;
+        
+        SOAPClient client;
 
-        NotificationThread(int interval) {
-            // Set this as a daemon thread
-            setDaemon(true);            
-            pollingTime = interval ;            
+        NotificationRunnable(int interval) {
+            pollingTime = interval;            
             sleepTime = pollingTime * 1000 * 60;
-            
+            client = new SOAPClient(JAXRPCUtil.SMS_SERVICE);
         }
 
         // Get the modification list and send notifications
         public void run() {
-            boolean gotoSleep = false;
-            SOAPClient client = new SOAPClient(JAXRPCUtil.SMS_SERVICE);
-            while (true) {
-                try {
-                    if (gotoSleep)
-                        sleep(sleepTime);
-                    Object obj[] = { new Integer(pollingTime) };
-                    Set mods = (Set) client.send(client.encodeMessage(
-                            "objectsChanged", obj), null, null);
-                    if (debug.messageEnabled()) {
-                        debug.message("SMSJAXRPCObject:"
-                                + "NotificationThread retrived changes: "
-                                + mods);
-                    }
-                    Iterator items = mods.iterator();
-                    while (items.hasNext()) {
-                        sendNotification((String) items.next());
-                    }
-                    gotoSleep = true;
-                } catch (NumberFormatException nfe) {
-                    // Should not happend
-                    debug.warning("SMSJAXRCPObject::NotificationThread:run "
-                            + "Number Format Exception for polling Time: "
-                            + pollingTime, nfe);
-                } catch (SMSException smse) {
-                    if (smse.getExceptionCode() != 
-                        SMSException.STATUS_REPEATEDLY_FAILED)
-                        gotoSleep = false;
-                    debug.warning("SMSJAXRPCObject::NotificationThread:run "
-                            + "SMSException", smse);
-                } catch (InterruptedException ie) {
-                    gotoSleep = false;
-                    debug.warning("SMSJAXRPCObject::NotificationThread:run "
-                            + "Interrupted Exception", ie);
-                } catch (Exception re) {
-                    gotoSleep = true;
-                    debug.warning("SMSJAXRPCObject::NotificationThread:run "
-                            + "Exception", re);
+            try {
+                Object obj[] = { new Integer(pollingTime) };
+                Set mods = (Set) client.send(client.encodeMessage(
+                        "objectsChanged", obj), null, null);
+                if (debug.messageEnabled()) {
+                    debug.message("SMSJAXRPCObject:"
+                            + "NotificationRunnable retrived changes: "
+                            + mods);
                 }
+                Iterator items = mods.iterator();
+                while (items.hasNext()) {
+                    sendNotification((String) items.next());
+                }
+                sleepTime = pollingTime * 1000 * 60;
+            } catch (NumberFormatException nfe) {
+                // Should not happend
+                debug.warning("SMSJAXRCPObject::NotificationRunnable:run "
+                        + "Number Format Exception for polling Time: "
+                        + pollingTime, nfe);
+            } catch (SMSException smse) {
+                sleepTime = WAIT_BEFORE_RETRY;
+                if (smse.getExceptionCode() != 
+                    SMSException.STATUS_REPEATEDLY_FAILED)
+                debug.warning("SMSJAXRPCObject::NotificationRunnable:run "
+                        + "SMSException", smse);
+            } catch (InterruptedException ie) {
+                sleepTime = WAIT_BEFORE_RETRY;
+                debug.warning("SMSJAXRPCObject::NotificationRunnable:run "
+                        + "Interrupted Exception", ie);
+            } catch (Exception re) {
+                sleepTime = pollingTime * 1000 * 60;
+                debug.warning("SMSJAXRPCObject::NotificationRunnable:run "
+                        + "Exception", re);
             }
         }
+        
+        public long getRunPeriod() {
+            return sleepTime;
+        }
+        
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+        
+        public boolean isEmpty() {
+            return false;
+        }
+        
     }
 
     // Inner class handle SMS change notifications
