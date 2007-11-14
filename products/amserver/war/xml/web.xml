@@ -61,7 +61,7 @@
 <!-- context param -->
 
 	<filter>
-                <filter-name>amSetupFilter</filter-name>
+        <filter-name>amSetupFilter</filter-name>
 		<filter-class>com.sun.identity.setup.AMSetupFilter</filter-class>
 	</filter>
 
@@ -191,13 +191,13 @@
     	    </init-param>
         </servlet>
 
-<!-- Config GUI 
+    <!-- Config GUI -->
     <servlet>
         <servlet-name>click-servlet</servlet-name>
         <servlet-class>net.sf.click.ClickServlet</servlet-class>
     </servlet>
--->
-        <!-- servlet declaration -->
+
+    <!-- servlet declaration -->
 
 
         <!-- Add one servlet mapping entry like this per module -->
@@ -323,12 +323,11 @@
     	    <url-pattern>/identity/*</url-pattern>
         </servlet-mapping>
 
-<!-- Config GUI:
+    <!-- Config GUI: -->
     <servlet-mapping>
         <servlet-name>click-servlet</servlet-name>
-        <url-pattern>/config/*</url-pattern>
+        <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
--->
 
         <!-- servlet mapping -->
 
