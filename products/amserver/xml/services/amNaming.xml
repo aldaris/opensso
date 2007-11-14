@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amNaming.xml,v 1.6 2007-10-17 23:00:53 veiming Exp $
+   $Id: amNaming.xml,v 1.7 2007-11-14 20:38:35 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -132,7 +132,7 @@
                     syntax="url"
                     i18nKey="a115">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/identityservices/</Value>
+                        <Value>%protocol://%host:%port%uri/identityservices/</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 
@@ -141,7 +141,7 @@
                     syntax="url"
                     i18nKey="a116">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/identity/</Value>
+                        <Value>%protocol://%host:%port%uri/identity/</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 
@@ -166,7 +166,7 @@
                     syntax="url"
                     i18nKey="a117">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/sts</Value>
+                        <Value>%protocol://%host:%port%uri/sts</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="sun-naming-sts-mex-url"
@@ -174,7 +174,7 @@
                     syntax="url"
                     i18nKey="a118">
                     <DefaultValues>
-                        <Value>%protocol://%host:%port/@SERVER_URI@/sts/mex</Value>
+                        <Value>%protocol://%host:%port%uri/sts/mex</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-profile-class"
