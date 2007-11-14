@@ -60,6 +60,7 @@ const std::string restURLAttribute("sun-naming-idsvcs-rest-url");
 const std::string protocolPart("%protocol");
 const std::string hostPart("%host");
 const std::string portPart("%port");
+const std::string uriPart("%uri");
 const std::size_t MAX_PORT_LENGTH = 5;
 
 
@@ -75,7 +76,6 @@ AgentProfileService::AgentProfileService(const Properties& config)
                    config.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY,""),
                    config.get(AM_AUTH_CERT_ALIAS_PROPERTY,""),
                    config.getBool(AM_COMMON_TRUST_SERVER_CERTS_PROPERTY, false))
-
 {
 
 } // constructor
@@ -84,7 +84,6 @@ AgentProfileService::AgentProfileService(const Properties& config)
 AgentProfileService::~AgentProfileService()
 {
 }
-
 
 /**
  * Fetches agent profile attributes using REST attribute service
@@ -516,6 +515,9 @@ void AgentProfileService::parseURL(std::string serviceURL,
         std::string hostname = (*iter).getHost();
         unsigned short portnumber = (*iter).getPort();
         snprintf(portBuf, sizeof(portBuf), "%u", portnumber);
+        std::string uri = (*iter).getURI();
+        char *c_uri = NULL;
+        char *uriTok = NULL;
 
         if (status == AM_SUCCESS) {
             std::size_t pos = 0;
@@ -537,26 +539,41 @@ void AgentProfileService::parseURL(std::string serviceURL,
                 tmpURL.replace (pos, portPart.size(), portBuf);
                 pos = tmpURL.find (portPart, pos + 1);
             }
+            // Need to use strtok as the uri contains eg:opensso/namingservice
+            // we want only /opensso
+            if (!uri.empty()) {
+                c_uri = (char *) malloc(strlen(uri.c_str())+1);
+                strcpy(c_uri,uri.c_str());
+                uriTok = strtok(c_uri, "/");
+                if (uriTok != NULL) {
+                    std::string tmpUri(uriTok);
+                    std::string newUri("/");
+                    newUri.append(tmpUri);
+                    
+                    pos = 0;
+                    pos = tmpURL.find (uriPart, pos);
+                    while (pos != std::string::npos) {
+                        tmpURL.replace (pos, uriPart.size(), newUri);
+                        pos = tmpURL.find (uriPart, pos + 1);
+                    }
+                }
+                free(c_uri);
+            }
         }
-
         // for rest service url, xml/attributes needs to be appended
         if(isRestURL) {
             tmpURL.append(ATTRIB_URI);
         }
-
         // if multiple urls are present in naming url property, 
         // then those many urls need to be present in 
         // auth service and rest service urls also. 
         tmpURL.append(" ");
         parsedServiceURL.append(tmpURL);
         }
-       
     }
-
     Log::log(logModule, Log::LOG_MAX_DEBUG,
              "Number of servers in service: '%s'.", 
              parsedServiceURL.c_str());
-
     return;
 } 
 
