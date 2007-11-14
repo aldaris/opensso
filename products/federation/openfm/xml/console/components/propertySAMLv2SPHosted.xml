@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPHosted.xml,v 1.5 2007-11-09 18:38:50 babysunil Exp $
+   $Id: propertySAMLv2SPHosted.xml,v 1.6 2007-11-14 21:17:04 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -630,8 +630,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>                
-        
+        </property>                        
         <property>
             <label name="lblECPRequestIDPListGetComplete" defaultValue="samlv2sp.attribute.label.ecp.ECPRequestIDPListGetComplete" labelFor="ECPRequestIDPListGetComplete" />
             <cc name="ECPRequestIDPListGetComplete" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
@@ -639,9 +638,8 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>       
-        
-         <subsection name="elistECPRequestIDPList" defaultValue="" >
+        </property>               
+        <subsection name="elistECPRequestIDPList" defaultValue="" >
             <property>
                 <label name="lblECPRequestIDPList" 
                        defaultValue="samlv2sp.attribute.label.ecp.ECPRequestIDPList" 
@@ -658,6 +656,40 @@
                 </ccgroup>                
             </property>
         </subsection>        
+    </section>        
+    <section name="SAE" defaultValue="samlv2sp.attribute.label.sae">
+        <property>
+            <label name="lblSAESPUrl" defaultValue="samlv2sp.attribute.label.sae.saeSPUrl" labelFor="saeSPUrl" />
+            <cc name="saeSPUrl" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>       
+        <property>
+            <label name="lblSAESPLogoutUrl" defaultValue="samlv2sp.attribute.label.sae.saeSPLogoutUrl" labelFor="saeSPLogoutUrl" />
+            <cc name="saeSPLogoutUrl" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>           
+        <subsection name="elistSAEAppSecretList" defaultValue="" >
+            <property>
+                <label name="lblSAEAppSecretList" 
+                       defaultValue="samlv2sp.attribute.label.sae.saeAppSecretList" 
+                       labelFor="saeAppSecretList" />
+                <ccgroup>
+                    <property>
+                        <cc name="saeAppSecretList"
+                            tagclass="com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                            <attribute name="name" value="list" />
+                            <attribute name="listboxLabel" value="label.current.value" />
+                            <attribute name="textboxLabel" value="label.new.value" />
+                        </cc>                      
+                    </property>
+                </ccgroup>                
+            </property>
+        </subsection>                
     </section>
-    
 </propertysheet>
