@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupUtils.java,v 1.1 2007-03-02 19:02:35 ak138937 Exp $
+ * $Id: SetupUtils.java,v 1.2 2007-11-14 00:24:59 manish_rustagi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -166,8 +166,8 @@ public class SetupUtils implements SetupConstants{
             int refSuffix = 0;
             String key = null;
             String realValue = null;
-            while (((refPrefix = returnValue.indexOf(VAR_PREFIX, offset)) >= 0)
-                && ((refSuffix = returnValue.indexOf(VAR_SUFFIX, offset)) >
+            while (((refPrefix = returnValue.indexOf(VAR_PREFIX)) >= 0)
+                && ((refSuffix = returnValue.indexOf(VAR_SUFFIX)) >
                 refPrefix)) {
                 key = returnValue.substring(refPrefix + VAR_PREFIX.length(),
                     refSuffix);
@@ -190,7 +190,7 @@ public class SetupUtils implements SetupConstants{
                     returnValue = returnValue.replaceAll(REX_VAR_PREFIX + key +
                         REX_VAR_SUFFIX, realValue);
                 }
-                offset = refSuffix + 1;
+                //offset = refSuffix + 1;
             }
         }
         return returnValue;

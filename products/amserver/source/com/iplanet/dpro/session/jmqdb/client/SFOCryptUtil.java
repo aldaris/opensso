@@ -17,51 +17,54 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SFOCryptUtil.java,v 1.1 2005-11-01 00:29:53 arvindp Exp $
+ * $Id: SFOCryptUtil.java,v 1.2 2007-11-14 00:21:07 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.jmqdb.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
+import java.util.*;
+import java.security.Security;
+import java.security.Provider;
 import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.NoSuchPaddingException;
 
 public class SFOCryptUtil {
 
-    static final String DEFAULT_PBE_PWD = "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
+    static final String DEFAULT_PBE_PWD =
+        "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
+    private static final String CRYPTO_DESCRIPTOR =
+        "PBEWithMD5AndDES";   
+    private static final String KEYGEN_ALGORITHM =
+        "PBEWithMD5AndDES";
+    private static final int    ITERATION_COUNT = 5;
 
-    private static final String CRYPTO_DESCRIPTOR = "PBEWithMD5AndDES";
 
-    private static final String KEYGEN_ALGORITHM = "PBEWithMD5AndDES";
+    private static final byte[]     ___y = {
+        0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01
+    };
 
-    private static final int ITERATION_COUNT = 5;
+    static private SecretKey        pbeKey;
+    static private boolean          _initialized = false;
 
-    private static final byte[] ___y = { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-            0x01, 0x01 };
-
-    static private SecretKey pbeKey;
-
-    static private boolean _initialized = false;
-
-    private static PBEParameterSpec pbeParameterSpec = new PBEParameterSpec(
-            ___y, ITERATION_COUNT);
+    private static PBEParameterSpec pbeParameterSpec =
+        new PBEParameterSpec(___y, ITERATION_COUNT);
 
     /**
      * Method declaration
-     * 
+     *
      * @param clearText
      */
-    static public String encrypt(String pbePassword, String clearText) {
+    static public String encrypt(String pbePassword,
+                                 String clearText) {
         setPassword(pbePassword);
         byte[] encData = pbeEncrypt(clearText.getBytes());
 
@@ -69,7 +72,8 @@ public class SFOCryptUtil {
         String str = base64encode(encData).trim();
 
         // Serialize the data, i.e., remove \n and \r
-        BufferedReader bufReader = new BufferedReader(new StringReader(str));
+        BufferedReader bufReader = 
+            new BufferedReader(new StringReader(str));
         StringBuffer strClean = new StringBuffer(str.length());
         String strTemp = null;
         try {
@@ -79,20 +83,21 @@ public class SFOCryptUtil {
         } catch (IOException ioe) {
             System.out.println("Crypt:: Error while base64 encoding");
         }
-
+        
         return strClean.toString();
     }
 
     /**
      * Method declaration
-     * 
+     *
      * @param encText
      */
-    static public String decrypt(String pbePassword, String encText) {
+    static public String decrypt(String pbePassword,
+                                 String encText) {
         setPassword(pbePassword);
-        if (encText == null || encText.length() == 0) {
+        if (encText == null || encText.length() == 0){
             System.out.println("encText == null");
-        }
+        }        
 
         // BASE64 decode the data
         byte[] encData = encData = base64decode(encText.trim());
@@ -111,11 +116,11 @@ public class SFOCryptUtil {
 
     /**
      * Method declaration
-     * 
+     *
      * @param clearText
      */
     static private byte[] pbeEncrypt(byte[] clearText) {
-        byte[] result = null;
+	byte[] result = null;
         if (clearText == null || clearText.length == 0) {
             return null;
         }
@@ -124,29 +129,27 @@ public class SFOCryptUtil {
             try {
 
                 Cipher pbeCipher = null;
-                try {
+		try {
                     pbeCipher = Cipher.getInstance(CRYPTO_DESCRIPTOR);
-                } catch (Exception ex) {
-                    if (ex instanceof NoSuchAlgorithmException
-                            || ex instanceof NoSuchPaddingException) {
-                        // Best effort try dynamically registring the SunJCE
-                        // provider
+		} catch (Exception ex) {
+		    if (ex instanceof NoSuchAlgorithmException ||
+			ex instanceof NoSuchPaddingException) 
+		    {
+			//Best effort try dynamically registring the SunJCE provider
                         System.out.println("JCEEncryption: Exception caught: ");
                         pbeCipher = Cipher.getInstance(CRYPTO_DESCRIPTOR);
-                    } else {
-                        throw ex;
-                    }
-                }
+		    } else {
+			throw ex;
+		    }
+		}
 
-                if (pbeCipher != null) {
-                    pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey,
-                            pbeParameterSpec);
+		if (pbeCipher != null) {
+                    pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParameterSpec);
 
                     result = pbeCipher.doFinal(clearText);
-                } else {
-                    System.out
-                            .println("JCEEncryption: Failed to obtain Cipher");
-                }
+		} else  {
+		    System.out.println("JCEEncryption: Failed to obtain Cipher");
+		}
             } catch (Exception ex) {
                 System.out.println("JCEEncryption:: failed to encrypt data");
             }
@@ -159,38 +162,37 @@ public class SFOCryptUtil {
 
     /**
      * Method declaration
-     * 
+     *
      * @param cipherText
      */
     static private byte[] pbeDecrypt(byte[] cipherText) {
-        byte[] result = null;
+	byte[] result = null;
         if (_initialized) {
             try {
-                byte share[] = cipherText;
+                byte share[] = cipherText;                
                 Cipher pbeCipher = null;
-                try {
+		try {
                     pbeCipher = Cipher.getInstance(CRYPTO_DESCRIPTOR);
-                } catch (Exception ex) {
-                    if (ex instanceof NoSuchAlgorithmException
-                            || ex instanceof NoSuchPaddingException) {
-                        // Best effort try dynamically registring the SunJCE
-                        // provider
+		} catch (Exception ex) {
+		    if (ex instanceof NoSuchAlgorithmException ||
+			ex instanceof NoSuchPaddingException) 
+		    {
+			//Best effort try dynamically registring the SunJCE provider
                         System.out.println("JCEEncryption: Exception caught: ");
                         pbeCipher = Cipher.getInstance(CRYPTO_DESCRIPTOR);
-                    } else {
-                        throw ex;
-                    }
-                }
+		    } else {
+			throw ex;
+		    }
+		}
 
-                if (pbeCipher != null) {
-                    pbeCipher.init(Cipher.DECRYPT_MODE, pbeKey,
-                            pbeParameterSpec);
+		if (pbeCipher != null) {
+                    pbeCipher.init(Cipher.DECRYPT_MODE, 
+                                   pbeKey, pbeParameterSpec);		
                     result = pbeCipher.doFinal(share);
-
-                } else {
-                    System.out
-                            .println("JCEEncryption: Failed to obtain Cipher");
-                }
+                    
+		} else {
+		    System.out.println("JCEEncryption: Failed to obtain Cipher");
+		}
             } catch (Exception ex) {
                 System.out.println("JCEEncryption:: failed to decrypt data");
             }
@@ -201,116 +203,110 @@ public class SFOCryptUtil {
         return result;
     }
 
-    // ****************************************************
+    //****************************************************
     // utility methods for BASE64 encode/decode
-    // ****************************************************
+    //****************************************************
 
     //
     // code characters for values 0..63
     //
-    static private char[] alphabet = 
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-            .toCharArray();
+    static private char[] alphabet =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+    .toCharArray();
 
     //
     // lookup table for converting base64 characters to value in range 0..63
     //
     static private byte[] codes = new byte[256];
     static {
-        for (int i = 0; i < 256; i++)
-            codes[i] = -1;
-        for (int i = 'A'; i <= 'Z'; i++)
-            codes[i] = (byte) (i - 'A');
-        for (int i = 'a'; i <= 'z'; i++)
-            codes[i] = (byte) (26 + i - 'a');
-        for (int i = '0'; i <= '9'; i++)
-            codes[i] = (byte) (52 + i - '0');
+        for (int i=0; i<256; i++) codes[i] = -1;
+        for (int i = 'A'; i <= 'Z'; i++) codes[i] = (byte)( i - 'A');
+        for (int i = 'a'; i <= 'z'; i++) codes[i] = (byte)(26 + i - 'a');
+        for (int i = '0'; i <= '9'; i++) codes[i] = (byte)(52 + i - '0');
         codes['+'] = 62;
         codes['/'] = 63;
     }
 
     /**
-     * Returns a String of base64-encoded characters to represent the passed
-     * data array.
-     * 
-     * @param data
-     *            the array of bytes to encode
-     * @return String base64-coded characters
-     */
-    static public String base64encode(byte[] data) {
+    * Returns a String of base64-encoded characters to represent the
+    * passed data array.
+    *
+    * @param data the array of bytes to encode
+    * @return String base64-coded characters
+    */
+    static public String base64encode(byte[] data){
         char[] out = new char[((data.length + 2) / 3) * 4];
 
         //
         // 3 bytes encode to 4 chars. Output is always an even
         // multiple of 4 characters.
         //
-        for (int i = 0, index = 0; i < data.length; i += 3, index += 4) {
+        for (int i=0, index=0; i<data.length; i+=3, index+=4) {
             boolean quad = false;
             boolean trip = false;
 
-            int val = (0xFF & data[i]);
+            int val = (0xFF & (int) data[i]);
             val <<= 8;
-            if ((i + 1) < data.length) {
-                val |= (0xFF & data[i + 1]);
+            if ((i+1) < data.length) {
+                val |= (0xFF & (int) data[i+1]);
                 trip = true;
             }
             val <<= 8;
-            if ((i + 2) < data.length) {
-                val |= (0xFF & data[i + 2]);
+            if ((i+2) < data.length) {
+                val |= (0xFF & (int) data[i+2]);
                 quad = true;
             }
-            out[index + 3] = alphabet[(quad ? (val & 0x3F) : 64)];
+            out[index+3] = alphabet[(quad? (val & 0x3F): 64)];
             val >>= 6;
-            out[index + 2] = alphabet[(trip ? (val & 0x3F) : 64)];
+            out[index+2] = alphabet[(trip? (val & 0x3F): 64)];
             val >>= 6;
-            out[index + 1] = alphabet[val & 0x3F];
+            out[index+1] = alphabet[val & 0x3F];
             val >>= 6;
-            out[index + 0] = alphabet[val & 0x3F];
+            out[index+0] = alphabet[val & 0x3F];
         }
         return new String(out);
     }
 
     /**
-     * Returns an array of decoded bytes which were encoded in the passed byte
-     * array.
-     * 
-     * @param encdata
-     *            the array of base64-encoded characters
-     * @return byte[] the decoded data array
-     */
-    static public byte[] base64decode(String encdata) {
+    * Returns an array of decoded bytes which were encoded in the passed
+    * byte array.
+    *
+    * @param data the array of base64-encoded characters
+    * @return byte[] the decoded data array
+    */
+    static public byte[] base64decode(String encdata){
         // convert to a char[]
         char[] data = encdata.toCharArray();
 
         if (data.length <= 0)
             throw new RuntimeException("Invalid encoded data!");
-        // check that length is a multiple of 4
-        if (data.length % 4 != 0)
-            throw new RuntimeException("Data is not Base64 encoded.");
+	// check that length is a multiple of 4
+	if(data.length % 4 != 0)
+	    throw new RuntimeException("Data is not Base64 encoded.");
 
         int len = ((data.length + 3) / 4) * 3;
-        if (data[data.length - 1] == '=')
-            --len;
-        if (data[data.length - 2] == '=')
-            --len;
+        if (data[data.length-1] == '=') --len; 
+        if (data[data.length-2] == '=') --len;
         byte[] out = new byte[len];
 
         int shift = 0; // # of excess bits stored in accum
         int accum = 0; // excess bits
         int index = 0;
 
-        for (int ix = 0; ix < data.length; ix++) {
-            int value = codes[data[ix] & 0xFF]; // ignore high byte of char
-            if (value >= 0) { // skip over non-code
+        for (int ix=0; ix<data.length; ix++){
+            int value = codes[ data[ix] & 0xFF ]; // ignore high byte of char
+            if ( value >= 0 ) { // skip over non-code
                 accum <<= 6; // bits shift up by 6 each time thru
                 shift += 6; // loop, with new bits being put in
                 accum |= value; // at the bottom.
-                if (shift >= 8) { // whenever there are 8 or more shifted in,
+                if ( shift >= 8 ) { // whenever there are 8 or more shifted in,
                     shift -= 8; // write them out (from the top, leaving any
                     out[index++] = // excess at the bottom for next iteration.
                     (byte) ((accum >> shift) & 0xff);
                 }
-            } else {
+            }
+	    else
+            {
                 if (data[ix] != '=') {
                     throw new RuntimeException("Data is not Base64 encoded.");
                 }
@@ -324,36 +320,39 @@ public class SFOCryptUtil {
 
     static private void setPassword(String passwd) {
         try {
-            pbeKey = SecretKeyFactory.getInstance(KEYGEN_ALGORITHM)
-                    .generateSecret(new PBEKeySpec(passwd.toCharArray()));
-            _initialized = true;
+            pbeKey =
+                SecretKeyFactory.getInstance(KEYGEN_ALGORITHM).generateSecret(
+                    new PBEKeySpec(passwd.toCharArray()));
+            _initialized = true;    
         } catch (Exception e) {
             System.out.println("Error in initializing the password");
         }
     }
 
-    // ****************************************************
+    //****************************************************
     // Testing Main program
-    // ****************************************************
+    //****************************************************
     static public void main(String args[]) {
-
+    
         String password = "superalan";
-        System.out.println("password = " + password);
+        System.out.println("password = "+ password);
 
         // *******************************************
         // Encrypting the data ...
         // *******************************************
-        String encrypted = SFOCryptUtil.encrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
-                password);
-
-        System.out.println("encrypted = " + encrypted);
+        String encrypted = 
+            SFOCryptUtil.encrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
+                                 password);
+        
+        System.out.println("encrypted = "+ encrypted);
 
         // *******************************************
         // Decrypting the data
         // *******************************************
-        String decrypted = SFOCryptUtil.decrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
-                encrypted);
+        String decrypted = 
+            SFOCryptUtil.decrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
+                                 encrypted);
 
-        System.out.println("decrypted = " + decrypted);
-    }
+        System.out.println("decrypted = "+ decrypted);
+    }    
 }

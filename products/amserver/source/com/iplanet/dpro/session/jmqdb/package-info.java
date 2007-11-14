@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.1 2005-11-01 00:29:52 arvindp Exp $
+ * $Id: package-info.java,v 1.2 2007-11-14 00:18:54 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */

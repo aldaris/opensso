@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.20 2007-11-06 00:17:48 kevinserwin Exp $
+   $Id: build.xml,v 1.21 2007-11-14 00:30:25 manish_rustagi Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -77,6 +77,8 @@
     <target name="openfm-nightly">
         <copy file="${amserver.dist.dir}/amAdminTools.zip"
             todir="${openfm.extlib.dir}"  />
+        <copy file="${amserver.dist.dir}/amSessionTools.zip"
+            todir="${openfm.extlib.dir}"  />            
         <copy file="${amserver.dist.dir}/opensso.jar"
             todir="${openfm.extlib.dir}"  />
         <copy file="${amserver.dist.dir}/console.jar"

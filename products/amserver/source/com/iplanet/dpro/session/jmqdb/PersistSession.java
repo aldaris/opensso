@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PersistSession.java,v 1.1 2005-11-01 00:29:52 arvindp Exp $
+* $Id: PersistSession.java,v 1.2 2007-11-14 00:18:54 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -178,8 +178,8 @@ public class PersistSession implements MessageListener {
         readTimeOutForConstraint = maxWaitTimeForConstraint;
         ConnectionFactoryProvider provider = ConnectionFactoryProviderFactory
                 .getProvider();
-        tFactory = provider.newTopicConnectionFactory(serverList, "RANDOM",
-                true, true, userName, password);
+        tFactory = provider
+        .newTopicConnectionFactory(serverList,true, true, userName, password);
         tConn = tFactory.createTopicConnection();
         int flag = Session.DUPS_OK_ACKNOWLEDGE;
         tSession = tConn.createTopicSession(false, flag);

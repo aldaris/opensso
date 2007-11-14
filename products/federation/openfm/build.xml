@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.32 2007-11-05 06:17:01 qcheng Exp $
+   $Id: build.xml,v 1.33 2007-11-14 00:33:46 manish_rustagi Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -150,6 +150,7 @@
 
     <target name="tools" depends="jars">
         <ant antfile="${openfm.dir}/build-tools.xml" inheritRefs="true"/>
+        <ant antfile="${openfm.dir}/build-session-tools.xml" inheritRefs="true"/>
     </target>
 
     <target name="jars" depends="build">
@@ -300,6 +301,7 @@
   
     <target name="tools-clean">
         <ant antfile="${openfm.dir}/build-tools.xml" inheritRefs="true" target="clean"/>
+        <ant antfile="${openfm.dir}/build-session-tools.xml" inheritRefs="true" target="clean"/>
     </target>
 
     <target name="clientsdk-clean">
@@ -325,7 +327,7 @@
         <delete file="${openfm.extlib.dir}/opensso-test.jar"/>
         <delete file="${openfm.extlib.dir}/opensso_server_samples.war"/>
         <delete file="${openfm.extlib.dir}/openssosamples.zip"/>
-        <delete file="${openfm.extlib.dir}/amAdminTools.zip"/>
+        <delete file="${openfm.extlib.dir}/amSessionTools.zip"/>
         <delete file="${openfm.extlib.dir}/opensso.war"/>
         <delete file="${openfm.extlib.dir}/console.jar"/>
     </target>

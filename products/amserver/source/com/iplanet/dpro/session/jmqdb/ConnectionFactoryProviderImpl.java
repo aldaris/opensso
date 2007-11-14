@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConnectionFactoryProvider.java,v 1.2 2007-11-14 00:18:54 manish_rustagi Exp $
+ * $Id: ConnectionFactoryProviderImpl.java,v 1.1 2007-11-14 00:19:59 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,24 +25,29 @@
 package com.iplanet.dpro.session.jmqdb;
 
 import javax.jms.TopicConnectionFactory;
-
+ 
 /**
- * Allows the session service implementation to create a new instance of a
- * <code>TopicConnectionFactory</code>. This interface is used to provide
- * custom construction of the <code>TopicConnectionFactory</code> which allows
- * the implementation to use vendor specific APIs if necessary. An
- * implementation of this interface is located at runtime via the factory method
- * in <code>ConnectionFactoryProviderFactory</code>.
+ * This class <code>ConnectionFactoryProviderImpl</code> implements 
+ * </code> ConnectionFactoryProvider</code> and provides a default 
+ * implementation for ConnectionFactoryProvider using sun specifig 
+ * configuration
  */
-public interface ConnectionFactoryProvider {
+public class ConnectionFactoryProviderImpl implements ConnectionFactoryProvider {
+
+    public com.sun.messaging.TopicConnectionFactory tFactory;
+    
 
     /**
      * Creates a new <code>TopicConnectionFactory</code> instance.
      * 
      * @return a newly created <code>TopicConnectionFactory</code>.
      */
-    public TopicConnectionFactory newTopicConnectionFactory();
+    public TopicConnectionFactory newTopicConnectionFactory(){
+        tFactory = new com.sun.messaging.TopicConnectionFactory();
+        return tFactory;    
+    }
 
+    
     /**
      * Creates a new <code>TopicConnectionFactory</code> instance. The
      * supplied parameters are optionally used to configure the newly created
@@ -64,7 +69,22 @@ public interface ConnectionFactoryProvider {
      *             the <code>TopicConnectionFactory</code>.
      */
     public TopicConnectionFactory newTopicConnectionFactory(
-            String brokerAddressList, boolean reconnectEnabled,
-            boolean flowLimitEnabled, String defaultUsername,
-            String defaultPassword) throws Exception;
+           String brokerAddressList,boolean reconnectEnabled,
+           boolean flowLimitEnabled,String defaultUsername,
+           String defaultPassword) throws Exception{
+        tFactory = new com.sun.messaging.TopicConnectionFactory();
+        com.sun.messaging.ConnectionFactory cf = 
+            (com.sun.messaging.ConnectionFactory) tFactory;
+        cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqAddressList,
+                    brokerAddressList);           
+        cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectEnabled,
+                    Boolean.toString(reconnectEnabled));
+        cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqConnectionFlowLimitEnabled,
+        		Boolean.toString(flowLimitEnabled));
+        cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqDefaultUsername,
+                    defaultUsername);
+        cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqDefaultPassword,
+                    defaultPassword);
+        return tFactory;                        
+    }    
 }

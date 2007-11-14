@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.7 2007-11-06 00:17:48 kevinserwin Exp $
+   $Id: build-zip.xml,v 1.8 2007-11-14 00:33:45 manish_rustagi Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -92,6 +92,7 @@
             tofile="${zip.temp.dir}/tools/README" />
         <copy todir="${zip.temp.dir}/tools">
             <fileset file="${fm.dist.dir}/famAdminTools.zip" />
+            <fileset file="${fm.dist.dir}/famSessionTools.zip" />
         </copy>
         
         <copy todir="${zip.temp.dir}/xml">

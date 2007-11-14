@@ -17,62 +17,49 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSFOPassword.java,v 1.2 2006-06-28 01:12:18 alanchu Exp $
+ * $Id: AMSFOPassword.java,v 1.3 2007-11-14 00:21:06 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
+
 package com.iplanet.dpro.session.jmqdb.client;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.io.*;
+import java.util.*;
 
 public class AMSFOPassword {
 
     private static final String RESOURCE_BUNDLE = "amSessionDB";
-
     private static final String HELP = "--help";
-
     private static final String S_HELP = "-h";
-
     private static final String ENCRYPT = "--encrypt";
-
     private static final String S_ENCRYPT = "-e";
-
     private static final String PASSWORDFILE = "--passwordfile";
-
     private static final String S_PASSWORDFILE = "-f";
-
     private static ResourceBundle bundle = null;
 
     static {
-        try {
-            bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, Locale
-                    .getDefault());
-        } catch (MissingResourceException mre) {
+        try {            
+            bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE,
+                                              Locale.getDefault());
+        }
+        catch (MissingResourceException mre) {
             System.err.println("Cannot get the resource bundle.");
             System.exit(1);
-        }
+	}
     }
-
+    
     AMSFOPassword() {
     }
 
-    private void saveEncPasswordToFile(String passwordfile, String encPassword) 
-    {
-
+    private void saveEncPasswordToFile(String passwordfile,
+                                       String encPassword) {
+        
         try {
             FileOutputStream fos = new FileOutputStream(passwordfile);
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                    fos, "UTF-8"));
+            BufferedWriter writer = 
+                new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
             PrintWriter statsFile = new PrintWriter(writer);
             statsFile.println(encPassword);
             statsFile.flush();
@@ -86,6 +73,8 @@ public class AMSFOPassword {
 
     private void setFilePermission(String filename, String perm) 
         throws IOException {        
+        System.out.println("os.name="+
+                           System.getProperty("os.name"));
         // Do "chmod" only if it is on UNIX/Linux platform
         if (System.getProperty("path.separator").equals(":")) {        
             Runtime.getRuntime().exec("chmod "+perm+" "+filename);
@@ -95,14 +84,16 @@ public class AMSFOPassword {
     private void process(String[] args) throws Exception {
 
         // Check the initial arguments
-        if ((args.length == 0) || args[0].equals(HELP)
-                || (args[0].equals(S_HELP))) {
+        if ((args.length == 0) || args[0].equals(HELP) ||
+            (args[0].equals(S_HELP))) {            
             System.err.println(bundle.getString("amsfopasswd-usage"));
             System.exit(1);
-        } else if (!args[0].equals(HELP) && !args[0].equals(S_HELP)
-                && !args[0].equals(ENCRYPT) && !args[0].equals(S_ENCRYPT)
-                && !args[0].equals(PASSWORDFILE)
-                && !args[0].equals(S_PASSWORDFILE)) {
+        } else if (!args[0].equals(HELP) && 
+                   !args[0].equals(S_HELP) &&
+                   !args[0].equals(ENCRYPT) && 
+                   !args[0].equals(S_ENCRYPT) &&
+                   !args[0].equals(PASSWORDFILE) && 
+                   !args[0].equals(S_PASSWORDFILE)) {
             // Invalid subcommand
             System.err.println(bundle.getString("invalid-option"));
             System.err.println(bundle.getString("amsfopasswd-usage"));
@@ -117,57 +108,62 @@ public class AMSFOPassword {
         // Encrypt the password nad save it to the file
         String filename = null;
         String cleartext = null;
-
-        if (args[0].equals(S_ENCRYPT) || args[0].equals(ENCRYPT)) {
+        
+        if (args[0].equals(S_ENCRYPT) || 
+            args[0].equals(ENCRYPT)) {
             cleartext = args[1];
-            if (args[2].equals(PASSWORDFILE) || args[2].equals(S_PASSWORDFILE)) 
-            {
+            if (args[2].equals(PASSWORDFILE) ||
+                args[2].equals(S_PASSWORDFILE)) {
                 filename = args[3];
             } else {
                 System.err.println(bundle.getString("amsfopasswd-usage"));
-                System.exit(1);
+                System.exit(1);                    
             }
         }
-        if (args[0].equals(PASSWORDFILE) || args[0].equals(S_PASSWORDFILE)) {
-            filename = args[1];
-            if (args[2].equals(ENCRYPT) || args[2].equals(S_ENCRYPT)) {
-                cleartext = args[3];
-            } else {
-                System.err.println(bundle.getString("amsfopasswd-usage"));
-                System.exit(1);
-            }
+        if (args[0].equals(PASSWORDFILE) ||
+            args[0].equals(S_PASSWORDFILE)) {
+                filename = args[1];
+                if (args[2].equals(ENCRYPT) ||
+                    args[2].equals(S_ENCRYPT)) {
+                    cleartext = args[3];
+                } else {
+                    System.err.println(bundle.getString("amsfopasswd-usage"));
+                    System.exit(1);                    
+                }
         }
-
-        String encPassword = SFOCryptUtil.encrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
-                cleartext);
+        
+        String encPassword = 
+            SFOCryptUtil.encrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
+                                  cleartext);
         saveEncPasswordToFile(filename, encPassword);
     }
-
+    
     static public ResourceBundle getResourceBundle() {
-
+        
         return bundle;
     }
+    
+    static String readEncPasswordFromFile(String passwordfile) 
+        throws Exception {
 
-    static String readEncPasswordFromFile(String passwordfile) throws Exception
-    {
-
-        String line = null;
-        BufferedReader in = null;
-        try {
+        String line =null;
+        BufferedReader in =null;
+        try{
             in = new BufferedReader(new FileReader(passwordfile));
-            if (in.ready()) {
+            if(in.ready())  {
                 line = in.readLine();
-            }
+            } 
             return line;
-        } catch (IOException e) {
+        } catch(IOException e){
             System.out.println("Could not open file " + e.getMessage());
         } finally {
-            if (in != null) {
+            if (in !=null ) {
                 try {
                     in.close();
-                } catch (Exception e) {
-                    System.out.println("Unable to close the file: "
-                            + e.getMessage());
+                }
+                catch (Exception e) {
+                    System.out.println("Unable to close the file: "+
+                                       e.getMessage());
                 }
             }
         }
@@ -175,19 +171,20 @@ public class AMSFOPassword {
     }
 
     static public void main(String args[]) {
-
-        AMSFOPassword pwdGen = new AMSFOPassword();
+    
+        AMSFOPassword pwdGen = new AMSFOPassword();        
         ResourceBundle rb = AMSFOPassword.getResourceBundle();
-
+                
         try {
             pwdGen.process(args);
             System.out.println(rb.getString("successful"));
             System.exit(0);
         } catch (Exception eex) {
-            System.err.println(bundle.getString("fail") + " "
-                    + eex.getLocalizedMessage());
+            System.err.println(bundle.getString("fail") + " " +
+                               eex.getLocalizedMessage());
             System.exit(1);
         }
     }
-
+    
+    
 }

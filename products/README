@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.16 2007-11-08 00:22:23 kevinserwin Exp $
+$Id: README,v 1.17 2007-11-14 00:29:33 manish_rustagi Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -41,6 +41,7 @@ Copyright 2006 Sun Microsystems Inc. All Rights Reserved
         %% 2.4 Obtaining db.jar
         %% 2.5 Obtaining testng-5.1-jdk15.jar
         %% 2.6 Obtaining fmsae.dll and agent-csdk
+        %% 2.7 Obtaining Open Message Queue binaries, imq.jar and jms.jar
     %% 3. Building the workspace
         %% 3.1 build target
         %% 3.2 doc target
@@ -85,6 +86,9 @@ The libraries needed for compiling OpenSSO sources are:
    - SleepyCat Berkeley DB version 4.2.52: db.jar 
    - TestNG version 5.1 : testng-5.1-jdk15.jar
    - Secure Attribute Exchange API: fmsae.dll
+   - Open Message Queue: mq4_1-binary-Linux_X86-20070816.jar, 
+     mq4_1-binary-SunOS_X86-20070816.jar, mq4_1-binary-SunOS-20070816.jar,
+     mq4_1-binary-WINNT-20070816.jar, imq.jar and jms.jar
 
 Once these libraries are available, they should be placed under the 
 "opensso/products/extlib" directory of your workspace. Any library placed 
@@ -217,6 +221,26 @@ libraries/native/dll and copy it into the opensso/products/extlib directory
 in your workspace. Copy the agent-csdk subdirectory, and contents from 
 libraries/native to opensso/products/extlib.
 
+%% 2.7 Obtaining Open Message Queue binaries, imq.jar and jms.jar
+
+2.7.1 Open the web page: https://mq.dev.java.net/downloads.html
+2.7.2 Depending on your choice of platform, you may choose to download any
+      one of the available distribution types available under Open MQ 4.1 
+      Binary Downloads.
+       |----mq4_1-binary-Linux_X86-20070816.jar 
+       |    (Open Message Queue binaries for x86 linux)
+       |
+       |----mq4_1-binary-SunOS_X86-20070816.jar
+       |    (Open Message Queue binaries for x86 Solaris)
+       |
+       |----mq4_1-binary-SunOS-20070816.jar 
+       |    (Open Message Queue binaries for sparc Solaris)
+       |
+       |----mq4_1-binary-WINNT-20070816.jar 
+       |    (Open Message Queue binaries for Windows)
+  
+2.7.3 Extract the downloaded file as necessary to get the 
+      imq.jar and jms.jar under /mq/lib directory
 
 %% 3. Building the workspace
 

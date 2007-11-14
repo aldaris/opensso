@@ -17,14 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConnectionFactoryProviderFactory.java,v 1.1 2005-11-01 00:29:52 arvindp Exp $
+ * $Id: ConnectionFactoryProviderFactory.java,v 1.2 2007-11-14 00:18:54 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.jmqdb;
-
-import com.iplanet.am.util.SystemProperties;
 
 /**
  * A factory to access <code>ConnectionFactoryProvider</code> instance at
@@ -69,13 +67,13 @@ public class ConnectionFactoryProviderFactory {
     }
 
     static {
-        try {
-            String className = SystemProperties.get(
+        try {    
+            String className = System.getProperty(
                     CONFIG_CONNECTION_FACTORY_PROVIDER_FACTORY,
-                    DEFAULT_CONNECTION_FACTORY_PROVIDER_FACTORY);
+                    DEFAULT_CONNECTION_FACTORY_PROVIDER_FACTORY);                    
 
-            connectionFactoryProvider = (ConnectionFactoryProvider) Class
-                    .forName(className).newInstance();
+            connectionFactoryProvider = (ConnectionFactoryProvider) Thread.currentThread().getContextClassLoader().loadClass(className).newInstance();
+            
         } catch (Exception ex) {
             throw new RuntimeException("Initialization Failed", ex);
         }
