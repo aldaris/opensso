@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.54 2007-11-14 00:45:15 manish_rustagi Exp $
+   $Id: build.xml,v 1.55 2007-11-14 22:36:12 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -72,7 +72,8 @@
         <antcall target="idsvcs" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
             destdir="${amserver.classes.dir}" source="1.4" target="1.4"
-            debug="${build.debug}" debuglevel="${build.debuglevel}">
+            debug="${build.debug}" debuglevel="${build.debuglevel}"
+            excludes="${amserver_one_dot_five_targets}">
             <src path="${amserver.src.dir}"/>
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
@@ -82,6 +83,14 @@
             <exclude name="**/com/sun/identity/cli/definition/*.java"/>
         </javac>
         <antcall target="jaxrpc" />
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${amserver.classes.dir}" source="1.5" target="1.5"
+            debug="${build.debug}" debuglevel="${build.debuglevel}"
+            includes="${amserver_one_dot_five_targets}">
+            <src path="${amserver.src.dir}"/>
+            <classpath refid="build.class.path"/>
+            <exclude name="**/package-info.java"/>
+        </javac>
 
         <copy todir="${amserver.built.res.dir}">
             <fileset dir="${amserver.config.res.dir}">
