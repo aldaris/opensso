@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPRemote.xml,v 1.6 2007-11-14 21:17:04 asyhuang Exp $
+   $Id: propertySAMLv2SPRemote.xml,v 1.7 2007-11-15 18:17:11 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -299,6 +299,30 @@
                     <cc name="Algorithm" 
                         tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
                 </property>
+            </ccgroup>
+        </property>
+    </section>
+    <section name="plugins" defaultValue="samlv2idp.provider.section.title.plugins" >
+        <property> 
+            <ccgroup>
+                <property>
+                    <label name="lblSPAttributeMap"
+                           defaultValue="samlv2sp.attribute.label.spattributeMap"
+                           labelFor="attributeMap" />
+                    <ccgroup>
+                        <property>
+                            <cc name="attributeMap" 
+                                tagclass=
+                                "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                                <attribute name="name" value="list" />
+                                <attribute name="listboxLabel" 
+                                           value="label.current.value" />
+                                <attribute name="textboxLabel"
+                                           value="label.new.value" />
+                            </cc>
+                        </property>
+                    </ccgroup>
+                </property>    
             </ccgroup>
         </property>
     </section>
