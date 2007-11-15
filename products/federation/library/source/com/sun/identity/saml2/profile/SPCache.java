@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.8 2007-11-14 18:55:30 ww203982 Exp $
+ * $Id: SPCache.java,v 1.9 2007-11-15 16:42:45 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,11 +105,12 @@ public class SPCache {
     protected static Hashtable fedSessionListsByNameIDInfoKey = new Hashtable();
 
     /**
-     * SP: used to correlate LogoutRequest ID and inResponseTo in LogoutResponse
-     * element : request ID (String)
+     * SP: used to map LogoutRequest ID and inResponseTo in LogoutResponse
+     * element to the original LogoutRequest object
+     * key : request ID (String)
+     * value : original logout request object  (LogotRequest)
      */
-    public static Set logoutRequestIDs =
-         Collections.synchronizedSet(new HashSet());
+    public static Hashtable logoutRequestIDHash = new Hashtable();
 
     /**
      * Map saves response info for local auth.
@@ -149,6 +150,14 @@ public class SPCache {
      * Value : sp account mapper object
      */
     public static Hashtable spAccountMapperCache = new Hashtable();
+    
+    /**
+     * Cache saves the sp adapter class instance.
+     * Key : realm + spEntityID + adapterClassName
+     * Value : sp adapter class instance 
+     * (<code>SAML2ServiceProviderAdapter</code>)
+     */
+    public static Hashtable spAdapterClassCache = new Hashtable();
 
     /**
      * Cache saves the ecp request IDP list finder.

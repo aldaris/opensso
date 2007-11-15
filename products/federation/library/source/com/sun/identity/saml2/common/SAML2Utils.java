@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.13 2007-11-14 18:55:28 ww203982 Exp $
+ * $Id: SAML2Utils.java,v 1.14 2007-11-15 16:42:45 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,7 @@ import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.plugins.DefaultSPAuthnContextMapper;
 import com.sun.identity.saml2.plugins.IDPAccountMapper;
+import com.sun.identity.saml2.plugins.SAML2ServiceProviderAdapter;
 import com.sun.identity.saml2.plugins.SAML2IDPFinder;
 import com.sun.identity.saml2.plugins.SPAccountMapper;
 import com.sun.identity.saml2.plugins.SPAuthnContextMapper;
@@ -65,6 +66,7 @@ import com.sun.identity.saml2.profile.AuthnRequestInfo;
 import com.sun.identity.saml2.profile.CacheCleanUpScheduler;
 import com.sun.identity.saml2.profile.IDPCache;
 import com.sun.identity.saml2.profile.SPCache;
+import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.protocol.Response;
@@ -239,10 +241,12 @@ public class SAML2Utils extends SAML2SDKUtils {
      * Verifies single sign on <code>Response</code> and returns information
      * to SAML2 auth module for further processing. This method is used by
      * SAML2 auth module only.
+     * @param httpRequest HttpServletRequest
+     * @param httpResponse HttpServletResponse
      * @param response Single Sign On <code>Response</code>.
      * @param orgName name of the realm or organization the provider is in.
      * @param hostEntityId Entity ID of the hosted provider.
-     * @param isPOSTBinding A flag indicating whether the binding is POST or not
+     * @param profileBinding Profile binding used. 
      * @return A Map of information extracted from the Response. The keys of
      *          map are: <code>SAML2Constants.SUBJECT</code>,
      *                  <code>SAML2Constants.POST_ASSERTION</code>,
@@ -253,10 +257,13 @@ public class SAML2Utils extends SAML2SDKUtils {
      * @throws SAML2Exception if the Response is not valid according to the
      *          processing rules.
      */
-    public static Map verifyResponse(Response response,
+    public static Map verifyResponse(
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse,
+            Response response,
             String orgName,
             String hostEntityId,
-            boolean isPOSTBinding)
+            String profileBinding)
             throws SAML2Exception {
         String method = "SAML2Utils.verifyResponse:";
         if (response == null || orgName == null || orgName.length() == 0) {
@@ -285,7 +292,19 @@ public class SAML2Utils extends SAML2SDKUtils {
                         "invalidInResponseToInResponse"));
             }
         }
-        
+       
+        // invoke SP Adapter
+        SAML2ServiceProviderAdapter spAdapter =
+            SAML2Utils.getSPAdapterClass(hostEntityId, orgName);
+        if (spAdapter != null) {
+            AuthnRequest authnRequest = null;
+            if (reqInfo != null) {
+                authnRequest = reqInfo.getAuthnRequest();
+            }
+            spAdapter.preSingleSignOnProcess(hostEntityId, orgName, httpRequest,
+                httpResponse, authnRequest, response, profileBinding); 
+        }
+ 
         String idpEntityId = null;
         Issuer respIssuer = response.getIssuer();
         if (respIssuer != null) { // optional
@@ -347,7 +366,8 @@ public class SAML2Utils extends SAML2SDKUtils {
         }
         
         // decide if assertion needs to be signed/verified
-        boolean needAssertionSigned = isPOSTBinding;
+        boolean needAssertionSigned = (profileBinding != null) &&
+            (profileBinding.equals(SAML2Constants.HTTP_POST));
         if (!needAssertionSigned) {
             needAssertionSigned = spDesc.isWantAssertionsSigned();
         }
@@ -714,9 +734,11 @@ public class SAML2Utils extends SAML2SDKUtils {
         SPAuthnContextMapper mapper = getSPAuthnContextMapper(orgName,
                 hostEntityId,mapperClass);
         RequestedAuthnContext reqContext = null;
+        AuthnRequest authnRequest = null;
         if (reqInfo != null) {
             reqContext = (reqInfo.getAuthnRequest()).
                     getRequestedAuthnContext();
+            authnRequest = reqInfo.getAuthnRequest(); 
         }
         authLevel = mapper.getAuthLevel(reqContext,
                 authnStmt.getAuthnContext(),
@@ -731,6 +753,9 @@ public class SAML2Utils extends SAML2SDKUtils {
         smap.put(SAML2Constants.SUBJECT, subject);
         smap.put(SAML2Constants.POST_ASSERTION, assertion);
         smap.put(SAML2Constants.ASSERTIONS, assertions);
+        if (authnRequest != null) {
+            smap.put(SAML2Constants.AUTHN_REQUEST, authnRequest);
+        }
         String[] data = {assertion.getID(), "", ""};
         if (LogUtil.isAccessLoggable(Level.FINE)) {
             data[1] = subject.toXMLString();
@@ -2040,9 +2065,10 @@ public class SAML2Utils extends SAML2SDKUtils {
         
         return wantSigned.equalsIgnoreCase("true") ? true : false;
     }
-    
+ 
     /**
-     * Returns a value of specified attribute from SSOConfig.
+     * Returns single value of specified attribute from SSOConfig.
+     * This method is used for single-valued attributes.
      * @param realm realm of hosted entity.
      * @param hostEntityId name of hosted entity.
      * @param entityRole role of hosted entity.
@@ -2060,7 +2086,37 @@ public class SAML2Utils extends SAML2SDKUtils {
             debug.message(method + "entityRole - " + entityRole);
             debug.message(method + "attrName - " + attrName);
         }
-        String result = null;
+        List value = (List) getAllAttributeValueFromSSOConfig(realm, 
+            hostEntityId, entityRole, attrName);
+        if (debug.messageEnabled()) {
+            debug.message("getAttributeValueFromSSOConfig: values=" + value);
+        }
+        if ((value != null) && !value.isEmpty()) {
+            return (String) value.get(0);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Returns all values of specified attribute from SSOConfig.
+     * @param realm realm of hosted entity.
+     * @param hostEntityId name of hosted entity.
+     * @param entityRole role of hosted entity.
+     * @param attrName attribute name for the value.
+     * @return value of specified attribute from SSOConfig.
+     */
+    public static List getAllAttributeValueFromSSOConfig(String realm,
+            String hostEntityId,
+            String entityRole,
+            String attrName) {
+        if (debug.messageEnabled()) {
+            String method = "getAllAttributeValueFromSSOConfig : ";
+            debug.message(method + "realm - " + realm);
+            debug.message(method + "hostEntityId - " + hostEntityId);
+            debug.message(method + "entityRole - " + entityRole);
+            debug.message(method + "attrName - " + attrName);
+        }
         try {
             IDPSSOConfigElement idpConfig = null;
             SPSSOConfigElement spConfig = null;
@@ -2085,14 +2141,11 @@ public class SAML2Utils extends SAML2SDKUtils {
             if (attrs == null) {
                 return null;
             }
-            List value = (List) attrs.get(attrName);
-            if (value != null && value.size() != 0) {
-                result = (String) value.get(0);
-            }
+            return (List) attrs.get(attrName);
         } catch (SAML2MetaException e) {
             debug.message("get SSOConfig failed:", e);
         }
-        return result;
+        return null;
     }
     
     /**
@@ -2654,7 +2707,113 @@ public class SAML2Utils extends SAML2SDKUtils {
         
         return idpAccountMapper;
     }
+        
+    /**
+     * Returns an <code>SP</code> adapter class
+     *
+     * @param spEntityID the entity id of the service provider
+     * @param realm the realm name
+     *
+     * @return the <code>SP</code> adapter class
+     * @exception SAML2Exception if the operation is not successful
+     */
+    public static SAML2ServiceProviderAdapter getSPAdapterClass(
+            String spEntityID, String realm)
+            throws SAML2Exception {
+        String classMethod = "SAML2Utils.getSPAdapterClass: ";
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(classMethod +
+               "get SPAdapter for " + spEntityID + " under realm " + realm);
+        }
+        String spAdapterClassName = null;
+        SAML2ServiceProviderAdapter spAdapterClass = null;
+        try {
+            spAdapterClassName = getAttributeValueFromSSOConfig(
+                    realm, spEntityID, SAML2Constants.SP_ROLE,
+                    SAML2Constants.SP_ADAPTER_CLASS);
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(classMethod +
+                   "get SPAdapter class " + spAdapterClassName);
+            }
+            if ((spAdapterClassName != null) && 
+                (spAdapterClassName.length() != 0)) {
+                spAdapterClass = (SAML2ServiceProviderAdapter)
+                SPCache.spAdapterClassCache.get(realm + spEntityID +
+                    spAdapterClassName);
+                if (spAdapterClass == null) {
+                    spAdapterClass = (SAML2ServiceProviderAdapter)
+                        Class.forName(spAdapterClassName).newInstance();
+                    List env = getAllAttributeValueFromSSOConfig(
+                        realm, spEntityID, SAML2Constants.SP_ROLE,
+                        SAML2Constants.SP_ADAPTER_ENV);
+                    Map map = parseEnvList(env);
+                    map.put(SAML2ServiceProviderAdapter.HOSTED_ENTITY_ID,
+                        spEntityID);
+                    map.put(SAML2ServiceProviderAdapter.REALM, realm);
+                    spAdapterClass.initialize(map);
+                    SPCache.spAdapterClassCache.put(
+                        realm + spEntityID + spAdapterClassName, 
+                        spAdapterClass);
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod +
+                            "create new SPAdapter " + spAdapterClassName +
+                            " for " + spEntityID + " under realm " + realm);
+                    }
+                } else {
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod +
+                            "got the SPAdapter " + spAdapterClassName +
+                            " from cache");
+                    }
+                }
+            }
+        } catch (InstantiationException ex) {
+            SAML2Utils.debug.error(classMethod +
+                "Unable to get SP Adapter class instance.", ex);
+            throw new SAML2Exception(ex);
+        } catch (ClassNotFoundException ex) {
+            SAML2Utils.debug.error(classMethod +
+                "SP Adapter class not found.", ex);
+            throw new SAML2Exception(ex);
+        } catch (IllegalAccessException ex) {
+            SAML2Utils.debug.error(classMethod +
+                "Unable to get SP Adapter class.", ex);
+            throw new SAML2Exception(ex);
+        }
+        
+        return spAdapterClass;
+    }
     
+    /**
+     * Returns map based on A/V pair.
+     */
+    private static Map parseEnvList (List list) {
+        Map map = new HashMap();
+        if ((list == null) || (list.isEmpty())) {
+            return map;
+        }
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            String val = (String) list.get(i);
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.parseEnvList : processing " + val);
+            }
+            if ((val == null) || (val.length() == 0)) {
+                continue;
+            }
+            int pos = val.indexOf("=");
+            if (pos == -1) {
+                if (debug.warningEnabled()) {
+                    debug.warning("SAML2Utils.parseEnvList : invalid value : " 
+                        + val + ". Value must be in key=value format.");
+                }
+                continue;
+            } else {
+                map.put(val.substring(0, pos), val.substring(pos + 1));
+            }
+        }
+        return map;
+    }
     
     /**
      * Returns an <code>SPAccountMapper</code>

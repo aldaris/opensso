@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.17 2007-11-08 05:41:47 beomsuk Exp $
+ * $Id: SAML2Constants.java,v 1.18 2007-11-15 16:42:44 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,6 +114,13 @@ public interface SAML2Constants {
                 "urn:oasis:names:tc:SAML:2.0:nameid-format:";
 
     /**
+     * String to represent Name Identifier Format name space
+     * version 1.1
+     */
+    public static final String NAMEID_FORMAT_NAMESPACE_V_1_1=
+          "urn:oasis:names:tc:SAML:1.1:nameid-format:";
+
+    /**
      * String to represent Persitent Name Identifier
      */
     public String PERSISTENT =
@@ -123,13 +130,13 @@ public interface SAML2Constants {
      * String to represent Unspecified Name Identifier
      */
     public String UNSPECIFIED =
-                NAMEID_FORMAT_NAMESPACE + "unspecified";
+        NAMEID_FORMAT_NAMESPACE_V_1_1 + "unspecified";
   
     /**
      * String to represent X509 Subejct Name Identifier
      */
     public String X509_SUBJECT_NAME =
-        NAMEID_FORMAT_NAMESPACE + "X509SubjectName";
+        NAMEID_FORMAT_NAMESPACE_V_1_1 + "X509SubjectName";
 
     /**
      * String to represent the authentication service url
@@ -168,6 +175,11 @@ public interface SAML2Constants {
      */
     public String SUBJECT_CONFIRMATION_METHOD_SENDER_VOUCHES =
         "urn:oasis:names:tc:SAML:2.0:cm:sender-vouches";
+    
+    /**
+     * Session Property name indicating if response is redirected or not
+     */
+    public String RESPONSE_REDIRECTED = "SAML2ResponseRedirected";
 
     /**
      * Length for SAMLv2 IDs.
@@ -392,6 +404,11 @@ public interface SAML2Constants {
      * Constant for Subject Element
      */
     public String SUBJECT="Subject";
+
+    /**
+     * Constant for AuthnRequest object
+     */
+    public String AUTHN_REQUEST = "AuthnRequest";
     
     /**
      * Constant for NameIDPolicy Element
@@ -520,6 +537,18 @@ public interface SAML2Constants {
      */
     public String ATTRIBUTE_MAP = "attributeMap";
 
+    /**
+     * Service provider adapter implementation class
+     */
+    public String SP_ADAPTER_CLASS = "spAdapter";
+    
+    /**
+     * Environment (attribute/value pair) for Service provider adapter 
+     * implementation class. Those variables will be passed down as
+     * Map to the implementation class for initialization.
+     */
+    public String SP_ADAPTER_ENV = "spAdapterEnv";
+    
     /**
      * Service provider account mapper.
      */

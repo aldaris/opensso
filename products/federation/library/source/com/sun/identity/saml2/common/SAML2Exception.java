@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Exception.java,v 1.1 2006-10-30 23:16:14 qcheng Exp $
+ * $Id: SAML2Exception.java,v 1.2 2007-11-15 16:42:45 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,11 @@ import com.sun.identity.shared.locale.L10NMessageImpl;
  * @supported.all.api
  */
 public class SAML2Exception extends L10NMessageImpl {
+
+    /**
+     * Flag to indicate whether the response has been redirected already
+     */
+    private boolean redirectionDone = false;
     
     /**
      * Constructs a new <code>SAML2Exception</code> without a nested
@@ -76,6 +81,24 @@ public class SAML2Exception extends L10NMessageImpl {
     public SAML2Exception(Throwable t) {
         super(t);
     }
-    
+
+    /**
+     * Sets redirection done flag.
+     * @param redirectionDone true means that the response has been
+     *     redirected already to another URL, false otherwise.
+     */
+    public void setRedirectionDone(boolean redirectionDone) {
+        this.redirectionDone = redirectionDone;
+    }
+
+    /**
+     * Returns true if the response has been redirected already to another URL,
+     * returns false otherwise. 
+     * @return true if the response has been redirected already to another URL,
+     * returns false otherwise.
+     */
+    public boolean isRedirectionDone() {
+        return redirectionDone;
+    }
 }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.9 2007-10-17 18:46:36 weisun2 Exp $
+ * $Id: IDPSingleLogout.java,v 1.10 2007-11-15 16:42:45 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -294,18 +294,10 @@ public class IDPSingleLogout {
                 
                 StringBuffer requestID = null;
                 try {
-                    requestID = LogoutUtil.doLogout(
-                        metaAlias,
-                        spEntityID,
-                        slosList,
-                        extensionsList,
-                        binding,
-                        relayState,
-                        idpSessionIndex,
-                        pair.getNameID(),
-                        response,
-                        paramsMap,
-                        spConfig);
+                    requestID = LogoutUtil.doLogout(metaAlias, spEntityID,
+                        slosList, extensionsList, binding, relayState,
+                        idpSessionIndex, pair.getNameID(), request,
+                        response, paramsMap, spConfig);
                 } catch (SAML2Exception ex) {
                     if (binding.equals(SAML2Constants.SOAP)) {
                         debug.error(
@@ -951,18 +943,10 @@ public class IDPSingleLogout {
 
             HashMap paramsMap = new HashMap(request.getParameterMap());
             paramsMap.put(SAML2Constants.ROLE, SAML2Constants.IDP_ROLE);
-            StringBuffer requestID = LogoutUtil.doLogout(
-                metaAlias,
-                spEntityID,
-                slosList,
-                extensionsList,
-                SAML2Constants.HTTP_REDIRECT,
-                relayState,
-                idpSessionIndex,
-                pair.getNameID(),
-                response,
-                paramsMap,
-                null);
+            StringBuffer requestID = LogoutUtil.doLogout(metaAlias, spEntityID,
+                slosList, extensionsList, SAML2Constants.HTTP_REDIRECT,
+                relayState, idpSessionIndex, pair.getNameID(), request,
+                response, paramsMap, null);
 
             String requestIDStr = requestID.toString();
             if (debug.messageEnabled()) {
@@ -1135,7 +1119,7 @@ public class IDPSingleLogout {
                     try {
                         requestID = LogoutUtil.doLogout(metaAlias,
                             spEntityID, slosList, null, binding, relayState,
-                            sessionIndex, pair.getNameID(), response,
+                            sessionIndex, pair.getNameID(), request, response,
                             paramsMap, spConfig);
                     } catch (SAML2Exception ex) {
                         if (binding.equals(SAML2Constants.SOAP)) {

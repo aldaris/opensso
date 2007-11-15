@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.7 2007-10-05 21:22:17 weisun2 Exp $
+   $Id: spAssertionConsumer.jsp,v 1.8 2007-11-15 16:42:44 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -176,6 +176,11 @@ com.sun.identity.plugin.session.SessionException
             request, response, metaAlias, token, respInfo,
             orgName, hostEntityId, metaManager);
     } catch (SAML2Exception se) {
+        SAML2Utils.debug.error("spAssertionConsumer.jsp: SSO failed.", se);
+        if (se.isRedirectionDone()) {
+            // response had been redirected already.
+            return;
+        }
         if (se.getMessage().equals(SAML2Utils.bundle.getString("noUserMapping"))) {
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("spAssertionConsumer.jsp:need "
@@ -187,7 +192,6 @@ com.sun.identity.plugin.session.SessionException
                 requestURL, relayState));
             return;
         }
-        SAML2Utils.debug.error("spAssertionConsumer.jsp: SSO failed.", se);
         response.sendError(response.SC_INTERNAL_SERVER_ERROR,
             SAML2Utils.bundle.getString("SSOFailed"));
         return;
@@ -203,6 +207,14 @@ com.sun.identity.plugin.session.SessionException
         return;
     }
     SAML2Utils.debug.message("SSO SUCCESS");
+    String[] redirected = sessionProvider.getProperty(newSession,
+        SAML2Constants.RESPONSE_REDIRECTED);
+    if ((redirected != null) && (redirected.length != 0) &&
+        redirected[0].equals("true")) {
+        SAML2Utils.debug.message("Redirection already done in SPAdapter.");
+        // response redirected already in SPAdapter
+        return;
+    }
     Response saml2Resp = respInfo.getResponse();
     String requestID = saml2Resp.getInResponseTo();
     boolean isProxyOn = IDPProxyUtil.isIDPProxyEnabled(requestID);

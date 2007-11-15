@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseInfo.java,v 1.2 2007-10-04 04:34:50 hengming Exp $
+ * $Id: ResponseInfo.java,v 1.3 2007-11-15 16:42:45 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,19 +33,22 @@ import com.sun.identity.saml2.protocol.Response;
  */
 public class ResponseInfo extends CacheObject {
     private Response resp = null;
-    private boolean isPOSTBinding = false;
     private String relayState = null;
+    private String profileBinding = null; 
 
     /**
      * Constructor creates the ResponseInfo.
      * @param response the Response
-     * @param isPOSTBinding whether the Response is from POST binding.
+     * @param binding Profile binding used, one of the following values:
+     *     <code>SAML2Constants.HTTP_POST</code>,
+     *     <code>SAML2Constants.HTTP_ARTIFACT</code>,
+     *     <code>SAML2Constants.PAOS</code>
      * @param relayState relayState retrieved from ECP RelayState.
      */
-    public ResponseInfo(Response response, boolean isPOSTBinding,
+    public ResponseInfo(Response response, String binding,
         String relayState) {
         this.resp = response;
-        this.isPOSTBinding = isPOSTBinding;
+        this.profileBinding = binding;
         this.relayState = relayState;
         time = System.currentTimeMillis();
     }
@@ -60,20 +63,24 @@ public class ResponseInfo extends CacheObject {
     }
 
     /**
-     * Returns the binding.
-     *
-     * @return the binding.
-     */
-    public boolean getIsPOSTBinding() {
-        return isPOSTBinding;
-    }
-
-    /**
      * Returns the relayState.
      *
      * @return the relayState.
      */
     public String getRelayState() {
         return relayState;
+    }
+
+    /**
+     * Returns the profile binding,  one of the following values:
+     *     <code>null</code>,
+     *     <code>SAML2Constants.HTTP_POST</code>,
+     *     <code>SAML2Constants.HTTP_ARTIFACT</code>,
+     *     <code>SAML2Constants.PAOS</code>
+     *
+     * @return the binding.
+     */
+    public String getProfileBinding() {
+        return profileBinding;
     }
 }

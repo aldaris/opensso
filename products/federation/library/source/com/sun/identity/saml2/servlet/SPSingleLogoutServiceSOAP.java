@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogoutServiceSOAP.java,v 1.1 2006-10-30 23:16:54 qcheng Exp $
+ * $Id: SPSingleLogoutServiceSOAP.java,v 1.2 2007-11-15 16:42:46 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,7 +169,7 @@ public class SPSingleLogoutServiceSOAP extends HttpServlet {
         // process LogoutRequestElement
         LogoutResponse loRes = 
             SPSingleLogout.processLogoutRequest(logoutReq, spEntityID, realm,
-                                                request, response, isLBReq);
+                request, response, isLBReq, SAML2Constants.SOAP);
 
         if (loRes == null) {
             SAML2Utils.debug.error("SPSLOSOAP.onMessage: null LogoutResponse");

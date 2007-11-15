@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SingleLogoutHandler.java,v 1.3 2007-08-28 00:37:58 qcheng Exp $
+ * $Id: SAML2SingleLogoutHandler.java,v 1.4 2007-11-15 16:42:44 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -347,8 +347,8 @@ public class SAML2SingleLogoutHandler implements SingleLogoutHandler {
             try {
                 LogoutUtil.doLogout(idpMetaAlias,
                     spEntityID, slosList, null, SAML2Constants.SOAP,
-                    relayState, sessIndex[0], pair.getNameID(), response,
-                    paramsMap, spConfig);
+                    relayState, sessIndex[0], pair.getNameID(), request,
+                    response, paramsMap, spConfig);
             } catch (SAML2Exception ex) {
                 debug.error("SAML2SLOHandler:handleSOAPSLO.doLogout" , ex);
                 soapFailCount++;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.22 2007-10-26 18:06:40 weisun2 Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.23 2007-11-15 16:43:08 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -821,6 +821,12 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + SAML2Constants.TRANSIENT_FED_USER + "\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.SP_ADAPTER_CLASS + "\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.SP_ADAPTER_ENV + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + SAML2Constants.SP_ACCOUNT_MAPPER + "\">\n" +

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.7 2007-08-28 23:28:15 weisun2 Exp $
+ * $Id: LogoutUtil.java,v 1.8 2007-11-15 16:42:45 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,6 +134,7 @@ public class LogoutUtil {
         String relayState,
         String sessionIndex,
         NameID nameID,
+        HttpServletRequest request,
         HttpServletResponse response,
         Map paramsMap,
         BaseConfigType config) throws SAML2Exception, SessionException {
@@ -282,10 +283,11 @@ public class LogoutUtil {
             location = SAML2Utils.fillInBasicAuthInfo(
                 config, location);
             
-            doSLOBySOAP(requestID, logoutReq.toXMLString(true,true),
+            doSLOBySOAP(requestID, logoutReq,
                 location, realm, requesterEntityID, hostEntityRole, 
-                response); 
+                request, response); 
         }
+        SPCache.logoutRequestIDHash.put(logoutRequestID.toString(), logoutReq);
         return logoutRequestID;
     }
 
@@ -364,13 +366,15 @@ public class LogoutUtil {
      */ 
     private static void doSLOBySOAP(
         String requestID,
-        String sloRequestXMLString,
+        LogoutRequest sloRequest,
         String sloURL,
         String realm,
         String hostEntity,
         String hostRole, 
+        HttpServletRequest request,
         HttpServletResponse response) throws SAML2Exception, SessionException {
 
+        String sloRequestXMLString = sloRequest.toXMLString(true, true);
         if (debug.messageEnabled()) {
             debug.message("LogoutUtil.doSLOBySOAP : SLORequestXML: " 
                 + sloRequestXMLString + "\nSOAPURL : " + sloURL);
@@ -389,6 +393,13 @@ public class LogoutUtil {
         LogoutResponse sloResponse = ProtocolFactory.getInstance()
                 .createLogoutResponse(respElem);
 
+        String userId = null;
+        // invoke SPAdapter for preSingleLogoutProcess : SP initiated SOAP
+        if ((hostRole != null) && hostRole.equals(SAML2Constants.SP_ROLE)) {
+            userId = SPSingleLogout.preSingleLogoutProcess(hostEntity, realm,
+                request, response, null, sloRequest, sloResponse, 
+                SAML2Constants.SOAP);
+        }
         if (sloResponse == null) {
             debug.error("LogoutUtil.doSLOBySoap : null response");
             throw new SAML2Exception(SAML2Utils.bundle.getString(
@@ -418,6 +429,13 @@ public class LogoutUtil {
         
         if (success == false) {
             throw new SAML2Exception(SAML2Utils.bundle.getString("sloFailed"));
+        } else {
+            // invoke SPAdapter for postSLOSuccess : SP inited SOAP 
+            if ((hostRole != null) && hostRole.equals(SAML2Constants.SP_ROLE)) {
+                SPSingleLogout.postSingleLogoutSuccess(hostEntity, realm,
+                    request, response, userId, sloRequest, sloResponse, 
+                    SAML2Constants.SOAP);
+            }
         }
     }
 

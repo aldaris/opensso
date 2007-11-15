@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.9 2007-11-14 18:55:31 ww203982 Exp $
+ * $Id: SPSSOFederate.java,v 1.10 2007-11-15 16:42:45 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import com.sun.identity.saml2.ecp.ECPRelayState;
 import com.sun.identity.saml2.ecp.ECPRequest;
 import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.plugins.SAML2IDPFinder;
+import com.sun.identity.saml2.plugins.SAML2ServiceProviderAdapter;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.Extensions;
 import com.sun.identity.saml2.protocol.GetComplete;
@@ -249,9 +250,17 @@ public class SPSSOFederate {
         
             // create AuthnRequest 
             AuthnRequest authnRequest = createAuthnRequest(realm,spEntityID,
-                    paramsMap,spConfigAttrsMap,extensionsList,spsso,
-                    ssoURL, false);
-                
+                paramsMap,spConfigAttrsMap,extensionsList,spsso,
+                ssoURL, false);
+               
+            // invoke SP Adapter class if registered
+            SAML2ServiceProviderAdapter spAdapter = 
+                SAML2Utils.getSPAdapterClass(spEntityID, realmName); 
+            if (spAdapter != null) {
+                spAdapter.preSingleSignOnRequest(spEntityID, idpEntityID,
+                    realmName, request, response, authnRequest);
+            }
+
             String authReqXMLString = authnRequest.toXMLString(true,true);
         
             if (SAML2Utils.debug.messageEnabled()) {
@@ -387,6 +396,14 @@ public class SPSSOFederate {
             AuthnRequest authnRequest = createAuthnRequest(realm, spEntityID,
                 paramsMap, spConfigAttrsMap, extensionsList, spsso, null,
                 true);
+
+            // invoke SP Adapter class if registered
+            SAML2ServiceProviderAdapter spAdapter =
+                SAML2Utils.getSPAdapterClass(spEntityID, realm);
+            if (spAdapter != null) {
+                spAdapter.preSingleSignOnRequest(spEntityID, realm, null,
+                    request, response, authnRequest);
+            }
 
             String alias = SAML2Utils.getSigningCertAlias(realm, spEntityID,
                 SAML2Constants.SP_ROLE);

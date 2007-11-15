@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.11 2007-11-13 20:35:09 exu Exp $
+ * $Id: SPACSUtils.java,v 1.12 2007-11-15 16:42:45 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,9 +85,11 @@ import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.protocol.Artifact;
 import com.sun.identity.saml2.protocol.ArtifactResolve;
 import com.sun.identity.saml2.protocol.ArtifactResponse;
+import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.Status;
+import com.sun.identity.saml2.plugins.SAML2ServiceProviderAdapter;
 import com.sun.identity.saml2.plugins.SPAccountMapper;
 import com.sun.identity.saml2.plugins.SPAttributeMapper;
 
@@ -143,7 +145,7 @@ public class SPACSUtils {
                     hostEntityId, metaManager);
             } else {
                 respInfo = new ResponseInfo(getResponseFromPost(request,
-                    response), true, null);
+                    response), SAML2Constants.HTTP_POST, null);
             }
         } else {
             // not supported
@@ -260,7 +262,7 @@ public class SPACSUtils {
         return new ResponseInfo(
                 getResponseFromArtifact(art, location, hostEntityId,
                         idpEntityID, idp, response, orgName, metaManager),
-                false, null);
+                SAML2Constants.HTTP_ARTIFACT, null);
     }
 
     // Retrieves response using artifact profile.
@@ -780,7 +782,7 @@ public class SPACSUtils {
             }
         }
 
-        return new ResponseInfo(resp, false, relayState);
+        return new ResponseInfo(resp, SAML2Constants.PAOS, relayState);
     }
 
     // Obtains SAML Response from POST.
@@ -895,10 +897,18 @@ public class SPACSUtils {
                                      respInfo.getResponse());
         }        
         Map smap = null;
-        // check Response/Assertion and get back a Map of relevant data
-        smap = SAML2Utils.verifyResponse(
-            respInfo.getResponse(), realm, hostEntityId,
-            respInfo.getIsPOSTBinding());
+        try {
+            // check Response/Assertion and get back a Map of relevant data
+            smap = SAML2Utils.verifyResponse(request, response,
+                respInfo.getResponse(), realm, hostEntityId,
+                respInfo.getProfileBinding());
+        } catch (SAML2Exception se) {
+            // invoke SPAdapter for failure
+            invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                request, response, smap, respInfo, 
+                SAML2ServiceProviderAdapter.INVALID_RESPONSE, se);
+            throw se;
+        }
         
         com.sun.identity.saml2.assertion.Subject assertionSubject =
             (com.sun.identity.saml2.assertion.Subject)
@@ -960,29 +970,61 @@ public class SPACSUtils {
         if (needNameIDEncrypted && encId == null) {
             SAML2Utils.debug.error(classMethod +
                                    "process: NameID was not encrypted.");
-            throw new SAML2Exception(SAML2Utils.bundle.getString(
+            SAML2Exception se = new SAML2Exception(SAML2Utils.bundle.getString(
                 "nameIDNotEncrypted"));
+            // invoke SPAdapter for failure
+            invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                request, response, smap, respInfo,
+                SAML2ServiceProviderAdapter.INVALID_RESPONSE, se);
+            throw se;
         }
         if (encId != null) {
-            nameId = encId.decrypt(decryptionKey);
+            try {
+                nameId = encId.decrypt(decryptionKey);
+            } catch (SAML2Exception se) {
+                // invoke SPAdapter for failure
+                invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                    request, response, smap, respInfo,
+                    SAML2ServiceProviderAdapter.INVALID_RESPONSE, se);
+                throw se;
+            }
         }
         String existUserName = null;
         SessionProvider sessionProvider = null;
         try {
             sessionProvider = SessionManager.getProvider();
         } catch (SessionException se) {
-            throw new SAML2Exception(se);
+            // invoke SPAdapter for failure
+            SAML2Exception se2 = new SAML2Exception(se);
+            invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                request, response, smap, respInfo, 
+                SAML2ServiceProviderAdapter.SSO_FAILED_SESSION_ERROR, se2);
+            throw se2;
         }
         if (session != null) {
             try {
                 existUserName = sessionProvider.
                     getPrincipalName(session);
             } catch (SessionException se) {
-                throw new SAML2Exception(se);
+                // invoke SPAdapter for failure
+                SAML2Exception se2 = new SAML2Exception(se);
+                invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                    request, response, smap, respInfo, 
+                    SAML2ServiceProviderAdapter.SSO_FAILED_SESSION_ERROR, se2);
+                throw se2;
             }
         }
-        String userName = acctMapper.getIdentity(
+        String userName;
+        try {
+            userName = acctMapper.getIdentity(
                 authnAssertion, hostEntityId, realm);
+        } catch (SAML2Exception se) {
+            // invoke SPAdapter for failure
+            invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                request, response, smap, respInfo, 
+                SAML2ServiceProviderAdapter.SSO_FAILED_NO_USER_MAPPING, se);
+            throw se;
+        }
         if (userName == null) {
             userName = existUserName;
         }
@@ -997,8 +1039,8 @@ public class SPACSUtils {
             Assertion assertion = (Assertion)it.next();
             remoteHostId = assertion.getIssuer().getValue();
             List origAttrs = getSAMLAttributes(assertion,
-                                               needAttributeEncrypted,
-                                               decryptionKey);
+                 needAttributeEncrypted,
+                 decryptionKey);
             if (origAttrs != null && !origAttrs.isEmpty()) {
                 if (attrs == null) {
                     attrs = new ArrayList();
@@ -1008,8 +1050,17 @@ public class SPACSUtils {
         }
         Map attrMap = null;
         if (attrs != null) {
-            attrMap = attrMapper.getAttributes(attrs, userName,
-                                               hostEntityId, remoteHostId, realm);
+            try {
+                attrMap = attrMapper.getAttributes(attrs, userName,
+                    hostEntityId, remoteHostId, realm);
+            } catch (SAML2Exception se) {
+                // invoke SPAdapter for failure
+                invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                    request, response, smap, respInfo, 
+                    SAML2ServiceProviderAdapter.SSO_FAILED_ATTRIBUTE_MAPPING, 
+                    se);
+                throw se;
+            }
         }
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message(
@@ -1046,6 +1097,11 @@ public class SPACSUtils {
             SAML2Utils.debug.message(
                 classMethod + "writeFedInfo : " + writeFedInfo);
         }
+        AuthnRequest authnRequest = null;
+        if (smap != null) {
+            authnRequest = (AuthnRequest) 
+                smap.get(SAML2Constants.AUTHN_REQUEST);
+        }
         if (inRespToResp != null && inRespToResp.length() != 0) {
             SPCache.requestHash.remove(inRespToResp);
         }
@@ -1062,19 +1118,45 @@ public class SPACSUtils {
         try {
             session = sessionProvider.createSession(
                 sessionInfoMap, request, response, null);
-            setAttrMapInSession(sessionProvider, attrMap, session);
-            setDiscoBootstrapCredsInSSOToken(sessionProvider, authnAssertion,
-                session);
         } catch (SessionException se) {
-            throw new SAML2Exception(se);
+            // invoke SPAdapter for failure
+            int failureCode = 
+                SAML2ServiceProviderAdapter.SSO_FAILED_SESSION_GENERATION;
+            int sessCode =  se.getErrCode();
+            if (sessCode == SessionException.AUTH_USER_INACTIVE) {
+                failureCode =
+                    SAML2ServiceProviderAdapter.SSO_FAILED_AUTH_USER_INACTIVE;
+            } else if (sessCode == SessionException.AUTH_USER_LOCKED) {
+                failureCode =
+                    SAML2ServiceProviderAdapter.SSO_FAILED_AUTH_USER_LOCKED;
+            } else if (sessCode == SessionException.AUTH_ACCOUNT_EXPIRED) {
+                failureCode =
+                    SAML2ServiceProviderAdapter.SSO_FAILED_AUTH_ACCOUNT_EXPIRED;
+            }
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(
+                    "SPACSUtils.processResponse : error code=" + sessCode, se);
+            }
+            SAML2Exception se2 = new SAML2Exception(se);
+            invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                request, response, smap, respInfo, failureCode, se2);
+            throw se2;
         }
         // set metaAlias
         String[] values = { metaAlias };
         try {
+            setAttrMapInSession(sessionProvider, attrMap, session);
+            setDiscoBootstrapCredsInSSOToken(sessionProvider, authnAssertion,
+                session);
             sessionProvider.setProperty(
                 session, SAML2Constants.SP_METAALIAS, values);
         } catch (SessionException se) {
-            throw new SAML2Exception(se);
+            // invoke SPAdapter for failure
+            SAML2Exception se2 = new SAML2Exception(se);
+            invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                request, response, smap, respInfo, 
+                SAML2ServiceProviderAdapter.SSO_FAILED_SESSION_ERROR, se2);
+            throw se2;
         }
                     
         NameIDInfo info = new NameIDInfo(
@@ -1086,14 +1168,27 @@ public class SPACSUtils {
         try {
             userName = sessionProvider.getPrincipalName(session);
         } catch (SessionException se) {
-            throw new SAML2Exception(se);
+            // invoke SPAdapter for failure
+            SAML2Exception se2 = new SAML2Exception(se);
+            invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                request, response, smap, respInfo, 
+                SAML2ServiceProviderAdapter.SSO_FAILED_SESSION_ERROR, se2);
+            throw se2;
         }
         String[] data1 = {userName, nameIDValueString};
         LogUtil.access(Level.INFO, LogUtil.SUCCESS_FED_SSO, data1, session,
             props);
         // write fed info into data store
         if (writeFedInfo) {
-            AccountUtils.setAccountFederation(info, userName);
+            try {
+                AccountUtils.setAccountFederation(info, userName);
+            } catch (SAML2Exception se) {
+                // invoke SPAdapter for failure
+                invokeSPAdapterForSSOFailure(hostEntityId, realm,
+                    request, response, smap, respInfo, 
+                    SAML2ServiceProviderAdapter.FEDERATION_FAILED_WRITING_ACCOUNT_INFO, se);
+               throw se;
+            }
             String[] data = {userName, ""};
             if (LogUtil.isAccessLoggable(Level.FINE)) {
                 data[1] = info.toValueString();
@@ -1108,7 +1203,56 @@ public class SPACSUtils {
         saveInfoInMemory(
             sessionProvider, session, sessionIndex, info);
 
+        // invoke SP Adapter
+        SAML2ServiceProviderAdapter spAdapter =
+            SAML2Utils.getSPAdapterClass(hostEntityId, realm);
+        if (spAdapter != null) {
+            boolean redirected = spAdapter.postSingleSignOnSuccess(
+                hostEntityId, realm, request, 
+                response, session, authnRequest, respInfo.getResponse(), 
+                respInfo.getProfileBinding(), writeFedInfo);
+            if (redirected) {
+                try {
+                    String[] value = new String[] {"true"};
+                    sessionProvider.setProperty(session, 
+                        SAML2Constants.RESPONSE_REDIRECTED, value);
+                } catch (SessionException ex) {
+                    SAML2Utils.debug.warning("SPSingleLogout.processResp", ex);
+                } catch (UnsupportedOperationException ex) {
+                    SAML2Utils.debug.warning("SPSingleLogout.processResp", ex);
+                }
+            }
+        }
+
         return session;
+    }
+
+   
+    private static void invokeSPAdapterForSSOFailure(String hostEntityId,
+        String realm, HttpServletRequest request, HttpServletResponse response,
+        Map smap, ResponseInfo respInfo, int errorCode, 
+        SAML2Exception se) { 
+        SAML2ServiceProviderAdapter spAdapter = null;
+        try {
+            spAdapter = SAML2Utils.getSPAdapterClass(hostEntityId, realm);
+        } catch (SAML2Exception e) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(
+                    "SPACSUtils.invokeSPAdapterForSSOFailure", e);
+            }
+        }
+        if (spAdapter != null) {
+            AuthnRequest authnRequest = null;
+            if (smap != null) {
+                authnRequest = (AuthnRequest) 
+                    smap.get(SAML2Constants.AUTHN_REQUEST);
+            }
+            boolean redirected = spAdapter.postSingleSignOnFailure(
+                hostEntityId, realm, request, response, authnRequest,
+                respInfo.getResponse(), respInfo.getProfileBinding(),
+                errorCode);
+            se.setRedirectionDone(redirected);
+        }
     }
 
     /**
@@ -1318,7 +1462,7 @@ public class SPACSUtils {
      */
     private static void setDiscoBootstrapCredsInSSOToken(
         SessionProvider sessionProvider, Assertion assertion, Object session)
-        throws SessionException, SAML2Exception {
+        throws SessionException {
 
         if (assertion == null) {
             return;
