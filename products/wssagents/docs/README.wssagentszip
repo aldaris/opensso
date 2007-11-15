@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagentszip,v 1.1 2007-08-31 06:06:42 mrudul_uchil Exp $
+   $Id: README.wssagentszip,v 1.2 2007-11-15 17:29:44 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,7 +29,10 @@ famwssproviders.zip
              |____ lib/famclientsdk.jar (complete clientsdk jar)
              |____ lib/famwssproviders.jar (complete WSSAgents jar, including glassfish, weblogic, websphere, proxy plugin code binaries)
              |____ lib/famauthprovider.jar (for weblogic only) 
-             |____ resources/AMClient.properties (complete client properties)
+             |____ resources/AMConfig.properties (complete client properties)
+             |____ resources/amclientkeystore.jks (client keystore file)
+             |____ resources/.keypass (password file for key)
+             |____ resources/.storepass (password file for keystore)
              |____ README (this file)
              |____ README.common (common / top level README for common instructions, like modifying AMClient.properties, etc.)
              |____ README.glassfish (instructions to install, deploy and configure glassfish plugins)

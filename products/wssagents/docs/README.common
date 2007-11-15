@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.common,v 1.2 2007-09-04 21:55:40 mrudul_uchil Exp $
+   $Id: README.common,v 1.3 2007-11-15 17:29:44 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,9 +36,9 @@ This document assumes that users have already done the following:
 
 Follow the steps below to setup the common environment for Securing Web Services.
 
-I. Modify resources/AMClient.properties as follows:
+I. Modify resources/AMConfig.properties as follows:
 
-JAVA_HOME=/usr/java
+JAVA_HOME=/usr/java (Path where JAVA is installed)
 
 # FAM Server Information
 # Protocol can be either http or https
@@ -50,7 +50,7 @@ SERVER_PORT=amserver_port
 APPLICATION_USERNAME=amadmin
 APPLICATION_PASSWORD=<amadmin password>
 
-NAMING_URL=amserver_protocol://amserver_host:amserver_port/amserver/namingservice
+NAMING_URL=amserver_protocol://amserver_host:amserver_port/amserver_deploy_uri/namingservice
 
 # Debug information
 DEBUG_LEVEL=error
@@ -72,8 +72,8 @@ SAML_KEYAPSS=/path_to_file/.keypass
 LIBERTY_TRUSTEDCA_ALIASES=amserver:<amserver_host>
 
 # Login URL and Authentication service URL for Liberty use case
-LOGIN_URL=amserver_protocol://amserver_host:amserver_port/amserver/UI/Login
-LIBERTY_AUTHSVC_URL=amserver_protocol://amserver_host:amserver_port/amserver/Liberty/authnsvc
+LOGIN_URL=amserver_protocol://amserver_host:amserver_port/amserver_deploy_uri/UI/Login
+LIBERTY_AUTHSVC_URL=amserver_protocol://amserver_host:amserver_port/amserver_deploy_uri/Liberty/authnsvc
 
 NOTE : The directory specified as a value for DEBUG_DIR in AMConfig.properties should be different 
 than the one specified as the value for BASE_DIR in Installing Access Manager.
@@ -85,29 +85,22 @@ III. Configure the web services client and the web services provider for Web ser
 
 1.  Login into the Federated Access Manager Console with user amadmin and <amadmin password>
 
-         http://localhost:8080/fam
+         amserver_protocol://amserver_host:amserver_port/amserver_deploy_uri
 
 Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the Federated Access Manager Console.
 
-2.  Click on Subjects tab.
-
-3.  Click on Agent tab.
-
-4.  Open wscWSC agent by clicking on it.
-
-5.  In the configurations for "Security Mechanism" enable / select required Security Mechanism / token.
-
-6.  Save the wscWSC configuration.
-
-Next update the Web Services Provider (WSP) for the web services security
-
-7.  Click on "Back to Subject".
-
-8.  Click on "wspWSP" agent.
-
-9.  In the configurations for "Security Mechanism" enable / check the Security Mechanism / token selected in step 5.
-
-10.  Save the configuration.
-
-11. Logout the amadmin user.
-
+2. Create "wsc" and "wsp" agent configurations using "famadm" cli.
+3. Pick up the opensso.zip from the build directory, and unzip it into a temp directory. There should be a file famAdminTools.zip. Create a directory for CLI and unzip the famAdminTools.zip into the directory.
+4. In the CLI directory, do "setup -p <FAM config directory>".  The <FAM config directory> is the config directory you specified while configuring the opensso server.
+5. The setup will create a directory called opensso. cd to opensso/bin to find admin tool "famadm".
+6. Create WSCAgentConfiguration.properties and WSPAgentConfiguration.properties	files.
+    Content of this properties file would look like this : 
+    userpassword=<agent password>
+    sunIdentityServerDeviceStatus=Active
+    UserCredential=UserName:TestUser|UserPassword:TestUser
+    SecurityMech=urn:sun:wss:security:null:UserNameToken
+    
+7. Create agent configuration using famadm:
+    famadm create-agent -b wsc -t WSCAgent -u amadmin -f <amadmin user password file> -D WSCAgentConfiguration.properties
+    famadm create-agent -b wsp -t WSPAgent -u amadmin -f <amadmin user password file> -D WSPAgentConfiguration.properties
+8. Use "famadm show-agent -b <agent user name> -u amadmin -f <amadmin user password file> " to verify agent account has been created correctly.
