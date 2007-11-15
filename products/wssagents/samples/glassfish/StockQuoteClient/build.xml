@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -18,11 +19,10 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2007-09-05 20:59:53 mallas Exp $
+   $Id: build.xml,v 1.2 2007-11-15 18:17:31 mallas Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
-<?xml version="1.0" encoding="UTF-8"?>
 
 <project name="StockQuoteClient" default="all" basedir=".">
     <description>Builds, tests, and runs the project stockclient.</description>
@@ -45,7 +45,7 @@
         <mkdir dir="build/classes"/>
         <mkdir dir="web/WEB-INF/classes"/>
         <exec executable="${glassfish.home}/bin/wsimport${wsimport-script-suffix}">
-            <arg line="-verbose -p com.samples -d build/classes ../wsdl/StockService.wsdl"/>
+            <arg line="-verbose -p com.samples -d build/classes web/WEB-INF/wsdl/client/StockService/StockService.wsdl"/>
         </exec>
         <copy file="src/java/handlers.xml" todir="web/WEB-INF/classes"/>
     </target>
@@ -59,7 +59,7 @@
       <copy todir="web/WEB-INF/classes">
          <fileset dir="build/classes" />
       </copy>
-      <war destfile="dist/StockQuoteClient.war">
+      <war destfile="dist/StockQuoteClient.war" webxml="web/WEB-INF/web.xml">
          <zipfileset dir="web" />
       </war>
     </target>

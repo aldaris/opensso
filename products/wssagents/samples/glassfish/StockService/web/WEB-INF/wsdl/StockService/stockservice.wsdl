@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -18,11 +19,10 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: stockservice.wsdl,v 1.1 2007-09-05 20:59:57 mallas Exp $
+   $Id: stockservice.wsdl,v 1.2 2007-11-15 18:17:33 mallas Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
-<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://sun.com/stockquote.wsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="http://sun.com/stockquote.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://sun.com/stockquote.wsdl">
 <types>
         <xsd:schema>
