@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.16 2007-11-15 23:49:44 goodearth Exp $
+ * $Id: ServicesDefaultValues.java,v 1.17 2007-11-16 03:49:53 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -158,7 +158,9 @@ public class ServicesDefaultValues {
                 } else {
                     map.put(SetupConstants.DATASTORE_NOTIFICATION, "false");
                 }
-            } 
+            } else { 
+                map.put(SetupConstants.DATASTORE_NOTIFICATION, "false");
+            }
         } else {
             map.put(SetupConstants.DATASTORE_NOTIFICATION, "true");
         }
