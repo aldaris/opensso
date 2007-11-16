@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModel.java,v 1.6 2007-11-13 19:18:28 babysunil Exp $
+ * $Id: EntityModel.java,v 1.7 2007-11-16 22:11:12 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,11 +87,14 @@ public interface EntityModel
     /**
      * Deletes the entity specified.
      *
-     * @param entities Map of name of entity to its information which is in this
-     * format <code>&lt;type&gt;|&lt;realm&gt;|&lt;location&gt;</code>.
+     * @param name Name of entity descriptor.
+     * @param protocol Protocol to which entity belongs.
+     * @param realm the realm in which the entity resides.
+     *
      * @throws AMConsoleException if unable to delete entitiy.
      */
-    public void deleteEntities(Map entities) throws AMConsoleException;
+    public void deleteEntities(String name, String protocol, String realm)
+    throws AMConsoleException;
     
     /**
      * Creates an entity.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.16 2007-11-13 19:19:29 babysunil Exp $
+ * $Id: FederationViewBean.java,v 1.17 2007-11-16 22:11:31 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -293,34 +293,38 @@ public  class FederationViewBean
         return ret;
     }
     
-    private void populateEntityTable () {
+    private void populateEntityTable() {
         tablePopulated=true;
         CCActionTableModel tableModel = (CCActionTableModel)
-        propertySheetModel.getModel (ENTITY_TABLE);
-        tableModel.clearAll ();
+        propertySheetModel.getModel(ENTITY_TABLE);
+        tableModel.clearAll();
         boolean firstRow = true;
-        EntityModel eModel = getEntityModel ();
+        EntityModel eModel = getEntityModel();
         Map entities = Collections.EMPTY_MAP;
+        List entityList = new ArrayList();
         try {
-            entities = eModel.getSAMLv2Entities ();
+            entities = eModel.getSAMLv2Entities();
             if (!entities.isEmpty()) {
-                addRows(entities, eModel, tableModel, firstRow);
-                firstRow = false;
-            }
-            entities.clear();            
-            entities = eModel.getIDFFEntities ();
-            if (!entities.isEmpty()) {
-                addRows(entities, eModel, tableModel, firstRow);
+                addRows(entities, eModel, tableModel, firstRow, entityList);
                 firstRow = false;
             }
             entities.clear();
-            entities = eModel.getWSFedEntities ();
+            entities = eModel.getIDFFEntities();
             if (!entities.isEmpty()) {
-                addRows(entities, eModel, tableModel, firstRow);
+                addRows(entities, eModel, tableModel, firstRow, entityList);
                 firstRow = false;
             }
+            entities.clear();
+            entities = eModel.getWSFedEntities();
+            if (!entities.isEmpty()) {
+                addRows(entities, eModel, tableModel, firstRow, entityList);
+                firstRow = false;
+            }
+            // set the instances in the page session so when a request comes
+            // in we can prepopulate the table model.
+            setPageSessionAttribute(ENTITY_TABLE,(Serializable)entityList);
         } catch (AMConsoleException e) {
-            debug.error ("FederationViewBean.populateEntityTable", e);
+            debug.error("FederationViewBean.populateEntityTable", e);
             return;
         }
     }
@@ -329,9 +333,9 @@ public  class FederationViewBean
           Map entities,  
           EntityModel eModel, 
           CCActionTableModel tableModel, 
-          boolean firstRow 
-  ) {  
-    List entityList = new ArrayList (entities.size() *2);        
+          boolean firstRow,
+          List entityList
+  ) { 
         for (Iterator i = entities.keySet().iterator(); i.hasNext(); ) {
             if (!firstRow) {
                 tableModel.appendRow();
@@ -367,11 +371,7 @@ public  class FederationViewBean
             
             // name|protocol|realm needed while deleting/exporting entities
             entityList.add(completeValue);
-        }
-        
-        // set the instances in the page session so when a request comes in
-        // we can prepopulate the table model.
-        setPageSessionAttribute (ENTITY_TABLE,(Serializable)entityList);        
+        }       
 }
 
     private void populateCOTTable () {
@@ -701,51 +701,72 @@ public  class FederationViewBean
         vb.forwardTo (getRequestContext ());
     }
     
-    public void handleDeleteEntityButtonRequest (RequestInvocationEvent event)
+    public void handleDeleteEntityButtonRequest(RequestInvocationEvent event)
     throws ModelControlException {
-        CCActionTable table = (CCActionTable)getChild (ENTITY_TABLE);
-        table.restoreStateData ();
-        
-        CCActionTableModel m = (CCActionTableModel)
-        propertySheetModel.getModel (ENTITY_TABLE);
-        Integer[] selected = m.getSelectedRows ();
-        
-        Map entries = new HashMap (selected.length*2);
-        
-        List l = (ArrayList)getPageSessionAttribute (ENTITY_TABLE);
-        StringBuffer tmp = new StringBuffer (100);
+        CCActionTable table = (CCActionTable)getChild(ENTITY_TABLE);
+        table.restoreStateData();
+        EntityModel model = getEntityModel();
+        CCActionTableModel cctablemodel = (CCActionTableModel)
+        propertySheetModel.getModel(ENTITY_TABLE);
+        List entitiesList = (ArrayList)getPageSessionAttribute(ENTITY_TABLE);
+        Integer[] selected = cctablemodel.getSelectedRows();
+        List successList = new ArrayList();
+        List failureList = new ArrayList();
+        String name = null;
         
         for (int i = 0; i < selected.length; i++) {
-            String s = (String)l.get (selected[i].intValue ());
-            
-            int pos = s.indexOf ("|");
-            String name = s.substring (0, pos);
-            String protocol = s.substring (pos+1);
-            tmp.append (" ").append (name).append ("; ");
-            Map x = new HashMap (6);
-            
-            entries.put (name, protocol);
-        }
-        
-        EntityModel model = getEntityModel ();
-        try {
-            model.deleteEntities (entries);
-            StringBuffer sb = new StringBuffer ();
-            sb.append (model.getLocalizedString ("entity.deleted.message"));
-            sb.append ("<ul>");
-            for (Iterator i = entries.keySet ().iterator (); i.hasNext ();) {
-                String key = (String)i.next ();
-                sb.append ("<li>").append (key);
+            String selectedRow =
+                    (String)entitiesList.get(selected[i].intValue());
+            int pos = selectedRow.indexOf("|");
+            name = selectedRow.substring(0, pos);
+            String protStr = selectedRow.substring(pos+1);
+            int posProtocol = protStr.indexOf("|");
+            String protocol = protStr.substring(0, posProtocol);
+            String realmStr = protStr.substring(posProtocol+1);
+            int posrealm = realmStr.indexOf("|");
+            String realm = realmStr.substring(0, posrealm);
+            try {                
+                model.deleteEntities(name, protocol, realm);
+                successList.add(name);
+            }catch (AMConsoleException e) {
+                failureList.add(name);
             }
-            setInlineAlertMessage (CCAlert.TYPE_INFO, "message.information",
-                sb.toString ());
-        } catch (AMConsoleException e) {
-            setInlineAlertMessage (
-                CCAlert.TYPE_ERROR, "message.error", e.getMessage ());
+            
         }
-        forwardTo ();
+        StringBuffer finalStr = printDeleteMessage(model, successList, failureList);       
+        setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+               finalStr.toString());
+        forwardTo();
     }
     
+    private StringBuffer printDeleteMessage(
+        EntityModel model, 
+        List slist, 
+        List flist 
+    ) {        
+        StringBuffer fBuffer = new StringBuffer();
+        StringBuffer sBuffer = new StringBuffer();
+        if (slist.size()>0 ) {
+            sBuffer.append(model.getLocalizedString(
+                    "entity.deleted.message")).append("<ul>");
+            for (Iterator it = slist.iterator(); it.hasNext();) {
+                String key = (String)it.next();
+                sBuffer.append("<li>").append(key);
+            }
+        }
+        if (flist.size()>0 ) {
+            fBuffer.append(model.getLocalizedString(
+                    "entity.deleted.failed.message")).append("<ul>");
+            for (Iterator it = flist.iterator(); it.hasNext();) {
+                String key = (String)it.next();
+                fBuffer.append("<li>").append(key);
+            }
+        }
+        StringBuffer strBuffer = sBuffer.append("<br>").append(fBuffer);        
+      return strBuffer;     
+       
+    }
+        
     public void handleEntityNameHrefRequest(RequestInvocationEvent event) {  
         // store the current selected tab in the page session
         String id = (String)getPageSessionAttribute(getTrackingTabIDName());

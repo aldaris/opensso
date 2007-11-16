@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.11 2007-11-13 19:18:38 babysunil Exp $
+ * $Id: EntityModelImpl.java,v 1.12 2007-11-16 22:11:03 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -274,34 +274,23 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
     /**
      * Deletes the entity specified.
      *
-     * @param data Map of name of entity to its information which is in this
-     * format <code>&lt;type&gt;|&lt;realm&gt;|&lt;location&gt;</code>.
+     * @param name Name of entity descriptor.
+     * @param protocol Protocol to which entity belongs.
+     * @param realm the realm in which the entity resides.
+     *
      * @throws AMConsoleException if unable to delete entitiy.
      */
-    public void deleteEntities(Map data)
-        throws AMConsoleException 
-    {
-        if (data == null || data.isEmpty()) {
-            throw new AMConsoleException("delete.entity.invalid.data");
-        }
-        
-        Set entities = data.keySet();                
-        for (Iterator i = entities.iterator(); i.hasNext();) {
-            String name = (String)i.next();      
-            
-            // the format of string s is <type>|<realm>|<location>
-            String s = (String)data.get(name);
-            int pos = s.indexOf("|");
-            String type = s.substring(0, pos);
-            String realm = s.substring(pos+1, s.lastIndexOf("|"));
-            
-            if (type.equals(IDFF)) {
-                deleteIDFFEntity(name, realm);
-            } else if (type.equals(WSFED)) {
-                deleteWSFedEntity(name,realm);
-            } else {
-                deleteSAMLv2Entity(name,realm);
-            }
+    public void deleteEntities(
+        String name, 
+        String protocol, 
+        String realm
+    ) throws AMConsoleException {       
+        if (protocol.equals(IDFF)) {
+            deleteIDFFEntity(name, realm);
+        } else if (protocol.equals(WSFED)) {
+            deleteWSFedEntity(name,realm);
+        } else {
+            deleteSAMLv2Entity(name,realm);
         }
     }
     
