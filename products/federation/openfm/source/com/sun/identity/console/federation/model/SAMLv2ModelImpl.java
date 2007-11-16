@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.8 2007-11-14 21:17:32 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.9 2007-11-16 22:12:14 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -897,32 +897,21 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      */
     private void updateBaseConfig(
         BaseConfigType baseConfig,
-        Map values 
-    ) throws AMConsoleException {
-        ObjectFactory objFactory = new ObjectFactory();
-        try {
-            for (Iterator iter=values.keySet().iterator();
-            iter.hasNext();) {
-                // each key value pair has to be set in Attribute element
-                AttributeElement avp = objFactory.createAttributeElement();
-                String key = (String)iter.next();
-                avp.setName(key);
-                Set set = (Set) values.get(key);
-                Iterator i = set.iterator();
-                while ((i !=  null)&& (i.hasNext())) {
-                    String val = (String) i.next();
-                    avp.getValue().add(val);
+        Map values
+        ) throws AMConsoleException {
+            List attrList = baseConfig.getAttribute();
+            for (Iterator i = attrList.iterator(); i.hasNext(); ) {
+                AttributeElement avpnew = (AttributeElement)i.next();
+                String name = avpnew.getName();
+                Set set = (Set)values.get(name);
+                if (set != null) {
+                   avpnew.getValue().clear();
+                   avpnew.getValue().addAll(set);
                 }
-                
-                //updates the BaseConfig Object
-                baseConfig.getAttribute().add(avp);
-            }
-        } catch (JAXBException e) {
-            debug.warning("SAMLv2ModelImpl.updateBaseConfig:", e);
-            throw new AMConsoleException(getErrorString(e));
-        }
+            } 
     }
     
+
     /**
      * Saves the NameIdFormat.
      *

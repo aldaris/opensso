@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModelImpl.java,v 1.5 2007-10-26 00:08:11 jonnelson Exp $
+ * $Id: WSFedPropertiesModelImpl.java,v 1.6 2007-11-16 22:12:37 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -385,7 +385,8 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             }
             SPSSOConfigElement  spsso = getspsso(fed);
             if (spsso != null) {
-                BaseConfigType bcon = updateSPBaseConfig(spsso, spExtvalues);
+                BaseConfigType baseConfig = (BaseConfigType)spsso;
+                updateBaseConfig(baseConfig, spExtvalues);
             }
             //saves the attributes by passing the new fed object
             WSFederationMetaManager.setEntityConfig(realm,fed);
@@ -423,7 +424,8 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             }
             IDPSSOConfigElement  idpsso = getidpsso(fed);
             if (idpsso != null){
-                BaseConfigType bcon = updateIDPBaseConfig(idpsso, idpExtValues);
+                BaseConfigType baseConfig = (BaseConfigType)idpsso;
+                updateBaseConfig(idpsso, idpExtValues);
             }
             
             //saves the new configuration by passing new fed element created
@@ -499,81 +501,29 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     }
     
     /**
-     * Updates the IDPSSOConfigElement with the map of values passed.
+     * Updates the BaseConfig Object with the map of values passed.
      *
-     * @param idpsso is the IDPSSOConfigElement passes.
+     * @param baseConfig is the BaseConfigType object passed.
      * @param values the Map which contains the new attribute/value pairs.
-     * @return the corresponding BaseConfigType Object.
-     * @throws AMConsoleException if update of idpsso object fails.
+     * @throws AMConsoleException if update of baseconfig object fails.
      */
-    private BaseConfigType updateIDPBaseConfig(
-        IDPSSOConfigElement idpsso,
+    private void updateBaseConfig(
+        BaseConfigType baseConfig,
         Map values
     ) throws AMConsoleException {
-        BaseConfigType bcon = (BaseConfigType)idpsso;
-        ObjectFactory objFactory = new ObjectFactory();
-        try {
-            for (Iterator iter=values.keySet().iterator(); iter.hasNext();) {
-                // each key value pair has to be set in Attribute element
-                AttributeElement avp = objFactory.createAttributeElement();
-                String key = (String)iter.next();
-
-                avp.setName(key);
-                Set set = (Set) values.get(key);
-                Iterator i = set.iterator();
-                while ((i !=  null) && (i.hasNext())) {
-                    String val = (String) i.next();
-                    avp.getValue().add(val);
-                }
-                //add Attribute element object to the BaseConfig Object
-                bcon.getAttribute().add(avp);
+        List attrList = baseConfig.getAttribute();
+        for (Iterator i = attrList.iterator(); i.hasNext(); ) {
+            AttributeElement avpnew = (AttributeElement)i.next();
+            String name = avpnew.getName();
+            Set set = (Set)values.get(name);
+            if (set != null) {
+               avpnew.getValue().clear();
+               avpnew.getValue().addAll(set);
             }
-        } catch (JAXBException e) {
-            debug.warning("WSFedPropertiesModelImpl.updateIDPBaseConfig", e);
-            throw new AMConsoleException(e.getMessage());
-        }
-        return bcon;
+        } 
     }
     
-    /**
-     * Updates the SPSSOConfigElement with the map of values passed.
-     *
-     * @param spsso is the IDPSSOConfigElement passes.
-     * @param values the Map which contains the new attribute/value pairs.
-     * @return the corresponding BaseConfigType Object.
-     * @throws AMConsoleException if update of spsso object fails.
-     */
-    private BaseConfigType updateSPBaseConfig(
-        SPSSOConfigElement spsso,
-        Map values
-    ) throws AMConsoleException {
-        BaseConfigType bcon = (BaseConfigType)spsso;
-        ObjectFactory objFactory = new ObjectFactory();
-        try {
-            for (Iterator iter=values.keySet().iterator();
-            iter.hasNext();) {
-                // each key value pair has to be set in Attribute element
-                AttributeElement avp = objFactory.createAttributeElement();
-                String key = (String)iter.next();
-                avp.setName(key);
-                Set set = (Set) values.get(key);
-                Iterator i = set.iterator();
-                while ((i !=  null)&& (i.hasNext())) {
-                    String val = (String) i.next();
-                    avp.getValue().add(val);
-                }
-                //add Attribute element object to the BaseConfig Object
-                bcon.getAttribute().add(avp);
-            }
-        } catch (JAXBException e) {
-            debug.warning(
-                "WSFedPropertiesModelImpl.updateSPBaseConfig", e);
-            throw new AMConsoleException(e.getMessage());
-        }
-        return bcon;
-    }   
-    
-    /**
+   /**
      * Creates the extended config object when it does not exist.
      * @param realm to which the entity belongs.
      * @param fedId is the entity id.
