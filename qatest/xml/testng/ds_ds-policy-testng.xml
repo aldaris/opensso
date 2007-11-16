@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-policy-testng.xml,v 1.8 2007-11-08 17:44:48 arunav Exp $: 
+ $Id: ds_ds-policy-testng.xml,v 1.9 2007-11-16 22:25:44 rmisra Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,6 +33,7 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.policy.ConfigUnconfig"/>
             <class name="com.sun.identity.qatest.policy.PolicyEvaluationTestFactory"/>
         </classes>
     </test>
