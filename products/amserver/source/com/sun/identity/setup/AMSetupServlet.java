@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.29 2007-11-14 07:15:44 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.30 2007-11-17 00:38:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -465,7 +465,13 @@ public class AMSetupServlet extends HttpServlet {
         String res = null;
         String bootstrap = getBootStrapFile();
         FileReader frdr = null;
+        
         try {
+            String configDir = getPresetConfigDir();
+            if ((configDir == null) || (configDir.length() == 0)) {
+                bootstrap = Bootstrap.readFile(bootstrap) + "/bootstrap";
+            }
+
             frdr = new FileReader(bootstrap);
             BufferedReader brdr = new BufferedReader(frdr);
             res = brdr.readLine();
@@ -567,28 +573,6 @@ public class AMSetupServlet extends HttpServlet {
         return configDir;
     }
 
-    private static String getConfigDirectory()
-        throws IOException {
-        String configDir = getPresetConfigDir();
-        if ((configDir  != null) && (configDir .length() > 0)) {
-            File f = new File(configDir);
-            if (!f.exists()) {
-                configDir = null;
-            }
-        } else {
-            try {
-                String bootstrap = getBootStrapFile();
-                FileReader frdr = new FileReader(bootstrap);
-                BufferedReader brdr = new BufferedReader(frdr);
-                configDir = brdr.readLine();
-                frdr.close();
-            } catch (FileNotFoundException e) {
-                //ignore: war is not configured
-            }
-        }
-        return configDir;
-    }
-    
     /**
      * Returns location of the bootstrap file.
      *

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.5 2007-11-10 04:38:28 veiming Exp $
+ * $Id: Bootstrap.java,v 1.6 2007-11-17 00:38:11 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -478,9 +478,9 @@ public class Bootstrap {
             btsFile.getParentFile().mkdirs();
         }
 
-        String url = createBootstrapResource(configuration, legacy);
-        AMSetupServlet.writeToFile(bootstrapFile, url);
-        return url;
+        String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
+        AMSetupServlet.writeToFile(bootstrapFile, baseDir);
+        return createBootstrapResource(configuration, legacy);
     }
     
     private static SSOToken getSSOToken(
@@ -498,7 +498,7 @@ public class Bootstrap {
         return ssoToken;
     }
 
-    private static String readFile(String file) 
+    static String readFile(String file) 
         throws IOException
     {
         BufferedReader in = null;
@@ -564,7 +564,6 @@ public class Bootstrap {
             }
         }
         
-        AMSetupServlet.writeToFile(bootstrapFile, url);
         AMSetupServlet.writeToFile(
             SystemProperties.get(AMSetupServlet.BOOTSTRAP_FILE_LOC), url);
     }
