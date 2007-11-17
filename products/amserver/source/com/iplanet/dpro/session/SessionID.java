@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionID.java,v 1.3 2007-10-17 23:00:17 veiming Exp $
+ * $Id: SessionID.java,v 1.4 2007-11-17 00:12:06 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,6 +76,8 @@ public class SessionID implements Serializable {
 
     private static String cookieName = null;
 
+    private static boolean hexEncodeCookie = false;
+
     private static Debug debug;
 
     private Boolean cookieMode = null;
@@ -85,7 +87,15 @@ public class SessionID implements Serializable {
         if (cookieName == null) {
             cookieName = SystemProperties.get("com.iplanet.am.cookie.name");
         }
+        hexEncodeCookie = Boolean.valueOf(
+                SystemProperties.get("com.iplanet.am.cookie.hexEncode", 
+                "false")).booleanValue();
         debug = Debug.getInstance("amSession");
+        if (debug.messageEnabled()) {
+            debug.message("SessionID.static block():" +
+                    "cookie.name=" + cookieName + "," +
+                    "hexEncodeCookie=" + hexEncodeCookie);
+        }
     }
 
     // prefix "S" is reserved to be used by session framework-specific
@@ -280,13 +290,17 @@ public class SessionID implements Serializable {
             throw new IllegalArgumentException("sid value is null or empty");
         }
         try {
-            int outerIndex = encryptedString.lastIndexOf("@");
+            String plainString = encryptedString;
+            if (hexEncodeCookie) {
+                plainString = hexToString(encryptedString);
+            }
+            int outerIndex = plainString.lastIndexOf("@");
             if (outerIndex == -1) {
                 isParsed = true;
                 return;
             }
 
-            String outer = encryptedString.substring(outerIndex + 1);
+            String outer = plainString.substring(outerIndex + 1);
             int tailIndex = outer.indexOf("#");
             tail = outer.substring(tailIndex + 1);
 
@@ -428,7 +442,11 @@ public class SessionID implements Serializable {
             if (tail != null) {
                 buf.append(tail);
             }
-            return buf.toString();
+            String returnValue = buf.toString();
+            if (hexEncodeCookie) {
+                returnValue = stringToHex(returnValue);
+            }
+            return returnValue;
         } catch (Exception e) {
             throw new SessionException(e);
         }
@@ -451,4 +469,61 @@ public class SessionID implements Serializable {
         prototype.parseSessionString();
         return makeSessionID(encryptedID, prototype.extensions, prototype.tail);
     }
+
+    /** 
+     * Converts hex encoded string to plain text string. 
+     * This is not a general purpose utility. 
+     * This is meant only for internal use for converting hex encoded 
+     * session cookie to plain text string. 
+     *
+     * @param hexString hex encoded string
+     * @return plain text string
+     */
+    private static String hexToString(String hexString) {
+        String plainString = hexString;
+        StringBuffer sb = new StringBuffer();
+        if ((hexString != null) && (hexString.length() != 0)) {
+            int l = hexString.length();
+            for (int i = 0; i < l; i = i + 2) {
+                int c1 = hexString.charAt(i);
+                int c2 = hexString.charAt(i + 1);
+                if (c1 >= 'a') {
+                    c1 =  c1 - 'a' + 10;
+                } else {
+                    c1 =  c1 - '0';
+                }
+                if (c2 >= 'a') {
+                    c2 =  c2 - 'a' + 10;
+                } else {
+                    c2 =  c2 - '0';
+                }
+                sb.append((char)(16*c1 + c2));
+            }
+            plainString = sb.toString();
+        }
+        return plainString;
+    }
+
+    /** 
+     * Converts plain text string to hex encoded string.
+     * This is not a general purpose utility. 
+     * This is meant only for internal use for converting base64 encoded
+     * session cookie to hex encoding
+     *
+     * @param plainString plain text string
+     * @return hex encoded string
+     */
+    private static String stringToHex(String plainString) {
+        String hexString = plainString;
+        StringBuffer sb = new StringBuffer();
+        if ((plainString != null) && (plainString.length() != 0)) {
+            int l = plainString.length();
+            for (int i = 0; i < l; i++) {
+                sb.append(Integer.toHexString(plainString.charAt(i)));
+            }
+            hexString = sb.toString();
+        }
+        return hexString;
+    }
+
 }

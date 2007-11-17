@@ -306,6 +306,7 @@ com/sun/identity/sm/jaxrpc/SMSObjectIF.class
 com/sun/identity/sm/jaxrpc/SMSJAXRPCObject.class
 com/sun/identity/sm/jaxrpc/SMSJAXRPCObject$NotificationThread.class
 com/sun/identity/sm/jaxrpc/SMSJAXRPCObject$SMSNotificationHandler.class
+com/sun/identity/sm/jaxrpc/SMSJAXRPCObject$NotificationRunnable.class
 com/sun/identity/shared/DateUtils.class
 com/sun/identity/policy/*.class
 com/sun/identity/policy/interfaces/*.class
