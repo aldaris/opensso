@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.13 2007-03-08 22:42:20 pawand Exp $
+ * $Id: AuthD.java,v 1.14 2007-11-17 00:40:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@
 package com.sun.identity.authentication.service;
 
 import com.iplanet.am.sdk.AMStoreConnection;
+import com.iplanet.am.util.Misc;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
@@ -48,7 +49,6 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.log.Logger;
 import com.sun.identity.log.messageid.MessageProviderFactory;
-import com.sun.identity.log.messageid.LogMessageProvider;
 import com.sun.identity.log.messageid.LogMessageProviderBase;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.datastruct.CollectionHelper;
@@ -75,7 +75,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import netscape.ldap.util.DN;
-import com.iplanet.am.util.Misc;
+
 
 /**
  * This class is used to initialize the Authentication service and retrieve 
@@ -864,10 +864,19 @@ public class AuthD  {
                     "gettingSessionFailed", null);
             }
             
-            authSession.setProperty("Principal", authSession.getClientID());
+            String clientID = authSession.getClientID();
+            authSession.setProperty("Principal", clientID);
             authSession.setProperty("Organization", defaultOrg);
             authSession.setProperty("Host",
                 authSession.getID().getSessionServer());
+            if (DN.isDN(clientID)) {
+                DN dn = new DN(clientID);
+                String[] tokens = dn.explodeDN(true);
+                String id = "id=" + tokens[0] + ",ou=user," + 
+                    ServiceManager.getBaseDN();
+                authSession.setProperty(Constants.UNIVERSAL_IDENTIFIER,
+                    id);
+            }
             SSOTokenManager ssoManager = SSOTokenManager.getInstance();
             ssoAuthSession = ssoManager.createSSOToken(
                 authSession.getID().toString());

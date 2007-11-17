@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.7 2007-11-14 01:43:35 veiming Exp $
+ * $Id: DelegationEvaluator.java,v 1.8 2007-11-17 00:40:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,6 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.delegation.interfaces.DelegationInterface;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdUtils;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
@@ -106,7 +105,7 @@ public class DelegationEvaluator {
         if ((permission != null) && (token != null)) {
             AMIdentity user = null;
             try {
-                user = IdUtils.getIdentity(token);
+                user = new AMIdentity(token);
             } catch (IdRepoException ide) {
                 throw (new DelegationException(ide.getMessage()));
             }
