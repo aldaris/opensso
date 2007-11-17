@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMProfileModelImpl.java,v 1.3 2007-10-24 20:51:02 veiming Exp $
+ * $Id: SMProfileModelImpl.java,v 1.4 2007-11-17 01:45:42 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -345,17 +345,7 @@ public class SMProfileModelImpl extends AMModelBase
             int index = serverEntry.indexOf(DELIMITER);
             if (index != -1) {
                 String server = serverEntry.substring(0, index);
-                try {
-                    URL url = new URL(server);
-                    serverList.add(url.getProtocol() + "://" + url.getHost() +
-                        ":" + url.getPort());
-                } catch (MalformedURLException ex) {
-                    if (debug.warningEnabled()) {
-                        debug.warning("SMProfileModelImpl.parseServerNames:" +
-                            "This server entry is not proper, ignoring:"
-                            + serverEntry);
-                    }
-                }
+                serverList.add(server);
             } else {
                 if (debug.warningEnabled()) {
                     debug.warning("SMProfileModelImpl.parseServerNames:" +

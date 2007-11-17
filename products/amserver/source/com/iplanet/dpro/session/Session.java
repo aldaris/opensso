@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.9 2007-10-24 20:50:58 veiming Exp $
+ * $Id: Session.java,v 1.10 2007-11-17 01:45:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -880,9 +880,10 @@ public class Session {
         if (pos != -1) {
             port = host.substring(pos + 1);
             host = host.substring(0, pos);
-            int pos1 = host.indexOf("/", pos);
+            int pos1 = port.indexOf("/");
             if (pos1 != -1 ) {
-               uri = host.substring(pos1);
+                uri = port.substring(pos1);
+                port = port.substring(0, pos1);
             }
         }
         
