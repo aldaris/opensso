@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.2 2007-09-10 19:38:00 arviranga Exp $
+ * $Id: IdentityServicesImpl.java,v 1.3 2007-11-19 21:20:20 lakshman_abburi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,7 +60,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idsvcs.LogResponse;
-import com.sun.identity.policy.client.PolicyEvaluator;
+import com.sun.identity.policy.PolicyEvaluator;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 
