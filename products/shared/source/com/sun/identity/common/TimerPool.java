@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimerPool.java,v 1.1 2007-09-13 18:12:20 ww203982 Exp $
+ * $Id: TimerPool.java,v 1.2 2007-11-19 20:08:59 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -138,9 +138,10 @@ public class TimerPool implements Triggerable {
                 try {
                     nextRun = (Date) taskList.firstKey();
                     long delay = now - nextRun.getTime();
-                    scheduler.setWait((delay >= 0 ? delay : 0));
+                    scheduler.setDelay((delay >= 0 ? delay : 0));
                 } catch(NoSuchElementException ex) {
                     nextRun = null;
+                    scheduler.setDelay(-1);
                 }
             }
         }
@@ -464,6 +465,7 @@ public class TimerPool implements Triggerable {
     private class Scheduler extends Thread {
         
         private volatile boolean shouldTerminate;
+        private boolean beingNotified;
         private long delay;
         private TimerPool pool;
         
@@ -475,6 +477,7 @@ public class TimerPool implements Triggerable {
         
         public Scheduler(TimerPool pool) {
             this.shouldTerminate = false;
+            this.beingNotified = false;
             this.delay = -1;
             this.pool = pool;
         }
@@ -487,7 +490,18 @@ public class TimerPool implements Triggerable {
         
         public synchronized void setWait(long delay) {
             this.delay = delay;
+            this.beingNotified = true;
             this.notify();
+        }
+        
+        /**
+         * Sets the time (in ms) to wait without notification.
+         *
+         * @param delay The time (in ms) to wait
+         */
+        
+        public synchronized void setDelay(long delay) {
+            this.delay = delay;
         }
         
         /**
@@ -511,9 +525,15 @@ public class TimerPool implements Triggerable {
                         if (!shouldTerminate) {
                             if (delay > 0) {
                                 this.wait(delay);
+                                if (beingNotified) {
+                                    beingNotified = false;
+                                    continue;
+                                }
                             } else {
                                 if (delay < 0) {
                                     this.wait();
+                                    beingNotified = false;
+                                    continue;
                                 }
                             }
                         }
