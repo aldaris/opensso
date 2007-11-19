@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.17 2007-10-19 00:21:01 rajeevangal Exp $
+   $Id: configurator.jsp,v 1.18 2007-11-19 22:24:20 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -81,17 +81,9 @@
         function processConfigType()
         {
             var show = 'table-row';
-            try {
-                // Firefox
-                document.getElementById("smdsrsuffix").style.display = show;
-            } catch(e) { 
-                // IE
-                show = 'block';
-            }
             var dschoice = document.getElementById("embeddedOp");
             if (dschoice.checked) { 
                 // embedded
-                document.getElementById("smrootsuffix").style.display = 'none';
                 document.getElementById("smdsservername").style.display = 'none';
                 document.getElementById("smdsserverport").style.display = show;
                 document.getElementById("smdsdmtextbox").style.display = 'none';
@@ -106,7 +98,6 @@
 
             } else {
                // SunDS
-                document.getElementById("smrootsuffix").style.display = show;
                 document.getElementById("smdsservername").style.display = show;
                 document.getElementById("smdsserverport").style.display = show;
                 document.getElementById("smdsdmtextbox").style.display = show;
@@ -123,13 +114,6 @@
         function showReplicationOptions()
         {
             var show = 'table-row';
-            try {
-                // Firefox
-                document.getElementById("smdsrsuffix").style.display = show;
-            } catch(e) { 
-                // IE
-                show = 'block';
-            }
             if (document.getElementById("smdsembrepl").checked) {
                 document.getElementById("smdsreplconfig").style.display = show;
                 document.getElementById("smdsrepladvanced").style.display = show;
@@ -305,7 +289,7 @@
 %>
 
 
-<form name="configurator" method="post" action="configurator.jsp" onsubmit="return true">
+<form name="configurator" method="post" action="configurator.jsp">
 <input type="hidden" name="deployuri" value="<%= deployuri %>">
       
         <br>
@@ -585,21 +569,6 @@
                     <div class="ConTblCl2Div"><input value="dc=opensso,dc=java,dc=net" name="ROOT_SUFFIX" id="psLbl1" size="50" class="TxtFld"></div>
                 </td>
             </tr>
-
-            <!-- Root Suffix for Service Management-->
-            <tr id="smdsrsuffix">
-                <td valign="top">
-                    <div class="ConEmbTblCl1Div">
-                        <div class="ConTblCl1Div">
-                            <img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.configsmsdatasuffix"/></span>
-                        </div>
-                    </div>
-                </td>
-                <td valign="top">
-                    <div class="ConTblCl2Div"><input value="dc=opensso,dc=java,dc=net" name="SM_CONFIG_ROOT_SUFFIX" id="psLbl1" size="50" class="TxtFld"></div>                                    
-                </td>
-            </tr>
-
 
             <tr><td colspan=2>&nbsp;</td></tr>  
 

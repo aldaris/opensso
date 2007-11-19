@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.9 2007-10-15 17:55:01 rajeevangal Exp $
+ * $Id: AMSetupDSConfig.java,v 1.10 2007-11-19 22:24:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,6 @@ import netscape.ldap.util.RDN;
 public class AMSetupDSConfig {
     private String dsManager;
     private String suffix;
-    private String smsuffix;
     private String dsHostName;
     private String dsPort;
     private String dsAdminPwd;
@@ -74,7 +73,6 @@ public class AMSetupDSConfig {
         Map map = ServicesDefaultValues.getDefaultValues();
         dsManager = (String)map.get(SetupConstants.CONFIG_VAR_DS_MGR_DN);
         suffix = (String)map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX);
-        smsuffix = (String)map.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX);
         dsHostName = (String)map.get(
             SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST);
         dsPort = (String)map.get(
@@ -183,29 +181,13 @@ public class AMSetupDSConfig {
             map.put(SetupConstants.RS_RDN, LDAPDN.escapeRDN(rdn)); 
             map.put(SetupConstants.DEFAULT_ORG, canonicalizedDN); 
             map.put(SetupConstants.ORG_BASE, canonicalizedDN);
-
-            if ((smsuffix != null) && (smsuffix.length() > 0)) { 
-                if (suffix.equalsIgnoreCase(smsuffix)) {
-                    map.put(SetupConstants.SM_CONFIG_BASEDN, canonicalizedDN);
-                    map.put(SetupConstants.SM_ROOT_SUFFIX_HAT, 
-                        replaceDNDelimiter(escapedDN, "^"));
-                } else {
-                    smsuffix = smsuffix.trim();
-                    String smnormalizedDN = LDAPDN.normalize(smsuffix); 
-                    String smcanonicalizedDN = canonicalize(smnormalizedDN);
-                    String smescapedDN = 
-                        SMSSchema.escapeSpecialCharacters(smnormalizedDN);
-                    map.put(SetupConstants.SM_CONFIG_BASEDN, smcanonicalizedDN);
-                    map.put(SetupConstants.SM_ROOT_SUFFIX_HAT, 
-                        replaceDNDelimiter(smescapedDN, "^"));
-                }
-                // Get naming rdn
-                String nstr = getRDNfromDN(
-                               (String) map.get(
-                                   SetupConstants.SM_CONFIG_BASEDN));
-                map.put(SetupConstants.SM_CONFIG_BASEDN_RDNV, nstr);
-
-            }
+            map.put(SetupConstants.SM_CONFIG_ROOT_SUFFIX, suffix);
+            map.put(SetupConstants.SM_CONFIG_BASEDN, canonicalizedDN);
+            map.put(SetupConstants.SM_ROOT_SUFFIX_HAT, 
+                replaceDNDelimiter(escapedDN, "^"));
+           // Get naming rdn
+           String nstr = getRDNfromDN((String) canonicalizedDN);
+           map.put(SetupConstants.SM_CONFIG_BASEDN_RDNV, nstr);
         }
     }
 
