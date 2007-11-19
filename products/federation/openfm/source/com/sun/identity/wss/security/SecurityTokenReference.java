@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenReference.java,v 1.2 2007-05-17 18:49:18 mallas Exp $
+ * $Id: SecurityTokenReference.java,v 1.3 2007-11-19 20:38:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,7 +146,7 @@ public class SecurityTokenReference {
     /**
      * Sets the <code>Reference</code>
      *
-     * @param Reference the reference element.
+     * @param reference the reference element.
      */
     public void setReference(Reference reference) {
         this.reference = reference;
@@ -182,7 +182,7 @@ public class SecurityTokenReference {
 
     /**
      * Sets the security token reference id.
-     * @param the security token reference id.
+     * @param id the security token reference id.
      */
     public void setId(String id) {
         this.id = id;

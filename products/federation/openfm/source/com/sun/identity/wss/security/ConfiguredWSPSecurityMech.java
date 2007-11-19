@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredWSPSecurityMech.java,v 1.1 2007-11-14 07:15:45 mrudul_uchil Exp $
+ * $Id: ConfiguredWSPSecurityMech.java,v 1.2 2007-11-19 20:38:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ import java.util.List;
 import com.sun.identity.sm.ChoiceValues;
 
 /**
- * The class determines the configured Security Mechanisms for Identity Repository
+ * The class determines the configured Security Mechanisms for 
  * Web Service Provider.
  * 
  */
@@ -69,8 +69,8 @@ public class ConfiguredWSPSecurityMech extends ChoiceValues {
 
         if (secMechList != null && !secMechList.isEmpty()) {
             for (Iterator it = secMechList.iterator(); it.hasNext(); ) {
-                String secMech = (String) it.next();
-                answer.put(secMech, secMech);
+                SecurityMechanism secMech = (SecurityMechanism) it.next();
+                answer.put(secMech.getName(), secMech.getURI());
             }
         }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.11 2007-11-13 19:47:34 mallas Exp $
+ * $Id: AgentProvider.java,v 1.12 2007-11-19 20:38:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,7 +78,8 @@ public class AgentProvider extends ProviderConfig {
      private static final String REQUEST_ENCRYPT = "isRequestEncrypt";
      private static final String REQUEST_HEADER_ENCRYPT = 
          "isRequestHeaderEncrypt";
-     private static final String KEY_ALIAS = "keyAlias";
+     private static final String KEY_ALIAS = "privateKeyAlias";
+     private static final String PUBLIC_KEY_ALIAS = "publicKeyAlias";
      private static final String STS_TRUST_AUTHORITY = "STS";
      private static final String DISCOVERY_TRUST_AUTHORITY = "Discovery";
      private static final String PROPERTY = "Property:";

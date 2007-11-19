@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientWARSamples.java,v 1.1 2007-10-05 17:57:12 qcheng Exp $
+ * $Id: SetupClientWARSamples.java,v 1.2 2007-11-19 20:38:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,7 +62,7 @@ public class SetupClientWARSamples {
      * Creates AMConfig.properties file
      * @param configFile Absolute path to the AMConfig.properties to be created.
      * @param templateFile Template file for AMConfig.properties
-     * @param props Properties to be swapped in the template
+     * @param properties Properties to be swapped in the template
      */
     public void createAMConfigProperties(String configFile, 
         String templateFile, Properties properties) throws IOException {

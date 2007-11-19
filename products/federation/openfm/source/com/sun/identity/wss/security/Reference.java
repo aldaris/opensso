@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Reference.java,v 1.2 2007-07-11 06:12:43 mrudul_uchil Exp $
+ * $Id: Reference.java,v 1.3 2007-11-19 20:38:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,7 +101,7 @@ public class Reference {
     /**
      * Sets the value type of the token.
      *
-     * @param the value type of the token.
+     * @param valueType value type of the token.
      */
     public void setValueType(String valueType) {
         this.valueType = valueType;

@@ -17,13 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredWSCSecurityMech.java,v 1.2 2007-11-19 20:38:41 mrudul_uchil Exp $
+ * $Id: ConfiguredSTSConfig.java,v 1.1 2007-11-19 20:38:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 
-package com.sun.identity.wss.security;
+package com.sun.identity.wss.provider;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,17 +34,16 @@ import java.util.List;
 import com.sun.identity.sm.ChoiceValues;
 
 /**
- * The class determines the configured Security Mechanisms for 
- * Web Service Client.
+ * The class determines the configured STS agent configurations.
  * 
  */
-public class ConfiguredWSCSecurityMech extends ChoiceValues {
+public class ConfiguredSTSConfig extends ChoiceValues {
     /**
-     * Creates <code>ConfiguredWSCSecurityMech</code> object.
+     * Creates <code>ConfiguredSTSConfig</code> object.
      * Default constructor that will be used by the SMS
      * to create an instance of this class
      */
-    public ConfiguredWSCSecurityMech() {
+    public ConfiguredSTSConfig() {
         // do nothing
     }
     
@@ -64,13 +63,13 @@ public class ConfiguredWSCSecurityMech extends ChoiceValues {
      */
     public Map getChoiceValues(Map envParams) {
 
-        List secMechList = SecurityMechanism.getAllWSCSecurityMechanisms();
+        List stsConfigList = ProviderUtils.getAllSTSConfig();
         Map answer = new HashMap();
 
-        if (secMechList != null && !secMechList.isEmpty()) {
-            for (Iterator it = secMechList.iterator(); it.hasNext(); ) {
-                SecurityMechanism secMech = (SecurityMechanism) it.next();
-                answer.put(secMech.getName(), secMech.getURI());
+        if (stsConfigList != null && !stsConfigList.isEmpty()) {
+            for (Iterator it = stsConfigList.iterator(); it.hasNext(); ) {
+                STSConfig stsConfig = (STSConfig) it.next();
+                answer.put(stsConfig.getName(), stsConfig.getName());
             }
         }
 

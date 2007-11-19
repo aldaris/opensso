@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderUtils.java,v 1.2 2007-11-01 17:25:56 mallas Exp $
+ * $Id: ProviderUtils.java,v 1.3 2007-11-19 20:38:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,7 +137,7 @@ public class ProviderUtils {
      
      public static STSConfig getLocalSTSConfig() {
          STSConfig stsConfig = new STSAgent();
-         stsConfig.setName("local");
+         stsConfig.setName("localSTS");
          stsConfig.setType("STS");
          stsConfig.setEndpoint(getLocalSTSEndpoint());
          stsConfig.setMexEndpoint(getLocalSTSMexEndpoint());

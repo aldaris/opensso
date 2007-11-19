@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserNameToken.java,v 1.3 2007-07-11 22:23:45 mrudul_uchil Exp $
+ * $Id: UserNameToken.java,v 1.4 2007-11-19 20:38:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -179,7 +179,7 @@ public class UserNameToken implements SecurityToken {
 
     /**
      * Sets the user name in the username token.
-     * @param the user name.
+     * @param username the user name.
      */
     public void setUserName(String username) {
         this.username = username;
@@ -187,7 +187,7 @@ public class UserNameToken implements SecurityToken {
 
     /**
      * Returns the password in the username token.
-     * @param the password in the username token.
+     * @return the password in the username token.
      */
     public String getPassword() {
         return password;

@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.6 2007-11-14 07:15:44 mrudul_uchil Exp $
+   $Id: AgentService.xml,v 1.7 2007-11-19 20:38:40 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2072,6 +2072,29 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
+                        name="STS"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="STSConfig">
+	     	            <ChoiceValues>
+			            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.provider.ConfiguredSTSConfig" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>localSTS</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="Discovery"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="DiscoveryConfig">
+	     	            <ChoiceValues>
+			            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.provider.ConfiguredDiscoveryConfig" />
+                        </ChoiceValues>
+                    </AttributeSchema>
+                    <AttributeSchema
                         name="forceUserAuthn"
                         type="single_choice"
                         syntax="boolean"
@@ -2161,6 +2184,37 @@
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="useDefaultStore"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="useDefaultStore">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KeyStoreFile"
+                        type="single"
+                        syntax="string"
+                        i18nKey="KeyStoreFile">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KeyStorePassword"
+                        type="single"
+                        syntax="string"
+                        i18nKey="KeyStorePassword">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KeyPassword"
+                        type="single"
+                        syntax="string"
+                        i18nKey="KeyPassword">
                     </AttributeSchema>
                     <AttributeSchema
                         name="privateKeyAlias"
@@ -2356,6 +2410,37 @@
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="useDefaultStore"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="useDefaultStore">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KeyStoreFile"
+                        type="single"
+                        syntax="string"
+                        i18nKey="KeyStoreFile">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KeyStorePassword"
+                        type="single"
+                        syntax="string"
+                        i18nKey="KeyStorePassword">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KeyPassword"
+                        type="single"
+                        syntax="string"
+                        i18nKey="KeyPassword">
                     </AttributeSchema>
                     <AttributeSchema
                         name="privateKeyAlias"
@@ -2560,6 +2645,37 @@
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="useDefaultStore"
+                        type="single_choice"
+                        syntax="boolean"
+                        i18nKey="useDefaultStore">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KeyStoreFile"
+                        type="single"
+                        syntax="string"
+                        i18nKey="KeyStoreFile">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KeyStorePassword"
+                        type="single"
+                        syntax="string"
+                        i18nKey="KeyStorePassword">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KeyPassword"
+                        type="single"
+                        syntax="string"
+                        i18nKey="KeyPassword">
                     </AttributeSchema>
                     <AttributeSchema
                         name="privateKeyAlias"

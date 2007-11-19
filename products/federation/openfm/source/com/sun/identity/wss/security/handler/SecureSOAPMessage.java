@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.8 2007-09-13 07:24:22 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.9 2007-11-19 20:38:42 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -891,7 +891,6 @@ public class SecureSOAPMessage {
     /**
      * Decrypts the <code>SOAPMessage</code> for the given security profile.
      *
-     * @param certAlias the certificate alias
      * @param decryptBody boolean flag to decrypt Body
      * @param decryptHeader boolean flag to decrypt Security header
      *
