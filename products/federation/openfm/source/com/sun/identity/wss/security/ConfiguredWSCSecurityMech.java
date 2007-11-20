@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredWSCSecurityMech.java,v 1.2 2007-11-19 20:38:41 mrudul_uchil Exp $
+ * $Id: ConfiguredWSCSecurityMech.java,v 1.3 2007-11-20 20:20:54 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,7 +70,7 @@ public class ConfiguredWSCSecurityMech extends ChoiceValues {
         if (secMechList != null && !secMechList.isEmpty()) {
             for (Iterator it = secMechList.iterator(); it.hasNext(); ) {
                 SecurityMechanism secMech = (SecurityMechanism) it.next();
-                answer.put(secMech.getName(), secMech.getURI());
+                answer.put(secMech.getURI(), secMech.getName());
             }
         }
 
