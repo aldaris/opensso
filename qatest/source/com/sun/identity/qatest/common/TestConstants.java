@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.13 2007-11-05 21:18:46 rmisra Exp $
+ * $Id: TestConstants.java,v 1.14 2007-11-20 23:31:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -181,11 +181,6 @@ public interface TestConstants {
      * Property key for <code>config_root_suffix</code>.
      */
     String KEY_ATT_CONFIG_ROOT_SUFFIX = "config_root_suffix";
-
-    /**
-     * Property key for <code>sm_root_suffix</code>.
-     */
-    String KEY_ATT_SM_ROOT_SUFFIX = "sm_root_suffix";
 
     /**
      * Property key for <code>ds_dirmgrdn</code>.
@@ -364,11 +359,6 @@ public interface TestConstants {
     String KEY_SP_CONFIG_ROOT_SUFFIX = "sp_config_root_suffix";  
 
     /** 
-     * SAMLv2, IDFF Property key for <code>sp_sm_root_suffix</code>
-     */
-    String KEY_SP_SM_ROOT_SUFFIX = "sp_sm_root_suffix";      
-    
-    /** 
      * SAMLv2, IDFF Property key for <code>sp_ds_dirmgrdn</code>
      */
     String KEY_SP_DS_DIRMGRDN = "sp_ds_dirmgrdn";      
@@ -489,11 +479,6 @@ public interface TestConstants {
      */
     String KEY_IDP_CONFIG_ROOT_SUFFIX = "idp_config_root_suffix";  
 
-    /** 
-     * SAMLv2, IDFF Property key for <code>idp_sm_root_suffix</code>
-     */
-    String KEY_IDP_SM_ROOT_SUFFIX = "idp_sm_root_suffix";      
-    
     /** 
      * SAMLv2, IDFF Property key for <code>idp_ds_dirmgrdn</code>
      */

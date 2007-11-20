@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.31 2007-11-05 21:18:45 rmisra Exp $
+ * $Id: TestCommon.java,v 1.32 2007-11-20 23:31:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -362,8 +362,6 @@ public class TestCommon implements TestConstants {
                 TestConstants.KEY_ATT_DIRECTORY_PORT));
         map.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
                 cfg.getString(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX));
-        map.put(TestConstants.KEY_ATT_SM_ROOT_SUFFIX,
-                cfg.getString(TestConstants.KEY_ATT_SM_ROOT_SUFFIX));
         map.put(TestConstants.KEY_ATT_DS_DIRMGRDN, cfg.getString(
                 TestConstants.KEY_ATT_DS_DIRMGRDN));
         map.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
@@ -514,12 +512,6 @@ public class TestCommon implements TestConstants {
                 txtDirConfigData.setValueAttribute((String)map.
                         get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX));
 
-                HtmlTextInput txtDirSMData =
-                        (HtmlTextInput)form.
-                        getInputByName("SM_CONFIG_ROOT_SUFFIX");
-                txtDirSMData.setValueAttribute((String)map.
-                        get(TestConstants.KEY_ATT_SM_ROOT_SUFFIX));
-
                 HtmlPasswordInput txtDirAdminPassword =
                         (HtmlPasswordInput)form.
                         getInputByName("DS_DIRMGRPASSWD");
@@ -545,12 +537,6 @@ public class TestCommon implements TestConstants {
                         (HtmlTextInput)form.getInputByName("ROOT_SUFFIX");
                 txtDirConfigData.setValueAttribute((String)map.
                         get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX));
-                
-                HtmlTextInput txtDirSMData =
-                        (HtmlTextInput)form.
-                        getInputByName("SM_CONFIG_ROOT_SUFFIX");
-                txtDirSMData.setValueAttribute((String)map.
-                        get(TestConstants.KEY_ATT_SM_ROOT_SUFFIX));
                 
                 HtmlTextInput txtDirAdminDN =
                         (HtmlTextInput)form.getInputByName("DS_DIRMGRDN");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.4 2007-11-02 00:44:13 mrudulahg Exp $
+ * $Id: MultiProtocolCommon.java,v 1.5 2007-11-20 23:31:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -197,8 +197,6 @@ public class MultiProtocolCommon extends TestCommon {
                     confMap.get(TestConstants.KEY_SP_DIRECTORY_PORT));
             spMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
                     confMap.get(TestConstants.KEY_SP_CONFIG_ROOT_SUFFIX));
-            spMap.put(TestConstants.KEY_ATT_SM_ROOT_SUFFIX,
-                    confMap.get(TestConstants.KEY_SP_SM_ROOT_SUFFIX));
             spMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
                     confMap.get(TestConstants.KEY_SP_DS_DIRMGRDN));
             spMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
@@ -242,8 +240,6 @@ public class MultiProtocolCommon extends TestCommon {
                     confMap.get(TestConstants.KEY_IDP_DIRECTORY_PORT));
             idpMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
                     confMap.get(TestConstants.KEY_IDP_CONFIG_ROOT_SUFFIX));
-            idpMap.put(TestConstants.KEY_ATT_SM_ROOT_SUFFIX,
-                    confMap.get(TestConstants.KEY_IDP_SM_ROOT_SUFFIX));
             idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
                     confMap.get(TestConstants.KEY_IDP_DS_DIRMGRDN));
             idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,

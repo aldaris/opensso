@@ -56,9 +56,6 @@ directory_port=
 # Configuration root suffix.
 config_root_suffix=
 
-# SM root sufix.
-sm_root_suffix=
-
 # User DN to use for directory configuration.
 ds_dirmgrdn=
 

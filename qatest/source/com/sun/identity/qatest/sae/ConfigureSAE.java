@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAE.java,v 1.1 2007-11-15 18:53:48 rmisra Exp $
+ * $Id: ConfigureSAE.java,v 1.2 2007-11-20 23:31:18 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -386,8 +386,6 @@ public class ConfigureSAE extends TestCommon {
                     confMap.get(TestConstants.KEY_SP_DIRECTORY_PORT));
             spMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
                     confMap.get(TestConstants.KEY_SP_CONFIG_ROOT_SUFFIX));
-            spMap.put(TestConstants.KEY_ATT_SM_ROOT_SUFFIX,
-                    confMap.get(TestConstants.KEY_SP_SM_ROOT_SUFFIX));
             spMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
                     confMap.get(TestConstants.KEY_SP_DS_DIRMGRDN));
             spMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
@@ -429,8 +427,6 @@ public class ConfigureSAE extends TestCommon {
                     confMap.get(TestConstants.KEY_IDP_DIRECTORY_PORT));
             idpMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
                     confMap.get(TestConstants.KEY_IDP_CONFIG_ROOT_SUFFIX));
-            idpMap.put(TestConstants.KEY_ATT_SM_ROOT_SUFFIX,
-                    confMap.get(TestConstants.KEY_IDP_SM_ROOT_SUFFIX));
             idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
                     confMap.get(TestConstants.KEY_IDP_DS_DIRMGRDN));
             idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,

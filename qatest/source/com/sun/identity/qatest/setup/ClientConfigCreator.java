@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.12 2007-11-05 21:19:05 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.13 2007-11-20 23:31:18 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -168,7 +168,7 @@ public class ClientConfigCreator {
                     value = strNamingURL;
                 else if (key.equals(TestConstants.KEY_AMC_BASEDN))
                     value = configDef.getString(
-                            TestConstants.KEY_ATT_SM_ROOT_SUFFIX);
+                            TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX);
                 else if (key.equals(TestConstants.KEY_AMC_SERVICE_PASSWORD))
                     value = configDef.getString(
                             TestConstants.KEY_ATT_AMADMIN_PASSWORD);
@@ -323,7 +323,7 @@ public class ClientConfigCreator {
                     value = strNamingURL;
                 else if (key.equals(TestConstants.KEY_AMC_BASEDN))
                     value = configDef2.getString(
-                            TestConstants.KEY_ATT_SM_ROOT_SUFFIX);
+                            TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX);
                 else if (key.equals(TestConstants.KEY_AMC_SERVICE_PASSWORD))
                     value = configDef2.getString(
                             TestConstants.KEY_ATT_AMADMIN_PASSWORD);
