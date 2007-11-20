@@ -21,7 +21,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.3 2007-10-04 05:55:59 mrudul_uchil Exp $
+   $Id: index.html,v 1.4 2007-11-20 21:33:04 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -129,92 +129,85 @@ configure Glassfish for web services security using FAM JSR196 agents.</span><br
 STS Setup:<br>
       <br>
 Currently the FAM STS requires&nbsp; keystore to be configured in WSDL
-also. By default, the fam.war does not have this configured as it would
+also. By default, the opensso.war does not have this configured as it
+would
 not know the location of keystore. So,this would require re-deploy of
 the FAM war on glassfish if you have
 already deployed FAM. <br>
       <br>
-&nbsp;&nbsp; 1.&nbsp; Unwar the fam.war <br>
+&nbsp;&nbsp; 1.&nbsp; Unwar the opensso.war <br>
 &nbsp;&nbsp; 2.&nbsp; Open the famsts.wsdl from WEB-INF/wsdl directory<br>
 &nbsp;&nbsp; 3.&nbsp; Check for TrustStore and KeyStore XML elements,
 uncomment these elements.<br>
 &nbsp;&nbsp; 4.&nbsp; Modify the kestore location, passwords, and
-recreate the war file using jar cvf&nbsp; fam.war<br>
+recreate the war file using jar cvf&nbsp; opensso.war<br>
 &nbsp;&nbsp; 5.&nbsp; Redeploy the war file and make sure that
 FAM&nbsp; STS WSDL is accessible.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-http://&lt;host&gt;:&lt;port&gt;/fam/sts?wsdl<br>
+&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;/&lt;opensso_deploy_uri&gt;/sts?wsdl<br>
       <br>
-&nbsp;Security Token Service Client :<br>
-      <br>
-&nbsp;&nbsp;&nbsp;&nbsp; 1. Login into Administrative Console using
-amadmin<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 2. Click on default realm "opensso" and
-Subjects tab<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 3. Click on "Agent" tab<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 4. Click "New"<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 5. Enter "SecurityTokenService" as the ID,
-Select "Web Services Security Client" as the Agent type, enter any
-password for the agent and click "OK"<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This will
-redirect back to the Agent(s) page.<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 6. Click on the created "SecurityTokenService"
-agent.<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 7. Select "SecurityMechanism" as "X509Token",
-enable (check) "<span class="LblLev2Txt">Is Request Signed</span>".<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 8. Use rest of&nbsp; the configuration as it
-is and save the configuration.<br>
-      <br>
-StockService Web Service Client:<br>
-&nbsp; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; 1. Login into Administrative Console using
-amadmin<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 2. Click on default realm "opensso" and
-Subjects tab<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 3. Click on "Agent" tab<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 4. Click "New"<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 5. Enter "StockService" as the ID, Select "Web
-Services
-Security Client" as the Agent type, enter any password for the agent
-and click "OK"<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This will
-redirect back to the Agent(s) page.<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 6. Click on the created "StockService" agent.<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 7. Select "SecurityMechanism" as
-"STSSecurity", enable (check) "<span class="LblLev2Txt">Is Request
-Signed</span>", Enter "Web Service Endpoint" as your
-planned WSP point.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For e.g. if you use
-stock quote service, the end point would be
-"http://&lt;host&gt;:&lt;port&gt;/StockService/StockService"<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 8. Use rest of&nbsp; the configuration as it
-is and save the configuration.<br>
-      <br>
-      <br>
-StockService Web Service Provider:&nbsp;&nbsp; You can use default
-"wsp"
-configuration or you can create StockServiceWSP.<br>
-      <br>
-&nbsp;&nbsp;&nbsp;&nbsp; 1. Login into Administrative Console using
-amadmin<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 2. Click on default realm "opensso" and
-Subjects tab<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 3. Click on "Agent" tab<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 4. Click "New"<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 5. Enter "StockServiceWSP" as the ID, Select
-"Web Services
-Security Provider" as the Agent type, enter any password for the agent
-and click "OK"<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This will
-redirect back to the Agent(s) page.<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 6. Click on the created "StockServiceWSP"
-agent.<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 7. Enabled all SecurityMechanisms , enable
-(check)
-"<span class="LblLev2Txt">Is Request Signature Verified</span>".<br>
-&nbsp;&nbsp;&nbsp;&nbsp; 8. Use rest of&nbsp; the configuration as it
-is and save the configuration.<br>
-      <br>
+Agent configurations using "famadm" cli.<br>
+      <ol>
+        <li>Pick up the opensso.zip from the build directory, and unzip
+it into a temp directory. There should be a file famAdminTools.zip.
+Create a directory for CLI and unzip the famAdminTools.zip into the
+directory.</li>
+        <li>In the CLI directory, do "setup -p &lt;FAM config
+directory&gt;".&nbsp; The &lt;FAM config directory&gt; is the config
+directory you specified while configuring the opensso server.</li>
+        <li>The setup will create a directory called opensso. cd to
+opensso/bin to find admin tool "famadm".</li>
+        <li>Create Security Token Service agent of type "STSAgent"
+using "famadm" cli :
+          <div style="margin-left: 40px;">famadm create-agent -b
+SecurityTokenService -t STSAgent -u amadmin -f &lt;amadmin user
+password file&gt; -D STSAgentConfiguration.properties</div>
+Create STSAgentConfiguration.properties like :<br>
+&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; userpassword=&lt;agent password&gt;<br>
+&nbsp;&nbsp;&nbsp; sunIdentityServerDeviceStatus=Active<br>
+&nbsp;&nbsp;&nbsp; SecurityMech=urn:sun:wss:security:null:X509Token<br>
+&nbsp;&nbsp;&nbsp; isRequestSign=true<br>
+&nbsp;&nbsp;&nbsp;
+STSEndpoint=&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;/&lt;opensso_deploy_uri&gt;/sts<br>
+&nbsp;&nbsp;&nbsp;
+STSMexEndpoint=&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;/&lt;opensso_deploy_uri&gt;/sts/mex
+&nbsp;&nbsp; <br>
+        </li>
+        <li>Create
+StockService Web Service agent of type "WSCAgent" using "famadm" cli :
+          <div style="margin-left: 40px;">famadm create-agent -b
+StockService -t WSCAgent -u amadmin -f &lt;amadmin user password
+file&gt; -D WSCAgentConfiguration.properties</div>
+Create WSCAgentConfiguration.properties like :<br>
+&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; userpassword=&lt;agent password&gt;<br>
+&nbsp;&nbsp;&nbsp; sunIdentityServerDeviceStatus=Active<br>
+&nbsp;&nbsp;&nbsp; SecurityMech=urn:sun:wss:sts:security<br>
+&nbsp;&nbsp;&nbsp; STS=SecurityTokenService<br>
+&nbsp;&nbsp;&nbsp; isRequestSign=true<br>
+&nbsp;&nbsp;&nbsp;
+WSPEndpoint=&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;/StockService/StockService<br>
+&nbsp;&nbsp;&nbsp; <br>
+        </li>
+        <li>Create
+StockService Web Service Provider agent of type "WSPAgent" using
+"famadm" cli :
+          <div style="margin-left: 40px;">famadm create-agent -b wsp -t
+WSPAgent -u amadmin -f &lt;amadmin user password file&gt; -D
+WSPAgentConfiguration.properties</div>
+        </li>
+      </ol>
+      <div style="margin-left: 40px;">Create
+WSPAgentConfiguration.properties like :<br>
+&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; userpassword=&lt;agent password&gt;<br>
+&nbsp;&nbsp;&nbsp; sunIdentityServerDeviceStatus=Active<br>
+&nbsp;&nbsp;&nbsp; SecurityMech=urn:sun:wss:security:null:SAMLToken-SV<br>
+&nbsp;&nbsp;&nbsp; SecurityMech=urn:sun:wss:security:null:SAMLToken-HK<br>
+&nbsp;&nbsp;&nbsp; isRequestSign=true<br>
+&nbsp;&nbsp; <br>
+      </div>
       <h3>How to Run:</h3>
 1. Deploy the fam client samples in glassfish and make sure that you
 have configured as in readme index.html file<br>
