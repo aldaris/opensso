@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.6 2007-11-01 17:25:56 mallas Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.7 2007-11-20 00:47:04 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,13 @@ public abstract class TrustAuthorityConfig {
     protected String keyAlias;
     protected String name;
     protected String type;
+    protected List secMech = null;
+    protected boolean isResponseSigned = false;
+    protected boolean isResponseEncrypted = false;
+    protected boolean isRequestSigned = true;
+    protected boolean isRequestEncrypted = false;
+    protected boolean isRequestHeaderEncrypted = false;
+    protected List usercredentials = null;
     
     private static Class discoveryConfigClass;
     private static Class stsConfigClass;
@@ -79,9 +86,9 @@ public abstract class TrustAuthorityConfig {
     /**
      * Discovery service configuration type.
      */
-    public static final String DISCOVERY_TRUST_AUTHORITY = "Discovery";
+    public static final String DISCOVERY_TRUST_AUTHORITY = "DiscoveryAgent";
     
-    public static final String STS_TRUST_AUTHORITY = "STS";
+    public static final String STS_TRUST_AUTHORITY = "STSAgent";
 
     /**
      * Returns the trust authority name.
@@ -145,6 +152,129 @@ public abstract class TrustAuthorityConfig {
      */
     public void setKeyAlias(String keyAlias) {
         this.keyAlias = keyAlias; 
+    }
+    
+    /**
+     * Sets the list of security mechanisms that the trust authority supports
+     * @param secMech list of security mechanisms that the trust 
+     *                authority supports
+     */
+    public void setSecurityMechs(List secMech) {
+        this.secMech = secMech;
+    }
+    
+    /**
+     * Returns the list of security mechanisms that the trust authority supports
+     */
+    public List getSecurityMech() {
+        return secMech;
+    }
+    
+   /**
+     * Checks if the response needs to be signed or not.
+     *
+     * @return true if the response needs to be signed.
+     */
+    public boolean isResponseSignEnabled() {
+        return isResponseSigned;
+    }
+
+    /**
+     * Sets the response sign enable flag.
+     *
+     * @param enable enables the response signing.
+     */
+    public void setResponseSignEnabled(boolean enable) {
+         isResponseSigned = enable;
+    }
+    
+    /**
+     * Checks if the response needs to be encrypted or not.
+     *
+     * @return true if the response needs to be encrypted.
+     */
+    public boolean isResponseEncryptEnabled() {
+        return isResponseEncrypted;
+    }
+
+    /**
+     * Sets the response encrypt enable flag.
+     *
+     * @param enable enables the response encryption.
+     */
+    public void setResponseEncryptEnabled(boolean enable) {
+         isResponseEncrypted = enable;
+    }
+    
+    /**
+     * Checks if the request needs to be signed or not.
+     *
+     * @return true if the request needs to be signed.
+     */
+    public boolean isRequestSignEnabled() {
+        return isRequestSigned;
+    }
+
+    /**
+     * Sets the request sign enable flag.
+     *
+     * @param enable enables the request signing.
+     */
+    public void setRequestSignEnabled(boolean enable) {
+         isRequestSigned = enable;
+    }
+    
+    /**
+     * Checks if the request needs to be encrypted or not.
+     *
+     * @return true if the request needs to be encrypted.
+     */
+    public boolean isRequestEncryptEnabled() {
+        return isRequestEncrypted;
+    }
+
+    /**
+     * Sets the request encrypt enable flag.
+     *
+     * @param enable enables the request encryption.
+     */
+    public void setRequestEncryptEnabled(boolean enable) {
+         isRequestEncrypted = enable;
+    }
+
+    /**
+     * Checks if the request header needs to be encrypted or not.
+     *
+     * @return true if the request header needs to be encrypted.
+     */
+    public boolean isRequestHeaderEncryptEnabled() {
+        return isRequestHeaderEncrypted;
+    }
+
+    /**
+     * Sets the request header encrypt enable flag.
+     *
+     * @param enable enables the request header encryption.
+     */
+    public void setRequestHeaderEncryptEnabled(boolean enable) {
+        isRequestHeaderEncrypted = enable;
+    }
+    
+    /**
+     * Sets the user credentials list.
+     * @param usercredentials list of <code>PasswordCredential</code>objects.
+     */
+    public void setUsers(List usercredentials) {
+        this.usercredentials = usercredentials;
+    }
+
+    /**
+     * Returns the list of <code>PasswordCredential</code>s of the user.
+     *
+     * @return the list of <code>PasswordCredential</code> objects.
+     */
+    public List getUsers() {
+        return usercredentials;
     }
     
     /**

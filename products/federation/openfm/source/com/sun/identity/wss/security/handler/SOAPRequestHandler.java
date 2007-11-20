@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.8 2007-09-13 07:24:22 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.9 2007-11-20 00:47:05 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,6 +82,8 @@ import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.wss.security.PasswordCredential;
 import com.sun.identity.wss.security.WSSConstants;
 import com.sun.identity.wss.provider.ProviderConfig;
+import com.sun.identity.wss.provider.TrustAuthorityConfig;
+import com.sun.identity.wss.provider.STSConfig;
 import com.sun.identity.wss.provider.ProviderException;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml2.assertion.AssertionFactory;
@@ -395,9 +397,15 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                }
                return getSecureMessageFromLiberty(subjectSecurity.ssoToken, subject,
                       soapMessage, sharedState, config);
-            } else {
+            } else {               
                try {
-                   TrustAuthorityClient client = new TrustAuthorityClient();            
+                   TrustAuthorityClient client = new TrustAuthorityClient();
+                   TrustAuthorityConfig taconfig = 
+                           config.getTrustAuthorityConfig();
+                   String taName = taconfig.getName();
+                   if(taName != null) {
+                      ThreadLocalService.setServiceName(taName);
+                   }
                    securityToken = client.getSecurityToken(config, 
                                    subjectSecurity.ssoToken);
                } catch (FAMSTSException stsEx) {
@@ -964,7 +972,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         try {
             String authURL = SystemConfigurationUtil.getProperty(LIBERTY_AUTHN_URL);
             if(authURL == null) {
-               debug.error("SOAPRequestHandler.getSASLResponse:: AuthnURL " +
+                debug.error("SOAPRequestHandler.getSASLResponse:: AuthnURL " +
                " not present in the configuration.");
                throw new SecurityException(
                      bundle.getString("authnURLMissing"));
@@ -1043,14 +1051,32 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         if((sharedMap == null) || (sharedMap.isEmpty())) {
            return null;
         }
-
-        QName service = (QName)sharedMap.get("javax.xml.ws.wsdl.service");
-        if(service == null) {
-           return null;
-        }
- 
-        try { 
-            String serviceName = service.getLocalPart();
+        
+        try {
+            String serviceName = ThreadLocalService.getServiceName();            
+            if(serviceName == null) {
+               serviceName = getServiceName(sharedMap);
+            } else {
+               // If we find the service name, that is of TA service name
+               // So, create provider config from TA.
+               if(debug.messageEnabled()) {
+                  debug.message("SOAPRequestHandler.getProviderConfig: " +
+                        "Service Name found in thread local" + serviceName);
+               }
+               ThreadLocalService.removeServiceName(serviceName);
+               STSConfig stsConfig = (STSConfig)
+                       TrustAuthorityConfig.getConfig(serviceName, 
+                       TrustAuthorityConfig.STS_TRUST_AUTHORITY);
+               ProviderConfig pc = 
+                    ProviderConfig.getProvider(serviceName, ProviderConfig.WSC);
+               pc.setSecurityMechanisms(stsConfig.getSecurityMech());
+               pc.setRequestSignEnabled(stsConfig.isRequestSignEnabled());
+               pc.setRequestEncryptEnabled(stsConfig.isRequestEncryptEnabled());
+               pc.setDefaultKeyStore(true);
+               pc.setUsers(stsConfig.getUsers());
+               
+               return pc;
+            }
             if(!ProviderConfig.isProviderExists(serviceName,  
                      ProviderConfig.WSC)) {
                return null;
@@ -1072,6 +1098,20 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             return null;
         }
         
+    }
+    
+    private String getServiceName(Map sharedMap) {
+        
+        // Check first if thread local has the service name.
+        
+        if((sharedMap == null) || (sharedMap.isEmpty())) {
+           return null;
+        }
+        QName service = (QName)sharedMap.get("javax.xml.ws.wsdl.service");
+        if(service == null) {
+           return null;
+        }
+        return service.getLocalPart();                    
     }
 
     /**

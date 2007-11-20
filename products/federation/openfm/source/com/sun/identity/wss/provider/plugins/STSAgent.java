@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.1 2007-11-01 17:25:57 mallas Exp $
+ * $Id: STSAgent.java,v 1.2 2007-11-20 00:47:04 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,11 +29,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.ArrayList;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.wss.provider.STSConfig;
+import com.sun.identity.wss.security.PasswordCredential;
 import com.sun.identity.wss.provider.ProviderException;
 import com.sun.identity.wss.provider.ProviderUtils;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -55,6 +58,17 @@ public class STSAgent extends STSConfig {
     private static final String TYPE = "Type";
     private static final String ENDPOINT = "Endpoint";
     private static final String MEX_ENDPOINT = "MexEndpoint";
+    private static final String SEC_MECH = "SecurityMech";
+    private static final String RESPONSE_SIGN = "isResponseSign";
+    private static final String RESPONSE_ENCRYPT = "isResponseEncrypt";
+    private static final String REQUEST_SIGN = "isRequestSign";     
+    private static final String REQUEST_ENCRYPT = "isRequestEncrypt";
+    private static final String REQUEST_HEADER_ENCRYPT = 
+                                "isRequestHeaderEncrypt";
+    private static final String USER_NAME = "UserName";
+    private static final String USER_PASSWORD = "UserPassword";
+    private static final String USER_CREDENTIAL = "UserCredential";
+     
     private static Debug debug = ProviderUtils.debug;
     
     private AMIdentityRepository idRepo;
@@ -148,6 +162,46 @@ public class STSAgent extends STSConfig {
             this.endpoint = value;
         } else if(attr.equals(MEX_ENDPOINT)) {
             this.mexEndpoint = value;
+        } else if(attr.equals(SEC_MECH)) {
+           if (secMech == null) {
+               secMech = new ArrayList();
+           }
+           StringTokenizer st = new StringTokenizer(value, ","); 
+           while(st.hasMoreTokens()) {
+               secMech.add(st.nextToken());
+           }
+        } else if(attr.equals(RESPONSE_SIGN)) {
+           this.isResponseSigned = Boolean.valueOf(value).booleanValue();
+        } else if(attr.equals(RESPONSE_ENCRYPT)) {
+           this.isResponseEncrypted = Boolean.valueOf(value).booleanValue();
+        } else if(attr.equals(REQUEST_SIGN)) {
+           this.isRequestSigned = Boolean.valueOf(value).booleanValue();
+        } else if(attr.equals(REQUEST_ENCRYPT)) {
+           this.isRequestEncrypted = Boolean.valueOf(value).booleanValue();
+        } else if(attr.equals(REQUEST_HEADER_ENCRYPT)) {
+           this.isRequestHeaderEncrypted = Boolean.valueOf(value).booleanValue();
+        }  else if(attr.equals(USER_CREDENTIAL)) {
+           int index = value.indexOf("|");
+           if(index == -1) {
+              return;
+           }
+           String usertmp = value.substring(0, index);
+           String passwordtmp = value.substring(index+1, value.length()); 
+
+           String user = null;
+           String password = null;
+           StringTokenizer st = new StringTokenizer(usertmp, ":"); 
+           if(USER_NAME.equals(st.nextToken())) {
+              if(st.hasMoreTokens()) {
+                 user = st.nextToken();
+              }               
+           }
+           StringTokenizer st1 = new StringTokenizer(passwordtmp, ":"); 
+           if(USER_PASSWORD.equals(st1.nextToken())) {
+              if(st1.hasMoreTokens()) {
+                 password = st1.nextToken();
+              }              
+           }
         }
     }
         
@@ -192,6 +246,44 @@ public class STSAgent extends STSConfig {
         if(mexEndpoint != null) {
            set.add(getKeyValue(MEX_ENDPOINT, mexEndpoint));
         }
+        
+        if(secMech != null) {
+           Iterator iter = secMech.iterator();
+           StringBuffer sb =  new StringBuffer(100);
+           while(iter.hasNext()) {
+              sb.append((String)iter.next()).append(",");
+           }
+           sb = sb.deleteCharAt(sb.length() - 1);
+           set.add(getKeyValue(SEC_MECH, sb.toString()));
+        }
+        
+        set.add(getKeyValue(RESPONSE_SIGN, 
+                            Boolean.toString(isResponseSigned)));
+        set.add(getKeyValue(RESPONSE_ENCRYPT, 
+                            Boolean.toString(isResponseEncrypted)));
+        set.add(getKeyValue(REQUEST_SIGN, 
+                            Boolean.toString(isRequestSigned)));
+        set.add(getKeyValue(REQUEST_ENCRYPT, 
+                            Boolean.toString(isRequestEncrypted)));
+        set.add(getKeyValue(REQUEST_HEADER_ENCRYPT,
+                            Boolean.toString(isRequestHeaderEncrypted)));
+        
+        if(usercredentials != null) {
+           Iterator iter = usercredentials.iterator();
+           while(iter.hasNext()) {
+              PasswordCredential cred = (PasswordCredential)iter.next();
+              String user = cred.getUserName();
+              String password = cred.getPassword();
+              if(user == null || password == null) {
+                 continue;
+              }
+              StringBuffer sb = new StringBuffer(100);
+              sb.append(USER_NAME).append(":").append(user)
+                .append("|").append(USER_PASSWORD).append(":").append(password);
+              set.add(getKeyValue(USER_CREDENTIAL, sb.toString()));
+           }
+        }
+        
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();

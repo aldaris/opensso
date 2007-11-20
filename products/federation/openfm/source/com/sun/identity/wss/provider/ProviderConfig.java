@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.10 2007-11-05 06:17:16 qcheng Exp $
+ * $Id: ProviderConfig.java,v 1.11 2007-11-20 00:47:04 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,12 +58,12 @@ public abstract class ProviderConfig {
      /**
       * Constant to define the web services client type.
       */
-     public static final String WSC = "WSC";
+     public static final String WSC = "WSCAgent";
 
      /**
       * Constant to define the web services provider type.
       */
-     public static final String WSP = "WSP";
+     public static final String WSP = "WSPAgent";
      
     /**
      * Property for the web services provider configuration plugin.
