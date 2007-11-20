@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.17 2007-11-02 05:43:55 veiming Exp $
+ * $Id: CommandManager.java,v 1.18 2007-11-20 01:13:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.cli;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.setup.Bootstrap;
 import com.sun.identity.shared.debug.Debug;
@@ -124,6 +125,8 @@ public class CommandManager {
 
             printUsageOnException(e);
             System.exit(e.getExitCode());
+        } finally {
+            ShutdownManager.getInstance().shutdown();
         }
     }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.5 2007-11-10 04:38:27 veiming Exp $
+ * $Id: ServerConfigMgr.java,v 1.6 2007-11-20 01:13:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,7 @@ import com.iplanet.ums.PersistentObject;
 import com.iplanet.ums.UMSObject;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -63,7 +64,6 @@ import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
 import com.sun.identity.setup.Bootstrap;
 import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSSchema;
@@ -455,6 +455,8 @@ public class ServerConfigMgr {
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
+        } finally {
+            ShutdownManager.getInstance().shutdown();
         }
     }
     

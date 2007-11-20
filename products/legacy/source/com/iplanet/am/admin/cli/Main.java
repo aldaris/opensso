@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.2 2007-11-14 18:53:39 veiming Exp $
+ * $Id: Main.java,v 1.3 2007-11-20 01:13:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSMigration70;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.setup.Bootstrap;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -1108,6 +1109,8 @@ class Main
             System.err.println(bundle.getString("oprfailed") + " " +
                 eex.getLocalizedMessage());
             System.exit(1);
+        } finally {
+            ShutdownManager.getInstance().shutdown();
         }
 
     }
