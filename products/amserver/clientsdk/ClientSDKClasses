@@ -1,4 +1,6 @@
 com/sun/identity/shared/debug/Debug.class
+com/sun/identity/common/TaskRunnable.class
+com/sun/identity/common/GeneralTaskRunnable.class
 com/iplanet/am/util/SystemProperties.class
 com/sun/identity/shared/xml/XMLUtils.class
 com/sun/identity/shared/locale/Locale.class
