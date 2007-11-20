@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.7 2007-11-19 20:38:40 mrudul_uchil Exp $
+   $Id: AgentService.xml,v 1.8 2007-11-20 01:02:28 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2068,7 +2068,7 @@
                             className="com.sun.identity.wss.security.ConfiguredWSCSecurityMech" />
                         </ChoiceValues>
                         <DefaultValues>
-                            <Value>Anonymous</Value>
+                            <Value>urn:sun:wss:security:null:Anonymous</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2081,7 +2081,7 @@
                             className="com.sun.identity.wss.provider.ConfiguredSTSConfig" />
                         </ChoiceValues>
                         <DefaultValues>
-                            <Value>localSTS</Value>
+                            <Value>[Empty]</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2093,6 +2093,9 @@
 			            <ChoiceValuesClassName
                             className="com.sun.identity.wss.provider.ConfiguredDiscoveryConfig" />
                         </ChoiceValues>
+                        <DefaultValues>
+                            <Value>[Empty]</Value>
+                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="forceUserAuthn"
@@ -2317,7 +2320,7 @@
                             className="com.sun.identity.wss.security.ConfiguredWSPSecurityMech" />
                         </ChoiceValues>
                         <DefaultValues>
-                            <Value>Anonymous</Value>
+                            <Value>urn:sun:wss:security:null:Anonymous</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2552,7 +2555,7 @@
                             className="com.sun.identity.wss.security.ConfiguredWSCSecurityMech" />
                         </ChoiceValues>
                         <DefaultValues>
-                            <Value>Anonymous</Value>
+                            <Value>urn:sun:wss:security:null:Anonymous</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema

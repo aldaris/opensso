@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredDiscoveryConfig.java,v 1.1 2007-11-19 20:38:41 mrudul_uchil Exp $
+ * $Id: ConfiguredDiscoveryConfig.java,v 1.2 2007-11-20 01:02:28 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,6 +72,8 @@ public class ConfiguredDiscoveryConfig extends ChoiceValues {
                 answer.put(discoConfig.getName(), discoConfig.getName());
             }
         }
+
+        answer.put("[Empty]", "[Empty]");
 
         //return the choice values map
         return (answer);
