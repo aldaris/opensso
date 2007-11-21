@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.35 2007-11-14 01:43:36 veiming Exp $
+   $Id: build.xml,v 1.36 2007-11-21 02:25:44 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -74,19 +74,7 @@
             tofile="${amserver.built.res.dir}/legacy.properties" />
 
         <war destfile="${amserver.dist.dir}/opensso.war" webxml="${war.xml.dir}/web.xml">
-            <lib dir="${extlib.dir}">
-                <exclude name="j2ee.jar"/>
-                <exclude name="db.jar"/>
-                <exclude name="testng-5.1-jdk15.jar"/>
-                <exclude name="fmsae.dll"/>
-                <exclude name="jaxb-api.jar"/>
-                <exclude name="jaxb-impl.jar"/>
-                <exclude name="jaxb-xjc.jar"/>
-                <exclude name="jaxb-libs.jar"/>
-                <exclude name="jaxb1-impl.jar"/>
-                <exclude name="saaj-api.jar"/>
-                <exclude name="saaj-impl.jar"/>
-            </lib>
+            <lib dir="${extlib.dir}" includes="*.jar" excludes="mq4_1*.jar,j2ee.jar,db.jar,testng-5.1-jdk15.jar,fmsae.dll,jaxb-api.jar,jaxb-impl.jar,jaxb-xjc.jar,jaxb-libs.jar,jaxb1-impl.jar,saaj-api.jar,saaj-impl.jar" />
             <lib dir="${lockhart.dir}/lib" />
             <lib dir="${javahelp.dir}/lib" />
             <lib dir="${jatolib.dir}">
