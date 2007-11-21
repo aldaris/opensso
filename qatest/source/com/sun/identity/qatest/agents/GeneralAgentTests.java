@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.1 2007-09-24 20:32:57 rmisra Exp $
+ * $Id: GeneralAgentTests.java,v 1.2 2007-11-21 19:00:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,6 +70,7 @@ public class GeneralAgentTests extends TestCommon {
     private WebClient webClient;
     private int polIdx;
     private int iIdx;
+    private int pollingTime;
     private AgentsCommon mpc;
     private IDMCommon idmc;
     private ResourceBundle rbg;
@@ -88,6 +89,8 @@ public class GeneralAgentTests extends TestCommon {
         rbg = ResourceBundle.getBundle(strGblRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
+        pollingTime = new Integer(rbg.getString(strGblRB +
+                ".pollingInterval")).intValue();
         admintoken = getToken(adminUser, adminPassword, basedn);
     }
     
@@ -138,6 +141,9 @@ public class GeneralAgentTests extends TestCommon {
         exiting("setup");
     }
     
+    /**
+     * Validates the value of REMOTE_USER for authenticated user.
+     */ 
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void evaluateRemoteUser()
     throws Exception {
@@ -154,9 +160,7 @@ public class GeneralAgentTests extends TestCommon {
                     "REMOTE_USER : generalagenttests");
             assert (iIdx != -1);
         } catch (Exception e) {
-            log(Level.SEVERE, "evaluetRemoteUser",
-                    e.getMessage(),
-                    null);
+            log(Level.SEVERE, "evaluetRemoteUser", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -166,6 +170,9 @@ public class GeneralAgentTests extends TestCommon {
         exiting("evaluetRemoteUser");
     }
 
+    /**
+     * Validates the value of REMOTE_USER for anonymous user.
+     */ 
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void evaluateAnonymous()
     throws Exception {
@@ -182,9 +189,7 @@ public class GeneralAgentTests extends TestCommon {
             iIdx = getHtmlPageStringIndex(page, "REMOTE_USER : anonymous");
             assert (iIdx != -1);
         } catch (Exception e) {
-            log(Level.SEVERE, "evaluateAnonymous",
-                    e.getMessage(),
-                    null);
+            log(Level.SEVERE, "evaluateAnonymous", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -192,6 +197,9 @@ public class GeneralAgentTests extends TestCommon {
         exiting("evaluateAnonymous");
     }
 
+    /**
+     * Validates a not enforced resources.
+     */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void evaluateNotEnforced()
     throws Exception {
@@ -208,9 +216,7 @@ public class GeneralAgentTests extends TestCommon {
                     "Notenforced Page");
             assert (iIdx != -1);
         } catch (Exception e) {
-            log(Level.SEVERE, "evaluateNotEnforced",
-                    e.getMessage(),
-                    null);
+            log(Level.SEVERE, "evaluateNotEnforced", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -218,6 +224,9 @@ public class GeneralAgentTests extends TestCommon {
         exiting("evaluateNotEnforced");
     }
 
+    /**
+     * Validates case sensitivity for resource name.
+     */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void evaluateCaseSensitive()
     throws Exception {
@@ -238,9 +247,7 @@ public class GeneralAgentTests extends TestCommon {
                     "Access Denied");
             assert (iIdx != -1);
         } catch (Exception e) {
-            log(Level.SEVERE, "evaluateCaseSensitive",
-                    e.getMessage(),
-                    null);
+            log(Level.SEVERE, "evaluateCaseSensitive", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -250,6 +257,10 @@ public class GeneralAgentTests extends TestCommon {
         exiting("evaluateCaseSensitive");
     }
 
+    /**
+     * Validates that agent gets notification if user session is 
+     * terminated on the server.
+     */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void evaluateSessionTermination()
     throws Exception {
@@ -265,7 +276,7 @@ public class GeneralAgentTests extends TestCommon {
             assert (iIdx != -1);
             SSOToken ssotoken = getUserToken(admintoken, "generalagenttests");
             destroyToken(admintoken, ssotoken);
-            Thread.sleep(5000);
+            Thread.sleep(pollingTime);
             HtmlPage page = consoleLogin(webClient, resourceProtected,
                     "generalagenttests",
                     "generalagenttests");
@@ -274,9 +285,7 @@ public class GeneralAgentTests extends TestCommon {
                     "Allow Page");
             assert (iIdx != -1);
         } catch (Exception e) {
-            log(Level.SEVERE, "evaluateSessionTermination",
-                    e.getMessage(),
-                    null);
+            log(Level.SEVERE, "evaluateSessionTermination", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -286,6 +295,10 @@ public class GeneralAgentTests extends TestCommon {
         exiting("evaluateSessionTermination");
     }
 
+    /**
+     * Validates that agent gets notification if user logs out 
+     * from the server.
+     */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void evaluateSessionLogout()
     throws Exception {
@@ -301,7 +314,7 @@ public class GeneralAgentTests extends TestCommon {
                     "Allow Page");
             assert (iIdx != -1);
             consoleLogout(webClient, logoutURL);
-            Thread.sleep(5000);
+            Thread.sleep(pollingTime);
             page = consoleLogin(webClient, resourceProtected,
                     "generalagenttests",
                     "generalagenttests");
@@ -310,9 +323,7 @@ public class GeneralAgentTests extends TestCommon {
                     "Allow Page");
             assert (iIdx != -1);
         } catch (Exception e) {
-            log(Level.SEVERE, "evaluateSessionLogout",
-                    e.getMessage(),
-                    null);
+            log(Level.SEVERE, "evaluateSessionLogout", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -322,6 +333,9 @@ public class GeneralAgentTests extends TestCommon {
         exiting("evaluateSessionLogout");
     }
 
+    /**
+     * Deletes policies, user identities and destroys amadmin token.
+     */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup()
     throws Exception {

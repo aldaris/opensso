@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.3 2007-08-29 16:58:23 rmisra Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.4 2007-11-21 19:00:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,10 @@ import java.util.logging.Level;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
+/**
+ * Contains setup and cleanup methods required to be executed
+ * before and after the execution of agents suite.
+ */
 public class ConfigureUnconfigure extends TestCommon {
 
     private SSOToken admintoken;
@@ -46,6 +50,10 @@ public class ConfigureUnconfigure extends TestCommon {
     private String agentPassword;
     private String strGblRB = "agentsGlobal";
 
+    /**
+     * Class constructor. Instantiates the ResourceBundles and
+     * creates common objects required by tests.
+     */
     public ConfigureUnconfigure()
     throws Exception{
         super("ConfigureUnconfigure");
@@ -55,11 +63,15 @@ public class ConfigureUnconfigure extends TestCommon {
         idmc = new IDMCommon();
     }
 
+    /**
+     * Creates agent profile for the agent and start the notification server.
+     */
     @BeforeSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void createAgentProfile()
     throws Exception {
         entering("createAgentProfile", null);
         try {
+            startNotificationServer();
             Map map = new HashMap();
             Set set = new HashSet();
             set.add(agentPassword);
@@ -79,6 +91,9 @@ public class ConfigureUnconfigure extends TestCommon {
         exiting("createAgentProfile");
     }
 
+    /**
+     * Deletes agent profile for the agent and stops the notification server.
+     */
     @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void deleteAgentProfile()
     throws Exception {
@@ -86,6 +101,7 @@ public class ConfigureUnconfigure extends TestCommon {
         try {
             admintoken = getToken(adminUser, adminPassword, basedn);
             idmc.deleteIdentity(admintoken, realm, IdType.AGENT, agentId);
+            stopNotificationServer();
         } catch (Exception e) {
             log(Level.SEVERE, "deleteAgentProfile", e.getMessage());
             e.printStackTrace();

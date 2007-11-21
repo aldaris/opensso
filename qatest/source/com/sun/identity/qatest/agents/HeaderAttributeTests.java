@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.2 2007-08-29 16:56:37 rmisra Exp $
+ * $Id: HeaderAttributeTests.java,v 1.3 2007-11-21 19:00:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,12 +28,14 @@ import com.gargoylesoftware.htmlunit.ImmediateRefreshHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.AgentsCommon;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HashMap;
@@ -72,6 +74,8 @@ public class HeaderAttributeTests extends TestCommon {
     private ResourceBundle rbg;
     private SSOToken usertoken;
     private SSOToken admintoken;
+    private int sleepTime = 2000;
+    private int pollingTime;
 
     /**
      * Instantiated different helper class objects
@@ -84,6 +88,8 @@ public class HeaderAttributeTests extends TestCommon {
         rbg = ResourceBundle.getBundle(strGblRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
+        pollingTime = new Integer(rbg.getString(strGblRB +
+                ".pollingInterval")).intValue();
         admintoken = getToken(adminUser, adminPassword, basedn);
         smsc = new SMSCommon(admintoken);
     }
@@ -257,7 +263,7 @@ public class HeaderAttributeTests extends TestCommon {
             idmc.modifyIdentity(idmc.getFirstAMIdentity(admintoken, "rauser"
                     , IdType.USER, realm), map);
 
-            Thread.sleep(210000);
+            Thread.sleep(pollingTime);
 
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
@@ -312,69 +318,70 @@ public class HeaderAttributeTests extends TestCommon {
     }
 
     /**
-     * Evaluates newly created custom session attribute
+     * Evaluates newly created and updated custom session attribute
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
     dependsOnMethods={"evaluateUniversalIdSessionAttribute"})
-    public void evaluateNewSessionAttribute()
+    public void evaluateCustomSessionAttribute()
     throws Exception {
-        entering("evaluateNewSessionAttribute", null);
-
-        webClient = new WebClient();
-        try {
-            usertoken = getToken("sauser", "sauser", basedn);
-            usertoken.setProperty("MyProperty", "val1");
-            String strProperty = usertoken.getProperty("MyProperty");
-            log(Level.FINEST, "evaluateNewSessionAttribute",
-                    "Session property value: " + strProperty);
-            assert (strProperty.equals("val1"));
-
-            HtmlPage page = consoleLogin(webClient, resource, "sauser",
-                    "sauser");
-            page = (HtmlPage)webClient.getPage(url);
-            iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_SESSION_MYPROPERTY : val1");
-            assert (iIdx != -1);
-        } catch (Exception e) {
-            log(Level.SEVERE, "evaluateNewSessionAttribute", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } finally {
-            consoleLogout(webClient, logoutURL);
-            destroyToken(usertoken);
-        }
-        exiting("evaluateNewSessionAttribute");
-    }
-
-    /**
-     * Evaluates updated custom session attribute
-     */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
-    dependsOnMethods={"evaluateNewSessionAttribute"})
-    public void evaluateUpdatedSessionAttribute()
-    throws Exception {
-        entering("evaluateUpdatedSessionAttribute", null);
+        entering("evaluateCustomSessionAttribute", null);
 
         webClient = new WebClient();
         try {
             HtmlPage page = consoleLogin(webClient, resource, "sauser",
                     "sauser");
+
+            page = (HtmlPage)webClient.getPage(url);
+
+            String strCookie = rbg.getString(strGblRB + ".serverCookieName");
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "strCookie: " +
+                    strCookie);
+            String s0 = page.asXml();
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "s0:\n" + s0);
+            int i1 = s0.indexOf(strCookie);
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "i1: " + i1);
+            String s1 = s0.substring(i1, s0.length());
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "s1:\n" + s1);
+            int i2 = s1.indexOf("$Path");
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "i2: " + i2);
+            String s3 = s1.substring(strCookie.length() + 1, i2 - 2);
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "s3: " + s3);
+
+            SSOTokenManager stMgr = SSOTokenManager.getInstance();
+            usertoken = stMgr.createSSOToken(URLDecoder.decode(s3));
+            String strProperty;
+            if (validateToken(usertoken)) {
+                log(Level.FINEST, "evaluateCustomSessionAttribute",
+                        "UserId property value: " +
+                        usertoken.getProperty("UserId"));
+                usertoken.setProperty("MyProperty", "val1");
+                strProperty = usertoken.getProperty("MyProperty");
+                log(Level.FINEST, "evaluateCustomSessionAttribute",
+                        "Session property value: " + strProperty);
+                assert (strProperty.equals("val1"));
+            } else {
+                log(Level.FINEST, "evaluateCustomSessionAttribute",
+                        "User token is invalid");
+                assert false;
+            }
+
+            Thread.sleep(pollingTime);
+
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
                     "HTTP_SESSION_MYPROPERTY : val1");
             assert (iIdx != -1);
 
-            usertoken = getToken("sauser", "sauser", basedn);
             usertoken.setProperty("MyProperty", "val2");
-            Thread.sleep(210000);
-            String strProperty = usertoken.getProperty("MyProperty");
+            Thread.sleep(sleepTime);
+            strProperty = usertoken.getProperty("MyProperty");
             log(Level.FINEST, "evaluateUpdatedSessionAttribute",
                     "Session property value: " + strProperty);
             assert (strProperty.equals("val2"));
 
-            page = consoleLogin(webClient, resource, "sauser", "sauser");
+            Thread.sleep(pollingTime);
+
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
@@ -562,7 +569,7 @@ public class HeaderAttributeTests extends TestCommon {
             idmc.modifyIdentity(idmc.getFirstAMIdentity(admintoken, "pauser",
                     IdType.USER, realm), map);
 
-            Thread.sleep(210000);
+            Thread.sleep(pollingTime);
 
             usertoken = getToken("pauser", "pauser", basedn);
             set = idmc.getIdentityAttribute(usertoken, "iPlanetAMUserService",
@@ -615,7 +622,7 @@ public class HeaderAttributeTests extends TestCommon {
             idmc.modifyIdentity(idmc.getFirstAMIdentity(admintoken, "pauser",
                     IdType.USER, realm), map);
 
-            Thread.sleep(210000);
+            Thread.sleep(pollingTime);
 
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
@@ -664,12 +671,12 @@ public class HeaderAttributeTests extends TestCommon {
                     new HashMap());
             idmc.addUserMember(admintoken, "pauser", "parole2", IdType.ROLE);
 
-            Thread.sleep(210000);
+            Thread.sleep(pollingTime);
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             strNsrole = "HTTP_PROFILE_NSROLE :" +
                     " cn=containerdefaulttemplaterole," + basedn +
-                    "|cn=parole2," + basedn + "|cn=parole1," + basedn +
+                    "|cn=parole1," + basedn + "|cn=parole2," + basedn +
                     "|cn=filparole1," + basedn;
             log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
                     "NSROLE: "+ strNsrole);
@@ -717,12 +724,12 @@ public class HeaderAttributeTests extends TestCommon {
             idmc.modifyIdentity(idmc.getFirstAMIdentity(admintoken,
                     "filparole1", IdType.FILTEREDROLE, realm), map);
 
-            Thread.sleep(210000);
+            Thread.sleep(pollingTime);
 
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page, "cn=filparole1");
-            assert (iIdx == -1);
+            assert (iIdx != -1);
 
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateUpdatedFilteredRoleProfileAttribute",
@@ -735,6 +742,10 @@ public class HeaderAttributeTests extends TestCommon {
         exiting("evaluateUpdatedFilteredRoleProfileAttribute");
     }
 
+    /**
+     * Deletes policies, identities and updates service attributes to default
+     * values.
+     */
     @AfterClass(groups={"ff_ds", "ff_ds_sec", "ds_ds", "ds_ds_sec"})
     public void cleanup()
     throws Exception {
@@ -782,6 +793,10 @@ public class HeaderAttributeTests extends TestCommon {
         exiting("cleanup");
     }
 
+    /**
+     * Deletes filtered roles. This is only valid for datastores supporting the
+     * filtered roles.
+     */
     @AfterClass(groups={"ds_ds", "ds_ds_sec"})
     public void cleanupForDS()
     throws Exception {

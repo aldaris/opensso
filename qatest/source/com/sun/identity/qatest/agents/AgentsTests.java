@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsTests.java,v 1.3 2007-09-28 20:15:33 rmisra Exp $
+ * $Id: AgentsTests.java,v 1.4 2007-11-21 19:00:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+/**
+ * This class evaluates general policy tests though the
+ * for different kinds of policy rules, subjects, conditions
+ * and response providers.
+ */
 public class AgentsTests extends TestCommon {
     
     private int polIdx;
@@ -50,6 +55,10 @@ public class AgentsTests extends TestCommon {
     private String strLocRB = "AgentsTests";
     private String strGblRB = "agentsGlobal";
 
+    /**
+     * Class constructor. Instantiates the ResourceBundles and other
+     * common class objects needed by the tests.
+     */
     public AgentsTests() 
     throws Exception{
         super("AgentsTests");
@@ -60,6 +69,9 @@ public class AgentsTests extends TestCommon {
                 ".executeAgainstOpenSSO")).booleanValue();
     }
     
+    /**
+     * Creates the policy on the server.
+     */
     @Parameters({"policyIdx","evaluationIdx","setup","cleanup"})
     @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup
@@ -89,6 +101,9 @@ public class AgentsTests extends TestCommon {
         exiting("setup");
     }
     
+    /**
+     * Evaluates policy through the agent.
+     */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void evaluatePolicyAgents()
     throws Exception {
@@ -115,6 +130,9 @@ public class AgentsTests extends TestCommon {
         exiting("evaluatePolicyAgents");
     }
 
+    /**
+     * Deletes policies and users.
+     */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup()
     throws Exception {
