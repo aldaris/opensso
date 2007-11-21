@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.8 2007-11-17 00:40:28 veiming Exp $
+ * $Id: DelegationEvaluator.java,v 1.9 2007-11-21 01:21:15 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.delegation.interfaces.DelegationInterface;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
@@ -53,11 +54,18 @@ public class DelegationEvaluator {
          SystemProperties.get("com.sun.identity.security.amadmin",
          "false")).booleanValue();
     static Set adminUserSet = new HashSet();
+    static AMIdentity adminUserId; 
     static {
-        String adminUser = SystemProperties.get(
-            "com.sun.identity.authentication.super.user");
-        if (adminUser != null) {
-            adminUserSet.add(DNUtils.normalizeDN(adminUser));
+        try {
+            String adminUser = SystemProperties.get(
+                "com.sun.identity.authentication.super.user");
+            if (adminUser != null) {
+                adminUserSet.add(DNUtils.normalizeDN(adminUser));
+                adminUserId = new AMIdentity(DelegationManager.getAdminToken(), 
+                    adminUser, IdType.USER, "/", null);
+            }
+        } catch (Exception e) {
+            debug.error("DelegationEvaluator:", e);
         }
     }
  
@@ -106,23 +114,27 @@ public class DelegationEvaluator {
             AMIdentity user = null;
             try {
                 user = new AMIdentity(token);
+                //AMIdentity adminUserId = 
+                //    new AMIdentity(token, adminUser, IdType.USER, "/", null);
+                if (((privilegedUser != null) && user.equals(privilegedUser)) ||
+                    (installTime && adminUserSet.contains(
+                    DNUtils.normalizeDN(token.getPrincipal().getName()))) ||
+                    user.equals(adminUserId) ) {
+                    result = true;
+                } else {
+                    if (pluginInstance == null) {
+                        pluginInstance = 
+                            DelegationManager.getDelegationPlugin();
+                        if (pluginInstance == null) {
+                            throw new DelegationException(ResBundleUtils.rbName,
+                                "no_plugin_specified", null, null);
+                        }
+                    }
+                    result = pluginInstance.isAllowed(
+                        token, permission, envParameters);
+                }
             } catch (IdRepoException ide) {
                 throw (new DelegationException(ide.getMessage()));
-            }
-            if (((privilegedUser != null) && user.equals(privilegedUser)) ||
-                 (installTime && adminUserSet.contains(
-                 DNUtils.normalizeDN(token.getPrincipal().getName())))) {
-                result = true;
-            } else {
-                if (pluginInstance == null) {
-                    pluginInstance = DelegationManager.getDelegationPlugin();
-                    if (pluginInstance == null) {
-                        throw new DelegationException(ResBundleUtils.rbName,
-                            "no_plugin_specified", null, null);
-                    }
-                }
-                result = pluginInstance.isAllowed(
-                    token, permission, envParameters);
             }
         }
         if (debug.messageEnabled()) {

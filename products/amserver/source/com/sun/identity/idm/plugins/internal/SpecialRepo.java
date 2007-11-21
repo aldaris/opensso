@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.10 2007-06-01 17:34:01 kenwho Exp $
+ * $Id: SpecialRepo.java,v 1.11 2007-11-21 01:22:32 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -917,7 +917,6 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
         opSet2.remove(IdOperation.EDIT);
         opSet2.remove(IdOperation.SERVICE);
         supportedOps.put(IdType.USER, Collections.unmodifiableSet(opSet));
-        supportedOps.put(IdType.ROLE, Collections.unmodifiableSet(opSet2));
 
         if (debug.messageEnabled()) {
             debug.message("SpecialRepo: loadSupportedOps called "

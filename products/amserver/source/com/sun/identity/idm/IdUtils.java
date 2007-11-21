@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.16 2007-02-07 21:39:49 veiming Exp $
+ * $Id: IdUtils.java,v 1.17 2007-11-21 01:21:39 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -289,10 +289,20 @@ public final class IdUtils {
         }
 
         // Since "amsdkdn is not a UUID, check if realm has AMSDK configured
-        if ((realm != null) && !OrgConfigViaAMSDK.isAMSDKConfigured(realm)) {
-            // Not configured for AMSDK, return
-            return (null);
-        }
+        // This change is to avoid the issue of IdUtils always checking the 
+        // users in AMSDK as IdUtils does not check if AMSDK is configured in 
+        // any of the realms. 
+
+        try {
+            if (((realm != null) &&
+                !OrgConfigViaAMSDK.isAMSDKConfigured(realm)) ||
+                    (!ServiceManager.isAMSDKConfigured())) { 
+                // Not configured for AMSDK, return
+                return (null);
+            }
+        } catch (SMSException smse) {
+            // Ignore the exception and continue
+        } 
 
         // Check for Special Users
         initializeSpecialUsers();
