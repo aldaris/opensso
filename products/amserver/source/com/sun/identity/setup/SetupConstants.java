@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.16 2007-10-17 23:00:46 veiming Exp $
+ * $Id: SetupConstants.java,v 1.17 2007-11-21 01:23:23 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -411,6 +411,12 @@ public interface SetupConstants {
      */
     String TAG_REALPATH = "@REAL_PATH@";
   
+    /**
+     * Disabling Persistent Searches in Directory Server.
+     */
+
+    String DISABLE_PERSISTENT_SEARCH = "DISABLE_PERSISTENT_SEARCH";
+
     /**
       * OpenDS Replication : Flag to indicate whether multi server sharing 
       * needs configured.
