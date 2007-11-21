@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.8 2007-11-14 21:17:32 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.9 2007-11-21 02:27:39 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -186,11 +186,17 @@ public interface SAMLv2Model
     // SAE IDP
     public static final String ATTR_SAE_IDP_APP_SECRET_LIST = "saeAppSecretList";
     public static final String ATTR_SAE_IDP_URL = "saeIDPUrl";
+    
     //SAE SP
     public static final String ATTR_SAE_SP_APP_SECRET_LIST = "saeAppSecretList";
     public static final String ATTR_SAE_SP_URL =  "saeSPUrl";
     public static final String ATTR_SAE_LOGOUT_URL = "saeSPLogoutUrl";
     
+    // SAMLv2 Service Provider Adapter feature
+     public static final String ATTR_SP_ADAPTER = "spAdapter";
+     public static final String ATTR_SP_ADAPTER_ENV = "spAdapterEnv";
+
+
     // XACML PDP/PEP
     public static final String ATTR_TXT_PROTOCOL_SUPPORT_ENUM =
         "txtProtocolSupportEnum";
