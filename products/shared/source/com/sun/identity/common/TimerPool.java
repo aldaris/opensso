@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimerPool.java,v 1.2 2007-11-19 20:08:59 ww203982 Exp $
+ * $Id: TimerPool.java,v 1.3 2007-11-26 18:04:29 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,7 +137,7 @@ public class TimerPool implements Triggerable {
                 }
                 try {
                     nextRun = (Date) taskList.firstKey();
-                    long delay = now - nextRun.getTime();
+                    long delay = nextRun.getTime() - now;
                     scheduler.setDelay((delay >= 0 ? delay : 0));
                 } catch(NoSuchElementException ex) {
                     nextRun = null;
@@ -509,7 +509,7 @@ public class TimerPool implements Triggerable {
          */
         
         public synchronized void terminate() {
-            shouldTerminate = true;
+            this.shouldTerminate = true;
             this.notify();
         }
         
@@ -532,8 +532,10 @@ public class TimerPool implements Triggerable {
                             } else {
                                 if (delay < 0) {
                                     this.wait();
-                                    beingNotified = false;
-                                    continue;
+                                    if (beingNotified) {
+                                        beingNotified = false;
+                                        continue;
+                                    }
                                 }
                             }
                         }
