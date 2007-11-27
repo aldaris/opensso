@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderUtils.java,v 1.3 2007-11-19 20:38:41 mrudul_uchil Exp $
+ * $Id: ProviderUtils.java,v 1.4 2007-11-27 17:43:48 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,7 @@ public class ProviderUtils {
 
      static ResourceBundle bundle = null;
      private static final String AGENT_CONFIG_ATTR = 
-             "sunIdentityServerDeviceKeyValue";
+             "AgentType";
      public static Debug debug = Debug.getInstance("fmWSSProvider");
      
      static {
@@ -64,25 +64,26 @@ public class ProviderUtils {
      public static List getAllSTSConfig() {
          List stsConfigs = new ArrayList();
          stsConfigs.add(getLocalSTSConfig());
-         Set agentConfigAttribute = new HashSet();
-         agentConfigAttribute.add(AGENT_CONFIG_ATTR);
+         //Set agentConfigAttribute = new HashSet();
+         //agentConfigAttribute.add(AGENT_CONFIG_ATTR);
          try {
              SSOToken adminToken = WSSUtils.getAdminToken();
              AMIdentityRepository idRepo = 
                 new AMIdentityRepository(adminToken, "/");
 
              IdSearchControl control = new IdSearchControl();
-             control.setReturnAttributes(agentConfigAttribute);
+             //control.setReturnAttributes(agentConfigAttribute);
+             control.setAllReturnAttributes(true);
              control.setTimeOut(0);
              //control.setMaxResults(2);
              Map kvPairMap = new HashMap();
              Set set = new HashSet();
-             set.add("Type=STS");            
+             set.add("STSAgent");            
              kvPairMap.put(AGENT_CONFIG_ATTR, set);
 
              control.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
 
-             IdSearchResults results = idRepo.searchIdentities(IdType.AGENT,
+             IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
                 "*", control);
              Set agents = results.getSearchResults();                          
              Iterator iter = agents.iterator();
@@ -100,8 +101,8 @@ public class ProviderUtils {
 
      public static List getAllDiscoveryConfig() {
          List discoConfigs = new ArrayList();         
-         Set agentConfigAttribute = new HashSet();
-         agentConfigAttribute.add(AGENT_CONFIG_ATTR);
+         //Set agentConfigAttribute = new HashSet();
+         //agentConfigAttribute.add(AGENT_CONFIG_ATTR);
 
          try {
              SSOToken adminToken = WSSUtils.getAdminToken();
@@ -109,16 +110,17 @@ public class ProviderUtils {
                  new AMIdentityRepository(adminToken, "/");
 
              IdSearchControl control = new IdSearchControl();
-             control.setReturnAttributes(agentConfigAttribute);
+             //control.setReturnAttributes(agentConfigAttribute);
+             control.setAllReturnAttributes(true);
              control.setTimeOut(0);       
              Map kvPairMap = new HashMap();
              Set set = new HashSet();
-             set.add("Type=Discovery");            
+             set.add("DiscoveryAgent");            
              kvPairMap.put(AGENT_CONFIG_ATTR, set);
 
              control.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
 
-             IdSearchResults results = idRepo.searchIdentities(IdType.AGENT,
+             IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
                  "*", control);
              Set agents = results.getSearchResults();
              Iterator iter = agents.iterator();
@@ -138,7 +140,7 @@ public class ProviderUtils {
      public static STSConfig getLocalSTSConfig() {
          STSConfig stsConfig = new STSAgent();
          stsConfig.setName("localSTS");
-         stsConfig.setType("STS");
+         stsConfig.setType("STSAgent");
          stsConfig.setEndpoint(getLocalSTSEndpoint());
          stsConfig.setMexEndpoint(getLocalSTSMexEndpoint());
          return stsConfig;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.7 2007-11-20 00:47:04 mallas Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.8 2007-11-27 17:43:48 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,7 +56,8 @@ import com.sun.identity.shared.Constants;
 public abstract class TrustAuthorityConfig {
 
     protected String endpoint;
-    protected String keyAlias;
+    protected String privateKeyAlias = null;
+    protected String publicKeyAlias = null;
     protected String name;
     protected String type;
     protected List secMech = null;
@@ -137,21 +138,39 @@ public abstract class TrustAuthorityConfig {
     }
 
     /**
-     * Returns the key alias of the trust authority.
+     * Returns the key alias for this provider.
      * 
-     * @return the key alias name.
+     * @return the key alias of the provider.
      */
     public String getKeyAlias() {
-        return keyAlias;
+        return privateKeyAlias;
+    }
+   
+    /**
+     * Sets the key alias for this provider.
+     * 
+     * @param alias the key alias for this provider.
+     */
+    public void setKeyAlias(String alias) {
+        this.privateKeyAlias = alias;
     }
 
     /**
-     * Sets the key alias for the trust authority.
-     *
-     * @param keyAlias the key alias for the trust authority.
+     * Returns the Public key alias for this provider's partner.
+     * 
+     * @return the Public key alias of the provider's partner.
      */
-    public void setKeyAlias(String keyAlias) {
-        this.keyAlias = keyAlias; 
+    public String getPublicKeyAlias() {
+        return publicKeyAlias;
+    }
+   
+    /**
+     * Sets the Public key alias for this provider's partner.
+     * 
+     * @param alias the Public key alias for this provider's partner.
+     */
+    public void setPublicKeyAlias(String alias) {
+        this.publicKeyAlias = alias;
     }
     
     /**

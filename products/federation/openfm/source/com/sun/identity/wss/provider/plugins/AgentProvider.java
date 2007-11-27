@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.12 2007-11-19 20:38:41 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.13 2007-11-27 17:43:48 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,7 @@ import com.sun.identity.idm.IdRepoException;
 public class AgentProvider extends ProviderConfig {
 
      private static final String AGENT_CONFIG_ATTR = 
-                       "sunIdentityServerDeviceKeyValue";
+                       "AgentType";
      private static final String NAME = "Name";
      private static final String TYPE = "Type";
      private static final String SEC_MECH = "SecurityMech";

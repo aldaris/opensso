@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.2 2007-11-20 00:47:04 mallas Exp $
+ * $Id: STSAgent.java,v 1.3 2007-11-27 17:43:48 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,12 +52,12 @@ public class STSAgent extends STSConfig {
     
     private static Set agentConfigAttribute;
     private static final String AGENT_CONFIG_ATTR = 
-                       "sunIdentityServerDeviceKeyValue";
+                       "AgentType";
     
     private static final String NAME = "Name";
     private static final String TYPE = "Type";
-    private static final String ENDPOINT = "Endpoint";
-    private static final String MEX_ENDPOINT = "MexEndpoint";
+    private static final String ENDPOINT = "STSEndpoint";
+    private static final String MEX_ENDPOINT = "STSMexEndpoint";
     private static final String SEC_MECH = "SecurityMech";
     private static final String RESPONSE_SIGN = "isResponseSign";
     private static final String RESPONSE_ENCRYPT = "isResponseEncrypt";

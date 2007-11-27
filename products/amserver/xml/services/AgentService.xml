@@ -3,7 +3,7 @@
 <!--
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
-   (the License). You may not use this file except in
+   (the License). You may not use this file except in                                                         5
    compliance with the License.
 
    You can obtain a copy of the License at
@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.9 2007-11-20 20:29:01 huacui Exp $
+   $Id: AgentService.xml,v 1.10 2007-11-27 17:43:48 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2014,44 +2014,46 @@
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
+                
                 <SubSchema name="WSCAgent" inheritance="multiple">
-                    <AttributeSchema name="userpassword"
-                        type="single"
-                        syntax="password"
-                        validator="RequiredValueValidator"
-                        i18nKey="userpassword">
-                        <DefaultValues>
-                            <Value>&#160;</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="sunIdentityServerDeviceStatus"
-                        type="single_choice"
-                        syntax="string"
-                        validator="RequiredValueValidator"
-                        i18nKey="sunIdentityServerDeviceStatus">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
-                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>Active</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="RequiredValueValidator"
-                        type="validator"
-                        syntax="string">
-                        <DefaultValues>
-                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-                        </DefaultValues>
+                     <AttributeSchema
+                         name="userpassword"
+                         type="single"
+                         syntax="password"
+                         validator="RequiredValueValidator"
+                         i18nKey="a100">
+                         <DefaultValues>
+                             <Value>&#160;</Value>
+                         </DefaultValues>
+                     </AttributeSchema>
+                     <AttributeSchema name="sunIdentityServerDeviceStatus"
+                         type="single_choice"
+                         syntax="string"
+                         validator="RequiredValueValidator"
+                         i18nKey="a101">
+                         <ChoiceValues>
+                             <ChoiceValue i18nKey="a102">Active</ChoiceValue>
+                             <ChoiceValue i18nKey="a103">Inactive</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>Active</Value>
+                         </DefaultValues>
+                     </AttributeSchema>
+                     <AttributeSchema name="RequiredValueValidator"
+                         type="validator"
+                         syntax="string">
+                         <DefaultValues>
+                             <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.repository.location"
+                        name="com.sun.identity.agents.config.repository.location"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.repository.location">
+                        i18nKey="a110">
                         <ChoiceValues>
-                            <ChoiceValue i18nKey="centralized">centralized</ChoiceValue>
-                            <ChoiceValue i18nKey="local">local</ChoiceValue>
+                            <ChoiceValue i18nKey="a111">centralized</ChoiceValue>
+                            <ChoiceValue i18nKey="a112">local</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>centralized</Value>
@@ -2061,7 +2063,7 @@
                         name="SecurityMech"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="securityMechanism">
+                        i18nKey="a301">
 	     	            <ChoiceValues>
 			            <ChoiceValuesClassName
                             className="com.sun.identity.wss.security.ConfiguredWSCSecurityMech" />
@@ -2074,7 +2076,7 @@
                         name="STS"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="STSConfig">
+                        i18nKey="a302">
 	     	            <ChoiceValues>
 			            <ChoiceValuesClassName
                             className="com.sun.identity.wss.provider.ConfiguredSTSConfig" />
@@ -2087,7 +2089,7 @@
                         name="Discovery"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="DiscoveryConfig">
+                        i18nKey="a303">
 	     	            <ChoiceValues>
 			            <ChoiceValuesClassName
                             className="com.sun.identity.wss.provider.ConfiguredDiscoveryConfig" />
@@ -2100,11 +2102,11 @@
                         name="forceUserAuthn"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="forceUserAuthn">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a304">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2113,11 +2115,11 @@
                         name="isRequestSign"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isRequestSign">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a305">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2126,11 +2128,11 @@
                         name="isRequestHeaderEncrypt"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isRequestHeaderEncrypt">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a306">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2139,11 +2141,11 @@
                         name="isRequestEncrypt"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isRequestEncrypt">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a307">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2152,11 +2154,11 @@
                         name="isResponseSign"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isResponseSignVerify">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a308">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2165,11 +2167,11 @@
                         name="isResponseEncrypt"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isResponseDecrypt">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a309">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2178,11 +2180,11 @@
                         name="keepSecurityHeaders"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="keepSecurityHeaders">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a310">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2191,11 +2193,11 @@
                         name="useDefaultStore"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="useDefaultStore">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a311">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -2204,25 +2206,25 @@
                         name="KeyStoreFile"
                         type="single"
                         syntax="string"
-                        i18nKey="KeyStoreFile">
+                        i18nKey="a312">
                     </AttributeSchema>
                     <AttributeSchema
                         name="KeyStorePassword"
                         type="single"
                         syntax="string"
-                        i18nKey="KeyStorePassword">
+                        i18nKey="a313">
                     </AttributeSchema>
                     <AttributeSchema
                         name="KeyPassword"
                         type="single"
                         syntax="string"
-                        i18nKey="KeyPassword">
+                        i18nKey="a314">
                     </AttributeSchema>
                     <AttributeSchema
                         name="privateKeyAlias"
                         type="single"
                         syntax="string"
-                        i18nKey="privateKeyAlias">
+                        i18nKey="a315">
                         <DefaultValues>
                             <Value>amclientWSC</Value>
                         </DefaultValues>
@@ -2231,7 +2233,7 @@
                         name="publicKeyAlias"
                         type="single"
                         syntax="string"
-                        i18nKey="publicKeyAliasOfWSP">
+                        i18nKey="a316">
                         <DefaultValues>
                             <Value>amclientWSP</Value>
                         </DefaultValues>
@@ -2240,70 +2242,77 @@
                         name="WSPEndpoint"
                         type="single"
                         syntax="string"
-                        i18nKey="WSPEndpoint">
+                        i18nKey="a317">
                     </AttributeSchema>
                     <AttributeSchema
                         name="WSPProxyEndpoint"
                         type="single"
                         syntax="string"
-                        i18nKey="WSPProxyEndpoint">
+                        i18nKey="a318">
                     </AttributeSchema>
                     <AttributeSchema
                         name="serviceType"
                         type="single"
                         syntax="string"
-                        i18nKey="serviceTypeURN">
+                        i18nKey="a319">
                     </AttributeSchema>
                     <AttributeSchema
                         name="UserCredential"
                         type="single"
                         syntax="string"
-                        i18nKey="userCredential">
+                        i18nKey="a320">
                         <DefaultValues>
                             <Value>UserName=test:UserPassword=test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
                 
-                
                 <SubSchema name="WSPAgent" inheritance="multiple">
-                    <AttributeSchema name="userpassword"
-                        type="single"
-                        syntax="password"
-                        validator="RequiredValueValidator"
-                        i18nKey="userpassword">
-                        <DefaultValues>
-                            <Value>&#160;</Value>
-                        </DefaultValues>
+                     <AttributeSchema
+                         name="userpassword"
+                         type="single"
+                         syntax="password"
+                         validator="RequiredValueValidator"
+                         i18nKey="a100">
+                         <DefaultValues>
+                             <Value>&#160;</Value>
+                         </DefaultValues>
+                     </AttributeSchema>
+                     <AttributeSchema name="sunIdentityServerDeviceStatus"
+                         type="single_choice"
+                         syntax="string"
+                         validator="RequiredValueValidator"
+                         i18nKey="a101">
+                         <ChoiceValues>
+                             <ChoiceValue i18nKey="a102">Active</ChoiceValue>
+                             <ChoiceValue i18nKey="a103">Inactive</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>Active</Value>
+                         </DefaultValues>
+                     </AttributeSchema>
+                     <AttributeSchema name="RequiredValueValidator"
+                         type="validator"
+                         syntax="string">
+                         <DefaultValues>
+                             <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                         </DefaultValues>
                     </AttributeSchema>
-                    <AttributeSchema name="sunIdentityServerDeviceStatus"
-                        type="single_choice"
-                        syntax="string"
-                        validator="RequiredValueValidator"
-                        i18nKey="sunIdentityServerDeviceStatus">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
-                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>Active</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="RequiredValueValidator"
+                    <AttributeSchema name="ListValueValidator"
                         type="validator"
                         syntax="string">
                         <DefaultValues>
-                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                            <Value>com.sun.identity.common.configuration.ListValueValidator</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.repository.location"
+                        name="com.sun.identity.agents.config.repository.location"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.repository.location">
+                        i18nKey="a110">
                         <ChoiceValues>
-                            <ChoiceValue i18nKey="centralized">centralized</ChoiceValue>
-                            <ChoiceValue i18nKey="local">local</ChoiceValue>
+                            <ChoiceValue i18nKey="a111">centralized</ChoiceValue>
+                            <ChoiceValue i18nKey="a112">local</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>centralized</Value>
@@ -2313,7 +2322,7 @@
                         name="SecurityMech"
                         type="multiple_choice"
                         syntax="string"
-                        i18nKey="securityMechanism">
+                        i18nKey="a301">
 	     	            <ChoiceValues>
 			            <ChoiceValuesClassName
                             className="com.sun.identity.wss.security.ConfiguredWSPSecurityMech" />
@@ -2326,7 +2335,7 @@
                         name="authenticationChain"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="authenticationChain">
+                        i18nKey="a321">
 	     	            <ChoiceValues>
 			            <ChoiceValuesClassName
                             className="com.sun.identity.authentication.service.ConfiguredAuthServices" />
@@ -2339,11 +2348,11 @@
                         name="isRequestSign"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isRequestSignVerify">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a322">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2352,11 +2361,11 @@
                         name="isRequestHeaderEncrypt"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isRequestHeaderDecrypt">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a323">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2365,11 +2374,11 @@
                         name="isRequestEncrypt"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isRequestDecrypt">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a324">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2378,11 +2387,11 @@
                         name="isResponseSign"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isResponseSign">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a325">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2391,11 +2400,11 @@
                         name="isResponseEncrypt"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isResponseEncrypt">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a326">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2404,11 +2413,11 @@
                         name="keepSecurityHeaders"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="keepSecurityHeaders">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a310">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2417,11 +2426,11 @@
                         name="useDefaultStore"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="useDefaultStore">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a311">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -2430,25 +2439,25 @@
                         name="KeyStoreFile"
                         type="single"
                         syntax="string"
-                        i18nKey="KeyStoreFile">
+                        i18nKey="a312">
                     </AttributeSchema>
                     <AttributeSchema
                         name="KeyStorePassword"
                         type="single"
                         syntax="string"
-                        i18nKey="KeyStorePassword">
+                        i18nKey="a313">
                     </AttributeSchema>
                     <AttributeSchema
                         name="KeyPassword"
                         type="single"
                         syntax="string"
-                        i18nKey="KeyPassword">
+                        i18nKey="a314">
                     </AttributeSchema>
                     <AttributeSchema
                         name="privateKeyAlias"
                         type="single"
                         syntax="string"
-                        i18nKey="privateKeyAlias">
+                        i18nKey="a315">
                         <DefaultValues>
                             <Value>amclientWSP</Value>
                         </DefaultValues>
@@ -2457,7 +2466,7 @@
                         name="privateKeyType"
                         type="single"
                         syntax="string"
-                        i18nKey="privateKeyType">
+                        i18nKey="a327">
                         <DefaultValues>
                             <Value>PublicKey</Value>
                         </DefaultValues>
@@ -2466,7 +2475,7 @@
                         name="publicKeyAlias"
                         type="single"
                         syntax="string"
-                        i18nKey="publicKeyAliasOfWSC">
+                        i18nKey="a328">
                         <DefaultValues>
                             <Value>amclientWSC</Value>
                         </DefaultValues>
@@ -2475,25 +2484,26 @@
                         name="WSPEndpoint"
                         type="single"
                         syntax="string"
-                        i18nKey="WSPEndpoint">
+                        i18nKey="a317">
                     </AttributeSchema>
                     <AttributeSchema
                         name="WSPProxyEndpoint"
                         type="single"
                         syntax="string"
-                        i18nKey="WSPProxyEndpoint">
+                        i18nKey="a318">
                     </AttributeSchema>
                     <AttributeSchema
                         name="serviceType"
                         type="single"
                         syntax="string"
-                        i18nKey="serviceTypeURN">
+                        i18nKey="a319">
                     </AttributeSchema>
                     <AttributeSchema
                         name="UserCredential"
                         type="list"
                         syntax="string"
-                        i18nKey="userCredential">
+                        validator="ListValueValidator"
+                        i18nKey="a320">
                         <DefaultValues>
                             <Value>UserName=test:UserPassword=test</Value>
                             <Value>UserName=TestUser:UserPassword=TestUser</Value>
@@ -2502,43 +2512,44 @@
                 </SubSchema>
                 
                 <SubSchema name="STSAgent" inheritance="multiple">
-                    <AttributeSchema name="userpassword"
-                        type="single"
-                        syntax="password"
-                        validator="RequiredValueValidator"
-                        i18nKey="userpassword">
-                        <DefaultValues>
-                            <Value>&#160;</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="sunIdentityServerDeviceStatus"
-                        type="single_choice"
-                        syntax="string"
-                        validator="RequiredValueValidator"
-                        i18nKey="sunIdentityServerDeviceStatus">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
-                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>Active</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="RequiredValueValidator"
-                        type="validator"
-                        syntax="string">
-                        <DefaultValues>
-                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-                        </DefaultValues>
+                     <AttributeSchema
+                         name="userpassword"
+                         type="single"
+                         syntax="password"
+                         validator="RequiredValueValidator"
+                         i18nKey="a100">
+                         <DefaultValues>
+                             <Value>&#160;</Value>
+                         </DefaultValues>
+                     </AttributeSchema>
+                     <AttributeSchema name="sunIdentityServerDeviceStatus"
+                         type="single_choice"
+                         syntax="string"
+                         validator="RequiredValueValidator"
+                         i18nKey="a101">
+                         <ChoiceValues>
+                             <ChoiceValue i18nKey="a102">Active</ChoiceValue>
+                             <ChoiceValue i18nKey="a103">Inactive</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>Active</Value>
+                         </DefaultValues>
+                     </AttributeSchema>
+                     <AttributeSchema name="RequiredValueValidator"
+                         type="validator"
+                         syntax="string">
+                         <DefaultValues>
+                             <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.repository.location"
+                        name="com.sun.identity.agents.config.repository.location"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.repository.location">
+                        i18nKey="a110">
                         <ChoiceValues>
-                            <ChoiceValue i18nKey="centralized">centralized</ChoiceValue>
-                            <ChoiceValue i18nKey="local">local</ChoiceValue>
+                            <ChoiceValue i18nKey="a111">centralized</ChoiceValue>
+                            <ChoiceValue i18nKey="a112">local</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>centralized</Value>
@@ -2548,7 +2559,7 @@
                         name="SecurityMech"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="securityMechanism">
+                        i18nKey="a301">
 	     	            <ChoiceValues>
 			            <ChoiceValuesClassName
                             className="com.sun.identity.wss.security.ConfiguredWSCSecurityMech" />
@@ -2558,27 +2569,27 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="forceUserAuthn"
+                        name="STS"
                         type="single_choice"
-                        syntax="boolean"
-                        i18nKey="forceUserAuthn">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        syntax="string"
+                        i18nKey="a302">
+	     	            <ChoiceValues>
+			            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.provider.ConfiguredSTSConfig" />
+                        </ChoiceValues>
                         <DefaultValues>
-                            <Value>false</Value>
+                            <Value>[Empty]</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestSign"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isRequestSign">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a305">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2587,11 +2598,11 @@
                         name="isRequestHeaderEncrypt"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isRequestHeaderEncrypt">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a306">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2600,11 +2611,11 @@
                         name="isRequestEncrypt"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isRequestEncrypt">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a307">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2613,11 +2624,11 @@
                         name="isResponseSign"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isResponseSignVerify">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a308">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2626,11 +2637,11 @@
                         name="isResponseEncrypt"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="isResponseDecrypt">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a309">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2639,11 +2650,11 @@
                         name="keepSecurityHeaders"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="keepSecurityHeaders">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a310">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -2652,11 +2663,11 @@
                         name="useDefaultStore"
                         type="single_choice"
                         syntax="boolean"
-                        i18nKey="useDefaultStore">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
-                        </BooleanValues>
+                        i18nKey="a311">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
+                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -2665,25 +2676,25 @@
                         name="KeyStoreFile"
                         type="single"
                         syntax="string"
-                        i18nKey="KeyStoreFile">
+                        i18nKey="a312">
                     </AttributeSchema>
                     <AttributeSchema
                         name="KeyStorePassword"
                         type="single"
                         syntax="string"
-                        i18nKey="KeyStorePassword">
+                        i18nKey="a313">
                     </AttributeSchema>
                     <AttributeSchema
                         name="KeyPassword"
                         type="single"
                         syntax="string"
-                        i18nKey="KeyPassword">
+                        i18nKey="a314">
                     </AttributeSchema>
                     <AttributeSchema
                         name="privateKeyAlias"
                         type="single"
                         syntax="string"
-                        i18nKey="privateKeyAlias">
+                        i18nKey="a315">
                         <DefaultValues>
                             <Value>amclientWSC</Value>
                         </DefaultValues>
@@ -2692,7 +2703,7 @@
                         name="publicKeyAlias"
                         type="single"
                         syntax="string"
-                        i18nKey="publicKeyAliasOfSTS">
+                        i18nKey="a329">
                         <DefaultValues>
                             <Value>amclientSTS</Value>
                         </DefaultValues>
@@ -2701,19 +2712,19 @@
                         name="STSEndpoint"
                         type="single"
                         syntax="string"
-                        i18nKey="STSEndpoint">
+                        i18nKey="a330">
                     </AttributeSchema>
                     <AttributeSchema
                         name="STSMexEndpoint"
                         type="single"
                         syntax="string"
-                        i18nKey="STSMexEndpoint">
+                        i18nKey="a331">
                     </AttributeSchema>
                     <AttributeSchema
                         name="UserCredential"
                         type="single"
                         syntax="string"
-                        i18nKey="userCredential">
+                        i18nKey="a320">
                         <DefaultValues>
                             <Value>UserName=test:UserPassword=test</Value>
                         </DefaultValues>
@@ -2721,43 +2732,44 @@
                 </SubSchema>
                 
                 <SubSchema name="DiscoveryAgent" inheritance="multiple">
-                    <AttributeSchema name="userpassword"
-                        type="single"
-                        syntax="password"
-                        validator="RequiredValueValidator"
-                        i18nKey="userpassword">
-                        <DefaultValues>
-                            <Value>&#160;</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="sunIdentityServerDeviceStatus"
-                        type="single_choice"
-                        syntax="string"
-                        validator="RequiredValueValidator"
-                        i18nKey="sunIdentityServerDeviceStatus">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
-                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>Active</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="RequiredValueValidator"
-                        type="validator"
-                        syntax="string">
-                        <DefaultValues>
-                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-                        </DefaultValues>
+                     <AttributeSchema
+                         name="userpassword"
+                         type="single"
+                         syntax="password"
+                         validator="RequiredValueValidator"
+                         i18nKey="a100">
+                         <DefaultValues>
+                             <Value>&#160;</Value>
+                         </DefaultValues>
+                     </AttributeSchema>
+                     <AttributeSchema name="sunIdentityServerDeviceStatus"
+                         type="single_choice"
+                         syntax="string"
+                         validator="RequiredValueValidator"
+                         i18nKey="a101">
+                         <ChoiceValues>
+                             <ChoiceValue i18nKey="a102">Active</ChoiceValue>
+                             <ChoiceValue i18nKey="a103">Inactive</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>Active</Value>
+                         </DefaultValues>
+                     </AttributeSchema>
+                     <AttributeSchema name="RequiredValueValidator"
+                         type="validator"
+                         syntax="string">
+                         <DefaultValues>
+                             <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.repository.location"
+                        name="com.sun.identity.agents.config.repository.location"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.repository.location">
+                        i18nKey="a110">
                         <ChoiceValues>
-                            <ChoiceValue i18nKey="centralized">centralized</ChoiceValue>
-                            <ChoiceValue i18nKey="local">local</ChoiceValue>
+                            <ChoiceValue i18nKey="a111">centralized</ChoiceValue>
+                            <ChoiceValue i18nKey="a112">local</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>centralized</Value>
@@ -2767,7 +2779,7 @@
                         name="privateKeyAlias"
                         type="single"
                         syntax="string"
-                        i18nKey="privateKeyAlias">
+                        i18nKey="a315">
                         <DefaultValues>
                             <Value>amclient</Value>
                         </DefaultValues>
@@ -2776,13 +2788,13 @@
                         name="DiscoveryEndpoint"
                         type="single"
                         syntax="string"
-                        i18nKey="DiscoveryEndpoint">
+                        i18nKey="a332">
                     </AttributeSchema>
                     <AttributeSchema
                         name="AuthNServiceEndpoint"
                         type="single"
                         syntax="string"
-                        i18nKey="AuthNServiceEndpoint">
+                        i18nKey="a333">
                     </AttributeSchema>
                 </SubSchema>
                 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.11 2007-11-20 00:47:04 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.12 2007-11-27 17:43:48 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,8 @@ public abstract class ProviderConfig {
      protected String wspEndpoint = null;
      protected String providerType = null;
      protected KeyStore keyStore = null;
-     protected String keyAlias = null;
+     protected String privateKeyAlias = null;
+     protected String publicKeyAlias = null;
      protected boolean isResponseSigned = false;
      protected boolean isResponseEncrypted = false;
      protected boolean isRequestSigned = true;
@@ -316,7 +317,7 @@ public abstract class ProviderConfig {
      * @return the key alias of the provider.
      */
     public String getKeyAlias() {
-        return keyAlias;
+        return privateKeyAlias;
     }
    
     /**
@@ -325,7 +326,25 @@ public abstract class ProviderConfig {
      * @param alias the key alias for this provider.
      */
     public void setKeyAlias(String alias) {
-        this.keyAlias = alias;
+        this.privateKeyAlias = alias;
+    }
+
+    /**
+     * Returns the Public key alias for this provider's partner.
+     * 
+     * @return the Public key alias of the provider's partner.
+     */
+    public String getPublicKeyAlias() {
+        return publicKeyAlias;
+    }
+   
+    /**
+     * Sets the Public key alias for this provider's partner.
+     * 
+     * @param alias the Public key alias for this provider's partner.
+     */
+    public void setPublicKeyAlias(String alias) {
+        this.publicKeyAlias = alias;
     }
 
     /**
