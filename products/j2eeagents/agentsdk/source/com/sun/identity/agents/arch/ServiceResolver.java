@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceResolver.java,v 1.2 2007-01-25 20:41:45 madan_ranganath Exp $
+ * $Id: ServiceResolver.java,v 1.3 2007-11-27 02:15:18 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,6 @@ package com.sun.identity.agents.arch;
 
 import java.util.ArrayList;
 
-import com.sun.identity.agents.common.AmSDKProfileAttributeHelper;
 import com.sun.identity.agents.common.ApplicationSSOTokenProvider;
 import com.sun.identity.agents.common.CookieResetHelper;
 import com.sun.identity.agents.common.FQDNHelper;
@@ -78,11 +77,7 @@ import com.sun.identity.agents.policy.AmWebPolicy;
 import com.sun.identity.agents.policy.AmWebPolicyAppSSOProvider;
 import com.sun.identity.agents.policy.AmWebPolicyModule;
 import com.sun.identity.agents.realm.AmRealm;
-import com.sun.identity.agents.realm.AmRealmMemebershipCache;
 import com.sun.identity.agents.realm.AmRealmModule;
-import com.sun.identity.agents.realm.AmSDKRealm;
-
-
 
 /**
  * The <code>ServiceResolver</code> provides the necessary means to access
@@ -145,11 +140,7 @@ public abstract class ServiceResolver {
     
     public String getProfileAttributeHelperImpl() {
         String result = null;
-        if (isIDMAvailable()) {
-            result = ProfileAttributeHelper.class.getName();
-        } else {
-            result = AmSDKProfileAttributeHelper.class.getName();
-        }
+        result = ProfileAttributeHelper.class.getName();       
         return result;
     }
     
@@ -197,11 +188,23 @@ public abstract class ServiceResolver {
 
     public abstract String getGlobalJ2EEAuthHandlerImpl();
     
-    public abstract boolean getSessionBindingFlag();
-    
     public abstract String getGlobalJ2EELogoutHandlerImpl();
     
     public abstract String getGlobalVerificationHandlerImpl();
+    
+    /**
+     * For some containers(maybe webspehe and tomcat) agents need to cache the
+     * membership, username and roles, for users when they authenticate to the
+     * realm. But it is specific to a few containers and agents. Other 
+     * containers keep this info already in credentials so dont need agents to
+     * cache it in the agent realm AmRealmMembershipCache.java cache.
+     *
+     * @ return false by default. A container specific service resolver
+     *   may overide it and return true.
+     */
+    public boolean getRealmMembershipCacheFlag() {
+        return false;
+    }
     
     public String getNotificationTaskHandlerImpl() {
         return NotificationTaskHandler.class.getName();
@@ -485,21 +488,11 @@ public abstract class ServiceResolver {
     }
     
     public String getAmRealmImpl() {
-        return (isIDMAvailable()) ? 
-           AmRealm.class.getName() : AmSDKRealm.class.getName();
-    }
-    
-    public String getAmRealmMembershipCacheImpl() {
-        return AmRealmMemebershipCache.class.getName();
+        return AmRealm.class.getName();
     }
     
     public String getCryptImpl() {
-            return (isIDMAvailable()) ?
-            AM70Crypt.class.getName() : AM63Crypt.class.getName(); 
-    }
-    
-    protected boolean isIDMAvailable() {
-        return _idmAvailable;
+            return AM70Crypt.class.getName(); 
     }
     
     protected boolean isEJBContextAvailable() {
@@ -507,19 +500,9 @@ public abstract class ServiceResolver {
     }
     
     
-    private static boolean _idmAvailable = false;
     private static boolean _ejbContextAvailable = false;
     
-    static {
-        try {
-            Class c = Class.forName("com.sun.identity.idm.AMIdentity");
-            if (c != null) {
-                _idmAvailable = true;
-            }
-        } catch (Exception ex) {
-            // No handling required
-        }
-        
+    static {      
         try {
             Class c = Class.forName("javax.ejb.EJBContext");
             if (c != null) {

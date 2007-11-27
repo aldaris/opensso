@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmWLAgentServiceResolver.java,v 1.1 2007-08-07 01:47:48 sean_brydon Exp $
+ * $Id: AmWLAgentServiceResolver.java,v 1.2 2007-11-27 02:15:20 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,13 +55,6 @@ public class AmWLAgentServiceResolver extends ServiceResolver {
     }
     
     /* (non-Javadoc)
-     * @see ServiceResolver#getSessionBindingFlag()
-     */
-    public boolean getSessionBindingFlag() {
-        return true;
-    }
-    
-    /* (non-Javadoc)
      * @see ServiceResolver#getGlobalJ2EELogoutHandlerImpl()
      */
     public String getGlobalJ2EELogoutHandlerImpl() {
@@ -74,5 +67,4 @@ public class AmWLAgentServiceResolver extends ServiceResolver {
     public String getGlobalVerificationHandlerImpl() {
         return GenericExternalVerificationHandler.class.getName();
     }
-    
 }

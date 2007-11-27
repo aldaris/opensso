@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmASAgentServiceResolver.java,v 1.1 2006-09-29 00:32:42 huacui Exp $
+ * $Id: AmASAgentServiceResolver.java,v 1.2 2007-11-27 02:15:19 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,13 +38,6 @@ public class AmASAgentServiceResolver extends ServiceResolver {
      */
     public String getGlobalJ2EEAuthHandlerImpl() {
         return AmASJ2EEAuthHandler.class.getName();
-    }
-
-    /* (non-Javadoc)
-     * @see com.sun.identity.agents.arch.ServiceResolver#getSessionBindingFlag()
-     */
-    public boolean getSessionBindingFlag() {
-        return true;
     }
 
     /* (non-Javadoc)

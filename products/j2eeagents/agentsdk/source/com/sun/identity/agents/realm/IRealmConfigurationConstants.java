@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IRealmConfigurationConstants.java,v 1.1 2006-09-29 00:05:33 huacui Exp $
+ * $Id: IRealmConfigurationConstants.java,v 1.2 2007-11-27 02:15:19 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,9 +28,6 @@ package com.sun.identity.agents.realm;
  * The interface for defining agent realm configuration constants
  */
 public interface IRealmConfigurationConstants {
-    
-    public static final String CONFIG_FILTERED_ROLES_ENABLED =
-        "filtered.roles.enable";
     
     public static final String CONFIG_FETCH_TYPE = 
         "privileged.attribute.type";
@@ -58,9 +55,4 @@ public interface IRealmConfigurationConstants {
     
     public static final String CONFIG_PRIVILEGED_SESSION_ATTR_LIST =
         "privileged.session.attribute";
-    
-    public static final int DEFAULT_FETCH_LEVEL = 1; 
-    
-    public static final boolean DEFAULT_FILTERED_ROLES_ENABLED = false;
-
 }

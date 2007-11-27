@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealmManager.java,v 1.1 2006-09-29 00:04:44 huacui Exp $
+ * $Id: AmRealmManager.java,v 1.2 2007-11-27 02:15:18 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,16 +41,7 @@ implements IRealmConfigurationConstants
 {
 
     private AmRealmManager() throws AgentException {
-        super(AmRealmModule.getModule(), 
-            new String[] {
-                CONFIG_DEFAULT_PRIVILEGE_ATTR_LIST,
-                CONFIG_PRIVILEGED_SESSION_ATTR_LIST,
-                CONFIG_BYPASS_USER_LIST,
-                CONFIG_FETCH_TYPE,
-                                CONFIG_PRIVILEGED_ATTR_CASE
-                }
-        );
-        
+        super(AmRealmModule.getModule(), new String[] {});        
         setAmRealm(ServiceFactory.getAmRealm(this));
     }
     

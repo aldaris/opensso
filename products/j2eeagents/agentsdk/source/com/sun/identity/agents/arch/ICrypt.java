@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ICrypt.java,v 1.1 2006-09-28 23:22:01 huacui Exp $
+ * $Id: ICrypt.java,v 1.2 2007-11-27 02:15:18 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 package com.sun.identity.agents.arch;
 
 /**
- * Public interface to be implemented by the AM70 and AM63 Crypt classes
+ * Public interface to be implemented by the AM70 Crypt classes
  */
 
 public interface ICrypt {

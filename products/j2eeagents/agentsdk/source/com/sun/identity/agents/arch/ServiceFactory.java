@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceFactory.java,v 1.2 2007-01-25 20:41:45 madan_ranganath Exp $
+ * $Id: ServiceFactory.java,v 1.3 2007-11-27 02:15:18 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,28 +42,11 @@ import com.sun.identity.agents.log.IAmAgentRemoteLog;
 import com.sun.identity.agents.policy.IAmWebPolicy;
 import com.sun.identity.agents.policy.IAmWebPolicyAppSSOProvider;
 import com.sun.identity.agents.realm.IAmRealm;
-import com.sun.identity.agents.realm.IAmRealmMembershipCache;
 
 /**
  * Helper Factory to instantiate service classes.
  */
 public class ServiceFactory {
-    
-    public static IAmRealmMembershipCache getAmRealmMembershipCache(
-            Manager manager) throws AgentException 
-    {
-        IAmRealmMembershipCache result = null;
-        String className =  getResolver().getAmRealmMembershipCacheImpl();
-        try {
-            result = (IAmRealmMembershipCache) getServiceInstance(
-                    manager, className);
-            result.initialize();
-        } catch (Exception ex) {
-            throw new AgentException("Unable to load IAmRealmMembershipCache: " 
-                    + className, ex);
-        }        
-        return result;
-    }
     
     public static ArrayList getFilterInboundTaskHandlers(Manager manager, 
            ISSOContext context, AmFilterMode mode, boolean cdssoEnabled) 
@@ -306,10 +289,6 @@ public class ServiceFactory {
                     + className, ex);
         }
         return result;
-    }
-    
-    public static boolean getisIDMAvailable() {
-        return getResolver().isIDMAvailable();
     }
     
     public static Object getServiceInstance(Manager manager, String className) 

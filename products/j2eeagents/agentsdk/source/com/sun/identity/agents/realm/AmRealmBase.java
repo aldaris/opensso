@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealmBase.java,v 1.1 2006-09-29 00:04:39 huacui Exp $
+ * $Id: AmRealmBase.java,v 1.2 2007-11-27 02:15:18 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,8 +48,15 @@ public abstract class AmRealmBase extends AgentBase implements IAmRealm {
         super(manager);
     }
     
+    /**
+     * @see IAmRealm.getMemberships method
+     *
+     * @return null if getRealmMembershipCacheFlag = false 
+     *         and if getRealmMembershipCacheFlag = true then returns the set of
+     *         memberships for the userName.
+     */
     public Set getMemberships(String userName) {
-        return getMembershipCache().getMembershipFromCache(userName);
+            return getMembershipCache().getMembershipFromCache(userName);
     }
     
     protected void processAuthenticationResult(String userName,
@@ -74,10 +81,6 @@ public abstract class AmRealmBase extends AgentBase implements IAmRealm {
         }
     }
 
-    protected IAmRealmMembershipCache getMembershipCache() {
-        return _membershipCache;
-    }
-
     public void initialize() throws AgentException {
         initMembershipCache();
         initAmAgentLog();        
@@ -86,15 +89,12 @@ public abstract class AmRealmBase extends AgentBase implements IAmRealm {
     private void cacheMembership(String userName, Set membershipSet, 
             SSOValidationResult ssoValidationResult) throws AgentException
     {
-        if (isLogMessageEnabled()) {
-            logMessage("AmRealmBase: caching memebership for user " + userName);
-        }
         try {
             getMembershipCache().addMembershipCacheEntry(userName, 
                     membershipSet, ssoValidationResult);
         } catch (Exception ex) {
-            logError("AmRealmBase: Exception caught while trying to cache "
-                     + "memberships for " + userName, ex);
+            logError("AmRealmBase.cacheMembership: Exception caught while"
+                     + " trying to cache memberships for " + userName, ex);
         }
     }
     
@@ -138,13 +138,16 @@ public abstract class AmRealmBase extends AgentBase implements IAmRealm {
         getAmAgentLog().log(ssoToken, message);
     }       
 
-
     private void initMembershipCache() throws AgentException {
         setMembershipCache(
-                ServiceFactory.getAmRealmMembershipCache(getManager()));
+                new AmRealmMembershipCache(getManager()));
+    } 
+         
+    private AmRealmMembershipCache getMembershipCache() {
+        return _membershipCache;
     }
-    
-    private void setMembershipCache(IAmRealmMembershipCache cache) {
+
+    private void setMembershipCache(AmRealmMembershipCache cache) {
         _membershipCache = cache;
     }    
     
@@ -161,6 +164,6 @@ public abstract class AmRealmBase extends AgentBase implements IAmRealm {
     }
         
    
-    private IAmRealmMembershipCache _membershipCache;
+    private AmRealmMembershipCache _membershipCache;
     private IAmAgentLog _amAgentLog;    
 }

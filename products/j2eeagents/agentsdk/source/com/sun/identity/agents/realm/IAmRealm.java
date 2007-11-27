@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IAmRealm.java,v 1.1 2006-09-29 00:05:12 huacui Exp $
+ * $Id: IAmRealm.java,v 1.2 2007-11-27 02:15:19 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,11 +36,17 @@ public interface IAmRealm extends IRealmConfigurationConstants {
     public abstract void initialize() throws AgentException;
     
     public abstract AmRealmAuthenticationResult authenticate(
-                                                    SSOValidationResult ssoValidationResult);
+            SSOValidationResult ssoValidationResult);
 
     public abstract AmRealmAuthenticationResult authenticate(String userName,
             String transportString);
-    
+       
+    /**
+     ** @return null if getRealmMembershipCacheFlag = false and do does not
+     *         need to check the cache since it is not enabled.
+     *         and if getRealmMembershipCacheFlag = true then returns the set of
+     *         memberships for the userName.
+     */
     public abstract Set getMemberships(String userName);
 
     public static final int FETCH_LEVEL_NONE = 0;

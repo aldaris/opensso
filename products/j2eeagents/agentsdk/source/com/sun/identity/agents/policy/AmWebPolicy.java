@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmWebPolicy.java,v 1.2 2006-10-12 06:24:04 veiming Exp $
+ * $Id: AmWebPolicy.java,v 1.3 2007-11-27 02:15:18 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,14 +105,12 @@ public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
                     }
                 }
                 
-                // Only for AM70 and above
-                if (ServiceFactory.getisIDMAvailable()) {
-                    result.setResponseAttributes(
-                            policyDecision.getResponseAttributes());
-                }
+                //For AM70 and above
+                result.setResponseAttributes(
+                        policyDecision.getResponseAttributes());
             }
         } catch (Exception ex) {
-            logError("AmWebPolicy: Unable to check polisy for resource: "
+            logError("AmWebPolicy: Unable to check policy for resource: "
                     + resource + ", action: " + action
                     + "; Access will be denied", ex);
             result = AmWebPolicyResult.DENY;
@@ -175,8 +173,7 @@ public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
     }
     
     /*
-     * This function does the flip between the 70 composite advice
-     * and the 63 advice schemes
+     * This function does the  70 composite advice
      * @param actionDecision
      * @return NameValuePair[] array of name value pair objects
      * @throws Exception
@@ -185,14 +182,7 @@ public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
     throws Exception {
         
         NameValuePair[] result = null;
-        if (ServiceFactory.getisIDMAvailable()) {
-            // For 70 and upwards
-            result = getCompositeAdviceNVP(actionDecision);
-        } else {
-            // Till 63
-            result = createAdviceNameValueArray(actionDecision);
-        }
-        
+        result = getCompositeAdviceNVP(actionDecision);     
         return result;
     }
     
@@ -218,183 +208,7 @@ public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
         
         return result;
     }
-    
-    /**
-     * Create Name value pair for advice map and return to caller
-     *
-     * @param actionDecision
-     *
-     * @return Name Value pair for advices
-     *
-     *
-     * @throws Exception
-     */
-    private NameValuePair[] createAdviceNameValueArray(
-            ActionDecision actionDecision) throws Exception {
-        
-        if(isLogMessageEnabled()) {
-            logMessage(
-                    "AmWebPolicy : Creating Name Value Pairs for Advice maps");
-        }
-        
-        // Only one advice name value will be returned
-        ArrayList advicevals = new ArrayList();
-        int       count      = 0;
-        Map       advices    = actionDecision.getAdvices();
-        
-        if((advices != null) && !advices.isEmpty()) {
-            if(isLogMessageEnabled()) {
-                logMessage(
-                        "AmWebPolicy : Policy Decision has Advices " +
-                        " associated with it");
-            }
-            
-            Set keys = advices.keySet();
-            
-            if(keys != null) {
-                Iterator keyIter = keys.iterator();
-                
-                while(keyIter.hasNext() && !keys.isEmpty()) {
-                    String adviceName  = (String) keyIter.next();
-                    Set    adviceValue = (Set) advices.get(adviceName);
-                    int    len         = adviceValue.size();
-                    
-                    if(len > 0) {
-                        Object[] array = adviceValue.toArray();
-                        
-                        for(int i = 0; i < array.length; i++) {
-                            if(adviceName != null) {
-                                String advice =
-                                        translateAdviceName(adviceName);
-                                
-                                if((array[i] != null) && (advice != null)) {
-                                    if(array[i].toString() != null) {
-                                        advicevals.add(
-                                                new NameValuePair(
-                                                advice, array[i].toString()));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            if(isLogMessageEnabled()) {
-                logMessage("AmWebPolicy : Policy Decision has no Advices "
-                        + " associated with it");
-            }
-        }
-        
-        return returnAdviceMap(advicevals);
-    }
-    
-    /**
-     * Return advice map giving priority to advice scheme or level
-     *
-     *
-     * @param advicevals
-     *
-     * @return NameValuePair[] array
-     *
-     * @see
-     */
-    private NameValuePair[] returnAdviceMap(ArrayList advicevals) {
-        
-        NameValuePair[] schemereturn = new NameValuePair[1];
-        NameValuePair[] levelreturn  = new NameValuePair[1];
-        
-        if(advicevals.size() > 0) {
-            for(int i = 0; i < advicevals.size(); i++) {
-                NameValuePair obj = (NameValuePair) advicevals.get(i);
-                
-                if(obj.getName().equals(AUTH_SCHEME_URL_PREFIX)) {
-                    schemereturn[0] = obj;
-                } else {
-                    levelreturn[0] = obj;
-                }
-            }
-        }
-        
-        if(schemereturn[0] != null) {
-            if(isLogMessageEnabled()) {
-                logMessage("AmWebPolicy : Found Advice for Auth Scheme");
-                
-                if(schemereturn[0].toString() != null) {
-                    logMessage("AmWebPolicy: "
-                            + getAdviceMessage(schemereturn[0]));
-                }
-            }
-            
-            return schemereturn;
-        } else if(levelreturn[0] != null) {
-            if(isLogMessageEnabled()) {
-                logMessage("AmWebPolicy : Found Advice for Auth Level");
-                
-                if(levelreturn[0].toString() != null) {
-                    logMessage("AmWebPolicy: "
-                            + getAdviceMessage(levelreturn[0]));
-                }
-            }
-            
-            return levelreturn;
-        }
-        
-        return null;
-    }
-    
-    private String getAdviceMessage(NameValuePair nvp) {
-        
-        String adviceNameValueStr = null;
-        
-        if(nvp != null) {
-            if((nvp.getName() != null) && (nvp.getValue() != null)) {
-                adviceNameValueStr = "Advice Name = [" + nvp.getName()
-                + "] Advice Value = [" + nvp.getValue()
-                + "]";
-            }
-        }
-        
-        return adviceNameValueStr;
-    }
-    
-    /**
-     * Translate advices, except for auth scheme and value, we will
-     * ignore/discard all other advices
-     *
-     * @param adviceName
-     *
-     * @return advice string returned for url prefix
-     * while redirecting
-     *
-     */
-    private String translateAdviceName(String adviceName) {
-        
-        String transName = null;
-        
-        try {
-            if (adviceName.equals(AUTH_SCHEME_ADVICE_RESPONSE)) {
-                transName = AUTH_SCHEME_URL_PREFIX;
-            } else if (adviceName.equals(AUTH_LEVEL_ADVICE_RESPONSE)) {
-                transName = AUTH_LEVEL_URL_PREFIX;
-            } else {
-                // return null in this case since we do not want
-                // to process any other advice
-                if(isLogWarningEnabled()) {
-                    logWarning(
-                        "AmWebPolicy : Ignoring advice map : " + adviceName);
-                }
-                
-            }
-        } catch (Exception ex) {
-            logError("AmWebPolicy: Failed translate advice name", ex);
-        }
-        
-        return transName;
-    }
-    
-    
-    
+     
     private AmWebPolicyResult getDenyResult() {
         return getDenyResult(null);
     }

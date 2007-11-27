@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.4 2007-11-07 21:07:37 madan_ranganath Exp $
+# $Id: AMAgentConfiguration.template,v 1.5 2007-11-27 02:15:19 sean_brydon Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -700,7 +700,7 @@ com.sun.identity.agents.config.response.attribute.mapping[] =
 # BYPASS PRINCIPAL LIST
 #   This property specifies a list of principals that is bypassed by the
 #   Agent for authentication and search purposes.
-# Hot-Swap Enabled: No
+# Hot-Swap Enabled: Yes
 # Example:
 #   com.sun.identity.agents.config.bypass.principal[0] = guest
 #   com.sun.identity.agents.config.bypass.principal[1] = testuser
@@ -725,7 +725,7 @@ com.sun.identity.agents.config.bypass.principal[0] =
 #     mentioned mapping; Note that if a key contains "=" or ":", then these
 #     special character needs to be escaped by "\".
 #
-# Hot-Swap Enabled: No
+# Hot-Swap Enabled: Yes
 # Examples:
 #   com.sun.identity.agents.config.default.privileged.attribute[0] = AUTHENTICATED_USERS
 #   com.sun.identity.agents.config.privileged.attribute.type[0] = Role

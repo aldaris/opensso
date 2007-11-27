@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealm.java,v 1.3 2007-09-27 01:43:09 leiming Exp $
+ * $Id: AmRealm.java,v 1.4 2007-11-27 02:15:18 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,7 +62,7 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
     public void initialize() throws AgentException {
         super.initialize();
         if (isLogMessageEnabled()) {
-            logMessage("AmRealm: Using IDM APIs");
+            logMessage("AmRealm.initialize: Using IDM APIs");
         }
         initPrivilegedAttributeTypes();
         initPrivilegedAttributeTypeCases();
@@ -76,7 +76,7 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
             initPrivilegedAttributeMap();
         }
         if (isLogMessageEnabled()) {
-            logMessage("AmRealm: Initialized.");
+            logMessage("AmRealm.initialize: Initialized.");
         }
     }
     
@@ -88,7 +88,8 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                 for (int i=0; i<givenTypes.length; i++) {
                     String nextType = givenTypes[i];
                     if (isLogMessageEnabled()) {
-                        logMessage("AmRealm: Next configured type: "
+                        logMessage("AmRealm.initPrivilegedAttributeTypes:"
+                                + " Next configured type: "
                                 + nextType);
                     }
                     IdType nextIdType = IdUtils.getType(nextType);
@@ -120,8 +121,9 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
             } else {
                 if(isLogMessageEnabled()) {
                     logMessage(
-                            "AmRealm: Bypassed authentication for user: "
-                            + userName);
+                      "AmRealm.authenticate(SSOValidationResult):"
+                            + " Bypassed authentication for user: "
+                      + userName);
                 }
             }
         }
@@ -139,7 +141,7 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                     if (userName.equalsIgnoreCase(ssoValidationResult.getUserId())) {
                         result = authenticateInternal(ssoValidationResult);
                     } else {
-                        logError("AmRealm: Username mismatch: given: "
+                        logError("AmRealm.authenticate: Username mismatch: given: "
                                 + userName + ", expected: "
                                 + ssoValidationResult.getUserId() +
                                 ". Denying authentication.");
@@ -148,17 +150,19 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
             } else {
                 result = new AmRealmAuthenticationResult(true);
                 if(isLogMessageEnabled()) {
-                    logMessage("AmRealm: Bypassed authentication for user: "
+                    logMessage("AmRealm.authenticate: Bypassed authentication"
+                            + " for user: "
                             + userName);
                 }
             }
         } catch (Exception ex) {
-            logError("AmRealm: failed to authenticate user: " + userName, ex);
+            logError("AmRealm.authenticate: failed to authenticate user: " 
+                    + userName, ex);
             result = AmRealmAuthenticationResult.FAILED;
         }
         
         if (isLogMessageEnabled()) {
-            logMessage("AmRealm: user: " + userName
+            logMessage("AmRealm.authenticate: user: " + userName
                     + ", authenticated: " + result.isValid()
                     + ", attributes: " + result.getAttributes());
         }
@@ -188,10 +192,10 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                                 ssoValidationResult.getSSOToken());
                         if (user != null) {
                             if (isLogMessageEnabled()) {
-                                String userId =
+                               String userId =
                                         getUniquePartOfUuid(
                                         IdUtils.getUniversalId(user));
-                                logMessage("AmRealm: user: "
+                               logMessage("AmRealm.authenticateInternal: user: "
                                         + userId);
                             }
                             IdType[] types = getPrivilegedAttributeTypes();
@@ -255,19 +259,23 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                     
                 } else {
                     if (isLogMessageEnabled()) {
-                        logMessage("AmRealm: external verfication failed "
-                                + "for user: " + userName);
+                        logMessage("AmRealm.authenticateInternal:"
+                                + " external verfication failed for user: " 
+                                + userName);
                     }
                 }
             } else {
                 if (isLogMessageEnabled()) {
-                    logMessage("AmRealm: session invalid for user: "
+                    logMessage("AmRealm.authenticateInternal: session invalid"
+                            + " for user: "
                             + userName);
                 }
             }
             processAuthenticationResult(userName, result, ssoValidationResult);
         } catch (Exception ex) {
-            logError("AmRealm: failed to authenticate user: " + userName, ex);
+            logError("AmRealm.authenticateInternal: failed to authenticate"
+                    + " user: " 
+                    + userName, ex);
             result = AmRealmAuthenticationResult.FAILED;
         }
         
@@ -368,8 +376,8 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
         }
         
         if (isLogMessageEnabled()) {
-            logMessage("AmRealm: Unique part of uuid = " +
-                    uuidStripped);
+            logMessage("AmRealm.getUniquePartOfUuid: Unique part of uuid = " 
+                    + uuidStripped);
         }
         return uuidStripped;
     }
@@ -418,7 +426,8 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
         }
         
         if (isLogMessageEnabled()) {
-            logMessage("AmRealm: Default privileged attribute set: "
+            logMessage("AmRealm.initDefaultPrivilegedAttributeList:"
+                    + " Default privileged attribute set: "
                     + getDefaultPrivilegedAttributeSet());
         }
     }
@@ -430,8 +439,8 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                 );
         if (isLogMessageEnabled()) {
             logMessage(
-                    "AmSDKRealm: Using privileged attribute " 
-                    + "mapping enabled flag: "
+                    "AmRealm.initPrivilegedAttributeMappingEnableFlag:" 
+                    + " Using privileged attribute mapping enabled flag: "
                     + _privilegedAttributeMappingEnabled);
         }
     }
@@ -440,8 +449,9 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
         _privilegedAttributeMap = getConfigurationMap(
                 CONFIG_PRIVILEGED_ATTRIBUTE_MAPPING);
         if (isLogMessageEnabled()) {
-            logMessage("AmRealm: privileged attribute mapping: "+
-                    _privilegedAttributeMap);
+            logMessage("AmRealm.initPrivilegedAttributeMap: privileged"
+                    + " attribute mapping: "
+                    + _privilegedAttributeMap);
         }
     }
     
@@ -486,8 +496,9 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                         getVerificationHandlers().put(appName, result);
                         
                         if (isLogMessageEnabled()) {
-                            logMessage("AmRealm: Unable to find verification "
-                                    + " handler for app: "+ appName
+                            logMessage("AmRealm.getVerificationHandler: Unable"
+                                    + " to find verification handler for app: "
+                                    + appName
                                     + ", using global handler");
                         }
                     }
@@ -509,7 +520,8 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
             Class.forName(className).newInstance();
             
             if (isLogMessageEnabled()) {
-                logMessage("AmRealm: Global verification handler set to: "
+                logMessage("AmRealm.initGlobalVerificationHandler: Global"
+                        + " verification handler set to: "
                         + _globalVerificationHandler);
             }
             
@@ -592,7 +604,8 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
         
         if (isLogMessageEnabled()) {
             StringBuffer buff = new StringBuffer(
-                    "AmRealm: Configured Attribute Types:");
+                    "AmRealm.setPrivilegedAttributeTypes: Configured"
+                    + " Attribute Types:");
             buff.append(IUtilConstants.NEW_LINE);
             for (int i=0; i<types.length; i++) {
                 buff.append("[").append(i).append("]: ");
@@ -630,7 +643,8 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                     buff.append(",");
                 }
             }
-            logMessage("AmRealm: Session attributes: " +buff.toString());
+            logMessage("AmRealm.setSessionAttributes: Session attributes: " 
+                    + buff.toString());
         }
     }
     

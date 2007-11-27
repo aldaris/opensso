@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.5 2007-10-31 00:43:22 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.6 2007-11-27 02:15:18 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -713,10 +713,6 @@ public class AgentConfiguration implements
                     serviceResolverClassName).newInstance();
                     
                     if (isLogMessageEnabled()) {
-                        logMessage(
-                               "AgentConfiguration: service resolver reports "
-                               + "IDM available: " 
-                               + _serviceResolver.isIDMAvailable());
                         logMessage(
                                "AgentConfiguration: service resolver reports "
                                + "EJBContext available: " 
