@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryAgent.java,v 1.2 2007-11-01 17:25:57 mallas Exp $
+ * $Id: DiscoveryAgent.java,v 1.3 2007-11-27 22:03:39 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -159,7 +159,7 @@ public class DiscoveryAgent extends DiscoveryConfig {
         } else if(attr.equals(ENDPOINT)) {
            this.endpoint = value;
         } else if(attr.equals(KEY_ALIAS)) {
-           this.keyAlias = value;
+           this.privateKeyAlias = value;
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("DiscoveryAgent.setConfig: Invalid " +
@@ -183,8 +183,8 @@ public class DiscoveryAgent extends DiscoveryConfig {
         if(endpoint != null) {
            set.add(getKeyValue(ENDPOINT, endpoint));
         }
-        if(keyAlias != null) {
-           set.add(getKeyValue(KEY_ALIAS, keyAlias));
+        if(privateKeyAlias != null) {
+           set.add(getKeyValue(KEY_ALIAS, privateKeyAlias));
         }
 
         // Save the entry in Agent's profile

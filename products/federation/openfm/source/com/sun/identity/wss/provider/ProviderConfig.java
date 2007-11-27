@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.12 2007-11-27 17:43:48 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.13 2007-11-27 22:02:17 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,6 +75,7 @@ public abstract class ProviderConfig {
      protected String serviceURI = null;
      protected String providerName = null; 
      protected String wspEndpoint = null;
+     protected String wssProxyEndpoint = null;
      protected String providerType = null;
      protected KeyStore keyStore = null;
      protected String privateKeyAlias = null;
@@ -162,6 +163,24 @@ public abstract class ProviderConfig {
      */
     public void setWSPEndpoint(String endpoint) {
         this.wspEndpoint = endpoint;
+    }
+
+    /**
+     * Returns the endpoint of the web services security proxy.
+     *
+     * @return the endpoint of the web services security proxy.
+     */
+    public String getWSSProxyEndpoint() {
+        return wssProxyEndpoint;        
+    }
+
+    /**
+     * Sets the web services security proxy endpoint.
+     *
+     * @param endpoint the web services security proxy endpoint.
+     */
+    public void setWSSProxyEndpoint(String endpoint) {
+        this.wssProxyEndpoint = endpoint;
     }
 
     /**

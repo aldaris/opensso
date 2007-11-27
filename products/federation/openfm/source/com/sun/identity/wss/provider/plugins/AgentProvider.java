@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.13 2007-11-27 17:43:48 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.14 2007-11-27 22:03:03 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -197,7 +197,7 @@ public class AgentProvider extends ProviderConfig {
         } else if(attr.equals(REQUEST_HEADER_ENCRYPT)) {
            this.isRequestHeaderEncrypted = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(KEY_ALIAS)) {
-           this.keyAlias = value;
+           this.privateKeyAlias = value;
         } else if(attr.equals(SERVICE_TYPE)) {
            this.serviceType = value;
         } else if(attr.equals(USE_DEFAULT_KEYSTORE)) {
@@ -322,8 +322,8 @@ public class AgentProvider extends ProviderConfig {
            set.add(getKeyValue(AUTHENTICATION_CHAIN, authenticationChain));
         }
         
-        if(keyAlias != null) {
-           set.add(getKeyValue(KEY_ALIAS, keyAlias));
+        if(privateKeyAlias != null) {
+           set.add(getKeyValue(KEY_ALIAS, privateKeyAlias));
         }
 
         Enumeration props = properties.propertyNames();
