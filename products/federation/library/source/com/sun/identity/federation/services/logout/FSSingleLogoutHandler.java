@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.8 2007-10-16 21:49:17 exu Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.9 2007-11-28 18:18:27 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -411,10 +411,10 @@ public class FSSingleLogoutHandler {
             FSSession session = sMgr.getSession(ssoToken);
 
             FSAccountFedInfo acctObj = null;
-            if (session!=null && session.getOneTime()) {
+            if (session!=null) {
                 acctObj = session.getAccountFedInfo();
-                FSUtils.debug.message("One time case");
-            } else {
+            }
+            if (acctObj == null && !session.getOneTime()) {
                 acctObj = FSLogoutUtil.getCurrentWorkingAccount(
                     userID, entityId, metaAlias);
             }
@@ -1012,10 +1012,10 @@ public class FSSingleLogoutHandler {
            FSSession session = sMgr.getSession(ssoToken);
 
             FSAccountFedInfo currentAccount = null;
-            if (session!=null && session.getOneTime()) {
+            if (session!=null) {
                 currentAccount = session.getAccountFedInfo();
-                FSUtils.debug.message("doSoapProfile(): One time case");
-            } else {
+            }
+            if (currentAccount == null && !session.getOneTime()) {
                 currentAccount = FSLogoutUtil.getCurrentWorkingAccount(
                      userID, providerId, metaAlias);
             }            

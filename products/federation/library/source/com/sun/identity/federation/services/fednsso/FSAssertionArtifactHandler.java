@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.9 2007-11-14 18:55:23 ww203982 Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.10 2007-11-28 18:18:26 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1177,7 +1177,7 @@ public class FSAssertionArtifactHandler {
                         userID, affiliationID);
                 } else {
                     fedInfo = accountManager.readAccountFedInfo(
-                        userID, idpEntityId);
+                        userID, idpEntityId, name);
                 }
                 if (fedInfo == null){
                     FSUtils.debug.error(
@@ -1249,7 +1249,7 @@ public class FSAssertionArtifactHandler {
             
             Map valueMap = new HashMap();
             valueMap.put(SessionProvider.PRINCIPAL_NAME, userID);
-            valueMap.put(SessionProvider.REALM, "/");
+            valueMap.put(SessionProvider.REALM, realm);
             valueMap.put(
                 SessionProvider.AUTH_LEVEL, String.valueOf(authnLevel));
             valueMap.put(SessionProvider.AUTH_INSTANT, getAuthInstant());
@@ -1722,6 +1722,7 @@ public class FSAssertionArtifactHandler {
                     handlerObj.setHostedDescriptorConfig(hostConfig);
                     handlerObj.setHostedEntityId(hostEntityId);
                     handlerObj.setMetaAlias(hostMetaAlias);
+                    handlerObj.setAccountInfo(accountInfo);
                     handlerObj.handleRegistrationAfterFederation(
                         this.relayState, response);
                 }

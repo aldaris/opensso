@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSNameRegistrationHandler.java,v 1.3 2007-10-16 21:49:18 exu Exp $
+ * $Id: FSNameRegistrationHandler.java,v 1.4 2007-11-28 18:18:27 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,9 +30,11 @@ import com.sun.identity.federation.accountmgmt.FSAccountManager;
 import com.sun.identity.federation.accountmgmt.FSAccountMgmtException;
 import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
 import com.sun.identity.federation.accountmgmt.FSAccountFedInfoKey;
+import com.sun.identity.federation.services.FSSession;
+import com.sun.identity.federation.services.FSSessionManager;
+import com.sun.identity.federation.services.FSSOAPService;
 import com.sun.identity.federation.services.util.FSSignatureUtil;
 import com.sun.identity.federation.services.util.FSServiceUtils;
-import com.sun.identity.federation.services.FSSOAPService;
 import com.sun.identity.federation.services.util.FSNameIdentifierHelper;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.common.FSUtils;
@@ -298,7 +300,7 @@ public class FSNameRegistrationHandler {
                 }
                 try {
                     acctInfo = managerInst.readAccountFedInfo(
-                        userID, remoteEntityId);
+                        userID, remoteEntityId, opaqueHandle);
                 } catch (FSAccountMgmtException e){
                     FSUtils.debug.message("Failed to read account information");
                     return false;
@@ -396,12 +398,12 @@ public class FSNameRegistrationHandler {
                                 FSUtils.debug.message("Found user : " + userID);
                             }
                             acctInfo = managerInst.readAccountFedInfo(
-                                userID, searchDomain);
+                                userID, searchDomain, opaqueHandle);
                             if (acctInfo == null || 
                                 !acctInfo.isFedStatusActive())
                             { 
                                 acctInfo = managerInst.readAccountFedInfo(
-                                    userID, remoteEntityId);
+                                    userID, remoteEntityId, opaqueHandle);
                             }
                             if (acctInfo.isRoleIDP()) {
                                 if (isSPEmpty) {
@@ -443,10 +445,10 @@ public class FSNameRegistrationHandler {
                         }
                     } else {
                         acctInfo = managerInst.readAccountFedInfo(
-                            userID, searchDomain);
+                            userID, searchDomain, opaqueHandle);
                         if (acctInfo == null || !acctInfo.isFedStatusActive()) {
                             acctInfo = managerInst.readAccountFedInfo(
-                                userID, remoteEntityId);
+                                userID, remoteEntityId, opaqueHandle);
                         }
                         newAcctInfo = new FSAccountFedInfo (
                             remoteEntityId,
@@ -459,10 +461,10 @@ public class FSNameRegistrationHandler {
                     }
                 } else {
                     acctInfo = managerInst.readAccountFedInfo(
-                        userID, searchDomain);
+                        userID, searchDomain,opaqueHandle);
                     if (acctInfo == null || !acctInfo.isFedStatusActive()) { 
                         acctInfo = managerInst.readAccountFedInfo(
-                            userID, remoteEntityId);
+                            userID, remoteEntityId, opaqueHandle);
                     }
                     if (acctInfo.isRoleIDP()) {
                         if (isSPEmpty) {
@@ -693,7 +695,7 @@ public class FSNameRegistrationHandler {
                 return true;
             } else {
                 FSRegistrationManager regisManager = 
-                    FSRegistrationManager.getInstance(hostedEntityId);
+                    FSRegistrationManager.getInstance(metaAlias);
                 HashMap valMap = regisManager.getRegistrationMap(relayState);
                 if (valMap == null) {
                     if (FSUtils.debug.messageEnabled()) {
@@ -783,8 +785,10 @@ public class FSNameRegistrationHandler {
             "Entered FSNameRegistrationHandler::doRemoteRegistration");
         try {
             try {
-                acctInfo = managerInst.readAccountFedInfo(
-                    userID, remoteEntityId);
+                if (acctInfo == null) {
+                    acctInfo = managerInst.readAccountFedInfo(
+                        userID, remoteEntityId);
+                }
             } catch (FSAccountMgmtException e){                                
                 returnLocallyAtSource(response, false);
                 return false;
@@ -1077,7 +1081,7 @@ public class FSNameRegistrationHandler {
                     valMap.put(IFSConstants.LRURL, returnURL);
                 }
                 FSRegistrationManager registInst = 
-                        FSRegistrationManager.getInstance(hostedEntityId);
+                        FSRegistrationManager.getInstance(metaAlias);
                 registInst.setRegistrationMapInfo(newId, valMap);
 
                 // sat1 add null checks 
@@ -1875,8 +1879,9 @@ public class FSNameRegistrationHandler {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("Old Account Key : " + oldAcctKey);
                 }
-                FSAccountFedInfo oldInfo = 
-                       managerInst.readAccountFedInfo(userID, remoteEntityId);
+                String oldNameIDValue = oldAcctKey.getName();
+                FSAccountFedInfo oldInfo = managerInst.readAccountFedInfo(
+                    userID, remoteEntityId, oldNameIDValue);
                 if (oldInfo != null) {
                     managerInst.removeAccountFedInfo(userID, oldInfo);
                 }
@@ -1891,6 +1896,16 @@ public class FSNameRegistrationHandler {
                 }
                 managerInst.writeAccountFedInfo(
                     userID, newAcctKey, newAcctInfo);
+            }
+            if ((ssoToken != null) && 
+                (hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) )
+            {
+                FSSessionManager sessManager =
+                    FSSessionManager.getInstance(metaAlias);
+                FSSession ssoSession = sessManager.getSession(ssoToken);
+                if (ssoSession != null) {
+                    ssoSession.setAccountFedInfo(newAcctInfo);
+                }
             }
             return true;                                    
         } catch(FSAccountMgmtException e){

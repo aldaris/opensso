@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSRegistrationManager.java,v 1.1 2006-10-30 23:14:35 qcheng Exp $
+ * $Id: FSRegistrationManager.java,v 1.2 2007-11-28 18:18:27 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,20 +89,20 @@ public final class FSRegistrationManager{
     /**
      * Gets the singleton instance of <code>FSRegistrationManager</code>.
      * There is a single instance for each hostedProvider.
-     * @param hostedProviderId hosted provider id whose instance needs to be
-     *  returned
+     * @param metaAlias hosted provider meta alias whose instance 
+     *  needs to be returned
      * @return the singleton <code>FSRegistrationManager</code> instance
      */
-    protected static FSRegistrationManager getInstance(String hostedProviderId){
+    protected static FSRegistrationManager getInstance(String metaAlias){
         FSUtils.debug.message("Entered FSRegistrationManager::getInstance");
         FSRegistrationManager instance = null;
         synchronized (FSRegistrationManager.class) {
-            instance = (FSRegistrationManager)instanceMap.get(hostedProviderId);
+            instance = (FSRegistrationManager)instanceMap.get(metaAlias);
             if (instance == null) {
                 FSUtils.debug.message(
                     "Constructing a new instance of FSRegistrationManager");
                 instance = new FSRegistrationManager();
-                instanceMap.put(hostedProviderId, instance);
+                instanceMap.put(metaAlias, instance);
             }
             return (instance);
         }

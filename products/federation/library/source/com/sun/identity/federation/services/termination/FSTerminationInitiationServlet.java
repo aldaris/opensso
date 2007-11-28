@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSTerminationInitiationServlet.java,v 1.3 2007-10-16 21:49:19 exu Exp $
+ * $Id: FSTerminationInitiationServlet.java,v 1.4 2007-11-28 18:18:27 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
+import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.common.LogUtil;
@@ -40,6 +41,8 @@ import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.federation.services.util.FSServiceUtils;
 import com.sun.identity.federation.services.FSServiceManager;
+import com.sun.identity.federation.services.FSSession;
+import com.sun.identity.federation.services.FSSessionManager;
 import com.sun.identity.liberty.ws.meta.jaxb.ProviderDescriptorType;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
@@ -264,8 +267,17 @@ public class FSTerminationInitiationServlet extends HttpServlet {
                 if (instSManager != null) {
                     FSUtils.debug.message("FSServiceManager Instance not null");
                     String remoteProviderRole = IFSConstants.SP;
+                    FSAccountFedInfo fedinfo = null;
                     if (hostedRole.equalsIgnoreCase( IFSConstants.SP)) {
                        remoteProviderRole = IFSConstants.IDP;
+                       FSSessionManager sessManager =
+                           FSSessionManager.getInstance(providerAlias);
+                       FSSession ssoSession = sessManager.getSession(ssoToken);
+                       if (ssoSession != null) {
+                           if (!ssoSession.getOneTime()) {
+                               fedinfo = ssoSession.getAccountFedInfo();
+                           }
+                       }
                     }
 
                     FSFedTerminationHandler handlerObj =
@@ -277,6 +289,7 @@ public class FSTerminationInitiationServlet extends HttpServlet {
                             realm,
                             hostedEntityId,
                             providerAlias); 
+                    
 
                     if (handlerObj != null) {
                         handlerObj.setHostedDescriptor(hostedProviderDesc);
@@ -285,6 +298,9 @@ public class FSTerminationInitiationServlet extends HttpServlet {
                         handlerObj.setMetaAlias(providerAlias);
                         handlerObj.setRealm(realm);
                         handlerObj.setHostedEntityId(hostedEntityId);
+                        if (fedinfo != null) {
+                            handlerObj.setAccountInfo(fedinfo);
+                        }
                         boolean bStatus = 
                             handlerObj.handleFederationTermination(request,
                                                                    response, 

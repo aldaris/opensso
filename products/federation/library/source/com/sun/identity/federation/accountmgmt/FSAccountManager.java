@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAccountManager.java,v 1.3 2007-10-16 21:49:08 exu Exp $
+ * $Id: FSAccountManager.java,v 1.4 2007-11-28 18:18:26 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -449,6 +449,7 @@ public class FSAccountManager {
                 }
             }
 
+            String nameIDValue = fedInfoKey.getName();
             Set existFedInfoSet = provider.getAttribute(
                 userID, FSAccountUtils.USER_FED_INFO_ATTR);
             if (existFedInfoSet != null && !existFedInfoSet.isEmpty()) {
@@ -457,7 +458,9 @@ public class FSAccountManager {
                 String filter = FSAccountUtils.createFilter(providerID);
                 while(i.hasNext()) {
                     existFedInfoStr = (String)i.next();
-                    if (existFedInfoStr.indexOf(filter) >= 0) {
+                    if ((existFedInfoStr.indexOf(filter) >= 0) &&
+                        (existFedInfoStr.indexOf(nameIDValue) >= 0))
+                    {
                         if (FSUtils.debug.messageEnabled()) {
                             FSUtils.debug.message(
                                 "FSAccountManager.removeAccountFedInfo():" +
@@ -504,10 +507,30 @@ public class FSAccountManager {
         String providerID) 
         throws FSAccountMgmtException 
     {
+        return readAccountFedInfo(userID, providerID, null);
+    }
+
+    /**
+     * Reads Account's federation Info from data store for given 
+     * providerID and returns value as fedInfo object.
+     * Returns null if value not found for given providerID
+     * @param  userID user ID.
+     * @param providerID Remote ProviderID value.
+     * @param nameIDValue fedinfo with this name ID value is to be found.
+     * @return Account's federation Info.
+     * Null if no Account Federation info value for given providerID.
+     * @throws FSAccountMgmtException if an error occurred.
+     */
+    public FSAccountFedInfo readAccountFedInfo(
+        String userID,
+        String providerID,
+        String nameIDValue) 
+        throws FSAccountMgmtException 
+    {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message(
                 "FSAccountManager.readAccountFedInfo() : user=" + userID +
-                ", providerID=" + providerID);
+                ", providerID=" + providerID + ", nameIDValue=" + nameIDValue);
         }
         if (userID == null) {
             FSUtils.debug.error("FSAccountManager.readAccountFedInfo():" +
@@ -538,7 +561,9 @@ public class FSAccountManager {
                 String existFedInfoStr = (String)i.next();
                 if (existFedInfoStr.indexOf(filter) >= 0 && 
                     (SP_FILTER == null || 
-                        existFedInfoStr.indexOf(SP_FILTER) >= 0)) 
+                        existFedInfoStr.indexOf(SP_FILTER) >= 0) &&
+                    (nameIDValue == null ||
+                        existFedInfoStr.indexOf(nameIDValue) >= 0)) 
                 {
                     // accountFedInfo exists for given providerID
                     if (FSUtils.debug.messageEnabled()) {

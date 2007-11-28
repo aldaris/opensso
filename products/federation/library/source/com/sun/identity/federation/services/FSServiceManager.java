@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceManager.java,v 1.3 2007-10-16 21:49:14 exu Exp $
+ * $Id: FSServiceManager.java,v 1.4 2007-11-28 18:18:26 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -480,11 +480,12 @@ public class FSServiceManager {
             }
 
             NameIdentifier nameIdObj = terminationRequest.getNameIdentifier();
+            String nameIDValue = nameIdObj.getName();
             // Get amId
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("Remote provider : " + remoteEntityId
                     + ", Name Qualifier : " + nameIdObj.getNameQualifier()
-                    + ", Name : " + nameIdObj.getName() + ", Realm : " + realm);
+                    + ", Name : " + nameIDValue + ", Realm : " + realm);
             }
             String nameQualifier = nameIdObj.getNameQualifier();
             String searchDomain = hostedEntityId;
@@ -498,10 +499,9 @@ public class FSServiceManager {
             // for IDP,  search remote SP, then local
             if (hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) {
                 acctkey = new FSAccountFedInfoKey(
-                    searchDomain, nameIdObj.getName());
+                    searchDomain, nameIDValue);
             } else {
-                acctkey = new FSAccountFedInfoKey(remoteEntityId, 
-                    nameIdObj.getName());
+                acctkey = new FSAccountFedInfoKey(remoteEntityId, nameIDValue);
             }
             Map env = new HashMap();
             env.put(IFSConstants.FS_USER_PROVIDER_ENV_TERMINATION_KEY,
@@ -510,10 +510,10 @@ public class FSServiceManager {
             if (userID == null) {
                 if (hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) {
                     acctkey = new FSAccountFedInfoKey(
-                        remoteEntityId, nameIdObj.getName());
+                        remoteEntityId, nameIDValue);
                 } else {
                     acctkey = new FSAccountFedInfoKey(
-                        hostedEntityId, nameIdObj.getName());
+                        hostedEntityId, nameIDValue);
                 }
                 userID = managerInst.getUserID(acctkey, realm, env);
                 if (userID == null) {
@@ -526,8 +526,8 @@ public class FSServiceManager {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("user ID is "+ userID);
             }
-            FSAccountFedInfo acctInfo =
-                managerInst.readAccountFedInfo(userID, remoteEntityId);
+            FSAccountFedInfo acctInfo = managerInst.readAccountFedInfo(
+                userID, remoteEntityId, nameIDValue);
             if (acctInfo == null) {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("Account federation with provider " +
