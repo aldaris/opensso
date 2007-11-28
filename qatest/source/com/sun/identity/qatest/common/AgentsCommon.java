@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsCommon.java,v 1.3 2007-08-29 16:55:20 rmisra Exp $
+ * $Id: AgentsCommon.java,v 1.4 2007-11-28 02:46:45 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -644,6 +644,11 @@ public class AgentsCommon extends TestCommon {
                     password);
             int iIdx = getHtmlPageStringIndex(page, expResult);
             assert (iIdx != -1);
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e) {
+            if (resource.indexOf("notvalid") != 0)
+                assert true;
+            else
+                assert false;
         } catch (Exception e) {
             log(Level.SEVERE, "evaluatePolicyThroughAgents", e.getMessage());
             e.printStackTrace();
