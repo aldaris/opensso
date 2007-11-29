@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.13 2007-11-27 22:02:17 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.14 2007-11-29 08:25:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,7 @@ public abstract class ProviderConfig {
      protected String providerType = null;
      protected KeyStore keyStore = null;
      protected String privateKeyAlias = null;
+     protected String privateKeyType = null;
      protected String publicKeyAlias = null;
      protected boolean isResponseSigned = false;
      protected boolean isResponseEncrypted = false;
@@ -328,7 +329,24 @@ public abstract class ProviderConfig {
         this.keyStore = keyStore;
         this.ksPasswd = password;
     }
-     
+
+    /**
+     * Returns the key type for this provider.
+     * 
+     * @return the key type of the provider.
+     */
+    public String getKeyType() {
+        return privateKeyType;
+    }
+   
+    /**
+     * Sets the key type for this provider.
+     * 
+     * @param keyType the key type for this provider.
+     */
+    public void setKeyType(String keyType) {
+        this.privateKeyType = keyType;
+    }
 
     /**
      * Returns the key alias for this provider.

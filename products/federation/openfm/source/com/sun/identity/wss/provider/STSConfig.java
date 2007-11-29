@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConfig.java,v 1.1 2007-11-01 17:25:56 mallas Exp $
+ * $Id: STSConfig.java,v 1.2 2007-11-29 08:25:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,8 @@ package com.sun.identity.wss.provider;
 
 public abstract class STSConfig extends TrustAuthorityConfig {
     
-    protected String mexEndpoint;
+    protected String mexEndpoint = null;
+    protected String stsConfigName = null;
     
     /** Creates a new instance of STSConfig */
     public STSConfig() {
@@ -52,10 +53,28 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     
     /**
      * Sets STS Mex endpoint
-     * @param mexEndpoint STS Mex endpoint     *
+     * @param mexEndpoint STS Mex endpoint
+     *
      */
     public void setMexEndpoint(String mexEndpoint) {
         this.mexEndpoint = mexEndpoint;
+    }
+
+    /**
+     * Returns STS configuration name
+     * @return STS configuration name
+     */
+    public String getSTSConfigName() {
+        return stsConfigName;
+    }         
+    
+    /**
+     * Sets STS configuration name
+     * @param stsConfigName STS configuration name
+     *
+     */
+    public void setSTSConfigName(String stsConfigName) {
+        this.stsConfigName = stsConfigName;
     }        
 }
  

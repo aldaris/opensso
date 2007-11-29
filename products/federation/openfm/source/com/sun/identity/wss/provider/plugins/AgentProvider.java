@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.14 2007-11-27 22:03:03 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.15 2007-11-29 08:25:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,12 +63,12 @@ import com.sun.identity.idm.IdRepoException;
  */
 public class AgentProvider extends ProviderConfig {
 
-     private static final String AGENT_CONFIG_ATTR = 
-                       "AgentType";
-     private static final String NAME = "Name";
-     private static final String TYPE = "Type";
+     // Initialize the Attributes names set
+     private static Set attrNames = new HashSet();;
+
      private static final String SEC_MECH = "SecurityMech";
      private static final String WSP_ENDPOINT = "WSPEndpoint";
+     private static final String WSS_PROXY_ENDPOINT = "WSPProxyEndpoint";
      private static final String KS_FILE = "KeyStoreFile";
      private static final String KS_PASSWD = "KeyStorePassword";
      private static final String KEY_PASSWD = "KeyPassword";
@@ -79,6 +79,7 @@ public class AgentProvider extends ProviderConfig {
      private static final String REQUEST_HEADER_ENCRYPT = 
          "isRequestHeaderEncrypt";
      private static final String KEY_ALIAS = "privateKeyAlias";
+     private static final String KEY_TYPE = "privateKeyType";
      private static final String PUBLIC_KEY_ALIAS = "publicKeyAlias";
      private static final String STS_TRUST_AUTHORITY = "STS";
      private static final String DISCOVERY_TRUST_AUTHORITY = "Discovery";
@@ -91,8 +92,6 @@ public class AgentProvider extends ProviderConfig {
      private static final String FORCE_AUTHENTICATION = "forceUserAuthn";
      private static final String KEEP_SECURITY_HEADERS = "keepSecurityHeaders";
      private static final String AUTHENTICATION_CHAIN = "authenticationChain";  
-     private static final String STS_ENDPOINT = "STSEndpoint";
-     private static final String STS_MEX_ENDPOINT = "STSMexEndpoint";
 
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
@@ -101,6 +100,31 @@ public class AgentProvider extends ProviderConfig {
      // Instance variables
      private SSOToken token;
      private boolean profilePresent;
+
+     static {
+         attrNames.add(SEC_MECH);
+         attrNames.add(WSP_ENDPOINT);
+         attrNames.add(WSS_PROXY_ENDPOINT);
+         attrNames.add(KS_FILE);
+         attrNames.add(KS_PASSWD);
+         attrNames.add(KEY_PASSWD);
+         attrNames.add(RESPONSE_SIGN);
+         attrNames.add(RESPONSE_ENCRYPT);
+         attrNames.add(REQUEST_HEADER_ENCRYPT);
+         attrNames.add(REQUEST_SIGN);
+         attrNames.add(REQUEST_ENCRYPT);
+         attrNames.add(KEY_ALIAS);
+         attrNames.add(KEY_TYPE);
+         attrNames.add(PUBLIC_KEY_ALIAS);
+         attrNames.add(STS_TRUST_AUTHORITY);
+         attrNames.add(DISCOVERY_TRUST_AUTHORITY);
+         attrNames.add(USER_CREDENTIAL);
+         attrNames.add(SERVICE_TYPE);
+         attrNames.add(USE_DEFAULT_KEYSTORE);
+         attrNames.add(FORCE_AUTHENTICATION);
+         attrNames.add(KEEP_SECURITY_HEADERS);
+         attrNames.add(AUTHENTICATION_CHAIN);
+     }
 
      public void init (String providerName, 
            String providerType, SSOToken token) throws ProviderException {
@@ -115,61 +139,48 @@ public class AgentProvider extends ProviderConfig {
                 idRepo = new AMIdentityRepository(token, "/");
             }
 
-            if (agentConfigAttribute == null) {
-                agentConfigAttribute = new HashSet();
-                agentConfigAttribute.add(AGENT_CONFIG_ATTR);
-            }
             IdSearchControl control = new IdSearchControl();
-            control.setReturnAttributes(agentConfigAttribute);
-            IdSearchResults results = idRepo.searchIdentities(IdType.AGENT,
+            control.setAllReturnAttributes(true);
+            IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
                 providerName, control);
             Set agents = results.getSearchResults();
             if (!agents.isEmpty()) {
-                Map attrs = (Map) results.getResultAttributes();
+                //Map attrs = (Map) results.getResultAttributes();
                 AMIdentity provider = (AMIdentity) agents.iterator().next();
                 profilePresent = true;
-                Map attributes = (Map) attrs.get(provider);
-                if(debug.messageEnabled()) {
-                   debug.message("Attributes: " + attributes);
-                }
-                Set attributeValues = (Set) attributes.get(
-                          AGENT_CONFIG_ATTR.toLowerCase());
-                if (attributeValues != null) {
-                    // Get the values and initialize the properties
-                    parseAgentKeyValues(attributeValues);
-                }
+                //Map attributes = (Map) attrs.get(provider);
+                Map attributes = (Map) provider.getAttributes(attrNames);
+                parseAgentKeyValues(attributes);
             }
+            
         } catch (Exception e) {
             debug.error("AgentProvider.init: Unable to get idRepo", e);
             throw (new ProviderException("idRepo exception: "+ e.getMessage()));
         }
     }
 
-    private void parseAgentKeyValues(Set keyValues) throws ProviderException {
-        if(keyValues == null || keyValues.isEmpty()) {
+     private void parseAgentKeyValues(Map attributes) throws ProviderException {
+        if(attributes == null || attributes.isEmpty()) {
            return;
         }
-        Iterator iter = keyValues.iterator(); 
-        while(iter.hasNext()) {
-           String entry = (String)iter.next();
-           int index = entry.indexOf("=");
-           if(index == -1) {
-              continue;
-           }
-           setConfig(entry.substring(0, index),
-                      entry.substring(index+1, entry.length()));
+
+        for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            Set valSet = (Set)attributes.get(key);
+            String value = null;
+            if (valSet.size() > 0) {
+                value = (String)(valSet.iterator()).next();
+            }
+            setConfig(key, value);
         }
+
     }
 
     private void setConfig(String attr, String value) {
  
-        debug.message("Attribute name: " + attr + "Value: "+ value);
+        debug.message("Attribute name: " + attr + " Value: "+ value);
 
-        if(attr.equals(NAME)) {
-           this.providerName = value;
-        } else if(attr.equals(TYPE)) {
-           this.providerType = value; 
-        } else if(attr.equals(SEC_MECH)) {
+        if (attr.equals(SEC_MECH)) {
            if (secMech == null) {
                secMech = new ArrayList();
            }
@@ -180,6 +191,8 @@ public class AgentProvider extends ProviderConfig {
            }
         } else if(attr.equals(WSP_ENDPOINT)) {
            this.wspEndpoint = value;
+        } else if(attr.equals(WSS_PROXY_ENDPOINT)) {
+           this.wssProxyEndpoint = value;
         } else if(attr.equals(KS_FILE)) {
            this.ksFile = value;
         } else if(attr.equals(KS_PASSWD)) {
@@ -198,26 +211,35 @@ public class AgentProvider extends ProviderConfig {
            this.isRequestHeaderEncrypted = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(KEY_ALIAS)) {
            this.privateKeyAlias = value;
+        } else if(attr.equals(PUBLIC_KEY_ALIAS)) {
+           this.publicKeyAlias = value;
+        } else if(attr.equals(KEY_TYPE)) {
+           this.privateKeyType = value;
         } else if(attr.equals(SERVICE_TYPE)) {
            this.serviceType = value;
         } else if(attr.equals(USE_DEFAULT_KEYSTORE)) {
            this.isDefaultKeyStore = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(DISCOVERY_TRUST_AUTHORITY)) {
-           try {
-               taconfig = TrustAuthorityConfig.getConfig(value, 
-                       TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY);                                              
-           } catch (ProviderException pe) {
-               ProviderUtils.debug.error("AgentProvider.setAttribute:error",pe);
-           }
+            if ((value != null) && (value.length() != 0) 
+                && (!value.equals("[Empty]"))) {
+                try {
+                    taconfig = TrustAuthorityConfig.getConfig(value, 
+                        TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY);                                              
+                } catch (ProviderException pe) {
+                    ProviderUtils.debug.error("AgentProvider.setAttribute:error",pe);
+                }
+            }
         } else if (attr.equals(STS_TRUST_AUTHORITY)) {
-            try {
-                taconfig = TrustAuthorityConfig.getConfig(value, 
-                       TrustAuthorityConfig.STS_TRUST_AUTHORITY);
+            if ((value != null) && (value.length() != 0) 
+                && (!value.equals("[Empty]"))) {
+                try {
+                    taconfig = TrustAuthorityConfig.getConfig(value, 
+                        TrustAuthorityConfig.STS_TRUST_AUTHORITY);
            
-           } catch (ProviderException pe) {
-               ProviderUtils.debug.error("AgentProvider.setAttribute:error",pe);
-           }
-                
+                } catch (ProviderException pe) {
+                    ProviderUtils.debug.error("AgentProvider.setAttribute:error",pe);
+                }
+            }
         } else if(attr.startsWith(PROPERTY)) {
            properties.put(attr.substring(PROPERTY.length()), value);
 
@@ -257,7 +279,10 @@ public class AgentProvider extends ProviderConfig {
         } else if(attr.equals(KEEP_SECURITY_HEADERS)) {
            this.preserveSecHeaders = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(AUTHENTICATION_CHAIN)) {
-           this.authenticationChain = value;
+            if ((value != null) && (value.length() != 0) 
+                && (!value.equals("[Empty]"))) {
+                this.authenticationChain = value;
+            }
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
@@ -268,28 +293,30 @@ public class AgentProvider extends ProviderConfig {
 
     public void store() throws ProviderException {
 
-        Set set = new HashSet(); 
-        if(providerType != null) { 
-           set.add(getKeyValue(TYPE, providerType));
-        }
+        Map config = new HashMap();
 
         if(wspEndpoint != null) {
-           set.add(getKeyValue(WSP_ENDPOINT, wspEndpoint));
+           config.put(WSP_ENDPOINT, wspEndpoint);
         }
+
+        if(wssProxyEndpoint != null) {
+           config.put(WSS_PROXY_ENDPOINT, wssProxyEndpoint);
+        }
+
         if(ksFile != null) {
-           set.add(getKeyValue(KS_FILE, ksFile));
+           config.put(KS_FILE, ksFile);
         }
 
         if(ksPasswd != null) {
-           set.add(getKeyValue(KS_PASSWD, ksPasswd));
+           config.put(KS_PASSWD, ksPasswd);
         }
 
         if(keyPasswd != null) {
-           set.add(getKeyValue(KEY_PASSWD, keyPasswd));
+           config.put(KEY_PASSWD, keyPasswd);
         }
 
         if(serviceType != null) {
-           set.add(getKeyValue(SERVICE_TYPE, serviceType));
+           config.put(SERVICE_TYPE, serviceType);
         }
 
         if(secMech != null) {
@@ -299,38 +326,46 @@ public class AgentProvider extends ProviderConfig {
               sb.append((String)iter.next()).append(",");
            }
            sb = sb.deleteCharAt(sb.length() - 1);
-           set.add(getKeyValue(SEC_MECH, sb.toString()));
+           config.put(SEC_MECH, sb.toString());
         }
 
-        set.add(getKeyValue(RESPONSE_SIGN, 
-                            Boolean.toString(isResponseSigned)));
-        set.add(getKeyValue(RESPONSE_ENCRYPT, 
-                            Boolean.toString(isResponseEncrypted)));
-        set.add(getKeyValue(REQUEST_SIGN, 
-                            Boolean.toString(isRequestSigned)));
-        set.add(getKeyValue(REQUEST_ENCRYPT, 
-                            Boolean.toString(isRequestEncrypted)));
-        set.add(getKeyValue(REQUEST_HEADER_ENCRYPT,
-                            Boolean.toString(isRequestHeaderEncrypted)));
-        set.add(getKeyValue(USE_DEFAULT_KEYSTORE, 
-                       Boolean.toString(isDefaultKeyStore)));
-        set.add(getKeyValue(FORCE_AUTHENTICATION,
-                       Boolean.toString(forceAuthn)));
-        set.add(getKeyValue(KEEP_SECURITY_HEADERS,
-                       Boolean.toString(preserveSecHeaders)));
+        config.put(RESPONSE_SIGN, 
+                            Boolean.toString(isResponseSigned));
+        config.put(RESPONSE_ENCRYPT, 
+                            Boolean.toString(isResponseEncrypted));
+        config.put(REQUEST_SIGN, 
+                            Boolean.toString(isRequestSigned));
+        config.put(REQUEST_ENCRYPT, 
+                            Boolean.toString(isRequestEncrypted));
+        config.put(REQUEST_HEADER_ENCRYPT,
+                            Boolean.toString(isRequestHeaderEncrypted));
+        config.put(USE_DEFAULT_KEYSTORE, 
+                       Boolean.toString(isDefaultKeyStore));
+        config.put(FORCE_AUTHENTICATION,
+                       Boolean.toString(forceAuthn));
+        config.put(KEEP_SECURITY_HEADERS,
+                       Boolean.toString(preserveSecHeaders));
         if(authenticationChain != null) {
-           set.add(getKeyValue(AUTHENTICATION_CHAIN, authenticationChain));
+           config.put(AUTHENTICATION_CHAIN, authenticationChain);
         }
         
         if(privateKeyAlias != null) {
-           set.add(getKeyValue(KEY_ALIAS, privateKeyAlias));
+           config.put(KEY_ALIAS, privateKeyAlias);
+        }
+        
+        if(privateKeyType != null) {
+           config.put(KEY_TYPE, privateKeyType);
+        }
+
+        if(publicKeyAlias != null) {
+           config.put(PUBLIC_KEY_ALIAS, publicKeyAlias);
         }
 
         Enumeration props = properties.propertyNames();
         while(props.hasMoreElements()) {
            String propertyName = (String)props.nextElement();
            String propertyValue = properties.getProperty(propertyName);
-           set.add(getKeyValue(PROPERTY + propertyName, propertyValue));
+           config.put(PROPERTY + propertyName, propertyValue);
         }
 
         if(usercredentials != null) {
@@ -345,7 +380,7 @@ public class AgentProvider extends ProviderConfig {
               StringBuffer sb = new StringBuffer(100);
               sb.append(USER_NAME).append(":").append(user)
                 .append("|").append(USER_PASSWORD).append(":").append(password);
-              set.add(getKeyValue(USER_CREDENTIAL, sb.toString()));
+              config.put(USER_CREDENTIAL, sb.toString());
            }
         }
 
@@ -362,21 +397,29 @@ public class AgentProvider extends ProviderConfig {
         }
                 
         if(stsTA != null) {
-           set.add(getKeyValue(STS_TRUST_AUTHORITY, stsTA));
+           config.put(STS_TRUST_AUTHORITY, stsTA);
         }
         if(discoTA != null) {
-           set.add(getKeyValue(DISCOVERY_TRUST_AUTHORITY, discoTA)); 
+           config.put(DISCOVERY_TRUST_AUTHORITY, discoTA); 
         }
         
 
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();
-            attributes.put(AGENT_CONFIG_ATTR, set);
+            Set values = null ;
+
+            for (Iterator i = config.keySet().iterator(); i.hasNext(); ) {
+                String key = (String)i.next();
+                String value = (String)config.get(key);
+                values = new HashSet();
+                values.add(value);
+                attributes.put(key, values);
+            }
             if (profilePresent) {
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
-                    providerName, IdType.AGENT, "/", null);
+                    providerName, IdType.AGENTONLY, "/", null);
                 debug.message("Attributes to be stored: " + attributes);
                 id.setAttributes(attributes);
                 id.store();
@@ -385,7 +428,7 @@ public class AgentProvider extends ProviderConfig {
                 if (idRepo == null) {
                     idRepo = new AMIdentityRepository(token, "/");
                 }
-                idRepo.createIdentity(IdType.AGENT,
+                idRepo.createIdentity(IdType.AGENTONLY,
                     providerName, attributes);
             }
         } catch (Exception e) {
@@ -406,7 +449,7 @@ public class AgentProvider extends ProviderConfig {
             }
             // Construct AMIdentity object to delete
             AMIdentity id = new AMIdentity(token,
-                providerName, IdType.AGENT, "/", null);
+                providerName, IdType.AGENTONLY, "/", null);
             Set identities = new HashSet();
             identities.add(id);
             idRepo.deleteIdentities(identities);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.30 2007-11-17 00:38:11 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.31 2007-11-29 08:25:21 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -352,7 +352,7 @@ public class AMSetupServlet extends HttpServlet {
              *       related issue in OpenSSO workspace.
              */
             //createPasswordFiles(basedir, deployuri);
-            //createIdentitiesForWSSecurity(serverURL, deployuri);
+            createIdentitiesForWSSecurity(serverURL, deployuri);
             isConfiguredFlag = true;
             configured = true;
         } catch (FileNotFoundException e) {
@@ -373,6 +373,8 @@ public class AMSetupServlet extends HttpServlet {
             e.printStackTrace();
         } catch (SSOException e) {
             e.printStackTrace();
+        } catch (IdRepoException idrepoe) {
+            idrepoe.printStackTrace();
         }
         return configured;
     }
@@ -1202,15 +1204,14 @@ public class AMSetupServlet extends HttpServlet {
     {
         SSOToken token = getAdminSSOToken();
         AMIdentityRepository idrepo = new AMIdentityRepository(token, "/");
-        createUser(idrepo, "jsmith", "John", "Smith");
-        createUser(idrepo, "jondoe", "Jon", "Doe");
+        //createUser(idrepo, "jsmith", "John", "Smith");
+        //createUser(idrepo, "jondoe", "Jon", "Doe");
         Map config = new HashMap();
 
         // Add WSC configuration
+        config.put("sunIdentityServerDeviceStatus","Active");
         config.put("SecurityMech","urn:sun:wss:security:null:UserNameToken");
         config.put("UserCredential","UserName:testuser|UserPassword:test");
-        config.put("useDefaultStore","true");
-        config.put("isResponseSign","true");
         config.put("AgentType","WSCAgent");
         createAgent(idrepo, "wsc", "WSC", "", config);
 
@@ -1219,6 +1220,7 @@ public class AMSetupServlet extends HttpServlet {
         config.put("AgentType","WSPAgent");
         createAgent(idrepo, "wsp", "WSP", "", config);
 
+        /*
         // Add UsernameToken profile
         createAgent(idrepo, "UserNameToken", "WSP",
             "WS-I BSP UserName Token Profile Configuration", config);
@@ -1267,7 +1269,7 @@ public class AMSetupServlet extends HttpServlet {
         config.put("AgentType","DiscoveryAgent");
         config.put("Endpoint", serverURL + deployuri + "/Liberty/disco");
         createAgent(idrepo, "LocalDisco", "Discovery",
-            "Local Liberty Discovery Service Configuration", config);
+            "Local Liberty Discovery Service Configuration", config);*/
     }
 
     private static void createUser(

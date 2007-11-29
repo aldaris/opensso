@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.3 2007-11-27 17:43:48 mrudul_uchil Exp $
+ * $Id: STSAgent.java,v 1.4 2007-11-29 08:25:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,14 +48,10 @@ import com.sun.identity.idm.IdRepoException;
 
 
 public class STSAgent extends STSConfig {
+
+    // Initialize the Attributes names set
+    private static Set attrNames = new HashSet();;
     
-    
-    private static Set agentConfigAttribute;
-    private static final String AGENT_CONFIG_ATTR = 
-                       "AgentType";
-    
-    private static final String NAME = "Name";
-    private static final String TYPE = "Type";
     private static final String ENDPOINT = "STSEndpoint";
     private static final String MEX_ENDPOINT = "STSMexEndpoint";
     private static final String SEC_MECH = "SecurityMech";
@@ -68,6 +64,9 @@ public class STSAgent extends STSConfig {
     private static final String USER_NAME = "UserName";
     private static final String USER_PASSWORD = "UserPassword";
     private static final String USER_CREDENTIAL = "UserCredential";
+    private static final String STS_CONFIG = "STS";
+    private static final String PRIVATE_KEY_ALIAS = "privateKeyAlias";
+    private static final String PUBLIC_KEY_ALIAS = "publicKeyAlias";
      
     private static Debug debug = ProviderUtils.debug;
     
@@ -75,17 +74,31 @@ public class STSAgent extends STSConfig {
     private boolean profilePresent = false;
     private SSOToken token = null;
     
+    static {
+        attrNames.add(ENDPOINT);
+        attrNames.add(MEX_ENDPOINT);
+        attrNames.add(SEC_MECH);
+        attrNames.add(RESPONSE_SIGN);
+        attrNames.add(RESPONSE_ENCRYPT);
+        attrNames.add(REQUEST_SIGN);
+        attrNames.add(REQUEST_ENCRYPT);
+        attrNames.add(REQUEST_HEADER_ENCRYPT);
+        attrNames.add(USER_CREDENTIAL);
+        attrNames.add(STS_CONFIG);
+        attrNames.add(PRIVATE_KEY_ALIAS);
+        attrNames.add(PUBLIC_KEY_ALIAS);
+    }
+
     /** Creates a new instance of STSAgent */
     public STSAgent() {
     }
     
     public STSAgent(AMIdentity amIdentity) throws ProviderException {
         try {
-            Set attributeValues = amIdentity.getAttribute(AGENT_CONFIG_ATTR);
-            if(attributeValues != null && !attributeValues.isEmpty()) {
-               profilePresent = true;
-               parseAgentKeyValues(attributeValues);
-            }
+            this.name = amIdentity.getName();
+            this.type = amIdentity.getType().getName();
+            Map attributes = (Map) amIdentity.getAttributes(attrNames);
+            parseAgentKeyValues(attributes);
         } catch (IdRepoException ire) {
             debug.error("STSAgent.constructor: Idrepo exception", ire);
             throw new ProviderException(ire.getMessage());            
@@ -108,26 +121,18 @@ public class STSAgent extends STSConfig {
                 idRepo = new AMIdentityRepository(token, "/");
             }
 
-            if (agentConfigAttribute == null) {
-                agentConfigAttribute = new HashSet();
-                agentConfigAttribute.add(AGENT_CONFIG_ATTR);
-            }
             IdSearchControl control = new IdSearchControl();
-            control.setReturnAttributes(agentConfigAttribute);
-            IdSearchResults results = idRepo.searchIdentities(IdType.AGENT,
+            control.setAllReturnAttributes(true);
+            IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
                 name, control);
             Set agents = results.getSearchResults();
             if (!agents.isEmpty()) {
-                Map attrs = (Map) results.getResultAttributes();
+                //Map attrs = (Map) results.getResultAttributes();
                 AMIdentity provider = (AMIdentity) agents.iterator().next();
                 profilePresent = true;
-                Map attributes = (Map) attrs.get(provider);
-                Set attributeValues = (Set) attributes.get(
-                          AGENT_CONFIG_ATTR.toLowerCase());
-                if (attributeValues != null) {
-                    // Get the values and initialize the properties
-                    parseAgentKeyValues(attributeValues);
-                }
+                //Map attributes = (Map) attrs.get(provider);
+                Map attributes = (Map) provider.getAttributes(attrNames);
+                parseAgentKeyValues(attributes);
             }
         } catch (Exception e) {
             debug.error("STSAgent.init: Unable to get idRepo", e);
@@ -136,29 +141,28 @@ public class STSAgent extends STSConfig {
          
     }
     
-     private void parseAgentKeyValues(Set keyValues) throws ProviderException {
-        if(keyValues == null || keyValues.isEmpty()) {
+    private void parseAgentKeyValues(Map attributes) throws ProviderException {
+        if(attributes == null || attributes.isEmpty()) {
            return;
         }
-        Iterator iter = keyValues.iterator(); 
-        while(iter.hasNext()) {
-           String entry = (String)iter.next();
-           int index = entry.indexOf("=");
-           if(index == -1) {
-              continue;
-           }
-           setConfig(entry.substring(0, index),
-                      entry.substring(index+1, entry.length()));
+
+        for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            Set valSet = (Set)attributes.get(key);
+            String value = null;
+            if (valSet.size() > 0) {
+                value = (String)(valSet.iterator()).next();
+            }
+            setConfig(key, value);
         }
+
     }
 
     private void setConfig(String attr, String value) {
+
+        debug.message("Attribute name: " + attr + " Value: "+ value);
         
-        if(attr.equals(NAME)) {
-           this.name = value;
-        } else if(attr.equals(TYPE)) {
-           this.type = value; 
-        } else if(attr.equals(ENDPOINT)) {
+        if(attr.equals(ENDPOINT)) {
             this.endpoint = value;
         } else if(attr.equals(MEX_ENDPOINT)) {
             this.mexEndpoint = value;
@@ -180,7 +184,13 @@ public class STSAgent extends STSConfig {
            this.isRequestEncrypted = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(REQUEST_HEADER_ENCRYPT)) {
            this.isRequestHeaderEncrypted = Boolean.valueOf(value).booleanValue();
-        }  else if(attr.equals(USER_CREDENTIAL)) {
+        } else if(attr.equals(PRIVATE_KEY_ALIAS)) {
+           this.privateKeyAlias = value;
+        } else if(attr.equals(STS_CONFIG)) {
+           this.stsConfigName = value;
+        } else if(attr.equals(PUBLIC_KEY_ALIAS)) {
+           this.publicKeyAlias = value;
+        } else if(attr.equals(USER_CREDENTIAL)) {
            int index = value.indexOf("|");
            if(index == -1) {
               return;
@@ -216,7 +226,7 @@ public class STSAgent extends STSConfig {
             }
             // Construct AMIdentity object to delete
             AMIdentity id = new AMIdentity(token, name,
-                            IdType.AGENT, "/", null);
+                            IdType.AGENTONLY, "/", null);
             Set identities = new HashSet();
             identities.add(id);
             idRepo.deleteIdentities(identities);
@@ -229,22 +239,26 @@ public class STSAgent extends STSConfig {
     
     public void store() throws ProviderException {
         
-        Set set = new HashSet();
+        Map config = new HashMap();
         
-        if(name != null) {
-           set.add(getKeyValue(NAME, name)); 
-        }
-        
-        if(type != null) { 
-           set.add(getKeyValue(TYPE, type));
-        }
-
         if(endpoint != null) {
-           set.add(getKeyValue(ENDPOINT, endpoint));
+           config.put(ENDPOINT, endpoint);
         }        
 
         if(mexEndpoint != null) {
-           set.add(getKeyValue(MEX_ENDPOINT, mexEndpoint));
+           config.put(MEX_ENDPOINT, mexEndpoint);
+        }
+
+        if(privateKeyAlias != null) {
+           config.put(PRIVATE_KEY_ALIAS, privateKeyAlias);
+        }
+
+        if(publicKeyAlias != null) {
+           config.put(PUBLIC_KEY_ALIAS, publicKeyAlias);
+        }
+
+        if(stsConfigName != null) {
+           config.put(STS_CONFIG, stsConfigName);
         }
         
         if(secMech != null) {
@@ -254,19 +268,19 @@ public class STSAgent extends STSConfig {
               sb.append((String)iter.next()).append(",");
            }
            sb = sb.deleteCharAt(sb.length() - 1);
-           set.add(getKeyValue(SEC_MECH, sb.toString()));
+           config.put(SEC_MECH, sb.toString());
         }
         
-        set.add(getKeyValue(RESPONSE_SIGN, 
-                            Boolean.toString(isResponseSigned)));
-        set.add(getKeyValue(RESPONSE_ENCRYPT, 
-                            Boolean.toString(isResponseEncrypted)));
-        set.add(getKeyValue(REQUEST_SIGN, 
-                            Boolean.toString(isRequestSigned)));
-        set.add(getKeyValue(REQUEST_ENCRYPT, 
-                            Boolean.toString(isRequestEncrypted)));
-        set.add(getKeyValue(REQUEST_HEADER_ENCRYPT,
-                            Boolean.toString(isRequestHeaderEncrypted)));
+        config.put(RESPONSE_SIGN, 
+                            Boolean.toString(isResponseSigned));
+        config.put(RESPONSE_ENCRYPT, 
+                            Boolean.toString(isResponseEncrypted));
+        config.put(REQUEST_SIGN, 
+                            Boolean.toString(isRequestSigned));
+        config.put(REQUEST_ENCRYPT, 
+                            Boolean.toString(isRequestEncrypted));
+        config.put(REQUEST_HEADER_ENCRYPT,
+                            Boolean.toString(isRequestHeaderEncrypted));
         
         if(usercredentials != null) {
            Iterator iter = usercredentials.iterator();
@@ -280,18 +294,27 @@ public class STSAgent extends STSConfig {
               StringBuffer sb = new StringBuffer(100);
               sb.append(USER_NAME).append(":").append(user)
                 .append("|").append(USER_PASSWORD).append(":").append(password);
-              set.add(getKeyValue(USER_CREDENTIAL, sb.toString()));
+              config.put(USER_CREDENTIAL, sb.toString());
            }
         }
         
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();
-            attributes.put(AGENT_CONFIG_ATTR, set);
+            Set values = null ;
+
+            for (Iterator i = config.keySet().iterator(); i.hasNext(); ) {
+                String key = (String)i.next();
+                String value = (String)config.get(key);
+                values = new HashSet();
+                values.add(value);
+                attributes.put(key, values);
+            }
             if (profilePresent) {
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
-                    name, IdType.AGENT, "/", null);                
+                    name, IdType.AGENTONLY, "/", null);
+                debug.message("Attributes to be stored: " + attributes);
                 id.setAttributes(attributes);
                 id.store();
             } else {
@@ -299,7 +322,7 @@ public class STSAgent extends STSConfig {
                 if (idRepo == null) {
                     idRepo = new AMIdentityRepository(token, "/");
                 }
-                idRepo.createIdentity(IdType.AGENT, name, attributes);
+                idRepo.createIdentity(IdType.AGENTONLY, name, attributes);
             }
         } catch (Exception e) {
             debug.error("STSAgent.store: Unable to get idRepo", e);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderUtils.java,v 1.4 2007-11-27 17:43:48 mrudul_uchil Exp $
+ * $Id: ProviderUtils.java,v 1.5 2007-11-29 08:25:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,9 +87,10 @@ public class ProviderUtils {
                 "*", control);
              Set agents = results.getSearchResults();                          
              Iterator iter = agents.iterator();
+             //Map attrs = (Map) results.getResultAttributes();
              while (iter.hasNext()) {
-                 Map attrs = (Map) results.getResultAttributes();
                  AMIdentity provider = (AMIdentity) iter.next();
+                 //Map attributes = (Map) attrs.get(provider);
                  STSConfig stsConfig = new STSAgent(provider);
                  stsConfigs.add(stsConfig);                
              }             
@@ -124,9 +125,10 @@ public class ProviderUtils {
                  "*", control);
              Set agents = results.getSearchResults();
              Iterator iter = agents.iterator();
+             //Map attrs = (Map) results.getResultAttributes();
              while (iter.hasNext()) {
-                 Map attrs = (Map) results.getResultAttributes();
                  AMIdentity provider = (AMIdentity) iter.next();
+                 //Map attributes = (Map) attrs.get(provider);
                  DiscoveryConfig discoConfig = new DiscoveryAgent(provider);
                  discoConfigs.add(discoConfig);                
              }

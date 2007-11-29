@@ -3,7 +3,7 @@
 <!--
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
-   (the License). You may not use this file except in                                                         5
+   (the License). You may not use this file except in 
    compliance with the License.
 
    You can obtain a copy of the License at
@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.10 2007-11-27 17:43:48 mrudul_uchil Exp $
+   $Id: AgentService.xml,v 1.11 2007-11-29 08:25:22 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2262,7 +2262,7 @@
                         syntax="string"
                         i18nKey="a320">
                         <DefaultValues>
-                            <Value>UserName=test:UserPassword=test</Value>
+                            <Value>UserName:test|UserPassword:test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
@@ -2297,13 +2297,6 @@
                          <DefaultValues>
                              <Value>com.sun.identity.sm.RequiredValueValidator</Value>
                          </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="ListValueValidator"
-                        type="validator"
-                        syntax="string">
-                        <DefaultValues>
-                            <Value>com.sun.identity.common.configuration.ListValueValidator</Value>
-                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.repository.location"
@@ -2500,13 +2493,11 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="UserCredential"
-                        type="list"
+                        type="single"
                         syntax="string"
-                        validator="ListValueValidator"
                         i18nKey="a320">
                         <DefaultValues>
-                            <Value>UserName=test:UserPassword=test</Value>
-                            <Value>UserName=TestUser:UserPassword=TestUser</Value>
+                            <Value>UserName:test|UserPassword:test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
@@ -2726,7 +2717,7 @@
                         syntax="string"
                         i18nKey="a320">
                         <DefaultValues>
-                            <Value>UserName=test:UserPassword=test</Value>
+                            <Value>UserName:test|UserPassword:test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>

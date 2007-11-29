@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryConfig.java,v 1.2 2007-11-01 17:25:56 mallas Exp $
+ * $Id: DiscoveryConfig.java,v 1.3 2007-11-29 08:25:22 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,11 +61,30 @@ import com.sun.identity.wss.security.SecurityMechanism;
  */
 public abstract class DiscoveryConfig extends TrustAuthorityConfig {
 
+      protected String authServiceEndpoint = null;
+
       /**
        * Constructor
        */
       public DiscoveryConfig() {}
-           
+
+
+      /**
+       * Returns Authentication Web Service End point
+       * @return Authentication Web Service End point
+       */
+      public String getAuthServiceEndPoint() {
+          return authServiceEndpoint;
+      }         
+
+      /**
+       * Sets Authentication Web Service End point
+       * @param authServiceEndpoint Authentication Web Service End point
+       *
+       */
+      public void setAuthServiceEndPoint(String authServiceEndpoint) {
+          this.authServiceEndpoint = authServiceEndpoint;
+      }        
 
       /**
        * Registers the provider configuration with trusted authority.
