@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.4 2007-11-14 18:55:26 ww203982 Exp $
+ * $Id: AssertionManager.java,v 1.5 2007-11-29 20:59:42 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -849,7 +849,6 @@ public final class AssertionManager {
             // this is the case when Session expired, and the assertion
             // was created for artifact
             artEntry = (ArtEntry) artEntryMap.remove(artifact);
-            artifactTimeoutRunnable.removeElement(artifact);
             String[] data = {SAMLUtils.bundle.getString(
                 "assertionArtifactRemoved"), artifact};
             LogUtils.access(java.util.logging.Level.FINE, 
@@ -859,7 +858,6 @@ public final class AssertionManager {
         if (assertionID != null) {
             Entry entry = null;
             entry = (Entry) idEntryMap.remove(assertionID);
-            assertionTimeoutRunnable.removeElement(assertionID);
             if (entry != null) {
                 String[] data = {SAMLUtils.bundle.getString("assertionRemoved"),
                     assertionID};
@@ -873,7 +871,6 @@ public final class AssertionManager {
                         synchronized (artEntryMap) {
                             artEntryMap.remove(artString);
                         }
-                        artifactTimeoutRunnable.removeElement(artString);
                         String[] data2 = {SAMLUtils.bundle.getString(
                             "assertionArtifactRemoved"), artifact};
                         LogUtils.access(java.util.logging.Level.FINE,
@@ -886,7 +883,6 @@ public final class AssertionManager {
                 synchronized (idEntryMap) {
                     idEntryMap.remove(artEntry.getAssertionID());
                 }
-                assertionTimeoutRunnable.removeElement(artEntry.getAssertionID());
             }
         }
     }
