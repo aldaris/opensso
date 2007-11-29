@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.11 2007-11-29 08:25:22 mrudul_uchil Exp $
+   $Id: AgentService.xml,v 1.12 2007-11-29 23:42:39 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -95,13 +95,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.cookie.secure"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.cookie.secure">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -153,13 +153,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.am.url_comparison.case_ignore"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.am.url_comparison.case_ignore">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -265,39 +265,39 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.load_balancer.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.load_balancer.enable">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.ignore_server_check"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.ignore_server_check">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.ignore.preferred_naming_url"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.ignore.preferred_naming_url">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -331,13 +331,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.deny_on_log_failure"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.deny_on_log_failure">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -362,13 +362,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.do_sso_only"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.do_sso_only">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -384,13 +384,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.fqdn.check.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.fqdn.check.enable">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -415,13 +415,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.cookie.reset.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.cookie.reset.enable">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -455,13 +455,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.anonymous_user.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.anonymous_user.enable">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -477,13 +477,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.notenforced_list.invert"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.notenforced_list.invert">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -499,13 +499,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.postdata.preserve.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.postdata.preserve.enable">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -521,13 +521,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.cdsso.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.cdsso.enable">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -543,13 +543,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.client_ip_validation.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.client_ip_validation.enable">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -592,65 +592,65 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.am.fetch_from_root_resource"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.am.fetch_from_root_resource">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.get_client_host_name"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.get_client_host_name">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.convert_mbyte.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.convert_mbyte.enable">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.encode_url_special_chars.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.encode_url_special_chars.enable">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.ignore_path_info"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.ignore_path_info">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -700,7 +700,7 @@
                             <Value></Value>
                         </DefaultValues>
                     </AttributeSchema>
-            	  <AttributeSchema
+                    <AttributeSchema
                         name="com.sun.am.poll_primary_server"
                         type="single"
                         syntax="string"
@@ -720,13 +720,13 @@
                     </AttributeSchema>
                      <AttributeSchema
                         name="com.sun.am.policy.agents.config.proxy.override_host_port"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="com.sun.am.policy.agents.config.proxy.override_host_port">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="true">true</ChoiceValue>
-                            <ChoiceValue i18nKey="false">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -840,13 +840,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.user.principal"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a116">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -943,13 +943,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.local.log.rotate"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a128">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -965,13 +965,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.webservice.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a131">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -988,13 +988,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.webservice.process.get.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a133">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1057,13 +1057,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.login.use.internal"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a141">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1109,13 +1109,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.httpsession.binding"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a146">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1141,26 +1141,26 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.login.url.prioritized"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a149">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.login.url.probe.enabled"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a151">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1212,39 +1212,39 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.sso.decode"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a157">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.amsso.cache.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a158">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.cookie.reset.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a159">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -1281,13 +1281,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.cdsso.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a164">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -1332,13 +1332,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.cdsso.secure.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a169">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                            <Value>false</Value>
                         </DefaultValues>
@@ -1375,13 +1375,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.logout.introspect.enabled"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a174">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -1398,13 +1398,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.fqdn.check.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a176">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1430,13 +1430,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.legacy.support.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a179">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -1481,13 +1481,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.port.check.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a185">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -1523,26 +1523,26 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.notenforced.uri.invert"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a189">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.notenforced.uri.cache.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a191">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1568,26 +1568,26 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.notenforced.ip.invert"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a194">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.notenforced.ip.cache.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a195">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1621,13 +1621,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.attribute.cookie.encode"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a199">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1741,13 +1741,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.privileged.attribute.mapping.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a213">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1791,13 +1791,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.iplanet.am.session.client.polling.enable"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a218">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -1822,13 +1822,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.idm.remote.notification.enabled"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a222">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1844,13 +1844,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.sm.notification.enabled"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a224">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -1938,13 +1938,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.notification.enabled"
-                        type="single_choice"
-                        syntax="string"
+                        type="single"
+                        syntax="boolean"
                         i18nKey="a235">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -2064,8 +2064,8 @@
                         type="single_choice"
                         syntax="string"
                         i18nKey="a301">
-	     	            <ChoiceValues>
-			            <ChoiceValuesClassName
+                        <ChoiceValues>
+                        <ChoiceValuesClassName
                             className="com.sun.identity.wss.security.ConfiguredWSCSecurityMech" />
                         </ChoiceValues>
                         <DefaultValues>
@@ -2077,8 +2077,8 @@
                         type="single_choice"
                         syntax="string"
                         i18nKey="a302">
-	     	            <ChoiceValues>
-			            <ChoiceValuesClassName
+                        <ChoiceValues>
+                            <ChoiceValuesClassName
                             className="com.sun.identity.wss.provider.ConfiguredSTSConfig" />
                         </ChoiceValues>
                         <DefaultValues>
@@ -2090,8 +2090,8 @@
                         type="single_choice"
                         syntax="string"
                         i18nKey="a303">
-	     	            <ChoiceValues>
-			            <ChoiceValuesClassName
+                        <ChoiceValues>
+                            <ChoiceValuesClassName
                             className="com.sun.identity.wss.provider.ConfiguredDiscoveryConfig" />
                         </ChoiceValues>
                         <DefaultValues>
@@ -2100,104 +2100,104 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="forceUserAuthn"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a304">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestSign"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a305">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestHeaderEncrypt"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a306">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestEncrypt"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a307">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isResponseSign"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a308">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isResponseEncrypt"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a309">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="keepSecurityHeaders"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a310">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="useDefaultStore"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a311">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -2316,8 +2316,8 @@
                         type="multiple_choice"
                         syntax="string"
                         i18nKey="a301">
-	     	            <ChoiceValues>
-			            <ChoiceValuesClassName
+                        <ChoiceValues>
+                            <ChoiceValuesClassName
                             className="com.sun.identity.wss.security.ConfiguredWSPSecurityMech" />
                         </ChoiceValues>
                         <DefaultValues>
@@ -2329,8 +2329,8 @@
                         type="single_choice"
                         syntax="string"
                         i18nKey="a321">
-	     	            <ChoiceValues>
-			            <ChoiceValuesClassName
+                        <ChoiceValues>
+                        <ChoiceValuesClassName
                             className="com.sun.identity.authentication.service.ConfiguredAuthServices" />
                         </ChoiceValues>
                         <DefaultValues>
@@ -2339,91 +2339,91 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestSign"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a322">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestHeaderEncrypt"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a323">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestEncrypt"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a324">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isResponseSign"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a325">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isResponseEncrypt"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a326">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="keepSecurityHeaders"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a310">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="useDefaultStore"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a311">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
@@ -2551,8 +2551,8 @@
                         type="single_choice"
                         syntax="string"
                         i18nKey="a301">
-	     	            <ChoiceValues>
-			            <ChoiceValuesClassName
+                        <ChoiceValues>
+                            <ChoiceValuesClassName
                             className="com.sun.identity.wss.security.ConfiguredWSCSecurityMech" />
                         </ChoiceValues>
                         <DefaultValues>
@@ -2564,8 +2564,8 @@
                         type="single_choice"
                         syntax="string"
                         i18nKey="a302">
-	     	            <ChoiceValues>
-			            <ChoiceValuesClassName
+                        <ChoiceValues>
+                        <ChoiceValuesClassName
                             className="com.sun.identity.wss.provider.ConfiguredSTSConfig" />
                         </ChoiceValues>
                         <DefaultValues>
@@ -2574,91 +2574,91 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestSign"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a305">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestHeaderEncrypt"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a306">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isRequestEncrypt"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a307">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isResponseSign"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a308">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="isResponseEncrypt"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a309">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="keepSecurityHeaders"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a310">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="useDefaultStore"
-                        type="single_choice"
+                        type="single"
                         syntax="boolean"
                         i18nKey="a311">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a105">true</ChoiceValue>
-                            <ChoiceValue i18nKey="a106">false</ChoiceValue>
-                        </ChoiceValues>
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>
