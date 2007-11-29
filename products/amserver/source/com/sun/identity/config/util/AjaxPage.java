@@ -17,31 +17,43 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.3 2007-11-12 14:51:17 lhazlewood Exp $
+ * $Id: AjaxPage.java,v 1.4 2007-11-29 22:52:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.util;
 
+import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.config.Configurator;
 import com.sun.identity.config.DummyConfigurator;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.Locale;
+import java.io.IOException;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import net.sf.click.Page;
 
-import java.io.IOException;
-
 /**
- * @author Les Hazlewood
+ * 
  */
 public abstract class AjaxPage extends Page {
 
     public static final String RESPONSE_TEMPLATE = "{\"valid\":${valid}, \"body\":\"${body}\"}";
     public static final String OLD_RESPONSE_TEMPLATE = "{\"isValid\":${isValid}, \"errorMessage\":\"${errorMessage}\"}";
-
+   
     private Configurator configurator = null;
-
+    
     private boolean rendering = false;
-
+    
+    // localization properties
+    private ISLocaleContext localeContext = new ISLocaleContext();
+    private ResourceBundle rb = null;
+    private static final String RB_NAME = "amConfigurator";
+    
+    public static Debug debug = Debug.getInstance("amConfigurator");
+    
     public AjaxPage() {
+        initializeResourceBundle();
     }
 
     public boolean isRendering() {
@@ -113,5 +125,24 @@ public abstract class AjaxPage extends Page {
         response = response.replaceFirst("\\$\\{" + "isValid" +  "\\}", String.valueOf(isValid));
         response = response.replaceFirst("\\$\\{" + "errorMessage" +  "\\}", errorMessage);
         writeToResponse(response);
+    }
+    
+    private void initializeResourceBundle() {
+        localeContext.setLocale(getContext().getRequest());
+        try {
+            rb = ResourceBundle.getBundle(RB_NAME, localeContext.getLocale());
+        } catch (MissingResourceException mre) {
+            // do nothing
+        }
+    }
+    
+    public String getLocalizedString(String i18nKey) {
+        String localizedValue = null;
+        try {
+            localizedValue = Locale.getString(rb, i18nKey, debug);
+        } catch (MissingResourceException mre) {
+            // do nothing
+        }
+        return (localizedValue == null) ? i18nKey : localizedValue;
     }
 }
