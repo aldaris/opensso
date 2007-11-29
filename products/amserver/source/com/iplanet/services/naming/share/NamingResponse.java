@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingResponse.java,v 1.1 2005-11-01 00:30:23 arvindp Exp $
+ * $Id: NamingResponse.java,v 1.2 2007-11-29 23:14:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -192,6 +192,28 @@ public class NamingResponse {
      */
     public String getException() {
         return exception;
+    }
+    
+    /**
+     * Replaces "%uri" with the acutal URI
+     */
+    public void replaceURI(String uri) {
+        if ((namingTable != null) && !namingTable.isEmpty()) {
+            Hashtable newNamingTable = new Hashtable();
+            Enumeration e = namingTable.keys();
+            while (e.hasMoreElements()) {
+                String name = e.nextElement().toString();
+                String value = namingTable.get(name).toString();
+                if (value.indexOf("%uri") != -1) {
+                    value = value.replaceAll("%uri", uri);
+                } else {
+                    // Remove "uri" if present
+                    value = value.replaceAll(uri, "");
+                }
+                newNamingTable.put(name, value);
+            }
+            namingTable = newNamingTable;
+        }
     }
 
     /**

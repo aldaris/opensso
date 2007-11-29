@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.5 2007-10-17 23:00:20 veiming Exp $
+ * $Id: NamingService.java,v 1.6 2007-11-29 23:14:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -363,6 +363,16 @@ public class NamingService implements RequestHandler, ServiceListener {
             }
         } catch (Exception e) {
             nres.setException(e.getMessage());
+        }
+        // if request version is less than 3.0, need to replace
+        // %uri with the actual value
+        if (reqVersion < 3.0) {
+            String uri = SystemProperties.get(
+                Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+            if (!uri.startsWith("/")) {
+                uri = "/" + uri;
+            }
+            nres.replaceURI(uri);
         }
         return new Response(nres.toXMLString());
     }

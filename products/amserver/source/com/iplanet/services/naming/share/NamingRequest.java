@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingRequest.java,v 1.1 2005-11-01 00:30:23 arvindp Exp $
+ * $Id: NamingRequest.java,v 1.2 2007-11-29 23:14:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ public class NamingRequest {
 
     private static int requestCount = 0;
 
-    public static final String reqVersion = "2.0";
+    public static final String reqVersion = "3.0";
 
     /*
      * Constructors
