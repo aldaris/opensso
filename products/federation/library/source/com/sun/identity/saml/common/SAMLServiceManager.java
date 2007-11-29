@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLServiceManager.java,v 1.4 2007-10-17 23:00:57 veiming Exp $
+ * $Id: SAMLServiceManager.java,v 1.5 2007-11-29 19:55:02 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -646,11 +646,11 @@ public class SAMLServiceManager implements ConfigurationListener {
                     SAMLConstants.SERVER_HOST);
                 serverPort = SystemConfigurationUtil.getProperty(
                     SAMLConstants.SERVER_PORT);
-                serverURL = SystemConfigurationUtil.getProperty(
+                serverURI = SystemConfigurationUtil.getProperty(
                     SAMLConstants.SERVER_URI);
-                serverURL =
-                    serverProtocol + "://" + serverHost + ":" + serverPort +
-                    serverURI;
+                String legacyId = 
+                    serverProtocol + "://" + serverHost + ":" + serverPort;
+                serverURL = legacyId + serverURI;
                 String sb = serverURL;
                     
                 Map siteidMap = new HashMap();
@@ -716,12 +716,20 @@ public class SAMLServiceManager implements ConfigurationListener {
                                 + "missing instanceID:" + entry);
                             break;
                         }
-                        boolean thisSite = instanceID.equalsIgnoreCase(sb);
+                        boolean thisSite = instanceID.equalsIgnoreCase(sb) ||
+                            instanceID.equalsIgnoreCase(legacyId);
                         if (siteID != null) {
                             siteID = SAMLUtils.getDecodedSourceIDString(siteID);
                             if (siteID != null) {
                                 siteidMap.put(instanceID, siteID);
                                 instanceMap.put(siteID, instanceID); 
+                                if (SAMLUtils.debug.messageEnabled()) {
+                                    SAMLUtils.debug.message("SAMLSManager: "
+                                        + "add instanceID: " + instanceID
+                                        + ", serverURL=" + sb 
+                                        + ", legacy serverURL=" + legacyId 
+                                        + ", isthissite=" + thisSite);
+                                }
                                 if (thisSite) {
                                     newMap.put(SAMLConstants.SITE_ID, siteID);
                                 }
@@ -737,8 +745,13 @@ public class SAMLServiceManager implements ConfigurationListener {
                     } // end of looping all the entries in the list
                 }
                 // set default site id
-                if (!siteidMap.containsKey(sb)) {
+                if (!siteidMap.containsKey(sb) && 
+                    !siteidMap.containsKey(legacyId)) {
                     String siteID = SAMLSiteID.generateSourceID(sb);
+                    if (SAMLUtils.debug.warningEnabled()) {
+                        SAMLUtils.debug.warning("SAMLSManager: site " + sb
+                            + " not configured, create new " + siteID);
+                    }
                     if (siteID != null) {
                         siteID = SAMLUtils.getDecodedSourceIDString(siteID);
                         if (siteID != null) {
@@ -751,7 +764,12 @@ public class SAMLServiceManager implements ConfigurationListener {
                     }
                 }
                 // set default issuer name
-                if (!issuerNameMap.containsKey(sb)) {
+                if (!issuerNameMap.containsKey(sb) && 
+                    !issuerNameMap.containsKey(legacyId)) {
+                    if (SAMLUtils.debug.warningEnabled()) {
+                        SAMLUtils.debug.warning("SAMLSManager: issuer for " + sb
+                            + " not configured, set to " + sb);
+                    }
                     issuerNameMap.put(sb, sb);
                     newMap.put(SAMLConstants.ISSUER_NAME, sb);
                 }
