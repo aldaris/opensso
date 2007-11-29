@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagentszip,v 1.2 2007-11-15 17:29:44 mrudul_uchil Exp $
+   $Id: README.wssagentszip,v 1.3 2007-11-29 07:53:04 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -40,3 +40,5 @@ famwssproviders.zip
              |____ README.websphere (instructions to install, deploy and configure websphere plugins)
              |____ README.proxy (instructions to install, create war, deploy and configure proxy web application)
              |____ xml/web.xml (for proxy only)
+             |____ license.txt
+             |____ samples/glassfish/* (WSS samples on Glassfish container)

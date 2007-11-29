@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2007-11-15 17:29:43 mrudul_uchil Exp $
+   $Id: build.xml,v 1.7 2007-11-29 07:53:04 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -143,8 +143,9 @@
             <fileset file="${wssagents.samples.dir}/**" />
         </copy>
         
+        <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template" tofile="${zip.temp.dir}/resources/AMConfig.properties" />
+        
         <copy todir="${zip.temp.dir}/resources">
-            <fileset file="${openfm.clientsamples.dir}/war/AMConfig.properties" />
             <fileset file="${openfm.clientsamples.dir}/war/amclientkeystore.jks" />
             <fileset file="${openfm.clientsamples.dir}/war/.keypass" />
             <fileset file="${openfm.clientsamples.dir}/war/.storepass" />

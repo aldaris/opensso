@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.4 2007-08-31 06:06:40 mrudul_uchil Exp $
+$Id: README,v 1.5 2007-11-29 07:53:04 mrudul_uchil Exp $
 
 %% Contents:
     %% 1. Build requirements
@@ -49,19 +49,17 @@ is setup correctly pointing to its location.
        the "opensso/products/extlib" directory of your workspace.
         
 %% 2.2 To resolve external library dependencies per container, copy corresponding 
-       container specific jars to individual extlib directories of your workspace 
+       container specific jars to extlib directory of your workspace 
        as -
-       opensso/products/wssagents/source/com/sun/identity/wssagents/glassfish/extlib
-       opensso/products/wssagents/source/com/sun/identity/wssagents/weblogic/extlib
-       opensso/products/wssagents/source/com/sun/identity/wssagents/websphere/extlib
+       opensso/products/wssagents/extlib
        
-       For example, for "glassfish", you need at add
+       For example, for "glassfish", you need to add
        1) javaee.jar
        2) appserv-rt.jar 
-       under opensso/products/wssagents/source/com/sun/identity/wssagents/glassfish/extlib
+       under opensso/products/wssagents/extlib
        
        For WebLogic Server, you need to add weblogic.jar under
-       opensso/products/wssagents/source/com/sun/identity/wssagents/weblogic/extlib
+       opensso/products/wssagents/extlib
        You can get the weblogic.jar from a weblogic server installation.
 
 %% 3. Building the workspace

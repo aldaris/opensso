@@ -47,9 +47,6 @@ section).
  
 
 I. Deploy the samples
-II. Create web services agent profiles:
-
-I. Deploy the samples:
 
    The samples here are provided with convenient "ant" build script to
    build and deploy the samples. This sample comes with two directories
@@ -68,52 +65,8 @@ I. Deploy the samples:
    4. cd StockQuoteService and run "ant -f build.xml". This will build
       and deploy the StockService onto glassfish container.
 
-II. Create web services agent profiles
 
-   1. Login into Federation Access Manager Console using amadmin
-
-   2. Navigate to opensso->subjects->agent to create web services client
-      profile. The README.glassfish assumes "wsc" as the web services client
-      profile. 
-
-   3. Click on "New". 
-
-   4. Enter web services client id as "wsc" and enter "test" as the password. 
-      and choose Agent type as "Web Services Security Client"
-
-   5. When you save, this will redirect back to the web services agent page.
-   
-   6. Click on "wsc" to edit "wsc" web services agent.
-
-   7. Choose any of the security mechanism and any optional configuration.
-      Note: More details on this page can be found from the documentation.
-      Here, probably choose X509Token as the security mechanism and enable
-      isRequestSign Enabled flag.
-
-   8. Save the configuration.
-
-   9. Now create Web services provider profile.
-  
-   10. Click on "New".
-
-   11. Enter web services client id as "wsp" and enter "test" as the password.
-       and choose Agent type as "Web Services Security Client" 
-
-   12. When you save, this will redirect back to the web services agent page.
-
-   13. Click on "wsp" to edit "wsp" web services agent.
-
-   14. Select either all the security mechanisms or select X509Token 
-       authentication mechanism.
-
-   15. Enabled isRequest Signature Verified flag and finally save the provider
-       configuration.
-
-   16. Restart the container.
-
-
-How to run the sample:
-======================
+II. Run the sample
 
   1. Access the stock quote client page.
 
