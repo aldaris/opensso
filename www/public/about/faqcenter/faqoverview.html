@@ -1,25 +1,22 @@
  <div><table cellpadding="0" cellspacing="10" border="0" align="center" valign="top">
   <col WIDTH=100%>
 	<tr><td><img src="../../../images/logo.gif" width="179" height="68" border="0" alt="OpenSSO"></td></tr>
-	<tr><td><h2>FAQ Overview</h2></td></tr>
+	<tr><td><h2>OpenSSO FAQ</h2></td></tr>
 	<tr><td><font size="2">
 <ol>
 <li><a href="#what_is">What is OpenSSO?</a></li>
-<li><a href="#why">Why would Sun open source SSO?</a></li>
+<li><a href="#why">Why would Sun open source this proprietary code?</a></li>
 <li><a href="#benefits">What are the benefits of open-sourcing software?</a></li>
 <li><a href="#openssobenefits">What are the benefits of OpenSSO??</a></li>
-<li><a href="#comprises">What comprises OpenSSO?</a></li>
 <li><a href="#objectives">What are the objectives of the OpenSSO project?</a></li>
-<li><a href="#benefits">What are the benefits of open-sourcing software?</a></li>
+<li><a href="#comprises">What comprises OpenSSO?</a></li>
 <li><a href="#large">How large is the OpenSSO community?</a></li>
-<li><a href="#url">What is the URL for the OpenSSO project?</a></li>
 <li><a href="#available">What is available on the OpenSSO project site?</a></li>
 <li><a href="#license">What license is used for the OpenSSO code base?</a></li>
 <li><a href="#cost">Is there any cost for using the OpenSSO source code?</a></li>
-<li><a href="#register">Do I need to register to use the OpenSSO source code I downloaded from the site?</a></li>
-<li><a href="#related">How are OpenSSO, Sun Java System Access Manager and Sun Java System Federation Manager related?</a></li>
-<li><a href="#amversion">What version of Sun Java System Access Manager has been open sourced?</a></li>
-<li><a href="#amname">If I build the code for Access Manager, can I call it Access Manager?</a></li>
+<li><a href="#allowed">What am I allowed to do with the OpenSSO source code?</a></li>
+<li><a href="#amname">If I build the code, can I call it Access Manager?</a></li>
+<li><a href="#register">Do I need to register to download the OpenSSO source code?</a></li>
 <li><a href="#participate">How do I participate in the OpenSSO project?</a></li>
 <li><a href="#start">Where do I start?</a></li>
 <li><a href="#support">Can I get support on OpenSSO?</a></li>
@@ -28,17 +25,19 @@
 <tr><td><p><b>Q:<b><a name="what_is"></a> What is OpenSSO?</b></b></p>
 
 
-<p>The Open Web Single Sign-On Project, also referred to as OpenSSO, is an open development effort based on the source code for <a href="http://www.sun.com/software/products/access_mgr/index.xml">Sun Java<sup>TM</sup> System Access Manager</a>, a core identity infrastructure product offered by Sun Microsystems, Inc. The goal of OpenSSO is to provide an extensible foundation for an identity services infrastructure that will facilitate single sign-on (SSO) for web applications hosted on web and application servers in the public domain.</p></td></tr>
+<p>The Open Web Single Sign-On Project, referred to as OpenSSO, is an open development effort based on the source code for <a href="http://www.sun.com/software/products/access_mgr/index.xml">Sun Java<sup>TM</sup> System Access Manager</a> and <a href="http://www.sun.com/software/products/federation_mgr/index.xml">Sun Java System Federation Manager</a>, two identity and federation products offered by Sun Microsystems, Inc. The goal of OpenSSO is to provide an extensible foundation for an identity services infrastructure in the public domain, facilitating single sign-on (SSO) for web applications hosted on web and application servers.</p></td></tr>
 
 
-<tr><td><p><b>Q:<b><a name="why"></a> Why would Sun open source SSO?</b></b></p>
+<tr><td><p><b>Q:<b><a name="why"></a> Why would Sun open source this proprietary code?</b></b></p>
 
-<p>Sun's goal is to improve developer access to this technology so that it can become a ubiquitous part of web security infrastructure. It is a given that companies are going to secure their internal web infrastructure using SSO technology, and the OpenSSO project gives developers the freedom to do that without adding software license costs to their budgets. The official Sun Microsystems answer to this FAQ can be found on the Sun web site at <a href="http://www.sun.com/software/products/identity/opensso/faq.xml">http://www.sun.com/software/products/identity/opensso/faq.xml</a>.</p></td></tr>
+<p>The official Sun Microsystems answer to this question can be found on the <a href="http://www.sun.com/software/products/identity/opensso/faq.xml">Sun web site</a>. In short, Sun's goal is to improve developer access to SSO technology so that it can become a ubiquitous part of web security infrastructure. OpenSSO gives developers the freedom to secure their internal web infrastructure using SSO technology without adding software licensing costs to their budgets.</p></td></tr>
 
 
 <tr><td><p><b>Q:<b><a name="benefits"></a> What are the benefits of open-sourcing software?</b></b></p>
 
-<p><ul>
+<p>Open-sourcing software:
+<P></P>
+<ul>
 <li>Allows developers to cooperate freely across time and distance with a minimum of legal restrictions.</li>
 <li>Increases code quality and security.</li>
 <li>Reduces deployment costs.</li>
@@ -50,13 +49,24 @@
 
 <tr><td><p><b>Q:<b><a name="openssobenefits"></a> What are the benefits of OpenSSO?</b></b></p>
 
-<p>The modules available in OpenSSO make up a common identity service, allowing for user authentication and single sign-on within a domain. Sun is providing this identity service to developers so they can incorporate it into each web or J2EE-based application and service they provide to internal employees and contractors. The availability of open source code that provides identity-based authentication and single sign-on capabilities will lead to broad adoption of the technology in the Java community.
+<p>The availability of free, open source code that provides identity-based authentication and single sign-on capabilities will lead to broad adoption of the technology in the Java community. The modules available in OpenSSO comprise an identity service that allows for user authentication and single sign-on within a domain. Developers can freely incorporate this identity service into the web or J2EE-based applications or services they provide.
 </p></td></tr>
+
+
+<tr><td><p><b>Q:<b><a name="objectives"></a> What are the objectives of the OpenSSO project?</b></b></p>
+
+<p>The objectives of the OpenSSO project are:
+<P></P>
+<ul>
+<li>To provide open access to an identity infrastructure source code.</li>
+<li>To enable innovation to build the next generation of open network identity services.</li>
+<li>To establish open XML-based file formats and language-independent component application programming interfaces (APIs).</li>
+</ul></p></td></tr>
 
 
 <tr><td><p><b>Q:<b><a name="comprises"></a> What comprises OpenSSO?</b></b></p>
 
-<p>Sun Microsystems will provide the source for the following modules contained in Sun Java System Access Manager to the Java developer community on a free right to use basis:
+<p>Sun Microsystems will provide the source for the following modules to the Java developer community on a free right-to-use basis:
 
 <ul>
 <li>Session Management</li>
@@ -68,30 +78,16 @@
 </ul></p></td></tr>
 
 
-<tr><td><p><b>Q:<b><a name="objectives"></a> What are the objectives of the OpenSSO project?</b></b></p>
-
-<p><ul>
-<li>To provide open access to an identity infrastructure source code.</li>
-<li>To enable innovation to build the next generation of open network identity services.</li>
-<li>To establish open XML-based file formats and language-independent component applicatin programming interfaces (API).</li>
-</ul></p></td></tr>
-
-
 <tr><td><p><b>Q:<b><a name="large"></a> How large is the OpenSSO community?</b></b></p>
 
-<p>The OpenSSO project, for all intents and purposes, went live in July, 2006 so the development community is small. The expectation is that developers working on the open source code will greatly increase as news of the project spreads.
+<p>The OpenSSO project, for all intents and purposes, went live in July, 2006. As of June, 2007, there were 400 project members.
 
 </p></td></tr>
 
 
-<tr><td><p><b>Q:<b><a name="url"></a> What is the URL for the OpenSSO project?</b></b></p>
+<tr><td><p><b>Q:<b><a name="available"></a> What is available on the OpenSSO site?</b></b></p>
 
-<p>The OpenSSO project is hosted at <a href="http://opensso.dev.java.net">http://opensso.dev.java.net</a>.</p></td></tr>
-
-
-<tr><td><p><b>Q:<b><a name="available"></a> What is available on the OpenSSO project site?</b></b></p>
-
-<p>The OpenSSO project site contains the source code, nightly builds, the governance, documentation, forums, mailing lists, and links to relevant information. In addition, it contains instructions on how to become involved in this project.</p></td></tr>
+<p>The OpenSSO site contains the source code, nightly builds, the governance proposal, the contributor agreement, documentation, forums, mailing lists, and links to relevant information. In addition, it contains instructions on how to become involved. Check out the navigation bar on the left for more specifics.</p></td></tr>
 
 
 <tr><td><p><b>Q:<b><a name="license"></a> What license is used for the OpenSSO code base?</b></b></p>
@@ -104,23 +100,19 @@
 <p>No. The OpenSSO source code is free to use, free to modify and free to redistribute.</p></td></tr>
 
 
-<tr><td><p><b>Q:<b><a name="register"></a> Do I need to register to use the OpenSSO source code I downloaded from the site?</b></b></p>
-
-<p>You do not need to register as a user on the java.net site in order to download the source code for OpenSSO. Nor is there a need to register specifically as a member of the OpenSSO project.</p></td></tr>
+<tr><td><p><b>Q:<b><a name="allowed"></a> What am I allowed to do with the OpenSSO source code?</b></b></p>
 
 
-<tr><td><p><b>Q:<b><a name="related"></a> How are OpenSSO, Sun Java System Access Manager and Sun Java System Federation Manager related?</b></b></p>
+<p>You can view, modify, build, use, and redistribute the OpenSSO source code. Each of the binary downloads have their own licenses with different rights and restrictions. Please refer to the <a href="http://www.sun.com/cddl/cddl.html">Licensing page</a> for information about the license terms associated with the source code and binaries.</p></td></tr>
 
-<p>OpenSSO is based on the Access Manager 7.0 code base (including components under development for 7.1). There are some changes (for example, Access Manager contains some third-party source code which we cannot redistribute) but we have worked to minimize these. The next versions of both Federation Manager and Access Manager will be built from the OpenSSO source (just as Sun Java System Application Server is built from the Glassfish source). When Sun decides that OpenSSO contains the features we want to use in the next Access Manager/Federation Manager product release, we will branch the code and stabilize the release branch - all in public. New feature development can and will continue on the trunk and fixes in the Sun release branch will be copied back to the OpenSSO trunk.</p></td></tr>
+<tr><td><p><b>Q:<b><a name="amname"></a> If I build the code, can I call it Access Manager?</b></b></p>
 
-<tr><td><p><b>Q:<b><a name="amversion"></a> What version of Sun Java System Access Manager has been open sourced?</b></b></p>
+<p>No. Access Manager, Federation Manager and Federated Access Manager are trademarks of Sun Microsystems. You can not call what you build, or any modifications thereof, by any of these names. You can call it anything that is not already trademarked.</p></td></tr>
 
-<p>Open sourced components are snapshots of the latest version of Access Manager under development, roughly corresponding to version 7.1. At this time, there are no plans to open source the code for previous versions of Access Manager.
-</p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="amname"></a> If I build the code for Access Manager, can I call it Access Manager?</b></b></p>
+<tr><td><p><b>Q:<b><a name="register"></a> Do I need to register to download the OpenSSO source code?</b></b></p>
 
-<p>No. You can not call what you build, or any modifications thereof, Access Manager. You can call it anything else, however, that is not already trademarked.</p></td></tr>
+<p>You do not need to register as a user on the <a href="http://www.java.net/">java.net</a> site in order to download the source code for OpenSSO. Nor do you need to register as a member of the OpenSSO project.</p></td></tr>
 
 
 <tr><td><p><b>Q:<b><a name="participate"></a> How do I participate in the OpenSSO project?</b></b></p>
@@ -148,11 +140,11 @@ See the <a href="https://opensso.dev.java.net/public/about/governance/index.html
 
 <tr><td><p><b>Q:<b><a name="start"></a> Where do I start?</b></b></p>
 
-<p>The best place to start is the <a href="https://opensso.dev.java.net/">OpenSSO home page</a> where you can find links to the nightly builds, discussion groups, documentation, downloads, source code, white papers, and more. You can also find information in the <a href="index.html">FAQ Center</a>.</p></td></tr>
+<p>The best place to start is the <a href="https://opensso.dev.java.net/">OpenSSO home page</a> where you can find links to the nightly builds, discussion groups, documentation, downloads, source code, white papers, and more. You can find answers to questions regarding CVS and how the OpenSSO tree works <a href="faqgetstart.html">here</a>. You can find answers to technical questions regarding the source code <a href="faqsourcecode.html">here</a>.</p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="support"></a> Can I get support on OpenSSO?</b></b></p>
 
-<p>The short answer is <b>No</b>. Sun will support Access Manager and Federation Manager, which will be built from the OpenSSO source. However, never say never. If there is sufficient demand, we will consider new support offerings.</p></td></tr>
+<p>Yes and no. There are <a href="https://opensso.dev.java.net/servlets/ProjectMailingListList">mailing lists</a> and <a href="https://opensso.dev.java.net/servlets/ForumMessageList?forumID=1554">community forums</a> where you can post questions and receive help from members of the OpenSSO community. And, Sun Microsystems will support Federated Access Manager, a productized release that will be built from the OpenSSO source code. At this point, though, Sun Microsystems does not support OpenSSO.</p></td></tr>
 
 </table>
 

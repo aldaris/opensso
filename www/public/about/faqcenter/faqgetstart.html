@@ -1,78 +1,68 @@
  <div><table cellpadding="0" cellspacing="10" border="0" align="center" valign="top">
   <col WIDTH=100%>
 	<tr><td><img src="../../../images/logo.gif" width="179" height="68" border="0" alt="OpenSSO"></td></tr>
-	<tr><td><h2>FAQ Getting Started</h2></td></tr>
+	<tr><td><h2>Getting Started FAQ</h2></td></tr>
 	<tr><td><font size="2">
 <ol>
 <li><a href="#browse">How do I browse the source code?</a></li>
-<li><a href="#download">How do I download the OpenSSO source code and binaries?</a></li>
-<li><a href="#allowed">What am I allowed to do with the OpenSSO source code and binaries?</a></li>
+<li><a href="#checkout">How do I checkout the source code?</a></li>
+<li><a href="#download">How do I download OpenSSO?</a></li>
 <li><a href="#information">Where do I find information about setting up the environment, getting the right tools, and actually building the source?</a></li>
-<li><a href="#built">Now that I've built the code, what do I do?</a></li>
-<li><a href="#participate">How do I participate in the communities?</a></li>
+<li><a href="#built">Now that I've built the code, what can I do?</a></li>
 <li><a href="#bug">How do I report a bug?</a></li>
 <li><a href="#changes">How do I make changes to files in the source?</a></li>
+<li><a href="#patch">What is a patch and how do I submit one?</a></li>
 </ol>
 </font></td></tr>
 
 
 <tr><td><p><b>Q:<b><a name="browse"></a> How do I browse the source code?</b></b></p>
 
-<p>You can browse the source code without a java.net account by going to the <a href="https://opensso.dev.java.net/source/browse/opensso/">Source - CVS page</a>.</p></td></tr>
+<p>You can browse the source code without a java.net account by going to the <a href="https://opensso.dev.java.net/source/browse/opensso/">Source - CVS</a> page.</p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="download"></a> How do I download the OpenSSO source code?</b></b></p>
-<p>
-You can download the source code for the most recent nightly build from 
-<a href="http://download.java.net/general/opensso/nightly/">http://download.java.net/general/opensso/nightly/</a> - select a module (for
-example, '<a href="http://download.java.net/general/opensso/nightly/amserver">Access Manager</a>'), select 'latest', then download the source JAR
-file - in this case, opensso-src.jar.
+<tr><td><p><b>Q:<b><a name="checkout"></a> How do I checkout the source code?</b></b></p>
+
+<p>To checkout the project source as a registered java.net user, see <a href="https://opensso.dev.java.net/servlets/ProjectSource">https://opensso.dev.java.net/servlets/ProjectSource</a>. As a registered user, you will be able to commit changes back to the tree if you have been approved as an OpenSSO <i>Committer</i>. (See the <a href="https://opensso.dev.java.net/public/about/governance/index.html">governance</a> for more details on OpenSSO project roles).
 </p>
 <p>
-You can also checkout the source code using a CVS client. You need not be 
-a registered user - you can use 'guest' (without the quotes) as your 
-username and password using the following command:
+You can also checkout the source code with a CVS client as a <i>guest</i>. Use <i>guest</i> as a username and password with the following command:
 </p>
 <p>
 <code>cvs -d :pserver:guest:guest@cvs.dev.java.net:/cvs checkout opensso<code>
 </p>
 <p>
-Note that you cannot commit changes back to CVS as guest!
+<i>Note: You cannot commit changes back to CVS as guest!</i>
 </p>
-<p>To checkout the project source using your dev.java.net 
-username see <a href="https://opensso.dev.java.net/servlets/ProjectSource">https://opensso.dev.java.net/servlets/ProjectSource</a>. You will be able to commit back changes if you have the <b>Committer</b> role in OpenSSO (see <a href="https://opensso.dev.java.net/public/about/governance/index.html">governance</a> for more details on OpenSSO project roles).
+
+</td></tr>
+
+<tr><td><p><b>Q:<b><a name="download"></a> How do I download OpenSSO?</b></b></p>
+<p>
+You can download built binaries from the <a href="https://opensso.dev.java.net/public/use/index.html">Downloads</a> page.
 </p>
 </td></tr>
 
-<tr><td><p><b>Q:<b><a name="allowed"></a> What am I allowed to do with the OpenSSO source code?</b></b></p>
-
-
-<p>You can freely view, modify, build, use, and redistribute the OpenSSO source code. Each of the binary downloads have their own licenses with different rights and restrictions. Please refer to the <a href="">Licensing page</a> for information about the license terms associated with the source code and binaries.</p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="information"></a> Where do I find information about setting up the environment, getting the right tools, and actually building the source?</b></b></p>
 
 
-<p>Using the <a href="https://opensso.dev.java.net/source/browse/opensso/">Source - CVS</a> link, click into the <code>products/amserver</code> directory. The README in this directory contains information on requirements and dependencies. This information is reproduced in the <a href="faqbuild.html">FAQ Build Requirements and Dependencies</a>. Build instructions are available in PDF <a href="https://opensso.dev.java.net/public/use/build/openssoSingleWAR.pdf">here</a>.       
+<p>On the <a href="https://opensso.dev.java.net/source/browse/opensso/">Source - CVS</a> page, change into the <code>products/amserver</code> directory. The README in this directory contains information on requirements and dependencies. This information is reproduced in the <a href="faqbuild.html">FAQ Build Requirements and Dependencies</a>.       
 
 </p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="built"></a> Now that I've built the code, what do I do?</b></b></p>
+<tr><td><p><b>Q:<b><a name="built"></a> Now that I've built the code, what can I do?</b></b></p>
 
 
-<p>You can start by joining communities of interest. This will give you a sense of what work is already being done and how you can best contribute. For example, you can:
-
+<p>To particpate in the OpenSSO project, you must <a href="https://www.dev.java.net/servlets/Login?cookieCheck=on">register</a> with <code>java.net</code> and join <a href="https://opensso.dev.java.net/public/about/governance/index.html">OpenSSO</a>. After this, you can:
+</P>
 <ul>
-<li>Participate in communities and discussions.</li>
+<li>Participate in discussions on <a href="https://opensso.dev.java.net/servlets/ProjectMailingListList">mailing lists</a> and in <a href="https://opensso.dev.java.net/servlets/ForumMessageList?forumID=1554">community forums</a>.</li>
 <li>Find and report bugs.</li>
-<li>Contribute documentation or source code.</li>
+<li>Write documentation or source code.</li>
 <li>Give feedback on how to make the project more successful.</li>
 </ul>
+</td></tr>
 
-To particpate in the OpenSSO project, you must register. See the Governance and the Register link in the navigation bar for more details. </p></td></tr>
-
-<tr><td><p><b>Q:<b><a name="participate"></a> How do I participate in the communities?</b></b></p>
-
-<p>Communities are the primary way to focus information and discussions on particular features. The OpenSSO navigation bar has links to discussion forums you can read and email aliases you can join.
-</p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="bug"></a> How do I report a bug?</b></b></p>
 
@@ -84,20 +74,19 @@ To particpate in the OpenSSO project, you must register. See the Governance and 
 
 <tr><td><p><b>Q:<b><a name="changes"></a> How do I make changes to files in the OpenSSO source?</b></b></p>
 
-<p>A contributor may resolve an issue by applying new code to files in the source tree. 
-
-<p>This is the process for making changes to files in the OpenSSO source:
+<p>An OpenSSO contributor may resolve an issue by applying new code to files in the source tree. This is the process for making changes to files in the OpenSSO source:
 <ol>
 <li>Check out the latest copy of the source files.</li>
-<li>Make modifications to the appropriate files to incorporate your changes or additions.</li>
+<li>Make modifications to the appropriate files.</li>
 <li>Write comments to explain the changes you have made.</li>
-<li>Modify the Javadoc<sup>TM</sup> comments and other appropriate documentation.</li>
+<li>Modify the comments that will be generated using the Javadoc<sup>TM</sup> tool and any other appropriate documentation.</li>
 <li>Build the software and verify your fix.</li>
-<li>Run the relevant sanity/regression tests to make sure that the fix has not broken anything.</li>
+<li>Run the relevant sanity and regression tests to make sure that the fix has not broken anything.</li>
 </ol>
 
-A <b>patch</b> is the set of differences between two versions of the same file. It is generated by running <pre>cvs diff</pre> 
-which reports the differences between two versions of one or more files in the source tree. Patches are used to send someone the exact changes that were made to your version of a program or a document. The receiver of the patch can then apply it to their version of the source tree to merge the changes and bring their version up-to-date with your version. <i>All patches must be reviewed before adding them back to the source tree.</i>
+<tr><td><p><b>Q:<b><a name="patch"></a> What is a patch and how do I submit one?</b></b></p>
+
+<p>Running <pre>cvs diff</pre> reports the differences between two versions of the same file. A <i>patch</i> captures these exact changes. The receiver of a patch applies it to their workspace to merge the changes and bring their version up-to-date with your version. <i>All patches must be reviewed before adding them back to the source tree.</i>
 
 <p>This is the process for submitting a patch file for review:
 
