@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.8 2007-11-09 23:05:58 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.9 2007-11-30 04:26:08 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
 
     ServiceConfigManager scm = null;
 
-    ServiceConfig orgConfig, agentConfig, agentGroupConfig;
+    ServiceConfig orgConfig, agentGroupConfig;
 
     String ssmListenerId, scmListenerId;
 
@@ -186,7 +186,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             } 
         }
         try {
-            if (type.equals(IdType.AGENTONLY)) {
+            if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
                 orgConfig = getOrgConfig(token);
                 aTypeConfig = orgConfig.getSubConfig(agentName);
                 if (aTypeConfig == null) {
@@ -225,17 +225,27 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         }
         ServiceConfig aCfg = null;
         try {
-            if (type.equals(IdType.AGENTONLY)) {
+            if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
                 orgConfig = getOrgConfig(token);
                 aCfg = orgConfig.getSubConfig(name);
                 if (aCfg != null) {
                     orgConfig.removeSubConfig(name);
+                } else {
+                    // Agent not found, throw an exception
+                    Object args[] = { name, type };
+                    throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                            "223", args));
                 }
             } else if (type.equals(IdType.AGENTGROUP)) {
                 agentGroupConfig = getAgentGroupConfig(token);
                 aCfg = agentGroupConfig.getSubConfig(name);
                 if (aCfg != null) {
                     agentGroupConfig.removeSubConfig(name);
+                } else {
+                    // Agent not found, throw an exception
+                    Object args[] = { name, type };
+                    throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                            "223", args));
                 }
             }
         } catch (SMSException smse) {
@@ -1008,16 +1018,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 AdminTokenAction.getInstance());
 
         boolean answer = false;
-        String baseDN = null;
         String userid = username;
         try {
             /* Only agents with IdType.AGENTONLY is used for authentication,
              * not the agents with IdType.AGENTGROUP.
              * AGENTGROUP is for storing common properties.
-             * So use the AGENTONLY's baseDN.
              */
-            baseDN = constructDN("default", "ou=OrganizationConfig,",
-                    "/", version, agentserviceName);
             if (DN.isDN(username)) {
                 userid = LDAPDN.explodeDN(username, true)[0];
             }
@@ -1038,11 +1044,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.authenticate(): "
                         + "Unable to authenticate SSOException:" + ssoe);
-            }
-        } catch (SMSException smse) {
-            if (debug.warningEnabled()) {
-                debug.warning("AgentsRepo.authenticate: "
-                        + "Unable to construct agent DN " + smse);
             }
         }
         return (answer);
