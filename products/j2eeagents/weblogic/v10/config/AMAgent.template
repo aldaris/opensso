@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgent.template,v 1.6 2007-10-12 22:10:43 madan_ranganath Exp $
+# $Id: AMAgent.template,v 1.7 2007-11-30 23:24:00 huacui Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -79,10 +79,6 @@ com.iplanet.am.service.secret = @AGENT_ENCRYPTED_PASSWORD@
 # The key that will be used to encrypt and decrypt passwords
 # Hot-Swap Enabled: No
 am.encryption.pwd = @AGENT_ENCRYPT_KEY@
-
-# The Client key that will be used to encrypt and decrypt passwords
-# Hot-Swap Enabled: No
-com.sun.identity.client.encryptionKey= @AGENT_ENCRYPT_KEY@
 
 #
 # DEBUG SERVICE PROPERTIES

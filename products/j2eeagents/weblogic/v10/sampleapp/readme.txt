@@ -30,14 +30,14 @@ descriptor has already been edited to include the Agent Filter. The
 deployment descriptors and source code are available in the sampleapp/src 
 directory.
 
-The sample application is supported for Policy Agent 2.2.
+The sample application is supported for Policy Agent 3.0.
 
 The application is already built and ready to be deployed. It is available at
 sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent 
 successfully and have followed the steps outlined in the Sun Java System 
-Access Manager Policy Agent 2.2 Guide for BEA WebLogic Server/Portal 10.0, 
+Access Manager Policy Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0, 
 including the post-installation steps.
 
 
@@ -58,9 +58,9 @@ configured with the subjects and policies required by the sample application.
     * gina/gina
 
 
-2. Assign Users to Roles
-   Create new roles for employee, manager, and everyone. Then assign the 
-   users to the roles as follows:
+2. Assign Users to Groups
+   Create new groups for employee, manager, everyone, and customer. Then assign 
+   the users to the groups as follows:
 
     * employee:
           o andy, bob, chris, dave, ellen, frank
@@ -68,15 +68,10 @@ configured with the subjects and policies required by the sample application.
           o andy, bob, chris
     * everyone:
           o andy, bob, chris, dave, ellen, frank, gina
-
-3. Group Setup:
-   Create a new group called customer and then assign users to 
-   that group as follows:
-
     * customer:
           o chris, ellen
     
-4. On Access Manager admin console, create the following URL Policies:
+3. On Access Manager admin console, create the following URL Policies:
    In the following URLs, replace the <hostname> and <port> with the 
    actual fully qualified host name and port on which the sample 
    application will be running.
@@ -98,12 +93,12 @@ configured with the subjects and policies required by the sample application.
 
 
 Configure the agent AMAgent.properties file
---------------------------------
+--------------------------------------------
 
 1. UUID to principal mapping in AMAgent.properties file:
 
     By default, the installation assumes that the Access Manager product was
-    under default Org/Realm "dc=iplanet,dc=com". If the Org/Realm for the
+    under default realm "dc=opensso,dc=java,dc=net". If the realm for the
     deployment scenario is different from the default root suffix, the Universal
     Id (UUID) for the role/principal mappings should be changed accordingly. The
     Universal Id can be obtained by using the agentadmin --getUuid command.
@@ -145,7 +140,7 @@ Deploying the Sample Application
 Note, before deploying the sample application, please be sure that you have
 deployed the Agent Application, which should have been done after installing 
 the agent.This was explained in the Sun Java System Access Manager Policy 
-Agent 2.2 Guide for BEA WebLogic Server/Portal 10.0 in the chapter which 
+Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0 in the chapter which 
 outlined the post-installation tasks.
 
 To deploy the application, do the following:
@@ -168,7 +163,7 @@ If you encounter problems when running the application, review the log files to
 learn what exactly went wrong. J2EE Agent logs can be found at 
 <agent_install_root>/<agent_instance>/logs/debug directory.
 
-Also, see the Sun Java System Access Manager Policy Agent 2.2 Guide 
+Also, see the Sun Java System Access Manager Policy Agent 3.0 Guide 
 for BEA WebLogic Server/Portal 10.0.
 
 
