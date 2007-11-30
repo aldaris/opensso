@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.10 2007-11-21 02:27:39 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.11 2007-11-30 01:01:27 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1275,32 +1275,28 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String[] params = {realm, entityName, "SAMLv2", "XACML PDP"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
            
-        try {
-            ObjectFactory objFactory = new ObjectFactory();
+        try {            
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
+            
+            //entityConfig is the extended entity configuration object
+            EntityConfigElement entityConfig =
+                    saml2Manager.getEntityConfig(realm,entityName);
+                       
+            if (entityConfig == null) {
+                throw new AMConsoleException("invalid.xacml.configuration");
+            }
             XACMLPDPConfigElement pdpEntityConfig =
                 saml2Manager.getPolicyDecisionPointConfig(
                 realm, entityName);            
             if (pdpEntityConfig == null) {
                 throw new AMConsoleException("invalid.xacml.configuration");
             } else {
-                List list = pdpEntityConfig.getAttribute();
-                Map values = convertSetToListInMap(attrValues);
-                for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
-                    String key = (String)i.next();
-                    AttributeType atype = objFactory.createAttributeType();
-                    atype.setName(key);
-                    atype.getValue().addAll((List)values.get(key));
-                    list.add(atype);
-                }
+                updateBaseConfig(pdpEntityConfig, attrValues);   
             }
+            
+            //saves the attributes by passing the new entityConfig object
+            saml2Manager.setEntityConfig(realm,entityConfig);
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
-        } catch (JAXBException e) {
-            String strError = getErrorString(e);
-            String[] paramsEx = 
-                {realm, entityName, "SAMLv2", "XACML PDP", strError};
-            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
-            throw new AMConsoleException(strError);
         } catch (SAML2MetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx = 
@@ -1344,32 +1340,29 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String[] params = {realm, entityName, "SAMLv2", "XACML PEP"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
             
-        try {
-            ObjectFactory objFactory = new ObjectFactory();
+        try {           
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
+            
+            //entityConfig is the extended entity configuration object
+            EntityConfigElement entityConfig =
+                    saml2Manager.getEntityConfig(realm,entityName);
+                       
+            if (entityConfig == null) {
+                throw new AMConsoleException("invalid.xacml.configuration");
+            }
+            
             XACMLAuthzDecisionQueryConfigElement pepEntityConfig =
                     saml2Manager.getPolicyEnforcementPointConfig(
                     realm, entityName);            
             if (pepEntityConfig == null) {
                 throw new AMConsoleException("invalid.xacml.configuration");
             } else {
-                List list = pepEntityConfig.getAttribute();
-                Map values = convertSetToListInMap(attrValues);
-                for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
-                    String key = (String)i.next();
-                    AttributeType atype = objFactory.createAttributeType();
-                    atype.setName(key);
-                    atype.getValue().addAll((List)values.get(key));
-                    list.add(atype);
-                }
+                updateBaseConfig(pepEntityConfig, attrValues);                
             }
+            
+            //saves the attributes by passing the new entityConfig object
+            saml2Manager.setEntityConfig(realm,entityConfig);
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
-        } catch (JAXBException e) {
-            String strError = getErrorString(e);
-            String[] paramsEx = 
-                {realm, entityName, "SAMLv2", "XACML PEP", strError};
-            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
-            throw new AMConsoleException(strError);
         } catch (SAML2MetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
@@ -1377,7 +1370,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
             throw new AMConsoleException(strError);
         }
-    } 
+    }    
+    
     /**
      * create Entity Config Object.(Extended Metadata)
      *
