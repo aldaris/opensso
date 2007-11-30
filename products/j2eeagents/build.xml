@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2007-11-06 16:19:58 kevinserwin Exp $
+   $Id: build.xml,v 1.16 2007-11-30 23:47:35 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -40,6 +40,11 @@
     <!-- overridable properties -->
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
+
+    <tstamp>
+        <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
+            unit="day"/>
+    </tstamp>
 
     <target name="preparebuild">
         <mkdir dir="${j2eeagents.built.dir}"/>
