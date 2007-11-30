@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCConfigViewBean.java,v 1.2 2007-10-17 23:00:36 veiming Exp $
+ * $Id: SCConfigViewBean.java,v 1.3 2007-11-30 02:11:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,9 +139,6 @@ public abstract class SCConfigViewBean extends AMPrimaryMastHeadViewBean {
             if (model.hasConfigAttributes(serviceName)) {
                 SCServiceProfileViewBean vb = (SCServiceProfileViewBean)
                     getViewBean(SCServiceProfileViewBean.class);
-                setPageSessionAttribute(
-                    SCServiceProfileViewBean.PG_RETURN_HOME_PAGE, 
-                    getClass().getName());
                 passPgSessionMap(vb);
                 vb.forwardTo(getRequestContext());
             } else {                

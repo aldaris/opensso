@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCServiceProfileViewBean.java,v 1.2 2007-10-17 23:00:38 veiming Exp $
+ * $Id: SCServiceProfileViewBean.java,v 1.3 2007-11-30 02:11:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,6 @@ public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
     public static final String DEFAULT_DISPLAY_URL =
         "/console/service/SCServiceProfile.jsp";
     public static final String PAGE_NAME = "SCServiceProfile";
-    public static final String PG_RETURN_HOME_PAGE = "pgSvcHomePage";
 
     private boolean populatedSubConfigTable;
 
@@ -327,18 +326,11 @@ public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
      * @param event Request invocation event
      */
     public void handleButton3Request(RequestInvocationEvent event) {
-        backTrail();
-        String homePage = (String)getPageSessionAttribute(PG_RETURN_HOME_PAGE);
-        try {
-            Class clazz = Class.forName(homePage);
-            SCConfigViewBean vb = (SCConfigViewBean)getViewBean(clazz);
-            passPgSessionMap(vb);
-            vb.forwardTo(getRequestContext());
-        } catch (ClassNotFoundException e) {
-            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
-            forwardTo();
-        }
+            backTrail();
+        SCConfigViewBean vb = (SCConfigViewBean)getViewBean(
+            SCConfigGlobalViewBean.class);
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
     }
 
 
