@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFGeneralViewBean.java,v 1.4 2007-10-16 22:09:38 exu Exp $
+ * $Id: IDFFGeneralViewBean.java,v 1.5 2007-11-30 01:11:31 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,8 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
-import com.sun.identity.console.federation.model.IDFFEntityModel;
-import com.sun.identity.console.federation.model.IDFFEntityModelImpl;
+import com.sun.identity.console.federation.model.IDFFModel;
+import com.sun.identity.console.federation.model.IDFFModelImpl;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.util.Map;
 
@@ -52,7 +52,7 @@ public class IDFFGeneralViewBean
         super.beginDisplay(event);        
   
         psModel.setValue(TF_NAME, entityName);        
-        IDFFEntityModel model = (IDFFEntityModel)getModel();
+        IDFFModel model = (IDFFModel)getModel();
         try {
             if (model.isAffiliate(realm, entityName)) {
                 psModel.setValue(TXT_TYPE, 
@@ -68,7 +68,7 @@ public class IDFFGeneralViewBean
     }
     
     private void populateValue(String name) {
-        IDFFEntityModel model = (IDFFEntityModel)getModel();
+        IDFFModel model = (IDFFModel)getModel();
         try {
             Map values = model.getCommonAttributeValues(realm, name);
             AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
@@ -95,7 +95,7 @@ public class IDFFGeneralViewBean
        throws ModelControlException 
     {        
         retrieveCommonProperties();
-        IDFFEntityModel model = (IDFFEntityModel)getModel();
+        IDFFModel model = (IDFFModel)getModel();
         
         try {
             Map orig = model.getCommonAttributeValues(realm, entityName);

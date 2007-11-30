@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFAffiliateViewBean.java,v 1.2 2007-10-16 22:09:38 exu Exp $
+ * $Id: IDFFAffiliateViewBean.java,v 1.3 2007-11-30 01:11:31 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,8 +31,8 @@ import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
-import com.sun.identity.console.federation.model.IDFFEntityProviderModel;
-import com.sun.identity.console.federation.model.IDFFEntityProviderModelImpl;
+import com.sun.identity.console.federation.model.IDFFModel;
+import com.sun.identity.console.federation.model.IDFFModelImpl;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.web.ui.model.CCAddRemoveModel;
 import com.sun.web.ui.view.addremove.CCAddRemove;
@@ -61,21 +61,21 @@ public class IDFFAffiliateViewBean
         throws ModelControlException 
     {
         super.beginDisplay(event);
-        IDFFEntityProviderModel model =
-            (IDFFEntityProviderModel)getModelInternal();       
+        IDFFModel model =
+            (IDFFModel)getModelInternal();       
         String[] args = { entityName };
         String pageTitle = MessageFormat.format(
             model.getLocalizedString(
             "idff.page.title.entityDescriptors.Affiliate"), args);
         setPageTitle(pageTitle);
-        psModel.setValue(IDFFEntityProviderModel.ATTR_PROVIDER_TYPE,
+        psModel.setValue(IDFFModel.ATTR_PROVIDER_TYPE,
             (String)getPageSessionAttribute(ENTITY_LOCATION));
         populateValue(entityName);
     }
         
     private void populateValue(String name) {
-        IDFFEntityProviderModel model =
-            (IDFFEntityProviderModel)getModelInternal();
+        IDFFModel model =
+            (IDFFModel)getModelInternal();
         
         try {
             Map values = model.getAffiliateProfileAttributeValues(
@@ -113,7 +113,7 @@ public class IDFFAffiliateViewBean
     
     protected AMModel getModelInternal() {
         HttpServletRequest req = getRequestContext().getRequest();
-        return new IDFFEntityProviderModelImpl(req, getPageSessionAttributes());
+        return new IDFFModelImpl(req, getPageSessionAttributes());
     }
     
     protected void createPropertyModel() {       
@@ -138,7 +138,7 @@ public class IDFFAffiliateViewBean
         throws ModelControlException 
     {
         retrieveCommonProperties();
-        IDFFEntityProviderModel model = (IDFFEntityProviderModel)getModel();
+        IDFFModel model = (IDFFModel)getModel();
         
         try{
             // get affiliate members

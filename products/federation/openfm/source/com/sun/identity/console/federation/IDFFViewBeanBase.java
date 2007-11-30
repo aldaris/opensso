@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFViewBeanBase.java,v 1.2 2007-08-03 22:29:02 jonnelson Exp $
+ * $Id: IDFFViewBeanBase.java,v 1.3 2007-11-30 01:11:32 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,8 +47,8 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.federation.model.EntityModel;
-import com.sun.identity.console.federation.model.IDFFEntityModel;
-import com.sun.identity.console.federation.model.IDFFEntityModelImpl;
+import com.sun.identity.console.federation.model.IDFFModel;
+import com.sun.identity.console.federation.model.IDFFModelImpl;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,7 +58,6 @@ public abstract class IDFFViewBeanBase
     protected static final String TF_NAME = "tfName";
     protected static final String TXT_TYPE = "txtType";
     protected static final String TF_DESCRIPTION = "tfDescription";
-
     
     public IDFFViewBeanBase(String name) {
         super(name);
@@ -66,12 +65,12 @@ public abstract class IDFFViewBeanBase
     
     protected AMModel getModelInternal() {
         HttpServletRequest req = getRequestContext().getRequest();
-        return new IDFFEntityModelImpl(req, getPageSessionAttributes());
+        return new IDFFModelImpl(req, getPageSessionAttributes());
     }
     
     protected String getProfileName() {
         return EntityModel.IDFF;
-    }        
+    }
     
     protected abstract void createPropertyModel();
 }

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyIDFFSPHosted.xml,v 1.2 2007-09-07 17:45:16 asyhuang Exp $
+   $Id: propertyIDFFSPHosted.xml,v 1.3 2007-11-30 01:12:09 asyhuang Exp $
    
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -227,23 +227,15 @@
             </cc>
         </property>          
         <property>
-            <label name="lblDoFederatePageURL" defaultValue="doFederatePageURL" labelFor="doFederatePageURL" />
+            <label name="lblDoFederatePageURL" defaultValue="idff.entityDescriptor.provider.attribute.label.doFederatePageURL" labelFor="doFederatePageURL" />
             <cc name="doFederatePageURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />                    
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>          
+        </property>                  
         <property>
-            <label name="lblSpAuthnContextMapping" defaultValue="spAuthnContextMapping" labelFor="spAuthnContextMapping" />
-            <cc name="spAuthnContextMapping" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>          
-        <property>
-            <label name="lblResponsdWith" defaultValue="responsdWith" labelFor="responsdWith" />
+            <label name="lblResponsdWith" defaultValue="idff.entityDescriptor.provider.attribute.label.responsdWith" labelFor="responsdWith" />
             <cc name="responsdWith" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -251,7 +243,7 @@
             </cc>
         </property>          
         <property>
-            <label name="lblFederationSPAdapterEnv" defaultValue="federationSPAdapterEnv" labelFor="federationSPAdapterEnv" />
+            <label name="lblFederationSPAdapterEnv" defaultValue="idff.entityDescriptor.provider.attribute.label.federationSPAdapterEnv" labelFor="federationSPAdapterEnv" />
             <cc name="federationSPAdapterEnv" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -259,7 +251,7 @@
             </cc>
         </property>          
         <property>
-            <label name="lblListOfCOTsPageURL" defaultValue="ListOfCOTsPageURL" labelFor="listOfCOTsPageURL" />
+            <label name="lblListOfCOTsPageURL" defaultValue="idff.entityDescriptor.provider.attribute.label.ListOfCOTsPageURL" labelFor="listOfCOTsPageURL" />
             <cc name="listOfCOTsPageURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -267,7 +259,7 @@
             </cc>
         </property>          
         <property>
-            <label name="lblUserProviderClass" defaultValue="userProviderClass" labelFor="userProviderClass" />
+            <label name="lblUserProviderClass" defaultValue="idff.entityDescriptor.provider.attribute.label.userProviderClass" labelFor="userProviderClass" />
             <cc name="userProviderClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -275,7 +267,7 @@
             </cc>
         </property>
         <property>
-            <label name="lblFederationDoneURL" defaultValue="federationDoneURL" labelFor="federationDoneURL" />
+            <label name="lblFederationDoneURL" defaultValue="idff.entityDescriptor.provider.attribute.label.federationDoneURL" labelFor="federationDoneURL" />
             <cc name="federationDoneURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -283,7 +275,7 @@
             </cc>
         </property>        
         <property>
-            <label name="lblTerminationDoneURL" defaultValue="terminationDoneURL" labelFor="terminationDoneURL" />
+            <label name="lblTerminationDoneURL" defaultValue="idff.entityDescriptor.provider.attribute.label.terminationDoneURL" labelFor="terminationDoneURL" />
             <cc name="terminationDoneURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -291,7 +283,7 @@
             </cc>
         </property>
         <property>
-            <label name="lblErrorPageURL" defaultValue="errorPageURL" labelFor="errorPageURL" />
+            <label name="lblErrorPageURL" defaultValue="idff.entityDescriptor.provider.attribute.label.errorPageURL" labelFor="errorPageURL" />
             <cc name="errorPageURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -299,7 +291,7 @@
             </cc>
         </property>
         <property>
-            <label name="lblProviderStatus" defaultValue="providerStatus" labelFor="providerStatus" />
+            <label name="lblProviderStatus" defaultValue="idff.entityDescriptor.provider.attribute.label.providerStatus" labelFor="providerStatus" />
             <cc name="providerStatus" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -307,7 +299,7 @@
             </cc>
         </property>          
         <property>
-            <label name="lblLogoutDoneURL" defaultValue="logoutDoneURL" labelFor="logoutDoneURL" />
+            <label name="lblLogoutDoneURL" defaultValue="idff.entityDescriptor.provider.attribute.label.logoutDoneURL" labelFor="logoutDoneURL" />
             <cc name="logoutDoneURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
@@ -315,9 +307,8 @@
             </cc>
         </property>          
         <property required="true">
-            <label name="lblSupportedSSOProfile" defaultValue="supportedSSOProfile" labelFor="supportedSSOProfile" />
-            <cc name="supportedSSOProfile" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag" >    
-                <attribute name="layout" value="horizontal" />
+            <label name="lblSupportedSSOProfile" defaultValue="idff.entityDescriptor.provider.attribute.label.supportedSSOProfile" labelFor="supportedSSOProfile" />
+            <cc name="supportedSSOProfile" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag" >                    
                 <option label="http://projectliberty.org/profiles/brws-art" value="http://projectliberty.org/profiles/brws-art" />
                 <option label="http://projectliberty.org/profiles/brws-post" value="http://projectliberty.org/profiles/brws-post" />
                 <option label="http://projectliberty.org/profiles/wml-post" value="http://projectliberty.org/profiles/wml-post" />
@@ -352,21 +343,6 @@
                 <option label="idff.entityDescriptor.provider.attribute.option.authenticationType.remote" value="remote" />
             </cc>
         </property>          
-        <property required="true">
-            <label name="lblDefaultAuthenticationContext" defaultValue="idff.entityDescriptor.provider.attribute.label.defaultAuthenticationContext" labelFor="singleChoiceDefaultAuthenticationContext" />
-            <cc name="defaultAuthnContext" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.password" value="http://www.projectliberty.org/schemas/authctx/classes/Password" />
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.MobileDigitalID" value="http://www.projectliberty.org/schemas/authctx/classes/MobileDigitalID" />                    
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Smartcard" value="http://www.projectliberty.org/schemas/authctx/classes/Smartcard" />
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Smartcard-PKI" value="http://www.projectliberty.org/schemas/authctx/classes/Smartcard-PKI" />
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.MobileUnregistered" value="http://www.projectliberty.org/schemas/authctx/classes/MobileUnregistered" />
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Software-PKI" value="http://www.projectliberty.org/schemas/authctx/classes/Software-PKI" />
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Previous-Session" value="http://www.projectliberty.org/schemas/authctx/classes/Previous-Session" />
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.MobileContract" value="http://www.projectliberty.org/schemas/authctx/classes/MobileContract" />
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Time-Sync-Token" value="http://www.projectliberty.org/schemas/authctx/classes/Time-Sync-Token" />
-                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.PasswordProtectedTransport" value="http://www.projectliberty.org/schemas/authctx/classes/PasswordProtectedTransport" />
-            </cc>
-        </property>          
         <property>
             <label name="lblForcedAuthenticationAtIdentityProvider" defaultValue="idff.entityDescriptor.provider.attribute.label.forcedAuthenticationAtIdentityProvider"  labelFor="cbForcedAuthenticationAtIdentityProvider" />
             <cc name="forceAuthn" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
@@ -378,18 +354,11 @@
             <cc name="isPassive" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
                 <attribute name="label" value="label.Enable" />
             </cc>
-        </property>         
-        <property required="true">
-            <label name="lblOrganizationDN" defaultValue="idff.entityDescriptor.provider.attribute.label.organizationDN" labelFor="tfOrganization" />
-            <cc name="realmName" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>        
+        </property>            
         <property required="true">
             <label name="lblNameIdentifierImplementation" defaultValue="idff.entityDescriptor.provider.attribute.label.nameIdentifierImplementation" labelFor="tfNameIdentifierImplementation" />
             <cc name="nameIDImplementationClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
@@ -455,6 +424,33 @@
             </property>
         </subsection>
     </section>  
+    <!-- authentication Context table-->
+    <section name="authenticationContext" defaultValue="idff.entityDescriptor.provider.section.title.authenticationContext">
+        <property required="true">
+            <label name="lblDefaultAuthenticationContext" defaultValue="idff.entityDescriptor.provider.attribute.label.defaultAuthenticationContext" labelFor="singleChoiceDefaultAuthenticationContext" />
+            <cc name="defaultAuthnContext" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.password" value="http://www.projectliberty.org/schemas/authctx/classes/Password" />
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.MobileDigitalID" value="http://www.projectliberty.org/schemas/authctx/classes/MobileDigitalID" />                    
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Smartcard" value="http://www.projectliberty.org/schemas/authctx/classes/Smartcard" />
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Smartcard-PKI" value="http://www.projectliberty.org/schemas/authctx/classes/Smartcard-PKI" />
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.MobileUnregistered" value="http://www.projectliberty.org/schemas/authctx/classes/MobileUnregistered" />
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Software-PKI" value="http://www.projectliberty.org/schemas/authctx/classes/Software-PKI" />
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Previous-Session" value="http://www.projectliberty.org/schemas/authctx/classes/Previous-Session" />
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.MobileContract" value="http://www.projectliberty.org/schemas/authctx/classes/MobileContract" />
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Time-Sync-Token" value="http://www.projectliberty.org/schemas/authctx/classes/Time-Sync-Token" />
+                <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.PasswordProtectedTransport" value="http://www.projectliberty.org/schemas/authctx/classes/PasswordProtectedTransport" />
+            </cc>
+        </property>          
+        <property>
+            <label name="lblSpAuthnContextMapping" defaultValue="idff.entityDescriptor.provider.attribute.label.spAuthnContextMapping" labelFor="spAuthnContextMapping" />
+            <cc name="spAuthnContextMapping" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>  
+    </section>
+    <!-- authentication Context table-->
     <section name="proxyAuthenticationConfiguration" defaultValue="idff.entityDescriptor.provider.section.title.proxyAuthenticationConfiguration">
         <property>
             <label name="lblEnableProxyAuthentication" defaultValue="idff.entityDescriptor.provider.attribute.label.enableProxyAuthentication" labelFor="cbEnableProxyAuthentication" />
