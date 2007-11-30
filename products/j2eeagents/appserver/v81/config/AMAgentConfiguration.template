@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.6 2007-11-30 23:10:18 huacui Exp $
+# $Id: AMAgentConfiguration.template,v 1.7 2007-11-30 23:53:28 huacui Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -28,7 +28,7 @@
 # Sun Java(TM) System Access Manager Policy Agent for:
 # Sun Java(TM) System Application Server 8.1/8.2/9.0/9.1
 #
-# Version: 2.2
+# Version: 3.0
 
 #------------------------------------------------------------------------------
 #
