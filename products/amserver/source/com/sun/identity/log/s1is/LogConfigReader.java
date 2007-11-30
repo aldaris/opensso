@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.9 2007-10-24 20:51:03 veiming Exp $
+ * $Id: LogConfigReader.java,v 1.10 2007-11-30 01:43:18 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,13 +27,11 @@ package com.sun.identity.log.s1is;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManager;
 import com.sun.identity.log.LogManagerUtil;
-import com.sun.identity.security.AdminDNAction;
-import com.sun.identity.security.AdminPasswordAction;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.shared.debug.Debug;
@@ -844,12 +842,8 @@ public class LogConfigReader implements ServiceListener{
      * @throws SSOException
      */
     private SSOToken getSSOToken() throws SSOException {
-        SSOTokenManager mgr = SSOTokenManager.getInstance();
-        String adminDN = 
-            (String)AccessController.doPrivileged(new AdminDNAction());
-        String adminPassword =
-            (String)AccessController.doPrivileged(new AdminPasswordAction());
-        return mgr.createSSOToken(new AuthPrincipal(adminDN), adminPassword);
+        return (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
     }
     
     /**
