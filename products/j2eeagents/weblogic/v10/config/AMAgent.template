@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgent.template,v 1.7 2007-11-30 23:24:00 huacui Exp $
+# $Id: AMAgent.template,v 1.8 2007-11-30 23:57:26 huacui Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -28,7 +28,7 @@
 # Sun Java(TM) System Access Manager Policy Agent for:
 # BEA WebLogic 10.0 Server/Portal
 #
-# Version: 2.2
+# Version: 3.0
 #------------------------------------------------------------------------------
 #
 # THIS FILE PROVIDES THE CONFIGURATION SETTINGS NECESSARY FOR THE AGENT
