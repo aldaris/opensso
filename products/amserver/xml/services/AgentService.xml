@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.12 2007-11-29 23:42:39 veiming Exp $
+   $Id: AgentService.xml,v 1.13 2007-11-30 18:47:43 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -753,7 +753,6 @@
                         name="com.sun.am.policy.agents.config.freeformproperties"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
                         i18nKey="com.sun.am.policy.agents.config.freeformproperties">
                         <DefaultValues>
                             <Value></Value>
@@ -1716,7 +1715,7 @@
                         validator="ListValueValidator"
                         i18nKey="a209">
                         <DefaultValues>
-                            <Value>[0]=Role</Value>
+                            <Value>[0]=Group</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -1726,7 +1725,7 @@
                         validator="ListValueValidator"
                         i18nKey="a211">
                         <DefaultValues>
-                            <Value>[Role]=false</Value>
+                            <Value>[Group]=false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2007,7 +2006,6 @@
                         name="com.sun.identity.agents.config.freeformproperties"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
                         i18nKey="a243">
                         <DefaultValues>
                             <Value></Value>
