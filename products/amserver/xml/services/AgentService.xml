@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.13 2007-11-30 18:47:43 huacui Exp $
+   $Id: AgentService.xml,v 1.14 2007-11-30 23:31:20 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,7 +39,7 @@
                         type="single"
                         syntax="password"
                         validator="RequiredValueValidator"
-                        i18nKey="userpassword">
+                        i18nKey="a100">
                         <DefaultValues>
                             <Value>&#160;</Value>
                         </DefaultValues>
@@ -48,10 +48,10 @@
                         type="single_choice"
                         syntax="string"
                         validator="RequiredValueValidator"
-                        i18nKey="sunIdentityServerDeviceStatus">
+                        i18nKey="a101">
                         <ChoiceValues>
-                            <ChoiceValue i18nKey="Active">Active</ChoiceValue>
-                            <ChoiceValue i18nKey="Inactive">Inactive</ChoiceValue>
+                            <ChoiceValue i18nKey="a102">Active</ChoiceValue>
+                            <ChoiceValue i18nKey="a103">Inactive</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>Active</Value>
@@ -75,10 +75,10 @@
                         name="com.sun.am.policy.agents.config.repository.location"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.repository.location">
+                        i18nKey="a110">
                         <ChoiceValues>
-                            <ChoiceValue i18nKey="centralized">centralized</ChoiceValue>
-                            <ChoiceValue i18nKey="local">local</ChoiceValue>
+                            <ChoiceValue i18nKey="a111">centralized</ChoiceValue>
+                            <ChoiceValue i18nKey="a112">local</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>centralized</Value>
@@ -88,7 +88,7 @@
                         name="com.sun.am.cookie.name"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.cookie.name">
+                        i18nKey="a400">
                         <DefaultValues>
                             <Value>iPlanetDirectoryPro</Value>
                         </DefaultValues>
@@ -97,10 +97,10 @@
                         name="com.sun.am.cookie.secure"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.cookie.secure">
+                        i18nKey="a401">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -110,7 +110,7 @@
                         name="com.sun.am.policy.agents.config.local.log.rotate"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.local.log.rotate">
+                        i18nKey="a402">
                         <DefaultValues>
                             <Value>@LOG_ROTATION@</Value>
                         </DefaultValues>
@@ -119,7 +119,7 @@
                         name="com.sun.am.policy.agents.config.local.log.size"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.local.log.size">
+                        i18nKey="a403">
                         <DefaultValues>
                             <Value>10</Value>
                         </DefaultValues>
@@ -128,7 +128,7 @@
                         name="com.sun.am.policy.agents.config.remote.log"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.remote.log">
+                        i18nKey="a404">
                         <DefaultValues>
                             <Value>amAuthLog.@AGENT_HOST@.@AGENT_PREF_PORT@</Value>
                         </DefaultValues>
@@ -137,7 +137,7 @@
                         name="com.sun.am.notification.enable"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.notification.enable">
+                        i18nKey="a405">
                         <DefaultValues>
                             <Value>@NOTIFICATION_ENABLE@</Value>
                         </DefaultValues>
@@ -146,7 +146,7 @@
                         name="com.sun.am.notification.url"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.notification.url">
+                        i18nKey="a406">
                         <DefaultValues>
                             <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/UpdateAgentCacheServlet?shortcircuit</Value>
                         </DefaultValues>
@@ -155,10 +155,10 @@
                         name="com.sun.am.policy.am.url_comparison.case_ignore"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.am.url_comparison.case_ignore">
+                        i18nKey="a407">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
@@ -168,7 +168,7 @@
                         name="com.sun.am.policy.am.polling.interval"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.am.polling.interval">
+                        i18nKey="a408">
                         <DefaultValues>
                             <Value>3</Value>
                         </DefaultValues>
@@ -177,7 +177,7 @@
                         name="com.sun.am.sso.polling.period"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.sso.polling.period">
+                        i18nKey="a409">
                         <DefaultValues>
                             <Value>3</Value>
                         </DefaultValues>
@@ -186,7 +186,7 @@
                         name="com.sun.am.policy.am.userid.param"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.am.userid.param">
+                        i18nKey="a410">
                         <DefaultValues>
                             <Value>UserToken</Value>
                         </DefaultValues>
@@ -195,7 +195,7 @@
                         name="com.sun.am.policy.am.userid.param.type"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.am.userid.param.type">
+                        i18nKey="a411">
                         <DefaultValues>
                             <Value>session</Value>
                         </DefaultValues>
@@ -204,7 +204,7 @@
                         name="com.sun.am.policy.agents.config.profile.attribute.fetch.mode"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.profile.attribute.fetch.mode">
+                        i18nKey="a412">
                         <DefaultValues>
                             <Value>NONE</Value>
                         </DefaultValues>
@@ -213,7 +213,7 @@
                         name="com.sun.am.policy.agents.config.profile.attribute.map"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.profile.attribute.map">
+                        i18nKey="a413">
                         <DefaultValues>
                             <Value>cn|common-name,ou|organizational-unit,o|organization,mail|email,employeenumber|employee-number,c|country</Value>
                         </DefaultValues>
@@ -222,7 +222,7 @@
                         name="com.sun.am.policy.agents.config.session.attribute.fetch.mode"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.session.attribute.fetch.mode">
+                        i18nKey="a414">
                         <DefaultValues>
                             <Value>NONE</Value>
                         </DefaultValues>
@@ -231,7 +231,7 @@
                         name="com.sun.am.policy.agents.config.session.attribute.map"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.session.attribute.map">
+                        i18nKey="a415">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -240,7 +240,7 @@
                         name="com.sun.am.policy.agents.config.response.attribute.fetch.mode"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.response.attribute.fetch.mode">
+                        i18nKey="a416">
                         <DefaultValues>
                             <Value>NONE</Value>
                         </DefaultValues>
@@ -249,7 +249,7 @@
                         name="com.sun.am.policy.agents.config.response.attribute.map"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.response.attribute.map">
+                        i18nKey="a417">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -258,7 +258,7 @@
                         name="com.sun.am.policy.agents.config.attribute.multi_value_separator"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.attribute.multi_value_separator">
+                        i18nKey="a418">
                         <DefaultValues>
                             <Value>|</Value>
                         </DefaultValues>
@@ -267,10 +267,10 @@
                         name="com.sun.am.load_balancer.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.load_balancer.enable">
+                        i18nKey="a419">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -280,10 +280,10 @@
                         name="com.sun.am.ignore_server_check"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.ignore_server_check">
+                        i18nKey="a420">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -293,10 +293,10 @@
                         name="com.sun.am.ignore.preferred_naming_url"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.ignore.preferred_naming_url">
+                        i18nKey="a421">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
@@ -306,7 +306,7 @@
                         name="com.sun.am.poll_primary_server"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.poll_primary_server">
+                        i18nKey="a422">
                         <DefaultValues>
                             <Value>5</Value>
                         </DefaultValues>
@@ -315,7 +315,7 @@
                         name="com.sun.am.policy.am.login.url"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.am.login.url">
+                        i18nKey="a423">
                         <DefaultValues>
                             <Value>@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Login</Value>
                         </DefaultValues>
@@ -324,7 +324,7 @@
                         name="com.sun.am.policy.agents.config.audit.accesstype"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.audit.accesstype">
+                        i18nKey="a424">
                         <DefaultValues>
                             <Value>LOG_DENY</Value>
                         </DefaultValues>
@@ -333,10 +333,10 @@
                         name="com.sun.am.policy.agents.config.deny_on_log_failure"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.deny_on_log_failure">
+                        i18nKey="a425">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
@@ -346,7 +346,7 @@
                         name="com.sun.am.policy.agents.config.agenturi.prefix"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.agenturi.prefix">
+                        i18nKey="a426">
                         <DefaultValues>
                             <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/amagent</Value>
                         </DefaultValues>
@@ -355,7 +355,7 @@
                         name="com.sun.am.policy.agents.config.locale"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.locale">
+                        i18nKey="a427">
                         <DefaultValues>
                             <Value>en_US</Value>
                         </DefaultValues>
@@ -364,10 +364,10 @@
                         name="com.sun.am.policy.agents.config.do_sso_only"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.do_sso_only">
+                        i18nKey="a428">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -377,7 +377,7 @@
                         name="com.sun.am.policy.agents.config.accessdenied.url"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.accessdenied.url">
+                        i18nKey="a429">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -386,10 +386,10 @@
                         name="com.sun.am.policy.agents.config.fqdn.check.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.fqdn.check.enable">
+                        i18nKey="a430">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
@@ -399,7 +399,7 @@
                         name="com.sun.am.policy.agents.config.fqdn.default"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.fqdn.default">
+                        i18nKey="a431">
                         <DefaultValues>
                             <Value>@AGENT_HOST@</Value>
                         </DefaultValues>
@@ -408,7 +408,7 @@
                         name="com.sun.am.policy.agents.config.fqdn.map"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.fqdn.map">
+                        i18nKey="a432">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -417,10 +417,10 @@
                         name="com.sun.am.policy.agents.config.cookie.reset.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.cookie.reset.enable">
+                        i18nKey="a433">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -430,7 +430,7 @@
                         name="com.sun.am.policy.agents.config.cookie.reset.list"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.cookie.reset.list">
+                        i18nKey="a434">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -439,7 +439,7 @@
                         name="com.sun.am.policy.agents.config.cookie.domain.list"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.cookie.domain.list">
+                        i18nKey="a435">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -448,7 +448,7 @@
                         name="com.sun.am.policy.agents.config.anonymous_user"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.anonymous_user">
+                        i18nKey="a436">
                         <DefaultValues>
                             <Value>anonymous</Value>
                         </DefaultValues>
@@ -457,10 +457,10 @@
                         name="com.sun.am.policy.agents.config.anonymous_user.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.anonymous_user.enable">
+                        i18nKey="a437">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -470,7 +470,7 @@
                         name="com.sun.am.policy.agents.config.notenforced_list"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.notenforced_list">
+                        i18nKey="a438">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -479,10 +479,10 @@
                         name="com.sun.am.policy.agents.config.notenforced_list.invert"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.notenforced_list.invert">
+                        i18nKey="a439">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -492,7 +492,7 @@
                         name="com.sun.am.policy.agents.config.notenforced_client_ip_list"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.notenforced_client_ip_list">
+                        i18nKey="a440">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -501,10 +501,10 @@
                         name="com.sun.am.policy.agents.config.postdata.preserve.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.postdata.preserve.enable">
+                        i18nKey="a441">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -514,7 +514,7 @@
                         name="com.sun.am.policy.agents.config.postcache.entry.lifetime"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.postcache.entry.lifetime">
+                        i18nKey="a442">
                         <DefaultValues>
                             <Value>10</Value>
                         </DefaultValues>
@@ -523,10 +523,10 @@
                         name="com.sun.am.policy.agents.config.cdsso.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.cdsso.enable">
+                        i18nKey="a443">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -536,7 +536,7 @@
                         name="com.sun.am.policy.agents.config.cdcservlet.url"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.cdcservlet.url">
+                        i18nKey="a444">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -545,10 +545,10 @@
                         name="com.sun.am.policy.agents.config.client_ip_validation.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.client_ip_validation.enable">
+                        i18nKey="a445">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -558,7 +558,7 @@
                         name="com.sun.am.policy.agents.config.profile.attribute.cookie.prefix"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.profile.attribute.cookie.prefix">
+                        i18nKey="a446">
                         <DefaultValues>
                             <Value>HTTP_</Value>
                         </DefaultValues>
@@ -567,7 +567,7 @@
                         name="com.sun.am.policy.agents.config.profile.attribute.cookie.maxage"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.profile.attribute.cookie.maxage">
+                        i18nKey="a447">
                         <DefaultValues>
                             <Value>300</Value>
                         </DefaultValues>
@@ -576,7 +576,7 @@
                         name="com.sun.am.policy.agents.config.logout.url"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.logout.url">
+                        i18nKey="a448">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -585,7 +585,7 @@
                         name="com.sun.am.policy.agents.config.logout.cookie.reset.list"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.logout.cookie.reset.list">
+                        i18nKey="a449">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -594,10 +594,10 @@
                         name="com.sun.am.policy.am.fetch_from_root_resource"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.am.fetch_from_root_resource">
+                        i18nKey="a450">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
@@ -607,10 +607,10 @@
                         name="com.sun.am.policy.agents.config.get_client_host_name"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.get_client_host_name">
+                        i18nKey="a451">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
@@ -620,10 +620,10 @@
                         name="com.sun.am.policy.agents.config.convert_mbyte.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.convert_mbyte.enable">
+                        i18nKey="a452">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -633,10 +633,10 @@
                         name="com.sun.am.policy.agents.config.encode_url_special_chars.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.encode_url_special_chars.enable">
+                        i18nKey="a453">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -646,10 +646,10 @@
                         name="com.sun.am.policy.agents.config.ignore_path_info"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.ignore_path_info">
+                        i18nKey="a454">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
@@ -659,7 +659,7 @@
                         name="com.sun.am.policy.agents.config.override_protocol"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.override_protocol">
+                        i18nKey="a455">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -668,7 +668,7 @@
                         name="com.sun.am.policy.agents.config.override_host"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.override_host">
+                        i18nKey="a456">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -677,7 +677,7 @@
                         name="com.sun.am.policy.agents.config.override_port"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.override_port">
+                        i18nKey="a457">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -686,7 +686,7 @@
                         name="com.sun.am.policy.agents.config.override_notification.url"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.override_notification.url">
+                        i18nKey="a458">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -695,7 +695,7 @@
                         name="com.sun.am.policy.agents.config.connection_timeout"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.connection_timeout">
+                        i18nKey="a459">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
@@ -704,7 +704,7 @@
                         name="com.sun.am.poll_primary_server"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.poll_primary_server">
+                        i18nKey="a460">
                         <DefaultValues>
                             <Value>5</Value>
                         </DefaultValues>
@@ -713,7 +713,7 @@
                         name="com.sun.am.policy.agents.config.locale"
                         type="single"
                         syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.locale">
+                        i18nKey="a461">
                         <DefaultValues>
                             <Value>en_US</Value>
                         </DefaultValues>
@@ -722,40 +722,13 @@
                         name="com.sun.am.policy.agents.config.proxy.override_host_port"
                         type="single"
                         syntax="boolean"
-                        i18nKey="com.sun.am.policy.agents.config.proxy.override_host_port">
+                        i18nKey="a462">
                         <BooleanValues>
-                            <BooleanTrueValue i18nKey="true">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="false">false</BooleanFalseValue>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.am.sso.default_session.url"
-                        type="single"
-                        syntax="string"
-                        i18nKey="com.sun.am.sso.default_session.url">
-                        <DefaultValues>
-                            <Value></Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.am.auth.auth_service.url"
-                        type="single"
-                        syntax="string"
-                        i18nKey="com.sun.am.auth.auth_service.url">
-                        <DefaultValues>
-                            <Value></Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.am.policy.agents.config.freeformproperties"
-                        type="list"
-                        syntax="string"
-                        i18nKey="com.sun.am.policy.agents.config.freeformproperties">
-                        <DefaultValues>
-                            <Value></Value>
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
