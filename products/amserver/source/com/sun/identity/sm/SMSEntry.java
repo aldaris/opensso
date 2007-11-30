@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.28 2007-11-08 06:15:49 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.29 2007-11-30 04:21:15 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1862,6 +1862,7 @@ public class SMSEntry implements Cloneable {
         }
 
         public void run() {
+            // This does not apply to FAM server
             // At install time and creation of placeholder nodes
             // should not send notifications
             // This would be determined if type == ADD and the DNs are
@@ -1872,12 +1873,6 @@ public class SMSEntry implements Cloneable {
             // 5) ou=services
             // 6) ...
             
-            String installTime = SystemProperties.get(
-                AdminTokenAction.AMADMIN_MODE, "false");
-            if (installTime.equalsIgnoreCase("true")) {
-                return;
-            }
-
             if (type == SMSObjectListener.ADD
                     && ((new StringTokenizer(name, ",")).countTokens() 
                             <= (baseDNCount + 1))) {
