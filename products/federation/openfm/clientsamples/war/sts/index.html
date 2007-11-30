@@ -21,7 +21,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.4 2007-11-20 21:33:04 mrudul_uchil Exp $
+   $Id: index.html,v 1.5 2007-11-30 19:08:01 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -108,23 +108,24 @@ Manager requires a JKS KeyStore. Creating a JKS
 Keystore is describes in SAML samples and this samples assumes that you
 have created the keystore and
 the corresponding keypass, storepass files and updated their locations
-in server's AMConfig.properties file. You could use different
+in server's Security configuration. You could use different
 private keys for STS, WSC and WSP.<br>
       <br>
-      <span style="font-style: italic;">[<span
- style="color: rgb(204, 0, 0);">Note</span> : Temporary action - There
-is client AMConfig.properties file bundled with this web application
-(under web application's root directory). You need to tag swap values
-of properties which are dynamic and then place this updated
-AMConfig.properties file under web application's WEB-INF/classes
-directory. Then restart the container.]</span><br>
+There
+is client AMConfig.properties file as ${user.home}/AMConfig.properties.
+You need to tag swap values
+of properties which are dynamic such as :<br>
+com.sun.identity.saml.xmlsig.keystore<br>
+com.sun.identity.saml.xmlsig.storepass<br>
+com.sun.identity.saml.xmlsig.keypass<br>
+      <br>
+Then restart the container.<br>
       <br>
       <span style="font-weight: bold;">Before you setup STS, deploy the
 stockquote web service client and stock quote web service provider as
-mentioned in the README file of web services agent samples. This is
-must before running this sample. Also follow the steps in README to
-configure Glassfish for web services security using FAM JSR196 agents.</span><br
- style="font-weight: bold;">
+mentioned in the samples/glassfish/README file of web services agent
+samples. This is
+must before running this sample. </span><br style="font-weight: bold;">
       <br>
 STS Setup:<br>
       <br>
@@ -155,8 +156,9 @@ directory.</li>
         <li>In the CLI directory, do "setup -p &lt;FAM config
 directory&gt;".&nbsp; The &lt;FAM config directory&gt; is the config
 directory you specified while configuring the opensso server.</li>
-        <li>The setup will create a directory called opensso. cd to
-opensso/bin to find admin tool "famadm".</li>
+        <li>The setup will create a directory called
+&lt;opensso_deploy_uri&gt;. cd to &lt;opensso_deploy_uri&gt;/bin to
+find admin tool "famadm".</li>
         <li>Create Security Token Service agent of type "STSAgent"
 using "famadm" cli :
           <div style="margin-left: 40px;">famadm create-agent -b

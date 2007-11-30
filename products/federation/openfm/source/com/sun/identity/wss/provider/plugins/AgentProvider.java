@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.15 2007-11-29 08:25:22 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.16 2007-11-30 19:08:02 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -168,8 +168,14 @@ public class AgentProvider extends ProviderConfig {
             String key = (String)i.next();
             Set valSet = (Set)attributes.get(key);
             String value = null;
-            if (valSet.size() > 0) {
-                value = (String)(valSet.iterator()).next();
+            if ((valSet != null) && (valSet.size() > 0)) {
+                Iterator iter = valSet.iterator();
+                StringBuffer sb =  new StringBuffer(100);
+                while(iter.hasNext()) {
+                   sb.append((String)iter.next()).append(",");
+                }
+                sb = sb.deleteCharAt(sb.length() - 1);
+                value = sb.toString();
             }
             setConfig(key, value);
         }
@@ -241,39 +247,43 @@ public class AgentProvider extends ProviderConfig {
                 }
             }
         } else if(attr.startsWith(PROPERTY)) {
-           properties.put(attr.substring(PROPERTY.length()), value);
+            properties.put(attr.substring(PROPERTY.length()), value);
 
         } else if(attr.equals(USER_CREDENTIAL)) {
-           int index = value.indexOf("|");
-           if(index == -1) {
-              return;
-           }
-           String usertmp = value.substring(0, index);
-           String passwordtmp = value.substring(index+1, value.length()); 
+            if(usercredentials == null) {
+                usercredentials = new ArrayList();
+            }
+            StringTokenizer stVal = new StringTokenizer(value, ","); 
+            while(stVal.hasMoreTokens()) {
+                String tmpVal = (String)stVal.nextToken();
+                int index = tmpVal.indexOf("|");
+                if(index == -1) {
+                    return;
+                }
+                String usertmp = tmpVal.substring(0, index);
+                String passwordtmp = tmpVal.substring(index+1, tmpVal.length()); 
 
-           String user = null;
-           String password = null;
-           StringTokenizer st = new StringTokenizer(usertmp, ":"); 
-           if(USER_NAME.equals(st.nextToken())) {
-              if(st.hasMoreTokens()) {
-                 user = st.nextToken();
-              }               
-           }
-           StringTokenizer st1 = new StringTokenizer(passwordtmp, ":"); 
-           if(USER_PASSWORD.equals(st1.nextToken())) {
-              if(st1.hasMoreTokens()) {
-                 password = st1.nextToken();
-              }              
-           }
+                String user = null;
+                String password = null;
+                StringTokenizer st = new StringTokenizer(usertmp, ":"); 
+                if(USER_NAME.equals(st.nextToken())) {
+                    if(st.hasMoreTokens()) {
+                        user = st.nextToken();
+                    }               
+                }
+                StringTokenizer st1 = new StringTokenizer(passwordtmp, ":"); 
+                if(USER_PASSWORD.equals(st1.nextToken())) {
+                    if(st1.hasMoreTokens()) {
+                        password = st1.nextToken();
+                    }              
+                }
 
-           if((user != null) && (password != null)) {
-              PasswordCredential credential = 
-                    new PasswordCredential(user, password);
-              if(usercredentials == null) {
-                 usercredentials = new ArrayList();
-              }
-              usercredentials.add(credential);
-           }
+                if((user != null) && (password != null)) {
+                    PasswordCredential credential = 
+                        new PasswordCredential(user, password);
+                    usercredentials.add(credential);
+                }
+            }
         } else if(attr.equals(FORCE_AUTHENTICATION)) {
            this.forceAuthn = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(KEEP_SECURITY_HEADERS)) {
@@ -319,14 +329,12 @@ public class AgentProvider extends ProviderConfig {
            config.put(SERVICE_TYPE, serviceType);
         }
 
+        Set secMechSet = new HashSet();
         if(secMech != null) {
            Iterator iter = secMech.iterator();
-           StringBuffer sb =  new StringBuffer(100);
            while(iter.hasNext()) {
-              sb.append((String)iter.next()).append(",");
+               secMechSet.add((String)iter.next());
            }
-           sb = sb.deleteCharAt(sb.length() - 1);
-           config.put(SEC_MECH, sb.toString());
         }
 
         config.put(RESPONSE_SIGN, 
@@ -370,6 +378,7 @@ public class AgentProvider extends ProviderConfig {
 
         if(usercredentials != null) {
            Iterator iter = usercredentials.iterator();
+           StringBuffer sb =  new StringBuffer(100);
            while(iter.hasNext()) {
               PasswordCredential cred = (PasswordCredential)iter.next();
               String user = cred.getUserName();
@@ -377,11 +386,12 @@ public class AgentProvider extends ProviderConfig {
               if(user == null || password == null) {
                  continue;
               }
-              StringBuffer sb = new StringBuffer(100);
+              
               sb.append(USER_NAME).append(":").append(user)
-                .append("|").append(USER_PASSWORD).append(":").append(password);
-              config.put(USER_CREDENTIAL, sb.toString());
+                .append("|").append(USER_PASSWORD).append(":").append(password).append(",");
            }
+           sb = sb.deleteCharAt(sb.length() - 1);
+           config.put(USER_CREDENTIAL, sb.toString());
         }
 
         String stsTA = null;
@@ -416,6 +426,10 @@ public class AgentProvider extends ProviderConfig {
                 values.add(value);
                 attributes.put(key, values);
             }
+            if (secMechSet != null) {
+                attributes.put(SEC_MECH, secMechSet);
+            }
+
             if (profilePresent) {
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,

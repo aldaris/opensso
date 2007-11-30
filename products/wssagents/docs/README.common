@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.common,v 1.4 2007-11-29 07:53:04 mrudul_uchil Exp $
+   $Id: README.common,v 1.5 2007-11-30 19:08:02 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -40,16 +40,16 @@ I. Modify resources/AMConfig.properties (from the exploded famwssproviders.zip) 
 
 # FAM Server Information
 # Protocol can be either http or https
-com.iplanet.am.server.protocol=amserver_protocol
-com.iplanet.am.server.host=amserver_host
-com.iplanet.am.server.port=amserver_port
-com.iplanet.am.services.deploymentDescriptor=amserver_deploy_uri
+com.iplanet.am.server.protocol=famserver_protocol
+com.iplanet.am.server.host=famserver_host
+com.iplanet.am.server.port=famserver_port
+com.iplanet.am.services.deploymentDescriptor=famserver_deploy_uri
 
 # Application username and password
 com.sun.identity.agents.app.username=amadmin
 com.iplanet.am.service.password=<amadmin password>
 
-com.iplanet.am.naming.url=amserver_protocol://amserver_host:amserver_port/amserver_deploy_uri/namingservice
+com.iplanet.am.naming.url=famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri/namingservice
 
 # Debug information
 com.iplanet.services.debug.level=message
@@ -68,11 +68,11 @@ com.iplanet.am.cookie.name=iPlanetDirectoryPro
 com.sun.identity.saml.xmlsig.keystore=/path_to_file/amclientkeystore.jks
 com.sun.identity.saml.xmlsig.storepass=/path_to_file/.storepass
 com.sun.identity.saml.xmlsig.keypass=/path_to_file/.keypass
-com.sun.identity.liberty.ws.trustedca.certaliases=amserver:<amserver_host>
+com.sun.identity.liberty.ws.trustedca.certaliases=amserver:<famserver_host>
 
 # Login URL and Authentication service URL for Liberty use case
-com.sun.identity.loginurl=amserver_protocol://amserver_host:amserver_port/amserver_deploy_uri/UI/Login
-com.sun.identity.liberty.authnsvc.url=amserver_protocol://amserver_host:amserver_port/amserver_deploy_uri/Liberty/authnsvc
+com.sun.identity.loginurl=famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri/UI/Login
+com.sun.identity.liberty.authnsvc.url=famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri/Liberty/authnsvc
 
 NOTE : The directory specified as a value for DEBUG_DIR in AMConfig.properties should be different 
 than the one specified as the value for BASE_DIR in Installing Access Manager.
@@ -84,14 +84,14 @@ III. Configure the web services client and the web services provider for Web ser
 
 1.  Login into the Federated Access Manager Console with user amadmin and <amadmin password>
 
-         amserver_protocol://amserver_host:amserver_port/amserver_deploy_uri
+         famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri
 
 Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the Federated Access Manager Console.
 
 2. Create "wsc" and "wsp" agent configurations using "famadm" cli, if not already created.
 3. Pick up the opensso.zip from the build directory, and unzip it into a temp directory. There should be a file famAdminTools.zip. Create a directory for CLI and unzip the famAdminTools.zip into the directory.
 4. In the CLI directory, do "setup -p <FAM config directory>".  The <FAM config directory> is the config directory you specified while configuring the opensso server.
-5. The setup will create a directory called opensso. cd to opensso/bin to find admin tool "famadm".
+5. The setup will create a directory called <famserver_deploy_uri>. cd to <famserver_deploy_uri>/bin to find admin tool "famadm".
 6. Create WSCAgentConfiguration.properties and WSPAgentConfiguration.properties	files.
     Content of this properties file would look like this : 
     userpassword=<agent password>

@@ -62,7 +62,7 @@ I. Deploy the samples
    3. cd StockQuoteClient and run "ant -f build.xml". This will build
       and deploy the StockQuoteClient onto glassfish container.
 
-   4. cd StockQuoteService and run "ant -f build.xml". This will build
+   4. cd StockService and run "ant -f build.xml". This will build
       and deploy the StockService onto glassfish container.
 
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryAgent.java,v 1.4 2007-11-29 08:25:22 mrudul_uchil Exp $
+ * $Id: DiscoveryAgent.java,v 1.5 2007-11-30 19:08:02 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,8 +139,14 @@ public class DiscoveryAgent extends DiscoveryConfig {
             String key = (String)i.next();
             Set valSet = (Set)attributes.get(key);
             String value = null;
-            if (valSet.size() > 0) {
-                value = (String)(valSet.iterator()).next();
+            if ((valSet != null) && (valSet.size() > 0)) {
+                Iterator iter = valSet.iterator();
+                StringBuffer sb =  new StringBuffer(100);
+                while(iter.hasNext()) {
+                   sb.append((String)iter.next()).append(",");
+                }
+                sb = sb.deleteCharAt(sb.length() - 1);
+                value = sb.toString();
             }
             setConfig(key, value);
         }
