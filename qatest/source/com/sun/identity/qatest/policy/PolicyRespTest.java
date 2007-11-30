@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRespTest.java,v 1.3 2007-11-09 00:47:58 arunav Exp $
+ * $Id: PolicyRespTest.java,v 1.4 2007-11-30 18:48:11 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,7 +101,7 @@ public class PolicyRespTest extends TestCommon {
                     mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
                             ".xml", strPeAtOrg);
                     mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
-                    Thread.sleep(2000);
+                    Thread.sleep(notificationSleepTime);
                 } else {
                     mpc.createRealm("/" + strPeAtOrg);
                     mpc.createIdentities(strLocRB, polIdx, strPeAtOrg);
@@ -112,18 +112,18 @@ public class PolicyRespTest extends TestCommon {
                         strReferringOrg = rbr.getString(strLocRB + polIdx +
                                 ".referringOrg");
                         mpc.createPolicy(strRefRB + ".xml", strReferringOrg );
-                        Thread.sleep(2000);
+                        Thread.sleep(notificationSleepTime);
                     } else {
                         strDynamicRefValue = "true";
                         mpc.setDynamicReferral(strDynamicRefValue);
                         mpc.createDynamicReferral(strGblRB, strRefRB, strLocRB,
                                 polIdx, strPeAtOrg);
-                        Thread.sleep(50000);
+                        Thread.sleep(notificationSleepTime);
                     }
                     mpc.createPolicyXML(strGblRB, strLocRB, polIdx,
                             strLocRB + ".xml", strPeAtOrg);
                     mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
-                    Thread.sleep(2000);
+                    Thread.sleep(notificationSleepTime);
                 }
             }
         } catch (Exception e) {

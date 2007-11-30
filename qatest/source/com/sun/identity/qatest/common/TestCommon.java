@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.32 2007-11-20 23:31:17 rmisra Exp $
+ * $Id: TestCommon.java,v 1.33 2007-11-30 18:47:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,7 @@ public class TestCommon implements TestConstants {
     static protected String uri;
     static protected String realm;
     static protected String serverName;
+    static protected int notificationSleepTime;
     static protected Level logLevel;
     static private Logger logger;
     static private Server server;
@@ -118,6 +119,8 @@ public class TestCommon implements TestConstants {
             port = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
             uri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);
             realm = rb_amconfig.getString(TestConstants.KEY_ATT_REALM);
+            notificationSleepTime = new Integer(rb_amconfig.getString(
+                    TestConstants.KEY_ATT_NOTIFICATION_SLEEP)).intValue();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -976,13 +979,26 @@ public class TestCommon implements TestConstants {
      */
     protected void startNotificationServer()
     throws Exception {
-        int port  = new Integer(rb_amconfig.getString(
-                TestConstants.KEY_ATT_NOTIFICATION_PORT)).intValue();
+        String strNotURI = rb_amconfig.getString(
+                TestConstants.KEY_ATT_NOTIFICATION_URI);
+        log(Level.FINEST, "startNotificationServer", "Notification URI: " +
+                strNotURI);
+
+        String strPort = strNotURI.substring(0, strNotURI.indexOf("/"));
+        log(Level.FINEST, "startNotificationServer", "Notification Port: " +
+                strPort);
+
+        String strURI = strNotURI.substring(strNotURI.indexOf("/"),
+                strNotURI.length());
+        log(Level.FINEST, "startNotificationServer", "Notification end point: "
+                + strURI);
+
+        int port  = new Integer(strPort).intValue();
         server = new Server(port);
         Context root = new Context(server, "/", Context.SESSIONS);
         root.addServlet(new ServletHolder(
                 new com.iplanet.services.comm.client.PLLNotificationServlet()),
-                "/*");
+                strURI);
         log(Level.FINE, "startNotificationServer", "Starting the notification" +
                 " (jetty) server");
         server.start();
@@ -997,5 +1013,8 @@ public class TestCommon implements TestConstants {
         log(Level.FINE, "stopNotificationServer", "Stopping the notification" +
                 " (jetty) server");
         server.stop();
+
+        // Time delay required by the jetty server process to die
+        Thread.sleep(30000);
     }
 }

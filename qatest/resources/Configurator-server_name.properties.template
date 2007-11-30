@@ -4,8 +4,15 @@
 cookiedomain=
 
 # The port on which the client server (jetty) will listen for notifications
-# from server. Ensure that the port is not in use.
-notification_port=
+# from server. Ensure that the port is not in use. The format is
+# '<notification port>/<notification uri>'. The server name defaults to the
+# name of host on/from where client sdk calls are being made.
+notification_uri=
+
+# The number of milliseconds client calls should wait for notification
+# from server to dirty the client side cache. The minimum should be set
+# to at least 5000 (5 seconds).
+notification_sleep=
 
 # The naming service of the server aganist which qatest is being executed. This
 # should have the following form:
@@ -16,8 +23,8 @@ namingservice=
 # configuring the war.
 config_dir=
 
-# The encryption key to use for server configuration and by IDM test to fill in the
-# value of am.encryption.pwd in AMClient.properties.
+# The encryption key to use for server configuration and by IDM test to fill in
+# the value of am.encryption.pwd in AMClient.properties.
 encryption_key=
 
 # The name of datastore created under root realm when system is configured. This

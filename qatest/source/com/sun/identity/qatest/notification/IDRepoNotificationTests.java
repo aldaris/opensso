@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoNotificationTests.java,v 1.2 2007-11-05 21:16:08 rmisra Exp $
+ * $Id: IDRepoNotificationTests.java,v 1.3 2007-11-30 18:46:51 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,7 +46,8 @@ import org.testng.annotations.Test;
  * This class tests IDrepo create, modify & delete events notifications for
  * all the IDTypes, such as User, Group Agent, Role, Filtered Role & Realm. 
  */
-public class IDRepoNotificationTests extends TestCommon implements IdEventListener {
+public class IDRepoNotificationTests extends TestCommon implements
+        IdEventListener {
     
     int listenerID;
     int eventID;
@@ -60,7 +61,6 @@ public class IDRepoNotificationTests extends TestCommon implements IdEventListen
     String attrToModify;
     String valToModify;
     boolean result = false;
-    int sleepTime = 2000;
     private IDMCommon idmc;
 
     /**
@@ -185,17 +185,19 @@ public class IDRepoNotificationTests extends TestCommon implements IdEventListen
                 map.put("nsRoleFilter", set);
                 log(Level.FINEST, "identityCreationTest", "Create the " +
                         "filtered role with ID " + strID);
-                idmc.createIdentity(token, realm, IdType.FILTEREDROLE, strID, map);
-                log(Level.FINEST, "identityCreationTest", "Get the filtered role " +
-                        "to check successful creation ");
-                amid = idmc.getFirstAMIdentity(token, strID, IdType.FILTEREDROLE, 
-                        realm);
+                idmc.createIdentity(token, realm, IdType.FILTEREDROLE, strID,
+                        map);
+                log(Level.FINEST, "identityCreationTest",
+                        "Get the filtered role to check successful creation ");
+                amid = idmc.getFirstAMIdentity(token, strID,
+                        IdType.FILTEREDROLE, realm);
                 attrToModify = "nsRoleFilter";
                 valToModify = "(mail=aaa@sun.com)";
             } else if (strIdType.equalsIgnoreCase("REALM")) {
                 set.add("active");
                 map.put("sunOrganizationStatus", set);
-                amid = idmc.createIdentity(token, realm, IdType.REALM, strID, new HashMap());
+                amid = idmc.createIdentity(token, realm, IdType.REALM, strID,
+                        new HashMap());
                 amid = idmc.getFirstAMIdentity(token, strID, IdType.REALM, 
                         realm);
                 attrToModify = "sunOrganizationStatus";
@@ -203,7 +205,7 @@ public class IDRepoNotificationTests extends TestCommon implements IdEventListen
             } 
             assert (amid.getName().equals(strID));
             log(Level.FINEST, "identityCreationTest", "Wait for notification");
-            Thread.sleep(sleepTime); //Wait for notifications
+            Thread.sleep(notificationSleepTime); //Wait for notifications
         } catch (Exception e) {
             log(Level.SEVERE, "identityCreationTest", e.getMessage());
             e.printStackTrace();
@@ -235,31 +237,34 @@ public class IDRepoNotificationTests extends TestCommon implements IdEventListen
             attrs.put(attrToModify, vals);
             idmc.modifyIdentity(amid, attrs);
             
-            log(Level.FINEST, "identityModificationTest", "Wait for notification");
-            Thread.sleep(sleepTime); //Wait for notifications
+            log(Level.FINEST, "identityModificationTest",
+                    "Wait for notification");
+            Thread.sleep(notificationSleepTime); //Wait for notifications
             
             //Read the attribute value & make sure the value is updated
-            log(Level.FINEST, "identityModificationTest", "Reading ATTRS AGAIN: " +
-                    amid.getAttribute(attrToModify));
+            log(Level.FINEST, "identityModificationTest",
+                    "Reading ATTRS AGAIN: " + amid.getAttribute(attrToModify));
             Set retVals = amid.getAttribute(attrToModify);
             if ((retVals != null) && (!retVals.isEmpty())) {
                 Iterator iter = retVals.iterator();
                 while (iter.hasNext()) {
                     String retValue = (String)iter.next();
                     if (retValue.equalsIgnoreCase(valToModify)) {
-                        log(Level.FINEST, "identityModificationTest", "Attribute " +
-                                "value returned is same. Set the result to true ");
+                        log(Level.FINEST, "identityModificationTest",
+                                "Attribute value returned is same. Set the" +
+                                " result to true ");
                         result = true;
                     } else {
-                        log(Level.FINEST, "identityModificationTest", "Attribute " +
-                                "value returned is different from " + valToModify + 
-                                ". Set the result to false");
+                        log(Level.FINEST, "identityModificationTest",
+                                "Attribute value returned is different from " +
+                                valToModify + ". Set the result to false");
                         result = false;
                     }
                 }
             } else {
                  log(Level.FINEST, "identityModificationTest", "Attribute " +
-                        "value returned is empty or null. Set the result to false");
+                        "value returned is empty or null. Set the result to" +
+                        " false");
                result = false;
             }
         } catch (Exception e) {
@@ -286,7 +291,7 @@ public class IDRepoNotificationTests extends TestCommon implements IdEventListen
             idDelete.add(amid);
             idrepo.deleteIdentities(idDelete);
             log(Level.FINEST, "identityDeletionTest", "Wait for notification");
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
         } catch (Exception e) {
             log(Level.SEVERE, "identityDeletionTest", e.getMessage());
             e.printStackTrace();
@@ -325,8 +330,8 @@ public class IDRepoNotificationTests extends TestCommon implements IdEventListen
      * Implementation of identityChanged(java.lang.String)
      */
     public void identityChanged(String universalId) {
-        log(Level.FINEST, "identityChanged", "Recvd notification: identityChanged:"
-                + universalId + " eventID is " + eventID);
+        log(Level.FINEST, "identityChanged", "Recvd notification:" +
+                " identityChanged:" + universalId + " eventID is " + eventID);
         if ((eventID == 0) || (eventID == 1)) {
             log(Level.FINEST, "identityChanged", "strID: " + strID );
             int index = universalId.indexOf(strID);
@@ -341,8 +346,8 @@ public class IDRepoNotificationTests extends TestCommon implements IdEventListen
      * Implementation of identityDeleted(java.lang.String)
      */
     public void identityDeleted(String universalId) {
-        log(Level.FINEST, "identityDeleted", "Recvd notification: identityDeleted:"
-                + universalId + " eventID is " + eventID);
+        log(Level.FINEST, "identityDeleted", "Recvd notification:" +
+                " identityDeleted:" + universalId + " eventID is " + eventID);
         if (eventID == 2) {
             log(Level.FINEST, "identityDeleted", "strID: " + strID );
             int index = universalId.indexOf(strID);
@@ -357,7 +362,7 @@ public class IDRepoNotificationTests extends TestCommon implements IdEventListen
      *  Implementation of identityRenamed(java.lang.String)
      */
     public void identityRenamed(String universalId) {
-        log(Level.FINEST, "identityRenamed", "Recvd notification: identityRenamed:"
-                + universalId);
+        log(Level.FINEST, "identityRenamed", "Recvd notification:" +
+                " identityRenamed:" + universalId);
     }
 }

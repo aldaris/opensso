@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.13 2007-11-20 23:31:18 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.14 2007-11-30 18:45:34 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -198,7 +198,7 @@ public class ClientConfigCreator {
                             strURI + "/" + "Liberty/authnsvc";
                 else if (key.equals(TestConstants.KEY_AMC_NOTIFICATION_URL))
                     value = "http://" + hostname + ":" + configDef.getString(
-                            TestConstants.KEY_ATT_NOTIFICATION_PORT);
+                            TestConstants.KEY_ATT_NOTIFICATION_URI);
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName);
@@ -353,7 +353,7 @@ public class ClientConfigCreator {
                             strURI + "/" + "Liberty/authnsvc";
                 else if (key.equals(TestConstants.KEY_AMC_NOTIFICATION_URL))
                     value = "http://" + hostname + ":" + configDef2.getString(
-                            TestConstants.KEY_ATT_NOTIFICATION_PORT);
+                            TestConstants.KEY_ATT_NOTIFICATION_URI);
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName1 + "_" + serverName2);

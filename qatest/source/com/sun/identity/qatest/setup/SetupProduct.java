@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.9 2007-11-02 00:43:06 mrudulahg Exp $
+ * $Id: SetupProduct.java,v 1.10 2007-11-30 18:46:25 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,6 +124,7 @@ public class SetupProduct extends TestCommon {
 
                             //delete default datastore if createDatastore is successful
                             if (createDataStoreUsingfamadm(webClient, famadm, cfg1Data, 0, dCount)) {
+                                list.add(cfg1.getString(TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME));
                                 famadm.deleteDatastores(webClient, realm, list);
                             } else {
                                 log(Level.SEVERE, "setup", "DataStore configuration didn't succeed.");
@@ -224,6 +225,7 @@ public class SetupProduct extends TestCommon {
                                         adminPassword);
                                 //delete default datastore if createDatastore is successful
                                 if (createDataStoreUsingfamadm(webClient, famadm, cfg1Data, 2, dCount)) {
+                                    list.add(cfg3.getString(TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME));
                                     famadm.deleteDatastores(webClient, realm, list);
                                 }
                             } catch (Exception e) {
@@ -290,6 +292,7 @@ public class SetupProduct extends TestCommon {
                                 //delete default datastore if createDatastore is successful
                                 if (createDataStoreUsingfamadm(webClient, famadm,
                                         cfg1Data, 3, dCount)) {
+                                    list.add(cfg4.getString(TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME));
                                     famadm.deleteDatastores(webClient, realm, list);
                                 }
                             } catch (Exception e) {
@@ -365,7 +368,7 @@ public class SetupProduct extends TestCommon {
     private boolean createDataStoreUsingfamadm(WebClient webClient,
             FederationManager famadm, ResourceBundle cfgData, int
             index, int dCount)
-            throws Exception {
+    throws Exception {
         String dsRealm = null;
         String dsType;
         String dsName;
@@ -381,11 +384,10 @@ public class SetupProduct extends TestCommon {
         String roleAtt;
         String userObjClass;
         String userAtt;
-        String defDatastoreName1;
-        defDatastoreName1 = cfgData.getString(TestConstants.
-                KEY_ATT_CONFIG_DEFDATASTORENAME);
+        boolean dsCreated = false;
         
         for (int i = 0; i < dCount; i++) {
+            dsCreated = false;
             dsType = cfgData.getString(SMSConstants.
                     SMS_DATASTORE_PARAMS_PREFIX + index + "." +
                     SMSConstants.SMS_DATASTORE_TYPE + "." +
@@ -520,6 +522,14 @@ public class SetupProduct extends TestCommon {
                     dsRealm), dsName) == -1)
                 famadm.createDatastore(webClient, dsRealm,
                         dsName, dsType, list);
+            if (getHtmlPageStringIndex(
+                    famadm.listDatastores(webClient,
+                    dsRealm), dsName) == -1) {
+                log(Level.SEVERE, "setup", "Datastore" +
+                    " creation failed: " + list);
+                 assert false;
+            }
+            dsCreated = true;
             list.clear();
             LDAPCommon ldc = new LDAPCommon(ldapServer,
                     ldapPort, adminId, dsAdminPassword,
@@ -537,10 +547,7 @@ public class SetupProduct extends TestCommon {
             ldc.loadAMUserSchema(schemaString,
                     schemaAttributes);
         }
-        //datastoreList.add(defDatastoreName1);
-        return (getHtmlPageStringIndex(
-                famadm.listDatastores(webClient, dsRealm),
-                defDatastoreName1) != -1);
+        return (dsCreated);
     }
     
     public static void main(String args[]) {

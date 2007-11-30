@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMNotificationTests.java,v 1.2 2007-11-05 21:16:25 rmisra Exp $
+ * $Id: SMNotificationTests.java,v 1.3 2007-11-30 18:46:51 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,6 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
     String attrToModify;
     String valToModify;
     boolean result = false;
-    int sleepTime = 2000;
     
     /** Creates a new instance of SMNotificationTests */
     public SMNotificationTests() {
@@ -99,20 +98,20 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
                     "returned from globlal config is: " + scAttrMap);
             Set oriLocaleValues = null;
             oriLocaleValues = (Set) scAttrMap.get
-                    ("iplanet-am-platform-available-locales");
+                    ("iplanet-am-platform-cookie-domains");
             Set newLocaleValues = oriLocaleValues;
-            newLocaleValues.add("GB");
+            newLocaleValues.add("not.test.com");
             Map newLocaleValuesMap = new HashMap();
-            newLocaleValuesMap.put("iplanet-am-platform-available-locales", 
+            newLocaleValuesMap.put("iplanet-am-platform-cookie-domains", 
                     newLocaleValues);
             sc.setAttributes(newLocaleValuesMap);
             log(Level.FINEST, "PlatformServiceModificationTest", "Replaced " +
                     "the attribute");
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
             Map scAttrMapNew = sc.getAttributes();
             log(Level.FINEST, "PlatformServiceModificationTest", 
                     "Read MAP again" + scAttrMapNew);
-            if (scAttrMapNew.get("iplanet-am-platform-available-locales").
+            if (scAttrMapNew.get("iplanet-am-platform-cookie-domains").
                     equals(newLocaleValues)) {
                 log(Level.FINEST, "PlatformServiceModificationTest", 
                         "Returned values are same as set");
@@ -123,10 +122,10 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
                 assert false;
             }
             Map oriLocaleValuesMap = new HashMap();
-            oriLocaleValuesMap.put("iplanet-am-platform-available-locales", 
+            oriLocaleValuesMap.put("iplanet-am-platform-cookie-domains", 
                     oriLocaleValues);
             sc.setAttributes(oriLocaleValuesMap);
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
         } catch (Exception e) {
             log(Level.SEVERE, "PlatformServiceModificationTest", 
                     e.getMessage());
@@ -165,7 +164,7 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
             sc.setAttributes(newLocaleValuesMap);
             log(Level.FINEST, "LoggingServiceModificationTest", "Replaced " +
                     "the attribute");
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
             Map scAttrMapNew = sc.getAttributes();
             log(Level.FINEST, "LoggingServiceModificationTest", "Read MAP " +
                     "again" + scAttrMapNew);
@@ -183,7 +182,7 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
             oriLoggingAttrValuesMap.put("iplanet-am-logging-num-hist-file", 
                     oriLoggingAttrValues);
             sc.setAttributes(oriLoggingAttrValuesMap);
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
         } catch (Exception e) {
             log(Level.SEVERE, "LoggingServiceModificationTest", e.getMessage());
             e.printStackTrace();
@@ -227,7 +226,7 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
             sc.setAttributes(newLocaleValuesMap);
             log(Level.FINEST, "AuthServiceOrgModificationTest", "Replaced " +
                     "the attribute");
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
             Map scAttrMapNew = sc.getAttributes();
             log(Level.FINEST, "AuthServiceOrgModificationTest", "Read MAP " +
                     "again" + scAttrMapNew);
@@ -245,7 +244,7 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
             oriAuthAttrValuesMap.put("iplanet-am-auth-persistent-cookie-mode", 
                     oriAuthAttrValues);
             sc.setAttributes(oriAuthAttrValuesMap);
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
         } catch (Exception e) {
             log(Level.SEVERE, "AuthServiceOrgModificationTest", e.getMessage());
             e.printStackTrace();
@@ -289,7 +288,7 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
             sc.setAttributes(newLocaleValuesMap);
             log(Level.FINEST, "AuthServiceGlobalModificationTest", "Replaced " +
                     "the attribute");
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
             Map scAttrMapNew = sc.getAttributes();
             log(Level.FINEST, "AuthServiceGlobalModificationTest", "Read " +
                     "MAP again" + scAttrMapNew);
@@ -307,7 +306,7 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
             oriAuthAttrValuesMap.put("sunRemoteAuthSecurityEnabled", 
                     oriAuthAttrValues);
             sc.setAttributes(oriAuthAttrValuesMap);
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
         } catch (Exception e) {
             log(Level.SEVERE, "AuthServiceGlobalModificationTest", 
                     e.getMessage());
@@ -345,7 +344,7 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
             sc.setAttributes(newLocaleValuesMap);
             log(Level.FINEST, "SessionServiceModificationTest", "Replaced " +
                     "the attribute");
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
             Map scAttrMapNew = sc.getAttributes();
             log(Level.FINEST, "SessionServiceModificationTest", "Read MAP " +
                     "again" + scAttrMapNew);
@@ -364,7 +363,7 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
                     ("iplanet-am-session-max-session-list-size", 
                     oriSessionAttrValues);
             sc.setAttributes(oriSessionAttrValuesMap);
-            Thread.sleep(sleepTime);
+            Thread.sleep(notificationSleepTime);
         } catch (Exception e) {
             log(Level.SEVERE, "SessionServiceModificationTest", e.getMessage());
             e.printStackTrace();

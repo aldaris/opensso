@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.8 2007-11-08 18:16:22 arunav Exp $
+ * $Id: PolicyCommon.java,v 1.9 2007-11-30 18:47:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -265,7 +265,7 @@ public class PolicyCommon extends TestCommon {
                         map.put(strDynamicAttribute, list);
                         modifyDynamicRespAttribute(strSubRealm, dynSetlist,
                                 "add");
-                        Thread.sleep(5000);
+                        Thread.sleep(notificationSleepTime);
                         createRPXML(out, "ResponseProvider", name, type, map);
                     }
                 }
@@ -531,8 +531,11 @@ public class PolicyCommon extends TestCommon {
                 HtmlPage policyCheckPage ;
                 policyCheckPage = fmadm.createPolicies(webClient, realm,
                         policyXML);
-                log(Level.FINER, "createPolicy", newline +
-                        policyCheckPage.asXml(), null);
+                if (getHtmlPageStringIndex(policyCheckPage, "CLIException") != -1) {
+                    log(Level.SEVERE, "createPolicy", "Policy creation failed");
+                    assert false;
+                } else
+                    log(Level.FINEST, "createPolicy", "Policy created successfully");
             }
         } catch(Exception e) {
             log(Level.SEVERE, "createPolicy", e.getMessage(), null);
