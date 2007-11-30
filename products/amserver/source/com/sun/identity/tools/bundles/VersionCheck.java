@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VersionCheck.java,v 1.4 2007-10-17 23:00:48 veiming Exp $
+ * $Id: VersionCheck.java,v 1.5 2007-11-30 00:13:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,14 +28,16 @@ import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.setup.Bootstrap;
 import java.util.ResourceBundle;
 
-public class VersionCheck implements SetupConstants{
+public class VersionCheck implements SetupConstants {
+    private static ResourceBundle bundle = ResourceBundle.getBundle(
+        System.getProperty(SETUP_PROPERTIES_FILE, DEFAULT_PROPERTIES_FILE));
     
     /**
      * Check whether the version AM is valid.
      *
      * @param bundle The ResourceBundle contains the prompt message.
      */
-    public static int isValid(ResourceBundle bundle) {
+    public static int isValid() {
         String javaExpectedVersion = System.getProperty(JAVA_VERSION_EXPECTED);
         String amExpectedVersion = System.getProperty(AM_VERSION_EXPECTED);
         try {

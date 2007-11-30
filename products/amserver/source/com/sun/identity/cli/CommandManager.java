@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.18 2007-11-20 01:13:34 veiming Exp $
+ * $Id: CommandManager.java,v 1.19 2007-11-30 00:13:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.setup.Bootstrap;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.tools.bundles.VersionCheck;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -77,6 +78,11 @@ public class CommandManager {
             System.err.println("Cannot bootstrap the system" + e.getMessage());
             System.exit(1);
         }
+        
+        if (VersionCheck.isValid() == 1) {
+            System.exit(1);
+        }
+        
         debugger = Debug.getInstance("amCLI");
         getIsInstallTime();
         Crypt.checkCaller();

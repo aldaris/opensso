@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.3 2007-11-20 01:13:34 veiming Exp $
+ * $Id: Main.java,v 1.4 2007-11-30 00:13:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.setup.Bootstrap;
+import com.sun.identity.tools.bundles.VersionCheck;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -168,6 +169,11 @@ class Main
     static {
         try {
             Bootstrap.load();
+
+            if (VersionCheck.isValid() == 1) {
+                System.exit(1);
+            }
+
             debugDir = SystemProperties.get(DEBUGDIR);
             admDbugDir = debugDir + Constants.FILE_SEPARATOR + "amadmincli";
             libertyDN = SystemProperties.get("com.iplanet.am.defaultOrg");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.3 2007-10-17 23:00:48 veiming Exp $
+ * $Id: Main.java,v 1.4 2007-11-30 00:13:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,7 +43,7 @@ public class Main implements SetupConstants{
 
         if (System.getProperty(CHECK_VERSION) != null) {
             if (System.getProperty(CHECK_VERSION).equals(YES)) {
-                System.exit(VersionCheck.isValid(bundle));
+                System.exit(VersionCheck.isValid());
             }
         }
 

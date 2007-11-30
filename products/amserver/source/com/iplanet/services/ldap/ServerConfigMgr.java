@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.6 2007-11-20 01:13:34 veiming Exp $
+ * $Id: ServerConfigMgr.java,v 1.7 2007-11-30 00:13:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,6 +68,7 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSSchema;
 import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.tools.bundles.VersionCheck;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -353,7 +354,7 @@ public class ServerConfigMgr {
         } else {
             proxyPassword = true;
         }
-
+        
         isAMSDKConfigured = ServiceManager.isAMSDKConfigured();
         if (proxyPassword && !isAMSDKConfigured) {
             System.err.println(i18n.getString("dscfg-proxy-no-suppport"));;
@@ -419,7 +420,7 @@ public class ServerConfigMgr {
         SSOToken ssoToken,
         String oldPassword,
         String newPassword
-    ) {
+        ) {
         Callback[] idCallbacks = new Callback[2];
         NameCallback nameCallback = new NameCallback("dummy");
         nameCallback.setName("dsameuser");
@@ -448,6 +449,11 @@ public class ServerConfigMgr {
     public static void main(String args[]) {
         try {
             Bootstrap.load();
+            
+            if (VersionCheck.isValid() == 1) {
+                System.exit(1);
+            }
+            
             debug = Debug.getInstance(IUMSConstants.UMS_DEBUG);
             validateArguments(args);
             boolean proceeded = printHelpMessage(args) || encryptPassword(args) ||
@@ -507,7 +513,7 @@ public class ServerConfigMgr {
         String userType,
         String oldPassword,
         String newPassword
-    ) throws Exception {
+        ) throws Exception {
         String fileEncPassword = getUserPassword(userType);
         String userDN = getUserDN(userType);
         

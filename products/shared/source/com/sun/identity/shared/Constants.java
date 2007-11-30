@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.14 2007-11-08 05:48:42 beomsuk Exp $
+ * $Id: Constants.java,v 1.15 2007-11-30 00:13:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -668,7 +668,7 @@ public interface Constants {
      * PROCTED_PROPERTIES_LIST but starts with this prefix
      * its considered protected.
      */
-    public static final String AM_PROTECTED_PROPERTY_PREFIX =
+    String AM_PROTECTED_PROPERTY_PREFIX =
         "am.protected";
 
     /**
@@ -714,42 +714,44 @@ public interface Constants {
     /**
      * LDAP server host name for saml2 crl cache
      */
-    public static final String CRL_CACHE_DIR_HOST =
+    String CRL_CACHE_DIR_HOST =
         "com.sun.identity.crl.cache.directory.host";
 
     /**
      * LDAP server port number for saml2 crl cache
      */
-    public static final String CRL_CACHE_DIR_PORT =
+    String CRL_CACHE_DIR_PORT =
         "com.sun.identity.crl.cache.directory.port";
 
     /**
      * LDAP server ssl config for saml2 crl cache
      */
-    public static final String CRL_CACHE_DIR_SSL_ENABLED =
+    String CRL_CACHE_DIR_SSL_ENABLED =
         "com.sun.identity.crl.cache.directory.ssl";
 
     /**
      * LDAP Server bind user name for saml2 crl cache
      */
-    public static final String CRL_CACHE_DIR_USER =
+    String CRL_CACHE_DIR_USER =
         "com.sun.identity.crl.cache.directory.user";
 
     /**
      * LDAP Server bind password for saml2 crl cache
      */
-    public static final String CRL_CACHE_DIR_PASSWD =
+    String CRL_CACHE_DIR_PASSWD =
         "com.sun.identity.crl.cache.directory.password";
 
     /**
      * LDAP Server search base dn for saml2 crl cache
      */
-    public static final String CRL_CACHE_DIR_SEARCH_LOC =
+    String CRL_CACHE_DIR_SEARCH_LOC =
         "com.sun.identity.crl.cache.directory.searchloc";
 
     /**
      * LDAP attribute name for searching crl entry
      */
-    public static final String CRL_CACHE_DIR_SEARCH_ATTR =
+    String CRL_CACHE_DIR_SEARCH_ATTR =
         "com.sun.identity.crl.cache.directory.searchattr";        
+
+    String SVC_NAME_NAMING = "iPlanetAMNamingService";
 }

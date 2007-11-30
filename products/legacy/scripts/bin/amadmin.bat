@@ -19,14 +19,11 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amadmin.bat,v 1.3 2007-11-14 18:53:39 veiming Exp $
+: $Id: amadmin.bat,v 1.4 2007-11-30 00:13:33 veiming Exp $
 :
 : Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 
 set TOOLS_HOME="@TOOLS_HOME@"
-
-java -cp %TOOLS_HOME%/locale;%TOOLS_HOME%/lib/OpenDS.jar;%TOOLS_HOME%/lib/opensso.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/amadm_setup.jar -D"com.sun.identity.security.amadmin=true" -D"com.iplanet.am.serverMode=false" -D"java.version.current=java.vm.version" -D"java.version.expected=1.4+" -D"bootstrap.dir=@CONFIG_DIR@" -D"am.version.current=com.iplanet.am.version" -D"am.version.expected=8.0" -D"version.check=yes" com.sun.identity.tools.bundles.Main
-IF %ERRORLEVEL% EQU 1 GOTO END
 
 setlocal
 :WHILE
@@ -36,6 +33,6 @@ shift
 goto WHILE
 :WEND
 
-java  -Xms64m -Xmx256m -cp "%TOOLS_HOME%/locale;%TOOLS_HOME%/lib/OpenDS.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/webservices-api.jar;%TOOLS_HOME%/lib/webservices-rt.jar;%TOOLS_HOME%/lib/webservices-tools.jar;%TOOLS_HOME%/lib/xsdlib.jar;%TOOLS_HOME%/lib/xmlsec.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/lib/opensso.jar -D"com.sun.identity.security.amadmin=true" -D"com.iplanet.am.serverMode=false" -D"bootstrap.dir=@CONFIG_DIR@" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.iplanet.am.admin.cli.Main %PARAMS%
+java  -Xms64m -Xmx256m -cp "%TOOLS_HOME%/locale;%TOOLS_HOME%/lib/amadm_setup.jar;%TOOLS_HOME%/lib/OpenDS.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/webservices-api.jar;%TOOLS_HOME%/lib/webservices-rt.jar;%TOOLS_HOME%/lib/webservices-tools.jar;%TOOLS_HOME%/lib/xsdlib.jar;%TOOLS_HOME%/lib/xmlsec.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/lib/opensso.jar -D"com.sun.identity.security.amadmin=true" -D"com.iplanet.am.serverMode=false" -D"bootstrap.dir=@CONFIG_DIR@" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" -D"java.version.current=java.vm.version" -D"java.version.expected=1.4+" -D"am.version.current=com.iplanet.am.version" -D"am.version.expected=8.0" com.iplanet.am.admin.cli.Main %PARAMS%
 endlocal
 :END
