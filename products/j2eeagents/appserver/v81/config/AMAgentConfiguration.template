@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.5 2007-11-27 02:15:19 sean_brydon Exp $
+# $Id: AMAgentConfiguration.template,v 1.6 2007-11-30 23:10:18 huacui Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -716,18 +716,14 @@ com.sun.identity.agents.config.bypass.principal[0] =
 # Hot-Swap Enabled: Yes
 # Examples:
 #   com.sun.identity.agents.config.default.privileged.attribute[0] = AUTHENTICATED_USERS
-#   com.sun.identity.agents.config.privileged.attribute.type[0] = Role
-#   com.sun.identity.agents.config.privileged.attribute.tolowercase[Role] = false
+#   com.sun.identity.agents.config.privileged.attribute.type[0] = Group
+#   com.sun.identity.agents.config.privileged.attribute.tolowercase[Group] = false
 #   com.sun.identity.agents.config.privileged.session.attribute[0] = UserToken
 #
 com.sun.identity.agents.config.default.privileged.attribute[0] = AUTHENTICATED_USERS
-com.sun.identity.agents.config.privileged.attribute.type[0] = Role
-com.sun.identity.agents.config.privileged.attribute.tolowercase[Role] = false
+com.sun.identity.agents.config.privileged.attribute.type[0] = Group
+com.sun.identity.agents.config.privileged.attribute.tolowercase[Group] = false
 com.sun.identity.agents.config.privileged.session.attribute[0] = 
-
-# The Client key that will be used to encrypt and decrypt passwords
-# Hot-Swap Enabled: No
-com.sun.identity.client.encryptionKey= @AGENT_ENCRYPT_KEY@
 
 #
 # SSO TOKEN COOKIE NAME

@@ -1,5 +1,5 @@
 <!--
-    Copyright (c) 2006 Sun Microsystems, Inc. All rights reserved
+    Copyright (c) 2007 Sun Microsystems, Inc. All rights reserved
     Use is subject to license terms.
 -->
 
@@ -13,9 +13,9 @@ Application Server.
     * Overview
     * Compiling and Assembling the Application
     * Deploying the Sample Application
+    * Post Deployment Agent tasks
     * Running the Sample Application
     * Troubleshooting
-    * Post Deployment Agent tasks
 
 
 Overview
@@ -83,24 +83,11 @@ To verify the registration of the application:
 
 Post Deployment Agents Tasks
 ----------------------------
+This agent sample application requires that the Access Manager server is
+configured with the subjects and policies required by the sample application.
 
- 1. Create the following URL Policies:
-
-    * Policy 1:
-          o allow:
-                + http://<hostname>:<port>/agentsample/jsp/*
-                + http://<hostname>:<port>/agentsample/invokerservlet
-                + http://<hostname>:<port>/agentsample/protectedservlet
-                + http://<hostname>:<port>/agentsample/securityawareservlet
-                + http://<hostname>:<port>/agentsample/unprotectedservlet
-          o Subject: entire organization
-    * Policy 2:
-          o allow:
-                + http://<hostname>:<port>/agentsample/urlpolicyservlet
-          o Subject: LDAP Group: customer
-
-
-2. Create the following users:
+1. Create the following users:
+   Here is the following list of users with username/password :
 
     * andy/andy
     * bob/bob
@@ -111,7 +98,9 @@ Post Deployment Agents Tasks
     * gina/gina
 
 
-3. Assign Users to Roles
+2. Assign Users to Groups
+   Create new groups for employee, manager, everyone, and customer. Then assign 
+   the users to the groups as follows:
 
     * employee:
           o andy, bob, chris, dave, ellen, frank
@@ -119,13 +108,29 @@ Post Deployment Agents Tasks
           o andy, bob, chris
     * everyone:
           o andy, bob, chris, dave, ellen, frank, gina
-
-4. LDAP Group Setup:
-
     * customer:
           o chris, ellen
 
-5. Modify the following properties in the AMAgent.properties file:
+
+3. Create the following URL Policies:
+
+    * Policy 1:
+          o allow:
+                + http://<hostname>:<port>/agentsample/jsp/*
+                + http://<hostname>:<port>/agentsample/invokerservlet
+                + http://<hostname>:<port>/agentsample/protectedservlet
+                + http://<hostname>:<port>/agentsample/securityawareservlet
+                + http://<hostname>:<port>/agentsample/unprotectedservlet
+          o Subject: entire organization which is all authenticated users.
+
+    * Policy 2:
+          o allow:
+                + http://<hostname>:<port>/agentsample/urlpolicyservlet
+          o Subject: Group: customer
+
+
+
+4. Modify the following properties in the AMAgent.properties file:
 
     * Not enforced List:
           o com.sun.identity.agents.config.notenforced.uri[0] = /agentsample/public/*
@@ -133,11 +138,10 @@ Post Deployment Agents Tasks
           o com.sun.identity.agents.config.notenforced.uri[2] = /agentsample/styles/*
           o com.sun.identity.agents.config.notenforced.uri[3] = /agentsample/index.html
           o com.sun.identity.agents.config.notenforced.uri[4] = /agentsample
-
           o com.sun.identity.agents.config.notenforced.uri[5] = /agentsample/
+
     * Access Denied URI:
-          o com.sun.identity.agents.config.access.denied.uri = 
-					/agentsample/authentication/accessdenied.html
+          o com.sun.identity.agents.config.access.denied.uri = /agentsample/authentication/accessdenied.html
     * Form List:
           o com.sun.identity.agents.config.login.form[0] = /agentsample/authentication/login.html
 

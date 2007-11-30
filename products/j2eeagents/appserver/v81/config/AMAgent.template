@@ -79,10 +79,6 @@ com.iplanet.am.service.secret = @AGENT_ENCRYPTED_PASSWORD@
 # Hot-Swap Enabled: No
 am.encryption.pwd = @AGENT_ENCRYPT_KEY@
 
-# The Client key that will be used to encrypt and decrypt passwords
-# Hot-Swap Enabled: No
-com.sun.identity.client.encryptionKey= @AGENT_ENCRYPT_KEY@
-
 #
 # DEBUG SERVICE PROPERTIES
 #   - com.iplanet.services.debug.level: Specifies the debug level to be used.
