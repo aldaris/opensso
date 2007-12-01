@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sampleconfigurator.jsp,v 1.3 2007-10-23 22:52:32 qcheng Exp $
+   $Id: sampleconfigurator.jsp,v 1.4 2007-12-01 01:10:04 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -152,7 +152,8 @@ java.util.Properties"
 
 <h3>Configuring Client Samples</h3>
 
-<form action="sampleconfigurator.jsp" method="GET">
+<form action="sampleconfigurator.jsp" method="GET" 
+    name="clientsampleconfigurator">
     Please provide the Federated Access Manager Server Information.
     <p>&nbsp;</p>    
 
