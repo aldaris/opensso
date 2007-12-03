@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.7 2006-12-13 00:27:15 rarcot Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.8 2007-12-03 22:37:12 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -555,6 +555,33 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         return (answer);
     }
     
+    // Returns fully qualified names for the identity
+    public Set getFullyQualifiedNames(SSOToken token,
+        IdType type, String name, String orgName)
+        throws IdRepoException, SSOException {
+
+        // Get the identity DN
+        AMIdentity id = new AMIdentity(token, name, type, orgName, null);
+        String dn = id.getUniversalId().toLowerCase();
+
+        // Get the cache entry
+        Set answer = null;
+        IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(dn);
+        if (cb != null) {
+            // Get the fully qualified names
+            answer = cb.getFullyQualifiedNames();
+        }
+        if (answer == null) {
+            // Obtain from the data stores
+            answer = super.getFullyQualifiedNames(
+                token, type, name, orgName);
+            if (cb != null) {
+                cb.setFullyQualifiedNames(answer);
+            }
+        }
+        return (answer);
+    }
+
     // Return cache block for the universal identifier
     private IdCacheBlock getFromCache(String dn) {
         IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(dn);

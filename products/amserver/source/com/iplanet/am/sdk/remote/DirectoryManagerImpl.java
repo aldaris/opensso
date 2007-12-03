@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.11 2007-06-01 17:34:45 kenwho Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.12 2007-12-03 22:35:10 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1251,7 +1251,28 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         }
         return resTypes;
     }
-    
+
+    public Set getFullyQualifiedNames_idrepo(String token, String type,
+        String name, String amOrgName)
+        throws RemoteException, IdRepoException, SSOException {
+        SSOToken stoken = tm.createSSOToken(token);
+        IdType idtype = IdUtils.getType(type);
+        Set opSet = idServices.getFullyQualifiedNames(stoken, idtype,
+                name, amOrgName);
+        Set resSet = null;
+        if (opSet != null) {
+            // Convert CaseInsensitiveHashSet to HashSet
+            resSet = new HashSet();
+            Iterator it = opSet.iterator();
+            while (it.hasNext()) {
+                IdOperation thisop = (IdOperation) it.next();
+                String opStr = thisop.getName();
+                resSet.add(opStr);
+            }
+        }
+        return resSet;
+    }
+
     public boolean isExists_idrepo(
         String token,
         String type,

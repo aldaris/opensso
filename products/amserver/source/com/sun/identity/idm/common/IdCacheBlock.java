@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCacheBlock.java,v 1.3 2007-04-02 06:02:09 veiming Exp $
+ * $Id: IdCacheBlock.java,v 1.4 2007-12-03 22:37:10 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm.common;
+
+import java.util.Set;
 
 import com.iplanet.am.sdk.common.CacheBlockBase;
 import com.sun.identity.shared.debug.Debug;
@@ -73,6 +75,9 @@ public class IdCacheBlock extends CacheBlockBase {
     protected static long ENTRY_DEFAULT_EXPIRE_TIME;
 
     private Debug debug = Debug.getInstance("amIdm");
+
+    // Variable to store the fully qualified names for identities
+    private Set fullyQualifiedNames;
 
     static {
         initializeExpirationParms();
@@ -133,6 +138,14 @@ public class IdCacheBlock extends CacheBlockBase {
 
     public Debug getDebug() {
         return debug;
+    }
+
+    public Set getFullyQualifiedNames() {
+        return (fullyQualifiedNames);
+    }
+
+    public void setFullyQualifiedNames(Set fqn) {
+        fullyQualifiedNames = fqn;
     }
 
     public IdCacheBlock(String entryDN, boolean validEntry) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.23 2007-11-14 01:43:35 veiming Exp $
+ * $Id: IdServicesImpl.java,v 1.24 2007-12-03 22:37:43 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -175,7 +175,80 @@ public class IdServicesImpl implements IdServices {
             }
         }
     }
-    
+
+    /**
+     * Returns the set of fully qualified names for the identity.
+     * The fully qualified names would be unique for a given datastore.
+     *
+     * @param token SSOToken that can be used by the datastore
+     *     to determine the fully qualified name
+     * @param type type of the identity
+     * @param name name of the identity
+     *
+     * @return fully qualified names for the identity
+     * @throws IdRepoException If there are repository related error conditions
+     * @throws SSOException If identity's single sign on token is invalid
+     */
+    public Set getFullyQualifiedNames(SSOToken token,
+        IdType type, String name, String orgName)
+        throws IdRepoException, SSOException {
+        if (getDebug().messageEnabled()) {
+            getDebug().message("IdServicesImpl::getFullyQualifiedNames " +
+                "called for type: " + type + " name: " + name +
+                " org: " + orgName);
+        }
+
+        CaseInsensitiveHashSet answer = new CaseInsensitiveHashSet();
+        IdRepoException firstException = null;
+        // Get the list of plugins and check if they support authN
+        // Use AdminToken, since user token may not have permission
+        token = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        Set plugins = getIdRepoPlugins(orgName);
+        Set cPlugins = getAllConfiguredPlugins(orgName, plugins);
+        // Check for special users
+        if (orgName.equalsIgnoreCase(ServiceManager.getBaseDN())) {
+            for (Iterator items = cPlugins.iterator(); items.hasNext();) {
+                IdRepo idRepo = (IdRepo) items.next();
+                if (idRepo.getClass().getName().equals(
+                    IdConstants.SPECIAL_PLUGIN) && isSpecialRepoUser(
+                    token, type, name, orgName, idRepo)) {
+                    String fqn = idRepo.getFullyQualifiedName(token,
+                        type, name);
+                    answer.add(fqn);
+                    return (answer);
+                }
+            }
+        }
+        // User does not an internal user, check other data stores
+        for (Iterator items = cPlugins.iterator(); items.hasNext();) {
+            IdRepo idRepo = (IdRepo) items.next();
+            // Skip users in Special Repo
+            if (!isSpecialRepoUser(token, type, name, orgName, idRepo)) {
+                continue;
+            }
+            if (!idRepo.getSupportedTypes().contains(type)) {
+               // IdRepo plugin does not support the idType
+               continue;
+            }
+            try {
+                String fqn = idRepo.getFullyQualifiedName(token,
+                    type, name);
+                if (fqn != null) {
+                    answer.add(fqn);
+                }
+            } catch (IdRepoException ide) {
+                if (firstException == null) {
+                    firstException = ide;
+                }
+            }
+        }
+        if ((firstException != null) && answer.isEmpty()) {
+            throw (firstException);
+        }
+        return (answer);
+    }
+
     /**
      * Returns <code>true</code> if the data store has successfully
      * authenticated the identity with the provided credentials. In case the
@@ -618,8 +691,12 @@ public class IdServicesImpl implements IdServices {
                 } else {
                     aMap = idRepo.getAttributes(token, type, name);
                 }
+                getDebug().warning("IdServicesImpl.getAttributes: " +
+                    "before reverseMapAttributeNames aMap=" + aMap);
                 aMap = reverseMapAttributeNames(aMap, cMap);
                 attrMapsSet.add(aMap);
+                getDebug().warning("IdServicesImpl.getAttributes: " +
+                    "after before reverseMapAttributeNames attrMapsSet=" + attrMapsSet);
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
@@ -659,6 +736,9 @@ public class IdServicesImpl implements IdServices {
             throw origEx;
         } else {
             Map returnMap = combineAttrMaps(attrMapsSet, true);
+            getDebug().warning("IdServicesImpl.getAttributes exit: " +
+                "returnMap=" + returnMap);
+
             return returnMap;
         }
     }
@@ -2477,20 +2557,21 @@ public class IdServicesImpl implements IdServices {
     }// end getAllConfiguredPlugins
 
     private Set getConfiguredPluginNames(String orgName, String schemaName) {
-        Set cPlugins = new HashSet();
+        Set cPlugins = null;
         SSOToken token = (SSOToken) AccessController
                 .doPrivileged(AdminTokenAction.getInstance());
         try {
             ServiceConfigManager scm = new ServiceConfigManager(token,
                     IdConstants.REPO_SERVICE, "1.0");
             if (scm == null) {
-                // Plugin not configured for this organization
-                // return an empty map.
+                // Service not configured, could be pre AM 70
+                // return null
                 return cPlugins;
             }
             ServiceConfig sc = scm.getOrganizationConfig(orgName, null);
             if (sc == null) {
-                // plugin not configured. Return empty Map
+                // Plugin not configured for this organization
+                // return null
                 return cPlugins;
             }
 
@@ -2504,6 +2585,9 @@ public class IdServicesImpl implements IdServices {
                     if (subConfig != null
                             && subConfig.getSchemaID().equalsIgnoreCase(
                                     schemaName)) {
+                        if (cPlugins == null) {
+                            cPlugins = new HashSet();
+                        }
                         cPlugins.add(pName);
                     }
                 }
@@ -2516,15 +2600,16 @@ public class IdServicesImpl implements IdServices {
             // is loaded. The condition below returns false and hence
             // we avoid writing to debug logs at install time
             if (ServiceManager.isConfigMigratedTo70()) {
-                getDebug().error(
-                    "IdServicesImpl.getConfiguredPluginNames: "
-                    + "SM Exception: unable to get plugin information", smse);
+                if (getDebug().warningEnabled()) {
+                    getDebug().warning(
+                        "SM Exception: unable to get plugin information", smse);
+                }
             }
             return cPlugins;
         } catch (SSOException ssoe) {
-            getDebug().error(
-                "IdServicesImpl.getConfiguredPluginNames: "
-                + "SSO Exception: ", ssoe);
+            if (debug.warningEnabled()) {
+                getDebug().warning("SSO Exception: ", ssoe);
+            }
             return cPlugins;
         }
 

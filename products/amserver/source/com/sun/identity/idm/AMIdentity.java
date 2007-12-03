@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.23 2007-07-01 07:48:30 veiming Exp $
+ * $Id: AMIdentity.java,v 1.24 2007-12-03 22:37:07 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,6 +102,8 @@ public final class AMIdentity {
     private IdType type;
 
     private String orgName;
+
+    private Set fullyQualifiedNames;
 
     private AMHashMap modMap = new AMHashMap(false);
 
@@ -952,12 +954,16 @@ public final class AMIdentity {
             if (members != null && members.contains(identity)) {
                 ismember = true;
             } else if (members != null) {
-                // Check if AM SDK DNs exist for this identity and match
+                // Check for fully qualified names or
+                // if AM SDK DNs for these identities match
                 String dn = identity.getDN();
-                if (dn != null) {
-                    Iterator it = members.iterator();
-                    while (it.hasNext()) {
-                        AMIdentity id = (AMIdentity) it.next();
+                Iterator it = members.iterator();
+                while (it.hasNext()) {
+                    AMIdentity id = (AMIdentity) it.next();
+                    if (identity.equals(id)) {
+                        ismember = true;
+                        break;
+                    } else if (dn != null) {
                         String mdn = id.getDN();
                         if ((mdn != null) && mdn.equalsIgnoreCase(dn)) {
                             ismember = true;
@@ -1013,12 +1019,16 @@ public final class AMIdentity {
                 if (members != null && members.contains(this)) {
                     ismember = true;
                 } else if (members != null) {
-                    // Check if AM SDK DNs exist for this identity and match
+                    // Check for fully qualified names or
+                    // if AM SDK DNs for these identities match
                     String dn = getDN();
-                    if (dn != null) {
-                        Iterator it = members.iterator();
-                        while (it.hasNext()) {
-                            AMIdentity id = (AMIdentity) it.next();
+                    Iterator it = members.iterator();
+                    while (it.hasNext()) {
+                        AMIdentity id = (AMIdentity) it.next();
+                        if (equals(id)) {
+                            ismember = true;
+                            break;
+                        } else if (dn != null) {
                             String mdn = id.getDN();
                             if ((mdn != null) && mdn.equalsIgnoreCase(dn)) {
                                 ismember = true;
@@ -1144,8 +1154,6 @@ public final class AMIdentity {
                 getDN());
     }
 
-    // TODO:
-    // FIXME: Add isExists() method
     /**
      * This method determines if the identity exists and returns true or false.
      * 
@@ -1171,20 +1179,38 @@ public final class AMIdentity {
      * @supported.api
      */
     public boolean equals(Object o) {
+        boolean isEqual = false;
         if (o instanceof AMIdentity) {
             AMIdentity compareTo = (AMIdentity) o;
             if (univIdWithoutDN.equalsIgnoreCase(
                 compareTo.univIdWithoutDN)) {
-                return true;
+                isEqual = true;
             } else if (univDN != null) {
                 // check if the amsdkdn match
                 String dn = compareTo.getDN();
                 if (dn != null && dn.equalsIgnoreCase(univDN)) {
-                    return (true);
+                    isEqual = true;
+                }
+            }
+            if (!isEqual && !type.equals(IdType.REALM) &&
+                type.equals(compareTo.getType())) {
+                // Check fully qualified names
+                Set sfqn = getFullyQualifiedNames();
+                Set cfqn = compareTo.getFullyQualifiedNames();
+
+                if ((sfqn != null) && (cfqn != null) &&
+                    !sfqn.isEmpty() && !cfqn.isEmpty()) {
+                    for (Iterator items = sfqn.iterator();
+                        items.hasNext();) {
+                        if (cfqn.contains(items.next())) {
+                            isEqual = true;
+                            break;
+                        }
+                    }
                 }
             }
         }
-        return false;
+        return (isEqual);
     }
 
     /**
@@ -1234,6 +1260,29 @@ public final class AMIdentity {
             sb.append("AMSDKDN=").append(univDN);
         }
         return (sb.toString());
+    }
+
+    // Returns a set of fully qulified names, as returned by DataStores
+    protected Set getFullyQualifiedNames() {
+        if (fullyQualifiedNames == null) {
+            try {
+                IdServices idServices =
+                    IdServicesFactory.getDataStoreServices();
+                fullyQualifiedNames = idServices.getFullyQualifiedNames(
+                    token, type, name, orgName);
+            } catch (IdRepoException ire) {
+                if (debug.messageEnabled()) {
+                    debug.message("AMIdentity:getFullyQualifiedNames: " +
+                        "got exception: ", ire);
+                }
+            } catch (SSOException ssoe) {
+                if (debug.messageEnabled()) {
+                    debug.message("AMIdentity:getFullyQualifiedNames: " +
+                        "got exception: ", ssoe);
+                }
+            }
+        }
+        return (fullyQualifiedNames);
     }
 
     private Set getServiceOCs(SSOToken token, String serviceName)

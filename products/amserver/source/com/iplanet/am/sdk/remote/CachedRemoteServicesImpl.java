@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedRemoteServicesImpl.java,v 1.2 2006-12-15 21:41:28 kenwho Exp $
+ * $Id: CachedRemoteServicesImpl.java,v 1.3 2007-12-03 22:35:10 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -539,6 +539,13 @@ public class CachedRemoteServicesImpl extends RemoteServicesImpl implements
         String entryDN = MiscUtils.formatToRFC(dn);
         CacheBlock cb = (CacheBlock) sdkCache.get(entryDN);
         if (cb != null) {
+            // Check if the entry exists, if not present throw an exception
+            if (!doesEntryExists(token, dn)) {
+                String locale = MiscUtils.getUserLocale(token);
+                String params[] = { cb.getEntryDN() };
+                throw new AMException(AMSDKBundle.getString("461", params,
+                    locale), "461", params);
+            }
             validateEntry(token, cb);
             objectType = cb.getObjectType();
             if (objectType != AMObject.UNDETERMINED_OBJECT_TYPE) {

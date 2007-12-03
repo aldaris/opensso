@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.30 2007-11-08 17:30:19 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.31 2007-12-03 22:37:10 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3837,12 +3837,7 @@ public class LDAPv3Repo extends IdRepo {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, 
                 "220", args);
         }
-        if ((type != IdType.USER) && (type != IdType.AGENT) 
-            && (type != IdType.GROUP)) {
-            Object[] args = { CLASS_NAME , type};
-            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME,
-                "210", args);
-        }
+
         String userDN = searchForName(type, name);
         if (firstHostAndPort.length() == 0) {
             StringTokenizer tk = new StringTokenizer(ldapServerName);

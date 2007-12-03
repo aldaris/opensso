@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServices.java,v 1.4 2007-06-01 17:34:01 kenwho Exp $
+ * $Id: IdServices.java,v 1.5 2007-12-03 22:37:08 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,4 +146,7 @@ public interface IdServices {
     public void reloadIdRepoServiceSchema();
     
     public void reinitialize();
+
+    public Set getFullyQualifiedNames(SSOToken token, IdType type,
+        String name, String orgName) throws IdRepoException, SSOException;
 }

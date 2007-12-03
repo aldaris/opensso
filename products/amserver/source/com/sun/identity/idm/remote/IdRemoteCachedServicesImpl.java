@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.8 2006-12-13 02:02:54 kenwho Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.9 2007-12-03 22:37:11 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -552,6 +552,33 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         } else {
             // Pattern contains "*", need a search in server.
             answer = super.search(token, type, pattern, ctrl, orgName);
+        }
+        return (answer);
+    }
+
+    // Returns fully qualified names for the identity
+    public Set getFullyQualifiedNames(SSOToken token,
+        IdType type, String name, String orgName)
+        throws IdRepoException, SSOException {
+
+        // Get the identity DN
+        AMIdentity id = new AMIdentity(token, name, type, orgName, null);
+        String dn = id.getUniversalId().toLowerCase();
+
+        // Get the cache entry
+        Set answer = null;
+        IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(dn);
+        if (cb != null) {
+            // Get the fully qualified names
+            answer = cb.getFullyQualifiedNames();
+        }
+        if (answer == null) {
+            // Obtain from the data stores
+            answer = super.getFullyQualifiedNames(
+                token, type, name, orgName);
+            if (cb != null) {
+                cb.setFullyQualifiedNames(answer);
+            }
         }
         return (answer);
     }

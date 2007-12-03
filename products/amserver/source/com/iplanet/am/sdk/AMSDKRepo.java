@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.17 2007-08-16 21:42:45 goodearth Exp $
+ * $Id: AMSDKRepo.java,v 1.18 2007-12-03 22:35:09 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1946,29 +1946,29 @@ public class AMSDKRepo extends IdRepo {
      * 
      * @return fully qualified name for the identity within the data store
      */
-    public String getFullyQualifiedName(SSOToken token, IdType type, 
-            String name)
-            throws IdRepoException, SSOException {
+    public String getFullyQualifiedName(SSOToken token,
+        IdType type, String name)
+        throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("AMSDKRepo: getFullyQualifiedName." + " type=" + type
-                    + "; name=" + name);
+            debug.message("AMSDKRepo: getFullyQualifiedName." +
+                " type=" + type + "; name=" + name);
         }
         // given idtype and name, we will do search to get its FDN.
         if ((name == null) || (name.length() == 0)) {
             Object[] args = { CLASS_NAME, "" };
-            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "220", args);
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                "220", args);
         }
-        if ((type != IdType.USER) && (type != IdType.AGENT)
-                && (type != IdType.GROUP)) {
-            Object[] args = { CLASS_NAME, type };
-            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "210", args);
-        }
-        String dn = getDN(type, name);
-
+        String dn;
+        AMStoreConnection amsc = (sc == null) ?
+            new AMStoreConnection(token) : sc;
+        dn = getDN(type, name);
+        boolean exists = amsc.isValidEntry(dn);
         ServerInstance svrCfg = getDsSvrCfg(LDAPUser.Type.AUTH_ADMIN);
-        return ("amsdk://" + svrCfg.getServerName() + ":" + svrCfg.getPort()
-                + "/" + dn);
+        return("amsdk://" + svrCfg.getServerName()  + ":" +
+                svrCfg.getPort() + "/"  + dn);
     }
+
 
     /**
      * Returns <code>true</code> if the data store supports authentication of

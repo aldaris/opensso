@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.13 2007-10-17 23:00:44 veiming Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.14 2007-12-03 22:37:11 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
@@ -700,6 +701,33 @@ public class IdRemoteServicesImpl implements IdServices {
 
     public void reinitialize() {
         // Do Nothing !!
+    }
+
+    public Set getFullyQualifiedNames(SSOToken token, IdType type,
+        String name, String org) throws IdRepoException, SSOException {
+        Set answer = null;
+        try {
+            Object[] objs = { getTokenString(token),
+                type.getName(), name, org };
+            Set set = (Set) client.send(client.encodeMessage(
+                "getFullyQualifiedNames_idrepo", objs), 
+                Session.getLBCookie(token.getTokenID().toString()), null);
+            if (set != null) {
+                // Convert to CaseInsensitiveHashSet
+                answer = new CaseInsensitiveHashSet(set);
+            }
+        } catch (Exception ex) {
+            if (debug.warningEnabled()) {
+                getDebug().warning(
+                    "IdRemoteServicesImpl.getFullyQualifiedNames_idrepo: " +
+                         "caught exception=", ex);
+            }
+            if (ex instanceof IdRepoException) {
+                throw ((IdRepoException) ex);
+            }
+            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        }
+        return (answer);
     }
 
     private IdSearchResults mapToIdSearchResults(SSOToken token, IdType type,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerIF.java,v 1.5 2007-06-01 17:34:45 kenwho Exp $
+ * $Id: DirectoryManagerIF.java,v 1.6 2007-12-03 22:35:10 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -325,6 +325,10 @@ public interface DirectoryManagerIF extends Remote {
     public Set getSupportedOperations_idrepo(String token, String type,
             String amOrgName) throws RemoteException, IdRepoException,
             SSOException;
+
+    public Set getFullyQualifiedNames_idrepo(String token, String type,
+        String name, String orgName)
+        throws RemoteException, IdRepoException, SSOException;
 
     public String registerNotificationURL_idrepo(String url)
             throws RemoteException;
