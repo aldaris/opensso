@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-session-tools.xml,v 1.1 2007-11-13 23:03:05 manish_rustagi Exp $
+   $Id: build-session-tools.xml,v 1.2 2007-12-04 18:06:25 ww203982 Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -248,7 +248,6 @@
         <replace file="${amsession.windows.bin.dir}/amsfopassword.bat.template"
             encoding="UTF-8">
             <replacefilter token="\" value="/"/>
-            <replacefilter token="%JAVA_HOME%/bin/java.exe" value="java"/>
             <replacefilter token="JDK_PATH" value="@JDK_PATH@"/>
             <replacefilter token="BASEDIR/PRODUCT_DIR" value="@BASE_DIR@"/>
         </replace>

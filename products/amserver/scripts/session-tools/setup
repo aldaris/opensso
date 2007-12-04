@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: setup,v 1.1 2007-11-13 23:11:03 manish_rustagi Exp $
+# $Id: setup,v 1.2 2007-12-04 18:06:26 ww203982 Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 
@@ -38,4 +38,4 @@ if [ "$1" = "-p" -o "$1" = "--path" ] ; then
   path_dest="$2"
 fi
 
-java -D"help.print=${help_print}" -D"path.dest=${path_dest}" -jar "lib/am_session_setup.jar"
+${JAVA_HOME}/bin/java -D"help.print=${help_print}" -D"path.dest=${path_dest}" -jar "lib/am_session_setup.jar"
