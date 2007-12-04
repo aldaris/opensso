@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.14 2007-11-17 00:40:28 veiming Exp $
+ * $Id: AuthD.java,v 1.15 2007-12-04 17:52:57 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1336,14 +1336,15 @@ public class AuthD  {
             }
             amIdentity = IdUtils.getIdentity(
                 getSSOAuthSession(), idName, orgName);
-            if (amIdentity != null && amIdentity.getType().equals(idType) &&
-                amIdentity.getAttributes() != null) {
+            if ((amIdentity != null) && (amIdentity.isExists()) && 
+                (amIdentity.getType().equals(idType)) && 
+                (amIdentity.getAttributes() != null)) {
                 if (debug.messageEnabled()) {
                     debug.message("AuthD.getIdentity obtained identity" +
                         "using IdUtil.getIdentity: " + amIdentity);
                 }
                 return (amIdentity);
-            }
+            } 
         } catch (IdRepoException e) {
             // Ignore this exception and continue with search
             if (debug.messageEnabled()) {
@@ -1356,10 +1357,11 @@ public class AuthD  {
                 debug.message("AuthD.getIdentity: Got SSOException while " +
                     "getting Identity from IdUtils: "+ssoe.getMessage());
             }
-        }
+        } 
 
         // Obtain AMIdentity object by searching within IdRepo
         try {
+            amIdentity = null;
             idName = DNUtils.DNtoName(idName);
             AMIdentityRepository amIdRepo = getAMIdentityRepository(orgName);
             IdSearchControl idsc = new IdSearchControl();
