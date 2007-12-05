@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.8 2007-09-06 16:55:03 qcheng Exp $
+   $Id: build-tools.xml,v 1.9 2007-12-05 20:56:34 kevinserwin Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -78,6 +78,7 @@
 
         <checksum file="${fm.dist.dir}/famAdminTools.zip"
             algorithm="SHA" fileext=".sha" />
+        <delete dir="${tools.temp.dir}" />
     </target>
 
     <target name="clean">

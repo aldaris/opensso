@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.8 2007-11-14 00:33:45 manish_rustagi Exp $
+   $Id: build-zip.xml,v 1.9 2007-12-05 20:56:35 kevinserwin Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -112,6 +112,7 @@
 
         <checksum file="${fm.dist.dir}/opensso.zip"
             algorithm="SHA" fileext=".sha" />
+        <delete dir="${zip.temp.dir}" />            
     </target>
 
     <target name="clean">
