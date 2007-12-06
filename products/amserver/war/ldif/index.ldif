@@ -29,13 +29,6 @@ nsSystemIndex: false
 cn: iplanet-am-modifiable-by
 nsIndexType: eq
 
-dn: cn=iplanet-am-user-federation-info-key,cn=index,cn=@DB_NAME@,cn=ldbm database,cn=plugins,cn=config
-objectClass: top
-objectClass: nsIndex
-nsSystemIndex: false
-cn: iplanet-am-user-federation-info-key
-nsIndexType: eq
-
 dn: cn=sunxmlkeyvalue,cn=index,cn=@DB_NAME@,cn=ldbm database,cn=plugins,cn=config
 objectClass: top
 objectClass: nsIndex

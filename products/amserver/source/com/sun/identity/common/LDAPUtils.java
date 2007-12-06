@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtils.java,v 1.2 2007-04-20 07:14:56 rarcot Exp $
+ * $Id: LDAPUtils.java,v 1.3 2007-12-06 02:36:32 kenwho Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,7 +114,7 @@ public class LDAPUtils {
             } catch (LDAPException e) {
                 switch (e.getLDAPResultCode()) {
                     case LDAPException.ATTRIBUTE_OR_VALUE_EXISTS:
-                        throw e;
+                        break;
                     case LDAPException.NO_SUCH_ATTRIBUTE:
 		        // Ignore some attributes need to be deleted if present
                         break; 
