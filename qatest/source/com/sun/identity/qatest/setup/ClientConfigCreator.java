@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.14 2007-11-30 18:45:34 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.15 2007-12-06 20:34:03 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,6 +63,7 @@ public class ClientConfigCreator {
     private Map properties_saml = new HashMap();
     private Map properties_idff = new HashMap();
     private Map properties_wsfed = new HashMap();
+    private Map properties_sae = new HashMap();
     private String ALL_FILE_CLIENT_PROPERTIES = "resources" + fileseparator +
             "AMConfig.properties";
     private String SAML_FILE_CLIENT_PROPERTIES =
@@ -74,6 +75,9 @@ public class ClientConfigCreator {
     private String WSFED_FILE_CLIENT_PROPERTIES =
             "resources" + fileseparator + "wsfed" + fileseparator +
             "WSFedTestConfigData.properties";
+    private String SAE_FILE_CLIENT_PROPERTIES =
+            "resources" + fileseparator + "sae" + fileseparator +
+            "saeTestConfigData.properties";
 
     /**
      * Default constructor. Calls method to transfer properties from:
@@ -112,10 +116,13 @@ public class ClientConfigCreator {
                         properties_idff);
                 getDefaultValues(testDir, serverName1, serverName2, 
                         properties_wsfed);
+                getDefaultValues(testDir, serverName1, serverName2, 
+                        properties_sae);
             }
             createFileFromMap(properties_saml, SAML_FILE_CLIENT_PROPERTIES);
             createFileFromMap(properties_idff, IDFF_FILE_CLIENT_PROPERTIES);
             createFileFromMap(properties_wsfed, WSFED_FILE_CLIENT_PROPERTIES);
+            createFileFromMap(properties_sae, SAE_FILE_CLIENT_PROPERTIES);
         }
         createFileFromMap(properties_ss, ALL_FILE_CLIENT_PROPERTIES);
     }
