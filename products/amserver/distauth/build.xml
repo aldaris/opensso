@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2007-03-26 22:00:28 manish_rustagi Exp $
+   $Id: build.xml,v 1.6 2007-12-06 21:17:25 manish_rustagi Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -40,17 +40,27 @@
     <property name="distauth.package.dir" location="${amserver.built.distauth.dir}/packages"/>
     <property name="distauth.src.dir" location="${amserver.distauth.dir}/source"/>
 
-    <target name="all" depends="zip">
+    <target name="all" depends="war">
     </target>
 
-    <target name="zip" depends="preparebuild">
+    <target name="war" depends="preparebuild">
+        <!--
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
             destdir="${distauth.classes.dir}" source="1.4" target="1.4"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${distauth.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
+        -->
+        
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${distauth.classes.dir}" source="1.4" target="1.4"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${amserver.distauth.dir}/configurator/source"/>
+            <classpath refid="build.class.path"/>
+        </javac>        
 
+        <!--
         <copy file="${amserver.distauth.dir}/manifest" 
               tofile="${distauth.package.dir}/manifest" />
 
@@ -58,7 +68,9 @@
               tofile="${distauth.package.dir}/classes/configDefault.properties" />
 
         <copy todir="${distauth.package.dir}/classes">
-            <fileset dir="${distauth.classes.dir}" />
+            <fileset dir="${distauth.classes.dir}">
+                <include name="com/sun/identity/distauth/setup/Main.class" />
+            </fileset>                        
         </copy>
 
         <copy todir="${distauth.package.dir}/scripts">
@@ -70,6 +82,7 @@
         
         <copy file="${amserver.clientsdkbase.dir}/resources/AMClient.properties" 
               tofile="${distauth.package.dir}/resources/AMConfigTemplate.properties" />
+        -->
         
         <copy todir="${distauth.package.dir}/war">
             <fileset dir="${amserver.www.dir}/authentication/UI">
@@ -83,6 +96,12 @@
                 <include name="*.html" />
             </fileset>
         </copy>
+        
+        <copy todir="${distauth.package.dir}/war">
+            <fileset dir="${amserver.distauth.dir}/configurator/jsp">
+                <include name="*.jsp" />
+            </fileset>
+        </copy>        
 
         <copy todir="${distauth.package.dir}/war/css">
             <fileset dir="${lockhart.dir}/css">
@@ -97,6 +116,19 @@
                 <include name="*.gif" />
             </fileset>
         </copy>
+        
+        <copy todir="${distauth.package.dir}/war/images/masthead">
+            <fileset dir="${amserver.distauth.dir}/configurator/images/masthead">
+                <include name="*.jpg" />
+                <include name="*.gif" />
+            </fileset>
+        </copy>        
+
+        <copy todir="${distauth.package.dir}/war/images/other">
+            <fileset dir="${amserver.distauth.dir}/configurator/images/other">
+                <include name="*.gif" />
+            </fileset>
+        </copy>        
 
         <copy todir="${distauth.package.dir}/war/images/button">
             <fileset dir="${lockhart.dir}/images/button">
@@ -119,7 +151,7 @@
             <fileset dir="${jatolib.dir}">
                 <include name="jato.tld" />
             </fileset>
-            <fileset dir="${amserver.distauth.dir}/xml">
+            <fileset dir="${amserver.distauth.dir}/configurator/xml">
                 <include name="web.xml" />
             </fileset>
         </copy>
@@ -148,15 +180,24 @@
                 <include name="com/sun/identity/authentication/UI/CallBackChoiceTiledView.class" />
                 <include name="com/sun/identity/authentication/UI/CallBackTiledView.class" />
             </fileset>
+            <fileset dir="${distauth.classes.dir}">
+                <include name="com/sun/identity/distauth/setup/DistAuthConfiguratorFilter.class" />
+                <include name="com/sun/identity/distauth/setup/SetupDistAuthWAR.class" />
+            </fileset>
+            <fileset dir="${amserver.distauth.dir}/configurator/resources">
+                <include name="AMDistAuthConfig.properties.template" />
+            </fileset>                   
         </copy>
 
+        <!--
         <xslt in="${amserver.distauth.dir}/docs/Readme.xml"
             out="${distauth.package.dir}/docs/Readme.txt"
             style="${products.xml.dir}/ReadmeText.xsl" />
+        -->    
 
-        <zip destfile="${amserver.dist.dir}/distauth.zip"
-            basedir="${distauth.package.dir}" />
-        <checksum file="${amserver.dist.dir}/distauth.zip"
+        <zip destfile="${amserver.dist.dir}/distauth.war"
+            basedir="${distauth.package.dir}/war" />
+        <checksum file="${amserver.dist.dir}/distauth.war"
             algorithm="SHA" fileext=".sha" />
     </target>
 
@@ -172,6 +213,8 @@
         <mkdir dir="${distauth.package.dir}/war/config/auth/default" />
         <mkdir dir="${distauth.package.dir}/war/css" />
         <mkdir dir="${distauth.package.dir}/war/images" />
+        <mkdir dir="${distauth.package.dir}/war/images/masthead" />
+        <mkdir dir="${distauth.package.dir}/war/images/other" />
         <mkdir dir="${distauth.package.dir}/war/images/button" />
         <mkdir dir="${distauth.package.dir}/war/js" />
         <mkdir dir="${distauth.package.dir}/war/WEB-INF" />
@@ -188,6 +231,8 @@
         <delete dir="${distauth.package.dir}/war/WEB-INF"/>
         <delete dir="${distauth.package.dir}/war/js" />
         <delete dir="${distauth.package.dir}/war/images/button" />
+        <delete dir="${distauth.package.dir}/war/images/other" />
+        <delete dir="${distauth.package.dir}/war/images/masthead" />        
         <delete dir="${distauth.package.dir}/war/images" />
         <delete dir="${distauth.package.dir}/war/css" />
         <delete dir="${distauth.package.dir}/war/config/auth/default" />
