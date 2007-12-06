@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSessionDB.java,v 1.2 2007-11-14 00:21:07 manish_rustagi Exp $
+ * $Id: AMSessionDB.java,v 1.3 2007-12-06 22:02:25 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -333,13 +333,13 @@ public class AMSessionDB implements Runnable {
         String id = message.getStringProperty(ID);
         String op = message.getStringProperty("op");
         
-        showAllSessionRecords();
+        //showAllSessionRecords();
         
         if (op.indexOf(READ) >= 0) {
             if(verbose) {
                 System.out.println(bundle.getString("readmsgrecv"));
             }
-	    if(statsEnabled) {
+	        if(statsEnabled) {
                 readCount++;
             }
             String sid = getLenString(message);
@@ -365,7 +365,7 @@ public class AMSessionDB implements Runnable {
                 BytesMessage resmsg = 
                     (BytesMessage) tSession.createBytesMessage();
                 resmsg.setStringProperty(ID, id);
-	        resmsg.writeLong(random);
+	            resmsg.writeLong(random);
 
                 byte blob[] = sessionRec.getSessionBlob();
                 resmsg.writeLong(blob.length);
@@ -384,7 +384,7 @@ public class AMSessionDB implements Runnable {
             if(verbose) {
                 System.out.println(bundle.getString("writemsgrecv"));
             }    
-	    if(statsEnabled) {
+	        if(statsEnabled) {
                 writeCount++;
             }
             String sid = getLenString(message);
@@ -416,7 +416,7 @@ public class AMSessionDB implements Runnable {
             if(verbose) {
                 System.out.println(bundle.getString("deletemsgrecv"));
             }
-	    if(statsEnabled) {
+	        if(statsEnabled) {
                 deleteCount++;
             }
             String sid = getLenString(message);
@@ -438,7 +438,7 @@ public class AMSessionDB implements Runnable {
             if(verbose) {
                 System.out.println(bundle.getString("getsessioncount"));
             }    
-	    if(statsEnabled) {
+	        if(statsEnabled) {
                 scReadCount++;
             }
             getSessionsByUUID(message, id);
@@ -574,6 +574,7 @@ public class AMSessionDB implements Runnable {
         System.out.println("Master SessionID :\t " + theSession.getMasterSID());
         System.out.println("Session State :\t " + theSession.getSessionState());
         System.out.println("UUID :\t " + theSession.getUUID());
+        
     }
     
     String getLenString(Message msg) throws Exception

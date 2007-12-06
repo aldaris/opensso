@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SFOCryptUtil.java,v 1.2 2007-11-14 00:21:07 manish_rustagi Exp $
+ * $Id: SFOCryptUtil.java,v 1.3 2007-12-06 21:59:11 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -271,7 +271,7 @@ public class SFOCryptUtil {
     * Returns an array of decoded bytes which were encoded in the passed
     * byte array.
     *
-    * @param data the array of base64-encoded characters
+    * @param encdata the array of base64-encoded characters
     * @return byte[] the decoded data array
     */
     static public byte[] base64decode(String encdata){
@@ -280,9 +280,9 @@ public class SFOCryptUtil {
 
         if (data.length <= 0)
             throw new RuntimeException("Invalid encoded data!");
-	// check that length is a multiple of 4
-	if(data.length % 4 != 0)
-	    throw new RuntimeException("Data is not Base64 encoded.");
+	    // check that length is a multiple of 4
+	    if(data.length % 4 != 0)
+	        throw new RuntimeException("Data is not Base64 encoded.");
 
         int len = ((data.length + 3) / 4) * 3;
         if (data[data.length-1] == '=') --len; 
