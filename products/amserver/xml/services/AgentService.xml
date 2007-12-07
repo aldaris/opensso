@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.14 2007-11-30 23:31:20 madan_ranganath Exp $
+   $Id: AgentService.xml,v 1.15 2007-12-07 22:53:37 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -731,6 +731,15 @@
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                     <AttributeSchema
+                         name="com.sun.am.policy.agents.config.freeformproperties"
+                         type="list"
+                         syntax="string"
+                         i18nKey="a463">
+                         <DefaultValues>
+                             <Value></Value>
+                         </DefaultValues>
+                     </AttributeSchema>
                 </SubSchema>
                 <SubSchema name="J2EEAgent" inheritance="multiple">
                      <AttributeSchema
