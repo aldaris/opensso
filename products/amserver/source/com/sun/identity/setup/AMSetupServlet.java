@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.31 2007-11-29 08:25:21 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.32 2007-12-07 21:25:59 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.setup;
 
 import com.iplanet.am.util.AdminUtils;
 import com.iplanet.services.ldap.DSConfigMgr;
+import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -41,6 +42,7 @@ import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.common.configuration.UnknownPropertyNameException;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.PolicyException;
@@ -50,7 +52,9 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceManager;
@@ -235,6 +239,18 @@ public class AMSetupServlet extends HttpServlet {
             File baseDirectory = new File(basedir);
             if (!baseDirectory.exists()) {
                 baseDirectory.mkdir();
+            } else {
+                SetupProgress.reportStart("emb.checkingbasedir",basedir);
+                File bootstrapFile = new File(basedir+"/"+BOOTSTRAP_EXTRA);
+                File opendsDir = new File(basedir+"/opends");
+                if (bootstrapFile.exists() || opendsDir.exists()) {
+                    SetupProgress.reportEnd("emb.basedirfailed", null);
+                    throw new ConfiguratorException(
+                        "Base directory specified :"+
+                        basedir+
+                        " cannot be used - has preexisting config data.");
+                }
+                SetupProgress.reportEnd("emb.success", null);
             }
             boolean isDITLoaded = ((String)map.get(
                 SetupConstants.DIT_LOADED)).equals("true");
@@ -258,16 +274,26 @@ public class AMSetupServlet extends HttpServlet {
                 // (ii) install, configure, and replicate embedded instance
                 try {
                     EmbeddedOpenDS.setup(map, servletCtx);
-                    // Determine if DITLoaded flag needs to be set...
-                    if (EmbeddedOpenDS.isMultiServer(map)) {
-                        isDITLoaded = true;
-                    }
                     // Now create the AMSetupDSConfig instance.Abort on failure
                     AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
                     if (!dsConfig.isDServerUp()) {
                         Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                          "AMSetupServlet.processRequest:OpenDS conn failed.");
                         return false;
+                    }
+
+                    // Determine if DITLoaded flag needs to be set : multi instance
+                    if (EmbeddedOpenDS.isMultiServer(map)) {
+                        // Replication 
+                        // Temporary fix until OpenDS auto-loads schema
+                        boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
+                          SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
+                          "sdkSchema") : false;
+                        List schemaFiles = getSchemaFiles(dataStore, 
+                                                           loadSDKSchema);
+                        writeSchemaFiles(basedir, schemaFiles);
+                        EmbeddedOpenDS.setupReplication(map);
+                        isDITLoaded = true;
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -339,7 +365,28 @@ public class AMSetupServlet extends HttpServlet {
                         doPrivileged(AdminTokenAction.getInstance()));
                 scm.addListener(ConfigurationObserver.getInstance());
             }
+
+            // Embedded :get our serverid and configure embedded idRepo
+            if (embedded == true) {
+                try {
+                    String serverID = WebtopNaming.getAMServerID();
+                    String entry = 
+                      map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST)+
+                      ":"+
+                      map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT)+
+                     "|"+ serverID;
+                    String orgName = (String) 
+                            map.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX);
+                    updateEmbeddedIdRepo(orgName, "embedded", entry);
+                } catch (Exception ex) {
+                    Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                        "EmbeddedDS : failed to setup serverid", ex);
+                    throw new ConfiguratorException(
+                        "EmbeddedDS : failed to gsetup serverid;ex="+ex);
+                }
+           } 
             SystemProperties.setServerInstanceName(serverInstanceName);
+
 
             handlePostPlugins(adminSSOToken);
 
@@ -1112,6 +1159,26 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
+    /**
+      * Update Embedded Idrepo instance with new embedded opends isntance.
+      */
+    private static void  updateEmbeddedIdRepo(String orgName, 
+                         String configName, String entry
+    ) throws SMSException, SSOException 
+    {
+        SSOToken token = (SSOToken) AccessController
+                 .doPrivileged(AdminTokenAction.getInstance());
+        ServiceConfigManager scm = new ServiceConfigManager(token,
+                 IdConstants.REPO_SERVICE, "1.0");
+        ServiceConfig sc = scm.getOrganizationConfig(orgName, null);
+        ServiceConfig subConfig = sc.getSubConfig(configName);
+        Map configMap = subConfig.getAttributes();
+        Set vals = (Set)configMap.get("sun-idrepo-ldapv3-config-ldap-server");
+        vals.add(entry);
+        HashMap mp = new HashMap(2);
+        mp.put("sun-idrepo-ldapv3-config-ldap-server", vals);
+        subConfig.setAttributes(mp);
+    }
     /**
      * Update platform server list and Organization alias
      */
