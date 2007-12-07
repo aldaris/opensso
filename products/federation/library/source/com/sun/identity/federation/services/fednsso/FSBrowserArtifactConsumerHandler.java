@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSBrowserArtifactConsumerHandler.java,v 1.5 2007-12-07 10:12:33 mchlbgs Exp $
+ * $Id: FSBrowserArtifactConsumerHandler.java,v 1.6 2007-12-07 18:41:50 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -348,7 +348,6 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
             }
             
             this.authnRequest = authnRequestRef;
-            FSUtils.debug.error("EMILY: handler: relayState = " + relayState);
             this.relayState = authnRequest.getRelayState();
             if ((this.relayState == null) || 
                 (this.relayState.trim().length() == 0))
@@ -362,7 +361,6 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                     this.relayState =
                         baseURL + IFSConstants.SP_DEFAULT_RELAY_STATE;
                 }
-                FSUtils.debug.error("EMILY: handler1: relayState = " + relayState);
             }
             this.doFederate = authnRequest.getFederate();
             this.nameIDPolicy = authnRequest.getNameIDPolicy();
