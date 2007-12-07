@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.6 2007-11-27 02:15:18 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.7 2007-12-07 21:39:06 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,8 +44,9 @@ import com.iplanet.sso.SSOTokenManager;
 
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.IApplicationSSOTokenProvider;
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.agents.util.AgentRemoteConfigUtils;
+import com.sun.identity.shared.debug.Debug;
+
 /**
  * <p>
  * Provides access to the configuration as set in the system. Underneath the
@@ -1045,7 +1046,10 @@ public class AgentConfiguration implements
     private static void updatePropertiesUponPolling() {
         if (needToRefresh()) {
             if (!isAgentConfigurationRemote()) {
-                File configFile = new File(getConfigFilePath());
+                File configFile = new File(getLocalConfigFilePath());
+                if (!configFile.exists()) {
+                    configFile = new File(getConfigFilePath());
+                }
                 if(getLastLoadTime() > configFile.lastModified()) {
                     markCurrent();
                     return; 
@@ -1082,7 +1086,7 @@ public class AgentConfiguration implements
             }
         }
     }    
-    
+   
     private synchronized static boolean loadProperties() {
         boolean result = false;
         try {
