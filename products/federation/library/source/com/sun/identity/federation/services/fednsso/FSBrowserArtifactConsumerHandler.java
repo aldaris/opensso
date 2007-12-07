@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSBrowserArtifactConsumerHandler.java,v 1.4 2007-10-16 21:49:15 exu Exp $
+ * $Id: FSBrowserArtifactConsumerHandler.java,v 1.5 2007-12-07 10:12:33 mchlbgs Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -526,7 +526,6 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                         LogUtil.access(Level.INFO,
                                     LogUtil.ACCESS_GRANTED_REDIRECT_TO,
                                     data);
-                        response.setHeader("Location", this.relayState);
                         // Call SP Adapter
                         if (spAdapter != null) {
                             FSUtils.debug.message("Invoke spAdapter");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.10 2007-11-28 18:18:26 exu Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.11 2007-12-07 10:11:47 mchlbgs Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -541,7 +541,6 @@ public class FSAssertionArtifactHandler {
                     String[] data = {this.relayState};
                     LogUtil.access(
                         Level.INFO,LogUtil.ACCESS_GRANTED_REDIRECT_TO, data); 
-                    response.setHeader("Location", this.relayState);
                     FSUtils.debug.message(
                         "ArtifactHandler.notfederated, postSSO");
                     if (spAdapter != null) {
@@ -1670,7 +1669,6 @@ public class FSAssertionArtifactHandler {
         }
         String[] data = {this.relayState} ;
         LogUtil.access(Level.INFO,LogUtil.ACCESS_GRANTED_REDIRECT_TO,data); 
-        response.setHeader("Location", this.relayState);
         //Set fed cookie
         if (nameIDPolicy == null ||
             !nameIDPolicy.equals(IFSConstants.NAME_ID_POLICY_ONETIME)) 
