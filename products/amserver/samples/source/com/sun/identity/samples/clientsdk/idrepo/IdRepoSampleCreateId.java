@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.6 2007-11-09 23:06:26 goodearth Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.7 2007-12-07 19:20:39 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,11 +112,6 @@ public class IdRepoSampleCreateId {
                 vals = new HashSet();
                 vals.add(tmpS);
                 attrs.put("userpassword", vals);
-
-                tmpS = sampleUtils.getLine(idName + "'s polling interval: ");
-                vals = new HashSet();
-                vals.add(tmpS);
-                attrs.put("com.sun.am.policy.am.polling.interval", vals);
 
                 tmpId = idRepo.createIdentity(idtype, idName, attrs);
             } else if (idtype.equals(IdType.USER)) {
