@@ -17,13 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.9 2007-11-30 04:26:08 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.10 2007-12-07 19:20:00 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm.plugins.internal;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +41,10 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 
 import com.iplanet.am.util.AdminUtils;
+import com.iplanet.services.comm.server.PLLServer;
+import com.iplanet.services.comm.server.SendNotificationException;
+import com.iplanet.services.comm.share.Notification;
+import com.iplanet.services.comm.share.NotificationSet;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
@@ -65,6 +72,7 @@ import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 public class AgentsRepo extends IdRepo implements ServiceListener {
+
     public static final String NAME = 
         "com.sun.identity.idm.plugins.internal.AgentsRepo";
 
@@ -97,6 +105,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     // To determine if notification object has been registered for schema
     // changes.
     private static boolean registeredForNotifications;
+
+    private static String agentNameforNotificationSet = null;
+    private static IdType agentIdTypeforNotificationSet;
+    private static String notificationURLname="com.sun.am.notification.url";
+    public static final String AGENT_CONFIG_SERVICE = "agentconfig";
+
 
     public AgentsRepo() {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -322,10 +336,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                         }
                     }
                 }
-                if (debug.messageEnabled()) {
-                    debug.message("AgentsRepo.getAttributes() agentsAttrMap: " 
-                        + agentsAttrMap);
-                }
                 return agentsAttrMap;
             } catch (IdRepoException idpe) {
                 debug.error("AgentsRepo.getAttributes(): Unable to read agent"
@@ -362,10 +372,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.error("AgentsRepo.getAgentAttrs(): "
                 + "Error occurred while getting " + agentName, sme);
             throw new IdRepoException(sme.getMessage());
-        }
-
-        if (debug.messageEnabled()) {
-            debug.message("AgentsRepo.getAgentAttrs() answer: " + answer);
         }
         return (answer);
     }
@@ -678,6 +684,17 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     public void removeAttributes(SSOToken token, IdType type, String name,
             Set attrNames) throws IdRepoException, SSOException {
 
+        if (debug.messageEnabled()) {
+            debug.message("AgentsRepo.removeAttributes() called: " + type + 
+                ": " + name);
+        }
+        if (attrNames == null || attrNames.isEmpty()) {
+            if (debug.messageEnabled()) {
+                debug.message("AgentsRepo.removeAttributes(): Attributes " +
+                        "are empty");
+            }
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
+        }
     }
 
     /*
@@ -793,6 +810,16 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             }
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
+
+        agentNameforNotificationSet = name;
+        agentIdTypeforNotificationSet = type;
+        if (debug.messageEnabled()) {
+            debug.message("AgentsRepo.setAttributes(): " + 
+                "agentNameforNotificationSet " + agentNameforNotificationSet);
+            debug.message("AgentsRepo.setAttributes(): " +
+                "agentIdTypeforNotificationSet "+agentIdTypeforNotificationSet);
+        }
+
         ServiceConfig aCfg = null;
         try {
             if (type.equals(IdType.AGENTONLY)) {
@@ -924,7 +951,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     + "supportedOps Map = " + supportedOps);
         }
     }
-
+ 
+    // The following three methods implement ServiceListener interface
     /*
      * (non-Javadoc)
      * 
@@ -933,7 +961,14 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
      *      java.lang.String, java.lang.String, java.lang.String, int)
      */
     public void globalConfigChanged(String serviceName, String version,
-            String groupName, String serviceComponent, int type) {
+        String groupName, String serviceComponent, int type) {
+        if (debug.messageEnabled()) {
+            debug.message("AgentsRepo.globalConfigChanged..");
+        }
+
+        // If notification URLs are present, send notifications
+        sendNotificationSet(type);
+
         repoListener.allObjectsChanged();
 
     }
@@ -947,8 +982,16 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
      *      java.lang.String, int)
      */
     public void organizationConfigChanged(String serviceName, String version,
-            String orgName, String groupName, String serviceComponent, int type)
+        String orgName, String groupName, String serviceComponent, int type)
+        
     {
+        if (debug.messageEnabled()) {
+            debug.message("AgentsRepo.organizationConfigChanged..");
+        }
+
+        // If notification URLs are present, send notifications
+        sendNotificationSet(type);
+
         repoListener.allObjectsChanged();
 
     }
@@ -960,6 +1003,9 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
      *      java.lang.String)
      */
     public void schemaChanged(String serviceName, String version) {
+        if (debug.messageEnabled()) {
+            debug.message("AgentsRepo.schemaChanged..");
+        }
         repoListener.allObjectsChanged();
     }
 
@@ -1245,5 +1291,79 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         orgName = DNMapper.orgNameToDN(orgName);
         sb.append(orgName);
         return (sb.toString());
+    }
+
+    // If notification URLs are present, send notifications to clients/agents.
+    private void sendNotificationSet(int type) {
+
+        switch (type) {
+        case MODIFIED:
+            if (agentIdTypeforNotificationSet == null) {
+                break;
+            }
+            String modItem = null;
+            String name = "Agent :" + agentNameforNotificationSet 
+                + " of IdType "+ agentIdTypeforNotificationSet;
+
+            if (debug.messageEnabled()) {
+                debug.message("AgentsRepo.sendNotificationSet():name "+name);
+            }
+
+            modItem = "MODIFIED:" + name;
+
+            // If notification URLs are present, send notifications
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+
+            Set nSet = new HashSet(2);
+            nSet.add(notificationURLname);
+            Map ansMap = new HashMap();
+            String nval = null;
+            try {
+                ansMap = getAttributes(adminToken, 
+                    agentIdTypeforNotificationSet, 
+                    agentNameforNotificationSet, nSet);
+                Set nvalSet = (Set) ansMap.get(notificationURLname); 
+                if ((nvalSet != null) && (!nvalSet.isEmpty())) {
+                    nval = (String) nvalSet.iterator().next();
+                    try {
+                        URL url = new URL(nval);
+                        // Construct NotificationSet to be sent to Agents.
+                        Notification notification = new Notification(modItem);
+                        NotificationSet ns = 
+                            new NotificationSet(AGENT_CONFIG_SERVICE);
+                        ns.addNotification(notification);
+                        try {
+                            PLLServer.send(url, ns);
+                            if (debug.messageEnabled()) {
+                                debug.message("AgentsRepo:sendNotificationSet "
+                                    + "Sent Notification to "
+                                    + "URL: " + url + " Data: " + ns);
+                            }
+                        } catch (SendNotificationException ne) {
+                            if (debug.warningEnabled()) {
+                                debug.warning("AgentsRepo.sendNotificationSet: "
+                                    + "failed sending notification to: " 
+                                    + url, ne);
+                            }
+                        }
+                    } catch (MalformedURLException e) {
+                        if (debug.warningEnabled()) {
+                            debug.warning("AgentsRepo.sendNotificationSet:(): "
+                                + " invalid URL: " , e);
+                        }
+                    }
+                }
+            } catch (IdRepoException idpe) {
+                debug.error("AgentsRepo.sendNotificationSet(): Unable to read "
+                    + "agent attributes ", idpe);
+                Object args[] = { NAME };
+            } catch (SSOException ssoe) {
+                if (debug.warningEnabled()) {
+                    debug.warning("AgentsRepo.sendNotificationSet(): "
+                        + "Unable to send notification due to " + ssoe);
+                }
+            }
+        }
     }
 }
