@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2007-11-29 07:53:04 mrudul_uchil Exp $
+   $Id: build.xml,v 1.8 2007-12-07 22:20:07 kevinserwin Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -56,7 +56,7 @@
         </fileset>
         
         <fileset dir="${fm.dist.dir}">
-            <include name="famclientsdk.jar"/>
+            <include name="openssoclientsdk.jar"/>
         </fileset>
     </path>
 
@@ -102,7 +102,7 @@
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
 
-        <jar destfile="${wssagents.dist.dir}/famwssproviders.jar">
+        <jar destfile="${wssagents.dist.dir}/openssowssproviders.jar">
             <manifest>
                 <attribute name="Version" value="${version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -112,10 +112,10 @@
             </fileset>
             <fileset dir="${wssagents.xml.dir}" includes="*.xml" />
             <zipfileset dir="${wssagents.classes.dir}" />
-            <zipfileset src="${fm.dist.dir}/famclientsdk.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class"/>
+            <zipfileset src="${fm.dist.dir}/openssoclientsdk.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class"/>
         </jar>
 
-        <checksum file="${wssagents.dist.dir}/famwssproviders.jar" 
+        <checksum file="${wssagents.dist.dir}/openssowssproviders.jar" 
             algorithm="SHA" fileext=".sha" />
     </target>
 
@@ -135,8 +135,8 @@
             tofile="${zip.temp.dir}/README.weblogic" />
 
         <copy todir="${zip.temp.dir}/lib">
-            <fileset file="${fm.dist.dir}/famclientsdk.jar" />
-            <fileset file="${wssagents.dist.dir}/famwssproviders.jar" />
+            <fileset file="${fm.dist.dir}/openssoclientsdk.jar" />
+            <fileset file="${wssagents.dist.dir}/openssowssproviders.jar" />
             <fileset file="${wssagents.src.dir}/com/sun/identity/wssagents/weblogic/famauthprovider.jar" />
         </copy>
         <copy todir="${zip.temp.dir}/samples">
@@ -151,7 +151,7 @@
             <fileset file="${openfm.clientsamples.dir}/war/.storepass" />
         </copy>
 
-        <zip destfile="${wssagents.dist.dir}/famwssproviders.zip" whenempty="create">
+        <zip destfile="${wssagents.dist.dir}/openssowssproviders.zip" whenempty="create">
             <zipfileset dir="${zip.temp.dir}" filemode="755">
                 <include name="setup"/>
             </zipfileset>
@@ -160,7 +160,7 @@
             </zipfileset>
         </zip>
 
-        <checksum file="${wssagents.dist.dir}/famwssproviders.zip"
+        <checksum file="${wssagents.dist.dir}/openssowssproviders.zip"
             algorithm="SHA" fileext=".sha" />
     </target>
     
@@ -176,8 +176,8 @@
         <echo message=" Following targets are available:"/>
         <echo message=" "/>
         <echo message=" build      : compiles the sources"/>
-        <echo message=" jars       : creates FAMWSSProviders JAR for deployment"/>
-        <echo message=" zip        : creates FAMWSSProviders ZIP for deployment"/>
+        <echo message=" jars       : creates OpenSSOWSSProviders JAR for deployment"/>
+        <echo message=" zip        : creates OpenSSOWSSProviders ZIP for deployment"/>
         <echo message=" clean      : deletes the generated files"/>
         <echo message=" samples    : builds the client samples"/>
         <echo message=" samples-clean : deletes generated client samples"/>
