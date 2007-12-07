@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2007-08-24 22:08:53 bina Exp $
+   $Id: build.xml,v 1.9 2007-12-07 22:14:16 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -64,7 +64,7 @@
                 <include name="COTLogMessageIDs.xml"/>
             </fileset>
         </copy>
-        <jar destfile="${fm.dist.dir}/famclientsdk.jar" duplicate="preserve">
+        <jar destfile="${fm.dist.dir}/openssoclientsdk.jar" duplicate="preserve">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -111,7 +111,7 @@
              <zipfileset src="${openfm.extlib.dir}/amclientsdk.jar" includes="**/*.*"/>
         </jar>
 
-        <checksum file="${fm.dist.dir}/famclientsdk.jar"
+        <checksum file="${fm.dist.dir}/openssoclientsdk.jar"
             algorithm="SHA" fileext=".sha" />
     </target>
 
