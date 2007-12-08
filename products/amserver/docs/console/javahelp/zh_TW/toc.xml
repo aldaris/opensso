@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- ident   "%Z%%M% %I%   %E% SMI" -->
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "toc_1_0.dtd">
+<toc version="2.0">
+<tocitem target="aawelcome" text="Sun Java System Access Manager 7.1 線上說明" expand="false"><tocitem target="intro" text="簡介" expand="false"></tocitem>
+</tocitem>
+<tocitem target="accesscontrol" text="存取控制" expand="false"><tocitem target="realm.rmrealm" text="範圍" expand="false"><tocitem target="realm.rmrealmadd" text="建立新的範圍" expand="false"></tocitem>
+<tocitem target="realm.realmproperties" text="一般特性" expand="false"></tocitem>
+</tocitem>
+<tocitem target="authentication.authproperties" text="認證" expand="false"><tocitem target="authentication.newauthinstance" text="建立新的認證模組實例" expand="false"></tocitem>
+<tocitem target="authentication.newauthconfig" text="建立新的認證鏈接" expand="false"></tocitem>
+</tocitem>
+<tocitem target="realm.services" text="服務" expand="false"><tocitem target="realm.servicesadd" text="將服務新增至範圍" expand="false"></tocitem>
+</tocitem>
+<tocitem target="realm.idrepo" text="資料存放區" expand="false"><tocitem target="realm.idreposelecttype" text="建立新的資料存放區" expand="false"></tocitem>
+<tocitem target="idrepoadd" text="Access Manager 資料存放區類型" expand="false"></tocitem>
+<tocitem target="amrepoattrs" text="Access Manager 儲存庫屬性" expand="false"></tocitem>
+<tocitem target="adattrs" text="Active Directory 屬性" expand="false"></tocitem>
+<tocitem target="flatfileattr" text="平面檔案儲存庫屬性" expand="false"></tocitem>
+<tocitem target="gdoto" text="通用 LDAPv3 屬性" expand="false"></tocitem>
+<tocitem target="sundirattrs" text="具有 Access Manager 模式的 Sun Directory Server 屬性" expand="false"></tocitem>
+</tocitem>
+<tocitem target="delegation.delegation" text="權限" expand="false"></tocitem>
+<tocitem target="policy.policy" text="策略" expand="false"><tocitem target="normalpolicy" text="一般策略" expand="false"><tocitem target="policy.policynormaladd" text="建立新的一般策略" expand="false"></tocitem>
+</tocitem>
+<tocitem target="normalrule" text="規則" expand="false"><tocitem target="policy.ruleadd" text="將規則新增至策略" expand="false"></tocitem>
+</tocitem>
+<tocitem target="normalsubject" text="主體" expand="false"><tocitem target="policy.subjectadd" text="將主體新增至策略" expand="false"></tocitem>
+</tocitem>
+<tocitem target="policyconditions" text="條件" expand="false"><tocitem target="policy.conditionadd" text="將條件新增至策略" expand="false"></tocitem>
+</tocitem>
+<tocitem target="policy.pmdefaultsessioncondtionadd" text="使用中的階段作業時間" expand="false"></tocitem>
+<tocitem target="policy.authtoserviceadd" text="認證鏈接" expand="false"></tocitem>
+<tocitem target="policy.pmdefaultauthlevelconditionadd" text="認證層級 (大於或等於)" expand="false"></tocitem>
+<tocitem target="gdovl" text="認證層級 (小於或等於)" expand="false"></tocitem>
+<tocitem target="policy.pmdefaultauthschemeconditionadd" text="認證模組實例" expand="false"></tocitem>
+<tocitem target="policy.sessionpropertyconditionadd" text="目前的階段作業特性" expand="false"></tocitem>
+<tocitem target="policy.pmdefaultipcondition" text="IP 位址/DNS 名稱" expand="false"></tocitem>
+<tocitem target="gdkmp" text="LDAP 篩選器條件" expand="false"></tocitem>
+<tocitem target="policy.authtorealmadd" text="範圍認證" expand="false"></tocitem>
+<tocitem target="policy.pmdefaulttimeconditionadd" text="時間 (星期幾、日期、時間和時區)" expand="false"></tocitem>
+<tocitem target="responseprovider" text="回應提供者" expand="false"><tocitem target="policy.responseprovideradd" text="將回應新增至策略" expand="false"></tocitem>
+</tocitem>
+<tocitem target="fyfby" text="參照策略" expand="false"><tocitem target="policy.policyreferraladd" text="建立新的參照策略" expand="false"></tocitem>
+</tocitem>
+<tocitem target="referrals" text="參照" expand="false"><tocitem target="policy.selectreferraltype" text="將參照新增至策略" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="idm.entities" text="主體" expand="false"><tocitem target="subjectuser" text="使用者" expand="false"><tocitem target="subjectcreateuser" text="建立或修改使用者" expand="false"></tocitem>
+<tocitem target="addusertogroup" text="新增使用者至角色與群組" expand="false"></tocitem>
+<tocitem target="idm.entityservices" text="新增服務至識別" expand="false"></tocitem>
+</tocitem>
+<tocitem target="subjectagents" text="代理程式" expand="false"><tocitem target="subjectcreateagent" text="建立或修改代理程式" expand="false"></tocitem>
+</tocitem>
+<tocitem target="subject.filteredrole" text="篩選的角色" expand="false"><tocitem target="subject.createfiltrole" text="建立篩選角色" expand="false"></tocitem>
+</tocitem>
+<tocitem target="subject.role" text="角色" expand="false"><tocitem target="subject.createrole" text="建立或修改角色" expand="false"></tocitem>
+<tocitem target="idm.entitymembers" text="新增使用者至角色或群組" expand="false"></tocitem>
+</tocitem>
+<tocitem target="subject.group" text="群組" expand="false"><tocitem target="subject.creategroup" text="建立或修改群組" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="dirmang" text="目錄管理" expand="false"><tocitem target="dm.home" text="目錄管理" expand="false"></tocitem>
+</tocitem>
+<tocitem target="federation" text="聯合" expand="false"><tocitem target="federation.fsauthdomains" text="認證網域" expand="false"><tocitem target="federation.fsauthdomainsadd" text="建立新的認證網域" expand="false"></tocitem>
+<tocitem target="federation.fsauthdomainsedit" text="修改認證網域設定檔" expand="false"></tocitem>
+<tocitem target="federation.fsauthdomainsselectprovider" text="新增提供者至認證網域" expand="false"></tocitem>
+<tocitem target="deleteauthdomain" text="刪除認證網域設定檔" expand="false"></tocitem>
+</tocitem>
+<tocitem target="federation.fsentitydescriptors" text="實體：提供者及附屬提供者" expand="false"><tocitem target="federation.fsentitydescriptorsadd" text="建立提供者實體或附屬提供者實體" expand="false"></tocitem>
+<tocitem target="federation.fsentitydescriptorsprofile" text="修改提供者實體或是附屬提供者實體的一般屬性" expand="false"></tocitem>
+<tocitem target="federation.fsidentityprovider" text="新增識別提供者至提供者實體" expand="false"></tocitem>
+<tocitem target="federation.fsidentityproviderhostedadd" text="新增一個新的代管識別提供者至提供者實體" expand="false"></tocitem>
+<tocitem target="federation.fsidentityproviderremoteadd" text="新增一個新的遠端識別提供者至提供者實體" expand="false"></tocitem>
+<tocitem target="federation.fsserviceprovider" text="新增服務提供者至提供者實體" expand="false"></tocitem>
+<tocitem target="federation.fsserviceproviderhostedadd" text="新增一個新的代管服務提供者至提供者實體" expand="false"></tocitem>
+<tocitem target="federation.fsserviceproviderremoteadd" text="新增一個新的遠端服務提供者至提供者實體" expand="false"></tocitem>
+<tocitem target="federation.fsidentityproviderhostedprofile" text="修改提供者實體內的代管識別提供者屬性" expand="false"></tocitem>
+<tocitem target="federation.fsidentityproviderremoteprofile" text="修改提供者實體內的遠端識別提供者屬性" expand="false"></tocitem>
+<tocitem target="federation.fsserviceproviderhostedprofile" text="修改提供者實體內的代管服務提供者屬性" expand="false"></tocitem>
+<tocitem target="federation.fsserviceproviderremoteprofile" text="修改提供者實體內的遠端服務提供者屬性" expand="false"></tocitem>
+<tocitem target="federation.fscreatecontactperson" text="新增連絡人員至提供者實體內的提供者" expand="false"></tocitem>
+<tocitem target="federation.fseditcontactperson" text="修改提供者實體內的連絡人員設定檔" expand="false"></tocitem>
+<tocitem target="federation.fsentitydescriptorsaffiliate" text="新增成員至附屬提供者實體" expand="false"></tocitem>
+</tocitem>
+<tocitem target="federation.fssamlservice" text="SAML" expand="false"><tocitem target="targetspecifier" text="目標指定符號" expand="false"></tocitem>
+<tocitem target="siteidentifiers" text="網站識別碼" expand="false"><tocitem target="federation.fssamlsiteidadd" text="配置網站識別碼 " expand="false"></tocitem>
+</tocitem>
+<tocitem target="trustedpartners" text="可信任的合作夥伴" expand="false"><tocitem target="federation.fssamlselecttrustedpartnertype" text="可信任的合作夥伴：選取夥伴類型及設定檔" expand="false"></tocitem>
+<tocitem target="federation.fssamltrustedpartnersadd" text="可信任的合作夥伴：配置可信任的合作夥伴屬性" expand="false"></tocitem>
+</tocitem>
+<tocitem target="targeturl" text="目標 URL" expand="false"><tocitem target="federation.fssamltargeturlsadd" text="配置目標 URL" expand="false"></tocitem>
+</tocitem>
+<tocitem target="assertiontimeout" text="指定逾時" expand="false"></tocitem>
+<tocitem target="assertionskew" text="notBefore 時間的假設偏斜因素。" expand="false"></tocitem>
+<tocitem target="artifacttimeout" text="工件逾時" expand="false"></tocitem>
+<tocitem target="samlartifactname" text="SAML 工件名稱" expand="false"></tocitem>
+<tocitem target="signsamlassertion" text="簽名 SAML 指定" expand="false"></tocitem>
+<tocitem target="signsamlrequest" text="簽名 SAML 請求" expand="false"></tocitem>
+<tocitem target="signsamlresponse" text="簽名 SAML 回應" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="webservices" text="Web 服務" expand="false"><tocitem target="webservices.wspersonalprofileservice" text="Liberty 個人設定檔服務" expand="false"><tocitem target="resourceidmapper" text="ResourceID 對映程式" expand="false"></tocitem>
+<tocitem target="authorizer" text="授權程式" expand="false"></tocitem>
+<tocitem target="attributemapper" text="屬性對映程式" expand="false"></tocitem>
+<tocitem target="ppproviderid" text="提供者 ID" expand="false"></tocitem>
+<tocitem target="namescheme" text="名稱方案" expand="false"></tocitem>
+<tocitem target="namespaceprefix" text="名稱空間前綴" expand="false"></tocitem>
+<tocitem target="supportedcontainers" text="支援的容器" expand="false"><tocitem target="webservices.wsppservicesupportedcontaineradd" text="配置支援的容器" expand="false"></tocitem>
+</tocitem>
+<tocitem target="ppldapattributemaplist" text="PPLDAP 屬性對映清單" expand="false"><tocitem target="webservices.wsppservicedsattributemaplistadd" text="配置屬性對映" expand="false"></tocitem>
+</tocitem>
+<tocitem target="requirequery" text="要求查詢策略評估：" expand="false"></tocitem>
+<tocitem target="requiremodify" text="要求修改策略評估：" expand="false"></tocitem>
+<tocitem target="extensioncontainerattributes" text="延伸容器屬性" expand="false"></tocitem>
+<tocitem target="extensionattributesnamespaceprefix" text="延伸屬性名稱空間前綴" expand="false"></tocitem>
+<tocitem target="serviceupdateenabled" text="服務更新" expand="false"></tocitem>
+<tocitem target="serviceinstanceupdateclass" text="服務實例更新類別" expand="false"></tocitem>
+<tocitem target="alternateendpoint" text="替代端點" expand="false"></tocitem>
+<tocitem target="alternatesecuritymechanisms" text="替代安全機制" expand="false"></tocitem>
+</tocitem>
+<tocitem target="service.smdiscoveryservice" text="探索服務" expand="false"><tocitem target="dsproviderid" text="提供者 ID" expand="false"></tocitem>
+<tocitem target="supportedauthmechanisms" text="支援的認證機制" expand="false"></tocitem>
+<tocitem target="supporteddirectives" text="支援的指令" expand="false"></tocitem>
+<tocitem target="policyevaldiscolookup" text="探索查找的策略評估" expand="false"></tocitem>
+<tocitem target="policyevaldiscoupdate" text="探索更新的策略評估" expand="false"></tocitem>
+<tocitem target="authorizerpluginclass" text="授權程式外掛程式類別：" expand="false"></tocitem>
+<tocitem target="entryhandlerpluginclass" text="項目處理程式外掛程式類別：" expand="false"></tocitem>
+<tocitem target="resourceidmapperpluginclass" text="ResourceID 對映程式外掛程式類別" expand="false"><tocitem target="service.smdiscoveryproviderresourceidmapadd" text="配置 ResourceID 對映程式" expand="false"></tocitem>
+</tocitem>
+<tocitem target="authresponsemessage" text="認證回應訊息" expand="false"></tocitem>
+<tocitem target="generatesessioncontext" text="啟動程式的階段作業環境敘述" expand="false"></tocitem>
+<tocitem target="encryptnameidentifier" text="為啟動程式加密階段作業環境中的名稱識別碼" expand="false"></tocitem>
+<tocitem target="useimpliedresource" text="隱含資源" expand="false"></tocitem>
+<tocitem target="resourceofferingsbootstrapping" text="啟動程式的資源提供" expand="false"><tocitem target="service.smdiscoverybootstraprefoffadd" text="配置啟動程式的資源提供" expand="false"></tocitem>
+<tocitem target="service.smdiscoverydescriptionadd" text="配置服務描述" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="service.scsoapbinding" text="SOAP 連結服務" expand="false"><tocitem target="requesthandlerlist" text="請求處理程式清單" expand="false"><tocitem target="service.scsoapbindingrequesthandlerlistadd" text="配置請求處理程式" expand="false"></tocitem>
+</tocitem>
+<tocitem target="webserviceauthenticator" text="Web 服務認證程式" expand="false"></tocitem>
+<tocitem target="soapsuppauthmech" text="支援的認證機制" expand="false"></tocitem>
+</tocitem>
+<tocitem target="webservices.wsauthnservices" text="認證 Web 服務" expand="false"><tocitem target="mechanismhandlerslist" text="機制處理程式清單" expand="false"><tocitem target="webservices.wsauthnserviceshandlersadd" text="配置新的機制處理程式" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="service.scconfig" text="配置屬性" expand="false"><tocitem target="authattrs" text="認證" expand="false"><tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="匿名" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory" expand="false"></tocitem>
+<tocitem target="authentication.authconfig" text="認證配置" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="憑證 " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthservice" text="核心" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="資料存放區" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP Basic" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC" expand="false"><tocitem target="jdbcexample" text="配置連線池 &#8212; 範例" expand="false"></tocitem>
+</tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="成員身份" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows Desktop SSO" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT" expand="false"></tocitem>
+<tocitem target="supportedlang" text="支援的語言環境" expand="false"></tocitem>
+</tocitem>
+<tocitem target="consoleprops" text="主控台特性" expand="false"><tocitem target="service.scserviceprofile.amadminconsoleservice" text="管理" expand="false"></tocitem>
+<tocitem target="service.smg11n" text="全域化設定" expand="false"></tocitem>
+</tocitem>
+<tocitem target="global" text="全域特性" expand="false"><tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="密碼重設" expand="false"></tocitem>
+<tocitem target="service.scpolicy" text="策略配置" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.amsessionservice" text="階段作業" expand="false"></tocitem>
+<tocitem target="service.subconfigadd" text="新增子配置" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamuserservice" text="使用者" expand="false"></tocitem>
+</tocitem>
+<tocitem target="systemprops" text="系統特性" expand="false"><tocitem target="service.scserviceprofile.iplanetamclientdetection" text="用戶端偵測" expand="false"></tocitem>
+<tocitem target="service.mapcreatedevice" text="新增用戶端" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamloggingservice" text="記錄" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamnamingservice" text="命名" expand="false"></tocitem>
+<tocitem target="service.scplatform" text="平台" expand="false"></tocitem>
+<tocitem target="service.scplatformsitelistadd" text="建立新的網站名稱" expand="false"></tocitem>
+<tocitem target="service.scplatformserverlistadd" text="建立新的實例名稱" expand="false"></tocitem>
+<tocitem target="service.scplatformclientcharsetsadd" text="建立新的字元集" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="sessions" text="階段作業" expand="false"><tocitem target="sessionpage" text="階段作業頁面" expand="false"><tocitem target="sessionsearch" text="搜尋" expand="false"></tocitem>
+<tocitem target="viewsession" text="檢視階段作業" expand="false"></tocitem>
+<tocitem target="session.smprofile" text="階段作業視窗" expand="false"></tocitem>
+<tocitem target="invalidatesession" text="使階段作業無效" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+
+</toc>

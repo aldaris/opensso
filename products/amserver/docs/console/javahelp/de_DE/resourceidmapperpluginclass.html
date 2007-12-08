@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Klassen f&#252;r ResourceID-Mapper-Plugin
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="resourceidmapperpluginclass"></A><h3>Klassen f&#252;r ResourceID-Mapper-Plugin</h3>
+<A NAME="indexterm-142"></A><A NAME="indexterm-143"></A><p>Der Wert dieses Attributs ist eine Liste von Klassen, mit denen IDs f&#252;r ein f&#252;r die Organisation oder Rolle konfiguriertes Ressourcenangebot erstellt werden. <tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper </tt> ist eine Schnittstelle, mit der Benutzer-IDs den entsprechenden Ressourcen-IDs zugeordnet werden. Der  Discovery-Dienst stellt f&#252;r diese Schnittstelle zwei Implementierungen bereit:</p>
+<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper </tt> (Format: <i>providerID</i> + "/" + <i>the Base64 encoded userIDs</i>)</p>
+</li>
+<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper </tt> (Format: <i>providerID</i> + "/" + <i>the hex string of userID</i>)</p>
+</li>
+</ul>
+<p>Mithilfe der Implementierungsklasse k&#246;nnen Sie weitere Implementierungen entwickeln und als Wert dieses Attributs hinzuf&#252;gen. Klicken Sie dazu auf &#8220;Neu&#34; und verwenden Sie das folgende Format:</p>
+<p><tt><b>providerid=</tt><i>providerID<tt></i>|</tt><i> class_name_and_path<tt></i></b></tt></p>
+<p>Siehe <A HREF="service.smdiscoveryproviderresourceidmapadd.html#service.smdiscoveryproviderresourceidmapadd">So konfigurieren Sie einen ResourceID-Mapper</A>.</p>
+
+<br />
+
+</body>
+</html>

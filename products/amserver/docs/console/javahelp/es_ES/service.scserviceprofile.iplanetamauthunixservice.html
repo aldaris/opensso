@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>UNIX 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthunixservice"></A><h3>UNIX </h3>
+<p><A NAME="indexterm-189"></A>Este m&#243;dulo exclusivo de Solaris permite realizar la autenticaci&#243;n mediante la identificaci&#243;n y la contrase&#241;a de UNIX de un usuario. Si se modifica alguno de los atributos de autenticaci&#243;n de UNIX, se deber&#225; reiniciar tanto Access Manager como el asistente amunixd. Los atributos de autenticaci&#243;n de UNIX son atributos globales y de dominio. Los atributos son:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbsy">Puerto de configuraci&#243;n</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbqv">Puerto de autenticaci&#243;n</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbrv">Tiempo de espera</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbls">Subprocesos</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbra">Nivel de autenticaci&#243;n</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbky">Nombre de servicio PAM</A></p>
+</li>
+</ul>
+<A NAME="fwbsy"></A><h4>Puerto de configuraci&#243;n</h4>
+<p>Este atributo especifica el puerto en el que el auxiliar de UNIX recibe, durante el inicio, la informaci&#243;n de configuraci&#243;n incluida en los atributos de puerto de autenticaci&#243;n del auxiliar de UNIX, tiempo de espera del auxiliar de UNIX y subprocesos del auxiliar de UNIX. El valor predeterminado es 58946.</p>
+<p>Si se cambia este atributo, tambi&#233;n deber&#225; cambiar la entrada <i>unixHelper.port</i> en el archivo <tt>AMConfig.properties</tt> y reiniciar Access Manager.</p>
+<A NAME="fwbqv"></A><h4>Puerto de autenticaci&#243;n</h4>
+<p>Este atributo especifica el puerto en el que el auxiliar de UNIX recibe las solicitudes de autenticaci&#243;n tras la configuraci&#243;n. El valor predeterminado es 57946.</p>
+<A NAME="fwbrv"></A><h4>Tiempo de espera</h4>
+<p>Este atributo especifica el n&#250;mero de minutos de los que disponen los usuarios para completar la autenticaci&#243;n. Si los usuarios sobrepasan el tiempo asignado, la autenticaci&#243;n presenta un error autom&#225;ticamente. El tiempo predeterminado es de 3 minutos.</p>
+<A NAME="fwbls"></A><h4>Subprocesos</h4>
+<p>Este atributo especifica el n&#250;mero m&#225;ximo permitido de sesiones de autenticaci&#243;n de UNIX simult&#225;neas. Si se alcanza el n&#250;mero m&#225;ximo en un momento dado, los siguientes intentos de autenticaci&#243;n no se permitir&#225;n hasta que se libere una sesi&#243;n. El valor predeterminado es 5.</p>
+<A NAME="fwbra"></A><h4>Nivel de autenticaci&#243;n</h4>
+<p>El nivel de autenticaci&#243;n se define de forma independiente para cada m&#233;todo de autenticaci&#243;n. El valor indica en qu&#233; medida se debe confiar en un mecanismo de autenticaci&#243;n. Una vez que el usuario se ha autenticado, este valor se guarda en el token SSO de la sesi&#243;n. Cuando se presenta el token SSO a una aplicaci&#243;n a la que desea acceder el usuario, la aplicaci&#243;n utiliza el valor almacenado para determinar si el nivel es suficiente para permitir el acceso al usuario. Si el nivel de autenticaci&#243;n guardado en un token SSO no satisface el valor m&#237;nimo necesario, la aplicaci&#243;n puede solicitar al usuario que se autentique de nuevo mediante un servicio con un mayor nivel de autenticaci&#243;n. El valor predeterminado es 0.</p>
+<p><hr size="1" noshade><p><b>Nota &#8211; </b>Si no se especifica ning&#250;n nivel de autenticaci&#243;n, el token SSO almacena el valor especificado en el <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Nivel de autenticaci&#243;n predeterminado</A> del atributo de autenticaci&#243;n "Principal".</p>
+<hr size="1" noshade></p><A NAME="fwbky"></A><h4>Nombre de servicio PAM</h4>
+<p>Define la configuraci&#243;n o la pila del M&#243;dulo de autenticaci&#243;n conectable (PAM, siglas en ingl&#233;s) incluida en el sistema operativo y utilizada para la autenticaci&#243;n de UNIX. En Solaris, el nombre es normalmente <tt>other</tt> y, en Linux, es <tt>password</tt>.</p>
+
+<br />
+
+</body>
+</html>

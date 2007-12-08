@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>SOAP 바인드 서비스
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scsoapbinding"></A><h2>SOAP 바인드 서비스</h2>
+<A NAME="indexterm-158"></A><p>SOAP 바인드 서비스는 SOAP 메시지를 보내고 받는 전송 계층입니다. SOAP 바인드 서비스 프로세스에서 Identity 서비스는 클라이언트측 응용 프로그램 프로그래밍 인터페이스를 호출하여 메시지를 구성하고 SOAP 종점 URL 즉, SOAP 수신자 서블릿으로 메시지를 보냅니다. SOAP 수신자 서블릿은 메시지를 수신하고 서명을 확인한 후 두 번째 메시지를 구성합니다. 그런 다음 SOAP 수신자 서블릿은 올바른 요청 처리기를 호출하여 이 두 번째 메시지를 응답할 해당하는 Identity 서비스로 보냅니다. Identity 서비스는 두 번째 메시지를 처리하여 응답을 생성한 다음 이 응답을 SOAP 수신자 서블릿으로 다시 보냅니다. 그러면 SOAP 수신자는 처리를 위해 이 응답을 Identity 서비스로 다시 보냅니다. </p>
+<p>다음의 SOAP 바인드 서비스 전역 속성을 구성하여 구현할 수 있습니다.</p>
+<ul><li><p><A HREF="requesthandlerlist.html#requesthandlerlist"> 요청 처리기 목록</A></p>
+</li>
+<li><p><A HREF="webserviceauthenticator.html#webserviceauthenticator"> 웹 서비스 인증자</A></p>
+</li>
+<li><p><A HREF="soapsuppauthmech.html#soapsuppauthmech"> 지원되는 인증 기법</A></p>
+</li>
+</ul>
+<p>SOAP 바인드 서비스 구성과 연관된 작업은 다음과 같습니다.</p>
+<ul><li><p><A HREF="service.scsoapbindingrequesthandlerlistadd.html#service.scsoapbindingrequesthandlerlistadd"> 요청 처리기 구성</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

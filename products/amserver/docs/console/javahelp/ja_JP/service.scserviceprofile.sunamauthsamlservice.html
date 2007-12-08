@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>SAML
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.sunamauthsamlservice"></A><h3>SAML</h3>
+<p><A NAME="indexterm-187"></A>SAML (Security Assertion Markup Language) 認証モジュールは、ターゲットサーバー上で SAML 表明を受信し、検証します。SAML 属性はレルム属性です。</p>
+<A NAME="fwbel"></A><h4>認証レベル</h4>
+<p>認証レベルは認証方法ごとに個別に設定します。この値は、認証メカニズムの信頼度を示します。ユーザーが認証を受けると、この値がセッションの SSO トークンに格納されます。ユーザーがアクセスするアプリケーションに SSO トークンが提供されると、そのアプリケーションは格納されている値を使用して、ユーザーにアクセスを許可するのに十分なレベルかどうかを判別します。SSO トークンに格納されている認証レベルが必要な最小値に満たない場合、アプリケーションはユーザーにより高い認証レベルのサービスで認証を再度受けるよう要求することがあります。デフォルト値は 0 です。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>認証レベルの指定がない場合、SSO トークンはコア認証属性の <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">「デフォルト認証レベル」</A>で指定した値を格納します。</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

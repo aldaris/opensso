@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>命名
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamnamingservice"></A><h3>命名</h3>
+<p><A NAME="indexterm-207"></A>命名服務用來取得並設定 URL、外掛程式及配置，以及各種其他 Access Manager 服務的請求通知，如階段作業、認證、記錄、SAML 及聯合。</p>
+<p>如果平台正在執行多個 Access Manager，此服務可讓用戶端尋找正確的服務 URL。找到命名 URL 後，命名服務將解碼使用者階段作業，並且動態使用此階段作業的參數取代協定、主機與連接埠。這樣可確保為此服務傳回的 URL 用於在其上建有使用者階段作業的主機。命名屬性包括：</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgc">設定檔服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgg">階段作業服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgf">記錄服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgh">策略服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfge">認證服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgl">SAML 網際網路設定檔/工件服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgm">SAML SOAP 服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgk">SAML 網際網路設定檔/POST 服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgi">SAML 假設管理程式服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgn">聯盟假設管理程式服務 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgp">安全記號管理程式 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgo">JAXRPC 端點 URL</A></p>
+</li>
+</ul>
+<A NAME="fwfgc"></A><h4>設定檔服務 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/profileservice</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代設定檔 URL。</p>
+<A NAME="fwfgg"></A><h4>階段作業服務 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/sessionservice</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代階段作業 URL。</p>
+<A NAME="fwfgf"></A><h4>記錄服務 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/loggingservice</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代記錄 URL。</p>
+<A NAME="fwfgh"></A><h4>策略服務 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代策略 URL。</p>
+<A NAME="fwfge"></A><h4>認證服務 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/authservice</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代認證 URL。</p>
+<A NAME="fwfgl"></A><h4>SAML 網際網路設定檔/工件服務 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLAwareServlet</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代 SAML 網際網路設定檔/工件 URL。</p>
+<A NAME="fwfgm"></A><h4>SAML SOAP 服務 URL</h4>
+<p>此欄位採用的值等於</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLSOAPReceiver</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代 SAML SOAP URL。</p>
+<A NAME="fwfgk"></A><h4>SAML 網際網路設定檔/POST 服務 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLPOSTProfileServlet</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代 SAML Web 設定檔/POST URL。</p>
+<A NAME="fwfgi"></A><h4>SAML 假設管理程式服務 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/AssertionManagerServlet/AssertionM anagerIF</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代 SAML 指定管理程式服務 URL。</p>
+<A NAME="fwfgn"></A><h4>聯盟假設管理程式服務 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/amserver/FSAssertionManagerServlet/FSAssertionMana gerIF</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代聯合指定管理程式服務 URL。</p>
+<A NAME="fwfgp"></A><h4>安全記號管理程式 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/amserver/SecurityTokenManagerServlet/SecurityToken ManagerIF/</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代安全記號管理程式 URL。</p>
+<A NAME="fwfgo"></A><h4>JAXRPC 端點 URL</h4>
+<p>此欄位採用的值等於：</p>
+<p><tt>%protocol://%host:%port/amserver/jaxrpc/</tt></p>
+<p>此語法允許基於特定的階段作業參數動態取代 JAXRPC 端點 URL。</p>
+
+<br />
+
+</body>
+</html>

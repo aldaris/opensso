@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- ident   "%Z%%M% %I%   %E% SMI" -->
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "toc_1_0.dtd">
+<toc version="2.0">
+<tocitem target="aawelcome" text="Sun Java System Access Manager 7.1 온라인 도움말" expand="false"><tocitem target="intro" text="소개" expand="false"></tocitem>
+</tocitem>
+<tocitem target="accesscontrol" text="액세스 제어" expand="false"><tocitem target="realm.rmrealm" text="영역" expand="false"><tocitem target="realm.rmrealmadd" text="새 영역 만들기" expand="false"></tocitem>
+<tocitem target="realm.realmproperties" text="일반 등록 정보" expand="false"></tocitem>
+</tocitem>
+<tocitem target="authentication.authproperties" text="인증" expand="false"><tocitem target="authentication.newauthinstance" text="새 인증 모듈 인스턴스 만들기" expand="false"></tocitem>
+<tocitem target="authentication.newauthconfig" text="새 인증 체인 만들기" expand="false"></tocitem>
+</tocitem>
+<tocitem target="realm.services" text="서비스" expand="false"><tocitem target="realm.servicesadd" text="영역에 서비스 추가" expand="false"></tocitem>
+</tocitem>
+<tocitem target="realm.idrepo" text="데이터 저장소" expand="false"><tocitem target="realm.idreposelecttype" text="새 데이터 저장소 만들기" expand="false"></tocitem>
+<tocitem target="idrepoadd" text="Access Manager 데이터 저장소 유형" expand="false"></tocitem>
+<tocitem target="amrepoattrs" text="Access Manager 저장소 속성" expand="false"></tocitem>
+<tocitem target="adattrs" text="활성 디렉토리 속성" expand="false"></tocitem>
+<tocitem target="flatfileattr" text="플랫 파일 저장소 속성" expand="false"></tocitem>
+<tocitem target="gdoto" text="일반 LDAPv3 속성" expand="false"></tocitem>
+<tocitem target="sundirattrs" text="Access Manager 스키마 속성을 사용하는 Sun Directory Server" expand="false"></tocitem>
+</tocitem>
+<tocitem target="delegation.delegation" text="권한" expand="false"></tocitem>
+<tocitem target="policy.policy" text="정책" expand="false"><tocitem target="normalpolicy" text="일반 정책" expand="false"><tocitem target="policy.policynormaladd" text="새 일반 정책 만들기" expand="false"></tocitem>
+</tocitem>
+<tocitem target="normalrule" text="규칙" expand="false"><tocitem target="policy.ruleadd" text="정책에 규칙 추가" expand="false"></tocitem>
+</tocitem>
+<tocitem target="normalsubject" text="주제" expand="false"><tocitem target="policy.subjectadd" text="정책에 주제 추가" expand="false"></tocitem>
+</tocitem>
+<tocitem target="policyconditions" text="조건" expand="false"><tocitem target="policy.conditionadd" text="정책에 조건 추가" expand="false"></tocitem>
+</tocitem>
+<tocitem target="policy.pmdefaultsessioncondtionadd" text="활성 세션 시간" expand="false"></tocitem>
+<tocitem target="policy.authtoserviceadd" text="인증 체인" expand="false"></tocitem>
+<tocitem target="policy.pmdefaultauthlevelconditionadd" text="인증 수준(보다 크거나 같음)" expand="false"></tocitem>
+<tocitem target="gdovl" text="인증 수준(보다 낮거나 같음)" expand="false"></tocitem>
+<tocitem target="policy.pmdefaultauthschemeconditionadd" text="인증 모듈 인스턴스" expand="false"></tocitem>
+<tocitem target="policy.sessionpropertyconditionadd" text="현재 세션 등록 정보" expand="false"></tocitem>
+<tocitem target="policy.pmdefaultipcondition" text="IP 주소/DNS 이름" expand="false"></tocitem>
+<tocitem target="gdkmp" text="LDAP 필터 조건" expand="false"></tocitem>
+<tocitem target="policy.authtorealmadd" text="영역 인증" expand="false"></tocitem>
+<tocitem target="policy.pmdefaulttimeconditionadd" text="시간(요일, 날짜, 시간 및 표준 시간대)" expand="false"></tocitem>
+<tocitem target="responseprovider" text="응답 공급자" expand="false"><tocitem target="policy.responseprovideradd" text="정책에 응답 공급자 추가" expand="false"></tocitem>
+</tocitem>
+<tocitem target="fyfby" text="참조 정책" expand="false"><tocitem target="policy.policyreferraladd" text="새 참조 정책 만들기" expand="false"></tocitem>
+</tocitem>
+<tocitem target="referrals" text="참조" expand="false"><tocitem target="policy.selectreferraltype" text="정책에 참조 추가" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="idm.entities" text="주제" expand="false"><tocitem target="subjectuser" text="사용자" expand="false"><tocitem target="subjectcreateuser" text="사용자 만들기 또는 수정" expand="false"></tocitem>
+<tocitem target="addusertogroup" text="역할 및 그룹에 사용자 추가" expand="false"></tocitem>
+<tocitem target="idm.entityservices" text="Identity에 서비스 추가" expand="false"></tocitem>
+</tocitem>
+<tocitem target="subjectagents" text="에이전트" expand="false"><tocitem target="subjectcreateagent" text="에이전트 만들기 또는 수정" expand="false"></tocitem>
+</tocitem>
+<tocitem target="subject.filteredrole" text="필터링된 역할" expand="false"><tocitem target="subject.createfiltrole" text="필터링된 역할 만들기" expand="false"></tocitem>
+</tocitem>
+<tocitem target="subject.role" text="역할" expand="false"><tocitem target="subject.createrole" text="역할 만들기 또는 수정" expand="false"></tocitem>
+<tocitem target="idm.entitymembers" text="역할 또는 그룹에 사용자 추가" expand="false"></tocitem>
+</tocitem>
+<tocitem target="subject.group" text="그룹" expand="false"><tocitem target="subject.creategroup" text="그룹 만들기 또는 수정" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="dirmang" text="디렉토리 관리" expand="false"><tocitem target="dm.home" text="디렉토리 관리" expand="false"></tocitem>
+</tocitem>
+<tocitem target="federation" text="연합" expand="false"><tocitem target="federation.fsauthdomains" text="인증 도메인" expand="false"><tocitem target="federation.fsauthdomainsadd" text="새 인증 도메인 작성" expand="false"></tocitem>
+<tocitem target="federation.fsauthdomainsedit" text="인증 도메인 프로필 수정" expand="false"></tocitem>
+<tocitem target="federation.fsauthdomainsselectprovider" text="인증 도메인에 공급자 추가" expand="false"></tocitem>
+<tocitem target="deleteauthdomain" text="인증 도메인 프로필 삭제" expand="false"></tocitem>
+</tocitem>
+<tocitem target="federation.fsentitydescriptors" text="엔티티: 공급자 및 계열사" expand="false"><tocitem target="federation.fsentitydescriptorsadd" text="공급자 엔티티 또는 계열사 엔티티 작성" expand="false"></tocitem>
+<tocitem target="federation.fsentitydescriptorsprofile" text="공급자 엔티티 또는 계열사 엔티티의 일반 속성 수정" expand="false"></tocitem>
+<tocitem target="federation.fsidentityprovider" text="공급자 엔티티에 Identity 공급자 추가" expand="false"></tocitem>
+<tocitem target="federation.fsidentityproviderhostedadd" text="공급자 엔티티에 새 호스트 Identity 공급자 추가" expand="false"></tocitem>
+<tocitem target="federation.fsidentityproviderremoteadd" text="공급자 엔티티에 새 원격 Identity 공급자 추가" expand="false"></tocitem>
+<tocitem target="federation.fsserviceprovider" text="공급자 엔티티에 서비스 공급자 추가" expand="false"></tocitem>
+<tocitem target="federation.fsserviceproviderhostedadd" text="공급자 엔티티에 새 호스트 서비스 공급자 추가" expand="false"></tocitem>
+<tocitem target="federation.fsserviceproviderremoteadd" text="공급자 엔티티에 새 원격 서비스 공급자 추가" expand="false"></tocitem>
+<tocitem target="federation.fsidentityproviderhostedprofile" text="공급자 엔티티의 호스트 Identity 공급자 속성 수정" expand="false"></tocitem>
+<tocitem target="federation.fsidentityproviderremoteprofile" text="공급자 엔티티의 원격 Identity 공급자 속성 수정" expand="false"></tocitem>
+<tocitem target="federation.fsserviceproviderhostedprofile" text="공급자 엔티티의 호스트 서비스 공급자 속성 수정" expand="false"></tocitem>
+<tocitem target="federation.fsserviceproviderremoteprofile" text="공급자 엔티티의 원격 서비스 공급자 속성 수정" expand="false"></tocitem>
+<tocitem target="federation.fscreatecontactperson" text="공급자 엔티티의 공급자에 연락 담당자 추가" expand="false"></tocitem>
+<tocitem target="federation.fseditcontactperson" text="공급자 엔티티의 연락 담당자 프로필 수정" expand="false"></tocitem>
+<tocitem target="federation.fsentitydescriptorsaffiliate" text="계열사 엔티티에 구성원 추가" expand="false"></tocitem>
+</tocitem>
+<tocitem target="federation.fssamlservice" text="SAML" expand="false"><tocitem target="targetspecifier" text="대상 지정자" expand="false"></tocitem>
+<tocitem target="siteidentifiers" text="사이트 식별자" expand="false"><tocitem target="federation.fssamlsiteidadd" text="사이트 식별자 구성 " expand="false"></tocitem>
+</tocitem>
+<tocitem target="trustedpartners" text="신뢰할 수 있는 파트너" expand="false"><tocitem target="federation.fssamlselecttrustedpartnertype" text="신뢰할 수 있는 파트너: 파트너 유형 및 프로필 선택" expand="false"></tocitem>
+<tocitem target="federation.fssamltrustedpartnersadd" text="신뢰할 수 있는 파트너: 신뢰할 수 있는 파트너 속성 구성" expand="false"></tocitem>
+</tocitem>
+<tocitem target="targeturl" text="대상 URL" expand="false"><tocitem target="federation.fssamltargeturlsadd" text="대상 URL 구성" expand="false"></tocitem>
+</tocitem>
+<tocitem target="assertiontimeout" text="논리 검사 시간 초과" expand="false"></tocitem>
+<tocitem target="assertionskew" text="notBefore 시간에 대한 스큐 팩터 단정" expand="false"></tocitem>
+<tocitem target="artifacttimeout" text="아티팩트 시간 초과" expand="false"></tocitem>
+<tocitem target="samlartifactname" text="SAML 아티팩트 이름" expand="false"></tocitem>
+<tocitem target="signsamlassertion" text="SAML 명제에 서명" expand="false"></tocitem>
+<tocitem target="signsamlrequest" text="SAML 요청에 서명" expand="false"></tocitem>
+<tocitem target="signsamlresponse" text="SAML 응답에 서명" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="webservices" text="웹 서비스" expand="false"><tocitem target="webservices.wspersonalprofileservice" text="리버티 개인 프로필 서비스" expand="false"><tocitem target="resourceidmapper" text="자원 아이디 매퍼" expand="false"></tocitem>
+<tocitem target="authorizer" text="인증자" expand="false"></tocitem>
+<tocitem target="attributemapper" text="속성 매퍼" expand="false"></tocitem>
+<tocitem target="ppproviderid" text="공급자 아이디" expand="false"></tocitem>
+<tocitem target="namescheme" text="이름 체계" expand="false"></tocitem>
+<tocitem target="namespaceprefix" text="이름 공간 접두어" expand="false"></tocitem>
+<tocitem target="supportedcontainers" text="지원되는 컨테이너" expand="false"><tocitem target="webservices.wsppservicesupportedcontaineradd" text="지원되는 컨테이너 구성" expand="false"></tocitem>
+</tocitem>
+<tocitem target="ppldapattributemaplist" text="PPLDAP 속성 맵 목록" expand="false"><tocitem target="webservices.wsppservicedsattributemaplistadd" text="속성 매핑 구성" expand="false"></tocitem>
+</tocitem>
+<tocitem target="requirequery" text="쿼리 정책 평가 요구" expand="false"></tocitem>
+<tocitem target="requiremodify" text="수정 정책 평가 요구" expand="false"></tocitem>
+<tocitem target="extensioncontainerattributes" text="확장 컨테이너 속성" expand="false"></tocitem>
+<tocitem target="extensionattributesnamespaceprefix" text="확장 속성 이름 공간 접두어" expand="false"></tocitem>
+<tocitem target="serviceupdateenabled" text="서비스 업데이트" expand="false"></tocitem>
+<tocitem target="serviceinstanceupdateclass" text="서비스 인스턴스 업데이트 클래스" expand="false"></tocitem>
+<tocitem target="alternateendpoint" text="대체 종점" expand="false"></tocitem>
+<tocitem target="alternatesecuritymechanisms" text="대체 보안 기법" expand="false"></tocitem>
+</tocitem>
+<tocitem target="service.smdiscoveryservice" text="검색 서비스" expand="false"><tocitem target="dsproviderid" text="공급자 아이디" expand="false"></tocitem>
+<tocitem target="supportedauthmechanisms" text="지원되는 인증 기법" expand="false"></tocitem>
+<tocitem target="supporteddirectives" text="지원되는 지시문" expand="false"></tocitem>
+<tocitem target="policyevaldiscolookup" text="검색 조회에 대한 정책 평가" expand="false"></tocitem>
+<tocitem target="policyevaldiscoupdate" text="검색 업데이트에 대한 정책 평가" expand="false"></tocitem>
+<tocitem target="authorizerpluginclass" text="인증자 플러그인 클래스:" expand="false"></tocitem>
+<tocitem target="entryhandlerpluginclass" text="항목 처리기 플러그인 클래스" expand="false"></tocitem>
+<tocitem target="resourceidmapperpluginclass" text="자원 아이디 매퍼 플러그인 클래스 " expand="false"><tocitem target="service.smdiscoveryproviderresourceidmapadd" text="자원 아이디 매퍼 구성" expand="false"></tocitem>
+</tocitem>
+<tocitem target="authresponsemessage" text="응답 메시지 인증" expand="false"></tocitem>
+<tocitem target="generatesessioncontext" text="부트스트랩용 세션 컨텍스트 문" expand="false"></tocitem>
+<tocitem target="encryptnameidentifier" text="부트스트랩용 세션 컨텍스트에서 NameIdentifier 암호화" expand="false"></tocitem>
+<tocitem target="useimpliedresource" text="함축된 자원" expand="false"></tocitem>
+<tocitem target="resourceofferingsbootstrapping" text="부트스트랩용 자원 오퍼링" expand="false"><tocitem target="service.smdiscoverybootstraprefoffadd" text="부트스트랩용 자원 오퍼링 구성" expand="false"></tocitem>
+<tocitem target="service.smdiscoverydescriptionadd" text="서비스 설명 구성" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="service.scsoapbinding" text="SOAP 바인드 서비스" expand="false"><tocitem target="requesthandlerlist" text="요청 처리기 목록" expand="false"><tocitem target="service.scsoapbindingrequesthandlerlistadd" text="요청 처리기 구성" expand="false"></tocitem>
+</tocitem>
+<tocitem target="webserviceauthenticator" text="웹 서비스 인증자" expand="false"></tocitem>
+<tocitem target="soapsuppauthmech" text="지원되는 인증 기법" expand="false"></tocitem>
+</tocitem>
+<tocitem target="webservices.wsauthnservices" text="인증 웹 서비스" expand="false"><tocitem target="mechanismhandlerslist" text="메커니즘 처리기 목록" expand="false"><tocitem target="webservices.wsauthnserviceshandlersadd" text="새 메커니즘 처리기 구성" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="service.scconfig" text="구성 속성" expand="false"><tocitem target="authattrs" text="인증" expand="false"><tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="익명" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthadservice" text="활성 디렉토리" expand="false"></tocitem>
+<tocitem target="authentication.authconfig" text="인증 구성 " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="인증서 " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthservice" text="핵심" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="데이터 저장소" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP 기본" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC" expand="false"><tocitem target="jdbcexample" text="연결 풀 구성 &#8212; 예제" expand="false"></tocitem>
+</tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="구성원" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows 데스크탑 SSO" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT" expand="false"></tocitem>
+<tocitem target="supportedlang" text="지원되는 언어 로켈" expand="false"></tocitem>
+</tocitem>
+<tocitem target="consoleprops" text="콘솔 등록 정보" expand="false"><tocitem target="service.scserviceprofile.amadminconsoleservice" text="관리 " expand="false"></tocitem>
+<tocitem target="service.smg11n" text="국제화 설정" expand="false"></tocitem>
+</tocitem>
+<tocitem target="global" text="전역 등록 정보" expand="false"><tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="비밀번호 재설정" expand="false"></tocitem>
+<tocitem target="service.scpolicy" text="정책 구성" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.amsessionservice" text="세션" expand="false"></tocitem>
+<tocitem target="service.subconfigadd" text="하위 구성 추가" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamuserservice" text="사용자" expand="false"></tocitem>
+</tocitem>
+<tocitem target="systemprops" text="시스템 등록 정보" expand="false"><tocitem target="service.scserviceprofile.iplanetamclientdetection" text="클라이언트 검색" expand="false"></tocitem>
+<tocitem target="service.mapcreatedevice" text="새 클라이언트 추가" expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamloggingservice" text="로깅 " expand="false"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamnamingservice" text="이름 지정 " expand="false"></tocitem>
+<tocitem target="service.scplatform" text="플랫폼" expand="false"></tocitem>
+<tocitem target="service.scplatformsitelistadd" text="새 사이트 이름 만들기" expand="false"></tocitem>
+<tocitem target="service.scplatformserverlistadd" text="새 인스턴스 이름 만들기" expand="false"></tocitem>
+<tocitem target="service.scplatformclientcharsetsadd" text="새 문자 집합 만들기" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="sessions" text="세션" expand="false"><tocitem target="sessionpage" text="세션 페이지" expand="false"><tocitem target="sessionsearch" text="검색" expand="false"></tocitem>
+<tocitem target="viewsession" text="보기 세션" expand="false"></tocitem>
+<tocitem target="session.smprofile" text="세션 창" expand="false"></tocitem>
+<tocitem target="invalidatesession" text="세션 무효화" expand="false"></tocitem>
+</tocitem>
+</tocitem>
+
+</toc>

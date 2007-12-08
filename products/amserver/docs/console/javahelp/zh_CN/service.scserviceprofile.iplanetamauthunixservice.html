@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>UNIX 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthunixservice"></A><h3>UNIX </h3>
+<p><A NAME="indexterm-189"></A>此模块是 Solaris 的独有模块，它允许使用用户的 UNIX 标识和密码进行验证。如果对任何 UNIX 验证属性进行了修改，则必须重新启动 Access Manager 和 amunixd 帮助器。UNIX 验证属性包括全局属性和领域属性。这些属性包括：</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbsy">配置端口</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbqv">验证端口</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbrv">超时</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbls">线程</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbra">验证级别</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthunixservice.html#fwbky">服务名称</A></p>
+</li>
+</ul>
+<A NAME="fwbsy"></A><h4>配置端口</h4>
+<p>该属性用于指定启动时 Unix 帮助器为获得“Unix 帮助器验证端口”、“Unix 帮助器超时”和“Unix 帮助器线程”属性中包含的配置信息所“侦听”的端口。默认值为 58946。</p>
+<p>如果更改了此属性，则还要必须更改 <tt>AMConfig.properties</tt> 文件中的 <i>unixHelper.port </i> 条目，并重新启动 Access Manager。</p>
+<A NAME="fwbqv"></A><h4>验证端口</h4>
+<p>该属性用于指定配置之后 Unix 帮助器为获取验证请求所“侦听”的端口。默认端口为 57946。</p>
+<A NAME="fwbrv"></A><h4>超时</h4>
+<p>该属性指定用户为完成验证而花费的时间（分钟）。如果用户超过分配的时间，验证将自动失败。默认时间为 3 分钟。</p>
+<A NAME="fwbls"></A><h4>线程</h4>
+<p>该属性用于指定允许同时进行的 Unix 验证会话的最大数目。如果在给定时间内达到了最大数目，将不再允许随后的验证尝试，直到有会话被释放。默认值为 5。</p>
+<A NAME="fwbra"></A><h4>验证级别</h4>
+<p>各种验证方法都单独设置了验证级别。验证级别值表示信任验证机制的程度。用户进行验证之后，该值将存储在会话的 SSO 令牌中。当 SSO 令牌传递到用户要访问的应用程序时，应用程序将根据存储的值来确定级别是否足以授予用户访问权限。如果 SSO 令牌中存储的验证级别没有达到所需的最小级别，应用程序将提示用户使用具有较高验证级别的服务再次进行验证。默认值为 0。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>如果未指定任何验证级别，则在核心验证属性<A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">默认验证级别</A>中所指定的值将会存储到 SSO 令牌中。</p>
+<hr size="1" noshade></p><A NAME="fwbky"></A><h4>服务名称</h4>
+<p>定义为您的操作系统发行并用于 UNIX 验证的 PAM （可插接的验证模块） 配置或栈。对于 Solaris，名称通常为 <tt>other</tt>；而对于 Linux，名称为 <tt>password</tt>。</p>
+
+<br />
+
+</body>
+</html>

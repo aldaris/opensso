@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Protokollierung 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamloggingservice"></A><h3>Protokollierung </h3>
+<p><A NAME="indexterm-206"></A>Der Protokollierungsdienst bietet Status- und Fehlermeldungen in Bezug auf die Access Manager-Administration. Als Administrator k&#246;nnen Sie bestimmte Werte, wie bespielsweise die Gr&#246;&#223;e und den Speicherort der Protokolldatei, konfigurieren. Access Manager kann Ereignisse in linearen Textdateien oder in einer relationalen Datenbank aufzeichnen. Die Attribute des Protokollierungsdienstes sind allgemeine Attribute. Es existieren folgende Attribute:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsv">Maximale Protokollgr&#246;&#223;e</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsg">Anzahl der Verlaufsdateien</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbzh">Speicherort der Protokolldateien</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwg">Protokollierungstyp</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbrd">Name des Datenbankbenutzers</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcdf">Passwort des Datenbankbenutzers</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcep">Passwort des Datenbankbenutzers (Best&#228;tigung)</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvb">Name des Datenbanktreibers</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsb">Konfigurierbare Protokollfelder</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxccb">H&#228;ufigkeit der Protokoll&#252;berpr&#252;fung</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxe">Protokoll-Signaturzeit</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcbz">Sichere Protokollierung</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxt">Maximale Anzahl an Datens&#228;tzen</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwp">Anzahl an Dateien pro Archiv</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbyw">Puffergr&#246;&#223;e</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvh">DB-Fehler bei Gr&#246;&#223;e von Speicherpuffer</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcea">Pufferzeitspanne</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsn">Pufferzeitspanne</A></p>
+</li>
+</ul>
+<A NAME="fxbsv"></A><h4>Maximale Protokollgr&#246;&#223;e</h4>
+<p>Der Wert dieses Attributs gibt die maximale Gr&#246;&#223;e (in Bytes) einer Access Manager-Protokolldatei an. Der Standardwert ist 1000000.</p>
+<A NAME="fxbsg"></A><h4>Anzahl der Verlaufsdateien</h4>
+<p>Der Wert dieses Attributs gibt die Anzahl der gesicherte Protokolldateien an, die zu Verlaufsanalysezwecken festgehalten werden. Es kann eine ganze Zahl, abh&#228;ngig von Partitionsgr&#246;&#223;e und verf&#252;gbarem Festplattenspeicher im lokalen System, eingegeben werden. Der Standardwert ist 3.</p>
+<p>Die Dateien betreffen nur den Protokollierungstyp FILE. Wenn der Protokollierungstyp auf DB eingestellt ist, werden keine Verlaufsdateien erstellt und die von Access Manager festgelegte Dateigr&#246;&#223;enbeschr&#228;nkung trifft nicht zu.</p>
+<p><hr size="1" noshade><p><b>Hinweis &#8211; </b> Der Wert 0 wird als Wert 1 interpretiert. Das hei&#223;t, auch wenn Sie eine 0 eingeben, wird eine Verlaufsdatei erstellt.</p>
+<hr size="1" noshade></p><A NAME="fxbzh"></A><h4>Speicherort der Protokolldateien</h4>
+<p>F&#252;r die dateibasierte Protokollierung muss ein Speicherort f&#252;r die Protokolldateien angegeben werden. Dieses Feld akzeptiert eine vollst&#228;ndigen Verzeichnispfad zu diesem Speicherort. Der Standardwert ist .</p>
+<p><tt>/var/opt/SUNWam/logs</tt></p>
+<p>Wenn ein nicht standardgem&#228;&#223;es Verzeichnis angegeben wird, das noch nicht existiert, erstellt Access Manager das Verzeichnis. Sie sollten in diesem Fall die entsprechenden Berechtigungen f&#252;r dieses Verzeichnis einrichten (z.B. 0700).</p>
+<p>Beachten Sie, dass bei der Angabe des Speicherorts f&#252;r die Protokollierung in einer Datenbank (DB), zum Beispiel Oracle oder MySQL, teilweise Gro&#223;- und Kleinschreibung ber&#252;cksichtigt wird. Wenn Sie als Speicherort der Protokolldaten beispielsweise eine Oracle-Datenbank festlegen, muss der Speicherort wie folgt lauten (Gro&#223;-/Kleinschreibung wird nicht ber&#252;cksichtigt):</p>
+<p><tt>jdbc:oracle:thin:@machine.domain:port:DBName</tt></p>
+<p>Um die DB-Protokollierung zu konfigurieren, f&#252;gen Sie die JDBC-Treiberdateien dem JVM-Klassenpfad des Webcontainers hinzu. Sie m&#252;ssen die JDBC-Treiberdateien manuell zum Klassenpfad des <tt>amadmin</tt>-Skripts hinzuf&#252;gen, anderenfalls kann die <tt>amadmin</tt> -Protokollierung den JDBC-Treiber nicht laden.</p>
+<p>&#196;nderungen an Protokollierungsattributen treten in der Regel erst nach dem Speichern in Kraft. Ein Neustart des Servers ist jedoch nicht erforderlich. Nur wenn Sie die sichere Protokollierung aktivieren, sollten Sie den Server anschlie&#223;end neu starten.</p>
+<A NAME="fxbwg"></A><h4>Protokollierungstyp</h4>
+<p>Sie k&#246;nnen entweder &#8220;Datei&#34; (Protokollierung in linearen Dateien) oder &#8220;DB&#34; (Protokollierung in Datenbank) festlegen.</p>
+<p>Ein ung&#252;ltiger Datenbank-Benutzername oder ein ung&#252;ltiges Datenbank-Benutzerpasswort beeintr&#228;chtigen die Verarbeitung von Access Manager erheblich. Wenn Access Manager oder die Konsole instabil wird, sollten Sie in  <tt>AMConfig.properties</tt> folgende Eigenschaft einstellen:</p>
+<p><i>com.iplanet.am.logstatus=INACTIVE</i></p>
+<p>Anschlie&#223;end sollten Sie den Server neu starten. Melden Sie sich danach bei der Konsole an und setzen Sie das Protokollierungsattribut zur&#252;ck. Setzen Sie die Eigenschaft <i>logstatus</i> danach wieder auf <i>AKTIV </i>  und starten Sie den Server neu.</p>
+<A NAME="fxbrd"></A><h4>Name des Datenbankbenutzers</h4>
+<p>Dieses Attribut akzeptiert als Wert den Namen des Benutzers, der die Datenbankverbindung herstellt, wenn als Protokollierungstyp &#8220;DB&#34; festgelegt wurde.</p>
+<A NAME="fxcdf"></A><h4>Passwort des Datenbankbenutzers</h4>
+<p>Dieses Attribut akzeptiert als Wert das Passwort des Datenbankbenutzers, wenn als Protokollierungstyp &#8220;DB&#34; festgelegt wurde.</p>
+<A NAME="fxcep"></A><h4>Passwort des Datenbankbenutzers (Best&#228;tigung)</h4>
+<p>Best&#228;tigen Sie das Datenbankpasswort.</p>
+<A NAME="fxbvb"></A><h4>Name des Datenbanktreibers</h4>
+<p>Mit diesem Attribut k&#246;nnen Sie den f&#252;r die Protokoll-Implementierungsklasse verwendeten Treiber festlegen.</p>
+<A NAME="fxbsb"></A><h4>Konfigurierbare Protokollfelder</h4>
+<p>Gibt eine Liste der zu protokollierenden Felder an. Standardm&#228;&#223;ig werden alle Felder protokolliert. Die Felder sind:</p>
+<ul><li><p>CONTEXTID</p>
+</li>
+<li><p>DOMAIN</p>
+</li>
+<li><p>HOSTNAME</p>
+</li>
+<li><p>IPADDRESS</p>
+</li>
+<li><p>LOGGED BY</p>
+</li>
+<li><p>LOGLEVEL</p>
+</li>
+<li><p>LOGINID</p>
+</li>
+<li><p>MESSAGEID</p>
+</li>
+<li><p>MODULENAME</p>
+</li>
+</ul>
+<p>Sie sollten wenigstens die Felder CONTEXTID, DOMAIN, HOSTNAME, LOGINID und MESSAGEID protokollieren.</p>
+<A NAME="fxccb"></A><h4>H&#228;ufigkeit der Protokoll&#252;berpr&#252;fung</h4>
+<p>Dieses Attribut legt die H&#228;ufigkeit (in Sekunden) fest, in der der Server die Protokolle auf unerlaubte &#196;nderungen &#252;berpr&#252;ft. Das Standardintervall ist 3600 Sekunden. Dieser Parameter wird nur auf die sichere Protokollierung angewendet.</p>
+<A NAME="fxbxe"></A><h4>Protokoll-Signaturzeit</h4>
+<p>Dieser Parameter legt die H&#228;ufigkeit (in Sekunden) fest, in der das Protokoll signiert wird. Das Standardintervall ist 900 Sekunden. Dieser Parameter wird nur auf die sichere Protokollierung angewendet.</p>
+<A NAME="fxcbz"></A><h4>Sichere Protokollierung</h4>
+<p>Mit diesem Attribut wird die sichere Protokollierung aktiviert bzw. deaktiviert. Standardm&#228;&#223;ig ist die Sicherheitsprotokollierung deaktiviert. Die sichere Protokollierung aktiviert die &#220;berpr&#252;fung auf unerlaubte &#196;nderungen bzw. Manipulationen in Sicherheitsprotokollen.</p>
+<A NAME="fxbxt"></A><h4>Maximale Anzahl an Datens&#228;tzen</h4>
+<p>Dieses Attribut legt die maximale Anzahl an Datens&#228;tzen fest, die von den Java <!-- was interface. No mapping rule. --> LogReader-Schnittstellen zur&#252;ckgeben wird, unabh&#228;ngig davon, wie viele der Datens&#228;tze der Leseanforderung entsprechen. Der Standardwert ist 500. Dieses Attribut kann vom Aufrufenden der Protokoll-API mit der <i> LogQuery</i>-Klasse &#252;berschrieben werden.</p>
+<A NAME="fxbwp"></A><h4>Anzahl an Dateien pro Archiv</h4>
+<p>Dieses Attribut wird nur auf die sichere Protokollierung angewendet. Es gibt an, wann die Protokolldateien und der Schl&#252;sselspeicher archiviert und der Sicherheitsschl&#252;sselspeicher neu generiert werden muss, um die anschlie&#223;ende sichere Protokollierung fortf&#252;hren zu k&#246;nnen. Standardm&#228;&#223;ig sind f&#252;nf Dateien je Protokoll festgelegt.</p>
+<A NAME="fxbyw"></A><h4>Puffergr&#246;&#223;e</h4>
+<p>Dieses Attribut legt die maximale Anzahl der Protokolldatens&#228;tze fest, die im Arbeitsspeicher zwischengespeichert werden, bevor sie vom Protokollierungsdienst in das Protokollierungs-Repository geschrieben werden. Der Standardwert ist ein Datensatz.</p>
+<A NAME="fxbvh"></A><h4>DB-Fehler bei Gr&#246;&#223;e von Speicherpuffer</h4>
+<p>Dieses Attribut legt die maximale Anzahl der Protokolldatens&#228;tze fest, die im Speicher verbleiben, wenn die Datenbank (DB)-Protokollierung fehlschl&#228;gt. Dieses Attribut wird nur angewendet, wenn die DB-Protokollierung festgelegt wurde. Wenn die Verbindung vom Access Manager-Protokollierungsdienst zur DB unterbrochen wird, wird die hier angegene Anzahl an Datens&#228;tzen zwischengespeichert. Der Standardwert dieses Attributs entspricht dem doppelten f&#252;r die Puffergr&#246;&#223;e angegebenen Wert.</p>
+<A NAME="fxcea"></A><h4>Pufferzeitspanne</h4>
+<p>Dieses Attribut gibt die Zeit an, die die Protokolldatens&#228;tze im Zwischenspeicher verbleiben, bevor diese zur Protokollierung an den Protokollierungsdienst gesendet werden. Dieses Attribut wird nur angewendet, wenn &#8220;Pufferzeitspanne aktivieren&#34; aktiviert ist. Das Standardwert ist 3600 Sekunden.</p>
+<A NAME="fxbsn"></A><h4>Pufferzeitspanne</h4>
+<p>Wenn f&#252;r dieses Attribut der Wert EIN festgelegt wird, wendet Access Manager ein Zeitlimit f&#252;r die Zwischenspeicherung der Protokolldatens&#228;tze an. Das Zeitlimit wird im Attribut &#8220;Pufferzeitspanne&#34; festgelegt.</p>
+
+<br />
+
+</body>
+</html>

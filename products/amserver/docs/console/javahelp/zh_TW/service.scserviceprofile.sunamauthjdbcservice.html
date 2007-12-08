@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>JDBC
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.sunamauthjdbcservice"></A><h3>JDBC</h3>
+<p><A NAME="indexterm-181"></A>Java Database Connectivity (JDBC) 認證模組允許 Access Manager 透過任何提供啟用 JDBC 之驅動程式的結構化查詢語言 (SQL) 資料庫來認證使用者。SQL 資料庫的連線可以直接透過 JDBC 驅動程式或透過 JNDI 連線池。這些 JDBC 屬性為範圍屬性。這些屬性包括：</p>
+<ul><li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwajx">連線類型</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwafb">連接儲存區 JNDI 名稱</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwaap">JDBC 驅動程式</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwarc">JDBC URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwaum">將這個使用者連接到資料庫</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwaeu">連接至資料庫使用的密碼</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwavq">連接至資料庫使用的密碼確認</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwads">密碼欄字串</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwapb">準備的描述</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwapv">變換密碼語法的類別</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwavz">認證級別</A></p>
+</li>
+</ul>
+<A NAME="fwajx"></A><h4>連線類型</h4>
+<p>使用 JNDI (Java 命名與目錄介面) 連線池或 JDBC 驅動程式，指定 SQL 資料庫的連線類型。選項如下：</p>
+<ul><li><p>透過 JNDI 擷取的連線池</p>
+</li>
+<li><p>非永久性的 JDBC 連線</p>
+</li>
+</ul>
+<p>JNDI 連線池利用基礎 Web 容器中的配置。</p>
+<A NAME="fwafb"></A><h4>連接儲存區 JNDI 名稱</h4>
+<p>如果選取 JNDI 連線類型，此欄位將指定連線池名稱。由於 JDBC 認證是使用 Web 容器所提供的 JNDI 連線池，JNDI 連線池的設定可能與其他 Web 容器不一致。請參閱「Access Manager 管理指南」以取得範例</p>
+<A NAME="fwaap"></A><h4>JDBC 驅動程式</h4>
+<p>如果在<A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwajx">連線類型</A>中選取了 JDBC，此欄位將指定 SQL 資料庫所提供的 JDBC 驅動程式。例如，<tt>com.mysql.jdbc.Driver</tt>。</p>
+<A NAME="fwarc"></A><h4>JDBC URL</h4>
+<p>如果在<A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwajx">連線類型</A>中選取了 JDBC，請指定資料庫 URL。例如，mySQL 的 URL 是 <tt>jdbc.mysql://hostname:port/databaseName</tt>。</p>
+<A NAME="fwaum"></A><h4>將這個使用者連接到資料庫</h4>
+<p>指定以 JDBC 連線為資料庫連線的使用者名稱。</p>
+<A NAME="fwaeu"></A><h4>連接至資料庫使用的密碼</h4>
+<p>為 [連接至資料庫的使用者] 中所指定的使用者定義密碼。</p>
+<A NAME="fwavq"></A><h4>連接至資料庫使用的密碼確認</h4>
+<p>確認密碼。</p>
+<A NAME="fwads"></A><h4>密碼欄字串</h4>
+<p>指定 SQL 資料庫中的密碼欄名稱。</p>
+<A NAME="fwapb"></A><h4>準備的描述</h4>
+<p>指定可以擷取正在登入之使用者密碼的 SQL 敘述。例如：</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre> select Password from Employees where USERNAME = ?</pre>
+</td></table><br><A NAME="fwapv"></A><h4>變換密碼語法的類別</h4>
+<p>指定將擷取自資料庫之密碼變換為使用者輸入格式的類別名稱，以供密碼比較之用。此類別必須實作 <tt>JDBCPasswordSyntaxTransform</tt> 介面。</p>
+<A NAME="fwavz"></A><h4>認證級別</h4>
+<p>會分別為每個認證方法設定認證層級。此值指示信任認證機制的程度。使用者進行認證後，此值便會儲存在階段作業的 SSO 記號中。SSO 記號呈現給使用者要存取的應用程式時，應用程式將使用此儲存值以決定此層級是否達到了允許使用者存取的層級。如果儲存在 SSO 記號中的認證層級不滿足最小值需求，應用程式可以提示使用者透過具有較高認證層級的服務重新進行認證。預設值為 0。</p>
+<p><hr size="1" noshade><p><b>備註 &#8211; </b>如果未指定任何認證層級，SSO 記號會將核心認證屬性中指定的值儲存為<A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">預設認證層級</A>。</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

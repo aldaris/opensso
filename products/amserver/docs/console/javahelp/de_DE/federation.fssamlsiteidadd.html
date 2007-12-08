@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>So konfigurieren Sie einen Site-Bezeichner
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fssamlsiteidadd"></A><h4>So konfigurieren Sie einen Site-Bezeichner</h4>
+<A NAME="indexterm-87"></A><A NAME="indexterm-88"></A><p>Dieses Attribut legt die Sites auf dem Server fest, auf dem Access Manager installiert ist. F&#252;r den Host werden bereits w&#228;hrend der Installation ein Standardwert und eine automatisch generierte Site-ID festgelegt (diese Werte werden aus <tt>AMConfig.properties</tt> abgerufen). Es sind mehrere Eintr&#228;ge m&#246;glich. Beispielsweise m&#252;ssten Load Balancing oder mehrere Instanzen von Access Manager, die denselben Directory Server nutzen, jeweils definiert werden. Der Ausgangspunkt ist das Attribut &#8220;Site-Bezeichner&#34; im SAML-Bildschirm der Verbindungsschnittstelle.</p>
+<ol><li><p><b>Klicken Sie auf &#8220;Neu&#34;, um einen neuen Site-Bezeichner hinzuzuf&#252;gen, oder klicken Sie auf den Namen eines bereits konfigurierten Site-Bezeichners, um dessen Profil zu &#228;ndern.</b></p><p>Die Site-Bezeichner-Attribute werden angezeigt.</p>
+</li>
+<li><p><b>Legen Sie die Werte der Site-Bezeichner-Attribute entsprechend der folgenden Informationen fest:</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>Instanz-ID</p></td><td valign="top"><p>Der Wert dieser Eigenschaft lautet <i>protocol</i><tt> ://</tt><i>host</i><tt>:</tt><i> port</i>.</p>
+<p> Wenn Sie SAML f&#252;r SSL konfigurieren (sowohl in der Quell- als auch in der Ziel-Site), m&#252;ssen Sie hier als Protokoll <tt>https//</tt>  angeben. </p>
+</td></tr><tr><td valign="top"><p>Site-ID</p></td><td valign="top"><p>Die Site-ID ist ein f&#252;r jede Site generierter Bezeichner (bei mehreren f&#252;r den Lastenausgleich konfigurierten Servern ist dieser Wert allerdings identisch). Das Paket  <tt>com.sun.identity.saml.common </tt> enth&#228;lt eine Klasse, mit der dieser Bezeichner bei Bedarf manuell generiert werden kann. Geben Sie in die Befehlszeile folgenden Befehl ein:</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>% <tt><b>java -classpath </tt><i>FM-classpath<tt></i> com.sun.identity.saml.common.SAMLSiteID
+</tt><i>protocol<tt></i>://</tt><i>host<tt></i>:</tt><i>port<tt></i></b></tt></pre>
+</td></table><br></td></tr><tr><td valign="top"><p>Ausstellername</p></td><td valign="top"><p>Der Standardwert f&#252;r diese Eigenschaft lautet <i>host</i><tt> :</tt><i>port</i>, es k&#246;nnte sich jedoch um jeden beliebigen URI handeln.</p>
+</td></tr></table>
+</li>
+<li><p><b>Klicken Sie auf &#8220;OK&#34;, um die Konfiguration des Site-Bezeichners abzuschlie&#223;en.</b></p></li>
+<li><p><b>Klicken Sie auf der Seite &#8220;SAML-Profil&#34; auf &#8220;Speichern&#34;, um die SAML-Konfiguration abzuschlie&#223;en.</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

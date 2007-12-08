@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Socios de confianza: configuraci&#243;n de los atributos de socios de confianza.
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fssamltrustedpartnersadd"></A><h4>Socios de confianza: configuraci&#243;n de los atributos de socios de confianza.</h4>
+<A NAME="indexterm-91"></A><p>A continuaci&#243;n, se describe la segunda parte del proceso de configuraci&#243;n de un socio de confianza. El punto de partida es <A HREF="federation.fssamlselecttrustedpartnertype.html#federation.fssamlselecttrustedpartnertype">Socios de confianza: selecci&#243;n del tipo de socio y el perfil</A>. En funci&#243;n del rol o roles que se hayan seleccionado en la primera parte, es posible que se deban definir algunos de los subatributos mostrados en las secciones siguientes para el socio de confianza.</p>
+<p><hr size="1" noshade><p><b>Nota &#8211; </b>Si ha accedido a esta p&#225;gina haciendo clic en Editar o Duplicar en la pantalla de configuraci&#243;n de SAML en Federaci&#243;n, modifique el perfil de socio de confianza en funci&#243;n de los pasos siguientes y haga clic en Guardar para cambiar los valores. Haga clic en Guardar en la p&#225;gina de perfil SAML para completar la modificaci&#243;n. </p>
+<hr size="1" noshade></p><ol><li><p><b>Escriba los valores para los atributos de configuraci&#243;n com&#250;n.</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>Id. de origen</p></td><td valign="top"><p>Se trata de una secuencia de 20 bytes (codificada mediante el formato Base64) que proviene del sitio del socio. Normalmente, es el mismo valor que el utilizado para el atributo Id. de sitio al configurar el atributo Identificadores de sitio.</p>
+</td></tr><tr><td valign="top"><p>Destino</p></td><td valign="top"><p>Es el dominio del sitio del socio (con o sin un n&#250;mero de puerto). Si desea establecer conexi&#243;n con una p&#225;gina Web alojada en este dominio, la URL de redirecci&#243;n se tomar&#225; de los valores definidos en el atributo de socio de confianza.</p>
+<p><hr size="1" noshade><p><b>Nota &#8211; </b>En caso de que existan dos entradas definidas para el mismo dominio (una con un n&#250;mero de puerto y otra sin &#233;l), tendr&#225; prioridad la entrada que contenga el n&#250;mero de puerto. Por ejemplo, suponga que las siguientes son dos definiciones de socio de confianza: <tt>target=sun.com</tt> y <tt>target=sun.com:8080</tt>. Si el principal busca <tt>http://machine.sun.com:8080/index.html</tt>, se seleccionar&#225; la segunda definici&#243;n.</p>
+<hr size="1" noshade></p></td></tr><tr><td valign="top"><p>Asignador de atributos de sitio</p></td><td valign="top"><p>La clase se utiliza para devolver una lista de valores de atributos definidos como elementos <tt>AttributeStatements</tt> en una aserci&#243;n de autenticaci&#243;n. Un asignador de atributos de sitio debe implementarse desde la interfaz <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerSiteAttributeMapper</tt>. </p>
+<p>Si no se define ninguna clase, no se incluir&#225; ning&#250;n atributo en la aserci&#243;n.</p>
+</td></tr><tr><td valign="top"><p>Versi&#243;n</p></td><td valign="top"><p>La versi&#243;n de SAML utilizada (<tt>1.0</tt> &#243; <tt> 1.1</tt>) para enviar solicitudes de SAML. Si este par&#225;metro no tiene ning&#250;n valor, se utilizar&#225;n los siguientes valores predeterminados (definidos en <tt>AMConfig.properties</tt>):</p>
+<ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p>
+</li>
+<li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>Asignador de cuentas</p></td><td valign="top"><p>La clase que define el modo en que el asunto de una aserci&#243;n se relaciona con una identidad del sitio de destino. Un asignador de cuentas debe implementarse desde la interfaz <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerAccountMapper </tt>. El valor predeterminado es <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper </tt> .</p>
+<p>Si no se define ninguna clase, no se incluir&#225; ning&#250;n atributo en la aserci&#243;n.</p>
+</td></tr><tr><td valign="top"><p>Certificado</p></td><td valign="top"><p>Un certificado utilizado para verificar la firma de una aserci&#243;n cuando &#233;sta se lleva a cabo por parte del socio y el certificado no se encuentra en la secci&#243;n <tt>KeyInfo</tt> de la aserci&#243;n firmada.</p>
+</td></tr><tr><td valign="top"><p>Lista de hosts</p></td><td valign="top"><p>Una lista de las direcciones IP, el nombre de host DNS o el alias del certificado de autenticaci&#243;n de cliente utilizado por el cliente. Se configura para todos los hosts en el sitio del socio que puede enviar solicitudes a la autoridad. Esta lista permite garantizar que el solicitante es realmente el receptor previsto del artefacto. Si el solicitante se encuentra definido en esta lista, la interacci&#243;n continuar&#225;. Si la informaci&#243;n del solicitante no coincide con ning&#250;n host definido en la lista de hosts, se rechazar&#225; la solicitud.</p>
+</td></tr><tr><td valign="top"><p>Emisor</p></td><td valign="top"><p>El creador de una aserci&#243;n generada. La sintaxis predeterminada es <i>hostname</i><tt>:</tt><i> port</i>.</p>
+</td></tr></table>
+</li>
+<li><p><b>Escriba los valores para los subatributos de destino.</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>Artefacto: URL de SAML</p></td><td valign="top"><p>La URL que se&#241;ala al servlet que implementa el perfil de artefacto del explorador Web.</p>
+</td></tr><tr><td valign="top"><p>Env&#237;o: URL de env&#237;o</p></td><td valign="top"><p>La URL que se&#241;ala al servlet que implementa el perfil de POST (env&#237;o) del explorador Web.</p>
+</td></tr><tr><td valign="top"><p>Consulta SOAP: asignador de atributos</p></td><td valign="top"><p>La clase utilizada para obtener informaci&#243;n de inicio de sesi&#243;n &#250;nico de una consulta. Debe implementar un asignador de atributos desde la interfaz incluida. Si no se especifica ninguna clase, se utilizar&#225; <tt>DefaultAttributeMapper</tt>.</p>
+</td></tr><tr><td valign="top"><p>Consulta SOAP: asignador de acciones</p></td><td valign="top"><p>La clase utilizada para obtener informaci&#243;n de inicio de sesi&#243;n &#250;nico y asignar acciones de socios a las decisiones de autorizaci&#243;n. Debe implementar un asignador de acciones desde la interfaz incluida. Si no se especifica ninguna clase, se utilizar&#225; <tt>DefaultActionMapper</tt>.</p>
+</td></tr></table>
+</li>
+<li><p><b>Escriba los valores para los subatributos de origen.</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>Artefacto: URL de SOAP</p></td><td valign="top"><p>La URL al receptor de SOAP de SAML.</p>
+</td></tr><tr><td valign="top"><p>Tipo de autenticaci&#243;n</p></td><td valign="top"><p>Entre los tipos de autenticaci&#243;n que pueden utilizarse con SAML, se incluyen:</p>
+<ul><li><p><tt>NOAUTH</tt></p>
+</li>
+<li><p><tt>BASICAUTH</tt></p>
+</li>
+<li><p><tt>SSL</tt></p>
+</li>
+<li><p><tt>SSLWITHBASICAUTH</tt></p>
+</li>
+</ul>
+<p>Este atributo es opcional. Si no se especifica ninguno, el valor predeterminado es <tt> NOAUTH</tt>. Si se especifica <tt>BASICAUTH</tt> o <tt>SSLWITHBASICAUTH </tt>, es necesario el atributo Socios de confianza y &#233;ste debe ser <tt>HTTPS</tt>.</p>
+</td></tr><tr><td valign="top"><p>Usuario</p></td><td valign="top"><p>Si se selecciona <tt>BASICAUTH</tt> como tipo de autenticaci&#243;n, el valor de este atributo define el identificador de usuario del socio que se est&#225; utilizando para proteger el receptor de SOAP.</p>
+</td></tr><tr><td valign="top"><p>Contrase&#241;a de usuario</p></td><td valign="top"><p>Si se selecciona <tt>BASICAUTH</tt> como tipo de autenticaci&#243;n, el valor de este atributo define la contrase&#241;a del identificador de usuario del socio que se est&#225; utilizando para proteger el receptor de SOAP.</p>
+</td></tr><tr><td valign="top"><p>Vuelva a introducir la contrase&#241;a de usuario</p></td><td valign="top"><p>Vuelva a introducir la contrase&#241;a definida anteriormente.</p>
+</td></tr></table>
+</li>
+<li><p><b>Haga clic en Finish (Finalizar).</b></p></li>
+<li><p><b>Pulse Guardar en la p&#225;gina de perfil SAML para completar la configuraci&#243;n. </b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

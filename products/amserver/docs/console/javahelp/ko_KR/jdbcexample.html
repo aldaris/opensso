@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>연결 풀 구성 &<!>#8212; 예제
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="jdbcexample"></A><h4>연결 풀 구성 &#8212; 예제</h4>
+<p>다음은 Web Server 및 MySQL 4.0용으로 연결 풀을 설정하는 예입니다.</p>
+<ol><li><p><b>Web Server 콘솔에서 다음 속성을 가진 JDBC 연결 풀을 만듭니다.</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>풀 이름</p></td><td valign="top"><p><tt>samplePool</tt></p>
+</td></tr><tr><td valign="top"><p>데이터 소스 클래스 이름</p></td><td valign="top"><p><tt>com.mysql.jdbc.jdbc2.optional.MysqlDatacSource</tt></p>
+</td></tr><tr><td valign="top"><p>서버 이름</p></td><td valign="top"><p>mySQL 서버의 이름</p>
+</td></tr><tr><td valign="top"><p>포트</p></td><td valign="top"><p>mySQL 서버가 실행 중인 포트 번호</p>
+</td></tr><tr><td valign="top"><p>사용자</p></td><td valign="top"><p>데이터베이스 비밀번호의 사용자 이름</p>
+</td></tr><tr><td valign="top"><p>비밀번호</p></td><td valign="top"><p>해당 사용자의 비밀번호</p>
+</td></tr><tr><td valign="top"><p>데이터베이스 이름</p></td><td valign="top"><p>데이터베이스의 이름</p>
+</td></tr></table>
+<p><hr size="1" noshade><p><b>주 &#8211; </b> 다음 단계에서 설명하는 데이터 소스 클래스 및 JDBC 드라이버 클래스를 포함하는 jar 파일을 응용 프로그램 클래스 경로에 추가해야 합니다.</p>
+<hr size="1" noshade></p></li>
+<li><p><b>JDBC 자원을 구성합니다. Web Server 콘솔에서 다음 속성을 가진 JDBC 자원을 만듭니다.</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>JNDI 이름</p></td><td valign="top"><p><i>jdbc/samplePool</i></p>
+</td></tr><tr><td valign="top"><p>풀 이름</p></td><td valign="top"><p><i>samplePool</i></p>
+</td></tr><tr><td valign="top"><p>데이터 자원 사용</p></td><td valign="top"><p><i>on</i></p>
+</td></tr></table>
+</li>
+<li><p><b>응용 프로그램의 <tt>sun-web.xml</tt> 파일에 다음 행을 추가합니다.</b></p><table cellpadding="4" border="1" cols="1" width="100%"><td><pre>&#60;resource-ref>
+      &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
+      &#60;jndi-name>jdbc/samplePool&#60;/jndi-name>
+&#60;/resource-ref></pre>
+</td></table><br></li>
+<li><p><b>응용 프로그램의 web.xml 파일에 다음 행을 추가합니다. </b></p><table cellpadding="4" border="1" cols="1" width="100%"><td><pre>&#60;resource-ref>
+       &#60;description>mySQL Database&#60;/description>
+       &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
+       &#60;res-type>javax.sql.DataSource&#60;/res-type>
+       &#60;res-auth>Container&#60;/res-auth>
+&#60;/resource-ref></pre>
+</td></table><br></li>
+<li><p><b>설정을 완료하면 이 속성 값은 <i>java:comp/env/jdbc/mySQL</i>이 됩니다.</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

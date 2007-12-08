@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>配置網站識別碼 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fssamlsiteidadd"></A><h4>配置網站識別碼 </h4>
+<A NAME="indexterm-87"></A><A NAME="indexterm-88"></A><p>此屬性定義由安裝 Access Manager 之伺服器代管的任何網站。安裝期間 (使用擷取自 <tt>AMConfig.properties</tt> 的值) 會為主機定義一個預設值和一個自動產生的網站 ID。可以有多個項目。例如，負載平衡或共用同一 Directory Server 的多個 Access Manager 實例全都需要加以定義。起點是聯合介面 SAML 畫面上的 [網站識別碼] 屬性。</p>
+<ol><li><p><b>按一下 [新建] 以新增一個新的網站識別碼，或是在已配置的網站識別碼的名稱上按一下以修改其設定檔。</b></p><p>會顯示 [網站識別碼] 屬性。</p>
+</li>
+<li><p><b>根據下列資訊提供網站識別碼屬性的值：</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>實例 ID</p></td><td valign="top"><p>此特性的值為 <i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i>。</p>
+<p>如果為 SSL 配置 SAML (同時在資源與目標網站內)，請確保此處定義的協定為 <tt>https//</tt>。</p>
+</td></tr><tr><td valign="top"><p>網站 ID</p></td><td valign="top"><p>網站 ID 是為每個網站 (雖然在負載平衡器之後的多個伺服器之值將會相同) 所產生的識別碼。如果需要的話，<tt>com.sun.identity.saml.common</tt> 套裝軟體內有一個類別，可用來手動產生此識別碼。在指令行鍵入如下：</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>% <tt><b>java -classpath </tt><i>FM-classpath<tt></i> com.sun.identity.saml.common.SAMLSiteID 
+</tt><i>protocol<tt></i>://</tt><i>host<tt></i>:</tt><i>port<tt></i></b></tt></pre>
+</td></table><br></td></tr><tr><td valign="top"><p>發行者名稱</p></td><td valign="top"><p>此特性的預設值為 <i>host</i><tt>:</tt><i>port</i>，但它可以是任何 URI。</p>
+</td></tr></table>
+</li>
+<li><p><b>按一下 [確定] 以完成網站識別碼配置。</b></p></li>
+<li><p><b>按一下 [SAML 設定檔 ] 頁面上的 [儲存] 以完成 SAML 配置。</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

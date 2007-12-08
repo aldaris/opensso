@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>証明書
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthcertservice"></A><h3>証明書</h3>
+<p><A NAME="indexterm-177"></A>このモジュールにより、ユーザーは個人デジタル証明書 (PDC) を通じてログインすることができます。このモジュールインスタンスは、証明書の状態を判断するために OCSP (Online Certificate Status Protocol) の使用を必要とする場合があります。OCSP の使用はオプションです。証明書が有効か無効かによって、ユーザーがリソースへのアクセスを許可されるかどうかが決まります。証明書認証属性はレルム属性です。属性は次のとおりです。</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbia">「LDAP で証明書を照合」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiq">「LDAP での証明書の検索に使用する対象 DN 属性」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbim">「CRL に対して証明書を照合」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbik">「LDAP での CRL の検索に使用する発行者 DN 属性」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbin">「CRL 更新用の HTTP パラメータ」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbil">「OCSP 検証」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbij">「証明書が格納されている LDAP サーバー」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbtp">「LDAP 検索開始 DN」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbqp">「LDAP サーバーの主体ユーザー」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbst">「LDAP サーバーの主体パスワード」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiu">「LDAP サーバーの主体パスワード (確認)」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblo">「プロファイル ID のための LDAP 属性」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblm">「LDAP アクセスに SSL を使用」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbof">「ユーザープロファイルへのアクセスに使用する証明書フィールド」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbna">「ユーザープロファイルへのアクセスに使用するその他の証明書フィールド」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiw">「信頼できるリモートホスト」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbkd">「SSL ポート番号」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblx">「認証レベル」</A></p>
+</li>
+</ul>
+<A NAME="fwbia"></A><h4>LDAP で証明書を照合</h4>
+<p>ログイン時に提出されたユーザー証明書が LDAP サーバーに格納されているかをチェックするかどうかを指定します。一致する証明書がない場合、ユーザーはアクセスを拒否されます。一致する証明書があり、かつほかの検証が必要ない場合、ユーザーはアクセスを許可されます。デフォルトでは、証明書認証サービスはユーザー証明書の有無をチェックしません。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>Directory Server に格納されている証明書が必ずしも有効とは限りません。証明書の取り消しリストに含まれている可能性があります。<A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbim">「CRL に対して証明書を照合」</A>を参照してください。ただし、Web コンテナは、ログイン時に示されるユーザー証明書の有効性をチェックする場合があります。</p>
+<hr size="1" noshade></p><A NAME="fwbiq"></A><h4>LDAP での証明書の検索に使用する対象 DN 属性</h4>
+<p>LDAP で証明書を検索するのに使用する証明書の <i>SubjectDN</i> 値の属性を指定します。この属性はユーザーエントリを一意に識別するものである必要があります。検索には実際の値を使用します。デフォルトは <tt>cn</tt> です。</p>
+<A NAME="fwbim"></A><h4>CRL に対して証明書を照合</h4>
+<p>ユーザー証明書と LDAP サーバーの証明書の取り消しリスト (CRL) を比較するかどうかを指定します。CRL は発行者の <i>SubjectDN</i> の属性名の 1 つで特定されます。証明書が CRL に載っている場合、ユーザーはアクセスを拒否され、載っていない場合は許可されます。デフォルトでは、この属性は無効になっています。</p>
+<p>証明書の所有者の状態が変わってその証明書を使う権利がなくなった場合、または証明書の所有者の秘密鍵が漏洩した場合は、証明書を取り消す必要があります。</p>
+<A NAME="fwbik"></A><h4>LDAP での CRL の検索に使用する発行者 DN 属性</h4>
+<p>LDAP で CRL を検索するのに使用する、受信した証明書の発行者 <i>subjectDN</i> 値の属性を指定します。このフィールドは、「CRL に対して証明書を照合」属性が有効になっているときにのみ使用されます。検索には実際の値を使用します。デフォルトは <tt>cn</tt> です。</p>
+<A NAME="fwbin"></A><h4>CRL 更新用の HTTP パラメータ</h4>
+<p>CRL 更新のサーブレットから CRL を取得するための HTTP パラメータを指定します。これらのパラメータについては、CA の管理者に問い合わせてください。</p>
+<A NAME="fwbil"></A><h4>OCSP 検証</h4>
+<p>対応する OCSP レスポンダと通信することによって実行される OCSP 検証を有効にします。OCSP レスポンダは、実行時に次のように決定されます。</p>
+<ul><li><p><tt>com.sun.identity.authentication.ocspCheck</tt> が true で、OCSP レスポンダが <i>com.sun.identity.authentication.ocsp.repsonder.url</i> 属性で設定されている場合は、この属性の値が OCSP レスポンダとして使用されます。</p>
+</li>
+<li><p><tt>com.sun.identity.authentication.ocspCheck</tt> が true に設定され、この属性の値が <tt>AMConfig.properties</tt> ファイルで設定されていない場合は、クライアント証明書に示されている OCSP レスポンダが OCSP レスポンダとして使用されます。</p>
+</li>
+<li><p><tt>com.sun.identity.authentication.ocspCheck</tt> が false に設定されているか、<i>com.sum.identity.authentication.ocspCheck</i> が true に設定され、OCSP レスポンダが見つからない場合は、OCSP 検証は実行されません。</p>
+</li>
+</ul>
+<p>OCSP 検証を有効にする前に、Access Manager マシンと OCSP レスポンダマシンの時刻ができるかぎり一致するようにしてください。また、Access Manager マシンの時刻が OCSP レスポンダの時刻より遅れないようにすることが必要です。次に例を示します。</p>
+<p><tt>OCSP レスポンダマシン: 12:00:00 pm</tt></p>
+<p><tt>Access Manager マシン: 12:00:30 pm</tt></p>
+<A NAME="fwbij"></A><h4>証明書が格納されている LDAP サーバー</h4>
+<p>証明書が格納されている LDAP サーバーの名前とポート番号を指定します。デフォルト値は、Access Manager のインストール時に指定したホスト名とポートです。証明書が格納されている LDAP サーバーのホスト名とポートを使用できます。形式は <tt>hostname:port</tt> です。</p>
+<A NAME="fwbtp"></A><h4>LDAP 検索開始 DN</h4>
+<p>ユーザーの証明書に対する検索を開始するノードの DN を指定します。デフォルト値はありません。このフィールドは有効な DN をすべて認識します。</p>
+<p>複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。形式は次のとおりです。</p>
+<p><tt>servername|search dn</tt></p>
+<p>複数のエントリの場合は、次のようになります。</p>
+<p><tt>servername1|search dn servername2|search dn servername3|search dn...</tt></p>
+<p>ルート組織の下に同じユーザー ID で複数のエントリが存在する場合、認証が正しく行われるためには、1 つのエントリだけを検索または発見できるようにこのパラメータを設定する必要があります。たとえば、ルート組織の下でエージェント ID とユーザー ID が同じである場合、ルート組織でエージェント ID を使用して認証するにはこのパラメータを <tt>ou=Agents</tt> に、ユーザー ID を使用して認証するにはこのパラメータを <tt>ou=People</tt> にしてください。</p>
+<A NAME="fwbqp"></A><h4>LDAP サーバーの主体ユーザー</h4>
+<p>このフィールドは、証明書が格納されている LDAP サーバーの主体ユーザーの DN を受け入れます。このフィールドにデフォルト値はありません。有効な DN をすべて認識します。主体ユーザーは読み取り権限を持ち、Directory Server に格納されている証明書情報を検索する必要があります。</p>
+<A NAME="fwbst"></A><h4>LDAP サーバーの主体パスワード</h4>
+<p>このフィールドは、「LDAP サーバーの主体ユーザー」フィールドで指定されるユーザーに関連付けられた LDAP パスワードを保持します。このフィールドにデフォルト値はありません。指定した主体ユーザーの有効な LDAP パスワードを認識します。この値は読み取り可能テキストとしてディレクトリに格納されます。</p>
+<A NAME="fwbiu"></A><h4>LDAP サーバーの主体パスワード (確認)</h4>
+<p>パスワードを確認します。</p>
+<A NAME="fwblo"></A><h4>プロファイル ID のための LDAP 属性</h4>
+<p>証明書と一致する Directory Server エントリの属性を指定します。この証明書の値は、正しいユーザープロファイルの識別に使用します。このフィールドにデフォルト値はありません。ユーザー ID として使用できるユーザーエントリの有効な属性 (<i>cn</i>、<i>sn</i> など) をすべて認識します。</p>
+<A NAME="fwblm"></A><h4>LDAP アクセスに SSL を使用</h4>
+<p>LDAP サーバーへのアクセスに SSL を使用するかどうかを指定します。デフォルトでは、証明書認証サービスは LDAP アクセスに SSL を使用しません。</p>
+<A NAME="fwbof"></A><h4>ユーザープロファイルへのアクセスに使用する証明書フィールド</h4>
+<p>一致するユーザープロファイルの検索に使用する、証明書の対象 DN のフィールドを指定します。たとえば、電子メールアドレスを選択すると、証明書認証サービスはユーザー証明書の属性 <i>emailAddr</i> に一致するユーザープロファイルを検索します。その後、ログインするユーザーは一致したプロファイルを使用します。デフォルトのフィールドは「対象 CN」です。<i></i>リストは次のとおりです。</p>
+<ul><li><p>電子メールアドレス</p>
+</li>
+<li><p>対象 CN</p>
+</li>
+<li><p>対象 DN</p>
+</li>
+<li><p>対象UID</p>
+</li>
+<li><p>その他</p>
+</li>
+</ul>
+<A NAME="fwbna"></A><h4>ユーザープロファイルへのアクセスに使用するその他の証明書フィールド</h4>
+<p>「ユーザープロファイルへのアクセスに使用する証明書フィールド」属性の値を「その他」に設定した場合は、このフィールドで、受信した証明書の <i>subjectDN</i> 値から選択する属性を指定します。認証サービスは、その属性の値に一致するユーザープロファイルを検索します。</p>
+<A NAME="fwbiw"></A><h4>信頼できるリモートホスト</h4>
+<p>Access Manager に証明書を送信する信頼できるホストのリストを定義します。Access Manager は、証明書がいずれかの信頼できるホストから送信されていることを検証する必要があります。この属性は、SSL ターミネーションでのみ使用されます。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>none</p></td><td valign="top"><p>属性が無効になります。この値はデフォルトで設定されます。</p>
+</td></tr><tr><td valign="top"><p>all</p></td><td valign="top"><p>任意のクライアント IP アドレスから Portal Server Gateway スタイルの証明書認証を受け入れます。</p>
+</td></tr><tr><td valign="top"><p>IP ADDR</p></td><td valign="top"><p>Portal Server Gateway スタイルの証明書認証要求を受け入れる IP アドレス (ゲートウェイの IP アドレス) を一覧表示します。属性はレルムベースで設定できます。</p>
+</td></tr></table>
+<A NAME="fwbkd"></A><h4>SSL ポート番号</h4>
+<p>セキュリティー保護されたソケットレイヤのポート番号を指定します。現在、この属性は Gateway サーブレットでのみ使用します。SSL ポート番号の追加または変更を行う前に、『Access Manager 管理ガイド』の「ポリシーベースのリソース管理」を参照してください。</p>
+<A NAME="gcabp"></A><h4>クライアント証明書のための HTTP ヘッダー名</h4>
+<p>この属性は、「信頼できるリモートホスト」属性が all に設定されているか、定義済みの特定のホスト名を保持している場合にのみ使用されます。管理者は、ロードバランサまたは SRA によって挿入されたクライアント証明書用の HTTP ヘッダー名を指定する必要があります。</p>
+<A NAME="fwblx"></A><h4>認証レベル</h4>
+<p>認証レベルは認証方法ごとに個別に設定します。この値は、認証メカニズムの信頼度を示します。ユーザーが認証を受けると、この値がセッションの SSO トークンに格納されます。ユーザーがアクセスするアプリケーションに SSO トークンが提供されると、そのアプリケーションは格納されている値を使用して、ユーザーにアクセスを許可するのに十分なレベルかどうかを判別します。SSO トークンに格納されている認証レベルが必要な最小値に満たない場合、アプリケーションはユーザーにより高い認証レベルのサービスで認証を再度受けるよう要求することがあります。デフォルト値は 0 です。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>認証レベルの指定がない場合、SSO トークンはコア認証属性の <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">「デフォルト認証レベル」</A>で指定した値を格納します。</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

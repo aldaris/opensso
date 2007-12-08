@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>엔티티: 공급자 및 계열사
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fsentitydescriptors"></A><h2>엔티티: 공급자 및 계열사</h2>
+<A NAME="indexterm-63"></A><A NAME="indexterm-64"></A><A NAME="indexterm-65"></A><A NAME="indexterm-66"></A><p>개별 Identity 공급자, 개별 서비스 공급자 또는 각각에 대해 <b>메타데이터</b>(특정 identity 서비스 아키텍처를 정의하는 구성 정보)로 <b>엔티티</b>를 구성할 수 있습니다. 이에 반해 두 유형의 선택된 공급자 그룹의 경우 제휴로 엔터티를 구성할 수도 있습니다. 공급자 및 제휴 엔티티는 모두Access Manager 콘솔을 사용하여 구성할 수 있습니다. </p>
+<p><hr size="1" noshade><p><b>주 &#8211; </b>엔티티를 작성할 수는 있지만 공급자로 채워지기 전까지는 인증 도메인에 할당할 수 없습니다.</p>
+<hr size="1" noshade></p><p>다음 표에는 두 유형의 엔티티가 설명되어 있습니다.</p>
+<A NAME="gbxxa"></A><p><b>표 1 </b>엔티티 유형</p>
+
+<table cellspacing="5" border="1">
+<tr><td><p><b>공급자 엔티티</b></p></td><td><p><b>공급자 엔티티</b>에는 각 유형의 개별 공급자에 대한 메타데이터가 있습니다. 모든 Identity 공급자 및 서비스 공급자는 먼저 공급자 엔티티 내에서 구성되어야 인증 도메인과 연결되거나 <b>계열사 엔티티</b>에 포함되도록 선택할 수 있습니다. Access Manager 콘솔에서 제공된 속성을 사용하여 개별 Identity 공급자, 개별 서비스 공급자 또는 둘 모두를 공급자 엔티티 내에서 정의할 수 있습니다. 공급자 엔티티 프로필에는 다음 속성 그룹이 포함됩니다.</p><ul><li><p><A HREF="federation.fsentitydescriptorsprofile.html#federation.fsentitydescriptorsprofile">일반 속성</A></p></li>
+<li><p><A HREF="federation.fsidentityprovider.html#federation.fsidentityprovider">Identity 공급자</A></p></li>
+<li><p><A HREF="federation.fsserviceprovider.html#federation.fsserviceprovider">서비스 공급자</A></p></li>
+</ul>
+</td></tr>
+<tr><td><p><b>계열사 엔티티</b></p></td><td><p>구성된 <b>제휴</b>를 사용하면 사용자가 관련 사이트 그룹과 연합할 수 있습니다. 예를 들어, 서비스 공급자가 사용자에 대해 제휴 대신 인증 요청을 발행하고 인증이 안전한 경우 사용자가 제휴의 모든 구성원에 대해 단일 사인온(SSO)을 수행할 수 있습니다. 제휴는 인증 도메인의 경계와 관계 없이 형성됩니다.</p><p><b>계열사 엔티티</b>에는 제휴를 구성하는 하나 이상의 공급자 엔티티 그룹을 정의하는 메타데이터가 있습니다. 제휴는 모든 공급자의 구성 정보가 아닌 제휴 자체의 구성 정보만 포함합니다. 계열사 엔티티 프로필에는 다음 속성 그룹이 포함됩니다.</p><ul><li><p><A HREF="federation.fsentitydescriptorsprofile.html#federation.fsentitydescriptorsprofile">일반 속성</A></p></li>
+<li><p><A HREF="federation.fsentitydescriptorsaffiliate.html#federation.fsentitydescriptorsaffiliate">계열사</A></p></li>
+</ul>
+<p><hr size="1" noshade><p><b>주 &#8211; </b>제휴의 구성원은 서비스를 제휴의 구성원으로 호출하거나 개별적으로 호출할 수 있습니다.</p><hr size="1" noshade></p></td></tr>
+</table><p>두 유형의 구성된 엔티티는 [엔티티] 아래에 모두 나열됩니다. 엔티티와 연관된 작업은 다음과 같습니다.</p>
+<ul><li><p><A HREF="federation.fsentitydescriptorsadd.html#federation.fsentitydescriptorsadd"> 공급자 엔티티 또는 계열사 엔티티 작성</A></p>
+</li>
+<li><p><A HREF="federation.fsentitydescriptorsprofile.html#federation.fsentitydescriptorsprofile"> 공급자 엔티티 또는 계열사 엔티티의 일반 속성 수정</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityprovider.html#federation.fsidentityprovider"> 공급자 엔티티에 Identity 공급자 추가</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderhostedadd.html#federation.fsidentityproviderhostedadd"> 공급자 엔티티에 새 호스트 Identity 공급자 추가</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderremoteadd.html#federation.fsidentityproviderremoteadd"> 공급자 엔티티에 새 원격 Identity 공급자 추가</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceprovider.html#federation.fsserviceprovider"> 공급자 엔티티에 서비스 공급자 추가</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderhostedadd.html#federation.fsserviceproviderhostedadd"> 공급자 엔티티에 새 호스트 서비스 공급자 추가</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderremoteadd.html#federation.fsserviceproviderremoteadd"> 공급자 엔티티에 새 원격 서비스 공급자 추가</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderhostedprofile.html#federation.fsidentityproviderhostedprofile"> 공급자 엔티티의 호스트 Identity 공급자 속성 수정</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderremoteprofile.html#federation.fsidentityproviderremoteprofile"> 공급자 엔티티의 원격 Identity 공급자 속성 수정</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderhostedprofile.html#federation.fsserviceproviderhostedprofile"> 공급자 엔티티의 호스트 서비스 공급자 속성 수정</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderremoteprofile.html#federation.fsserviceproviderremoteprofile"> 공급자 엔티티의 원격 서비스 공급자 속성 수정</A></p>
+</li>
+<li><p><A HREF="federation.fscreatecontactperson.html#federation.fscreatecontactperson"> 공급자 엔티티의 공급자에 연락 담당자 추가</A></p>
+</li>
+<li><p><A HREF="federation.fseditcontactperson.html#federation.fseditcontactperson"> 공급자 엔티티의 연락 담당자 프로필 수정</A></p>
+</li>
+<li><p><A HREF="federation.fsentitydescriptorsaffiliate.html#federation.fsentitydescriptorsaffiliate"> 계열사 엔티티에 구성원 추가</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

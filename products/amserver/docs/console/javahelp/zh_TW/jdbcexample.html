@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>配置連線池 &<!>#8212; 範例
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="jdbcexample"></A><h4>配置連線池 &#8212; 範例</h4>
+<p>下列範例顯示如何為 Web 伺服器以及 MySQL 4.0 設定連線池：</p>
+<ol><li><p><b>在 Web 伺服器主控台中，建立包含下列屬性的 JDBC 連線池：</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>poolName</p></td><td valign="top"><p><tt>samplePool</tt></p>
+</td></tr><tr><td valign="top"><p>DataSource Classname</p></td><td valign="top"><p><tt>com.mysql.jdbc.jdbc2.optional.MysqlDatacSource</tt></p>
+</td></tr><tr><td valign="top"><p>serverName</p></td><td valign="top"><p>mySQL 伺服器的伺服器名稱。</p>
+</td></tr><tr><td valign="top"><p>port</p></td><td valign="top"><p>執行 mySQL 伺服器的連接埠號</p>
+</td></tr><tr><td valign="top"><p>user</p></td><td valign="top"><p>資料庫密碼的使用者名稱。</p>
+</td></tr><tr><td valign="top"><p>password</p></td><td valign="top"><p>使用者的密碼。</p>
+</td></tr><tr><td valign="top"><p>databaseName</p></td><td valign="top"><p>資料庫的名稱。</p>
+</td></tr></table>
+<p><hr size="1" noshade><p><b>備註 &#8211; </b>應用程式類別路徑中應該加入包含下列步驟所提 DataSource 類別以及 JDBC 驅動程式類別的 Jar 檔案。</p>
+<hr size="1" noshade></p></li>
+<li><p><b>配置 JDBC 資源。在 Web 伺服器主控台中，建立包含下列屬性的 JDBC 資源：</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>JNDI name</p></td><td valign="top"><p><i>jdbc/samplePool</i></p>
+</td></tr><tr><td valign="top"><p>Pool name</p></td><td valign="top"><p><i>samplePool</i></p>
+</td></tr><tr><td valign="top"><p>Data Resource Enabled</p></td><td valign="top"><p><i>on</i></p>
+</td></tr></table>
+</li>
+<li><p><b>在應用程式的 <tt>sun-web.xml</tt> 檔案中新增下列幾行：</b></p><table cellpadding="4" border="1" cols="1" width="100%"><td><pre>&#60;resource-ref>
+      &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
+      &#60;jndi-name>jdbc/samplePool&#60;/jndi-name>
+&#60;/resource-ref></pre>
+</td></table><br></li>
+<li><p><b>在應用程式的 web.xml 檔案中新增下列行：</b></p><table cellpadding="4" border="1" cols="1" width="100%"><td><pre>&#60;resource-ref>
+       &#60;description>mySQL Database&#60;/description>
+       &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
+       &#60;res-type>javax.sql.DataSource&#60;/res-type>
+       &#60;res-auth>Container&#60;/res-auth>
+&#60;/resource-ref></pre>
+</td></table><br></li>
+<li><p><b>一旦您完成了設定，此屬性的值就會變成 <i>java:comp/env/jdbc/mySQL</i>。</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

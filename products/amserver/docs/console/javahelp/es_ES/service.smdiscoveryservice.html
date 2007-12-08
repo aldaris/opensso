@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Servicio de detecci&#243;n
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.smdiscoveryservice"></A><h2>Servicio de detecci&#243;n</h2>
+<A NAME="indexterm-127"></A><p>El paso inicial para acceder a los datos de identidad es determinar d&#243;nde se encuentra la informaci&#243;n. (Por ejemplo, el servicio de detecci&#243;n que guarda la informaci&#243;n de la tarjeta de cr&#233;dito de la entidad principal o el servidor que guarda el servicio de calendario de la entidad principal.) Normalmente, hay uno o m&#225;s servicios en una red que permiten que otras entidades realicen una acci&#243;n en los datos de identidad. Debido a que no se espera que los clientes mantengan un seguimiento de estos servicios o que sepan en cu&#225;l pueden confiar, es necesario disponer de un servicio de detecci&#243;n. Un <b>servicio de detecci&#243;n</b> es b&#225;sicamente una interfaz de servicio Web para los recursos de detecci&#243;n. Un <b>recurso de detecci&#243;n</b> es un registro de las ofertas de recursos. Una <b>oferta de recursos</b> define una asociaci&#243;n entre una unidad de datos de identidad y la instancia de servicio que proporciona el acceso a dichos datos. Un <b>identificador de recursos</b> es un identificador de recursos exclusivo (URI, Unique Resource Identifier) registrado con el servicio de detecci&#243;n que se&#241;ala a un determinado recurso de detecci&#243;n. Cuando un cliente env&#237;a una solicitud para obtener algunos tipos de datos, se incluye el identificador de recursos que el Servicio de detecci&#243;n de Access Manager utiliza para localizar el proveedor de los servicios Web de los atributos solicitados. El Servicio de detecci&#243;n muestra una oferta de recursos que contiene la informaci&#243;n necesaria para localizar los datos.</p>
+<p><hr size="1" noshade><p><b>Nota &#8211; </b>Para poder disponer de acceso, el proveedor que aloja el Servicio de perfil personal de Liberty debe registrarse en el Servicio de detecci&#243;n en nombre de cada principal de identidad.</p>
+<hr size="1" noshade></p><p>Se pueden configurar los siguientes atributos globales del Servicio de detecci&#243;n para la implementaci&#243;n.</p>
+<ul><li><p><A HREF="dsproviderid.html#dsproviderid">Id. de proveedor</A></p>
+</li>
+<li><p><A HREF="supportedauthmechanisms.html#supportedauthmechanisms">Mecanismos de autenticaci&#243;n admitidos</A></p>
+</li>
+<li><p><A HREF="supporteddirectives.html#supporteddirectives">Directivas admitidas</A></p>
+</li>
+<li><p><A HREF="policyevaldiscolookup.html#policyevaldiscolookup">Evaluaci&#243;n de directivas para la b&#250;squeda de detecci&#243;n</A></p>
+</li>
+<li><p><A HREF="policyevaldiscoupdate.html#policyevaldiscoupdate">Evaluaci&#243;n de directivas para la actualizaci&#243;n de detecci&#243;n</A></p>
+</li>
+<li><p><A HREF="authorizerpluginclass.html#authorizerpluginclass">Clase de complemento del autorizador:</A></p>
+</li>
+<li><p><A HREF="entryhandlerpluginclass.html#entryhandlerpluginclass">Clase de complemento del administrador de entradas:</A></p>
+</li>
+<li><p><A HREF="resourceidmapperpluginclass.html#resourceidmapperpluginclass">Clases de complemento del asignador de Id. de recursos</A></p>
+</li>
+<li><p><A HREF="authresponsemessage.html#authresponsemessage">Mensaje de respuesta de autenticaci&#243;n</A></p>
+</li>
+<li><p><A HREF="generatesessioncontext.html#generatesessioncontext">Instrucci&#243;n de contexto de sesi&#243;n de bootstrapping</A></p>
+</li>
+<li><p><A HREF="encryptnameidentifier.html#encryptnameidentifier">Cifrar el identificador de nombre en el contexto de sesi&#243;n para Bootstrapping</A></p>
+</li>
+<li><p><A HREF="useimpliedresource.html#useimpliedresource">Recurso impl&#237;cito</A></p>
+</li>
+<li><p><A HREF="resourceofferingsbootstrapping.html#resourceofferingsbootstrapping">Ofertas de recursos para bootstrapping</A></p>
+</li>
+</ul>
+<p>A continuaci&#243;n, se muestran distintas tareas asociadas a la configuraci&#243;n del Servicio de detecci&#243;n:</p>
+<ul><li><p><A HREF="service.smdiscoveryproviderresourceidmapadd.html#service.smdiscoveryproviderresourceidmapadd">Para configurar un asignador de Id. de recursos</A></p>
+</li>
+<li><p><A HREF="service.smdiscoverybootstraprefoffadd.html#service.smdiscoverybootstraprefoffadd">Para configurar una oferta de recursos para Bootstrapping</A></p>
+</li>
+<li><p><A HREF="service.smdiscoverydescriptionadd.html#service.smdiscoverydescriptionadd">Para configurar una descripci&#243;n de servicio</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

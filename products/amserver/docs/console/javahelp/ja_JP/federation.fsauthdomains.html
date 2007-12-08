@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>認証ドメイン
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fsauthdomains"></A><h2>認証ドメイン</h2>
+<A NAME="indexterm-58"></A><p><b>認証ドメイン</b>とは、任意の数のサービスプロバイダおよび少なくとも 1 つのアイデンティティープロバイダを連携させたものです。主体はこれらのプロバイダを使用して、セキュリティーが保護されたシームレスな環境で業務を処理できます。認証ドメインを作成および設定するには、まず認証ドメインのメンバーとなるプロバイダごとに、<b>メタデータ</b> (特定のアイデンティティーサービスアーキテクチャーを定義する設定情報) を保持するための<b>エンティティー</b>を作成します。次いで、認証ドメインを設定し保存します。最後に、エンティティーのプロパティーを編集して、認証ドメインにエンティティー (設定済みプロバイダ) を追加します。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>エンティティーの詳細については、<A HREF="federation.fsentitydescriptors.html#federation.fsentitydescriptors">「エンティティー: プロバイダおよびアフィリエイト」</A>を参照してください。</p>
+<hr size="1" noshade></p><p>設定済みの認証ドメインはすべて、「認証ドメイン」に一覧表示されます。認証ドメインに関連する作業は、次のとおりです。</p>
+<ul><li><p><A HREF="federation.fsauthdomains.html#federation.fsauthdomainsadd">「新しい認証ドメインを作成する」</A></p>
+</li>
+<li><p><A HREF="federation.fsauthdomains.html#federation.fsauthdomainsedit">「認証ドメインプロファイルを変更する」</A></p>
+</li>
+<li><p><A HREF="federation.fsauthdomains.html#federation.fsauthdomainsselectprovider">「プロバイダを認証ドメインに追加する」</A></p>
+</li>
+<li><p><A HREF="federation.fsauthdomains.html#deleteauthdomain">「認証ドメインプロファイルを削除する」</A></p>
+</li>
+</ul>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>認証ドメインのメンバー間には、<A target="_blank" HREF="http://www.projectliberty.org/specs/liberty-trust-models-guidelines-v1.0.pdf">Liberty 信頼モデルガイドライン</A>に基づく<b>トラストサークル (circle of trust)</b> 運用協定が前もって確立されている必要があります。</p>
+<hr size="1" noshade></p><A NAME="federation.fsauthdomainsadd"></A><h3>新しい認証ドメインを作成する</h3>
+<A NAME="indexterm-59"></A><p>次の手順に従って、新しい認証ドメインを作成します。連携インタフェースの「認証ドメイン」から作業を始めます。</p>
+<ol><li><p><b>「新規」をクリックして、認証ドメイン属性を表示します。</b></p><p>「新規認証ドメイン」プロファイルページが表示されます。</p>
+</li>
+<li><p><b>認証ドメインの名前を入力します。</b></p></li>
+<li><p><b>「説明」フィールドに認証ドメインの説明を入力します。</b></p></li>
+<li><p><b>「ライターサービス URL」の値を入力します。</b></p><p>「ライタサービス URL」は、共通ドメインからの Cookie を書き込むサーブレットの場所を指定します。指定可能な形式は <tt>http://</tt><i>common-domain-host <tt></i>:</tt><i>port<tt></i>/common/writer</tt> です。</p>
+</li>
+<li><p><b>「リーダーサービス URL」の値を入力します。</b></p><p>「リーダーサービス URL」は、共通ドメインからの Cookie を読み込むサーブレットの場所を指定します。指定可能な形式は <tt>http://</tt><i>common-domain-host <tt></i>:</tt><i>port<tt></i>/common/transfer</tt> です。</p>
+</li>
+<li><p><b>「アクティブ」または「非アクティブ」を選択します。</b></p><p>デフォルトの状態は「アクティブ」です。「非アクティブ」を選択すると、認証ドメイン内の通信が無効になります。</p>
+</li>
+<li><p><b>「了解」をクリックして設定を完了します。</b></p><p>新しい認証ドメインが「認証ドメイン」画面に表示されます。</p>
+</li>
+</ol><A NAME="federation.fsauthdomainsedit"></A><h3>認証ドメインプロファイルを変更する</h3>
+<A NAME="indexterm-60"></A><p>次の手順に従って、既存の認証ドメインの設定済み「一般」属性を編集するか、既存の認証ドメインにプロバイダを追加します。連携インタフェースの「認証ドメイン」から作業を始めます。</p>
+<ol><li><p><b>設定済みの認証ドメインのプロファイルを変更したりプロバイダを追加したりするには、名前をクリックします。</b></p><p>「認証ドメインを編集」ページが表示されます。</p>
+</li>
+<li><p><b>認証ドメインの次の「一般」属性に新規の値を入力するか、または既存の値を編集します。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>名前</p></td><td valign="top"><p>この属性の静的な値は、認証ドメインの作成時に指定した名前です。</p>
+</td></tr><tr><td valign="top"><p>説明</p></td><td valign="top"><p>この属性の値は認証ドメインの説明です。適切な場合には、すでに入力されている説明を変更することもできます。</p>
+</td></tr><tr><td valign="top"><p>ライターサービス URL</p></td><td valign="top"><p>この属性は、共通ドメインからの Cookie を書き込むサービスの場所を指定します。URL の形式は <tt><b>http://</tt><i>common-domain-host<tt></i>:</tt><i>port<tt></i>/common/writer</b></tt> です。</p>
+</td></tr><tr><td valign="top"><p>リーダーサービス URL</p></td><td valign="top"><p>この属性は、共通ドメインからの Cookie を読み込むサービスの場所を指定します。URL の形式は <tt><b>http://</tt><i>common-domain-host<tt></i>:</tt><i>port<tt></i>/common/transfer</b></tt> です。</p>
+</td></tr><tr><td valign="top"><p>状態</p></td><td valign="top"><p>デフォルトの状態は「アクティブ」です。「非アクティブ」を選択すると、認証ドメイン内の通信が無効になります。</p>
+</td></tr></table>
+</li>
+<li><p><b>プロバイダを認証ドメインに追加するには、「追加」をクリックします。</b></p><p>信頼パートナーを選択するページが表示されます。</p>
+</li>
+<li><p><b>1 つ以上の利用可能なプロバイダを選択し、「追加」矢印をクリックして追加します。</b></p><p>表示される一覧には、作成されプロバイダが設定されたエンティティーの名前が入ります。詳細は、<A HREF="federation.fsauthdomains.html#federation.fsauthdomainsselectprovider">「プロバイダを認証ドメインに追加する」</A>を参照してください。</p>
+</li>
+<li><p><b>「了解」をクリックして、認証ドメインに追加したプロバイダを保存します。</b></p><p>「認証ドメイン」プロファイル画面に戻ります。</p>
+</li>
+<li><p><b>「保存」をクリックして、操作を完了します。</b></p></li>
+</ol><A NAME="federation.fsauthdomainsselectprovider"></A><h3>プロバイダを認証ドメインに追加する</h3>
+<A NAME="indexterm-61"></A><p>アイデンティティープロバイダとサービスプロバイダを認証ドメインに追加できるようにするには、あらかじめ<b>エンティティー</b>に設定しておく必要があります。エンティティー (したがってそれに含まれるプロバイダも) は、いったん作成されてプロバイダが設定されると、認証ドメインに割り当てることができます。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>エンティティーは、プロバイダを設定してはじめて選択可能なプロバイダリストに表示されます。詳細については、<A HREF="federation.fsentitydescriptors.html#federation.fsentitydescriptors">「エンティティー: プロバイダおよびアフィリエイト」</A>を参照してください。</p>
+<hr size="1" noshade></p><ol><li><p><b>選択可能なプロバイダリストからプロバイダを 1 つ以上選択し、「追加」をクリックします。</b></p></li>
+<li><p><b>「了解」をクリックして、認証ドメインに追加したプロバイダを保存します。</b></p><p>「認証ドメイン」プロファイル画面に戻ります。</p>
+</li>
+<li><p><b>設定を終了し、「保存」をクリックして操作を完了します。</b></p></li>
+</ol><A NAME="deleteauthdomain"></A><h3>認証ドメインプロファイルを削除する</h3>
+<A NAME="indexterm-62"></A><p>次の手順に従って、既存の認証ドメインを削除します。連携インタフェースの「認証ドメイン」から作業を始めます。</p>
+<ol><li><p><b>削除する認証ドメイン名の横にあるチェックボックスをオンにします。</b></p></li>
+<li><p><b>「削除」をクリックします。</b></p><p>認証ドメインを削除しても、そのドメインに属するプロバイダは削除されません。</p>
+</li>
+</ol>
+<br />
+
+</body>
+</html>

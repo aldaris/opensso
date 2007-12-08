@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>So f&#252;gen Sie einer Anbieter-Entity einen neuen Host-Identity-Anbieter hinzu
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fsidentityproviderhostedadd"></A><h3>So f&#252;gen Sie einer Anbieter-Entity einen neuen Host-Identity-Anbieter hinzu</h3>
+<p>Ein <b>Host-Anbieter</b> befindet sich auf demselben Server wie Access Manager. Die Konfiguration der Attribute eines neuen Host-Identity-Anbieters beinhaltet das Hinzuf&#252;gen der Metadaten des Identity-Anbieters zum Entity-Profil. Der Ausgangspunkt f&#252;r dieses Verfahren ist <A HREF="federation.fsidentityprovider.html#federation.fsidentityprovider">So f&#252;gen Sie einer Anbieter-Entity einen Identity-Anbieter hinzu</A>.</p>
+<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Zus&#228;tzliche Attribute k&#246;nnen konfiguriert werden, sie werden jedoch auf der Seite f&#252;r die anf&#228;ngliche Konfiguration nicht angezeigt. Siehe <A HREF="federation.fsidentityproviderhostedprofile.html#federation.fsidentityproviderhostedprofile">So &#228;ndern Sie einen Host-Identity-Anbieter in einer Anbieter-Entity</A>.</p>
+<hr size="1" noshade></p><ol><li><p><b>Geben Sie Informationen f&#252;r die allgemeinen Attribute an.</b></p><p>Allgemeine Attribute enthalten Werte, die den Identity-Anbieter selbst allgemein beschreiben.</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Beschreibung</p></td><td valign="top"><p>Der Wert dieses Attributs ist die Beschreibung, die Sie bei der Erstellung der Entity eingegeben haben. Sie k&#246;nnen die urspr&#252;nglich eingegebene Beschreibung &#228;ndern bzw. eine hinzuf&#252;gen, wenn noch keine vorhanden ist.</p>
+</td></tr><tr><td valign="top"><p>Protokollunterst&#252;tzungsaufz&#228;hlung</p></td><td valign="top"><p>W&#228;hlen Sie die von dieser Entity unterst&#252;tzte Version von Liberty Alliance Project Liberty Identity Federation Framework (Liberty ID-FF) aus.</p>
+<ul><li><p><tt>urn:liberty:iff:2003-08</tt> bezieht sich auf Liberty ID-FF-Version 1.2.</p>
+</li>
+<li><p><tt>urn:liberty:iff:2002-12</tt> bezieht sich auf Liberty ID-FF-Version 1.1.</p>
+</li>
+</ul>
+</td></tr></table>
+</li>
+<li><p><b>Geben Sie Informationen f&#252;r die Kommunikations-URL-Attribute an.</b></p><p>Kommunikations-URL-Attribute enthalten Orte, an die die Anbieter &#220;bertragungen senden k&#246;nnen, die f&#252;r den betreffenden Identity-Anbieter vorgesehen sind.</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Single Sign-On-Dienst-URL</p></td><td valign="top"><p>Geben Sie einen URL ein, an den die Dienstanbieter Single Sign-On- und Verbindungsanforderungen senden k&#246;nnen.</p>
+</td></tr></table>
+</li>
+<li><p><b>Geben Sie Informationen f&#252;r die Kommunikationsprofil-Attribute an. </b></p><p>Ein Liberty Alliance Project-<b>Profil</b> legt die Kombination aus dem Inhalt einer Nachricht und dem zu ihrem Transport verwendeten Mechanismus fest. Die folgenden Kommunikationsprofilattribute legen die Profile fest, die vom Identity-Anbieter f&#252;r die entsprechende Funktion verwendet werden.</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Single Sign-On/Verbindung</p></td><td valign="top"><p>W&#228;hlen Sie das Profil aus, das dieser Identity-Anbieter beim Senden von Antworten zur Authentifizierung oder von Verbindungsanforderungen verwenden soll.</p>
+<ul><li><p>Browser-Ver&#246;ffentlichung (Browser-basiertes HTTP POST-Protokoll)</p>
+</li>
+<li><p>Browser-Produkt (nicht Browser-basiertes SOAP-Protokoll)</p>
+</li>
+<li><p>LECP (Liberty-f&#228;higer Client-Proxy)</p>
+</li>
+</ul>
+</td></tr></table>
+</li>
+<li><p><b>W&#228;hlen Sie eine der zur Verf&#252;gung stehenden Authentifizierungsdom&#228;nen aus, um sie dem Anbieter zuzuweisen.</b></p><p>Anbieter k&#246;nnen zu einer oder mehreren Authentifizierungsdom&#228;nen geh&#246;ren. Ein Anbieter, bei dem keine Authentifizierungsdom&#228;ne angegeben ist, kann jedoch nicht an Kommunikationen teilnehmen, die auf den  Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Authentifizierungsdom&#228;nen erstellt wurden, k&#246;nnen Sie dieses Attribut sp&#228;ter definieren.</p>
+</li>
+<li><p><b>Geben Sie Informationen f&#252;r die Access Manager-Konfigurationsattribute an.</b></p><p>Access Manager-Konfigurationsattribute legen Informationen zu dieser Host-Instanz von Access Manager fest.</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Anbieter-URL</p></td><td valign="top"><p>Geben Sie den URL des Anbieters ein, der sich an einem lokalen Ort befindet.</p>
+</td></tr><tr><td valign="top"><p>Anbieter-Alias</p></td><td valign="top"><p>Der Anbieter-Alias ist ein Name, der verwendet wird, um den Host-Anbieter innerhalb eines Entity-Profils zu identifizieren und zu bestimmen, ob es sich um einen Dienstanbieter oder eine Identity-Anbieter-Konfiguration handelt. Der Wert muss eindeutig sein und als URL dargestellt werden k&#246;nnen. Beispiel: <tt>sunAlias</tt>.</p>
+</td></tr><tr><td valign="top"><p>Authentifizierungstyp</p></td><td valign="top"><p>W&#228;hlen Sie den Anbietertyp aus, der f&#252;r Authentifizierungsanforderungen eines lokalen Host-Anbieters verwendet werden soll.</p>
+<ul><li><p><b>Lokal</b> legt fest, dass der lokale Host-Anbieter bei Empfang einer Authentifizierungsanforderung einen lokalen Identity-Anbieter (im Prinzip sich selbst) kontaktiert.</p>
+</li>
+<li><p><b>Remote</b> legt fest, dass der lokale Host-Anbieter bei Empfang einer Authentifizierungsanforderung einen Remote-Identity-Anbieter kontaktiert.</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>Standardm&#228;&#223;iger Authentifizierungskontext</p></td><td valign="top"><p>W&#228;hlen Sie die Klasse des Authentifizierungskontexts (Authentifizierungsmethode) aus, die von diesem Identity-Anbieter verwendet werden soll, wenn die Informationen nicht im Rahmen einer Dienstanbieter-Anforderung empfangen wurden. Dieser Wert gibt au&#223;erdem an, welche Klasse des Authentifizierungskontexts verwendet werden soll, wenn ein unbekannter Benutzer versucht, auf eine gesch&#252;tzte Ressource eines Dienstanbieters zuzugreifen und der Dienstanbieter eine Authentifizierungsanforderung sendet. Folgende Optionen stehen zur Auswahl:</p>
+<ul><li><p>Passwort</p>
+</li>
+<li><p>Mobile Digital-ID</p>
+</li>
+<li><p>Smartcard</p>
+</li>
+<li><p>Smartcard-PKI</p>
+</li>
+<li><p>MobileUnregistered</p>
+</li>
+<li><p>Software-PKI</p>
+</li>
+<li><p>Zur&#252;ck-Sitzung</p>
+</li>
+<li><p>Mobilvertrag</p>
+</li>
+<li><p>Time-Sync-Token</p>
+</li>
+<li><p>Passwort-ProtectedTransport</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>Bereich</p></td><td valign="top"><p>Geben Sie einen Wert f&#252;r den Bereich ein, in dem dieser Anbieter konfiguriert ist. Beispiel: <tt>/sp</tt>.</p>
+</td></tr><tr><td valign="top"><p>URI der Liberty-Version</p></td><td valign="top"><p>Geben Sie einen URI ein, der die Version der verwendeten Liberty Alliance Project-Spezifikation angibt. Der Standardwert lautet <tt>http://projectliberty.org/specs/v1 </tt>.</p>
+</td></tr><tr><td valign="top"><p>Implementierung des Namensbezeichners</p></td><td valign="top"><p>Dieses Feld legt die Klasse fest, die ein Dienstanbieter f&#252;r die Teilnahme an der Namensregistrierung verwendet. Die Namensregistrierung ist ein Profil, anhand dessen die Dienstanbieter den Namensbezeichner eines Principals angeben, den ein Identity-Anbieter f&#252;r die Kommunikation mit dem Dienstanbieter verwendet. Der Wert lautet <tt>com.sun.identity.</tt><tt>federation.services.</tt><tt>util.FSNameIdentifierImpl</tt>.</p>
+</td></tr><tr><td valign="top"><p>Homepage-URL</p></td><td valign="top"><p>Geben Sie den URL der Homepage des lokalen Anbieters ein.</p>
+</td></tr><tr><td valign="top"><p>Umleitungs-URL bei Fehler bei Single Sign-On</p></td><td valign="top"><p>Geben Sie den URL ein, an den ein Principal umgeleitet wird, wenn das Single Sign-On fehlschl&#228;gt.</p>
+</td></tr></table>
+</li>
+<li><p><b>Geben Sie Informationen f&#252;r die SAML-Attribute an.</b></p><p>SAML-Attribute definieren allgemeine Werte dazu, wie der Identity-Anbieter SAML-Assertionen sendet.</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Assertions-Intervall</p></td><td valign="top"><p>Geben Sie die G&#252;ltigkeitsdauer (in Sekunden) einer vom Identity-Anbieter ausgestellten Assertion ein. Ein Principal bleibt f&#252;r die Dauer des Assertions-Intervalls authentifiziert.</p>
+</td></tr><tr><td valign="top"><p>Bereinigungsintervall</p></td><td valign="top"><p>Geben Sie die Zeit (in Sekunden) ein, nach der die vom Identity-Anbieter gespeicherten Assertionen bereinigt werden.</p>
+</td></tr><tr><td valign="top"><p>Produktzeit&#252;berschreitung</p></td><td valign="top"><p>Geben Sie die Zeit (in Sekunden) ein, nach der eine Zeit&#252;berschreitung der Assertionsprodukte auftritt.</p>
+</td></tr><tr><td valign="top"><p>Assertion-Limit</p></td><td valign="top"><p>Geben Sie die Anzahl der Assertionen an, die ein Identity-Anbieter ausstellen kann bzw. die gespeichert werden k&#246;nnen.</p>
+</td></tr></table>
+</li>
+<li><p><b>Klicken Sie auf &#8220;OK&#34;, um den Anbieter zur Entity hinzuzuf&#252;gen.</b></p></li>
+<li><p><b>W&#228;hlen Sie eine andere Option aus dem Men&#252; &#8220;Ansicht&#34; aus, um weitere Einstellungen der Entity zu konfigurieren, oder klicken Sie auf &#8220;Speichern&#34;, um die Konfiguration abzuschlie&#223;en.</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

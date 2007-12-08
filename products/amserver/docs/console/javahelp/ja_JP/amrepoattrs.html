@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Access Manager リポジトリの属性
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="amrepoattrs"></A><h3>Access Manager リポジトリの属性</h3>
+<p><A NAME="indexterm-13"></A>Access Manager リポジトリプラグインの設定に使用される属性は次のとおりです。</p>
+<A NAME="gdlng"></A><h4>クラス名</h4>
+<p>Access Manager リポジトリプラグインを実装するクラスファイルの場所を指定します。</p>
+<A NAME="gdopv"></A><h4>Access Manager でサポートされるタイプおよび操作</h4>
+<p>この LDAP サーバー上で許可される (実行可能な) 操作を指定します。この LDAPv3 リポジトリプラグインでサポートされている操作のみがデフォルトで指定されています。次に示すのは、LDAPv3 リポジトリプラグインでサポートされている操作です。</p>
+<ul><li><p>エージェント &#8212; 読み取り、作成、編集、削除</p>
+</li>
+<li><p>グループ &#8212; 読み取り、作成、編集、削除</p>
+</li>
+<li><p>レルム &#8212; 読み取り、作成、編集、削除、サービス</p>
+</li>
+<li><p>ユーザー &#8212; 読み取り、作成、編集、削除、サービス</p>
+</li>
+</ul>
+<p>使用する LDAP サーバーの設定や作業に応じて上記のリストから不要なアクセス権を削除することはできますが、その他のアクセス権を追加することはできません。</p>
+<p>設定する LDAPv3 リポジトリプラグインが Sun Java Systems Directory Server のインスタンスを指している場合は、タイプ <tt>ロール</tt>のアクセス権を追加できます。そうでない場合、他のデータストアがロールをサポートしていない可能性があるため、このアクセス権は追加できない場合があります。タイプ「ロール」のアクセス権は次のとおりです。</p>
+<ul><li><p>ロール &#8212; 読み取り、作成、編集、削除</p>
+</li>
+</ul>
+<p>LDAPv3 リポジトリのサポートタイプとして<tt>ユーザー</tt>が設定されている場合、そのユーザーで読み取り、作成、編集、および削除のサービス操作が可能です。つまり、<tt>ユーザー</tt>がサポートタイプの場合、読み取り、編集、作成、および削除操作によって、アイデンティティーリポジトリにあるユーザーエントリの読み取り、編集、作成、および削除を行えます。<tt>ユーザー = サービス</tt>操作では、Access Manager サービスからユーザーエントリの属性にアクセスできます。加えて、サービスがユーザーの所属するレルムまたはロールに割り当てられていれば、ユーザーは動的サービス属性にアクセスできます。</p>
+<p>ユーザーは、割り当てられた任意のサービスでユーザー属性を管理することもできます。ユーザーの操作として<tt>サービス</tt>が設定されている場合 (<tt>ユーザー = サービス</tt>)、すべてのサービス関連操作がサポートされます。これらの操作には、<tt>assignService</tt>、<tt>unassignService</tt>、<tt>getAssignedServices</tt>、<tt>getServiceAttributes、removeServiceAttributes</tt>、および <tt>modifyService</tt> があります。</p>
+<A NAME="gdlnf"></A><h4>組織 DN 値</h4>
+<p>Access Manager で管理する Directory Server 内の組織を示す DN を定義します。これが、データストア内で実行されるすべての操作のベース DN になります。</p>
+<A NAME="gdopu"></A><h4>ピープルコンテナネーミング属性</h4>
+<p>ユーザーが特定のピープルコンテナ内に存在している場合、そのピープルコンテナのネーミング属性を指定します。ユーザーが特定のピープルコンテナ内に存在していない場合、このフィールドは空白のままにしておきます。</p>
+<A NAME="gdopc"></A><h4>ピープルコンテナ値</h4>
+<p>ピープルコンテナの値を指定します。デフォルトは <tt>people</tt> です。</p>
+<A NAME="gdopl"></A><h4>エージェントコンテナネーミング属性</h4>
+<p>エージェントが特定のエージェントコンテナ内に存在している場合のエージェントコンテナのネーミング属性。エージェントが特定のエージェントコンテナ内に存在していない場合、このフィールドは空白のままにしておきます。</p>
+<A NAME="gdopi"></A><h4>エージェントコンテナ値</h4>
+<p>エージェントコンテナの値を指定します。デフォルトは <tt>agents</tt> です。</p>
+<A NAME="gdoow"></A><h4>再帰検索</h4>
+<p>これを有効にすると、Access Manager リポジトリ内の検索実行時に、指定したアイデンティティーの再帰検索を行います。次のデータ構造で再帰検索を実行する場合について説明します。</p>
+<pre style="font-family:arial,helvetica,sans-serif">root
+realm1
+    subrealm11
+        user5
+    subrealm12
+        user6
+realm2
+    user1
+    user2
+    subrealm21
+        user3
+        user4</pre>
+<p>検索結果は次のとおりです。</p>
+<ul><li><p>検索を root から実行し、このレベルに <tt>amadmin</tt> および <tt>anonymous</tt> 以外のユーザーが定義されていない場合、検索結果は user1&#8211;user6 になります。</p>
+</li>
+<li><p>検索を <tt>realm1</tt> から実行し、このレベルにユーザーが定義されていない場合、検索結果は <tt>user5</tt> および <tt>user6</tt> になります。</p>
+</li>
+<li><p>検索を 2 ユーザーが定義されている <tt>realm2</tt> から実行した場合、検索結果は user1&#8211;user4 になります。</p>
+</li>
+</ul>
+<A NAME="gdoox"></A><h4>レルム設定のコピー</h4>
+<p>レルムモードインストールでこの属性を有効にすると、リポジトリに存在するレルムおよびサブレルムに対応する組織およびサブ組織が Access Manager によって作成されます。さらに、レルムまたはサブレルムに登録されているサービスが、新しく作成された組織またはサブ組織に登録されます。データストア内に、レルム DIT と組織 DIT の両方が存在するようになります。</p>
+
+<br />
+
+</body>
+</html>

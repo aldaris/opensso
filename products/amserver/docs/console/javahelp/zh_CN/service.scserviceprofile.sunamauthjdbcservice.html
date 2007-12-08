@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>JDBC
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.sunamauthjdbcservice"></A><h3>JDBC</h3>
+<p><A NAME="indexterm-181"></A>Java 数据库连接 (Java Database Connectivity, JDBC) 验证模块允许 Access Manager 通过任意结构化查询语言 (Structured Query Language, SQL) 数据库来验证用户，该 SQL 数据库提供了启用 JDBC 的驱动程序。可以直接通过 JDBC 驱动程序或 JNDI 连接池连接 SQL 数据库。JDBC 属性是领域属性。这些属性包括：</p>
+<ul><li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwajx">连接类型</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwafb">连接池 JNDI 名称</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwaap">JDBC 驱动程序</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwarc">JDBC URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwaum">将此用户连接至数据库</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwaeu">连接至数据库的密码</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwavq">连接至数据库的密码确认</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwads">密码列字符串</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwapb">准备的语句</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwapv">变换密码语法的类</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwavz">验证级别</A></p>
+</li>
+</ul>
+<A NAME="fwajx"></A><h4>连接类型</h4>
+<p>指定连接至 SQL 数据库的连接类型，可以是 JNDI（Java 命名和目录接口）连接池或 JDBC 驱动程序。这些选项包括：</p>
+<ul><li><p>已通过 JDNI 检索连接池</p>
+</li>
+<li><p>非持久 JDBC 连接</p>
+</li>
+</ul>
+<p>JNDI 连接池利用了底层 Web 容器的配置。</p>
+<A NAME="fwafb"></A><h4>连接池 JNDI 名称</h4>
+<p>如果在“连接类型”中选择了 JNDI，此字段将指定连接池名称。由于 JDBC 验证使用 Web 容器提供的 JNDI 连接池，因此，JNDI 连接池的设置在其他 Web 容器中可能会不一致。有关示例，请参阅 Access Manager 管理员指南</p>
+<A NAME="fwaap"></A><h4>JDBC 驱动程序</h4>
+<p>如果在<A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwajx">连接类型</A>中选择了 JDBC，此字段将指定 SQL 数据库所提供的 JDBC 驱动程序。例如，<tt>com.mysql.jdbc.Driver</tt>。</p>
+<A NAME="fwarc"></A><h4>JDBC URL</h4>
+<p>如果在<A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwajx">连接类型</A>中选择了 JDBC，此字段将指定数据库 URL。例如，mySQL 的 URL 为 <tt>jdbc.mysql://hostname:port/databaseName</tt>。</p>
+<A NAME="fwaum"></A><h4>将此用户连接至数据库</h4>
+<p>指定用户名称，JDBC 连接以它建立数据库连接。</p>
+<A NAME="fwaeu"></A><h4>连接至数据库的密码</h4>
+<p>为在“连接至数据库的用户”中指定的用户定义密码。</p>
+<A NAME="fwavq"></A><h4>连接至数据库的密码确认</h4>
+<p>确认密码。</p>
+<A NAME="fwads"></A><h4>密码列字符串</h4>
+<p>指定 SQL 数据库中的密码列名。</p>
+<A NAME="fwapb"></A><h4>准备的语句</h4>
+<p>指定用于检索用户登录密码的 SQL 语句。例如：</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre> select Password from Employees where USERNAME = ?</pre>
+</td></table><br><A NAME="fwapv"></A><h4>变换密码语法的类</h4>
+<p>指定用于比较的密码，将数据库检索到的密码变换为用户输入格式的类名。此类必须实现 <tt>JDBCPasswordSyntaxTransform</tt> 接口。</p>
+<A NAME="fwavz"></A><h4>验证级别</h4>
+<p>各种验证方法都单独设置了验证级别。验证级别值表示信任验证机制的程度。用户进行验证之后，该值将存储在会话的 SSO 令牌中。当 SSO 令牌传递到用户要访问的应用程序时，应用程序将根据存储的值来确定级别是否足以授予用户访问权限。如果 SSO 令牌中存储的验证级别没有达到所需的最小级别，应用程序将提示用户使用具有较高验证级别的服务再次进行验证。默认值为 0。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>如果未指定任何验证级别，则在核心验证属性<A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">默认验证级别</A>中所指定的值将会存储到 SSO 令牌中。</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

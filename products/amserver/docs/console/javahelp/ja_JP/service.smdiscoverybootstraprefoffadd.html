@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>ブートストラップのリソースオファリングを設定する
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.smdiscoverybootstraprefoffadd"></A><h4>ブートストラップのリソースオファリングを設定する</h4>
+<A NAME="indexterm-154"></A><A NAME="indexterm-155"></A><p>ブートストラップではリソースオファリングを 1 つだけ実行できます。デフォルトでは、このリソースオファリングにはディスカバリサービスに関する情報が含まれています。リソースオファリングが定義済みである場合は、リソースオファリング名をクリックすると属性を変更できます。また、既存のリソースオファリングを削除する場合は、名前の横にあるチェックボックスを選択します。新しいリソースオファリングを設定するには、「新規」をクリックします。</p>
+<ol><li><p><b>「新規」をクリックして新規のマッパー属性を表示するか、設定済みマッパーの名前をクリックしてそのマッパーを変更します。</b></p></li>
+<li><p><b>リソースオファリングの説明をオプションで入力します。</b></p></li>
+<li><p><b>次の情報に基づいて、サービスインスタンスの属性に値を設定します。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>サービスタイプ</p></td><td valign="top"><p>この属性には、リソースオファリングが実装するサービスのタイプを定義する URI を値として指定します。たとえば、<tt><b>urn:liberty:disco:2003-08</b></tt> のように指定します。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>この URI には、サービスに関する抽象的な WSDL 記述の <tt>targetNamespace</tt> URI と同じ URI を指定することをお勧めします。</p>
+<hr size="1" noshade></p></td></tr><tr><td valign="top"><p>プロバイダ ID</p></td><td valign="top"><p>この属性には、サービスインスタンスのプロバイダの URI を値として指定します。たとえば、<tt><b>http://daiquiri.sun.com:80/amserver/Liberty/disco</b></tt> のように指定します。</p>
+</td></tr><tr><td valign="top"><p>サービス記述</p></td><td valign="top"><p>この属性は、個別のプロトコルエンドポイントで実行中の Web サービスを定義します。サービスインスタンスに関する情報は、各種のコンテキスト間でやり取りされる必要があります。たとえば、この仕様に定義されているディスカバリサービスは、リソースオファリング (それぞれにはサービスインスタンス記述が含まれる) の列挙を提供するアイデンティティーサービスの 1 つです。<A HREF="service.smdiscoverydescriptionadd.html#service.smdiscoverydescriptionadd">「サービス記述を設定する」</A>を参照してください。</p>
+</td></tr></table>
+</li>
+<li><p><b>次の情報に基づいて、リソースオファリングオプションの属性に値を設定します。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>オプション</p></td><td valign="top"><p>リソースオファリングで使用可能なオプションがサービスにない場合は、このチェックボックスをオンにします。オプションは、想定される要求者に、特定のリソースオファリングで特定のデータや操作が使用可能であるかどうかのヒントを与えます。たとえば、自宅の連絡先情報が使用可能であることを示すオプションが提供される場合があります。</p>
+</td></tr><tr><td valign="top"><p>オプションリスト</p></td><td valign="top"><p>この属性には、サービスインスタンスのオプションのリストが含まれます。オプションは URI として定義されます。使用可能な URI のセットは、通常はサービスタイプ別に標準化されます。</p>
+</td></tr></table>
+</li>
+<li><p><b>次の情報に基づいてディレクティブを有効にします。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>記述 ID 参照: GenerateBearerToken</p></td><td valign="top"><p>すべての <A HREF="supporteddirectives.html#supporteddirectives">「サポートされているディレクティブ」</A>には、記述参照が含まれる可能性があります。あるディレクティブで ID 参照属性が有効でない場合、ディレクティブはリソースオファリングで提供されるすべての認証メカニズムに適用されるものと見なされます。あるディレクティブで ID 参照属性が有効である場合、ディレクティブにはそれに関連する認証メカニズムを参照する ID 参照のリストが含まれている必要があります。ID 参照属性が存在する場合、ディレクティブは ID 参照リストで参照される記述にのみ適用されると見なされる必要があります。このようにしておくと、あるディレクティブが特定のセキュリティーメカニズムに準拠していない場合に役立つことがあります。</p>
+</td></tr><tr><td valign="top"><p>記述 ID 参照: AuthenticateRequester</p></td><td valign="top"><p>すべての <A HREF="supporteddirectives.html#supporteddirectives">「サポートされているディレクティブ」</A>には、記述参照が含まれる可能性があります。あるディレクティブで ID 参照属性が有効でない場合、ディレクティブはリソースオファリングで提供されるすべての認証メカニズムに適用されるものと見なされます。あるディレクティブで ID 参照属性が有効である場合、ディレクティブにはそれに関連する認証メカニズムを参照する ID 参照のリストが含まれている必要があります。ID 参照属性が存在する場合、ディレクティブは ID 参照リストで参照される記述にのみ適用されると見なされる必要があります。このようにしておくと、あるディレクティブが特定のセキュリティーメカニズムに準拠していない場合に役立つことがあります。</p>
+</td></tr><tr><td valign="top"><p>記述 ID 参照: Encrypt ResourceID</p></td><td valign="top"><p>すべての <A HREF="supporteddirectives.html#supporteddirectives">「サポートされているディレクティブ」</A>には、記述参照が含まれる可能性があります。あるディレクティブで ID 参照属性が有効でない場合、ディレクティブはリソースオファリングで提供されるすべての認証メカニズムに適用されるものと見なされます。あるディレクティブで ID 参照属性が有効である場合、ディレクティブにはそれに関連する認証メカニズムを参照する ID 参照のリストが含まれている必要があります。ID 参照属性が存在する場合、ディレクティブは ID 参照リストで参照される記述にのみ適用されると見なされる必要があります。このようにしておくと、あるディレクティブが特定のセキュリティーメカニズムに準拠していない場合に役立つことがあります。</p>
+</td></tr><tr><td valign="top"><p>記述 ID 参照: AuthenticateSessionContext</p></td><td valign="top"><p>すべての <A HREF="supporteddirectives.html#supporteddirectives">「サポートされているディレクティブ」</A>には、記述参照が含まれる可能性があります。あるディレクティブで ID 参照属性が有効でない場合、ディレクティブはリソースオファリングで提供されるすべての認証メカニズムに適用されるものと見なされます。あるディレクティブで ID 参照属性が有効である場合、ディレクティブにはそれに関連する認証メカニズムを参照する ID 参照のリストが含まれている必要があります。ID 参照属性が存在する場合、ディレクティブは ID 参照リストで参照される記述にのみ適用されると見なされる必要があります。このようにしておくと、あるディレクティブが特定のセキュリティーメカニズムに準拠していない場合に役立つことがあります。</p>
+</td></tr><tr><td valign="top"><p>記述 ID 参照: AuthorizeRequester</p></td><td valign="top"><p>すべての <A HREF="supporteddirectives.html#supporteddirectives">「サポートされているディレクティブ」</A>には、記述参照が含まれる可能性があります。あるディレクティブで ID 参照属性が有効でない場合、ディレクティブはリソースオファリングで提供されるすべての認証メカニズムに適用されるものと見なされます。あるディレクティブで ID 参照属性が有効である場合、ディレクティブにはそれに関連する認証メカニズムを参照する ID 参照のリストが含まれている必要があります。ID 参照属性が存在する場合、ディレクティブは ID 参照リストで参照される記述にのみ適用されると見なされる必要があります。このようにしておくと、あるディレクティブが特定のセキュリティーメカニズムに準拠していない場合に役立つことがあります。</p>
+</td></tr></table>
+</li>
+<li><p><b>「保存」をクリックして設定を完了します。</b></p></li>
+<li><p><b>ディスカバリサービスページで「保存」をクリックして、サービスの設定を完了します。</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

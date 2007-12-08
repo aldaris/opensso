@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Access Manager データストアの種類
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="idrepoadd"></A><h3>Access Manager データストアの種類</h3>
+<p>Access Manager のデータストア選択画面で作成できるデータストアの種類は次のとおりです。</p>
+<A NAME="gdlnj"></A><h4>Access Manager リポジトリプラグイン</h4>
+<p>このタイプのデータストアは Sun Java System Directory Server インスタンス内に存在し、そこに Access Manager 情報ツリーが格納されます。このタイプのデータストアは、ロールやサービスのクラスなど LDAP version 3 の仕様に含まれない Directory Server 機能を使用します。また、Access Manager の以前のバージョンとの互換性があります。</p>
+<p>属性の定義については、<A HREF="amrepoattrs.html#amrepoattrs">「Access Manager リポジトリの属性」</A>を参照してください。</p>
+<A NAME="gdlmv"></A><h4>Active Directory</h4>
+<p>このタイプのデータストアは、LDAP version 3 仕様に基づいて、Microsoft Active Directory インスタンスにアイデンティティーデータを書き込みます。</p>
+<p>属性の定義については、<A HREF="adattrs.html#adattrs">「Active Directory の属性」</A>を参照してください。</p>
+<A NAME="gdlml"></A><h4>フラットファイルリポジトリ</h4>
+<p>このリポジトリにはデータを保存でき、識別は Access Manager のローカルインストールインスタンス上のフラット DIT 構造内で行われます。別個にデータストアを作成する必要はありません。これは一般に、概念展開のテストまたは検証に使用されます。</p>
+<p>属性の定義については、<A HREF="flatfileattr.html#flatfileattr">「フラットファイルリポジトリの属性」</A>を参照してください。</p>
+<A NAME="gdlmr"></A><h4>汎用 LDAPv3</h4>
+<p>このタイプのデータストアは、アイデンティティーデータを任意の LDAPv3 準拠データベースに書き込むことができます。使用している LDAPv3 データベースが持続検索をサポートしない場合は、キャッシュ機能を利用できません。</p>
+<p>属性の定義については、<A HREF="gdoto.html#gdoto">「汎用 LDAPv3 属性」</A>を参照してください。</p>
+<A NAME="gdlnw"></A><h4>Access Manager スキーマを含んだ Sun Directory Server</h4>
+<p>このタイプのデータストアは Sun Java System Directory Server インスタンス内に存在し、そこに Access Manager 情報ツリーが格納されます。これは、豊富な設定属性によるデータストアの高度なカスタマイズが可能な点で Access Manager リポジトリプラグインとは異なります。</p>
+<p>属性の定義については、<A HREF="sundirattrs.html#sundirattrs">「Access Manager スキーマ属性を含んだ Sun Directory Server」</A>を参照してください。</p>
+
+<br />
+
+</body>
+</html>

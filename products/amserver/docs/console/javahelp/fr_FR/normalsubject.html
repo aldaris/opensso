@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Objets
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="normalsubject"></A><h3>Objets</h3>
+<p><A NAME="indexterm-26"></A><A NAME="indexterm-27"></A>Un <b>objet</b> d&#233;finit l'utilisateur ou le groupe d'utilisateurs (par exemple,  un groupe ou ceux qui poss&#232;dent un r&#244;le donn&#233;) affect&#233; par la strat&#233;gie. La r&#232;gle g&#233;n&#233;rale pour les objets est que la strat&#233;gie ne s'applique que si l'utilisateur est membre d'au moins un objet de la strat&#233;gie. Les objets par d&#233;faut sont les suivants :</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Objet d'identit&#233; Access Manager</p></td><td valign="top"><p>Cet objet implique que les identit&#233;s que vous cr&#233;ez et g&#233;rez sous l'onglet Objet de domaine puissent &#234;tre ajout&#233;es comme membres de l'objet.</p>
+</td></tr><tr><td valign="top"><p>Utilisateurs authentifi&#233;s</p></td><td valign="top"><p>Ce type d'objet implique que tout utilisateur disposant d'un jeton SSO valide soit membre de cet objet.</p>
+<p>Tous les utilisateurs authentifi&#233;s doivent &#234;tre membres de cet objet, m&#234;me s'ils ont &#233;t&#233; authentifi&#233;s aupr&#232;s d'un domaine diff&#233;rent de celui dans lequel la strat&#233;gie est d&#233;finie. Ceci est utile si le propri&#233;taire de la ressource souhaite donner acc&#232;s aux ressources qu'il g&#232;re &#224; des utilisateurs d'autres organisations. Si vous souhaitez limiter l'acc&#232;s aux ressources prot&#233;g&#233;es strictement aux membres d'une organisation sp&#233;cifique, utilisez dans ce cas l'objet Organisation.</p>
+</td></tr><tr><td valign="top"><p>Clients de services Web</p></td><td valign="top"><p>Ce type d'objet implique qu'un client de service Web (WSC) identifi&#233; par le jeton SSO soit membre de cet objet si le DN de toute entit&#233; principale contenue dans le jeton SSO correspond &#224; une valeur s&#233;lectionn&#233;e quelconque de cet objet. Les valeurs valides sont les DN des certificats de confiance dans le fichier keystore JKS local, qui correspondent aux certificats des WSC de confiance. Cet objet pr&#233;sente une d&#233;pendance vis &#224; vis de Liberty Web Services Framework et ne doit &#234;tre utilis&#233; que par les fournisseurs de services Liberty pour autoriser les WSC.</p>
+<p>Assurez-vous d'avoir cr&#233;&#233; le fichier keystore avant d'ajouter cet objet &#224; une strat&#233;gie. Vous pouvez consulter les informations relatives &#224; la configuration d'un fichier keystore &#224; l'emplacement suivant :</p>
+<p><tt></tt><i>AccessManager-base<tt></i></tt> <tt> /SUNWam/samples/saml/xmlsig/keytool.html</tt></p>
+</td></tr></table>
+<p>Les autres objets suivants sont disponibles en les s&#233;lectionnant dans le service de configuration de strat&#233;gie du domaine :</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>R&#244;les Access Manager</p></td><td valign="top"><p>Ce type d'objet implique que tout membre d'un r&#244;le Access Manager soit un membre de cet objet. Un r&#244;le Access Manager est cr&#233;&#233; en ex&#233;cutant Access Manager en mode h&#233;rit&#233; et en utilisant la console 6.3. Ces r&#244;les ont des classes d'objet impos&#233;es par Access Manager. Les r&#244;les Access Manager sont accessibles uniquement par le biais du service de strat&#233;gie Access Manager d'h&#233;bergement.</p>
+</td></tr><tr><td valign="top"><p>Groupes LDAP</p></td><td valign="top"><p>Ce type de sous-objet implique que tout membre d'un groupe LDAP soit membre de cet objet.</p>
+</td></tr><tr><td valign="top"><p>R&#244;les LDAP</p></td><td valign="top"><p>Ce type de sous-objet implique que tout membre d'un r&#244;le LDAP soit membre de cet objet. Un r&#244;le LDAP est une d&#233;finition de r&#244;le quelconque utilisant la fonctionnalit&#233; de r&#244;le de Directory Server. Ces r&#244;les ont des classes d'objet impos&#233;es par la d&#233;finition de r&#244;le Directory Server. Le filtre de recherche de r&#244;le LDAP peut &#234;tre modifi&#233; dans le service de configuration des strat&#233;gies afin de restreindre l'&#233;tendue de la recherche et d'am&#233;liorer les performances.</p>
+</td></tr><tr><td valign="top"><p>Utilisateurs LDAP</p></td><td valign="top"><p>Ce type de sous-objet implique que tout utilisateur LDAP soit membre de cet objet.</p>
+</td></tr><tr><td valign="top"><p>Organisation</p></td><td valign="top"><p>Ce type d'objet implique que tout membre d'un domaine soit membre de cet objet.</p>
+</td></tr></table>
+
+<br />
+
+</body>
+</html>

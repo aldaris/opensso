@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Discovery-Dienst
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.smdiscoveryservice"></A><h2>Discovery-Dienst</h2>
+<A NAME="indexterm-127"></A><p>Um auf Identity-Daten zugreifen zu k&#246;nnen, muss zun&#228;chst der Speicherort der Informationen ermittelt werden. (In welchem Identity-Dienst sind beispielsweise die Kreditkarteninformationen des Principals enthalten oder auf welchen Server ist der Kalenderdienst des Principals gespeichert.) In einem Netzwerk stehen in der Regel ein oder mehrere Dienste zur Verf&#252;gung, mit denen andere Entities Vorg&#228;nge bez&#252;glich Identity-Daten durchf&#252;hren k&#246;nnen. Da Clients nicht daf&#252;r ausgelegt sind, diese Dienste nachzuverfolgen bzw. nicht &#252;ber die Informationen verf&#252;gen, welche Dienste vertrauensw&#252;rdig sind, wird ein Discovery-Dienst ben&#246;tigt. Bei einem <b>Discovery-Dienst</b> handelt es sich im Wesentlichen um eine Webdienstschnittstelle f&#252;r Discovery-Ressourcen. Eine <b>Discovery-Ressource</b> ist eine Registrierung von Ressourcenangeboten. Ein <b>Ressourcenangebot</b> definiert die Zuordnung zwischen bestimmten Identity-Daten und der Dienstinstanz, &#252;ber die der Zugriff auf diese Daten bereitgestellt wird. Eine <b>Ressourcen-ID</b> ist ein eindeutiger Ressourcenbezeichner (Unique Resource Identifier, URI), der in dem Discovery-Dienst registriert ist, der auf eine bestimmte Discovery-Ressource verweist. Wenn ein Client eine Anforderung f&#252;r einen Datentyp sendet, sucht der Access Manager Discovery-Dienst anhand des darin enthaltenen Ressourcenbezeichners nach dem Webdienstanbieter f&#252;r die angeforderten Attribute. Der Discovery-Dienst gibt ein Ressourcenangebot mit Informationen zum Speicherort der Daten zur&#252;ck.</p>
+<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Um den Zugriff zu erm&#246;glichen, muss der Anbieter der Pers&#246;nlicher Liberty-Profildienst, der als Host agiert, im Namen der einzelnen Identit&#228;ts-Principals bei Discovery-Dienst registriert sein.</p>
+<hr size="1" noshade></p><p>Folgende allgemeine  Discovery-Dienst -Attribute k&#246;nnen f&#252;r eine Implementierung konfiguriert werden.</p>
+<ul><li><p><A HREF="dsproviderid.html#dsproviderid">Anbieter-ID</A></p>
+</li>
+<li><p><A HREF="supportedauthmechanisms.html#supportedauthmechanisms">Unterst&#252;tzte Authentifizierungsmechanismen</A></p>
+</li>
+<li><p><A HREF="supporteddirectives.html#supporteddirectives">Unterst&#252;tzte Richtlinien</A></p>
+</li>
+<li><p><A HREF="policyevaldiscolookup.html#policyevaldiscolookup">Richtlinienbewertung f&#252;r Discovery-Suche</A></p>
+</li>
+<li><p><A HREF="policyevaldiscoupdate.html#policyevaldiscoupdate">Richtlinienbewertung f&#252;r Discovery-Aktualisierung</A></p>
+</li>
+<li><p><A HREF="authorizerpluginclass.html#authorizerpluginclass">Plugin-Klasse f&#252;r berechtigte Person:</A></p>
+</li>
+<li><p><A HREF="entryhandlerpluginclass.html#entryhandlerpluginclass">Plugin-Klasse f&#252;r Eintrags-Handler:</A></p>
+</li>
+<li><p><A HREF="resourceidmapperpluginclass.html#resourceidmapperpluginclass">Klassen f&#252;r ResourceID-Mapper-Plugin</A></p>
+</li>
+<li><p><A HREF="authresponsemessage.html#authresponsemessage">Antwort-authentifizieren-Nachricht</A></p>
+</li>
+<li><p><A HREF="generatesessioncontext.html#generatesessioncontext">Sitzungskontext-Anweisung f&#252;r Bootstrapping</A></p>
+</li>
+<li><p><A HREF="encryptnameidentifier.html#encryptnameidentifier">NameIdentifier in Sitzungskontext f&#252;r Bootstrapping verschl&#252;sseln</A></p>
+</li>
+<li><p><A HREF="useimpliedresource.html#useimpliedresource">Implizierte Ressource</A></p>
+</li>
+<li><p><A HREF="resourceofferingsbootstrapping.html#resourceofferingsbootstrapping">Ressourcenangebote f&#252;r Bootstrapping</A></p>
+</li>
+</ul>
+<p>In Verbindung mit der Konfiguration von Discovery-Dienst m&#252;ssen die folgenden Aufgaben ausgef&#252;hrt werden:</p>
+<ul><li><p><A HREF="service.smdiscoveryproviderresourceidmapadd.html#service.smdiscoveryproviderresourceidmapadd">So konfigurieren Sie einen ResourceID-Mapper</A></p>
+</li>
+<li><p><A HREF="service.smdiscoverybootstraprefoffadd.html#service.smdiscoverybootstraprefoffadd">So konfigurieren Sie ein Ressourcenangebot f&#252;r Bootstrapping</A></p>
+</li>
+<li><p><A HREF="service.smdiscoverydescriptionadd.html#service.smdiscoverydescriptionadd">So konfigurieren Sie eine Dienstbeschreibung</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

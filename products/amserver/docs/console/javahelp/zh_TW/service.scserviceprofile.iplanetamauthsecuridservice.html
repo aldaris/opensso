@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>SecurID 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthsecuridservice"></A><h3>SecurID </h3>
+<p><A NAME="indexterm-188"></A>此模組允許使用 RSA ACE/Server 軟體及 RSA SecurID 認證程式來進行認證。SecurID 認證模組無法用於 Linux 或 Solaris x86 平台，因此不應該在這兩個平台上註冊、配置或啟用此認證模組。它僅適用於 Solaris。SecurID 認證屬性為範圍屬性。這些屬性包括：</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthsecuridservice.html#fwbpt">ACE/Server 配置路徑</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthsecuridservice.html#fwbkv">輔助程式配置連接埠</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthsecuridservice.html#fwbpq">輔助程式認證連接埠</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthsecuridservice.html#fwbma">認證級別</A></p>
+</li>
+</ul>
+<A NAME="fwbpt"></A><h4>ACE/Server 配置路徑</h4>
+<p>指定 SecurID ACE/Server <tt>sdconf.rec</tt> 檔案所在的目錄，依預設位於 <tt>/opt/ace/data</tt>。如果在此欄位中指定了不同目錄，則在嘗試 SecurID 認證之前，此目錄必須存在。</p>
+<A NAME="fwbkv"></A><h4>輔助程式配置連接埠</h4>
+<p>指定 SecurID 輔助程式啟動時「偵聽」的連接埠，以取得 [SecurID 輔助程式認證連接埠] 屬性中包含的配置資訊。預設值為 58943。</p>
+<p>如果變更了此屬性，則必須同時變更 <tt>AMConfig.properties</tt> 檔案中的 <i>securidHelper.ports</i> 項目，然後重新啟動 Access Manager。<tt>AMConfig.properties</tt> 檔案中的項目是 SecurID 輔助程式實例的連接埠清單 (以空格分隔)。對於每個與不同 ACE/Server (具有不同的 <tt>sdconf.rec</tt> 檔案) 通訊的範圍來說，必須具有單獨的 SecurID 輔助程式。</p>
+<A NAME="fwbpq"></A><h4>輔助程式認證連接埠</h4>
+<p>指定一個連接埠，範圍的 SecurID 認證模組將配置該連接埠的 SecurID 輔助程式實例，以「偵聽」認證請求。此連接埠號在使用 SecurID 或 UNIX 認證的所有範圍中均必須是唯一的。預設連接埠為 57943。</p>
+<A NAME="fwbma"></A><h4>認證級別</h4>
+<p>會分別為每個認證方法設定認證層級。此值指示信任認證機制的程度。使用者進行認證後，此值便會儲存在階段作業的 SSO 記號中。SSO 記號呈現給使用者要存取的應用程式時，應用程式將使用此儲存值以決定此層級是否達到了允許使用者存取的層級。如果儲存在 SSO 記號中的認證層級不滿足最小值需求，應用程式可以提示使用者透過具有較高認證層級的服務重新進行認證。預設值為 0。</p>
+<p><hr size="1" noshade><p><b>備註 &#8211; </b>如果未指定任何認證層級，SSO 記號會將核心認證屬性中指定的值儲存為<A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">預設認證層級</A>。</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

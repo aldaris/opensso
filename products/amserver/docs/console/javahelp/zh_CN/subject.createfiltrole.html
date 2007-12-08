@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>创建过滤的角色
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="subject.createfiltrole"></A><h4>创建过滤的角色</h4>
+<ol><li><p><b>在“浏览”窗格中，找到要在其中创建角色的组织。</b></p></li>
+<li><p><b>单击&#8220;新建&#8221;。</b></p></li>
+<li><p><b>输入过滤的角色的名称。</b></p></li>
+<li><p><b>输入搜索条件信息。</b></p><p>例如：</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>(&#38;(uid=user1)(|(inetuserstatus=active)(!(inetuserstatus=*))))</pre>
+</td></table><br><p>如果过滤器保留为空，将默认创建以下角色：</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>(objectclass = inetorgperson)</pre>
+</td></table><br></li>
+<li><p><b>单击“确定”根据过滤条件启动搜索。由过滤条件定义的身份将会自动指定给角色。</b></p></li>
+<li><p><b>创建过滤的角色后，单击角色的名称来查看属于该角色的“用户”。此外，还可以通过单击“服务”选项卡将服务添加到角色。参见<A HREF="idm.entityservices.html#idm.entityservices">向身份添加服务</A>。</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

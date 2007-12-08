@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>實體：提供者及附屬提供者
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fsentitydescriptors"></A><h2>實體：提供者及附屬提供者</h2>
+<A NAME="indexterm-63"></A><A NAME="indexterm-64"></A><A NAME="indexterm-65"></A><A NAME="indexterm-66"></A><p>使用<b>中介資料</b> (即配置資訊，用於定義特定識別服務架構) 可針對個別識別提供者、個別服務提供者，或分別為二者配置一個<b>實體</b>。相對地，可將實體配置為附屬提供者，亦即其中任一類型的選定提供者群組。提供者及附屬提供者實體均可以使用 Access Manager 主控台來配置。</p>
+<p><hr size="1" noshade><p><b>備註 &#8211; </b>可以建立實體，但是在該實體中寫入提供者之前，無法將其指定給認證網域。</p>
+<hr size="1" noshade></p><p>下列表格中將介紹兩種實體類型。</p>
+<A NAME="gbxxa"></A><p><b>表 1 </b>實體類型</p>
+
+<table cellspacing="5" border="1">
+<tr><td><p><b>提供者實體</b></p></td><td><p><b>提供者實體</b>保留任一類型的個別提供者的中介資料。必須在提供者實體內配置所有識別提供者及服務提供者，然後才能將它們與認證網域產生關聯，或選擇它們以併入<b>附屬提供者實體</b>。使用 Access Manager 主控台中提供的屬性，即可在提供者實體內定義一個個別識別提供者、一個個別服務提供者或兩者中的一個。提供者實體設定檔包含下列屬性群組：</p><ul><li><p><A HREF="federation.fsentitydescriptorsprofile.html#federation.fsentitydescriptorsprofile">一般屬性</A></p></li>
+<li><p><A HREF="federation.fsidentityprovider.html#federation.fsidentityprovider">識別提供者</A></p></li>
+<li><p><A HREF="federation.fsserviceprovider.html#federation.fsserviceprovider">服務提供者</A></p></li>
+</ul>
+</td></tr>
+<tr><td><p><b>附屬提供者實體</b></p></td><td><p>配置的<b>附屬提供者</b>可讓使用者與相關聯的網站群組聯合。例如，當服務提供者代表附屬提供者向使用者發出認證請求，且獲得認證時，使用者便可以利用附屬提供者的所有成員身份完成單次登入。附屬提供者的構成與認證網域的界限無關。</p><p><b>附屬提供者實體</b>保留中介資料，此資料係用來定義一或多個構成附屬提供者之服務提供者實體的分組。它不包含任何提供者的配置資訊，只包含附屬提供者本身的配置資訊。附屬提供者實體設定檔包含下列屬性群組：</p><ul><li><p><A HREF="federation.fsentitydescriptorsprofile.html#federation.fsentitydescriptorsprofile">一般屬性</A></p></li>
+<li><p><A HREF="federation.fsentitydescriptorsaffiliate.html#federation.fsentitydescriptorsaffiliate">附屬提供者</A></p></li>
+</ul>
+<p><hr size="1" noshade><p><b>備註 &#8211; </b>附屬提供者的成員會以附屬提供者的成員身份呼叫服務，或個別呼叫服務。</p><hr size="1" noshade></p></td></tr>
+</table><p>任一類型的所有已配置實體均列於 [實體] 之下。以下的作業與實體相關聯：</p>
+<ul><li><p><A HREF="federation.fsentitydescriptorsadd.html#federation.fsentitydescriptorsadd">建立提供者實體或附屬提供者實體</A></p>
+</li>
+<li><p><A HREF="federation.fsentitydescriptorsprofile.html#federation.fsentitydescriptorsprofile">修改提供者實體或是附屬提供者實體的一般屬性</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityprovider.html#federation.fsidentityprovider">新增識別提供者至提供者實體</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderhostedadd.html#federation.fsidentityproviderhostedadd">新增一個新的代管識別提供者至提供者實體</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderremoteadd.html#federation.fsidentityproviderremoteadd">新增一個新的遠端識別提供者至提供者實體</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceprovider.html#federation.fsserviceprovider">新增服務提供者至提供者實體</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderhostedadd.html#federation.fsserviceproviderhostedadd">新增一個新的代管服務提供者至提供者實體</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderremoteadd.html#federation.fsserviceproviderremoteadd">新增一個新的遠端服務提供者至提供者實體</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderhostedprofile.html#federation.fsidentityproviderhostedprofile">修改提供者實體內的代管識別提供者屬性</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderremoteprofile.html#federation.fsidentityproviderremoteprofile">修改提供者實體內的遠端識別提供者屬性</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderhostedprofile.html#federation.fsserviceproviderhostedprofile">修改提供者實體內的代管服務提供者屬性</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderremoteprofile.html#federation.fsserviceproviderremoteprofile">修改提供者實體內的遠端服務提供者屬性</A></p>
+</li>
+<li><p><A HREF="federation.fscreatecontactperson.html#federation.fscreatecontactperson">新增連絡人員至提供者實體內的提供者</A></p>
+</li>
+<li><p><A HREF="federation.fseditcontactperson.html#federation.fseditcontactperson">修改提供者實體內的連絡人員設定檔</A></p>
+</li>
+<li><p><A HREF="federation.fsentitydescriptorsaffiliate.html#federation.fsentitydescriptorsaffiliate">新增成員至附屬提供者實體</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

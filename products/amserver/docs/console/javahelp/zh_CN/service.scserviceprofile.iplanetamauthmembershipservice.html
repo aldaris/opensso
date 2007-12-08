@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>成员资格
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthmembershipservice"></A><h3>成员资格</h3>
+<p><A NAME="indexterm-183"></A>“成员资格验证”模块是针对个性化站点实现的。当启用了成员资格验证时，用户可以进行自注册。这意味着用户可以创建帐户、对其进行个性化设置以及在无需管理员帮助下将其作为一个已注册用户进行访问。这些属性是领域属性。这些属性包括：</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumys">最小密码长度</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyr">默认用户角色</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyt">注册后的用户状态</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzt">主 LDAP 服务器</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumza">次 LDAP 服务器</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyz">起始用户搜索的 DN</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzb">Root 用户绑定的 DN</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumze">Root 用户绑定密码</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzd">Root 用户绑定密码（确认）</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzc">用于检索用户配置文件的属性</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzh">用于搜索要进行验证的用户的属性</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzg">用户搜索过滤器</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzj">搜索范围</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzi">启用 SSL 以访问 LDAP 服务器</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzk">返回用户 DN 以进行验证</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzm">验证级别</A></p>
+</li>
+</ul>
+<A NAME="fumys"></A><h4>最小密码长度</h4>
+<p>用于指定自注册过程中设置密码时要求的最小字符数。默认值为 8。</p>
+<p>如果更改该默认值，还需更改注册中的该值和以下文件的错误文本中的该值：</p>
+<p><tt></tt><i>AcessManager-base<tt></i>/locale/amAuthMembership.properties</tt>（<i>PasswdMinChars</i> 项）</p>
+<A NAME="fumyr"></A><h4>默认用户角色</h4>
+<p>指定分配给其配置文件是在自注册过程中创建的新用户的角色。该字段没有默认值。管理员必须指定要分配给新用户的角色的 DN。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>所指定的角色必须属于正在为其配置验证的领域。在自注册过程中，只能添加可以指派给用户的角色。所有其他 DN 将被忽略。该角色既可以是 Access Manager 角色，也可以是 LDAP 角色，但不接受已过滤角色。</p>
+<hr size="1" noshade></p><A NAME="fumyt"></A><h4>注册后的用户状态</h4>
+<p>指定服务是否立即可以供已自注册的用户使用。默认值为活动，服务可供新用户使用。通过选中不活动，管理员不对新用户提供服务。</p>
+<A NAME="fumzt"></A><h4>主 LDAP 服务器</h4>
+<p>指定 Access Manager 安装过程中所指定的主 LDAP 服务器的主机名和端口号。这是进行验证时搜索的首选服务器。格式为 <tt></tt><i>hostname:port<tt></i></tt>。如果没有端口号，将采用 <tt>389</tt>。</p>
+<p>如果在多个域部署 Access Manager，则可按以下格式指定 Access Manager 与 Directory Server 的特定实例之间的通信链接（如果指定了多个条目，则条目前必须带有本地服务器名称）：</p>
+<p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p>
+<p>例如，如果将两个 Access Manager 实例部署在不同位置（L1-machine1-IS 和 L2- machine2-IS），它们分别与 Directory Server 的不同实例（L1-machine1-DS 和 L2-machine2-DS）进行通信，则形式如下：</p>
+<p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p>
+<p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+<A NAME="fumza"></A><h4>次 LDAP 服务器</h4>
+<p>指定 Access Manager 平台上可用的次 LDAP 服务器的主机名和端口号。如果主 LDAP 服务器对验证请求不响应，则将会搜索次服务器。如果主服务器恢复正常，Access Manager 将切换回主服务器。格式仍为：<tt></tt><i>hostname:port<tt></i></tt>。如果指定多个条目，条目前面必须带有本地服务器名称。</p>
+<hr size="1" noshade><p><IMG ALT="注意" src="graphics/caution.gif">  <b>注意 &#8211; </b>当验证来自 Directory Server 的用户，并且 Directory Server 相对于 Access Manager 企业处于远程位置时，主 LDAP 服务器和次 LDAP 服务器的端口都具有值非常重要。两个字段可以使用一个 Directory Server 位置的值。</p><hr size="1" noshade><A NAME="fumyz"></A><h4>起始用户搜索的 DN</h4>
+<p>指定节点的 DN，将从该 DN 开始搜索用户。（为了获取较好性能，DN 应当尽可能明确。）默认值是目录树的根。可以接受任何有效的 DN。如果在搜索范围属性中选择 OBJECT，则 DN 应指定配置文件所在级别的上一级。如果指定多个条目，条目前面必须带有本地服务器名称。格式为 <tt></tt><i>servername|search dn<tt></i></tt>。</p>
+<p>对于多个条目：</p>
+<p><tt></tt><i>servername1|search dn servername2|search dn servername3|search dn<tt></i>...</tt></p>
+<p>如果根组织下存在多个具有相同用户 ID 的条目，则要进行验证，应设置此参数以便仅能搜索或查找到一个条目。例如，当代理 ID 与用户 ID 均位于根组织下，该参数在根组织使用代理 ID 进行验证时应为 <tt>ou=Agents</tt>，根组织使用用户 ID 进行验证时则应为 <tt>ou=People</tt>。</p>
+<A NAME="fumzb"></A><h4>Root 用户绑定的 DN</h4>
+<p>指定用户的 DN，该用户将作为管理员被绑定到“主 LDAP 服务器和端口”字段中指定的 Directory Server。验证服务需要进行该 DN 绑定，以便基于用户登录 ID 搜索匹配的用户 DN。默认值为 <tt>amldapuser</tt>。可以接受任何有效的 DN。</p>
+<A NAME="fumze"></A><h4>Root 用户绑定密码</h4>
+<p>指定在“Root 用户绑定的 DN”字段中指定的管理员配置文件的密码。该字段没有默认值。只接收管理员的有效 LDAP 密码。</p>
+<A NAME="fumzd"></A><h4>Root 用户绑定密码（确认）</h4>
+<p>对密码进行确认。</p>
+<A NAME="fumzc"></A><h4>用于检索用户配置文件的属性</h4>
+<p>指定用户条目命名惯例的属性。默认情况下，Access Manager 假定用户条目是由 uid 属性标识的。如果 Directory Server 使用了其他属性（如 <i>givenname</i>），请在该字段中指定属性名。</p>
+<A NAME="fumzh"></A><h4>用于搜索要进行验证的用户的属性</h4>
+<p>列出为即将验证的用户形成搜索过滤器时所要使用的属性，并允许用户使用用户条目中的多个属性进行验证。例如，如果该字段被设置为 <i>uid</i>、<i>employeenumber</i> 和 <i>mail</i>，则用户可使用这些名称中的任意一个来进行验证。</p>
+<A NAME="fumzg"></A><h4>用户搜索过滤器</h4>
+<p>指定一个属性，用于搜索“起始用户搜索的 DN”字段下的用户。它与“用户命名”属性共同发挥作用。该字段没有默认值。可以接受任何有效的用户条目属性。</p>
+<A NAME="fumzj"></A><h4>搜索范围</h4>
+<p>指明 Directory Server 中搜索匹配的用户配置文件时所用的级别号。从第 315 页上的“起始用户搜索的 DN”属性中指定的节点开始搜索，默认值为 SUBTREE。可以从列表中选择以下选项之一：</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>OBJECT</p></td><td valign="top"><p>仅搜索指定的节点。</p>
+</td></tr><tr><td valign="top"><p>ONELEVEL</p></td><td valign="top"><p>搜索指定节点一级及其下面一级。</p>
+</td></tr><tr><td valign="top"><p>SUBTREE</p></td><td valign="top"><p>搜索指定节点及以下的所有条目。</p>
+</td></tr></table>
+<A NAME="fumzi"></A><h4>启用 SSL 以访问 LDAP 服务器</h4>
+<p>启用 SSL 来访问“主/次 LDAP 服务器和端口”字段中指定的 Directory Server。默认情况下未选中该复选框，SSL 协议不用于访问 Directory Server。</p>
+<p>如果 LDAP 服务器已启用 SSL (LDAPS)，您必须确保 Access Manager 已配置正确的 SSL 可信任证书，以使 AM 可以通过 LDAPS 协议连接到 Directory Server。</p>
+<A NAME="fumzk"></A><h4>返回用户 DN 以进行验证</h4>
+<p>当 Access Manager 目录与为 LDAP 配置的目录相同时，可以启用该选项。如果启用了该选项，LDAP 验证模块将返回 DN，而不是用户 ID，并且不需要进行搜索。通常情况下，验证模块仅返回用户 ID，且验证服务搜索本地 Access Manager LDAP 中的用户。如果使用了外部 LDAP 目录，则通常不启用该选项。</p>
+<A NAME="fumzm"></A><h4>验证级别</h4>
+<p>各种验证方法都单独设置了验证级别。验证级别值表示信任验证机制的程度。用户进行验证之后，该值将存储在会话的 SSO 令牌中。当 SSO 令牌传递到用户要访问的应用程序时，应用程序将根据存储的值来确定级别是否足以授予用户访问权限。如果 SSO 令牌中存储的验证级别没有达到所需的最小级别，应用程序将提示用户使用具有较高验证级别的服务再次进行验证。默认值为 0。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>如果未指定任何验证级别，则在核心验证属性<A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">默认验证级别</A>中所指定的值将会存储到 SSO 令牌中。</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

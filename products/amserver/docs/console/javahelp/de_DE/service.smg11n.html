@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Globalisierungseinstellungen
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.smg11n"></A><h3>Globalisierungseinstellungen</h3>
+<p><A NAME="indexterm-195"></A>Der Dienst &#8220;Globalisierungseinstellungen&#34; enth&#228;lt globale Attribute, mit denen Sie Access Manager f&#252;r verschiedene L&#228;ndereinstellungen und Zeichens&#228;tze konfigurieren k&#246;nnen. Es existieren folgende Attribute:</p>
+<ul><li><p><A HREF="service.smg11n.html#fsvdx">Von den einzelnen L&#228;ndereinstellungen unterst&#252;tzte Zeichens&#228;tze</A></p>
+</li>
+<li><p><A HREF="service.smg11n.html#fsvec">Zeichensatz-Aliasnamen</A></p>
+</li>
+<li><p><A HREF="service.smg11n.html#fsveb">Format f&#252;r allgemeinen Namen automatisch generiert</A></p>
+</li>
+</ul>
+<A NAME="fsvdx"></A><h4>Von den einzelnen L&#228;ndereinstellungen unterst&#252;tzte Zeichens&#228;tze</h4>
+<p>Dieses Attribut listet die f&#252;r die einzelnen L&#228;ndereinstellungen unterst&#252;tzten Zeichens&#228;tze auf und gibt so die Zuordnung zwischen L&#228;ndereinstellung und Zeichensatz an. Das Attribut hat folgendes Format:</p>
+<p>Um einen neuen unterst&#252;tzten Zeichensatz hinzuzuf&#252;gen, klicken Sie auf &#8220;Hinzuf&#252;gen&#34; und legen Sie folgende Parameter fest:</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>L&#228;ndereinstellung</p></td><td valign="top"><p>Die neue L&#228;ndereinstellung, die hinzugef&#252;gt werden soll. Weitere Informationen finden Sie unter <A HREF="supportedlang.html#supportedlang">Unterst&#252;tzte Sprach- bzw. L&#228;ndereinstellungen</A>.</p>
+</td></tr><tr><td valign="top"><p>Unterst&#252;tzte Zeichens&#228;tze</p></td><td valign="top"><p>Geben Sie den f&#252;r die angegebene L&#228;ndereinstellung unterst&#252;tzten Zeichensatz ein. Zeichens&#228;tze werden durch ein Semikolon voneinander getrennt. Beispiel: <tt>charset=charset1;charset2;charset3;...;charsetn </tt></p>
+</td></tr></table>
+<p>Um einen vorhandenen unterst&#252;tzten Zeichensatz zu bearbeiten, klicken Sie in der Tabelle mit den unterst&#252;tzten Zeichens&#228;tzen auf den entsprechenden Namen. Klicken Sie auf &#8220;OK&#34;, wenn Sie fertig sind.</p>
+<A NAME="fsvec"></A><h4>Zeichensatz-Aliasnamen</h4>
+<p>Dieses Attribut listet die Namen der Codes&#228;tze (die IANA-Namen zugeordnet sind) auf, die f&#252;r das Senden der Antwort verwendet werden. Diese Codesatz-Namen m&#252;ssen nicht mit den Java-Codesatz-Namen &#252;bereinstimmen. Eine Hash-Tabelle f&#252;r das Zuordnen von Java-Zeichens&#228;tzen zu IANA-Zeichens&#228;tzen und umgekehrt steht derzeit zur Verf&#252;gung.</p>
+<p>Um einen neuen Zeichensatz-Aliasnamen hinzuzuf&#252;gen, klicken Sie auf die Schaltfl&#228;che &#8220;Hinzuf&#252;gen&#34; und legen Sie folgende Parameter fest:</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>MIME-Name</p></td><td valign="top"><p>Der IANA-Zuordnungsname. Beispiel: <tt>Shift_JIS</tt></p>
+</td></tr><tr><td valign="top"><p>Java-Name</p></td><td valign="top"><p>Der Java-Zeichensatz, der dem IANA-Zeichensatz zugeordnet werden soll. </p>
+</td></tr></table>
+<p>Um einen vorhandenen unterst&#252;tzten Zeichensatz-Alias zu bearbeiten, klicken Sie in der Tabelle mit den unterst&#252;tzten Zeichens&#228;tzen auf den entsprechenden Namen. Klicken Sie auf &#8220;OK&#34;, wenn Sie fertig sind.</p>
+<A NAME="fsveb"></A><h4>Format f&#252;r allgemeinen Namen automatisch generiert</h4>
+<p>Die Anzeigeoption erm&#246;glicht es Ihnen, festzulegen, auf welche Weise die automatische Namensgenerierung entsprechend den Namensformaten f&#252;r verschiedene L&#228;ndereinstellungen und Zeichens&#228;tze erfolgen soll. Die Standardsyntax lautet wie folgt (beachten Sie, dass in der Definition angegebene Kommata und/oder Leerzeichen im Namensformat angezeigt werden):</p>
+<p><tt>en_us = {givenname} {initials} {sn}</tt></p>
+<p>Wenn Sie beispielsweise ein neues Namesnformat f&#252;r einen Benutzer (Benutzer Eins) mit einer UID (1111) f&#252;r den chinesischen Zeichnsatz anzeigen m&#246;chten, legen Sie Folgendes fest:</p>
+<p><tt>zh = {sn}{givenname}({uid})</tt></p>
+<p>Es wird Folgendes angezeigt:</p>
+<p><tt>OneUser 11111</tt></p>
+
+<br />
+
+</body>
+</html>

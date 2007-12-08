@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>サポートされているディレクティブ
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="supporteddirectives"></A><h3>サポートされているディレクティブ</h3>
+<A NAME="indexterm-132"></A><A NAME="indexterm-133"></A><p>この属性により、リソースに対してポリシー関連のディレクティブを指定できます。サポートされていないディレクティブは、サービスプロバイダが使用しようとしても、その要求は失敗します。次の表に、利用可能なオプションの詳細を示します。</p>
+
+<table cellspacing="5" border="1">
+<tr><th scope="col"><p>ディレクティブ</p></th><th scope="col"><p>目的</p></th></tr>
+<tr><td><p><tt>AuthenticateRequester</tt></p></td><td><p>ディスカバリサービスでは、リソースをホストしているサービスインスタンスに対するクライアントの認証を有効にするため、応答に SAML 表明 (<tt>AuthenticationStatement</tt> を含む) が含まれている必要があります。</p></td></tr>
+<tr><td><p><tt>AuthenticateSessionContext</tt></p></td><td><p>ディスカバリサービスでは、セッションの状態を示す応答に SAML 表明 (<tt>SessionContextStatement</tt> を含む) が含まれている必要があります。</p></td></tr>
+<tr><td><p><tt>AuthorizeRequestor</tt></p></td><td><p>ディスカバリサービスでは、クライアントがリソースにアクセス可能かどうかを示す応答に SAML 表明 (<tt>ResourceAccessStatement</tt> を含む) が含まれる必要があります。</p></td></tr>
+<tr><td><p><tt>EncryptResourceID</tt></p></td><td><p>ディスカバリサービスは、すべてのクライアント宛ての応答に含まれるリソース ID を暗号化する必要があります。</p></td></tr>
+<tr><td><p><tt>GenerateBearerToken</tt></p></td><td><p>ベアラトークン認証と組み合わせて使用するため、ディスカバリサービスは、リソースへのベアラのアクセス権を与えるトークンを生成する必要があります。</p></td></tr>
+</table><hr size="1" noshade><p><IMG ALT="注意" src="graphics/caution.gif">  <b>注意 &#8211; </b><tt>AuthorizeRequestor</tt> ディレクティブと <tt>EncryptResourceID</tt> ディレクティブは組み合わせて使用できません。</p><hr size="1" noshade>
+<br />
+
+</body>
+</html>

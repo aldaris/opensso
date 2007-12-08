@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>主题
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="normalsubject"></A><h3>主题</h3>
+<p><A NAME="indexterm-26"></A><A NAME="indexterm-27"></A><b>主题</b>定义了策略所影响的用户或用户集合（例如，组或具有特定角色的用户）。主题的常规规则是：只有当用户至少是策略中的其中一个主题的成员时，才能够应用策略。默认主题包括：</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Access Manager 身份主题</p></td><td valign="top"><p>此主题表明可以将在“领域主题”选项卡下创建和管理的身份作为主题的成员添加。</p>
+</td></tr><tr><td valign="top"><p>验证的用户</p></td><td valign="top"><p>此主题类型表明任何具有有效 SSO 令牌的用户都是此主题的成员。</p>
+<p>所有通过验证的用户都是该“主题”的成员，即使他们已在其他领域（而不是定义策略所在的组织）中进行了验证。如果资源拥有者要开放一些资源（为其他组织的用户所管理的资源）的访问权时，这将非常有用。如果您要限制某个特定组织的成员对受保护资源的访问权，请使用“组织”主题。</p>
+</td></tr><tr><td valign="top"><p>Web 服务客户机</p></td><td valign="top"><p>此主题类型表明如果 SSO 令牌中包含的主体的 DN 与此主题的任意选定值匹配，则由该 SSO 令牌标识的 Web 服务客户机 (WSC) 是此主题的成员。有效值为本地 JKS 密钥库中的可信赖证书（对应于可信赖 WSC 证书）的 DN。 此主题取决于&#8220;Liberty Web 服务框架&#8221;，并且只能由&#8220;Liberty 服务提供者&#8221;用来对 WSC 进行授权。 </p>
+<p>请确保将此&#8220;主题&#8221;添加到策略之前，您已经创建了密钥库。 您可以从以下位置找到有关于设置密钥库的信息：</p>
+<p><tt></tt><i>AccessManager-base<tt></i></tt> <tt> /SUNWam/samples/saml/xmlsig/keytool.html</tt></p>
+</td></tr></table>
+<p>通过在领域的“策略配置服务”中选择以下附加主题，便可对其进行使用：</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Access Manager 角色</p></td><td valign="top"><p>此主题类型表明任何使用 Access Manager 角色的成员都是此主题的成员。Access Manager 角色是使用运行于传统模式的 Access Manager 以及基于 6.3 的控制台创建的。这些角色所具有的对象类由 Access Manager 进行授权。Access Manager 角色只能通过所属的&#8220;Access Manager 策略服务&#8221;进行访问。</p>
+</td></tr><tr><td valign="top"><p>LDAP 组</p></td><td valign="top"><p>此主题类型表明 LDAP 组的任何成员都是此主题的成员。</p>
+</td></tr><tr><td valign="top"><p>LDAP 角色</p></td><td valign="top"><p>此主题类型表明任何使用 LDAP 角色的成员都是此主题的成员。&#8220;LDAP 角色&#8221;是使用 Directory Server 角色功能的任意角色定义。这些角色具有通过角色定义授权的对象类。可以在&#8220;策略配置服务&#8221;中修改&#8220;LDAP 角色搜索&#8221;过滤器以缩小范围并提高性能。</p>
+</td></tr><tr><td valign="top"><p>LDAP 用户</p></td><td valign="top"><p>此主题类型表明任何 LDAP 用户都是此主题的成员。</p>
+</td></tr><tr><td valign="top"><p>组织</p></td><td valign="top"><p>此主题类型表明领域的所有成员均为该主题的成员</p>
+</td></tr></table>
+
+<br />
+
+</body>
+</html>

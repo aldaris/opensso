@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>授權程式
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="authorizer"></A><h3>授權程式</h3>
+<A NAME="indexterm-97"></A><A NAME="indexterm-98"></A><p>處理請求之前，Liberty 個人設定檔服務 將驗證發出請求之 WSC 的授權。可以完成兩種等級的授權檢查：</p>
+<ol Type="1"><li><p>請求的實體已獲授權存取請求的資源配置文件資訊？</p>
+</li>
+<li><p>請求的資源已發佈給請求者？</p>
+</li>
+</ol>
+<p>授權透過 Liberty 個人設定檔服務 的外掛程式  (<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt> 介面的實作) 發生。雖然可以開發新的實作，但是 Access Manager 提供了預設實作：<tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt>。此外掛程式定義了四個針對查詢和修改作業的政策動作值：</p>
+<ul><li><p>允許</p>
+</li>
+<li><p>拒絕</p>
+</li>
+<li><p>互動同意</p>
+</li>
+<li><p>互動值</p>
+</li>
+</ul>
+<p>規則的資源值類似於 Liberty 個人設定檔服務 定義的 <tt>x-path</tt> 表示式。</p>
+<pre style="font-family:arial,helvetica,sans-serif">/PP/CommonName/AnalyzedName/FN 	查詢 	互動同意
+/PP/CommonName/*                      	修改 	互動值
+/PP/InformalName                        	查詢 	拒絕</pre>
+<p>可以透過取消選取以下一個或兩個在 Liberty 個人設定檔服務中定義的屬性來取消授權。</p>
+<ul><li><p><A HREF="requirequery.html#requirequery">要求查詢策略評估：</A></p>
+</li>
+<li><p><A HREF="requiremodify.html#requiremodify">要求修改策略評估：</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Entities: Anbieter und Partner
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fsentitydescriptors"></A><h2>Entities: Anbieter und Partner</h2>
+<A NAME="indexterm-63"></A><A NAME="indexterm-64"></A><A NAME="indexterm-65"></A><A NAME="indexterm-66"></A><p>Eine <b>Entity</b> kann mit <b>Metadaten </b> (Konfigurationsinformationen, die eine bestimmte Identit&#228;tsdienstarchitektur definieren) f&#252;r einen einzelnen Identity-Anbieter, einen einzelnen Dienstanbieter oder jeweils einen davon konfiguriert werden. Im Gegensatz dazu kann eine Entity als Partner konfiguriert werden, eine ausgew&#228;hlte Gruppe mit beiden Arten von Anbietern. Sowohl Anbieter- als auch Partner-Entities k&#246;nnen &#252;ber die Access Manager-Konsole konfiguriert werden. </p>
+<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Eine Entity kann erst dann einer Authentifizierungsdom&#228;ne zugewiesen werden, wenn sie Anbieter enth&#228;lt.</p>
+<hr size="1" noshade></p><p>Die beiden m&#246;glichen Entity-Typen werden in der folgenden Tabelle beschrieben.</p>
+<A NAME="gbxxa"></A><p><b>Tabelle 1 </b>Entity-Typen</p>
+
+<table cellspacing="5" border="1">
+<tr><td><p><b>Anbieter-Entity</b></p></td><td><p>Eine <b>Anbieter-Entity</b> enth&#228;lt die Metadaten f&#252;r einzelne Anbieter eines der beiden Typen. Alle Identity- und Dienstanbieter m&#252;ssen innerhalb einer Anbieter-Entity konfiguriert werden, bevor sie einer Authentifizierungsdom&#228;ne zugeordnet werden  oder f&#252;r die Aufnahme in eine <b>Partner-Entity</b> ausgew&#228;hlt werden k&#246;nnen Mithilfe der in der Access Manager-Konsole angegebenen Attribute k&#246;nnen ein einzelner Identity-Anbieter, ein einzelner Dienstanbieter oder je einer davon innerhalb einer Anbieter-Entity definiert werden. Das Profil einer Anbieter-Entity enth&#228;lt die folgenden Attributgruppen:</p><ul><li><p><A HREF="federation.fsentitydescriptorsprofile.html#federation.fsentitydescriptorsprofile">General Attributes</A></p></li>
+<li><p><A HREF="federation.fsidentityprovider.html#federation.fsidentityprovider">Identity Provider</A></p></li>
+<li><p><A HREF="federation.fsserviceprovider.html#federation.fsserviceprovider">Service Provider</A></p></li>
+</ul>
+</td></tr>
+<tr><td><p><b>Partner-Entity</b></p></td><td><p>Mithilfe einer konfigurierten <b>Partnerschaft</b> kann sich ein Benutzer mit einer Gruppe von zugeordneten Sites  zusammenschlie&#223;en. Wenn ein Dienstanbieter beispielsweise eine Authentifizierungsanforderung f&#252;r einen Benutzer im Namen einer  Partnerschaft ausgibt und die Authentifizierung gesichert ist, ist f&#252;r den Benutzer Single Sign-On mit allen Mitgliedern der Partnerschaft m&#246;glich. Partnerschaften  werden ohne R&#252;cksicht auf die Grenzen einer Authentifizierungsdom&#228;ne gebildet.</p><p>Eine <b>Partner-Entity</b> enth&#228;lt die Metadaten, die die Zusammenstellung einer oder mehrerer Anbieter-Entities definieren, aus denen die Partnerschaft besteht. Sie enthalten keine Konfigurationsinformationen f&#252;r Anbieter, nur die Konfigurationsinformationen f&#252;r die Partnerschaft selbst. Das Profil einer Partner-Entity enth&#228;lt die folgenden Attributgruppen:</p><ul><li><p><A HREF="federation.fsentitydescriptorsprofile.html#federation.fsentitydescriptorsprofile">General Attributes</A></p></li>
+<li><p><A HREF="federation.fsentitydescriptorsaffiliate.html#federation.fsentitydescriptorsaffiliate">Affiliate</A></p></li>
+</ul>
+<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Die  Mitglieder einer Partnerschaft k&#246;nnen Dienste entweder als Mitglieder der Partnerschaft oder einzeln aufrufen.</p><hr size="1" noshade></p></td></tr>
+</table><p>S&#228;mtliche konfigurierten Entities beider Typen werden unter &#8220;Entities&#34; aufgef&#252;hrt. In Verbindung mit Entities m&#252;ssen die folgenden Aufgaben ausgef&#252;hrt werden:</p>
+<ul><li><p><A HREF="federation.fsentitydescriptorsadd.html#federation.fsentitydescriptorsadd">So erstellen Sie eine Anbieter-Entity oder eine Partner-Entity</A></p>
+</li>
+<li><p><A HREF="federation.fsentitydescriptorsprofile.html#federation.fsentitydescriptorsprofile">So &#228;ndern Sie die allgemeinen Attribute einer Anbieter-Entity oder einer Partner-Entity</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityprovider.html#federation.fsidentityprovider">So f&#252;gen Sie einer Anbieter-Entity einen Identity-Anbieter hinzu</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderhostedadd.html#federation.fsidentityproviderhostedadd">So f&#252;gen Sie einer Anbieter-Entity einen neuen Host-Identity-Anbieter hinzu</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderremoteadd.html#federation.fsidentityproviderremoteadd">So f&#252;gen Sie einer Anbieter-Entity einen neuen Remote-Identity-Anbieter hinzu</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceprovider.html#federation.fsserviceprovider">So f&#252;gen Sie einer Anbieter-Entity einen Dienstanbieter hinzu</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderhostedadd.html#federation.fsserviceproviderhostedadd">So f&#252;gen Sie einer Anbieter-Entity einen neuen Host-Dienstanbieter hinzu</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderremoteadd.html#federation.fsserviceproviderremoteadd">So f&#252;gen Sie einer Anbieter-Entity einen neuen Remote-Dienstanbieter hinzu</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderhostedprofile.html#federation.fsidentityproviderhostedprofile">So &#228;ndern Sie einen Host-Identity-Anbieter in einer Anbieter-Entity</A></p>
+</li>
+<li><p><A HREF="federation.fsidentityproviderremoteprofile.html#federation.fsidentityproviderremoteprofile">So &#228;ndern Sie einen Remote-Identity-Anbieter in einer Anbieter-Entity</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderhostedprofile.html#federation.fsserviceproviderhostedprofile">So &#228;ndern Sie einen Host-Dienstanbieter in einer Anbieter-Entity</A></p>
+</li>
+<li><p><A HREF="federation.fsserviceproviderremoteprofile.html#federation.fsserviceproviderremoteprofile">So &#228;ndern Sie einen Remote-Dienstanbieter in einer Anbieter-Entity</A></p>
+</li>
+<li><p><A HREF="federation.fscreatecontactperson.html#federation.fscreatecontactperson">So f&#252;gen Sie einem Anbieter in einer Anbieter-Entity eine Kontaktperson hinzu</A></p>
+</li>
+<li><p><A HREF="federation.fseditcontactperson.html#federation.fseditcontactperson">So &#228;ndern Sie das Profil einer Kontaktperson in einer Anbieter-Entity</A></p>
+</li>
+<li><p><A HREF="federation.fsentitydescriptorsaffiliate.html#federation.fsentitydescriptorsaffiliate">So f&#252;gen Sie Mitglieder zu einer Partner-Entity hinzu</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

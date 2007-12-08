@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>So konfigurieren Sie eine Dienstbeschreibung
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.smdiscoverydescriptionadd"></A><h4>So konfigurieren Sie eine Dienstbeschreibung</h4>
+<A NAME="indexterm-156"></A><A NAME="indexterm-157"></A><p>Das Attribut &#8220;Dienstbeschreibung&#34; definiert einen laufenden Webdienst an einem gegebenen Protokollendpunkt. Es wird bei der Konfiguration von <A HREF="resourceofferingsbootstrapping.html#resourceofferingsbootstrapping">Ressourcenangebote f&#252;r Bootstrapping</A> festgelegt. Die Informationen &#252;ber Dienstinstanzen m&#252;ssen in verschiedenen Kontexten bereitgestellt werden. Der definierte  Discovery-Dienst ist beispielsweise ein Identity-Dienst, der eine Aufz&#228;hlung der Ressourcenangebote bereitstellt (wobei jedes der Angebote eine Dienstinstanzbeschreibung enth&#228;lt).</p>
+<ol><li><p><b>Klicken Sie auf &#8220;Beschreibung hinzuf&#252;gen&#34;, um die Attribute der neuen Dienstbeschreibung anzuzeigen, oder klicken Sie auf &#8220;Bearbeiten&#34;, um eine vorhandene Beschreibung zu &#228;ndern.</b></p></li>
+<li><p><b>Legen Sie die Attributwerte entsprechend der folgenden Informationen fest:</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>Sicherheitsmechanismus-ID</p></td><td valign="top"><p>In diesem Attribut werden vom Discovery-Dienst unterst&#252;tzte Authentifizierungsmethoden hinzugef&#252;gt. Diese Sicherheitsmechanismen beziehen sich auf die Methode, mit der sich ein Webdienstbenutzer beim Webdienstanbieter authentifiziert bzw. mit der er Sicherheit auf Nachrichtenebene bereitstellt. Standardm&#228;&#223;ig sind alle verf&#252;gbaren, von der Dienstinstanz unterst&#252;tzten Methoden ausgew&#228;hlt. Wenn ein Webdienstbenutzer eine Anforderung mit einer nicht ausgew&#228;hlten Authentifizierungsmethode sendet, wird die Anforderung abgelehnt. Siehe <A HREF="supportedauthmechanisms.html#supportedauthmechanisms">Unterst&#252;tzte Authentifizierungsmechanismen</A>. </p>
+</td></tr><tr><td valign="top"><p>Endpunkt-URL</p></td><td valign="top"><p>Der Wert dieses Attributs ist der URL des SOAP-over-HTTP-Endpunkts. Das URI-Schema muss HTTP bzw. HTTPS sein, wie in <tt>https://soap.profile-provider.com/soap </tt>.</p>
+</td></tr><tr><td valign="top"><p>SOAP-Vorgang</p></td><td valign="top"><p>Der Wert dieses optionalen Attributs ist das &#196;quivalent des <tt>wsdlsoap:soapAction</tt>-Attributs des <tt>wsdlsoap:operation </tt>-Elements in der konreten WSDL-basierten Beschreibung des Dienstes.</p>
+</td></tr></table>
+</li>
+<li><p><b>Klicken Sie auf &#8220;OK&#34;, um die Dienstkonfiguration abzuschlie&#223;en.</b></p></li>
+<li><p><b>Klicken Sie auf der  Discovery-Dienst-Seite auf &#8220;Speichern&#34;, um die Konfiguration des Dienstes abzuschlie&#223;en.</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

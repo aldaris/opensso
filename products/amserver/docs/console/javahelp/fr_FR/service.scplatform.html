@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Plate-forme
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scplatform"></A><h3>Plate-forme</h3>
+<p><A NAME="indexterm-208"></A>Le service Plate-forme est le service qui permet d'ajouter d'autres serveurs &#224; la configuration d'Access Manager, ainsi que d'autres options appliqu&#233;es au premier niveau de l'application Access Manager. Les attributs du service Plate-forme sont des attributs g&#233;n&#233;raux. Ces attributs sont les suivants :</p>
+<ul><li><p><A HREF="service.scplatform.html#fxcsy">Nom du site</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcqf">Nom d'instance</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcgy">Param&#232;tre r&#233;gional de la plate-forme</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcpo">Domaines de cookies</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcsh">URL du service de connexion</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcrt">URL du service de d&#233;connexion</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcmi">Param&#232;tres r&#233;gionaux disponibles</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxctg">Jeux de caract&#232;res client</A></p>
+</li>
+</ul>
+<A NAME="fxcsy"></A><h4>Nom du site</h4>
+<p>Le service de noms lit cet attribut au moment de l'initialisation. Cette liste identifie de fa&#231;on unique le nom de domaine complet &#224; l'aide du num&#233;ro de port de l'&#233;quilibreur de charge ou du SRA pour l'&#233;quilibrage de charge sur les serveurs Access Manager d'arri&#232;re-plan. Si l'h&#244;te sp&#233;cifi&#233; dans une demande de service URL ne figure pas dans la liste, le service de nom va rejeter la demande. Seul le protocole de service de nom doit &#234;tre utilis&#233; dans cet attribut. Reportez-vous &#224; <A HREF="service.scplatformsitelistadd.html#service.scplatformsitelistadd">Cr&#233;ation d'un nom de site</A>. </p>
+<A NAME="fxcqf"></A><h4>Nom d'instance</h4>
+<p>Le service de noms lit cet attribut au moment de l'initialisation. Cette liste contient les serveurs de session Access Manager d'une configuration Access Manager unique. Par exemple, si deux serveurs Access Manager sont install&#233;s et doivent fonctionner comme une seule entit&#233;, ils doivent tous deux &#234;tre inclus dans la liste. Si l'h&#244;te sp&#233;cifi&#233; dans une demande de service URL ne figure pas dans la liste, le service de nom va rejeter la demande. Seul le protocole de service de nom doit &#234;tre utilis&#233; dans cet attribut. Reportez-vous &#224; <A HREF="service.scplatformserverlistadd.html#service.scplatformserverlistadd">Cr&#233;ation d'un nom d'isntance</A>.</p>
+<A NAME="fxcgy"></A><h4>Param&#232;tre r&#233;gional de la plate-forme</h4>
+<p>La valeur du param&#232;tre r&#233;gional de la plate-forme correspond au sous-type de langue par d&#233;faut avec lequel Access Manager a &#233;t&#233; install&#233;. Les services d'authentification, de journalisation et d'administration sont g&#233;r&#233;s dans cette langue. La valeur par d&#233;faut est en_US (anglais am&#233;ricain). Pour consulter la liste des sous-types de langue pris en charge, reportez-vous &#224; <A HREF="supportedlang.html#supportedlang">Environnements linguistiques pris en charge</A>.</p>
+<A NAME="fxcpo"></A><h4>Domaines de cookies</h4>
+<p>Liste des domaines qui seront renvoy&#233;s dans l'en-t&#234;te de cookie lors de la d&#233;finition d'un cookie pour le navigateur de l'utilisateur lors de l'authentification. Si ce champ est vide, aucun domaine de cookie ne sera d&#233;fini. En d'autres termes, le cookie de session Access Manager ne sera transmis qu'au serveur Access Manager et non autres serveurs du domaine.</p>
+<p>Si la connexion unique (SSO) est requise avec d'autres serveurs du domaine, cet attribut doit &#234;tre d&#233;fini avec le domaine de cookie. Si vous avez deux interfaces dans des domaines diff&#233;rents sur un serveur Access Manager, vous devez d&#233;finir les deux domaines de cookies dans cet attribut. Si l'&#233;quilibreur de charge est utilis&#233;, le domaine de cookie doit &#234;tre celui de l'&#233;quilibreur de charge et non ceux des serveurs situ&#233;s derri&#232;re ce dernier. La valeur par d&#233;faut de ce champ est le domaine du serveur Access Manager install&#233;.</p>
+<A NAME="fxcsh"></A><h4>URL du service de connexion</h4>
+<p>Ce champ sp&#233;cifie l'URL de la page de connexion. La valeur par d&#233;faut de cet attribut est <tt>/URI_DEPLOIEMENT_Service/UI/Login</tt>. </p>
+<A NAME="fxcrt"></A><h4>URL du service de d&#233;connexion</h4>
+<p>Ce champ sp&#233;cifie l'URL de la page de d&#233;connexion. La valeur par d&#233;faut de cet attribut est <tt>/URI_DEPLOIEMENT_Service/UI/Logout</tt>. </p>
+<A NAME="fxcmi"></A><h4>Param&#232;tres r&#233;gionaux disponibles</h4>
+<p>Cet attribut enregistre les param&#232;tres r&#233;gionaux configur&#233;s pour la plate-forme. Supposez une application qui permet &#224; l'utilisateur de choisir ses param&#232;tres r&#233;gionaux. L'application obtient cet attribut &#224; partir du profil de la plate-forme et propose la liste des param&#232;tres r&#233;gionaux &#224; l'utilisateur. L'utilisateur choisit un param&#232;tre r&#233;gional que l'application enregistre dans le param&#232;tre <i>preferredLocale</i>.</p>
+<A NAME="fxctg"></A><h4>Jeux de caract&#232;res client</h4>
+<p>Cet attribut sp&#233;cifie le jeu de caract&#232;res pour diff&#233;rents clients au niveau de la plate-forme. Il contient la liste des types de client et les jeux de caract&#232;res correspondants. Pour plus d'informations, reportez-vous &#224; <A HREF="service.scplatformclientcharsetsadd.html#service.scplatformclientcharsetsadd">Cr&#233;ation d'un jeu de caract&#232;res</A>.</p>
+
+<br />
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>全局化设置
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.smg11n"></A><h3>全局化设置</h3>
+<p><A NAME="indexterm-195"></A>“全局化设置”服务包含全局属性，这些属性允许您针对不同的语言环境和字符集配置 Access Manager。这些属性包括：</p>
+<ul><li><p><A HREF="service.smg11n.html#fsvdx">各个语言环境支持的字符集</A></p>
+</li>
+<li><p><A HREF="service.smg11n.html#fsvec">字符集别名</A></p>
+</li>
+<li><p><A HREF="service.smg11n.html#fsveb">自动生成的通用名称格式</A></p>
+</li>
+</ul>
+<A NAME="fsvdx"></A><h4>各个语言环境支持的字符集</h4>
+<p>该属性列出各个语言环境支持的字符集，指明语言环境与字符集之间的映射。格式如下所示：</p>
+<p>要添加新建支持的字符集，请单击“添加”并定义以下参数：</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>语言环境</p></td><td valign="top"><p>要添加的新语言环境。有关更多信息，参见<A HREF="supportedlang.html#supportedlang">支持的语言环境</A>。</p>
+</td></tr><tr><td valign="top"><p>支持的字符集</p></td><td valign="top"><p>为指定的语言环境输入支持的字符集。字符集用分号分隔。例如，<tt>charset=charset1;charset2;charset3;...;charsetn</tt></p>
+</td></tr></table>
+<p>要编辑任何现有的“支持的字符集”，请在“支持的字符集”表格中单击该名称。完成后单击“确定”。</p>
+<A NAME="fsvec"></A><h4>字符集别名</h4>
+<p>该属性列出将用于发送响应的代码集名称（映射到 IANA 名称）。这些代码集名称无需与 Java 代码集名称匹配。当前提供了一个散列表来形成 Java 字符集与 IANA 字符集之间的映射。</p>
+<p>要添加“新建字符集别名”，请单击“添加”按钮并定义以下参数：</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>MIME 名称</p></td><td valign="top"><p>IANA 映射名称。例如，<tt>Shift_JIS</tt></p>
+</td></tr><tr><td valign="top"><p>Java 名称</p></td><td valign="top"><p>要映射到 IANA 字符集的 Java 字符集。</p>
+</td></tr></table>
+<p>要编辑任何现有的字符集别名，请在表格中单击该名称。完成后单击“确定”。</p>
+<A NAME="fsveb"></A><h4>自动生成的通用名称格式</h4>
+<p>该显示选项用于定义自动生成名称的方式，从而针对不同语言环境和字符集提供名称格式。默认语法如下（请注意，定义中包含的逗号和/或空格将显示在名称格式中）：</p>
+<p><tt>en_us = {givenname} {initials} {sn}</tt></p>
+<p>例如，如果要使用中文字符集显示带有 uid（为 11111）的用户（用户 One）的新名称格式，定义如下：</p>
+<p><tt>zh = {sn}{givenname}({uid})</tt></p>
+<p>显示为：</p>
+<p><tt>OneUser 11111</tt></p>
+
+<br />
+
+</body>
+</html>

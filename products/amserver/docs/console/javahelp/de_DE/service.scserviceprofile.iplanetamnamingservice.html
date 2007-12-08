@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Namen 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamnamingservice"></A><h3>Namen </h3>
+<p><A NAME="indexterm-207"></A>Der Namensdienst wird zum Abrufen und Festlegen der URLs, Plugins und Konfigurationen sowie f&#252;r Anforderungsbenachrichtigungen f&#252;r verschiedene Access Manager-Dienste verwendet, z. B. f&#252;r Sitzung, Authentifizierung, Protokollierung, SAML und Verbindung.</p>
+<p>Dieser Dienst erm&#246;glicht es den Clients, den korrekten Dienst-URL zu finden, wenn Access Manager auf der Plattform mehrfach ausgef&#252;hrt wird. Wenn eine Namens-URL gefunden wurde, entschl&#252;sselt der Namensdienst die Benutzersitzungsinformationen und ersetzt dynamisch die Werte f&#252;r Protokoll, Host und Anschluss mit den Parametern der Sitzung. Damit wird sichergestellt, dass der an den Dienst zur&#252;ckgegebene URL auf den Host verweist, auf dem die Benutzersitzung erstellt wurde. Es existieren folgende Namensattribute:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgc">URL des Profildienstes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgg">URL des Sitzungsdienstes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgf">URL des Protokollierungsdienstes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgh">URL des Richtliniendienstes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfge">URL des Authentifizierungsdienstes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgl">URL des SAML-Webprofil/-Produktdienstes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgm">URL des SAML-SOAP-Dienstes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgk">URL des SAML-Webprofil-/POST-Dienstes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgi">URL des SAML-Assertion-Manager-Dienstes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgn">Dienst-URL f&#252;r Verbindungassertions-Manager</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgp">URL f&#252;r den Sicherheits-Token-Manager</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgo">URL f&#252;r JAXRPC-Endpunkt</A></p>
+</li>
+</ul>
+<A NAME="fwfgc"></A><h4>URL des Profildienstes</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/profileservice</tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der Profil-URL, basierend auf den sitzungsspezifischen Parametern.</p>
+<A NAME="fwfgg"></A><h4>URL des Sitzungsdienstes</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/sessionservice</tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der Sitzung-URL, basierend auf den sitzungsspezifischen Parametern.</p>
+<A NAME="fwfgf"></A><h4>URL des Protokollierungsdienstes</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/loggingservice</tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der Protokollierungs-URL, basierend auf den sitzungsspezifischen Parametern.</p>
+<A NAME="fwfgh"></A><h4>URL des Richtliniendienstes</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig: </p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der Richtlinien-URL, basierend auf den sitzungsspezifischen Parametern.</p>
+<A NAME="fwfge"></A><h4>URL des Authentifizierungsdienstes</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/authservice</tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der Authentifizierungs-URL, basierend auf den sitzungsspezifischen Parametern.</p>
+<A NAME="fwfgl"></A><h4>URL des SAML-Webprofil/-Produktdienstes</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLAwareServlet </tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der SAM-Webprofil/-Produktdienst-URL, basierend auf den sitzungsspezifischen Parametern. </p>
+<A NAME="fwfgm"></A><h4>URL des SAML-SOAP-Dienstes</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLSOAPReceiver </tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der SAML-SOAP-URL, basierend auf den sitzungsspezifischen Parametern.</p>
+<A NAME="fwfgk"></A><h4>URL des SAML-Webprofil-/POST-Dienstes</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLPOSTProfileServlet </tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der SAM-Webprofil/-POST-URL, basierend auf den sitzungsspezifischen Parametern. </p>
+<A NAME="fwfgi"></A><h4>URL des SAML-Assertion-Manager-Dienstes</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/AssertionManagerServlet/AssertionManagerIF</tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der SAML-Assertion-Manager-URL, basierend auf den sitzungsspezifischen Parametern. </p>
+<A NAME="fwfgn"></A><h4>Dienst-URL f&#252;r Verbindungassertions-Manager</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/amserver/FSAssertionManagerServlet/FSAssertionMana gerIF </tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der Verbindungsassertions-Manager-URL, basierend auf den sitzungsspezifischen Parametern. </p>
+<A NAME="fwfgp"></A><h4>URL f&#252;r den Sicherheits-Token-Manager</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/amserver/SecurityTokenManagerServlet/SecurityToken ManagerIF/</tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der Sicherheits-Token-URL, basierend auf den sitzungsspezifischen Parametern. </p>
+<A NAME="fwfgo"></A><h4>URL f&#252;r JAXRPC-Endpunkt</h4>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p>
+<p><tt>%protocol://%host:%port/amserver/jaxrpc/</tt></p>
+<p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der JAXRPC-Endpunkt-URL, basierend auf den sitzungsspezifischen Parametern.</p>
+
+<br />
+
+</body>
+</html>

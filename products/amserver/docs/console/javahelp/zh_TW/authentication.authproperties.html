@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>認證
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="authentication.authproperties"></A><h2>認證</h2>
+<p><A NAME="indexterm-5"></A>一般認證服務必須先註冊為某個範圍的服務，使用者才能使用其他認證模組類型登入。核心認證服務可讓 Access Manager 管理員定義範圍認證參數的預設值。若未於特定認證模組中定義置換值，稍後則可以使用這些值。核心認證服務的預設值定義於 <tt>amAuth.xml</tt> 檔案中，並於安裝後儲存於 Directory Server 內。</p>
+<p>認證特性包括：</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>進階特性</p></td><td valign="top"><p>按一下 [進階特性] 按鈕顯示可為範圍定義的核心認證屬性。全域屬性不適用於範圍，因此將不顯示。</p>
+</td></tr><tr><td valign="top"><p>預設認證鏈接</p></td><td valign="top"><p>定義範圍所使用的認證鏈接。於 [認證鏈接] 屬性中建立新鏈接後，其將顯示於下拉式清單中並可供選取。請參閱<A HREF="authentication.newauthconfig.html#authentication.newauthconfig">建立新的認證鏈接</A>，以取得更多資訊。</p>
+</td></tr><tr><td valign="top"><p>管理員認證鏈接</p></td><td valign="top"><p>定義僅適用於管理員的認證鏈接。如果管理員的認證鏈接需要與一般使用者的認證鏈接有所不同，則可以使用此屬性。此屬性中配置的模組將在存取 Access Manager 主控台時被繼承。</p>
+</td></tr><tr><td valign="top"><p>預設成功的 URL</p></td><td valign="top"><p>指定使用者在成功經過範圍認證後將重新導向至的 URL。</p>
+</td></tr><tr><td valign="top"><p>模組實例</p></td><td valign="top"><p>您可定義與配置範圍的 Access Manager 預設認證模組。您可新增相同認證模組的多重實例。請參閱<A HREF="authentication.newauthinstance.html#authentication.newauthinstance">建立新的認證模組實例</A>，以取得更多資訊。</p>
+</td></tr><tr><td valign="top"><p>認證鏈接</p></td><td valign="top"><p>可以配置一個以上的認證模組，因此使用者必需傳送認證憑證給這些模組。這稱為認證鏈接。這個屬性可讓您定義範圍的認證鏈接選項。您建立的鏈接會顯示於 [預設認證鏈接] 清單中。請參閱<A HREF="authentication.newauthconfig.html#authentication.newauthconfig">建立新的認證鏈接</A>，以取得更多資訊。</p>
+</td></tr></table>
+
+<br />
+
+</body>
+</html>

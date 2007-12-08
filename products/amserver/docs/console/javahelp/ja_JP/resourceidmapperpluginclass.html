@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>リソース ID マッパープラグイン用のクラス
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="resourceidmapperpluginclass"></A><h3>リソース ID マッパープラグイン用のクラス</h3>
+<A NAME="indexterm-142"></A><A NAME="indexterm-143"></A><p>この属性の値は、組織またはロールに対して設定されるリソースオファリングの ID を生成するクラスのリストです。<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt> は、ユーザー ID を、それと関連付けられたリソース ID にマップするために使用されるインタフェースです。ディスカバリサービスは、このインタフェースのために次の 2 つの実装プラグインを提供します。</p>
+<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper </tt> (形式: <i>プロバイダ ID</i> + "/" + <i>Base64 エンコードされたユーザー ID</i>)</p>
+</li>
+<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper</tt> (形式: <i>プロバイダ ID</i> + "/" + <i>ユーザー ID の 16 進文字列</i>)</p>
+</li>
+</ul>
+<p>実装クラスを使用してさまざまな実装プラグインを開発し、この属性の値として追加することができます。そのためには、「新規」をクリックして次の形式を使用します。</p>
+<p><tt><b>providerid=</tt><i>providerID<tt></i>|</tt><i> class_name_and_path<tt></i></b></tt></p>
+<p><A HREF="service.smdiscoveryproviderresourceidmapadd.html#service.smdiscoveryproviderresourceidmapadd">「リソース ID マッパーを設定する」</A>を参照してください。</p>
+
+<br />
+
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>ログ
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamloggingservice"></A><h3>ログ</h3>
+<p><A NAME="indexterm-206"></A>ログサービスは、Access Manager の管理に関連する状態メッセージやエラーメッセージを提供します。管理者は、ログファイルのサイズや場所などの値を設定できます。Access Manager は、フラットテキストファイルかリレーショナルデータベースにイベントを記録できます。ログサービス属性はグローバル属性です。属性は次のとおりです。</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsv">「最大ログサイズ」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsg">「履歴ファイルの数」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbzh">「ログファイルの位置」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwg">「ログタイプ」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbrd">「データベースユーザー名」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcdf">「データベースユーザーパスワード」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcep">「データベースユーザーパスワード (確認)」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvb">「データベースドライバ名」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsb">「設定可能なログフィールド」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxccb">「ログ検証頻度」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxe">「ログ署名時間」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcbz">「セキュリティー保護されたログ」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxt">「レコードの最大数」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwp">「アーカイブあたりのファイル数」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbyw">「バッファーサイズ」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvh">「DB 失敗メモリバッファサイズ」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcea">「バッファー時間」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsn">「時間バッファリング」</A></p>
+</li>
+</ul>
+<A NAME="fxbsv"></A><h4>最大ログサイズ</h4>
+<p>この属性は、Access Manager ログファイルの最大サイズ (バイト単位) の値を指定します。デフォルト値は 1000000 です。</p>
+<A NAME="fxbsg"></A><h4>履歴ファイルの数</h4>
+<p>この属性は、履歴解析のために保持するバックアップログファイルの数に等しい値を持ちます。ローカルシステムのパーティションサイズと利用可能なディスク容量に応じて、任意の整数値を入力できます。デフォルト値は 3 です。</p>
+<p>このファイル数は FILE ログタイプにのみ適用されます。ログタイプが DB の場合、履歴ファイルは存在せず、Access Manager によって明示的に設定されるファイルサイズ制限も存在しません。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>値として 0 を入力すると値 1 と同様に解釈されます。つまり、0 を指定すると履歴ログファイルが 1 つ作成されます。</p>
+<hr size="1" noshade></p><A NAME="fxbzh"></A><h4>ログファイルの位置</h4>
+<p>ファイルベースのログ機能には、ログファイルを格納する場所が必要です。このフィールドは、その場所の完全なディレクトリパスを指定します。デフォルトの場所は次に示すとおりです。</p>
+<p><tt>/var/opt/SUNWam/logs</tt></p>
+<p>デフォルト以外のディレクトリを指定した場合、そのディレクトリが存在しなければ、Access Manager によってそのディレクトリが作成されます。したがって、「0700」などの適切なアクセス権をそのディレクトリに対して設定する必要があります。</p>
+<p>DB (データベース) ログ (Oracle または MySQL など) のログの場所を設定する場合、ログの場所は大文字と小文字が区別されます。たとえば、Oracle データベースにログを書き込む場合、ログの場所は次のようになります。大文字と小文字は区別されますので、注意してください。</p>
+<p><tt>jdbc:oracle:thin:@machine.domain:port:DBName</tt></p>
+<p>DB にログを書き込むようにするには、JDBC ドライバファイルを Web コンテナの JVM クラスパスに追加してください。手動で JDBC ドライバファイルを <tt>amadmin</tt> スクリプトのクラスパスに追加する必要があります。そうしないと、<tt>amadmin</tt> ログでは JDBC ドライバをロードできません。</p>
+<p>通常、ログ属性に対する変更内容は、保存が完了すると有効になります。その場合、サーバーを再起動する必要はありません。ただし、セキュリティー保護されたログに切り替える場合には、サーバーを再起動する必要があります。</p>
+<A NAME="fxbwg"></A><h4>ログタイプ</h4>
+<p>フラットファイルログには「ファイル」を、データベースログには「DB」を指定できます。</p>
+<p>「データベースユーザー名」または「データベースユーザーパスワード」の値が無効である場合、それは Access Manager の処理に深刻な影響を及ぼします。Access Manager またはそのコンソールが不安定になった場合には、<tt>AMConfig.properties</tt> 内で次のプロパティーを設定します。</p>
+<p><i>com.iplanet.am.logstatus=INACTIVE</i></p>
+<p>プロパティーの設定が完了したら、サーバーを再起動します。そうすると、コンソールにログインできるようになるので、問題のログ属性をリセットします。その後、<i>logstatus</i> プロパティーを <i>ACTIVE</i> に変更し、サーバーを再起動します。</p>
+<A NAME="fxbrd"></A><h4>データベースユーザー名</h4>
+<p>この属性は、ログタイプ属性が DB に設定されている場合に、データベースに接続するユーザーの名前を指定します。</p>
+<A NAME="fxcdf"></A><h4>データベースユーザーパスワード</h4>
+<p>この属性は、ログタイプ属性が DB に設定されている場合に、データベースユーザーのパスワードを指定します。</p>
+<A NAME="fxcep"></A><h4>データベースユーザーパスワード (確認)</h4>
+<p>データベースパスワードを確認します。</p>
+<A NAME="fxbvb"></A><h4>データベースドライバ名</h4>
+<p>この属性を使用すると、ログ実装クラスに使用するドライバを指定できます。</p>
+<A NAME="fxbsb"></A><h4>設定可能なログフィールド</h4>
+<p>記録されるフィールドのリストです。デフォルトでは、すべてのフィールドがログに記録されます。フィールドは次のとおりです。</p>
+<ul><li><p>CONTEXTID</p>
+</li>
+<li><p>DOMAIN</p>
+</li>
+<li><p>HOSTNAME</p>
+</li>
+<li><p>IPADDRESS</p>
+</li>
+<li><p>LOGGED BY</p>
+</li>
+<li><p>LOGLEVEL</p>
+</li>
+<li><p>LOGINID</p>
+</li>
+<li><p>MESSAGEID</p>
+</li>
+<li><p>MODULENAME</p>
+</li>
+</ul>
+<p>少なくとも、CONTEXTID、DOMAIN、HOSTNAME、LOGINID、および MESSAGEID だけは、ログに記録することをお勧めします。</p>
+<A NAME="fxccb"></A><h4>ログ検証頻度</h4>
+<p>この属性は、サーバーがログを検証して改ざんを検出する頻度 (秒単位) を設定します。デフォルトの時間は 3600 秒です。このパラメータは、セキュリティー保護されたログにのみ適用されます。</p>
+<A NAME="fxbxe"></A><h4>ログ署名時間</h4>
+<p>このパラメータは、ログに署名する頻度 (秒単位) を設定します。デフォルトの時間は 900 秒です。このパラメータは、セキュリティー保護されたログにのみ適用されます。</p>
+<A NAME="fxcbz"></A><h4>セキュリティー保護されたログ</h4>
+<p>この属性は、セキュリティー保護されたログを有効または無効にします。デフォルトでは、セキュリティー保護されたログはオフです。セキュリティー保護されたログによって、セキュリティーログの不正な変更や改ざんを検出できます。</p>
+<A NAME="fxbxt"></A><h4>レコードの最大数</h4>
+<p>この属性は、読み取りクエリーと一致するレコードの数に関係なく、Java <!-- was interface. No mapping rule. -->LogReader インタフェースが返すレコードの最大数を設定します。デフォルトでは 500 に設定されています。この属性は、<i>LogQuery</i> クラスを使用してログ API を呼び出した場合、オーバーライド可能です。</p>
+<A NAME="fxbwp"></A><h4>アーカイブあたりのファイル数</h4>
+<p>この属性は、セキュリティー保護されたログにのみ適用可能です。この属性は、セキュリティー保護された後続のログに対して、ログファイルとキーストアをいつアーカイブする必要があるか、およびセキュリティー保護されたキーストアをいつ再生成する必要があるかを指定します。デフォルトでは、各ログで 5 ファイル処理します。</p>
+<A NAME="fxbyw"></A><h4>バッファーサイズ</h4>
+<p>この属性は、メモリー内にバッファリングするログレコードの最大数を指定します。この数を超えると、ログサービスはそれらのレコードをログリポジトリに書き込もうとします。デフォルトは、1 レコードです。</p>
+<A NAME="fxbvh"></A><h4>DB 失敗メモリバッファサイズ</h4>
+<p>この属性は、データベース (DB) ログに失敗した場合にメモリーに保持されるログレコードの最大数を指定します。この属性は DB ログが指定されている場合にのみ適用されます。Access Manager ログサービスと DB との接続が切断された場合、指定された件数までのレコードがバッファーに保存されます。この属性は、デフォルトでは「バッファーサイズ」属性に定義された値の 2 倍の値に設定されます。</p>
+<A NAME="fxcea"></A><h4>バッファー時間</h4>
+<p>この属性は、ログレコードがメモリー内のバッファーに保存される時間を指定します。この時間を超えると、メモリー内のログレコードはログサービスに送られて記録されます。この属性は、「時間バッファリングを有効」がオンの場合に適用されます。デフォルト値は 3600 秒です。</p>
+<A NAME="fxbsn"></A><h4>時間バッファリング</h4>
+<p>「オン」を選択すると、Access Manager はログレコードをメモリー内のバッファーに格納する時間を制限します。制限時間は、「バッファー時間」属性で設定します。</p>
+
+<br />
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Berechtigte Person
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="authorizer"></A><h3>Berechtigte Person</h3>
+<A NAME="indexterm-97"></A><A NAME="indexterm-98"></A><p>Vor der Bearbeitung einer Anforderung &#252;berpr&#252;ft Pers&#246;nlicher Liberty-Profildienst die Autorisierung des WSC, der die Anforderung stellt. Bei der Autorisierungs&#252;berpr&#252;fung k&#246;nnen zwei Ebenen untersucht werden:</p>
+<ol Type="1"><li><p>Ist die anfordernde Entity berechtigt, auf die angeforderten Ressourcenprofilinformationen zuzugreifen?</p>
+</li>
+<li><p>Ist die angeforderte Ressource f&#252;r den Anforderer ver&#246;ffentlicht?</p>
+</li>
+</ol>
+<p>Die Autorisierung erfolgt &#252;ber ein Plugin f&#252;r Pers&#246;nlicher Liberty-Profildienst: eine Implementierung der <tt> com.sun.identity.liberty.ws.interfaces</tt>.<tt>Berechtigte Person</tt>-Schnittstelle. Sie k&#246;nnen eine neue Implementierung entwickeln oder die von Access Manager bereitgestellte Standardimplementierung verwenden: <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer </tt>. Dieses Plugin legt f&#252;r Abfrage- und &#196;nderungsvorg&#228;nge vier Richtlinien-Aktionswerte fest:</p>
+<ul><li><p>Zulassen</p>
+</li>
+<li><p>Ablehnen</p>
+</li>
+<li><p>Interaktion f&#252;r Zustimmung</p>
+</li>
+<li><p>Interaktion f&#252;r Wert</p>
+</li>
+</ul>
+<p>Die Ressourcenwerte der Regeln &#228;hneln den <tt>x-path</tt>-Ausdr&#252;cken, die durch Pers&#246;nlicher Liberty-Profildienst definiert sind.</p>
+<pre style="font-family:arial,helvetica,sans-serif">/PP/CommonName/AnalyzedName/FN 	Abfrage 	Interaktion f&#252;r Zustimmung
+/PP/CommonName/*                      	&#196;ndern 	Interaktion f&#252;r Wert
+/PP/InformalName                        	Abfrage 	Ablehnen </pre>
+<p>Die Autorisierung kann durch Deaktivierung einer der beiden folgenden Attribute, die ebenfalls im pers&#246;nlichen Liberty-Profildienst festgelegt werden, deaktiviert werden:</p>
+<ul><li><p><A HREF="requirequery.html#requirequery">Richtlinien&#252;berpr&#252;fung f&#252;r Abfrage erforderlich:</A></p>
+</li>
+<li><p><A HREF="requiremodify.html#requiremodify">Richtlinien&#252;berpr&#252;fung bei &#196;nderungen erforderlich:</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

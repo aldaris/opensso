@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>配置服務描述
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.smdiscoverydescriptionadd"></A><h4>配置服務描述</h4>
+<A NAME="indexterm-156"></A><A NAME="indexterm-157"></A><p>服務說明屬性會在不同的協定終點定義執行中的 Web 服務。當您配置<A HREF="resourceofferingsbootstrapping.html#resourceofferingsbootstrapping">啟動程式的資源提供</A>時進行定義。服務實例的相關資訊需要在各種環境中進行通訊。例如，定義的探索服務是識別服務，它會提供資源提供的列舉 (每一個都包括服務實例說明)。</p>
+<ol><li><p><b>按一下 [新增說明] 以顯示新的服務說明屬性，或按一下 [編輯] 以修改現有的說明。</b></p></li>
+<li><p><b>根據下列資訊提供屬性值：</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>安全機制 ID</p></td><td valign="top"><p>此屬性是新增探索服務所支援的認證方法的位置。這些安全機制會參考 Web 服務使用者對 Web 服務提供者進行認證，或提供訊息層級安全性的方式。依預設，會選取服務實例支援的所有可用方法。如果未選取認證方法，且 Web 服務使用者使用該方法傳送請求，將拒絕請求。請參閱<A HREF="supportedauthmechanisms.html#supportedauthmechanisms">支援的認證機制</A>。</p>
+</td></tr><tr><td valign="top"><p>端點 URL</p></td><td valign="top"><p>此屬性的值是 SOAP-over-HTTP 端點的 URL。URI 方案必須為如同 <tt>https://soap.profile-provider.com/soap</tt> 中的 HTTP 或 HTTPS。</p>
+</td></tr><tr><td valign="top"><p>SOAP 動作</p></td><td valign="top"><p>此選擇性屬性的值等同於服務基於 WSDL 之具體說明中 <tt>wsdlsoap:operation </tt> 元素的 <tt>wsdlsoap:soapAction</tt> 屬性。</p>
+</td></tr></table>
+</li>
+<li><p><b>按一下 [確定] 以完成服務配置。</b></p></li>
+<li><p><b>按一下探索服務頁面上的 [儲存] 以完成服務配置。</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

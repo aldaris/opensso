@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Directives prises en charge
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="supporteddirectives"></A><h3>Directives prises en charge</h3>
+<A NAME="indexterm-132"></A><A NAME="indexterm-133"></A><p>Cet attribut vous permet de sp&#233;cifier une directive li&#233;e &#224; une strat&#233;gie pour une ressource. Si un fournisseur de services veut utiliser une directive non prise en charge, la demande &#233;chouera. Le tableau suivant d&#233;taille les options disponibles.</p>
+
+<table cellspacing="5" border="1">
+<tr><th scope="col"><p>Directive</p></th><th scope="col"><p>Objectif</p></th></tr>
+<tr><td><p><tt>AuthenticateRequester</tt></p></td><td><p>Le Service de d&#233;couverte doit inclure une assertion SAML (contenant une instruction <tt>AuthenticationStatement </tt>) dans ses r&#233;ponses pour permettre au client d'authentifier l'instance de service h&#233;bergeant la ressource.</p></td></tr>
+<tr><td><p><tt>AuthenticateSessionContext</tt></p></td><td><p>Le Service de d&#233;couverte doit inclure une assertion SAML (contenant une instruction <tt>SessionContextStatement </tt>) dans ses r&#233;ponses pour indiquer l'&#233;tat de la session.</p></td></tr>
+<tr><td><p><tt>AuthorizeRequestor</tt> </p></td><td><p>Le Service de d&#233;couverte doit inclure une assertion SAML (contenant une instruction <tt>ResourceAccessStatement </tt>) dans ses r&#233;ponses pour indiquer si le client est autoris&#233; &#224; acc&#233;der &#224; la ressource.</p></td></tr>
+<tr><td><p><tt>EncryptResourceID</tt></p></td><td><p>Le Service de d&#233;couverte doit crypter l'identificateur de ressource dans les r&#233;ponses adress&#233;es &#224; tous les clients.</p></td></tr>
+<tr><td><p><tt>GenerateBearerToken</tt></p></td><td><p>Pour &#234;tre utilis&#233; avec l'authentification de jeton de support (Bearer Token Authentication), le Service de d&#233;couverte doit g&#233;n&#233;rer un jeton accordant l'autorisation du support &#224; acc&#233;der &#224; la ressource. </p></td></tr>
+</table><hr size="1" noshade><p><IMG ALT="Attention" src="graphics/caution.gif">  <b>Attention &#8211; </b>Les directives <tt>AuthorizeRequestor</tt> et <tt>EncryptResourceID </tt> ne peuvent pas &#234;tre utilis&#233;es ensemble.</p><hr size="1" noshade>
+<br />
+
+</body>
+</html>

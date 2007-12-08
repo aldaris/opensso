@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Asignaci&#243;n de nombres 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamnamingservice"></A><h3>Asignaci&#243;n de nombres </h3>
+<p><A NAME="indexterm-207"></A>El servicio de asignaci&#243;n de nombres se utiliza para obtener y definir las direcciones URL, complementos y configuraciones, as&#237; como las notificaciones de solicitudes para diversos servicios de Access Manager como sesi&#243;n, autenticaci&#243;n, registro SAML y federaci&#243;n.</p>
+<p>Este servicio permite que los clientes encuentren la direcci&#243;n URL correcta del servicio si la plataforma est&#225; ejecutando m&#225;s de un Access Manager. Cuando se encuentra una direcci&#243;n URL de asignaci&#243;n de nombres, este servicio descodificar&#225; la sesi&#243;n del usuario y sustituir&#225; din&#225;micamente el protocolo, el host y el puerto por los par&#225;metros de la sesi&#243;n. De esta forma, se garantiza que la direcci&#243;n URL que el servicio devuelve est&#225; destinada al host en el que se cre&#243; la sesi&#243;n del usuario. Los atributos de asignaci&#243;n de nombres son:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgc">URL de servicio de perfil</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgg">URL de servicio de sesi&#243;n</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgf">URL de servicio de registro</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgh">URL de servicio de pol&#237;tica</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfge">Direcci&#243;n URL del servicio de autenticaci&#243;n</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgl">Perfil Web SAML/URL de servicio Artefacto</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgm">URL de servicio SAML SOAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgk">Perfil Web SAML/URL de servicio POST</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgi">URL del servicio del administrador de aserci&#243;n SAM</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgn">URL del servicio del administrador de aserci&#243;n de federaci&#243;n</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgp">Direcci&#243;n URL del administrador del token de seguridad</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgo">URL de punto final de JAXRPC</A></p>
+</li>
+</ul>
+<A NAME="fwfgc"></A><h4>URL de servicio de perfil</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/profileservice</tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL del perfil en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
+<A NAME="fwfgg"></A><h4>URL de servicio de sesi&#243;n</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/sessionservice</tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de la sesi&#243;n en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
+<A NAME="fwfgf"></A><h4>URL de servicio de registro</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/loggingservice</tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL del registro en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
+<A NAME="fwfgh"></A><h4>URL de servicio de pol&#237;tica</h4>
+<p>Este campo contiene un valor igual a: </p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de la pol&#237;tica en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
+<A NAME="fwfge"></A><h4>Direcci&#243;n URL del servicio de autenticaci&#243;n</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/authservice</tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de autenticaci&#243;n en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
+<A NAME="fwfgl"></A><h4>Perfil Web SAML/URL de servicio Artefacto</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLAwareServlet </tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL del artefacto/perfil Web SAML en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos. </p>
+<A NAME="fwfgm"></A><h4>URL de servicio SAML SOAP</h4>
+<p>Este campo contiene un valor igual a</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLSOAPReceiver </tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de SAML SOAP en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
+<A NAME="fwfgk"></A><h4>Perfil Web SAML/URL de servicio POST</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLPOSTProfileServlet </tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de POST/perfil Web SAML en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos. </p>
+<A NAME="fwfgi"></A><h4>URL del servicio del administrador de aserci&#243;n SAM</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/AssertionManagerServlet/AssertionM anagerIF</tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL del servicio del administrador de aserci&#243;n SAML en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos. </p>
+<A NAME="fwfgn"></A><h4>URL del servicio del administrador de aserci&#243;n de federaci&#243;n</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/amserver/FSAssertionManagerServlet/FSAssertionMana gerIF</tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL del servicio del administrador de aserci&#243;n de federaci&#243;n en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos. </p>
+<A NAME="fwfgp"></A><h4>Direcci&#243;n URL del administrador del token de seguridad</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/amserver/SecurityTokenManagerServlet/SecurityToken ManagerIF/</tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL del administrador del token de seguridad en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos. </p>
+<A NAME="fwfgo"></A><h4>URL de punto final de JAXRPC</h4>
+<p>Este campo contiene un valor igual a:</p>
+<p><tt>%protocol://%host:%port/amserver/jaxrpc/</tt></p>
+<p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de punto final de JAXRPC en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
+
+<br />
+
+</body>
+</html>

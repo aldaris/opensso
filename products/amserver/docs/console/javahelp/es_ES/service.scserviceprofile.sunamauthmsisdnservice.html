@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>MSISDN 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.sunamauthmsisdnservice"></A><h3>MSISDN </h3>
+<p><A NAME="indexterm-184"></A>El m&#243;dulo de autenticaci&#243;n Red digital de servicios integrados de estaci&#243;n m&#243;vil (MSISDN, Mobile Station Integrated Services Digital Network) permite la autenticaci&#243;n mediante la red RDSI del suscriptor m&#243;vil asociada a un dispositivo como, por ejemplo, un tel&#233;fono celular. Se trata de un m&#243;dulo que no es interactivo. El m&#243;dulo recupera la RDSI de abonado y la valida con Directory Server para encontrar un usuario que coincida con el n&#250;mero. Los atributos de autenticaci&#243;n de MSISDN son atributos de dominio. Los atributos de autenticaci&#243;n de MSISDN son:</p>
+<ul><li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxe">Direcci&#243;n IP de puerta de enlace de confianza</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxg">Argumento de n&#250;mero MSISDN</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxf">Puerto y servidor LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxi">DN de b&#250;squeda de inicio de LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxk">Atributo para buscar en LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxl">Usuario principal del servidor LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxn">Contrase&#241;a principal del servidor LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxm">Contrase&#241;a principal del servidor LDAP (confirmar)</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxo">Active SSL para el acceso LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxp">Atributo LDAP utilizado para recuperar el perfil de usuario</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxr">Devolver DN de usuario en autenticaci&#243;n</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthmsisdnservice.html#fumxs">Nivel de autenticaci&#243;n</A></p>
+</li>
+</ul>
+<A NAME="fumxe"></A><h4>Direcci&#243;n IP de puerta de enlace de confianza</h4>
+<p>Especifica una lista de direcciones IP de clientes de confianza que pueden acceder a m&#243;dulos MSISDN. Puede definir las direcciones IP de todos los clientes para permitir el acceso al m&#243;dulo MSISDN introduciendo la direcci&#243;n (por ejemplo, <tt> 123.456.123.111</tt>) en el campo de entrada y haciendo clic en Agregar. La lista est&#225; vac&#237;a de forma predeterminada. Si el atributo se deja vac&#237;o, se permitir&#225; el acceso a todos los clientes. Si especifica none (ninguno), no se permitir&#225; el acceso a ning&#250;n cliente.</p>
+<A NAME="fumxg"></A><h4>Argumento de n&#250;mero MSISDN</h4>
+<p>Especifica una lista de los nombres que identifican los par&#225;metros que se deben buscar en el encabezado de solicitud o de cookie para el n&#250;mero MSISDN. Por ejemplo, si define <i>x-Cookie-Param</i>, <i> AM_NUMBER</i> y <i>COOKIE-ID</i>, los servicios de autenticaci&#243;n de MSISDN buscar&#225;n dichos par&#225;metros para el n&#250;mero MSISDN.</p>
+<A NAME="fumxf"></A><h4>Puerto y servidor LDAP</h4>
+<p>Especifica el nombre de host y n&#250;mero de puerto de Directory Server en el que se producir&#225; la b&#250;squeda de los usuarios con n&#250;meros MSISDN. El formato es <tt></tt><i>hostname:port<tt></i></tt>. Si no hay ning&#250;n n&#250;mero de puerto, utilice <tt>389</tt>.</p>
+<p>Si tiene Access Manager implementado con varios dominios, puede especificar el v&#237;nculo de comunicaci&#243;n entre instancias espec&#237;ficas de Access Manager y Directory Server con el siguiente formato (las distintas entradas deben tener el nombre del servidor local como prefijo):</p>
+<p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p>
+<p>Por ejemplo, si tiene dos instancias de Access Manager implementadas en ubicaciones distintas (L1-machine1-IS y L2- machine2-IS) que se comunican con diferentes instancias de Directory Server (L1-machine1-DS y L2-machine2-DS), deber&#237;a mostrar el siguiente aspecto:</p>
+<p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p>
+<p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+<A NAME="fumxi"></A><h4>DN de b&#250;squeda de inicio de LDAP</h4>
+<p>Especifica el DN del nodo en el que debe comenzar la b&#250;squeda del n&#250;mero MSISDN del usuario. No hay ning&#250;n valor predeterminado. El campo reconocer&#225; cualquier DN v&#225;lido. Si hay varias entradas, el nombre del servidor local debe ir en primer lugar. El formato es <tt></tt><i>servername|search dn<tt></i></tt>.</p>
+<p>Para entradas m&#250;ltiples:</p>
+<p><tt></tt><i>servername1|search dn servername2|search dn servername3|search dn<tt></i>...</tt></p>
+<p>Si hay varias entradas bajo la organizaci&#243;n root con el mismo Id. de usuario, deber&#237;a definirse este par&#225;metro para que s&#243;lo se pueda buscar o encontrar la entrada que se autenticar&#225;. Por ejemplo, si el Id. de agente y el Id. de usuario se encuentran en la misma organizaci&#243;n root, deber&#237;a utilizarse el par&#225;metro <tt>ou=Agents</tt> para que la organizaci&#243;n root realice la autenticaci&#243;n mediante el Id. de agente y <tt>ou=People</tt> para que la organizaci&#243;n root realice la autenticaci&#243;n mediante el Id. de usuario.</p>
+<A NAME="fumxk"></A><h4>Atributo para buscar en LDAP</h4>
+<p>Especifica el nombre del atributo en el perfil del usuario que contiene el n&#250;mero MSISDN para buscar un usuario concreto. El valor predeterminado es <i>sunIdentityMSISDNNumber</i>. Este valor no se debe modificar a menos que est&#233; seguro de que otro atributo en el perfil de usuario contiene el mismo n&#250;mero MSISDN.</p>
+<A NAME="fumxl"></A><h4>Usuario principal del servidor LDAP</h4>
+<p>Especifica el DN de conexi&#243;n LDAP para permitir b&#250;squedas de MSISDN en Directory Server. El DN de enlace predeterminado es <tt>cn=amldapuser,ou=DSAME Users,dc=sun,dc=com</tt>.</p>
+<A NAME="fumxn"></A><h4>Contrase&#241;a principal del servidor LDAP</h4>
+<p>Especifica la contrase&#241;a de conexi&#243;n LDAP para el DN de conexi&#243;n como se ha definido en el usuario principal del servidor LDAP.</p>
+<A NAME="fumxm"></A><h4>Contrase&#241;a principal del servidor LDAP (confirmar)</h4>
+<p>Confirme la contrase&#241;a.</p>
+<A NAME="fumxo"></A><h4>Active SSL para el acceso LDAP</h4>
+<p>Permite el acceso mediante SSL al servidor Directory Server especificado en el atributo LDAP Server and Port (Puerto y servidor LDAP). De forma predeterminada, esta opci&#243;n no est&#225; habilitada y el protocolo SSL no se utilizar&#225; para acceder a Directory Server. Sin embargo, si este atributo est&#225; habilitado, podr&#225; conectarse a un servidor que no utilice SSL.</p>
+<A NAME="fumxp"></A><h4>Atributo LDAP utilizado para recuperar el perfil de usuario</h4>
+<p>Especifica los encabezados que se utilizar&#225;n para buscar la solicitud del n&#250;mero MSISDN. Los valores admitidos son los siguientes:</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Encabezado de cookie</p></td><td valign="top"><p>Realiza la b&#250;squeda en la cookie.</p>
+</td></tr><tr><td valign="top"><p>Encabezado de solicitud</p></td><td valign="top"><p>Realiza la b&#250;squeda en el encabezado de solicitud. </p>
+</td></tr><tr><td valign="top"><p>Par&#225;metro de solicitud</p></td><td valign="top"><p>Realiza la b&#250;squeda en el par&#225;metro de solicitud. De forma predeterminada, todas las opciones est&#225;n seleccionadas.</p>
+</td></tr></table>
+<A NAME="fumxr"></A><h4>Devolver DN de usuario en autenticaci&#243;n</h4>
+<p>Esta opci&#243;n puede habilitarse cuando el directorio de Access Manager es igual al directorio configurado para MSISDN. En ese caso, esta opci&#243;n permite que el m&#243;dulo de autenticaci&#243;n devuelva el DN en lugar del Id. de usuario, y no es necesario realizar ninguna b&#250;squeda. Normalmente, un m&#243;dulo de autenticaci&#243;n devuelve s&#243;lo el Id. de usuario y el servicio de autenticaci&#243;n busca al usuario en la instancia local de Access Manager. Si se utiliza un directorio externo, normalmente esta opci&#243;n no est&#225; habilitada.</p>
+<A NAME="fumxs"></A><h4>Nivel de autenticaci&#243;n</h4>
+<p>El nivel de autenticaci&#243;n se define de forma independiente para cada m&#233;todo de autenticaci&#243;n. El valor indica en qu&#233; medida se debe confiar en un mecanismo de autenticaci&#243;n. Una vez que el usuario se ha autenticado, este valor se guarda en el token SSO de la sesi&#243;n. Cuando se presenta el token SSO a una aplicaci&#243;n a la que desea acceder el usuario, la aplicaci&#243;n utiliza el valor almacenado para determinar si el nivel es suficiente para permitir el acceso al usuario. Si el nivel de autenticaci&#243;n guardado en un token SSO no satisface el valor m&#237;nimo necesario, la aplicaci&#243;n puede solicitar al usuario que se autentique de nuevo mediante un servicio con un mayor nivel de autenticaci&#243;n. El valor predeterminado es 0.</p>
+<p><hr size="1" noshade><p><b>Nota &#8211; </b>Si no se especifica ning&#250;n nivel de autenticaci&#243;n, el token SSO almacena el valor especificado en el <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Nivel de autenticaci&#243;n predeterminado</A> del atributo de autenticaci&#243;n "Principal".</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>新しい認証連鎖を作成する
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="authentication.newauthconfig"></A><h3>新しい認証連鎖を作成する</h3>
+<ol><li><p><b><A NAME="indexterm-7"></A>新しい認証連鎖を追加するレルムの名前をクリックします。</b></p></li>
+<li><p><b>「認証」タブを選択します。</b></p></li>
+<li><p><b>「認証連鎖」リストの「新規」をクリックします。</b></p></li>
+<li><p><b>認証連鎖の名前を入力します。</b></p></li>
+<li><p><b>「了解」をクリックします。</b></p></li>
+<li><p><b>「追加」をクリックし、連鎖に含める認証モジュールインスタンスを定義します。そのためには、モジュールインスタンスの名前を「インスタンス」リストから選択します。このリストに表示されるモジュールインスタンス名は、「モジュールインスタンス」属性で作成されたものです。</b></p></li>
+<li><p><b>連鎖の基準を選択します。認証モジュールにこれらのフラグを定義することにより、認証モジュールの適用基準が確立されます。適用には階層があります。「必須」がもっとも高く、「オプション」がもっとも低くなっています。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>必要</p></td><td valign="top"><p>このモジュールインスタンスは成功する必要があります。成功した場合は、「認証連鎖」リストの順に認証が続行されます。失敗した場合、「認証連鎖」リストの順に認証が続行されることはなく、すぐに制御がアプリケーションに戻ります。</p>
+</td></tr><tr><td valign="top"><p>必須</p></td><td valign="top"><p>このモジュールに対する認証は成功する必要があります。連鎖内の必須モジュールのいずれかが失敗すると、認証連鎖全体は最終的に失敗となります。ただし、1 つの必須モジュールの成功や失敗にかかわらず、制御は連鎖内の次のモジュールに移ります。</p>
+</td></tr><tr><td valign="top"><p>十分</p></td><td valign="top"><p>このモジュールインスタンスは成功する必要がありません。成功した場合、モジュールインスタンスリストの順に認証が続行されることはなく、すぐに制御がアプリケーションに戻ります。失敗した場合は、「認証連鎖」リストの順に認証が続行されます。</p>
+</td></tr><tr><td valign="top"><p>オプション</p></td><td valign="top"><p>このモジュールインスタンスは成功する必要がありません。その成功や失敗にかかわらず、「認証連鎖」リストの順に認証が続行されます。</p>
+</td></tr></table>
+</li>
+<li><p><b>連鎖のオプションを入力します。これにより、モジュールの追加オプションをキーと値のペアで設定できます。複数のオプションはスペースで区切ります。</b></p></li>
+<li><p><b>次の属性を定義します。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>ログイン成功時に返す URL</p></td><td valign="top"><p>認証の成功時にユーザーをリダイレクトする URL を指定します。</p>
+</td></tr><tr><td valign="top"><p>ログイン失敗時に返す URL</p></td><td valign="top"><p>認証の失敗時にユーザーをリダイレクトする URL を指定します。</p>
+</td></tr><tr><td valign="top"><p>認証ポストプロセスクラス</p></td><td valign="top"><p>ログインの成功または失敗後に実行する認証後プロセスをカスタマイズするための Java クラス名を定義します。</p>
+</td></tr></table>
+</li>
+<li><p><b>「保存」をクリックします。</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

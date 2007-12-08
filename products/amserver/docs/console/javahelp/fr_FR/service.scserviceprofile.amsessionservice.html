@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Session
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.amsessionservice"></A><h3>Session</h3>
+<p><A NAME="indexterm-199"></A>Le service Session d&#233;finit les valeurs d'une session d'utilisateur authentifi&#233;, comme la dur&#233;e maximale de la session et la dur&#233;e d'inactivit&#233; maximale. Les attributs de session sont des attributs globaux, dynamiques ou utilisateur. Ces attributs sont les suivants :</p>
+<ul><li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfeu">Instance de configuration secondaire</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfew">Nombre maximal de r&#233;sultats renvoy&#233;s par la recherche</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfex">D&#233;lai d'attente de recherche</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfez">Avis de changement de propri&#233;t&#233;</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfey">Contraintes de quota</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffa">Expiration du d&#233;lai de lecture de la contrainte li&#233;e aux quotas</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffb">Exempter les administrateurs de niveau sup&#233;rieur de la v&#233;rification des contraintes </A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffc">Comportement observ&#233; en cas d'&#233;puisement du quota de sessions</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffd">Propri&#233;t&#233;s de notification</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffe">Dur&#233;e maximale de session</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfff">Dur&#233;e maximale d'inactivit&#233;</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffh">Dur&#233;e maximale de mise en cache</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffi">Sessions utilisateur actives</A></p>
+</li>
+</ul>
+<A NAME="fwfeu"></A><h4>Instance de configuration secondaire</h4>
+<p>Fournit les informations de connexion pour le r&#233;f&#233;rentiel de session utilis&#233; pour la fonction de reprise de session dans Access Manager. L'URL de l'&#233;quilibreur de charge doit &#234;tre fourni en tant qu'identificateur de cette configuration secondaire. Si la configuration secondaire est d&#233;finie dans ce cadre, la fonction de reprise de session sera automatiquement activ&#233;e et entrera en vigueur au red&#233;marrage du serveur. Pour plus d'informations, reportez-vous &#224; <A HREF="service.subconfigadd.html#service.subconfigadd">Ajout d'une configuration secondaire</A>.</p>
+<A NAME="fwfew"></A><h4>Nombre maximal de r&#233;sultats renvoy&#233;s par la recherche</h4>
+<p>Cet attribut sp&#233;cifie le nombre maximal de r&#233;sultats renvoy&#233;s par une recherche de session. La valeur par d&#233;faut est 120.</p>
+<A NAME="fwfex"></A><h4>D&#233;lai d'attente de recherche</h4>
+<p>Cet attribut d&#233;finit la dur&#233;e maximale avant expiration d'une recherche de session. La valeur par d&#233;faut est 5 secondes.</p>
+<A NAME="fwfez"></A><h4>Avis de changement de propri&#233;t&#233;</h4>
+<p>Active ou d&#233;sactive la notification de modification d'une propri&#233;t&#233; de session. Dans un environnement de connexion unique, une session Access Manager peut &#234;tre partag&#233;e par plusieurs applications. Lorsque cette fonctionnalit&#233; est activ&#233;e, si une application modifie une des propri&#233;t&#233;s de session sp&#233;cifi&#233;es dans la liste Propri&#233;t&#233;s de notification (d&#233;finie en tant qu'attribut de service de session distinct), la notification est envoy&#233;e aux autres applications faisant partie de cet environnement de connexion unique.</p>
+<A NAME="fwfey"></A><h4>Contraintes de quota</h4>
+<p>Active ou d&#233;sactive les contraintes li&#233;es aux quotas. L'application de contraintes li&#233;es aux quotas de session permet aux administrateurs de limiter le nombre de sessions actives/simultan&#233;es pour un utilisateur en fonction des param&#232;tres de contraintes d&#233;finis au niveau global ou des configurations associ&#233;es aux entit&#233;s (domaine/r&#244;le/utilisateur) auxquelles il appartient.</p>
+<p>La valeur par d&#233;faut pour cet attribut est OFF. Vous devez red&#233;marrer le serveur si les param&#232;tres sont modifi&#233;s.</p>
+<A NAME="fwffa"></A><h4>Expiration du d&#233;lai de lecture de la contrainte li&#233;e aux quotas</h4>
+<p>D&#233;finit la dur&#233;e (en millisecondes) de validit&#233; avant expiration d'une interrogation du r&#233;f&#233;rentiel de session sur le nombre de sessions utilisateur actives.</p>
+<p>Une fois la dur&#233;e maximale de lecture atteinte, une erreur est renvoy&#233;e. Cet attribut n'a d'effet que si la contrainte li&#233;e aux quotas de session est activ&#233;e dans le d&#233;ploiement de reprise de session. La valeur par d&#233;faut est de 6000 millisecondes. Vous devez red&#233;marrer le serveur si les param&#232;tres sont modifi&#233;s.</p>
+<A NAME="fwffb"></A><h4>Exempter les administrateurs de niveau sup&#233;rieur de la v&#233;rification des contraintes </h4>
+<p>Indique si les utilisateurs dot&#233;s du r&#244;le d'administrateur de niveau sup&#233;rieur doivent &#234;tre exempt&#233;s des v&#233;rifications de contraintes de session. Si OUI, m&#234;me si les contraintes de sessions sont activ&#233;es, aucune v&#233;rification des contraintes li&#233;es aux quotas de session n'est effectu&#233;e pour ces administrateurs.</p>
+<p>La valeur par d&#233;faut de cet attribut est NO. Vous devez red&#233;marrer le serveur si les param&#232;tres ont &#233;t&#233; modifi&#233;s. Cet attribut s'appliquera uniquement si la contrainte li&#233;e aux quotas de session est activ&#233;e.</p>
+<p><hr size="1" noshade><p><b>Remarque &#8211; </b>Le superutilisateur d&#233;fini pour Access Manager dans <tt>AMConfig.properties</tt> (<tt>com.sun.identity.authentication.super.user</tt>) est toujours exempt&#233; des v&#233;rifications de contraintes li&#233;es aux quotas de session. </p>
+<hr size="1" noshade></p><A NAME="fwffc"></A><h4>Comportement observ&#233; en cas d'&#233;puisement du quota de sessions</h4>
+<p>Sp&#233;cifie le comportement r&#233;sultant lorsque le quota de sessions d'un utilisateur est &#233;puis&#233;. Deux options peuvent &#234;tre s&#233;lectionn&#233;es pour cet attribut :</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>DESTROY_OLD_SESSION</p></td><td valign="top"><p>La prochaine session arrivant &#224; expiration sera supprim&#233;e.</p>
+</td></tr><tr><td valign="top"><p>DENY_ACCESS</p></td><td valign="top"><p>La prochaine demande de cr&#233;ation de session sera refus&#233;e.</p>
+</td></tr></table>
+<p>Cet attribut n'a d'effet que si la contrainte li&#233;e aux quotas de session est activ&#233;e et si la valeur par d&#233;faut de ce param&#232;tre est DESTROY_OLD_SESSION.</p>
+<A NAME="fwffd"></A><h4>Propri&#233;t&#233;s de notification</h4>
+<p>Lorsqu'une modification intervient sur une propri&#233;t&#233; de session d&#233;finie dans la liste, la notification est envoy&#233;e aux listeners enregistr&#233;s. Cet attribut n'a d'effet que si la fonctionnalit&#233; de Notification de modification de propri&#233;t&#233; de session est activ&#233;e.</p>
+<A NAME="fwffe"></A><h4>Dur&#233;e maximale de session</h4>
+<p>Cet attribut accepte une valeur en minutes pour exprimer la dur&#233;e maximale avant qu'une session n'arrive &#224; expiration et que l'utilisateur doive se r&#233;authentifier pour b&#233;n&#233;ficier &#224; nouveau d'un acc&#232;s. Une valeur sup&#233;rieure ou &#233;gale &#224; 1 est accept&#233;e. La valeur par d&#233;faut est 120. (Pour concilier les exigences en mati&#232;re de s&#233;curit&#233; et la facilit&#233; d'utilisation, vous pouvez choisir une valeur &#233;lev&#233;e pour la dur&#233;e maximale de session et une valeur relativement faible pour la dur&#233;e maximale d'inactivit&#233;.)) La dur&#233;e maximale de session limite la validit&#233; d'une session. Elle ne peut &#234;tre &#233;tendue au-del&#224; de la valeur configur&#233;e.</p>
+<A NAME="fwfff"></A><h4>Dur&#233;e maximale d'inactivit&#233;</h4>
+<p>Cet attribut accepte une valeur en minutes pour exprimer la dur&#233;e maximale d'inactivit&#233; avant qu'une session n'arrive &#224; expiration et que l'utilisateur doive se r&#233;authentifier pour b&#233;n&#233;ficier &#224; nouveau d'un acc&#232;s. Une valeur sup&#233;rieure ou &#233;gale &#224; 1 est accept&#233;e. La valeur par d&#233;faut est 30. (Pour concilier les exigences en mati&#232;re de s&#233;curit&#233; et la facilit&#233; d'utilisation, vous pouvez choisir une valeur &#233;lev&#233;e pour la dur&#233;e maximale de session et une valeur relativement faible pour la dur&#233;e maximale d'inactivit&#233;.))</p>
+<A NAME="fwffh"></A><h4>Dur&#233;e maximale de mise en cache</h4>
+<p>Cet attribut accepte une valeur en minutes correspondant &#224; l'intervalle maximal avant que le client ne doive contacter Access Manager pour rafra&#238;chir les informations de session en m&#233;moire cache. Une valeur sup&#233;rieure ou &#233;gale &#224; 0 est accept&#233;e. La valeur par d&#233;faut est 3. Il est conseill&#233; de choisir une dur&#233;e maximale de mise en cache toujours inf&#233;rieure &#224; la dur&#233;e maximale d'inactivit&#233;.</p>
+<A NAME="fwffi"></A><h4>Sessions utilisateur actives</h4>
+<p>Indique le nombre maximal de sessions simultan&#233;es autoris&#233;es pour un utilisateur.</p>
+
+<br />
+
+</body>
+</html>

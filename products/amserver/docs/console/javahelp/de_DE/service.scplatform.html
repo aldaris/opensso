@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Plattform
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scplatform"></A><h3>Plattform</h3>
+<p><A NAME="indexterm-208"></A>Mithilfe des Plattformdiensts k&#246;nnen zus&#228;tzliche Server zur Access Manager-Konfiguration hinzugef&#252;gt und andere Optionen auf der obersten Ebene der Access Manager-Anwendung &#252;bernommen werden. Bei den Plattformdienstattributen handelt es sich um globale Attribute. Es existieren folgende Attribute:</p>
+<ul><li><p><A HREF="service.scplatform.html#fxcsy">Site-Name</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcqf">Objektname</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcgy">Plattform-L&#228;ndereinstellung</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcpo">Cookie-Dom&#228;nen</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcsh">URL des Anmeldedienstes</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcrt">URL des Abmeldedienstes</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcmi">Verf&#252;gbare L&#228;ndereinstellungen</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxctg">Client-Zeichens&#228;tze</A></p>
+</li>
+</ul>
+<A NAME="fxcsy"></A><h4>Site-Name</h4>
+<p>Der Namensdienst liest diese Attribute w&#228;hrend der Initialisierung ein. Diese Liste identifiziert den FQDN mit der Anschlussnummer des Lastenausgleichs oder dem SRA f&#252;r den Lastenausgleich auf den Access Manager-Back-end-Servern eindeutig. Wenn sich der in einer Dienst-URL-Anforderung angegebene Host nicht in dieser Liste befindet, lehnt der Namensdienst diese Anforderung ab. Nur das Namensdienstprotokoll sollte f&#252;r dieses Attribut angegeben sein. Weitere Informationen finden Sie unter <A HREF="service.scplatformsitelistadd.html#service.scplatformsitelistadd">So erstellen Sie einen neuen Site-Namen</A>. </p>
+<A NAME="fxcqf"></A><h4>Objektname</h4>
+<p>Der Namensdienst liest diese Attribute w&#228;hrend der Initialisierung ein. Diese Liste enth&#228;lt die innerhalb einer Access Manager-Konfiguration verf&#252;gbaren Access Manager-Sitzungs-Server. Sind beispielsweise zwei Access Manager installiert und sollen diese als eine Instanz zusammenarbeiten, m&#252;ssen beide in dieser Liste eingetragen sein. Wenn sich der in einer Dienst-URL-Anforderung angegebene Host nicht in dieser Liste befindet, lehnt der Namensdienst diese Anforderung ab. Nur das Namensdienstprotokoll sollte f&#252;r dieses Attribut angegeben sein. Weitere Informationen finden Sie unter <A HREF="service.scplatformserverlistadd.html#service.scplatformserverlistadd">So erstellen Sie einen neuen Objektnamen</A>.</p>
+<A NAME="fxcgy"></A><h4>Plattform-L&#228;ndereinstellung</h4>
+<p>Der Wert dieses Attributs ist der Standard-Sprachenuntertyp, mit dem Access Manager installiert wurde. Die Authentifizierungs-, Protokoll- und Verwaltungsdienste werden in der mit diesem Attribut eingestellten Sprache verwaltet. Der Standardwert ist en_US. Eine Liste der unterst&#252;tzten Sprachuntertypen finden Sie unter <A HREF="supportedlang.html#supportedlang">Unterst&#252;tzte Sprach- bzw. L&#228;ndereinstellungen</A>.</p>
+<A NAME="fxcpo"></A><h4>Cookie-Dom&#228;nen</h4>
+<p>Dieses Attribut gibt die Liste der Dom&#228;nen an, die im Cookie-Header zur&#252;ckgegeben werden, wenn w&#228;hrend der Authentifizierung ein Cookie f&#252;r den Browser des Benutzers eingerichtet wird. Falls dieses Attribut leer ist, wird keine Cookie-Dom&#228;ne eingerichtet. Mit anderen Worten: Das Access Manager-Sitzungscookie wird lediglich an Access Manager weitergeleitet und an keinen anderen Server der Dom&#228;ne.</p>
+<p>Wenn f&#252;r andere Server in der Dom&#228;ne SSO erforderlich ist, muss in diesem Attribut die Cookie-Dom&#228;ne angegeben werden. Wenn auf einem Access Manager zwei Schnittstellen in unterschiedlichen Dom&#228;nen vorhanden sind, m&#252;ssen in diesem Attribut beide Cookie-Dom&#228;nen angegeben werden. Wird ein Lastenausgleichssystem eingesetzt, muss die Dom&#228;ne dieses Systems als Cookie-Dom&#228;ne angegeben werden und nicht die Dom&#228;ne der Server hinter diesem System. Der Standardwert f&#252;r dieses Feld ist die Dom&#228;ne des installierten Access Manager.</p>
+<A NAME="fxcsh"></A><h4>URL des Anmeldedienstes</h4>
+<p>In diesem Feld wird der URL der Anmeldeseite angegeben. Der Standardwert f&#252;r dieses Attribut lautet <tt>/Service_DEPLOY_URI/UI/Login</tt>. </p>
+<A NAME="fxcrt"></A><h4>URL des Abmeldedienstes</h4>
+<p>In diesem Feld wird der URL der Abmeldeseite angegeben. Der Standardwert f&#252;r dieses Attribut lautet <tt>/Service_DEPLOY_URI/UI/Logout</tt>. </p>
+<A NAME="fxcmi"></A><h4>Verf&#252;gbare L&#228;ndereinstellungen</h4>
+<p>Dieses Attribut speichert alle f&#252;r die Plattform verf&#252;gbaren L&#228;ndereinstellungen. Verwenden Sie nach M&#246;glichkeit eine Anwendung, die dem Benutzer die Auswahl der L&#228;ndereinstellungen erm&#246;glicht. Eine solche Anwendung ruft dieses Attribut aus dem Plattformprofil ab und zeigt dem Benutzer die Liste der verf&#252;gbaren L&#228;ndereinstellungen an. Die vom Benutzer ausgew&#228;hlte L&#228;ndereinstellung wird von der Anwendung im Benutzereintrag <i> preferredLocale</i> gespeichert.</p>
+<A NAME="fxctg"></A><h4>Client-Zeichens&#228;tze</h4>
+<p>Dieses Attribut gibt die Zeichens&#228;tze f&#252;r unterschiedliche Clients auf Plattformebene an. Es enth&#228;lt eine Liste der Client-Typen mit den zugeh&#246;rigen Zeichens&#228;tzen. Weitere Informationen finden Sie unter <A HREF="service.scplatformclientcharsetsadd.html#service.scplatformclientcharsetsadd">So erstellen Sie einen neuen Zeichensatz</A>.</p>
+
+<br />
+
+</body>
+</html>

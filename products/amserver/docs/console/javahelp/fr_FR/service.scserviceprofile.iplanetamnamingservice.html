@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Attribution de nom 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamnamingservice"></A><h3>Attribution de nom </h3>
+<p><A NAME="indexterm-207"></A>Le service Attribution de nom permet d'obtenir et de d&#233;finir des URL, des plug-ins et des configurations, ainsi que des notifications de demande pour divers autres services d'Access Manager (session, authentification, journalisation, SAML et Federation).</p>
+<p>Ce service permet aux clients de trouver l'URL de service correct si la plate-forme ex&#233;cute plusieurs instances d'Access Manager. Lorsqu'un URL d'attribution de nom est trouv&#233;, le service Attribution de nom d&#233;code la session de l'utilisateur et remplace de mani&#232;re dynamique le protocole, l'h&#244;te, le port par les param&#232;tres de la session. Ceci garantit que l'URL retourn&#233; par la service correspond &#224; l'h&#244;te sur lequel est cr&#233;&#233;e la session utilisateur. Les attributs Attribution de nom sont les suivants :</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgc">URL du service de profil</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgg">URL du service de session</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgf">URL du service de journalisation</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgh">URL du service de modalit&#233;</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfge">URL du service d'authentification</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgl">URL du service profil Web SAML/art&#233;fact SAML</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgm">URL du service SOAP SAML</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgk">URL du service profil Web SAML/POST SAML</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgi">URL du service du gestionnaire d'assertions SAML</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgn">URL du service du gestionnaire d'assertions de f&#233;d&#233;rations</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgp">URL du gestionnaire de jeton de s&#233;curit&#233;</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgo">URL d'arriv&#233;e JAXRPC</A></p>
+</li>
+</ul>
+<A NAME="fwfgc"></A><h4>URL du service de profil</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/profileservice</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL de profil sur la base des param&#232;tres de session sp&#233;cifiques.</p>
+<A NAME="fwfgg"></A><h4>URL du service de session</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocole://%h&#244;te:%port/URI_DEPLOIEMENT_Serveur/sessionservice</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL de session sur la base des param&#232;tres de session sp&#233;cifiques.</p>
+<A NAME="fwfgf"></A><h4>URL du service de journalisation</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/loggingservice</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL de journalisation sur la base des param&#232;tres de session sp&#233;cifiques.</p>
+<A NAME="fwfgh"></A><h4>URL du service de modalit&#233;</h4>
+<p>Ce champ accepte une valeur du type : </p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL de strat&#233;gie sur la base des param&#232;tres de session sp&#233;cifiques.</p>
+<A NAME="fwfge"></A><h4>URL du service d'authentification</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocole://%h&#244;te:%port/URI_DEPLOIEMENT_Serveur/serviceauth</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL d'authentification sur la base des param&#232;tres de session sp&#233;cifiques.</p>
+<A NAME="fwfgl"></A><h4>URL du service profil Web SAML/art&#233;fact SAML</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocole://%h&#244;te:%port/URI_DEPLOIEMENT_Serveur/SAMLAwareServlet </tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL du service profil Web SAML/art&#233;fact SAML sur la base des param&#232;tres de session sp&#233;cifiques. </p>
+<A NAME="fwfgm"></A><h4>URL du service SOAP SAML</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocole://%h&#244;te:%port/URI_DEPLOIEMENT_Serveur/SAMLSOAPReceiver </tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL du service SOAP SAML sur la base des param&#232;tres de session sp&#233;cifiques.</p>
+<A NAME="fwfgk"></A><h4>URL du service profil Web SAML/POST SAML</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocole://%h&#244;te:%port/URI_DEPLOIEMENT_Serveur/SAMLPOSTProfileServlet</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL du service profil Web/POST SAML sur la base des param&#232;tres de session sp&#233;cifiques. </p>
+<A NAME="fwfgi"></A><h4>URL du service du gestionnaire d'assertions SAML</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocole://%h&#244;te:%port/URI_DEPLOIEMENT_Serveur/AssertionManagerServlet/AssertionManagerIF</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL du service du gestionnaire d'assertions SAML sur la base des param&#232;tres de session sp&#233;cifiques. </p>
+<A NAME="fwfgn"></A><h4>URL du service du gestionnaire d'assertions de f&#233;d&#233;rations</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocol://%host:%port/amserver/FSAssertionManagerServlet/FSAssertionMana gerIF</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL du service du gestionnaire d'assertions de f&#233;d&#233;ration sur la base des param&#232;tres de session sp&#233;cifiques. </p>
+<A NAME="fwfgp"></A><h4>URL du gestionnaire de jeton de s&#233;curit&#233;</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocole://%h&#244;te:%port/amserver/SecurityTokenManagerServlet/SecurityTokenManagerIF/</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL du gestionnaire de jetons de s&#233;curit&#233; sur la base des param&#232;tres de session sp&#233;cifiques. </p>
+<A NAME="fwfgo"></A><h4>URL d'arriv&#233;e JAXRPC</h4>
+<p>Ce champ accepte une valeur du type :</p>
+<p><tt>%protocole://%h&#244;te:%port/amserver/jaxrpc/</tt></p>
+<p>Cette syntaxe permet le remplacement dynamique de l'URL d'arriv&#233;e JAXRPC sur la base des param&#232;tres de session sp&#233;cifiques.</p>
+
+<br />
+
+</body>
+</html>

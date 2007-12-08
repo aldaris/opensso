@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>会话
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.amsessionservice"></A><h3>会话</h3>
+<p><A NAME="indexterm-199"></A>“会话”服务用于定义已验证用户会话的值，如最长会话时间和最长空闲时间。“会话”属性可以是全局、动态或用户属性。这些属性包括：</p>
+<ul><li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfeu">辅助配置实例</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfew">搜索结果的最大数目</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfex">搜索超时</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfez">属性更改通知</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfey">配额限制</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffa">配额限制读取超时</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffb">免除顶层管理员的限制检查</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffc">会话配额用尽时的操作</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffd">通知属性</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffe">最长会话时间</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfff">最长空闲时间</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffh">最长缓存时间</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffi">活动用户会话</A></p>
+</li>
+</ul>
+<A NAME="fwfeu"></A><h4>辅助配置实例</h4>
+<p>为 Access Manager 会话故障转移功能所使用的会话库提供连接信息。负载平衡器的 URL 应作为此辅助配置的标识符给出。如果此时定义了辅助配置，则会话故障转移功能将自动启用并在服务器重新启动后生效。有关更多信息，参见<A HREF="service.subconfigadd.html#service.subconfigadd">添加子配置</A>。</p>
+<A NAME="fwfew"></A><h4>搜索结果的最大数目</h4>
+<p>该属性指定会话搜索返回的结果的最大数目。默认值为 120。</p>
+<A NAME="fwfex"></A><h4>搜索超时</h4>
+<p>该属性定义在会话搜索终止前，允许的最长搜索时间。默认值为 5 秒。</p>
+<A NAME="fwfez"></A><h4>属性更改通知</h4>
+<p>启用或禁用特性会话属性更改通知。在单点登录环境下，一个 Access Manager 会话可以被多个应用程序共享。如果将此功能设置为 ON，则当某个应用程序更改“通知属性”列表中所指定的任何会话属性（被定义为独立会话服务属性）时，便会向参与相同单点登录环境的其他应用程序发送通知。</p>
+<A NAME="fwfey"></A><h4>配额限制</h4>
+<p>启用或禁用会话配额限制。通过执行会话配额限制，管理员能够基于全局级别上的限制设置来限制一个用户拥有特定数目的活动/可同时进行的会话，或与该特殊用户所属的条目（领域/角色/用户）相关的配置。</p>
+<p>该属性的默认设置是“关闭”。如果更改了设置，则必须重新启动服务器。</p>
+<A NAME="fwffa"></A><h4>配额限制读取超时</h4>
+<p>定义对会话库进行活动用户会话计数查询多长时间（以毫秒为单位）后将超时。</p>
+<p>达到最长读取时间后，将返回错误信息。该属性只有在会话故障转移部署中启用了会话配额限制时才生效。默认值为 6000 毫秒。如果更改了设置，则必须重新启动服务器。</p>
+<A NAME="fwffb"></A><h4>免除顶层管理员的限制检查</h4>
+<p>指定“顶层管理员角色”的用户是否应免除会话限制检查。如果“是”，即使启用会话限制，也不会对这些管理员进行会话配额检查。</p>
+<p>该属性的默认设置为“否”。如果更改了设置，则必须重新启动服务器。只有启用会话配额限制时此属性才会生效。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>在 <tt>AMConfig.properties</tt> (<tt>com.sun.identity.authentication.super.user</tt>) 中定义的 Access Manager 超级用户可始终免除会话配额限制检查。</p>
+<hr size="1" noshade></p><A NAME="fwffc"></A><h4>会话配额用尽时的操作</h4>
+<p>指定用户会话配额用尽时的操作。该属性有两个可选项：</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>DESTROY_OLD_SESSION</p></td><td valign="top"><p>将会终止下一即将过期的会话。</p>
+</td></tr><tr><td valign="top"><p>DENY_ACCESS</p></td><td valign="top"><p>将会拒绝新建会话请求。</p>
+</td></tr></table>
+<p>仅当会话配额限制已启用且默认设置为 DESTROY_OLD_SESSION 时，此属性才生效。</p>
+<A NAME="fwffd"></A><h4>通知属性</h4>
+<p>当列表中定义的会话属性发生更改时，将向已注册的侦听程序发送通知。该属性只有在会话属性更改通知启用时才生效。</p>
+<A NAME="fwffe"></A><h4>最长会话时间</h4>
+<p>该属性的值以分钟为单位，这个值表示经过多长时间后会话将过期，过期后用户就必须重新验证才能重新获得访问权。它接受 1 以上（含 0）的值。默认值为 120。（为了同时实现安全和方便两方面的要求，可以考虑将“最长会话时间”的时间间隔设置为一个较大的值，而将“最长空闲时间”的时间间隔设置为一个相对小的值。）“最长会话时间”限制了会话的有效性。会话不能超过设定的“最长会话时间”。</p>
+<A NAME="fwfff"></A><h4>最长空闲时间</h4>
+<p>该属性的值以分钟为单位，这个值表示会话在过期以前能够处于非活动状态的最长时间，过期后用户就必须重新验证才能重新获得访问权。它接受 1 以上（含 0）的值。默认值为 30。（为了同时满足安全与方便这两方面的要求，可以考虑将“最长会话时间”的时间间隔设置为一个较大的值，而将“最长空闲时间”的时间间隔设置为一个相对小的值。）</p>
+<A NAME="fwffh"></A><h4>最长缓存时间</h4>
+<p>该属性的值以分钟为单位，这个值表示客户机联系 Access Manager 来刷新缓存的会话信息的最长时间间隔。它接受 0 或更大的值。默认值为 3。建议最长缓存时间应始终小于最长空闲时间。</p>
+<A NAME="fwffi"></A><h4>活动用户会话</h4>
+<p>指定一个用户可同时进行的最大会话数。</p>
+
+<br />
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Autenticaci&#243;n
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="authentication.authproperties"></A><h2>Autenticaci&#243;n</h2>
+<p><A NAME="indexterm-5"></A>El servicio de autenticaci&#243;n general debe registrarse como servicio en un dominio para que un usuario pueda iniciar la sesi&#243;n utilizando los otros tipos de m&#243;dulos de autenticaci&#243;n. El servicio de autenticaci&#243;n principal permite al administrador de Access Manager definir valores predeterminados para los par&#225;metros de autenticaci&#243;n de un dominio. Estos valores pueden utilizarse si no se ha definido ning&#250;n otro valor que los anule en el m&#243;dulo de autenticaci&#243;n especificado. Los valores predeterminados del servicio de autenticaci&#243;n principal se definen en el archivo <tt>amAuth.xml </tt> y se almacenan en Directory Server despu&#233;s de la instalaci&#243;n.</p>
+<p>Entre las propiedades de autenticaci&#243;n, se incluyen:</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>Propiedades avanzadas</p></td><td valign="top"><p>Si hace clic en el bot&#243;n Advanced Properties (Propiedades avanzadas), se muestran los atributos de autenticaci&#243;n principal que pueden definirse para el dominio. No se mostrar&#225;n los atributos globales, ya que no se pueden aplicar al dominio.</p>
+</td></tr><tr><td valign="top"><p>Cadena de autenticaci&#243;n predeterminada</p></td><td valign="top"><p>Define la cadena de autenticaci&#243;n que se va a utilizar para el dominio. Una vez creada la nueva cadena en el atributo de cadena de autenticaci&#243;n, aparecer&#225; en la lista desplegable y permitir&#225; su selecci&#243;n. Consulte <A HREF="authentication.newauthconfig.html#authentication.newauthconfig">Para crear un nuevo encadenamiento de autenticaci&#243;n</A> para obtener m&#225;s informaci&#243;n.</p>
+</td></tr><tr><td valign="top"><p>Cadena de autenticaci&#243;n del administrador</p></td><td valign="top"><p>Define la cadena de autenticaci&#243;n s&#243;lo para los administradores. Este atributo se puede utilizar si la cadena de autenticaci&#243;n de los administradores tiene que ser distinta de la cadena de los usuarios finales. Los m&#243;dulos configurados en este atributo se heredan cuando se accede a la consola de Access Manager.</p>
+</td></tr><tr><td valign="top"><p>URL de &#233;xito predeterminada</p></td><td valign="top"><p>Especifica la direcci&#243;n URL a la que se redirigir&#225; el usuario si la autenticaci&#243;n en el dominio se realiza con &#233;xito.</p>
+</td></tr><tr><td valign="top"><p>Instancias del m&#243;dulo</p></td><td valign="top"><p>Permite definir y configurar los m&#243;dulos de autenticaci&#243;n predeterminados de Access Manager para el dominio. Se pueden agregar varias instancias del mismo m&#243;dulo de autenticaci&#243;n. Consulte <A HREF="authentication.newauthinstance.html#authentication.newauthinstance">Para crear una nueva instancia de m&#243;dulo de autenticaci&#243;n</A> para obtener m&#225;s informaci&#243;n.</p>
+</td></tr><tr><td valign="top"><p>Cadena de autenticaci&#243;n</p></td><td valign="top"><p>Se pueden configurar uno o varios m&#243;dulos de autenticaci&#243;n a los que el usuario debe transferir las credenciales de autenticaci&#243;n. Este proceso se denomina encadenamiento de autenticaci&#243;n. Este atributo permite definir las opciones de encadenamiento de autenticaci&#243;n para el dominio. Las cadenas que cree se mostrar&#225;n en la lista de cadenas de autenticaci&#243;n predeterminadas. Consulte <A HREF="authentication.newauthconfig.html#authentication.newauthconfig">Para crear un nuevo encadenamiento de autenticaci&#243;n</A> para obtener m&#225;s informaci&#243;n.</p>
+</td></tr></table>
+
+<br />
+
+</body>
+</html>

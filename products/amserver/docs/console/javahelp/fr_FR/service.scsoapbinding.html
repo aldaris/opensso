@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Service de liaison SOAP
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scsoapbinding"></A><h2>Service de liaison SOAP</h2>
+<A NAME="indexterm-158"></A><p>Service de liaison SOAP est une couche de transport qui permet d'envoyer et de recevoir des messages SOAP. Dans le processus Service de liaison SOAP, un service d'identit&#233; appelle l'interface de programmation d'application c&#244;t&#233; client pour cr&#233;er un message et l'envoie &#224; l'URL d'extr&#233;mit&#233; du SOAP, en l'occurrence un servlet r&#233;cepteur SOAP. Le servlet r&#233;cepteur SOAP re&#231;oit le message, v&#233;rifie la signature et cr&#233;e un second message. Il appelle ensuite le gestionnaire de demandes appropri&#233; pour envoyer en r&#233;ponse le second messages au service d'identit&#233; correspondant. Le service d'identit&#233; traite le second message, g&#233;n&#232;re une r&#233;ponse, puis renvoie cette r&#233;ponse au servlet r&#233;cepteur SOAP. Le r&#233;cepteur SOAP, &#224; son tour, renvoie la r&#233;ponse au service d'identit&#233;, qui la traite. </p>
+<p>Les attributs gg&#233;n&#233;raux du service Service de liaison SOAP peuvent &#234;tre configur&#233;s pour votre impl&#233;mentation.</p>
+<ul><li><p><A HREF="requesthandlerlist.html#requesthandlerlist">Liste de gestionnaires de demandes</A></p>
+</li>
+<li><p><A HREF="webserviceauthenticator.html#webserviceauthenticator">Authentificateur de service Web</A></p>
+</li>
+<li><p><A HREF="soapsuppauthmech.html#soapsuppauthmech">M&#233;canismes d'authentification pris en charge</A></p>
+</li>
+</ul>
+<p>La t&#226;che suivante est associ&#233;e &#224; la configuration du Service de liaison SOAP :</p>
+<ul><li><p><A HREF="service.scsoapbindingrequesthandlerlistadd.html#service.scsoapbindingrequesthandlerlistadd">Configuration d'un gestionnaire de demandes</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

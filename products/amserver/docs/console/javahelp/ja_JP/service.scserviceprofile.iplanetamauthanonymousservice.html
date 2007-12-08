@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>匿名
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthanonymousservice"></A><h3>匿名</h3>
+<p><A NAME="indexterm-174"></A>このモジュールタイプにより、ユーザーは証明情報を指定せずにログインできます。だれでもパスワードを入力せずに匿名でログインできるようにするために、匿名ユーザーを作成できます。匿名接続は通常、匿名ユーザーがサーバーに対するアクセスを制限されるように Access Manager 管理者によってカスタマイズされます。匿名認証属性はレルム属性です。属性は次のとおりです。</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthanonymousservice.html#fwblp">「有効な匿名ユーザー」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthanonymousservice.html#fwbnz">「デフォルトの匿名ユーザー名」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthanonymousservice.html#fwbto">「大文字と小文字を区別するユーザー ID」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthanonymousservice.html#fwbli">「認証レベル」</A></p>
+</li>
+</ul>
+<A NAME="fwblp"></A><h4>有効な匿名ユーザー</h4>
+<p>証明情報を指定しないでログインする権限のあるユーザー ID のリストが含まれています。ユーザーのログイン名がこのリストのユーザー ID に一致した場合は、アクセスが許可され、指定したユーザー ID にセッションが割り当てられます。</p>
+<p>このリストが空の場合、以下のデフォルトモジュールインスタンスログイン URL にアクセスすると、デフォルトの匿名ユーザー名として認証されます。</p>
+<p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name </tt></p>
+<p>このリストが空でない場合、デフォルトモジュールインスタンスログイン URL (上記と同じ) にログインすると、ユーザーは有効な匿名ユーザー名を入力するよう要求されます。このリストが空でない場合は、ユーザーは次の URL にアクセスしてログインページを表示せずに、ログインすることができます。</p>
+<p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name&#38;IDToken1=&#60;valid Anonymous username></tt></p>
+<A NAME="fwbnz"></A><h4>デフォルトの匿名ユーザー名</h4>
+<p>「有効な匿名ユーザーリスト」が空白で、次のデフォルトモジュールインスタンスログイン URL がアクセスされた場合に、セッションが割り当てられるユーザー ID を定義します。</p>
+<p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name </tt></p>
+<p>デフォルト値は anonymous です。匿名ユーザーはレルムにも作成する必要があります。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>「有効な匿名ユーザーリスト」が空白でない場合は、「デフォルトの匿名ユーザー名」で定義されたユーザーを使用して、ログインページにアクセスせずにログインすることができます。これは、次の URL にアクセスすることで実行できます。</p>
+<p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name&#38;IDToken1= </tt> <tt></tt><i>デフォルトの匿名ユーザー名<tt></i></tt></p>
+<hr size="1" noshade></p><A NAME="fwbto"></A><h4>大文字と小文字を区別するユーザー ID</h4>
+<p>有効な場合、このオプションでユーザー ID の大文字と小文字を区別できます。デフォルトでは、この属性は無効です。</p>
+<A NAME="fwbli"></A><h4>認証レベル</h4>
+<p>認証レベルは認証方法ごとに個別に設定します。この値は、認証メカニズムの信頼度を示します。ユーザーが認証を受けると、この値がセッションの SSO トークンに格納されます。ユーザーがアクセスするアプリケーションに SSO トークンが提供されると、そのアプリケーションは格納されている値を使用して、ユーザーにアクセスを許可するのに十分なレベルかどうかを判別します。SSO トークンに格納されている認証レベルが必要な最小値に満たない場合、アプリケーションはユーザーにより高い認証レベルのサービスで認証を再度受けるよう要求することがあります。デフォルト値は 0 です。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>認証レベルの指定がない場合、SSO トークンはコア認証属性の <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">「デフォルト認証レベル」</A>で指定した値を格納します。</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

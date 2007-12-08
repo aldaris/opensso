@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>支援的指令
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="supporteddirectives"></A><h3>支援的指令</h3>
+<A NAME="indexterm-132"></A><A NAME="indexterm-133"></A><p>此屬性可讓您為資源指定策略相關指令。如果服務提供者想要使用不支援的指令，請求將失敗。下表詳述可用的選項。</p>
+
+<table cellspacing="5" border="1">
+<tr><th scope="col"><p>指令</p></th><th scope="col"><p>目的</p></th></tr>
+<tr><td><p><tt>AuthenticateRequester</tt></p></td><td><p>探索服務應該在其回應中包括 SAML 指定 (包含 <tt>AuthenticationStatement</tt>)，以讓用戶端認證到代管資源之服務實例。</p></td></tr>
+<tr><td><p><tt>AuthenticateSessionContext</tt></p></td><td><p>探索服務應該在其指出階段作業狀態的回應中包括 SAML 指定 (包含 <tt>SessionContextStatement</tt>)。</p></td></tr>
+<tr><td><p><tt>AuthorizeRequestor</tt></p></td><td><p>探索服務應該在其指出是否允許用戶端存取資源的回應中包括 SAML 指定 (包含 <tt>ResourceAccessStatement</tt>)。</p></td></tr>
+<tr><td><p><tt>EncryptResourceID</tt></p></td><td><p>探索服務應該加密資源識別碼以回應所有用戶端。</p></td></tr>
+<tr><td><p><tt>GenerateBearerToken</tt></p></td><td><p>若要與 Bearer 記號認證搭配使用，探索服務應該產生一個記號，授予 Bearer 存取資源的權限。</p></td></tr>
+</table><hr size="1" noshade><p><IMG ALT="注意" src="graphics/caution.gif">  <b>注意 &#8211; </b><tt>AuthorizeRequestor</tt> 與 <tt>EncryptResourceID</tt> 指令不能一起使用。</p><hr size="1" noshade>
+<br />
+
+</body>
+</html>

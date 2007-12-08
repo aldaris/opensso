@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>So f&#252;gen Sie einer Richtlinie eine Regel hinzu.
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="policy.ruleadd"></A><h4>So f&#252;gen Sie einer Richtlinie eine Regel hinzu.</h4>
+<ol><li><p><b><A NAME="indexterm-25"></A>Wenn Sie die Richtlinie bereits erstellt haben, klicken Sie auf den Namen der Richtlinie, f&#252;r die Sie die Regel hinzuf&#252;gen m&#246;chten. Falls die Richtlinie noch nicht erstellt wurde, ziehen Sie <A HREF="policy.policynormaladd.html#policy.policynormaladd">So erstellen Sie eine neue normale Richtlinie</A> zurate. </b></p></li>
+<li><p><b>Klicken Sie unter dem Men&#252; &#8220;Regeln&#34; auf &#8220;Neu&#34;.</b></p></li>
+<li><p><b>W&#228;hlen Sie f&#252;r die Regel einen der folgenden Standard-Diensttypen aus. Wenn f&#252;r die Richtlinie weitere Dienste aktiviert sind, ist die Liste eventuell l&#228;nger:</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>Discovery-Dienst</p></td><td valign="top"><p>Legt die Autorisierungsaktionen f&#252;r Discovery-Dienstanfrage- und Protokoll&#228;nderungsaufrufe von Webdienst-Clients f&#252;r eine bestimmte Ressource fest.</p>
+</td></tr><tr><td valign="top"><p>Pers&#246;nlicher Liberty-Profildienst</p></td><td valign="top"><p>Legt die Autorisierungsaktionen f&#252;r pers&#246;nliche Liberty-Profildienstanfrage- und Protokoll&#228;nderungsaufrufe von Webdienst-Clients f&#252;r eine bestimmte Ressource fest.</p>
+</td></tr><tr><td valign="top"><p>URL-Richtlinien-Agent</p></td><td valign="top"><p>Definiert Autorisierungsaktionen f&#252;r den URL-Richtlinien-Agent-Dienst. Dieser Typ kommt bei der Definition von Richtlinien zum Schutz von HTTP- und HTTPS-URLs zum Einsatz. Dies ist der Fall, wenn Access Manager-Richtlinien am h&#228;ufigsten verwendet werden.</p>
+</td></tr></table>
+</li>
+<li><p><b>Klicken Sie auf &#8220;Weiter&#34;.</b></p></li>
+<li><p><b>Geben Sie einen Namen und einen Ressourcennamen f&#252;r die Regel ein.</b></p><p>Gegenw&#228;rtig unterst&#252;tzen Access Manager-Richtlinien-Agenten nur <tt>http://</tt>- und <tt>https://</tt>-Ressourcen und keine IP-Adressen anstelle des Hostnamens.</p>
+<p>Platzhalter werden f&#252;r Protokoll, Host, Port und Ressourcenname unterst&#252;tzt. Beispiel:</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>http*://*:*/*.html</pre>
+</td></table><br><p>Der URL-Richtlinien-Agent-Dienst verwendet die Standardportnummer 80 f&#252;r <tt>http://</tt> und 443 f&#252;r <tt>https://</tt>, falls keine Portnummern angegeben werden.</p>
+<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Schritt 6 und 7 gelten nicht f&#252;r Bezugsrichtlinien.</p>
+<hr size="1" noshade></p></li>
+<li><p><b>W&#228;hlen Sie die Aktion f&#252;r diese Regel aus. Abh&#228;ngig vom Diensttyp stehen folgende Aktionen zur Auswahl:</b></p><ul><li><p>LOOKUP (Discovery-Dienst)</p>
+</li>
+<li><p>UPDATE (Discovery-Dienst)</p>
+</li>
+<li><p>MODIFY (Pers&#246;nlicher Liberty-Profildienst)</p>
+</li>
+<li><p>QUERY (Pers&#246;nlicher Liberty-Profildienst)</p>
+</li>
+<li><p>GET (URL-Richtlinien-Agent)</p>
+</li>
+<li><p>POST (URL-Richtlinien-Agent)</p>
+</li>
+</ul>
+</li>
+<li><p><b>W&#228;hlen Sie die Aktionswerte aus.</b></p><ul><li><p>Interaktion f&#252;r Zustimmung: Ruft f&#252;r eine Ressource das Liberty-Interaktionsprotokoll f&#252;r Zustimmung auf. Diese Aktion ist nur auf den pers&#246;nlichen Liberty-Profildienst anwendbar.</p>
+</li>
+<li><p>Interaktion f&#252;r Wert: Ruft f&#252;r eine Ressource das Liberty-Interaktionsprotokoll f&#252;r einen Wert auf. Diese Aktion ist nur auf den pers&#246;nlichen Liberty-Profildienst anwendbar.</p>
+</li>
+<li><p>Zulassen: Erm&#246;glicht den Zugriff auf die Ressource, die mit der in der Regel definierten Ressource &#252;bereinstimmt.</p>
+</li>
+<li><p>Verweigern: Verweigert den Zugriff auf die Ressource, die mit der in der Regel definierten Ressource &#252;bereinstimmt.</p>
+<p>Verweigerungsregeln haben stets Vorrang vor Zulassungsregeln in einer Richtlinie. Wenn Sie beispielsweise zwei Richtlinien f&#252;r eine bestimmte Ressource haben, von denen eine den Zugriff verweigert und die andere den Zugriff erlaubt, dann wird der Zugriff verweigert (vorausgesetzt, dass die Bedingungen f&#252;r beide Richtlinien erf&#252;llt sind). Es wird empfohlen, die Verweigerungsrichtlinien mit &#228;u&#223;erster Vorsicht zu verwenden, da sie zu m&#246;glichen Konflikten zwischen den Richtlinien f&#252;hren k&#246;nnen. In der Regel sollte der Richtliniendefinitionsprozess nur Zulassungsregeln verwenden und standardm&#228;&#223;ig die Verweigerung anwenden, wenn keine Richtlinien vorhanden sind, um den Verweigerungsfall zu erf&#252;llen.</p>
+<p>Wenn explizite Verweigerungsregeln verwendet werden, k&#246;nnen Richtlinien, die einem bestimmten Benutzer &#252;ber verschiedene Betreffe zugewiesen wurden (wie Rollen- und/oder Gruppenmitgliedschaft) zu einem verweigerten Zugriff auf eine Ressource f&#252;hren, auch wenn mindestens eine der Richtlinien den Zugriff erlaubt. Wenn beispielsweise eine Verweigerungsrichtlinie f&#252;r eine auf eine Mitarbeiterrolle anwendbare Ressource vorhanden ist und eine Zulassungsrichtlinie f&#252;r die gleiche Ressource f&#252;r eine Managerrolle existiert, werden Richtlinienentscheidungen f&#252;r Benutzer, denen sowohl eine Mitarbeiter- als auch eine Managerrolle zugewiesen wurde, verweigert.</p>
+<p>Eine M&#246;glichkeit, das Problem zu beheben, besteht darin, Richtlinien mit Bedingungs-Plugins zu entwickeln. Im obigen Beispiel w&#252;rde eine &#8220;Rollenbedingung&#34;, die die Verweigerungsrichtlinie auf Benutzer, die sich f&#252;r die Mitarbeiterrolle authentifizieren, und die Zulassungsrichtlinie auf Benutzer anwendet, die sich f&#252;r die Managerrolle authentifizieren, helfen, die beiden Richtlinien zu unterscheiden. Eine andere M&#246;glichkeit besteht darin, die <tt>authentication level</tt>-Bedingung zu verwenden, bei der die Managerrolle auf einer h&#246;heren Authentifizierungsebene authentifiziert wird.</p>
+</li>
+</ul>
+</li>
+<li><p><b>Klicken Sie auf &#8220;Fertig stellen&#34;</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

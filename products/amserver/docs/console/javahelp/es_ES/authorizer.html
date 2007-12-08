@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Autorizador
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="authorizer"></A><h3>Autorizador</h3>
+<A NAME="indexterm-97"></A><A NAME="indexterm-98"></A><p>Antes de procesar una solicitud, el Servicio de perfil personal de Liberty verificar&#225; la autorizaci&#243;n del WSC que realiza la solicitud. Para ello, se pueden llevar a cabo dos niveles de comprobaci&#243;n de la autorizaci&#243;n:</p>
+<ol Type="1"><li><p>&#191;Dispone la entidad emisora de la solicitud de autorizaci&#243;n para acceder a la informaci&#243;n del perfil del recurso solicitado?</p>
+</li>
+<li><p>&#191;Se ha publicado el recurso solicitado para el solicitante?</p>
+</li>
+</ol>
+<p>Las autorizaciones tienen lugar mediante un complemento del Servicio de perfil personal de Liberty: una implementaci&#243;n de la interfaz <tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt>. Aunque es posible crear una implementaci&#243;n nueva, Access Manager proporcionar&#225; la predeterminada: <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer </tt>. Este complemento define cuatro valores de acci&#243;n de pol&#237;tica para la solicitud y las operaciones de modificaci&#243;n:</p>
+<ul><li><p>Permitir</p>
+</li>
+<li><p>Denegar</p>
+</li>
+<li><p>Interactuar para consentir</p>
+</li>
+<li><p>Interactuar para valor</p>
+</li>
+</ul>
+<p>Los valores de recursos de las reglas son similares a las expresiones <tt>x-path</tt> definidas por el Servicio de perfil personal de Liberty.</p>
+<pre style="font-family:arial,helvetica,sans-serif">/PP/CommonName/AnalyzedName/FN 	Query 	Interact for consent
+/PP/CommonName/*                      	Modify 	Interact for value
+/PP/InformalName                        	Query 	Deny </pre>
+<p>La autorizaci&#243;n se puede anular seleccionando uno o los dos atributos siguientes, que tambi&#233;n se definen en el servicio de perfil personal Liberty:</p>
+<ul><li><p><A HREF="requirequery.html#requirequery">Requerir evaluaci&#243;n de pol&#237;ticas de consultas:</A></p>
+</li>
+<li><p><A HREF="requiremodify.html#requiremodify">Requerir evaluaci&#243;n de pol&#237;ticas de modificaciones:</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

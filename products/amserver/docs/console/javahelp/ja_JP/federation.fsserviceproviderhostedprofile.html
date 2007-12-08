@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>プロバイダエンティティーに含まれるホストサービスプロバイダ属性を変更する
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fsserviceproviderhostedprofile"></A><h3>プロバイダエンティティーに含まれるホストサービスプロバイダ属性を変更する</h3>
+<A NAME="indexterm-80"></A><p>エンティティーを作成しサービスプロバイダを追加した後に、サービスプロバイダのプロファイルを編集できます。始めにアイデンティティープロバイダを追加したときには設定できなかった属性に値を追加したり、設定済みデータを変更したりする作業が必要な場合があります。連携インタフェースの「エンティティー」から作業を始めます。</p>
+<ol><li><p><b>プロファイルを変更する設定済みプロバイダエンティティーの名前をクリックします。</b></p></li>
+<li><p><b>「表示」メニューから「サービスプロバイダ」を選択します。</b></p></li>
+<li><p><b>「共通属性」の値を変更します。</b></p><p>「共通属性」の値は、アイデンティティープロバイダ自体の一般的な定義です。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>プロバイダタイプ</p></td><td valign="top"><p>この属性の静的な値は、これがホストプロバイダなのかそれともリモートプロバイダなのかを定義します。</p>
+</td></tr><tr><td valign="top"><p>説明</p></td><td valign="top"><p>この属性の値は、エンティティーの作成時に入力した説明です。始めに入力した説明を変更するか、その説明がない場合は新たに説明を追加することができます。</p>
+</td></tr><tr><td valign="top"><p>サポートされるプロトコルリスト</p></td><td valign="top"><p>このエンティティーによってサポートされる Liberty Alliance Project Liberty Identity Federation Framework (Liberty ID-FF) リリースを選択します。</p>
+<ul><li><p><tt>urn:liberty:iff:2003-08</tt> は Liberty ID-FF version 1.2 を表します。</p>
+</li>
+<li><p><tt>urn:liberty:iff:2002-12</tt> は Liberty ID-FF version 1.1 を表します。</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>サーバー名 ID のマッピングバインド</p></td><td valign="top"><p>名前 ID のマッピングにより、サービスプロバイダは別のサービスプロバイダのネームスペースで連携している主体の名前 ID を取得できます。このようにして、要求側のプロバイダは自らは相互にアイデンティティー連携の関係にない主体について、他方のサービスプロバイダとやり取りできます。ID の取得に使用する通信プロトコルを識別する URI を入力し、「追加」をクリックします。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>Access Manager の名前 ID マッピングプロファイルは、現時点では SOAP のみをサポートします。この属性を使用する場合、属性の値は <tt>http://projectliberty.org/profiles/nim-sp-http</tt> にする必要があります。</p>
+<hr size="1" noshade></p></td></tr><tr><td valign="top"><p>署名鍵: 鍵のエイリアス</p></td><td valign="top"><p>証明書は Java キーストアファイルに格納されます。ファイル内の各証明書はエイリアスにマップされ、証明書をフェッチするときにはそのエイリアスが使用されます。要求や応答の署名に使用する証明書に関連付けられているキーエイリアスを入力します。</p>
+</td></tr><tr><td valign="top"><p>暗号化鍵: 鍵のエイリアス</p></td><td valign="top"><p>証明書は Java キーストアファイルに格納されます。ファイル内の各証明書はエイリアスにマップされ、証明書をフェッチするときにはそのエイリアスが使用されます。プロバイダのセキュリティー証明書に関連付けられているキーエイリアスを入力します。</p>
+</td></tr><tr><td valign="top"><p>暗号化鍵: キーサイズ</p></td><td valign="top"><p>Web サービスコンシューマが別のエンティティーと対話するときに使用するキーの長さを入力します。</p>
+</td></tr><tr><td valign="top"><p>暗号化鍵: 暗号化方式</p></td><td valign="top"><p>暗号化の方式を選択します。次の中から選択できます。</p>
+<ul><li><p>なし</p>
+</li>
+<li><p>AES</p>
+</li>
+<li><p>DESede</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>名前 ID の暗号化</p></td><td valign="top"><p>名前 ID の暗号化を有効にするには、このチェックボックスをオンにします。</p>
+</td></tr></table>
+</li>
+<li><p><b>「通信 URL」属性の値を変更します。</b></p><p>「通信 URL」属性には、プロバイダがこのアイデンティティープロバイダ専用で伝送できる場所が入ります。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>SOAP エンドポイント</p></td><td valign="top"><p>アイデンティティープロバイダの SOAP メッセージの受信者の URL を入力します。この値により、ブラウザを使用しない通信で SOAP 受信者の場所が伝達されます。</p>
+</td></tr><tr><td valign="top"><p>シングルログアウトのサービス</p></td><td valign="top"><p>サービスプロバイダがログアウト要求を送信できる URL を入力します。シングルログアウトは、このアイデンティティープロバイダが認証したすべてのセッションで、ログアウト機能の同期を取ります。</p>
+</td></tr><tr><td valign="top"><p>シングルログアウトの返信</p></td><td valign="top"><p>ログアウト完了後にアイデンティティープロバイダが主体をリダイレクトする URL を入力します。</p>
+</td></tr><tr><td valign="top"><p>連携終了サービス</p></td><td valign="top"><p>サービスプロバイダが連携終了要求を送信する URL を入力します。</p>
+</td></tr><tr><td valign="top"><p>連携終了の返信</p></td><td valign="top"><p>連携終了処理の完了後にアイデンティティープロバイダが主体をリダイレクトする URL を入力します。</p>
+</td></tr><tr><td valign="top"><p>名前登録サービス</p></td><td valign="top"><p>名前 ID を指定するための要求をサービスプロバイダが送信する URL を入力します。この ID は、特定の主体についてこのアイデンティティープロバイダとやり取りするときに使用します。このオプションのサービスは、連携セッションが確立された後にのみ実装されます。</p>
+</td></tr><tr><td valign="top"><p>名前登録の返信</p></td><td valign="top"><p>HTTP リダイレクトベースの名前登録の完了後に、アイデンティティープロバイダが主体をリダイレクトする宛先の URL を入力します。</p>
+</td></tr></table>
+</li>
+<li><p><b>「通信プロファイル」属性の値を変更します。</b></p><p>Liberty Alliance Project <b>プロファイル</b>は、メッセージの内容とメッセージの移動に使用するメカニズムとの組み合わせを定義します。次の「通信プロファイル」属性は、アイデンティティープロバイダが各機能に使用するプロファイルを定義します。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>連携終了</p></td><td valign="top"><p>アイデンティティープロバイダが主体の連携終了を他のプロバイダに通知するために使用するプロファイルを選択します。</p>
+<ul><li><p>HTTP リダイレクト</p>
+</li>
+<li><p>SOAP</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>シングルログアウト</p></td><td valign="top"><p>アイデンティティープロバイダが主体のログアウトを他のプロバイダに通知するために使用するプロファイルを選択します。</p>
+<ul><li><p>HTTP リダイレクト</p>
+</li>
+<li><p>HTTP GET</p>
+</li>
+<li><p>SOAP</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>名前登録</p></td><td valign="top"><p>他のプロバイダが主体の新しい名前 ID をこのアイデンティティープロバイダに連絡するときに使用するプロファイルを選択します。</p>
+<ul><li><p>HTTP リダイレクト</p>
+</li>
+<li><p>SOAP</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>シングルサインオン/連携</p></td><td valign="top"><p>このアイデンティティープロバイダが認証要求または連携要求への応答を送信するときに使用するプロファイルを選択します。</p>
+<ul><li><p>ブラウザ POST (ブラウザベースの HTTP POST プロトコルを指定)</p>
+</li>
+<li><p>ブラウザアーティファクト (ブラウザを使用しない SOAP ベースのプロトコルを指定)</p>
+</li>
+<li><p>LECP (Liberty 対応クライアントプロキシを指定)</p>
+</li>
+</ul>
+</td></tr></table>
+</li>
+<li><p><b>利用可能な認証ドメインのいずれかを選択し、プロバイダに割り当てます。</b></p><p>プロバイダは 1 つまたは複数の認証ドメインに所属することができます。しかし、認証ドメインが指定されていないプロバイダは、Liberty Alliance Project 仕様に基づく通信に参加できません。認証ドメインがまだ作成されていない場合は、後でこの属性を定義することができます。</p>
+</li>
+<li><p><b>「認証コンテキスト」属性で、各「コンテキスト参照」について「レベル」ボックスに正数を入力します。</b></p><p>この数値は、特定の認証モジュールに定義されている認証レベルに対応します。ユーザーは、この認証レベルが定義されているモジュールにリダイレクトされます。</p>
+<ul><li><p>MobileContract</p>
+</li>
+<li><p>MobileDigitalID</p>
+</li>
+<li><p>MobileUnregistered</p>
+</li>
+<li><p>パスワード</p>
+</li>
+<li><p>PasswordProtectedTransport</p>
+</li>
+<li><p>以前のセッション</p>
+</li>
+<li><p>スマートカード</p>
+</li>
+<li><p>Smartcard-PKI</p>
+</li>
+<li><p>ソフトウェア PKI</p>
+</li>
+<li><p>時間同期トークン</p>
+</li>
+</ul>
+</li>
+<li><p><b>「信頼プロバイダ」から選択し、エンティティーに追加します。</b></p><p>このリストには、プロバイダが設定された設定済みエンティティーが表示されます。</p>
+</li>
+<li><p><b>「サービスプロバイダ」属性の値を変更します。</b></p><p>「サービスプロバイダ」属性は、サービスプロバイダに関する一般情報を定義します。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>表明コンシューマ URL</p></td><td valign="top"><p>サービスプロバイダに送信されるすべての SAML 表明を受信し処理するエンドポイントの URL を入力します。</p>
+</td></tr><tr><td valign="top"><p>表明コンシューマサービス URL ID</p></td><td valign="top"><p>「サポートされるプロトコルリスト」共通属性の値が <tt>urn:liberty:iff:2003-08</tt> の場合は、この必須 ID を入力します。</p>
+</td></tr><tr><td valign="top"><p>表明コンシューマサービス URL をデフォルトとして設定</p></td><td valign="top"><p>要求に ID が指定されていない場合にデフォルト値として「表明コンシューマサービス URL」を使用するには、このチェックボックスをオンにします。</p>
+</td></tr><tr><td valign="top"><p>認証要求に署名</p></td><td valign="top"><p>サービスプロバイダが常に認証要求に署名するようにするには、このチェックボックスをオンにします。</p>
+</td></tr><tr><td valign="top"><p>連携後の名前登録</p></td><td valign="top"><p>主体が連携された後にサービスプロバイダを名前登録に参加できるようにするには、このチェックボックスをオンにします。</p>
+</td></tr><tr><td valign="top"><p>名前 ID ポリシー</p></td><td valign="top"><p>このオプションを選択することにより、要求者はアイデンティティープロバイダ側の名前 ID ポリシーを制御できます。オプションは次のとおりです。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>なし</p></td><td valign="top"><p>アイデンティティープロバイダと要求元のサービスプロバイダまたはアフィリエイトグループとの間に主体について連携が存在している場合、アイデンティティープロバイダはその連携に対応する名前 ID を返します。そのような連携が存在しない場合は、エラーが返されます。</p>
+</td></tr><tr><td valign="top"><p>1 回</p></td><td valign="top"><p>アイデンティティープロバイダは、主体について連携後に 1 回だけ使用できる一時的な ID を発行します。</p>
+</td></tr><tr><td valign="top"><p>連携</p></td><td valign="top"><p>主体についてアイデンティティー連携が存在していない場合、アイデンティティープロバイダは新しいアイデンティティー連携を開始できます。</p>
+</td></tr></table>
+</td></tr><tr><td valign="top"><p>アフィリエイト連携</p></td><td valign="top"><p>アフィリエイト連携を有効にするには、このチェックボックスをオンにします。</p>
+</td></tr></table>
+</li>
+<li><p><b>「Access Manager 設定」属性の値を変更します。</b></p><p>「Access Manager 設定」属性は、このホストされている Access Manager インスタンスに関する情報を定義します。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>サービスプロバイダアダプタ</p></td><td valign="top"><p><!-- was interface. No mapping rule. -->com.sun.identity.<!-- was interface. No mapping rule. -->federation.plugins.FederationSPAdapter の実装クラスを定義します。これは、連携処理中にアプリケーション固有の処理を追加するのに使用されます。</p>
+</td></tr><tr><td valign="top"><p>プロバイダエイリアス</p></td><td valign="top"><p>「プロバイダエイリアス」は、エンティティープロファイル内でホストプロバイダを識別し、サービスプロバイダとアイデンティティープロバイダのどちらの設定であるかを見分けるために使用される名前です。値は一意で、URL で表すことができる必要があります。たとえば、<tt>sunAlias</tt> とすることができます。</p>
+</td></tr><tr><td valign="top"><p>認証タイプ</p></td><td valign="top"><p>ローカルホストプロバイダからの認証要求に使用するプロバイダのタイプを選択します。</p>
+<ul><li><p>「<b>ローカル</b>」を選択すると、ローカルホストプロバイダは、認証要求を受け取ったらすぐにローカルアイデンティティープロバイダに接続するように指定されます。実質的に自らに接続することになります。</p>
+</li>
+<li><p>「<b>リモート</b>」を選択すると、ローカルホストプロバイダは、認証要求を受け取ったらすぐにリモートアイデンティティープロバイダに接続するように指定されます。</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>デフォルト認証コンテキスト</p></td><td valign="top"><p>情報をサービスプロバイダ要求の一部として受信していない場合に、このアイデンティティープロバイダが使用する認証コンテキストクラス (認証の方法) を選択します。この値で指定された認証コンテキストクラスは、不明なユーザーがサービスプロバイダの保護リソースにアクセスしようとしたために、サービスプロバイダが認証要求を送信するときにも使用されます。オプションは次のとおりです。</p>
+<ul><li><p>パスワード</p>
+</li>
+<li><p>Mobile Digital ID</p>
+</li>
+<li><p>スマートカード</p>
+</li>
+<li><p>Smartcard-PKI</p>
+</li>
+<li><p>MobileUnregistered</p>
+</li>
+<li><p>ソフトウェア PKI</p>
+</li>
+<li><p>以前のセッション</p>
+</li>
+<li><p>Mobile Contract</p>
+</li>
+<li><p>時間同期トークン</p>
+</li>
+<li><p>PasswordProtectedTransport</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>アイデンティティープロバイダ強制認証</p></td><td valign="top"><p>アイデンティティープロバイダが新規の認証要求を受け取ったときに、セッションが継続中でもユーザーを再び認証する必要がある場合は、チェックボックスをオンにします。この属性はデフォルトで有効です。</p>
+</td></tr><tr><td valign="top"><p>アイデンティティープロバイダをパッシブにするように要求</p></td><td valign="top"><p>アイデンティティープロバイダがユーザーとやり取りしてはならないことを指定するには、チェックボックスをオンにします。</p>
+</td></tr><tr><td valign="top"><p>レルム</p></td><td valign="top"><p>このプロバイダが設定されているレルムを指す値を入力します。たとえば、<tt>/sp</tt> です。</p>
+</td></tr><tr><td valign="top"><p>Liberty バージョン URI</p></td><td valign="top"><p>使用する Liberty Alliance Project 仕様のバージョンを規定する URI を入力します。デフォルト値は <tt>http://projectliberty.org/specs/v1</tt> です。</p>
+</td></tr><tr><td valign="top"><p>名前 ID の実装</p></td><td valign="top"><p>このフィールドは、サービスプロバイダが名前登録に参加するために使用するクラスを定義します。名前登録とは、サービスプロバイダが主体の名前 ID を指定するためのプロファイルです。名前 ID は、アイデンティティープロバイダがサービスプロバイダと通信する際に使用します。値は <tt>com.sun.identity.</tt><tt>federation.services.</tt><tt>util.FSNameIdentifierImpl</tt> です。</p>
+</td></tr><tr><td valign="top"><p>ホームページ URL</p></td><td valign="top"><p>ローカルホストプロバイダのホームページの URL を入力します。</p>
+</td></tr><tr><td valign="top"><p>シングルサインオンエラー時のリダイレクト URL</p></td><td valign="top"><p>シングルサインオンに失敗した場合に主体がリダイレクトされる URL を入力します。</p>
+</td></tr><tr><td valign="top"><p>自動連携</p></td><td valign="top"><p>自動連携は、同じユーザーの異なるプロバイダアカウントを共通属性に基づいて自動的に連携します。自動連携を有効にするには、このチェックボックスをオンにします。</p>
+</td></tr><tr><td valign="top"><p>自動連携共通属性名</p></td><td valign="top"><p>この属性の値は、同じユーザーの異なるプロバイダアカウントを自動的に連携する際の共通属性として使用されます。</p>
+</td></tr><tr><td valign="top"><p>属性マッパークラス</p></td><td valign="top"><p>この属性の値は、SAML 表明の属性をローカルに定義されたユーザー属性にマップする際に使用するクラスです。デフォルトのクラスは <tt>com.sun.identity.</tt><tt>federation.services.FSDefaultAttributeMapper</tt> です。</p>
+</td></tr><tr><td valign="top"><p>サービスプロバイダ属性マッピング</p></td><td valign="top"><p>この値は、上で指定した属性マッパークラスによって使用されるマッピングを定義します。この属性のマッピングは、次のように設定します。</p>
+<p><tt><b></tt><i>SAML 属性<tt></i>=</tt><i>ローカル属性 <tt></i></b></tt></p>
+<p>たとえば、<tt>EmailAddress=mail</tt> や <tt>Address=postaladdress</tt> のようにします。</p>
+</td></tr></table>
+</li>
+<li><p><b>「プロキシ認証設定」属性の値を変更します。</b></p><p>別のアイデンティティープロバイダによってすでに認証された主体を認証するよう依頼されたアイデンティティープロバイダはプロキシとなって、要求元のサービスプロバイダの代わりに、認証を行うアイデンティティープロバイダに認証要求を送ります。これを<b>動的アイデンティティープロバイダプロキシ</b>といいます。「プロキシ認証設定」属性は、動的アイデンティティープロバイダプロキシの値を定義します。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>プロキシ認証</p></td><td valign="top"><p>動的アイデンティティープロバイダプロキシを有効にするには、このチェックボックスをオンにします。</p>
+</td></tr><tr><td valign="top"><p>プロキシのアイデンティティープロバイダのリスト</p></td><td valign="top"><p>動的アイデンティティープロバイダプロキシに使用可能なアイデンティティープロバイダのリストを追加します。この属性の値は、所有者/プロバイダが属するエンティティーの「エンティティー名」属性に定義された値と一致する URI です。</p>
+</td></tr><tr><td valign="top"><p>プロキシの最大数</p></td><td valign="top"><p>要求の送信先にすることが可能なプロキシアイデンティティープロバイダの最大数を入力します。</p>
+</td></tr><tr><td valign="top"><p>プロキシ用に Introduction Cookie を使用</p></td><td valign="top"><p>プロキシとして機能しているアイデンティティープロバイダを検索するために Introduction Cookie を使用するには、このチェックボックスをオンにします。</p>
+</td></tr></table>
+</li>
+<li><p><b>「組織プロファイル」属性の値を変更します。</b></p><p>「組織プロファイル」属性は、主体とやり取りするときに必要になることがある基本情報を提供します。これらの属性はオプションです。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>「名前」属性に値を指定した場合は、「表示名」および「URL」属性に値を追加する必要があります。</p>
+<hr size="1" noshade></p><table border="0" cellspacing="5"><tr><td valign="top"><p>名前</p></td><td valign="top"><p>エンティティーの組織の正式名称を入力し、「追加」をクリックします。この値は、<i>locale</i>| <i> organization-name</i> の形式で定義します。たとえば、<tt>en</tt>|<tt> example.com</tt> のようにします。</p>
+</td></tr><tr><td valign="top"><p>表示名</p></td><td valign="top"><p>主体者への表示に適したエンティティーの組織の名前を入力し、「追加」をクリックします。この値は、<i>locale</i>|<i>organization-display-name</i> の形式で定義します。たとえば、<tt>en</tt>|<tt>example.com</tt> のようにします。</p>
+</td></tr><tr><td valign="top"><p>URL</p></td><td valign="top"><p>組織の URL を入力し、「追加」をクリックします。この値は、<i>locale</i>|<i> organization-URL</i> の形式で定義します。たとえば、<tt>en</tt>|<tt> http://www.example.com</tt> のようにします。</p>
+</td></tr></table>
+</li>
+<li><p><b>プロバイダの「担当者」を設定するには、「新規担当者」をクリックします。</b></p><p>この属性はオプションです。詳細については、<A HREF="federation.fscreatecontactperson.html#federation.fscreatecontactperson">「担当者をプロバイダエンティティーに含まれるプロバイダに追加する」</A>を参照してください。</p>
+</li>
+<li><p><b>「保存」をクリックして設定を完了します。</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

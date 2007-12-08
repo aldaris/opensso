@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>信頼パートナー: 信頼パートナー属性を設定する
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fssamltrustedpartnersadd"></A><h4>信頼パートナー: 信頼パートナー属性を設定する</h4>
+<A NAME="indexterm-91"></A><p>信頼パートナーを設定するための後半の手順は、次のとおりです。<A HREF="federation.fssamlselecttrustedpartnertype.html#federation.fssamlselecttrustedpartnertype">「信頼パートナー: パートナータイプおよびプロファイルを選択する」</A>ことから始めます。第 1 段階で選択したロールに基づいて、次のセクションに一覧表示された副属性を定義することが必要になる場合があります。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>連携の「SAML」設定画面で「編集」または「複製」をクリックしてこのページが表示された場合は、次の手順に従って信頼パートナープロファイルを変更し、「保存」をクリックして値を変更します。「SAML プロファイル」ページで「保存」をクリックして、変更を完了します。</p>
+<hr size="1" noshade></p><ol><li><p><b>「共通設定」副属性の値を入力します。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>ソース ID</p></td><td valign="top"><p>これは、パートナーサイトから受け取る、Base64 フォーマットでエンコードされた 20 バイトのシーケンスです。通常この値は、サイト ID 属性を設定したときに「サイト ID」属性に使用した値と同じにします。</p>
+</td></tr><tr><td valign="top"><p>ターゲット</p></td><td valign="top"><p>これはパートナーサイトのドメインです (ポート番号の有無は任意)。このドメインにホストされる Web ページにアクセスする場合は、リダイレクト URL が、「信頼パートナー」属性に定義された値から選択されます。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>同じドメインに定義されたエントリが 2 つある (1 つにはポート番号が含まれ、もう 1 つにはポート番号が含まれていない) 場合は、ポート番号を含むエントリが優先されます。たとえば、<tt>target=sun.com</tt> と <tt>target=sun.com:8080</tt> の 2 つの信頼パートナー定義があるとします。主体が <tt>http://machine.sun.com:8080/index.html</tt> をシークしている場合は、2 番目の定義が選択されます。</p>
+<hr size="1" noshade></p></td></tr><tr><td valign="top"><p>サイト属性マッパー</p></td><td valign="top"><p>このクラスは、「認証表明」の <tt>AttributeStatements</tt> 要素として定義される属性値のリストを返すために使用されます。サイト属性マッパーを <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerSiteAttributeMapper</tt> インタフェースから実装する必要があります。</p>
+<p>クラスが 1 つも定義されていない場合、表明に属性は含められません。</p>
+</td></tr><tr><td valign="top"><p>バージョン</p></td><td valign="top"><p>SAML 要求の送信に使用する SAML バージョン (<tt>1.0</tt> または <tt> 1.1</tt>)。このパラメータに値が指定されていない場合は、次のデフォルト値 (<tt>AMConfig.properties</tt> に定義) が使用されます。</p>
+<ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p>
+</li>
+<li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>アカウントマッパー</p></td><td valign="top"><p>表明の対象と送信先サイト側のアイデンティティーとを関連付ける方法を定義するクラス。アカウントマッパーを <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerAccountMapper </tt> インタフェースから実装する必要があります。デフォルトは <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper </tt> です。</p>
+<p>クラスが 1 つも定義されていない場合、表明に属性は含められません。</p>
+</td></tr><tr><td valign="top"><p>証明書</p></td><td valign="top"><p>パートナーが表明に署名しているのに、署名された表明の <tt>KeyInfo</tt> 部分にパートナーの証明書が見つからない場合に、表明の署名を検証するために使用する証明書エイリアス。</p>
+</td></tr><tr><td valign="top"><p>ホストリスト</p></td><td valign="top"><p>パートナーが使用する、IP アドレス、DNS ホスト名、またはクライアント認証証明書のエイリアスのリスト。このオーソリティーに要求を送信することができるパートナーサイト内のすべてのホストに対して設定されます。このリストは、要求者が本当にアーティファクトの意図した受信者であるかを確かめるのに役立ちます。要求者がこのリストに定義されている場合、対話が継続されます。要求者の情報がホストリストに定義されたどのホストにも一致しない場合は、要求は拒否されます。</p>
+</td></tr><tr><td valign="top"><p>発行者</p></td><td valign="top"><p>生成される表明の作成者。デフォルトの構文は <i>hostname</i><tt>:</tt><i> port</i> です。</p>
+</td></tr></table>
+</li>
+<li><p><b>「送信先」副属性の値を入力します。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>アーティファクト: SAML URL</p></td><td valign="top"><p>Web ブラウザのアーティファクトプロファイルを実装するサーブレットを指す URL。</p>
+</td></tr><tr><td valign="top"><p>Post: Post URL</p></td><td valign="top"><p>Web ブラウザの POST プロファイルを実装するサーブレットを指す URL。</p>
+</td></tr><tr><td valign="top"><p>SOAP クエリー: 属性マッパー</p></td><td valign="top"><p>クエリーからシングルサインオン情報を取得するために使用するクラス。組み込まれているインタフェースから属性マッパーを実装する必要があります。クラスが 1 つも指定されていない場合は、<tt>DefaultAttributeMapper</tt> が使用されます。</p>
+</td></tr><tr><td valign="top"><p>SOAP クエリー: アクションマッパー</p></td><td valign="top"><p>シングルサインオン情報を取得し、パートナーアクションを認証決定内容にマップするために使用されるクラス。組み込まれているインタフェースからアクションマッパーを実装する必要があります。クラスが 1 つも指定されていない場合は、<tt>DefaultActionMapper</tt> が使用されます。</p>
+</td></tr></table>
+</li>
+<li><p><b>「ソース」副属性の値を入力します。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>アーティファクト: SOAP URL</p></td><td valign="top"><p>SAML SOAP 受信者を指す URL。</p>
+</td></tr><tr><td valign="top"><p>認証タイプ</p></td><td valign="top"><p>SAML で使用可能な認証タイプ。次のものがあります。</p>
+<ul><li><p><tt>なし</tt></p>
+</li>
+<li><p><tt>基本</tt></p>
+</li>
+<li><p><tt>SSL</tt></p>
+</li>
+<li><p><tt>SSLWITHBASICAUTH</tt></p>
+</li>
+</ul>
+<p>この属性はオプションです。指定されていない場合、デフォルトは「<tt>なし</tt>」です。<tt>基本</tt>または <tt>SSLWITHBASICAUTH</tt> が指定されている場合は、「信頼パートナー」属性が必須となり <tt>HTTPS</tt> にする必要があります。</p>
+</td></tr><tr><td valign="top"><p>ユーザー</p></td><td valign="top"><p>「認証タイプ」に <tt>BASICAUTH</tt> を選択すると、パートナーの SOAP 受信者を保護するために使用されるパートナーのユーザー ID が、この属性の値によって定義されます。</p>
+</td></tr><tr><td valign="top"><p>ユーザーのパスワード</p></td><td valign="top"><p>「認証タイプ」に <tt>BASICAUTH</tt> を選択すると、パートナーの SOAP 受信者を保護するために使用されるパートナーのユーザー ID のパスワードが、この属性の値によって定義されます。</p>
+</td></tr><tr><td valign="top"><p>ユーザーのパスワード (再入力)</p></td><td valign="top"><p>定義したパスワードをもう一度入力します。</p>
+</td></tr></table>
+</li>
+<li><p><b>「完了」をクリックします。</b></p></li>
+<li><p><b>「SAML プロファイル」ページで「保存」をクリックして、設定を完了します。</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

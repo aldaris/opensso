@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>이름 지정 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamnamingservice"></A><h3>이름 지정 </h3>
+<p><A NAME="indexterm-207"></A>이름 지정 서비스는 세션, 인증, 로깅, SAML 및 연합과 같은 다양한 기타 Access Manager 서비스에 대한 요청 알림뿐만 아니라 URL,플러그인 및 구성을 가져오고 설정하는 데 사용됩니다.</p>
+<p>플랫폼이 둘 이상의 Access Manager를 실행 중인 경우 이 서비스를 사용하여 클라이언트가 올바른 서비스 URL을 찾을 수 있습니다. 이름 지정 URL이 발견되면 이름 지정 서비스는 사용자 세션을 해독하고 프로토콜, 호스트 및 포트를 세션의 매개 변수로 동적으로 대체합니다. 이는 서비스에 대해 반환된 URL이 사용자 세션이 만들어진 호스트에 대한 URL이 되도록 합니다. 이름 지정 속성은 다음과 같습니다.</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgc"> 프로필 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgg"> 세션 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgf"> 로깅 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgh"> 정책 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfge"> 인증 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgl"> SAML 웹 프로필/아티팩트 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgm"> SAML SOAP 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgk"> SAML 웹 프로필/POST 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgi"> SAML 명제 관리자 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgn"> 연합 명제 관리자 서비스 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgp"> 보안 토큰 관리자 URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgo"> JAXRPC 종점 URL</A></p>
+</li>
+</ul>
+<A NAME="fwfgc"></A><h4>프로필 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/profileservice</tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 프로필 URL을 동적으로 대체할 수 있게 합니다.</p>
+<A NAME="fwfgg"></A><h4>세션 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/sessionservice</tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 세션 URL을 동적으로 대체할 수 있게 합니다.</p>
+<A NAME="fwfgf"></A><h4>로깅 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/loggingservice</tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 로깅 URL을 동적으로 대체할 수 있게 합니다.</p>
+<A NAME="fwfgh"></A><h4>정책 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다. </p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 정책 URL을 동적으로 대체할 수 있게 합니다.</p>
+<A NAME="fwfge"></A><h4>인증 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/authservice</tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 인증 URL을 동적으로 대체할 수 있게 합니다.</p>
+<A NAME="fwfgl"></A><h4>SAML 웹 프로필/아티팩트 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLAwareServlet </tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 SAML 웹 프로필/아티팩트 URL을 동적으로 대체할 수 있게 합니다. </p>
+<A NAME="fwfgm"></A><h4>SAML SOAP 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLSOAPReceiver </tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 SAML SOAP URL을 동적으로 대체할 수 있게 합니다.</p>
+<A NAME="fwfgk"></A><h4>SAML 웹 프로필/POST 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLPOSTProfileServlet </tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 SAML 웹 프로필/POST URL을 동적으로 대체할 수 있게 합니다. </p>
+<A NAME="fwfgi"></A><h4>SAML 명제 관리자 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/AssertionManagerServlet/AssertionM anagerIF</tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 SAML 명제 관리자 서비스 URL을 동적으로 대체할 수 있게 합니다. </p>
+<A NAME="fwfgn"></A><h4>연합 명제 관리자 서비스 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/amserver/FSAssertionManagerServlet/FSAssertionMana gerIF</tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 연합 명제 관리자 서비스 URL을 동적으로 대체할 수 있게 합니다. </p>
+<A NAME="fwfgp"></A><h4>보안 토큰 관리자 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/amserver/SecurityTokenManagerServlet/SecurityToken ManagerIF/</tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 보안 토큰 관리자 URL을 동적으로 대체할 수 있게 합니다. </p>
+<A NAME="fwfgo"></A><h4>JAXRPC 종점 URL</h4>
+<p>이 필드는 다음과 동일한 값을 가집니다.</p>
+<p><tt>%protocol://%host:%port/amserver/jaxrpc/</tt></p>
+<p>이 구문은 특정 세션 매개 변수에 기초하여 JAXRPC 종점 URL을 동적으로 대체할 수 있게 합니다.</p>
+
+<br />
+
+</body>
+</html>

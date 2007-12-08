@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>SOAP 绑定服务
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scsoapbinding"></A><h2>SOAP 绑定服务</h2>
+<A NAME="indexterm-158"></A><p>SOAP 绑定服务是用于发送和接收 SOAP 消息的传输层。在 SOAP 绑定服务过程中，身份服务呼叫客户端应用编程接口，以构建消息并将其发送至 SOAP 端点 URL；实际上是 SOAP 接收方 servlet。SOAP 接收方 servlet 接收消息，验证签名，并构建第二条消息。然后，SOAP 接收方 servlet 调用正确的请求处理程序，以将此第二条消息发送给相应的身份服务作为响应。身份服务处理第二条消息，生成响应，并将该响应发送回 SOAP 接收方 servlet。SOAP 接收方又将响应发送回身份服务进行处理。</p>
+<p>可为您的实现配置以下 SOAP 绑定服务全局属性。</p>
+<ul><li><p><A HREF="requesthandlerlist.html#requesthandlerlist">请求处理程序列表</A></p>
+</li>
+<li><p><A HREF="webserviceauthenticator.html#webserviceauthenticator">Web 服务验证程序</A></p>
+</li>
+<li><p><A HREF="soapsuppauthmech.html#soapsuppauthmech">支持的验证机制</A></p>
+</li>
+</ul>
+<p>以下任务与配置 SOAP 绑定服务关联：</p>
+<ul><li><p><A HREF="service.scsoapbindingrequesthandlerlistadd.html#service.scsoapbindingrequesthandlerlistadd">配置请求处理程序</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

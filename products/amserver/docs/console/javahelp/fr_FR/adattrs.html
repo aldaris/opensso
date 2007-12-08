@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Attributs Active Directory
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="adattrs"></A><h3>Attributs Active Directory</h3>
+<p><A NAME="indexterm-14"></A>Les attributs suivants permettent de configurer un magasin de donn&#233;es Active Directory :</p>
+<A NAME="fyfdo"></A><h4>Serveur LDAP</h4>
+<p>Entrez le nom du serveur LDAP auquel vous serez connect&#233;. Le format doit &#234;tre <tt>nomh&#244;te.nomdomaine:num&#233;roport</tt>. </p>
+<p>Si plusieurs entr&#233;es <tt>h&#244;te:num&#233;roport</tt> sont saisies, une tentative de connexion au premier h&#244;te de la liste est effectu&#233;e. L'entr&#233;e suivante dans la liste est essay&#233;e uniquement en cas d'&#233;chec de la connexion &#224; l'h&#244;te actuel.</p>
+<A NAME="fyfdt"></A><h4>DN de la liaison LDAP</h4>
+<p>Sp&#233;cifie le nom DN qui sera utilis&#233; par Access Manager pour effectuer l'authentification aupr&#232;s du serveur LDAP auquel vous &#234;tes actuellement connect&#233;. L'utilisateur poss&#233;dant le nom DN utilis&#233; pour la liaison doit poss&#233;der des privil&#232;ges d'ajout/de modification/de suppression appropri&#233;s que vous avez configur&#233;s dans l'attribut <A HREF="adattrs.html#fyffb">Types et op&#233;rations pris en charge pour le plug-in LDAPv3</A>.</p>
+<A NAME="fyfds"></A><h4>Mot de passe pour la liaison LDAP</h4>
+<p>Sp&#233;cifie le mot de passe DN qui sera utilis&#233; par Access Manager pour effectuer l'authentification aupr&#232;s du serveur LDAP auquel vous &#234;tes actuellement connect&#233;.</p>
+<A NAME="fyfdu"></A><h4>Mot de passe pour la liaison LDAP (confirmer)</h4>
+<p> : confirmez le mot de passe.</p>
+<A NAME="fyfdv"></A><h4>DN de l'organisation LDAP</h4>
+<p>DN sur lequel le r&#233;f&#233;rentiel du magasin de donn&#233;es sera mapp&#233;. Ceci constituera le DN de base de toutes les op&#233;rations effectu&#233;es dans le magasin de donn&#233;es. </p>
+<A NAME="fyfdw"></A><h4>SSL LDAP</h4>
+<p>Lorsque cet attribut est activ&#233;, Access Manager se connecte au serveur principal &#224; l'aide du protocole HTTPS.</p>
+<A NAME="fyfej"></A><h4>Taille minimale de pool de connexion LDAP</h4>
+<p>D&#233;finit le nombre initial de connexions dans le pool de connexions. L'utilisation d'un pool de connexions permet de ne pas avoir &#224; cr&#233;er une connexion chaque fois.</p>
+<A NAME="fyfee"></A><h4>Taille maximale de pool de connexion LDAP</h4>
+<p>Indique le nombre maximal de connexions autoris&#233;.</p>
+<A NAME="fyfdx"></A><h4>Maximum de r&#233;sultats renvoy&#233;s par la recherche</h4>
+<p>Sp&#233;cifie le nombre maximal d'entr&#233;es retourn&#233;es &#224; la suite d'une op&#233;ration de recherche. Si cette limite est atteinte, Directory Server retourne toutes les entr&#233;es correspondant &#224; la recherche.</p>
+<A NAME="fyfen"></A><h4>D&#233;lai de recherche</h4>
+<p>Sp&#233;cifie le nombre maximal de secondes allou&#233; &#224; une recherche. Si cette limite est atteinte, Directory Server retourne toutes les entr&#233;es correspondant &#224; la recherche.</p>
+<A NAME="fyfdz"></A><h4>Orientation suivie par LDAP</h4>
+<p>Si elle est activ&#233;e, cette option sp&#233;cifie que les r&#233;f&#233;rences aux autres serveurs LDAP sont suivies automatiquement.</p>
+<A NAME="fyffh"></A><h4>Nom de la classe pour le plug-in du r&#233;f&#233;rentiel LDAPv3</h4>
+<p>D&#233;finit l'emplacement du fichier de classe qui impl&#233;mente le r&#233;f&#233;rentiel LDAPv3.</p>
+<A NAME="fyfeu"></A><h4>Mappages de nom d'attributs globaux</h4>
+<p>Active le mappage des attributs communs connus de la structure avec le magasin de donn&#233;es natif. Par exemple, si la structure utilise <tt>inetUserStatus</tt> pour d&#233;terminer le statut de l'utilisateur, il est possible que le magasin de donn&#233;es natif utilise <tt>userStatus</tt>. La distinction majuscules/minuscules s'applique pour les d&#233;finitions d'attribut.</p>
+<A NAME="fyffb"></A><h4>Types et op&#233;rations pris en charge pour le plug-in LDAPv3</h4>
+<p>Sp&#233;cifie les op&#233;rations autoris&#233;es sur ce serveur LDAP. Les op&#233;rations par d&#233;faut sont les seules op&#233;rations prises en charge par ce plug-in du r&#233;f&#233;rentiel LDAPv3. Les op&#233;rations prises en charge par le plug-in du r&#233;f&#233;rentiel LDAPv3 sont les suivantes :</p>
+<ul><li><p>agent : lecture, cr&#233;ation, modification, suppression</p>
+</li>
+<li><p>groupe : lecture, cr&#233;ation, modification, suppression</p>
+</li>
+<li><p>domaine : lecture, cr&#233;ation, modification, suppression, service</p>
+</li>
+<li><p>utilisateur : lecture, cr&#233;ation, modification, suppression, service</p>
+</li>
+</ul>
+<p>Vous pouvez supprimer des autorisations de la liste ci-dessus en fonction des param&#232;tres du serveur LDAP et des t&#226;ches mais vous ne pouvez pas en ajouter d'autres. </p>
+<p>Si le plug&#8212;in du r&#233;f&#233;rentiel LDAPv3 pointe vers une instance de Sun Java Systems Directory Server, des autorisations du type <tt>role</tt> peuvent &#234;tre ajout&#233;es. Sinon, cette autorisation peut ne pas &#234;tre ajout&#233;e car d'autres magasins de donn&#233;es peuvent ne pas prendre en charge les r&#244;les. L'autorisation du type r&#244;le est :</p>
+<ul><li><p>r&#244;le : lecture, cr&#233;ation, modification, suppression </p>
+</li>
+</ul>
+<p>Si <tt>user</tt> est pr&#233;sent en tant que type pris en charge pour le r&#233;f&#233;rentiel LDAPv3, les op&#233;rations de lecture, de cr&#233;ation, de modification et de suppression de service sont possibles pour cet utilisateur. En d'autres termes, si <tt>user</tt> est un type pris en charge, les op&#233;rations de lecture, de modification, de cr&#233;ation et de suppression vous permettent de lire, modifier, cr&#233;er et supprimer des entr&#233;es utilisateur dans le r&#233;f&#233;rentiel d'identit&#233;. L'op&#233;ration <tt>user=service</tt> permet aux services Access Manager d'acc&#233;der aux attributs d'entr&#233;es utilisateur. L'utilisateur peut &#233;galement acc&#233;der aux attributs de service dynamiques si le service est affect&#233; au domaine ou au r&#244;le auquel l'utilisateur appartient. </p>
+<p>L'utilisateur peut &#233;galement g&#233;rer les attributs utilisateur d'un quelconque service affect&#233;. Si l'utilisateur dispose de <tt>service</tt> en tant qu'op&#233;ration (<tt>user=service</tt>), ceci indique que toutes les op&#233;rations li&#233;es au service sont prises en charge. Ces op&#233;rations sont <tt>assignService,</tt> <tt>unassignService,</tt> <tt> getAssignedServices,</tt> <tt>getServiceAttributes, removeServiceAttributes</tt> et <tt>modifyService.</tt></p>
+<A NAME="gdlmc"></A><h4>&#201;tendue de la recherche de plug-in LDAPv3</h4>
+<p>D&#233;finit l'&#233;tendue &#224; utiliser pour rechercher les entr&#233;es de plug-in LDAPv3. L'&#233;tendue peut avoir l'une des valeurs suivantes :</p>
+<ul><li><p>SCOPE_BASE</p>
+</li>
+<li><p>SCOPE_ONE</p>
+</li>
+<li><p>SCOPE_SUB (valeur par d&#233;faut)</p>
+</li>
+</ul>
+<A NAME="fyffj"></A><h4>Attribut de recherche d'utilisateurs LDAP</h4>
+<p>Ce champ d&#233;finit le type d'attribut qui permet de rechercher un utilisateur. Par exemple, si le DN utilisateur est <tt>uid=user1,ou=people,dc=iplanet,dc=com </tt>, l'attribut d'attribution de nom est <tt>uid</tt>. </p>
+<A NAME="fyfeo"></A><h4>Filtre de recherche d'utilisateurs LDAP</h4>
+<p>Sp&#233;cifie le filtre de recherche &#224; utiliser pour rechercher les entr&#233;es utilisateur.</p>
+<A NAME="fyffi"></A><h4>Classe d'objet utilisateur LDAP</h4>
+<p>Sp&#233;cifie les classes d'objet d'un utilisateur. Lorsqu'un utilisateur est cr&#233;&#233;, la liste des classes d'objet de cet utilisateur est ajout&#233;e &#224; la liste des attributs de l'utilisateur.</p>
+<A NAME="fyfez"></A><h4>Attributs utilisateur LDAP</h4>
+<p>D&#233;finit la liste des attributs associ&#233;s &#224; un utilisateur. Toute tentative de lecture/d'&#233;criture des attributs utilisateur autres que ceux figurant sur cette liste est interdite. La distinction majuscules/minuscules s'applique pour les attributs. Vous pouvez d&#233;finir ici les classes d'objet et le sch&#233;ma d'attribut uniquement s'ils sont d&#233;j&#224; d&#233;finis dans Directory Server.</p>
+<A NAME="gdlms"></A><h4>Mappages d'attributs de cr&#233;ation utilisateurs LDAP</h4>
+<p>Sp&#233;cifie les attributs requis lors de la cr&#233;ation d'un utilisateur. Cet attribut utilise la syntaxe suivante :</p>
+<p><tt>DestinationAttributeName=SourceAttributeName</tt></p>
+<p>Si le nom de l'attribut source est manquant, la valeur par d&#233;faut est le DN utilisateur (<tt>uid</tt>). Par exemple :</p>
+<pre style="font-family:arial,helvetica,sans-serif">cn
+sn=givenName</pre>
+<p><tt>cn</tt> et <tt>sn</tt> sont requis pour cr&#233;er un profil utilisateur. <tt>cn</tt> prend la valeur de l'attribut nomm&#233; <tt>uid</tt> et <tt> sn</tt> prend la valeur de l'attribut nomm&#233; <tt>givenName.</tt></p>
+<A NAME="gdlmi"></A><h4>Attribut statut utilisateur</h4>
+<p>Sp&#233;cifie le nom d'attribut afin d'indiquer le statut de l'utilisateur. </p>
+<A NAME="gdopm"></A><h4>Valeur active du statut de l'utilisateur</h4>
+<p>Sp&#233;cifie le nom d'attribut d'un statut d'utilisateur actif. La valeur par d&#233;faut est <tt>active</tt>.</p>
+<A NAME="gdoqh"></A><h4>Valeur inactive du statut de l'utilisateur</h4>
+<p>Sp&#233;cifie le nom d'attribut d'un statut d'utilisateur inactif. La valeur par d&#233;faut est <tt>inactive</tt>.</p>
+<A NAME="fyfeb"></A><h4>Attribut de recherche de groupes LDAP</h4>
+<p>Ce champ d&#233;finit le type d'attribut qui permet de rechercher un groupe. La valeur par d&#233;faut est <tt>cn</tt>.</p>
+<A NAME="fyfep"></A><h4>Filtre de recherche de groupes LDAP</h4>
+<p>Sp&#233;cifie le filtre de recherche &#224; utiliser pour rechercher les entr&#233;es groupe. La valeur par d&#233;faut est <tt>(objectclass=groupOfUniqueNames)</tt>.</p>
+<A NAME="fyfed"></A><h4>Attribut d'affectation de nom du conteneur de groupes LDAP</h4>
+<p>D&#233;finit l'attribut de nommage d'un conteneur de groupes, si des groupes r&#233;sident dans un conteneur. Dans le cas contraire, cet attribut n'est pas d&#233;fini. Par exemple, si un DN de groupe <tt>cn=group1,ou=groups,dc=iplanet,dc=com</tt> r&#233;side dans <tt>ou=groups</tt>, l'attribut de nommage de conteneur de groupes est <tt>ou</tt>.</p>
+<A NAME="fyfec"></A><h4>Valeur du conteneur de groupes LDAP</h4>
+<p>Indique la valeur du conteneur de groupes. Par exemple, si le DN de groupe  <tt>cn=group1,ou=groups,dc=iplanet,dc=com</tt> r&#233;side dans un conteneur nomm&#233; <tt>ou=groups</tt>, la valeur du conteneur de groupes est <tt>groups</tt>.</p>
+<A NAME="fyffc"></A><h4>Classes d'objets de groupes LDAP</h4>
+<p>Sp&#233;cifie les classes d'objet des groupes. Lorsqu'un groupe est cr&#233;&#233;, cette liste des classes d'objet de groupe est ajout&#233;e &#224; la liste des attributs du groupe.</p>
+<A NAME="fyfff"></A><h4>Attributs des groupes LDAP</h4>
+<p>D&#233;finit la liste des attributs associ&#233;s &#224; un groupe. Toute tentative de lecture/d'&#233;criture des attributs de groupe autres que ceux figurant sur cette liste est interdite. La distinction majuscules/minuscules s'applique pour les attributs. Vous pouvez d&#233;finir ici les classes d'objet et le sch&#233;ma d'attribut uniquement s'ils sont d&#233;j&#224; d&#233;finis dans Directory Server.</p>
+<A NAME="fyfea"></A><h4>Attributs d'appartenance &#224; un groupe</h4>
+<p>Indique le nom des attributs dont les valeurs sont les noms de tous les groupes auxquels appartient le DN. La valeur par d&#233;faut est <tt>memberOf</tt>. </p>
+<A NAME="fyfes"></A><h4>Attributs de membre unique</h4>
+<p>Sp&#233;cifie le nom de l'attribut dont les valeurs sont un DN appartenant &#224; ce groupe. La valeur par d&#233;faut est <tt>uniqueMember</tt>.</p>
+<A NAME="fyfev"></A><h4>Attributs URL de membre d'un groupe</h4>
+<p>Indique le nom de l'attribut dont la valeur est un URL LDAP qui aboutit aux membres appartenant &#224; ce groupe. La valeur par d&#233;faut est <tt>memberUrl</tt>.</p>
+<A NAME="fyfem"></A><h4>Attribut d'affectation de nom du conteneur de personnes LDAP</h4>
+<p>Indique l'attribut de nommage du conteneur de personnes si un utilisateur r&#233;side dans un conteneur de personnes. Ce champ est laiss&#233; vide si l'utilisateur ne r&#233;side pas dans un conteneur de personnes.</p>
+<A NAME="fyffe"></A><h4>Valeur du conteneur de personnes LDAP</h4>
+<p>Indique la valeur du conteneur de personnes. La valeur par d&#233;faut est <tt>people</tt>.</p>
+<A NAME="fyffk"></A><h4>Attribut de recherche d'agents LDAP</h4>
+<p>Ce champ d&#233;finit le type d'attribut qui permet de rechercher un agent. La valeur par d&#233;faut est <tt>uid</tt>.</p>
+<A NAME="fyffl"></A><h4>Attribut d'affectation de nom du conteneur d'agents LDAP</h4>
+<p>L'attribut de nommage du conteneur d'agents si l'agent r&#233;side dans un conteneur d'agents. Ce champ est laiss&#233; vide si l'agent ne r&#233;side pas dans un conteneur d'agents.</p>
+<A NAME="fyffa"></A><h4>Valeur du conteneur d'agents LDAP</h4>
+<p>Indique la valeur du conteneur d'agents. La valeur par d&#233;faut est <tt>agents</tt>.</p>
+<A NAME="fyffd"></A><h4>Filtre de recherche d'agents LDAP</h4>
+<p>D&#233;finit le filtre utilis&#233; pour rechercher un agent. L'attribut Recherche d'agents LDAP est ajout&#233; devant ce champ pour former le filtre de recherche d'agents r&#233;el.</p>
+<p>Par exemple, si l'attribut de recherche d'agents LDAP est <tt>uid</tt> et que le filtre de recherche d'utilisateurs LDAP est <tt>(objectClass=sunIdentityServerDevice) </tt>, le filtre de recherche d'utilisateur utilis&#233; est : <tt>(&#38;(uid=*)(objectClass=sunIdentityServ erDevice))</tt></p>
+<A NAME="fyfey"></A><h4>Classe d'objet d'agents LDAP</h4>
+<p>D&#233;finit les classes d'objet des agents. Lorsqu'un agent est cr&#233;&#233;, la liste des classes d'objet de l'utilisateur est ajout&#233;e &#224; la liste des attributs de l'agent.</p>
+<A NAME="fyfew"></A><h4>Attributs d'agents LDAP</h4>
+<p>D&#233;finit la liste des attributs associ&#233;s &#224; un agent. Toute tentative de lecture/d'&#233;criture des attributs d'agents autres que ceux figurant sur cette liste est interdite. La distinction majuscules/minuscules s'applique pour les attributs. Vous pouvez d&#233;finir ici les classes d'objet et le sch&#233;ma d'attribut uniquement s'ils sont d&#233;j&#224; d&#233;finis dans Directory Server.</p>
+<A NAME="gdlns"></A><h4>Types d'identit&#233;s pouvant &#234;tre authentifi&#233;s</h4>
+<p>Indique que ce magasin de donn&#233;es peut authentifier les types d'identit&#233;s utilisateur et/ou agent lorsque le mode du module d'authentification du domaine est d&#233;fini sur Magasin de donn&#233;es.</p>
+<A NAME="fyfef"></A><h4>DN de base de la recherche persistante</h4>
+<p>D&#233;finit le DN de base &#224; utiliser pour une recherche persistante. Certains serveurs LDAPv3 prennent en charge la recherche persistante uniquement au niveau du suffixe racine.</p>
+<A NAME="gdlmx"></A><h4>Filtre de recherche persistant</h4>
+<p>D&#233;finit le filtre qui renverra les changements sp&#233;cifiques aux entr&#233;es du serveur d'annuaire. Le magasin de donn&#233;es ne recevra que les changements correspondants au filtre d&#233;fini.</p>
+<A NAME="fyffz"></A><h4>D&#233;lai d'inactivit&#233; maximal de la recherche persistante avant red&#233;marrage</h4>
+<p>D&#233;finit le d&#233;lai d'inactivit&#233; maximal avant de red&#233;marrer la recherche persistante. Cette valeur doit &#234;tre sup&#233;rieure &#224; 1. Les valeurs inf&#233;rieures ou &#233;gales &#224; 1 red&#233;marrent la recherche quel que soit le temps d'inactivit&#233; de la connexion.</p>
+<p>Si Access Manager est d&#233;ploy&#233; avec un &#233;quilibreur de charge, certains &#233;quilibreurs de charge seront interrompus apr&#232;s un certain d&#233;lai d'inactivit&#233;. Dans ce cas, vous devez d&#233;finir le d&#233;lai d'inactivit&#233; maximal de la recherche persistante avant red&#233;marrage sur une valeur inf&#233;rieure au temps sp&#233;cifi&#233; pour l'&#233;quilibreur de charge.</p>
+<A NAME="fyfgh"></A><h4>Nombre maximal de nouvelles tentatives apr&#232;s r&#233;ception d'un code d'erreur</h4>
+<p>D&#233;finit le nombre maximal de tentatives de l'op&#233;ration de recherche persistante si celle-ci rencontre les codes d'erreur sp&#233;cifi&#233;s dans les Codes d'erreur LDAPException suite auxquels une nouvelle tentative doit avoir lieu.</p>
+<A NAME="fyfge"></A><h4>Le d&#233;lai entre les nouvelles tentatives</h4>
+<p>Indique le d&#233;lai &#224; observer avant chaque tentative. Cet attribut s'applique uniquement &#224; la connexion de recherche persistante.</p>
+<A NAME="fyffr"></A><h4>Codes d'erreur LDAPException suite auxquels une nouvelle tentative doit avoir lieu</h4>
+<p>Indique les codes d'erreur apr&#232;s lesquels une nouvelle tentative de recherche persistante doit &#234;tre effectu&#233;e. Cet attribut s'applique uniquement &#224; la recherche persistante, et non &#224; toutes les op&#233;rations LDAP.</p>
+<A NAME="gdlnn"></A><h4>Mise en m&#233;moire cache</h4>
+<p>Si activ&#233;, cet attribut permet &#224; Access Manager de mettre en cache des donn&#233;es r&#233;cup&#233;r&#233;es du magasin de donn&#233;es.</p>
+<A NAME="gdlnm"></A><h4>&#194;ge maximum d'&#233;l&#233;ments mis en cache</h4>
+<p>Sp&#233;cifie la dur&#233;e maximale de stockage dans le cache avant suppression. Les valeurs sont exprim&#233;es en secondes.</p>
+<A NAME="gdlnd"></A><h4>Taille maximum du cache</h4>
+<p>Sp&#233;cifie la taille maximale du cache. Plus la valeur est importante et plus la quantit&#233; de donn&#233;es stock&#233;es est importante. Cela n&#233;cessite cependant une m&#233;moire sup&#233;rieure. Les valeurs sont exprim&#233;es en octets.</p>
+
+<br />
+
+</body>
+</html>

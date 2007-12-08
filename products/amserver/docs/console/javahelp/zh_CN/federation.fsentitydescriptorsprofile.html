@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>修改提供者实体或联合提供者实体的常规属性
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="federation.fsentitydescriptorsprofile"></A><h3>修改提供者实体或联合提供者实体的常规属性</h3>
+<A NAME="indexterm-71"></A><A NAME="indexterm-72"></A><A NAME="indexterm-73"></A><p>创建实体之后，您可以编辑其配置文件。这可能包括修改属性、添加身份提供者和服务提供者，或配置联合提供者。编辑实体配置文件的“常规”属性时，可能需要修改已定义的公共属性、添加联系人，或提供可选的组织信息。可按以下过程编辑“常规”属性。起点是联合下的“实体”屏幕。</p>
+<ol><li><p><b>选择已配置实体的名称以修改其配置文件。</b></p><p>默认情况下，将显示实体配置文件的“常规”属性页面。如果当前不处于“常规”属性页面，可从“查看”菜单中选择“常规”。</p>
+</li>
+<li><p><b>编辑任何实体公共属性的值。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>实体名称</p></td><td valign="top"><p>该属性的静态值是您创建实体时提供的名称。</p>
+</td></tr><tr><td valign="top"><p>类型</p></td><td valign="top"><p>该属性的静态值为实体类型（“提供者”或“联合提供者”）。</p>
+</td></tr><tr><td valign="top"><p>说明</p></td><td valign="top"><p>该属性的值是您创建实体时提供的说明。可以修改原来输入的说明，如果不存在，则可添加一条说明。</p>
+</td></tr></table>
+</li>
+<li><p><b>提供“实体联系人配置文件”属性的值。</b></p><p>“实体联系人配置文件”属性提供实体联系人方面的信息。这些属性都是可选的。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>名字</p></td><td valign="top"><p>键入实体联系人的名。</p>
+</td></tr><tr><td valign="top"><p>姓氏</p></td><td valign="top"><p>键入实体联系人的姓。</p>
+</td></tr><tr><td valign="top"><p>类型</p></td><td valign="top"><p>从下拉式菜单中选择联系人类型：</p>
+<ul><li><p>管理</p>
+</li>
+<li><p>记帐</p>
+</li>
+<li><p>技术</p>
+</li>
+<li><p>其他</p>
+</li>
+</ul>
+</td></tr><tr><td valign="top"><p>公司</p></td><td valign="top"><p>键入雇用该人员的公司的名称。</p>
+</td></tr><tr><td valign="top"><p>Liberty 负责人 ID</p></td><td valign="top"><p>键入指向联系人个人信息配置文件实例的统一资源标识符 (Uniform Resource Identifier, URI)。</p>
+</td></tr><tr><td valign="top"><p>电子邮件</p></td><td valign="top"><p>键入联系人的一个或多个电子邮件地址，然后单击“添加”。</p>
+</td></tr><tr><td valign="top"><p>电话号码</p></td><td valign="top"><p>键入联系人的一个或多个电话号码，然后单击“添加”。</p>
+</td></tr></table>
+</li>
+<li><p><b>提供“组织配置文件”属性的值。</b></p><p>“组织配置文件”属性提供与主体交互时可能需要的基本信息。这些属性都是可选的。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>如果“名称”属性包含值，则需要向“显示名称”属性和 "URL" 属性添加值。</p>
+<hr size="1" noshade></p><table border="0" cellspacing="5"><tr><td valign="top"><p>名称</p></td><td valign="top"><p>输入实体组织的合法名称并单击“添加”。按 <i>locale</i>|<i>organization-name</i> 格式定义该值。例如，<tt>en</tt>|<tt>example.com</tt>。</p>
+</td></tr><tr><td valign="top"><p>显示名称</p></td><td valign="top"><p>输入适于向主体显示的实体组织名称，然后单击“添加”。按 <i>locale</i>|<i>organization-display-name </i> 格式定义该值。例如，<tt>en</tt>|<tt>example.com</tt>。</p>
+</td></tr><tr><td valign="top"><p>URL</p></td><td valign="top"><p>输入组织的 URL 并单击“添加”。按 <i>locale</i>|<i>organization-URL</i> 格式定义该值。例如，<tt>en</tt>|<tt>http://www.example.com</tt>。</p>
+</td></tr></table>
+</li>
+<li><p><b>单击“保存”完成配置，或者继续定义身份提供者、服务提供者或联合提供者属性的值。</b></p><p>如果要继续配置，请参见：</p>
+<ul><li><p><b><A HREF="federation.fsidentityprovider.html#federation.fsidentityprovider">向提供者实体添加身份提供者</A>，定义身份提供者属性的值。</b></p></li>
+<li><p><b><A HREF="federation.fsserviceprovider.html#federation.fsserviceprovider">向提供者实体添加服务提供者</A>，定义服务提供者属性的值。</b></p></li>
+<li><p><b><A HREF="federation.fsentitydescriptorsaffiliate.html#federation.fsentitydescriptorsaffiliate">向联合提供者实体添加成员</A>，以成员填充联合提供者实体。</b></p></li>
+</ul>
+</li>
+</ol>
+<br />
+
+</body>
+</html>

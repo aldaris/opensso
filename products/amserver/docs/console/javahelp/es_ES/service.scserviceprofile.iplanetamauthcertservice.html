@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Certificado 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthcertservice"></A><h3>Certificado </h3>
+<p><A NAME="indexterm-177"></A>Este m&#243;dulo permite a un usuario iniciar una sesi&#243;n mediante un certificado digital personal (PDC, Personal Digital Certificate). La instancia del m&#243;dulo puede necesitar la utilizaci&#243;n del Protocolo de estado de certificado en l&#237;nea (OCSP, Online Certificate Status Protocol) para determinar el estado de un certificado. La utilizaci&#243;n de OCSP es opcional. Un usuario tendr&#225; o no acceso a un recurso en funci&#243;n de la validez o no del certificado. Los atributos de autenticaci&#243;n de certificado son atributos de dominio. Los atributos son:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbia">Coincidir certificado en LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiq">Atributo DN de asunto utilizado para buscar certificados en LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbim">Coincidir certificados en CRL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbik">Atributo DN de remitente utilizado para buscar CRL en LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbin">Par&#225;metros HTTP para actualizaci&#243;n de CRL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbil">Validaci&#243;n OCSP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbij">Servidor LDAP en el que se almacenan los certificados</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbtp">DN de b&#250;squeda de inicio de LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbqp">Usuario principal del servidor LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbst">Contrase&#241;a principal del servidor LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiu">Contrase&#241;a principal del servidor LDAP (confirmar)</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblo">Atributo LDAP para el Id. de perfil</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblm">Utilizar SSL para el acceso LDAP</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbof">Campo de certificado utilizado para acceder al perfil de un usuario</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbna">Otro campo de certificado utilizado para acceder al perfil de un usuario</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiw">Hosts remotos de confianza</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbkd">N&#250;mero de puerto SSL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblx">Nivel de autenticaci&#243;n</A></p>
+</li>
+</ul>
+<A NAME="fwbia"></A><h4>Coincidir certificado en LDAP</h4>
+<p>Especifica si se debe comprobar si el certificado de usuario presentado en el inicio de sesi&#243;n se guarda en el servidor LDAP. Si no se encuentra ninguna coincidencia, se deniega el acceso al usuario. Si se encuentra una coincidencia y no es necesaria ninguna otra validaci&#243;n, se concede el acceso al usuario. De forma predeterminada, el servicio de autenticaci&#243;n de certificados no comprueba el certificado del usuario.</p>
+<p><hr size="1" noshade><p><b>Nota &#8211; </b>Un certificado almacenado en Directory Server no tiene que ser necesariamente v&#225;lido; puede encontrarse en la lista de revocaci&#243;n de certificados. Consulte <A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbim">Coincidir certificados en CRL</A>. Sin embargo, el contenedor Web puede comprobar la validez del certificado de usuario presentado en el inicio de sesi&#243;n.</p>
+<hr size="1" noshade></p><A NAME="fwbiq"></A><h4>Atributo DN de asunto utilizado para buscar certificados en LDAP</h4>
+<p>Especifica el atributo del valor <i>SubjectDN</i> del certificado que se utilizar&#225; para buscar certificados en LDAP. Este atributo debe identificar de forma exclusiva una entrada de usuario. El valor real se utilizar&#225; para la b&#250;squeda. El valor predeterminado es <tt>cn</tt>.</p>
+<A NAME="fwbim"></A><h4>Coincidir certificados en CRL</h4>
+<p>Especifica si se debe comparar el certificado de usuario con la lista de revocaci&#243;n de certificados (CRL, Certificate Revocation List) en el servidor LDAP. La CRL se localiza mediante uno de los nombres de atributo en <i>SubjectDN</i> del emisor. Si el certificado se encuentra en la CRL, se denegar&#225; el acceso al usuario; en caso contrario, el usuario podr&#225; continuar. De forma predeterminada, este atributo no est&#225; habilitado.</p>
+<p>Los certificados deben revocarse cuando el propietario del certificado ha cambiado de estado y ya no tiene derecho a utilizar el certificado o cuando se ha puesto en peligro la clave privada de un propietario de certificado.</p>
+<A NAME="fwbik"></A><h4>Atributo DN de remitente utilizado para buscar CRL en LDAP</h4>
+<p>Especifica el atributo del valor <i>subjectDN</i> del emisor del certificado recibido que se utilizar&#225; para buscar CRL en LDAP. Este campo se utiliza &#250;nicamente cuando el atributo Match Certificate to CRL (Coincidir certificado en CRL) est&#225; habilitado. El valor real se utilizar&#225; para la b&#250;squeda. El valor predeterminado es <tt>cn</tt>.</p>
+<A NAME="fwbin"></A><h4>Par&#225;metros HTTP para actualizaci&#243;n de CRL</h4>
+<p>Especifica los par&#225;metros HTTP para obtener una CRL desde un servlet para una actualizaci&#243;n de CRL. P&#243;ngase en contacto con el administrador de CA para conocer estos par&#225;metros. </p>
+<A NAME="fwbil"></A><h4>Validaci&#243;n OCSP</h4>
+<p>Habilita la validaci&#243;n OCSP que se realizar&#225; al ponerse en contacto con el contestador OCSP correspondiente. El contestador OCSP se decide de la siguiente manera durante el tiempo de ejecuci&#243;n:</p>
+<ul><li><p>Si <tt>com.sun.identity.authentication.ocspCheck</tt> es true (verdadero) y el contestador OCSP se ha definido en el atributo <i>com.sun.identity.authentication.ocsp.repsonder.url </i>, el valor del atributo se utilizar&#225; como contestador OCSP.</p>
+</li>
+<li><p>Si <tt>com.sun.identity.authentication.ocspCheck</tt> se define como true (verdadero) y si el valor del atributo no se define en el archivo <tt> AMConfig.properties</tt>, el contestador OCSP que se presenta en el certificado de cliente se utiliza como contestador OCSP. </p>
+</li>
+<li><p>Si <tt>com.sun.identity.authentication.ocspCheck</tt> se define como false (falso) o si se define <i>com.sum.identity.authentication.ocspCheck</i> como true (verdadero), y no se encuentra un contestador OCSP, no se realizar&#225; ninguna validaci&#243;n OCSP.</p>
+</li>
+</ul>
+<p>Antes de habilitar la validaci&#243;n OCSP, aseg&#250;rese de que la hora de la m&#225;quina de Access Manager y la m&#225;quina del contestador OCSP est&#225;n lo m&#225;s sincronizadas posible. Asimismo, la hora en la m&#225;quina de Access Manager no debe ser posterior a la del contestador OCSP. Por ejemplo:</p>
+<p><tt>OCSP responder machine - 12:00:00 pm</tt></p>
+<p><tt>Access Manager machine - 12:00:30 pm</tt> </p>
+<A NAME="fwbij"></A><h4>Servidor LDAP en el que se almacenan los certificados</h4>
+<p>Especifica el nombre y el n&#250;mero de puerto del servidor LDAP en el que se almacenan los certificados. El valor predeterminado es el nombre de host y el puerto especificados al instalar Access Manager. Se puede utilizar el nombre de host y el puerto de cualquier servidor LDAP donde se hayan guardado los certificados. El formato es <tt>hostname:port</tt>.</p>
+<A NAME="fwbtp"></A><h4>DN de b&#250;squeda de inicio de LDAP</h4>
+<p>Especifica el DN del nodo en el que debe comenzar la b&#250;squeda de un certificado de usuario. No hay ning&#250;n valor predeterminado. El campo reconocer&#225; cualquier DN v&#225;lido.</p>
+<p>Si hay varias entradas, el nombre del servidor local debe ir en primer lugar. El formato es el siguiente:</p>
+<p><tt>servername|search dn</tt> </p>
+<p>Para entradas m&#250;ltiples:</p>
+<p><tt>servername1|search dn servername2|search dn servername3|search dn...</tt></p>
+<p>Si hay varias entradas bajo la organizaci&#243;n root con el mismo Id. de usuario, deber&#237;a definirse este par&#225;metro para que s&#243;lo se pueda buscar o encontrar la entrada que se autenticar&#225;. Por ejemplo, si el Id. de agente y el Id. de usuario se encuentran en la misma organizaci&#243;n root, deber&#237;a utilizarse el par&#225;metro <tt>ou=Agents</tt> para que la organizaci&#243;n root realice la autenticaci&#243;n mediante el Id. de agente y <tt>ou=People</tt> para que la organizaci&#243;n root realice la autenticaci&#243;n mediante el Id. de usuario.</p>
+<A NAME="fwbqp"></A><h4>Usuario principal del servidor LDAP</h4>
+<p>Este campo acepta el DN del usuario principal para el servidor LDAP donde se guardan los certificados. No existe un valor predeterminado para este campo, que reconocer&#225; cualquier DN v&#225;lido. El usuario principal debe tener autorizaci&#243;n para leer y buscar la informaci&#243;n de certificados almacenada en Directory Server.</p>
+<A NAME="fwbst"></A><h4>Contrase&#241;a principal del servidor LDAP</h4>
+<p>El campo tiene la contrase&#241;a LDAP asociada al usuario especificado en el campo LDAP Server Principal User (Usuario principal del servidor LDAP). No existe un valor predeterminado para este campo, que reconocer&#225; la contrase&#241;a LDAP v&#225;lida para el usuario principal especificado. 	Este valor se guarda como texto legible en el directorio.</p>
+<A NAME="fwbiu"></A><h4>Contrase&#241;a principal del servidor LDAP (confirmar)</h4>
+<p>Confirme la contrase&#241;a.</p>
+<A NAME="fwblo"></A><h4>Atributo LDAP para el Id. de perfil</h4>
+<p>Especifica el atributo en la entrada de Directory Server que coincide con el certificado cuyo valor se deber&#237;a utilizar para identificar el perfil de usuario correcto. No existe ning&#250;n valor predeterminado para este campo, que reconocer&#225; cualquier atributo v&#225;lido en una entrada de usuario (<i>cn</i>, <i> sn</i>, etc.) que se pueda utilizar como Id. de usuario.</p>
+<A NAME="fwblm"></A><h4>Utilizar SSL para el acceso LDAP</h4>
+<p>Especifica si se utiliza SSL para acceder al servidor LDAP. De forma predeterminada, el servicio de autenticaci&#243;n de certificados no utiliza SSL para el acceso LDAP.</p>
+<A NAME="fwbof"></A><h4>Campo de certificado utilizado para acceder al perfil de un usuario</h4>
+<p>Especifica el campo en el DN de asunto del certificado que debe utilizarse para buscar un perfil de usuario coincidente. Por ejemplo, si elige la direcci&#243;n de correo electr&#243;nico, el servicio de autenticaci&#243;n de certificados buscar&#225; el perfil de usuario que coincida con el atributo <i>emailAddr </i> en el certificado de usuario. El usuario que ha iniciado una sesi&#243;n utiliza el perfil que coincide. El campo predeterminado es <i>subject CN</i>. La lista contiene:</p>
+<ul><li><p>direcci&#243;n de correo electr&#243;nico</p>
+</li>
+<li><p>CN de asunto</p>
+</li>
+<li><p>DN de asunto</p>
+</li>
+<li><p>UID de asunto</p>
+</li>
+<li><p>otros</p>
+</li>
+</ul>
+<A NAME="fwbna"></A><h4>Otro campo de certificado utilizado para acceder al perfil de un usuario</h4>
+<p>Si el valor del atributo Campo de certificado utilizado para acceder al perfil de un usuario se define en Otro, este campo especifica el atributo que se seleccionar&#225; desde el valor <i>subjectDN </i> del certificado recibido. El servicio de autenticaci&#243;n buscar&#225; el perfil de usuario que coincida con el valor de dicho atributo.</p>
+<A NAME="fwbiw"></A><h4>Hosts remotos de confianza</h4>
+<p>Define una lista de los hosts de confianza para enviar certificados a Access Manager. Access Manager debe comprobar si el certificado procede de uno de estos hosts. Este atributo s&#243;lo se utiliza para la finalizaci&#243;n de SSL. </p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>ninguno</p></td><td valign="top"><p>Deshabilita el atributo. De forma predeterminada, esta opci&#243;n est&#225; habilitada.</p>
+</td></tr><tr><td valign="top"><p>todos</p></td><td valign="top"><p>Acepta la autenticaci&#243;n de certificados de estilo Portal Server Gateway desde cualquier direcci&#243;n IP de un cliente.</p>
+</td></tr><tr><td valign="top"><p>IP ADDR</p></td><td valign="top"><p>Enumera las direcciones IP desde las que aceptar las solicitudes de autenticaci&#243;n de certificados de estilo Portal Server Gateway (la direcci&#243;n IP de las puertas de enlace). El atributo se puede configurar por dominio.</p>
+</td></tr></table>
+<A NAME="fwbkd"></A><h4>N&#250;mero de puerto SSL</h4>
+<p>Especifica el n&#250;mero de puerto del nivel de sockets seguro. En la actualidad, este atributo s&#243;lo lo utiliza el servlet de la puerta de enlace. Antes de agregar o cambiar un n&#250;mero de puerto SSL, consulte la secci&#243;n "Policy-Based Resource Management" (Administraci&#243;n de recursos basada en pol&#237;ticas) en el documento Access Manager Administration Guide (Gu&#237;a de administraci&#243;n de Access Manager).</p>
+<A NAME="gcabp"></A><h4>Nombre del encabezado HTTP para el certificado de cliente</h4>
+<p>Este atributo s&#243;lo se utiliza cuando el atributo Hosts remotos de confianza se ha establecido en todos o se ha definido un nombre de host espec&#237;fico. El administrador debe especificar el nombre de encabezado http para el certificado de cliente insertado por el equilibrador de carga o SRA. </p>
+<A NAME="fwblx"></A><h4>Nivel de autenticaci&#243;n</h4>
+<p>El nivel de autenticaci&#243;n se define de forma independiente para cada m&#233;todo de autenticaci&#243;n. El valor indica en qu&#233; medida se debe confiar en un mecanismo de autenticaci&#243;n. Una vez que el usuario se ha autenticado, este valor se guarda en el token SSO de la sesi&#243;n. Cuando se presenta el token SSO a una aplicaci&#243;n a la que desea acceder el usuario, la aplicaci&#243;n utiliza el valor almacenado para determinar si el nivel es suficiente para permitir el acceso al usuario. Si el nivel de autenticaci&#243;n guardado en un token SSO no satisface el valor m&#237;nimo necesario, la aplicaci&#243;n puede solicitar al usuario que se autentique de nuevo mediante un servicio con un mayor nivel de autenticaci&#243;n. El valor predeterminado es 0.</p>
+<p><hr size="1" noshade><p><b>Nota &#8211; </b>Si no se especifica ning&#250;n nivel de autenticaci&#243;n, el token SSO almacena el valor especificado en el <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Nivel de autenticaci&#243;n predeterminado</A> del atributo de autenticaci&#243;n "Principal".</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

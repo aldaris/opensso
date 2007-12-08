@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Configuration d'un mappeur d'ID de ressource
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.smdiscoveryproviderresourceidmapadd"></A><h4>Configuration d'un mappeur d'ID de ressource</h4>
+<p><tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt> est une interface utilis&#233;e pour mapper un ID utilisateur &#224; l'ID de ressource qui lui est associ&#233;. Diff&#233;rentes impl&#233;mentations peuvent &#234;tre d&#233;velopp&#233;es avec la classe d'impl&#233;mentation et ajout&#233;es &#224; l'attribut. La proc&#233;dure &#224; suivre pour ajouter un nouveau mappeur d'ID de ressource au Service de d&#233;couverte est d&#233;crite ci-dessous. Le point de d&#233;part est l'&#233;cran de configuration du Service de d&#233;couverte dans le module Services Web.</p>
+<ol><li><p><b>Cliquez sur Nouveau pour afficher les attributs du nouveau mappeur ou cliquez sur le nom d'un mappeur configur&#233; pour le modifier.</b></p></li>
+<li><p><b>Fournissez des valeurs pour les attributs de mappeur en vous aidant des informations suivantes :</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>ID fournisseur</p></td><td valign="top"><p>Cet attribut accepte comme valeur un URI pointant vers le Service de d&#233;couverte. La valeur est &#233;crite au format : <tt><b>http://</tt><i> host<tt></i>:</tt><i>port<tt></i>/amserver/Liberty/disco </b></tt></p>
+</td></tr><tr><td valign="top"><p>Mappeur d'ID</p></td><td valign="top"><p>Entrez le nom de la classe d'impl&#233;mentation.</p>
+</td></tr></table>
+</li>
+<li><p><b>Cliquez sur OK pour terminer la configuration du mappeur.</b></p></li>
+<li><p><b>Cliquez sur Enregistrer dans la page du Service de d&#233;couverte pour terminer la configuration du service.</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>So erstellen Sie eine neue Authentifizierungskette
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="authentication.newauthconfig"></A><h3>So erstellen Sie eine neue Authentifizierungskette</h3>
+<ol><li><p><b><A NAME="indexterm-7"></A>Klicken Sie auf den Namen des Bereichs, f&#252;r den Sie eine neue Authentifizierungskette hinzuf&#252;gen m&#246;chten.</b></p></li>
+<li><p><b>Klicken Sie auf die Registerkarte &#8220;Authentifizierung&#34;.</b></p></li>
+<li><p><b>Klicken Sie in der Liste &#8220;Authentifizierungsverkettung&#34; auf &#8220;Neu&#34;.</b></p></li>
+<li><p><b>Geben Sie einen Namen f&#252;r die Authentifizierungskette ein.</b></p></li>
+<li><p><b>Klicken Sie auf &#8220;OK&#34;.</b></p></li>
+<li><p><b>Klicken Sie auf &#8220;Hinzuf&#252;gen&#34;, um die Authentifizierungsmodulinstanz festzulegen, die Sie der Kette hinzuf&#252;gen m&#246;chten. W&#228;hlen Sie dazu den Namen der Modulinstanz aus der Instanzenliste aus. Die in dieser Liste angezeigten Modulinstanzen wurden &#252;ber das Attribut &#8220;Modulinstanz&#34; erstellt. </b></p></li>
+<li><p><b>W&#228;hlen Sie das Kriterium f&#252;r diese Kette aus. Diese Flags stellen Durchf&#252;hrungskriterien f&#252;r das Authentifizierungsmodul dar, f&#252;r das sie definiert wurden. F&#252;r deren Durchsetzung gilt eine hierarchisch festgelegte Reihenfolge. &#8220;Erforderlich&#34; hat die h&#246;chste Priorit&#228;t und &#8220;Optional&#34; hat die niedrigste Priorit&#228;t:</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>Obligatorisch</p></td><td valign="top"><p>Der Erfolg der Modulinstanz muss gew&#228;hrleistet sein. Bei einem Erfolg wird die Authentifizierung in der Liste Authentifizierungsverkettung nach unten hin fortgesetzt. Bei einem Fehlschlag erfolgt die sofortige R&#252;ckkehr zur Anwendung (die Authentifizierung wird nicht in der Liste Authentifizierungsverkettung nach unten hin fortgesetzt).</p>
+</td></tr><tr><td valign="top"><p>Erforderlich</p></td><td valign="top"><p>Die Authentifizierung bei diesem Modul muss gew&#228;hrleistet sein. Wenn ein erforderliches Modul der Kette fehlschl&#228;gt, gilt dies als Fehlschlag der gesamten Authentifizierungskette. Dennoch wird die Authentifizierung auch beim Fehlschlag eines erforderlichen Moduls mit dem n&#228;chsten Modul der Kette fortgef&#252;hrt.</p>
+</td></tr><tr><td valign="top"><p>Ausreichend</p></td><td valign="top"><p>Der Erfolg der Modulinstanz muss nicht gew&#228;hrleistet sein. Bei einem Erfolg erfolgt die sofortige R&#252;ckkehr zur Anwendung (die Authentifizierung wird nicht in der Liste der Modulinstanzen nach unten hin fortgesetzt). Bei einem Fehlschlag wird die Authentifizierung in der Liste Authentifizierungsverkettung nach unten hin fortgesetzt.</p>
+</td></tr><tr><td valign="top"><p>Optional</p></td><td valign="top"><p>Der Erfolg der Modulinstanz muss nicht gew&#228;hrleistet sein. Sowohl bei einem Erfolg als auch bei einem Fehlschlag wird die Authentifizierung in der Liste Authentifizierungsverkettung nach unten hin fortgesetzt.</p>
+</td></tr></table>
+</li>
+<li><p><b>Legen Sie die Optionen f&#252;r die Kette fest. Hier k&#246;nnen Sie weitere Optionen f&#252;r das Modul in der Form &#8220;Schl&#252;ssel=Wert&#34; festlegen. Mehrfach-Optionen werden durch einen Leerschritt getrennt.</b></p></li>
+<li><p><b>Legen Sie die folgenden Attribute fest:</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>URL f&#252;r erfolgreiche Anmeldung</p></td><td valign="top"><p>Legt den URL fest, zu dem der Benutzer nach erfolgreicher Authentifizierung weitergeleitet wird.</p>
+</td></tr><tr><td valign="top"><p>URL f&#252;r fehlgeschlagene Anmeldung</p></td><td valign="top"><p>Legt den URL fest, zu dem der Benutzer nach fehlgeschlagener Authentifizierung weitergeleitet wird.</p>
+</td></tr><tr><td valign="top"><p>Nachverarbeitungs-Authentifizierungsklasse</p></td><td valign="top"><p>Legt die Java-Klasse fest, die zur Anpassung des Weiterverarbeitungsprozesses nach einer erfolgreichen oder fehlgeschlagenen Anmeldung dient.</p>
+</td></tr></table>
+</li>
+<li><p><b>Klicken Sie auf &#8220;Speichern&#34;.</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>SecurID 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthsecuridservice"></A><h3>SecurID </h3>
+<p><A NAME="indexterm-188"></A>Dieses Modul erm&#246;glicht die Authentifizierung mithilfe von RSA ACE/Server-Software und RSA SecurID-Authentikators. Das Authentifizierungsmodul &#8220;SecurID&#34; ist nicht f&#252;r die Plattformen Linux bzw. Solaris x86 verf&#252;gbar und sollte nicht auf diesen beiden Plattformen registriert, konfiguriert bzw. aktiviert werden. Das Modul steht nur f&#252;r Solaris zur Verf&#252;gung. Bei den Attributen f&#252;r die SecurID-Authentifizierung handelt es sich um Bereichsattribute. Es existieren folgende Attribute:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthsecuridservice.html#fwbpt">ACE-/Serverkonfigurationspfad</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthsecuridservice.html#fwbkv">Helper-Konfigurationsanschluss</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthsecuridservice.html#fwbpq">Helper-Authentifizierungsanschluss</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthsecuridservice.html#fwbma">Authentifizierungsebene</A></p>
+</li>
+</ul>
+<A NAME="fwbpt"></A><h4>ACE-/Serverkonfigurationspfad</h4>
+<p>Gibt das Verzeichnis an, in dem sich die SecurID ACE/Server-Datei <tt>sdconf.rec </tt>  befindet. Standardm&#228;&#223;ig ist dies das Verzeichnis <tt>/opt/ace/data</tt>. Wenn Sie ein anderes Verzeichnis angeben, m&#252;ssen Sie sicherstellen, dass das Verzeichnis bereits eingerichtet ist, bevor Sie versuchen, eine SecurID-Authentifizierung durchzuf&#252;hren.</p>
+<A NAME="fwbkv"></A><h4>Helper-Konfigurationsanschluss</h4>
+<p>Gibt den Anschluss an, den SecurID Helper &#252;berwacht, nachdem die Konfigurationsinformationen aus dem Attribut &#8220;Anschluss f&#252;r SecurID Helper-Authentifizierung&#34; aktiviert wurden. Der Standardanschluss ist 58943.</p>
+<p> Falls Sie dieses Attribut &#228;ndern, m&#252;ssen Sie auch den Eintrag <i>securidHelper.ports </i> in der Datei <tt>AMConfig.properties</tt> entsprechend &#228;ndern und Access Manager neu starten. Der Eintrag in der Datei <tt>AMConfig.properties </tt> ist eine durch Leerschritte getrennte Liste der Anschl&#252;sse f&#252;r die Instanzen von SecurID Helpers. F&#252;r jeden Bereich, der mit einem anderen ACE/Server kommuniziert (der eine andere <tt>sdconf.rec</tt>-Datei verwendet), muss ein separater SecurID Helper vorhanden sein.</p>
+<A NAME="fwbpq"></A><h4>Helper-Authentifizierungsanschluss</h4>
+<p>Gibt den Anschluss an, den das SecurID-Authentifizierungsmodul des Bereichs als SecurID Helper-Instanz f&#252;r den Empfang von Authentifizierungsanforderungen konfiguriert. Diese Anschlussnummer muss in allen Bereichen eindeutig sein, die die SecurID- oder UNIX-Authentifizierung verwenden. Der Standardanschluss ist 57943.</p>
+<A NAME="fwbma"></A><h4>Authentifizierungsebene</h4>
+<p>Die Authentifizierungsebene wird f&#252;r jede Authentifizierungsmethode einzeln festgelegt. Mit diesem Wert wird angegeben, wie stark einem Authentifizierungsmechanismus vertraut wird. Sobald ein Benutzer authentifiziert wurde, wird der Wert im SSO-Token der aktuellen Sitzung gespeichert. Wird der SSO-Token einer Anwendung, auf die der Benutzer zugreifen m&#246;chte, vorgelegt, bestimmt die Anwendung anhand des gespeicherten Werts, ob die Ebene ausreicht, um den Benutzer Zugriff zu gew&#228;hren. Wenn die im SSO-Token gespeicherte Authentifizierungsebene nicht den erforderlichen Mindestwert aufweist, wird der Benutzer aufgefordert, sich erneut &#252;ber einen Dienst mit einer h&#246;heren Authentifizierungsebene zu authentifizieren. Der Standardwert ist 0.</p>
+<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Hinweis: Wenn keine Authentifizierungsebene angegeben wird, wird im SSO-Token der im Kern-Authentifizierungsattribut <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Standard-Authentifizierungsebene</A> angegebene Wert verwendet.</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

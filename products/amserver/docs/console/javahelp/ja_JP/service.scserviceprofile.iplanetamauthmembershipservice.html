@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>メンバーシップ
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthmembershipservice"></A><h3>メンバーシップ</h3>
+<p><A NAME="indexterm-183"></A>メンバーシップ認証モジュールは、パーソナライズされるサイト用に実装されています。メンバーシップ認証が有効になっている場合、ユーザーは自己登録できます。つまり、ユーザーは管理者の助けを借りずに、アカウントを作成して、個別設定し、登録済みユーザーとしてアクセスすることができます。この属性はレルム属性です。属性は次のとおりです。</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumys">「パスワードの最少文字数」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyr">「デフォルトユーザーロール」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyt">「登録後のユーザー状態」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzt">「プライマリ LDAP サーバー」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumza">「セカンダリ LDAP サーバー」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyz">「ユーザー検索の開始 DN」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzb">「root ユーザーバインド DN」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumze">「root ユーザーバインドパスワード」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzd">「root ユーザーバインドパスワード (確認)」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzc">「ユーザープロファイルの取得に使用する属性」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzh">「認証するユーザーの検索に使用する属性」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzg">「ユーザー検索フィルタ」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzj">「検索範囲」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzi">「SSL の LDAP サーバーへのアクセスを有効」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzk">「認証するユーザー DN を返す」</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzm">「認証レベル」</A></p>
+</li>
+</ul>
+<A NAME="fumys"></A><h4>パスワードの最少文字数</h4>
+<p>自己登録時に設定するパスワードに必要な最少文字数を指定します。デフォルト値は 8 です。</p>
+<p>この値を変更すると、次のファイルの登録およびエラーテキストでも値が変更されます。</p>
+<p><tt></tt><i>AcessManager-base<tt></i>/locale/amAuthMembership.properties </tt> (<i>PasswdMinChars</i> エントリ)</p>
+<A NAME="fumyr"></A><h4>デフォルトユーザーロール</h4>
+<p>自己登録で作成されたプロファイルを持つ新しいユーザーに割り当てるロールを指定します。デフォルト値はありません。管理者は、新しいユーザーに割り当てられるロールの DN を指定する必要があります。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>指定するロールは、認証を構成するレルムの下にあることが必要です。自己登録時に、ユーザーに割り当てることのできるロールだけを追加することができます。その他のすべての DN は無視されます。このロールは、Access Manager ロールまたは LDAP ロールにすることができますが、フィルタロールは指定できません。</p>
+<hr size="1" noshade></p><A NAME="fumyt"></A><h4>登録後のユーザー状態</h4>
+<p>自己登録したユーザーにサービスをすぐに利用できるようにするかどうかを指定します。デフォルト値は「アクティブ」なので、新しいユーザーはサービスを利用できます。管理者が「非アクティブ」を選択すると、新しいユーザーはサービスを利用できません。</p>
+<A NAME="fumzt"></A><h4>プライマリ LDAP サーバー</h4>
+<p>Access Manager のインストール時に指定するプライマリ LDAP サーバーのホスト名およびポート番号を指定します。これは、認証で最初に通信するサーバーです。形式は <tt></tt><i>hostname:port<tt></i></tt> です。ポート番号がないときは、<tt>389</tt> と想定します。</p>
+<p>Access Manager に複数のドメインが配備されている場合、Access Manager と Directory Server の特定のインスタンス間の通信リンクを次の形式で指定できます。複数のエントリの場合は、ローカルサーバー名を先頭に付ける必要があります。</p>
+<p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p>
+<p>たとえば、異なる場所に配備された 2 つの Access Manager インスタンス (L1-machine1-IS および L2- machine2-IS) が、それぞれ別の Directory Server インスタンス (L1-machine1-DS および L2-machine2-DS) と通信する場合、次のように指定します。</p>
+<p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p>
+<p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+<A NAME="fumza"></A><h4>セカンダリ LDAP サーバー</h4>
+<p>Access Manager プラットフォームが利用できるセカンダリ LDAP サーバーのホスト名およびポート番号を指定します。プライマリ LDAP サーバーが認証要求に応答しない場合は、このサーバーと通信します。プライマリサーバーが稼働している場合は、Access Manager はプライマリサーバーに戻ります。この形式も <tt></tt><i>hostname:port<tt></i></tt> です。複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。</p>
+<hr size="1" noshade><p><IMG ALT="注意" src="graphics/caution.gif">  <b>注意 &#8211; </b>Access Manager が稼働しているホストとは別のホストにある Directory Server からユーザーを認証する場合は、プライマリとセカンダリ両方の LDAP サーバーポートに値があることが重要です。1 つの Directory Server の場所の値を両方のフィールドに使用できます。</p><hr size="1" noshade><A NAME="fumyz"></A><h4>ユーザー検索の開始 DN</h4>
+<p>ユーザーの検索を開始するノードの DN を指定します。性能上の理由から、この DN はできるだけ特定のものにしてください。デフォルト値は、ディレクトリツリーのルートです。有効な DN がすべて認識されます。「検索範囲」属性で「オブジェクト」を選択する場合、プロファイルが存在するレベルよりも 1 つ上のレベルを指す DN を指定します。複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。形式は <tt></tt><i>servername|search dn<tt></i></tt> です。</p>
+<p>複数のエントリの場合は、次のようになります。</p>
+<p><tt></tt><i>servername1|search dn servername2|search dn servername3|search dn<tt></i>...</tt></p>
+<p>ルート組織の下に同じユーザー ID で複数のエントリが存在する場合、認証が正しく行われるためには、1 つのエントリだけを検索または発見できるようにこのパラメータを設定する必要があります。たとえば、ルート組織の下でエージェント ID とユーザー ID が同じである場合、ルート組織でエージェント ID を使用して認証するにはこのパラメータを <tt>ou=Agents</tt> に、ユーザー ID を使用して認証するにはこのパラメータを <tt>ou=People</tt> にしてください。</p>
+<A NAME="fumzb"></A><h4>root ユーザーバインド DN</h4>
+<p>「プライマリ LDAP サーバーおよびポート」フィールドで指定した Directory Server に管理者としてバインドするのに使用するユーザーの DN を指定します。ユーザーログイン ID に基づいて、一致するユーザー DN を検索するためには、認証サービスはこの DN でバインドする必要があります。デフォルトは <tt>amldapuser</tt> です。任意の有効な DN が認識されます。</p>
+<A NAME="fumze"></A><h4>root ユーザーバインドパスワード</h4>
+<p>「root ユーザーバインド DN」フィールドで指定される管理者プロファイルのパスワードを指定します。デフォルト値はありません。管理者の有効な LDAP パスワードだけが認識されます。</p>
+<A NAME="fumzd"></A><h4>root ユーザーバインドパスワード (確認)</h4>
+<p>パスワードを確認します。</p>
+<A NAME="fumzc"></A><h4>ユーザープロファイルの取得に使用する属性</h4>
+<p>ユーザーエントリのネーミング規則に使用する属性を指定します。デフォルトでは、Access Manager はユーザーエントリが uid 属性によって識別されるものと想定します。Directory Server で異なる属性 (<i>givenname</i> など) を使用している場合は、このフィールドにその属性名を指定します。</p>
+<A NAME="fumzh"></A><h4>認証するユーザーの検索に使用する属性</h4>
+<p>認証を受けるユーザーの検索フィルタを設定するのに使用する属性を一覧表示します。これにより、ユーザーは 1 つ以上の属性によって認証を受けることができます。たとえば、このフィールドが <i>uid</i>、<i>employeenumber</i>、および <i>mail</i> に設定されている場合、ユーザーはこれらの名前のどれを使用しても認証を受けることができます。</p>
+<A NAME="fumzg"></A><h4>ユーザー検索フィルタ</h4>
+<p>「ユーザー検索の開始 DN」フィールドの下でユーザーの検索に使用する属性を指定します。これはユーザーネーミング属性とともに機能します。デフォルト値はありません。有効なユーザーエントリ属性はすべて認識されます。</p>
+<A NAME="fumzj"></A><h4>検索範囲</h4>
+<p>一致するユーザープロファイルを検索する対象となる Directory Server のレベルの数を示します。検索は、315 ページの「ユーザー検索の開始 DN」属性で指定されたノードから開始されます。デフォルト値は「サブツリー」です。次のリスト項目から 1 つ選択できます。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>オブジェクト</p></td><td valign="top"><p>指定したノードだけを検索します。</p>
+</td></tr><tr><td valign="top"><p>1 レベル</p></td><td valign="top"><p>指定したノードのレベルとその 1 つ下のレベルで検索します。</p>
+</td></tr><tr><td valign="top"><p>サブツリー</p></td><td valign="top"><p>指定したノードとその下のノードのエントリすべてを検索します。</p>
+</td></tr></table>
+<A NAME="fumzi"></A><h4>SSL の LDAP サーバーへのアクセスを有効</h4>
+<p>プライマリとセカンダリの「LDAP サーバーおよびポート」フィールドで指定される Directory Server への SSL アクセスを有効にします。デフォルトでは、このチェックボックスはオフなので、Directory Server へのアクセスに SSL プロトコルは使用されません。</p>
+<p>LDAP サーバーが SSL 有効 (LDAPS) で実行中の場合、Access Manager が LDAPS プロトコルで Directory Server に接続できるように、適切な SSL- 信頼証明書で設定されていることを確認する必要があります。</p>
+<A NAME="fumzk"></A><h4>認証するユーザー DN を返す</h4>
+<p>Access Manager ディレクトリが LDAP 用に設定されたディレクトリと同じ場合、このオプションを有効にすることができます。オプションを有効にすると、このオプションによって LDAP 認証モジュールがユーザー ID ではなく DN を返すことができるため、検索が不要になります。通常、認証モジュールはユーザー ID だけを返すため、認証サービスはローカルの Access Manager LDAP でユーザーを検索します。外部の LDAP ディレクトリが使用された場合、通常このオプションは有効になりません。</p>
+<A NAME="fumzm"></A><h4>認証レベル</h4>
+<p>認証レベルは認証方法ごとに個別に設定します。この値は、認証メカニズムの信頼度を示します。ユーザーが認証を受けると、この値がセッションの SSO トークンに格納されます。ユーザーがアクセスするアプリケーションに SSO トークンが提供されると、そのアプリケーションは格納されている値を使用して、ユーザーにアクセスを許可するのに十分なレベルかどうかを判別します。SSO トークンに格納されている認証レベルが必要な最小値に満たない場合、アプリケーションはユーザーにより高い認証レベルのサービスで認証を再度受けるよう要求することがあります。デフォルト値は 0 です。</p>
+<p><hr size="1" noshade><p><b>注 &#8211; </b>認証レベルの指定がない場合、SSO トークンはコア認証属性の <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">「デフォルト認証レベル」</A>で指定した値を格納します。</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

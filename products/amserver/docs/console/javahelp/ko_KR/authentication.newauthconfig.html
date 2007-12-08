@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>새 인증 체인 만들기
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="authentication.newauthconfig"></A><h3>새 인증 체인 만들기</h3>
+<ol><li><p><b><A NAME="indexterm-7"></A>새 인증 체인을 추가할 영역의 이름을 누릅니다.</b></p></li>
+<li><p><b>[인증] 탭을 선택합니다.</b></p></li>
+<li><p><b>인증 연결 목록에서 [새로 만들기]를 누릅니다.</b></p></li>
+<li><p><b>인증 체인의 이름을 입력합니다.</b></p></li>
+<li><p><b>[확인]을 누릅니다.</b></p></li>
+<li><p><b>[추가]를 눌러 체인에 포함할 인증 모듈 인스턴스를 정의합니다. 이를 수행하려면 인스턴스 목록에서 모듈 인스턴스 이름을 선택합니다. 이 목록에 표시된 모듈 인스턴스 이름은 모듈 인스턴스 속성에서 만들어집니다. </b></p></li>
+<li><p><b>체인의 기준을 선택합니다. 이러한 플래그는 플래그가 정의된 인증 모듈에 대한 적용 기준을 설정하며적용을 위한 계층이 있습니다. 필수는 가장 높고 옵션은 가장 낮습니다.</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>필요</p></td><td valign="top"><p>모듈 인스턴스가 성공적이어야 합니다. 성공한 경우 인증 연결 목록의 그 다음 항목에 대해 인증이 계속됩니다. 실패한 경우 컨트롤이 응용 프로그램에 즉시 반환됩니다(인증 연결 목록의 그 다음 항목에 대해 인증이 진행되지 않음).</p>
+</td></tr><tr><td valign="top"><p>필수</p></td><td valign="top"><p>이 모듈에 대한 인증이 성공적이어야 합니다. 체인의 필수 모듈 중 하나라도 실패하면 결과적으로 전체 인증 체인이 실패합니다. 그러나 필수 모듈이 성공하든 실패하든 컨트롤은 체인에서 그 다음 모듈에 대해 계속 진행됩니다.</p>
+</td></tr><tr><td valign="top"><p>충분</p></td><td valign="top"><p>모듈 인스턴스가 반드시 성공적이지 않아도 됩니다. 성공한 경우 컨트롤이 즉시 응용 프로그램에 반환됩니다(인증 모듈 목록의 그 다음 항목에 대해 인증이 진행되지 않음). 실패한 경우 인증 연결 목록의 그 다음 항목에 대해 인증이 계속됩니다.</p>
+</td></tr><tr><td valign="top"><p>옵션</p></td><td valign="top"><p>모듈 인스턴스가 반드시 성공적이지 않아도 됩니다. 성공 또는 실패한 경우 인증 연결 목록의 그 다음 항목에 대해 인증이 계속 진행됩니다.</p>
+</td></tr></table>
+</li>
+<li><p><b>체인에 대한 옵션을 입력합니다. 이렇게 하면 키=값 쌍으로 모듈에 대한 추가 옵션을 허용합니다. 여러 옵션을 사용할 경우 공백으로 구분합니다.</b></p></li>
+<li><p><b>다음 속성을 정의합니다.</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>성공한 로그인 URL</p></td><td valign="top"><p>인증 성공 시 사용자가 리디렉션되는 URL을 지정합니다.</p>
+</td></tr><tr><td valign="top"><p>실패한 로그인 URL</p></td><td valign="top"><p>인증 실패 시 사용자가 리디렉션되는 URL을 지정합니다.</p>
+</td></tr><tr><td valign="top"><p>인증 사후 처리 클래스</p></td><td valign="top"><p>로그인 성공 또는 실패 후에 인증 사후 처리를 사용자 정의하는 데 사용되는 Java 클래스의 이름을 정의합니다.</p>
+</td></tr></table>
+</li>
+<li><p><b>[저장]을 누릅니다.</b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

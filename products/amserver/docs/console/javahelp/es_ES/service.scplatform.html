@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Plataforma
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scplatform"></A><h3>Plataforma</h3>
+<p><A NAME="indexterm-208"></A>El servicio de plataforma es aqu&#233;l en el que se pueden agregar servidores adicionales a las configuraciones de Access Manager, as&#237; como otras opciones aplicadas en el nivel superior de la aplicaci&#243;n Access Manager. Los atributos del servicio de plataforma son globales. Los atributos son:</p>
+<ul><li><p><A HREF="service.scplatform.html#fxcsy">Nombre del sitio</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcqf">Nombre de instancia</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcgy">Idioma de plataforma</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcpo">Dominios de cookies</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcsh">URL de servicio de inicio de sesi&#243;n</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcrt">URL de servicio de cierre de sesi&#243;n</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcmi">Idiomas disponibles</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxctg">Conjunto de caracteres del cliente</A></p>
+</li>
+</ul>
+<A NAME="fxcsy"></A><h4>Nombre del sitio</h4>
+<p>El servicio de asignaci&#243;n de nombres lee este atributo en el momento de la inicializaci&#243;n. La lista identifica de forma exclusiva el nombre FQDN con el n&#250;mero de puerto del equilibrador de carga o el SRA de equilibrado de carga para los servidores secundarios de Access Manager. Si el host especificado en una solicitud para una URL de servicio no se encuentra en la lista, el servicio de asignaci&#243;n de nombres rechazar&#225; la solicitud. En este atributo s&#243;lo debe utilizarse el protocolo de servicio de asignaci&#243;n de nombres. Consulte <A HREF="service.scplatformsitelistadd.html#service.scplatformsitelistadd">Para crear un nombre de sitio nuevo</A>. </p>
+<A NAME="fxcqf"></A><h4>Nombre de instancia</h4>
+<p>El servicio de asignaci&#243;n de nombres lee este atributo en el momento de la inicializaci&#243;n. Esta lista contiene los servidores de la sesi&#243;n de Access Manager en una &#250;nica configuraci&#243;n de Access Manager. Por ejemplo, si hay dos Access Manager instalados que deben funcionar como uno, deben incluirse ambos en esta lista. Si el host especificado en una solicitud para una URL de servicio no se encuentra en la lista, el servicio de asignaci&#243;n de nombres rechazar&#225; la solicitud. En este atributo s&#243;lo debe utilizarse el protocolo de servicio de asignaci&#243;n de nombres. Consulte <A HREF="service.scplatformserverlistadd.html#service.scplatformserverlistadd">Para crear un nombre de instancia nuevo</A>.</p>
+<A NAME="fxcgy"></A><h4>Idioma de plataforma</h4>
+<p>El valor del idioma de la plataforma es el subtipo de idioma predeterminado con el que se instal&#243; Access Manager. Los servicios administraci&#243;n, registro y autenticaci&#243;n se administran con el idioma de este valor. El valor predeterminado es en_US. Consulte <A HREF="supportedlang.html#supportedlang">Idiomas admitidos</A> para obtener una lista de los subtipos de idiomas admitidos.</p>
+<A NAME="fxcpo"></A><h4>Dominios de cookies</h4>
+<p>La lista de dominios que se devolver&#225;n en el encabezado de cookie al configurar una cookie en el explorador del usuario durante la autenticaci&#243;n. Si se deja vac&#237;o, no se configurar&#225; ning&#250;n dominio de cookie. Es decir, la cookie de sesi&#243;n de Access Manager s&#243;lo se reenviar&#225; a Access Manager y no al resto de servidores del dominio.</p>
+<p>Si se requiere SSO con otros servidores del dominio, este atributo debe configurarse con el dominio de cookies. Si dispone de dos interfaces en dominios distintos de un Access Manager, deber&#225; configurar ambos dominios de cookies en este atributo. Si se utiliza un equilibrador de carga, el dominio de cookies debe ser el del dominio del equilibrador de carga y no los servidores detr&#225;s del equilibrador. El valor predeterminado de este campo es el dominio del Access Manager instalado.</p>
+<A NAME="fxcsh"></A><h4>URL de servicio de inicio de sesi&#243;n</h4>
+<p>Este campo especifica la URL de la p&#225;gina de inicio de sesi&#243;n. El valor predeterminado de este atributo es <tt>/Service_DEPLOY_URI/UI/Login</tt>. </p>
+<A NAME="fxcrt"></A><h4>URL de servicio de cierre de sesi&#243;n</h4>
+<p>Este campo especifica la URL de la p&#225;gina de cierre de sesi&#243;n. El valor predeterminado de este atributo es <tt>/Service_DEPLOY_URI/UI/Logout</tt>. </p>
+<A NAME="fxcmi"></A><h4>Idiomas disponibles</h4>
+<p>Este atributo almacena todos las configuraciones regionales configuradas para la plataforma. Considere una aplicaci&#243;n que permite al usuario elegir la configuraci&#243;n regional del usuario. La aplicaci&#243;n obtendr&#225; el atributo del perfil de la plataforma y mostrar&#225; al usuario la lista de configuraciones regionales. El usuario elegir&#225; una configuraci&#243;n regional y la aplicaci&#243;n la configurar&#225; en la entrada de usuario <i>preferredLocale</i>.</p>
+<A NAME="fxctg"></A><h4>Conjunto de caracteres del cliente</h4>
+<p>Este atributo especifica el conjunto de caracteres establecido para los distintos clientes en el nivel de la plataforma. Contiene una lista con los tipos de clientes y los correspondientes conjuntos de caracteres. Consulte <A HREF="service.scplatformclientcharsetsadd.html#service.scplatformclientcharsetsadd">Para crear un conjunto de caracteres nuevo</A> para obtener m&#225;s informaci&#243;n.</p>
+
+<br />
+
+</body>
+</html>

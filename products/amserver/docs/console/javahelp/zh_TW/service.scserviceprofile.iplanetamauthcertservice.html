@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>憑證 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthcertservice"></A><h3>憑證 </h3>
+<p><A NAME="indexterm-177"></A>此模組可讓使用者透過個人數位憑證 (PDC) 來登入。模組實例需要使用線上憑證狀態通訊協定 (OCSP)，才能判定憑證的狀態。使用 OCSP 是選擇性的。根據憑證是否有效，來授予或拒絕使用者存取資源的權限。憑證認證屬性為範圍屬性。這些屬性包括：</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbia">符合 LDAP 中的憑證</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiq">用於在 LDAP 中搜尋憑證的主體 DN 屬性</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbim">使憑證符合 CRL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbik">用於搜尋 CRL 的 LDAP 之發行者 DN 屬性</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbin">用於 CRL 更新的 HTTP 參數</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbil">OCSP 驗證</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbij">儲存憑證的 LDAP 伺服器</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbtp">LDAP 起始搜尋 DN</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbqp">LDAP 伺服器首要使用者</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbst">LDAP 伺服器首要密碼</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiu">LDAP 伺服器首要密碼 (確認)</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblo">設定檔 ID 的 LDAP 屬性</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblm">將 SSL 用於 LDAP 存取</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbof">用於存取使用者設定檔的憑證欄位</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbna">用於存取使用者設定檔的其他憑證欄位</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiw">可信任的遠端主機</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbkd">SSL 連接埠編號</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblx">認證級別</A></p>
+</li>
+</ul>
+<A NAME="fwbia"></A><h4>符合 LDAP 中的憑證</h4>
+<p>指定是否檢查登入時出示的使用者憑證是否儲存在 LDAP 伺服器中。如果找不到相符的憑證，則會拒絕使用者存取。如果找到相符的憑證，並且不需要其他驗證，則允許使用者存取。依預設，憑證認證服務不會檢查使用者憑證。</p>
+<p><hr size="1" noshade><p><b>備註 &#8211; </b>儲存在 Directory Server 中的憑證不一定有效，憑證廢止清單中也可能存在該憑證。請參閱<A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbim">使憑證符合 CRL</A>。但是，Web 容器可能會檢查登入時所出示使用者憑證的有效性。</p>
+<hr size="1" noshade></p><A NAME="fwbiq"></A><h4>用於在 LDAP 中搜尋憑證的主體 DN 屬性</h4>
+<p>指定憑證之 <i>SubjectDN</i> 的屬性值，該值將用於在 LDAP 中搜尋憑證。必須用來唯一識別使用者項目的屬性。搜尋將使用此實際值。預設值為 <tt>cn</tt>。</p>
+<A NAME="fwbim"></A><h4>使憑證符合 CRL</h4>
+<p>指定是否針對 LDAP 伺服器中的憑證廢止清單 (CRL) 比對使用者憑證。此 CRL 的位置由核發者的 <i>SubjectDN</i> 中某個屬性名稱確定。如果 CRL 中存在此憑證，則拒絕使用者存取；如果不存在，則允許使用者存取。依預設，此屬性是停用的。</p>
+<p>發生以下情況時應該廢止憑證：憑證所有者的狀態已經變更，不再具有使用此憑證的權限；或者憑證所有者的私密金鑰已經洩漏。</p>
+<A NAME="fwbik"></A><h4>用於搜尋 CRL 的 LDAP 之發行者 DN 屬性</h4>
+<p>指定已收到憑證的核發者 <i>subjectDN</i> 屬性的值，此值將用於在 LDAP 中搜尋 CRL。僅在啟用 [使憑證符合 CRL] 屬性時，才使用此欄位。搜尋將使用此實際值。預設值為 <tt>cn</tt>。</p>
+<A NAME="fwbin"></A><h4>用於 CRL 更新的 HTTP 參數</h4>
+<p>指定 HTTP 參數 (用於從 servlet 取得 CRL) 以更新 CRL。請聯絡您的 CA 管理員，以取得這些參數。</p>
+<A NAME="fwbil"></A><h4>OCSP 驗證</h4>
+<p>透過聯絡對應的 OCSP 回應者，來啟用要執行的 OCSP 驗證。在執行階段，OCSP 回應者如下決定：</p>
+<ul><li><p>如果 <tt>com.sun.identity.authentication.ocspCheck</tt> 為 true，且在 <i>com.sun.identity.authentication.ocsp.repsonder.url</i> 屬性中設定了 OCSP 回應者，則此屬性的值將用作 OCSP 回應者。</p>
+</li>
+<li><p>如果將 <tt>com.sun.identity.authentication.ocspCheck</tt> 設定為 true，且未在 <tt>AMConfig.properties</tt> 檔案中設定此屬性值，則在您的用戶端憑證中顯示的 OCSP 回應者會被用作 OCSP 回應者。</p>
+</li>
+<li><p>如果將 <tt>com.sun.identity.authentication.ocspCheck</tt> 設定為 false，或將 <i>com.sum.identity.authentication.ocspCheck</i> 設定為 true，且無法找到 OCSP 回應者，則不會執行任何 OCSP 驗證。</p>
+</li>
+</ul>
+<p>在啟用 OCSP 驗證之前，請確定 Access Manager 機器與 OCSP 回應者機器上的時間儘可能同步。而且，Access Manager 機器上的時間不能晚於 OCSP 回應者機器上的時間。例如：</p>
+<p><tt>OCSP responder machine - 12:00:00 pm</tt></p>
+<p><tt>Access Manager machine - 12:00:30 pm</tt></p>
+<A NAME="fwbij"></A><h4>儲存憑證的 LDAP 伺服器</h4>
+<p>指定儲存憑證的 LDAP 伺服器名稱與連接埠號。預設值為安裝 Access Manager 時指定的主機名稱與連接埠。可以使用任何儲存憑證的 LDAP 伺服器之主機名稱與連接埠。格式為 <tt>hostname:port</tt>。</p>
+<A NAME="fwbtp"></A><h4>LDAP 起始搜尋 DN</h4>
+<p>指定應該開始搜尋使用者之憑證的節點 DN。此欄位沒有預設值。此欄位將識別任何有效 DN。</p>
+<p>多重項目必須以本機伺服器名稱為字首。格式如下所示：</p>
+<p><tt>servername|search dn</tt></p>
+<p>對於多個項目：</p>
+<p><tt>servername1|search dn servername2|search dn servername3|search dn...</tt></p>
+<p>如果在具有同一使用者 ID 的根組織之下有多個項目，則應該將此參數設定為只能搜尋或尋找一個項目進行認證。例如，當代理程式 ID 與使用者 ID 都在根組織下時，若根組織使用代理程式 ID 進行認證，此參數應該為 <tt>ou=Agents</tt>；若根組織採用使用者 ID 進行認證，此參數應該為 <tt>ou=People</tt>。</p>
+<A NAME="fwbqp"></A><h4>LDAP 伺服器首要使用者</h4>
+<p>此欄位會接受儲存憑證的 LDAP 伺服器之首要使用者 DN。將辨識任何有效 DN 的此欄位沒有預設值。必須授與主體使用者讀取與搜尋儲存於 Directory Server 中之憑證資訊的權限。</p>
+<A NAME="fwbst"></A><h4>LDAP 伺服器首要密碼</h4>
+<p>此欄位具有與 [LDAP 伺服器首要使用者] 欄位中指定的使用者關聯的 LDAP 密碼。此欄位沒有預設值，它將辨識指定的首要使用者之有效 LDAP 密碼。此值做為可讀文字儲存在目錄中。</p>
+<A NAME="fwbiu"></A><h4>LDAP 伺服器首要密碼 (確認)</h4>
+<p>確認密碼。</p>
+<A NAME="fwblo"></A><h4>設定檔 ID 的 LDAP 屬性</h4>
+<p>指定與憑證 (應該使用其值識別正確的使用者設定檔) 相符的 Directory Server 項目中之屬性。此欄位沒有預設值，它可辨識使用者項目中可以做為使用者 ID 之任何有效屬性 (<i>cn</i>、<i>sn</i> 等)。</p>
+<A NAME="fwblm"></A><h4>將 SSL 用於 LDAP 存取</h4>
+<p>指定是否使用 SSL 來存取 LDAP 伺服器。預設情況下，憑證認證服務不使用 SSL 存取 LDAP。</p>
+<A NAME="fwbof"></A><h4>用於存取使用者設定檔的憑證欄位</h4>
+<p>指定應該使用憑證主題 DN 中的哪個欄位來搜尋相符的使用者設定檔。例如，如果選擇電子郵件地址，則憑證認證服務將搜尋與使用者憑證中 <i>emailAddr</i> 屬性相符的使用者設定檔。然後使用者會使用此相符設定檔進行登入。預設欄位為<i>主體 CN</i>。此清單包含：</p>
+<ul><li><p>電子郵件地址</p>
+</li>
+<li><p>主體 CN</p>
+</li>
+<li><p>主體 DN</p>
+</li>
+<li><p>主體 UID</p>
+</li>
+<li><p>其他</p>
+</li>
+</ul>
+<A NAME="fwbna"></A><h4>用於存取使用者設定檔的其他憑證欄位</h4>
+<p>如果將 [用於存取使用者設定檔的憑證欄位] 屬性設為其他，則此欄位指定要從已接收憑證的 <i>subjectDN</i> 值中選取的屬性。然後，此認證服務將搜尋與該屬性值相符的使用者設定檔。</p>
+<A NAME="fwbiw"></A><h4>可信任的遠端主機</h4>
+<p>定義信任的主機清單，這些主機可被信任以向 Access Manager 傳送憑證。Access Manager 必須驗證憑證是否來自這些主機中的一個。此屬性僅用於 SSL 終止。</p>
+<table border="0" cellspacing="5"><tr><td valign="top"><p>無</p></td><td valign="top"><p>停用此屬性。這是依預設而設定的。</p>
+</td></tr><tr><td valign="top"><p>全部</p></td><td valign="top"><p>會接受來自任意用戶端 IP 位址的 Portal Server Gateway 樣式之憑證認證。</p>
+</td></tr><tr><td valign="top"><p>IP ADDR</p></td><td valign="top"><p>會列出接受 Portal Server Gateway 樣式之憑證認證請求的 IP 位址 (Gateway 的 IP 位址)。此屬性可基於範圍配置。</p>
+</td></tr></table>
+<A NAME="fwbkd"></A><h4>SSL 連接埠編號</h4>
+<p>指定安全套接層的連接埠號。目前，此屬性僅由 Gateway servlet 使用。在新增或變更 SSL 連接埠號之前，請參閱「Access Manager 管理指南」中的「以策略為基礎的資源管理」一節。</p>
+<A NAME="gcabp"></A><h4>用戶端憑證的 HTTP 標頭名稱</h4>
+<p>僅當 [可信任的遠端主機] 屬性設定為 [全部] 時或定義了特定的主機名稱時，才使用此屬性。對於由負載平衡器或 SRA 插入的用戶端憑證，管理員必須為其指定 http 標頭名稱。</p>
+<A NAME="fwblx"></A><h4>認證級別</h4>
+<p>會分別為每個認證方法設定認證層級。此值指示信任認證機制的程度。使用者進行認證後，此值便會儲存在階段作業的 SSO 記號中。SSO 記號呈現給使用者要存取的應用程式時，應用程式將使用此儲存值以決定此層級是否達到了允許使用者存取的層級。如果儲存在 SSO 記號中的認證層級不滿足最小值需求，應用程式可以提示使用者透過具有較高認證層級的服務重新進行認證。預設值為 0。</p>
+<p><hr size="1" noshade><p><b>備註 &#8211; </b>如果未指定任何認證層級，SSO 記號會將核心認證屬性中指定的值儲存為<A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">預設認證層級</A>。</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

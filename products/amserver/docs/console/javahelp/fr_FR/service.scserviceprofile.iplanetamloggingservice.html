@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@15714-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Journalisation 
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamloggingservice"></A><h3>Journalisation </h3>
+<p><A NAME="indexterm-206"></A>Le service Journalisation fournit des messages d'&#233;tat et d'erreur concernant l'administration d'Access Manager. Un administrateur peut configurer des valeurs telles que la taille et l'emplacement du fichier journal. Access Manager peut consigner les &#233;v&#233;nements dans un fichier texte ordinaire ou dans une base de donn&#233;es relationnelles. Les attributs du service Journalisation sont des attributs globaux. Ces attributs sont les suivants :</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsv">Taille maximale du journal</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsg">Nombre de fichiers d'historique</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbzh">Emplacement du fichier journal</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwg">Type de connexion</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbrd">Nom d'utilisateur de la base de donn&#233;es</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcdf">Mot de passe de la base de donn&#233;es</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcep">Mot de passe de la base de donn&#233;es (confirmer)</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvb">Nom du pilote de la base de donn&#233;es</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsb">Champs de journal configurables</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxccb">Fr&#233;quence de v&#233;rification du journal</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxe">Dur&#233;e de signature du journal</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcbz">Connexion s&#233;curis&#233;e</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxt">Nombre max. d'enregistrements</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwp">Nombre de fichiers par archive</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbyw">Taille du tampon</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvh">Taille de la m&#233;moire tampon pour &#233;chec de base de donn&#233;es</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcea">Dur&#233;e de la m&#233;moire tampon</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsn">Dur&#233;e de la mise en m&#233;moire tampon</A></p>
+</li>
+</ul>
+<A NAME="fxbsv"></A><h4>Taille maximale du journal</h4>
+<p>Cet attribut d&#233;finit la taille maximale (en octets) d'un fichier journal Access Manager. La valeur par d&#233;faut est 1000000.</p>
+<A NAME="fxbsg"></A><h4>Nombre de fichiers d'historique</h4>
+<p>Cet attribut d&#233;finit le nombre de fichiers journaux de sauvegarde qui seront conserv&#233;s pour l'analyse historique. Cet attribut accepte tout entier bas&#233; sur la taille de partition et l'espace disque disponible sur le syst&#232;me local. La valeur par d&#233;faut est 3.</p>
+<p>Les fichiers s'appliquent uniquement au type de journalisation FILE. Lorsque le type de journalisation est d&#233;fini sur DB, aucun fichier d'historique n'est cr&#233;&#233; et aucune limite de taille de fichier n'est d&#233;finie par Access Manager.</p>
+<p><hr size="1" noshade><p><b>Remarque &#8211; </b>La valeur 0 est interpr&#233;t&#233;e de la m&#234;me mani&#232;re que la valeur 1, ce qui signifie que si vous sp&#233;cifiez 0, un journal d'historique est cr&#233;&#233;.</p>
+<hr size="1" noshade></p><A NAME="fxbzh"></A><h4>Emplacement du fichier journal</h4>
+<p>La fonction de journalisation bas&#233; sur un fichier n&#233;cessite la d&#233;finition de l'emplacement de stockage des fichiers journaux. Ce champ accepte un chemin de r&#233;pertoire complet. L'emplacement par d&#233;faut est :</p>
+<p><tt>/var/opt/SUNWam/logs</tt></p>
+<p>Si un r&#233;pertoire autre que le r&#233;pertoire par d&#233;faut est sp&#233;cifi&#233;, Access Manager cr&#233;era ce r&#233;pertoire si celui-ci n'existe pas. Vous devez alors d&#233;finir les permissions appropri&#233;es pour ce r&#233;pertoire (par exemple, 0700).</p>
+<p>Lorsque vous configurez l'emplacement pour la journalisation dans une base de donn&#233;es (par exemple, Oracle ou MySQL), notez que pour une partie de l'emplacement, la distinction majuscules/minuscules s'applique. Par exemple, si vous effectuez la journalisation dans une base de donn&#233;es Oracle, l'emplacement de la journalisation doit &#234;tre le suivant (notez la distinction majuscules/minuscules) :</p>
+<p><tt>jdbc:oracle:thin:@machine.domaine:port:nomBD</tt></p>
+<p>Pour configurer la journalisation dans la base de donn&#233;es, ajoutez les fichiers de pilote JDBC au chemin d'acc&#232;s de la classe JVM du conteneur Web. Vous devez ajouter manuellement les fichiers de pilote JDBC au chemin d'acc&#232;s de la classe du script <tt>amadmin</tt>. Sinon, la journalisation <tt>amadmin</tt> ne peut pas charger le pilote JDBC.</p>
+<p>Les modifications apport&#233;es aux attributs de journalisation prennent effet une fois que vous les avez enregistr&#233;es. Il n'est pas n&#233;cessaire de red&#233;marrer le serveur. Si vous activez la journalisation s&#233;curis&#233;e, toutefois, vous devez red&#233;marrer le serveur.</p>
+<A NAME="fxbwg"></A><h4>Type de connexion</h4>
+<p>Vous permet d'indiquer soit Fichier pour la journalisation dans un fichier texte ordinaire, soit DB pour la journalisation dans une base de donn&#233;es.</p>
+<p>Si le nom d'utilisateur ou le mot de passe de la base de donn&#233;es est incorrect, ceci emp&#234;che l'ex&#233;cution correcte d'Access Manager. Si Access manager ou la console devient instable, d&#233;finissez la propri&#233;t&#233; suivante dans <tt> AMConfig.properties</tt> :</p>
+<p><i>com.iplanet.am.logstatus=INACTIVE</i></p>
+<p>Une fois que vous d&#233;fini cette propri&#233;t&#233;, red&#233;marrez le serveur. Vous pouvez alors vous connecter &#224; la console et red&#233;finir l'attribut de journalisation. Ensuite, attribuez &#224; la propri&#233;t&#233; <i>logstatus</i> la valeur <i>ACTIVE </i> et red&#233;marrez le serveur.</p>
+<A NAME="fxbrd"></A><h4>Nom d'utilisateur de la base de donn&#233;es</h4>
+<p>Cet attribut accepte le nom de l'utilisateur qui se connectera &#224; la base de donn&#233;es lorsque l'attribut Type de connexion est d&#233;fini sur DB.</p>
+<A NAME="fxcdf"></A><h4>Mot de passe de la base de donn&#233;es</h4>
+<p>Cet attribut accepte le mot de passe de la base de donn&#233;es lorsque l'attribut Type de connexion est d&#233;fini sur DB.</p>
+<A NAME="fxcep"></A><h4>Mot de passe de la base de donn&#233;es (confirmer)</h4>
+<p>Confirmez le mot de passe de la base de donn&#233;es.</p>
+<A NAME="fxbvb"></A><h4>Nom du pilote de la base de donn&#233;es</h4>
+<p>Cet attribut vous permet de sp&#233;cifier le pilote utilis&#233; pour la classe d'impl&#233;mentation de la journalisation.</p>
+<A NAME="fxbsb"></A><h4>Champs de journal configurables</h4>
+<p>Repr&#233;sente la liste des champs &#224; consigner. Par d&#233;faut, tous les champs sont consign&#233;s : Ces champs sont les suivants :</p>
+<ul><li><p>ID DE CONTEXTE</p>
+</li>
+<li><p>DOMAINE</p>
+</li>
+<li><p>NOM D'H&#212;TE</p>
+</li>
+<li><p>ADRESSE IP</p>
+</li>
+<li><p>CONSIGN&#201; PAR</p>
+</li>
+<li><p>NIVEAU DE JOURNAL</p>
+</li>
+<li><p>ID DE CONNEXION</p>
+</li>
+<li><p>ID DE MESSAGE</p>
+</li>
+<li><p>NOM DU MODULE</p>
+</li>
+</ul>
+<p>Au minimum, vous devez consigner les champs ID DE CONTEXTE, DOMAINE, NOM D'H&#212;TE, ID DE CONNEXION, ID DE MESSAGE.</p>
+<A NAME="fxccb"></A><h4>Fr&#233;quence de v&#233;rification du journal</h4>
+<p>Cet attribut indique la fr&#233;quence (en secondes) &#224; laquelle le serveur doit v&#233;rifier les journaux afin de d&#233;tecter les &#233;ventuelles modifications non autoris&#233;es. La valeur par d&#233;faut est 3600 secondes. Ce param&#232;tre s'applique uniquement &#224; la journalisation s&#233;curis&#233;e.</p>
+<A NAME="fxbxe"></A><h4>Dur&#233;e de signature du journal</h4>
+<p>Ce param&#232;tre d&#233;finit la fr&#233;quence (en secondes) avec laquelle le journal sera sign&#233;. La valeur par d&#233;faut est 900 secondes. Ce param&#232;tre s'applique uniquement &#224; la journalisation s&#233;curis&#233;e.</p>
+<A NAME="fxcbz"></A><h4>Connexion s&#233;curis&#233;e</h4>
+<p>Cet attribut active ou d&#233;sactive la journalisation s&#233;curis&#233;e. Par d&#233;faut, elle est d&#233;sactiv&#233;e. La journalisation s&#233;curis&#233;e active la d&#233;tection des modifications non autoris&#233;es des journaux de s&#233;curit&#233;.</p>
+<A NAME="fxbxt"></A><h4>Nombre max. d'enregistrements</h4>
+<p>Cet attribut d&#233;finit le nombre maximum d'enregistrements renvoy&#233;s par les interfaces Java <!-- was interface. No mapping rule. -->LogReader, quel que soit le nombre d'enregistrements correspondant &#224; la demande de lecture. Par d&#233;faut, il est de 500. Cet attribut peut &#234;tre modifi&#233; par l'appelant de l'API de journalisation gr&#226;ce &#224; la classe <i>LogQuery</i>.</p>
+<A NAME="fxbwp"></A><h4>Nombre de fichiers par archive</h4>
+<p>Cet attribut s'applique uniquement &#224; la journalisation s&#233;curis&#233;e. Il indique le moment auquel les fichiers journaux doivent &#234;tre archiv&#233;s et le keystore s&#233;curis&#233; g&#233;n&#233;r&#233; de nouveau pour les journalisations s&#233;curis&#233;es suivantes. La valeur par d&#233;faut est cinq fichiers par logger.</p>
+<A NAME="fxbyw"></A><h4>Taille du tampon</h4>
+<p>Cet attribut d&#233;finit le nombre maximal d'enregistrements de journal &#224; placer en m&#233;moire tampon avant que le service de journalisation tente de les &#233;crire dans le r&#233;f&#233;rentiel de journalisation. La valeur par d&#233;faut est un enregistrement.</p>
+<A NAME="fxbvh"></A><h4>Taille de la m&#233;moire tampon pour &#233;chec de base de donn&#233;es</h4>
+<p>Cet attribut d&#233;finit le nombre maximal d'enregistrements de journal conserv&#233;s en m&#233;moire en cas d'&#233;chec de la journalisation en base de donn&#233;es. Cet attribut s'applique uniquement lorsque la journalisation en base de donn&#233;es est sp&#233;cifi&#233;e. Lorsque le service de journalisation d'Access Manager perd la connexion &#224; la base de donn&#233;es, il place en m&#233;moire tampon le nombre d'enregistrements sp&#233;cifi&#233;s. La valeur par d&#233;faut de cet attribut correspond au double de la valeur d&#233;finie dans l'attribut Taille du tampon.</p>
+<A NAME="fxcea"></A><h4>Dur&#233;e de la m&#233;moire tampon</h4>
+<p>Cet attribut d&#233;finit la dur&#233;e maximale de mise en m&#233;moire tampon des enregistrements de journal avant leur envoi au service de journalisation. Cet attribut s'applique si l'attribut Activer la mise en m&#233;moire tampon temporelle est s&#233;lectionn&#233;. La valeur par d&#233;faut est 3600 secondes.</p>
+<A NAME="fxbsn"></A><h4>Dur&#233;e de la mise en m&#233;moire tampon</h4>
+<p>Lorsque cet attribut est s&#233;lectionn&#233;, Access Manager d&#233;finit un d&#233;lai maximal de conservation dans la m&#233;moire tampon des enregistrements de journal. Cette p&#233;riode est d&#233;finie dans l'attribut Dur&#233;e de la m&#233;moire tampon.</p>
+
+<br />
+
+</body>
+</html>
