@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.32 2007-11-09 17:56:08 qcheng Exp $
+   $Id: build-war.xml,v 1.33 2007-12-08 01:18:12 cbasha Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -71,12 +71,15 @@
         <copy todir="${war.package.dir}/WEB-INF/lib">
             <fileset dir="${extlib.dir}" includes="FastInfoset.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jsr173_api.jar, ldapjdk.jar, mail.jar, relaxngDatatype.jar, xmlsec.jar, xsdlib.jar" />
         </copy>
+        
+        <copy todir="${war.package.dir}/WEB-INF/classes" flatten="true">
+            <fileset dir="${library.res.i18n.dir}" includes="**/*.properties" />
+            <fileset dir="${openfm.res.i18n.dir}" includes="**/*.properties" />
+        </copy>
 
         <copy todir="${war.package.dir}/WEB-INF/classes">
             <fileset dir="${library.res.dir}" includes="*.properties" 
                 excludes="FederationConfig.properties,FederationPerServer.properties" />
-            <fileset dir="${library.res.i18n.dir}" includes="*.properties" />
-            <fileset dir="${openfm.res.i18n.dir}" includes="*.properties" />
             <fileset dir="${openfm.res.dir}" includes="*.properties" />
             <fileset dir="${library.xml.dir}" includes="*.xsl" />
         </copy>
@@ -97,6 +100,34 @@
             <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
         </copy>
 
+		<copy todir="${war.package.dir}/config/auth/default_ja">
+            <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
+        </copy>
+
+        <copy todir="${war.package.dir}/config/auth/default_ko">
+            <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
+        </copy>
+
+        <copy todir="${war.package.dir}/config/auth/default_zh">
+            <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
+        </copy>
+
+        <copy todir="${war.package.dir}/config/auth/default_zh_CN">
+            <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
+        </copy>
+
+        <copy todir="${war.package.dir}/config/auth/default_de">
+            <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
+        </copy>
+
+        <copy todir="${war.package.dir}/config/auth/default_es">
+            <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
+        </copy>
+
+        <copy todir="${war.package.dir}/config/auth/default_fr">
+            <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
+        </copy>
+
         <copy file="${openfm.dir}/www/jsp/famadm.jsp" todir="${war.package.dir}" />
 
         <copy todir="${war.package.dir}/config/federation/default">
@@ -107,8 +138,8 @@
         <copy todir="${war.package.dir}/config/federation/default_en">
             <fileset dir="${library.dir}/www/config/federation" 
                 includes="*.jsp,*.html" />
-        </copy>
-
+        </copy>     
+                
         <copy todir="${war.package.dir}/fed_images">
             <fileset dir="${library.dir}/www/config/federation/fed_images"
                 includes="*" />
