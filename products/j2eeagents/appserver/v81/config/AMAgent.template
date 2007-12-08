@@ -80,12 +80,9 @@ com.iplanet.am.service.secret = @AGENT_ENCRYPTED_PASSWORD@
 am.encryption.pwd = @AGENT_ENCRYPT_KEY@
 
 #
-# DEBUG SERVICE PROPERTIES
-#   - com.iplanet.services.debug.level: Specifies the debug level to be used.
-#     The value is one of: off, error, warning, message.
+# DEBUG SERVICE PROPERTY
 #   - com.iplanet.services.debug.directory: Specifies the complete path to the
 #     directory where debug files will be stored by the Agent.
 # Hot-Swap Enabled: No
 #
-com.iplanet.services.debug.level=@DEBUG_LEVEL@
 com.iplanet.services.debug.directory=@DEBUG_LOGS_DIR@

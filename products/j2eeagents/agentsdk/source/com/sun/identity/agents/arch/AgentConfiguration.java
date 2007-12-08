@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.7 2007-12-07 21:39:06 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.8 2007-12-08 04:47:03 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,8 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.IApplicationSSOTokenProvider;
 import com.sun.identity.agents.util.AgentRemoteConfigUtils;
+import com.sun.identity.common.DebugPropertiesObserver;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 
 /**
@@ -560,7 +562,15 @@ public class AgentConfiguration implements
                 Properties properties = getProperties();
                 properties.clear();
                 properties.putAll(getPropertiesFromConfigFile());
-                
+               
+                String initialDebugLevel = properties.getProperty(
+                    Constants.SERVICES_DEBUG_LEVEL);
+                if ((initialDebugLevel == null) || 
+                    (initialDebugLevel.trim().length() == 0)) {
+                    properties.setProperty(
+                        Constants.SERVICES_DEBUG_LEVEL, Debug.STR_MESSAGE);
+                }
+
                 // set the bootstrap properties to system properties
                 Iterator iter = properties.keySet().iterator();
                 while (iter.hasNext()) {
@@ -572,6 +582,10 @@ public class AgentConfiguration implements
                         sysPropertyMap.put(nextKey, nextValue);
                     }
                 }
+                
+                // instanciate the instance of DebugPropertiesObserver
+                debugObserver = DebugPropertiesObserver.getInstance();
+
                 setDebug(Debug.getInstance(IBaseModuleConstants.BASE_RESOURCE));
                 setServiceResolver();
                 setApplicationUser();
@@ -1042,7 +1056,7 @@ public class AgentConfiguration implements
     private static boolean isLogMessageEnabled() {
         return getDebug().messageEnabled();
     }    
-    
+   
     private static void updatePropertiesUponPolling() {
         if (needToRefresh()) {
             if (!isAgentConfigurationRemote()) {
@@ -1062,6 +1076,8 @@ public class AgentConfiguration implements
     private static void hotSwapAgentConfiguration() {
         if (loadProperties()) {
             notifyModuleConfigurationListeners();
+            // notify possible debug level change
+            debugObserver.notifyChanges();
         }
     }
     
@@ -1086,7 +1102,7 @@ public class AgentConfiguration implements
             }
         }
     }    
-   
+
     private synchronized static boolean loadProperties() {
         boolean result = false;
         try {
@@ -1106,6 +1122,7 @@ public class AgentConfiguration implements
                 properties.putAll(getPropertiesFromRemote(
                     getAttributeServiceURLs()));
             }
+
             String modIntervalString = properties.getProperty(
                     CONFIG_LOAD_INTERVAL);
             if (isLogMessageEnabled()) {
@@ -1130,6 +1147,17 @@ public class AgentConfiguration implements
             getProperties().clear();
             getProperties().putAll(properties);
             markCurrent();
+
+            // set clientsdk properties to System properties
+            Iterator it = properties.keySet().iterator();
+            while (it.hasNext()) {
+                String nextKey = (String) it.next();
+                if (!nextKey.startsWith(AGENT_CONFIG_PREFIX)) {
+                    String nextValue = getProperties().getProperty(nextKey);
+                    System.setProperty(nextKey, nextValue);
+                }
+            }
+
             result = true;            
             if (isLogMessageEnabled()) {
                 logMessage("AgentConfiguration: loaded new configuration.");
@@ -1287,6 +1315,7 @@ public class AgentConfiguration implements
     private static Properties _systemProperties = new Properties();
     private static SSOToken _appSSOToken = null;
     private static Vector _attributeServiceURLs = null;
+    private static DebugPropertiesObserver debugObserver; 
     
     static {
         initializeConfiguration();
