@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.55 2007-11-14 22:36:12 veiming Exp $
+   $Id: build.xml,v 1.56 2007-12-08 01:12:37 cbasha Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -91,14 +91,8 @@
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
         </javac>
-
-        <copy todir="${amserver.built.res.dir}">
-            <fileset dir="${amserver.config.res.dir}">
-                <include name="*.properties"/>
-            </fileset>
-            <fileset dir="${amserver.console.res.dir}">
-                <include name="*.properties"/>
-            </fileset>
+        
+        <copy todir="${amserver.built.res.dir}" flatten="true">
             <fileset dir="${amserver.res.i18n.dir}">
                 <include name="**/*.properties"/>
                 <exclude name="Services.properties"/>
@@ -106,6 +100,15 @@
                 <exclude name="sso.properties"/>
                 <exclude name="SMS.properties"/>
                 <exclude name="authentication_util.properties"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${amserver.built.res.dir}">
+            <fileset dir="${amserver.config.res.dir}">
+                <include name="*.properties"/>
+            </fileset>
+            <fileset dir="${amserver.console.res.dir}">
+                <include name="*.properties"/>
             </fileset>
             <fileset dir="${amserver.xml.dir}">
                 <include name="*.xml"/>
@@ -127,6 +130,7 @@
                 <exclude name="dtd/sms.dtd"/>
             </fileset>
         </copy>
+        
         <concat destfile="${amserver.built.res.dir}/amSDK.properties">
             <fileset dir="${amserver.res.i18n.dir}">
                 <include name="Services.properties"/>
