@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.5 2007-04-02 06:02:10 veiming Exp $
+ * $Id: SOAPClient.java,v 1.6 2007-12-10 19:19:21 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,7 @@ import org.xml.sax.XMLReader;
 import com.iplanet.am.sdk.remote.AMRemoteException;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.entity.EntityException;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.shared.datastruct.OrderedSet;
@@ -176,8 +177,8 @@ public class SOAPClient {
             }
             
             URL endpoint = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) endpoint
-                .openConnection();
+            HttpURLConnection connection = 
+                HttpURLConnectionManager.getConnection(endpoint);
             connection.setDoOutput(true);
             // connection.setUseCaches(false);
             connection.setRequestMethod("POST");

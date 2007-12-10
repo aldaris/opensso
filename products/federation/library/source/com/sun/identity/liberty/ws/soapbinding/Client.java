@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Client.java,v 1.3 2007-10-31 16:12:32 mchlbgs Exp $
+ * $Id: Client.java,v 1.4 2007-12-10 19:22:51 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.liberty.ws.soapbinding;
 
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 
@@ -249,7 +250,8 @@ public class Client {
      */
     private static URLConnection getConnection(String endpoint,String certAlias)
     throws Exception {
-        URLConnection con = new URL(endpoint).openConnection();
+        URL url = new URL(endpoint);
+        URLConnection con = HttpURLConnectionManager.getConnection(url); 
         
         if (Utils.debug.messageEnabled()) {
             Utils.debug.message("Client.getConnection: con class = " +

@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSPRedirectHandlerServlet.java,v 1.2 2007-06-23 05:08:58 dillidorai Exp $
+ * $Id: WSPRedirectHandlerServlet.java,v 1.3 2007-12-10 19:22:51 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.liberty.ws.interaction;
 
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.liberty.ws.common.LogUtil;
 import com.sun.identity.liberty.ws.interaction.jaxb.InquiryElement;
@@ -694,7 +695,8 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
 
         try {
             URL url = new URL(forwardToUrl);
-            URLConnection urlConnection = url.openConnection();
+            URLConnection urlConnection =  
+                HttpURLConnectionManager.getConnection(url); 
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
             urlConnection.setUseCaches(false);

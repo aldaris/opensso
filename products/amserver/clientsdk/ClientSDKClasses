@@ -416,3 +416,7 @@ com/sun/identity/security/keystore/AMCallbackHandler.class
 com/sun/identity/security/keystore/AMPassword.class
 com/sun/identity/security/keystore/AMX509KeyManager.class
 com/sun/identity/security/keystore/AMX509TrustManager.class
+
+com/sun/identity/protocol/AMURLStreamHandlerFactory.class
+
+
