@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.11 2007-12-10 19:18:26 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.12 2007-12-10 20:21:19 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1312,14 +1312,17 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 break;
             }
             String modItem = null;
-            String name = "Agent :" + agentNameforNotificationSet 
+            String name = agentNameforNotificationSet 
                 + " of IdType "+ agentIdTypeforNotificationSet;
 
             if (debug.messageEnabled()) {
                 debug.message("AgentsRepo.sendNotificationSet():name "+name);
             }
 
-            modItem = "MODIFIED:" + name;
+            // To be consistent and for easy web agent parsing, the 
+            // notification set should start with 
+            // "AgentConfigChangeNotification"
+            modItem = "AgentConfigChangeNotification " + name;
 
             // If notification URLs are present, send notifications
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
