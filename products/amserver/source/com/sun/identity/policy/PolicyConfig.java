@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyConfig.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
+ * $Id: PolicyConfig.java,v 1.3 2007-12-10 20:41:38 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -348,6 +348,7 @@ public class PolicyConfig implements com.sun.identity.sm.ServiceListener {
      */
     public void schemaChanged(String serviceName, String version) {
         ServiceSchema globalSchema = null;
+        PolicyManager.debug.message("PolicyConfig.schemaChanged():entering");
         try {
             globalSchema = ssm.getGlobalSchema();
         } catch (SMSException se) {
@@ -359,6 +360,7 @@ public class PolicyConfig implements com.sun.identity.sm.ServiceListener {
             Map attributeDefaults =  globalSchema.getAttributeDefaults();
             setContinueEvaluationOnDenyDecision(attributeDefaults);
             setAdvicesHandleableByAM(attributeDefaults);
+            setOrgAliasMappedResourcesEnabled(attributeDefaults);
             processResourceMap(attributeDefaults);
         }
     }
