@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2007-11-02 19:23:54 huacui Exp $
+   $Id: build.xml,v 1.9 2007-12-10 21:36:38 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -89,7 +89,7 @@
 
         <copy todir="${container.j2ee_agent.lib.dir}">
             <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/extlib">
-                <include name="famclientsdk.jar"/>
+                <include name="openssoclientsdk.jar"/>
                 <include name="opensso-installtools-launcher.jar"/>
                 <include name="opensso-installtools.jar"/>
             </fileset>

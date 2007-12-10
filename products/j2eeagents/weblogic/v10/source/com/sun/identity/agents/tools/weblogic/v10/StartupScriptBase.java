@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StartupScriptBase.java,v 1.2 2007-08-31 18:10:52 sean_brydon Exp $
+ * $Id: StartupScriptBase.java,v 1.3 2007-12-10 21:39:09 huacui Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,8 +44,8 @@ public class StartupScriptBase implements InstallConstants, IConfigKeys {
     }
     
     /**
-     * Set classpath to j2ee_agents/am_wl92_agent/lib/agent.jar:
-     * j2ee_agents/weblogic_v10_agent/lib/famclientsdk.jar:
+     * Set classpath to j2ee_agents/am_wl10_agent/lib/agent.jar:
+     * j2ee_agents/weblogic_v10_agent/lib/openssoclientsdk.jar:
      * j2ee_agents/weblogic_v10_agent/agent_xxx/config:
      * j2ee_agents/weblogic_v10_agent/locale
      */
