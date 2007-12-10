@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainXMLBase.java,v 1.6 2007-11-30 20:41:14 huacui Exp $
+ * $Id: DomainXMLBase.java,v 1.7 2007-12-10 21:40:48 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -469,7 +469,7 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
     public static final String STR_AS_GROUP = "as81Tools";
     
     public static final String STR_AGENT_JAR = "agent.jar";
-    public static final String STR_FM_CLIENT_SDK_JAR = "famclientsdk.jar";
+    public static final String STR_FM_CLIENT_SDK_JAR = "openssoclientsdk.jar";
     
     public static final String STR_AGENT_REALM = "agentRealm";
   

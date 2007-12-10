@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.10 2007-09-14 00:12:10 madan_ranganath Exp $
+$Id: README,v 1.11 2007-12-10 21:32:56 huacui Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -133,18 +133,18 @@ is opensso/products/j2eeagents/weblogic/v10/extlib.
 
 %% 2.3 Obtaining OpenFM ClientSDK library
 
-2.3.1 The OpenFM ClientSDK library famclientsdk.jar can be obtained from 
+2.3.1 The OpenFM ClientSDK library openssoclientsdk.jar can be obtained from 
 the OpenSSO nightly build.
 
 Follow these steps to obtain the library:
-2.3.1.1 download the latest famclientsdk.jar from:
+2.3.1.1 download the latest openssoclientsdk.jar from:
     http://download.java.net/general/opensso/nightly/openfm/
-2.3.1.2 Copy the downloaded famclientsdk.jar into extlib directory of 
+2.3.1.2 Copy the downloaded openssoclientsdk.jar into extlib directory of 
 the specific J2EE Container directory in this workspace. For Sun Application 
 Server 8.1/8.2/9.0/9.1, the directory is appserver/v9/extlib. For BEA 
 WebLogic 10 agent, the directory is opensso/products/j2eeagents/weblogic/v10/extlib.
 
-2.3.2 Alternatively the OpenFM ClientSDK library famclientsdk.jar can be
+2.3.2 Alternatively the OpenFM ClientSDK library openssoclientsdk.jar can be
 built from the OpenSSO workspace.
 
 Follow these steps to obtain the library:
@@ -152,7 +152,7 @@ Follow these steps to obtain the library:
 2.3.2.2 Set JAVA_HOME to the location of JDK 1.5.
 2.3.2.3 At the root of the workspace (under opensso/products/federation/openfm), 
 run: ant clientsdk 
-2.3.2.4 Copy the library famclientsdk.jar from the built/dist of
+2.3.2.4 Copy the library openssoclientsdk.jar from the built/dist of
 the OpenSSO workspace into extlib directory of the specific J2EE Container
 directory in this workspace. For Sun Application Server 8.1/8.2/9.0/9.1, the 
 directory is appserver/v9/extlib. For BEA WebLogic 10 agent, the directory 
