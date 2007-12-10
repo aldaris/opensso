@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OCSPChecker.java,v 1.1 2007-10-22 15:06:31 beomsuk Exp $
+ * $Id: OCSPChecker.java,v 1.2 2007-12-10 19:15:38 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import sun.security.util.*;
 import sun.security.x509.*;
 import sun.misc.HexDumpEncoder;
 
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.security.SecurityDebug;
 
@@ -325,7 +326,8 @@ class OCSPChecker extends PKIXCertPathChecker {
             OCSPRequest ocspRequest =
                 new OCSPRequest(currCertImpl, issuerCertImpl);
             URL url = getOCSPServerURL(currCertImpl, properties);
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+            HttpURLConnection con =
+                HttpURLConnectionManager.getConnection(url); 
             if (debug.messageEnabled()) {
                 debug.message("OCSPChecker.check: connecting to OCSP service" +
                               " at: " + url);

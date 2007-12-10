@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.9 2007-10-17 23:01:01 veiming Exp $
+ * $Id: SOAPClient.java,v 1.10 2007-12-10 19:15:38 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.shared.jaxrpc;
 
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.encode.Base64;
@@ -197,8 +198,8 @@ public class SOAPClient {
             }
 
             URL endpoint = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) endpoint
-                    .openConnection();
+            HttpURLConnection connection = 
+                HttpURLConnectionManager.getConnection(endpoint);
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type",
