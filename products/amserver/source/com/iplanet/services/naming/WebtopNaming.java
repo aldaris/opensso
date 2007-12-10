@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.10 2007-11-14 18:53:47 ww203982 Exp $
+ * $Id: WebtopNaming.java,v 1.11 2007-12-10 19:20:21 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -414,6 +414,22 @@ public class WebtopNaming {
             }
         }
         return null;
+    }
+
+    /**
+     * This method returns local server name from naming table. 
+     * @return server name opensso is deployed. 
+     */
+    public static String getLocalServer() {
+        String server = null;
+        
+        try {
+            server = getServerFromID(getAMServerID());
+        } catch (ServerEntryNotFoundException e) {
+            debug.error("Failed to get local server entry.", e);
+        }
+        
+        return server;
     }
 
     /**
@@ -899,7 +915,7 @@ public class WebtopNaming {
      *             if there is no configured urls or any problem in getting urls
      */
     public synchronized static String[] getNamingServiceURL() throws Exception {
-        if (namingServiceURL == null) {
+        if (!serverMode && (namingServiceURL == null)) {
             // Initilaize the list of naming URLs
             ArrayList urlList = new ArrayList();
 
