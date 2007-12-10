@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.10 2007-12-07 19:20:00 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.11 2007-12-10 19:18:26 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -206,6 +206,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 if (aTypeConfig == null) {
                     orgConfig.addSubConfig(agentName, agentType, 0, attrMap);
                     aTypeConfig = orgConfig.getSubConfig(agentName);
+                } else {
+                    // Agent already found, throw an exception
+                    Object args[] = { agentName, type };
+                    throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                            "224", args));
                 }
             } else if (type.equals(IdType.AGENTGROUP)) {
                 agentGroupConfig = getAgentGroupConfig(token);
@@ -214,6 +219,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     agentGroupConfig.addSubConfig(agentName, agentType, 0, 
                         attrMap);
                     aTypeConfig = agentGroupConfig.getSubConfig(agentName);
+                } else {
+                    // Agent already found, throw an exception
+                    Object args[] = { agentName, type };
+                    throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                            "224", args));
                 }
             }
         } catch (SMSException smse) {
