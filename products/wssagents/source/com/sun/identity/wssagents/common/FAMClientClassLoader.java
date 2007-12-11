@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClientClassLoader.java,v 1.2 2007-09-04 21:55:41 mrudul_uchil Exp $
+ * $Id: FAMClientClassLoader.java,v 1.3 2007-12-11 02:00:31 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ public class FAMClientClassLoader {
                     "com.sun.aas.instanceRoot");
                 String clientSDKPath = FILE_BEGIN + installRoot +
                     FILE_SEPARATOR + "addons" + FILE_SEPARATOR +
-                    "accessmanager" + FILE_SEPARATOR + "famclientsdk.jar";
+                    "accessmanager" + FILE_SEPARATOR + "openssoclientsdk.jar";
                 String configPath = FILE_BEGIN + instanceRoot +
                     FILE_SEPARATOR + "config" + FILE_SEPARATOR;
                 String xmlsecPath = FILE_BEGIN + installRoot +

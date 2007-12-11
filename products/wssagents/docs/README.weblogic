@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.weblogic,v 1.1 2007-08-31 06:06:41 mrudul_uchil Exp $
+   $Id: README.weblogic,v 1.2 2007-12-11 02:00:34 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -105,7 +105,7 @@ III. Setting up WSS plugin at the WSC
       </j2ee:handler>
       Section V has an example of <ServiceName>_internaldd.xml with FAM WSS 
       client handler.
-   5. Copy lib/famclientsdk.jar and lib/FAMWSSProviders.jar from the 
+   5. Copy lib/openssoclientsdk.jar and lib/famwssproviders.jar from the 
       famwssproviders.zip to WEB-INF/lib
    6. Regenerate the war file.
    7. Deploy the war file using WebLogic console.
@@ -133,7 +133,7 @@ IV. Setting the WSS plugin at WSP
         <url-pattern>/*</url-pattern>
       </filter-mapping>
       Section V has an example of web.xml with FAM WSS servlet filter.
-   5. Copy lib/famclientsdk.jar and lib/FAMWSSProviders.jar from the 
+   5. Copy lib/openssoclientsdk.jar and lib/famwssproviders.jar from the 
       famwssproviders.zip to WEB-INF/lib
    6. Regenerate the war file.
    7. Deploy the war file using WebLogic console.

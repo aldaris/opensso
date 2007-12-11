@@ -23,7 +23,7 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: run-policy-evaluation-sample.sh,v 1.1 2007-11-17 00:12:05 dillidorai Exp $
+#$Id: run-policy-evaluation-sample.sh,v 1.2 2007-12-11 01:59:24 qcheng Exp $
 #Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #------------------------------------------------------------------------------
 #
@@ -47,4 +47,4 @@
 #Must run "setup.sh" once to configure the client to find the FAM server.
 #
 # Then, run this script
-java -classpath resources:lib/famclientsdk.jar:lib/javaee.jar:lib/jaxb-libs.jar:lib/jaxb-impl.jar:lib/webservices-rt.jar:classes samples.policy.PolicyEvaluationSample policyEvaluationSample
+java -classpath resources:lib/openssoclientsdk.jar:lib/javaee.jar:lib/jaxb-libs.jar:lib/jaxb-impl.jar:lib/webservices-rt.jar:classes samples.policy.PolicyEvaluationSample policyEvaluationSample

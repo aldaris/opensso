@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: setup.sh,v 1.1 2007-10-05 17:57:09 qcheng Exp $
+# $Id: setup.sh,v 1.2 2007-12-11 01:59:26 qcheng Exp $
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 
-java -cp resources:classes:lib/famclientsdk.jar com.sun.identity.setup.SetupClientSDKSamples
+java -cp resources:classes:lib/openssoclientsdk.jar com.sun.identity.setup.SetupClientSDKSamples

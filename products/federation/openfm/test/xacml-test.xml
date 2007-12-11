@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: xacml-test.xml,v 1.1 2007-08-29 23:43:11 dillidorai Exp $
+   $Id: xacml-test.xml,v 1.2 2007-12-11 01:59:58 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -92,7 +92,7 @@
     <path id="test.class.path">
         <pathelement location="${openfm.test.classes.dir}"/>
         <pathelement location="${openfm.test.clientconfig.dir}"/>
-        <pathelement location="${opensso.home}/products/federation/openfm/built/dist/famclientsdk.jar"/>
+        <pathelement location="${opensso.home}/products/federation/openfm/built/dist/openssoclientsdk.jar"/>
         <pathelement location="${openfm.classes.dir}"/> <!-- required to test plugins -->
         <fileset dir="${opensso.home}/products/extlib">
             <include name="**/*.jar"/>

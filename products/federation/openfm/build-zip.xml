@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.9 2007-12-05 20:56:35 kevinserwin Exp $
+   $Id: build-zip.xml,v 1.10 2007-12-11 01:58:41 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -51,7 +51,7 @@
         </copy>
         <copy file="${fm.dist.dir}/opensso.war"
             tofile="${zip.temp.dir}/deployable-war/opensso.war" />
-            
+
         <copy file="${openfm.dir}/docs/README"
             tofile="${zip.temp.dir}/docs/README" />
         <copy file="${fm.dist.dir}/fam-public-javadocs.jar"
@@ -74,7 +74,7 @@
         <copy file="${openfm.dir}/docs/README.jars"
             tofile="${zip.temp.dir}/libraries/jars/README" />
         <copy todir="${zip.temp.dir}/libraries/jars">
-            <fileset file="${fm.dist.dir}/famclientsdk.jar" />
+            <fileset file="${fm.dist.dir}/openssoclientsdk.jar" />
         </copy>
         
         <copy file="${openfm.dir}/docs/README.migration"
