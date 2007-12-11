@@ -18,7 +18,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.1 2007-10-04 16:55:27 hengming Exp $
+  $Id: build.xml,v 1.2 2007-12-11 23:35:07 qcheng Exp $
 
   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
   Portions Copyright 2007 Paul C. Bryan
@@ -85,7 +85,7 @@
     </javac>
 
     <mkdir dir="${war.package.dir}"/>
-    <unjar src="${openfm.dist.dir}/fam.war" dest="${war.package.dir}" />
+    <unjar src="${openfm.dist.dir}/opensso.war" dest="${war.package.dir}" />
 
     <java classname="InsertContent" fork="true">
         <classpath refid="build.classpath"/>
@@ -103,7 +103,7 @@
     <mkdir dir="${war.packageweb.dir}" />
     <move file="${war.package.dir}/WEB-INF/web.xml" tofile="${war.packageweb.dir}/web.xml" />
 
-    <war destfile="${dist.dir}/fam.war" webxml="${war.packageweb.dir}/web.xml">
+    <war destfile="${dist.dir}/opensso.war" webxml="${war.packageweb.dir}/web.xml">
         <zipfileset dir="${war.package.dir}" />
     </war>
     <move file="${war.packageweb.dir}/web.xml" tofile="${war.package.dir}/WEB-INF/web.xml" />
