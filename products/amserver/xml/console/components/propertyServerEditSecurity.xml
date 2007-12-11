@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyServerEditSecurity.xml,v 1.1 2007-10-17 23:00:52 veiming Exp $
+   $Id: propertyServerEditSecurity.xml,v 1.2 2007-12-11 00:51:43 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -166,6 +166,15 @@
         </cc>
         <fieldhelp name="helpcsccom-sun-identity-saml-xmlsig-keypass"
             defaultValue="amconfig.help.com.sun.identity.saml.xmlsig.keypass" />
+    </property>
+    <property>
+	<label name="lblcsccom.sun.identity.saml.xmlsig.certalias"
+            defaultValue="amconfig.com.sun.identity.saml.xmlsig.certalias"
+            labelFor="csccom.sun.identity.saml.xmlsig.certalias" />
+	<cc name="csccom.sun.identity.saml.xmlsig.certalias"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="50" />
+        </cc>
     </property>
     </section>
 </propertysheet>
