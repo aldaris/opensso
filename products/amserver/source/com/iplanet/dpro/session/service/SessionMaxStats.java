@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionMaxStats.java,v 1.2 2006-08-25 21:19:42 veiming Exp $
+ * $Id: SessionMaxStats.java,v 1.3 2007-12-11 22:03:27 subashvarma Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,10 @@ import com.sun.identity.shared.stats.StatsListener;
 public class SessionMaxStats implements StatsListener {
 
     private Hashtable sessionTable;
+    private int peakSessions = 0;
+    private int peakActiveSessions = 0;
+    private int peakNotificationQueue = 0;
+
 
    /**
     * Creates a new SessionMaxStats
@@ -49,14 +53,34 @@ public class SessionMaxStats implements StatsListener {
      * Prints the session statistics for the given session table.
      *
      */
-    public void printStats() {
-        if (sessionTable.size() != 0) {
-            SessionService.stats.record("Max sessions in session table:"
-                    + Integer.toString(sessionTable.size()));
-            SessionService.stats.record("Max active sessions:"
-                    + SessionService.getActiveSessions());
-        } else {
-            SessionService.stats.record("No sessions found in session table");
-        }
-    }
+   public void printStats() {
+       if (sessionTable.size() != 0 ) {
+           
+           int maxSessions = sessionTable.size();
+           int maxActiveSessions = SessionService.getActiveSessions();
+           int notificationQueue = SessionService.getNotificationQueueSize();
+           
+           if (maxSessions > peakSessions) {
+               peakSessions = maxSessions;
+           }
+           if (maxActiveSessions > peakActiveSessions) {
+               peakActiveSessions = maxActiveSessions;
+           }
+           if (notificationQueue > peakNotificationQueue) {
+               peakNotificationQueue = notificationQueue;
+           }
+           
+           SessionService.stats.record(
+                 "Max sessions in session table Current/Peak:" + 
+                     maxSessions + "/" + peakSessions + "\n" +
+                 "Max active sessions Current/Peak:" + 
+                     maxActiveSessions + "/" + peakActiveSessions + "\n" +
+                 "Session Notifications in Queue Current/Peak:" 
+                     + notificationQueue + "/" + peakNotificationQueue);
+       } 
+       else {
+         SessionService.stats.record("No sessions found in session table"); 
+       }
+   }
 }
+

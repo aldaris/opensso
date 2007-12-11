@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.3 2006-08-25 21:19:35 veiming Exp $
+ * $Id: ThreadPool.java,v 1.4 2007-12-11 22:04:22 subashvarma Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -119,6 +119,13 @@ public class ThreadPool {
             }
             return (Runnable) taskList.remove(0);
         }
+    }
+    
+    /*
+     * Returns the size of the task list.
+     */
+    public int getCurrentSize() {
+        return taskList.size();
     }
 
     // private thread class that fetches tasks from the task queue and
