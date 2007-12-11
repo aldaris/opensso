@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.10 2007-11-17 01:45:42 veiming Exp $
+ * $Id: Session.java,v 1.11 2007-12-11 22:03:55 subashvarma Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -369,7 +369,7 @@ public class Session {
         if(resetLBCookie) {
             if (isServerMode()) {
                 SessionService ss = SessionService.getSessionService();            
-                if (ss.isSessionFailoverEnabled()) {
+                if (ss.isSessionFailoverEnabled() && ss.isLocalSite(sid)) {
                     cookieValue = ss.getCurrentHostServer(sid);
                 }    
             } else {            
