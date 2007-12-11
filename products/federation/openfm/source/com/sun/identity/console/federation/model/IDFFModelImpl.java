@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModelImpl.java,v 1.1 2007-11-30 01:11:20 asyhuang Exp $
+ * $Id: IDFFModelImpl.java,v 1.2 2007-12-11 23:03:08 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.console.federation.model;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModelBase;
+import com.sun.identity.console.federation.IDFFAuthContexts;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
@@ -204,7 +205,7 @@ public class IDFFModelImpl
     /**
      * Returns provider-affiliate common attribute values.
      * @param realm the realm in which the entity resides.
-     * @param name Name of Entity Descriptor.
+     * @param entityName Name of Entity Descriptor.
      * @return provider-affiliate common attribute values.
      * @throws IDFFMetaException if attribute values cannot be obtained.
      */
@@ -237,7 +238,7 @@ public class IDFFModelImpl
      * Modifies entity descriptor profile.
      *
      * @param realm the realm in which the entity resides.
-     * @param name Name of entity descriptor.
+     * @param entityName Name of entity descriptor.
      * @param map Map of attribute type to a Map of attribute name to values.
      * @throws AMConsoleException if profile cannot be modified.
      */
@@ -427,7 +428,6 @@ public class IDFFModelImpl
      *
      * @param realm where the entity exists.
      * @param entityName Name of Entity Descriptor.
-     * @param role Role of provider. (idp or sp)
      * @param location Location of provider such as Hosted or Remote.
      * @return attributes values of provider.
      */
@@ -478,7 +478,7 @@ public class IDFFModelImpl
             {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
-        }          
+        }
         return tmpMap;
     }
     
@@ -487,7 +487,6 @@ public class IDFFModelImpl
      *
      * @param realm where the entity exists.
      * @param entityName Name of Entity Descriptor.
-     * @param role Role of provider. (idp or sp)
      * @param location Location of provider such as Hosted or Remote.
      * @return attributes values of provider.
      */
@@ -540,7 +539,7 @@ public class IDFFModelImpl
         }
         return tmpMap;
     }
-            
+    
     public void updateEntitySPDescriptor(
         String realm,
         String entityName,
@@ -797,28 +796,27 @@ public class IDFFModelImpl
         }
     }
     
-    private void updateAttrInConfig(       
+    private void updateAttrInConfig(
         BaseConfigType baseConfig,
-        Map values                      
-    ) throws AMConsoleException {          
-            List attrList = baseConfig.getAttribute();
-            for (Iterator i = attrList.iterator(); i.hasNext(); ) {
-                AttributeElement avpnew = (AttributeElement)i.next();
-                String name = avpnew.getName();
-                Set set = (Set)values.get(name);
-                if (set != null) {                  
-                   avpnew.getValue().clear();
-                   avpnew.getValue().addAll(set);
-                }
-            } 
-    }    
+        Map values
+    ) throws AMConsoleException {
+        List attrList = baseConfig.getAttribute();
+        for (Iterator i = attrList.iterator(); i.hasNext(); ) {
+            AttributeElement avpnew = (AttributeElement)i.next();
+            String name = avpnew.getName();
+            Set set = (Set)values.get(name);
+            if (set != null) {
+                avpnew.getValue().clear();
+                avpnew.getValue().addAll(set);
+            }
+        }
+    }
     
     /**
      * Modifies a identity provider's extended metadata.
      *
-     * @param name of Entity Descriptor.
+     * @param entityName name of Entity Descriptor.
      * @param realm where entity exists.
-     * @param role specifies if SP or IDP.
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
      * @throws JAXBException if provider cannot be retrieved.
@@ -830,30 +828,30 @@ public class IDFFModelImpl
     ) throws AMConsoleException {
         String[] params = {realm, entityName,"IDFF", "IDP-Extended Metadata"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
-       
+        
         try {
-            IDFFMetaManager idffMetaMgr = getIDFFMetaManager();                                
+            IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
             EntityConfigElement entityConfig =
-                    idffMetaMgr.getEntityConfig(realm,entityName);
+                idffMetaMgr.getEntityConfig(realm,entityName);
             if (entityConfig == null) {
                 throw new AMConsoleException("invalid.entity.name");
             }
-                       
-            IDPDescriptorConfigElement 	idpDecConfigElement = 
-                 idffMetaMgr.getIDPDescriptorConfig(realm, entityName); 
+            
+            IDPDescriptorConfigElement 	idpDecConfigElement =
+                idffMetaMgr.getIDPDescriptorConfig(realm, entityName);
             if (idpDecConfigElement == null) {
                 throw new AMConsoleException("invalid.config.element");
-            } else {                
-                updateAttrInConfig(                    
+            } else {
+                updateAttrInConfig(
                     idpDecConfigElement,
                     attrValues
                     );
             }
             
-             //saves the attributes by passing the new entityConfig object
+            //saves the attributes by passing the new entityConfig object
             idffMetaMgr.setEntityConfig(realm,entityConfig);
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
-        } catch (IDFFMetaException e) {            
+        } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
             {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
@@ -865,9 +863,8 @@ public class IDFFModelImpl
     /**
      * Modifies a service provider's extended metadata.
      *
-     * @param name of Entity Descriptor.
      * @param realm where entity exists.
-     * @param role specifies if SP or IDP.
+     * @param entityName name of Entity Descriptor.
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
      * @throws JAXBException if provider cannot be retrieved.
@@ -878,28 +875,28 @@ public class IDFFModelImpl
         Map attrValues
     ) throws AMConsoleException {
         String[] params = {realm, entityName,"IDFF", "SP-Extended Metadata"};
-        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);       
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         
         try {
-            IDFFMetaManager idffMetaMgr = getIDFFMetaManager();                     
+            IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
             EntityConfigElement entityConfig =
-                    idffMetaMgr.getEntityConfig(realm,entityName);
+                idffMetaMgr.getEntityConfig(realm,entityName);
             if (entityConfig == null) {
                 throw new AMConsoleException("invalid.entity.name");
-            }            
-         
-             SPDescriptorConfigElement spDecConfigElement = 
-                 idffMetaMgr.getSPDescriptorConfig(realm, entityName);   
+            }
+            
+            SPDescriptorConfigElement spDecConfigElement =
+                idffMetaMgr.getSPDescriptorConfig(realm, entityName);
             if (spDecConfigElement == null) {
                 throw new AMConsoleException("invalid.config.element");
             } else {
-                // update sp entity config              
-                updateAttrInConfig(                   
+                // update sp entity config
+                updateAttrInConfig(
                     spDecConfigElement,
                     attrValues
                     );
             }
-             
+            
             //saves the attributes by passing the new entityConfig object
             idffMetaMgr.setEntityConfig(realm,entityConfig);
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -910,6 +907,229 @@ public class IDFFModelImpl
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
             throw new AMConsoleException(strError);
         }
+    }
+    
+    /**
+     * update IDP Authentication Contexts
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.     
+     * @param cxt IDFFAuthContexts object contains IDP
+     *        Authentication Contexts values
+     */
+    public void updateIDPAuthenticationContexts(
+        String realm,
+        String entityName,
+        IDFFAuthContexts cxt
+    ) throws AMConsoleException {
+        
+        List list = cxt.toIDPAuthContextInfo();        
+        String[] params = {realm, entityName,"IDFF", "IDP-updateIDPAuthenticationContexts"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
+        
+        try {
+            IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
+            EntityConfigElement entityConfig =
+                idffMetaMgr.getEntityConfig(realm,entityName);
+            if (entityConfig == null) {
+                throw new AMConsoleException("invalid.entity.name");
+            }
+            
+            IDPDescriptorConfigElement 	idpDecConfigElement =
+                idffMetaMgr.getIDPDescriptorConfig(realm, entityName);
+            if (idpDecConfigElement == null) {
+                throw new AMConsoleException("invalid.config.element");
+            } else {
+                updateAttrInConfig(
+                    idpDecConfigElement,
+                    ATTR_IDP_AUTHN_CONTEXT_MAPPING,
+                    list
+                    );
+            }
+            
+            //saves the attributes by passing the new entityConfig object
+            idffMetaMgr.setEntityConfig(realm,entityConfig);
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
+        } catch (IDFFMetaException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "IDFF", "IDP-updateIDPAuthenticationContexts", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        
+        return;
+    }
+    
+    /**
+     * update SP Authentication Contexts
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.     
+     * @param cxt IDFFAuthContexts object contains SP
+     *        Authentication Contexts values
+     */
+    public void updateSPAuthenticationContexts(
+        String realm,
+        String entityName,
+        IDFFAuthContexts cxt
+    ) throws AMConsoleException {        
+        List list = cxt.toSPAuthContextInfo();       
+        String[] params = {realm, entityName,"IDFF", "SP-updateSPAuthenticationContexts"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
+        
+        try {
+            IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
+            EntityConfigElement entityConfig =
+                idffMetaMgr.getEntityConfig(realm,entityName);
+            if (entityConfig == null) {
+                throw new AMConsoleException("invalid.entity.name");
+            }
+            
+            SPDescriptorConfigElement spDecConfigElement =
+                idffMetaMgr.getSPDescriptorConfig(realm, entityName);
+            if (spDecConfigElement == null) {
+                throw new AMConsoleException("invalid.config.element");
+            } else {
+                // update sp entity config
+                updateAttrInConfig(
+                    spDecConfigElement,
+                    ATTR_SP_AUTHN_CONTEXT_MAPPING,
+                    list
+                    );
+            }
+            
+            //saves the attributes by passing the new entityConfig object
+            idffMetaMgr.setEntityConfig(realm,entityConfig);
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
+        } catch (IDFFMetaException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "IDFF", "SP-updateSPAuthenticationContexts", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
+        }        
+        return;
+    }
+    
+    private void updateAttrInConfig(
+        BaseConfigType baseConfig,
+        String attributeName,
+        List list
+    ) throws AMConsoleException {
+        List attrList = baseConfig.getAttribute();
+        for (Iterator i = attrList.iterator(); i.hasNext(); ) {
+            AttributeElement avpnew = (AttributeElement)i.next();
+            String name = avpnew.getName();
+            if(name.equals(attributeName)){
+                avpnew.getValue().clear();
+                avpnew.getValue().addAll(list);
+            }
+        }
+    }
+    
+    /**
+     * Returns the object of Auththentication Contexts in IDP.
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.       
+     * @return attributes values of provider.
+     */
+    public IDFFAuthContexts getIDPAuthenticationContexts(
+        String realm,
+        String entityName       
+    ) throws AMConsoleException {
+        String str = null;
+        IDFFAuthContexts cxt = new IDFFAuthContexts();
+        
+        try {
+            List tmpList = new ArrayList();
+            IDFFMetaManager  manager = getIDFFMetaManager();
+            Map map = new HashMap();
+            
+            BaseConfigType  idpConfig=
+                manager.getIDPDescriptorConfig(realm, entityName);
+            if (idpConfig != null){
+                map = IDFFMetaUtils.getAttributes(idpConfig) ;
+            } else {
+                throw new AMConsoleException("invalid.entity.name");
+            }
+            List list = (List) map.get(ATTR_IDP_AUTHN_CONTEXT_MAPPING);
+            
+            for (int i=0; i<list.size();i++) {
+                String tmp = (String) list.get(i);
+                int index = tmp.lastIndexOf("|");
+                String level = removeKey(tmp.substring(index+1));
+                
+                tmp = tmp.substring(0, index);
+                index = tmp.lastIndexOf("|");
+                
+                String value = removeKey(tmp.substring(index+1));
+                tmp = tmp.substring(0, index);
+                
+                index = tmp.indexOf("|");
+                String key = removeKey(tmp.substring(index + 1));
+                String name = removeKey(tmp.substring(0,index));
+                
+                cxt.put(name, "true", key, value, level);
+            }
+            
+        } catch (IDFFMetaException e) {
+            throw new AMConsoleException(getErrorString(e));
+        } catch (AMConsoleException e) {
+            throw new AMConsoleException(getErrorString(e));
+        }
+        return (cxt != null) ? cxt : new IDFFAuthContexts();
+    }
+    
+    private String removeKey(String input){
+        int idx = input.lastIndexOf("=");
+        String str = input.substring(idx+1);
+        return str;
+    }
+    /**
+     * Returns  the object of Auththentication Contexts in SP.
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.     
+     * @return attributes values of provider.
+     */
+    public IDFFAuthContexts getSPAuthenticationContexts(
+        String realm,
+        String entityName        
+    ) throws AMConsoleException {
+        IDFFAuthContexts cxt = new IDFFAuthContexts();
+        String str = null;
+        
+        try{
+            List tmpList = new ArrayList();
+            IDFFMetaManager  manager = getIDFFMetaManager();
+            Map map = new HashMap();
+            
+            BaseConfigType  spConfig=
+                manager.getSPDescriptorConfig(realm, entityName);
+            if (spConfig != null){
+                map = IDFFMetaUtils.getAttributes(spConfig) ;
+            } else {
+                throw new AMConsoleException("invalid.entity.name");
+            }
+            
+            List list = (List) map.get(ATTR_SP_AUTHN_CONTEXT_MAPPING);
+            for (int i=0; i<list.size(); i++){
+                String tmp = (String) list.get(i);
+                int index = tmp.lastIndexOf("|");
+                String level = removeKey(tmp.substring(index+1));
+                String name = removeKey(tmp.substring(0,index));
+                cxt.put(name, "true", level);
+            }
+        } catch (IDFFMetaException e) {
+            throw new AMConsoleException(getErrorString(e));
+        } catch (AMConsoleException e) {
+            throw new AMConsoleException(getErrorString(e));
+        }
+        
+        return (cxt != null) ? cxt : new IDFFAuthContexts();
+        
     }
     
     public void createEntityConfig(
@@ -1000,7 +1220,9 @@ public class IDFFModelImpl
         }
     }
     
-    protected IDFFMetaManager getIDFFMetaManager() throws IDFFMetaException {
+    protected IDFFMetaManager getIDFFMetaManager() 
+        throws IDFFMetaException 
+    {
         if (metaManager == null) {
             metaManager = new IDFFMetaManager(getUserSSOToken());
         }
@@ -1037,7 +1259,7 @@ public class IDFFModelImpl
      * Returns affiliate profile attribute values.
      *
      * @param realm the realm in which the entity resides.
-     * @param name of Entity Descriptor.
+     * @param entityName name of Entity Descriptor.
      * @return affiliate profile attribute values.
      * @throws AMConsoleException if attribute values cannot be obtained.
      */
@@ -1168,7 +1390,7 @@ public class IDFFModelImpl
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
             entitySet = idffManager.getAllEntities(realm);
-        } catch (IDFFMetaException e) {   
+        } catch (IDFFMetaException e) {
             throw new AMConsoleException(e.getMessage());
         }
         return (entitySet != null) ? entitySet : Collections.EMPTY_SET;
@@ -1191,7 +1413,7 @@ public class IDFFModelImpl
                     entitySet.add(name);
                 }
             }
-        } catch (IDFFMetaException e) {            
+        } catch (IDFFMetaException e) {
             throw new AMConsoleException(e.getMessage());
         }
         return (entitySet != null) ? entitySet : Collections.EMPTY_SET;
@@ -1213,10 +1435,10 @@ public class IDFFModelImpl
             AffiliationDescriptorType aDesc = (AffiliationDescriptorType)
             idffManager.getAffiliationDescriptor(realm, entityName);
             memberSet = convertListToSet(aDesc.getAffiliateMember());
-        } catch (IDFFMetaException e) {           
+        } catch (IDFFMetaException e) {
             throw new AMConsoleException(e.getMessage());
         }
         
         return (memberSet != null) ? memberSet : Collections.EMPTY_SET;
-    }          
+    }
 }

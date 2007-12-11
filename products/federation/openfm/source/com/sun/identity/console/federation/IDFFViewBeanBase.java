@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFViewBeanBase.java,v 1.3 2007-11-30 01:11:32 asyhuang Exp $
+ * $Id: IDFFViewBeanBase.java,v 1.4 2007-12-11 23:02:56 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,8 @@ import com.sun.identity.console.federation.model.EntityModel;
 import com.sun.identity.console.federation.model.IDFFModel;
 import com.sun.identity.console.federation.model.IDFFModelImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class IDFFViewBeanBase
@@ -58,6 +60,42 @@ public abstract class IDFFViewBeanBase
     protected static final String TF_NAME = "tfName";
     protected static final String TXT_TYPE = "txtType";
     protected static final String TF_DESCRIPTION = "tfDescription";
+        
+    protected static List AUTH_CONTEXT_REF_NAMES = new ArrayList();
+    
+    public static final String MOBILE_CONTRACT =
+        "http://www.projectliberty.org/schemas/authctx/classes/MobileContract";
+    public static final String MOBILE_DIGITALID =
+        "http://www.projectliberty.org/schemas/authctx/classes/MobileDigitalID";
+    public static final String MOBILE_UNREGISTERED =
+        "http://www.projectliberty.org/schemas/authctx/classes/MobileUnregistered";
+    public static final String PASSWORD =
+        "http://www.projectliberty.org/schemas/authctx/classes/Password";
+    public static final String PASSWORD_PROTECTED_TRANSPORT =
+        "http://www.projectliberty.org/schemas/authctx/classes/PasswordProtectedTransport";
+    public static final String PREVIOUS_SESSION =
+        "http://www.projectliberty.org/schemas/authctx/classes/Previous-Session";
+    public static final String SMARTCARD =
+        "http://www.projectliberty.org/schemas/authctx/classes/Smartcard";
+    public static final String SMARTCARD_PKI =
+        "http://www.projectliberty.org/schemas/authctx/classes/Smartcard-PKI";
+    public static final String SOFTWARE_PKI =
+        "http://www.projectliberty.org/schemas/authctx/classes/Software-PKI";
+    public static final String TIME_SYNC_TOKEN =
+        "http://www.projectliberty.org/schemas/authctx/classes/Time-Sync-Token";
+    
+    static {
+        AUTH_CONTEXT_REF_NAMES.add(MOBILE_CONTRACT);
+        AUTH_CONTEXT_REF_NAMES.add(MOBILE_DIGITALID);
+        AUTH_CONTEXT_REF_NAMES.add(MOBILE_UNREGISTERED);
+        AUTH_CONTEXT_REF_NAMES.add(PASSWORD);
+        AUTH_CONTEXT_REF_NAMES.add(PASSWORD_PROTECTED_TRANSPORT);
+        AUTH_CONTEXT_REF_NAMES.add(PREVIOUS_SESSION);
+        AUTH_CONTEXT_REF_NAMES.add(SMARTCARD);
+        AUTH_CONTEXT_REF_NAMES.add(SMARTCARD_PKI);
+        AUTH_CONTEXT_REF_NAMES.add(SOFTWARE_PKI);
+        AUTH_CONTEXT_REF_NAMES.add(TIME_SYNC_TOKEN);
+    }
     
     public IDFFViewBeanBase(String name) {
         super(name);

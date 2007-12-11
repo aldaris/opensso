@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyIDFFIDPHosted.xml,v 1.2 2007-11-30 01:12:09 asyhuang Exp $
+   $Id: propertyIDFFIDPHosted.xml,v 1.3 2007-12-11 23:03:38 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -186,17 +186,15 @@
             </cc>
             <fieldhelp name="helpFederationProfile" defaultValue="idff.entityDescriptor.provider.attribute.help.federationProfile" />
         </property>
-    </section>    
-    <!-- extended metat -->
-    <section name="accessManagerConfigurations" defaultValue="idff.entityDescriptor.provider.section.title.accessManagerConfigurations">
+    </section>        
+    <section name="idpConfiguration" defaultValue="idff.entityDescriptor.provider.section.title.idpConfiguration">
         <property required="true">
             <label name="lblAlias" defaultValue="idff.entityDescriptor.provider.attribute.label.alias" labelFor="tfAlias" />
             <cc name="tfAlias" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>
-        
+        </property>        
         <property required="true">
             <label name="lblAuthenticationType" defaultValue="idff.entityDescriptor.provider.attribute.label.authenticationType" labelFor="radioAuthenticationType" />
             <cc name="authType" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag" >
@@ -204,15 +202,34 @@
                 <option label="idff.entityDescriptor.provider.attribute.option.authenticationType.local" value="local" />
                 <option label="idff.entityDescriptor.provider.attribute.option.authenticationType.remote" value="remote" />
             </cc>
-        </property>        
-        <property required="true">
-            <label name="lblNameIdentifierImplementation" defaultValue="idff.entityDescriptor.provider.attribute.label.nameIdentifierImplementation" labelFor="tfNameIdentifierImplementation" />
-            <cc name="nameIDImplementationClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+        </property>     
+        <property>
+            <label name="lblAssertionIssuer" defaultValue="idff.entityDescriptor.provider.attribute.label.assertionIssuer" labelFor="tfAssertionIssuer" />
+            <cc name="assertionIssuer" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>        
+            <fieldhelp name="helpAssertionIssuer" defaultValue="idff.entityDescriptor.provider.attribute.help.assertionIssuer" />
+        </property>                
+        <property>
+            <label name="lblResponsdWith" defaultValue="idff.entityDescriptor.provider.attribute.label.responsdWith" labelFor="responsdWith" />
+            <cc name="responsdWith" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>      
+        <property>
+            <label name="lblProviderStatus" defaultValue="idff.entityDescriptor.provider.attribute.label.providerStatus" labelFor="providerStatus" />
+            <cc name="providerStatus" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>  
+    </section>
+    <section name="serviceURL" defaultValue="idff.entityDescriptor.provider.section.title.serviceURL">                
         <property required="true">
             <label name="lblProviderHomePageURL" defaultValue="idff.entityDescriptor.provider.attribute.label.providerHomePageURL" labelFor="tfProviderHomePageURL" />
             <cc name="providerHomePageURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
@@ -230,63 +247,13 @@
             </cc>
         </property>        
         <property>
-            <label name="lblAssertionIssuer" defaultValue="idff.entityDescriptor.provider.attribute.label.assertionIssuer" labelFor="tfAssertionIssuer" />
-            <cc name="assertionIssuer" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-            <fieldhelp name="helpAssertionIssuer" defaultValue="idff.entityDescriptor.provider.attribute.help.assertionIssuer" />
-        </property>        
-        <property>
-            <label name="lblGenDiscoverBootstrapResourceOffering" defaultValue="idff.entityDescriptor.provider.attribute.label.generateDiscoveryBootstrappingResOffering" labelFor="cbGenDiscoverBootstrapResourceOffering" />
-            <cc name="generateBootstrapping" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                <attribute name="label" value="label.Yes" />
-            </cc>
-            <fieldhelp name="helpGenDiscoverBootstrapResourceOffering" defaultValue="idff.entityDescriptor.provider.attribute.help.generateDiscoveryBootstrappingResOffering" />
-        </property>        
-        <property>
-            <label name="lblEnableAutoFederation" defaultValue="idff.entityDescriptor.provider.attribute.label.enableAutoFederation" labelFor="cbEnableAutoFederation" />
-            <cc name="enableAutoFederation" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                <attribute name="label" value="label.Enable" />
-            </cc>
-            <fieldhelp name="helpEnableAutoFederation" defaultValue="idff.entityDescriptor.provider.attribute.help.enableAutoFederation" />
-        </property>        
-        <property>
-            <label name="lblAutoFederationCommonAttributeName" defaultValue="idff.entityDescriptor.provider.attribute.label.autoFederationCommonAttributeName" labelFor="tfAutoFederationCommonAttributeName" />
-            <cc name="autoFederationAttribute" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-            <fieldhelp name="helpAutoFederationCommonAttributeName" defaultValue="idff.entityDescriptor.provider.attribute.help.autoFederationCommonAttributeName" />
-        </property>        
-        <property>
-            <label name="lblAttributeStatementPlugin" defaultValue="idff.entityDescriptor.provider.attribute.label.attributeStatementPlugin" labelFor="tfAttributeStatementPlugin" />
-            <cc name="attributePlugin" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-            <fieldhelp name="helpAttributeStatementPlugin" defaultValue="idff.entityDescriptor.provider.attribute.help.attributeStatementPlugin" />
-        </property>
-        <!-- new -->
-        <property>
             <label name="lblDoFederatePageURL" defaultValue="idff.entityDescriptor.provider.attribute.label.doFederatePageURL" labelFor="doFederatePageURL" />
             <cc name="doFederatePageURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />                    
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>
-        <property>
-            <label name="lblAttributeMapperClass" defaultValue="idff.entityDescriptor.provider.attribute.label.attributeMapperClass" labelFor="attributeMapperClass" />
-            <cc name="attributeMapperClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>               
+        </property>             
         <property>
             <label name="lblRegistrationDoneURL" defaultValue="idff.entityDescriptor.provider.attribute.label.registrationDoneURL" labelFor="registrationDoneURL" />
             <cc name="registrationDoneURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
@@ -294,15 +261,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>        
-        <property>
-            <label name="lblResponsdWith" defaultValue="idff.entityDescriptor.provider.attribute.label.responsdWith" labelFor="responsdWith" />
-            <cc name="responsdWith" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>        
+        </property>    
         <property>
             <label name="lblListOfCOTsPageURL" defaultValue="idff.entityDescriptor.provider.attribute.label.ListOfCOTsPageURL" labelFor="listOfCOTsPageURL" />
             <cc name="listOfCOTsPageURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
@@ -311,14 +270,7 @@
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
         </property>        
-        <property>
-            <label name="lblUserProviderClass" defaultValue="idff.entityDescriptor.provider.attribute.label.userProviderClass" labelFor="userProviderClass" />
-            <cc name="userProviderClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>                
+ 
         <property>
             <label name="lblFederationDoneURL" defaultValue="idff.entityDescriptor.provider.attribute.label.federationDoneURL" labelFor="federationDoneURL" />
             <cc name="federationDoneURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
@@ -343,14 +295,7 @@
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
         </property>
-        <property>
-            <label name="lblProviderStatus" defaultValue="idff.entityDescriptor.provider.attribute.label.providerStatus" labelFor="providerStatus" />
-            <cc name="providerStatus" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>        
+        
         <property>
             <label name="lblLogoutDoneURL" defaultValue="idff.entityDescriptor.provider.attribute.label.logoutDoneURL" labelFor="logoutDoneURL" />
             <cc name="logoutDoneURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
@@ -358,9 +303,42 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+        </property>      
+    </section> 
+    <section name="plugin" defaultValue="idff.entityDescriptor.provider.section.title.plugin">        
+        <property required="true">
+            <label name="lblNameIdentifierImplementation" defaultValue="idff.entityDescriptor.provider.attribute.label.nameIdentifierImplementation" labelFor="tfNameIdentifierImplementation" />
+            <cc name="nameIDImplementationClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property> 
+        <property>
+            <label name="lblAttributeStatementPlugin" defaultValue="idff.entityDescriptor.provider.attribute.label.attributeStatementPlugin" labelFor="tfAttributeStatementPlugin" />
+            <cc name="attributePlugin" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+            <fieldhelp name="helpAttributeStatementPlugin" defaultValue="idff.entityDescriptor.provider.attribute.help.attributeStatementPlugin" />
         </property>
-        <!-- end new -->
-
+                <property>
+            <label name="lblAttributeMapperClass" defaultValue="idff.entityDescriptor.provider.attribute.label.attributeMapperClass" labelFor="attributeMapperClass" />
+            <cc name="attributeMapperClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>  
+               <property>
+            <label name="lblUserProviderClass" defaultValue="idff.entityDescriptor.provider.attribute.label.userProviderClass" labelFor="userProviderClass" />
+            <cc name="userProviderClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>           
         <subsection name="elistSunIdentityServerProviderIDPAttributeMapSection" defaultValue="" >
             <property>
                 <label name="lblSunIdentityServerProviderIDPAttributeMap" 
@@ -381,9 +359,34 @@
                 
             </property>
         </subsection>
+    </section>
+    <section name="bootStrapping" defaultValue="idff.entityDescriptor.provider.section.title.bootStrapping">        
+        <property>
+            <label name="lblGenDiscoverBootstrapResourceOffering" defaultValue="idff.entityDescriptor.provider.attribute.label.generateDiscoveryBootstrappingResOffering" labelFor="cbGenDiscoverBootstrapResourceOffering" />
+            <cc name="generateBootstrapping" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+                <attribute name="label" value="label.Yes" />
+            </cc>
+            <fieldhelp name="helpGenDiscoverBootstrapResourceOffering" defaultValue="idff.entityDescriptor.provider.attribute.help.generateDiscoveryBootstrappingResOffering" />
+        </property>        
+    </section>
+    <section name="autoFederation" defaultValue="idff.entityDescriptor.provider.section.title.autoFederation">        
+        <property>
+            <label name="lblEnableAutoFederation" defaultValue="idff.entityDescriptor.provider.attribute.label.enableAutoFederation" labelFor="cbEnableAutoFederation" />
+            <cc name="enableAutoFederation" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+                <attribute name="label" value="label.Enable" />
+            </cc>
+            <fieldhelp name="helpEnableAutoFederation" defaultValue="idff.entityDescriptor.provider.attribute.help.enableAutoFederation" />
+        </property>        
+        <property>
+            <label name="lblAutoFederationCommonAttributeName" defaultValue="idff.entityDescriptor.provider.attribute.label.autoFederationCommonAttributeName" labelFor="tfAutoFederationCommonAttributeName" />
+            <cc name="autoFederationAttribute" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+            <fieldhelp name="helpAutoFederationCommonAttributeName" defaultValue="idff.entityDescriptor.provider.attribute.help.autoFederationCommonAttributeName" />
+        </property>        
     </section>    
-    
-    <!-- authentication Context table-->
     <section name="authenticationContext" defaultValue="idff.entityDescriptor.provider.section.title.authenticationContext">
         <property required="true">
             <label name="lblDefaultAuthenticationContext" defaultValue="idff.entityDescriptor.provider.attribute.label.defaultAuthenticationContext" labelFor="singleChoiceDefaultAuthenticationContext" />
@@ -399,17 +402,21 @@
                 <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.Time-Sync-Token" value="http://www.projectliberty.org/schemas/authctx/classes/Time-Sync-Token" />
                 <option label="idff.entityDescriptor.provider.attribute.option.defaultAuthenticationContext.PasswordProtectedTransport" value="http://www.projectliberty.org/schemas/authctx/classes/PasswordProtectedTransport" />
             </cc>
-        </property>                      
-        <property>
-            <label name="lblIdpAuthnContextMapping" defaultValue="idff.entityDescriptor.provider.attribute.label.idpAuthnContextMapping" labelFor="idpAuthnContextMapping" />
-            <cc name="idpAuthnContextMapping" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
+        </property>          
+        <property span="true">
+            <cc name="tblAuthenticationContext" tagclass="com.sun.web.ui.taglib.table.CCActionTableTag" >
+                <attribute name="title" value="idff.entityDescriptor.provider.table.title.authenticationContexts" />
+                <attribute name="showPaginationControls" value="false" />
+                <attribute name="showAdvancedSortingIcon" value="false" />
+                <attribute name="showLowerActions" value="false" />
+                <attribute name="showPaginationControls" value="false" />
+                <attribute name="showPaginationIcon" value="false" />
+                <attribute name="showSelectionIcons" value="false" />
+                <attribute name="showSelectionSortIcon" value="false" />
+                <attribute name="showSortingRow" value="false" />
             </cc>
-        </property>                       
-    </section>
-    <!-- authentication Context table -->
+        </property>
+    </section>   
     <section name="SAMLAttributes" defaultValue="idff.entityDescriptor.provider.section.title.SAMLAttributes">
         <property required="true">
             <label name="lblAssertionInterval" defaultValue="idff.entityDescriptor.provider.attribute.label.assertionInterval" labelFor="tfAssertionInterval" />

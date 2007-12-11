@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModel.java,v 1.1 2007-11-30 01:11:20 asyhuang Exp $
+ * $Id: IDFFModel.java,v 1.2 2007-12-11 23:03:08 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.console.federation.model;
 
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;
+import com.sun.identity.console.federation.IDFFAuthContexts;
 import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
 import java.util.Set;
@@ -390,8 +391,7 @@ public interface IDFFModel
      * create a provider's extended metadata.
      *
      * @param entityName Name of Entity Descriptor.
-     * @param realm Realm of Entity
-     * @param role Role of provider. (SP or IDP)
+     * @param realm Realm of Entity    
      * @param location if the entity is remote or hosted.
      * @throws AMConsoleException if provider cannot be modified.
      */
@@ -400,6 +400,58 @@ public interface IDFFModel
         String entityName,
         String role,
         String location
+    ) throws AMConsoleException;
+    
+    /**
+     * Returns the object of Auththentication Contexts in IDP.
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.         
+     * @return attributes values of provider.
+     */
+    public IDFFAuthContexts getIDPAuthenticationContexts(
+        String realm,
+        String entityName       
+    ) throws AMConsoleException ;
+    
+    /**
+     * Returns  the object of Auththentication Contexts in SP.
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.    
+     * @return attributes values of provider.
+     */
+    public IDFFAuthContexts getSPAuthenticationContexts(
+        String realm,
+        String entityName       
+    ) throws AMConsoleException ;
+            
+     /**
+     * update IDP Authentication Contexts
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.         
+     * @param cxt IDFFAuthContexts object contains IDP 
+     *        Authentication Contexts values
+     */
+    public void updateIDPAuthenticationContexts(
+        String realm,
+        String entityName, 
+        IDFFAuthContexts cxt
+    ) throws AMConsoleException;
+    
+     /**
+     * update SP Authentication Contexts
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.       
+     * @param cxt IDFFAuthContexts object contains SP 
+     *        Authentication Contexts values
+     */
+    public void updateSPAuthenticationContexts(
+        String realm,
+        String entityName, 
+        IDFFAuthContexts cxt
     ) throws AMConsoleException;
     
     /**
