@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigServlet.java,v 1.1 2006-08-04 21:06:52 veiming Exp $
+ * $Id: ServiceConfigServlet.java,v 1.2 2007-12-11 19:55:59 rmisra Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,6 +64,8 @@ public class ServiceConfigServlet extends SampleBase {
             method = "globalSchema";
         }
         
+        response.setContentType("text/html");
+
         PrintWriter out = response.getWriter();
         out.println(SampleConstants.HTML_HEADER);
         if (username == null || password == null || servicename == null) {

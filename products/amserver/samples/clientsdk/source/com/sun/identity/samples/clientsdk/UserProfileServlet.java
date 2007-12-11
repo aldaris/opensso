@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserProfileServlet.java,v 1.1 2006-08-04 21:06:52 veiming Exp $
+ * $Id: UserProfileServlet.java,v 1.2 2007-12-11 19:55:59 rmisra Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,6 +62,8 @@ public class UserProfileServlet extends SampleBase {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         
+        response.setContentType("text/html");
+
         // Get the output stream
         PrintWriter out = response.getWriter();
         out.println(SampleConstants.HTML_HEADER);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyClientServlet.java,v 1.1 2006-08-04 21:06:51 veiming Exp $
+ * $Id: PolicyClientServlet.java,v 1.2 2007-12-11 19:55:59 rmisra Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,6 +65,8 @@ public class PolicyClientServlet extends SampleBase {
         String servicename = request.getParameter("servicename");
         String resource = request.getParameter("resource");
         
+        response.setContentType("text/html");
+
         PrintWriter out = response.getWriter();
         out.println(SampleConstants.HTML_HEADER);
         

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenSampleServlet.java,v 1.1 2006-08-04 21:06:53 veiming Exp $
+ * $Id: SSOTokenSampleServlet.java,v 1.2 2007-12-11 19:56:00 rmisra Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,6 +62,7 @@ public class SSOTokenSampleServlet extends HttpServlet {
         
         try {
             try {
+                response.setContentType("text/html");
                 out = response.getOutputStream();
 
                 // create the sso token from http request 
