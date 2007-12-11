@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.5 2007-10-08 20:31:28 pawand Exp $
+ * $Id: InternalSession.java,v 1.6 2007-12-11 22:02:58 subashvarma Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -902,14 +902,16 @@ public class InternalSession implements Serializable {
      * session times out.
      */
     private void changeStateAndNotify(int eventType) {
-
-        SessionService.decrementActiveSessions();
-        SessionCount.decrementSessionCount(this);
-
         SessionService.getSessionService().logEvent(this, eventType);
-        setState(Session.INVALID);
-        timedOutAt = System.currentTimeMillis() / 1000;
+        timedOutAt = System.currentTimeMillis()/1000;
         putProperty("SessionTimedOut", String.valueOf(timedOutAt));
+        if(purgeDelay == 0) {
+            ss.destroyInternalSession(sessionID);
+            return;
+        }
+        SessionService.decrementActiveSessions();
+        SessionCount.decrementSessionCount(this);  
+        setState(Session.INVALID);
         trimSession();
         SessionService.getSessionService().sendEvent(this, eventType);
     }
