@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPBindingService.java,v 1.2 2007-09-13 07:41:20 stanguy Exp $
+ * $Id: SOAPBindingService.java,v 1.3 2007-12-11 07:48:49 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -222,7 +222,8 @@ public class SOAPBindingService implements ConfigurationListener {
              && !valuesEnforceOnlyKnownProvider.isEmpty() ){
             String enforce = 
                 (String) valuesEnforceOnlyKnownProvider.iterator().next();
-            enforceOnlyKnownProvider = Boolean.parseBoolean( enforce );
+            enforceOnlyKnownProvider = 
+                Boolean.valueOf( enforce ).booleanValue();
         }
 
     }
