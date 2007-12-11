@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.3 2007-10-29 16:56:10 qcheng Exp $
+ * $Id: SystemProperties.java,v 1.4 2007-12-11 23:36:42 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,10 @@
 package com.sun.identity.saml2.idpdiscovery;
 
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
-import java.util.ResourceBundle;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Properties;
 import java.util.MissingResourceException;
 
 /** 
@@ -42,24 +45,27 @@ import java.util.MissingResourceException;
  * <code>IDPDiscoveryConfig_serverName</code>.
  */
 public class SystemProperties {
-    private static ResourceBundle properties = null;
-    public static String iasGXId = null;
+    private static Properties properties = new Properties();
 
-    /* Load the properties file for config information before anything else
-     * starts.
+    /** 
+     * Initializes the properties.
+     * @param fileName name of file containing the properties to be initialized.
      */
-    static {
+    public static synchronized void initializeProperties(String fileName) 
+        throws FileNotFoundException, IOException {
+        FileInputStream fis = null;
         try { 
-            String serverName = System.getProperty("server.name");
-            String fname = null;
-            if (serverName != null) {
-                fname = "libIDPDiscoveryConfig_" + serverName;
-            } else {
-                fname = "libIDPDiscoveryConfig";
+            if ((fileName != null) && (fileName.length() != 0)) {
+                fis = new FileInputStream(fileName);
+                properties.load(fis);
             }
-            properties = ResourceBundle.getBundle(fname);
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ioe) {
+                }
+            }
         }
     }
 
@@ -72,15 +78,11 @@ public class SystemProperties {
      * @return the value if the key exists; otherwise returns <code>null</code>.
     */
     public static String get(String key) {
-        try {
-            String val = SystemPropertiesManager.get(key);
-            if (val == null) {
-                return properties.getString(key);
-            } else {
-                return val;
-            }
-        } catch (MissingResourceException e) {
-            return null;
+        String val = SystemPropertiesManager.get(key);
+        if (val == null) {
+            return (String) properties.get(key);
+        } else {
+            return val;
         }
     }
 }
