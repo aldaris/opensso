@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServicesClients.java,v 1.2 2007-08-28 18:52:31 mallas Exp $
+ * $Id: WebServicesClients.java,v 1.3 2007-12-11 23:04:19 asyhuang Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,7 +113,7 @@ public class WebServicesClients implements Subject {
      * Returns certificate subject DNs in the KeyStore as possible values. 
      *
      * @param token the <code>SSOToken</code>
-     * @param patter the pattern to match with valid values.
+     * @param pattern the pattern to match with valid values.
      *
      * @return <code>ValidValues</code> object wiht certificate subject DNs.
      *
