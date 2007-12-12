@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.6 2007-11-05 17:56:36 ericow Exp $
+ * $Id: AMLoginContext.java,v 1.7 2007-12-12 06:58:26 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1258,7 +1258,8 @@ public class AMLoginContext {
         
         // set username
         
-        if (indexType == AuthContext.IndexType.USER) {
+        if ((indexType == AuthContext.IndexType.USER) && 
+            (pCookieMode)) {
             loginState.setToken(indexName);
         }
     }
