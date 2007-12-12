@@ -1,0 +1,24 @@
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+
+<!DOCTYPE table SYSTEM "table.dtd">
+
+<table>
+    <column name="tblColSupported" >
+        <cc name="tblDataSupported" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+    </column>
+    <column name="tblColContextReference">
+        <cc name="tblDataLabel" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" ><attribute name="bundleID" value="" /></cc>
+        <cc name="tblDataContextReference" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
+    </column>
+    <column name="tblColLevel" >
+        <cc name="tblDataLevel" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="3" />
+        </cc>
+    </column>
+</table>
