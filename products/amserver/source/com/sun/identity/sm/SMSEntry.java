@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.29 2007-11-30 04:21:15 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.30 2007-12-13 23:30:18 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,6 +102,8 @@ public class SMSEntry implements Cloneable {
     static String GLOBAL_CACHE_PROPERTY = "com.iplanet.am.sdk.caching.enabled";
 
     static String SM_CACHE_PROPERTY = "com.sun.identity.sm.cache.enabled";
+
+    static final String AGENTGROUP_RDN = "ou=agentgroup,ou=Instances";
 
     /**
      * Flat File Configuration Data Store
@@ -1862,7 +1864,6 @@ public class SMSEntry implements Cloneable {
         }
 
         public void run() {
-            // This does not apply to FAM server
             // At install time and creation of placeholder nodes
             // should not send notifications
             // This would be determined if type == ADD and the DNs are
@@ -1873,9 +1874,12 @@ public class SMSEntry implements Cloneable {
             // 5) ou=services
             // 6) ...
             
+            // Since agentgroup placeholder node is added after install time,
+            // fix it here to avoid sending notifications.
             if (type == SMSObjectListener.ADD
-                    && ((new StringTokenizer(name, ",")).countTokens() 
-                            <= (baseDNCount + 1))) {
+                && ((new StringTokenizer(name, ",")).countTokens() 
+                    <= (baseDNCount + 1) || 
+                        (name.indexOf(AGENTGROUP_RDN) >= 0))) {
                 return;
             }
 
