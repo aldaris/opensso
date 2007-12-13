@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.18 2007-11-19 22:24:20 veiming Exp $
+   $Id: configurator.jsp,v 1.19 2007-12-13 23:16:04 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -391,6 +391,30 @@
             </td>
             <td valign="top">
                 <div class="ConTblCl2Div"><input type="password" value="" name="ADMIN_CONFIRM_PWD" id="psLbl3" size="35" class="TxtFld"></div>
+            </td>
+        </tr>
+
+        <!-- URLAccessAgent Password  -->
+        <tr>
+            <td valign="top">
+                <div class="ConEmbTblCl1Div">
+                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.urlaccessagent.password"/></span></div>
+                </div>
+            </td>
+            <td valign="top">
+                <div class="ConTblCl2Div"><input type="password" value="" name="AMLDAPUSERPASSWD" id="psLbl3" size="35" class="TxtFld"></div>
+            </td>
+        </tr>
+
+        <!-- Confirm URLAccessAgent Password -->
+        <tr>
+            <td valign="top">
+                <div class="ConEmbTblCl1Div">
+                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.urlaccessagent.confirmpassword"/></span></div>
+                </div>
+            </td>
+            <td valign="top">
+                <div class="ConTblCl2Div"><input type="password" value="" name="AMLDAPUSERPASSWD_CONFIRM" id="psLbl3" size="35" class="TxtFld"></div>
             </td>
         </tr>
 

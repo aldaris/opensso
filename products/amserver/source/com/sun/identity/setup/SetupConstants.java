@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.17 2007-11-21 01:23:23 goodearth Exp $
+ * $Id: SetupConstants.java,v 1.18 2007-12-13 23:16:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -305,6 +305,16 @@ public interface SetupConstants {
      * Configuration Variable for confirm administrator password.
      */
     String CONFIG_VAR_CONFIRM_ADMIN_PWD  = "ADMIN_CONFIRM_PWD";
+
+    /**
+     * Configuration Variable for <code>URLAccessAgent</code> password.
+     */
+    String CONFIG_VAR_AMLDAPUSERPASSWD = "AMLDAPUSERPASSWD";
+
+    /**
+     * Configuration Variable for <code>URLAccessAgent</code> password.
+     */
+    String CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM = "AMLDAPUSERPASSWD_CONFIRM";
 
     /**
      * Configuration Variable for server cookie domain.

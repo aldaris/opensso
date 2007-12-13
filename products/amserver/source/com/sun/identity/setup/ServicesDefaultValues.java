@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.18 2007-11-21 01:23:23 goodearth Exp $
+ * $Id: ServicesDefaultValues.java,v 1.19 2007-12-13 23:16:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -367,6 +367,14 @@ public class ServicesDefaultValues {
             Crypt.reinitialize();
             map.put(SetupConstants.HASH_ADMIN_PWD, (String)Hash.hash(adminPwd));
         }
+
+        String urlAccessAgentPwd = ((String)map.get(
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD)).trim();
+        String urlAccessAgentPwdConfirm = ((String)map.get(
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM)).trim();
+        validateURLAccessAgentPassword(adminPwd, urlAccessAgentPwd,
+            urlAccessAgentPwdConfirm, locale);
+
         String dbOption = (String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE);
         boolean embedded = 
               dbOption.equals(SetupConstants.SMS_EMBED_DATASTORE);
@@ -406,6 +414,7 @@ public class ServicesDefaultValues {
         map.put(SetupConstants.ENCRYPTED_ADMIN_PWD, encryptAdminPwd);
         map.put(SetupConstants.ENCRYPTED_AD_ADMIN_PWD, encryptAdminPwd);
         map.remove(SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD);
+        map.remove(SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM);
     }
 
 
@@ -431,6 +440,30 @@ public class ServicesDefaultValues {
         } else {
              throw new ConfiguratorException("configurator.passwdlength",
                  null, locale);
+        }
+        return true;
+    }
+
+    private static boolean validateURLAccessAgentPassword(
+        String amadminPwd,
+        String pwd,
+        String cPwd,
+        Locale locale
+    ) {
+        if ((pwd != null) && (pwd.length() > 7)) {
+            if (!pwd.equals(cPwd)) {
+                throw new ConfiguratorException(
+                    "configurator.urlaccessagent.passwd.nomatch", null, locale);
+            }
+
+            if (amadminPwd.equals(pwd)) {
+                throw new ConfiguratorException(
+                    "configurator.urlaccessagent.passwd.match.amadmin.pwd",
+                    null, locale);
+            }
+        } else {
+            throw new ConfiguratorException("configurator.passwdlength",
+                null, locale);
         }
         return true;
     }
