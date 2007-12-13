@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: setup.bat,v 1.3 2007-12-04 18:06:26 ww203982 Exp $
+: $Id: setup.bat,v 1.4 2007-12-13 20:17:38 ww203982 Exp $
 :
 : Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 
@@ -29,5 +29,5 @@ IF "%1" == "--help" SET help_print=yes
 IF "%1" == "-p" SET path_AMConfig=%2
 IF "%1" == "--path" SET path_AMConfig=%2
 
-%JAVA_HOME%/bin/java.exe -version:"1.4+" -D"load.config=yes" -D"help.print=%help_print%" -D"path.AMConfig=%path_AMConfig%" -cp "lib/opensso.jar;lib/amadm_setup.jar;lib/opensso-sharedlib.jar;lib/ldapjdk.jar;lib/OpenDS.jar;locale" com.sun.identity.tools.bundles.Main
+"%JAVA_HOME%/bin/java.exe" -version:"1.4+" -D"load.config=yes" -D"help.print=%help_print%" -D"path.AMConfig=%path_AMConfig%" -cp "lib/opensso.jar;lib/amadm_setup.jar;lib/opensso-sharedlib.jar;lib/ldapjdk.jar;lib/OpenDS.jar;locale" com.sun.identity.tools.bundles.Main
 ENDLOCAL
