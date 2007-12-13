@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.6 2007-10-17 23:00:48 veiming Exp $
+ * $Id: SMDataLayer.java,v 1.7 2007-12-13 18:42:15 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -190,6 +190,8 @@ class SMDataLayer {
 
             int poolMin = svrCfg.getMinConnections();
             int poolMax = svrCfg.getMaxConnections();
+            String connDN = svrCfg.getAuthID();
+            String connPWD = svrCfg.getPasswd();
             int maxBackLog = svrCfg.getIntValue(LDAP_MAXBACKLOG, MAX_BACKLOG);
             m_releaseConnectionBeforeSearchCompletes = svrCfg.getBooleanValue(
                 LDAP_RELEASECONNBEFORESEARCH, false);
@@ -242,8 +244,7 @@ class SMDataLayer {
             connOptions.put("searchconstraints", _defaultSearchConstraints);
 
             _ldapPool = new LDAPConnectionPool("SMS", poolMin, poolMax,
-                hostName, 389, _trialConn.getAuthenticationDN(),
-                _trialConn.getAuthenticationPassword(), connOptions);
+                hostName, 389, connDN, connPWD, _trialConn, connOptions);
 
         } catch (LDAPServiceException ex) {
             debug.error("SMDataLayer:initLdapPool()-"
