@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.9 2007-10-09 18:46:59 kenwho Exp $
+ * $Id: DataLayer.java,v 1.10 2007-12-13 18:44:17 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1357,6 +1357,8 @@ public class DataLayer implements java.io.Serializable {
         m_releaseConnectionBeforeSearchCompletes = svrCfg.getBooleanValue(
                 LDAP_RELEASECONNBEFORESEARCH, false);
         boolean referrals = svrCfg.getBooleanValue(LDAP_REFERRAL, true);
+        String connDN = svrCfg.getAuthID();
+        String connPWD = svrCfg.getPasswd();
 
         if (debug.messageEnabled()) {
             debug.message("Creating ldap connection pool with :");
@@ -1412,9 +1414,9 @@ public class DataLayer implements java.io.Serializable {
             connOptions.put("referrals", new Boolean(referrals));
             connOptions.put("searchconstraints", _defaultSearchConstraints);
 
+            // Pass the valid bind credentials from the configuration.
             _ldapPool = new LDAPConnectionPool("DataLayer", poolMin, poolMax,
-                hostName, 389, _trialConn.getAuthenticationDN(),
-                _trialConn.getAuthenticationPassword(), connOptions);
+                hostName, 389, connDN, connPWD, _trialConn, connOptions);
 
         } catch (LDAPException e) {
             debug.error("Exception in DataLayer.initLdapPool:", e);

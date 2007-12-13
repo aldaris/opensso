@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.6 2007-04-20 21:17:46 goodearth Exp $
+ * $Id: LDAPConnectionPool.java,v 1.7 2007-12-13 18:43:50 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,7 +110,6 @@ public class LDAPConnectionPool {
         String authdn,
         String authpw
     ) throws LDAPException {
-        /////this(name, min, max, host, port, authdn, authpw, null);
         this(name, min, max, host, port, authdn, authpw, null, null);
     }
 
@@ -625,6 +624,11 @@ public class LDAPConnectionPool {
                                     "primary port-" + port + " :is down."+
                                     "Failover to the secondary server.");
                         }
+                        // Release this connection as it cannot connect
+                        // to the primary server, in order for failover
+                        // to happen. use case:primary is shut down and
+                        // AM server(web container) is restarted.
+                        close(ldc, connEx.getLDAPResultCode());
                     }
                 }
             }
@@ -1146,6 +1150,20 @@ public class LDAPConnectionPool {
                 newConn =
                     failoverAndfallback(upHost,upPort,newConn,"failover");
                 break;
+            }
+            // This check is for MMR DS instances on the same machine, but
+            // different port numbers.
+            if ((upHost != null) && (upHost.length() != 0)
+                && (upPort != null) && (upPort.length() != 0)
+                && (ld.getHost() !=null)) {
+                int thisPort = (Integer.valueOf((String)upPort)).intValue();
+
+                if ((ld.getHost().equalsIgnoreCase(upHost)) &&
+                    (ld.getPort() != thisPort)) {
+                    newConn =
+                        failoverAndfallback(upHost,upPort,newConn,"failover");
+                    break;
+                }
             }
         }
         reinit(newConn);
