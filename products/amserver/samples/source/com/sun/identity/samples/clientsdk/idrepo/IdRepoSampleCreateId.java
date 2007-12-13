@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.7 2007-12-07 19:20:39 goodearth Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.8 2007-12-13 18:37:36 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,7 +107,12 @@ public class IdRepoSampleCreateId {
                 String tmpS = sampleUtils.getLine(idName + "'s agentType: ");
                 vals.add(tmpS);
                 attrs.put("AgentType", vals);
-
+                if (tmpS.equalsIgnoreCase("webagent")) {
+                    tmpS = sampleUtils.getLine(idName +"'s polling interval: ");
+                    vals = new HashSet();
+                    vals.add(tmpS);
+                    attrs.put("com.sun.am.policy.am.polling.interval", vals);
+                }
                 tmpS = sampleUtils.getLine(idName + "'s password: ");
                 vals = new HashSet();
                 vals.add(tmpS);
@@ -163,53 +168,102 @@ public class IdRepoSampleCreateId {
                     System.out.println("    Odd, no " +
                         idtype.getName() + "s found.");
                 }
-                vals = new HashSet();
-                vals.add("WebAgent");
-                attrs.put("AgentType", vals);
-                AMIdentity agroupIdentity = 
-                    idRepo.createIdentity(IdType.AGENTGROUP, "myagrp", attrs);
-                System.out.println("\nChecking membership operations");
-                IdSearchResults res = 
-                    idRepo.searchIdentities(IdType.AGENTGROUP,
-                    "myagrp", new IdSearchControl());
-                Iterator iter = res.getSearchResults().iterator();
-                if (iter.hasNext()) {
-                    agroupIdentity = (AMIdentity) iter.next();
+                if (idtype.equals(IdType.AGENTONLY) || 
+                    idtype.equals(IdType.AGENTGROUP)) {
+                    String POLLINT = "com.sun.am.policy.am.polling.interval";
+                    //  now get the attributes of the identities of type created
+                    Map attrMap = null;
+                    String name = null;
+                    String type = null;
+                    name = tmpId.getName();
+                    attrMap = tmpId.getAttributes();
+                    if (!attrMap.isEmpty()) {
+                        Set keySet = attrMap.keySet();
+                        for (Iterator it = keySet.iterator(); it.hasNext(); ) {
+                            String key = (String)it.next();
+                            if (key.equalsIgnoreCase(POLLINT)) { 
+                                System.out.println("Value before " +
+                                    "removeAttribute: "
+                                    + POLLINT + "=" + attrMap.get(POLLINT));
+                                Set attrNameSet = null;
+                                attrNameSet = new HashSet();
+                                attrNameSet.add(key);
+                                System.out.println("Attribute to remove :"+key);
+                                tmpId.removeAttributes(attrNameSet);
+                            }
+                        }
+                    } else {
+                        System.out.println (name + " has no attributes.");
+                    }
+
+                    // get/check after remove
+                    attrMap = tmpId.getAttributes();
+                    if (!attrMap.isEmpty()) {
+                        System.out.println ("Has key after removeAttribute : "+
+                            POLLINT + " : true/false :" +
+                                attrMap.keySet().contains(POLLINT));
+                        if (attrMap.keySet().contains(POLLINT)) {
+                            System.out.println ("Value after removeAttribute : "+
+                                POLLINT + "=" + attrMap.get(POLLINT));
+                        }
+                    }
+
+                    vals = new HashSet();
+                    vals.add("WebAgent");
+                    attrs.put("AgentType", vals);
+                    AMIdentity agroupIdentity = null; 
+
+                    System.out.println("\nChecking membership operations");
+                    IdSearchResults res = 
+                        idRepo.searchIdentities(IdType.AGENTGROUP,
+                            "myagrp", new IdSearchControl());
+                    Set resSet = res.getSearchResults();
+                    if (!resSet.isEmpty()) {
+                        Iterator iter = resSet.iterator();
+                        if (iter.hasNext()) {
+                            agroupIdentity = (AMIdentity) iter.next();
+                        }
+                    } else {
+                        agroupIdentity = 
+                            idRepo.createIdentity(IdType.AGENTGROUP, "myagrp", 
+                                attrs);
+                    }
+
+                    // Test for getMembers()
+                    System.out.println("Obtained agent group =" + 
+                        agroupIdentity.getName());
+                    System.out.println("\nAdding member to agent group: " + 
+                        tmpId.getName());
+                    agroupIdentity.addMember(tmpId);
+                    System.out.println("\nGetting member from agent group: " + 
+                        agroupIdentity.getMembers(IdType.AGENTONLY));
+
+                    // Test for getMemberships()
+                    Set agentgroupsOfAgent = 
+                        tmpId.getMemberships(IdType.AGENTGROUP);
+                    System.out.println("Agent's agentGroup memberships = ");
+                    Iterator agiter = agentgroupsOfAgent.iterator();
+                    while (agiter.hasNext() ){
+                        AMIdentity id = (AMIdentity) agiter.next();
+                        System.out.println("AgentGroup of agent = " + 
+                            id.getName());
+                        System.out.println("AgentGroup of agent isExists: " + 
+                            id.isExists());
+                    }
+
+                    System.out.println("\nRemoving member from agent group: " + 
+                        tmpId.getName());
+                    agroupIdentity.removeMember(tmpId);
+                    System.out.println("\nAfter removeMember : Getting member " +
+                        "from agent group: " + 
+                        agroupIdentity.getMembers(IdType.AGENTONLY));
+
                 }
-
-                // Test for getMembers()
-                System.out.println("Obtained agent group =" + 
-                    agroupIdentity.getName());
-                System.out.println("\nAdding member to agent group: " + 
-                    tmpId.getName());
-                agroupIdentity.addMember(tmpId);
-                System.out.println("\nGetting member from agent group: " + 
-                    agroupIdentity.getMembers(IdType.AGENTONLY));
-
-                // Test for getMemberships()
-                Set agentgroupsOfAgent = 
-                    tmpId.getMemberships(IdType.AGENTGROUP);
-                System.out.println("Agent's agentGroup memberships = ");
-                Iterator agiter = agentgroupsOfAgent.iterator();
-                while (agiter.hasNext() ){
-                    AMIdentity id = (AMIdentity) agiter.next();
-                    System.out.println("AgentGroup of agent = " + 
-                        id.getName());
-                    System.out.println("AgentGroup of agent isExists: " + 
-                        id.isExists());
-                }
-
-                System.out.println("\nRemoving member from agent group: " + 
-                    tmpId.getName());
-                agroupIdentity.removeMember(tmpId);
-                System.out.println("\nAfter removeMember : Getting member " +
-                    "from agent group: " + 
-                    agroupIdentity.getMembers(IdType.AGENTONLY));
-
             }
         } catch (IdRepoException ire) {
             System.err.println("idRepoProcessing IdRepoException " +
                 "creating '" + idtype + "': " + ire.getMessage());
+            System.err.println("SUJATHA ire "+ ire);
         } catch (SSOException ssoe) {
             System.err.println("idRepoProcessing: SSOException " +
                 "creating '" + idtype + "': " + ssoe.getMessage());
