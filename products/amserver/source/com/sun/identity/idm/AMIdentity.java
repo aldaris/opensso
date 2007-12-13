@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.24 2007-12-03 22:37:07 kenwho Exp $
+ * $Id: AMIdentity.java,v 1.25 2007-12-13 18:36:48 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -471,10 +471,22 @@ public final class AMIdentity {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
 
-        Iterator it = attrNames.iterator();
-        while (it.hasNext()) {
-            String attr = (String) it.next();
-            modMap.put(attr, Collections.EMPTY_SET);
+        boolean agentflg = getType().equals(IdType.AGENTONLY);
+        if (agentflg) {
+            IdServices idServices = IdServicesFactory.getDataStoreServices();
+            idServices.removeAttributes(token, type, name, attrNames, 
+                orgName, null);
+            Iterator it = attrNames.iterator();
+            while (it.hasNext()) {
+                String attr = (String) it.next();
+                modMap.remove(attr);
+            }
+        } else {
+            Iterator it = attrNames.iterator();
+            while (it.hasNext()) {
+                String attr = (String) it.next();
+                modMap.put(attr, Collections.EMPTY_SET);
+            }
         }
     }
 
