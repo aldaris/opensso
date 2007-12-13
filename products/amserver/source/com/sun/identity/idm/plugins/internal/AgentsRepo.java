@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.12 2007-12-10 20:21:19 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.13 2007-12-13 18:38:52 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -372,7 +372,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             // Get the agent's config and then it's attributes.
             ServiceConfig aCfg = svcConfig.getSubConfig(agentName);
             if (aCfg != null) {
-                answer = aCfg.getAttributes();
+                answer = aCfg.getAttributesWithoutDefaults();
                 // Send the agenttype of that agent.
                 Set vals = new HashSet(2);
                 vals.add(aCfg.getSchemaID());
@@ -662,7 +662,18 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                              aCfg.setLabeledUri(name);
                              break;
                          case REMOVEMEMBER:
-                             aCfg.setLabeledUri("");
+                             /*
+                              * set "  "(empty string) instead of "" to avoid 
+                              * this LDAPException(21)
+                              * When attempting to modify entry
+                              * to replace the set of values for attribute 
+                              * labeledURI, value "" was found to be invalid 
+                              * according to the associated syntax:  The 
+                              * operation attempted to assign a zero-length 
+                              * value to an attribute with the directory 
+                              * string syntax.
+                              */
+                             aCfg.setLabeledUri("  ");
                          }
                      }
                  }
@@ -704,6 +715,36 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                         "are empty");
             }
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
+        } else {
+            if (debug.messageEnabled()) {
+                debug.message("AgentsRepo.removeAttributes(): Attribute " +
+                    " names" + attrNames);
+            }
+        }
+
+        ServiceConfig aCfg = null;
+        try {
+            if (type.equals(IdType.AGENTONLY)) {
+                orgConfig = getOrgConfig(token);
+                aCfg = orgConfig.getSubConfig(name);
+                Iterator it = attrNames.iterator();
+                while (it.hasNext()) {
+                    String attrName = (String) it.next();
+                    if (aCfg != null) {
+                        aCfg.removeAttribute(attrName);
+                    } else {
+                        // Agent not found, throw an exception
+                        Object args[] = { name, type };
+                        throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                            "223", args));
+                    }
+                }
+            }
+        } catch (SMSException smse) {
+            debug.error("AgentsRepo.removeAttributes(): Unable to remove "
+                + "agent attributes ",smse);
+            Object args[] = { NAME, type.getName(), name };
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "212", args);
         }
     }
 
@@ -845,6 +886,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             }
             if (aCfg != null) {
                 aCfg.setAttributes(attributes);
+            } else {
+                // Agent not found, throw an exception
+                Object args[] = { name, type };
+                throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                    "223", args));
             }
         } catch (SMSException smse) {
             debug.error("AgentsRepo.setAttributes(): Unable to set agent"
