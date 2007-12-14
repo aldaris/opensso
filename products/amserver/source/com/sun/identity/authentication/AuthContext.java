@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.9 2007-11-05 17:54:42 ericow Exp $
+ * $Id: AuthContext.java,v 1.10 2007-12-14 00:51:24 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1683,9 +1683,14 @@ public class AuthContext extends Object implements java.io.Serializable {
         if (localFlag) {
             lockoutMsg = acLocal.getLockoutMsg();
         } else {
-            // TBD
+            // Account Lockout Warning Check by scanning the error
+            // message in the exception thrown by the server
+            lockoutMsg = getErrorMessage();
+            if((lockoutMsg == null) ||
+                (lockoutMsg.indexOf("Account lockout") == -1)){
+                lockoutMsg = "";
+            }
         }
-        
         return lockoutMsg;
     }
     

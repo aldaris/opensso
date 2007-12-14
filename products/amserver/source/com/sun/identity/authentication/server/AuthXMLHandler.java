@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.8 2007-11-05 17:57:45 ericow Exp $
+ * $Id: AuthXMLHandler.java,v 1.9 2007-12-14 00:51:51 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -545,6 +545,14 @@ public class AuthXMLHandler implements RequestHandler {
             if ((authContext.getErrorTemplate() != null) &&
             ((authContext.getErrorTemplate()).length() > 0 )) {
                 authResponse.setErrorTemplate(authContext.getErrorTemplate());
+            }
+            //Account Lockout Warning Check
+            if(authContext.getErrorCode().equals(
+                AMAuthErrorCode.AUTH_INVALID_PASSWORD)){
+                String lockWarning = authContext.getLockoutMsg();
+                if((lockWarning != null) && (lockWarning.length() > 0)){
+                    authResponse.setErrorMessage(lockWarning);
+                }
             }
         }
         
