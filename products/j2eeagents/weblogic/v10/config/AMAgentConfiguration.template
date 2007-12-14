@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.8 2007-12-08 04:51:12 huacui Exp $
+# $Id: AMAgentConfiguration.template,v 1.9 2007-12-14 18:16:17 huacui Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -855,6 +855,40 @@ com.sun.identity.policy.client.cacheMode=subtree
 com.sun.identity.policy.client.booleanActionValues=iPlanetAMWebAgentService|GET|allow|deny:iPlanetAMWebAgentService|POST|allow|deny
 com.sun.identity.policy.client.resourceComparators=serviceType=iPlanetAMWebAgentService|class=com.sun.identity.policy.plugins.HttpURLResourceName|wildcard=*|delimiter=/|caseSensitive=false
 com.sun.identity.policy.client.clockSkew=10
+#
+# URL POLICY ENVIRONMENT VARIABLE PROPERTIES
+#    - com.sun.identity.agents.config.policy.env.get.param: A list of HTTP GET
+#      request parameters whose names and values will be set in the environment
+#      map for URL policy evaluation at AM server. The key in the map is in the
+#      format of GET.<parameter-name>, the map value is a set of string values
+#      of the parameter.
+#    - com.sun.identity.agents.config.policy.env.post.param: A list of HTTP POST
+#      request parameters whose names and values will be set in the environment
+#      map for URL policy evaluation at AM server. The key in the map is in the
+#      format of POST.<parameter-name>, the map value is a set of string values
+#      of the parameter.
+#    - com.sun.identity.agents.config.policy.env.jsession.param: A list of
+#      HTTP SESSION attributes whose names and values will be set in the
+#      environment map for URL policy evaluation at AM server. The key in the
+#      map is in the format of JSESSION.<parameter-name>, the map value is a
+#      set that contains the string value of the parameter.
+# Hot-Swap Enabled: Yes
+#
+# Examples:
+#   com.sun.identity.agents.config.policy.env.get.param[0]=name
+#   com.sun.identity.agents.config.policy.env.get.param[1]=phonenumber
+#   com.sun.identity.agents.config.policy.env.jsession.param[0]=cardnumber
+#   Assuming HTTP GET request parameters "name" and "phonenumber" have their
+#   values as "bob" and "1-800-123-4567" respectively. There is a HTTP Session
+#   attribute "cardnumber" with its value as "12345678".
+#   In the map, the following will be set:
+#     GET.name => [bob]
+#     GET.phonenumber => [1-800-123-4567]
+#     JSESSION.cardnumber => [12345678]
+#
+com.sun.identity.agents.config.policy.env.get.param[0]=
+com.sun.identity.agents.config.policy.env.post.param[0]=
+com.sun.identity.agents.config.policy.env.jsession.param[0]=
 
 #
 # AGENT CENTRALIZED NOTIFICATIONS PROPERTIES
