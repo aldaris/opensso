@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.15 2007-12-07 22:53:37 huacui Exp $
+   $Id: AgentService.xml,v 1.16 2007-12-14 04:55:36 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1985,10 +1985,23 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
+                        name="com.sun.identity.agents.config.centralized.notification.enable"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a246">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
                         name="com.sun.identity.agents.config.freeformproperties"
                         type="list"
                         syntax="string"
-                        i18nKey="a243">
+                        i18nKey="a247">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>
