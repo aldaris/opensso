@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.8 2007-06-07 18:58:52 beomsuk Exp $
+ * $Id: LoginViewBean.java,v 1.9 2007-12-14 16:03:15 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -305,8 +305,6 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                     if (!newOrgExist) {
                         if (isPost) {
                             isBackPost = canGetOrigCredentials(ssoToken);
-                            clearCookie();
-                            manager.destroyToken(ssoToken);
                         }
                         sessionUpgrade = acu.checkSessionUpgrade(
                         ssoToken,reqDataHash);
