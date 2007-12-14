@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmWebPolicy.java,v 1.3 2007-11-27 02:15:18 sean_brydon Exp $
+ * $Id: AmWebPolicy.java,v 1.4 2007-12-14 18:21:35 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.agents.arch.AgentBase;
@@ -47,8 +49,13 @@ import com.sun.identity.shared.Constants;
 /**
  * The class handles and evaluates URL policies
  */
-public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
-    
+public class AmWebPolicy extends AgentBase implements IAmWebPolicy,
+    IWebPolicyConfigurationConstants {
+
+    private static final String HTTP_METHOD_GET = "GET";    
+    private static final String HTTP_METHOD_POST = "POST";    
+    private static final String JSESSION = "JSESSION";    
+
     public AmWebPolicy(Manager manager) {
         super(manager);
     }
@@ -60,14 +67,69 @@ public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
             setPolicyEvaluator(PolicyEvaluatorFactory.getInstance().
                     getPolicyEvaluator(AM_WEB_SERVICE_NAME,
                     getAppSSOProvider()));
+            initParamListOfGET();
+            initParamListOfPOST();
+            initParamListOfJSESSION();
+            if (isLogMessageEnabled()) {
+                logMessage("AmWebPolicy.initialize: Initialized.");
+            }
         } catch (Exception ex) {
             throw new AgentException("Failed to initialize AmWebPolicy", ex);
         }
     }
-    
+   
+    private void initParamListOfGET() {
+        String[] paramList = getConfigurationStrings(CONFIG_GET_PARAM_LIST);
+        if (paramList != null && paramList.length > 0) {
+            for (int i=0; i<paramList.length; i++) {
+                if (paramList[i] != null
+                        && paramList[i].trim().length() > 0) {
+                    getParamListOfGET().add(paramList[i]);
+                }
+            }
+        }
+        if (isLogMessageEnabled()) {
+            logMessage("AmWebPolicy.initParamListOfGET: GET params="
+                       + getParamListOfGET());
+        }
+    }
+ 
+    private void initParamListOfPOST() {
+        String[] paramList = getConfigurationStrings(CONFIG_POST_PARAM_LIST);
+        if (paramList != null && paramList.length > 0) {
+            for (int i=0; i<paramList.length; i++) {
+                if (paramList[i] != null
+                        && paramList[i].trim().length() > 0) {
+                    getParamListOfPOST().add(paramList[i]);
+                }
+            }
+        }
+        if (isLogMessageEnabled()) {
+            logMessage("AmWebPolicy.initParamListOfPOST: POST params="
+                       + getParamListOfPOST());
+        }
+    }
+ 
+    private void initParamListOfJSESSION() {
+        String[] paramList = 
+            getConfigurationStrings(CONFIG_JSESSION_PARAM_LIST);
+        if (paramList != null && paramList.length > 0) {
+            for (int i=0; i<paramList.length; i++) {
+                if (paramList[i] != null
+                        && paramList[i].trim().length() > 0) {
+                    getParamListOfJSESSION().add(paramList[i]);
+                }
+            }
+        }
+        if (isLogMessageEnabled()) {
+            logMessage("AmWebPolicy.initParamListOfJSESSION: JSESSION params="
+                       + getParamListOfJSESSION());
+        }
+    }
+ 
     public AmWebPolicyResult checkPolicyForResource(
             SSOToken ssoToken, String resource, String action,
-            String ipAddress, String hostName) {
+            String ipAddress, String hostName, HttpServletRequest request) {
         AmWebPolicyResult result = AmWebPolicyResult.DENY;
         
         try {
@@ -77,7 +139,7 @@ public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
             PolicyDecision policyDecision =
                     getPolicyEvaluator().getPolicyDecision(ssoToken,
                     resource, actionNameSet,
-                    getPolicyEnvironmentMap(ipAddress, hostName));
+                    getPolicyEnvironmentMap(ipAddress, hostName, request));
             
             if (policyDecision == null) {
                 if (isLogWarningEnabled()) {
@@ -246,7 +308,8 @@ public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
         _policyEvaluator = policyEvaluator;
     }
     
-    private Map getPolicyEnvironmentMap(String ipAddress, String hostName) {
+    private Map getPolicyEnvironmentMap(String ipAddress, String hostName,
+        HttpServletRequest request) {
         Map result = new HashMap();
         
         Set dnsNameSet = new HashSet();
@@ -257,7 +320,62 @@ public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
         
         result.put(IPCondition.REQUEST_IP, ipAddressSet);
         result.put(IPCondition.REQUEST_DNS_NAME, dnsNameSet);
+
+        // set Http GET/POST/JSESSION parameter values into env map
+        if (request != null) {
+            String method = request.getMethod();
+            if (method != null) {
+                if (method.equalsIgnoreCase(HTTP_METHOD_GET)) {
+                    setHttpRequestParamsInEnvironmentMap(result,
+                        request, getParamListOfGET(), HTTP_METHOD_GET);
+                } else if (method.equalsIgnoreCase(HTTP_METHOD_POST)) {
+                    setHttpRequestParamsInEnvironmentMap(result,
+                        request, getParamListOfPOST(), HTTP_METHOD_POST);
+                }
+            }
+            HttpSession session = request.getSession();
+            if (session != null) {
+                Set params = getParamListOfJSESSION(); 
+                if ((params != null) && (params.size() > 0)) {
+                    Iterator it = params.iterator();
+                    while (it.hasNext()) {
+                        String paramName = (String)it.next();
+                        String value = (String)session.getAttribute(paramName);
+                        if ((value != null) && (value.trim().length() > 0)) {
+                            Set valueSet = new HashSet();
+                            valueSet.add(value);
+                            result.put(JSESSION + "." + paramName, valueSet);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (isLogMessageEnabled()) {
+            logMessage("AmWebPolicy.getPolicyEnvironmentMap: envmap=" + result);
+        }
         return result;
+    }
+
+    private void setHttpRequestParamsInEnvironmentMap(Map result,
+        HttpServletRequest request, Set params, String method) {
+        if ((params != null) && (params.size() > 0)) { 
+            Iterator it = params.iterator();
+            while (it.hasNext()) {
+                String paramName = (String)it.next();
+                String[] values = request.getParameterValues(paramName);
+                if ((values != null) && (values.length > 0)) {
+                    Set valueSet = new HashSet();
+                    for (int i = 0; i < values.length; i++) {
+                        if (values[i] != null
+                            && values[i].trim().length() > 0) {
+                            valueSet.add(values[i]);
+                        }
+                    }
+                    result.put(method + "." + paramName, valueSet);
+                }
+            }
+        }
     }
     
     private IAmWebPolicyAppSSOProvider getAppSSOProvider() {
@@ -267,7 +385,22 @@ public class AmWebPolicy extends AgentBase implements IAmWebPolicy {
     private void setAppSSOProvider(IAmWebPolicyAppSSOProvider appSSOProvider) {
         _appSSOProvider = appSSOProvider;
     }
-    
+
+    private Set getParamListOfGET() {
+        return paramListOfGET;
+    }
+
+    private Set getParamListOfPOST() {
+        return paramListOfPOST;
+    }
+
+    private Set getParamListOfJSESSION() {
+        return paramListOfJSESSION;
+    }
+
     private PolicyEvaluator _policyEvaluator;
     private IAmWebPolicyAppSSOProvider _appSSOProvider;
+    private Set paramListOfGET = new HashSet();
+    private Set paramListOfPOST = new HashSet();
+    private Set paramListOfJSESSION = new HashSet();
 }
