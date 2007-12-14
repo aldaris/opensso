@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPRoles.java,v 1.3 2006-08-25 21:21:09 veiming Exp $
+ * $Id: LDAPRoles.java,v 1.4 2007-12-14 00:06:02 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -641,10 +641,12 @@ public class LDAPRoles implements Subject {
         if (userEntry != null) {
             LDAPAttribute attribute
                 = userEntry.getAttribute(LDAP_USER_ROLE_ATTR);
-            Enumeration enumVals = attribute.getStringValues();
-            while (enumVals.hasMoreElements()) {
-                roles.add(new DN((String)enumVals.nextElement()).
-                    toRFCString().toLowerCase());
+            if (attribute != null) {
+                Enumeration enumVals = attribute.getStringValues();
+                while (enumVals.hasMoreElements()) {
+                    roles.add(new DN((String)enumVals.nextElement()).
+                        toRFCString().toLowerCase());
+                }
             }
             Object[] elem = new Object[2];
             elem[0] = new Long(System.currentTimeMillis() 
