@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LocalLdapAuthModule.java,v 1.2 2006-08-25 21:20:17 veiming Exp $
+ * $Id: LocalLdapAuthModule.java,v 1.3 2007-12-14 00:07:28 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,8 +72,6 @@ public class LocalLdapAuthModule implements LoginModule {
     private static String baseDN = null;
 
     private static LDAPConnection conn = null;
-
-    private static ConnectionPool anonConnectionPool = null;
 
     private CallbackHandler cbHandler;
 
@@ -163,7 +161,6 @@ public class LocalLdapAuthModule implements LoginModule {
             throws LoginException {
         // LDAP connection used for authentication
         LDAPConnection localConn = null;
-        boolean connectionFromPool = false;
 
         // Check if organization is present in options
         String orgUrl = (String) options.get(LoginContext.ORGNAME);
@@ -275,11 +272,7 @@ public class LocalLdapAuthModule implements LoginModule {
             throw (new LoginException(ex.getMessage()));
         } finally {
             try {
-                if (connectionFromPool) {
-                    anonConnectionPool.close(localConn);
-                } else {
-                    localConn.disconnect();
-                }
+                localConn.disconnect();
             } catch (LDAPException e) {
                 // do nothing
             }
@@ -327,7 +320,15 @@ public class LocalLdapAuthModule implements LoginModule {
                     attrs, false);
         } catch (LDAPException ex) {
             throw (new LoginException(ex.getMessage()));
-        }
+        } finally {
+            try {
+                conn.disconnect();
+                conn=null;
+            } catch (Exception e) {
+                conn=null;
+            }
+         }
+
 
         LDAPEntry entry = null;
         try {
@@ -343,7 +344,7 @@ public class LocalLdapAuthModule implements LoginModule {
         return retVal;
     }
 
-    private static void readServerConfig() throws LoginException {
+    private void readServerConfig() throws LoginException {
         if (readServerConfiguration)
             return;
 

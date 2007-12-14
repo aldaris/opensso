@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.5 2007-03-09 05:50:57 veiming Exp $
+ * $Id: Application.java,v 1.6 2007-12-14 00:07:28 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.authentication.internal.AuthSSOProvider;
 import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
 import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
@@ -500,7 +501,8 @@ public class Application extends AMLoginModule {
             if (ac.getLoginStatus() == AuthContext.AUTH_SUCCESS) {
                 userTokenId = ac.getSSOToken().getPrincipal().getName();
                 debug.message("InternalAuth is successful");
-                ac.logout();
+                AuthSSOProvider authSSOProvider = new AuthSSOProvider();
+                authSSOProvider.destroyToken(ac.getSSOToken());
                 return true;
             }
         } catch (Exception ex) {
