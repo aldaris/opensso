@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.5 2007-11-14 01:43:34 veiming Exp $
+ * $Id: AuthClientUtils.java,v 1.6 2007-12-14 23:29:05 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1382,6 +1382,30 @@ public class AuthClientUtils {
             return (ssoToken);
         }
         return (ssoToken);
+    }
+
+    // Check for Session Timed Out
+    // If Session is Timed Out Exception is thrown
+    public boolean isTimedOut(SessionID sessID) {
+        boolean isTimedOut = false;
+        try {
+            if (sessID != null) {
+                String sidString = sessID.toString();
+                SSOTokenManager manager = SSOTokenManager.getInstance();
+                SSOToken currentToken = manager.createSSOToken(sidString);
+                if (manager.isValidToken(currentToken)) {
+                      isTimedOut = false;
+                }
+            }
+        } catch (Exception e) {
+            if (e.getMessage().indexOf("Session timed out") != -1) {
+                isTimedOut = true;
+            }
+        }
+        if (utilDebug.messageEnabled()) {
+            utilDebug.message("Session Timed Out :"+ isTimedOut);
+        }
+        return isTimedOut;
     }
 
     public String getErrorVal(String errorCode,String type) {

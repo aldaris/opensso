@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.10 2007-12-14 21:17:54 pawand Exp $
+ * $Id: LoginViewBean.java,v 1.11 2007-12-14 23:29:55 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.UI.ButtonTiledView;
 import com.sun.identity.authentication.UI.CallBackTiledView;
 import com.sun.identity.authentication.client.AuthClientUtils;
+import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
@@ -289,6 +290,27 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             // will be used to retrieve the session for session upgrade
             SessionID sessionID = acu.getSessionIDFromRequest(request);
             ssoToken = acu.getExistingValidSSOToken(sessionID);
+            //Check for session Timeout
+            if((ssoToken == null) && (sessionID != null) &&
+              (sessionID.toString().length()!= 0)){
+                    if(acu.isTimedOut(sessionID)){
+                        clearCookie();
+                        errorCode = AMAuthErrorCode.AUTH_TIMEOUT;
+                        ErrorMessage = acu.getErrorVal(
+                              AMAuthErrorCode.AUTH_TIMEOUT,
+                              AuthClientUtils.ERROR_MESSAGE);
+                        errorTemplate = acu.getErrorVal(
+                              AMAuthErrorCode.AUTH_TIMEOUT,
+                              AuthClientUtils.ERROR_TEMPLATE);
+
+                        ISLocaleContext localeContext = new ISLocaleContext();
+                        localeContext.setLocale(request);
+                        locale = localeContext.getLocale();
+                        rb =  rbCache.getResBundle(bundleName, locale);
+                        super.forwardTo(requestContext);
+                        return;
+                  }
+            }
             orgName = acu.getDomainNameByRequest(reqDataHash);
             String authCookieValue = acu.getAuthCookieValue(request);
             loginURL = acu.constructLoginURL(request);
