@@ -22,8 +22,8 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: compile-samples.sh,v 1.5 2007-12-11 01:59:23 qcheng Exp $
+#$Id: compile-samples.sh,v 1.6 2007-12-14 00:09:05 dillidorai Exp $
 #Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #------------------------------------------------------------------------------
 #
-javac -classpath resources:lib/openssoclientsdk.jar:lib/j2ee.jar:lib/jaxb-libs.jar:lib/jaxb-impl.jar:lib/webservices-rt.jar  -d classes source/samples/xacml/*.java source/com/sun/identity/samples/clientsdk/idrepo/*.java source/com/sun/identity/samples/clientsdk/logging/*.java source/com/sun/identity/samples/sso/*.java source/com/sun/identity/samples/authentication/*.java
+javac -classpath resources:lib/openssoclientsdk.jar:lib/j2ee.jar:lib/jaxb-libs.jar:lib/jaxb-impl.jar:lib/webservices-rt.jar  -d classes source/samples/xacml/*.java source/com/sun/identity/samples/clientsdk/idrepo/*.java source/com/sun/identity/samples/clientsdk/logging/*.java source/com/sun/identity/samples/sso/*.java source/com/sun/identity/samples/authentication/*.java source/samples/policy/*.java
