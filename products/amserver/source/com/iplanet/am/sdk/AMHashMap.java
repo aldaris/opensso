@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMHashMap.java,v 1.4 2006-12-15 21:38:58 kenwho Exp $
+ * $Id: AMHashMap.java,v 1.5 2007-12-14 20:58:18 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -304,6 +304,9 @@ public class AMHashMap extends CaseInsensitiveHashMap {
                 Set values = (Set) map.get(name);
                 if (!values.isEmpty()) {
                     this.put(name, getSetCopy(values));
+                    attrsWithValues.add(name);
+                } else {
+                    this.put(name, Collections.EMPTY_SET);
                     attrsWithValues.add(name);
                 }
             }

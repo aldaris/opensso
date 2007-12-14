@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.24 2007-12-03 22:37:43 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.25 2007-12-14 20:58:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -691,12 +691,17 @@ public class IdServicesImpl implements IdServices {
                 } else {
                     aMap = idRepo.getAttributes(token, type, name);
                 }
-                getDebug().warning("IdServicesImpl.getAttributes: " +
-                    "before reverseMapAttributeNames aMap=" + aMap);
+                if (getDebug().messageEnabled()) {
+                    getDebug().message("IdServicesImpl.getAttributes: " +
+                        "before reverseMapAttributeNames aMap=" + aMap);
+                }
                 aMap = reverseMapAttributeNames(aMap, cMap);
                 attrMapsSet.add(aMap);
-                getDebug().warning("IdServicesImpl.getAttributes: " +
-                    "after before reverseMapAttributeNames attrMapsSet=" + attrMapsSet);
+                if (getDebug().messageEnabled()) {
+                    getDebug().message("IdServicesImpl.getAttributes: " +
+                        "after before reverseMapAttributeNames attrMapsSet=" + 
+                        attrMapsSet);
+                }
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
