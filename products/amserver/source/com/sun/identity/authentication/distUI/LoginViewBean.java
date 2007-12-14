@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.9 2007-12-14 16:03:15 pawand Exp $
+ * $Id: LoginViewBean.java,v 1.10 2007-12-14 21:17:54 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -766,6 +766,13 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             LoginFail = true;
             setErrorMessage(le);
             ResultVal = ErrorMessage;
+            // redirect to 'gotoOnFail' parameter or SPI hook
+            // or default redirect URL.
+            redirect_url = gotoOnFailUrl;
+            if ((gotoOnFailUrl == null) || (gotoOnFailUrl.length() == 0) ||
+                (gotoOnFailUrl.equalsIgnoreCase("null")) ) {
+                redirect_url = ac.getFailureURL();
+            }
             return;
         }
         
