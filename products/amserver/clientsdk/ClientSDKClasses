@@ -417,6 +417,22 @@ com/sun/identity/security/keystore/AMPassword.class
 com/sun/identity/security/keystore/AMX509KeyManager.class
 com/sun/identity/security/keystore/AMX509TrustManager.class
 
-com/sun/identity/protocol/AMURLStreamHandlerFactory.class
+com/iplanet/services/comm/https/ApprovalCallback.class
+com/iplanet/services/comm/https/Handler.class
+com/iplanet/services/comm/https/HttpsClient.class
+com/iplanet/services/comm/https/HttpsURLConnection.class
+com/iplanet/services/comm/https/JSSInit.class
+com/iplanet/services/comm/https/JSSProxy$1.class
+com/iplanet/services/comm/https/JSSProxy$JSSProxySessionRunnable.class
+com/iplanet/services/comm/https/JSSProxy.class
+com/iplanet/services/comm/https/JSSThreadPool.class
+com/iplanet/services/comm/https/RWGroupJSSProxy.class
+com/iplanet/services/comm/https/ReaderWriter.class
+com/iplanet/services/comm/https/ReaderWriterClear.class
+com/iplanet/services/comm/https/ReaderWriterLock.class
+com/iplanet/services/util/JSSEncryption.class
+com/iplanet/am/util/JSSPasswordCallback.class
+com/iplanet/am/util/JSSSecureRandomFactoryImpl.class
 
+com/sun/identity/protocol/AMURLStreamHandlerFactory.class
 
