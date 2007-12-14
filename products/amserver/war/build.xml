@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.38 2007-12-08 01:16:32 cbasha Exp $
+   $Id: build.xml,v 1.39 2007-12-14 07:04:06 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -58,7 +58,7 @@
              inheritRefs="true"/>
     </target>        
 
-    <target name="war">
+    <target name="war" depends="createwebxml">
         <tstamp>
             <format property="war.time.stamp" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
@@ -73,7 +73,7 @@
         <copy file="${war.xml.dir}/template/sms/legacy.properties"
             tofile="${amserver.built.res.dir}/legacy.properties" />
 
-        <war destfile="${amserver.dist.dir}/opensso.war" webxml="${war.xml.dir}/web.xml">
+        <war destfile="${amserver.dist.dir}/opensso.war" webxml="${amserver.dist.dir}/web.xml">
             <lib dir="${extlib.dir}" includes="*.jar" excludes="mq4_1*.jar,j2ee.jar,db.jar,testng-5.1-jdk15.jar,fmsae.dll,jaxb-api.jar,jaxb-impl.jar,jaxb-xjc.jar,jaxb-libs.jar,jaxb1-impl.jar,saaj-api.jar,saaj-impl.jar" />
             <lib dir="${lockhart.dir}/lib" />
             <lib dir="${javahelp.dir}/lib" />
@@ -355,8 +355,35 @@
             </zipfileset>
         </war>
 
+        <delete file="${amserver.dist.dir}/web.xml"/>
+
         <antcall target="war-legacy" />
         <checksum file="${amserver.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="createwebxml">
+        <copy overwrite="true" file="${amserver.warbase.dir}/xml/web.xml" todir="${amserver.dist.dir}" />
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;context-param&gt;.+?&lt;/context-param&gt;" />
+            <arg value="${amserver.warbase.dir}/xml/console/web.xml" />
+            <arg value="${amserver.dist.dir}/web.xml" />
+            <arg value="&lt;!-- context param --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet&gt;.+?&lt;/servlet&gt;" />
+            <arg value="${amserver.warbase.dir}/xml/console/web.xml" />
+            <arg value="${amserver.dist.dir}/web.xml" />
+            <arg value="&lt;!-- servlet declaration --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet-mapping&gt;.+?&lt;/servlet-mapping&gt;" />
+            <arg value="${amserver.warbase.dir}/xml/console/web.xml" />
+            <arg value="${amserver.dist.dir}/web.xml" />
+            <arg value="&lt;!-- servlet mapping --&gt;" />
+        </java>
     </target>
 
     <target name="war-legacy" if="legacy">

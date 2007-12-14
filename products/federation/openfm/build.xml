@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.33 2007-11-14 00:33:46 manish_rustagi Exp $
+   $Id: build.xml,v 1.34 2007-12-14 07:04:08 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -230,8 +230,7 @@
             <packageset dir="${amserver.src.dir}">
                 <include name="com/iplanet/am/sdk/**"/>
                 <include name="com/iplanet/sso/**"/>
-                <include name="com/iplanet/dpro/**"/>
-                <include name="com/sun/identity/session/**"/>
+                <include name="com/sun/identity/log/**"/>
                 <include name="com/sun/identity/policy/**"/>
                 <include name="com/sun/identity/authentication/**"/>
                 <include name="com/sun/identity/idm/**"/>

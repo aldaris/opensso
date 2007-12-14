@@ -1,7 +1,6 @@
 ./WEB-INF/classes/libIDPDiscoveryConfig.properties
 ./WEB-INF/lib/idpdiscovery.jar
 ./WEB-INF/lib/opensso-sharedlib.jar
-./WEB-INF/web.xml
 ./com_sun_web_ui/css/css_ns6up.css
 ./com_sun_web_ui/images/masthead/masthead-background.jpg
 ./com_sun_web_ui/images/masthead/masthead-sun-background.jpg
@@ -9,6 +8,3 @@
 ./com_sun_web_ui/images/other/dot.gif
 ./com_sun_web_ui/images/other/javalogo.gif
 ./console/images/PrimaryProductName.png
-./index.html
-./WEB-INF/web.xml
-

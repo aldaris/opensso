@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.1 2007-08-30 20:20:29 qcheng Exp $
+   $Id: index.html,v 1.2 2007-12-14 07:04:40 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -86,16 +86,18 @@
        user attributes.
 </p>
 <h3>Setup</h3>
-1. Deploy Open Federation server sample WAR (openfm-samples.war) on machine A,
+1. Deploy Federated Access Manager server WAR (opensso.war) on machine A,
    and configure the IDFF sample to run as IDP. This instance will also act as
    DS and ID-SIS-PP role in the sample scenario.
 <br>
-2. Deploy Open Federation server sample WAR (openfm-samples.war) on machine B,
+2. Deploy Federated Access Manager server WAR (opensso.war) on machine B,
    and configure the IDFF sample to run as SP. 
 <br>
 3. Create a user on IDP and a user on SP. Federate and signle sign on the users.
 <br>
-4. Deploy Open Federation client sample WAR (openfm-clientsamples.war) on
+4. Deploy Federated Access Manager client sample WAR (fam-client-jdk14.war
+   for web container running JDK 1.4.x or fam-client-jdk15.war for
+   web container running JDK 1.5.x) on
    machine B. If you want to deploy the war on different machine C, you need to
    create a configuration directoy on machine C and copy
    AMConfig.properties and FederationConfig.properties from machine B

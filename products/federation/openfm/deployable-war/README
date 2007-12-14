@@ -18,31 +18,59 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.2 2007-08-30 06:41:19 kevinserwin Exp $
+   $Id: README,v 1.3 2007-12-14 07:04:41 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-Federated Access Manager - Deployable War
+Federated Access Manager - Deployable WAR 
 
-This directory contains the Federated Access Manager deployable war file
-(fam.war),  which contains all the Federated Access Manager components,
-and the text files (*.list) required to create specialized war files.  
+This directory contains the Federated Access Manager deployable WAR file
+(opensso.war which contains all server components and server samples), 
+and files/directories required to create some specialized WAR files.
 
-The following specialized war files are supported:
+The following specialized WAR files are supported:
+  - Console Only WAR (fam-console.list)
+  - Server without console WAR (fam-noconsole.list)
+  - Distributed Authentication WAR (fam-distauth.list)
+  - SAMLv2/ID-FF IDP Discovery/Introduction WAR (fam-idpdiscovery.list)
 
-Console Only (fam-console.list)
-Distributed Authentication (fam-distauth.list)
-No Console Server War (fam-noconsole.list)
-No Sample Server War (fam-nosample.list)
+Contents of this directory:
+  <zip staging area>           (directory where the opensso.zip is extracted)
+   |- deployable-war           (current directory)
+      |- README                (this README file)
+      |- opensso.war           (OpenSSO Server WAR with samples)
+      |- fam-idpdiscovery.list (files list for IDP Discovery WAR)
+      |- fam-distauth.list     (files list for Distributed Authentication WAR)
+      |- fam-console.list      (files list for Console Only WAR)
+      |- fam-noconsole.list    (files list for Server without console WAR)
+      |- idpdiscovery          (directory containing additional files for
+      |                         IDP discovery WAR)
+      |- distauth              (directory containing additional files for
+      |                         Distributed Authentication WAR) 
+      |- console               (directory containing additional files for
+      |                         Console Only WAR)
+      |- noconsole             (directory containing additional files for
+                                Server without console WAR)
 
-In order to create a specialized war file
 
-1.Extract the Federated Access Manager server war
-% cd <server war staging area>
-% jar xvf fam.war
+Steps to create a specialized WAR file:
 
-2.War up the specialized war file using the specific Federated Access Manager
-specific file list
-% jar cvf fam-nosample.war @<war staging area>/deployable-war/fam-nosample.list
+1. Creates a new directory as staging area for the server WAR, and extracts the 
+   opensso.war in this staging directory:
+   % mkdir <server war staging area>
+   % cd <server war staging area>
+   % jar xvf <zip staging area>/deployable-war/opensso.war
+
+2. Creates the specialized WAR file using the specific file list. 
+   For example, to create Console only WAR:
+   % cd <server war staging area>
+   % jar cvf <zip staging area>/deployable-war/fam-console.war @<zip staging area>/deployable-war/fam-console.list
+
+3. Updates the WAR created in previous step with additional files for the 
+   specific WAR.  For example, to update the Console only WAR: 
+   % cd <zip staging area>/deployable-war/console
+   % jar uvf <zip staging area>/deployable-war/fam-console.war *
+
+Now the specialized WAR is ready to be deployed into your web container.
 

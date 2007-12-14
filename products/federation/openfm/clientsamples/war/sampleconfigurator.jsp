@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sampleconfigurator.jsp,v 1.4 2007-12-01 01:10:04 qcheng Exp $
+   $Id: sampleconfigurator.jsp,v 1.5 2007-12-14 07:04:40 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -26,7 +26,7 @@
 
 <html>
 <head>
-<title>Configure Identity Provider</title>
+<title>Configure Federated Access Manager Client SDK</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
 
@@ -56,7 +56,7 @@ java.util.Properties"
 
     File configF = new File(configFile);
     if (configF.exists()) {
-        errorMsg = "The Client Samples have already been configued.<br>" +
+        errorMsg = "The Client SDK have already been configued.<br>" +
             "Configuration file : " + configFile + "<br><p><br>" +
             "Click <a href=\"index.html\">here</a> to go to samples.";
         // reinitialize properties
@@ -150,11 +150,11 @@ java.util.Properties"
     if (!configured) {
 %>
 
-<h3>Configuring Client Samples</h3>
+<h3>Configuring Federated Access Manager Client SDK</h3>
 
 <form action="sampleconfigurator.jsp" method="GET" 
     name="clientsampleconfigurator">
-    Please provide the Federated Access Manager Server Information.
+    Please provide the Federated Access Manager Server Information. This is the server this Client SDK (including samples) will interact with. 
     <p>&nbsp;</p>    
 
     <table border=0 cellpadding=5 cellspacing=0>
@@ -223,7 +223,7 @@ java.util.Properties"
 <%
 } else {
 %>
-Client Samples are successfully configured.<br>
+Client SDK is successfully configured.<br>
 AMConfig.properties created at <%= configFile %><br>
 <br>
 <p>
