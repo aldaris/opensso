@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionConfig.java,v 1.2 2007-06-23 05:08:58 dillidorai Exp $
+ * $Id: InteractionConfig.java,v 1.3 2007-12-14 21:35:43 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,9 +53,13 @@ class InteractionConfig {
     static final String DO_NOT_INTERACT_FOR_DATA 
         = "doNotInteractForData";
 
-    static final String WSC_WILL_INCLUDE_USER_INTERACTION_HEADER
+    static final String WSC_WILL_INCLUDE_USER_INTERACTION_HEADER_OLD
         = "com.sun.identity.liberty.interaction." +
           "wscWillInlcudeUserInteractionHeader";
+        
+    static final String WSC_WILL_INCLUDE_USER_INTERACTION_HEADER
+        = "com.sun.identity.liberty.interaction." +
+          "wscWillIncludeUserInteractionHeader";
         
     static final String WSC_WILL_REDIRECT 
         = "com.sun.identity.liberty.interaction.wscWillRedirect";
@@ -67,9 +71,6 @@ class InteractionConfig {
 
     static final String WSC_WILL_ENFORCE_HTTPS_CHECK 
         = "com.sun.identity.liberty.interaction.wscWillEnforceHttpsCheck";
-
-    static final String WSC_SPECIFIED_CONNECT_TO 
-        = "com.sun.identity.liberty.interaction.wscSpecifiedConnectTo";
 
     static final String WSP_WILL_REDIRECT 
         = "com.sun.identity.liberty.interaction.wspWillRedirect";
@@ -368,6 +369,11 @@ class InteractionConfig {
         }
 
         s = SystemPropertiesManager.get(WSC_WILL_INCLUDE_USER_INTERACTION_HEADER);
+        if ( s == null) {
+            s = SystemPropertiesManager.get(
+                    WSC_WILL_INCLUDE_USER_INTERACTION_HEADER_OLD);
+        }
+
         if (s != null) {
             if (s.equalsIgnoreCase(YES)) {
                 wscWillIncludeUserInteractionHeader = true; 
@@ -598,8 +604,6 @@ class InteractionConfig {
                     + "local serverId is null for wspRedirectHandler:"
                     + wspRedirectHandler);
         }
-
-
 
         htmlStyleSheetLocation 
                 = SystemPropertiesManager.get(HTML_STYLE_SHEET_LOCATION);

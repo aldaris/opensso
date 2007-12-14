@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSPRedirectHandlerServlet.java,v 1.3 2007-12-10 19:22:51 beomsuk Exp $
+ * $Id: WSPRedirectHandlerServlet.java,v 1.4 2007-12-14 21:35:43 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -695,13 +696,14 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
 
         try {
             URL url = new URL(forwardToUrl);
-            URLConnection urlConnection =  
+            HttpURLConnection urlConnection =  
                 HttpURLConnectionManager.getConnection(url); 
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
             urlConnection.setUseCaches(false);
             urlConnection.setConnectTimeout(CONNECT_TIMEOUT); //hard coding for 5seconds
             urlConnection.setReadTimeout(READ_TIMEOUT); //hard coding for 5seconds
+            urlConnection.setInstanceFollowRedirects(false);  
 
             Enumeration enumer = request.getHeaderNames();
             while (enumer.hasMoreElements()) {
@@ -757,17 +759,24 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
                 clientOut.write(buffer, 0, len);
             }
         } finally {
-            if (clientIn != null) {
-                clientIn.close();
-            }
-            if (clientIn != null) {
-                serverIn.close();
-            }
-            if (clientIn != null) {
-                clientOut.close();
-            }
-            if (clientIn != null) {
-                serverOut.close();
+            try {
+                if (clientIn != null) {
+                    clientIn.close();
+                }
+                if (serverIn != null) {
+                    serverIn.close();
+                }
+                if (clientOut != null) {
+                    clientOut.close();
+                }
+                if (serverOut != null) {
+                    serverOut.close();
+                }
+            } catch (Exception e) {
+                if (debug.warningEnabled()) {
+                    debug.warning("WSPRedirectHandlerServlet.forwardRequest()"
+                            + "exception in finally block:", e);
+                }
             }
         }
 
