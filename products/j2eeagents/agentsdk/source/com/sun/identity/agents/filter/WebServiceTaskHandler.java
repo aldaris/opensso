@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceTaskHandler.java,v 1.2 2006-12-08 23:32:42 madan_ranganath Exp $
+ * $Id: WebServiceTaskHandler.java,v 1.3 2007-12-14 18:19:22 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -223,7 +223,8 @@ public class WebServiceTaskHandler extends LocalAuthTaskHandler implements
                     .checkPolicyForResource(ssoToken, requestURL,
                             request.getMethod(),
                             getClientIPAddress(request),
-                            getClientHostName(request));
+                            getClientHostName(request),
+                            request);
                     
                     if (amWebPolicyResult.getPolicyResultStatus().equals(
                             AmWebPolicyResultStatus.STATUS_ALLOW)) {

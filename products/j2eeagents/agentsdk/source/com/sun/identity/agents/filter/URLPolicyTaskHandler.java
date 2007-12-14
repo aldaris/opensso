@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLPolicyTaskHandler.java,v 1.3 2006-12-08 23:32:42 madan_ranganath Exp $
+ * $Id: URLPolicyTaskHandler.java,v 1.4 2007-12-14 18:18:42 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,8 @@ public class URLPolicyTaskHandler extends AmFilterTaskHandler
                 ssoValidationResult.getSSOToken(),
                 ctx.getPolicyDestinationURL(), request.getMethod(),
                 ssoValidationResult.getClientIPAddress(),
-                ssoValidationResult.getClientHostName());
+                ssoValidationResult.getClientHostName(),
+                request);
         
         switch(policyResult.getPolicyResultStatus().getIntValue()) {
             

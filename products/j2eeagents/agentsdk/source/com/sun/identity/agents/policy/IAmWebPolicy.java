@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IAmWebPolicy.java,v 1.1 2006-09-28 23:48:45 huacui Exp $
+ * $Id: IAmWebPolicy.java,v 1.2 2007-12-14 18:20:52 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.agents.policy;
+	
+import javax.servlet.http.HttpServletRequest;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.agents.arch.AgentException;
@@ -34,7 +36,8 @@ public interface IAmWebPolicy {
     public abstract void initialize() throws AgentException;
 
     public abstract AmWebPolicyResult checkPolicyForResource(SSOToken ssoToken,
-            String resource, String action, String ipAddress, String hostName);
+            String resource, String action, String ipAddress, String hostName,
+            HttpServletRequest request);
 
     public static final String AM_WEB_SERVICE_NAME = "iPlanetAMWebAgentService";
 
@@ -51,4 +54,5 @@ public interface IAmWebPolicy {
             "AuthLevelConditionAdvice";
 
     public static final String AUTH_LEVEL_URL_PREFIX = "authlevel";
+
 }

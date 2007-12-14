@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.16 2007-12-14 04:55:36 huacui Exp $
+   $Id: AgentService.xml,v 1.17 2007-12-14 18:14:33 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1982,6 +1982,36 @@
                         i18nKey="a242">
                         <DefaultValues>
                             <Value>10</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.policy.env.get.param"
+                        type="list"
+                        syntax="string"
+                        validator="ListValueValidator"
+                        i18nKey="a243">
+                        <DefaultValues>
+                            <Value>[0]=</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.policy.env.post.param"
+                        type="list"
+                        syntax="string"
+                        validator="ListValueValidator"
+                        i18nKey="a244">
+                        <DefaultValues>
+                            <Value>[0]=</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.policy.env.jsession.param"
+                        type="list"
+                        syntax="string"
+                        validator="ListValueValidator"
+                        i18nKey="a245">
+                        <DefaultValues>
+                            <Value>[0]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
