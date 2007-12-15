@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.9 2007-10-17 18:46:36 weisun2 Exp $
+ * $Id: IDPSSOFederate.java,v 1.10 2007-12-15 06:22:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -248,7 +248,7 @@ public class IDPSSOFederate {
                         return;
                     }
                     X509Certificate spCert = KeyUtil.getVerificationCert(
-                        spSSODescriptor, spEntityID, false);
+                        spSSODescriptor, spEntityID, SAML2Constants.SP_ROLE);
 
                     try {
                         boolean isSignatureOK = false;

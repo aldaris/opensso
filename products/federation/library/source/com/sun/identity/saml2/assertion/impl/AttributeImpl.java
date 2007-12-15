@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeImpl.java,v 1.2 2007-04-23 03:34:08 hengming Exp $
+ * $Id: AttributeImpl.java,v 1.3 2007-12-15 06:14:29 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -360,9 +360,11 @@ public class AttributeImpl implements Attribute {
             Iterator iter = value.iterator();
             while (iter.hasNext()) {
                 String attr = (String) iter.next();
-                attrValues.add("<saml:AttributeValue xmlns:saml=\"urn:oasis:"
-                    + "names:tc:SAML:2.0:assertion\">" + attr
-                    + "</saml:AttributeValue>");
+                attrValues.add("<saml:AttributeValue " +
+                    "xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" " +
+                    "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "+
+                    "xsi:type=\"xs:string\">" + attr +
+                    "</saml:AttributeValue>");
                 valueStrings.add(attr);
             }
         } else {

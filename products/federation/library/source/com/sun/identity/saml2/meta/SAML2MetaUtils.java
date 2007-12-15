@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaUtils.java,v 1.2 2007-04-19 18:28:54 veiming Exp $
+ * $Id: SAML2MetaUtils.java,v 1.3 2007-12-15 06:19:00 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,10 +50,12 @@ import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.saml2.jaxb.entityconfig.AttributeType;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzDecisionQueryDescriptorElement;
-import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
 
 /**
  * The <code>SAML2MetaUtils</code> provides metadata related util methods.
@@ -368,6 +370,60 @@ public final class SAML2MetaUtils {
         return null;
     }
     
+    /**
+     * Returns attribute authority descriptor in an entity descriptor.
+     *
+     * @param eDescriptor The entity descriptor.
+     * @return an <code>AttributeAuthorityDescriptorElement</code> object for
+     *     the entity or null if not found. 
+     */
+    public static AttributeAuthorityDescriptorElement
+        getAttributeAuthorityDescriptor(EntityDescriptorElement eDescriptor)
+    {
+        if (eDescriptor == null) {
+            return null;
+        }
+
+        List list =
+            eDescriptor.getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
+
+        for(Iterator iter = list.iterator(); iter.hasNext();) {
+            Object obj = iter.next();
+            if (obj instanceof AttributeAuthorityDescriptorElement) {
+                return (AttributeAuthorityDescriptorElement)obj;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns attribute query descriptor in an entity descriptor.
+     *
+     * @param eDescriptor The entity descriptor.
+     * @return an <code>AttributeQueryDescriptorElement</code> object for
+     *     the entity or null if not found. 
+     */
+    public static AttributeQueryDescriptorElement
+        getAttributeQueryDescriptor(EntityDescriptorElement eDescriptor)
+    {
+        if (eDescriptor == null) {
+            return null;
+        }
+
+        List list =
+            eDescriptor.getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
+
+        for(Iterator iter = list.iterator(); iter.hasNext();) {
+            Object obj = iter.next();
+            if (obj instanceof AttributeQueryDescriptorElement) {
+                return (AttributeQueryDescriptorElement)obj;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Get the first value of set by given key searching in the given map. 
      * return null if <code>attrMap</code> is null or <code>key</code> 

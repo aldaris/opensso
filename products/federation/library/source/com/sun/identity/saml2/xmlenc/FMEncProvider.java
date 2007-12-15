@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMEncProvider.java,v 1.2 2007-04-12 16:08:07 qcheng Exp $
+ * $Id: FMEncProvider.java,v 1.3 2007-12-15 06:24:18 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,6 +122,46 @@ public final class FMEncProvider implements EncProvider {
 
 	throws SAML2Exception {
 
+        return encrypt(xmlString, recipientPublicKey, null, dataEncAlgorithm,
+            dataEncStrength, recipientEntityID, outerElementName);
+    }
+
+    /**
+     * Encrypts the root element of the given XML document.
+     * @param xmlString String representing an XML document whose root
+     *                  element is to be encrypted.
+     * @param recipientPublicKey Public key used to encrypt the data encryption
+     *                           (secret) key, it is the public key of the
+     *                           recipient of the XML document to be encrypted.
+     * @param secretKey the secret key used to encrypted data.
+     * @param dataEncAlgorithm Data encryption algorithm.
+     * @param dataEncStrength Data encryption strength.
+     * @param recipientEntityID Unique identifier of the recipient, it is used
+     *                          as the index to the cached secret key so that
+     *                          the key can be reused for the same recipient;
+     *                          It can be null in which case the secret key will
+     *                          be generated every time and will not be cached
+     *                          and reused. Note that the generation of a secret
+     *                          key is a relatively expensive operation.
+     * @param outerElementName Name of the element that will wrap around the
+     *                         encrypted data and encrypted key(s) sub-elements
+     * @return org.w3c.dom.Element Root element of the encypted document; The
+     *                             name of this root element is indicated by
+     *                             the last input parameter
+     * @exception SAML2Exception if there is an error during the encryption
+     *                           process
+     */
+    public Element encrypt(
+        String xmlString,
+	Key recipientPublicKey,
+        SecretKey secretKey,
+        String dataEncAlgorithm,
+        int dataEncStrength,
+	String recipientEntityID,
+	String outerElementName)
+
+	throws SAML2Exception {
+
 	String classMethod = "FMEncProvider.encrypt: ";
 
 	// checking the input parameters
@@ -177,23 +217,24 @@ public final class FMEncProvider implements EncProvider {
 		SAML2SDKUtils.bundle.getString("emptyDoc"));
 	}
 	// start of obtaining secret key
-        SecretKey secretKey = null;
-        if (recipientEntityID != null) {
-	    if (cachedKeys.containsKey(recipientEntityID)) {
-		secretKey = (SecretKey)
-		    cachedKeys.get(recipientEntityID);
-	    } else {
-		secretKey = generateSecretKey(
-		    dataEncAlgorithm, dataEncStrength);
-		cachedKeys.put(recipientEntityID, secretKey);
-	    }
-        } else {
-	    secretKey = generateSecretKey(
-		dataEncAlgorithm, dataEncStrength);
-        }
         if (secretKey == null) {
-	    throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
-		"errorGenerateKey"));
+            if (recipientEntityID != null) {
+	        if (cachedKeys.containsKey(recipientEntityID)) {
+		    secretKey = (SecretKey)
+		        cachedKeys.get(recipientEntityID);
+                } else {
+		    secretKey = generateSecretKey(
+		        dataEncAlgorithm, dataEncStrength);
+                    cachedKeys.put(recipientEntityID, secretKey);
+                }
+            } else {
+                secretKey = generateSecretKey(
+                   dataEncAlgorithm, dataEncStrength);
+            }
+            if (secretKey == null) {
+                throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
+                    "errorGenerateKey"));
+            }
         }
 	// end of obtaining secret key
 
@@ -324,6 +365,155 @@ public final class FMEncProvider implements EncProvider {
             outerElement.appendChild(ek);
         }
 	return resultDoc.getDocumentElement();
+    }
+
+    /**
+     * Returns the secret key that encrypts encrypted data and is encrypted
+     * with recipient's public key in the XML document.
+     * @param xmlString String representing an XML document with encrypted
+     *     secret key.
+     * @param recipientPrivateKey Private key used to decrypt the secret key
+     * @return the secret key.
+     * @exception SAML2Exception if there is an error during the decryption
+     *     process
+     */
+    public SecretKey getSecretKey(
+        String xmlString,
+        Key recipientPrivateKey)
+
+	throws SAML2Exception {
+
+	String classMethod = "FMEncProvider.getSecretKey: ";
+        if (SAML2SDKUtils.debug.messageEnabled()) {
+            SAML2SDKUtils.debug.message(classMethod + "Entering ...");
+        }
+
+        if (xmlString == null ||
+	    xmlString.length() == 0 ||
+	    recipientPrivateKey == null) {
+	    throw new SAML2Exception(
+		SAML2SDKUtils.bundle.getString("nullInput"));
+        }
+        Document doc = XMLUtils.toDOMDocument(
+	    xmlString, SAML2SDKUtils.debug);
+        if (doc == null) {
+            throw new SAML2Exception(
+                SAML2SDKUtils.bundle.getString(
+		    "errorObtainingElement"));
+        }
+	Element rootElement = doc.getDocumentElement();
+	if (rootElement == null) {
+            SAML2SDKUtils.debug.error(classMethod + "Empty document.");
+	    throw new SAML2Exception(
+		SAML2SDKUtils.bundle.getString("emptyDoc"));
+	}
+	Element firstChild = getNextElementNode(rootElement.getFirstChild());
+	if (firstChild == null) {
+            SAML2SDKUtils.debug.error(
+		classMethod + "Missing the EncryptedData element.");
+	    throw new SAML2Exception(
+		SAML2SDKUtils.bundle.getString(
+		    "missingElementEncryptedData"));
+	}
+	Element secondChild = getNextElementNode(firstChild.getNextSibling());
+	if (secondChild == null) {
+            if (SAML2SDKUtils.debug.messageEnabled()) {
+                SAML2SDKUtils.debug.message(classMethod +
+                    "looking for encrytion key inside first child.");
+            }
+            NodeList nl = firstChild.getElementsByTagNameNS(
+                SAML2Constants.NS_XMLENC, "EncryptedKey");
+            if ((nl == null) || (nl.getLength() == 0)) {
+                SAML2SDKUtils.debug.error(
+                    classMethod + "Missing the EncryptedKey element."); 
+	        throw new SAML2Exception(
+		    SAML2SDKUtils.bundle.getString(
+		        "missingElementEncryptedKey"));
+            } else {
+                // use the first EncryptedKey found
+                secondChild = (Element) nl.item(0);
+            }
+        }
+
+        XMLCipher cipher = null;
+	try {
+	    cipher = XMLCipher.getInstance();
+	} catch (XMLEncryptionException xe1) {
+            SAML2SDKUtils.debug.error(
+		classMethod + "Unable to get a cipher instance.", xe1);
+	    throw new SAML2Exception(
+		SAML2SDKUtils.bundle.getString("noCipher"));
+	}
+	try {
+	    cipher.init(XMLCipher.DECRYPT_MODE, null);
+	} catch (XMLEncryptionException xe2) {
+            SAML2SDKUtils.debug.error(
+		classMethod + "Failed to initialize cipher for decryption mode",
+		xe2);
+	    throw new SAML2Exception(
+		SAML2SDKUtils.bundle.getString(
+		    "failedInitCipherForDecrypt"));
+	}
+	EncryptedData encryptedData = null;
+	try {
+	    encryptedData = cipher.loadEncryptedData(doc, firstChild);	
+	} catch (XMLEncryptionException xe3) {
+            SAML2SDKUtils.debug.error(
+		classMethod + "Failed to load encrypted data", xe3);
+	    throw new SAML2Exception(
+		SAML2SDKUtils.bundle.getString(
+		    "failedLoadingEncryptedData"));
+	}
+	EncryptedKey encryptedKey = null;
+	try {
+	    encryptedKey = cipher.loadEncryptedKey(doc, secondChild);
+	} catch (XMLEncryptionException xe4) {
+            SAML2SDKUtils.debug.error(
+		classMethod + "Failed to load encrypted key", xe4);
+	    throw new SAML2Exception(
+		SAML2SDKUtils.bundle.getString(
+		    "failedLoadingEncryptedKey"));
+	}
+        Document decryptedDoc = null;
+	if ((encryptedKey != null) && (encryptedData != null)) {
+	    XMLCipher keyCipher = null;
+	    try {
+		keyCipher = XMLCipher.getInstance();
+	    } catch (XMLEncryptionException xe5) {
+		SAML2SDKUtils.debug.error(
+		    classMethod +
+		    "Failed to get a cipher instance "+
+		    "for decrypting secret key.",
+		    xe5);
+		throw new SAML2Exception(
+		    SAML2SDKUtils.bundle.getString("noCipher"));
+	    }
+	    try {
+		keyCipher.init(XMLCipher.UNWRAP_MODE, recipientPrivateKey);
+	    } catch (XMLEncryptionException xe6) {
+		SAML2SDKUtils.debug.error(
+		    classMethod +
+		    "Failed to initialize cipher in unwrap mode "+
+		    "with private key",
+		    xe6);
+		throw new SAML2Exception(
+		    SAML2SDKUtils.bundle.getString(
+			"noCipherForUnwrap"));
+	    }
+
+	    try {
+		return (SecretKey)keyCipher.decryptKey(encryptedKey,
+                    encryptedData.getEncryptionMethod().getAlgorithm());
+	    } catch (XMLEncryptionException xe7) {
+		SAML2SDKUtils.debug.error(
+		    classMethod +
+		    "Failed to decrypt the secret key", xe7);
+		throw new SAML2Exception(
+		    SAML2SDKUtils.bundle.getString(
+			"failedDecryptingSecretKey"));
+	    }
+        }
+        return null;
     }
 
     /**

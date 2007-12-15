@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectConfirmationDataImpl.java,v 1.2 2007-05-17 18:51:31 mallas Exp $
+ * $Id: SubjectConfirmationDataImpl.java,v 1.3 2007-12-15 06:14:29 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,6 +132,11 @@ public class SubjectConfirmationDataImpl implements SubjectConfirmationData {
                     getContent().add(childNode);
                 }
             }
+        }
+
+        if (content == null) {
+            content = new ArrayList();
+            content.add(XMLUtils.getElementValue(element));
         }
     }
 
@@ -485,7 +490,7 @@ public class SubjectConfirmationDataImpl implements SubjectConfirmationData {
         }
         
         if(contentType != null) {
-            xml.append(SAML2Constants.NS_XSI).append(" ")                    
+            xml.append(SAML2Constants.XSI_DECLARE_STR).append(" ")
                .append("xsi:type=\"")
                .append(contentType)
                .append("\" ");
@@ -500,8 +505,7 @@ public class SubjectConfirmationDataImpl implements SubjectConfirmationData {
                 if(obj instanceof Element) {
                    xml.append(XMLUtils.print((Element)obj)).append(" ");                   
                 } else if(obj instanceof String) {
-                    String any = (String) it.next();
-                    xml.append(any).append(" ");
+                    xml.append((String)obj);
                 }
             }
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.12 2007-11-15 16:42:45 qcheng Exp $
+ * $Id: SPACSUtils.java,v 1.13 2007-12-15 06:22:22 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -552,7 +552,7 @@ public class SPACSUtils {
                                 SAML2Constants.WANT_ARTIFACT_RESPONSE_SIGNED);
         if (wantArtiRespSigned != null && wantArtiRespSigned.equals("true")) {
             X509Certificate cert = KeyUtil.getVerificationCert(
-                                                idp, idpEntityID, true);
+                idp, idpEntityID, SAML2Constants.IDP_ROLE);
             if (!artiResp.isSigned() || !artiResp.isSignatureValid(cert)) {
                 if (SAML2Utils.debug.messageEnabled()) {
                    SAML2Utils.debug.message(method 
@@ -747,7 +747,7 @@ public class SPACSUtils {
         }
 
         X509Certificate cert = KeyUtil.getVerificationCert(idpDesc,
-            idpEntityID, true);
+            idpEntityID, SAML2Constants.IDP_ROLE);
         List assertions = resp.getAssertion();
         if ((assertions != null) && (!assertions.isEmpty())) {
             for(Iterator iter = assertions.iterator(); iter.hasNext(); ) {

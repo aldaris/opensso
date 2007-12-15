@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SDKUtils.java,v 1.6 2007-10-04 04:30:43 hengming Exp $
+ * $Id: SAML2SDKUtils.java,v 1.7 2007-12-15 06:15:50 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,6 +115,7 @@ public class SAML2SDKUtils {
     public static final String ARTIFACT = "Artifact"; 
     public static final String ARTIFACT_RESOLVE = "ArtifactResolve"; 
     public static final String ARTIFACT_RESPONSE = "ArtifactResponse";
+    public static final String ATTRIBUTE_QUERY = "AttributeQuery";
     public static final String AUTHN_REQUEST = "AuthnRequest";
     public static final String ECP_RELAY_STATE = "ECPRelayState";
     public static final String ECP_REQUEST = "ECPRequest";
@@ -156,8 +157,8 @@ public class SAML2SDKUtils {
         ONE_TIME_USE, PROXY_RESTRICTION, STATEMENT, 
         SUBJECT_CONFIRMATION_DATA, SUBJECT_CONFIRMATION, SUBJECT,
         SUBJECT_LOCALITY, ARTIFACT, ARTIFACT_RESOLVE, ARTIFACT_RESPONSE,
-        AUTHN_REQUEST, EXTENSIONS, GET_COMPLETE, IDPENTRY, IDPLIST,
-        LOGOUT_REQUEST, LOGOUT_RESPONSE, MANAGE_NAMEID_REQUEST, 
+        ATTRIBUTE_QUERY, AUTHN_REQUEST, EXTENSIONS, GET_COMPLETE, IDPENTRY,
+        IDPLIST, LOGOUT_REQUEST, LOGOUT_RESPONSE, MANAGE_NAMEID_REQUEST, 
         MANAGE_NAMEID_RESPONSE, NAMEID_POLICY, NEW_ENCRYPTEDID, NEWID,
         REQUESTED_AUTHN_CONTEXT, REQUESTERID, RESPONSE,
         SCOPING, SESSION_INDEX, STATUS_CODE, STATUS_DETAIL, STATUS,

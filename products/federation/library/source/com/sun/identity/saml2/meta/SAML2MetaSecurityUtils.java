@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaSecurityUtils.java,v 1.1 2006-10-30 23:16:26 qcheng Exp $
+ * $Id: SAML2MetaSecurityUtils.java,v 1.2 2007-12-15 06:19:00 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,8 +79,12 @@ public final class SAML2MetaSecurityUtils {
     public static final String NS_META = "urn:oasis:names:tc:SAML:2.0:metadata";
     public static final String NS_XMLSIG = "http://www.w3.org/2000/09/xmldsig#";
     public static final String NS_XMLENC = "http://www.w3.org/2001/04/xmlenc#";
+    public static final String NS_MD_QUERY =
+        "urn:oasis:names:tc:SAML:metadata:ext:query";
+
     public static final String PREFIX_XMLSIG = "ds";
     public static final String PREFIX_XMLENC = "xenc";
+    public static final String PREFIX_MD_QUERY = "query";
     public static final String TAG_KEY_INFO = "KeyInfo";
     public static final String TAG_KEY_DESCRIPTOR = "KeyDescriptor";
     public static final String TAG_SP_SSO_DESCRIPTOR = "SPSSODescriptor";

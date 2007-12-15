@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.3 2007-08-17 17:17:34 bina Exp $
+ * $Id: KeyUtil.java,v 1.4 2007-12-15 06:17:31 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,8 +42,8 @@ import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
-import com.sun.identity.saml2.jaxb.metadata.SSODescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.KeyDescriptorType;
+import com.sun.identity.saml2.jaxb.metadata.RoleDescriptorType;
 import com.sun.identity.saml2.jaxb.xmlsig.*;
 import com.sun.identity.saml2.jaxb.xmlenc.*;
 
@@ -148,27 +148,20 @@ public class KeyUtil {
 
     /**
      * Returns the partner entity's signature verification certificate.
-     * @param ssod <code>SSODescriptor</code> for the partner entity
+     * @param roled <code>RoleDescriptor</code> for the partner entity
      * @param entityID partner entity's ID
-     * @param isIDP whether partner entity's role is IDP or SP 
+     * @param role entity's role
      * @return <code>X509Certificate</code> for verifying the partner
      * entity's signature
      */    
     public static X509Certificate getVerificationCert(
-        SSODescriptorType ssod,
+        RoleDescriptorType roled,
         String entityID,
-        boolean isIDP
+        String role
     ) {
         
         String classMethod = "KeyUtil.getVerificationCert: ";
-        String role = (isIDP) ? "idp":"sp";        
-        if (SAML2SDKUtils.debug.messageEnabled()) {
-            SAML2SDKUtils.debug.message(
-                classMethod +
-                "Entering... \nEntityID=" +
-                entityID + "\nRole="+role
-            );
-        }
+
         // first try to get it from cache
         String index = entityID.trim()+"|"+ role;
         X509Certificate cert = (X509Certificate)sigHash.get(index);
@@ -176,16 +169,16 @@ public class KeyUtil {
             return cert;
         }
         // else get it from meta
-        if (ssod == null) {
+        if (roled == null) {
             SAML2SDKUtils.debug.error(
                 classMethod+
-                "Null SSODescriptorType input for entityID=" +
+                "Null RoleDescriptorType input for entityID=" +
                 entityID + " in "+role+" role."
             );
             return null;
         }
         KeyDescriptorType kd =
-            getKeyDescriptor(ssod, "signing");
+            getKeyDescriptor(roled, "signing");
         if (kd == null) {
             SAML2SDKUtils.debug.error(
                 classMethod+
@@ -210,21 +203,21 @@ public class KeyUtil {
     /**
      * Returns the encryption information which will be used in
      * encrypting messages intended for the partner entity.
-     * @param ssod <code>SSODescriptor</code> for the partner entity
+     * @param roled <code>RoleDescriptor</code> for the partner entity
      * @param entityID partner entity's ID
      * @param isIDP whether partner entity's role is IDP or SP 
+     * @param role entity's role
      * @return <code>EncInfo</code> which includes partner entity's
      * public key for wrapping the secret key, data encryption algorithm,
      * and data encryption strength 
      */        
     public static EncInfo getEncInfo(
-        SSODescriptorType ssod,
+        RoleDescriptorType roled,
         String entityID,
-        boolean isIDP
+        String role
     ) {
 
         String classMethod = "KeyUtil.getEncInfo: ";
-        String role = (isIDP) ? "idp":"sp";                
         if (SAML2SDKUtils.debug.messageEnabled()) {
             SAML2SDKUtils.debug.message(
                 classMethod +
@@ -239,16 +232,16 @@ public class KeyUtil {
             return encInfo;
         }
         // else get it from meta
-        if (ssod == null) {
+        if (roled == null) {
             SAML2SDKUtils.debug.error(
                 classMethod+
-                "Null SSODescriptorType input for entityID=" +
+                "Null RoleDescriptorType input for entityID=" +
                 entityID + " in "+role+" role."
             );
             return null;
         }
         KeyDescriptorType kd =
-            getKeyDescriptor(ssod, "encryption");
+            getKeyDescriptor(roled, "encryption");
         if (kd == null) {
             SAML2SDKUtils.debug.error(
                 classMethod+
@@ -299,20 +292,20 @@ public class KeyUtil {
 
     /**
      * Returns <code>KeyDescriptorType</code> from 
-     * <code>SSODescriptorType</code>.
-     * @param ssod <code>SSODescriptorType</code> which contains
+     * <code>RoleDescriptorType</code>.
+     * @param roled <code>RoleDescriptorType</code> which contains
      *                <code>KeyDescriptor</code>s.
      * @param usage type of the <code>KeyDescriptorType</code> to be retrieved.
      *                Its value is "encryption" or "signing".
-     * @return KeyDescriptorType in <code>SSODescriptorType</code> that matched
+     * @return KeyDescriptorType in <code>RoleDescriptorType</code> that matched
      *                the usage type.
      */
     public static KeyDescriptorType getKeyDescriptor(
-        SSODescriptorType ssod,
+        RoleDescriptorType roled,
         String usage
     ) {
         
-        List list = ssod.getKeyDescriptor();
+        List list = roled.getKeyDescriptor();
         Iterator iter = list.iterator();
         KeyDescriptorType kd = null;
         String use = null;

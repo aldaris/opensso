@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestAbstractImpl.java,v 1.2 2007-04-02 06:02:14 veiming Exp $
+ * $Id: RequestAbstractImpl.java,v 1.3 2007-12-15 06:23:25 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,12 +29,14 @@ package com.sun.identity.saml2.protocol.impl;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.DateUtils;
 import com.sun.identity.saml.xmlsig.XMLSignatureException;
+import com.sun.identity.saml2.assertion.AssertionFactory;
+import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2SDKUtils;
-import com.sun.identity.saml2.assertion.Issuer;
-import com.sun.identity.saml2.protocol.RequestAbstract;
 import com.sun.identity.saml2.protocol.Extensions;
+import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.saml2.protocol.RequestAbstract;
 import java.security.PublicKey;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -42,6 +44,8 @@ import java.security.Signature;
 import com.sun.identity.saml2.xmlsig.SigManager;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.ListIterator;
+import java.util.Set;
 import org.w3c.dom.Element;
 
 
@@ -334,7 +338,7 @@ public abstract class RequestAbstractImpl implements RequestAbstract {
     abstract public String toXMLString(boolean includeNSPrefix,
                                        boolean declareNS) throws SAML2Exception;
 
-    protected String getAttributes() 
+    protected String getAttributesString() 
     throws SAML2Exception {
         StringBuffer xml = new StringBuffer();
 
@@ -458,5 +462,160 @@ public abstract class RequestAbstractImpl implements RequestAbstract {
 		SAML2SDKUtils.bundle.getString("incorrectIssueInstant"));
 	}
 	validateIssueInstant(DateUtils.dateToString(issueInstant));
+    }
+
+    protected void getXMLString(Set namespaces, StringBuffer attrs,
+        StringBuffer childElements, boolean includeNSPrefix, boolean declareNS)
+        throws SAML2Exception {
+
+        validateData();
+
+        attrs.append(SAML2Constants.SPACE).append(SAML2Constants.ID)
+             .append(SAML2Constants.EQUAL).append(SAML2Constants.QUOTE)
+             .append(requestId).append(SAML2Constants.QUOTE)
+             .append(SAML2Constants.SPACE).append(SAML2Constants.VERSION)
+             .append(SAML2Constants.EQUAL).append(SAML2Constants.QUOTE)
+             .append(version).append(SAML2Constants.QUOTE)
+             .append(SAML2Constants.SPACE).append(SAML2Constants.ISSUE_INSTANT)
+             .append(SAML2Constants.EQUAL).append(SAML2Constants.QUOTE)
+             .append(DateUtils.toUTCDateFormat(issueInstant))
+             .append(SAML2Constants.QUOTE);
+
+        if ((destinationURI != null) && (destinationURI.length() > 0)) {
+            attrs.append(SAML2Constants.SPACE)
+                 .append(SAML2Constants.DESTINATION)
+                 .append(SAML2Constants.EQUAL).append(SAML2Constants.QUOTE)
+                 .append(destinationURI).append(SAML2Constants.QUOTE);
+        }
+
+        if ((consent != null) && (consent.length() > 0)) {
+            attrs.append(SAML2Constants.SPACE)
+                 .append(SAML2Constants.CONSENT).append(SAML2Constants.EQUAL)
+                 .append(SAML2Constants.QUOTE).append(consent)
+                 .append(SAML2Constants.QUOTE);
+        }
+
+	if (nameID != null) {
+	    childElements.append(nameID.toXMLString(includeNSPrefix,declareNS))
+	                 .append(SAML2Constants.NEWLINE);
+	}
+	if ((signatureString != null) && (signatureString.length() > 0)) {
+	    childElements.append(signatureString)
+                         .append(SAML2Constants.NEWLINE);
+	}
+	if (extensions != null) {
+	    childElements.append(extensions.toXMLString(includeNSPrefix,
+                declareNS)).append(SAML2Constants.NEWLINE);
+	}
+
+    }
+
+    /** 
+     * Parses attributes of the Docuemnt Element for this object.
+     * 
+     * @param element the Document Element of this object.
+     * @throws SAML2Exception if error parsing the Document Element.
+     */ 
+    protected void parseDOMAttributes(Element element) throws SAML2Exception {
+        requestId = element.getAttribute(SAML2Constants.ID);
+        validateID(requestId);
+        
+        version = element.getAttribute(SAML2Constants.VERSION);
+        validateVersion(version);
+
+        String issueInstantStr = element.getAttribute(
+                                    SAML2Constants.ISSUE_INSTANT);
+        validateIssueInstant(issueInstantStr);
+        
+        destinationURI = element.getAttribute(SAML2Constants.DESTINATION);
+        consent = element.getAttribute(SAML2Constants.CONSENT);
+    }
+
+    /** 
+     * Parses child elements of the Docuemnt Element for this object.
+     * 
+     * @param iter the child elements iterator.
+     * @throws SAML2Exception if error parsing the Document Element.
+     */ 
+    protected void parseDOMChileElements(ListIterator iter)
+        throws SAML2Exception {
+
+        AssertionFactory assertionFactory = AssertionFactory.getInstance();
+        ProtocolFactory protoFactory = ProtocolFactory.getInstance();
+
+        while (iter.hasNext()) {
+            Element childElement = (Element)iter.next();
+            String localName = childElement.getLocalName() ;
+            if (SAML2Constants.ISSUER.equals(localName)) {
+                validateIssuer();
+                nameID = assertionFactory.createIssuer(childElement);
+            } else if (SAML2Constants.SIGNATURE.equals(localName)) {
+                validateSignature();
+                signatureString = XMLUtils.print(childElement);
+                isSigned = true;
+            } else if (SAML2Constants.EXTENSIONS.equals(localName)) {
+                validateExtensions();
+                extensions = protoFactory.createExtensions(childElement);
+            } else {
+                iter.previous();
+                break;
+            }
+        }
+    }
+
+    /* validate the sequence and occurence of Issuer Element*/
+    private void validateIssuer() throws SAML2Exception {
+        if (nameID != null) {
+            if (SAML2SDKUtils.debug.messageEnabled()) {
+                SAML2SDKUtils.debug.message("RequestAbstractImpl." +
+                    "validateIssuer: Too many Issuer Element");
+            }
+            throw new SAML2Exception(
+                SAML2SDKUtils.bundle.getString("schemaViolation"));
+        } 
+
+        if ((signatureString != null) || (extensions != null)) {
+            if (SAML2SDKUtils.debug.messageEnabled()) {
+                SAML2SDKUtils.debug.message("RequestAbstractImpl." +
+                    "validateIssuer: Issuer Element should be the " +
+                    "first element in the Request");
+            }
+            throw new SAML2Exception(
+                SAML2SDKUtils.bundle.getString("schemaViolation"));
+        }
+    }
+
+    /* validate the sequence and occurence of Signature Element*/
+    private void validateSignature() throws SAML2Exception {
+        if (signatureString != null) {
+            if (SAML2SDKUtils.debug.messageEnabled()) {
+                SAML2SDKUtils.debug.message("RequestAbstractImpl." +
+                    "validateSignature: Too many Signature Elements");
+            }
+            throw new SAML2Exception(
+                SAML2SDKUtils.bundle.getString("schemaViolation"));
+        } 
+
+        if (extensions != null) {
+            if (SAML2SDKUtils.debug.messageEnabled()) {
+                SAML2SDKUtils.debug.message("RequestAbstractImpl." +
+                    "validateSignature: Signature should be in front of " +
+                    "Extensions");
+            }
+            throw new SAML2Exception(
+                SAML2SDKUtils.bundle.getString("schemaViolation"));
+        }
+    }
+
+    /* validate the sequence and occurence of Extensions Element*/
+    private void validateExtensions() throws SAML2Exception {
+        if (extensions != null) { 
+            if (SAML2SDKUtils.debug.messageEnabled()) {
+                SAML2SDKUtils.debug.message("RequestAbstractImpl." +
+                    "validateExtensions: Too many Extension Elements");
+            }
+            throw new SAML2Exception(
+                SAML2SDKUtils.bundle.getString("schemaViolation"));
+        } 
     }
 }

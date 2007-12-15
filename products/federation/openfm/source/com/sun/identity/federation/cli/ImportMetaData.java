@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.7 2007-10-16 22:09:41 exu Exp $
+ * $Id: ImportMetaData.java,v 1.8 2007-12-15 06:27:23 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,7 +40,9 @@ import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.federation.jaxb.entityconfig.IDPDescriptorConfigElement;
 import com.sun.identity.federation.jaxb.entityconfig.SPDescriptorConfigElement;
+import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
+import com.sun.identity.saml2.meta.SAML2MetaConstants;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
@@ -59,6 +61,9 @@ import java.text.MessageFormat;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Import Meta Data.
@@ -289,19 +294,40 @@ public class ImportMetaData extends AuthenticatedCommand {
             Object obj;
             Document doc;
             if (webAccess) {
-                obj = SAML2MetaUtils.convertStringToJAXB(metadata);
                 doc = XMLUtils.toDOMDocument(metadata, debug);
             } else {
                 is = new FileInputStream(metadata);
                 doc = XMLUtils.toDOMDocument(is, debug);
-                obj = SAML2MetaUtils.convertNodeToJAXB(doc);
             }
+
+            if (doc == null) {
+                throw new CLIException(MessageFormat.format(
+                    getResourceString(
+                    "import-entity-exception-invalid-descriptor-file"),
+                    objs), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            Element docElem = doc.getDocumentElement();
+            if ((!SAML2MetaConstants.ENTITY_DESCRIPTOR.equals(
+                docElem.getLocalName())) ||
+                (!SAML2MetaConstants.NS_METADATA.equals(
+                docElem.getNamespaceURI()))) {
+                throw new CLIException(MessageFormat.format(
+                    getResourceString(
+                    "import-entity-exception-invalid-descriptor-file"),
+                    objs), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            SAML2MetaSecurityUtils.verifySignature(doc);
+            workaroundAbstractRoleDescriptor(doc);
+            if (debug.messageEnabled()) {
+                debug.message("ImportMetaData.importMetaData: modified " +
+                    "metadata = " + XMLUtils.print(doc));
+            }
+            obj = SAML2MetaUtils.convertNodeToJAXB(doc);
 
             if (obj instanceof EntityDescriptorElement) {
                 EntityDescriptorElement descriptor =
                     (EntityDescriptorElement)obj;
                 entityID = descriptor.getEntityID();
-                SAML2MetaSecurityUtils.verifySignature(doc);
 
                 metaManager.createEntityDescriptor(realm, descriptor);
                 getOutputWriter().printlnMessage(MessageFormat.format(
@@ -609,6 +635,47 @@ public class ImportMetaData extends AuthenticatedCommand {
             }
         }
         return buff.toString();
+    }
+
+    private static void workaroundAbstractRoleDescriptor(
+        Document doc) {
+
+        NodeList nl = doc.getDocumentElement().getElementsByTagNameNS(
+            SAML2MetaConstants.NS_METADATA,SAML2MetaConstants.ROLE_DESCRIPTOR);
+        int length = nl.getLength();
+        if (length == 0) {
+            return;
+        }
+
+        for(int i = 0; i < length; i++) {
+            Element child = (Element)nl.item(i);
+            String type = child.getAttributeNS(SAML2Constants.NS_XSI, "type");
+            if (type != null) {
+                if ((type.equals(
+                    SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR_TYPE)) ||
+                    (type.endsWith(":" +
+                    SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR_TYPE))) {
+
+                    String newTag = type.substring(0, type.length() - 4);
+
+                    String xmlstr = XMLUtils.print(child);
+                    int index = xmlstr.indexOf(
+                        SAML2MetaConstants.ROLE_DESCRIPTOR);
+                    xmlstr = "<" + newTag + xmlstr.substring(index +
+                        SAML2MetaConstants.ROLE_DESCRIPTOR.length());
+                    if (!xmlstr.endsWith("/>")) {
+                        index = xmlstr.lastIndexOf("</");
+                        xmlstr = xmlstr.substring(0, index) + "</" + newTag +
+                            ">";
+                    }
+
+                    Document tmpDoc = XMLUtils.toDOMDocument(xmlstr, debug);
+                    Node newChild =
+                        doc.importNode(tmpDoc.getDocumentElement(), true);
+                    child.getParentNode().replaceChild(newChild, child);
+                }
+            }
+        }                
     }
 }
 

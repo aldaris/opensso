@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.13 2007-10-04 04:34:50 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.14 2007-12-15 06:22:21 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,6 +82,7 @@ import com.sun.identity.saml2.protocol.Artifact;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.saml2.protocol.RequestAbstract;
 import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.Scoping;
 import com.sun.identity.saml2.protocol.Status;
@@ -664,19 +665,19 @@ public class IDPSSOUtil {
     /**
      * Returns a <code>SAML Response</code> object containing error status
      *
-     * @param authnReq the <code>AuthnRequest</code> object
+     * @param request the <code>RequestAbstract</code> object
      * @param code the error code
      * @param statusMsg the error message
-     * @param idpEntityID the entity id of the identity provider
+     * @param issuerEntityID the entity id of the issuer
      * 
      * @return the <code>SAML Response</code> object containing error status
      * @exception SAML2Exception if the operation is not successful
      */
     public static Response getErrorResponse(
-        AuthnRequest authnReq,
+        RequestAbstract request,
         String code,
         String statusMsg,
-        String idpEntityID)
+        String issuerEntityID)
         throws SAML2Exception {
     
         String classMethod = "IDPSSOUtil.getErrorResponse: ";
@@ -697,17 +698,19 @@ public class IDPSSOUtil {
         }
         errResp.setID(responseID);
 
-        if (authnReq != null) {
+        if (request != null) {
             // sp initiated case, need to set InResponseTo attribute
-            errResp.setInResponseTo(authnReq.getID());
+            errResp.setInResponseTo(request.getID());
         }
         errResp.setVersion(SAML2Constants.VERSION_2_0);
         errResp.setIssueInstant(new Date());
 
         // set the idp entity id as the response issuer
-        Issuer issuer = AssertionFactory.getInstance().createIssuer();
-        issuer.setValue(idpEntityID);
-        errResp.setIssuer(issuer);
+        if (issuerEntityID != null) {
+            Issuer issuer = AssertionFactory.getInstance().createIssuer();
+            issuer.setValue(issuerEntityID);
+            errResp.setIssuer(issuer);
+        }
 
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message(classMethod + 
@@ -807,25 +810,8 @@ public class IDPSSOUtil {
         }
 
         // get the assertion effective time (in seconds)
-        int effectiveTime = SAML2Constants.ASSERTION_EFFECTIVE_TIME;
-        String effectiveTimeStr = getAttributeValueFromIDPSSOConfig(
-            realm, idpEntityID, 
-            SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE);
-        if (effectiveTimeStr != null) {
-            try {
-                effectiveTime = Integer.parseInt(effectiveTimeStr);
-                if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message(classMethod +
-                        "got effective time from config:" + effectiveTime);
-                }       
-            } catch (NumberFormatException nfe) {
-                SAML2Utils.debug.error(classMethod +
-                    "Failed to get assertion effective time from " +
-                    "IDP SSO config: ", nfe);
-                effectiveTime = SAML2Constants.ASSERTION_EFFECTIVE_TIME;
-            }
-        }
-                
+        int effectiveTime = getEffectiveTime(realm, idpEntityID);
+
         // get the NotBefore skew (in seconds)
         int notBeforeSkewTime = getNotBeforeSkewTime(realm,idpEntityID);
 
@@ -1381,10 +1367,8 @@ public class IDPSSOUtil {
      * @return the <code>SAML Conditions</code> object
      * @exception SAML2Exception if the operation is not successful
      */
-    private static Conditions getConditions(String audienceEntityID,
-                                            int notBeforeSkewTime,
-                                            int effectiveTime) 
-        throws SAML2Exception {
+    protected static Conditions getConditions(String audienceEntityID,
+        int notBeforeSkewTime, int effectiveTime) throws SAML2Exception {
 
         String classMethod = "IDPSSOUtil.getConditions: ";
         
@@ -2245,7 +2229,7 @@ public class IDPSSOUtil {
         } 
         // get the encryption information 
         EncInfo encInfo = KeyUtil.getEncInfo(spSSODescriptorElement,
-                                      spEntityID, false);
+                                      spEntityID, SAML2Constants.SP_ROLE);
         if (encInfo == null) {
             SAML2Utils.debug.error(classMethod + 
                 "failed to get service provider encryption key info.");
@@ -2464,6 +2448,35 @@ public class IDPSSOUtil {
         return nameID;
     }
 
+     /**
+      * Returns the effective time from the IDP
+      * extended metadata . If the attreibute is not
+      * defined in the metadata then defaults to
+      * a value of 600 seconds (5 minutes).
+      *
+      * @return the effective time value in seconds.
+      */
+    protected static int getEffectiveTime(String realm,String idpEntityID) {
+        int effectiveTime = SAML2Constants.ASSERTION_EFFECTIVE_TIME;
+        String effectiveTimeStr = getAttributeValueFromIDPSSOConfig(
+            realm, idpEntityID, 
+            SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE);
+        if (effectiveTimeStr != null) {
+            try {
+                effectiveTime = Integer.parseInt(effectiveTimeStr);
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("IDPSSOUtil.getEffectiveTime: " +
+                        "got effective time from config:" + effectiveTime);
+                }       
+            } catch (NumberFormatException nfe) {
+                SAML2Utils.debug.error("IDPSSOUtil.getEffectiveTime: " +
+                    "Failed to get assertion effective time from " +
+                    "IDP SSO config: ", nfe);
+                effectiveTime = SAML2Constants.ASSERTION_EFFECTIVE_TIME;
+            }
+        }
+        return effectiveTime;
+    }
 
      /**
       * Returns the NotBefore skew time from the IDP
@@ -2473,7 +2486,8 @@ public class IDPSSOUtil {
       *
       * @return the NotBefore skew value in seconds.
       */
-     private static int getNotBeforeSkewTime(String realm,String idpEntityID) {
+     protected static int getNotBeforeSkewTime(String realm,
+         String idpEntityID) {
          String classMethod = "IDPSSOUtil.getNotBeforeSkewTime:";
          int notBeforeSkewTime = 
              SAML2Constants.NOTBEFORE_ASSERTION_SKEW_DEFAULT;

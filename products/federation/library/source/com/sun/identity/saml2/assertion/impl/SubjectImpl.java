@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectImpl.java,v 1.1 2006-10-30 23:16:11 qcheng Exp $
+ * $Id: SubjectImpl.java,v 1.2 2007-12-15 06:14:29 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,6 @@ public class SubjectImpl implements Subject {
     private NameID nameId = null;
     private EncryptedID encryptedId = null;
     private boolean isMutable = true;
-    private boolean subjectConfirmationOnly = false;
 
     public static final String SUBJECT_ELEMENT = "Subject";
     public static final String SUBJECT_CONFIRMATION_ELEMENT = 
@@ -159,7 +158,6 @@ public class SubjectImpl implements Subject {
             if (childName.equals(SUBJECT_CONFIRMATION_ELEMENT)) {
                 subjectConfirmations.add(AssertionFactory.getInstance().
                     createSubjectConfirmation((Element)child));
-                subjectConfirmationOnly = true;
             } else if (childName.equals(BASE_ID_ELEMENT)) {
                 baseId = AssertionFactory.getInstance().
                          createBaseID((Element)child);
@@ -310,6 +308,7 @@ public class SubjectImpl implements Subject {
     */
     public String toXMLString(boolean includeNSPrefix, boolean declareNS)
         throws SAML2Exception {
+
         StringBuffer sb = new StringBuffer(2000);
         String NS = "";
         String appendNS = "";
@@ -321,42 +320,53 @@ public class SubjectImpl implements Subject {
         }
         sb.append("<").append(appendNS).append(SUBJECT_ELEMENT).
             append(NS).append(">\n");
-        if (!subjectConfirmationOnly) {
-            if ((baseId != null) && (nameId == null) 
-                && (encryptedId == null)) {
-                sb.append(baseId.toXMLString(includeNSPrefix, false));
-            } else if ((nameId != null) && (baseId == null)
-                && (encryptedId == null)) {
-                sb.append(nameId.toXMLString(includeNSPrefix, false));
-            } else if ((encryptedId != null) && (baseId == null)
-                && (nameId == null)) {
-                sb.append(encryptedId.toXMLString(includeNSPrefix, false));
-            } else if ((baseId != null) || (nameId != null) 
-                || (encryptedId != null)) { 
-                SAML2SDKUtils.debug.error("SubjectImpl.toXMLString(): "
-                    + "id not specified");
-                throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
-                      "no_id_specified"));
-            } else {
+
+        boolean idFound = false;
+        if (baseId != null) {
+            sb.append(baseId.toXMLString(includeNSPrefix, false));
+            idFound = true;
+        }
+
+        if (nameId != null) {
+            if (idFound) {
                 SAML2SDKUtils.debug.error("SubjectImpl.toXMLString(): "
                     + "more than one types of id specified");
                 throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
                       "too_many_ids_specified"));
+            } else {
+                sb.append(nameId.toXMLString(includeNSPrefix, false));
+                idFound = true;
             }
         }
+
+        if (encryptedId != null) {
+            if (idFound) {
+                SAML2SDKUtils.debug.error("SubjectImpl.toXMLString(): "
+                    + "more than one types of id specified");
+                throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
+                      "too_many_ids_specified"));
+            } else {
+                sb.append(encryptedId.toXMLString(includeNSPrefix, false));
+                idFound = true;
+            }
+        }
+
         int length = subjectConfirmations.size();
-        if (subjectConfirmationOnly && (length == 0)) {
-            SAML2SDKUtils.debug.error("SubjectImpl.toXMLString(): "
-                + "need at least one SubjectConfirmation");
-            throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
-                "need_at_least_one_SubjectConfirmation"));
+        if (length == 0) {
+            if (!idFound) {
+                SAML2SDKUtils.debug.error("SubjectImpl.toXMLString(): Need at "
+                    + "least one id or one subject confirmation in a subject");
+                throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
+                    "need_at_least_one_id_or_on_SubjectConfirmation"));
+            }
+        } else {
+            for (int i = 0; i < length; i++) {
+                SubjectConfirmation sc = 
+                    (SubjectConfirmation)subjectConfirmations.get(i);
+                sb.append(sc.toXMLString(includeNSPrefix, false));
+            }
         }
-        for (int i = 0; i < length; i++) {
-            SubjectConfirmation sc = 
-                (SubjectConfirmation)subjectConfirmations.get(i);
-            sb.append(sc.toXMLString(includeNSPrefix, false));
-        }
-        sb.append("</").append(appendNS).append(SUBJECT_ELEMENT).append(">\n");
+        sb.append("</").append(appendNS).append(SUBJECT_ELEMENT).append(">");
         return sb.toString();
     }
 

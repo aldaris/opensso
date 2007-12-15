@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.10 2007-11-15 16:42:45 qcheng Exp $
+ * $Id: SPSSOFederate.java,v 1.11 2007-12-15 06:22:22 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -595,14 +595,7 @@ public class SPSSOFederate {
             return false;
         }
 
-        StringTokenizer stz = new StringTokenizer(acceptHeader, ",");
-        while(stz.hasMoreTokens()) {
-            if (stz.nextToken().trim().equals(PAOSConstants.PAOS_MIME_TYPE)) {
-                return true;
-            }
-        }
-
-        return false;
+        return (acceptHeader.indexOf(PAOSConstants.PAOS_MIME_TYPE) != -1);
     }
 
     /* Create NameIDPolicy Element */

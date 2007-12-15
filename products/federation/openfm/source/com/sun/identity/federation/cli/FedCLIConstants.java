@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedCLIConstants.java,v 1.3 2007-06-21 23:01:38 superpat7 Exp $
+ * $Id: FedCLIConstants.java,v 1.4 2007-12-15 06:27:23 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,16 @@ public interface FedCLIConstants {
     String ARGUMENT_IDENTITY_PROVIDER = "identityprovider";
 
     /**
+     * Attribute Query Provider.
+     */
+    String ARGUMENT_ATTRIBUTE_QUERY_PROVIDER = "attrqueryprovider";
+
+    /**
+     * Attribute Authority.
+     */
+    String ARGUMENT_ATTRIBUTE_AUTHORITY = "attrauthority";
+
+    /**
      * Policy Decision Point.
      */
     String ARGUMENT_PDP = "xacmlpdp";
@@ -99,6 +109,16 @@ public interface FedCLIConstants {
     String ARGUMENT_IDP_S_CERT_ALIAS = "idpscertalias";
 
     /**
+     * Attribute Query Provider Signing Certificate Alias.
+     */
+    String ARGUMENT_ATTRQ_S_CERT_ALIAS = "attrqscertalias";
+
+    /**
+     * Attribute Authority Signing Certificate Alias.
+     */
+    String ARGUMENT_ATTRA_S_CERT_ALIAS = "attrascertalias";
+
+    /**
      * Policy Decision Point Signing Certificate Alias.
      */
     String ARGUMENT_PDP_S_CERT_ALIAS = "xacmlpdpscertalias";
@@ -114,9 +134,19 @@ public interface FedCLIConstants {
     String ARGUMENT_SP_E_CERT_ALIAS = "specertalias";
 
     /**
-     * Service Provider Encryption Certificate Alias.
+     * Identity Provider Encryption Certificate Alias.
      */
     String ARGUMENT_IDP_E_CERT_ALIAS = "idpecertalias";
+
+    /**
+     * Attribute Query Provider Encryption Certificate Alias.
+     */
+    String ARGUMENT_ATTRQ_E_CERT_ALIAS = "attrqecertalias";
+
+    /**
+     * Attribute Authority Encryption Certificate Alias.
+     */
+    String ARGUMENT_ATTRA_E_CERT_ALIAS = "attraecertalias";
 
     /**
      * Policy Decision Point Encryption Certificate Alias.

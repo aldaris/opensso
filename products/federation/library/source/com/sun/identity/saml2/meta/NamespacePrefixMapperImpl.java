@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamespacePrefixMapperImpl.java,v 1.1 2006-10-30 23:16:22 qcheng Exp $
+ * $Id: NamespacePrefixMapperImpl.java,v 1.2 2007-12-15 06:19:00 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,6 +75,8 @@ public class NamespacePrefixMapperImpl extends NamespacePrefixMapper {
             return SAML2MetaSecurityUtils.PREFIX_XMLSIG;
         } else if (namespaceUri.equals(SAML2MetaSecurityUtils.NS_XMLENC)) {
             return SAML2MetaSecurityUtils.PREFIX_XMLENC;
+        } else if (namespaceUri.equals(SAML2MetaSecurityUtils.NS_MD_QUERY)) {
+            return SAML2MetaSecurityUtils.PREFIX_MD_QUERY;
         }
 
         return suggestion;

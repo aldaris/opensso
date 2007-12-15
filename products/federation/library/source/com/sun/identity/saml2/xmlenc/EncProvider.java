@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncProvider.java,v 1.1 2006-10-30 23:16:54 qcheng Exp $
+ * $Id: EncProvider.java,v 1.2 2007-12-15 06:24:18 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,8 @@ package com.sun.identity.saml2.xmlenc;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.security.Key;
+import javax.crypto.SecretKey;
+
 import com.sun.identity.saml2.common.SAML2Exception;
 
 /**
@@ -68,7 +70,58 @@ public interface EncProvider {
 	String recipientEntityID,
 	String outerElementName)
     throws SAML2Exception;
-    
+
+    /**
+     * Encrypts the root element of the given XML document.
+     * @param xmlString String representing an XML document whose root
+     *                  element is to be encrypted.
+     * @param recipientPublicKey Public key used to encrypt the data encryption
+     *                           (secret) key, it is the public key of the
+     *                           recipient of the XML document to be encrypted.
+     * @param secretKey the secret key used to encrypted data.
+     * @param dataEncAlgorithm Data encryption algorithm.
+     * @param dataEncStrength Data encryption strength.
+     * @param recipientEntityID Unique identifier of the recipient, it is used
+     *                          as the index to the cached secret key so that
+     *                          the key can be reused for the same recipient;
+     *                          It can be null in which case the secret key will
+     *                          be generated every time and will not be cached
+     *                          and reused. Note that the generation of a secret
+     *                          key is a relatively expensive operation.
+     * @param outerElementName Name of the element that will wrap around the
+     *                         encrypted data and encrypted key(s) sub-elements
+     * @return org.w3c.dom.Element Root element of the encypted document; The
+     *                             name of this root element is indicated by
+     *                             the last input parameter
+     * @exception SAML2Exception if there is an error during the encryption
+     *                           process
+     */
+    public Element encrypt(
+        String xmlString,
+	Key recipientPublicKey,
+        SecretKey secretKey,
+        String dataEncAlgorithm,
+        int dataEncStrength,
+	String recipientEntityID,
+	String outerElementName)
+
+	throws SAML2Exception;
+
+    /**
+     * Returns the secret key that encrypts encrypted data and is encrypted
+     * with recipient's public key in the XML document.
+     * @param xmlString String representing an XML document with encrypted
+     *     secret key.
+     * @param recipientPrivateKey Private key used to decrypt the secret key
+     * @return the secret key.
+     * @exception SAML2Exception if there is an error during the decryption
+     *     process
+     */
+    public SecretKey getSecretKey(
+        String xmlString,
+        Key recipientPrivateKey)
+    throws SAML2Exception;
+
     /**
      * Decrypts an XML document that contains encrypted data.
      * @param xmlString String representing an XML document with encrypted

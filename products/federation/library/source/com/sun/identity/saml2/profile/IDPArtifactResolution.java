@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.3 2007-09-13 23:49:28 exu Exp $
+ * $Id: IDPArtifactResolution.java,v 1.4 2007-12-15 06:22:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -276,7 +276,7 @@ public class IDPArtifactResolution {
                     "ArtifactResolveNotSigned", null);
             }
             X509Certificate spCert = KeyUtil.getVerificationCert(
-                spSSODescriptor, spEntityID, false);
+                spSSODescriptor, spEntityID, SAML2Constants.SP_ROLE);
             if (!artResolve.isSignatureValid(spCert)) {
                 SAML2Utils.debug.error(classMethod +
                     "artifact resolve verification failed.");

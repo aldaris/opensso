@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: binding.xjb,v 1.1 2006-10-30 23:17:36 qcheng Exp $
+   $Id: binding.xjb,v 1.2 2007-12-15 06:26:15 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -69,6 +69,32 @@
   <jxb:bindings schemaLocation="saml-schema-metadata-2.0.xsd" node="/xs:schema">
     <jxb:schemaBindings>
       <jxb:package name="com.sun.identity.saml2.jaxb.metadata">
+         <jxb:javadoc>
+     <![CDATA[<body> Package level documentation for generated package com.sun.identity.saml2.jaxb.metadata. </body>]]>
+         </jxb:javadoc>
+      </jxb:package>
+      <jxb:nameXmlTransform>
+          <jxb:elementName suffix="Element"/>
+      </jxb:nameXmlTransform>
+    </jxb:schemaBindings>
+  </jxb:bindings>
+
+  <jxb:bindings schemaLocation="sstc-saml-metadata-ext-query.xsd" node="/xs:schema">
+    <jxb:schemaBindings>
+      <jxb:package name="com.sun.identity.saml2.jaxb.metadataextquery">
+         <jxb:javadoc>
+     <![CDATA[<body> Package level documentation for generated package com.sun.identity.saml2.jaxb.metadata. </body>]]>
+         </jxb:javadoc>
+      </jxb:package>
+      <jxb:nameXmlTransform>
+          <jxb:elementName suffix="Element"/>
+      </jxb:nameXmlTransform>
+    </jxb:schemaBindings>
+  </jxb:bindings>
+
+  <jxb:bindings schemaLocation="sstc-saml-metadata-x509-query.xsd" node="/xs:schema">
+    <jxb:schemaBindings>
+      <jxb:package name="com.sun.identity.saml2.jaxb.metadatax509query">
          <jxb:javadoc>
      <![CDATA[<body> Package level documentation for generated package com.sun.identity.saml2.jaxb.metadata. </body>]]>
          </jxb:javadoc>

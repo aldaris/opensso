@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ManageNameIDRequestImpl.java,v 1.1 2006-10-30 23:16:49 qcheng Exp $
+ * $Id: ManageNameIDRequestImpl.java,v 1.2 2007-12-15 06:23:25 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -375,7 +375,7 @@ public class ManageNameIDRequestImpl
         xml.append("<").append(NSP).append(elementName);
         xml.append(NS).append(" ");
 
-        xml.append(getAttributes());
+        xml.append(getAttributesString());
 
         xml.append(">");
 

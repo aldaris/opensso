@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportMetaData.java,v 1.5 2007-10-16 22:09:41 exu Exp $
+ * $Id: ExportMetaData.java,v 1.6 2007-12-15 06:27:23 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,10 +35,12 @@ import com.sun.identity.federation.jaxb.entityconfig.SPDescriptorConfigElement;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
+import com.sun.identity.saml2.meta.SAML2MetaConstants;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
@@ -187,6 +189,7 @@ public class ExportMetaData extends AuthenticatedCommand {
                 return;
             } else {
                 String xmlstr = XMLUtils.print(doc);
+                xmlstr = workaroundAbstractRoleDescriptor(xmlstr);
 
                 if (isWebBase) {
                     getOutputWriter().printlnMessage(xmlstr);
@@ -351,6 +354,10 @@ public class ExportMetaData extends AuthenticatedCommand {
     private void runExportMeta() 
         throws CLIException
     {
+        if (debug.messageEnabled()) {
+            debug.message("ExportMetaData.runExportMeta:");
+        }
+
         PrintWriter pw = null;
         String out = (isWebBase) ? "web" : metadata;
         Object[] objs = {out};
@@ -367,6 +374,8 @@ public class ExportMetaData extends AuthenticatedCommand {
             }
             
             String xmlstr = SAML2MetaUtils.convertJAXBToString(descriptor);
+            xmlstr = workaroundAbstractRoleDescriptor(xmlstr);
+
             xmlstr = SAML2MetaSecurityUtils.formatBase64BinaryElement(xmlstr);
 
             if (isWebBase) {
@@ -704,4 +713,35 @@ public class ExportMetaData extends AuthenticatedCommand {
             }
         }
     }
+
+    private static String workaroundAbstractRoleDescriptor(String xmlstr) {
+        if (debug.messageEnabled()) {
+            debug.message("ExportMetaData.workaroundAbstractRoleDescriptor:");
+        }
+        int index =
+            xmlstr.indexOf(":" +SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR);
+        if (index == -1) {
+            return xmlstr;
+        }
+
+        int index2 = xmlstr.lastIndexOf("<", index);
+        if (index2 == -1) {
+            return xmlstr;
+        }
+
+        String prefix = xmlstr.substring(index2 + 1, index);
+        String type =  prefix + ":" +
+            SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR_TYPE;
+
+        xmlstr = xmlstr.replaceAll("<" + prefix + ":" +
+            SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR,
+            "<" + SAML2MetaConstants.ROLE_DESCRIPTOR + " " +
+            SAML2Constants.XSI_DECLARE_STR + " xsi:type=\"" + type + "\"");
+        xmlstr = xmlstr.replaceAll("</" + prefix + ":" +
+            SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR,
+            "</" + SAML2MetaConstants.ROLE_DESCRIPTOR);
+        return xmlstr;
+    }
+
+
 }

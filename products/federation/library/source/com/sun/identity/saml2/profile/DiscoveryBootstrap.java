@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryBootstrap.java,v 1.1 2007-04-23 03:36:08 hengming Exp $
+ * $Id: DiscoveryBootstrap.java,v 1.2 2007-12-15 06:22:21 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -192,7 +192,8 @@ public class DiscoveryBootstrap {
                 IDPSSODescriptorElement idpSSODesc = SAML2Utils
                     .getSAML2MetaManager().getIDPSSODescriptor(realm,
                     providerID);
-                EncInfo encInfo = KeyUtil.getEncInfo(idpSSODesc, wscID, true);
+                EncInfo encInfo = KeyUtil.getEncInfo(idpSSODesc, wscID,
+                    SAML2Constants.IDP_ROLE);
 
                 NameIdentifier ni =
                     EncryptedNameIdentifier.getEncryptedNameIdentifier(

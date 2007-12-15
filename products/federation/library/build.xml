@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.19 2007-11-09 17:56:07 qcheng Exp $
+   $Id: build.xml,v 1.20 2007-12-15 06:09:57 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -70,12 +70,14 @@
 
     <target name="xsd.saml2" depends="preparebuild" unless="library.xsd.saml2.done">
         <property name="xsd.saml2.dir" value="${library.xsd.dir}/saml2"/>
-        <property name="xsd.saml2.files" value="${xsd.saml2.dir}/entity-config-schema.xsd ${xsd.saml2.dir}/saml-schema-assertion-2.0.xsd ${xsd.saml2.dir}/saml-schema-metadata-2.0.xsd  ${xsd.saml2.dir}/schema.xsd"/>
+        <property name="xsd.saml2.files" value="${xsd.saml2.dir}/entity-config-schema.xsd ${xsd.saml2.dir}/saml-schema-assertion-2.0.xsd ${xsd.saml2.dir}/saml-schema-metadata-2.0.xsd  ${xsd.saml2.dir}/schema.xsd ${xsd.saml2.dir}/sstc-saml-metadata-ext-query.xsd ${xsd.saml2.dir}/sstc-saml-metadata-x509-query.xsd"/>
         <java classname="com.sun.tools.xjc.Driver" 
             maxmemory="128m" failonerror="true" fork="true">
             <classpath refid="build.class.path"/>
             <arg line="-b ${xsd.saml2.dir}/binding.xjb -extension -d ${library.src.dir} ${xsd.saml2.files}"/> 
         </java>
+        <replace file="${jaxb.saml2}/metadata/impl/RoleDescriptorTypeImpl.java" token="&quot;&quot;, &quot;type&quot;" value="&quot;http://www.w3.org/2001/XMLSchema-instance&quot;, &quot;type&quot;"/>
+        <replace file="${jaxb.saml2}/metadata/impl/RoleDescriptorTypeImpl.java" token="(&quot;type&quot; == ___local)&amp;&amp;(&quot;&quot; == ___uri)" value="(&quot;type&quot; == ___local)&amp;&amp;(&quot;http://www.w3.org/2001/XMLSchema-instance&quot; == ___uri)"/>
         <property name="library.xsd.saml2.done" value="true" />
         <concat destfile="${libtracker}" append="true">library.xsd.saml2.done=true&#10;</concat>
     </target>

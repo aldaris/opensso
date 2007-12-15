@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.23 2007-11-15 16:43:08 qcheng Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.24 2007-12-15 06:27:23 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,14 +79,20 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private String extendedData;
     private String idpAlias;
     private String spAlias;
+    private String attraAlias;
+    private String attrqAlias;
     private String pdpAlias;
     private String pepAlias;
     private String idpSCertAlias;
     private String idpECertAlias;
+    private String attraSCertAlias;
+    private String attraECertAlias;
     private String pdpSCertAlias;
     private String pdpECertAlias;
     private String spSCertAlias;
     private String spECertAlias;
+    private String attrqSCertAlias;
+    private String attrqECertAlias;
     private String pepSCertAlias;
     private String pepECertAlias;
     private String protocol;
@@ -165,6 +171,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             FedCLIConstants.ARGUMENT_IDENTITY_PROVIDER);
         spAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_SERVICE_PROVIDER);
+        attraAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_ATTRIBUTE_AUTHORITY);
+        attrqAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_ATTRIBUTE_QUERY_PROVIDER);
         pdpAlias = getStringOptionValue(FedCLIConstants.ARGUMENT_PDP);
         pepAlias = getStringOptionValue(FedCLIConstants.ARGUMENT_PEP);
         
@@ -182,6 +192,16 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         spECertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_SP_E_CERT_ALIAS);
         
+        attraSCertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_ATTRA_S_CERT_ALIAS);
+        attraECertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_ATTRA_E_CERT_ALIAS);
+        
+        attrqSCertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_ATTRQ_S_CERT_ALIAS);
+        attrqECertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_ATTRQ_E_CERT_ALIAS);
+
         pdpSCertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_PDP_S_CERT_ALIAS);
         pdpECertAlias = getStringOptionValue(
@@ -208,6 +228,12 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         if ((spAlias != null) && !spAlias.startsWith("/")) {
             spAlias = "/" + spAlias;
         }
+        if ((attraAlias != null) && !attraAlias.startsWith("/")) {
+            attraAlias = "/" + attraAlias;
+        }
+        if ((attrqAlias != null) && !attrqAlias.startsWith("/")) {
+            attrqAlias = "/" + attrqAlias;
+        }
         if ((pdpAlias != null) && !pdpAlias.startsWith("/")) {
             pdpAlias = "/" + pdpAlias;
         }
@@ -229,6 +255,18 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         if (spECertAlias == null) {
             spECertAlias = "";
         }
+        if (attraSCertAlias == null) {
+            attraSCertAlias = "";
+        }
+        if (attraECertAlias == null) {
+            attraECertAlias = "";
+        }
+        if (attrqSCertAlias == null) {
+            attrqSCertAlias = "";
+        }
+        if (attrqECertAlias == null) {
+            attrqECertAlias = "";
+        }
         if (pdpSCertAlias == null) {
             pdpSCertAlias = "";
         }
@@ -246,7 +284,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private void validateOptions()
     throws CLIException {
         if ((idpAlias == null) && (spAlias == null) && (pdpAlias == null) && 
-            (pepAlias == null)
+            (pepAlias == null) && (attraAlias == null) && (attrqAlias == null)
         ) {
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-role-null"),
@@ -269,6 +307,22 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
         
+        if ((attraAlias == null) &&
+            ((attraSCertAlias != null) || (attraECertAlias != null))
+            ) {
+            throw new CLIException(getResourceString(
+                "create-meta-template-exception-attra-null-with-cert-alias"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+        
+        if ((attrqAlias == null) &&
+            ((attrqSCertAlias != null) || (attrqECertAlias != null))
+            ) {
+            throw new CLIException(getResourceString(
+                "create-meta-template-exception-attrq-null-with-cert-alias"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
         if ((pdpAlias == null) &&
             ((pdpSCertAlias != null) || (pdpECertAlias != null))
             ) {
@@ -330,6 +384,14 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             if (spAlias != null) {
                 realm = SAML2MetaUtils.getRealmByMetaAlias(spAlias);
                 addServiceProviderTemplate(pw, url);
+            }
+            if (attraAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(attraAlias);
+                addAttributeAuthorityTemplate(pw, url);
+            }
+            if (attrqAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(attrqAlias);
+                addAttributeQueryTemplate(pw, url);
             }
             if (pdpAlias != null) {
                 realm = SAML2MetaUtils.getRealmByMetaAlias(pdpAlias);
@@ -448,6 +510,63 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 );
     }
     
+    private void addAttributeAuthorityTemplate(Writer pw, String url)
+        throws IOException, SAML2MetaException {
+        String maStr = buildMetaAliasInURI(attraAlias);
+        
+        pw.write(
+                "    <AttributeAuthorityDescriptor\n" +
+                "        protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n"
+                );
+        
+        String attraSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+                attraSCertAlias);
+        if (attraSX509Cert != null) {
+            pw.write(
+                    "        <KeyDescriptor use=\"signing\">\n" +
+                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                    "                <X509Data>\n" +
+                    "                    <X509Certificate>\n" + attraSX509Cert +
+                    "                    </X509Certificate>\n" +
+                    "                </X509Data>\n" +
+                    "            </KeyInfo>\n" +
+                    "        </KeyDescriptor>\n");
+        }
+        
+        String attraEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+                attraECertAlias);
+        if (attraEX509Cert != null) {
+            pw.write(
+                    "        <KeyDescriptor use=\"encryption\">\n" +
+                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                    "                <X509Data>\n" +
+                    "                    <X509Certificate>\n" + attraEX509Cert +
+                    "                    </X509Certificate>\n" +
+                    "                </X509Data>\n" +
+                    "            </KeyInfo>\n" +
+                    "            <EncryptionMethod Algorithm=" +
+                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
+                    "                <KeySize xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
+                    "128</KeySize>\n" +
+                    "            </EncryptionMethod>\n" +
+                    "        </KeyDescriptor>\n");
+        }
+        
+        pw.write(
+                "        <AttributeService\n" +
+                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
+                "            Location=\"" + url + "/AttributeServiceSoap/" + SAML2Constants.DEFAULT_ATTR_QUERY_PROFILE_ALIAS + maStr + "\"/>\n" +
+                "        <AttributeService\n" +
+                "            xmlns:x509qry=\"urn:oasis:names:tc:SAML:metadata:X509:query\"\n" +
+                "            x509qry:supportsX509Query=\"true\"\n" +
+                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
+                "            Location=\"" + url + "/AttributeServiceSoap/" + SAML2Constants.X509_SUBJECT_ATTR_QUERY_PROFILE_ALIAS + maStr + "\"/>\n" +
+                "        <AttributeProfile>" + SAML2Constants.BASIC_ATTRIBUTE_PROFILE + "</AttributeProfile>\n" +
+
+                "    </AttributeAuthorityDescriptor>\n"
+                );
+    }
+
     private void addServiceProviderTemplate(Writer pw, String url)
     throws IOException, SAML2MetaException {
         String maStr = buildMetaAliasInURI(spAlias);
@@ -531,6 +650,65 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 );
     }
     
+    private void addAttributeQueryTemplate(Writer pw, String url)
+    throws IOException, SAML2MetaException {
+        String maStr = buildMetaAliasInURI(attrqAlias);
+        pw.write(
+                "    <RoleDescriptor\n" +
+                "        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "        xmlns:query=\"urn:oasis:names:tc:SAML:metadata:ext:query\"\n" +
+                "        xsi:type=\"query:AttributeQueryDescriptorType\"\n" +
+                "        protocolSupportEnumeration=\n" +
+                "            \"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
+        
+        String attrqSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+                attrqSCertAlias);
+        String attrqEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+                attrqECertAlias);
+        
+        if (attrqSX509Cert != null) {
+            pw.write(
+                    "        <KeyDescriptor use=\"signing\">\n" +
+                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                    "                <X509Data>\n" +
+                    "                    <X509Certificate>\n" + attrqSX509Cert +
+                    "                    </X509Certificate>\n" +
+                    "                </X509Data>\n" +
+                    "            </KeyInfo>\n" +
+                    "        </KeyDescriptor>\n");
+        }
+        
+        if (attrqEX509Cert != null) {
+            pw.write(
+                    "        <KeyDescriptor use=\"encryption\">\n" +
+                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                    "                <X509Data>\n" +
+                    "                    <X509Certificate>\n" + attrqEX509Cert +
+                    "                    </X509Certificate>\n" +
+                    "                </X509Data>\n" +
+                    "            </KeyInfo>\n" +
+                    "            <EncryptionMethod Algorithm=" +
+                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
+                    "                <KeySize xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
+                    "128</KeySize>\n" +
+                    "            </EncryptionMethod>\n" +
+                    "        </KeyDescriptor>\n");
+        }
+        
+        pw.write(
+                "        <NameIDFormat>\n" +
+                "            urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\n" +
+                "        </NameIDFormat>\n" +
+                "        <NameIDFormat>\n" +
+                "            urn:oasis:names:tc:SAML:2.0:nameid-format:transient\n" +
+                "        </NameIDFormat>\n" +
+                "        <NameIDFormat>\n" +
+                "            urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName\n" +
+                "        </NameIDFormat>\n" +
+                "    </RoleDescriptor>\n"
+                );
+    }
+
     private void addPDPTemplate(Writer pw, String url)
         throws IOException, SAML2MetaException {
         String maStr = buildMetaAliasInURI(pdpAlias);
@@ -659,6 +837,14 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             if (spAlias != null) {
                 realm = SAML2MetaUtils.getRealmByMetaAlias(spAlias);
                 buildSPConfigTemplate(pw, url);
+            }
+            if (attraAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(attraAlias);
+                buildAttributeAuthorityConfigTemplate(pw, url);
+            }
+            if (attrqAlias != null) {
+                realm = SAML2MetaUtils.getRealmByMetaAlias(attrqAlias);
+                buildAttributeQueryConfigTemplate(pw, url);
             }
             if (pdpAlias != null) {
                 realm = SAML2MetaUtils.getRealmByMetaAlias(pdpAlias);
@@ -927,6 +1113,43 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "    </SPSSOConfig>\n");
     }
     
+    private void buildAttributeAuthorityConfigTemplate(Writer pw, String url)
+        throws IOException {
+        pw.write(
+                "    <AttributeAuthorityConfig metaAlias=\"" + attraAlias + "\">\n" +
+                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
+                "            <Value>" + attraSCertAlias + "</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
+                "            <Value>" + attraECertAlias + "</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.DEFAULT_ATTR_QUERY_PROFILE_ALIAS + "_" + SAML2Constants.ATTRIBUTE_AUTHORITY_MAPPER + "\">\n" +
+                "            <Value>" + SAML2Constants.DEFAULT_ATTRIBUTE_AUTHORITY_MAPPER_CLASS + "</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.X509_SUBJECT_ATTR_QUERY_PROFILE_ALIAS + "_" + SAML2Constants.ATTRIBUTE_AUTHORITY_MAPPER + "\">\n" +
+                "            <Value>com.sun.identity.saml2.plugins.X509SubjectAttributeAuthorityMapper</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.X509_SUBJECT_DATA_STORE_ATTR_NAME + "\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
+                "    </AttributeAuthorityConfig>\n"
+                );
+    }
+
+    private void buildAttributeQueryConfigTemplate(Writer pw, String url)
+        throws IOException {
+        pw.write(
+                "    <AttributeQueryConfig metaAlias=\"" + attrqAlias + "\">\n" +
+                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
+                "            <Value>" + attrqSCertAlias + "</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
+                "            <Value>" + attrqECertAlias + "</Value>\n" +
+                "        </Attribute>\n" +
+                "    </AttributeQueryConfig>\n"
+                );
+    }
+
     private void buildPDPConfigTemplate(Writer pw)
         throws IOException {
         pw.write(

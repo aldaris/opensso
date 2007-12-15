@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAccountMapper.java,v 1.1 2006-10-30 23:16:28 qcheng Exp $
+ * $Id: DefaultAccountMapper.java,v 1.2 2007-12-15 06:20:42 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -144,8 +144,8 @@ public class DefaultAccountMapper {
         }
 
         try {
-            return dsProvider.getUserID(
-                realm, getNameIDKeyMap(nameID, hostEntityID, remoteEntityID));
+            return dsProvider.getUserID(realm, SAML2Utils.getNameIDKeyMap
+                (nameID, hostEntityID, remoteEntityID));
 
         } catch (DataStoreProviderException dse) {
             debug.error("DefaultAccountMapper.getIdentity(MNIRequest,):" +
@@ -153,36 +153,6 @@ public class DefaultAccountMapper {
             throw new SAML2Exception(dse.getMessage());
         }
          
-    }
-
-    /**
-     * Returns the <code>NameIDInfoKey</code> key value pair that can
-     * be used for searching the user.
-     * @param nameID <code>NameID</code> object.
-     * @param hostEntityID hosted <code>EntityID</code>.
-     * @param remoteEntityID remote <code>EntityID</code>.
-     * @exception <code>SAML2Exception</code> if any failure.
-     */
-    protected Map getNameIDKeyMap(NameID nameID, 
-         String hostEntityID, String remoteEntityID) throws SAML2Exception {
-
-         if(nameID == null) {
-            throw new SAML2Exception(bundle.getString(
-                  "nullNameID"));
-         }
-
-         NameIDInfoKey infoKey = new NameIDInfoKey(nameID.getValue(),
-                hostEntityID, remoteEntityID); 
-         HashSet set = new HashSet();
-         set.add(infoKey.toValueString()); 
-
-         Map keyMap = new HashMap();  
-         keyMap.put(AccountUtils.getNameIDInfoKeyAttribute(), set);
-
-         if(debug.messageEnabled()) {
-            debug.message("DefaultAccountMapper.getNameIDKeyMap: " + keyMap);
-         }
-         return keyMap;
     }
 
     /**

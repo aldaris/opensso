@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaConstants.java,v 1.3 2007-04-10 06:28:33 veiming Exp $
+ * $Id: SAML2MetaConstants.java,v 1.4 2007-12-15 06:19:00 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,32 @@ public interface SAML2MetaConstants {
 
     String COT_TRUSTED_PROVIDERS = "sun-saml2-trusted-providers";
 
-    String ACTIVE= "active"; 
+    String ACTIVE= "active";
     
-    String INACTIVE = "inactive";         
+    String INACTIVE = "inactive";
+
+    /**
+     * Namespace declaration for SAML2 metadata
+     */
+    String NS_METADATA = "urn:oasis:names:tc:SAML:2.0:metadata";
+
+    /**
+     * Constant for EntityDescriptor Element
+     */
+    String ENTITY_DESCRIPTOR = "EntityDescriptor";
+
+    /**
+     * Constant for RoleDescriptor Element
+     */
+    String ROLE_DESCRIPTOR = "RoleDescriptor";
+
+    /**
+     * Constant for AttributeQueryDescriptorType Type
+     */
+    String ATTRIBUTE_QUERY_DESCRIPTOR_TYPE = "AttributeQueryDescriptorType";
+
+    /**
+     * Constant for AttributeQueryDescriptor Element
+     */
+    String ATTRIBUTE_QUERY_DESCRIPTOR = "AttributeQueryDescriptor";
 } 

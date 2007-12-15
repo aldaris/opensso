@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.14 2007-11-15 16:42:45 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.15 2007-12-15 06:15:50 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.identity.saml.common.SAMLUtilsCommon;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Assertion;
+import com.sun.identity.saml2.assertion.Attribute;
 import com.sun.identity.saml2.assertion.AudienceRestriction;
 import com.sun.identity.saml2.assertion.AuthnStatement;
 import com.sun.identity.saml2.assertion.Conditions;
@@ -99,9 +100,11 @@ import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
@@ -453,7 +456,8 @@ public class SAML2Utils extends SAML2SDKUtils {
                 if (cert == null) {
                     idp = saml2MetaManager.getIDPSSODescriptor(
                             orgName, idpEntityId);
-                    cert = KeyUtil.getVerificationCert(idp, idpEntityId, true);
+                    cert = KeyUtil.getVerificationCert(idp, idpEntityId,
+                        SAML2Constants.IDP_ROLE);
                 }
                 if (!assertion.isSigned() || !assertion.isSignatureValid(cert)){
                     debug.error(method +
@@ -897,6 +901,36 @@ public class SAML2Utils extends SAML2SDKUtils {
         return exists;
     }
     
+    /**
+     * Returns the <code>NameIDInfoKey</code> key value pair that can
+     * be used for searching the user.
+     * @param nameID <code>NameID</code> object.
+     * @param hostEntityID hosted <code>EntityID</code>.
+     * @param remoteEntityID remote <code>EntityID</code>.
+     * @exception <code>SAML2Exception</code> if any failure.
+     */
+    public static Map getNameIDKeyMap(NameID nameID, 
+         String hostEntityID, String remoteEntityID) throws SAML2Exception {
+
+         if(nameID == null) {
+            throw new SAML2Exception(bundle.getString(
+                  "nullNameID"));
+         }
+
+         NameIDInfoKey infoKey = new NameIDInfoKey(nameID.getValue(),
+                hostEntityID, remoteEntityID); 
+         HashSet set = new HashSet();
+         set.add(infoKey.toValueString()); 
+
+         Map keyMap = new HashMap();  
+         keyMap.put(AccountUtils.getNameIDInfoKeyAttribute(), set);
+
+         if(debug.messageEnabled()) {
+            debug.message("SAML2Utils.getNameIDKeyMap: " + keyMap);
+         }
+         return keyMap;
+    }
+
     /**
      * Returns <code>true</code> if <code>Issuer</code> is valid.
      *
@@ -2118,26 +2152,25 @@ public class SAML2Utils extends SAML2SDKUtils {
             debug.message(method + "attrName - " + attrName);
         }
         try {
-            IDPSSOConfigElement idpConfig = null;
-            SPSSOConfigElement spConfig = null;
-            Map attrs = null;
-            
+            BaseConfigType config = null;
             if (entityRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
-                spConfig =
-                        saml2MetaManager.getSPSSOConfig(realm, hostEntityId);
-                if (spConfig == null) {
-                    return null;
-                }
-                attrs = SAML2MetaUtils.getAttributes(spConfig);
-            } else {
-                idpConfig =
-                        saml2MetaManager.getIDPSSOConfig(realm, hostEntityId);
-                if (idpConfig == null) {
-                    return null;
-                }
-                attrs = SAML2MetaUtils.getAttributes(idpConfig);
+                config =  saml2MetaManager.getSPSSOConfig(realm, hostEntityId);
+            } else if (entityRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {
+                config = saml2MetaManager.getIDPSSOConfig(realm, hostEntityId);
+            } else if (entityRole.equalsIgnoreCase(
+                SAML2Constants.ATTR_AUTH_ROLE)) {
+                config = saml2MetaManager.getAttributeAuthorityConfig(realm,
+                    hostEntityId);
+            } else if (entityRole.equalsIgnoreCase(
+                SAML2Constants.ATTR_QUERY_ROLE)) {
+                config = saml2MetaManager.getAttributeQueryConfig(realm,
+                    hostEntityId);
             }
-            
+
+            if (config == null) {
+                return null;
+            }
+            Map attrs = SAML2MetaUtils.getAttributes(config);
             if (attrs == null) {
                 return null;
             }
@@ -2296,12 +2329,14 @@ public class SAML2Utils extends SAML2SDKUtils {
             SPSSODescriptorElement spSSODesc =
                     saml2MetaManager.getSPSSODescriptor(realm, remoteEntity);
             signingCert =
-                    KeyUtil.getVerificationCert(spSSODesc, remoteEntity, false);
+                    KeyUtil.getVerificationCert(spSSODesc, remoteEntity,
+                    SAML2Constants.SP_ROLE);
         } else {
             IDPSSODescriptorElement idpSSODesc =
                     saml2MetaManager.getIDPSSODescriptor(realm, remoteEntity);
             signingCert =
-                    KeyUtil.getVerificationCert(idpSSODesc, remoteEntity, true);
+                    KeyUtil.getVerificationCert(idpSSODesc, remoteEntity,
+                    SAML2Constants.IDP_ROLE);
         }
         
         if (debug.messageEnabled()) {
@@ -3264,5 +3299,113 @@ public class SAML2Utils extends SAML2SDKUtils {
         }
 
         return certgood;
+    }
+
+    /**
+     * Returns the attribute map by parsing the configured map in hosted
+     * provider configuration
+     * @param realm realm name.
+     * @param hostEntityID <code>EntityID</code> of the hosted provider.
+     * @return a map of local attributes configuration map.
+     *        This map will have a key as the SAML attribute name and the value
+     *        is the local attribute. 
+     * @exception <code>SAML2Exception</code> if any failured.
+     */
+    public static Map getConfigAttributeMap(String realm, String hostEntityID,
+        String role) throws SAML2Exception {
+
+        if (realm == null) {
+            throw new SAML2Exception(bundle.getString("nullRealm"));
+        }
+
+        if (hostEntityID == null) {
+            throw new SAML2Exception(bundle.getString("nullHostEntityID"));
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("SAML2Utils.getConfigAttributeMap:" +
+                " DefaultAttrMapper: relam=" + realm + ", entity id=" +
+                hostEntityID + ", role=" + role);
+        }
+        try {
+            BaseConfigType config = null;
+            if (role.equals(SAML2Constants.SP_ROLE)) {
+                config = saml2MetaManager.getSPSSOConfig(realm, hostEntityID);
+            } else if (role.equals(SAML2Constants.IDP_ROLE)) {
+                config = saml2MetaManager.getIDPSSOConfig(realm, hostEntityID);
+            }
+
+
+            if (config == null) {
+                if (debug.warningEnabled()) {
+                    debug.warning("SAML2Utils.getConfigAttributeMap: " +
+                        "configuration is not defined.");
+                }
+                return Collections.EMPTY_MAP;
+            }
+
+            Map attribConfig = SAML2MetaUtils.getAttributes(config);
+            List mappedAttributes = 
+                (List)attribConfig.get(SAML2Constants.ATTRIBUTE_MAP);
+
+            if ((mappedAttributes == null) || (mappedAttributes.size() == 0)) {
+                if (debug.messageEnabled()) {
+                    debug.message("SAML2Utils.getConfigAttributeMap:" +
+                        "Attribute map is not defined for entity: "+
+                        hostEntityID);
+                }
+                return Collections.EMPTY_MAP; 
+            }
+            Map map = new HashMap();
+
+            for(Iterator iter = mappedAttributes.iterator(); iter.hasNext();) {
+                String entry = (String)iter.next();
+
+                if (entry.indexOf("=") == -1) {
+                    if(debug.messageEnabled()) {
+                        debug.message("SAML2Utils.getConfigAttributeMap: " +
+                            "Invalid entry." + entry);
+                    }
+                    continue;
+                }
+
+                StringTokenizer st = new StringTokenizer(entry, "="); 
+                map.put(st.nextToken(), st.nextToken());
+            }
+            return map;
+
+        } catch(SAML2MetaException sme) {
+            debug.error("SAML2Utils.getConfigAttributeMap: ", sme);
+            throw new SAML2Exception(sme.getMessage());
+
+        }
+    }
+    
+    /**
+     * Returns the SAML <code>Attribute</code> object.
+     * @param name attribute name.
+     * @param values attribute values.
+     * @exception SAML2Exception if any failure.
+     */
+    public static Attribute getSAMLAttribute(String name, String[] values)
+        throws SAML2Exception {
+
+         if (name == null) {
+             throw new SAML2Exception(bundle.getString("nullInput"));
+         }
+
+         AssertionFactory factory = AssertionFactory.getInstance();
+         Attribute attribute =  factory.createAttribute();
+
+         attribute.setName(name);
+         attribute.setNameFormat(SAML2Constants.BASIC_NAME_FORMAT);
+         if (values != null) {
+             List list = new ArrayList();
+             for (int i=0; i<values.length; i++) {
+                 list.add(XMLUtils.escapeSpecialCharacters(values[i]));
+             }
+             attribute.setAttributeValueString(list);
+         }
+         return attribute;
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProtocolFactory.java,v 1.1 2006-10-30 23:16:43 qcheng Exp $
+ * $Id: ProtocolFactory.java,v 1.2 2007-12-15 06:23:24 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,13 +33,14 @@ import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.protocol.impl.ArtifactImpl;
 import com.sun.identity.saml2.protocol.impl.ArtifactResolveImpl;
 import com.sun.identity.saml2.protocol.impl.ArtifactResponseImpl;
-import com.sun.identity.saml2.protocol.impl.RequestedAuthnContextImpl;
+import com.sun.identity.saml2.protocol.impl.AttributeQueryImpl;
 import com.sun.identity.saml2.protocol.impl.AuthnRequestImpl;
 import com.sun.identity.saml2.protocol.impl.ExtensionsImpl;
 import com.sun.identity.saml2.protocol.impl.GetCompleteImpl;
 import com.sun.identity.saml2.protocol.impl.IDPEntryImpl;
 import com.sun.identity.saml2.protocol.impl.IDPListImpl;
 import com.sun.identity.saml2.protocol.impl.NameIDPolicyImpl;
+import com.sun.identity.saml2.protocol.impl.RequestedAuthnContextImpl;
 import com.sun.identity.saml2.protocol.impl.RequesterIDImpl;
 import com.sun.identity.saml2.protocol.impl.ScopingImpl;
 import com.sun.identity.saml2.protocol.impl.SessionIndexImpl;
@@ -81,6 +82,59 @@ public class ProtocolFactory  {
         return protoInstance;
     }
     
+    /**
+     * Returns the <code>AttributeQuery</code> Object.
+     *
+     * @return the <code>AttributeQuery</code> object.
+     * @throws SAML2Exception if <code>AttributeQuery</code> cannot be created.
+     */
+    public AttributeQuery createAttributeQuery() throws SAML2Exception {
+	Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.ATTRIBUTE_QUERY);
+	if (obj == null) {
+            return new AttributeQueryImpl();
+	} else {
+            return (AttributeQuery) obj;
+	}
+    }
+    
+    /**
+     * Returns the <code>AttributeQuery</code> Object.
+     *
+     * @param value the Document Element of <code>AttributeQuery</code> object.
+     * @return the <code>AttributeQuery</code> object.
+     * @throws SAML2Exception if <code>AttributeQuery</code> cannot be created.
+     */
+    
+    public AttributeQuery createAttributeQuery(Element value)
+        throws SAML2Exception {
+	Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.ATTRIBUTE_QUERY, value);
+	if (obj == null) {
+            return new AttributeQueryImpl(value);
+	} else {
+            return (AttributeQuery) obj;
+	}
+    }
+    
+    /**
+     * Returns the <code>AttributeQuery</code> Object.
+     *
+     * @param value <code>AttributeQuery</code> XML String.
+     * @return the <code>AttributeQuery</code> object.
+     * @throws SAML2Exception if <code>AttributeQuery</code> cannot be created.
+     */
+    public AttributeQuery createAttributeQuery(String value)
+        throws SAML2Exception {
+	Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.ATTRIBUTE_QUERY, value);
+	if (obj == null) {
+            return new AttributeQueryImpl(value);
+	} else {
+            return (AttributeQuery) obj;
+	}
+    }
+
     /**
      * Returns the <code>AuthnRequest</code> Object.
      *

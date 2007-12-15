@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.8 2007-11-15 16:42:45 qcheng Exp $
+ * $Id: LogoutUtil.java,v 1.9 2007-12-15 06:22:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -797,12 +797,14 @@ public class LogoutUtil {
             SPSSODescriptorElement spSSODesc =
                 metaManager.getSPSSODescriptor(realm, remoteEntity);
             signingCert = 
-                KeyUtil.getVerificationCert(spSSODesc, remoteEntity, false);
+                KeyUtil.getVerificationCert(spSSODesc, remoteEntity,
+                SAML2Constants.SP_ROLE);
         } else {
             IDPSSODescriptorElement idpSSODesc = 
                  metaManager.getIDPSSODescriptor(realm, remoteEntity);
             signingCert = 
-                    KeyUtil.getVerificationCert(idpSSODesc, remoteEntity, true);
+                KeyUtil.getVerificationCert(idpSSODesc, remoteEntity,
+                SAML2Constants.IDP_ROLE);
         }
 
         if (signingCert != null) {
@@ -919,12 +921,14 @@ public class LogoutUtil {
             SPSSODescriptorElement spSSODesc =
                 metaManager.getSPSSODescriptor(realm, remoteEntity);
             signingCert = 
-                    KeyUtil.getVerificationCert(spSSODesc, remoteEntity, false);
+                KeyUtil.getVerificationCert(spSSODesc, remoteEntity,
+                SAML2Constants.SP_ROLE);
         } else {
             IDPSSODescriptorElement idpSSODesc = 
                      metaManager.getIDPSSODescriptor(realm, remoteEntity);
             signingCert = 
-                KeyUtil.getVerificationCert(idpSSODesc, remoteEntity, true);
+                KeyUtil.getVerificationCert(idpSSODesc, remoteEntity,
+                SAML2Constants.IDP_ROLE);
         }
         
         if (signingCert != null) {
@@ -972,12 +976,14 @@ public class LogoutUtil {
             SPSSODescriptorElement spSSODesc =
                 metaManager.getSPSSODescriptor(realm, remoteEntity);
             keyDescriptor = KeyUtil.getKeyDescriptor(spSSODesc, "encryption");
-            encryptInfo = KeyUtil.getEncInfo(spSSODesc, remoteEntity, false);
+            encryptInfo = KeyUtil.getEncInfo(spSSODesc, remoteEntity,
+                SAML2Constants.SP_ROLE);
         } else {
             IDPSSODescriptorElement idpSSODesc = 
                 metaManager.getIDPSSODescriptor(realm, remoteEntity);
             keyDescriptor = KeyUtil.getKeyDescriptor(idpSSODesc, "encryption");
-            encryptInfo = KeyUtil.getEncInfo(idpSSODesc, remoteEntity, true);
+            encryptInfo = KeyUtil.getEncInfo(idpSSODesc, remoteEntity,
+                SAML2Constants.IDP_ROLE);
         }
 
         if (debug.messageEnabled()) {

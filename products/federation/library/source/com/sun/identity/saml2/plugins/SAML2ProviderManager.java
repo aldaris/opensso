@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2ProviderManager.java,v 1.1 2007-04-23 03:37:03 hengming Exp $
+ * $Id: SAML2ProviderManager.java,v 1.2 2007-12-15 06:20:42 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -225,6 +225,6 @@ public class SAML2ProviderManager implements ProviderManager {
             return null;
         }
 
-        return KeyUtil.getEncInfo(ssod, providerID, false);
+        return KeyUtil.getEncInfo(ssod, providerID, SAML2Constants.SP_ROLE);
     }
 }

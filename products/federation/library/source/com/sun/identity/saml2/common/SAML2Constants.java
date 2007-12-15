@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.18 2007-11-15 16:42:44 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.19 2007-12-15 06:15:50 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,6 +133,12 @@ public interface SAML2Constants {
         NAMEID_FORMAT_NAMESPACE_V_1_1 + "unspecified";
   
     /**
+     * String to represent Entity Name Identifier
+     */
+    public String ENTITY =
+                NAMEID_FORMAT_NAMESPACE + "entity";
+
+    /**
      * String to represent X509 Subejct Name Identifier
      */
     public String X509_SUBJECT_NAME =
@@ -157,6 +163,51 @@ public interface SAML2Constants {
     
     public String VERSION_MISMATCH =
         "urn:oasis:names:tc:SAML:2.0:status:VersionMismatch";
+
+    public String UNKNOWN_PRINCIPAL =
+        "urn:oasis:names:tc:SAML:2.0:status:UnknownPrincipal";
+
+    public String AUTHN_FAILED =
+        "urn:oasis:names:tc:SAML:2.0:status:AuthnFailed";
+
+    public String INVALID_ATTR_NAME_OR_VALUE =
+        "urn:oasis:names:tc:SAML:2.0:status:InvalidAttrNameOrValue";
+
+    /**
+     * Basic name format
+     */
+    public String BASIC_NAME_FORMAT =
+        "urn:oasis:names:tc:SAML:2.0:attrname-format:basic";
+
+    /**
+     * Basic attribute profile
+     */
+    public String BASIC_ATTRIBUTE_PROFILE =
+        "urn:oasis:names:tc:SAML:2.0:profiles:attribute:basic";
+
+    /**
+     * Attribute Query default profile
+     */
+    public static final String DEFAULT_ATTR_QUERY_PROFILE =
+        "urn:oasis:names:tc:SAML:2.0:profiles:query";
+
+    /**
+     * Attribute Query x509 Subject profile
+     */
+    public static final String X509_SUBJECT_ATTR_QUERY_PROFILE =
+        "urn:oasis:names:tc:SAML:2.0:profiles:query:attribute:X509";
+
+    /**
+     * Attribute Query default profile alias
+     */
+    public static final String DEFAULT_ATTR_QUERY_PROFILE_ALIAS =
+        "default";
+
+    /**
+     * Attribute Query x509 Subject profile alias
+     */
+    public static final String X509_SUBJECT_ATTR_QUERY_PROFILE_ALIAS =
+        "x509Subject";
 
     /**
      * Strings represent subject confirmation methods
@@ -259,6 +310,16 @@ public interface SAML2Constants {
      * Constant for LogoutResponse
      */
     public String LOGOUT_RESPONSE="LogoutResponse";
+
+    /**
+     * Constant for AttributeQuery
+     */
+    public String ATTRIBUTE_QUERY = "AttributeQuery";
+
+    /**
+     * Constant for Attribute
+     */
+    public String ATTRIBUTE="Attribute";
 
     /**
      * Constant for SessionIndex
@@ -574,6 +635,12 @@ public interface SAML2Constants {
                         "idpAttributeMapper";
 
     /**
+     * Attribute authority mapper.
+     */
+    public String ATTRIBUTE_AUTHORITY_MAPPER = 
+                        "attributeAuthorityMapper";
+
+    /**
      * RelayState Parameter
      */
     public String RELAY_STATE="RelayState";
@@ -656,6 +723,16 @@ public interface SAML2Constants {
      */
     String PEP_ROLE = "PEPRole";
     
+    /**
+     * Attribute Authority Role
+     */
+    String ATTR_AUTH_ROLE = "AttrAuthRole";
+
+    /**
+     * Attribute Query Role
+     */
+    String ATTR_QUERY_ROLE = "AttrQueryRole";
+
     /**
      * Unknown Role
      */
@@ -834,6 +911,13 @@ public interface SAML2Constants {
         "ECPRequestIDPListGetComplete";
 
     /**
+     * Attribute Authority Config attribute name. Used to specify data store
+     * attribute name than containse X509 subjecT DN.
+     */
+    public String X509_SUBJECT_DATA_STORE_ATTR_NAME =
+        "x509SubjectDataStoreAttrName";
+
+    /**
      * Constant for SAML2IDPSessionIndex SSO token property
      */
     public String IDP_SESSION_INDEX = "SAML2IDPSessionIndex";
@@ -940,6 +1024,10 @@ public interface SAML2Constants {
     public String DEFAULT_IDP_ATTRIBUTE_MAPPER_CLASS =
         "com.sun.identity.saml2.plugins.DefaultIDPAttributeMapper";
 
+    // Default Attribute Authority mapper class name
+    public static final String DEFAULT_ATTRIBUTE_AUTHORITY_MAPPER_CLASS =
+        "com.sun.identity.saml2.plugins.DefaultAttributeAuthorityMapper";
+
     // Default IDP ECP Session mapper class name
     public static final String DEFAULT_IDP_ECP_SESSION_MAPPER_CLASS =
         "com.sun.identity.saml2.plugins.DefaultIDPECPSessionMapper";
@@ -1033,8 +1121,17 @@ public interface SAML2Constants {
     public String DISCOVERY_BOOTSTRAP_CREDENTIALS =
         "DiscoveryBootstrapCrendentials";
     
+    /**
+     * XML Schema Instance namespace URI
+     */
     public String NS_XSI = 
-            "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
+        "http://www.w3.org/2001/XMLSchema-instance";
+
+    /**
+     * String used to declare XML Schema Instance namespace.
+     */
+    public String XSI_DECLARE_STR =
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
 
     /**
      * List of SAE appliation name to encrypted secret mapping.

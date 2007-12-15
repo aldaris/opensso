@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAttributeMapper.java,v 1.2 2007-08-17 22:48:11 exu Exp $
+ * $Id: DefaultAttributeMapper.java,v 1.3 2007-12-15 06:20:42 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,24 +28,12 @@ package com.sun.identity.saml2.plugins;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 
-import com.sun.identity.saml2.assertion.Attribute;
+import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
-import com.sun.identity.saml2.common.SAML2Constants;
-import com.sun.identity.saml2.meta.SAML2MetaManager;
-import com.sun.identity.saml2.meta.SAML2MetaUtils;
-import com.sun.identity.saml2.meta.SAML2MetaException;
-import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 
-import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.Iterator;
-import java.util.Collections;
 
 /**
  * This class <code>DefaultAttribute</code> is the base class for 
@@ -55,7 +43,6 @@ import java.util.Collections;
  */
 public class DefaultAttributeMapper {
 
-    protected static SAML2MetaManager metaManager = null;
     protected static Debug debug = SAML2Utils.debug;
     protected static ResourceBundle bundle = SAML2Utils.bundle;
     protected static DataStoreProvider dsProvider = null;
@@ -65,7 +52,6 @@ public class DefaultAttributeMapper {
     static {
         try {
             dsProvider = SAML2Utils.getDataStoreProvider();
-            metaManager = new SAML2MetaManager();
         } catch (Exception ex) {
             debug.error("DefaultAttributeMapper.static init failed.", ex);
         }
@@ -86,75 +72,11 @@ public class DefaultAttributeMapper {
      *        is the local attribute. 
      * @exception <code>SAML2Exception</code> if any failured.
      */
-    public Map getConfigAttributeMap(
-         String realm, String hostEntityID, String role) throws SAML2Exception {
+    public Map getConfigAttributeMap(String realm, String hostEntityID,
+        String role) throws SAML2Exception {
 
-        if(realm == null) {
-           throw new SAML2Exception(bundle.getString(
-             "nullRealm"));
-        }
+        return SAML2Utils.getConfigAttributeMap(realm, hostEntityID, role);
 
-        if(hostEntityID == null) {
-           throw new SAML2Exception(bundle.getString(
-             "nullHostEntityID"));
-        }
-
-        if (debug.messageEnabled()) {
-            debug.message("DefaultAttrMapper: relam=" + realm + ", entity id="
-                + hostEntityID + ", role=" + role);
-        }
-        try {
-            BaseConfigType config = null;
-            if(role.equals(SP)) {
-               config = metaManager.getSPSSOConfig(realm, hostEntityID);
-            } else {
-               config = metaManager.getIDPSSOConfig(realm, hostEntityID);
-            }
-
-
-            if(config == null) {
-               if(debug.warningEnabled()) {
-                  debug.warning("DefaultAttributeMapper.getConfigAttribute" +
-                  "Map: configuration is not defined.");
-               }
-               return Collections.EMPTY_MAP;
-            }
-
-            Map attribConfig = SAML2MetaUtils.getAttributes(config);
-            List mappedAttributes = 
-                 (List)attribConfig.get(SAML2Constants.ATTRIBUTE_MAP);
-
-            if(mappedAttributes == null || mappedAttributes.size() == 0) {
-               if(debug.messageEnabled()) {
-                  debug.message("DefaultAttributeMapper.getConfigAttributeMap:"
-                  + "Attribute map is not defined for entity: " + hostEntityID);
-               }
-               return Collections.EMPTY_MAP; 
-            }
-            Map map = new HashMap();
-
-            for(Iterator iter = mappedAttributes.iterator(); iter.hasNext();) {
-                String entry = (String)iter.next();
-
-                if(entry.indexOf("=") == -1) {
-                   if(debug.messageEnabled()) {
-                      debug.message("DefaultAttributeMapper.getConfig" +
-                      "AttributeMap: Invalid entry." + entry);
-                   }
-                   continue;
-                }
-
-                StringTokenizer st = new StringTokenizer(entry, "="); 
-                map.put(st.nextToken(), st.nextToken());
-            }
-            return map;
-
-        } catch(SAML2MetaException sme) {
-            debug.error("DefaultAttributeMapper.getConfigAttributeMap: " +
-            "Meta Exception", sme);
-            throw new SAML2Exception(sme.getMessage());
-
-        }
     }
 
 }

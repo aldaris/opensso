@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.9 2007-09-11 19:39:51 bina Exp $
+ * $Id: SAML2MetaManager.java,v 1.10 2007-12-15 06:19:00 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,17 +42,21 @@ import com.sun.identity.plugin.configuration.ConfigurationManager;
 import com.sun.identity.plugin.configuration.ConfigurationInstance;
 import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.jaxb.entityconfig.AttributeAuthorityConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.AttributeQueryConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.XACMLPDPConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzDecisionQueryDescriptorElement;
-import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
 import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.shared.debug.Debug;
 
@@ -199,6 +203,42 @@ public class SAML2MetaManager {
     }
 
  
+    /**
+     * Returns attribute authority descriptor in an entity under the
+     * realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved. 
+     * @return an <code>AttributeAuthorityDescriptorElement</code> object for
+     *     the entity or null if not found. 
+     * @throws SAML2MetaException if unable to retrieve attribute authority
+     *     descriptors.
+     */
+    public AttributeAuthorityDescriptorElement
+        getAttributeAuthorityDescriptor(String realm, String entityId)
+        throws SAML2MetaException {
+        EntityDescriptorElement eDescriptor = getEntityDescriptor(
+            realm, entityId);
+        return SAML2MetaUtils.getAttributeAuthorityDescriptor(eDescriptor);
+    }
+
+    /**
+     * Returns attribute query descriptor in an entity under the
+     * realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved. 
+     * @return an <code>AttributeQueryDescriptorElement</code> object for
+     *     the entity or null if not found. 
+     * @throws SAML2MetaException if unable to retrieve attribute query
+     *     descriptors.
+     */
+    public AttributeQueryDescriptorElement
+        getAttributeQueryDescriptor(String realm, String entityId)
+        throws SAML2MetaException {
+        EntityDescriptorElement eDescriptor = getEntityDescriptor(
+            realm, entityId);
+        return SAML2MetaUtils.getAttributeQueryDescriptor(eDescriptor);
+    }
+
     /**
      * Returns first policy decision point descriptor in an entity under the
      * realm.
@@ -619,6 +659,66 @@ public class SAML2MetaManager {
             Object obj = iter.next();
             if (obj instanceof IDPSSOConfigElement) {
                 return (IDPSSOConfigElement)obj;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns first attribute authority configuration in an entity under
+     * the realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved.
+     * @return <code>AttributeAuthorityConfigElement</code> for the entity or
+     *     null if not found.
+     * @throws SAML2MetaException if unable to retrieve the first attribute
+     *     authority configuration.
+     */
+    public AttributeAuthorityConfigElement getAttributeAuthorityConfig(
+        String realm, String entityId) throws SAML2MetaException {
+
+        EntityConfigElement eConfig = getEntityConfig(realm, entityId);
+        if (eConfig == null) {
+            return null;
+        }
+
+        List list =
+            eConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+        for(Iterator iter = list.iterator(); iter.hasNext();) {
+            Object obj = iter.next();
+            if (obj instanceof AttributeAuthorityConfigElement) {
+                return (AttributeAuthorityConfigElement)obj;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns first attribute query configuration in an entity under
+     * the realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved.
+     * @return <code>AttributeQueryConfigElement</code> for the entity or
+     *     null if not found.
+     * @throws SAML2MetaException if unable to retrieve the first attribute
+     *     query configuration.
+     */
+    public AttributeQueryConfigElement getAttributeQueryConfig(
+        String realm, String entityId) throws SAML2MetaException {
+
+        EntityConfigElement eConfig = getEntityConfig(realm, entityId);
+        if (eConfig == null) {
+            return null;
+        }
+
+        List list =
+            eConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+        for(Iterator iter = list.iterator(); iter.hasNext();) {
+            Object obj = iter.next();
+            if (obj instanceof AttributeQueryConfigElement) {
+                return (AttributeQueryConfigElement)obj;
             }
         }
 

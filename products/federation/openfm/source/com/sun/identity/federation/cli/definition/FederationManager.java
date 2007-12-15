@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.20 2007-07-28 01:34:55 veiming Exp $
+ * $Id: FederationManager.java,v 1.21 2007-12-15 06:27:24 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,21 +63,29 @@ public class FederationManager {
             "extended|x|s|c|Specify file name for the standard metadata to be created.",
             "serviceprovider|s|s|Specify metaAlias for hosted service provider to be created. The format must be <realm name>/<identifier>.",
             "identityprovider|i|s|Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.",
+            "attrqueryprovider|S|s|Specify metaAlias for hosted attribute query provider to be created. The format must be <realm name>/<identifier>.",
+            "attrauthority|I|s|Specify metaAlias for hosted attribute authority to be created. The format must be <realm name>/<identifier>.",
             "xacmlpep|e|s|Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.",
             "xacmlpdp|p|s|Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.",
             "spscertalias|a|s|Service provider signing certificate alias",
             "idpscertalias|b|s|Identity provider signing certificate alias",
+            "attrqscertalias|A|s|Attribute query provider signing certificate alias",
+            "attrascertalias|B|s|Attribute authority signing certificate alias",
             "xacmlpdpscertalias|t|s|Policy decision point signing certificate alias",
             "xacmlpepscertalias|k|s|Policy enforcement point signing certificate alias",
             "specertalias|r|s|Service provider encryption certificate alias",
             "idpecertalias|g|s|Identity provider encryption certificate alias.",
+            "attrqecertalias|R|s|Attribute query provider encryption certificate alias",
+            "attraecertalias|G|s|Attribute authority encryption certificate alias.",
             "xacmlpdpecertalias|j|s|Policy decision point encryption certificate alias",
             "xacmlpepecertalias|z|s|Policy enforcement point encryption certificate alias",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "create-meta-template-exception-role-null=Identity or Service Provider or Policy Enforcement Point or Policy Decision Point are required.",
             "create-meta-template-exception-idp-null-with-cert-alias=Identity Provider Certificate Alias is provided without Identity Provider Name.",
-            "create-meta-template-exception-dp-null-with-cert-alias=Service Provider Certificate Alias is provided without Service Provider Name.",
+            "create-meta-template-exception-sp-null-with-cert-alias=Service Provider Certificate Alias is provided without Service Provider Name.",
+            "create-meta-template-exception-attra-null-with-cert-alias=Attribute Authority Certificate Alias is provided without Attribute Authority Name.",
+            "create-meta-template-exception-attrq-null-with-cert-alias=Attribute Query Provider Certificate Alias is provided without Attribute Query Provider Name.",
             "create-meta-template-exception-pdp-null-with-cert-alias=Policy Decision Point Certificate Alias is provided without Policy Decision Point Name",
             "create-meta-template-exception-pep-null-with-cert-alias=Policy Enforcement Point Certificate Alias is provided without Policy Enforcement Point Name",
             "create-meta-template-exception-protocol-not-found=Protocol is not found in configuration file.",

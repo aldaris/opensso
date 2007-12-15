@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PAOSHeader.java,v 1.2 2007-10-04 04:27:31 hengming Exp $
+ * $Id: PAOSHeader.java,v 1.3 2007-12-15 06:11:54 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,6 +78,10 @@ public class PAOSHeader {
      */
     public PAOSHeader(HttpServletRequest req) throws PAOSException {
         paosHeaderStr = req.getHeader(PAOS_HEADER);
+        if (PAOSUtils.debug.messageEnabled()) {
+            PAOSUtils.debug.message("PAOSHeader.PAOSHeader: PAOS Header = " +
+                paosHeaderStr);
+        }
         if (paosHeaderStr != null) {
             paosHeaderStr = paosHeaderStr.trim();
         } else {
@@ -187,7 +191,8 @@ public class PAOSHeader {
     
     private String trimQuotes(String inStr) {
 	
-	if (inStr.startsWith("\"") && inStr.endsWith("\"")) {
+	if ((inStr.startsWith("\"") && inStr.endsWith("\"")) ||
+            (inStr.startsWith("'") && inStr.endsWith("'"))) {
 	    return inStr.substring(1, inStr.length()-1);
 	}
 	return inStr;
