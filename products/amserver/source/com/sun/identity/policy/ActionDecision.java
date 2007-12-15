@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ActionDecision.java,v 1.3 2006-08-25 21:21:02 veiming Exp $
+ * $Id: ActionDecision.java,v 1.4 2007-12-15 08:54:57 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,20 +57,17 @@ public class ActionDecision {
     private long timeToLive = Long.MAX_VALUE;
     private Map advices;
 
-    public static final String CLIENT_CLOCK_SKEW 
-            = "com.sun.identity.policy.client.clockSkew";
-
     /**
      *  Difference of system clock on the client machine compared to 
      * policy server machine. Valid life of policy decisions are extended 
      * by this skew on the client side.
      * Value for this is set by reading property 
      * com.sun.identity.policy.client.clockSkew
-     * from AMConfig.properties in classpath.
+     * from SystemProperties
      * If the value is not defined in AMConfig.properties, 
      * this would default to 0.
      */
-    private static final long clientClockSkew = getClientClockSkew();
+    private static long clientClockSkew = 0;
 
     /**
      * No argument constructor
@@ -347,41 +344,11 @@ public class ActionDecision {
     }
 
     /**
-     * Returns the client clock skew setup in the AMConfig.properties, if
-     * property is not set, defaults to 0.
-     * @see #CLIENT_CLOCK_SKEW
+     * Sets the client clock skew 
+     * @param skew the time skew in milliseconds, serverTime - clientTime
      */
-    static long getClientClockSkew() {
-        long ccSkew = 0;
-        String clientClockSkewString 
-                = SystemProperties.get(ActionDecision.CLIENT_CLOCK_SKEW);
-        if (clientClockSkewString == null) {
-            if (debug.messageEnabled()) {
-                debug.message("PolicyUtils.getClientClockSkew():"
-                        + CLIENT_CLOCK_SKEW + " Property not defined "
-                        + ": defaulting to 0");
-            }
-        } else {
-            try {
-
-                //convert from seconds to milliseconds
-                ccSkew = Long.valueOf(clientClockSkewString).longValue()*1000;
-                if (debug.messageEnabled()) {
-                    debug.message(
-                            "PolicyUtils.getClientClockSkew():"
-                            + CLIENT_CLOCK_SKEW + " = "
-                            + clientClockSkewString);
-                }
-            } catch (NumberFormatException nfe) {
-                if (debug.messageEnabled()) {
-                    debug.message(
-                            "PolicyUtils.getClientClockSkew():"
-                            + CLIENT_CLOCK_SKEW + " not a long number"
-                            + ": defaulting to 0", nfe);
-                }
-            }
-        }
-        return ccSkew ;
+    public static void setClientClockSkew(long skew) {
+        clientClockSkew = skew;
     }
 
 }

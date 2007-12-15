@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.7 2007-10-17 23:00:45 veiming Exp $
+ * $Id: ResourceResultCache.java,v 1.8 2007-12-15 08:54:57 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,7 +104,6 @@ class ResourceResultCache implements SSOTokenListener {
     private static long requestID = 0;
     private static String REQUEST_ID_LOCK = "REQUEST_ID_LOCK";
     private static String SECRET_MASK = "*********";
-    private static String cacheMode;
 
     /**
      * Constructs the singleton instance of <code>ResourceResultCache</code>
@@ -119,7 +118,6 @@ class ResourceResultCache implements SSOTokenListener {
         this.policyProperties = policyProperties;
         notificationHandler = new PolicyNotificationHandler(this);
         cacheTtl = policyProperties.getCacheTtl();
-        cacheMode = policyProperties.getCacheMode();
 
         if(policyProperties.notificationEnabled()){
             //register notification handler with PLLClient
@@ -133,7 +131,7 @@ class ResourceResultCache implements SSOTokenListener {
 
         if (debug.messageEnabled()) {
             debug.message( "RsourceResultCache():"
-                    + "singleton instance created");
+                    + "Singleton Instance Created");
         }
     }
 
@@ -153,7 +151,10 @@ class ResourceResultCache implements SSOTokenListener {
             PolicyProperties policyProperties) throws PolicyException {
         if (resourceResultCache == null) {
             resourceResultCache = new ResourceResultCache(policyProperties);
-        } 
+        }  else {
+            resourceResultCache.policyProperties = policyProperties;
+            resourceResultCache.cacheTtl = policyProperties.getCacheTtl();
+        }
         return resourceResultCache;
     } 
 
@@ -283,8 +284,8 @@ class ResourceResultCache implements SSOTokenListener {
             throws InvalidAppSSOTokenException, 
             PolicyException, SSOException {
 
+        String cacheMode = policyProperties.getCacheMode();
         String rootResourceName = resourceName;
-        String scope = cacheMode;
         if (PolicyProperties.SUBTREE.equals(cacheMode)) {
             rootResourceName = getRootResourceName(resourceName, serviceName);
             if (debug.messageEnabled()) {
@@ -292,13 +293,12 @@ class ResourceResultCache implements SSOTokenListener {
                         + "resourceName=" + resourceName
                         + ":cacheMode=" + cacheMode
                         + ":would get resource results for root resource="
-                        + rootResourceName
-                        + ":scope=" +scope);
+                        + rootResourceName);
             }
         }
 
         Set resourceResults = getResourceResults(appToken, serviceName, 
-                token, rootResourceName, actionNames, env, scope, useCache);
+                token, rootResourceName, actionNames, env, cacheMode, useCache);
         ResourceName resourceComparator =
                 (ResourceName)policyProperties.getResourceComparator(
                 serviceName);
@@ -310,7 +310,7 @@ class ResourceResultCache implements SSOTokenListener {
                     + ":token=" + token.getPrincipal().getName() 
                     + ":resourceName=" + resourceName 
                     + ":actionNames=" + actionNames + ":env" 
-                    + ":scope=" + scope
+                    + ":cacehMode=" + cacheMode
                     + ":useCache=" + useCache
                     + ":returning policyDecision:" + pd);
         }
@@ -373,6 +373,7 @@ class ResourceResultCache implements SSOTokenListener {
             throws InvalidAppSSOTokenException, 
             PolicyException, SSOException {
         SSOTokenManager.getInstance().validateToken(token);
+        String cacheMode = policyProperties.getCacheMode();
         Set resourceResults = null;
         if (debug.messageEnabled()) {
             debug.message("ResourceResultCache.getResourceResults():"
@@ -930,10 +931,11 @@ class ResourceResultCache implements SSOTokenListener {
      * @param notificationURL end point on the client that listens for
      * notifications
      */
-     private boolean removeRemotePolicyListener(SSOToken appToken, 
+     public boolean removeRemotePolicyListener(SSOToken appToken, 
             String serviceName, String notificationURL) {
         boolean status = false;
         URL policyServiceURL = null;
+        remotePolicyListeners.remove(notificationURL);
         if (appToken != null) {
             try {
                 policyServiceURL = getPolicyServiceURL(appToken);
@@ -1224,8 +1226,7 @@ class ResourceResultCache implements SSOTokenListener {
                                         + ":affectedResourceName=" + affectedRN
                                         + ":match=WILD_CARD_MATCH");
                             }
-                        } else if (cacheMode.equals(PolicyProperties.SUBTREE) 
-                                && rm.equals(
+                        } else if (rm.equals(
                                 ResourceMatch.SUB_RESOURCE_MATCH)) {
                             crIter.remove();
                             if (debug.messageEnabled()) {
@@ -1234,7 +1235,6 @@ class ResourceResultCache implements SSOTokenListener {
                                         + "cleared cached results for "
                                         + "resourceName=" + cachedRN
                                         + ":affectedResourceName=" + affectedRN
-                                        + "cacheMode=" + cacheMode
                                         + ":match=SUB_RESOURCE_MACTH");
                             }
                         }

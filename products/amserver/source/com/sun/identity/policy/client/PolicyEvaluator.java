@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.2 2006-08-25 21:21:07 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.3 2007-12-15 08:54:57 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -168,6 +168,11 @@ public class PolicyEvaluator {
                 = ResourceResultCache.getInstance(policyProperties);
         appSSOToken = getNewAppSSOToken();
 
+        if (PolicyProperties.previouslyNotificationEnabled()) {
+            resourceResultCache.removeRemotePolicyListener(appSSOToken,
+                    serviceName, PolicyProperties.getPreviousNotificationURL());
+        }
+
         if (policyProperties.notificationEnabled()) {
 
             // register remote policy listener policy service
@@ -180,6 +185,8 @@ public class PolicyEvaluator {
             resourceResultCache.addRemotePolicyListener(appSSOToken,
                     serviceName, policyProperties.getNotificationURL());
         }
+
+        ActionDecision.setClientClockSkew(policyProperties.getClientClockSkew());
 
         if (debug.messageEnabled()) {
             debug.message("PolicyEvaluator:"

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyProperties.java,v 1.2 2006-08-25 21:21:07 veiming Exp $
+ * $Id: PolicyProperties.java,v 1.3 2007-12-15 08:54:57 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -119,8 +119,34 @@ class PolicyProperties {
     private String pre22FalseValue = PRE22_FALSE_VALUE;
     private ResourceName prefixResourceName = new PrefixResourceName();
 
+    /**
+     * Difference of system clock on the client machine compared to 
+     * policy server machine. Valid life of policy decisions are extended 
+     * by this skew on the client side.
+     * Value for this is set by reading property 
+     * com.sun.identity.policy.client.clockSkew
+     * from AMConfig.properties in classpath.
+     * If the value is not defined in AMConfig.properties, 
+     * this would default to 0.
+     */
+    private static long clientClockSkew = 0;
+
+    /**
+     * Previous notification status
+     */
+    private static boolean previousNotificationEnabledFlag = false;
+
+     /**
+     * Previous notification URL
+     */
+    private static String previousNotificationURL = null;
+
+
     private static String logActions = NONE;
     private static Debug debug = PolicyEvaluator.debug;
+
+    public static final String CLIENT_CLOCK_SKEW 
+            = "com.sun.identity.policy.client.clockSkew";
 
     /**
      * Creates an instance of <code>PolicyProperties</code>
@@ -171,6 +197,9 @@ class PolicyProperties {
                         + (cacheTtl/60/1000) + "minutes" );
             }
         }
+
+        previousNotificationEnabledFlag = notificationEnabledFlag;
+        previousNotificationURL = notificationURL;
 
         //initialize notification status
 	String isEnabled = SystemProperties.get(NOTIFICATION_ENABLED);
@@ -328,6 +357,37 @@ class PolicyProperties {
 		responseAttributeNames.add(st.nextToken());
 	    }
 	}
+
+        //initialize clientClockSkew
+        String clientClockSkewString 
+                = SystemProperties.get(CLIENT_CLOCK_SKEW);
+        if (clientClockSkewString == null) {
+            if (debug.messageEnabled()) {
+                debug.message("PolicyProperties.getClientClockSkew():"
+                        + CLIENT_CLOCK_SKEW + " Property not defined "
+                        + ": defaulting to 0");
+            }
+        } else {
+            try {
+
+                //convert from seconds to milliseconds
+                clientClockSkew = Long.valueOf(clientClockSkewString).longValue()*1000;
+                if (debug.messageEnabled()) {
+                    debug.message(
+                            "PolicyProperties.constructor():"
+                            + CLIENT_CLOCK_SKEW + " = "
+                            + clientClockSkewString);
+                }
+            } catch (NumberFormatException nfe) {
+                if (debug.messageEnabled()) {
+                    debug.message(
+                            "PolicyProperties.constructor():"
+                            + CLIENT_CLOCK_SKEW + " not a long number"
+                            + ": defaulting to 0", nfe);
+                }
+            }
+        }
+        
         if (debug.messageEnabled()) {
             debug.message("PolicyProperties():constructed");
         }
@@ -381,6 +441,15 @@ class PolicyProperties {
     }
 
     /**
+     * Returns the client clock skew 
+     * @return skew the time skew in milliseconds, serverTime - clientTime
+     * @see #CLIENT_CLOCK_SKEW
+     */
+    long getClientClockSkew() {
+        return clientClockSkew;
+    }
+
+    /**
      * Checks if policy client is enabled to get notifications from policy
      * service
      * @return <code>true</code> if client is enabled to get notifications from
@@ -391,14 +460,34 @@ class PolicyProperties {
     }
 
     /**
+     * Checks if policy client was enabled to get notifications previously
+     * @return <code>true</code> if client wass enabled to get notifications from
+     * policy service
+     */
+    static boolean previouslyNotificationEnabled() {
+        return previousNotificationEnabledFlag;
+    }
+
+    /**
      * Returns notification URL on the client side that would listen for 
      * notifications from policy service
      *
-     * @return notification URl on the client side that would listen for
+     * @return notification URL on the client side that would listen for
      * notifications from policy service
      */
     String getNotificationURL() {
         return notificationURL;
+    }
+
+    /**
+     * Returns previous notification URL used on the client side to get 
+     * notifications from policy service
+     *
+     * @return previous notification URL on the client side that was listening
+     * for notifications from policy service
+     */
+    static String getPreviousNotificationURL() {
+        return previousNotificationURL;
     }
 
     /**
