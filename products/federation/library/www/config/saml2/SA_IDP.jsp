@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_IDP.jsp,v 1.2 2007-10-01 23:57:28 exu Exp $
+   $Id: SA_IDP.jsp,v 1.3 2007-12-15 09:24:06 rajeevangal Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -32,6 +32,7 @@ com.sun.identity.plugin.session.SessionProvider,
 com.sun.identity.plugin.session.SessionManager,
 com.sun.identity.plugin.session.SessionException,
 com.sun.identity.sae.api.SecureAttrs,
+com.sun.identity.sae.api.Utils,
 com.sun.identity.saml2.common.SAML2Constants,
 com.sun.identity.saml2.common.SAML2Utils,
 com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement,
@@ -89,6 +90,8 @@ com.sun.identity.shared.debug.Debug"
 %>
 
 <%
+    // Setup POST or GET for SAE interactions on IDP end
+    String action = "POST";
     // Determine metadata alias of hosted IDP this endpoint represents.
     String idpMetaAlias = 
                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
@@ -303,32 +306,59 @@ com.sun.identity.shared.debug.Debug"
     if(!loggedIn) {
 	SAML2Utils.debug.message(
              "SA_IDP:Fresh session needs to be created first.");
-        String qs = request.getQueryString();
+        String qs = Utils.queryStringFromRequest(request); 
         if (qs != null && qs.length() > 0) {
             gotoUrl = gotoUrl + "?" + qs;
         } 
 
-        String redirectUrl = appBase + "UI/Login?module=SAE&"+
-            SecureAttrs.SAE_PARAM_DATA+"="+sunData +
-            "&" + SAML2Constants.SAE_REALM + "=" + 
-            java.net.URLEncoder.encode(realm) +
-            "&" + SAML2Constants.SAE_IDP_ENTITYID + "=" + 
-            java.net.URLEncoder.encode(idpEntityId) +
-            "&" + SAML2Constants.SAE_IDPAPP_URL + "=" + 
-            java.net.URLEncoder.encode(idpAppUrl);
+        String redirectUrl;
+        HashMap postParams = null;
+        if (action.equals("GET")) {
+            redirectUrl = appBase + "UI/Login?module=SAE&"+
+                SecureAttrs.SAE_PARAM_DATA+"="+sunData +
+                "&" + SAML2Constants.SAE_REALM + "=" + 
+                java.net.URLEncoder.encode(realm) +
+                "&" + SAML2Constants.SAE_IDP_ENTITYID + "=" + 
+                java.net.URLEncoder.encode(idpEntityId) +
+                "&" + SAML2Constants.SAE_IDPAPP_URL + "=" + 
+                java.net.URLEncoder.encode(idpAppUrl) +
+                "&goto=" + java.net.URLEncoder.encode(gotoUrl);
+        } else  {
+            postParams = new HashMap();
+            redirectUrl = appBase + "UI/Login";
+            postParams.put("module", "SAE");
+            //postParams.put("forward", "true");
+            postParams.put(SecureAttrs.SAE_PARAM_DATA, sunData);
+            postParams.put(SAML2Constants.SAE_REALM,
+                realm);
+            postParams.put(SAML2Constants.SAE_IDP_ENTITYID ,
+                idpEntityId);
+            postParams.put(SAML2Constants.SAE_IDPAPP_URL,
+                idpAppUrl);
+            postParams.put("goto", gotoUrl);
+        }
 
-        String loginUrl = redirectUrl
-            + "&goto=" + java.net.URLEncoder.encode(gotoUrl);
         
 	if (SAML2Utils.debug.messageEnabled()) {
+            String loginUrl = redirectUrl
+                + "&goto=" + java.net.URLEncoder.encode(gotoUrl);
 	    SAML2Utils.debug.message(
                 "SA_IDP:Fresh session needs to be created. URL="+loginUrl);
         }
         String[] data = {rawattrs.toString()};
         SAML2Utils.logAccess(Level.INFO, LogUtil.SAE_IDP_AUTH, 
                    data, token, ipaddr, userid, realm, "SAE", null);
-        response.sendRedirect(redirectUrl
-            + "&goto=" + java.net.URLEncoder.encode(gotoUrl));
+        try {
+            Utils.redirect(response, redirectUrl, postParams, action);
+        } catch (Exception ex) {
+            String errStr = 
+              errorUrl+"SA_IDP:errcode=5,redirect to Lofin failed:"+ex;
+	    SAML2Utils.debug.error(errStr);
+            String[] data1 = {errStr, rawattrs.toString()};
+            SAML2Utils.logError(Level.INFO, LogUtil.SAE_IDP_ERROR, 
+               data1, token, ipaddr, userid, realm, "SAE", null);
+            response.sendRedirect(errStr);
+        }
         return;
     }
 
@@ -350,6 +380,7 @@ com.sun.identity.shared.debug.Debug"
         return;
     }
 
+    // Process fresh login/1st time FM access/switched user
     // sun.data verified okay - update session
     Iterator iter = rawattrs.entrySet().iterator();
     while(iter.hasNext()) {
@@ -406,6 +437,7 @@ com.sun.identity.shared.debug.Debug"
         + "&" + SAML2Constants.BINDING + "=" + SAML2Constants.HTTP_ARTIFACT
         + "&NameIDFormat=transient"
         + "&RelayState=" + java.net.URLEncoder.encode(spUrl);
+
     if (SAML2Utils.debug.messageEnabled()) {
         SAML2Utils.debug.message("SA_IDP:INITIATE SSO:"+spUrl );
     }
@@ -417,6 +449,7 @@ com.sun.identity.shared.debug.Debug"
     // Comment the sendRedirect below and uncomment the below br blocks to debug
     // The href at the bottom will take effect.
     response.sendRedirect(ssoUrl);
+
 /*
 %>
     <br> DEBUG : We are in SAE handler deployed on FM in IDP role.

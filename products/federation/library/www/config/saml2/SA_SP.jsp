@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_SP.jsp,v 1.2 2007-10-01 23:57:28 exu Exp $
+   $Id: SA_SP.jsp,v 1.3 2007-12-15 09:24:06 rajeevangal Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -37,10 +37,13 @@ com.sun.identity.saml2.logging.LogUtil,
 com.sun.identity.saml2.meta.SAML2MetaManager,
 com.sun.identity.saml2.meta.SAML2MetaException,
 com.sun.identity.saml2.meta.SAML2MetaUtils,
-com.sun.identity.sae.api.SecureAttrs"
+com.sun.identity.sae.api.SecureAttrs,
+com.sun.identity.sae.api.Utils"
 %>
 
 <%
+    //  Setup http GET/POST to sp app URL
+    String action = "POST";
     // Resolve FM-SP's metaAlias
     String spMetaAlias = 
                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
@@ -193,10 +196,17 @@ com.sun.identity.sae.api.SecureAttrs"
         return;
     }
     String ssoUrl = null;
-    if (spApp.indexOf("?") > 0) {
-        ssoUrl = spApp+"&"+SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
+    HashMap sParams = null;
+    if (action.equals("GET")) {
+        if (spApp.indexOf("?") > 0) {
+            ssoUrl = spApp+"&"+SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
+        } else {
+            ssoUrl = spApp+"?"+SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
+        }
     } else {
-        ssoUrl = spApp+"?"+SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
+        ssoUrl = spApp;
+        sParams = new HashMap();
+        sParams.put(SecureAttrs.SAE_PARAM_DATA, encodedString);
     }
 
     String data[] = {map.toString()};
@@ -204,7 +214,19 @@ com.sun.identity.sae.api.SecureAttrs"
                data, token, ipaddr, userid, realm, "SAE", null);
     // Comment this redirect and uncomment the below href for debugging. 
     // The href at the bottom will take effect
-    response.sendRedirect(ssoUrl);
+    try {
+        Utils.redirect(response, ssoUrl, sParams, action);
+    } catch (Exception ex) {
+       String errStr = errorUrl
+                       +"?errorcode=7&errorstring=Couldnt_redirect:"+ex
+                       +" Map="+map;
+	SAML2Utils.debug.error(errStr);
+        String data1[] = {errStr};
+        SAML2Utils.logError(Level.INFO, LogUtil.SAE_SP_ERROR, 
+                   data1, token, ipaddr, userid, realm, "SAE", null);
+        response.sendRedirect(errStr);
+        return;
+    }
 /*
 %>
     <br> DEBUG : We are in SAE handler deployed on FM in IDP role.

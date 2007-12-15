@@ -18,12 +18,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeIDPApp.jsp,v 1.1 2007-08-17 22:50:49 exu Exp $
+   $Id: saeIDPApp.jsp,v 1.2 2007-12-15 09:24:06 rajeevangal Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 <%@ page import="com.sun.identity.sae.api.SecureAttrs"%>
+<%@ page import="com.sun.identity.sae.api.Utils"%>
 <%@ page import="java.io.*"%>
 <%@ page import="java.util.*"%>
 <%@ page import="com.sun.identity.common.SystemConfigurationUtil"%>
@@ -64,7 +65,7 @@ public void jspInit()
     String idpAppName = request.getRequestURL().toString();
 
     // FAM-IDP hosted SAE url that will act like the gateway.
-    String  saeServiceURL="http://www.idp1.com:9080/idp1/idpsaehandler/metaAlias/idp";
+    String  saeServiceURL="http://www.idp.com:8080/idp/idpsaehandler/metaAlias/idp";
 
     // String representing authenticated user.
     String userid = "testuser";
@@ -73,8 +74,7 @@ public void jspInit()
     String branch = "mainbranch" ;
 
     // SP-App to be invoked with profile attributes above.
-    String spapp  = "http://www.sp1.com:9080/sp1/samples/saml2/sae/saeSPApp.jsp";
-
+    String spapp  = "http://www.sp.com:8080/spp/samples/saml2/sae/saeSPApp.jsp";
     if (request.getMethod().equals("GET"))
     {
 %>
@@ -202,6 +202,9 @@ iv) SP-App is already deployed and ready to accept requests.
         // We are ready to format the URLs to invoke the SP-App and Single logout
         String url = null;
         String slourl = null;
+        String postForm = null;
+        HashMap pmap = new HashMap();
+        pmap.put(SecureAttrs.SAE_PARAM_DATA, encodedString);
         if (saeServiceURL.indexOf("?") > 0) {
             url = saeServiceURL+"&"+SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
             slourl = saeServiceURL+"&"+SecureAttrs.SAE_PARAM_DATA+"="
@@ -213,7 +216,13 @@ iv) SP-App is already deployed and ready to accept requests.
                                   +sloencodedString;
         }
 
-        out.println("<br><br>This URL will invoke the remote SP App : "+spapp+"  :  <a href="+url+">ssourl</a>");
+        // This function is a simple wrapper to create a form - to
+        // autosubmit the form via javascriopt chnage false to true.
+        postForm = Utils.formFromMap(saeServiceURL, pmap, false);
+        out.println(postForm);
+
+        out.println("<br><br>Click here to invoke the remote SP App via http GET to local IDP : "+spapp+"  :  <a href="+url+">ssourl</a>");
+        out.println("<br><br>Click here to invoke the remote SP App via http POST to IDP : "+spapp+"  :  <input type=\"button\" onclick=\"document.forms['saeform'].submit();\" value=POST>");
         out.println("<br><br>This URL will invoke global Logout : <a href="+slourl+">slourl</a>");
     }
 %>
