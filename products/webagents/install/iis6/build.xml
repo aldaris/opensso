@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2007-06-05 19:36:43 subbae Exp $
+   $Id: build.xml,v 1.2 2007-12-15 01:31:51 madan_ranganath Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,6 +50,9 @@
                 <include name=".version"/>
             </fileset>
         </copy>
+
+        <concat destfile="${container.web_agent.dir}/.version" append="true">Build Date: ${nightly.date}&#10;&#10;</concat>
+
         <copy todir="${container.web_agent.bin.dir}">
             <fileset dir="${webagents.install.iis6.scripts.dir}">
                     <include name="IIS6admin.vbs"/>
