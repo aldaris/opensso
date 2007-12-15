@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sampleconfigurator.jsp,v 1.5 2007-12-14 07:04:40 qcheng Exp $
+   $Id: Configurator.jsp,v 1.1 2007-12-15 08:06:00 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -26,7 +26,7 @@
 
 <html>
 <head>
-<title>Configure Federated Access Manager Client SDK</title>
+<title>Configure Federated Access Manager Administration Console WAR</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
 
@@ -50,15 +50,19 @@ java.util.Properties"
     String famHost = null;
     String famPort = null;
     String famDeploymenturi = null;
+    String consoleProt = null; 
+    String consoleHost = null;
+    String consolePort = null;
+    String consoleDeploymenturi = null;
     String debugDir = null;
     String appUser = null;
     String appPassword = null;
 
     File configF = new File(configFile);
     if (configF.exists()) {
-        errorMsg = "The Client SDK have already been configued.<br>" +
-            "Configuration file : " + configFile + "<br><p><br>" +
-            "Click <a href=\"index.html\">here</a> to go to samples.";
+        errorMsg = "The Administration Console WAR has already been configued."
+            + "<br>Configuration file : " + configFile + "<br><p><br>" 
+            + "Click <a href=\"index.html\">here</a> to go to the console.";
         // reinitialize properties
         Properties props = new Properties();
         props.load(new FileInputStream(configFile));
@@ -69,6 +73,10 @@ java.util.Properties"
         famHost = request.getParameter("famHost");
         famPort = request.getParameter("famPort");
         famDeploymenturi = request.getParameter("famDeploymenturi");
+        consoleProt = request.getParameter("consoleProt");
+        consoleHost = request.getParameter("consoleHost");
+        consolePort = request.getParameter("consolePort");
+        consoleDeploymenturi = request.getParameter("consoleDeploymenturi");
         debugDir = request.getParameter("debugDir");
         appUser = request.getParameter("appUser");
         appPassword = request.getParameter("appPassword");
@@ -80,6 +88,11 @@ java.util.Properties"
                 (famHost != null) && !famHost.equals("") && 
                 (famPort != null) && !famPort.equals("") && 
                 (famDeploymenturi != null) && !famDeploymenturi.equals("") && 
+                (consoleProt != null) && !consoleProt.equals("") && 
+                (consoleHost != null) && !consoleHost.equals("") && 
+                (consolePort != null) && !consolePort.equals("") && 
+                (consoleDeploymenturi != null) && 
+                !consoleDeploymenturi.equals("") && 
                 (debugDir != null) && !debugDir.equals("") &&
                 (appUser != null) && !appUser.equals("") &&
                 (appPassword != null) && !appPassword.equals("")) {
@@ -88,13 +101,19 @@ java.util.Properties"
                 props.setProperty("SERVER_HOST", famHost);
                 props.setProperty("SERVER_PORT", famPort);
                 props.setProperty("DEPLOY_URI", famDeploymenturi);
+                props.setProperty("CONSOLE_PROTOCOL", consoleProt);
+                props.setProperty("CONSOLE_HOST", consoleHost);
+                props.setProperty("CONSOLE_PORT", consolePort);
+                props.setProperty("CONSOLE_DEPLOY_URI", consoleDeploymenturi);
+                props.setProperty("CONSOLE_REMOTE", "true");
                 props.setProperty("DEBUG_DIR", debugDir);
                 props.setProperty("NAMING_URL", famProt + "://" + famHost + ":"
                     + famPort + famDeploymenturi + "/namingservice");
-                props.setProperty("DEBUG_LEVEL", "message");
+                props.setProperty("DEBUG_LEVEL", "error");
                 props.setProperty("APPLICATION_USER", appUser);
                 props.setProperty("ENCODED_APPLICATION_PASSWORD", (String) 
                   AccessController.doPrivileged(new EncodeAction(appPassword)));
+                // TODO : comment this out
                 props.setProperty("APPLICATION_PASSWD", appPassword); 
                 props.setProperty("AM_COOKIE_NAME", "iPlanetDirectoryPro");
                 props.setProperty("ENCRYPTION_KEY", "SAMPLE_RAND");
@@ -105,6 +124,7 @@ java.util.Properties"
                     "com.sun.identity.plugin.configuration.impl.ConfigurationInstanceImpl");
                 props.setProperty("DATASTORE_PROVIDER_CLASS", 
                     "com.sun.identity.plugin.datastore.impl.IdRepoDataStoreProvider");
+                
                 try {
                     SetupClientWARSamples configurator = 
                         new SetupClientWARSamples(
@@ -120,6 +140,26 @@ java.util.Properties"
                 configured = true;
             } else {
                 errorMsg = "Missing one or more required fields."; 
+            }
+        } else {
+            // get local protocol/host/port as default for this console
+            if (consoleProt == null) {
+                consoleProt = request.getScheme();
+            } 
+            if (consoleHost == null) {
+                consoleHost = request.getServerName();
+            }
+            if (consolePort == null) {
+                consolePort = "" + request.getServerPort();
+            }
+            if (consoleDeploymenturi == null) {
+                String tmp = request.getRequestURI();
+                int secondSlash = tmp.indexOf("/", 1);
+                if (secondSlash == -1) {
+                    consoleDeploymenturi = tmp;
+                } else {
+                    consoleDeploymenturi = tmp.substring(0, secondSlash);
+                }
             }
         }
     }
@@ -150,11 +190,11 @@ java.util.Properties"
     if (!configured) {
 %>
 
-<h3>Configuring Federated Access Manager Client SDK</h3>
+<h3>Configuring Federated Access Manager Administration Console WAR</h3>
 
-<form action="sampleconfigurator.jsp" method="GET" 
-    name="clientsampleconfigurator">
-    Please provide the Federated Access Manager Server Information. This is the server this Client SDK (including samples) will interact with. 
+<form action="Configurator.jsp" method="GET" 
+    name="consoleconfigurator">
+    Please provide the Federated Access Manager Server Information. This is the server instance this remote administration console will be managing. 
     <p>&nbsp;</p>    
 
     <table border=0 cellpadding=5 cellspacing=0>
@@ -189,16 +229,36 @@ java.util.Properties"
     <td><input name="famDeploymenturi" type="text" size="15" value="<%= famDeploymenturi == null ? "" : famDeploymenturi %>" /></td>
     </tr>
     <tr>
-    <td>Debug directory</td>
-    <td><input name="debugDir" type="text" size="15" value="<%= debugDir == null ? "" : debugDir %>" /></td>
-    </tr>
-    <tr>
     <td>Application user name</td>
     <td><input name="appUser" type="text" size="15" value="<%= appUser == null ? "" : appUser %>" /></td>
     </tr>
     <tr>
     <td>Application user password</td>
     <td><input name="appPassword" type="password" size="15" value="<%= appPassword == null ? "" : appPassword %>" /></td>
+    </tr>
+    <tr>
+        <td>  </td>
+    </tr>
+    <tr>
+    <td>Administration Console Protocol:</td>
+    <td><input name="consoleProt" type="text" size="6" value="<%= consoleProt == null ? "" : consoleProt %>" /></td>
+    </tr>
+    <tr>
+    <td>Administration Console Host:</td>
+    <td><input name="consoleHost" type="text" size="30" value="<%= consoleHost == null ? "" : consoleHost %>" /></td>
+    </tr>
+    <tr>
+    <td>Administration Console Port:</td>
+    <td><input name="consolePort" type="text" size="6" value="<%= consolePort == null ?
+"" : consolePort %>" /></td>
+    </tr>
+    <tr>
+    <td>Administration Console Deployment URI:</td>
+    <td><input name="consoleDeploymenturi" type="text" size="15" value="<%= consoleDeploymenturi == null ? "" : consoleDeploymenturi %>" /></td>
+    </tr>
+    <tr>
+    <td>Administration Console Debug directory</td>
+    <td><input name="debugDir" type="text" size="15" value="<%= debugDir == null ? "" : debugDir %>" /></td>
     </tr>
     <tr>
         <td>  </td>
@@ -223,11 +283,11 @@ java.util.Properties"
 <%
 } else {
 %>
-Client SDK is successfully configured.<br>
+The Administration Console only WAR had been successfully configured.<br>
 AMConfig.properties created at <%= configFile %><br>
 <br>
 <p>
-Click <a href="index.html">here</a> to go to samples. 
+Click <a href="index.html">here</a> to go to the administration console. 
 <%
     }
 }

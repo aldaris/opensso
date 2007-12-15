@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.34 2007-12-14 07:04:08 qcheng Exp $
+   $Id: build.xml,v 1.35 2007-12-15 08:05:20 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -133,7 +133,6 @@
         <antcall target="unittest" />
         <antcall target="clientsdk" />
         <antcall target="clientsamples" />
-        <antcall target="idpdiscovery" />
         <antcall target="doc" />
         <antcall target="zip" />
         <filter token="DATE" value="${nightly.date}" />
@@ -193,10 +192,6 @@
 
     <target name="clientsamples" depends="clientsdk">
          <ant antfile="${openfm.clientsamples.dir}/build.xml" inheritRefs="true"/>
-    </target>
-
-    <target name="idpdiscovery" depends="">
-         <ant antfile="${openfm.idpdiscovery.dir}/build.xml" inheritRefs="true"/>
     </target>
 
     <target name="doc" depends="preparebuild">
@@ -358,7 +353,6 @@
         <echo message=" nightly             : generates nightly build binaries"/>
         <echo message=" unittest            : generates unit test zip file"/>
         <echo message=" clientsamples       : generates client samples war file"/>
-        <echo message=" idpdiscovery        : generates IDP discovery service war file"/>
         <echo message=" war                 : creates WAR with server samples for deployment"/>
         <echo message=" tools               : creates tools zip"/>
         <echo message=" zip                 : creates zip file"/>

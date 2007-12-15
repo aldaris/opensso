@@ -58,6 +58,10 @@
 
     <!-- context param -->
 
+    <!-- filter definition -->
+
+    <!-- filter mapping -->
+
     <!-- Add one servlet entry like this per module -->
     <servlet>
         <servlet-name>UMServlet</servlet-name>

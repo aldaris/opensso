@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfiguratorFilter.java,v 1.2 2007-10-23 22:52:31 qcheng Exp $
+ * $Id: ClientConfiguratorFilter.java,v 1.3 2007-12-15 08:05:41 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,7 @@ public final class ClientConfiguratorFilter implements Filter {
     private ServletContext servletCtx;
     // see if the configure.jsp page is executed
     public static boolean isConfigured = false;
-    private static final String SETUP_URI = "/sampleconfigurator.jsp";
+    private static final String SETUP_URI = "/Configurator.jsp";
     private static final String configFile = 
         System.getProperty("user.home") + File.separator + 
         "AMConfig.properties"; 
@@ -73,7 +73,7 @@ public final class ClientConfiguratorFilter implements Filter {
         HttpServletRequest  httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response ;
         try {
-            // pass through on sampleconfigurator.jsp page
+            // pass through on Configurator  page
             if (httpRequest.getRequestURI().endsWith(SETUP_URI)) {
                 passThrough = true;
                 filterChain.doFilter(httpRequest, httpResponse);

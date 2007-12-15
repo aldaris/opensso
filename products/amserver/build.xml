@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.56 2007-12-08 01:12:37 cbasha Exp $
+   $Id: build.xml,v 1.57 2007-12-15 08:02:25 qcheng Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -350,7 +350,7 @@
         <ant antfile="${amserver.samples.dir}/build.xml" inheritRefs="true"/>
     </target>
 
-    <target name="distauth" depends="clientsdk,war">
+    <target name="distauth">
         <ant antfile="${amserver.distauth.dir}/build.xml" inheritRefs="true"/>
     </target>
 
