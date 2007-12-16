@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.1 2007-12-15 08:06:00 qcheng Exp $
+   $Id: Configurator.jsp,v 1.2 2007-12-16 02:55:40 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -113,11 +113,11 @@ java.util.Properties"
                 props.setProperty("APPLICATION_USER", appUser);
                 props.setProperty("ENCODED_APPLICATION_PASSWORD", (String) 
                   AccessController.doPrivileged(new EncodeAction(appPassword)));
-                // TODO : comment this out
-                props.setProperty("APPLICATION_PASSWD", appPassword); 
+                // set empty application password
+                props.setProperty("APPLICATION_PASSWD", ""); 
                 props.setProperty("AM_COOKIE_NAME", "iPlanetDirectoryPro");
-                props.setProperty("ENCRYPTION_KEY", "SAMPLE_RAND");
-                props.setProperty("ENCRYPTION_KEY_LOCAL", "SAMPLE_RAND");
+                props.setProperty("ENCRYPTION_KEY", "");
+                props.setProperty("ENCRYPTION_KEY_LOCAL", "");
                 props.setProperty("SESSION_PROVIDER_CLASS", 
                     "com.sun.identity.plugin.session.impl.FMSessionProvider");
                 props.setProperty("CONFIGURATION_PROVIDER_CLASS", 
