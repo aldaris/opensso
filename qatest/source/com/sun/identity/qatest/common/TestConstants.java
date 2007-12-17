@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.15 2007-11-30 18:47:41 rmisra Exp $
+ * $Id: TestConstants.java,v 1.16 2007-12-17 19:51:34 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,11 @@ public interface TestConstants {
      * Property key for <code>amadmin</code> user password.
      */
     String KEY_ATT_AMADMIN_PASSWORD = "amadmin_password";
+
+    /**
+     * Property key for <code>UrlAccessAgent</code> user password.
+     */
+    String KEY_ATT_SERVICE_PASSWORD = "urlaccessagent_password";
 
     /**
      * Property key for <code>com.iplanet.am.defaultOrg</code>.
@@ -121,6 +126,11 @@ public interface TestConstants {
      * Property key for <code>com.iplanet.am.notification.url</code>.
      */
     String KEY_AMC_NOTIFICATION_URL = "com.iplanet.am.notification.url";
+
+    /**
+     * Property key for <code>com.sun.identity.agents.app.username</code>.
+     */
+    String KEY_AMC_AGENTS_APP_USERNAME = "com.sun.identity.agents.app.username";
 
     /**
      * Property key for <code>realm</code>.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.33 2007-11-30 18:47:41 rmisra Exp $
+ * $Id: TestCommon.java,v 1.34 2007-12-17 19:51:34 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,7 @@ public class TestCommon implements TestConstants {
     static protected String uri;
     static protected String realm;
     static protected String serverName;
+    static protected String cookieDomain;
     static protected int notificationSleepTime;
     static protected Level logLevel;
     static private Logger logger;
@@ -119,6 +120,7 @@ public class TestCommon implements TestConstants {
             port = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
             uri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);
             realm = rb_amconfig.getString(TestConstants.KEY_ATT_REALM);
+            cookieDomain = rb_amconfig.getString(TestConstants.KEY_ATT_COOKIE_DOMAIN);
             notificationSleepTime = new Integer(rb_amconfig.getString(
                     TestConstants.KEY_ATT_NOTIFICATION_SLEEP)).intValue();
         } catch (Exception e) {
@@ -353,6 +355,8 @@ public class TestCommon implements TestConstants {
                 TestConstants.KEY_ATT_AMADMIN_USER));
         map.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD, cfg.getString(
                 TestConstants.KEY_ATT_AMADMIN_PASSWORD));
+        map.put(TestConstants.KEY_ATT_SERVICE_PASSWORD, cfg.getString(
+                TestConstants.KEY_ATT_SERVICE_PASSWORD));
         map.put(TestConstants.KEY_ATT_CONFIG_DIR, cfg.getString(
                 TestConstants.KEY_ATT_CONFIG_DIR));
         map.put(TestConstants.KEY_ATT_CONFIG_DATASTORE, cfg.getString(
@@ -392,6 +396,7 @@ public class TestCommon implements TestConstants {
      * serveruri                 <URI for configured instance>
      * cookiedomain              <full cookie domain name>
      * amadmin_password          <password for amadmin user>
+     * urlaccessagent_password   <password for UrlAccessAgent user>
      * config_dir                <directory where product will be installed>
      * datastore                 <type of statstore: faltfile, dirServer or
      *                            activeDir>
@@ -478,6 +483,15 @@ public class TestCommon implements TestConstants {
                     (HtmlPasswordInput)form.getInputByName("ADMIN_CONFIRM_PWD");
             txtAmadminPasswordR.setValueAttribute((String)map.get(
                     TestConstants.KEY_ATT_AMADMIN_PASSWORD));
+
+            HtmlPasswordInput txtUrlAccessAgentPassword =
+                    (HtmlPasswordInput)form.getInputByName("AMLDAPUSERPASSWD");
+            txtUrlAccessAgentPassword.setValueAttribute((String)map.get(
+                    TestConstants.KEY_ATT_SERVICE_PASSWORD));
+            HtmlPasswordInput txtUrlAccessAgentPasswordR =
+                    (HtmlPasswordInput)form.getInputByName("AMLDAPUSERPASSWD_CONFIRM");
+            txtUrlAccessAgentPasswordR.setValueAttribute((String)map.get(
+                    TestConstants.KEY_ATT_SERVICE_PASSWORD));
             
             HtmlTextInput txtConfigDir =
                     (HtmlTextInput)form.getInputByName("BASE_DIR");
@@ -661,10 +675,10 @@ public class TestCommon implements TestConstants {
         int iIdx = strPage.indexOf(searchStr);
         if (iIdx != -1)
             log(Level.FINEST, "getHtmlPageStringIndex",
-                    "Search string found on page:" + iIdx);
+                    "Search string found on page: " + iIdx);
         else
             log(Level.FINEST, "getHtmlPageStringIndex",
-                    "Search string not found on page:" + iIdx);
+                    "Search string not found on page: " + iIdx);
         exiting("getHtmlPageStringIndex");
         return iIdx;
     }

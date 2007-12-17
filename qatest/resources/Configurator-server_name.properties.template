@@ -19,6 +19,11 @@ notification_sleep=
 # '<protocol>://<fqdn>:<port>/<deploy-uri>/namingservice'
 namingservice=
 
+# The password to set for UrlAccessAgent user. This should be different from the
+# amadmin password. This property is utilized only at the time of configuring
+# the deployed war.
+urlaccessagent_password=
+
 # The configuration directory for server. This is used only at the time of 
 # configuring the war.
 config_dir=
