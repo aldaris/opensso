@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheet.java,v 1.1 2007-02-07 20:19:33 jonnelson Exp $
+ * $Id: AMPropertySheet.java,v 1.2 2007-12-17 19:42:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,16 +154,18 @@ public class AMPropertySheet
         if (Set.class.isInstance(values)) {
             for (Iterator i = ((Set)values).iterator(); i.hasNext(); ) {
                 String val = (String)i.next();
-                try {
-                    View view = parent.getChild(
+                if (val.indexOf('=') == -1) {
+                    try {
+                        View view = parent.getChild(
                         PropertyTemplate.DYN_GUI_MULTIPLE_LIST_CHECKBOX_PREFIX +
                         name + "_" + val);
-                    if (view instanceof CCCheckBox) {
-                        ((CCCheckBox)view).setChecked(true);
+                        if (view instanceof CCCheckBox) {
+                            ((CCCheckBox)view).setChecked(true);
+                        }
+                        set = true;
+                    } catch (IllegalArgumentException e) {
+                        //ok if it is not found.
                     }
-                    set = true;
-                } catch (IllegalArgumentException e) {
-                    //ok if it is not found.
                 }
             }
         }

@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: ConsoleLogMessageIDs.xml,v 1.4 2007-10-29 23:40:07 asyhuang Exp $
+    $Id: ConsoleLogMessageIDs.xml,v 1.5 2007-12-17 19:42:53 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -9381,4 +9381,347 @@
             <item>Look under service management SDK log for more information.</item>
        </actions>
     </logmessage>
+
+    <logmessage name="ATTEMPT_SEARCH_AGENT" id="13001"
+        loglevel="LL_INFO"
+        description="Attempt to search for agents">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+            <item>search size limit</item>
+            <item>search time limit</item>
+        </datainfo>
+        <triggers>
+            <item>Click on Search button in agent search view.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SEARCH_AGENT" id="13002"
+        loglevel="LL_INFO"
+        description="Searching for agents succeeded">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+            <item>search size limit</item>
+            <item>search time limit</item>
+        </datainfo>
+        <triggers>
+            <item>Click on Search button in agent search view.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="EXCEPTION_SEARCH_AGENT" id="13003"
+        loglevel="LL_SEVERE"
+        description="Searching for agents failed">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+            <item>search size limit</item>
+            <item>search time limit</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to perform search operation on agents under a realm. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under data store log for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_DELETE_AGENT" id="13011"
+        loglevel="LL_INFO"
+        description="Attempt to delete agents">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent names</item>
+        </datainfo>
+        <triggers>
+            <item>Click on Delete button in agent home page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_DELETE_AGENT" id="13012"
+        loglevel="LL_INFO"
+        description="Agents are deleted">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent names</item>
+        </datainfo>
+        <triggers>
+            <item>Click on Delete button in agent home page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="EXCEPTION_DELETE_AGENT" id="13013"
+        loglevel="LL_SEVERE"
+        description="Deletion of agents failed">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent names</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to perform delete operation on agents under a realm. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under data store log for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SEARCH_AGENT_GROUP" id="13021"
+        loglevel="LL_INFO"
+        description="Attempt to search for agent groups">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+            <item>search size limit</item>
+            <item>search time limit</item>
+        </datainfo>
+        <triggers>
+            <item>Click on Search button in agent search view.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SEARCH_AGENT_GROUP" id="13022"
+        loglevel="LL_INFO"
+        description="Searching for agent groups succeeded">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+            <item>search size limit</item>
+            <item>search time limit</item>
+        </datainfo>
+        <triggers>
+            <item>Click on Search button in agent search view.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="EXCEPTION_SEARCH_AGENT_GROUP" id="13023"
+        loglevel="LL_SEVERE"
+        description="Searching for agent groups failed">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent type</item>
+            <item>search pattern</item>
+            <item>search size limit</item>
+            <item>search time limit</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to perform search operation on agent groups under a realm. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under data store log for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_DELETE_AGENT_GROUP" id="13031"
+        loglevel="LL_INFO"
+        description="Attempt to delete agent groups">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent group names</item>
+        </datainfo>
+        <triggers>
+            <item>Click on Delete button in agent home page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_DELETE_AGENT_GROUP" id="13032"
+        loglevel="LL_INFO"
+        description="Agent groups are deleted">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent group names</item>
+        </datainfo>
+        <triggers>
+            <item>Click on Delete button in agent home page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="EXCEPTION_DELETE_AGENT_GROUP" id="13033"
+        loglevel="LL_SEVERE"
+        description="Deletion of agent groups failed">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent group names</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to perform delete operation on agents under a realm. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under data store log for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_CREATE_AGENT" id="13041"
+        loglevel="LL_INFO"
+        description="Attempt to create agent">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent name</item>
+            <item>agent type</item>
+        </datainfo>
+        <triggers>
+            <item>Click on New button in agent home page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CREATE_AGENT" id="13042"
+        loglevel="LL_INFO"
+        description="Agent is created">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent name</item>
+            <item>agent type</item>
+        </datainfo>
+        <triggers>
+            <item>Click on New button in agent home page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="EXCEPTION_CREATE_AGENT" id="13043"
+        loglevel="LL_SEVERE"
+        description="Creation of agent failed">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent name</item>
+            <item>agent type</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to perform create agent. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under data store log for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_CREATE_AGENT_GROUP" id="13051"
+        loglevel="LL_INFO"
+        description="Attempt to create agent group">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent group name</item>
+            <item>agent type</item>
+        </datainfo>
+        <triggers>
+            <item>Click on New button in agent home page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_CREATE_AGENT_GROUP" id="13052"
+        loglevel="LL_INFO"
+        description="Agent group is created">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent group name</item>
+            <item>agent type</item>
+        </datainfo>
+        <triggers>
+            <item>Click on New button in agent home page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="EXCEPTION_CREATE_AGENT_GROUP" id="13053"
+        loglevel="LL_SEVERE"
+        description="Creation of agent group failed">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent group name</item>
+            <item>agent type</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to perform create agent group. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under data store log for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_GET_AGENT_ATTRIBUTE_VALUES" id="13061"
+        loglevel="LL_INFO"
+        description="Attempt to get agent attribute values">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent universal Id</item>
+        </datainfo>
+        <triggers>
+            <item>Visit agent profile page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_AGENT_ATTRIBUTE_VALUES" id="13062"
+        loglevel="LL_INFO"
+        description="Agent attribute values is retrieved.">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent universal Id</item>
+        </datainfo>
+        <triggers>
+            <item>Visit agent profile page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES" id="13063"
+        loglevel="LL_SEVERE"
+        description="Unable to get agent attribute values">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent universal Id</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to perform get agent attribute values. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under data store log for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SET_AGENT_ATTRIBUTE_VALUE" id="13071"
+        loglevel="LL_INFO"
+        description="Attempt to set agent attribute values">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent universal Id</item>
+        </datainfo>
+        <triggers>
+            <item>Click on save button in agent profile page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SET_AGENT_ATTRIBUTE_VALUE" id="13072"
+        loglevel="LL_INFO"
+        description="Agent attribute values is retrieved.">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent universal Id</item>
+        </datainfo>
+        <triggers>
+            <item>Click on save button in agent profile page.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE" id="13073"
+        loglevel="LL_SEVERE"
+        description="Unable to set agent attribute values">
+        <datainfo>
+            <item>base realm</item>
+            <item>agent universal Id</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to perform set agent attribute values. It may be the single sign on token of the user has expired; or the user does not have permission to perform this operation.</item>
+        </triggers>
+        <actions>
+            <item>Look under data store log for more information.</item>
+        </actions>
+    </logmessage>
+
+
 </logmessages>

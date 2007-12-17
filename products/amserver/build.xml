@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.57 2007-12-15 08:02:25 qcheng Exp $
+   $Id: build.xml,v 1.58 2007-12-17 19:42:49 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -235,8 +235,6 @@
                     path="${amserver.classes.dir}" />
             <tag name="supported.all.api" description="" />
             <tag name="supported.api" description="" />
-            <tag name="supported.all.api" enabled="false" />
-            <tag name="supported.api" enabled="false" />
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
             <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
         </javadoc>

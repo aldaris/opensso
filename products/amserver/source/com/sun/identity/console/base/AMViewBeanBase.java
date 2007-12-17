@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.1 2007-02-07 20:19:36 jonnelson Exp $
+ * $Id: AMViewBeanBase.java,v 1.2 2007-12-17 19:42:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,6 +128,10 @@ public abstract class AMViewBeanBase
     public void setRequestContext(RequestContext context) {
         super.setRequestContext(context);
         handlePageSessionThruURL(context);
+        setRequestContentInitialize(context);
+    }
+    
+    protected void setRequestContentInitialize(RequestContext context) {
         initialize();
     }
 

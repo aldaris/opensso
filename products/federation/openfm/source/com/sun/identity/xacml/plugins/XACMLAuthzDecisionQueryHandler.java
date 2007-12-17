@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.2 2007-10-01 05:40:18 qcheng Exp $
+ * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.3 2007-12-17 19:42:56 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,6 @@ package com.sun.identity.xacml.plugins;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 
-//import com.sun.identity.policy.PolicyEvaluator;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.ResourceResult;
 
@@ -36,7 +35,6 @@ import com.sun.identity.policy.client.PolicyEvaluator;
 import com.sun.identity.policy.client.PolicyEvaluatorFactory;
 
 import com.sun.identity.saml2.common.SAML2Exception;
-//import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.RequestAbstract;
 import com.sun.identity.saml2.soapbinding.RequestHandler;
 import com.sun.identity.xacml.common.XACMLConstants;
@@ -110,17 +108,18 @@ public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
     }
     
     /**
-     * Processes an XACMLAuthzDecisionQuery and retruns a SAML2 Response
+     * Processes an XACMLAuthzDecisionQuery and retruns a SAML2 Response.
+     *
      * @param pdpEntityId EntityID of PDP
      * @param pepEntityId EntityID of PEP
-     * @param request SAML2 Request, an XAMLAuthzDecisionQuery
+     * @param samlpRequest SAML2 Request, an XAMLAuthzDecisionQuery
      * @param soapMessage SOAPMessage that carried the SAML2 Request
      * @return SAML2 Response with an XAMLAuthzDecisionStatement
      * @exception SAML2Exception if the query can not be handled
      */
     public com.sun.identity.saml2.protocol.Response handleQuery(
             String pdpEntityId, String pepEntityId, 
-            RequestAbstract samlpRequest, SOAPMessage  soapMessage) 
+            RequestAbstract samlpRequest, SOAPMessage soapMessage) 
             throws SAML2Exception {
 
         //TODO: logging, i18n

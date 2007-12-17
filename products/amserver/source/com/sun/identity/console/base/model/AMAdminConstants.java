@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminConstants.java,v 1.5 2007-03-14 19:28:44 jonnelson Exp $
+ * $Id: AMAdminConstants.java,v 1.6 2007-12-17 19:42:51 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -174,7 +174,17 @@ public interface AMAdminConstants {
      * Realm node identifier.
      */
     int REALM_NODE_ID = 1;
+    
+    /**
+     * Configuration node identifier.
+     */
+    int CONFIGURATION_NODE_ID = 4;
 
+    /**
+     * Agent node identifier.
+     */
+    int AGENTS_NODE_ID = 446;
+    
     /**
      * Subjects node identifier.
      */

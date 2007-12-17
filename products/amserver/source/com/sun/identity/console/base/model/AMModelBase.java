@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.5 2007-10-30 19:30:16 veiming Exp $
+ * $Id: AMModelBase.java,v 1.6 2007-12-17 19:42:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.DisplayUtils;
 import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -52,9 +53,7 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSException;
 import java.io.IOException;
-import netscape.ldap.util.DN;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.text.Collator;
 import java.util.Collections;
 import java.util.HashMap;
@@ -723,6 +722,30 @@ public class AMModelBase
                 }
             }
         } catch (IdRepoException e) {
+            debug.warning("AMModelBase.getSupportedTypes", e);
+        } catch (SSOException e) {
+            debug.warning("AMModelBase.getSupportedTypes", e);
+        }
+
+        return (map != null) ? map : Collections.EMPTY_MAP;
+    }
+    
+    /**
+     * Returns a map of supported agent type to its localized name.
+     *
+     * @return a map of supported agent type to its localized name.
+     */
+    public Map getSupportedAgentTypes() {
+        Map map = null;
+        try {
+            Set types = AgentConfiguration.getAgentTypes();
+            map = new HashMap(types.size() *2);
+
+            for (Iterator iter = types.iterator(); iter.hasNext(); ) {
+                String name = (String)iter.next();
+                map.put(name, getLocalizedString("agenttype." + name));
+            }
+        } catch (SMSException e) {
             debug.warning("AMModelBase.getSupportedTypes", e);
         } catch (SSOException e) {
             debug.warning("AMModelBase.getSupportedTypes", e);

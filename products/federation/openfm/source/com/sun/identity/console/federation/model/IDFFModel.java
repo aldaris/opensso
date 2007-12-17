@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModel.java,v 1.2 2007-12-11 23:03:08 asyhuang Exp $
+ * $Id: IDFFModel.java,v 1.3 2007-12-17 19:42:55 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -359,9 +359,8 @@ public interface IDFFModel
      * updateIDPEntityConfig
      * Modifies a provider's extended metadata.
      *
-     * @param entityName Name of Entity Descriptor.
      * @param realm Realm of Entity
-     * @param role Role of provider. (SP or IDP)
+     * @param entityName Name of Entity Descriptor.
      * @param attrValues Map of attribute name to set of values.
      * @throws AMConsoleException if provider cannot be modified.
      */

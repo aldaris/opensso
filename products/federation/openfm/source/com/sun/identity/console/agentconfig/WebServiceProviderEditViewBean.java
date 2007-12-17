@@ -17,27 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceProviderEditViewBean.java,v 1.2 2007-06-14 21:02:50 veiming Exp $
+ * $Id: WebServiceProviderEditViewBean.java,v 1.1 2007-12-17 19:42:48 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.console.idm;
+package com.sun.identity.console.agentconfig;
 
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
+import com.iplanet.jato.view.event.ChildContentDisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
-import com.iplanet.jato.view.html.Option;
 import com.iplanet.jato.view.html.OptionList;
-import com.sun.identity.console.base.AMPropertySheet;
-import com.sun.identity.console.base.model.AMAdminConstants;
+import com.sun.identity.console.agentconfig.model.AgentsModel;
+import com.sun.identity.console.agentconfig.model.WSSAttributeNames;
 import com.sun.identity.console.base.model.AMConsoleException;
-import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.components.view.html.SerializedField;
-import com.sun.identity.console.idm.model.EntitiesModel;
-import com.sun.identity.wss.security.SecurityMechanism;
 import com.sun.web.ui.model.CCActionTableModel;
-import com.sun.web.ui.model.CCPropertySheetModel;
+import com.sun.web.ui.model.CCActionTableModelInterface;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.html.CCSelectableList;
 import com.sun.web.ui.view.table.CCActionTable;
@@ -49,8 +46,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
+/**
+ * Customized view bean for WSP.
+ */
 public class WebServiceProviderEditViewBean 
     extends WebServiceEditViewBean {
     private static final String EDIT_LINK_TRACKER = "WebServiceEditTracker";
@@ -66,16 +65,42 @@ public class WebServiceProviderEditViewBean
     private static final String TBL_DATA_NAME = "tblDataName";
     private static final String TBL_DATA_PWD = "tblDataPassword";
 
-    private static final String ATTR_NAME_AUTH_CHAIN = "authenticationChain";
     private static final String CHILD_NAME_AUTH_CHAIN = "authenticationchain";
     
-    public static final String DEFAULT_DISPLAY_URL =
-        "/console/idm/WebServiceProviderEdit.jsp";
+    static final String DEFAULT_DISPLAY_URL =
+        "/console/agentconfig/WebServiceProviderEdit.jsp";
+    private static Map attrToChildNames = new HashMap();
 
     private Set providerUIProperties = parseExternalizeUIProperties(
         "webServiceProviderUI");
     private CCActionTableModel tblUserCredential;
     
+    static {
+        attrToChildNames.put("userpassword", "userpassword");
+        attrToChildNames.put("WSPProxyEndpoint", "wssproxyEndPoint");
+        attrToChildNames.put("privateKeyAlias", "certalias");
+        attrToChildNames.put("privateKeyType", "keyType");
+        attrToChildNames.put("publicKeyAlias", "publicKeyAlias");
+        attrToChildNames.put("WSPEndpoint", "wspendpoint");
+        attrToChildNames.put("sunIdentityServerDeviceStatus",
+            "sunIdentityServerDeviceStatus");
+        attrToChildNames.put("serviceType", "libertyservicetype");
+        attrToChildNames.put("authenticationChain", "authenticationchain");
+        attrToChildNames.put("isResponseSign", "isresponsesigned");
+        attrToChildNames.put("isResponseEncrypt", "isresponsedecrypted");
+        attrToChildNames.put("isRequestHeaderEncrypt",
+            "isRequestHeaderEncrypt");
+        attrToChildNames.put("keepSecurityHeaders", "preservesecurityheader");
+        attrToChildNames.put("isRequestSign", "isrequestsigned");
+        attrToChildNames.put("useDefaultStore", "keystoreusage");
+        attrToChildNames.put("isRequestEncrypt", "isrequestencrypted");
+        attrToChildNames.put("SecurityMech", "SecurityMech");
+        attrToChildNames.put("UserCredential", "UserCredential");
+    }
+    
+    /**
+     * Creates an instance of this view bean.
+     */
     public WebServiceProviderEditViewBean() {
         super(PAGE_NAME, DEFAULT_DISPLAY_URL, false,
             "com/sun/identity/console/propertyWebServiceProviderEdit.xml");
@@ -102,35 +127,30 @@ public class WebServiceProviderEditViewBean
         return view;
     }
 
-    protected void setExtendedDefaultValues(Map attrValues)
+    protected void setExtendedDefaultValues(Map values)
         throws AMConsoleException {
-        Set values = (Set)attrValues.get(
-            EntitiesModel.ATTR_NAME_DEVICE_KEY_VALUE);
         populateTableModel(getUserCredentials(values));
-
-        String authChains = getAttributeFromSet(values, ATTR_NAME_AUTH_CHAIN);
+        String authChains = getValueFromMap(values, 
+            WSSAttributeNames.AUTH_CHAIN);
         if (authChains == null) {
             authChains = "";
         }
-        CCSelectableList cb = (CCSelectableList)getChild(CHILD_NAME_AUTH_CHAIN);
-        cb.setOptions(getAuthChainOptionList());
+
+        if (!inheritedPropertyNames.contains(WSSAttributeNames.AUTH_CHAIN)) {
+            CCSelectableList cb = (CCSelectableList)getChild(
+                CHILD_NAME_AUTH_CHAIN);
+            cb.setOptions(getAuthChainOptionList());
+        }
         propertySheetModel.setValue(CHILD_NAME_AUTH_CHAIN, authChains);
 
         setExternalizeUIValues(providerUIProperties, values);
-
-        values.add(EntitiesViewBean.ATTR_NAME_AGENT_TYPE + "WSP");
-
-        setPageSessionAttribute(EDIT_LINK_TRACKER, (Serializable)attrValues);
+        setPageSessionAttribute(EDIT_LINK_TRACKER, (Serializable)values);
     }
 
     private OptionList getAuthChainOptionList()
         throws AMConsoleException {
-        String curRealm = (String)getPageSessionAttribute(
-            AMAdminConstants.CURRENT_REALM);
-        Set config = ((EntitiesModel)getModel()).getAuthenticationChains(
-            curRealm);
+        Set config = ((AgentsModel)getModel()).getAuthenticationChains();
         OptionList optList = new OptionList();
-        optList.add("web.services.profile.authenticationchain-none", "");
         if ((config != null) && !config.isEmpty()) {
             for (Iterator iter = config.iterator(); iter.hasNext(); ) {
                 String c = (String)iter.next();
@@ -158,7 +178,13 @@ public class WebServiceProviderEditViewBean
     private void populateTableModel(Map nameToPassword) {
         tblUserCredential.clearAll();
         SerializedField szCache = (SerializedField)getChild(SZ_CACHE);
-                                                                                
+        boolean inheriting = inheritedPropertyNames.contains(
+            WSSAttributeNames.USERCREDENTIAL);
+        
+        if (inheriting) {
+            tblUserCredential.setSelectionType(
+                CCActionTableModelInterface.NONE);
+        }
         if ((nameToPassword != null) && !nameToPassword.isEmpty()) {
             boolean firstEntry = true;
             int counter = 0;
@@ -176,8 +202,14 @@ public class WebServiceProviderEditViewBean
                 String name = (String)i.next();
                 String token = WebServiceEditViewBean.formUserCredToken(
                     name, (String)nameToPassword.get(name));
-                tblUserCredential.setSelectionVisible(counter, true);
-                tblUserCredential.setValue(TBL_DATA_ACTION_HREF, token);
+                tblUserCredential.setSelectionVisible(counter, !inheriting);
+                
+                if (!inheriting) {
+                    tblUserCredential.setValue(TBL_DATA_ACTION_HREF, token);
+                } else {
+                    tblUserCredential.setValue(TBL_DATA_ACTION_HREF, "");
+                }
+                
                 tblUserCredential.setValue(TBL_DATA_NAME, name);
 
                 // mask password
@@ -190,41 +222,63 @@ public class WebServiceProviderEditViewBean
         }
     }
 
-    protected void getExtendedFormsValues(Set deviceKeyValue)
+    /**
+     * Removed the anchor tag if user credential is to be inherit from group.
+     *
+     * @param event Child Content Display Event.
+     * @return the manipulated HTML.
+     */
+    public String endTblDataActionHrefDisplay(ChildContentDisplayEvent event) {
+        String value = (String)tblUserCredential.getValue(TBL_DATA_ACTION_HREF);
+        String content = event.getContent();
+        if (value.length() > 0) {
+            return content;
+        } else {
+            int idx = content.indexOf(">");
+            int idx1 = content.indexOf("</a>");
+            return content.substring(idx+1, idx1);
+        }
+    }
+
+    protected void getExtendedFormsValues(Map values)
         throws AMConsoleException {
 
         String authChain = (String)propertySheetModel.getValue(
             CHILD_NAME_AUTH_CHAIN);
+        Set setAuthChain = new HashSet(2);
         if ((authChain != null) && (authChain.length() > 0)) {
-            deviceKeyValue.add(ATTR_NAME_AUTH_CHAIN + "=" + authChain);
+            setAuthChain.add(authChain);
         }
+        values.put(WSSAttributeNames.AUTH_CHAIN, setAuthChain);
 
-        getExternalizeUIValues(providerUIProperties, deviceKeyValue);
-        deviceKeyValue.add(EntitiesViewBean.ATTR_NAME_AGENT_TYPE + "WSP");
+        getExternalizeUIValues(providerUIProperties, values);
 
-        try {
-            CCActionTable table = (CCActionTable)getChild(TBL_USER_CRED);
-            table.restoreStateData();
-            
-            SerializedField szCache = (SerializedField)getChild(SZ_CACHE);
-            List list = (List)szCache.getSerializedObj();
-            
-            if ((list != null) && !list.isEmpty()) {
-                StringBuffer buff = new StringBuffer();
-                boolean first = true;
-                for (int i = 0; i < list.size(); i++) {
-                    if (!first) {
-                        buff.append(",");
-                    } else {
-                        first = false;
+        if (!inheritedPropertyNames.contains(WSSAttributeNames.USERCREDENTIAL)){
+            try {
+                CCActionTable table = (CCActionTable)getChild(TBL_USER_CRED);
+                table.restoreStateData();
+                
+                SerializedField szCache = (SerializedField)getChild(SZ_CACHE);
+                List list = (List)szCache.getSerializedObj();
+                Set set = new HashSet(2);
+                
+                if ((list != null) && !list.isEmpty()) {
+                    StringBuffer buff = new StringBuffer();
+                    boolean first = true;
+                    for (int i = 0; i < list.size(); i++) {
+                        if (!first) {
+                            buff.append(",");
+                        } else {
+                            first = false;
+                        }
+                        buff.append((String)list.get(i));
                     }
-                    buff.append((String)list.get(i));
+                    set.add(buff.toString());
                 }
-                deviceKeyValue.add(ATTR_NAME_USERCREDENTIAL + "=" +
-                    buff.toString());
+                values.put(WSSAttributeNames.USERCREDENTIAL, set);
+            } catch (ModelControlException ex) {
+                throw new AMConsoleException(ex.getMessage());
             }
-        } catch (ModelControlException ex) {
-            throw new AMConsoleException(ex.getMessage());
         }
     }
     
@@ -252,8 +306,12 @@ public class WebServiceProviderEditViewBean
         throws ModelControlException
     {
         try {
-            setPageSessionAttribute(TRACKER_ATTR, (Serializable)getFormValues()
-                );
+            Map values = getFormValues();
+            String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
+            AgentsModel model = (AgentsModel)getModel();
+            values.putAll(model.getAgentGroupValues(
+                universalId, inheritedPropertyNames));
+            setPageSessionAttribute(TRACKER_ATTR, (Serializable)values);
             WebServiceUserCredAddViewBean vb = (WebServiceUserCredAddViewBean)
                 getViewBean(WebServiceUserCredAddViewBean.class);
             unlockPageTrail();
@@ -317,10 +375,8 @@ public class WebServiceProviderEditViewBean
 
         try {
             Map map = getFormValues();
-            Set values = (Set)map.get(
-                EntitiesModel.ATTR_NAME_DEVICE_KEY_VALUE);
-            WebServiceEditViewBean.removeUserCredTokenAttr(tokens, values);
-            populateTableModel(getUserCredentials(values));
+            WebServiceEditViewBean.removeUserCredTokenAttr(tokens, map);
+            populateTableModel(getUserCredentials(map));
             setPageSessionAttribute(TRACKER_ATTR, (Serializable)map);
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                 "web.services.profile.click-to-save");
@@ -330,8 +386,17 @@ public class WebServiceProviderEditViewBean
         }
         forwardTo();
     }
-
-    protected List getMessageLevelSecurityMech() {
-        return SecurityMechanism.getAllWSPSecurityMechanisms();
+    
+    protected Map getAttrToChildNamesMapping() {
+        return attrToChildNames;
+    }
+    
+    protected String handleReadonlyAttributes(String xml) {
+        xml = super.handleReadonlyAttributes(xml);
+        if (inheritedPropertyNames.contains(WSSAttributeNames.USERCREDENTIAL)) {
+            disableButton(TBL_BUTTON_ADD, true);
+            disableButton(TBL_BUTTON_DELETE, true);
+        }
+        return xml;
     }
 } 

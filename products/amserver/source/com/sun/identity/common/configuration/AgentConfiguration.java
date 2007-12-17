@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.2 2007-11-13 21:56:30 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.3 2007-12-17 19:42:50 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,17 +38,21 @@ import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.security.AccessController;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
  * This class provides agent configuration utilities.
  */
 public class AgentConfiguration {
-
+  
     private AgentConfiguration() {
     }
 
@@ -281,9 +285,29 @@ public class AgentConfiguration {
                 attrSchemas.addAll(attrs);
             }
         }
+        
+        for (Iterator i = attrSchemas.iterator(); i.hasNext(); ) {
+            AttributeSchema as = (AttributeSchema)i.next();
+            if (as.getType().equals(AttributeSchema.Type.VALIDATOR)) {
+                i.remove();
+            }
+        }
         return attrSchemas;
     }
 
+    private static Set getAgentAttributeSchemaNames(String agentTypeName)
+        throws SMSException, SSOException {
+        Set attrSchemas = getAgentAttributeSchemas(agentTypeName);
+        Set names = new HashSet(attrSchemas.size() *2);
+        
+        for (Iterator i = attrSchemas.iterator(); i.hasNext(); ) {
+            AttributeSchema as = (AttributeSchema)i.next();
+            names.add(as.getName());
+        }
+        
+        return names;
+    }
+    
     /**
      * Returns agent group's attribute values.
      *
@@ -338,30 +362,27 @@ public class AgentConfiguration {
      */
     public static Map getAgentAttributes(SSOToken ssoToken, String agentName) 
         throws IdRepoException, SMSException, SSOException {
-        return getAgentAttributes(ssoToken, "/", agentName);
+        AMIdentity amid = new AMIdentity(ssoToken, agentName,
+            IdType.AGENTONLY, "/", null);
+        return getAgentAttributes(amid, true);
     }
     
     /**
      * Returns agent's attribute values.
      *
-     * @param ssoToken Single Sign On token that is to be used for query.
-     * @param realm Name of realm where agent resides.
-     * @param agentName Name of agent.
+     * @param amid Identity object.
+     * @param reformat <code>true</code> to reformat the values.
      * @return agent's attribute values.
      * @throws IdRepoException if there are Id Repository related errors.
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      */
-    private static Map getAgentAttributes(
-        SSOToken ssoToken,
-        String realm,
-        String agentName
-    ) throws IdRepoException, SMSException, SSOException {
-        AMIdentity amid = new AMIdentity(ssoToken, agentName,
-            IdType.AGENTONLY, realm, null);
+    public static Map getAgentAttributes(AMIdentity amid, boolean reformat)
+        throws IdRepoException, SMSException, SSOException {
         Map values = amid.getAttributes();
-        return unparseAttributeMap(getAgentType(amid), values);
+        return (reformat) ? unparseAttributeMap(getAgentType(amid), values) :
+            correctAttributeNames(getAgentType(amid), values);
     }
     
     private static String getAgentType(AMIdentity amid)
@@ -422,16 +443,45 @@ public class AgentConfiguration {
         return results;
     }
     
+
+    private static Map correctAttributeNames(String agentType, Map attrValues)
+        throws SMSException, SSOException {
+        Map result = new HashMap();
+        Set asNames = getAgentAttributeSchemaNames(agentType);
+
+        if ((asNames != null) && !asNames.isEmpty()) {
+            for (Iterator i = asNames.iterator(); i.hasNext(); ) {
+                String name = (String)i.next();
+                Set values = (Set)attrValues.get(name);
+                if (values != null) {
+                    result.put(name, values);
+                }
+            }
+        } else {
+            result.putAll(attrValues);
+        }
+        
+        return result;
+    }
+    
     private static Map unparseAttributeMap(String agentType, Map attrValues)
         throws SMSException, SSOException {
         Map result = new HashMap();
+        Set asNames = getAgentAttributeSchemaNames(agentType);
         Set asListType = getAttributesSchemaNames(agentType,
             AttributeSchema.Type.LIST);
         Set asValidatorType = getAttributesSchemaNames(agentType,
             AttributeSchema.Type.VALIDATOR);
         
-        if ((asListType != null) && !asListType.isEmpty()) {
-            for (Iterator i = attrValues.keySet().iterator(); i.hasNext(); ) {
+        if (asListType == null) {
+            asListType = Collections.EMPTY_SET;
+        }
+        if (asValidatorType == null) {
+            asValidatorType = Collections.EMPTY_SET;
+        }
+        
+        if ((asNames != null) && !asNames.isEmpty()) {
+            for (Iterator i = asNames.iterator(); i.hasNext(); ) {
                 String name = (String)i.next();
                 Set values = (Set)attrValues.get(name);
                 if (!asValidatorType.contains(name)) {
@@ -539,5 +589,183 @@ public class AgentConfiguration {
             ss = ssm.getSchema(SchemaType.ORGANIZATION);
         }
         return ss;
+    }
+    
+    /**
+     * Returns the default values of attribute schemas
+     * of a given agent type.
+     *
+     * @param agentType Type of agent.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     */
+    public static Map getDefaultValues(String agentType) 
+        throws SMSException, SSOException {
+        Map mapDefault = new HashMap();
+        Set attributeSchemas = getAgentAttributeSchemas(agentType);
+        
+        if ((attributeSchemas != null) && !attributeSchemas.isEmpty()) {
+            for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
+                AttributeSchema as = (AttributeSchema)i.next();
+                mapDefault.put(as.getName(), as.getDefaultValues());
+            }
+        }
+        return mapDefault;
+    }
+    
+    /**
+     * Returns choice values of an attribute schema.
+     *
+     * @param name Name of attribute schema.
+     * @param agentType Type of agent.
+     * @return choice values of an attribute schema.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     */
+    public static Map getChoiceValues(String name, String agentType) 
+        throws SMSException, SSOException {
+        Map choiceValues = new HashMap();
+        AttributeSchema as = getAgentAttributeSchema(name, agentType);
+        
+        if (as != null) {
+            String[] cValues = as.getChoiceValues();
+            
+            if (cValues != null) {
+                for (int i = 0; i < cValues.length; i++) {
+                    String v = cValues[i];
+                    choiceValues.put(as.getChoiceValueI18NKey(v), v);
+                }
+            }
+        }
+        return choiceValues;
+    }
+
+    /**
+     * Returns attribute schema of a given agent type.
+     *
+     * @param name Name of attribute schema.
+     * @param agentTypeName Name of agent type.
+     * @return attribute schema of a given agent type.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     */
+    public static AttributeSchema getAgentAttributeSchema(
+        String name, 
+        String agentTypeName
+    ) throws SMSException, SSOException {
+        AttributeSchema as = null;
+        ServiceSchema ss = getOrganizationSchema();
+        if (ss != null) {
+            ServiceSchema ssType = ss.getSubSchema(agentTypeName);
+            as = ssType.getAttributeSchema(name);
+        }
+        return as;
+    }
+
+    /**
+     * Returns the inherited attribute names.
+     *
+     * @param amid Identity object of the agent.
+     * @return the inherited attribute names.
+     * @throws IdRepoException if attribute names cannot obtained.
+     * @throws SSOException if single sign on token is expired or invalid.
+     */
+    public static Set getInheritedAttributeNames(AMIdentity amid)
+        throws IdRepoException, SSOException, SMSException {
+        String agentType = getAgentType(amid);
+        Set attributeSchemaNames = getAgentAttributeSchemaNames(agentType);
+        Map values = getAgentAttributes(amid, false);
+        
+        if ((values != null) && !values.isEmpty()) {
+            attributeSchemaNames.removeAll(values.keySet());
+        }
+        return attributeSchemaNames;
+    }
+    
+    /**
+     * Updates the inherited attribute names.
+     *
+     * @param amid Identity object of the agent.
+     * @param inherit Map of attribute name to either "1" or "0". "1" to 
+     *        inherit and "0" not.
+     * @throws IdRepoException if attribute names cannot obtained.
+     * @throws SSOException if single sign on token is expired or invalid.
+     */
+    public static void updateInheritance(AMIdentity amid, Map inherit) 
+        throws IdRepoException, SSOException, SMSException {
+        
+        Set toInherit = new HashSet();
+        Set notToInherit = new HashSet();
+        
+        for (Iterator i = inherit.keySet().iterator(); i.hasNext(); ) {
+            String attrName = (String)i.next();
+            String flag = (String)inherit.get(attrName);
+            if (flag.equals("1")) {
+                toInherit.add(attrName);
+            } else {
+                notToInherit.add(attrName);
+            }
+        }
+        Map origValues = getAgentAttributes(amid, false);
+        Map values = amid.getAttributes(toInherit);
+        amid.removeAttributes(values.keySet());
+        
+        String agentType = getAgentType(amid);
+        Map attrSchemas = getAttributeSchemas(agentType, notToInherit);
+        Map resetValues = new HashMap(notToInherit.size() *2);
+        
+        for (Iterator i = notToInherit.iterator(); i.hasNext(); ) {
+            String attrName = (String)i.next();
+            if (origValues.get(attrName) == null) {
+                AttributeSchema as = (AttributeSchema)attrSchemas.get(attrName);
+                Set defaultValues = as.getDefaultValues();
+                if ((defaultValues == null)) {
+                    resetValues.put(attrName, Collections.EMPTY_SET);
+                } else {
+                    resetValues.put(attrName, defaultValues);
+                }
+            }
+        }
+        
+        if (!resetValues.isEmpty()) {
+            amid.setAttributes(resetValues);
+            amid.store();
+        }
+    }
+
+    /**
+     * Returns attribute schema for a given set of attribute names.
+     *
+     * @param agentType Agent type.
+     * @param names Set of attribute names.
+     * @return localized names for a given set of attribute names.
+     */
+    public static Map getAttributeSchemas(
+        String agentType, 
+        Collection names
+    ) throws SMSException, SSOException {
+        Map map = new HashMap();
+        Set attributeSchema = getAgentAttributeSchemas(agentType);
+        for (Iterator i = attributeSchema.iterator(); i.hasNext(); ) {
+            AttributeSchema as = (AttributeSchema)i.next();
+            if (names.contains(as.getName())) {
+                map.put(as.getName(), as);
+            }
+        }
+        return map;
+    }
+
+    public static ResourceBundle getServiceResourceBundle(Locale locale)
+        throws SMSException, SSOException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        ServiceSchemaManager ssm = new ServiceSchemaManager(
+            IdConstants.AGENT_SERVICE, adminToken);
+
+        String rbName = ssm.getI18NFileName();
+        return ResourceBundle.getBundle(rbName, locale);
     }
 }

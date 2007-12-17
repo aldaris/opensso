@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.5 2007-10-17 23:00:51 veiming Exp $
+   $Id: amAccessControl.xml,v 1.6 2007-12-17 19:42:53 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -150,6 +150,10 @@
     </viewbean>
 
     <!-- ENTITIES -->
+    <viewbean classname="com.sun.identity.console.agentconfig.AgentsViewBean" view="*" modify="*">
+	<actionhandler name="tblButtonGroupAdd,tblButtonAdd,tblDataActionHref,tblDataActionGroupHref,tblDataActionGroupMembersHref,tblButtonDelete,tblButtonGroupDelete" />
+	<table name="tblSearch" />
+    </viewbean>
     <viewbean classname="com.sun.identity.console.idm.EntitiesViewBean" view="*" modify="*">
 	<actionhandler name="tblButtonAdd,tblButtonDelete" />
 	<table name="tblSearch" />
@@ -349,4 +353,21 @@
     <neednodealwith classname="com.sun.identity.console.service.ServerEditAdvancedViewBean" />
     <neednodealwith classname="com.sun.identity.console.service.ServerConfigXMLViewBean" />
     <neednodealwith classname="com.sun.identity.console.service.SiteEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.AgentsViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.AgentAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.HomeViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.GenericAgentProfileViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.AgentConfigInheritViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.AgentProfileViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.AgentConfigurationServlet" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.AgentGroupMembersViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.AgentTabManager" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.AgentGroupAddViewBean" />
+<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceSTSEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceProviderEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceUserCredEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceClientEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceUserCredAddViewBean" />
+<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceUIElement" />
 </accesscontrols>

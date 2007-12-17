@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPropertyXMLBuilderBase.java,v 1.1 2007-02-07 20:23:56 jonnelson Exp $
+ * $Id: PolicyPropertyXMLBuilderBase.java,v 1.2 2007-12-17 19:42:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,7 @@ public abstract class PolicyPropertyXMLBuilderBase
         List propertyNames = getPropertyNames();
 
         if ((propertyNames != null) && !propertyNames.isEmpty()) {
-            String[] params = {"values",
+            Object[] params = {"values",
                 model.getLocalizedString(getSectionLabel())};
             xml.append(MessageFormat.format(SECTION_START_TAG, params));
 
@@ -78,7 +78,7 @@ public abstract class PolicyPropertyXMLBuilderBase
         
         if (tagClassName != null) {
             xml.append(PROPERTY_START_TAG);
-            String[] params = new String[3];
+            Object[] params = new String[3];
             params[0] = name;
             params[2] = name;
            
@@ -92,10 +92,10 @@ public abstract class PolicyPropertyXMLBuilderBase
             xml.append(MessageFormat.format(LABEL_TAG, params));
 
             if (allAttributesReadonly) {
-                String[] param = {name, STATIC_TEXT_TAG_NAME};
+                Object[] param = {name, STATIC_TEXT_TAG_NAME};
                 xml.append(MessageFormat.format(COMPONENT_START_TAG, param));
             } else {
-                String[] param = {name, tagClassName};
+                Object[] param = {name, tagClassName};
                 xml.append(MessageFormat.format(COMPONENT_START_TAG, param));
                 
                 // Textarea, textfield, and editable list components will
@@ -104,7 +104,7 @@ public abstract class PolicyPropertyXMLBuilderBase
                     xml.append(NON_LOCALIZED_FIELD);
                 } else if (tagClassName.equals(TAGNAME_TEXTFIELD)) {
                     // set the size of the text field based on its syntax
-                    String[] pSize = { getStringFieldSize(syntax) };
+                    Object[] pSize = { getStringFieldSize(syntax) };
                     xml.append(MessageFormat.format(TEXTBOX_SIZE_TAG, pSize));
                     xml.append(NON_LOCALIZED_FIELD);
                 } else if (tagClassName.equals(TAGNAME_MULTIPLE_CHOICE)) {
@@ -161,7 +161,7 @@ public abstract class PolicyPropertyXMLBuilderBase
     
                     for (Iterator iter = sorted.iterator(); iter.hasNext(); ) {
                         String val = (String)iter.next();
-                        String[] params = {val, val};
+                        Object[] params = {val, val};
                         xml.append(MessageFormat.format(OPTION_TAG, params));
                     }
                 }

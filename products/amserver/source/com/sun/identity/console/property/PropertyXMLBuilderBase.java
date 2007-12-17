@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.3 2007-10-17 23:00:34 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.4 2007-12-17 19:42:52 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,7 @@ import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -395,7 +395,7 @@ public abstract class PropertyXMLBuilderBase
         String name = getAttributeNameForPropertyXML(as); 
         xml.append(PROPERTY_START_TAG);
         addLabel(as, xml, serviceBundle);
-        String[] param = {name};
+        Object[] param = {name};
         xml.append(MessageFormat.format(READONLY_START_TAG, param));
         xml.append(COMPONENT_END_TAG); 
 
@@ -442,12 +442,12 @@ public abstract class PropertyXMLBuilderBase
             //need to handle link specially.
             if (tagClassName.equals(TAGNAME_BUTTON)) {
                 String editString = model.getLocalizedString("label.edit");
-                String[] pLink = {"'" + name + "'", editString};
+                Object[] pLink = {"'" + name + "'", editString};
                 xml.append(MessageFormat.format(
                     COMPONENT_BUTTON_START_TAG, pLink));
             } else if (tagClassName.equals(TAGNAME_HREF)) {
                 String editString = model.getLocalizedString("label.edit");
-                String[] pLink = {
+                Object[] pLink = {
                     PropertyTemplate.PARAM_ATTR_NAME + "=" + name +
                     "&amp;" + PropertyTemplate.PARAM_PROPERTIES_VIEW_BEAN_URL +
                         "=" + as.getPropertiesViewBeanURL(),
@@ -456,7 +456,7 @@ public abstract class PropertyXMLBuilderBase
                 xml.append(MessageFormat.format(
                     COMPONENT_LINK_START_TAG, pLink));
             } else if (tagClassName.equals(TAGNAME_CHECKBOX)) {
-                String[] param = {name, tagClassName,
+                Object[] param = {name, tagClassName,
                     model.getLocalizedString("label.Enable")};
                 xml.append(MessageFormat.format( 
                     COMPONENT_BOOLEAN_START_TAG, param));
@@ -467,7 +467,7 @@ public abstract class PropertyXMLBuilderBase
                 * page. Otherwise the list component blends in with other
                 * components on the page.
                 */
-                String[] param = { 
+                Object[] param = { 
                     name, 
                     model.getLocalizedString("label.current.value"),
                     model.getLocalizedString("label.new.value")
@@ -477,7 +477,7 @@ public abstract class PropertyXMLBuilderBase
                     .append(MessageFormat.format(
                         COMPONENT_EDITABLE_LIST_START_TAG, param));
             } else {
-                String[] param = {name, tagClassName};
+                Object[] param = {name, tagClassName};
                 xml.append(MessageFormat.format(COMPONENT_START_TAG, param));
 
                 /*
@@ -485,7 +485,7 @@ public abstract class PropertyXMLBuilderBase
                 * set the size of the text field based on its syntax
                 */
                 if (tagClassName.equals(TAGNAME_TEXTFIELD)) {
-                    String[] pSize = { getStringFieldSize(as) };
+                    Object[] pSize = { getStringFieldSize(as) };
                     xml.append(MessageFormat.format(TEXTBOX_SIZE_TAG, pSize));
                     xml.append(NON_LOCALIZED_FIELD);
                     xml.append(NO_AUTO_SUBMIT);
@@ -556,7 +556,7 @@ public abstract class PropertyXMLBuilderBase
     ) {
         AttributeSchema.Syntax syntax = as.getSyntax();
         if (syntax.equals(AttributeSchema.Syntax.DATE)) {
-            String[] arg = {as.getName()};
+            Object[] arg = {as.getName()};
             xml.append(MessageFormat.format(PropertyTemplate.DATE_MARKER, arg));
         }
     }
@@ -577,7 +577,7 @@ public abstract class PropertyXMLBuilderBase
         }
 
         addPasswordConfirmLabel(as, xml, serviceBundle, model);
-        String[] param = {name};
+        Object[] param = {name};
         xml.append(MessageFormat.format(COMPONENT_PWD_START_TAG, param));
         xml.append(COMPONENT_END_TAG);
         xml.append(PROPERTY_END_TAG);
@@ -589,7 +589,7 @@ public abstract class PropertyXMLBuilderBase
         ResourceBundle serviceBundle
     ) {
         String name = getAttributeNameForPropertyXML(as);
-        String[] params = {name,
+        Object[] params = {name,
             com.sun.identity.shared.locale.Locale.getString(
                 serviceBundle, as.getI18NKey(), debug),
             name};
@@ -603,14 +603,14 @@ public abstract class PropertyXMLBuilderBase
         AMModel model
     ) {
         String name = as.getName();
-        String[] labelParam = {
+        Object[] labelParam = {
             com.sun.identity.shared.locale.Locale.getString(
                 serviceBundle, as.getI18NKey(), debug)
         };
         String label = MessageFormat.format(model.getLocalizedString(
             "password.confirm.label"), labelParam);
 
-        String[] params = {name, label, name};
+        Object[] params = {name, label, name};
         xml.append(MessageFormat.format(LABEL_TAG, params));
     }
 
@@ -626,7 +626,7 @@ public abstract class PropertyXMLBuilderBase
         
         try {
             String helpString = serviceBundle.getString(i18nKey + ".help");
-            String[] params = {as.getName(), escapeSpecialChars(helpString)};
+            Object[] params = {as.getName(), escapeSpecialChars(helpString)};
             xml.append(MessageFormat.format(HELP_TAG, params));
         } catch (MissingResourceException e) {
             // no-op, assumption here is help is not defined for this attr.
@@ -680,10 +680,10 @@ public abstract class PropertyXMLBuilderBase
                                                                                 
             if ((uitype != null) && uitype.equals(AttributeSchema.UIType.RADIO))
             {
-                String[] p1 = {
+                Object[] p1 = {
                     model.getLocalizedString("label.Yes"), "true"};
                 xml.append(MessageFormat.format(OPTION_TAG, p1));
-                String[] p2 = {model.getLocalizedString("label.No"), "false"};
+                Object[] p2 = {model.getLocalizedString("label.No"), "false"};
                 xml.append(MessageFormat.format(OPTION_TAG, p2));
             }
         } else if (type.equals(AttributeSchema.Type.SINGLE_CHOICE)) {
@@ -699,13 +699,13 @@ public abstract class PropertyXMLBuilderBase
         Map map = new HashMap();
         Set sorted = getSortedChoiceValues(as, map, serviceBundle);
         String name = as.getName();
-        String[] nameArg = {name};
+        Object[] nameArg = {name};
         xml.append(MessageFormat.format(DYN_GUI_MULTIPLE_LIST_MARKER_XML,
             nameArg));
 
         for (Iterator iter = sorted.iterator(); iter.hasNext(); ) {
             String localizedName = (String)iter.next();
-            String[] params = {
+            Object[] params = {
                 name, (String)map.get(localizedName), localizedName};
             xml.append(MessageFormat.format(DYN_GUI_MULTIPLE_LIST_CHECKBOX_XML,
                 params));
@@ -725,7 +725,7 @@ public abstract class PropertyXMLBuilderBase
 
             for (Iterator iter = sorted.iterator(); iter.hasNext(); ) {
                 String choice = (String)iter.next();
-                String[] params = {attrName, choice, choice};
+                Object[] params = {attrName, choice, choice};
                 xml.append(
                     MessageFormat.format(DYN_GUI_MULTIPLE_LIST_CHECKBOX_XML,
                     params));
@@ -801,7 +801,7 @@ public abstract class PropertyXMLBuilderBase
         for (Iterator iter = sorted.iterator(); iter.hasNext(); ) {
             String localizedName = (String)iter.next();
             String value = (String)map.get(localizedName);
-            String[] params = {localizedName, value};
+            Object[] params = {localizedName, value};
             if (!defaultValue) {
                 xml.append("<attribute name=\"defaultValue\" value=\"")
                     .append(value)
@@ -902,7 +902,7 @@ public abstract class PropertyXMLBuilderBase
         Set readonly
     ) {
         String label = "lbl" + schemaTypeName.replace('.', '_');
-        String[] params = {label, schemaTypeName};
+        Object[] params = {label, schemaTypeName};
         xml.append(MessageFormat.format(SECTION_START_TAG, params));
 
         List sorted = new ArrayList(attributeSchemas);

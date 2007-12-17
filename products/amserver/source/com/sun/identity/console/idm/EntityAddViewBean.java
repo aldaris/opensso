@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityAddViewBean.java,v 1.1 2007-02-07 20:21:53 jonnelson Exp $
+ * $Id: EntityAddViewBean.java,v 1.2 2007-12-17 19:42:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,7 +91,7 @@ public class EntityAddViewBean
         String i18nName = (String)types.get(type);
         String title = model.getLocalizedString(
             "page.title.entities.create");
-        String[] param = {i18nName};
+        Object[] param = {i18nName};
         ptModel.setPageTitleText(MessageFormat.format(title, param));
 
         if (hasNoAttributeToDisplay) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewConfig.java,v 1.3 2007-08-03 22:29:49 jonnelson Exp $
+ * $Id: AMViewConfig.java,v 1.4 2007-12-17 19:42:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.console.base;
 
 import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.common.DisplayUtils;
+import com.sun.identity.console.agentconfig.AgentsViewBean;
 import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
@@ -78,6 +79,7 @@ public class AMViewConfig {
     private static final String REALM_ENABLE_HIDE_ATTRS =
         "realmEnableHideAttrName";
     private static final String IDENTITY_SERVICE = "identityservice";
+    private static final String AGENT_SERVICE = "agentservice";
 
     private AMViewConfig() {
         Document doc = parseDocument(CONFIG_FILENAME);
@@ -140,6 +142,75 @@ public class AMViewConfig {
 
         return added;
     }
+    
+    public CCNavNode addAgentTabs(CCTabsModel tabModel, AMModel model, int idx) {
+        CCNavNode selected = null;
+        Map mapSupported = getSupportedAgentTypesMap(model);
+        List supported = getSupportedAgentTypes(model);
+
+        if (!supported.isEmpty()) {
+            CCNavNode configNode = (CCNavNode)tabModel.getNodeById(
+                AMAdminConstants.CONFIGURATION_NODE_ID);
+            CCNavNode agentNode = null;
+            
+            List nodes = configNode.getChildren();
+            for (Iterator i = nodes.iterator(); 
+                i.hasNext() && (agentNode == null);
+            ) {
+                CCNavNode c = (CCNavNode)i.next();
+                if (c.getId() == AMAdminConstants.AGENTS_NODE_ID) {
+                    agentNode = c;
+                }
+            }
+            
+            if (agentNode != null) {
+                for (int i = 0; i < supported.size(); i++) {
+                    String t = (String)supported.get(i);
+                    int nodeId = Integer.parseInt("46" + i);
+                    CCNavNode n = new CCNavNode(nodeId,
+                        (String)mapSupported.get(t), t, t);
+                    if (nodeId == idx) {
+                        selected = n;
+                    }
+                    agentNode.addChild(n);
+                }
+            }
+        }
+
+        return selected;
+    }
+
+    
+    public List getSupportedAgentTypes(AMModel model) {
+        Map supported = getSupportedAgentTypesMap(model);
+        List ordered = null;
+
+        if ((supported != null) && !supported.isEmpty()) {
+            ordered = new ArrayList(supported.size());
+            Set basket = new HashSet();
+            basket.addAll(supported.keySet());
+            List predefinedOrder = (List)services.get(AGENT_SERVICE);
+
+            for (Iterator i = predefinedOrder.iterator(); i.hasNext(); ) {
+                String wildcard = (String)i.next();
+                List matched = matchIdentityType(basket, wildcard, model);
+                if (!matched.isEmpty()) {
+                    ordered.addAll(matched);
+                }
+            }
+
+            /*
+             * This handles identity types that are not pre-ordered.
+             */
+            if (!basket.isEmpty()) {
+                ordered.addAll(
+                    AMFormatUtils.sortItems(basket, model.getUserLocale()));
+            }
+        }
+
+        return (ordered == null) ? Collections.EMPTY_LIST : ordered;
+    }
+
 
     public List getSupportedEntityTypes(String realmName, AMModel model) {
         Map supported = getSupportedEntityTypesMap(realmName, model);
@@ -170,7 +241,7 @@ public class AMViewConfig {
 
         return (ordered == null) ? Collections.EMPTY_LIST : ordered;
     }
-
+    
     private List matchIdentityType(Set basket, String wildcard, AMModel model) {
         Set matched = new HashSet();
         for (Iterator i = basket.iterator(); i.hasNext(); ) {
@@ -183,6 +254,20 @@ public class AMViewConfig {
         return AMFormatUtils.sortItems(matched, model.getUserLocale());
     }
 
+
+    public Map getSupportedAgentTypesMap(AMModel model) {
+        Map supported = null;
+        AccessControlModel accessModel = new AccessControlModelImpl(
+            model.getUserSSOToken());
+        Set permission = new HashSet(2);
+        permission.add(AMAdminConstants.IDREPO_SERVICE_NAME);
+
+        if (accessModel.canView(permission, null, "/", false)) {
+            supported = model.getSupportedAgentTypes();
+        }
+
+        return (supported == null) ? Collections.EMPTY_MAP : supported;
+    }    
 
     public Map getSupportedEntityTypesMap(String realmName, AMModel model) {
         Map supported = null;
@@ -334,19 +419,9 @@ public void setTabViews(int parentID, List items) {
             }
 
             if (clazz == null) {
-                // may be entity type
-                Map supported = model.getSupportedEntityTypes(realmName);
-
-                for (Iterator it = supported.keySet().iterator();
-                    it.hasNext() && (clazz == null);
-                ) {
-                    String t = (String)it.next();
-                    if (idx == t.hashCode()) {
-                        clazz =
-                            com.sun.identity.console.idm.EntitiesViewBean.class;
-                        vb.setPageSessionAttribute(
-                            EntitiesViewBean.PG_SESSION_ENTITY_TYPE, t);
-                    }
+                clazz = getEntityTypeClass(vb, idx, realmName, model);
+                if (clazz == null) {
+                    clazz = getAgentTypeClass(vb, idx, model);
                 }
             } else if (BlankTabViewBean.class.equals(clazz)) {
                 switch (childIdx) {
@@ -367,6 +442,46 @@ public void setTabViews(int parentID, List items) {
                 "AMViewConfig.getTabClass: no action class for node ID, " +idx);
         }
 
+        return clazz;
+    }
+
+    
+    private Class getEntityTypeClass(
+        AMViewBeanBase vb,
+        int idx, 
+        String realmName, 
+        AMModel model
+    ) {
+        Class clazz = null;
+        Map supported = model.getSupportedEntityTypes(realmName);
+
+        for (Iterator i = supported.keySet().iterator(); 
+            i.hasNext() && (clazz == null);
+        ) {
+            String t = (String)i.next();
+            if (idx == t.hashCode()) {
+                clazz = EntitiesViewBean.class;
+                vb.setPageSessionAttribute(
+                    EntitiesViewBean.PG_SESSION_ENTITY_TYPE, t);
+            }
+        }
+        return clazz;
+    }
+    
+    private Class getAgentTypeClass(AMViewBeanBase vb, int idx, AMModel model) {
+        Class clazz = null;
+        Map supported = model.getSupportedAgentTypes();
+
+        for (Iterator i = supported.keySet().iterator(); 
+            i.hasNext() && (clazz == null);
+        ) {
+            String t = (String)i.next();
+            if (idx == t.hashCode()) {
+                clazz = AgentsViewBean.class;
+                vb.setPageSessionAttribute(
+                    AgentsViewBean.PG_SESSION_AGENT_TYPE, t);
+            }
+        }
         return clazz;
     }
 
@@ -567,6 +682,20 @@ public void setTabViews(int parentID, List items) {
                     } else if (child.getNodeName().equals(IDENTITY_SERVICE)) {
                         List list = new ArrayList();
                         services.put(IDENTITY_SERVICE, list);
+                        try {
+                            String order = getAttribute(child, "order");
+                            StringTokenizer st = new StringTokenizer(
+                                order, ",");
+                            while (st.hasMoreTokens()) {
+                                list.add(st.nextToken().trim());
+                            }
+                        } catch (AMConsoleException e) {
+                            AMModelBase.debug.error(
+                                "AMViewConfig.configServices", e);
+                        }
+                    } else if (child.getNodeName().equals(AGENT_SERVICE)) {
+                        List list = new ArrayList();
+                        services.put(AGENT_SERVICE, list);
                         try {
                             String order = getAttribute(child, "order");
                             StringTokenizer st = new StringTokenizer(

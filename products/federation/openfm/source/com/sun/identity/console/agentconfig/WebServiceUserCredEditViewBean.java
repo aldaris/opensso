@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceUserCredEditViewBean.java,v 1.1 2007-06-07 18:48:46 veiming Exp $
+ * $Id: WebServiceUserCredEditViewBean.java,v 1.1 2007-12-17 19:42:48 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.console.idm;
+package com.sun.identity.console.agentconfig;
 
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.model.ModelControlException;
@@ -45,11 +45,14 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * View Bean to edit user credential entry.
+ */
 public class WebServiceUserCredEditViewBean
     extends AMPrimaryMastHeadViewBean
 {
-    public static final String DEFAULT_DISPLAY_URL =
-        "/console/idm/WebServiceUserCredEdit.jsp";
+    static final String DEFAULT_DISPLAY_URL =
+        "/console/agentconfig/WebServiceUserCredEdit.jsp";
 
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
     private static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
@@ -137,7 +140,7 @@ public class WebServiceUserCredEditViewBean
         
         if ((username == null) || (username.trim().length() == 0) ||
             (password == null) || (password.trim().length() == 0)) {
-            this.setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
               "breadcrumbs.add-web-service-usercred-mandate-username-password");
             forwardTo();
         } else {
@@ -148,17 +151,14 @@ public class WebServiceUserCredEditViewBean
 
                 Map map = (Map)getPageSessionAttribute(
                     WebServiceEditViewBean.TRACKER_ATTR);
-                Set values = (Set)map.get(
-                    EntitiesModel.ATTR_NAME_DEVICE_KEY_VALUE);
-
                 if (username.equals(orig[0])) {
                     WebServiceEditViewBean.replaceUserCredTokenAttr(
-                        username, password, values);
+                        username, password, map);
                 } else {
                     WebServiceEditViewBean.addToUserCredTokenAttr(
-                        username, password, values, getModel());
+                        username, password, map, getModel());
                     WebServiceEditViewBean.removeUserCredTokenAttr(
-                        username, values);
+                        username, map);
                 }
                 setPageSessionAttribute(WebServiceEditViewBean.TRACKER_ATTR,
                     (Serializable)map);

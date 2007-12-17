@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListValueValidator.java,v 1.1 2007-11-05 21:41:04 veiming Exp $
+ * $Id: ListValueValidator.java,v 1.2 2007-12-17 19:42:50 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,10 +48,12 @@ public class ListValueValidator implements ServiceAttributeValidator {
         if ((values != null) && !values.isEmpty()) {
             for (Iterator i = values.iterator(); (i.hasNext() && valid);) {
                 String str = (String)i.next();
-                if (str.charAt(0) != '[') {
-                    valid = false;
-                } else {
-                    valid = (str.indexOf("]=") != -1);
+                if (str.length() > 0) {
+                    if (str.charAt(0) != '[') {
+                        valid = false;
+                    } else {
+                        valid = (str.indexOf("]=") != -1);
+                    }
                 }
             }
         }

@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceUserCredAddViewBean.java,v 1.1 2007-06-07 18:48:45 veiming Exp $
+ * $Id: WebServiceUserCredAddViewBean.java,v 1.1 2007-12-17 19:42:48 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.console.idm;
+package com.sun.identity.console.agentconfig;
 
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.model.ModelControlException;
@@ -44,11 +44,14 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * View Bean to create new User Credential entry.
+ */
 public class WebServiceUserCredAddViewBean
     extends AMPrimaryMastHeadViewBean
 {
-    public static final String DEFAULT_DISPLAY_URL =
-        "/console/idm/WebServiceUserCredAdd.jsp";
+    static final String DEFAULT_DISPLAY_URL =
+        "/console/agentconfig/WebServiceUserCredAdd.jsp";
 
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
     private static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
@@ -140,11 +143,10 @@ public class WebServiceUserCredAddViewBean
         } else {
             Map map = (Map)getPageSessionAttribute(
                 WebServiceEditViewBean.TRACKER_ATTR);
-            Set values = (Set)map.get(EntitiesModel.ATTR_NAME_DEVICE_KEY_VALUE);
 
             try {
                 WebServiceEditViewBean.addToUserCredTokenAttr(
-                    username, password, values, getModel());
+                    username, password, map, getModel());
                 setPageSessionAttribute(WebServiceEditViewBean.TRACKER_ATTR,
                     (Serializable)map);
                 backTrail();
@@ -156,6 +158,7 @@ public class WebServiceUserCredAddViewBean
             } catch (AMConsoleException e) {
                 setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage());
+                forwardTo();
             }
         }
     }

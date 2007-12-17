@@ -17,13 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceUIElement.java,v 1.1 2007-06-14 21:02:50 veiming Exp $
+ * $Id: WebServiceUIElement.java,v 1.1 2007-12-17 19:42:48 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.console.idm;
+package com.sun.identity.console.agentconfig;
 
+/**
+ * Stub of WSS UI Element.
+ */
 public class WebServiceUIElement {
     static final String TYPE_BOOL = "boolean";
     static final String TYPE_TEXT = "text";

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModel.java,v 1.3 2007-06-29 19:47:19 jonnelson Exp $
+ * $Id: AMModel.java,v 1.4 2007-12-17 19:42:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -190,6 +190,13 @@ public interface AMModel
      * @return a map of suppported entity type to its localized name.
      */
     Map getSupportedEntityTypes(String realmName);
+    
+    /**
+     * Returns a map of supported agent type to its localized name.
+     *
+     * @return a map of supported agent type to its localized name.
+     */
+    Map getSupportedAgentTypes();
 
     /**
      * Writes log event.

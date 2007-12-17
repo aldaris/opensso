@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPrimaryMastHeadViewBean.java,v 1.2 2007-03-14 19:28:43 jonnelson Exp $
+ * $Id: AMPrimaryMastHeadViewBean.java,v 1.3 2007-12-17 19:42:50 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,6 +104,13 @@ public abstract class AMPrimaryMastHeadViewBean
     }
 
     public void forwardTo(RequestContext rc) {
+        if (!handleRealmNameInTabSwitch(rc)) {
+            super.forwardTo(rc);
+        }
+    }
+    
+    protected boolean handleRealmNameInTabSwitch(RequestContext rc) {
+        boolean forwarded = false;
         // Need to default realm name if it is not even set at this point.
         String realmName = (String)getPageSessionAttribute(
             AMAdminConstants.CURRENT_PROFILE);
@@ -113,25 +120,16 @@ public abstract class AMPrimaryMastHeadViewBean
         }
         createTabModel();
 
-        try {
-            initPageTrail();
-            DelegationConfig dConfig = DelegationConfig.getInstance();
-            if (dConfig.isUncontrolledViewBean(getClass().getName())) {
-                super.forwardTo(rc);
-            } else {
-                if (tabModel.getNodeCount() == 0) {
-                    EndUserViewBean vb = (EndUserViewBean)
-                        getViewBean(EndUserViewBean.class);
-                    vb.forwardTo(rc);
-                } else {
-                    super.forwardTo(rc);
-                }
+        DelegationConfig dConfig = DelegationConfig.getInstance();
+        if (!dConfig.isUncontrolledViewBean(getClass().getName())) {
+            if (tabModel.getNodeCount() == 0) {
+                EndUserViewBean vb = (EndUserViewBean)
+                getViewBean(EndUserViewBean.class);
+                vb.forwardTo(rc);
+                forwarded = true;
             }
-        } catch (AMConsoleException e) {
-            AMAdminFrameViewBean vb = (AMAdminFrameViewBean)getViewBean(
-                AMAdminFrameViewBean.class);
-            vb.forwardTo(rc);
         }
+        return forwarded;
     }
 
     /**

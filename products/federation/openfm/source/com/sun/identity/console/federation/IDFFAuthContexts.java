@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFAuthContexts.java,v 1.1 2007-12-12 01:09:05 asyhuang Exp $
+ * $Id: IDFFAuthContexts.java,v 1.2 2007-12-17 19:42:55 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,9 +53,10 @@ public class IDFFAuthContexts
         Iterator iterator = entries.iterator();
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry)iterator.next();
-            //System.out.println(entry.getKey());
-            IDFFAuthContext idffAuthContextObj = (IDFFAuthContext) entry.getValue();           
-            String str = "context=" + idffAuthContextObj.name + "|level=" +  idffAuthContextObj.level ;
+            IDFFAuthContext idffAuthContextObj =
+                (IDFFAuthContext) entry.getValue();           
+            String str = "context=" + idffAuthContextObj.name + "|level=" +
+                idffAuthContextObj.level ;
             if(idffAuthContextObj.supported.equals("true")){
                 list.add(str);
             }
@@ -70,7 +71,8 @@ public class IDFFAuthContexts
         Iterator iterator = entries.iterator();
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry)iterator.next();            
-            IDFFAuthContext idffAuthContextObj = (IDFFAuthContext) entry.getValue();
+            IDFFAuthContext idffAuthContextObj =
+                (IDFFAuthContext)entry.getValue();
             String str = "context=" + idffAuthContextObj.name + 
                 "|key=" +  idffAuthContextObj.key +
                 "|value=" +  idffAuthContextObj.value +
@@ -108,6 +110,7 @@ public class IDFFAuthContexts
      * Adds IDFFAuthContext to the collection
      *
      * @param name Name of entry.
+     * @param supported true if this entry is supported.
      * @param level Level of entry.
      */
     public void put(String name,  String supported, String level) {
@@ -127,7 +130,7 @@ public class IDFFAuthContexts
      * @param supported true if this entry is supported.
      * @param key Key of entry.
      * @param value Value of entry.
-     * @param priority Priority of entry.
+     * @param level Level of entry.
      */
     public void put(
         String name,
@@ -135,7 +138,7 @@ public class IDFFAuthContexts
         String key,
         String value,
         String level
-        ) {
+    ) {
         IDFFAuthContext c = new IDFFAuthContext();
         c.name = name;
         c.supported = supported;
