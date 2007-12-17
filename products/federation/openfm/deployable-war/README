@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.3 2007-12-14 07:04:41 qcheng Exp $
+   $Id: README,v 1.4 2007-12-17 23:35:19 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -74,3 +74,11 @@ Steps to create a specialized WAR file:
 
 Now the specialized WAR is ready to be deployed into your web container.
 
+After deploying the WAR, access the WAR deployment URL 
+(e.g. http://moonriver.eng.sun.com/console) from your browser. A configurator 
+JSP page will be displayed for you to enter the configuration information 
+for the special WAR. Enter the fields and submit the data, a configuration file 
+(e.g. AMConfig.properties) will be created under your home directory. It is 
+highly recommended that you change the permission of the configuration file 
+to limit access to the sensitive configuration information. 
+Now you could access the special WAR for its functions. 
