@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.17 2007-11-14 00:29:33 manish_rustagi Exp $
+$Id: README,v 1.18 2007-12-17 23:34:52 qcheng Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ Copyright 2006 Sun Microsystems Inc. All Rights Reserved
                FastInfoset.jar, jsr173_api.jar, webservices-api.jar,
                webservices-rt.jar, webservices-tools.jar, 
                webservices-extra.jar, webservices-extra-api.jar, OpenDS.jar, 
-               je.jar, mfwk_instrum_tk-2.0.jar, xercesImpl.jar
+               je.jar, mfwk_instrum_tk-2.0.jar, xercesImpl.jar, jss4.jar
         %% 2.3 Obtaining ldapjdk.jar
         %% 2.4 Obtaining db.jar
         %% 2.5 Obtaining testng-5.1-jdk15.jar
@@ -81,7 +81,7 @@ The libraries needed for compiling OpenSSO sources are:
      FastInfoset.jar, jsr173_api.jar, webservices-api.jar,
      webservices-rt.jar, webservices-tools.jar, webservices-extra.jar,
      webservices-extra-api.jar, OpenDS.jar, je.jar,
-     mfwk_instrum_tk-2.0.jar, xercesImpl.jar
+     mfwk_instrum_tk-2.0.jar, xercesImpl.jar, jss4.jar
    - Mozilla LDAP JDK version 4.17: ldapjdk.jar
    - SleepyCat Berkeley DB version 4.2.52: db.jar 
    - TestNG version 5.1 : testng-5.1-jdk15.jar
@@ -130,7 +130,7 @@ copying it to the "opensso/products/extlib" directory of your workspace.
      FastInfoset.jar, jsr173_api.jar, webservices-api.jar,
      webservices-rt.jar, webservices-tools.jar, webservices-extra.jar,
      webservices-extra-api.jar, OpenDS.jar, je.jar,
-     mfwk_instrum_tk-2.0.jar, xercesImpl.jar
+     mfwk_instrum_tk-2.0.jar, xercesImpl.jar, jss4.jar
 
 Those libraries can be obtained by downloading opensso-sun-extlib.zip from
 http://download.java.net/general/opensso/extlib/latest/opensso-sun-extlib.zip
