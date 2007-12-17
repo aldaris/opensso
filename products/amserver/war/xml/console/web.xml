@@ -40,6 +40,10 @@
         <param-value>../delegation</param-value>
     </context-param>
     <context-param>
+         <param-name>jato:com.sun.identity.console.agentconfig.*:moduleURL</param-name>
+         <param-value>../agentconfig</param-value>
+    </context-param>
+    <context-param>
         <param-name>jato:enforceStrictSessionTimeout</param-name>
         <param-value>true</param-value>
     </context-param>
@@ -100,6 +104,10 @@
         <servlet-class>com.sun.identity.console.delegation.DelegationServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>AgentConfigurationServlet</servlet-name>
+        <servlet-class>com.sun.identity.console.agentconfig.AgentConfigurationServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Help2Servlet</servlet-name>
         <servlet-class>com.sun.web.ui.servlet.help2.Help2Servlet</servlet-class>
     </servlet>
@@ -150,6 +158,10 @@
     <servlet-mapping>
         <servlet-name>DelegationServlet</servlet-name>
         <url-pattern>/delegation/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AgentConfigurationServlet</servlet-name>
+        <url-pattern>/agentconfig/*</url-pattern>
     </servlet-mapping>
 
     <!-- lockhart 2.x servlet mappings -->
