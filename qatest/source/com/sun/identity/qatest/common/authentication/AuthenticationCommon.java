@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.4 2007-10-16 22:15:07 rmisra Exp $
+ * $Id: AuthenticationCommon.java,v 1.5 2007-12-18 21:29:26 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,38 +26,61 @@ package com.sun.identity.qatest.common.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.sun.identity.qatest.common.SMSCommon;
+import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.TestCommon;
 import java.lang.String;
 import java.net.URL;
 import java.util.logging.Level;
+import com.iplanet.sso.SSOToken;
 
 /**
  * This class contains helper method related to Authentication.
  */
 public class AuthenticationCommon extends TestCommon {
-
+    
+    SSOToken ssoToken;
+    SMSCommon smsCommon;
+    
     public AuthenticationCommon() {
         super("AuthenticationCommon");
+        try{
+            ssoToken = getToken(adminUser, adminPassword, basedn);
+            smsCommon = new SMSCommon(ssoToken);
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
     }
-
+    
     /**
-     * Tests zero page login for given mode. This is a positive test. If the 
+     * Tests zero page login for given mode. This is a positive test. If the
      * login is  unsuccessfull, an error is thrown.
      */
-    public void testZeroPageLoginPositive(WebClient wc, String user,
+    public void testZeroPageLoginPositive(WebClient wc, String user, 
             String password, String mode,  String modeValue, String passMsg)
     throws Exception {
         Object[] params = {user, password, mode, modeValue, passMsg};
         entering("testZeroPageLoginPositive", params);
+        String strTest = null;
         try {
-            String strTest = protocol + ":" + "//" + host + ":" + port + uri +
-                        "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                        user + "&IDToken2=" + password;
-            log(logLevel, "testZeroPageLoginPositive", strTest);
+            strTest = protocol + ":" + "//" + host + ":" + port + uri +
+                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
+                    user + "&IDToken2=" + password;
+            log(Level.FINEST, "testZeroPageLoginPositive", strTest);
             URL url = new URL(strTest);
             HtmlPage page = (HtmlPage)wc.getPage( url );
-            log(logLevel, "testZeroPageLoginPositive", page.getTitleText());
-            assert page.getTitleText().equals(passMsg);
+            
+            log(Level.FINEST, "testZeroPageLoginPositive", page.getTitleText());
+            // Tests for everything if mode is not set to role. If mode is set 
+            // to role, tests only if one of the configured plugin for the realm 
+            // under test is of type amsdk, as this feature is only supported 
+            // by this plugin
+            if (!mode.equalsIgnoreCase("role")) {             
+                assert page.getTitleText().equals(passMsg);
+            } else if (smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
+                assert page.getTitleText().equals(passMsg);
+            }    
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginPositive", e.getMessage(),
                     params);
@@ -66,26 +89,36 @@ public class AuthenticationCommon extends TestCommon {
         }
         exiting("testZeroPageLoginPositive");
     }
-
+    
     /**
-     * Tests zero page login for a module. This is a negative test. If the 
+     * Tests zero page login for a module. This is a negative test. If the
      * login is  successfull, an error is thrown.
      */
-    public void testZeroPageLoginNegative(WebClient wc, String user,
-            String password, String mode,
-            String modeValue, String failMsg)
+    public void testZeroPageLoginNegative(WebClient wc, String user, 
+            String password, String mode, String modeValue, String failMsg)
     throws Exception {
         Object[] params = {user, password, mode, modeValue, failMsg};
         entering("testZeroPageLoginNegative", params);
+        String strTest = null;
         try {
-            String strTest = protocol + ":"  + "//" + host + ":" + port + uri +
-                        "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                        user + "&IDToken2=" + password + "negative";
-            log(logLevel, "testZeroPageLoginNegative", strTest);
+            strTest = protocol + ":"  + "//" + host + ":" + port + uri +
+                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
+                    user + "&IDToken2=" + password + "negative";
+            log(Level.FINEST, "testZeroPageLoginNegative", strTest);
             URL url = new URL(strTest);
             HtmlPage page = (HtmlPage)wc.getPage( url );
-            log(logLevel, "testZeroPageLoginNegative", page.getTitleText());
-            assert page.getTitleText().equals(failMsg);
+            
+            log(Level.FINEST, "testZeroPageLoginNegative", page.getTitleText());
+            // Tests for everything if mode is not set to role. If mode is set 
+            // to role, tests only if one of the configured plugin for the realm 
+            // under test is of type amsdk, as this feature is only supported 
+            // by this plugin
+            if (!mode.equalsIgnoreCase("role")) {
+                assert page.getTitleText().equals(failMsg);
+            } else if (smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
+                assert page.getTitleText().equals(failMsg);
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginNegative", e.getMessage(),
                     params);
@@ -94,26 +127,35 @@ public class AuthenticationCommon extends TestCommon {
         }
         exiting("testZeroPageLoginNegative");
     }
-
+    
     /**
      * Tests zero page login for given mode. This is a test for a valid user
      * but the user session has expired.
      */
-    public void testZeroPageLoginFailure(WebClient wc, String user,
-            String password, String mode,
-            String modeValue, String passMsg)
+    public void testZeroPageLoginFailure(WebClient wc, String user, 
+            String password, String mode, String modeValue, String passMsg)
     throws Exception {
         Object[] params = {user, password, mode, modeValue, passMsg};
         entering("testZeroPageLoginFailure", params);
         try {
             String strTest = protocol + ":" + "//" + host + ":" + port + uri +
-                        "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                        user + "&IDToken2=" + password;
-            log(logLevel, "testZeroPageLoginFailure", strTest);
+                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
+                    user + "&IDToken2=" + password;
+            log(Level.FINEST, "testZeroPageLoginFailure", strTest);
             URL url = new URL(strTest);
             HtmlPage page = (HtmlPage)wc.getPage( url );
-            log(logLevel, "testZeroPageLoginFailure", page.getTitleText());
-            assert page.getTitleText().equals(passMsg);
+            log(Level.FINEST, "testZeroPageLoginFailure", page.getTitleText());
+            
+            // Tests for everything if mode is not set to role. If mode is set 
+            // to role, tests only if one of the configured plugin for the realm 
+            // under test is of type amsdk, as this feature is only supported 
+            // by this plugin
+            if (!mode.equalsIgnoreCase("role")) { 
+                assert page.getTitleText().equals(passMsg);
+            } else if (smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
+                assert page.getTitleText().equals(passMsg);
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginFailure", e.getMessage(),
                     params);
@@ -122,27 +164,37 @@ public class AuthenticationCommon extends TestCommon {
         }
         exiting("testZeroPageLoginFailure");
     }
-
+    
     /**
      * Tests zero page login for a anonymous user. This is a poitive test. If
      * the login is unsuccessfull, an error is thrown.
      */
-    public void testZeroPageLoginAnonymousPositive(WebClient wc, String user,
-            String password,
-            String mode, String modeValue, String passMsg)
+    public void testZeroPageLoginAnonymousPositive(WebClient wc, String user, 
+            String password,String mode, String modeValue, String passMsg)
     throws Exception {
         Object[] params = {user, password, mode, modeValue, passMsg};
         entering("testZeroPageLoginAnonymousPositive", params);
+        String strTest = null;
         try {
-            String strTest = protocol + ":"  + "//" + host + ":" + port + uri +
-                        "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                        user;
-            log(logLevel, "testZeroPageLoginAnonymousPositive", strTest);
+            strTest = protocol + ":"  + "//" + host + ":" + port + uri +
+                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
+                    user;
+            log(Level.FINEST, "testZeroPageLoginAnonymousPositive", strTest);
             URL url = new URL(strTest);
             HtmlPage page = (HtmlPage)wc.getPage( url );
-            log(logLevel, "testZeroPageLoginAnonymousPositive",
+            log(Level.FINEST, "testZeroPageLoginAnonymousPositive",
                     page.getTitleText());
-            assert page.getTitleText().equals(passMsg);
+            
+            // Tests for everything if mode is not set to role. If mode is set 
+            // to role, tests only if one of the configured plugin for the realm 
+            // under test is of type amsdk, as this feature is only supported 
+            // by this plugin
+            if(!mode.equalsIgnoreCase("role")) {   
+                assert page.getTitleText().equals(passMsg);
+            } else if (smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
+                assert page.getTitleText().equals(passMsg);
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginAnonymousPositive",
                     e.getMessage(),
@@ -152,27 +204,37 @@ public class AuthenticationCommon extends TestCommon {
         }
         exiting("testZeroPageLoginAnonymousPositive");
     }
-
+    
     /**
      * Tests zero page login for a anonymous user. This is a negative test. If
      * the login is successfull, an error is thrown.
      */
-    public void testZeroPageLoginAnonymousNegative(WebClient wc, String user,
-            String password,
-            String mode, String modeValue, String failMsg)
+    public void testZeroPageLoginAnonymousNegative(WebClient wc, String user, 
+            String password, String mode, String modeValue, String failMsg)
     throws Exception {
         Object[] params = {user, password, mode, modeValue, failMsg};
         entering("testZeroPageLoginAnonymousNegative", params);
+        String strTest = null;
         try {
-            String strTest = protocol + ":"  + "//" + host + ":" + port + uri +
-                        "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                        user + "negative";
-            log(logLevel, "testZeroPageLoginAnonymousNegative", strTest);
+            strTest = protocol + ":"  + "//" + host + ":" + port + uri +
+                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
+                    user + "negative";
+            log(Level.FINEST, "testZeroPageLoginAnonymousNegative", strTest);
             URL url = new URL(strTest);
             HtmlPage page = (HtmlPage)wc.getPage( url );
-            log(logLevel, "testZeroPageLoginAnonymousNegative",
+            log(Level.FINEST, "testZeroPageLoginAnonymousNegative",
                     page.getTitleText());
-            assert page.getTitleText().equals(failMsg);
+            
+            // Tests for everything if mode is not set to role. If mode is set 
+            // to role, tests only if one of the configured plugin for the realm 
+            // under test is of type amsdk, as this feature is only supported 
+            // by this plugin
+            if (!mode.equalsIgnoreCase("role")) {
+                assert page.getTitleText().equals(failMsg);
+            } else if (smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
+                assert page.getTitleText().equals(failMsg);
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginAnonymousNegative",
                     e.getMessage(),
