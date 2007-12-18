@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.8 2007-12-18 22:03:23 sridharev Exp $
+ * $Id: AuthTest.java,v 1.9 2007-12-18 22:06:16 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -283,7 +283,7 @@ public class AuthTest extends TestCommon {
      * (3) Delete all users and roles
      * This is called only once per auth module.
      */
-    //@AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
