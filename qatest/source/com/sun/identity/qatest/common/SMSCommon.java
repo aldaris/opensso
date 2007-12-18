@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.7 2007-10-29 23:38:07 bt199000 Exp $
+ * $Id: SMSCommon.java,v 1.8 2007-12-18 21:53:13 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,7 @@ public class SMSCommon extends TestCommon {
     private SSOToken admintoken;
     private String fileSeparator = System.getProperty("file.separator");
     private Map globalCfgMap;
-
+    
     /**
      * Class constructor. Sets class variables.
      */
@@ -84,15 +84,15 @@ public class SMSCommon extends TestCommon {
             throw e;
         }
     }
-
+    
     /**
-     * Returns attribute value as a set for an attribute in a service using 
+     * Returns attribute value as a set for an attribute in a service using
      * ServiceSchema API. Service type can be one of the following: Global,
      * Organization, Dynamic, User or Policy.
      */
     public Set getAttributeValueFromSchema(String serviceName,
             String attributeName, String type)
-    throws Exception {
+            throws Exception {
         ServiceManager sm = new ServiceManager(admintoken);
         ServiceSchemaManager ssm = sm.getSchemaManager(serviceName, "1.0");
         ServiceSchema ss = null;
@@ -112,7 +112,7 @@ public class SMSCommon extends TestCommon {
         else
             return (null);
     }
-
+    
     /**
      * Returns attribute value as a set for an attribute in a service
      * which have sub configurations. Service type can be one of the following:
@@ -120,7 +120,7 @@ public class SMSCommon extends TestCommon {
      */
     public Set getAttributeValue(String serviceName, String attributeName,
             String type)
-    throws Exception {
+            throws Exception {
         ServiceConfigManager scm = new ServiceConfigManager(admintoken,
                 serviceName, "1.0");
         ServiceConfig sc = null;
@@ -144,7 +144,7 @@ public class SMSCommon extends TestCommon {
      */
     public void updateServiceAttribute(String serviceName,
             String attributeName, Set set, String type)
-    throws Exception {
+            throws Exception {
         ServiceConfigManager scm = new ServiceConfigManager(serviceName,
                 admintoken);
         ServiceConfig sc = null;
@@ -157,7 +157,7 @@ public class SMSCommon extends TestCommon {
         sc.removeAttribute(attributeName);
         sc.setAttributes(map);
     }
-
+    
     /**
      * Method updates a given attribute in any sepcified service.
      * This is only valid for Global, Organization, Dynamic, User and Policy
@@ -165,7 +165,7 @@ public class SMSCommon extends TestCommon {
      */
     public void updateServiceSchemaAttribute(String serviceName,
             String attributeName, Set set, String type)
-    throws Exception {
+            throws Exception {
         ServiceManager sm = new ServiceManager(admintoken);
         ServiceSchemaManager ssm = sm.getSchemaManager(serviceName, "1.0");
         ServiceSchema ss = null;
@@ -181,13 +181,13 @@ public class SMSCommon extends TestCommon {
             ss = ssm.getPolicySchema();
         ss.setAttributeDefaults(attributeName, set);
     }
-
+    
     /**
      * Method removes values for a given attribute in any sepcified service
      */
     public void removeServiceAttributeValues(String serviceName,
             String attributeName, String type)
-    throws Exception {
+            throws Exception {
         ServiceConfigManager scm = new ServiceConfigManager(serviceName,
                 admintoken);
         ServiceConfig sc = null;
@@ -197,7 +197,7 @@ public class SMSCommon extends TestCommon {
             sc = scm.getOrganizationConfig(realm, null);
         sc.removeAttribute(attributeName);
     }
-
+    
     /**
      * Assign a service which has dynamic attributes like session or user from
      * a realm
@@ -213,36 +213,36 @@ public class SMSCommon extends TestCommon {
         else
             return (null);
     }
-
+    
     /**
      * Assign a service which has dynamic attributes like session or user from
      * a realm
      */
     public boolean assignDynamicServiceRealm(String serviceName, String realm,
             Map map)
-    throws Exception {
+            throws Exception {
         AMIdentityRepository idrepo = new AMIdentityRepository(admintoken,
                 realm);
         AMIdentity realmIdentity = idrepo.getRealmIdentity();
         Set set = realmIdentity.getAssignedServices();
         if (!set.contains(serviceName))
-            realmIdentity.assignService(serviceName, map); 
+            realmIdentity.assignService(serviceName, map);
         set = realmIdentity.getAssignedServices();
         return (set.contains(serviceName));
     }
-
+    
     /**
      * Assign a service without dynamic attributes to a realm
      */
     public void assignServiceRealm(String serviceName, String realm, Map map)
     throws Exception {
         if (!isServiceAssigned(serviceName, realm)) {
-            OrganizationConfigManager ocm = 
+            OrganizationConfigManager ocm =
                     new OrganizationConfigManager(admintoken, realm);
             ocm.assignService(serviceName, map);
         }
     }
-
+    
     /**
      * Unassign a service which has dynamic attributes like session or user
      * from a realm
@@ -258,25 +258,25 @@ public class SMSCommon extends TestCommon {
         set = realmIdentity.getAssignedServices();
         return (!set.contains(serviceName));
     }
-
+    
     /**
      * Unassign a service without dynamic attributes from a realm
      */
     public void unassignServiceRealm(String serviceName, String realm)
     throws Exception {
         if (isServiceAssigned(serviceName, realm)) {
-            OrganizationConfigManager ocm = 
+            OrganizationConfigManager ocm =
                     new OrganizationConfigManager(admintoken, realm);
             ocm.unassignService(serviceName);
         }
     }
-
+    
     /**
      * Checks whether a service is assigned to a realm
      */
     public boolean isServiceAssigned(String serviceName, String realm)
     throws Exception {
-        OrganizationConfigManager ocm = 
+        OrganizationConfigManager ocm =
                 new OrganizationConfigManager(admintoken, realm);
         Set set = ocm.getAssignedServices();
         if (set.contains(serviceName))
@@ -284,19 +284,19 @@ public class SMSCommon extends TestCommon {
         else
             return (false);
     }
-
+    
     /**
      * Sets dynamic attributes for a service at the global leval
      */
-    public void updateGlobalServiceDynamicAttributes(String serviceName, 
+    public void updateGlobalServiceDynamicAttributes(String serviceName,
             Map map)
-    throws Exception {
+            throws Exception {
         ServiceManager sm = new ServiceManager(admintoken);
         ServiceSchemaManager ssm = sm.getSchemaManager(serviceName , "1.0");
         ServiceSchema ss = ssm.getDynamicSchema();
         ss.setAttributeDefaults(map);
     }
-
+    
     /**
      * This method create one or multiple datastores by datastore index number
      * from configuration data specified in the properties file.
@@ -311,7 +311,7 @@ public class SMSCommon extends TestCommon {
     }
     
     /**
-     * This method create one or multiple datastores from configuration data 
+     * This method create one or multiple datastores from configuration data
      * specified in a Map.
      * @param cdsMap a map contains datstore configuration data
      */
@@ -359,7 +359,7 @@ public class SMSCommon extends TestCommon {
                     String keystore = null;
                     if (sslmode.equals("true"))
                         keystore = (String)cdsiMap.
-                            get(SMSConstants.SMS_DATASTORE_KEYSTORE);
+                                get(SMSConstants.SMS_DATASTORE_KEYSTORE);
                     LDAPCommon ldc = new LDAPCommon(dsHost, dsPort,
                             dsDirmgrdn, dsDirmgrpwd, dsRootSuffix, keystore);
                     String schemaString = (String)globalCfgMap.
@@ -370,7 +370,7 @@ public class SMSCommon extends TestCommon {
                 }
                 log(Level.FINE, "createDataStoreImpl", "Creating datastore " +
                         dsName +  "...");
-                ServiceConfig cfg = getServiceConfig(admintoken, realmName, 
+                ServiceConfig cfg = getServiceConfig(admintoken, realmName,
                         true);
                 cfg.addSubConfig(dsName,
                         getDataStoreType(dsType), 0,
@@ -505,7 +505,7 @@ public class SMSCommon extends TestCommon {
     
     /**
      * This method delete one or multiple datastore(s) that specified in a
-     * properties file.  
+     * properties file.
      * @param ddsIndex realm name where datastore belongs to
      * @param propertyFileName properties file with datastore configuration data
      */
@@ -616,7 +616,7 @@ public class SMSCommon extends TestCommon {
     }
     
     /**
-     * This method get a Service Configuration object from Service 
+     * This method get a Service Configuration object from Service
      * Management methods
      */
     private ServiceConfig getServiceConfig(SSOToken admToken, String gscRealm)
@@ -625,12 +625,12 @@ public class SMSCommon extends TestCommon {
     }
     
     /**
-     * This method get a Service Configuration object from Service Management 
+     * This method get a Service Configuration object from Service Management
      * methods
      */
     private ServiceConfig getServiceConfig(SSOToken admToken,
-            String gscRealm, boolean createIfNull) 
-    throws Exception {
+            String gscRealm, boolean createIfNull)
+            throws Exception {
         ServiceConfig svcfg = null;
         IDMCommon idmObj = new IDMCommon();
         if (!gscRealm.equals(realm)) {
@@ -703,7 +703,7 @@ public class SMSCommon extends TestCommon {
                 value = sdscfmMap.get(key).toString();
                 if (!key.startsWith(SMSConstants.SMS_DATASTORE_KEY_PREFIX)) {
                     if ((dsType == null) || (dsType.equalsIgnoreCase(
-                            SMSConstants.SMS_DATASTORE_TYPE_FF)) || 
+                            SMSConstants.SMS_DATASTORE_TYPE_FF)) ||
                             (dsType.equalsIgnoreCase(
                             SMSConstants.SMS_DATASTORE_TYPE_AMSDK))) {
                         putSetIntoMap(key, dsAttributeMap, value, "|");
@@ -711,7 +711,7 @@ public class SMSCommon extends TestCommon {
                         if (key.equals(SMSConstants.SMS_LDAPv3_LDAP_SERVER)) {
                             portNumber = (String)sdscfmMap.
                                     get(SMSConstants.SMS_LDAPv3_LDAP_PORT);
-                            value = (portNumber == null) ? value + ":389" : 
+                            value = (portNumber == null) ? value + ":389" :
                                 value + ":" + portNumber;
                         }
                         putSetIntoMap(key, dsAttributeMap, value, "|");
@@ -788,9 +788,9 @@ public class SMSCommon extends TestCommon {
             sValue = (Set)sMap.get(key);
             lValue = (Set)lMap.get(key);
             log(Level.FINEST, "doesMapContainsKeysValues", "Key = " + key);
-            log(Level.FINEST, "doesMapContainsKeysValues", 
+            log(Level.FINEST, "doesMapContainsKeysValues",
                     "Small set value = " + sValue.toString());
-            log(Level.FINEST, "doesMapContainsKeysValues", 
+            log(Level.FINEST, "doesMapContainsKeysValues",
                     "Large set value = " + lValue.toString());
             // if one of the value of the key does not match or empty, set the
             // flag to false.
@@ -819,5 +819,49 @@ public class SMSCommon extends TestCommon {
             values.put(as.getName(), as.getDefaultValues());
         }
         return values;
+    }
+    
+    /**
+     * This method checks whether a given type of datastore plugin is 
+     * configured at the selected realm
+     * The supported type of pluings are :
+     *  - amSDK
+     *  - LDAVPv3forAMDS
+     *  - LDAPv3ForAD
+     *  - LDAPv3
+     *  - files
+     * @param ssotoken SSO token
+     * @param pluginName Plugin name
+     * @param subRealmName subRealm name
+     * @return true if Plugin type to be checked is supported to the given realm
+     * 
+     */
+    public boolean isPluginConfigured(SSOToken ssoToken, String pluginName, 
+            String subRealmName)
+    throws Exception {
+        entering("isPluginConfigured", null);
+        ServiceConfig subConfig;
+        OrganizationConfigManager orgMgr = new OrganizationConfigManager(ssoToken,
+                subRealmName);
+        OrganizationConfigManager subrealm = orgMgr.getSubOrgConfigManager(subRealmName);
+        ServiceConfig sc = subrealm.getServiceConfig(SMSConstants.REALM_SERVICE);
+        boolean isPluginConfigured = false;
+        if (sc != null) {
+            try {
+                Iterator items = sc.getSubConfigNames().iterator();
+                while (items.hasNext()) {
+                    subConfig = sc.getSubConfig((String) items.next());
+                    if (subConfig.getSchemaID().equalsIgnoreCase(pluginName)) {
+                        isPluginConfigured = true;
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        }
+        exiting("isPluginConfigured");
+        return isPluginConfigured;
     }
 }
