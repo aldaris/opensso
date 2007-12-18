@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.13 2007-11-10 06:14:02 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.14 2007-12-18 18:40:24 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -5613,4 +5613,47 @@
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>
+    <logmessage name="ATTEMPT_REMOVE_AGENT_PROPERTIES" id="4520"
+        loglevel="LL_INFO"
+        description="Attempt to remove property values of an agent.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+            <item>property names</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove property values of an agent Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_REMOVE_AGENT_PROPERTIES" id="4521"
+        loglevel="LL_INFO"
+        description="Property values are removed.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+            <item>property names</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove property values of an agent Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_REMOVE_AGENT_PROPERTIES" id="4522"
+        loglevel="LL_INFO"
+        description="Unable to remove property values of an agent.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of agent</item>
+            <item>property names</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove property values of an agent Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
 </logmessages>

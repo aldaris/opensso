@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.3 2007-12-17 19:42:50 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.4 2007-12-18 18:40:23 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -348,7 +348,8 @@ public class AgentConfiguration {
         Map values = amid.getAttributes();
         return unparseAttributeMap(getAgentType(amid), values);
     }
-    
+
+
     /**
      * Returns agent's attribute values.
      *
@@ -364,6 +365,29 @@ public class AgentConfiguration {
         throws IdRepoException, SMSException, SSOException {
         AMIdentity amid = new AMIdentity(ssoToken, agentName,
             IdType.AGENTONLY, "/", null);
+        return getAgentAttributes(amid, true);
+    }
+    
+    /**
+     * Returns agent's attribute values.
+     *
+     * @param ssoToken Single Sign On token that is to be used for query.
+     * @param agentName Name of agent.
+     * @param bInherit <code>true</code> to inherit from group.
+     * @return agent's attribute values.
+     * @throws IdRepoException if there are Id Repository related errors.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     */
+    public static Map getAgentAttributes(
+        SSOToken ssoToken, 
+        String agentName,
+        boolean bInherit
+    ) throws IdRepoException, SMSException, SSOException {
+        IdType type = (bInherit) ? IdType.AGENT : IdType.AGENTONLY;
+        AMIdentity amid = new AMIdentity(ssoToken, agentName,
+            type, "/", null);
         return getAgentAttributes(amid, true);
     }
     

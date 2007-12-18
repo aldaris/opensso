@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowAgent.java,v 1.2 2007-11-05 21:43:43 veiming Exp $
+ * $Id: ShowAgent.java,v 1.3 2007-12-18 18:40:21 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,8 @@ import java.util.logging.Level;
  * This command gets attribute values of an agent.
  */
 public class ShowAgent extends AuthenticatedCommand {
+    private static String OPT_INHERIT = "inherit";
+
     /**
      * Services a Commandline Request.
      *
@@ -70,14 +72,15 @@ public class ShowAgent extends AuthenticatedCommand {
         String realm = "/";
         String agentName = getStringOptionValue(IArgument.AGENT_NAME);
         String outfile = getStringOptionValue(IArgument.OUTPUT_FILE);
+        boolean inherit = isOptionSet(OPT_INHERIT);
         String[] params = {realm, agentName};
 
         try {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, "ATTEMPT_SHOW_AGENT",
                 params);
             Map values = AgentConfiguration.getAgentAttributes(
-                adminSSOToken, agentName);
-            AMIdentity amid = new AMIdentity(adminSSOToken, agentName,
+                adminSSOToken, agentName, inherit);
+            AMIdentity amid = new AMIdentity(adminSSOToken, agentName, 
                 IdType.AGENTONLY, realm, null); 
             Set passwords = AgentConfiguration.getAttributesSchemaNames(
                 amid, AttributeSchema.Syntax.PASSWORD);
@@ -92,13 +95,16 @@ public class ShowAgent extends AuthenticatedCommand {
                     } else {
                         Set vals = (Set)values.get(attrName);
                         
-                        if (vals.isEmpty()) {
-                            buff.append(attrName).append("=").append("\n");
-                        } else {
-                            for (Iterator j = vals.iterator(); j.hasNext(); ) {
-                                String val = (String)j.next();
-                                buff.append(attrName).append("=").append(val)
-                                    .append("\n");
+                        if (vals != null) {
+                            if (vals.isEmpty()) {
+                                buff.append(attrName).append("=").append("\n");
+                            } else {
+                                for (Iterator j = vals.iterator(); j.hasNext(); 
+                                ) {
+                                    String val = (String)j.next();
+                                    buff.append(attrName).append("=")
+                                        .append(val).append("\n");
+                                }
                             }
                         }
                     }

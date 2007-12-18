@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.13 2007-12-13 18:38:52 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.14 2007-12-18 18:40:24 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -337,16 +337,25 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     orgConfig = getOrgConfig(token);
                     agentsAttrMap = getAgentAttrs(orgConfig, name);
 
-                    agentGroupConfig = getAgentGroupConfig(token);
-                    Map agentGroupMap = getAgentAttrs(agentGroupConfig, name);
+                    String groupName = getGroupName(orgConfig, name);
+                    if (groupName != null) {
+                        agentGroupConfig = getAgentGroupConfig(token);
+                        Map agentGroupMap = getAgentAttrs(agentGroupConfig, 
+                            groupName);
 
-                    if (agentsAttrMap != null) {
-                        if (agentGroupMap != null) {
-                            agentsAttrMap.putAll(agentGroupMap);
+                        if ((agentsAttrMap != null) && (agentGroupMap != null)){
+                            agentGroupMap.putAll(agentsAttrMap);
+                            agentsAttrMap = agentGroupMap;
                         }
                     }
                 }
                 return agentsAttrMap;
+            } catch (SMSException e) {
+                debug.error("AgentsRepo.getAttributes(): Unable to read agent"
+                    + " attributes ", e);
+                Object args[] = { NAME };
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "200", 
+                    args);
             } catch (IdRepoException idpe) {
                 debug.error("AgentsRepo.getAttributes(): Unable to read agent"
                     + " attributes ", idpe);
@@ -522,14 +531,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 // belongs to the agentgroup, add the agentgroup to the 
                 // result set. 
                 orgConfig = getOrgConfig(token);
-                ServiceConfig aCfg = null;
-                aCfg = orgConfig.getSubConfig(name);
-                if (aCfg !=null) {
-                    String lUri = aCfg.getLabeledUri();
-                    if ((lUri != null) && (lUri.length() > 0)) {
-                        results.add(lUri);
-                    }
-                }
+                results = getGroupNames(orgConfig, name);
             } catch (SMSException sme) {
                 debug.error("AgentsRepo.getMemberships: Caught "
                         + "exception while getting memberships"
@@ -548,6 +550,25 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         return (results);
     }
 
+    private String getGroupName(ServiceConfig orgConfig, String agentName)
+        throws SSOException, SMSException {
+        Set groups = getGroupNames(orgConfig, agentName);
+        return ((groups != null) && !groups.isEmpty()) ? 
+            (String)groups.iterator().next() : null;
+    }
+    
+    private Set getGroupNames(ServiceConfig orgConfig, String agentName)
+        throws SSOException, SMSException {
+        Set results = new HashSet(2);
+        ServiceConfig aCfg = orgConfig.getSubConfig(agentName);
+        if (aCfg !=null) {
+            String lUri = aCfg.getLabeledUri();
+            if ((lUri != null) && (lUri.length() > 0)) {
+                results.add(lUri);
+            }
+        }
+        return results;
+    }
 
     /*
      * (non-Javadoc)

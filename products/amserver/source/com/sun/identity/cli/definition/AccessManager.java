@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.47 2007-11-10 06:14:02 veiming Exp $
+ * $Id: AccessManager.java,v 1.48 2007-12-18 18:40:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1725,6 +1725,21 @@ public class AccessManager {
         }
     )
     private String update_agent;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.agentconfig.RemoveAgentProperties",
+        description="Remove agent's properties.",
+        webSupport="true",
+        mandatoryOptions={"agentname|b|s|Name of agent.",
+            "attributenames|a|m|properties name(s)."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "agent-remove-properties-succeeded=Proeperties were removed."
+        }
+    )
+    private String agent_remove_props;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.agentconfig.ListAgents",
@@ -1753,7 +1768,8 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "outfile|o|s|Filename where configuration is written to."},
+            "outfile|o|s|Filename where configuration is written to.",
+            "inherit|i|u|Set this to inherit properties from parent group."},
         resourceStrings={
             "show-agent-succeeded=The followings are the agent properties.",
             "show-agent-to-file=Agent properties are written to file.",
