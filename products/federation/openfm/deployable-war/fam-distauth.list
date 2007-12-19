@@ -3,6 +3,7 @@
 ./WEB-INF/classes/amAuthUI.properties
 ./WEB-INF/classes/amClientDetection.properties
 ./WEB-INF/lib/jato.jar
+./WEB-INF/lib/ldapjdk.jar
 ./WEB-INF/auth.tld
 ./WEB-INF/jato.tld
 ./WEB-INF/web.xml
