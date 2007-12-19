@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.11 2007-12-10 19:20:21 beomsuk Exp $
+ * $Id: WebtopNaming.java,v 1.12 2007-12-19 21:52:23 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -217,13 +217,7 @@ public class WebtopNaming {
     ) throws URLNotFoundException {
         String namingURL = SystemProperties.get(Constants.AM_NAMING_URL);
         try {
-            URL url = new URL(namingURL);
-            String uri = url.getPath();
-            int idx = uri.lastIndexOf('/');
-            while (idx > 0) {
-                uri = uri.substring(0, idx);
-                idx = uri.lastIndexOf('/');
-            }
+            String uri = getURI(new URL(namingURL));
             return getServiceURL(service, protocol, host, port, uri, validate);
         } catch (MalformedURLException ex) {
             throw new URLNotFoundException(ex.getMessage());
@@ -1002,6 +996,23 @@ public class WebtopNaming {
         return;
     }
 
+    /**
+     * Returns the uri of the specified URL.
+     * 
+     * @param URL that includes uri.
+     * @return uri of the specified <code>URL</code>.
+     */
+    public static String getURI(URL url) {
+        String uri = url.getPath();
+        int idx = uri.lastIndexOf('/');
+        while (idx > 0) {
+            uri = uri.substring(0, idx);
+            idx = uri.lastIndexOf('/');
+        }
+        
+        return uri;
+    }
+    
 static public class SiteMonitor extends GeneralTaskRunnable {
     static long sleepInterval;
     static Vector availableSiteList = new Vector();

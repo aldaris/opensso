@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingRequest.java,v 1.2 2007-11-29 23:14:28 veiming Exp $
+ * $Id: NamingRequest.java,v 1.3 2007-12-19 21:52:24 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,8 @@ public class NamingRequest {
 
     private String sessionId = null;
 
+    private String preferredNamingURL = null;
+
     private static int requestCount = 0;
 
     public static final String reqVersion = "3.0";
@@ -91,6 +93,7 @@ public class NamingRequest {
      * 
      * @param xml
      *            The NamingRequest XML document String.
+     * @return <code>NamingRequest</code> object.
      */
     public static NamingRequest parseXML(String xml) {
         NamingRequestParser parser = new NamingRequestParser(xml);
@@ -103,7 +106,7 @@ public class NamingRequest {
      * @param version
      *            A string representing the request version.
      */
-    void setRequestVersion(String version) {
+    public void setRequestVersion(String version) {
         requestVersion = version;
     }
 
@@ -122,7 +125,7 @@ public class NamingRequest {
      * @param id
      *            A string representing the request ID.
      */
-    void setRequestID(String id) {
+    public void setRequestID(String id) {
         requestID = id;
     }
 
@@ -141,7 +144,7 @@ public class NamingRequest {
      * @param id
      *            A string representing the session ID.
      */
-    void setSessionId(String id) {
+    public void setSessionId(String id) {
         sessionId = id;
     }
 
@@ -155,6 +158,22 @@ public class NamingRequest {
     }
 
     /**
+     * Sets the PreferredNamingURL.
+     * @param url A string representing preferred NamingURL by client.
+     */
+    public void setPreferredNamingURL(String url){
+         preferredNamingURL = url;
+    }
+
+    /**
+     * Gets the PreferredNamingURL.
+     * @return The PreferredNamingURL.
+     */
+    public String getPreferredNamingURL(){
+        return preferredNamingURL;
+    }
+
+    /**
      * This method translates the request to an XML document String based on the
      * NamingRequest DTD described above.
      * 
@@ -163,8 +182,17 @@ public class NamingRequest {
     public String toXMLString() {
         StringBuffer xml = new StringBuffer(150);
         xml.append("<NamingRequest vers=").append(QUOTE).append(requestVersion)
-                .append(QUOTE).append(" reqid=").append(QUOTE)
-                .append(requestID).append(QUOTE).append(">").append(NL);
+           .append(QUOTE).append(" reqid=").append(QUOTE).append(requestID);
+        if (sessionId != null) {
+            xml.append(QUOTE).append(" sessid=")
+               .append(QUOTE).append(sessionId);
+        }
+        if (preferredNamingURL != null) {
+            xml.append(QUOTE).append(" preferredNamingURL=");
+            xml.append(QUOTE).append(preferredNamingURL);
+        }
+
+        xml.append(QUOTE).append(">").append(NL);
         xml.append("<GetNamingProfile>").append(NL);
         xml.append("</GetNamingProfile>").append(NL);
         xml.append("</NamingRequest>");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingRequestParser.java,v 1.2 2006-08-25 21:19:56 veiming Exp $
+ * $Id: NamingRequestParser.java,v 1.3 2007-12-19 21:52:24 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,10 +39,20 @@ class NamingRequestParser {
 
     static Debug debug = Debug.getInstance("amNaming");
 
+    /**
+     * Class constructor with <code>NamingRequest</code>
+     * in <code>Document</code> format.
+     * @param xmlDoc A DOM representing <code>NamingRequest</code> class.
+     */
     public NamingRequestParser(Document xmlDoc) {
         document = xmlDoc;
     }
 
+    /**
+     * Class constructor with <code>NamingRequest</code>
+     * in <code>String</code> format.
+     * @param xmlString A string representing <code>NamingRequest</code> class.
+     */
     public NamingRequestParser(String xmlString) {
         document = XMLUtils.toDOMDocument(xmlString, debug);
     }
@@ -76,6 +86,13 @@ class NamingRequestParser {
             namingRequest.setSessionId(temp);
         } else {
             namingRequest.setSessionId(null);
+        }
+
+        temp = elem.getAttribute("preferredNamingURL");
+        if ((temp != null) &&  ((temp.trim()).length() != 0)) {
+            namingRequest.setPreferredNamingURL(temp);
+        } else {
+            namingRequest.setPreferredNamingURL(null);
         }
 
         return namingRequest;

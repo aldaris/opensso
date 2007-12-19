@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.6 2007-11-29 23:14:28 veiming Exp $
+ * $Id: NamingService.java,v 1.7 2007-12-19 21:52:24 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.comm.share.ResponseSet;
 import com.iplanet.services.naming.share.NamingRequest;
 import com.iplanet.services.naming.share.NamingResponse;
+import com.iplanet.services.naming.ServerEntryNotFoundException;
+import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
@@ -351,7 +353,19 @@ public class NamingService implements RequestHandler, ServiceListener {
                 Hashtable tempHash = new Hashtable();
                 tempHash = transferTable(NamingService
                         .getNamingTable(limitNametable));
-                Hashtable replacedTable = replaceTable(tempHash, sessionId);
+                Hashtable replacedTable = null;
+                URL url = usePreferredNamingURL(nreq);
+                if (url != null) {
+                    String uri = WebtopNaming.getURI(url);
+                    replacedTable = replaceTable(tempHash,
+                                        url.getProtocol(),
+                                        url.getHost(),
+                                        Integer.toString(url.getPort()),
+                                        uri); 
+                } else {
+                    replacedTable = replaceTable(tempHash, sessionId);
+                }
+
                 if (replacedTable == null) {
                     nres.setException("SessionID ---" + sessionId
                             + "---is Invalid");
@@ -377,13 +391,60 @@ public class NamingService implements RequestHandler, ServiceListener {
         return new Response(nres.toXMLString());
     }
 
+    private URL usePreferredNamingURL(NamingRequest request)
+        throws ServerEntryNotFoundException, MalformedURLException {
+        String preferredNamingURL = null;
+        URL preferredURL = null;
+
+        if (request == null) {
+            return null;
+        }
+
+        preferredNamingURL = request.getPreferredNamingURL();
+        if (preferredNamingURL == null) {
+            return null;
+        }
+
+        String sessionid = request.getSessionId();
+        if (sessionid == null) {
+            return null;
+        }
+
+        URL url = new URL(request.getPreferredNamingURL());
+        String uri = WebtopNaming.getURI(url);
+        String serverID = WebtopNaming.getServerID(url.getProtocol(),
+                                            url.getHost(),
+                                            Integer.toString(url.getPort()),
+                                            uri);
+
+        SessionID sessionID = new SessionID(sessionid);
+        String primary_id = sessionID.getExtension(SessionID.PRIMARY_ID);
+        if (primary_id != null) {
+            String secondarysites = WebtopNaming.getSecondarySites(primary_id);
+
+            if ((secondarysites != null) && (serverID != null)) {
+                if (secondarysites.indexOf(serverID) != -1) {
+                    preferredURL = url;
+                }
+            }
+        }
+
+        return preferredURL;
+    }
+
     private Hashtable replaceTable(Hashtable namingTable, String sessionID) {
         SessionID sessID = new SessionID(sessionID);
         namingDebug.message("SessionId received is --" + sessionID);
-        String protocol = sessID.getSessionServerProtocol();
-        String host = sessID.getSessionServer();
-        String port = sessID.getSessionServerPort();
-        String uri = sessID.getSessionServerURI();
+         
+        return replaceTable(namingTable,
+                       sessID.getSessionServerProtocol(),
+                       sessID.getSessionServer(),
+                       sessID.getSessionServerPort(),
+                       sessID.getSessionServerURI());
+    }
+
+    private Hashtable replaceTable(Hashtable namingTable,
+        String protocol, String host, String port, String uri) {
         if (protocol.equalsIgnoreCase("") || host.equalsIgnoreCase("")
                 || port.equalsIgnoreCase("")) {
             return null;
