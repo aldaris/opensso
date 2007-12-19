@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.9 2007-11-30 18:47:41 rmisra Exp $
+ * $Id: PolicyCommon.java,v 1.10 2007-12-19 16:27:42 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1493,6 +1493,47 @@ public class PolicyCommon extends TestCommon {
             log(logLevel, "deletePolicies", "cleaned up the policies");
         } catch (Exception e) {
             log(Level.SEVERE, "deletePolicies", e.getMessage(), null);
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(webClient, logoutUrl);
+        }
+    }
+
+    /**
+     * Deletes a policy, given policy name and realm.
+     *
+     */
+    public void deletePolicy(String polName, String realm)
+    throws Exception {
+        String logoutUrl = protocol + ":" + "//" + host + ":" + port
+                + uri + "/UI/Logout";
+        WebClient webClient = new WebClient();
+        try{
+            List pList = new ArrayList();
+            pList.add(polName);
+
+            String url = protocol + ":" + "//" + host + ":"
+                    + port + uri ;
+
+            consoleLogin(webClient, url, adminUser, adminPassword);
+
+            HtmlPage policyCheckPage  = fmadm.deletePolicies(webClient,
+                    realm, pList);
+            String xmlString = policyCheckPage.asXml();
+            if (!xmlString.contains("Policy is deleted")) {
+                log(Level.FINEST, "deletePolicy", "Delete Policy" +
+                        "is not success " + polName );
+                log(Level.FINEST, "deletePolicy", xmlString);
+                assert false;
+            } else {
+                log(Level.FINEST, "deletePolicy", "is success " +
+                        polName);
+                log(Level.FINEST, "deletePolicy", xmlString);
+            }
+            log(Level.FINEST, "deletePolicy", "Cleaned up the policy");
+        } catch (Exception e) {
+            log(Level.SEVERE, "deletePolicy", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {

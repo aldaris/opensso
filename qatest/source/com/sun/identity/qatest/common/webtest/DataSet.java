@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataSet.java,v 1.1 2007-03-29 21:41:36 mrudulahg Exp $
+ * $Id: DataSet.java,v 1.2 2007-12-19 16:28:40 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -183,7 +183,13 @@ public class DataSet {
         for (int i = 0; i < len; i++) {
             Element inputElm = (Element)inputNodes.item(i);
             String name = inputElm.getAttribute(INPUT_NAME_ATTR);
-            String values = inputElm.getAttribute(INPUT_VALUES_ATTR);
+
+            // The constant should be set to INPUT_VALUES_ATTR but
+            // for some reason webtest is unable to retrive values
+            // if its set for multiple values. Need to debug this 
+            // more and fix it later. For now this will ONLY work
+            // with list having single strings as list members.
+            String values = inputElm.getAttribute(INPUT_VALUE_ATTR);
             StringTokenizer st = new StringTokenizer(values, "|");
             String[] arrayVal = new String[st.countTokens()];
             int counter = 0;
