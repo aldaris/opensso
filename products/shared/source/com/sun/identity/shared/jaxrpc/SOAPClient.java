@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.10 2007-12-10 19:15:38 beomsuk Exp $
+ * $Id: SOAPClient.java,v 1.11 2007-12-19 18:18:02 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -254,7 +254,7 @@ public class SOAPClient {
         }
 
         // Debug the input/output messages
-        //if (debug.messageEnabled()) {
+        if (debug.messageEnabled()) {
             StringBuffer inbuf = new StringBuffer();
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -263,10 +263,10 @@ public class SOAPClient {
                 inbuf.append(line).append("\n");
             }
             String data = new String(inbuf);
-            debug.error("SOAP Client: Input: " + message + "\nOutput: "
+            debug.message("SOAP Client: Input: " + message + "\nOutput: "
                     + data);
             in_buf = new ByteArrayInputStream(data.getBytes("UTF-8"));
-        //}
+        }
         return (new SOAPResponseObject(in_buf, isException));
     }
     
