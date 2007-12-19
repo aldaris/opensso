@@ -402,7 +402,7 @@ APP.util.Paginator.prototype = {
 
             DOM.setStyle(pageLink, "padding", "10px");
             DOM.setStyle(pageLink, "color", i == 1 ? "#000000" : "#60a2e1");
-            DOM.setStyle(pageLink, "fontFamily", "Helvetica, sans-serif");
+            DOM.setStyle(pageLink, "fontFamily", "Arial, Helvetica, sans-serif");
             DOM.setStyle(pageLink, "fontSize", "12px");
             DOM.setStyle(pageLink, "fontWeight", "bold");
             
