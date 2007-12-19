@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPrimaryMastHeadViewBean.java,v 1.3 2007-12-17 19:42:50 veiming Exp $
+ * $Id: AMPrimaryMastHeadViewBean.java,v 1.4 2007-12-19 22:25:13 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -208,11 +208,13 @@ public abstract class AMPrimaryMastHeadViewBean
             try {
                 id = Integer.parseInt(strID);
             } catch (NumberFormatException e) {
-                AMModelBase.debug.error("AMPrimaryMastHeadVB.setSelectedTabNode", e);
+                AMModelBase.debug.error(
+                    "AMPrimaryMastHeadVB.setSelectedTabNode", e);
             }
         }
 
         tabModel.clear();
+        setPageSessionAttribute("CCTabs.SelectedTabId", Integer.toString(id));
         tabModel.setSelectedNode(id);
     }
 
@@ -364,15 +366,15 @@ public abstract class AMPrimaryMastHeadViewBean
                 getRequestContext().getRequest());
         }
 
-        AMViewBeanBase vb = (tabSetName == null) ?
-            amconfig.getTabViewBean(this, curRealm, getModel(), nodeID,
-                getChildNodeId(nodeID)) :
-            amconfig.getTabViewBean(
+        AMPrimaryMastHeadViewBean vb = (tabSetName == null) ?
+            (AMPrimaryMastHeadViewBean)amconfig.getTabViewBean(
+                this, curRealm, getModel(), nodeID, getChildNodeId(nodeID)) :
+            (AMPrimaryMastHeadViewBean)amconfig.getTabViewBean(
                 this, curRealm, getModel(), tabSetName, nodeID,
                     getChildNodeId(nodeID));
 
         setPageSessionAttribute(
-            getTrackingTabIDName(), Integer.toString(nodeID));
+            vb.getTrackingTabIDName(), Integer.toString(nodeID));
         return vb;
     }
 
@@ -391,7 +393,7 @@ public abstract class AMPrimaryMastHeadViewBean
     }
 
     protected String getTrackingTabIDName() {
-        return "CCTabs.SelectedTabId";
+        return "opensso.SelectedTabId";
     }
     
     /**

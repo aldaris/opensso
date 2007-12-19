@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.1 2007-12-17 19:42:44 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.2 2007-12-19 22:25:13 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,7 +142,7 @@ public class AgentsViewBean
         createTableModel();
         registerChildren();
     }
-    
+ 
     protected void createTabModel() {
         if (tabModel == null) {
             AMViewConfig amconfig = AMViewConfig.getInstance();
@@ -150,7 +150,7 @@ public class AgentsViewBean
                 "/", getRequestContext().getRequest());
             String tabIdx = (String)getPageSessionAttribute(
                 getTrackingTabIDName());
-            
+
             if (tabIdx != null) {
                 selectedNode = addAgentsTab(Integer.parseInt(tabIdx));
                 setPageSessionAttribute("CCTabs.SelectedTabId", tabIdx);
@@ -272,22 +272,28 @@ public class AgentsViewBean
      * @param nodeID Selected Node ID.
      */
     public void nodeClicked(RequestInvocationEvent event, int nodeID) {
-        setPageSessionAttribute(getTrackingTabIDName(), 
-            Integer.toString(nodeID));
-        AMViewConfig amconfig = AMViewConfig.getInstance();
-        List list = amconfig.getSupportedAgentTypes(getModel());
-
         String strNodeId = Integer.toString(nodeID);
         if (strNodeId.length() > 2) {
-            strNodeId = strNodeId.substring(2);
-            int idx = Integer.parseInt(strNodeId);
-            if (idx < list.size()) {
-                setPageSessionAttribute(PG_SESSION_AGENT_TYPE, 
-                    (String)list.get(idx));
+            String prefix = strNodeId.substring(0, 2);
+            if (prefix.equals("46")) {
+                setPageSessionAttribute(getTrackingTabIDName(), 
+                    Integer.toString(nodeID));
+                AMViewConfig amconfig = AMViewConfig.getInstance();
+                List list = amconfig.getSupportedAgentTypes(getModel());
+                strNodeId = strNodeId.substring(2);
+                int idx = Integer.parseInt(strNodeId);
+                if (idx < list.size()) {
+                    setPageSessionAttribute(PG_SESSION_AGENT_TYPE, 
+                        (String)list.get(idx));
+                }
+                resetView();
+                forwardTo();
+            } else {
+                super.nodeClicked(event, nodeID);
             }
+        } else {
+            super.nodeClicked(event, nodeID);
         }
-        resetView();
-        forwardTo();
     }
     
     private void createPageTitleModel() {
@@ -697,10 +703,6 @@ public class AgentsViewBean
         }
 
         forwardTo();
-    }
-    
-    protected String getTrackingTabIDName() {
-        return PG_SESSION_AGENT_MAIN_TAB;
     }
 
     static Class getAgentCustomizedViewBean(String agentType) 
