@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.9 2007-12-05 20:56:34 kevinserwin Exp $
+   $Id: build-tools.xml,v 1.10 2007-12-19 06:40:35 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -59,7 +59,7 @@
             <fileset file="${fedlibrary.dist.dir}/openfedlib.jar" />
             <fileset dir="${extlib.dir}" includes="FastInfoset.jar, webservices-tools.jar, jsr173_api.jar, relaxngDatatype.jar, xalan.jar, xmlsec.jar, xsdlib.jar" />
         </copy>
-        <copy todir="${tools.temp.dir}/locale">
+        <copy todir="${tools.temp.dir}/locale" flatten="true">
             <fileset dir="${openfm.res.i18n.dir}" includes="**/*.properties"/>
             <fileset dir="${library.res.i18n.dir}" includes="**/*.properties"/>
         </copy>
