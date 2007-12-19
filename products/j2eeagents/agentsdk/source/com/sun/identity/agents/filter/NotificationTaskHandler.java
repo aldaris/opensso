@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationTaskHandler.java,v 1.2 2007-10-31 00:43:23 sean_brydon Exp $
+ * $Id: NotificationTaskHandler.java,v 1.3 2007-12-19 21:04:36 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -246,7 +246,7 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
     }
     
     /** 
-     * For receiving agent configuration properties xml notifications 
+     * For receiving agent configuration properties changed xml notifications 
      * when in centralized mode.
      */ 
     private void initConfigNotificationEnabledFlagAndURI() {
@@ -256,8 +256,7 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
                 DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE); 
         
         if (flag) {
-            //later ALL (policy/session/config) will use same uri
-            String url = AgentConfiguration.getSessionNotificationURL();
+            String url = AgentConfiguration.getClientNotificationURL();
             String notificationURI = null;
             if (( url == null) || (url.trim().length() == 0)) {
                 url = null;

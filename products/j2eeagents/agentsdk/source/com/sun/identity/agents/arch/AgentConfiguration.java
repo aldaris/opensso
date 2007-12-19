@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.8 2007-12-08 04:47:03 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.9 2007-12-19 21:04:35 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -161,6 +161,16 @@ public class AgentConfiguration implements
     */
     public static String getPolicyNotificationURL() {
         return _policyNotificationURL;
+    }
+    
+   /**
+    * Returns the URL that will be used by the Server to send all 
+    * notifications to agents. This will include policy, session, and agent 
+    * configuration change notifications.
+    * @return the client notification URL.
+    */
+    public static String getClientNotificationURL() {
+        return _clientNotificationURL;
     }
     
    /**
@@ -967,6 +977,24 @@ public class AgentConfiguration implements
         }
     }
     
+        private static synchronized void setClientNotificationURL() {
+        if (!isInitialized()) {
+            String url = getProperty(SDKPROP_CLIENT_NOTIFICATION_URL);
+            if (url != null && url.trim().length() > 0) {
+                _clientNotificationURL = url;
+            } else {
+                if (isLogWarningEnabled()) {
+                    logWarning(
+                         "AgentConfiguration: No client notification URL set");
+                }
+            }
+            if (isLogMessageEnabled()) {
+                logMessage("AgentConfiguration: Client notification URL: "
+                        + _clientNotificationURL);
+            }
+        }
+    }
+    
     private static synchronized void setPolicyNotificationEnabledFlag() {
         if (!isInitialized()) {
             boolean enable = false;
@@ -1017,6 +1045,7 @@ public class AgentConfiguration implements
             setSessionNotificationURL();
             setSessionNotificationEnabledFlag();
             setPolicyNotificationURL();
+            setClientNotificationURL();
             setPolicyNotificationEnabledFlag();
             setClientIPAddressHeader();
             setClientHostNameHeader();
@@ -1307,6 +1336,7 @@ public class AgentConfiguration implements
     private static String _anonymousUserName;
     private static String _sessionNotificationURL;
     private static String _policyNotificationURL;
+    private static String _clientNotificationURL;
     private static boolean _policyNotificationEnabledFlag;
     private static boolean _sessionNotificationEnabledFlag;
     private static String _clientIPAddressHeader;

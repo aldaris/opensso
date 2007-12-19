@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.9 2007-12-14 18:17:16 huacui Exp $
+# $Id: AMAgentConfiguration.template,v 1.10 2007-12-19 21:04:36 sean_brydon Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -884,14 +884,14 @@ com.sun.identity.agents.config.policy.env.jsession.param[0]=
 #    new properties.
 #    Can only be used in centralized mode when agent properties are controlled 
 #    by fam server
-# Note: for the notification url, it currently uses session notification 
-# property com.iplanet.am.notification.url
-# This will be changed soon when all notificatons convert to using a single 
-# notification url and property, so this is TEMPORARY
+#  -com.sun.identity.client.notification.url: URL to receive agent 
+#   configuration notifications. Soon this will be used for all agent
+#   notifications.
 #
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.centralized.notification.enable=true
+com.sun.identity.client.notification.url=@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@@AGENT_APP_URI@/notification
 
 #
 # DEBUG SERVICE PROPERTY

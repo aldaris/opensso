@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IClientConfigurationKeyConstants.java,v 1.1 2006-09-28 23:21:34 huacui Exp $
+ * $Id: IClientConfigurationKeyConstants.java,v 1.2 2007-12-19 21:04:35 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 package com.sun.identity.agents.arch;
 
 /**
- * Constants used for identifying Clinet SDK Configuration keys.
+ * Constants used for identifying Client SDK Configuration keys.
  */
 public interface IClientConfigurationKeyConstants {
     
@@ -86,4 +86,12 @@ public interface IClientConfigurationKeyConstants {
      */
      public static final String SDKPROP_POLICY_NOTIFICATION_ENABLE =
          "com.sun.identity.agents.notification.enabled";
+     
+    /**
+     * Configuration key for Client Notification URL for agent to receive
+     * notification messages for policy, session, and agent configuration
+     * changes.
+     */
+     public static final String SDKPROP_CLIENT_NOTIFICATION_URL =
+         "com.sun.identity.client.notification.url";
 }
