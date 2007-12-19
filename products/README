@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.18 2007-12-17 23:34:52 qcheng Exp $
+$Id: README,v 1.19 2007-12-19 23:53:39 veiming Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -42,6 +42,7 @@ Copyright 2006 Sun Microsystems Inc. All Rights Reserved
         %% 2.5 Obtaining testng-5.1-jdk15.jar
         %% 2.6 Obtaining fmsae.dll and agent-csdk
         %% 2.7 Obtaining Open Message Queue binaries, imq.jar and jms.jar
+        %% 2.8 Obtaining click.jar and click-extras.jar
     %% 3. Building the workspace
         %% 3.1 build target
         %% 3.2 doc target
@@ -241,6 +242,17 @@ libraries/native to opensso/products/extlib.
   
 2.7.3 Extract the downloaded file as necessary to get the 
       imq.jar and jms.jar under /mq/lib directory
+
+%% 2.8 Obtaining click.jar and click-extras.jar
+2.8.1 Visit http://click.sourceforge.net/, click on the Download hyperlink
+      (under the Click tree) on the left panel
+      You will be brought to sourceforge.net with the list of click binaries.
+2.8.2 Download click-1.4-RC1.zip
+2.8.3 Unzip this zip file in a temporary directory
+2.8.4 copy <temporary directory>/click.1.4-RC-1/dist/click-1.4-RC1.jar to
+      <your workspace>/opensso/products/extlib/click.jar
+2.8.5 copy <temporary directory>/click.1.4-RC-1/dist/click-extras-1.4-RC1.jar to
+      <your workspace>/opensso/products/extlib/click-extras.jar
 
 %% 3. Building the workspace
 
