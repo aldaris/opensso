@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.32 2007-12-07 21:25:59 rajeevangal Exp $
+ * $Id: AMSetupServlet.java,v 1.33 2007-12-19 01:18:23 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -226,6 +226,8 @@ public class AMSetupServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.processRequest: error.", e);
             e.printStackTrace();
         }
         return isConfiguredFlag;
@@ -296,6 +298,8 @@ public class AMSetupServlet extends HttpServlet {
                         isDITLoaded = true;
                     }
                 } catch (Exception ex) {
+                    Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                        "AMSetupServlet.configure: embedded = true", ex);
                     ex.printStackTrace();
                     throw new ConfiguratorException(
                         "Error setting up embedded ds:ex="+ex);
@@ -403,24 +407,44 @@ public class AMSetupServlet extends HttpServlet {
             isConfiguredFlag = true;
             configured = true;
         } catch (FileNotFoundException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", e);
             e.printStackTrace();
         } catch (ConfigurationException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", e);
             e.printStackTrace();
         } catch (SecurityException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", e);
             e.printStackTrace();
         } catch (LDAPServiceException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", e);
             e.printStackTrace();
         } catch (IOException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", e);
             e.printStackTrace();
         } catch (SMSException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", e);
             e.printStackTrace();
         } catch (PolicyException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", e);
             e.printStackTrace();
         } catch (ConfiguratorException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", e);
             e.printStackTrace();
         } catch (SSOException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", e);
             e.printStackTrace();
         } catch (IdRepoException idrepoe) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.configure: error", idrepoe);
             idrepoe.printStackTrace();
         }
         return configured;
@@ -527,6 +551,8 @@ public class AMSetupServlet extends HttpServlet {
         } catch (FileNotFoundException e) {
             // ignore bootstrap file is missing if war is not configured.
         } catch (IOException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.getBootStrap: error", e);
             System.err.println(e.getMessage());
         } finally {
             if (frdr != null) {
@@ -565,10 +591,16 @@ public class AMSetupServlet extends HttpServlet {
                 }
             }
         } catch (IllegalAccessException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.getConfigPluginClasses: error", e);
             e.printStackTrace();
         } catch (InstantiationException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.getConfigPluginClasses: error", e);
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.getConfigPluginClasses: error", e);
             e.printStackTrace();
         } catch (MissingResourceException e) {
             //ignore if there are no configurator plugins.
