@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-authentication-testng.xml,v 1.3 2007-09-07 21:28:32 sridharev Exp $
+ $Id: ds_ds-authentication-testng.xml,v 1.4 2007-12-19 01:10:29 sridharev Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -316,6 +316,66 @@
     </test>
     <test name="AuthTestJDBCAuthLevel">
         <parameter name="testModule" value="jdbc"/>
+        <parameter name="testMode" value="authlevel"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestRadiusUser">
+        <parameter name="testModule" value="radius"/>
+        <parameter name="testMode" value="user"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestRadiusModule">
+        <parameter name="testModule" value="radius"/>
+        <parameter name="testMode" value="module"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestRadiusService">
+        <parameter name="testModule" value="radius"/>
+        <parameter name="testMode" value="service"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestRadiusRole">
+        <parameter name="testModule" value="radius"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestRadiusAuthLevel">
+        <parameter name="testModule" value="radius"/>
         <parameter name="testMode" value="authlevel"/>
         <groups>
             <run>
