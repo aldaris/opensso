@@ -43,7 +43,7 @@
         }
 
         YAHOO.sun.identity.config.options.existConf.writeConf.show();
-        
+
         APP.call( "$context$path", "writeConfig", params, writingComplete, writingFailed );
     }
 
@@ -64,53 +64,33 @@
     YAHOO.util.Event.onDOMReady(init);
 
 </script>
-<style type="text/css">
-    #title {
-        background: #60a2e1;
-        border: 1px solid;
-        border-color: #999999;
-        font-family: Helvetica, sans-serif;
-        font-size: 14px;
-        color: #FFFFFF;
-        font-weight: bold;
-        padding-left: 10px;
-        padding-right: 10px;
-        width: 450px;
-    }
-
-    .border {
-        font-family: Helvetica, sans-serif;
-        font-size: 12px;
-        border: 1px solid #60a2e1;
-        padding: 5px;
-        width: 460px;
-    }
-</style>
 <div align="left" style="width:700px">
     <h1>Use an existing configuration</h1>
 
-    <h2>Select the configuration you are adding to</h2>
-
-    <div id="title">Configurations</div>
-    <div class="border">
-        #if ( $existingConfigs.empty )
-        <p>There are no existing configurations to use at this time.</p>
-        #else
-            #foreach( $url in $existingConfigs )
-            <p>&nbsp;<input id="configOption${velocityCount}" type="checkbox"/>$url</p>
-            #end
-        #end
-    </div>
-    <br/>
-
-    <div align="right" style="width:460px">
-        <button type="button" value="Cancel" onClick="cancel();">Cancel</button>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <button type="button" value="AcddConf" onClick="createConf();">Add to Configuration</button>
+    <h2 style="color:#000000">Select the configuration you are adding to</h2>
+	<div style="width: 460px;">
+		<b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+		<div class="headerBox">Configurations</div>
+		<div class="bodyBox">
+			#if ( $existingConfigs.empty )
+			<p>There are no existing configurations to use at this time.</p>
+			#else
+				#foreach( $url in $existingConfigs )
+				<p>&nbsp;<input id="configOption${velocityCount}" type="checkbox"/>$url</p>
+				#end
+			#end
+		</div>
+		<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
+		<br />
+		<p align="right">
+			<button type="button" value="Cancel" onClick="cancel();">Cancel</button>
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<button type="button" value="AcddConf" onClick="createConf();">Add to Configuration</button>
+		</p>
     </div>
 </div>
 <div id="confComplete" style="visibility:hidden">
-    <div class="hd">Configuration Complete</div>
+    <div class="header">Configuration Complete</div>
     <div class="bd">
         <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
             <h1>Configuration Complete!</h1>

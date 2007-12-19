@@ -5,7 +5,7 @@
     var $ = YAHOO.util.Dom.get;
 
     function launchConsole() {
-        document.location = "$context/config/commonTasks.htm";
+        document.location = "$context/UI/Login";
     }
 
     /* #if ( $upgrade )
@@ -79,8 +79,40 @@
     /* #else
      */
     var passwordUpdateRequired = $passwordUpdateRequired;
-    var configOption = 1;
+    var configOption = 0;
 
+
+    
+    
+    function onDefaultSummarySuccess( response ) {
+        var formError = (response != null && (response.getResponseHeader["formError"] != null));
+        YAHOO.sun.identity.config.options.inProgress.hide();
+        if ( !formError ) {            
+            YAHOO.sun.identity.config.options.defaultSummary.hide(); 
+            YAHOO.sun.identity.config.options.confComplete.show();
+        } else {
+            YAHOO.sun.identity.config.options.defaultSummary.show();
+        }
+    }
+    
+    function onDefaultSummaryFailure(response ) {
+        YAHOO.sun.identity.config.options.defaultSummary.hide();
+        alert("configuration failed");
+        document.location = "$context/config/options.htm";
+    }
+    
+    function submitDefaultSummaryForm() {
+        YAHOO.sun.identity.config.options.defaultSummary.hide(); 
+        YAHOO.sun.identity.config.options.inProgress.show();
+        AjaxUtils.doPost("defaultSummary", "$context/config/defaultSummary.htm", AjaxUtils.serializeForm("defaultForm"), onDefaultSummarySuccess, onDefaultSummaryFailure);
+    }
+    
+    function renderDefaultSummary() {
+        YAHOO.sun.identity.config.options.defaultSummary = new YAHOO.widget.Dialog("defaultSummary", { width:"300px", fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.defaultSummary.render();
+    }
+    
+    
     function onNewPasswordSubmitSuccess( response ) {
         var formError = (response != null && (response.getResponseHeader["formError"] != null));
         if ( !formError ) {
@@ -96,38 +128,45 @@
             }
         }
     }
-
+    
     function submitNewPasswordForm() {
         AjaxUtils.doPost("passwordDialog", "$context/config/newPassword.htm", AjaxUtils.serializeForm("newPasswordForm"), onNewPasswordSubmitSuccess, null);
     }
 
-    function setOption( inOption ) {
-        configOption = inOption;
-        if ( passwordUpdateRequired ) {
-            YAHOO.sun.identity.config.options.passwordDialog.show();
-        } else {
-            onNewPasswordSubmitSuccess(null);
-        }
-    }
-
     function renderPasswordDialog() {
-        YAHOO.sun.identity.config.options.passwordDialog = new YAHOO.widget.Dialog("passwordDialog", { width:"280px", fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.passwordDialog = new YAHOO.widget.Dialog("passwordDialog", { width:"280px", draggable: true, fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
         YAHOO.sun.identity.config.options.passwordDialog.render();
     }
 
+    
+    
     function showWizard() {
         renderWizard();
         YAHOO.sun.identity.config.options.wizard.show();
     }
     function renderWizard() {
-        YAHOO.sun.identity.config.options.wizard = new YAHOO.widget.Panel("wizard", { fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.wizard = new YAHOO.widget.Panel("wizard", { fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
         YAHOO.sun.identity.config.options.wizard.render();
     }
-
+    
+    function setOption( inOption ) {
+        configOption = inOption;
+        if (inOption == 1) {
+            YAHOO.sun.identity.config.options.defaultSummary.show();
+        } else {
+            YAHOO.sun.identity.config.options.passwordDialog.show();
+        }
+    }    
+    
     /* #end
      */
 
     function init() {
+        YAHOO.sun.identity.config.options.inProgress = new YAHOO.widget.Panel("inProgress", { fixedcenter: true, modal:true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.inProgress.render();
+        
+        YAHOO.sun.identity.config.options.confComplete = new YAHOO.widget.Panel("confComplete", { fixedcenter: true, modal:true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.confComplete.render();
         /* #if ( $upgrade )
          */
         YAHOO.sun.identity.config.options.confirmUpgrade = new YAHOO.widget.Panel("confirmUpgrade", { fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true });
@@ -159,6 +198,7 @@
         /* #else 
         */
         AjaxUtils.load('passwordDialogContainer', "$context/config/newPassword.htm", renderPasswordDialog);
+        AjaxUtils.load('defaultSummaryContainer', "$context/config/defaultSummary.htm", renderDefaultSummary);
         AjaxUtils.load('wizardContainer', "$context/config/wizard/wizard.htm", renderWizard);
         /* #end
         */
@@ -175,10 +215,10 @@
     <div id="options" align="left" style="width:800px">
         #if ( $upgrade )
         <h1>Upgrade Available</h1>
-        <h4>Please select an upgrade option.</h4>
+        <h4>Select an upgrade option.</h4>
         #else
         <h1>Configuration Options</h1>
-        <h4>Please select a configuration option.</h4>
+        <h4>S   elect a configuration option.</h4>
         #end
 
         <div class="borderRight">
@@ -195,7 +235,7 @@
             <a id="DemoConfiguration" class="blue pointer" onclick="setOption(1);">Demo Configuration</a>
             #end
         </div>
-        <div class="borderRight">
+        <div>
             #if( $upgrade )
             <h3>Use an existing configuration</h3>
             <p>Enable this instance to co-exist with your existing AM7.1/FM7.0 instances.</p>
@@ -206,6 +246,7 @@
             <a id="CreateNewConf" class="blue pointer" onclick="setOption(2);">Create a New Configuration</a>
             #end
         </div>
+        <!--
         <div>
             #if( $upgrade )
             <h3>Upgrade from an older version</h3>
@@ -217,6 +258,7 @@
             <a id="ExistingConfiguration" class="blue pointer" onclick="setOption(3);">Add to an Existing Configuration</a>
             #end
         </div>
+        -->
     </div>
 </div>
 #if ( $upgrade )
@@ -229,7 +271,7 @@
 	}
 </style>
 <div id="confirmUpgrade" align="center" style="width:600px;visibility:hidden">
-    <div class="hd">Confirm Upgrade</div>
+    <div class="header">Confirm Upgrade</div>
     <div class="bd" style="background-color: white; height: 150px">
 		<h2>Are you certain that there are no AM 7.0 or FM 7.0 servers in deployment that are sharing the configuration?</h2>
         <div class="colum">
@@ -243,7 +285,7 @@
     </div>
 </div>
 <div id="upgradePartiallyComplete" style="width:400px;visibility:hidden">
-    <div class="hd">Upgrade Complete!</div>
+    <div class="header">Upgrade Complete!</div>
     <div class="bd" style="background-color: white">
 	    <h2>Upgrade Complete!</h2>
 	    <p>You will not be able to have the full FAM 8.0 functionality until the shared configuration is complete.</p>
@@ -255,15 +297,42 @@
     </div>
 </div>
 <div id="upgradeComplete" style="width:400px;visibility:hidden">
-    <div class="hd">Upgrade Complete</div>
+    <div class="header">Upgrade Complete</div>
     <div class="bd" style="background-color: white; text-align: center">
 	    <h2>Upgrade to FAM8.0 Successful</h2>
 	    <a id="launchConsoleLink2" class="blueSmall pointer">Launch the console</a>
     </div>
 </div>
 #else
-<div id="passwordDialogContainer"></div>
-<div id="wizardContainer"></div>
+    <div id="passwordDialogContainer"></div>
+    <div id="defaultSummaryContainer"></div>
+    <div id="wizardContainer"></div>
+    
+    <div id="inProgress" style="visibility:hidden">
+        <div class="header">Busy</div>
+        <div class="bd">
+            <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
+                <br/>
+                <h2>Configuration in progress...</h2>
+                <img src="$context/assets/images/rel_interstitial_loading.gif" />
+            </div>
+        </div>
+    </div>
+    
+    <div id="confComplete" style="visibility:hidden">
+        <div class="header">Configuration Complete</div>
+        <div class="bd">
+            <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
+
+                <br>
+                <h1>Configuration Complete!</h1>
+                <br/>
+                What would you like to do next?
+                <p align="center" class="blueSmall">
+                    <a class="pointer" href="#" onclick="launchConsole(); return false">Launch the console</a>&nbsp;|&nbsp;<a class="pointer" href="#" onclick="startNewConfig(); return false">Create another FAM instance</a>
+                </div>
+        </div>
+    </div>
 #end
 
 

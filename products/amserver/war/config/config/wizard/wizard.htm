@@ -27,15 +27,15 @@
     function adjustTabButtons() {
         $('saveTabButton').style.display = "none";
         if ( currentTab == 1 ) {
-            $('previousTabButton').style.display = "none";
+            $('previousTabButton').disabled = true;
             $('nextTabButton').style.display = "";
             $('writeConfigButton').style.display = "none";
         } else if ( currentTab == 6 ) {
-            $('previousTabButton').style.display = "";
+            $('previousTabButton').disabled = false;
             $('nextTabButton').style.display = "none";
             $('writeConfigButton').style.display = "";
         } else {
-            $('previousTabButton').style.display = "";
+            $('previousTabButton').disabled = false;
             $('nextTabButton').style.display = "";
             $('writeConfigButton').style.display = "none";
         }
@@ -55,7 +55,7 @@
     function _tabLoaded( tabNum ) {
         $('wizardStep' + currentTab).style.display = "none";
         $('wizardStep' + tabNum).style.display = "";
-        $('tab' + currentTab).className = "";
+        $('tab' + currentTab).className = "LastTab";
         $('tab' + tabNum).className = "currentTab";
         currentTab = tabNum;
         $('nextTabButton').disabled = false;
@@ -81,7 +81,7 @@
 
     function editTab( tabNum ) {
         showTab(tabNum);
-        $('previousTabButton').style.display = "none";
+        $('previousTabButton').disabled = false;
         $('nextTabButton').style.display = "none";
         $('writeConfigButton').style.display = "none";
         $('saveTabButton').style.display = "";
@@ -172,9 +172,9 @@
         } else {
             //TODO - show a specific (nice looking) error message dialog that explains why writing config failed.
             //for now, just alert:
-            alert( "Unexpected error: [" + response.responseText + "].  Please contact your System " +
-                   "Administrator.  If you are the System Administrator, please direct your questions to the " +
-                   "OpenSSO user's mailing list for help.");
+            alert( "Write Configuration Failed. \n" +
+                "Go back and check the configuration settings");
+           YAHOO.sun.identity.config.options.wizard.writeConf.hide();
         }
     }
 
@@ -301,7 +301,7 @@
         if( response.responseText == "true" ) {
             eval( type + "StoreHostValid = true;" );
             $(type + 'StoreHostStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                                                   '<small>Located Directory</small>';
+                                                   '<small>OK</small>';
         } else {
             eval( type + "StoreHostValid = true;" );
             $(type + 'StoreHostStatus').innerHTML = response.responseText;
@@ -313,7 +313,7 @@
         if( response.responseText == "true" ) {
             eval( type + "StoreBaseDNValid = true;" );
             $(type + 'StoreBaseDNStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                                                   '<small>Located Base DN</small>';
+                                                   '<small>OK</small>';
         } else {
             eval( type + "StoreBaseDNValid = false;" );
             $(type + 'StoreBaseDNStatus').innerHTML = response.responseText;
@@ -325,7 +325,7 @@
         if( response.responseText == "true" ) {
             eval( type + "StoreLoginIdValid = true;" );
             $(type + 'StoreLoginIdStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                                                   '<small>Logged in.</small>';
+                                                   '<small>OK</small>';
         } else {
             eval( type + "StoreLoginIdValid = false;" );
             $(type + 'StoreLoginIdStatus').innerHTML = response.responseText;
@@ -445,78 +445,23 @@
     }
     YAHOO.util.Event.onDOMReady(wizardInit);
 </script>
-<style type="text/css">
-    #tabList {
-        margin-left: 5px;
-        margin-bottom: 1em;
-        padding-bottom: 1em;
-    }
+<link href="$context/assets/css/Specific/wizard.css" rel="stylesheet" type="text/css" />
 
-    #tablist ol {
-        margin: 0;
-    }
-
-    #tabList li {
-        display: inline;
-        float: left;
-        margin: 0;
-        padding: 0.7em;
-        font-size: 108%;
-        border-bottom: 1px solid #999999;
-    }
-
-    #tab1, #tab2, #tab3, #tab4, #tab5 {
-        border-right: 1px solid #999999;
-    }
-
-    .currentTab {
-        color: #ec9c2b;
-        font-weight: bold;
-        font-size: 123.1%;
-    }
-
-    #wizardFooter {
-        height: 30px;
-        background: #d4deec;
-        padding: 10px;
-        vertical-align: middle;
-    }
-
-    #tabContents {
-        padding: 2em 1em 1em 1em;
-    }
-
-    #tab1RequiredInfoPanel li {
-        color: black;
-        padding: 0;
-    }
-
-    .tabContent {
-        height: 450px;
-    }
-
-    .tabContent h1 {
-        margin: 0 0 .5em 0;
-    }
-
-    .panel h1 {
-        padding: 0 1em 0.2em 1em;
-    }
-
-
-</style>
-<div id="wizard" style="width:800px">
-    <div class="hd">FAM Custom Configuration</div>
-    <div class="bd" style="background-color: #FFFFFF">
-        <ol id="tabList">
-            <li id="tab1">1 Introduction</li>
-            <li id="tab2">2 FAM Association</li>
-            <li id="tab3">3 Configuration Store</li>
-            <li id="tab4">4 User Store</li>
-            <li id="tab5">5 Load Balancing</li>
-            <li id="tab6">6 Summary</li>
-        </ol>
-
+<div id="wizard" style="width:780px;background-color: #FFFFFF">    
+    <div style="background-color: #FFFFFF;padding:0">
+		<div class="header">FAM Custom Configuration</div>
+        <div id="title">FAM Custom Configuration Wizard</div>
+		<div class="col1">		
+			<ol id="tabList" start="1" type="1">
+				<li id="tab1">Introduction</li>
+				<li id="tab2">FAM Association</li>
+				<li id="tab3">Configuration Store</li>
+				<li id="tab4">User Store</li>
+				<li id="tab5">Load Balancing</li>
+				<li id="tab6">Summary</li>
+			</ol>
+			&nbsp;
+		</div>
         <div id="tabContents">
             <div id="wizardStep1" class="tabContent" style="display:none"></div>
             <div id="wizardStep2" class="tabContent" style="display:none"></div>
@@ -527,19 +472,21 @@
         </div>
         <!-- end tabContents -->
     </div>
-    <div id="wizardFooter" class="ft">
+    <div id="wizardFooter">
+		<div class="col1">&nbsp;</div>		
+        
         <div align="left" style="float:left">
-            <button id="wizardCancelButton" type="button" onclick="cancelWizard();">Cancel</button>
+            <button id="previousTabButton" type="button" disabled="disabled" onclick="previousWizardTab();">Previous</button>
+            <button id="nextTabButton" type="button" onclick="nextWizardTab();" class="buttonblue">Next</button>
+            <button id="saveTabButton" type="button" style="display:none" onclick="showTab(6);" class="buttonblue">Save</button>
+            <button id="writeConfigButton" type="button" style="display:none" onclick="writeConfiguration();" class="buttonblue">Create Configuration</button>
         </div>
-        <div align="right">
-            <button id="previousTabButton" type="button" style="display:none" onclick="previousWizardTab();">Previous</button>
-            <button id="nextTabButton" type="button" onclick="nextWizardTab();">Next</button>
-            <button id="saveTabButton" type="button" style="display:none" onclick="showTab(6);">Save</button>
-            <button id="writeConfigButton" type="button" style="display:none" onclick="writeConfiguration();">Create Configuration</button>
+		<div align="right">
+            <button id="wizardCancelButton" type="button" onclick="cancelWizard();">Cancel</button>
         </div>
     </div>
     <div id="confComplete" style="visibility:hidden">
-        <div class="hd">Configuration Complete</div>
+        <div class="header">Configuration Complete</div>
         <div class="bd">
             <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
                 <br/>

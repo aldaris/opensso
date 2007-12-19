@@ -1,41 +1,10 @@
-<style type="text/css">
-    .summaryPanel {
-        float: left;
-        margin-right: 10px;
-    }
-
-    .summaryPanel .bd {
-        height: 100px;
-    }
-
-    .summaryPanel ol {
-        padding: 0;
-        margin: 0;
-        font-size: smaller;
-    }
-
-    .summaryPanel li {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .summaryPanel label {
-        float: left;
-        margin-right: 0.5em;
-        width: 55px;
-    }
-    #loadBalancingSummary label {
-        width: 25px;    
-    }
-</style>
-    
-<h1>Summary</h1>
+<h1>Step 6: Summary</h1>
 <p>Please take a moment to confirm that your settings are correct.</p>
 
 <div class="summaryPanel" style="width:120px">
-    <div class="hd">FAM Association</div>
-    <div class="bd">
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox">FAM Association</div>
+    <div class="bodyBox">
         <span>
             #if ( $newInstanceUrl )
             This instance is being added to the existing site as '$newInstanceUrl'
@@ -44,11 +13,13 @@
             #end
         </span>
     </div>
+	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
 </div>
 
 <div class="summaryPanel">
-    <div class="hd">Configuration Store Details</div>
-    <div class="bd">
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox">Configuration Store Details</div>
+    <div class="bodyBox">
         #if ( $newInstanceUrl )
         <span>Previously configured</span>
         #elseif ( $configStore )
@@ -78,11 +49,13 @@
         <span>Default Configuration</span>
         #end
     </div>
+	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
 </div>
 
 <div class="summaryPanel">
-    <div class="hd">User Store Details</div>
-    <div class="bd">
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox">User Store Details</div>
+    <div class="bodyBox">
         #if ( $newInstanceUrl )
         <span>Previously configured</span>
         #elseif ( $userStore )
@@ -112,11 +85,13 @@
         <span>Default Configuration</span>
         #end
     </div>
+	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
 </div>
 
 <div class="summaryPanel" style="margin-right:0;width:140px">
-    <div class="hd">Load Balancing</div>
-    <div id="loadBalancingSummary" class="bd">
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox">Load Balancing</div>
+    <div id="loadBalancingSummary" class="bodyBox">
         #if ( $newInstanceUrl )
         <span>Previously configured</span>
         #elseif ( $loadBalancerHost )
@@ -134,4 +109,5 @@
         <span>This instance will not be deployed behind a load balancer.</span>
         #end
     </div>
+	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
 </div>
