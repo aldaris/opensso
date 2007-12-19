@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.17 2007-12-14 18:14:33 huacui Exp $
+   $Id: AgentService.xml,v 1.18 2007-12-19 00:37:42 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -140,6 +140,15 @@
                         i18nKey="a405">
                         <DefaultValues>
                             <Value>@NOTIFICATION_ENABLE@</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.client.notification.url"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a109">
+                        <DefaultValues>
+                            <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/UpdateAgentCacheServlet?shortcircuit</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -1935,6 +1944,15 @@
                         type="single"
                         syntax="string"
                         i18nKey="a236">
+                        <DefaultValues>
+                            <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@@AGENT_APP_URI@/notification</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.client.notification.url"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a109">
                         <DefaultValues>
                             <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@@AGENT_APP_URI@/notification</Value>
                         </DefaultValues>
