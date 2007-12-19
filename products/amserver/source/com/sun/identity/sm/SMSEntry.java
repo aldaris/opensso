@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.30 2007-12-13 23:30:18 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.31 2007-12-19 17:44:17 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -203,7 +203,7 @@ public class SMSEntry implements Cloneable {
         // Initialize for checking delegation permissions
         readActionSet.add(READ);
         modifyActionSet.add(MODIFY);
-        initSMSObject();
+
         // Cache internal users
         String adminUser = SystemProperties.get(AUTH_SUPER_USER, "");
         if (adminUser != null && adminUser.length() != 0) {
@@ -267,6 +267,12 @@ public class SMSEntry implements Cloneable {
         AMResourceBundleCache amCache = AMResourceBundleCache.getInstance();
         bundle = amCache.getResBundle(IUMSConstants.UMS_BUNDLE_NAME,
                 java.util.Locale.ENGLISH);
+
+        // Get an instance of SMSObject(can be SMSLDAP or SMSJAXRPC)
+        // after the properties for cache/resourcebundle/internal users
+        // are retrieved/initialized.
+
+        initSMSObject();
     }
     
     private static void initSMSObject() {
