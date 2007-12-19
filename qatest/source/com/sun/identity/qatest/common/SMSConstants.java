@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSConstants.java,v 1.4 2007-10-29 23:37:17 bt199000 Exp $
+ * $Id: SMSConstants.java,v 1.5 2007-12-19 00:11:28 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,6 +137,11 @@ public interface SMSConstants {
      * Access Manager user schema attributes key in property file
      */
     static final String SMS_SCHEMNA_ATTR = "SMSGlobalConfig.schema_attributes";
+    
+     /**
+     * Access Manager realm services key in property file
+     */
+    static final String REALM_SERVICE = "sunidentityrepositoryservice";
     
     /**
      * Attributes for LDAPv3 datastore
