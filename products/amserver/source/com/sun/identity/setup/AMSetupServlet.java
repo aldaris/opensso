@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.33 2007-12-19 01:18:23 qcheng Exp $
+ * $Id: AMSetupServlet.java,v 1.34 2007-12-20 20:19:18 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -183,6 +183,16 @@ public class AMSetupServlet extends HttpServlet {
     public static boolean processRequest(
         HttpServletRequest request,
         HttpServletResponse response
+    ) {
+        HttpServletRequestWrapper req = new HttpServletRequestWrapper(request);
+        HttpServletResponseWrapper res = new HttpServletResponseWrapper(
+            response);
+        return processRequest(req, res);
+    }
+    
+    public static boolean processRequest(
+        IHttpServletRequest request,
+        IHttpServletResponse response
     ) {
         /*
          * This logic needs refactoring later. setServiceConfigValues()

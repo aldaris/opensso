@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.19 2007-12-13 23:16:00 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.20 2007-12-20 20:19:18 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
-import javax.servlet.http.HttpServletRequest;
 import netscape.ldap.util.DN;
 
 /**
@@ -77,15 +76,12 @@ public class ServicesDefaultValues {
      * @param request is the Servlet Request.
      */
     public static void setServiceConfigValues(
-        HttpServletRequest request
+        IHttpServletRequest request
     ) {
         Locale locale = (Locale)request.getLocale();
-        Enumeration requestEnum = request.getParameterNames();
         Map map = instance.defValues;
-        while (requestEnum.hasMoreElements()) {
-            String key = (String)requestEnum.nextElement();
-            map.put(key, ((String)request.getParameter(key)).trim());
-        }
+        map.putAll(request.getParameterMap());
+        
         String base = (String)map.get(
             SetupConstants.CONFIG_VAR_BASE_DIR);
         base = base.replace('\\', '/');
