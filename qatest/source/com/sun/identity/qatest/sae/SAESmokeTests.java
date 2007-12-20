@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAESmokeTests.java,v 1.1 2007-11-15 18:53:48 rmisra Exp $
+ * $Id: SAESmokeTests.java,v 1.2 2007-12-20 22:43:12 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -662,22 +662,42 @@ public class SAESmokeTests extends TestCommon {
      */
     private void setSPAppData(String secMode)
     throws Exception {
-        page = (HtmlPage) webClient.getPage(spurl + "/" +
-                saeConfig.getString("spAppCreateDataFileURL"));
+        log(Level.FINEST, "setSPAppData", "spurl: " + spurl);
+        String spAppCreateDataFileURL = saeConfig.getString("spAppCreateDataFileURL");
+        log(Level.FINEST, "setSPAppData", "spAppCreateDataFileURL: " + spAppCreateDataFileURL);
+        page = (HtmlPage) webClient.getPage(spurl + "/" + spAppCreateDataFileURL);
+
         form = (HtmlForm)page.getForms().get(0);
+
+        log(Level.FINEST, "setSPAppData", "secMode: " + secMode);
         ((HtmlTextInput)form.getInputByName("cryptotype")).
                 setValueAttribute(secMode);
+
+        String sharedSecret = saeConfig.getString("sharedSecret");
+        log(Level.FINEST, "setSPAppData", "sharedSecret: " + sharedSecret);
         ((HtmlTextInput)form.getInputByName("secret")).
-                setValueAttribute(saeConfig.getString("sharedSecret"));
+                setValueAttribute(sharedSecret);
+
         if (secMode.equals("asymmetric")) {
+            String sp_keyalias = saeConfig.getString("sp_keyalias");
+            log(Level.FINEST, "setSPAppData", "sp_keyalias: " + sp_keyalias);
             ((HtmlTextInput)form.getInputByName("secret")).
                     setValueAttribute(saeConfig.getString("sp_keyalias"));
+
+            String sp_keystore = saeConfig.getString("sp_keystore");
+            log(Level.FINEST, "setSPAppData", "sp_keystore: " + sp_keystore);
             ((HtmlTextInput)form.getInputByName("keystore")).
-                    setValueAttribute(saeConfig.getString("sp_keystore"));
+                    setValueAttribute(sp_keystore);
+
+            String sp_keypass = saeConfig.getString("sp_keypass");
+            log(Level.FINEST, "setSPAppData", "sp_keypass: " + sp_keypass);
             ((HtmlTextInput)form.getInputByName("keypass")).
-                    setValueAttribute(saeConfig.getString("sp_keypass"));
+                    setValueAttribute(sp_keypass);
+
+            String sp_storepass = saeConfig.getString("sp_storepass");
+            log(Level.FINEST, "setSPAppData", "sp_storepass: " + sp_storepass);
             ((HtmlTextInput)form.getInputByName("privkeypass")).
-                    setValueAttribute(saeConfig.getString("sp_storepass"));
+                    setValueAttribute(sp_storepass);
         }
         result = (HtmlPage)form.submit();
     }
@@ -689,38 +709,75 @@ public class SAESmokeTests extends TestCommon {
      */
     private HtmlPage generateSSOSLOURL(String secMode)
     throws Exception {
-        page = (HtmlPage) webClient.getPage(idpurl + "/" +
-                saeConfig.getString("idpAppURL"));
+        log(Level.FINEST, "generateSSOSLOURL", "secMode: " + secMode);
+
+        log(Level.FINEST, "generateSSOSLOURL", "idpurl: " + idpurl);
+        String idpAppURL = saeConfig.getString("idpAppURL");
+        log(Level.FINEST, "generateSSOSLOURL", "idpAppURL: " + idpAppURL);
+        page = (HtmlPage) webClient.getPage(idpurl + "/" + idpAppURL);
+
         form = (HtmlForm)page.getForms().get(0);
+
+        String idp_userid = saeConfig.getString("idp_userid");
+        log(Level.FINEST, "generateSSOSLOURL", "idp_userid: " + idp_userid);
         ((HtmlTextInput)form.getInputByName("userid")).
-                setValueAttribute(saeConfig.getString("idp_userid"));
+                setValueAttribute(idp_userid);
+
+        String mail_attribute = saeConfig.getString("mail_attribute");
+        log(Level.FINEST, "generateSSOSLOURL", "mail_attribute: " + mail_attribute);
         ((HtmlTextInput)form.getInputByName("mail")).
-                setValueAttribute(saeConfig.getString("mail_attribute"));
+                setValueAttribute(mail_attribute);
+
+        String branch_attribute = saeConfig.getString("branch_attribute");
+        log(Level.FINEST, "generateSSOSLOURL", "branch_attribute: " + branch_attribute);
         ((HtmlTextInput)form.getInputByName("branch")).
-                setValueAttribute(saeConfig.getString("branch_attribute"));
+                setValueAttribute(branch_attribute);
+
+        String spAppURL = saeConfig.getString("spAppURL");
+        log(Level.FINEST, "generateSSOSLOURL", "spAppURL: " + spAppURL);
         ((HtmlTextInput)form.getInputByName("spapp")).
                 setValueAttribute(spurl + "/" +
-                saeConfig.getString("spAppURL"));
+                spAppURL);
+
+        String idpAppHandler = saeConfig.getString("idpAppHandler");
+        log(Level.FINEST, "generateSSOSLOURL", "idpAppHandler: " + idpAppHandler);
         ((HtmlTextInput)form.getInputByName("saeurl")).
                 setValueAttribute(idpurl + "/" +
-                saeConfig.getString("idpAppHandler") + "/metaAlias/" +
+                idpAppHandler + "/metaAlias/" +
                 configMap.get(TestConstants.KEY_IDP_HOST));
+
         ((HtmlTextInput)form.getInputByName("idpappname")).
                 setValueAttribute(idpurl + "/" +
-                saeConfig.getString("idpAppURL"));
+                idpAppURL);
+
         ((HtmlTextInput)form.getInputByName("cryptotype")).
                 setValueAttribute(secMode);
+
+        String sharedSecret = saeConfig.getString("sharedSecret");
+        log(Level.FINEST, "generateSSOSLOURL", "sharedSecret: " + sharedSecret);
         ((HtmlTextInput)form.getInputByName("secret")).
-                setValueAttribute(saeConfig.getString("sharedSecret"));
+                setValueAttribute(sharedSecret);
+
         if (secMode.equals("asymmetric")) {
+            String idp_keyalias = saeConfig.getString("idp_keyalias");
+            log(Level.FINEST, "generateSSOSLOURL", "idp_keyalias: " + idp_keyalias);
             ((HtmlTextInput)form.getInputByName("secret")).
-                    setValueAttribute(saeConfig.getString("idp_keyalias"));
+                    setValueAttribute(idp_keyalias);
+
+            String idp_keystore = saeConfig.getString("idp_keystore");
+            log(Level.FINEST, "generateSSOSLOURL", "idp_keystore: " + idp_keystore);
             ((HtmlTextInput)form.getInputByName("keystore")).
-                    setValueAttribute(saeConfig.getString("idp_keystore"));
+                    setValueAttribute(idp_keystore);
+
+            String idp_keypass = saeConfig.getString("idp_keypass");
+            log(Level.FINEST, "generateSSOSLOURL", "idp_keypass: " + idp_keypass);
             ((HtmlTextInput)form.getInputByName("keypass")).
-                    setValueAttribute(saeConfig.getString("idp_keypass"));
+                    setValueAttribute(idp_keypass);
+
+            String idp_storepass = saeConfig.getString("idp_storepass");
+            log(Level.FINEST, "generateSSOSLOURL", "idp_storepass: " + idp_storepass);
             ((HtmlTextInput)form.getInputByName("privkeypass")).
-                    setValueAttribute(saeConfig.getString("idp_storepass"));
+                    setValueAttribute(idp_storepass);
         }
         result = (HtmlPage)form.submit();
         log(Level.FINEST, "generateSSOSLOURL", "Generate URL Page:\n" +

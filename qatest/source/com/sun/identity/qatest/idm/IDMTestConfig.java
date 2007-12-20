@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMTestConfig.java,v 1.2 2007-09-25 17:36:30 bt199000 Exp $
+ * $Id: IDMTestConfig.java,v 1.3 2007-12-20 22:42:42 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -129,11 +129,11 @@ public class IDMTestConfig extends IDMCommon {
     public void cleanupIdmTest(boolean cleanupidm)
     throws Exception {
         Object[] params = {cleanupidm};
+        entering("cleanupIdmTest", null);
         if (!cleanupidm) return;
-        entering("cleanupDataStore", null);
         try {
-            log(Level.FINE, "cleanupIdmTest", "Deleting datastore...");
-            smsObj.deleteDataStore(dsCfgMap);   
+            log(Level.FINE, "cleanupIdmTest", "Deleting realm: " + subRealm);
+            deleteRealm(ssotoken, subRealm);
         } catch (Exception e) {
             log(Level.SEVERE, "cleanupIdmTest", e.getMessage());
             e.printStackTrace();
