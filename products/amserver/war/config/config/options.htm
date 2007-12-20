@@ -108,7 +108,7 @@
     }
     
     function renderDefaultSummary() {
-        YAHOO.sun.identity.config.options.defaultSummary = new YAHOO.widget.Dialog("defaultSummary", { width:"300px", fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.defaultSummary = new YAHOO.widget.Dialog("defaultSummary", { width:"450px", fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
         YAHOO.sun.identity.config.options.defaultSummary.render();
     }
     
@@ -218,7 +218,7 @@
         <h4>Select an upgrade option.</h4>
         #else
         <h1>Configuration Options</h1>
-        <h4>S   elect a configuration option.</h4>
+        <h4>Select a configuration option.</h4>
         #end
 
         <div class="borderRight">
@@ -229,7 +229,7 @@
             <a id="upgradeLink" class="blue pointer">Upgrade to FAM 8.0</a>
             #else
             <h3>Demo & Evaluation</h3>
-            <p>This demo is for evaluation purposes. FAM will automatically configure the config store and the user
+            <p>This option should be primarily used for evaluation purposes. FAM will automatically configure the config store and the user
                store to your local system.</p>
             <p>If you intend on placing this on a production server then you should select 'Custom Configuration' instead.</p>
             <a id="DemoConfiguration" class="blue pointer" onclick="setOption(1);">Demo Configuration</a>
@@ -309,7 +309,7 @@
     <div id="wizardContainer"></div>
     
     <div id="inProgress" style="visibility:hidden">
-        <div class="header">Busy</div>
+        <div class="header"> </div>
         <div class="bd">
             <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
                 <br/>
@@ -328,8 +328,9 @@
                 <h1>Configuration Complete!</h1>
                 <br/>
                 What would you like to do next?
+                <br/>
                 <p align="center" class="blueSmall">
-                    <a class="pointer" href="#" onclick="launchConsole(); return false">Launch the console</a>&nbsp;|&nbsp;<a class="pointer" href="#" onclick="startNewConfig(); return false">Create another FAM instance</a>
+                    <a class="pointer" href="#" onclick="launchConsole(); return false">Proceed to Login Page</a>&nbsp;|&nbsp;<a class="pointer" href="#" onclick="startNewConfig(); return false">Create another FAM instance</a>
                 </div>
         </div>
     </div>

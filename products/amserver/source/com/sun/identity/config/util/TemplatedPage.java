@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TemplatedPage.java,v 1.3 2007-11-12 14:51:17 lhazlewood Exp $
+ * $Id: TemplatedPage.java,v 1.4 2007-12-20 23:26:37 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,11 +29,11 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author Les Hazlewood
- * @since 2007-09-12
+ *
  */
 public abstract class TemplatedPage extends AjaxPage {
-
+   
+    
     public static final String STATUS_MESSAGE_CODES_SESSION_KEY = "statusMessageCodes";
 
     public int currentYear = Calendar.getInstance().get( Calendar.YEAR );
@@ -52,42 +52,30 @@ public abstract class TemplatedPage extends AjaxPage {
 
 
     protected List getStatusMessageCodes() {
-        return (List)getContext().getSessionAttribute( STATUS_MESSAGE_CODES_SESSION_KEY );
+        return (List)getContext().getSessionAttribute(STATUS_MESSAGE_CODES_SESSION_KEY);
     }
 
-    protected void addStatusMessageCode( String statusMessageCode ) {
+    protected void addStatusMessageCode(String statusMessageCode) {
         List codes = getStatusMessageCodes();
-        if ( codes == null ) {
+        if (codes == null) {
             codes = new ArrayList();
         }
-        codes.add( statusMessageCode );
-        getContext().setSessionAttribute( STATUS_MESSAGE_CODES_SESSION_KEY, codes );
+        codes.add(statusMessageCode);
+        getContext().setSessionAttribute(STATUS_MESSAGE_CODES_SESSION_KEY, codes);
     }
 
     protected void clearStatusMessageCodes() {
-        getContext().removeSessionAttribute( STATUS_MESSAGE_CODES_SESSION_KEY );
-    }
-
-    protected String i18n( String key ) {
-        return getMessage( key );
-    }
-
-    protected String i18n( String key, Object arg ) {
-        return getMessage( key, arg );
-    }
-
-    protected String i18n( String key, Object[] args ) {
-        return getMessage( key, args );
+        getContext().removeSessionAttribute(STATUS_MESSAGE_CODES_SESSION_KEY);
     }
 
     public final void onInit() {
-        addModel( "title", i18n( getTitle() ) );
+        addModel("title", getTitle());
         List sessionStatusMessages = getStatusMessageCodes();
         if ( sessionStatusMessages != null && !sessionStatusMessages.isEmpty() ) {
             Iterator i = sessionStatusMessages.iterator();
             while ( i.hasNext() ) {
                 String messageCode = (String)i.next();
-                statusMessages.add( i18n( messageCode ) );
+                statusMessages.add(getLocalizedString(messageCode) );
             }
             clearStatusMessageCodes();
         }

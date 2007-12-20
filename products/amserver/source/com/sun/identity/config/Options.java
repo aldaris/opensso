@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Options.java,v 1.2 2007-11-12 14:51:14 lhazlewood Exp $
+ * $Id: Options.java,v 1.3 2007-12-20 23:27:00 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,10 +25,13 @@ package com.sun.identity.config;
 
 import com.sun.identity.config.util.TemplatedPage;
 import net.sf.click.control.ActionLink;
+import com.iplanet.am.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
-/**
- * @author Les Hazlewood
- */
 public class Options extends TemplatedPage {
 
     public ActionLink createConfigLink = new ActionLink("upgradeLink", this, "upgrade" );
@@ -37,7 +40,9 @@ public class Options extends TemplatedPage {
 
     protected boolean passwordUpdateRequired = true;
     protected boolean upgrade = false;
-
+    
+    private java.util.Locale configLocale = null;
+    
     protected String getTitle() {
         return "configOptions.title";
     }
@@ -50,6 +55,44 @@ public class Options extends TemplatedPage {
         addModel( "upgrade", Boolean.valueOf( upgrade ) );
     }
 
+    protected void initializeResourceBundle() {
+        HttpServletRequest req = (HttpServletRequest)getContext().getRequest();
+	HttpServletResponse res = (HttpServletResponse)getContext().getResponse();
+
+        setLocale(req);
+        try {
+            req.setCharacterEncoding("UTF-8");
+	    res.setContentType("text/html; charset=UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            //Do nothing.
+        }
+    }
+    
+    private void setLocale (HttpServletRequest request) {      
+        if (request != null) {
+            String superLocale = request.getParameter("locale");
+
+            if (superLocale != null && superLocale.length() > 0) {
+		configLocale = new java.util.Locale(superLocale);
+            } else {
+		String acceptLangHeader =
+                          (String)request.getHeader("Accept-Language");
+		if ((acceptLangHeader !=  null) &&
+                     (acceptLangHeader.length() > 0)) {
+                    String acclocale = 
+                        Locale.getLocaleStringFromAcceptLangHeader(
+                            acceptLangHeader);
+		    configLocale = new java.util.Locale(acclocale);
+		}
+            }
+            try {
+                rb = ResourceBundle.getBundle(RB_NAME, configLocale);
+            } catch (MissingResourceException mre) {
+                
+            }
+       }
+    }
+    
     public boolean upgrade() {
         try {
             getConfigurator().upgrade();

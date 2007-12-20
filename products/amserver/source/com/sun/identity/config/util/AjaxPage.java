@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.4 2007-11-29 22:52:40 jonnelson Exp $
+ * $Id: AjaxPage.java,v 1.5 2007-12-20 23:26:37 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,14 +46,12 @@ public abstract class AjaxPage extends Page {
     private boolean rendering = false;
     
     // localization properties
-    private ISLocaleContext localeContext = new ISLocaleContext();
-    private ResourceBundle rb = null;
-    private static final String RB_NAME = "amConfigurator";
+    protected ResourceBundle rb = null;
+    protected static final String RB_NAME = "amConfigurator";
     
     public static Debug debug = Debug.getInstance("amConfigurator");
     
     public AjaxPage() {
-        initializeResourceBundle();
     }
 
     public boolean isRendering() {
@@ -127,7 +125,8 @@ public abstract class AjaxPage extends Page {
         writeToResponse(response);
     }
     
-    private void initializeResourceBundle() {
+    protected void initializeResourceBundle() {
+        ISLocaleContext localeContext = new ISLocaleContext();
         localeContext.setLocale(getContext().getRequest());
         try {
             rb = ResourceBundle.getBundle(RB_NAME, localeContext.getLocale());
@@ -137,7 +136,11 @@ public abstract class AjaxPage extends Page {
     }
     
     public String getLocalizedString(String i18nKey) {
-        String localizedValue = null;
+        if (rb == null) {
+            initializeResourceBundle();
+        }
+        
+        String localizedValue = null;     
         try {
             localizedValue = Locale.getString(rb, i18nKey, debug);
         } catch (MissingResourceException mre) {
