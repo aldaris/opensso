@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TokenUtils.java,v 1.1 2007-08-29 23:43:21 dillidorai Exp $
+ * $Id: TokenUtils.java,v 1.2 2007-12-20 18:49:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,10 +27,8 @@ package com.sun.identity.xacml.client;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.internal.AuthPrincipal;
-
-import java.util.Iterator;
 import java.security.Principal;
+import java.util.Iterator;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
@@ -43,16 +41,6 @@ public class TokenUtils {
     public static SSOToken getToken(String orgName, String userId, 
             String password) throws Exception {
         return getSessionToken(orgName, userId, password); 
-    }
-
-    public static SSOToken getLocalToken(String orgName, String userId, 
-            String password) throws Exception 
-    {
-            System.out.println("TokenUrils.getLocalToken():getting local ssoToken");
-            SSOTokenManager tm = SSOTokenManager.getInstance();
-            SSOToken token 
-                    = tm.createSSOToken(new AuthPrincipal(userId), password);
-            return token;
     }
 
     public static SSOToken getSessionToken(String orgName, String userId, 

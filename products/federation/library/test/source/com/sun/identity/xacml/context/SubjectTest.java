@@ -17,10 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectTest.java,v 1.1 2007-08-29 23:42:24 dillidorai Exp $
+ * $Id: SubjectTest.java,v 1.2 2007-12-20 18:49:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
+
 package com.sun.identity.xacml.context;
 
 import java.io.FileInputStream;
@@ -77,7 +78,7 @@ public class SubjectTest extends UnitTestBase {
             Subject subject =
                     ContextFactory.getInstance().createSubject();
             subject.setSubjectCategory(new URI(xc.ACCESS_SUBJECT));
-            List attrs = new ArrayList();
+            List<Attribute> attrs = new ArrayList<Attribute>();
             Attribute attr = ContextFactory.getInstance().createAttribute();
             attr.setAttributeID(new URI("testid1"));
             attr.setDataType(new URI("testDataType1"));

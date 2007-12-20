@@ -1,11 +1,33 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ *                 * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: XACMLRequestProcessorTest.java,v 1.2 2007-12-20 18:49:30 veiming Exp $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
 package com.sun.identity.xacml.client;
 
 import com.sun.identity.shared.test.UnitTestBase;
-
-import com.sun.identity.saml2.common.SAML2Exception;
-
 import com.sun.identity.xacml.client.XACMLRequestProcessor;
 import com.sun.identity.xacml.common.XACMLException;
+import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.xacml.context.ContextFactory;
 import com.sun.identity.xacml.context.Action;
 import com.sun.identity.xacml.context.Attribute;
@@ -79,11 +101,11 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
         attribute.setDataType(
             new URI("urn:opensso:names:xacml:2.0:data-type:opensso-session-id"));
 
-        List valueList = new ArrayList();
+        List<String> valueList = new ArrayList<String>();
         valueList.add("sessionId1");
         valueList.add("sessionId2");
         attribute.setAttributeStringValues(valueList);
-        List attributeList = new ArrayList();
+        List<Attribute> attributeList = new ArrayList<Attribute>();
         attributeList.add(attribute);
         subject1.setAttributes(attributeList);
 
@@ -96,14 +118,14 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
             new URI("urn:oasis:names:tc:xacml:1.0:subject:subject-id"));
         attribute.setDataType(
             new URI("urn:sun:names:xacml:2.0:data-type:openfm-sp-nameid"));
-        valueList = new ArrayList();
+        valueList = new ArrayList<String>();
         valueList.add("openfm-sp-nameid1");
         attribute.setAttributeStringValues(valueList);
-        attributeList = new ArrayList();
+        attributeList = new ArrayList<Attribute>();
         attributeList.add(attribute);
         subject2.setAttributes(attributeList);
 
-        List subjects = new ArrayList();
+        List<Subject> subjects = new ArrayList<Subject>();
         subjects.add(subject1);
         subjects.add(subject2);
         request.setSubjects(subjects);
@@ -123,10 +145,10 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
         //http://www.w3.org/2001/XMLSchema#string
         attribute.setDataType(
             new URI("http://www.w3.org/2001/XMLSchema#string"));
-        valueList = new ArrayList();
+        valueList = new ArrayList<String>();
         valueList.add("http://insat.red.iplanet.com/banner.html");
         attribute.setAttributeStringValues(valueList);
-        attributeList = new ArrayList();
+        attributeList = new ArrayList<Attribute>();
         attributeList.add(attribute);
 
         attribute = ContextFactory.getInstance().createAttribute();
@@ -135,13 +157,13 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
             new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"));
         attribute.setDataType(
             new URI("http://www.w3.org/2001/XMLSchema#string"));
-        valueList = new ArrayList();
+        valueList = new ArrayList<String>();
         valueList.add("http://insat.red.iplanet.com/banner.html");
         attribute.setAttributeStringValues(valueList);
         attributeList.add(attribute);
 
         resource.setAttributes(attributeList);
-        List resourceList = new ArrayList();
+        List<Resource> resourceList = new ArrayList<Resource>();
         resourceList.add(resource);
         request.setResources(resourceList);
 
@@ -158,19 +180,19 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
         //http://www.w3.org/2001/XMLSchema#string
         attribute.setDataType(
             new URI("http://www.w3.org/2001/XMLSchema#string"));
-        valueList = new ArrayList();
+        valueList = new ArrayList<String>();
         valueList.add("GET");
         attribute.setAttributeStringValues(valueList);
-        attributeList = new ArrayList();
+        attributeList = new ArrayList<Attribute>();
         attributeList.add(attribute);
 
         action.setAttributes(attributeList);
 
         request.setAction(action);
 
-        Environment environment = ContextFactory.getInstance().createEnvironment();
+        Environment environment =
+            ContextFactory.getInstance().createEnvironment();
         request.setEnvironment(environment);
         return request;
     }
-
 }

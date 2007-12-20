@@ -1,3 +1,27 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: FMSubjectMapperTest.java,v 1.2 2007-12-20 18:49:31 veiming Exp $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
 package com.sun.identity.xacml.plugins;
 
 import com.sun.identity.shared.test.UnitTestBase;
@@ -37,7 +61,8 @@ public class FMSubjectMapperTest extends UnitTestBase {
     }
 
     @Test(groups={"xacml"})
-    public void testMapToNativeSubject() throws XACMLException, URISyntaxException {
+    public void testMapToNativeSubject()
+        throws XACMLException, URISyntaxException {
 	FMSubjectMapper subjectMapper = new FMSubjectMapper();
         Subject subject1 = ContextFactory.getInstance().createSubject();
         //supported category for id
@@ -59,19 +84,22 @@ public class FMSubjectMapperTest extends UnitTestBase {
         attribute.setDataType(
             new URI("urn:sun:names:xacml:2.0:data-type:opensso-session-id"));
 
-        List valueList = new ArrayList();
+        List<String> valueList = new ArrayList<String>();
 
 	AuthContext lc = null;
 	String callbacks[] = {"amadmin","admin123"};
         SSOToken ssot = null;
         try {
             lc = new AuthContext("/");
-            AuthContext.IndexType indexType = AuthContext.IndexType.MODULE_INSTANCE;
+            AuthContext.IndexType indexType =
+                AuthContext.IndexType.MODULE_INSTANCE;
             String indexName = "DataStore";
-            log(Level.INFO,"testMapToNativeSubject():\n"," LDAPLogin: Obtained login context");
+            log(Level.INFO, "testMapToNativeSubject():\n",
+                " LDAPLogin: Obtained login context");
             lc.login(indexType, indexName, callbacks);
 	    if (lc.getStatus() == AuthContext.Status.SUCCESS) {
-		log(Level.INFO,"testMapToNativeSubject():\n"," Login success!!");
+		log(Level.INFO, "testMapToNativeSubject():\n",
+                    " Login success!!");
 	    }
             ssot = lc.getSSOToken();
         } catch (Exception le) {
@@ -83,11 +111,11 @@ public class FMSubjectMapperTest extends UnitTestBase {
 
         valueList.add(sid);
         attribute.setAttributeStringValues(valueList);
-        List attributeList = new ArrayList();
+        List<Attribute> attributeList = new ArrayList<Attribute>();
         attributeList.add(attribute);
         subject1.setAttributes(attributeList);
         Subject subjects[] = {subject1};
-        List subjectsList = new ArrayList();
+        List<Subject> subjectsList = new ArrayList<Subject>();
         subjectsList.add(subject1);
         
         SSOToken retSSOToken = (SSOToken) subjectMapper.mapToNativeSubject(subjectsList);

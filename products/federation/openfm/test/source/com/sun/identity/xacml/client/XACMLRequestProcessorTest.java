@@ -1,11 +1,32 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *           *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: XACMLRequestProcessorTest.java,v 1.2 2007-12-20 18:49:31 veiming Exp $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
 package com.sun.identity.xacml.client;
 
 import com.iplanet.sso.SSOToken;
-
-import com.sun.identity.shared.test.UnitTestBase;
-
 import com.sun.identity.saml2.common.SAML2Exception;
-
+import com.sun.identity.shared.test.UnitTestBase;
 import com.sun.identity.xacml.client.XACMLRequestProcessor;
 import com.sun.identity.xacml.common.XACMLConstants;
 import com.sun.identity.xacml.common.XACMLException;
@@ -120,10 +141,10 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
         attribute.setIssuer("sampleIssuer1");
 
         //set values
-        List valueList = new ArrayList();
+        List<String> valueList = new ArrayList<String>();
         valueList.add(subjectId);
         attribute.setAttributeStringValues(valueList);
-        List attributeList = new ArrayList();
+        List<Attribute> attributeList = new ArrayList<Attribute>();
         attributeList.add(attribute);
         subject1.setAttributes(attributeList);
 
@@ -147,15 +168,15 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
         attribute.setIssuer("sampleIssuer2");
 
         //set values
-        valueList = new ArrayList();
+        valueList = new ArrayList<String>();
         valueList.add(subjectId);
         attribute.setAttributeStringValues(valueList);
-        attributeList = new ArrayList();
+        attributeList = new ArrayList<Attribute>();
         attributeList.add(attribute);
         subject2.setAttributes(attributeList);
 
         //set subjects in request
-        List subjectList = new ArrayList();
+        List<Subject> subjectList = new ArrayList<Subject>();
         subjectList.add(subject1);
         subjectList.add(subject2);
         request.setSubjects(subjectList);
@@ -180,11 +201,11 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
 
         //set values
-        valueList = new ArrayList();
+        valueList = new ArrayList<String>();
         valueList.add(resourceId);
         attribute.setAttributeStringValues(valueList);
 
-        attributeList = new ArrayList();
+        attributeList = new ArrayList<Attribute>();
         attributeList.add(attribute);
 
         //serviceName attribute
@@ -204,7 +225,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
 
         //set values
-        valueList = new ArrayList();
+        valueList = new ArrayList<String>();
         valueList.add(serviceName);
         attribute.setAttributeStringValues(valueList);
 
@@ -212,7 +233,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         resource.setAttributes(attributeList);
 
-        List resourceList = new ArrayList();
+        List<Resource> resourceList = new ArrayList<Resource>();
         resourceList.add(resource);
         request.setResources(resourceList);
 
@@ -233,10 +254,10 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         attribute.setIssuer("sampleIssuer5");
 
-        valueList = new ArrayList();
+        valueList = new ArrayList<String>();
         valueList.add(actionId);
         attribute.setAttributeStringValues(valueList);
-        attributeList = new ArrayList();
+        attributeList = new ArrayList<Attribute>();
         attributeList.add(attribute);
 
         action.setAttributes(attributeList);
@@ -244,7 +265,8 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
         request.setAction(action);
 
         //Enviornment
-        Environment environment = ContextFactory.getInstance().createEnvironment();
+        Environment environment =
+            ContextFactory.getInstance().createEnvironment();
         request.setEnvironment(environment);
         return request;
     }

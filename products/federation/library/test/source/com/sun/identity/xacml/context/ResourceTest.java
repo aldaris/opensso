@@ -17,10 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceTest.java,v 1.1 2007-08-29 23:42:02 dillidorai Exp $
+ * $Id: ResourceTest.java,v 1.2 2007-12-20 18:49:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
+
 package com.sun.identity.xacml.context;
 
 import java.io.FileInputStream;
@@ -75,7 +76,7 @@ public class ResourceTest extends UnitTestBase {
         try {
             Resource resource =
                     ContextFactory.getInstance().createResource();
-            List attrs = new ArrayList();
+            List<Attribute> attrs = new ArrayList<Attribute>();
             Attribute attr = ContextFactory.getInstance().createAttribute();
             attr.setAttributeID(new URI("testid1"));
             attr.setDataType(new URI("testDataType1"));
@@ -84,7 +85,6 @@ public class ResourceTest extends UnitTestBase {
             attr1.setAttributeID(new URI("testid2"));
             attr1.setDataType(new URI("testDataType2"));
             attr1.setIssuer("Bhavna");
-            ArrayList values = new ArrayList();
             attrs.add(attr1);
             resource.setAttributes(attrs);
             // object to xml string
