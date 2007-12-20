@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.10 2007-09-21 14:00:32 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.11 2007-12-20 22:55:57 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1851,6 +1851,7 @@ public class FederationManagerCLI extends CLIUtility
         
         if (realm != null && !realm.equals("")) {
             commandStatus = listAuthInstances(realm);
+            logCommand("findAuthInstances");
             if (commandStatus == SUCCESS_STATUS) {
                 StringBuffer instanceList = new StringBuffer();
                 String[] instances = instanceNames.split("\\|");

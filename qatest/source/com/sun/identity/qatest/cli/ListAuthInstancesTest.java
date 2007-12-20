@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAuthInstancesTest.java,v 1.1 2007-09-21 14:01:13 cmwesley Exp $
+ * $Id: ListAuthInstancesTest.java,v 1.2 2007-12-20 22:55:57 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -317,6 +317,10 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
                 log(Level.FINE, "cleanup", "Deleting auth instances " + 
                         cleanupInstances);
                 String[] instancesToDelete = cleanupInstances.split(";");
+                FederationManagerCLI listCli = 
+                        new FederationManagerCLI(useDebugOption, 
+                        useVerboseOption, useLongOptions);
+
                 for (String instance: instancesToDelete) {
                     String[] instanceData = instance.split(",");
                     exitStatus = cli.deleteAuthInstances(instanceData[0], 
@@ -329,6 +333,12 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
                                 " failed with status " + exitStatus + ".");
                         assert false;
                     }
+                    if (listCli.findAuthInstances(realm, name)) {
+                        log(Level.SEVERE, "cleanup", "Auth instance " + name + 
+                                " was found after deletion.");
+                        assert false;
+                    }  
+                    listCli.resetArgList();
                 }
             }
             

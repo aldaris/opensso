@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListRealmsTest.java,v 1.5 2007-08-16 19:40:08 cmwesley Exp $
+ * $Id: ListRealmsTest.java,v 1.6 2007-12-20 22:55:57 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -318,15 +318,30 @@ public class ListRealmsTest extends TestCommon implements CLIExitCodes {
             Reporter.log("UseLongOptions: " + useLongOptions);
             
             if (!setupRealms.equals("")) {
-                StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
-                        ";");
-                String setupRealmToDelete = tokenizer.nextToken();
-                log(logLevel, "cleanup", "setupRealmToDelete: " + 
-                        setupRealmToDelete);
-                Reporter.log("SetupRealmToDelete: " + setupRealmToDelete);
-                cli.deleteRealm(setupRealmToDelete, true);
-                cli.logCommand("cleanup");
-                cli.resetArgList();
+                String[] realms = setupRealms.split(";");
+                FederationManagerCLI cleanupCli = 
+                        new FederationManagerCLI(useDebugOption, useVerboseOption,
+                                useLongOptions);
+                for (int i=realms.length-1; i >= 0; i--) {
+                    log(Level.FINEST, "cleanup", "setupRealmToDelete: " + 
+                        realms[i]);
+                    Reporter.log("SetupRealmToDelete: " + realms[i]);
+                    int exitStatus = cli.deleteRealm(realms[i], true); 
+                    cli.logCommand("cleanup");
+                    cli.resetArgList();
+                    if (exitStatus != SUCCESS_STATUS) {
+                        log(Level.SEVERE, "cleanup", 
+                                "Realm deletion returned the failed exit " +
+                                "status " + exitStatus + ".");
+                        assert false;
+                    }
+                    if (cleanupCli.findRealms(realms[i])) {
+                        log(Level.SEVERE, "cleanup", "Deleted realm " + 
+                                realms[i] + " still exists.");
+                        assert false;
+                    }
+                    cleanupCli.resetArgList();
+                }
             }
             exiting("cleanup");
         } catch (Exception e) {

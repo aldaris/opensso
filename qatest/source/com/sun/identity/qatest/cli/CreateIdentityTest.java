@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.5 2007-08-16 19:39:18 cmwesley Exp $
+ * $Id: CreateIdentityTest.java,v 1.6 2007-12-20 22:54:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -363,8 +363,20 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                                     idType);
                             cli.resetArgList();
                             if (exitStatus != SUCCESS_STATUS) {
+                                log(Level.SEVERE, "cleanup", 
+                                        "The deletion of" + idType + 
+                                        "identity " + idName + 
+                                        " returned the failed exit status " +
+                                        exitStatus + ".");
                                 assert false;
                             }
+                            if (cli.findIdentities(idRealm, "*", idType, idName)) {
+                                log(Level.SEVERE, "cleanup", "The " + idType + 
+                                        "identity " + idName + 
+                                        " was not deleted.");
+                                assert false;
+                            }
+                            cli.resetArgList();
                         } else {
                             log(Level.SEVERE, "cleanup", "The setup identity " + 
                                     setupIdentities + " must have a realm, " +

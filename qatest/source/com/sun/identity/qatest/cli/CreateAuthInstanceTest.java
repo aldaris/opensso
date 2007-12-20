@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAuthInstanceTest.java,v 1.1 2007-09-12 16:24:10 cmwesley Exp $
+ * $Id: CreateAuthInstanceTest.java,v 1.2 2007-12-20 22:54:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -302,6 +302,14 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
                     assert false;
                 }
                 cli.resetArgList();
+                FederationManagerCLI listCli = 
+                        new FederationManagerCLI(useDebugOption, 
+                        useVerboseOption, useLongOptions);
+                if (listCli.findAuthInstances(realm, name)) {
+                    log(Level.SEVERE, "cleanup", "Auth instance " + name + 
+                            " was found after deletion.");
+                    assert false;
+                }
             }
             
             if (!setupRealms.equals("")) {

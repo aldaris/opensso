@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-cli-testng.xml,v 1.6 2007-09-28 21:15:59 cmwesley Exp $
+ $Id: ds_ds-cli-testng.xml,v 1.7 2007-12-20 22:52:14 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2421,8 +2421,8 @@
             <class name="com.sun.identity.qatest.cli.AddRealmAttributesTest"/>
         </classes>
     </test>
-    <test name="CLI_get-identity01">
-        <parameter name="testName" value="getidentity-test1"/>
+    <test name="CLI_get-identity25">
+        <parameter name="testName" value="getidentity-test25"/>
         <groups>
             <run>
                 <include name="ds_ds"/>
@@ -2432,8 +2432,8 @@
             <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
         </classes>
     </test>
-    <test name="CLI_get-identity02">
-        <parameter name="testName" value="getidentity-test2"/>
+    <test name="CLI_get-identity26">
+        <parameter name="testName" value="getidentity-test26"/>
         <groups>
             <run>
                 <include name="ds_ds"/>

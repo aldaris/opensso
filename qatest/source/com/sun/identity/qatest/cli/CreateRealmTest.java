@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealmTest.java,v 1.7 2007-08-16 19:39:18 cmwesley Exp $
+ * $Id: CreateRealmTest.java,v 1.8 2007-12-20 22:54:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -258,10 +258,19 @@ public class CreateRealmTest extends TestCommon implements CLIExitCodes {
                         cli.logCommand("cleanup");
                         cli.resetArgList();
                         if (exitStatus != SUCCESS_STATUS) {
+                            log(Level.SEVERE, "cleanup", 
+                                    "Realm deletion returned the failed exit " +
+                                    "status " + exitStatus + ".");
                             assert false;
                         }
+                        if (cli.findRealms(realms[i])) {
+                            log(Level.SEVERE, "cleanup", "Deleted realm " + 
+                                    realms[i] + " still exists.");
+                            assert false;
+                        }
+                        cli.resetArgList();
                     }
-                } 
+                }
             }
             exiting("cleanup");
         } catch (Exception e) {
