@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.1 2007-12-18 23:49:44 rmisra Exp $
+ * $Id: ConfigUnconfig.java,v 1.2 2007-12-20 22:39:11 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -181,7 +181,7 @@ public class ConfigUnconfig extends TestCommon {
         log(Level.FINEST, "generateConfigXML", "Server port: " + port);
         log(Level.FINEST, "generateConfigXML", "Server URI: " + uri);
 
-        out.write("<url href=\"" + clientURL + "/sampleconfigurator.jsp");
+        out.write("<url href=\"" + clientURL + "/Configurator.jsp");
         out.write("\">");
         out.write(newline);
         out.write("<form name=\"clientsampleconfigurator\"");
