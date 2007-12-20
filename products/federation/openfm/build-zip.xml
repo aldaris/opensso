@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.12 2007-12-15 08:05:20 qcheng Exp $
+   $Id: build-zip.xml,v 1.13 2007-12-20 06:12:39 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,7 +35,8 @@
         </condition>
     </fail>
 
-    <property name="zip.temp.dir" value="${openfm.built.dir}/.zip" />
+    <property name="zip.temp.dir1" value="${openfm.built.dir}/.zip" />
+    <property name="zip.temp.dir" value="${zip.temp.dir1}/opensso" />
 
     <target name="all" depends="consoleonlywebxml, noconsolewebxml">
         <copy file="${openfm.dir}/license.txt"
@@ -195,10 +196,10 @@
 
 
         <zip destfile="${fm.dist.dir}/opensso.zip" whenempty="create">
-            <zipfileset dir="${zip.temp.dir}" filemode="755">
+            <zipfileset dir="${zip.temp.dir1}" filemode="755">
                 <include name="setup"/>
             </zipfileset>
-            <zipfileset dir="${zip.temp.dir}">
+            <zipfileset dir="${zip.temp.dir1}">
                 <exclude name="setup"/>
             </zipfileset>
         </zip>

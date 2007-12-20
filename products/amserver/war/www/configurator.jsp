@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.19 2007-12-13 23:16:04 veiming Exp $
+   $Id: configurator.jsp,v 1.20 2007-12-20 06:12:39 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -244,7 +244,13 @@
         
         String configDir = AMSetupServlet.getPresetConfigDir();
         if ((configDir == null) || (configDir.length() == 0)) {
-            basedir = System.getProperty("user.home");
+            String userHome = System.getProperty("user.home");
+            if (File.separator.equals(userHome)) { 
+                // user home is root, avoid double slash
+                basedir = File.separatorChar + "opensso";
+            } else {
+                basedir = userHome + File.separatorChar + "opensso";
+            }
             if (File.separatorChar == '\\') {
                 basedir = basedir.replace('\\', '/');
             }

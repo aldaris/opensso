@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.4 2007-12-17 23:35:19 qcheng Exp $
+   $Id: README,v 1.5 2007-12-20 06:12:39 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,22 +36,23 @@ The following specialized WAR files are supported:
   - SAMLv2/ID-FF IDP Discovery/Introduction WAR (fam-idpdiscovery.list)
 
 Contents of this directory:
-  <zip staging area>           (directory where the opensso.zip is extracted)
-   |- deployable-war           (current directory)
-      |- README                (this README file)
-      |- opensso.war           (OpenSSO Server WAR with samples)
-      |- fam-idpdiscovery.list (files list for IDP Discovery WAR)
-      |- fam-distauth.list     (files list for Distributed Authentication WAR)
-      |- fam-console.list      (files list for Console Only WAR)
-      |- fam-noconsole.list    (files list for Server without console WAR)
-      |- idpdiscovery          (directory containing additional files for
-      |                         IDP discovery WAR)
-      |- distauth              (directory containing additional files for
-      |                         Distributed Authentication WAR) 
-      |- console               (directory containing additional files for
-      |                         Console Only WAR)
-      |- noconsole             (directory containing additional files for
-                                Server without console WAR)
+  <zip staging area>            (root directory where opensso.zip is extracted)
+   |- opensso                   (parent directory)
+     |- deployable-war          (current directory)
+       |- README                (this README file)
+       |- opensso.war           (OpenSSO Server WAR with samples)
+       |- fam-idpdiscovery.list (files list for IDP Discovery WAR)
+       |- fam-distauth.list     (files list for Distributed Authentication WAR)
+       |- fam-console.list      (files list for Console Only WAR)
+       |- fam-noconsole.list    (files list for Server without console WAR)
+       |- idpdiscovery          (directory containing additional files for
+       |                         IDP discovery WAR)
+       |- distauth              (directory containing additional files for
+       |                         Distributed Authentication WAR) 
+       |- console               (directory containing additional files for
+       |                         Console Only WAR)
+       |- noconsole             (directory containing additional files for
+                                 Server without console WAR)
 
 
 Steps to create a specialized WAR file:
@@ -60,17 +61,17 @@ Steps to create a specialized WAR file:
    opensso.war in this staging directory:
    % mkdir <server war staging area>
    % cd <server war staging area>
-   % jar xvf <zip staging area>/deployable-war/opensso.war
+   % jar xvf <zip staging area>/opensso/deployable-war/opensso.war
 
 2. Creates the specialized WAR file using the specific file list. 
    For example, to create Console only WAR:
    % cd <server war staging area>
-   % jar cvf <zip staging area>/deployable-war/fam-console.war @<zip staging area>/deployable-war/fam-console.list
+   % jar cvf <zip staging area>/opensso/deployable-war/fam-console.war @<zip staging area>/opensso/deployable-war/fam-console.list
 
 3. Updates the WAR created in previous step with additional files for the 
    specific WAR.  For example, to update the Console only WAR: 
-   % cd <zip staging area>/deployable-war/console
-   % jar uvf <zip staging area>/deployable-war/fam-console.war *
+   % cd <zip staging area>/opensso/deployable-war/console
+   % jar uvf <zip staging area>/opensso/deployable-war/fam-console.war *
 
 Now the specialized WAR is ready to be deployed into your web container.
 
