@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateTestXML.java,v 1.4 2007-08-17 20:06:20 sridharev Exp $
+ * $Id: CreateTestXML.java,v 1.5 2007-12-21 22:32:04 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,6 +90,9 @@ public class CreateTestXML {
             int uIndex = testUserName.indexOf(":");
             tuser= testUserName.substring(0,uIndex);
             tpass = testUserName.substring(uIndex+1,uLength);
+            if (testNegative) {
+                tpass = tpass + "fail";
+            }
             out.write("<form name=\"Login\" IDButton=\"\" >");
             out.write(newline);
             out.write("<input name=\"IDToken1\" value=\"" + tuser + "\" />");
