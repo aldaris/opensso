@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigXMLViewBean.java,v 1.1 2007-10-17 23:00:39 veiming Exp $
+ * $Id: ServerConfigXMLViewBean.java,v 1.2 2007-12-21 21:14:55 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,8 +83,6 @@ public class ServerConfigXMLViewBean
         "tblServerConfigXMLServerColPort";
     private static final String TBL_SERVERS_COL_TYPE =
         "tblServerConfigXMLServerColType";
-    private static final String TBL_SERVERS_NAME_HREF =
-        "tblServerConfigXMLNameHrefServer";
     private static final String TBL_SERVERS_NAME_DATA =
         "tblServerConfigXMLNameDataServer";
     private static final String TBL_SERVERS_HOST_DATA =
@@ -110,8 +108,6 @@ public class ServerConfigXMLViewBean
         "tblServerConfigXMLUserColPort";
     private static final String TBL_USERS_COL_TYPE =
         "tblServerConfigXMLUserColType";
-    private static final String TBL_USERS_NAME_HREF =
-        "tblServerConfigXMLUserNameHrefAction";
     private static final String TBL_USERS_NAME_DATA =
         "tblServerConfigXMLNameDataUser";
     private static final String TBL_USERS_HOST_DATA =
@@ -330,7 +326,6 @@ public class ServerConfigXMLViewBean
                 ServerConfigXML.ServerObject entry =
                     (ServerConfigXML.ServerObject)i.next();
                 tblServerModel.setValue(TBL_SERVERS_NAME_DATA, entry.name);
-                tblServerModel.setValue(TBL_SERVERS_NAME_HREF, entry.name);
                 tblServerModel.setValue(TBL_SERVERS_HOST_DATA, entry.host);
                 tblServerModel.setValue(TBL_SERVERS_PORT_DATA, entry.port);
                 tblServerModel.setValue(TBL_SERVERS_TYPE_DATA, entry.type);
@@ -353,7 +348,6 @@ public class ServerConfigXMLViewBean
                 
                 ServerConfigXML.ServerObject entry =
                     (ServerConfigXML.ServerObject)i.next();
-                tblUserModel.setValue(TBL_USERS_NAME_HREF, entry.name);
                 tblUserModel.setValue(TBL_USERS_NAME_DATA, entry.name);
                 tblUserModel.setValue(TBL_USERS_HOST_DATA, entry.host);
                 tblUserModel.setValue(TBL_USERS_PORT_DATA, entry.port);

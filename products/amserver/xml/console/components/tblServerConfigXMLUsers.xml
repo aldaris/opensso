@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: tblServerConfigXMLUsers.xml,v 1.1 2007-10-17 23:00:52 veiming Exp $
+   $Id: tblServerConfigXMLUsers.xml,v 1.2 2007-12-21 21:14:55 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -40,12 +40,9 @@
     </cc>
 </actions>
 <column name="tblServerConfigXMLUserColName" rowheader="true">
-<cc name="tblServerConfigXMLUserNameHrefAction"
-    tagclass="com.sun.web.ui.taglib.html.CCHrefTag">
-    <cc name="tblServerConfigXMLNameDataUser"
-        tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" >
-        <attribute name="bundleID" value="" />
-    </cc>
+<cc name="tblServerConfigXMLNameDataUser"
+    tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" >
+    <attribute name="bundleID" value="" />
 </cc>
 </column>
 <column name="tblServerConfigXMLUserColHost" rowheader="true">
