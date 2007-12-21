@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.4 2007-11-21 19:00:24 rmisra Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.5 2007-12-21 19:11:57 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,6 +86,7 @@ public class ConfigureUnconfigure extends TestCommon {
             e.printStackTrace();
             throw e;
         } finally {
+            stopNotificationServer();
             destroyToken(admintoken);
         }
         exiting("createAgentProfile");
@@ -107,6 +108,7 @@ public class ConfigureUnconfigure extends TestCommon {
             e.printStackTrace();
             throw e;
         } finally {
+            stopNotificationServer();
             destroyToken(admintoken);
         }
         exiting("deleteAgentProfile");
