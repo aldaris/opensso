@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.21 2007-11-14 00:30:25 manish_rustagi Exp $
+   $Id: build.xml,v 1.22 2007-12-21 18:51:50 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,6 +44,11 @@
         <antcall target="amserver-nightly" />
         <antcall target="fedlibrary-nightly" />
         <antcall target="openfm-nightly" />
+        <antcall target="remove-amserver-bits" />
+    </target>
+
+    <target name="remove-amserver-bits">
+        <delete dir="${amserver.dist.dir}" />
     </target>
 
     <target name="agents-nightly">
