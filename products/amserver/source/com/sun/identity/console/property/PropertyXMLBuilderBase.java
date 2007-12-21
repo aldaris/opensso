@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.4 2007-12-17 19:42:52 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.5 2007-12-21 21:25:37 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -431,7 +431,7 @@ public abstract class PropertyXMLBuilderBase
                 xml.append(SUBSECTION_DUMMY_START_TAG);
             }
 
-            if (hasAnyAttribute(as.getAny(), ANY_REQUIRED)) {
+            if (needRequiredTag(as)) {
                 xml.append(PROPERTY_REQUIRED_START_TAG);
             } else {
                 xml.append(PROPERTY_START_TAG);
@@ -570,7 +570,7 @@ public abstract class PropertyXMLBuilderBase
 
         String name = getAttributeNameForPropertyXML(as);
 
-        if (hasAnyAttribute(as.getAny(), ANY_REQUIRED)) {
+        if (needRequiredTag(as)) {
             xml.append(PROPERTY_REQUIRED_START_TAG);
         } else {
             xml.append(PROPERTY_START_TAG);
@@ -988,5 +988,11 @@ public abstract class PropertyXMLBuilderBase
             idx = template.indexOf(tag, idx + valLen);
         }
         return template;
+    }
+    
+    private static boolean needRequiredTag(AttributeSchema as) {
+        return hasAnyAttribute(as.getAny(), ANY_REQUIRED) ||
+            ((as.getValidator() != null) &&
+            as.getValidator().equals("RequiredValueValidator"));
     }
 }
