@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.9 2007-12-19 21:04:35 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.10 2007-12-22 00:52:02 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.AlreadyRegisteredException;
 import com.iplanet.services.comm.client.PLLClient;
 import com.iplanet.services.naming.URLNotFoundException;
@@ -460,6 +459,9 @@ public class AgentConfiguration implements
         }
     }
     
+    /**
+     * load from AMAgent.properties for start up properties
+     **/
     private static Properties getPropertiesFromConfigFile() 
     throws Exception {
         Properties result = new Properties();
@@ -562,7 +564,21 @@ public class AgentConfiguration implements
         }
         return _attributeServiceURLs;
     }
-       
+    /**
+     * Collect all configuration info. Store all config properties, including 
+     * AMAgent.properties bootstrap small set of props and also agent config
+     * props (from fam server or if local config file 
+     * AMAgentConfiguration.properties) and store ALL the properties in a 
+     * class field for later use, plus set a few fields on this class for some
+     * props that are used throughout agent code and accessed from this class.
+     * Also, for any clientsdk properties, push them into the JVM system 
+     * properties so they can be accessed by clientsdk.
+     * All non-system properties start with AGENT_CONFIG_PREFIX and this is how
+     * we distinguish between agent properties and cleintsdk properties.
+     * Note, a few clientsdk props (like notification url and notification
+     * enable flags) are ALSO stored by this class in fields since
+     * they are also use throughout agent code as well as by cleintsdk.
+     */   
     private static synchronized void bootStrapClientConfiguration() {
         if (!isInitialized()) {
             HashMap sysPropertyMap = null;
@@ -573,6 +589,12 @@ public class AgentConfiguration implements
                 properties.clear();
                 properties.putAll(getPropertiesFromConfigFile());
                
+                //debug level can optionally be set in AMAgent.properties
+                //but by default is not set, so we provide default if no value
+                //This debug level(either default or prop in AmAgent.properties)
+                //file is only used for bootup time logging.
+                //Real runtime debug level value is later retrieved with rest of 
+                //agent config from fam server
                 String initialDebugLevel = properties.getProperty(
                     Constants.SERVICES_DEBUG_LEVEL);
                 if ((initialDebugLevel == null) || 
@@ -581,10 +603,10 @@ public class AgentConfiguration implements
                         Constants.SERVICES_DEBUG_LEVEL, Debug.STR_MESSAGE);
                 }
 
-                // set the bootstrap properties to system properties
+                //push the bootstrap properties to JVM system properties
                 Iterator iter = properties.keySet().iterator();
                 while (iter.hasNext()) {
-                    String nextKey = (String) iter.next();
+                    String nextKey = (String) iter.next(); 
                     if (!nextKey.startsWith(AGENT_CONFIG_PREFIX)) {
                         String nextValue = 
                                 getProperties().getProperty(nextKey);
@@ -593,48 +615,44 @@ public class AgentConfiguration implements
                     }
                 }
                 
-                // instanciate the instance of DebugPropertiesObserver
+                // instantiate the instance of DebugPropertiesObserver
                 debugObserver = DebugPropertiesObserver.getInstance();
-
                 setDebug(Debug.getInstance(IBaseModuleConstants.BASE_RESOURCE));
                 setServiceResolver();
                 setApplicationUser();
                 setApplicationPassword();
+                
                 setAppSSOToken();
 
                 Vector attrServiceURLs = getAttributeServiceURLs();
+                //if fam 8.0 server
                 if (attrServiceURLs != null) {
-                    Properties props = getPropertiesFromRemote(attrServiceURLs);
+                    Properties propsFromFAMserver = 
+                            getPropertiesFromRemote(attrServiceURLs);
                     String agentConfigLocation = 
-                            props.getProperty(CONFIG_REPOSITORY_LOCATION);
+                     propsFromFAMserver.getProperty(CONFIG_REPOSITORY_LOCATION);
+                    
+                    //if agent profile on fam server is 2.2 style(null or 
+                    //blank value)-maybe to help agent upgrade use case)
+                    //OR agent profile is 3.0 style(common case) with local
+                    //config flag set
                     if ((agentConfigLocation == null)
                          || (agentConfigLocation.trim().equals(""))
                          || (agentConfigLocation.equalsIgnoreCase(
                             AGENT_CONFIG_LOCAL))) {  
-                        // if audit log mode is set, then agent configuration is 
-                        // already loaded during bootstrapping. 
-                        // This happens when agent config file is old style.
-                        if (properties.getProperty(CONFIG_AUDIT_LOG_MODE) == null) {
-                           // Need to read the rest of agent config from its 
-                           // local configuration file
                             properties.putAll(getPropertiesFromLocal());
-                        }
                     } else if (agentConfigLocation.equalsIgnoreCase(
                             AGENT_CONFIG_CENTRALIZED)) {
                         markAgentConfigurationRemote();
-                        properties.putAll(props);
+                        properties.putAll(propsFromFAMserver);
                     } else {
-                        throw new AgentException("Invalid agent config location.");
+                        throw new AgentException("Invalid agent config"
+                             + "location: does not specify local or centralized");
                     }
-                } else {
-                    // if audit log mode is set, then agent configuration is 
-                    // already loaded during bootstrapping. 
-                    // This happens when agent config file is old style.
-                    if (properties.getProperty(CONFIG_AUDIT_LOG_MODE) == null) {
+                } else {    //else if Access Manager 7.1/7.0 server
                         // Need to read the rest of agent config from its local
                         // configuration file
                         properties.putAll(getPropertiesFromLocal());
-                    }
                 }
 
                 Iterator it = properties.keySet().iterator();
@@ -644,6 +662,7 @@ public class AgentConfiguration implements
                         String nextValue = 
                                getProperties().getProperty(nextKey);
                         System.setProperty(nextKey, nextValue);
+                        //save in sysPropertyMap for upcoming log messages
                         sysPropertyMap.put(nextKey, nextValue);
                     }
                 }
@@ -924,8 +943,9 @@ public class AgentConfiguration implements
         }
     }
     
+    //this property is a hot swappable ClientSDK property
     private static synchronized void setSessionNotificationURL() {
-        if (!isInitialized()) {
+        //if (!isInitialized()) {
             String url = getProperty(SDKPROP_SESSION_NOTIFICATION_URL);
             if (url != null && url.trim().length() > 0) {
                 _sessionNotificationURL = url;
@@ -938,12 +958,12 @@ public class AgentConfiguration implements
             if (isLogMessageEnabled()) {
                 logMessage("AgentConfiguration: Session notification URL: "
                         + _sessionNotificationURL);
-            }
-        }
+            }     
     }
     
+    //this property is a hot swappable ClientSDK property
     private static synchronized void setSessionNotificationEnabledFlag() {
-        if (!isInitialized()) {
+        //if (!isInitialized()) {
             _sessionNotificationEnabledFlag = true;
             boolean pollingEnabled = false;
             String flag = getProperty(SDKPROP_SESSION_POLLING_ENABLE);
@@ -955,12 +975,12 @@ public class AgentConfiguration implements
             if (isLogMessageEnabled()) {
                 logMessage("AgentConfiguration: Session notification enable: " 
                         + _sessionNotificationEnabledFlag);
-            }
-        }        
+            }        
     }
     
+    //this property is a hot swappable ClientSDK property
     private static synchronized void setPolicyNotificationURL() {
-        if (!isInitialized()) {
+        //if (!isInitialized()) {
             String url = getProperty(SDKPROP_POLICY_NOTIFICATION_URL);
             if (url != null && url.trim().length() > 0) {
                 _policyNotificationURL = url;
@@ -974,11 +994,11 @@ public class AgentConfiguration implements
                 logMessage("AgentConfiguration: Policy notification URL: "
                         + _policyNotificationURL);
             }
-        }
     }
     
-        private static synchronized void setClientNotificationURL() {
-        if (!isInitialized()) {
+    //this property is a hot swappable ClientSDK property
+    private static synchronized void setClientNotificationURL() {
+        //if (!isInitialized()) {
             String url = getProperty(SDKPROP_CLIENT_NOTIFICATION_URL);
             if (url != null && url.trim().length() > 0) {
                 _clientNotificationURL = url;
@@ -992,11 +1012,11 @@ public class AgentConfiguration implements
                 logMessage("AgentConfiguration: Client notification URL: "
                         + _clientNotificationURL);
             }
-        }
     }
     
+    //this property is a hot swappable ClientSDK property
     private static synchronized void setPolicyNotificationEnabledFlag() {
-        if (!isInitialized()) {
+        //if (!isInitialized()) {
             boolean enable = false;
             String flag = getProperty(SDKPROP_POLICY_NOTIFICATION_ENABLE);
             if (flag != null && flag.trim().length() > 0) {
@@ -1008,7 +1028,6 @@ public class AgentConfiguration implements
                 logMessage("AgentConfiguration: Policy notification enable: " 
                         + _policyNotificationEnabledFlag);
             }
-        }
     }
     
     private static synchronized void setClientIPAddressHeader() {
@@ -1033,26 +1052,41 @@ public class AgentConfiguration implements
     
     private static synchronized void initializeConfiguration() {
         if (!isInitialized()) {
+            //read in all properties, save all props & values in map to use 
+            //later and push some to JVM system for clientsdk
             bootStrapClientConfiguration();  
             registerAgentNotificationHandler();
+            
+            //now set some class fields with property values
             setUserMappingMode();
             setAuditLogMode();
             setUserAttributeName();
             setUserPrincipalEnabledFlag();
-            setSSOTokenName();
             setUserIdPropertyName();
             setAnonymousUserName();
-            setSessionNotificationURL();
-            setSessionNotificationEnabledFlag();
-            setPolicyNotificationURL();
-            setClientNotificationURL();
-            setPolicyNotificationEnabledFlag();
             setClientIPAddressHeader();
             setClientHostNameHeader();
             
-            markInitialized();
+            //set some fields as some cleintsdk props also used by agent code
+            setSSOTokenName();   
+            setHotSwappableClientSDKProps();                      
+            markInitialized(); 
         }
     }
+    
+    /**
+     * some of clientSDK props are hot-swappable and are used by clientSDK thru
+     * JVM system properties are are ALSO used by agent code and hence we store
+     * their current values in some fields.
+     */
+    private static void setHotSwappableClientSDKProps() {
+        setSessionNotificationURL();
+        setSessionNotificationEnabledFlag();
+        setPolicyNotificationURL();
+        setClientNotificationURL();
+        setPolicyNotificationEnabledFlag();
+    }
+    
     
     private static void logMessage(String msg) {
         getDebug().message(msg);
@@ -1138,15 +1172,9 @@ public class AgentConfiguration implements
             Properties properties = new Properties();
             properties.clear();
             properties.putAll(getPropertiesFromConfigFile());
-            if (!isAgentConfigurationRemote()) {
-                // if audit log mode is set, then agent configuration is 
-                // already loaded during bootstrapping. 
-                // This happens when agent config file is old style.
-                if (properties.getProperty(CONFIG_AUDIT_LOG_MODE) == null) {
-                    // Need to read the rest of agent config from its local
-                    // configuration file
-                    properties.putAll(getPropertiesFromLocal());
-                }
+            
+            if (!isAgentConfigurationRemote()) {                        
+                properties.putAll(getPropertiesFromLocal());
             } else {
                 properties.putAll(getPropertiesFromRemote(
                     getAttributeServiceURLs()));
@@ -1177,7 +1205,6 @@ public class AgentConfiguration implements
             getProperties().putAll(properties);
             markCurrent();
 
-            // set clientsdk properties to System properties
             Iterator it = properties.keySet().iterator();
             while (it.hasNext()) {
                 String nextKey = (String) it.next();
@@ -1186,11 +1213,13 @@ public class AgentConfiguration implements
                     System.setProperty(nextKey, nextValue);
                 }
             }
-
+            //set local copies of some current values we store
+            setHotSwappableClientSDKProps();
+            
             result = true;            
             if (isLogMessageEnabled()) {
                 logMessage("AgentConfiguration: loaded new configuration.");
-            }
+            }          
         } catch (Exception ex) {
             result = false;
             logError("AgentConfiguration: Exception during reload:", ex);
@@ -1309,11 +1338,6 @@ public class AgentConfiguration implements
         return _moduleConfigListeners;
     }
     
-    private static Properties getAllSystemProperties() {
-        return _systemProperties;
-    }
-   
-        
     private static boolean _isAgentConfigurationRemote = false;
     private static boolean _initialized;
     private static String _configFilePath;
@@ -1342,7 +1366,6 @@ public class AgentConfiguration implements
     private static String _clientIPAddressHeader;
     private static String _clientHostNameHeader;
     private static ICrypt _crypt;
-    private static Properties _systemProperties = new Properties();
     private static SSOToken _appSSOToken = null;
     private static Vector _attributeServiceURLs = null;
     private static DebugPropertiesObserver debugObserver; 

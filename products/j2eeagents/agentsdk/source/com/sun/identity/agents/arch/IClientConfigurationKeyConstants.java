@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IClientConfigurationKeyConstants.java,v 1.2 2007-12-19 21:04:35 sean_brydon Exp $
+ * $Id: IClientConfigurationKeyConstants.java,v 1.3 2007-12-22 00:52:02 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,14 +28,7 @@ package com.sun.identity.agents.arch;
  * Constants used for identifying Client SDK Configuration keys.
  */
 public interface IClientConfigurationKeyConstants {
-    
-   /**
-    * Configuration key for locating the AMAgent file when secondary
-    * configuration is in use.
-    */
-    public static final String SDKPROP_AMAGENT_LOCATION =
-        "com.sun.identity.agents.config.location";
-    
+      
    /**
     * Configuration key for application user name.
     */
@@ -47,18 +40,6 @@ public interface IClientConfigurationKeyConstants {
     */
     public static final String SDKPROP_APP_PASSWORD = 
         "com.iplanet.am.service.secret";
-    
-    /**
-     * Client encryption key
-     */
-     public static final String SDKPROP_CLIENT_ENC_KEY = 
-         "com.sun.identity.client.encryptionKey";
-    
-    /**
-     * Configuration key for debug level property.
-     */
-     public static final String SDKPROP_DEBUG_LEVEL = 
-         "com.iplanet.services.debug.level";
      
     /**
      * Configuration key for SSO Token Cookie Name property.
@@ -89,8 +70,7 @@ public interface IClientConfigurationKeyConstants {
      
     /**
      * Configuration key for Client Notification URL for agent to receive
-     * notification messages for policy, session, and agent configuration
-     * changes.
+     * notification messages for policy, session, & agent configuration changes.
      */
      public static final String SDKPROP_CLIENT_NOTIFICATION_URL =
          "com.sun.identity.client.notification.url";
