@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.setup,v 1.3 2007-09-07 18:34:00 bina Exp $
+   $Id: README.setup,v 1.4 2008-01-02 23:57:21 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,8 +49,8 @@ Step 1: Unzip amAdminTools.zip to the desired directory.
 Step 2: Go to the directory which has the amAdminTools.zip unzipped.
         Run the setup command as follows:
         "setup -p | --path <LOCATION_OF_CONFIGURED_AM_INSTANCE>"
-        where <LOCATION_OF_CONFIGURED_AM_INSTANCE> is the location of
-        AMConfig.properties
+        where <LOCATION_OF_CONFIGURED_AM_INSTANCE> is the 
+        configuration directory of the server instance.
 
         Note: 
             a. Users under Linux or Unix environment may need to run

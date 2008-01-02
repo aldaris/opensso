@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.9 2007-10-17 23:00:11 veiming Exp $
+   $Id: build-tools.xml,v 1.10 2008-01-02 23:57:21 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -101,8 +101,6 @@
         <copy todir="${amadm.tools.dir}" overwrite="yes" flatten="yes"
             encoding="UTF-8">
             <fileset dir="${amserver.basedir}" includes="license.txt"/>
-            <fileset dir="${amadm.windows.scripts.dir}"
-                includes="README.amadm"/>
             <fileset dir="${amadm.tools.scripts.dir}"
                 includes="setup, setup.bat, README.setup"/>
         </copy>
@@ -147,7 +145,6 @@
                 <include name="setup"/>
                 <include name="setup.bat"/>
                 <include name="license.txt"/>
-                <include name="README.amadm"/>
                 <include name="README.setup"/>
             </zipfileset>
             <zipfileset dir="${amadm.tools.dir}" filemode="755">
