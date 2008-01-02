@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAgentGroup.java,v 1.2 2008-01-02 18:01:51 veiming Exp $
+ * $Id: UpdateAgentGroup.java,v 1.3 2008-01-02 18:15:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,7 +81,7 @@ public class UpdateAgentGroup extends AuthenticatedCommand {
             AgentConfiguration.updateAgentGroup(adminSSOToken, agentGroupName, 
                 attributeValues, bSet);
             outputWriter.printlnMessage(getResourceString(
-                "update-agent-succeeded"));
+                "update-agent-group-succeeded"));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_UPDATE_AGENT_GROUP", params);
         } catch (IdRepoException e) {
