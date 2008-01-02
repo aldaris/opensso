@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.4 2007-12-18 18:40:23 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.5 2008-01-02 18:01:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -191,7 +191,29 @@ public class AgentConfiguration {
         String agentName,
         Map attrValues
     ) throws IdRepoException, SSOException, SMSException {
-        updateAgent(ssoToken, "/", agentName, attrValues);
+        updateAgent(ssoToken, "/", agentName, attrValues, true);
+    }
+    
+    /**
+     * Updates agent attribute values.
+     *
+     * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param agentName Name of agent.
+     * @param values Map of attribute name to its values.
+     * @param bSet <code>true</code> to overwrite the values for the
+     *        attribute.
+     * @throws IdRepoException if there are Id Repository related errors.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     */
+    public static void updateAgent(
+        SSOToken ssoToken,
+        String agentName,
+        Map attrValues,
+        boolean bSet
+    ) throws IdRepoException, SSOException, SMSException {
+        updateAgent(ssoToken, "/", agentName, attrValues, bSet);
     }
     
     /**
@@ -201,6 +223,8 @@ public class AgentConfiguration {
      * @param realm Name of realm where agent resides.
      * @param agentName Name of agent.
      * @param values Map of attribute name to its values.
+     * @param bSet <code>true</code> to overwrite the values for the
+     *        attribute.
      * @throws IdRepoException if there are Id Repository related errors.
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
@@ -210,16 +234,76 @@ public class AgentConfiguration {
         SSOToken ssoToken,
         String realm,
         String agentName,
-        Map attrValues
+        Map attrValues,
+        boolean bSet
     ) throws IdRepoException, SSOException, SMSException {
         AMIdentity amid = new AMIdentity(ssoToken, agentName, 
             IdType.AGENTONLY, realm, null); 
-        Map attributeValues = parseAttributeMap(getAgentType(amid), 
-            attrValues);
+        String agentType = getAgentType(amid);
+        Map attributeValues = parseAttributeMap(agentType, attrValues);
+
+        if (!bSet) {
+            Map origValues = amid.getAttributes(attributeValues.keySet());
+            for (Iterator i = attributeValues.keySet().iterator();
+                i.hasNext(); 
+            ) {
+                String attrName = (String)i.next();
+                attributeValues.put(attrName, updateAttrValues(
+                    agentType, attrName,
+                    (Set)origValues.get(attrName),
+                    (Set)attributeValues.get(attrName)));
+            }
+        }
         amid.setAttributes(attributeValues);
         amid.store();
     }
+
+    private static Set updateAttrValues(
+        String agentType,
+        String attrName,
+        Set origValues,
+        Set newValues
+    ) throws SMSException, SSOException {
+        AttributeSchema as = getAgentAttributeSchema(attrName, agentType);
+        return (as.getType().equals(AttributeSchema.Type.LIST)) ?
+            updateAttrValues(origValues, newValues) : newValues;
+    }
     
+    private static Set updateAttrValues(Set origValues, Set newValues) {
+        if ((origValues == null) || origValues.isEmpty()) {
+            return newValues;
+        }
+
+        Set set = new HashSet();
+        set.addAll(origValues);
+
+        for (Iterator i = newValues.iterator(); i.hasNext(); ) {
+            String val = (String)i.next();
+            if (val.startsWith("[")) {
+                int idx = val.indexOf(']');
+                if (idx != -1) {
+                    String key = val.substring(0, idx +1);
+                    removeEntryByKey(set, key);
+                }
+            }
+            set.add(val);
+        }
+        return set;
+    }
+
+    private static boolean removeEntryByKey(Set set, String key) {
+        boolean bRemoved = false;
+        String match = key + "=";
+        for (Iterator i = set.iterator(); i.hasNext() && !bRemoved; ) {
+            String val = (String)i.next();
+            if (val.startsWith(match)) {
+                i.remove();
+                bRemoved = true;
+            }
+        }
+        return bRemoved;
+    }
+
     /**
      * Updates agent group attribute values.
      *
@@ -236,7 +320,29 @@ public class AgentConfiguration {
         String agentGroupName,
         Map attrValues
     ) throws IdRepoException, SSOException, SMSException {
-        updateAgentGroup(ssoToken, "/", agentGroupName, attrValues);
+        updateAgentGroup(ssoToken, "/", agentGroupName, attrValues, true);
+    }
+
+    /**
+     * Updates agent group attribute values.
+     *
+     * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param agentName Name group of agent.
+     * @param values Map of attribute name to its values.
+     * @param bSet <code>true</code> to overwrite the values for the
+     *        attribute.
+     * @throws IdRepoException if there are Id Repository related errors.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     */
+    public static void updateAgentGroup(
+        SSOToken ssoToken,
+        String agentGroupName,
+        Map attrValues,
+        boolean bSet
+    ) throws IdRepoException, SSOException, SMSException {
+        updateAgentGroup(ssoToken, "/", agentGroupName, attrValues, bSet);
     }
     
     /**
@@ -246,6 +352,8 @@ public class AgentConfiguration {
      * @param realm Name of realm where agent resides.
      * @param agentGroupName Name of agent group.
      * @param values Map of attribute name to its values.
+     * @param bSet <code>true</code> to overwrite the values for the
+     *        attribute.
      * @throws IdRepoException if there are Id Repository related errors.
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
@@ -255,12 +363,26 @@ public class AgentConfiguration {
         SSOToken ssoToken,
         String realm,
         String agentGroupName,
-        Map attrValues
+        Map attrValues,
+        boolean bSet
     ) throws IdRepoException, SSOException, SMSException {
         AMIdentity amid = new AMIdentity(ssoToken, agentGroupName, 
             IdType.AGENTGROUP, realm, null); 
-        Map attributeValues = parseAttributeMap(getAgentType(amid), 
-            attrValues);
+        String agentType = getAgentType(amid);
+        Map attributeValues = parseAttributeMap(agentType, attrValues);
+        if (!bSet) {
+            Map origValues = amid.getAttributes(attributeValues.keySet());
+            for (Iterator i = attributeValues.keySet().iterator();
+                i.hasNext();
+            ) {
+                String attrName = (String)i.next();
+                attributeValues.put(attrName, updateAttrValues(
+                    agentType, attrName,
+                    (Set)origValues.get(attrName),
+                    (Set)attributeValues.get(attrName)));
+            }
+        }
+
         amid.setAttributes(attributeValues);
         amid.store();
     }
@@ -435,6 +557,12 @@ public class AgentConfiguration {
         return result;
     }
 
+    /**
+     * E.g. abc[0]=x
+     *      abc[1]=y
+     *      where abc is the attribute schema name
+     * this method will return {[0]=x, [1]=y}.
+     */
     private static Set parseAttributeMap(AttributeSchema as, Map attrValues) {
         Set results = null;
         String attrName = as.getName();

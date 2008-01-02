@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.48 2007-12-18 18:40:21 veiming Exp $
+ * $Id: AccessManager.java,v 1.49 2008-01-02 18:01:51 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1718,6 +1718,7 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
+            "set|s|u|Set this flag to overwrite properties values.",
             "attributevalues|a|m|properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
@@ -1940,6 +1941,7 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
+            "set|s|u|Set this flag to overwrite properties values.",
             "attributevalues|a|m|properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={

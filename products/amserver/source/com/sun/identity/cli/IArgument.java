@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IArgument.java,v 1.6 2007-10-26 17:14:23 veiming Exp $
+ * $Id: IArgument.java,v 1.7 2008-01-02 18:01:52 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -173,6 +173,11 @@ public interface IArgument {
      * Agent type.
      */
     String AGENT_TYPE = "agenttype";
+
+    /**
+     * Set attribute values falg.
+     */
+    String AGENT_SET_ATTR_VALUE = "set";
 
     /**
      * Server name.
