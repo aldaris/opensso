@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.50 2008-01-02 18:15:34 veiming Exp $
+ * $Id: AccessManager.java,v 1.51 2008-01-02 20:09:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1673,6 +1673,43 @@ public class AccessManager {
         }
     )
     private String create_serverconfig_xml;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.GetServerConfigXML",
+        description="Get server configuration XML from centralized data store",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name, e.g. http://samples.com:8080/fam"},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "outfile|o|s|File name where serverconfig XML is written."
+        },
+        resourceStrings={
+            "get-server-config-xml-no-result-no-results=Cannot locate server configuration XML for this server.",
+            "get-serverconfig-xml-succeeded=Server Configuration XML is returned."
+        }
+    )
+    private String get_svrcfg_xml;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.SetServerConfigXML",
+        description="Set server configuration XML to centralized data store",
+        webSupport="true",
+        mandatoryOptions={
+            "servername|s|s|Server name, e.g. http://samples.com:8080/fam",
+            "xmlfile|X|m|XML file that contains configuration."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "outfile|o|s|File name where serverconfig XML is written."
+        },
+        resourceStrings={
+            "set-serverconfig-xml-succeeded=Server Configuration XML is set."
+        }
+    )
+    private String set_svrcfg_xml;
+
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.agentconfig.CreateAgent",

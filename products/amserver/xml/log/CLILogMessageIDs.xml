@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.14 2007-12-18 18:40:24 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.15 2008-01-02 20:09:05 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -5655,5 +5655,78 @@
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>
-
+    <logmessage name="ATTEMPT_GET_SERVER_CONFIG_XML" id="4600"
+        loglevel="LL_INFO"
+        description="Attempt to get server configuration XML.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get server configuration XML Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SERVER_CONFIG_XML" id="4601"
+        loglevel="LL_INFO"
+        description="Server configuration XML is displayed.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get server configuration XML Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_GET_SERVER_CONFIG_XML" id="4602"
+        loglevel="LL_INFO"
+        description="Unable to get server configuration XML.">
+        <datainfo>
+            <item>name of server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get server configuration XML Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Check if servername is correct.</item>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SET_SERVER_CONFIG_XML" id="4610"
+        loglevel="LL_INFO"
+        description="Attempt to set server configuration XML.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set server configuration XML Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SET_SERVER_CONFIG_XML" id="4611"
+        loglevel="LL_INFO"
+        description="Server configuration XML is set.">
+        <datainfo>
+            <item>name of server</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set server configuration XML Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SET_SERVER_CONFIG_XML" id="4612"
+        loglevel="LL_INFO"
+        description="Unable to set server configuration XML.">
+        <datainfo>
+            <item>name of server</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set server configuration XML Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Check if servername is correct.</item>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
 </logmessages>
