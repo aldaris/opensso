@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.58 2007-12-17 19:42:49 veiming Exp $
+   $Id: build.xml,v 1.59 2008-01-03 18:20:54 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -130,7 +130,7 @@
                 <exclude name="dtd/sms.dtd"/>
             </fileset>
         </copy>
-        
+
         <concat destfile="${amserver.built.res.dir}/amSDK.properties">
             <fileset dir="${amserver.res.i18n.dir}">
                 <include name="Services.properties"/>
@@ -141,6 +141,13 @@
                 <include name="authentication_util.properties"/>
             </fileset>
         </concat>
+
+        <java classname="com.sun.identity.tools.nightly.MergeSDKProperties"
+            fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="${amserver.res.i18n.dir}" />
+            <arg value="${amserver.built.res.dir}" />
+        </java>
         <copy file="${amserver.dtd.xml.dir}/smsflatfile.dtd" 
               todir="${amserver.classes.dir}/com/sun/identity/sm/flatfile"/>
         <copy file="${amserver.dtd.xml.dir}/policyAdmin.dtd" 
