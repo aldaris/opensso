@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportBulkFederationData.java,v 1.1 2007-03-15 18:01:00 veiming Exp $
+ * $Id: ImportBulkFederationData.java,v 1.2 2008-01-03 00:22:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,7 +67,7 @@ import java.util.Set;
  */
 public class ImportBulkFederationData extends AuthenticatedCommand {
     static final String ARGUMENT_METADATA = "metaalias";
-    static final String ARGUMENT_BULK_DATA = "bulkfeddata";
+    static final String ARGUMENT_BULK_DATA = "bulk-data-file";
     
     private String metaAlias;
     private String bulkFedData;

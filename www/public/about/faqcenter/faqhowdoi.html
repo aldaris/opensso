@@ -349,8 +349,8 @@ The following procedures are optional setups:
 <ol type="a">
 <li>Run the following commands to turn on policy evaluation for all queries to, and modifications of, the Personal Profile service:<p></p>
 <ul>
-<li><code>famadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerPPisQueryPolicyEvalRequired=true"</code></li>
-<li><code>famadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerPPisModifyPolicyEvalRequired=true"</code></li>
+<li><code>famadm set-attr-defs -s sunIdentityServerLibertyPPService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerPPisQueryPolicyEvalRequired=true"</code></li>
+<li><code>famadm set-attr-defs -s sunIdentityServerLibertyPPService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerPPisModifyPolicyEvalRequired=true"</code></li>
 </ul>
 <p></p>
 <li>Create a policy for the Personal Profile service with the following procedure:<p></p>
@@ -403,15 +403,15 @@ This needs to be done on both <i>machine-A</i> and <i>machine-B</i>. If <i>machi
 <li>Use the following procedure to set up <i>machine-A</i> as the identity provider:<p></p>
 <ol type="i">
 <li>Run the following command to set the default attribute values for the discovery service:<p></p>
-<code>famadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerDiscoProviderID=<i><i>machine-A</i>_protocol</i>://<i><i>machine-A</i>_host</i>:<i><i>machine-A</i>_port</i>/<i>machine-A_deploy_uri</i>"</code>
+<code>famadm set-attr-defs -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerDiscoProviderID=<i><i>machine-A</i>_protocol</i>://<i><i>machine-A</i>_host</i>:<i><i>machine-A</i>_port</i>/<i>machine-A_deploy_uri</i>"</code>
 </li>
 <p></p>
 <li>Run the following command to set the default attribute values for name ID encryption:<p></p>
-<code>famadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerBootstrappingEncryptNIinSessionContext=true"</code>
+<code>famadm set-attr-defs -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerBootstrappingEncryptNIinSessionContext=true"</code>
 </li>
 <p></p>
 <li>Run the following command to display the default attribute values for bootstrapping:<p></p>
-<code>famadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a sunIdentityServerBootstrappingDiscoEntry</code>
+<code>famadm show-attr-defs -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a sunIdentityServerBootstrappingDiscoEntry</code>
 </li>
 <p></p>
 <li>From the previous step's output, save the entire line beginning with <code>sunIdentityServerBootstrappingDiscoEntry=</code> to a file.<p></p>
@@ -448,7 +448,7 @@ with
 <p></p>
 <li>Run the following command to set the default attribute values for the discovery service in <code>datafile</code>:
 <p></p>
-<code>famadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -D datafile</code>
+<code>famadm set-attr-defs -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -D datafile</code>
 </li>
 <p></p>
 <li>Logon to console as top level administrator. Goto Configuration -> Global -> Liberty ID-WSF Security Service, edit the values of the following properties:<br>
@@ -505,7 +505,7 @@ For example, <code>http://sad.red.sun.com:80/openfm</code></td>
 
 <li>Run the following command to create a metadata file for the identity provider:
 <p></p>
-<code>famadm create-metadata-template -u amadmin -f <i>admin_password_file_name</i> -y <i>machine-A_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -g <i>idpeCertAlias</i> -c <i>metadata_spec</i></code>
+<code>famadm create-metadata-templ -u amadmin -f <i>admin_password_file_name</i> -y <i>machine-A_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -g <i>idpeCertAlias</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -606,7 +606,7 @@ where
 
 <p></p>
 <li>Run the following command to create a metadata file for the service provider:<p></p>
-<code>famadm create-metadata-template -u amadmin -f <i>admin_password_file_name</i> -y <i>machine-B_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -r <i>speCertAlias</i> -c <i>metadata_spec</i></code>
+<code>famadm create-metadata-templ -u amadmin -f <i>admin_password_file_name</i> -y <i>machine-B_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -r <i>speCertAlias</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -710,15 +710,15 @@ where
 <ol>
 <li>Run the following command to turn on signing for all SAML responses:
 <p></p>
-<code>famadm set-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --attributevalues  iplanet-am-saml-signresponse=true  -d</code></li>
+<code>famadm set-attr-defs -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --attributevalues  iplanet-am-saml-signresponse=true  -d</code></li>
 <p></p>
 <li>Run the following command to turn on signing for all SAML requests:
 <p></p>
-<code>famadm set-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --attributevalues  iplanet-am-saml-signrequest=true  -d</code></li>
+<code>famadm set-attr-defs -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --attributevalues  iplanet-am-saml-signrequest=true  -d</code></li>
 <P></P></li>
 <li>Run the following command to turn on signing for all SAML assertions:
 <p></p>
-<code>famadm set-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --attributevalues  iplanet-am-saml-signassertion=true  -d</code></li>
+<code>famadm set-attr-defs -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --attributevalues  iplanet-am-saml-signassertion=true  -d</code></li>
 <P></P></li>
 </ol>         
 </td></tr>
@@ -769,12 +769,12 @@ If a value is set for <code>signingCertAlias</code> in <i>extended_metadata</i> 
 <ul>
 <li>For a hosted identity provider, run the following command:
 <p></p>
- <code>famadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
+ <code>famadm create-metadata-templ -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
 </li>
 <P></P>
 <li>For a hosted service provider, run the following command:
 <p></p>
- <code>famadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+ <code>famadm create-metadata-templ -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 </li> 
 <P></P>You may modify the extended metadata attributes (for example, <code>providerHomePageURL</code>) as needed.</li>
 </ul> 
@@ -902,7 +902,7 @@ If not set the value correctly and proceed.
 <ol>
 <li>Run the following command on the remote site to get the site ID:
 <p></p>
-<code>famadm show-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> -a iplanet-am-saml-siteid-issuername-list</code>
+<code>famadm show-attr-defs -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> -a iplanet-am-saml-siteid-issuername-list</code>
 <p></p>
 The output of this command is<p></p> 
 <code>iplanet-am-saml-siteid-issuername-list=instanceID=http://host.exampleA.com:58080|siteid=VhqieajnHbbNX1usZkmnQLTxNeQ=|issuerName=host.exampleA.com:58080</code>
@@ -913,7 +913,7 @@ The site ID is the value of the <code>siteid</code> property, <code>VhqieajnHbbN
 <ol type="a">
 <li>Display any existing trusted partners by running the following command:
 <p></p>
-<code>famadm show-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> -a iplanet-am-saml-partner-urls</code>
+<code>famadm show-attr-defs -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> -a iplanet-am-saml-partner-urls</code>
 <p></p>
 The output will be
 <p></p>
@@ -967,11 +967,11 @@ Other keys that can also be used for <code>iplanet-am-saml-partner-urls</code> i
 <li>Import the file you just created using the following command:
 <p></p>
 
-<code>famadm add-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --datafile ./partner.txt</code></li>
+<code>famadm add-attr-defs -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --datafile ./partner.txt</code></li>
 <p></p>
 <li>To verify that the file was imported correctly, run the following command on the hosted site to display the information:
 <p></p>
-<code>famadm show-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> -a iplanet-am-saml-partner-urls</code>
+<code>famadm show-attr-defs -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> -a iplanet-am-saml-partner-urls</code>
 <p></p>
 In this case, the output will be:
 <p></p>
@@ -1014,7 +1014,7 @@ You will be redirected to the target site without authentication.
 <ol>
 <li>Run the following command to create a circle of trust.
 <p></p>
-<code>famadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -f <i>admin_password_file_name</i> -e <i>realm</i> -c <i>metadata_spec</i></code>
+<code>famadm create-cot -t <i>cot_name</i> -u amadmin -f <i>admin_password_file_name</i> -e <i>realm</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1042,7 +1042,7 @@ where
 <ol type="a">
 <li>Run the following command if a keystore has already been set up:
 <p></p>
-<code>famadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>famadm create-metadata-templ -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
 <P></P>
 where
 <p></p>
@@ -1078,7 +1078,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command if a keystore has NOT been set up:
 <p></p>
-<code>famadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -c <i>metadata_spec</i></code></li>
+<code>famadm create-metadata-templ -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -c <i>metadata_spec</i></code></li>
 </ol></li></ul>
 <p></p>
 <ul>
@@ -1087,7 +1087,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <ol type="a">
 <li>Run the following command if a keystore has already been set up:
 <p></p>
-<code>famadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>famadm create-metadata-templ -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 <P></P>
 where
 <p></p>
@@ -1123,7 +1123,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command if a keystore has NOT been set up:
 <p></p>
-<code>famadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -c <i>metadata_spec</i></code>
+<code>famadm create-metadata-templ -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -c <i>metadata_spec</i></code>
 </li>
 </ol></li></ul>
 <p></p>
@@ -1168,7 +1168,7 @@ The value of <i>cot_name</i> is the name of the circle of trust created in the f
 <li>Create the service provider metadata files.<p></p>
 <ol type="a"> 
 <li>Run the following command on the service provider instance to create the service provider metadata files.<p></p>
-<code>famadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_meta_alias</i></code></li>
+<code>famadm create-metadata-templ -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_meta_alias</i></code></li>
 <p></p>
 <li>Edit the default values of any attributes in the <i>sp_extended_metadata</i> to reflect your deployment, if required.
 <p></p>
@@ -1179,7 +1179,7 @@ For example, attribute mappers might need to be changed.</li>
 <p></p>
 <ol type="a"> 
 <li>Run the following command on the identity provider instance to create the Identity Provider metadata file.<p></p>
-<code>famadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_meta_alias</i></code></li>
+<code>famadm create-metadata-templ -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_meta_alias</i></code></li>
 <p></p>
 <li>Edit the default values of any attributes in the <i>idp_extended_metadata</i> to reflect your deployment, if required.
 <p></p>
@@ -1192,7 +1192,7 @@ For example, attribute mappers might need to be changed.</li>
 <ol type="a"> 
 <li>Run the following command on the service provider instance to create a circle of trust.
 <p></p>
-<code>famadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -f <i>admin_password_file_name</i></code></li>
+<code>famadm create-cot -t <i>cot_name</i> -u amadmin -f <i>admin_password_file_name</i></code></li>
 <p></p>
 <li>Run the following command to import the service provider metadata files into the circle just created.<p></p>
 <code>famadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -t <i>cot_name</i></code></li>
@@ -1204,7 +1204,7 @@ For example, attribute mappers might need to be changed.</li>
 <p></p>
 <li>Run the following command to verify that the files have been imported successfully.
 <p></p>
-<code>famadm list-circle-of-trust-members -u amadmin -f <i>admin_password_file_name</i> -t <i>cot_name</i></code>
+<code>famadm list-cot-members -u amadmin -f <i>admin_password_file_name</i> -t <i>cot_name</i></code>
 <p></p>
 This will display all members of the named circle of trust. In this case, the hosted service provider and remote identity provider are listed. You can also export the metadata files for verification using the following command:
 <p></p>
@@ -1220,7 +1220,7 @@ This will display all members of the named circle of trust. In this case, the ho
 <ol type="a"> 
 <li>Run the following command on the identity provider instance to create a circle of trust.
 <p></p>
-<code>famadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -f <i>admin_password_file_name</i></code></li>
+<code>famadm create-cot -t <i>cot_name</i> -u amadmin -f <i>admin_password_file_name</i></code></li>
 <p></p>
 <li>Run the following command to import the identity provider metadata files.<p></p>
 <code>famadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -t <i>cot_name</i></code></li>
@@ -1232,7 +1232,7 @@ This will display all members of the named circle of trust. In this case, the ho
 <p></p>
 <li>Run the following command to verify that the files have been imported successfully.
 <p></p>
-<code>famadm list-circle-of-trust-members -u amadmin -f <i>admin_password_file_name</i> -t <i>cot_name</i></code>
+<code>famadm list-cot-members -u amadmin -f <i>admin_password_file_name</i> -t <i>cot_name</i></code>
 <p></p>
 This will display all members of the named circle of trust. In this case, the remote service provider and hosted identity provider are listed. You can also export the metadata files, using the following command, for verification:
 <p></p>
@@ -1276,10 +1276,10 @@ After setting up the keystore, import the applicable signing and encryption cert
 
 <ol>
 <li>Run the following command on the service provider machine to regenerate the service provider metadata (including the newly added signing and encryption key information).<p></p>
-<code>famadm create-metadata-template -y <i>sp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_metaAlias</i> -a <i>sp_certalias</i> -r <i>sp_enc_alias</i></code></li>
+<code>famadm create-metadata-templ -y <i>sp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_metaAlias</i> -a <i>sp_certalias</i> -r <i>sp_enc_alias</i></code></li>
 <P></P>
 <li>Run the following command on the identity provider machine to regenerate the identity provider metadata (including the newly added signing and encryption key information).<p></p>
-<code>famadm create-metadata-template -y <i>idp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_metaAlias</i> -b <i>idp_certalias</i> -g <i>idp_enc_alias</i></code></li>
+<code>famadm create-metadata-templ -y <i>idp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_metaAlias</i> -b <i>idp_certalias</i> -g <i>idp_enc_alias</i></code></li>
 <P></P>
 <li>Modify the values of the following attributes in the appropriate file to enable signing and encryption.
 <p></p>
@@ -1434,7 +1434,7 @@ Initially, you will need to authenticate to both the service provider and the id
 <ol>
 <li>Run the following command to get the current value for the defined Authentication Web Service attribute:
 <p></p>
-<code>famadm show-attribute-defaults -s sunIdentityServerAuthnService -u amadmin -f <i>admin_password_file_name</i> -t Global -a MechanismHandlerList</code>
+<code>famadm show-attr-defs -s sunIdentityServerAuthnService -u amadmin -f <i>admin_password_file_name</i> -t Global -a MechanismHandlerList</code>
 </li>
 <p></p>
 <li>From the previous command's output, save the entire line beginning with <code>MechanismHandlerList=</code> to a file. <p></p>
@@ -1445,7 +1445,7 @@ The syntax of the value of the <code>MechanismHandlerList</code> attribute is <c
 <p></p>
 <li>Run the following command to change the value of <code>MechanismHandlerList</code>:
 <p></p>
-<code>famadm set-attribute-defaults -s sunIdentityServerAuthnService -u amadmin -f <i>admin_password_file_name</i> -t Global -D datafile</code>
+<code>famadm set-attr-defs -s sunIdentityServerAuthnService -u amadmin -f <i>admin_password_file_name</i> -t Global -D datafile</code>
 </li>
 </ol></p></td></tr>
 
@@ -1464,7 +1464,7 @@ The syntax of the value of the <code>MechanismHandlerList</code> attribute is <c
 <ol type="a">
 <li>Run the following command to get the current value for the defined Discovery Service attribute:
 <p></p>
-<code>famadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a sunIdentityServerBootstrappingDiscoEntry</code>
+<code>famadm show-attr-defs -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a sunIdentityServerBootstrappingDiscoEntry</code>
 </li>
 <p></p>
 <li>From the previous step's output, save the entire line beginning with <code>sunIdentityServerBootstrappingDiscoEntry=</code> to a file. <p></p>
@@ -1520,7 +1520,7 @@ In this case, we will call the file <code>datafile</code>.</li>
 <p></p>
 <li>Run the following command (using as <code>datafile</code> input) to change the values of the attributes:
 <p></p>
-<code>famadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -D datafile</code>
+<code>famadm set-attr-defs -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -D datafile</code>
 </li>
 <p></p>
 <li>Logon to console as top level administrator. Goto Configuration -> Global -> Liberty ID-WSF Security Service, edit the values of the following properties:<br>
@@ -1577,7 +1577,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command to create new standard and extended metadata files for the identity provider:
 <p></p>
-<code>famadm create-metadata-template -u amadmin -f <i>admin_password_file_name</i> -y <i>idp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>famadm create-metadata-templ -u amadmin -f <i>admin_password_file_name</i> -y <i>idp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1685,7 +1685,7 @@ where
 <p></p>
 <li>Run the following command to create new standard and extended metadata files for the service provider:
 <p></p>
-<code>famadm create-metadata-template -u amadmin -f <i>admin_password_file_name</i> -y <i>sp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>famadm create-metadata-templ -u amadmin -f <i>admin_password_file_name</i> -y <i>sp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 </li>
 <P></P>
 <li>Run the following command to import the new metadata files into the defined circle:

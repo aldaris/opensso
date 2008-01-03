@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.51 2008-01-02 20:09:05 veiming Exp $
+ * $Id: AccessManager.java,v 1.52 2008-01-03 00:22:27 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,7 +114,7 @@ public class AccessManager {
             "bundlelocale|o|s|Locale of the resource bundle."},
         resourceStrings={
             "resourcebundle-added=Resource Bundle is added."})
-    private String add_resource_bundle;
+    private String add_res_bundle;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.GetResourceBundle",
@@ -128,7 +128,7 @@ public class AccessManager {
             "bundlelocale|o|s|Locale of the resource bundle."},
         resourceStrings={
             "resourcebundle-returned=Resource Bundle is returned."})
-    private String list_resource_bundle;
+    private String list_res_bundle;
     
  
     @SubCommandInfo(
@@ -143,7 +143,7 @@ public class AccessManager {
             "bundlelocale|o|s|Locale of the resource bundle."},
         resourceStrings={
             "resourcebundle-deleted=Resource Bundle is deleted."})
-    private String remove_resource_bundle;
+    private String remove_res_bundle;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.LoadSchema",
@@ -158,7 +158,7 @@ public class AccessManager {
         resourceStrings={
             "schema-added=Service is added.",
             "schema-failed=Service is not added."})
-    private String create_service;
+    private String create_svc;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.DeleteService",
@@ -177,7 +177,7 @@ public class AccessManager {
             "delete-service-no-policy-rules=There are no policy rules.",
             "delete-service-no-policy-schema=There are no policy schema.",
             "delete-service-delete-policy-rules=Delete policy rules."})
-    private String delete_service;
+    private String delete_svc;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.UpdateService",
@@ -192,7 +192,7 @@ public class AccessManager {
         resourceStrings={
             "service-updated=Schema is updated.",
             "service-updated-failed=Schema is not updated."})
-    private String update_service;
+    private String update_svc;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddAttributeSchema",
@@ -209,7 +209,7 @@ public class AccessManager {
         resourceStrings={
             "attribute-schema-added=Attribute schema is added.",
             "add-attribute-schema-failed=Attribute schema is not added."})
-    private String add_attributes;
+    private String add_attrs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.SMSMigration",
@@ -282,7 +282,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
             "assign-service-to-realm-succeed=Service, {1} is added to realm, {0}."})
-    private String add_service_realm;
+    private String add_svc_realm;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmGetAssignedServices",
@@ -298,7 +298,7 @@ public class AccessManager {
             "realm-get-assigned-services-succeed=Services are returned.",
             "realm-get-assigned-services-no-services=There no services in this realm.",
             "realm-get-assigned-services-results={0}"})
-    private String show_realm_services;
+    private String show_realm_svcs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmGetAssignableServices",
@@ -313,7 +313,7 @@ public class AccessManager {
             "realm-getassignable-services-succeed=Assignable Services are returned.",
             "realm-getassignable-services-no-services=There no assignable services for this realm.",
             "realm-getassignable-services-result={0}"})
-    private String list_realm_assignable_services;
+    private String list_realm_assignable_svcs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmUnassignService",
@@ -328,7 +328,7 @@ public class AccessManager {
         resourceStrings={
             "unassign-service-from-realm-succeed=Service, {1} is removed from realm, {0}.",
             "unassign-service-from-realm-service-not-assigned=Service, {1} is not added to realm, {0}."})
-    private String remove_service_realm;
+    private String remove_svc_realm;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmGetAttributeValues",
@@ -348,7 +348,7 @@ public class AccessManager {
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmGetServiceAttributeValues",
-        description="Show realm's service attribute values.",
+        description="Get realm's service attribute values.",
         webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
@@ -359,7 +359,7 @@ public class AccessManager {
         resourceStrings={
             "get-service-attr-values-of-realm-succeed=Service attribute values is returned.",
             "get-service-attr-values-of-realm-result={0}={1}"})
-    private String show_realm_service_attributes;
+    private String get_realm_svc_attrs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmRemoveAttribute",
@@ -374,7 +374,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "remove-attribute-from-realm-succeed=Attribute is removed."})
-    private String delete_realm_attribute;
+    private String delete_realm_attr;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmModifyService",
@@ -391,7 +391,7 @@ public class AccessManager {
         resourceStrings={
             "modify-service-of-realm-succeed={1} under {0} is modified.",
             "modify-service-of-realm-not-assigned=Service, {1} is not modified because it is not added to {0}."})
-    private String set_service_attributes;
+    private String set_svc_attrs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmRemoveServiceAttributes",
@@ -408,7 +408,7 @@ public class AccessManager {
         resourceStrings={
             "realm-remove-service-attributes-succeed=The following attributes were removed.",
             "realm-remove-service-attributes-not-assigned=Service, {1} is not modified because it is not added to {0}."})
-    private String remove_service_attributes;
+    private String remove_svc_attrs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmAddServiceAttributes",
@@ -425,24 +425,7 @@ public class AccessManager {
         resourceStrings={
             "realm-add-service-attributes-succeed=The following attributes were added.",
             "realm-add-service-attributes-not-assigned=Service, {1} is not modified because it is not added to {0}."})
-    private String add_service_attributes;
-
-
-    @SubCommandInfo(
-        implClassName="com.sun.identity.cli.realm.RealmAddAttributeValues",
-        description="Add attribute value to a realm.",
-        webSupport="true",
-        mandatoryOptions={
-            "realm|e|s|Name of realm.",
-            "servicename|s|s|Name of service."},
-        optionAliases={},
-        macro="authentication",
-        optionalOptions={
-            "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
-            "datafile|D|s|Name of file that contains attribute values data."},
-        resourceStrings={
-            "add-attribute-values-realm-succeed=Attribute values are added."})
-    private String add_realm_attributes;
+    private String add_svc_attrs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmSetAttributeValues",
@@ -454,11 +437,13 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
+            "append|p|u|Set this flag to append the values to existing ones.",
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
+            "add-attribute-values-realm-succeed=Attribute values are added.",
             "set-attribute-values-realm-succeed=Attribute values are set."})
-    private String set_realm_attributes;
+    private String set_realm_attrs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmCreatePolicy",
@@ -520,7 +505,7 @@ public class AccessManager {
             "schema-remove-attribute-defaults-succeed=Schema attribute defaults are removed.",
             "schema-sub-schema-does-not-exists=Sub Schema does not exist, {0}.",
             "supported-schema-type=Unsupported Schema Type, {0}."})
-    private String remove_attribute_defaults;
+    private String remove_attr_defs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddAttributeDefaults",
@@ -537,11 +522,11 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "schema-add-attribute-defaults-succeed=Schema attribute defaults are added."})
-    private String add_attribute_defaults;
+    private String add_attr_defs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.GetAttributeDefaults",
-        description="Show default attribute values in schema.",
+        description="Get default attribute values in schema.",
         webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
@@ -555,7 +540,7 @@ public class AccessManager {
             "schema-get-attribute-defaults-succeed=Schema attribute defaults are returned.",
             "schema-get-attribute-defaults-no-matching-attr=There are no attribute values.",
             "schema-get-attribute-defaults-result={0}={1}"})
-    private String show_attribute_defaults;
+    private String get_attr_defs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeDefaults",
@@ -572,7 +557,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
             "schema-set-attribute-defaults-succeed=Schema attribute defaults are set."})
-    private String set_attribute_defaults;
+    private String set_attr_defs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaChoiceValues",
@@ -591,7 +576,7 @@ public class AccessManager {
             "choicevalues|k|m|Choice value e.g. o102=Inactive."},
         resourceStrings={
             "attribute-schema-set-choice-value-succeed=Choice Values are set."})
-    private String set_attribute_choice_values;
+    private String set_attr_choicevals;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaBooleanValues",
@@ -611,7 +596,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-set-boolean-values-succeed=Boolean Values are set."})
-    private String set_attribute_boolean_values;
+    private String set_attr_bool_values;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeSchemaChoiceValues",
@@ -628,7 +613,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-remove-choice-value-succeed=Choice Values are removed."})
-    private String remove_attribute_choice_values;
+    private String remove_attr_choicevals;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaType",
@@ -645,7 +630,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-modify-type-succeed=Attribute Schema, {3} is modified."})
-    private String set_attribute_type;
+    private String set_attr_type;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaUIType",
@@ -662,7 +647,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-modify-ui-type-succeed=Attribute Schema, {3} is modified."})
-    private String set_attribute_ui_type;
+    private String set_attr_ui_type;
 
    @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaSyntax",
@@ -679,7 +664,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-modify-syntax-succeed=Attribute Schema, {3} is modified."})
-    private String set_attribute_syntax;
+    private String set_attr_syntax;
    
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaI18nKey",
@@ -696,7 +681,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-modify-i18n-key-succeed=Attribute Schema, {3} is modified."})
-    private String set_attribute_i18n_key;
+    private String set_attr_i18n_key;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaPropertiesViewBeanURL",
@@ -713,7 +698,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-modify-properties-view-bean-url-key-succeed=Attribute Schema, {3} is modified."})
-    private String set_attribute_view_bean_url;
+    private String set_attr_view_bean_url;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaAny",
@@ -730,7 +715,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-modify-any-succeed=Attribute Schema, {3} is modified."})
-    private String set_attribute_any;
+    private String set_attr_any;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeSchemaDefaultValues",
@@ -747,7 +732,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-remove-default-values-succeed=Attribute Schema, {3} is modified."})
-    private String delete_attribute_default_values;
+    private String delete_attr_def_values;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaValidator",
@@ -764,7 +749,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-set-validator-succeed=Attribute Schema, {3} is modified."})
-    private String set_attribute_validator;
+    private String set_attr_validator;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaStartRange",
@@ -781,7 +766,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-set-start-range-succeed=Attribute Schema, {3} is modified."})
-    private String set_attribute_start_range;
+    private String set_attr_start_range;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaEndRange",
@@ -798,7 +783,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "attribute-schema-set-end-range-succeed=Attribute Schema, {3} is modified."})
-    private String set_attribute_end_range;
+    private String set_attr_end_range;
      
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeSchemas",
@@ -814,7 +799,7 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
             "remove-attribute-schema-succeed=Attribute schema, {3} is removed."})
-    private String delete_attribute;
+    private String delete_attr;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetServiceSchemaI18nKey",
@@ -828,7 +813,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "service-schema-set-i18n-key-succeed=Service Schema, {0} is modified."})
-    private String set_service_i18n_key;
+    private String set_svc_i18n_key;
 
      @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetServiceSchemaPropertiesViewBeanURL",
@@ -842,7 +827,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "service-schema-set-properties-view-bean-url-succeed=Service Schema, {0} is modified."})
-    private String set_service_view_bean_url;
+    private String set_svc_view_bean_url;
 
      @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetServiceRevisionNumber",
@@ -891,7 +876,7 @@ public class AccessManager {
             "add-sub-configuration-priority-no-integer=Priority needs to be an integer.",
             "add-sub-configuration-to-realm-succeed=Sub Configuration, {1} is added to realm, {0}",
             "add-sub-configuration-no-global-config=There are no global configurations for service, {0}"})
-    private String create_sub_configuration;
+    private String create_sub_cfg;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.DeleteSubConfiguration",
@@ -907,7 +892,7 @@ public class AccessManager {
         resourceStrings={
             "delete-sub-configuration-succeed=Sub Configuration, {0} is deleted.",
             "delete-sub-configuration-to-realm-succeed=Sub Configuration, {1} is deleted from realm, {0}"})
-    private String delete_sub_configuration;
+    private String delete_sub_cfg;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifySubConfiguration",
@@ -927,7 +912,7 @@ public class AccessManager {
             "modify-sub-configuration-succeed=Sub Configuration, {0} is modified.",
             "modify-sub-configuration-to-realm-succeed=Sub Configuration, {1} is modify in realm, {0}",
             "modify-sub-configuration-invalid-operation=Invalid operation, supported operation are 'add', 'delete' and 'set'."})
-    private String set_sub_configuration;
+    private String set_sub_cfg;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddSubSchema",
@@ -1007,7 +992,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "set-properties-viewbean-url-plugin-schema-succeed=Properties View Bean of Plug-in schema, {1} of service, {0} is set."})
-    private String set_plugin_schema_view_bean_url;
+    private String set_plugin_viewbean_url;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.CreateIdentity",
@@ -1077,7 +1062,7 @@ public class AccessManager {
             "get-allowed-ops-succeed=The following operations are allowed for {1} under {0}.",
             "get-allowed-ops-no-ops=No operations are allowed for {1} under {0}.",
             "allowed-ops-result={0}"})
-    private String show_identity_operations;
+    private String show_identity_ops;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.GetSupportedDataTypes",
@@ -1124,11 +1109,11 @@ public class AccessManager {
             "assignable-service-result={0}",
             "realm-does-not-support-service=realm, {0} does not support services.",
             "no-service-assignable=There are no assignable services."})
-    private String list_identity_assignable_services;
+    private String list_identity_assignable_svcs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetAssignedServices",
-        description="Show the service in an identity",
+        description="Get the service in an identity",
         webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
@@ -1141,7 +1126,7 @@ public class AccessManager {
             "get-assigned-services-succeed=Services of identity, {2} of type, {1} in realm, {0} is printed.",
             "assigned-service-result={0}",
             "no-service-assigned=There are no services."})
-    private String show_identity_services;
+    private String get_identity_svcs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetServiceAttributes",
@@ -1159,7 +1144,7 @@ public class AccessManager {
             "get-service-attributes-succeed={3}, services attribute values of identity, {2} of type, {1} in realm, {0} is printed.",
             "idrepo-service-attribute-result={0}={1}",
             "idrepo-no-service-attributes=There are no service attribute values."})
-    private String show_identity_service_attributes;
+    private String show_identity_svc_attrs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetAttributes",
@@ -1267,7 +1252,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
             "idrepo-assign-service-succeed={3} is added to identity {2} of type, {1} in realm, {0}."})
-    private String add_service_identity;
+    private String add_svc_identity;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.UnassignService",
@@ -1283,7 +1268,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "idrepo-unassign-service-succeed={3} is removed from identity {2} of type, {1} in realm, {0}."})
-    private String remove_service_identity;
+    private String remove_svc_identity;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.ModifyService",
@@ -1301,7 +1286,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
             "idrepo-modify-service-succeed=Attribute values of service, {3} of identity {2} of type, {1} in realm, {0} is modified."})
-    private String set_identity_service_attributes;
+    private String set_identity_svc_attrs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.SetAttributeValues",
@@ -1318,7 +1303,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
             "idrepo-set-attribute-values-succeed=Attribute values of identity, {2} of type, {1} in realm, {0} is modified."})
-    private String set_identity_attributes;
+    private String set_identity_attrs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetPrivileges",
@@ -1470,7 +1455,7 @@ public class AccessManager {
             "authentication-list-auth-configurations-no-configurations=There are no configurations."
         }
     )
-    private String list_auth_configurations;
+    private String list_auth_cfgs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.CreateAuthConfiguration",
@@ -1485,7 +1470,7 @@ public class AccessManager {
         resourceStrings={
             "authentication-created-auth-configuration-succeeded=Authentication Configuration is created."}
     )
-    private String create_auth_configuration;
+    private String create_auth_cfg;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.DeleteAuthConfigurations",
@@ -1502,7 +1487,7 @@ public class AccessManager {
             "authentication-delete-auth-configurations-succeeded=Authentication Configurations are deleted."
         }
     )
-    private String delete_auth_configurations;
+    private String delete_auth_cfgs;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.GetAuthConfigurationEntries",
@@ -1520,7 +1505,7 @@ public class AccessManager {
             "authentication-get-auth-config-entries-no-values=There are no entries.",
             "authentication-get-auth-config-entries-not-found=Authentication Configuration is not found."}
     )
-    private String get_auth_configuration_entries;
+    private String get_auth_cfg_entr;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.UpdateAuthConfigurationEntries",
@@ -1539,7 +1524,7 @@ public class AccessManager {
             "authentication-set-auth-config-entries-not-found=Authentication Configuration is not found.",
             "authentication-set-auth-config-entries-missing-data=Entries and datafile are missing."}
     )
-    private String update_auth_configuration_entries;
+    private String update_auth_cfg_entr;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.datastore.ListDataStores",
@@ -1628,7 +1613,7 @@ public class AccessManager {
             "export-service-configuration-succeeded=Service Configuration is exported."
         }
     )
-    private String export_service_configuration;
+    private String export_svc_cfg;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ImportServiceConfiguration",
@@ -1651,7 +1636,7 @@ public class AccessManager {
             "import-service-configuration-cannot-load-lidf=Cannot locate LDIF, {0}."
         }
     )
-    private String import_service_configuration;
+    private String import_svc_cfg;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.CreateServerConfigXML",
@@ -1665,14 +1650,14 @@ public class AccessManager {
             "dsport|p|s|Directory Server port number",
             "basedn|b|s|Directory Server base distinguished name.",
             "dsadmin|a|s|Directory Server administrator distinguished name",
-            "dspassword|x|s|Directory Server administrator password",
+            "dspassword-file|x|s|File that contains Directory Server administrator password",
             "outfile|o|s|File name where serverconfig XML is written."
         },
         resourceStrings={
             "create-serverconfig-xml-succeeded=Server Configuration XML is created."
         }
     )
-    private String create_serverconfig_xml;
+    private String create_svrcfg_xml;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.GetServerConfigXML",
@@ -1847,7 +1832,7 @@ public class AccessManager {
             "show-agent-group-no-attributes=There are no attribute values."
         }
     )
-    private String show_agent_group;
+    private String show_agent_grp;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.agentconfig.CreateAgentGroup",
@@ -1866,7 +1851,7 @@ public class AccessManager {
             "create-agent-group-succeeded=Agent group is created."
         }
     )
-    private String create_agent_group;
+    private String create_agent_grp;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.agentconfig.DeleteAgentGroups",
@@ -1881,7 +1866,7 @@ public class AccessManager {
             "delete-agent-group-succeeded=The following agent groups are deleted."
         }
     )
-    private String delete_agent_groups;
+    private String delete_agent_grps;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.agentconfig.ListAgentGroups",
@@ -1899,7 +1884,7 @@ public class AccessManager {
             "format-search-agent-group-results={0} ({1})"
         }
     )
-    private String list_agent_groups;
+    private String list_agent_grps;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.agentconfig.ListAgentGroupMembers",
@@ -1917,7 +1902,7 @@ public class AccessManager {
              "format-list-agent-group-members-results={0} ({1})"
         }
     )
-    private String list_agent_group_members;
+    private String list_agent_grp_members;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.agentconfig.ListAgentMembership",
@@ -1950,7 +1935,7 @@ public class AccessManager {
             "add-agent-to-group-succeeded-pural=Agents are added to group."
         }
     )
-    private String add_agent_to_group;
+    private String add_agent_to_grp;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.agentconfig.RemoveAgentsFromGroup",
@@ -1967,7 +1952,7 @@ public class AccessManager {
             "remove-agent-to-group-succeeded-pural=Agents are removed from group."
           }
       )
-    private String remove_agent_from_group;
+    private String remove_agent_from_grp;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.agentconfig.UpdateAgentGroup",
@@ -1985,7 +1970,7 @@ public class AccessManager {
             "update-agent-group-succeeded=Agent group configuration is updated."
         }
     )
-    private String update_agent_group;
+    private String update_agent_grp;
 
 
     @SubCommandInfo(
@@ -2003,7 +1988,7 @@ public class AccessManager {
             "list-server-config-no-results=There are no configuration."
         }
     )
-    private String list_server_configuration;
+    private String list_server_cfg;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.UpdateServerConfig",
@@ -2022,7 +2007,7 @@ public class AccessManager {
             "update-server-config-does-not-exists={0} does not exist."
         }
     )
-    private String update_server_configuration;
+    private String update_server_cfg;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.RemoveServerConfig",
@@ -2039,7 +2024,7 @@ public class AccessManager {
             "remove-server-config-does-not-exists={0} does not exist."
         }
     )
-    private String remove_server_configuration;
+    private String remove_server_cfg;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.CreateServer",
@@ -2201,7 +2186,7 @@ public class AccessManager {
             "set-site-primary-url-no-exists=Site does not exists."
         }
     )
-    private String set_site_primary_url;
+    private String set_site_pri_url;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.ShowSite",
@@ -2236,7 +2221,7 @@ public class AccessManager {
             "set-site-secondary-urls-no-exists=Site does not exists."
         }
     )
-    private String set_site_secondary_urls;
+    private String set_site_sec_urls;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.AddSiteFailoverURLs",
@@ -2253,7 +2238,7 @@ public class AccessManager {
             "add-site-secondary-urls-no-exists=Site does not exists."
         }
     )
-    private String add_site_secondary_urls;
+    private String add_site_sec_urls;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.RemoveSiteFailoverURLs",
@@ -2270,7 +2255,7 @@ public class AccessManager {
             "remove-site-secondary-urls-no-exists=Site does not exists."
         }
     )
-    private String remove_site_secondary_urls;
+    private String remove_site_sec_urls;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.CloneServer",

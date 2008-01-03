@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.21 2007-12-15 06:27:24 hengming Exp $
+ * $Id: FederationManager.java,v 1.22 2008-01-03 00:22:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,8 +59,8 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "metadata|m|s|c|Specify file name for the standard metadata to be created.",
-            "extended|x|s|c|Specify file name for the standard metadata to be created.",
+            "meta-data-file|m|s|c|Specify file name for the standard metadata to be created.",
+            "extended-data-file|x|s|c|Specify file name for the standard metadata to be created.",
             "serviceprovider|s|s|Specify metaAlias for hosted service provider to be created. The format must be <realm name>/<identifier>.",
             "identityprovider|i|s|Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.",
             "attrqueryprovider|S|s|Specify metaAlias for hosted attribute query provider to be created. The format must be <realm name>/<identifier>.",
@@ -94,7 +94,7 @@ public class FederationManager {
             "create-meta-template-exception-deploymentURI-not-found=Deployment URI is not found in configuration file.",
             "create-meta-template-created-descriptor-template=Hosted entity descriptor for realm, {1} was written to file, {0}.",
             "create-meta-template-created-configuration-template=Hosted entity configuration for realm, {1} was written to file, {0}."})
-    private String create_metadata_template;
+    private String create_metadata_templ;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ImportMetaData",
@@ -105,8 +105,8 @@ public class FederationManager {
         macro="authentication",
         optionalOptions={
             "realm|e|s|Realm where entity resides.",
-            "metadata|m|s|t|Specify file name for the standard metadata to be imported.<web>Standard metadata to be imported.",
-            "extended|x|s|t|Specify file name for the extended entity configuration to be imported.<web>Extended entity configuration to be imported.",
+            "meta-data-file|m|s|t|Specify file name for the standard metadata to be imported.<web>Standard metadata to be imported.",
+            "extended-data-file|x|s|t|Specify file name for the extended entity configuration to be imported.<web>Extended entity configuration to be imported.",
             "cot|t|s|Specify name of the Circle of Trust this entity belongs.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
@@ -127,8 +127,8 @@ public class FederationManager {
         optionalOptions={
             "realm|e|s|Realm where data resides",
             "sign|g|u|Set this flag to sign the metadata",
-            "metadata|m|s|c|Metadata",
-            "extended|x|s|c|Extended data",
+            "meta-data-file|m|s|c|Metadata",
+            "extended-data-file|x|s|c|Extended data",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "export-entity-exception-no-datafile=Missing export files, metadata or extended option needs to be set.",
@@ -187,7 +187,7 @@ public class FederationManager {
             "prefix|p|s|Prefix URL for idp discovery reader and writer URL."},
         resourceStrings={
             "create-circle-of-trust-succeeded=Circle of trust, {0} is created."})
-    private String create_circle_of_trust;
+    private String create_cot;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.DeleteCircleOfTrust",
@@ -201,7 +201,7 @@ public class FederationManager {
             "realm|e|s|Realm where circle of trust resides"},
         resourceStrings={
             "delete-circle-of-trust-succeeded=Circle of trust, {0} is deleted."})
-    private String delete_circle_of_trust;
+    private String delete_cot;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListCircleOfTrusts",
@@ -215,7 +215,7 @@ public class FederationManager {
         resourceStrings={
             "list-circles-of-trust-no-members=There are no circles of trust.",
             "list-circles-of-trust-members=Followings are the circles of trust."})
-    private String list_circles_of_trust;
+    private String list_cots;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListCircleOfTrustMembers",
@@ -232,7 +232,7 @@ public class FederationManager {
             "list-circle-of-trust-members-no-members=There are no trusted entities in the circle of trust, {0}.",
             "list-circle-of-trust-members-cot-does-not-exists=Circle of trust, {0} does not exist.",
             "list-circle-of-trust-members-members=List of trusted entities (entity IDs) in the circle of trust, {0}:"})
-    private String list_circle_of_trust_members;
+    private String list_cot_members;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.RemoveCircleOfTrustMembers",
@@ -248,7 +248,7 @@ public class FederationManager {
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "remove-circle-of-trust-member-succeeded=Entity, {1} is removed from the circle of trust, {0}."})
-    private String remove_circle_of_trust_member;
+    private String remove_cot_member;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.AddCircleOfTrustMembers",
@@ -264,7 +264,7 @@ public class FederationManager {
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "add-circle-of-trust-member-succeeded=Entity, {2} is added to the circle of trust, {1}, in realm {3}."})
-    private String add_circle_of_trust_member;
+    private String add_cot_member;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.BulkFederation",
@@ -297,7 +297,7 @@ public class FederationManager {
         webSupport="false",
         mandatoryOptions={
             "metaalias|m|s|Specify metaAlias for local provider.",
-            "bulkfeddata|g|s|File name of  bulk federation data which is generated by 'do-bulk-federation' sub command."},
+            "bulk-data-file|g|s|File name of  bulk federation data which is generated by 'do-bulk-federation' sub command."},
         optionAliases={},
         macro="authentication",
         optionalOptions={
@@ -312,5 +312,5 @@ public class FederationManager {
             "import-bulk-federation-data-incorrect-spec=Incorrect specification. The specification in data file differs from the entered specification",
             "import-bulk-federation-data-cannot-federate=Cannot federate user, {0}"
             })
-    private String import_bulk_federation_data;
+    private String import_bulk_fed_data;
 }

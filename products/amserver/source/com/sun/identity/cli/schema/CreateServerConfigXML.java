@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServerConfigXML.java,v 1.2 2007-10-17 23:00:26 veiming Exp $
+ * $Id: CreateServerConfigXML.java,v 1.3 2008-01-03 00:22:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,8 +50,9 @@ public class CreateServerConfigXML extends AuthenticatedCommand {
     static final String DS_HOST = "dshost";
     static final String DS_PORT = "dsport";
     static final String DS_ADMIN = "dsadmin";
-    static final String DS_PWD = "dspassword";
     static final String DS_BASEDN = "basedn";
+    
+    private static final String DS_PWD_FILE = "dspassword-file";
     
     private String dsHost;
     private String dsPort;
@@ -78,7 +79,7 @@ public class CreateServerConfigXML extends AuthenticatedCommand {
         dsHost = getStringOptionValue(DS_HOST);
         dsPort = getStringOptionValue(DS_PORT);
         dsAdmin = getStringOptionValue(DS_ADMIN);
-        dsPassword = getStringOptionValue(DS_PWD);
+        String dsPasswordFile = getStringOptionValue(DS_PWD_FILE);
         basedn = getStringOptionValue(DS_BASEDN);
         
         if ((dsHost == null) || (dsHost.length() == 0)) {
@@ -90,8 +91,10 @@ public class CreateServerConfigXML extends AuthenticatedCommand {
         if ((dsAdmin == null) || (dsAdmin.length() == 0)) {
             dsAdmin = "cn=Directory Manager";
         }
-        if ((dsPassword == null) || (dsPassword.length() == 0)) {
+        if ((dsPasswordFile == null) || (dsPasswordFile.length() == 0)) {
             dsPassword = "11111111";
+        } else {
+            dsPassword = CLIUtil.getFileContent(dsPasswordFile);
         }
         if ((basedn == null) || (basedn.length() == 0)) {
             basedn = "dc=opensso,dc=java,dc=net";

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedCLIConstants.java,v 1.4 2007-12-15 06:27:23 hengming Exp $
+ * $Id: FedCLIConstants.java,v 1.5 2008-01-03 00:22:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,12 +46,12 @@ public interface FedCLIConstants {
     /**
      * Metadata option.
      */
-    String ARGUMENT_METADATA = "metadata";
+    String ARGUMENT_METADATA = "meta-data-file";
 
     /**
      * Extended Configuration option.
      */
-    String ARGUMENT_EXTENDED_DATA = "extended";
+    String ARGUMENT_EXTENDED_DATA = "extended-data-file";
 
     /**
      * Circle of Trust.
