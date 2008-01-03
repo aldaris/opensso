@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentGroup.java,v 1.1 2007-11-10 06:14:02 veiming Exp $
+ * $Id: CreateAgentGroup.java,v 1.2 2008-01-03 18:14:20 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.common.configuration.AgentConfiguration;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepoException;
@@ -100,6 +101,12 @@ public class CreateAgentGroup extends AuthenticatedCommand {
                 (Object[])params));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_CREATE_AGENT_GROUP", params);
+        } catch (ConfigurationException e) {
+            String[] args = {realm, agentType, groupName, e.getMessage()};
+            debugError("CreateAgentGroup.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_CREATE_AGENT_GROUP", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
             String[] args = {realm, agentType, groupName, e.getMessage()};
             debugError("CreateAgentGroup.handleRequest", e);

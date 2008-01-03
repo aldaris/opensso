@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.5 2008-01-02 18:01:51 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.6 2008-01-03 18:14:20 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,8 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.AccessController;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,6 +54,9 @@ import java.util.Set;
  * This class provides agent configuration utilities.
  */
 public class AgentConfiguration {
+
+    public final static String AGENT_TYPE_J2EE = "J2EEAgent";
+    public final static String AGENT_TYPE_WEB = "WebAgent";
   
     private AgentConfiguration() {
     }
@@ -86,14 +91,56 @@ public class AgentConfiguration {
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
      * @throws SMSException if there are errors in service management layers.
+     * @throws ConfigurationException if there are missing information in
+     *         server or agent URL.
      */
     public static void createAgentGroup(
         SSOToken ssoToken,
         String agentGroupName,
         String agentType,
         Map attrValues
-    ) throws IdRepoException, SSOException, SMSException {
-        createAgentGroup(ssoToken, "/", agentGroupName, agentType, attrValues);
+    ) throws IdRepoException, SSOException, SMSException,
+        ConfigurationException {
+        createAgentGroup(ssoToken, "/", agentGroupName, agentType, attrValues,
+            null, null);
+    }
+
+    /**
+     * Creates an agent group.
+     *
+     * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param agentGroupName Name of agent group.
+     * @param agentType Type of agent group.
+     * @param values Map of attribute name to its values.
+     * @param serverURL Server URL.
+     * @param agentURL Agent URL.
+     * @throws IdRepoException if there are Id Repository related errors.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     * @throws MalformedURLException if server or agent URL is invalid.
+     * @throws ConfigurationException if there are missing information in
+     *         server or agent URL.
+     */
+    public static void createAgentGroup(
+        SSOToken ssoToken,
+        String agentGroupName,
+        String agentType,
+        Map attrValues,
+        String serverURL,
+        String agentURL
+    ) throws IdRepoException, SSOException, SMSException,
+        MalformedURLException, ConfigurationException {
+        if ((serverURL == null) || (serverURL.trim().length() == 0)) {
+            throw new ConfigurationException(
+                "create.agent.invalid.server.url", null);
+        }
+        if ((agentURL == null) || (agentURL.trim().length() == 0)) {
+            throw new ConfigurationException(
+                "create.agent.invalid.agent.url", null);
+        }
+        createAgentGroup(ssoToken, "/", agentGroupName, agentType, attrValues,
+            new URL(serverURL), new URL(agentURL));
     }
 
     /**
@@ -108,21 +155,69 @@ public class AgentConfiguration {
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
      * @throws SMSException if there are errors in service management layers.
+     * @throws ConfigurationException if there are missing information in
+     *         server or agent URL.
      */
     private static void createAgentGroup(
         SSOToken ssoToken,
         String realm,
         String agentGroupName,
         String agentType,
-        Map attrValues
-    ) throws IdRepoException, SSOException, SMSException {
+        Map attrValues,
+        URL serverURL,
+        URL agentURL
+    ) throws IdRepoException, SSOException, SMSException,
+        ConfigurationException {
         AMIdentityRepository amir = new AMIdentityRepository(
             ssoToken, realm);
         Map attributeValues = parseAttributeMap(agentType, attrValues);
         Set setAgentType = new HashSet(2);
         setAgentType.add(agentType);
-        attributeValues .put(IdConstants.AGENT_TYPE, setAgentType);
+        attributeValues.put(IdConstants.AGENT_TYPE, setAgentType);
+
+         if ((serverURL != null) || (agentURL != null)) {
+            tagswapAttributeValues(attributeValues, agentType, serverURL,
+                agentURL);
+         }
+
         amir.createIdentity(IdType.AGENTGROUP, agentGroupName, attributeValues);
+    }
+    /**
+     * Creates an agent.
+     *
+     * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param agentName Name of agent.
+     * @param agentType Type of agent.
+     * @param values Map of attribute name to its values.
+     * @param serverURL Server URL.
+     * @param agentURL Agent URL.
+     * @throws IdRepoException if there are Id Repository related errors.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     * @throws MalformedURLException if server or agent URL is invalid.
+     * @throws ConfigurationException if there are missing information in
+     *         server or agent URL.
+     */
+    public static void createAgent(
+        SSOToken ssoToken,
+        String agentName,
+        String agentType,
+        Map attrValues,
+        String serverURL,
+        String agentURL
+    ) throws IdRepoException, SSOException, SMSException,
+        MalformedURLException, ConfigurationException {
+        if ((serverURL == null) || (serverURL.trim().length() == 0)) {
+            throw new ConfigurationException(
+                "create.agent.invalid.server.url", null);
+        }
+        if ((agentURL == null) || (agentURL.trim().length() == 0)) {
+            throw new ConfigurationException(
+                "create.agent.invalid.agent.url", null);
+        }
+        createAgent(ssoToken, "/", agentName, agentType, attrValues,
+            new URL(serverURL), new URL(agentURL));
     }
 
     /**
@@ -136,14 +231,18 @@ public class AgentConfiguration {
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
      * @throws SMSException if there are errors in service management layers.
+     * @throws ConfigurationException if there are missing information in
+     *         server or agent URL.
      */
     public static void createAgent(
         SSOToken ssoToken,
         String agentName,
         String agentType,
         Map attrValues
-    ) throws IdRepoException, SSOException, SMSException {
-        createAgent(ssoToken, "/", agentName, agentType, attrValues);
+    ) throws IdRepoException, SSOException, SMSException,
+        ConfigurationException {
+        createAgent(ssoToken, "/", agentName, agentType, attrValues, null,
+            null);
     }
 
     /**
@@ -154,25 +253,118 @@ public class AgentConfiguration {
      * @param agentName Name of agent.
      * @param agentType Type of agent.
      * @param values Map of attribute name to its values.
+     * @param serverURL Server URL.
+     * @param agentURL Agent URL.
      * @throws IdRepoException if there are Id Repository related errors.
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
      * @throws SMSException if there are errors in service management layers.
+     * @throws ConfigurationException if there are missing information in
+     *         server or agent URL.
      */
     private static void createAgent(
         SSOToken ssoToken,
         String realm,
         String agentName,
         String agentType,
-        Map attrValues
-    ) throws IdRepoException, SSOException, SMSException {
+        Map attrValues,
+        URL serverURL,
+        URL agentURL
+    ) throws IdRepoException, SSOException, SMSException,
+        ConfigurationException {
         AMIdentityRepository amir = new AMIdentityRepository(
             ssoToken, realm);
         Map attributeValues = parseAttributeMap(agentType, attrValues);
         Set setAgentType = new HashSet(2);
         setAgentType.add(agentType);
-        attributeValues .put(IdConstants.AGENT_TYPE, setAgentType);
+        attributeValues.put(IdConstants.AGENT_TYPE, setAgentType);
+
+        if ((serverURL != null) || (agentURL != null)) {
+            tagswapAttributeValues(attributeValues, agentType, serverURL,
+                agentURL);
+        }
         amir.createIdentity(IdType.AGENTONLY, agentName, attributeValues);
+    }
+
+    private static void tagswapAttributeValues(
+        Map attributeValues,
+        String agentType,
+        URL serverURL,
+        URL agentURL
+    ) throws ConfigurationException {
+        Map map = new HashMap();
+
+        if (serverURL != null) {
+            String uri = getURI(serverURL);
+            if (uri.length() == 0){
+                throw new ConfigurationException(
+                    "create.agent.invalid.server.url.missing.uri", null);
+            }
+
+            String port = Integer.toString(serverURL.getPort());
+            if (port.equals("-1")){
+                throw new ConfigurationException(
+                    "create.agent.invalid.server.url.missing.port", null);
+            }
+
+            map.put("SERVER_PROTO", serverURL.getProtocol());
+            map.put("SERVER_HOST", serverURL.getHost());
+            map.put("SERVER_PORT", port);
+            map.put("AM_SERVICES_DEPLOY_URI", uri);
+
+            if (agentType.equals(AGENT_TYPE_J2EE)) {
+                String logFileName = serverURL.getHost();
+                logFileName = "amAgent_" + logFileName.replaceAll("\\.", "_") +
+                    "_" + port + ".log";
+                map.put("AUDIT_LOG_FILENAME", logFileName);
+            }
+        }
+
+        if (agentURL != null) {
+            String port = Integer.toString(agentURL.getPort());
+            map.put("AGENT_PREF_PROTO", agentURL.getProtocol());
+            map.put("AGENT_HOST", agentURL.getHost());
+            map.put("AGENT_PREF_PORT", port);
+
+            if (agentType.equals(AGENT_TYPE_J2EE)) {
+                String uri = getURI(agentURL);
+                if (uri.length() == 0) {
+                    throw new ConfigurationException(
+                        "create.agent.invalid.agent.url.missing.uri", null);
+                }
+                map.put("AGENT_APP_URI", uri);
+            }
+        }
+
+        for (Iterator i = attributeValues.keySet().iterator(); i.hasNext(); ) {
+            String attrName = (String)i.next();
+            Set values = (Set)attributeValues.get(attrName);
+            Set newValues = new HashSet(values.size() *2);
+
+            for (Iterator j = values.iterator(); j.hasNext(); ) {
+                String value = (String)j.next();
+                newValues.add(tagswap(map, value));
+            }
+            values.clear();
+            values.addAll(newValues);
+        }
+    }
+
+    private static String tagswap(Map map, String value) {
+        for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+            String k = (String)i.next();
+            value = value.replaceAll("@" + k + "@", (String)map.get(k));
+        }
+        return value;
+    }
+
+    private static String getURI(URL url) {
+        String uri = url.getPath();
+        int idx = uri.indexOf('/', 1);
+        if (idx != -1) {
+            uri = uri.substring(0, idx);
+        }
+        return uri;
     }
     
     /**

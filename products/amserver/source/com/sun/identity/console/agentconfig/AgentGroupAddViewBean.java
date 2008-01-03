@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentGroupAddViewBean.java,v 1.1 2007-12-17 19:42:44 veiming Exp $
+ * $Id: AgentGroupAddViewBean.java,v 1.2 2008-01-03 18:14:20 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.console.agentconfig;
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.agentconfig.model.AgentsModelImpl;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
@@ -51,6 +52,8 @@ public class AgentGroupAddViewBean
     private static final String DEFAULT_DISPLAY_URL =
         "/console/agentconfig/AgentGroupAdd.jsp";
     private static final String TF_NAME = "tfName";
+    private static final String TF_SERVER_URL = "tfServerURL";
+    private static final String TF_AGENT_URL = "tfAgentURL";
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
     private static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
 
@@ -63,9 +66,19 @@ public class AgentGroupAddViewBean
     public AgentGroupAddViewBean() {
         super("AgentGroupAdd");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
-        createPageTitleModel();
-        createPropertyModel();
-        registerChildren();
+    }
+
+    protected void initialize() {
+        if (!initialized) {
+            String agentType = (String)getPageSessionAttribute(
+                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+
+            if (agentType != null) {
+                createPageTitleModel();
+                createPropertyModel();
+                registerChildren();
+            }
+        }
     }
 
     protected void registerChildren() {
@@ -104,9 +117,20 @@ public class AgentGroupAddViewBean
     }
 
     private void createPropertyModel() {
+        String agentType = (String)getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String xml;
+
+        if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE)) {
+            xml = "com/sun/identity/console/propertyAgentAddJ2EE.xml";
+        } else if (agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)) {
+            xml = "com/sun/identity/console/propertyAgentAddWeb.xml";
+        } else{
+            xml = "com/sun/identity/console/propertyAgentAdd.xml";
+        }
+
         propertySheetModel = new AMPropertySheetModel(
-            getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/propertyAgentGroupAdd.xml"));
+            getClass().getClassLoader().getResourceAsStream(xml));
         propertySheetModel.clear();
     }
 
@@ -123,14 +147,27 @@ public class AgentGroupAddViewBean
      */
     public void handleButton1Request(RequestInvocationEvent event) {
         AgentsModel model = (AgentsModel)getModel();
-        String idType = (String)getPageSessionAttribute(
+        String agentType = (String)getPageSessionAttribute(
             AgentsViewBean.PG_SESSION_AGENT_TYPE);
         AMPropertySheet prop = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
         String agentGroupName = (String)propertySheetModel.getValue(TF_NAME);
         agentGroupName = agentGroupName.trim();
 
         try {
-            model.createAgentGroup(agentGroupName, idType);
+            if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
+                agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)
+            ) {
+                String serverURL = (String)propertySheetModel.getValue(
+                    TF_SERVER_URL);
+                serverURL = serverURL.trim();
+                String agentURL = (String)propertySheetModel.getValue(
+                    TF_AGENT_URL);
+                agentURL = agentURL.trim();
+                model.createAgentGroup(agentGroupName, agentType, serverURL,
+                    agentURL);
+            } else {
+                model.createAgentGroup(agentGroupName, agentType);
+            }
             forwardToAgentsViewBean();
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",

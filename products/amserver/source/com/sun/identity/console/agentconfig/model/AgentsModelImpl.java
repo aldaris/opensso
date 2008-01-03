@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.1 2007-12-17 19:49:50 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.2 2008-01-03 18:14:21 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.common.DisplayUtils;
 import com.sun.identity.common.configuration.AgentConfiguration;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMFormatUtils;
 import com.sun.identity.console.base.model.AMModelBase;
@@ -41,6 +42,7 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.sm.SMSException;
+import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -232,6 +234,11 @@ public class AgentsModelImpl
             AgentConfiguration.createAgent(getUserSSOToken(), name, type, 
                 AgentConfiguration.getDefaultValues(type));
             logEvent("SUCCEED_CREATE_AGENT", params);
+        } catch (ConfigurationException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
         } catch (SSOException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};
             logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
@@ -249,7 +256,109 @@ public class AgentsModelImpl
             throw new AMConsoleException(getErrorString(e));
         }
     }
-    
+
+    /**
+     * Creates agent.
+     *
+     * @param name Name of agent.
+     * @param type Type of agent.
+     * @param serverURL Server URL.
+     * @param agentURL Agent URL.
+     * @throws AMConsoleException if agent cannot be created.
+     */
+    public void createAgent(
+        String name,
+        String type,
+        String serverURL,
+        String agentURL
+    ) throws AMConsoleException {
+        String realmName = "/";
+        String[] params = {realmName, name, type};
+
+        try {
+            logEvent("ATTEMPT_CREATE_AGENT", params);
+            AgentConfiguration.createAgent(getUserSSOToken(), name, type,
+                AgentConfiguration.getDefaultValues(type), serverURL, agentURL);
+            logEvent("SUCCEED_CREATE_AGENT", params);
+        } catch (ConfigurationException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (MalformedURLException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (SSOException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (IdRepoException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (SMSException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        }
+    }
+
+    /**
+     * Creates agent group.
+     *
+     * @param name Name of agent group.
+     * @param type Type of agent group.
+     * @param serverURL Server URL.
+     * @param agentURL Agent URL.
+     * @throws AMConsoleException if agent group cannot be created.
+     */
+    public void createAgentGroup(
+        String name,
+        String type,
+        String serverURL,
+        String agentURL
+    ) throws AMConsoleException {
+        String realmName = "/";
+        String[] params = {realmName, name, type};
+
+        try {
+            logEvent("ATTEMPT_CREATE_AGENT_GROUP", params);
+            AgentConfiguration.createAgentGroup(getUserSSOToken(), name, type,
+                AgentConfiguration.getDefaultValues(type), serverURL, agentURL);
+            logEvent("SUCCEED_CREATE_AGENT_GROUP", params);
+        } catch (MalformedURLException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT_GROUP", paramsEx);
+            debug.warning("AgentsModelImpl.createAgentGroup", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (ConfigurationException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT_GROUP", paramsEx);
+            debug.warning("AgentsModelImpl.createAgentGroup", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (SSOException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT_GROUP", paramsEx);
+            debug.warning("AgentsModelImpl.createAgentGroup", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (IdRepoException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT_GROUP", paramsEx);
+            debug.warning("AgentsModelImpl.createAgentGroup", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (SMSException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT_GROUP", paramsEx);
+            debug.warning("AgentsModelImpl.createAgentGroup", e);
+            throw new AMConsoleException(getErrorString(e));
+        }
+    }
+
     /**
      * Creates agent group.
      *
@@ -267,6 +376,11 @@ public class AgentsModelImpl
             AgentConfiguration.createAgentGroup(getUserSSOToken(), name, type, 
                 AgentConfiguration.getDefaultValues(type));
             logEvent("SUCCEED_CREATE_AGENT_GROUP", params);
+        } catch (ConfigurationException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT_GROUP", paramsEx);
+            debug.warning("AgentsModelImpl.createAgentGroup", e);
+            throw new AMConsoleException(getErrorString(e));
         } catch (SSOException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};
             logEvent("EXCEPTION_CREATE_AGENT_GROUP", paramsEx);
