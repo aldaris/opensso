@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.6 2007-10-16 22:09:37 exu Exp $
+   $Id: configure.jsp,v 1.7 2008-01-03 00:26:15 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -87,7 +87,7 @@
 
                     // [START] Make a call to CLI to get the meta data template
                     String entityName = baseURL; 
-                    String[] args = {"create-metadata-template", 
+                    String[] args = {"create-metadata-templ", 
                         "--spec", "idff",
                         "--entityid", entityName,
                         "--identityprovider", "/idp"};
@@ -143,7 +143,7 @@
                     // [END] Import these XMLs
 
                     // [START] Make a call to CLI to get SP meta data template
-                    String[] args2 = {"create-metadata-template", 
+                    String[] args2 = {"create-metadata-templ", 
                         "--spec", "idff",
                         "--entityid", entityName,
                         "--serviceprovider", "/sp"};

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SchemaTest.java,v 1.4 2007-02-02 18:05:37 veiming Exp $
+ * $Id: SchemaTest.java,v 1.5 2008-01-03 00:26:15 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,7 +134,7 @@ public class SchemaTest extends TestBase {
     }
 
     
-    @Test(groups = {"schema", "create-service"})
+    @Test(groups = {"schema", "create-svc"})
     public void loadMultipleServices()
         throws CLIException, SMSException, SSOException {
         entering("loadMultipleServices", null);
@@ -165,7 +165,7 @@ public class SchemaTest extends TestBase {
         }
     }
 
-    @Test(groups = {"schema", "delete-service", "issue76"},
+    @Test(groups = {"schema", "delete-svc", "issue76"},
         dependsOnMethods = {"loadMultipleServices"}
     )
     public void deleteMultipleServices() {
@@ -233,11 +233,11 @@ public class SchemaTest extends TestBase {
         }
     }
 
-    @Test(groups = {"schema", "create-sub-configuration"})
+    @Test(groups = {"schema", "create-sub-cfg"})
     public void createSubConfiguration()
         throws CLIException, SMSException, SSOException {
         entering("createSubConfiguration", null);
-        String[] args = {"create-sub-configuration",
+        String[] args = {"create-sub-cfg",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
             TEST_SERVICE,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SUB_CONFIGURATION_ID,
@@ -271,12 +271,12 @@ public class SchemaTest extends TestBase {
         }
     }
 
-    @Test(groups = {"schema", "delete-sub-configuration"},
+    @Test(groups = {"schema", "delete-sub-cfg"},
         dependsOnMethods = {"setSubConfiguration"})
     public void deleteSubConfiguration()
         throws CLIException, SMSException, SSOException {
         entering("deleteSubConfiguration", null);
-        String[] args = {"delete-sub-configuration",
+        String[] args = {"delete-sub-cfg",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
             TEST_SERVICE,
             CLIConstants.PREFIX_ARGUMENT_LONG +IArgument.SUB_CONFIGURATION_NAME,
@@ -305,13 +305,13 @@ public class SchemaTest extends TestBase {
         }
     }
 
-    @Test(groups = {"schema", "set-sub-configuration"},
+    @Test(groups = {"schema", "set-sub-cfg"},
         dependsOnMethods = {"createSubConfiguration"})
     public void setSubConfiguration()
         throws CLIException, SMSException, SSOException {
         entering("setSubConfiguration", null);
 
-        String[] args = {"set-sub-configuration",
+        String[] args = {"set-sub-cfg",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
             TEST_SERVICE,
             CLIConstants.PREFIX_ARGUMENT_LONG +
@@ -410,11 +410,11 @@ public class SchemaTest extends TestBase {
         return sc.getAttributes();
     }
 
-    @Test(groups = {"schema", "set-service-i18n-key"})
+    @Test(groups = {"schema", "set-svc-i18n-key"})
     public void setServiceI18nKey() 
         throws CLIException, SMSException, SSOException {
         entering("setServiceI18nKey", null);
-        String[] args = {"set-service-i18n-key", 
+        String[] args = {"set-svc-i18n-key", 
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
             TEST_SERVICE,
             CLIConstants.PREFIX_ARGUMENT_LONG + 
@@ -442,11 +442,11 @@ public class SchemaTest extends TestBase {
         }
     }
 
-    @Test(groups = {"schema", "set-service-view-bean-url"})
+    @Test(groups = {"schema", "set-svc-view-bean-url"})
     public void setServiceViewBeanURL()
         throws CLIException, SMSException, SSOException {
         entering("setServiceViewBeanURL", null);
-        String[] args = {"set-service-view-bean-url",
+        String[] args = {"set-svc-view-bean-url",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
             TEST_SERVICE,
             CLIConstants.PREFIX_ARGUMENT_LONG +
@@ -477,7 +477,7 @@ public class SchemaTest extends TestBase {
     private void updateService() 
         throws CLIException, SMSException, SSOException {
         entering("updateService", null);
-        String[] args = {"update-service", 
+        String[] args = {"update-svc", 
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.XML_FILE,
             TEST_SERVICE_XML
         };
@@ -608,7 +608,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "add-attributes", "subschema"})
+    @Test(groups = {"schema", "add-attrs", "subschema"})
     public void addAttributeSchema(String subschema) 
         throws CLIException, SMSException, SSOException {
         Object[] params = {subschema};
@@ -617,7 +617,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() > 0) ?
             new String[9] : new String[7];
 
-        args[0] = "add-attributes";
+        args[0] = "add-attrs";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -664,7 +664,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "add-attribute-defaults", "attribute-schema-ops",
+    @Test(groups = {"schema", "add-attr-defs", "attribute-schema-ops",
         "subschema"},
         dependsOnMethods = {"addAttributeSchema"}
     )
@@ -674,7 +674,7 @@ public class SchemaTest extends TestBase {
         entering("addAttributeDefaultValues", params);
         String[] args = (subschema.length() == 0) 
             ? new String[7] : new String[9];
-        args[0] = "add-attribute-defaults";
+        args[0] = "add-attr-defs";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -717,7 +717,7 @@ public class SchemaTest extends TestBase {
         entering("deleteAttributeDefaultValues", params);
         String[] args = (subschema.length() == 0) 
             ? new String[9] : new String[11];
-        args[0] = "delete-attribute-default-values";
+        args[0] = "delete-attr-def-values";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -751,7 +751,7 @@ public class SchemaTest extends TestBase {
     }
     
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-defaults", "attribute-schema-ops",
+    @Test(groups = {"schema", "set-attr-defs", "attribute-schema-ops",
         "subschema"},
         dependsOnMethods = {"deleteAttributeDefaultValues"}
     )
@@ -773,7 +773,7 @@ public class SchemaTest extends TestBase {
         
         String[] args = (subschema.length() == 0) 
             ? new String[8] : new String[10];
-        args[0] = "set-attribute-defaults";
+        args[0] = "set-attr-defs";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -806,7 +806,7 @@ public class SchemaTest extends TestBase {
     }
     
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-view-bean-url",
+    @Test(groups = {"schema", "set-attr-view-bean-url",
         "attribute-schema-ops", "subschema"},
         dependsOnMethods = {"addAttributeSchema"}
     )
@@ -818,7 +818,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
         
-        args[0] = "set-attribute-view-bean-url";
+        args[0] = "set-attr-view-bean-url";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -865,7 +865,7 @@ public class SchemaTest extends TestBase {
 
     
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-any", "attribute-schema-ops",
+    @Test(groups = {"schema", "set-attr-any", "attribute-schema-ops",
         "subschema"},
         dependsOnMethods = {"addAttributeSchema"}
     )
@@ -876,7 +876,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
 
-        args[0] = "set-attribute-any";
+        args[0] = "set-attr-any";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -920,7 +920,7 @@ public class SchemaTest extends TestBase {
     }
     
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-i18n-key", "attribute-schema-ops",
+    @Test(groups = {"schema", "set-attr-i18n-key", "attribute-schema-ops",
         "subschema"},
         dependsOnMethods = {"addAttributeSchema"}
     )
@@ -931,7 +931,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
 
-        args[0] = "set-attribute-i18n-key";
+        args[0] = "set-attr-i18n-key";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -975,7 +975,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-type", "attribute-schema-ops",
+    @Test(groups = {"schema", "set-attr-type", "attribute-schema-ops",
         "subschema"},
         dependsOnMethods = {"addAttributeSchema", "showAttributeDefaultValues"}
     )
@@ -986,7 +986,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
         
-        args[0] = "set-attribute-type";
+        args[0] = "set-attr-type";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1032,7 +1032,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-syntax", "attribute-schema-ops",
+    @Test(groups = {"schema", "set-attr-syntax", "attribute-schema-ops",
         "subschema"},
         dependsOnMethods = {"addAttributeSchema", "showAttributeDefaultValues"}
     )
@@ -1043,7 +1043,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
 
-        args[0] = "set-attribute-syntax";
+        args[0] = "set-attr-syntax";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1089,7 +1089,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-ui-type", "attribute-schema-ops",
+    @Test(groups = {"schema", "set-attr-ui-type", "attribute-schema-ops",
         "subschema"},
         dependsOnMethods = {"addAttributeSchema", "showAttributeDefaultValues"}
     )
@@ -1100,7 +1100,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
         
-        args[0] = "set-attribute-ui-type";
+        args[0] = "set-attr-ui-type";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1146,7 +1146,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-start-range", "subschema"})
+    @Test(groups = {"schema", "set-attr-start-range", "subschema"})
     public void setAttributeSchemaStartRange(String subschema) 
         throws CLIException, SMSException, SSOException {
         Object[] params = {subschema};
@@ -1154,7 +1154,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
 
-        args[0] = "set-attribute-start-range";
+        args[0] = "set-attr-start-range";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1204,7 +1204,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-end-range", "subschema"})
+    @Test(groups = {"schema", "set-attr-end-range", "subschema"})
     public void setAttributeSchemaEndRange(String subschema) 
         throws CLIException, SMSException, SSOException {
         Object[] params = {subschema};
@@ -1212,7 +1212,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
         
-        args[0] = "set-attribute-end-range";
+        args[0] = "set-attr-end-range";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1262,7 +1262,7 @@ public class SchemaTest extends TestBase {
     }
     
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-validator",
+    @Test(groups = {"schema", "set-attr-validator",
         "attribute-schema-ops", "subschema"})
     public void setAttributeSchemaValidator(String subschema) 
         throws CLIException, SMSException, SSOException {
@@ -1271,7 +1271,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
 
-        args[0] = "set-attribute-validator";
+        args[0] = "set-attr-validator";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1323,7 +1323,7 @@ public class SchemaTest extends TestBase {
     }
     
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-choice-values",
+    @Test(groups = {"schema", "set-attr-choicevals",
         "attribute-schema-ops", "subschema"})
     public void setAttributeSchemaChoiceValues(String subschema)
         throws CLIException, SMSException, SSOException {
@@ -1332,7 +1332,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
 
-        args[0] = "set-attribute-choice-values";
+        args[0] = "set-attr-choicevals";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1385,7 +1385,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "remove-attribute-choice-values",
+    @Test(groups = {"schema", "remove-attr-choicevals",
         "attribute-schema-ops", "subschema"},
         dependsOnMethods = {"setAttributeSchemaChoiceValues"})
     public void removeAttributeSchemaChoiceValues(String subschema)
@@ -1395,7 +1395,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[9] : new String[11];
 
-        args[0] = "remove-attribute-choice-values";
+        args[0] = "remove-attr-choicevals";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1445,7 +1445,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "set-attribute-boolean-values", "subschema"})
+    @Test(groups = {"schema", "set-attr-bool-values", "subschema"})
     public void setAttributeSchemaBooleanValues(String subschema)
         throws CLIException, SMSException, SSOException {
         Object[] params = {subschema};
@@ -1453,7 +1453,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[15] : new String[17];
 
-        args[0]= "set-attribute-boolean-values";
+        args[0]= "set-attr-bool-values";
         args[1]= CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2]= TEST_SERVICE;
         args[3]= CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1514,7 +1514,7 @@ public class SchemaTest extends TestBase {
     }
     
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "delete-attribute", "subschema"},
+    @Test(groups = {"schema", "delete-attr", "subschema"},
         dependsOnGroups = {"attribute-schema-ops"}
     )
     public void deleteAttributeSchema(String subschema) 
@@ -1524,7 +1524,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[7] : new String[9];
 
-        args[0] = "delete-attribute";
+        args[0] = "delete-attr";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1567,7 +1567,7 @@ public class SchemaTest extends TestBase {
     }
     
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "show-attribute-defaults",
+    @Test(groups = {"schema", "show-attr-defs",
         "attribute-schema-ops", "subschema"},
         dependsOnMethods = {"addAttributeDefaultValues"}
     )
@@ -1578,7 +1578,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[7] : new String[9];
 
-        args[0] = "show-attribute-defaults";
+        args[0] = "show-attr-defs";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1606,7 +1606,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "remove-attribute-defaults", 
+    @Test(groups = {"schema", "remove-attr-defs", 
             "attribute-schema-ops", "subschema"},
         dependsOnMethods = {"showAttributeDefaultValues"}
     )
@@ -1617,7 +1617,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() == 0)
             ? new String[7] : new String[9];
 
-        args[0] = "remove-attribute-defaults";
+        args[0] = "remove-attr-defs";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -1666,7 +1666,7 @@ public class SchemaTest extends TestBase {
     private void createServices(List<String> xmlFileNames)
         throws CLIException {
         String[] args = new String[xmlFileNames.size() +2];
-        args[0] = "create-service";
+        args[0] = "create-svc";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.XML_FILE;
         int cnt = 2;
         for (String xml : xmlFileNames) {
@@ -1681,7 +1681,7 @@ public class SchemaTest extends TestBase {
         throws CLIException {
         /* Issue 76
         String[] args = new String[serviceNames.size() +2];
-        args[0] = "delete-service";
+        args[0] = "delete-svc";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         int cnt = 2;
         for (String xml : serviceNames) {

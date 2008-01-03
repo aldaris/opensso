@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthConfigTest.java,v 1.1 2007-02-23 22:38:25 veiming Exp $
+ * $Id: AuthConfigTest.java,v 1.2 2008-01-03 00:26:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,13 +113,13 @@ public class AuthConfigTest extends TestBase{
     }
 
     @Parameters ({"realm"})
-    @Test(groups = {"cli-authconfig", "ops", "list-auth-configurations"})
+    @Test(groups = {"cli-authconfig", "ops", "list-auth-cfgs"})
     public void listAuthConfigurations(String realm)
         throws CLIException, AMConfigurationException {
         String[] param = {realm};
         entering("listAuthConfigurations", param);
         String[] args = {
-            "list-auth-configurations",
+            "list-auth-cfgs",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm
         };
@@ -131,13 +131,13 @@ public class AuthConfigTest extends TestBase{
     }
 
     @Parameters ({"realm"})
-    @Test(groups = {"cli-authconfig", "ops", "create-auth-configuration"})
+    @Test(groups = {"cli-authconfig", "ops", "create-auth-cfg"})
     public void createAuthConfiguration(String realm)
         throws CLIException, AMConfigurationException {
         String[] param = {realm};
         entering("createAuthConfiguration", param);
         String[] args = {
-            "create-auth-configuration",
+            "create-auth-cfg",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + AuthOptions.AUTH_CONFIG_NAME,
@@ -201,14 +201,14 @@ public class AuthConfigTest extends TestBase{
     }
 
     @Parameters ({"realm"})
-    @Test(groups = {"cli-authconfig", "ops", "get-auth-configuration-entries"},
+    @Test(groups = {"cli-authconfig", "ops", "get-auth-cfg-entr"},
         dependsOnMethods = {"createAuthConfiguration"})
     public void getAuthConfigurationEntries(String realm)
         throws CLIException, AMConfigurationException {
        String[] param = {realm};
         entering("getAuthConfigurationEntries", param);
         String[] args = {
-            "get-auth-configuration-entries",
+            "get-auth-cfg-entr",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + AuthOptions.AUTH_CONFIG_NAME,
@@ -223,14 +223,14 @@ public class AuthConfigTest extends TestBase{
 
     @Parameters ({"realm"})
     @Test(groups = {"cli-authconfig", "ops",
-        "update-auth-configuration-entries"},
+        "update-auth-cfg-entr"},
         dependsOnMethods = {"createAuthConfiguration"})
     public void updateAuthConfigurationEntries(String realm)
         throws CLIException, AMConfigurationException {
        String[] param = {realm};
         entering("updateAuthConfigurationEntries", param);
         String[] args = {
-            "update-auth-configuration-entries",
+            "update-auth-cfg-entr",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + AuthOptions.AUTH_CONFIG_NAME,
@@ -269,14 +269,14 @@ public class AuthConfigTest extends TestBase{
     }
     
     @Parameters ({"realm"})
-    @Test(groups = {"cli-authconfig", "delete-auth-configurations"},
+    @Test(groups = {"cli-authconfig", "delete-auth-cfgs"},
         dependsOnGroups = {"ops"})
     public void deleteAuthConfiguration(String realm)
         throws CLIException, AMConfigurationException {
         String[] param = {realm};
         entering("deleteAuthConfiguration", param);
         String[] args = {
-            "delete-auth-configurations",
+            "delete-auth-cfgs",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG +

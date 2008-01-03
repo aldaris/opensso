@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Test.java,v 1.6 2007-07-28 01:34:56 veiming Exp $
+ * $Id: SAML2Test.java,v 1.7 2008-01-03 00:26:16 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,7 +78,7 @@ public class SAML2Test extends TestBase {
     public void createCircleOfTrust()
         throws CLIException, COTException, SAML2MetaException {
         entering("createCircleOfTrust", null);
-        String[] args = {"create-circle-of-trust",
+        String[] args = {"create-cot",
             CLIConstants.PREFIX_ARGUMENT_LONG + FedCLIConstants.ARGUMENT_COT,
             NAME_COT
         };
@@ -102,7 +102,7 @@ public class SAML2Test extends TestBase {
         throws CLIException {
         entering("createMetaTemplate", null);
         String[] args = {
-            "create-metadata-template",
+            "create-metadata-templ",
             CLIConstants.PREFIX_ARGUMENT_LONG +
                 FedCLIConstants.ARGUMENT_ENTITY_ID,
             NAME_IDP,
@@ -213,7 +213,7 @@ public class SAML2Test extends TestBase {
         throws CLIException, SAML2MetaException {
         entering("listCircleOfTrustMembers", null);
         String[] args = {
-            "list-circle-of-trust-members",
+            "list-cot-members",
             CLIConstants.PREFIX_ARGUMENT_LONG +
                 FedCLIConstants.ARGUMENT_COT,
             NAME_COT,
@@ -234,7 +234,7 @@ public class SAML2Test extends TestBase {
         throws CLIException, SAML2MetaException {
         entering("listCircleOfTrusts", null);
         String[] args = {
-            "list-circles-of-trust",
+            "list-cots",
             CLIConstants.PREFIX_ARGUMENT_LONG +
                 FedCLIConstants.SPECIFICATION_VERSION,
             FedCLIConstants.SAML2_SPECIFICATION
@@ -305,7 +305,7 @@ public class SAML2Test extends TestBase {
         throws CLIException, SAML2MetaException {
         entering("removeProviderFromCircleOfTrust", null);
         String[] args = {
-            "remove-circle-of-trust-member",
+            "remove-cot-member",
             CLIConstants.PREFIX_ARGUMENT_LONG +
                 FedCLIConstants.ARGUMENT_ENTITY_ID,
             NAME_IDP,
@@ -329,7 +329,7 @@ public class SAML2Test extends TestBase {
     public void deleteCircleOfTrust()
         throws CLIException, COTException, SAML2MetaException {
         entering("deleteCircleOfTrust", null);
-        String[] args = {"delete-circle-of-trust",
+        String[] args = {"delete-cot",
             CLIConstants.PREFIX_ARGUMENT_LONG + FedCLIConstants.ARGUMENT_COT,
             NAME_COT
         };

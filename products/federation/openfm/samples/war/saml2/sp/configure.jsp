@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.2 2007-03-23 22:24:23 bina Exp $
+   $Id: configure.jsp,v 1.3 2008-01-03 00:26:15 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -107,7 +107,7 @@
                     String endEntityDescriptorTag=null;
                     String metaXML =  null;
                     if (!spExists) {
-                    String[] args = {"create-metadata-template", 
+                    String[] args = {"create-metadata-templ", 
                         "--entityid", entityName,
                         "--serviceprovider", "/sp"};
                     req = new CLIRequest(null, args, ssoToken);
@@ -158,7 +158,7 @@
                     remoteIDPEntityID = remoteEntityID;
                     if (!idpExists) {
                     // [START] Make a call to CLI to get IDP meta data template
-                    String[] args2 = {"create-metadata-template", 
+                    String[] args2 = {"create-metadata-templ", 
                         "--entityid", remoteEntityID,
                         "--identityprovider", "/idp"};
                     outputWriter = new StringOutputWriter();

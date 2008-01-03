@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: util.jsp,v 1.3 2007-10-16 22:09:37 exu Exp $ 
+   $Id: util.jsp,v 1.4 2008-01-03 00:26:15 veiming Exp $ 
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -197,7 +197,7 @@ import="java.io.IOException,
         String endEntityDescriptorTag=null;
         String metaXML =  null;
         if (!spExists) {
-            String[] args = {"create-metadata-template", 
+            String[] args = {"create-metadata-templ", 
                 "--entityid", hostedSPEntityID,
                 "--serviceprovider", "/multiprotosaml2sp"};
             req = new CLIRequest(null, args, ssoToken);
@@ -245,7 +245,7 @@ import="java.io.IOException,
             && idpEntityList.contains(remoteIDPEntityID));
         if (!idpExists) {
             // [START] Make a call to CLI to get IDP meta data template
-            String[] args2 = {"create-metadata-template", 
+            String[] args2 = {"create-metadata-templ", 
                 "--entityid", remoteIDPEntityID,
                 "--identityprovider", "/multiprotosaml2idp"};
             outputWriter = new StringOutputWriter();
@@ -312,7 +312,7 @@ import="java.io.IOException,
               && spEntityList.contains(hostedSPEntityID)) ;
         if (!spExists) {
             // [START] Make a call to CLI to get the meta data template
-            String[] args = {"create-metadata-template",
+            String[] args = {"create-metadata-templ",
                 "--spec", "idff",
                 "--entityid", hostedSPEntityID,
                 "--serviceprovider", "/multiprotoidffsp"};
@@ -369,7 +369,7 @@ import="java.io.IOException,
               && idpEntityList.contains(remoteIDPEntityID)) ;
         if (!idpExists) {
             // [START] Make a call to CLI to get IDP meta data template
-            String[] args2 = {"create-metadata-template",
+            String[] args2 = {"create-metadata-templ",
                 "--spec", "idff",
                 "--entityid", remoteIDPEntityID,
                 "--identityprovider", "/multiprotoidffidp"};
@@ -437,7 +437,7 @@ import="java.io.IOException,
               && spEntityList.contains(hostedSPEntityID)) ;
         if (!spExists) {
             // [START] Make a call to CLI to get the meta data template
-            String[] args = {"create-metadata-template",
+            String[] args = {"create-metadata-templ",
                 "--spec", "wsfed",
                 "--entityid", hostedSPEntityID,
                 "--serviceprovider", "/multiprotowsfedsp"};
@@ -494,7 +494,7 @@ import="java.io.IOException,
               && idpEntityList.contains(remoteIDPEntityID)) ;
         if (!idpExists) {
             // [START] Make a call to CLI to get IDP meta data template
-            String[] args2 = {"create-metadata-template",
+            String[] args2 = {"create-metadata-templ",
                 "--spec", "wsfed",
                 "--entityid", remoteIDPEntityID,
                 "--identityprovider", "/multiprotowsfedidp"};
@@ -599,7 +599,7 @@ import="java.io.IOException,
         int extendStartIdx = 0;
         int extendEndIdx = 0;
         if (!idpExists) {
-            String[] args = {"create-metadata-template",
+            String[] args = {"create-metadata-templ",
             "--entityid", hostedIDPEntityID,
             "--identityprovider", "/multiprotosaml2idp"};
             req = new CLIRequest(null, args, ssoToken);
@@ -648,7 +648,7 @@ import="java.io.IOException,
                 ((spEntityList != null && !spEntityList.isEmpty())
                 && spEntityList.contains(remoteSPEntityID));
         if (!spExists) {
-            String[] args2 = {"create-metadata-template",
+            String[] args2 = {"create-metadata-templ",
             "--entityid", remoteSPEntityID,
             "--serviceprovider", "/multiprotosaml2sp"};
             outputWriter = new StringOutputWriter();
@@ -716,7 +716,7 @@ import="java.io.IOException,
             && idpEntityList.contains(hostedIDPEntityID)) ;
         if (!idpExists) {
             // [START] Make a call to CLI to get the meta data template
-            String[] args = {"create-metadata-template",
+            String[] args = {"create-metadata-templ",
             "--spec", "idff",
             "--entityid", hostedIDPEntityID,
             "--identityprovider", "/multiprotoidffidp"};
@@ -772,7 +772,7 @@ import="java.io.IOException,
         && spEntityList.contains(remoteSPEntityID)) ;
         if (!idpExists) {
             // [START] Make a call to CLI to get SP meta data template
-            String[] args2 = {"create-metadata-template",
+            String[] args2 = {"create-metadata-templ",
                 "--spec", "idff",
                 "--entityid", remoteSPEntityID,
                 "--serviceprovider", "/multiprotoidffsp"};
@@ -840,7 +840,7 @@ import="java.io.IOException,
               && idpEntityList.contains(hostedIDPEntityID)) ;
         if (!idpExists) {
             // [START] Make a call to CLI to get the meta data template
-            String[] args = {"create-metadata-template",
+            String[] args = {"create-metadata-templ",
                 "--spec", "wsfed",
                 "--entityid", hostedIDPEntityID,
                 "--identityprovider", "/multiprotowsfedidp"};
@@ -886,7 +886,7 @@ import="java.io.IOException,
               && spEntityList.contains(remoteSPEntityID)) ;
         if (!spExists) {
             // [START] Make a call to CLI to get IDP meta data template
-            String[] args2 = {"create-metadata-template",
+            String[] args2 = {"create-metadata-templ",
                 "--spec", "wsfed",
                 "--entityid", remoteSPEntityID,
                 "--serviceprovider", "/multiprotowsfedsp"};

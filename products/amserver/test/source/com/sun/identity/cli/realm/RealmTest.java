@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmTest.java,v 1.6 2007-04-10 20:47:41 veiming Exp $
+ * $Id: RealmTest.java,v 1.7 2008-01-03 00:26:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,13 +125,13 @@ public class RealmTest extends TestBase{
     }
 
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm", "list-realm-assignable-services"})
+    @Test(groups = {"cli-realm", "list-realm-assignable-svcs"})
     public void getAssignableServicesInRealm(String realm)
         throws CLIException, SMSException {
         String[] param = {realm};
         entering("getAssignableServicesInRealm", param);
         String[] args = {
-            "list-realm-assignable-services",
+            "list-realm-assignable-svcs",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm};
 
@@ -142,13 +142,13 @@ public class RealmTest extends TestBase{
     }
  
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm", "show-realm-services"})
+    @Test(groups = {"cli-realm", "show-realm-svcs"})
     public void getAssignedServicesInRealm(String realm)
         throws CLIException, SMSException {
         String[] param = {realm};
         entering("getAssignedServicesInRealm", param);
         String[] args = {
-            "show-realm-services",
+            "show-realm-svcs",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm};
 
@@ -159,7 +159,7 @@ public class RealmTest extends TestBase{
     }
     
     @Parameters ({"realm", "service-name", "attribute-value"})
-    @Test(groups = {"cli-realm", "add-service-realm"})
+    @Test(groups = {"cli-realm", "add-svc-realm"})
     public void assignedServiceToRealm(
         String realm,
         String serviceName,
@@ -168,7 +168,7 @@ public class RealmTest extends TestBase{
         String[] param = {realm, serviceName, attributeValue};
         entering("assignedServiceToRealm", param);
         String[] args = {
-            "add-service-realm",
+            "add-svc-realm",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
@@ -208,14 +208,14 @@ public class RealmTest extends TestBase{
     }
     
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm", "set-realm-attributes"},
+    @Test(groups = {"cli-realm", "set-realm-attrs"},
         dependsOnMethods = {"removeRealmAttribute"})
     public void setRealmAttributeValues(String realm)
         throws CLIException, SMSException, SSOException {
         String[] param = {realm};
         entering("setRealmAttributeValues", param);
         String[] args = {
-            "set-realm-attributes",
+            "set-realm-attrs",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
@@ -237,13 +237,13 @@ public class RealmTest extends TestBase{
     }  
     
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm", "delete-realm-attribute"})
+    @Test(groups = {"cli-realm", "delete-realm-attr"})
     public void removeRealmAttribute(String realm)
         throws CLIException, SMSException, SSOException {
         String[] param = {realm};
         entering("removeRealmAttribute", param);
         String[] args = {
-            "delete-realm-attribute",
+            "delete-realm-attr",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             "/",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
@@ -334,14 +334,14 @@ public class RealmTest extends TestBase{
     }
     
     @Parameters ({"realm", "service-name"})
-    @Test(groups = {"cli-realm", "services", "show-realm-service-attributes"}, 
+    @Test(groups = {"cli-realm", "services", "show-realm-svc-attrs"}, 
         dependsOnMethods = {"assignedServiceToRealm"})
     public void getServiceAttribute(String realm, String serviceName)
         throws CLIException {
         String[] param = {realm};
         entering("getServiceAttribute", param);
         String[] args = {
-            "show-realm-service-attributes",
+            "show-realm-svc-attrs",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
@@ -356,7 +356,7 @@ public class RealmTest extends TestBase{
 
     
     @Parameters ({"realm", "service-name", "modify-attribute-value"})
-    @Test(groups = {"cli-realm", "services", "set-service-attributes"}, 
+    @Test(groups = {"cli-realm", "services", "set-svc-attrs"}, 
         dependsOnMethods = {"assignedServiceToRealm"})
     public void setServiceAttribute(
         String realm,
@@ -366,7 +366,7 @@ public class RealmTest extends TestBase{
         String[] param = {realm};
         entering("setServiceAttribute", param);
         String[] args = {
-            "set-service-attributes",
+            "set-svc-attrs",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
@@ -397,14 +397,14 @@ public class RealmTest extends TestBase{
     }
 
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm", "add-realm-attributes"}, 
+    @Test(groups = {"cli-realm", "add-realm-attrs"}, 
         dependsOnMethods = {"assignedServiceToRealm"})
     public void addRealmAttribute(String realm)
         throws CLIException, IdRepoException, SMSException, SSOException {        
         String[] param = {realm};
         entering("addRealmAttribute", param);
         String[] args = {
-            "add-realm-attributes",
+            "add-realm-attrs",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
@@ -429,7 +429,7 @@ public class RealmTest extends TestBase{
     }
 
     @Parameters ({"realm", "service-name", "attribute-value"})
-    @Test(groups = {"cli-realm", "remove-service-realm"},
+    @Test(groups = {"cli-realm", "remove-svc-realm"},
         dependsOnGroups = {"services"})
     public void unassignServiceFromRealm(
         String realm,
@@ -439,7 +439,7 @@ public class RealmTest extends TestBase{
         String[] param = {realm};
         entering("unassignServiceFromRealm", param);
         String[] args = {
-            "remove-service-realm",
+            "remove-svc-realm",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,

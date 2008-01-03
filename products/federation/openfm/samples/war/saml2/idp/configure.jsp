@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.2 2007-03-23 22:24:23 bina Exp $
+   $Id: configure.jsp,v 1.3 2008-01-03 00:26:15 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -108,7 +108,7 @@
                     int extendEndIdx = 0;
                     hostedIDPEntityID = entityName;
                     if (!idpExists) {
-                    String[] args = {"create-metadata-template", 
+                    String[] args = {"create-metadata-templ", 
                         "--entityid", entityName,
                         "--identityprovider", "/idp"};
                     req = new CLIRequest(null, args, ssoToken);
@@ -160,7 +160,7 @@
                          && spEntityList.contains(remoteEntityID));
                     remoteSPEntityID = remoteEntityID;
                     if (!spExists) {
-                    String[] args2 = {"create-metadata-template", 
+                    String[] args2 = {"create-metadata-templ", 
                         "--entityid", remoteEntityID,
                         "--serviceprovider", "/sp"};
                     outputWriter = new StringOutputWriter();

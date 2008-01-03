@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceBundleTest.java,v 1.3 2007-02-01 05:49:00 veiming Exp $
+ * $Id: ResourceBundleTest.java,v 1.4 2008-01-03 00:26:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,7 @@ public class ResourceBundleTest extends TestBase{
     }
     
     @Parameters ({"bundle-name", "bundle-file-name", "locale"})
-    @Test(groups = {"cli-resource-bundle", "add-resource-bundle"})
+    @Test(groups = {"cli-resource-bundle", "add-res-bundle"})
     public void addResourceBundle(
         String bundleName, 
         String fileName, 
@@ -74,7 +74,7 @@ public class ResourceBundleTest extends TestBase{
         entering("addResourceBundle", null);
         String[] args = (locale.length() == 0) ? new String[5] : new String[7];
         
-        args[0] = "add-resource-bundle";
+        args[0] = "add-res-bundle";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + 
             IArgument.RESOURCE_BUNDLE_NAME;
         args[2] = bundleName;
@@ -102,14 +102,14 @@ public class ResourceBundleTest extends TestBase{
     }
 
     @Parameters ({"bundle-name", "locale"})
-    @Test(groups = {"cli-resource-bundle", "list-resource-bundle"},
+    @Test(groups = {"cli-resource-bundle", "list-res-bundle"},
         dependsOnMethods = {"addResourceBundle"})
     public void getResourceBundle(String bundleName, String locale) 
         throws CLIException {
         entering("getResourceBundle", null);
         String[] args = (locale.length() == 0) ? new String[3] : new String[5];
         
-        args[0] = "list-resource-bundle";
+        args[0] = "list-res-bundle";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + 
             IArgument.RESOURCE_BUNDLE_NAME;
         args[2] = bundleName;
@@ -127,14 +127,14 @@ public class ResourceBundleTest extends TestBase{
     }
 
     @Parameters ({"bundle-name", "locale"})
-    @Test(groups = {"cli-resource-bundle", "remove-resource-bundle"}, 
+    @Test(groups = {"cli-resource-bundle", "remove-res-bundle"}, 
         dependsOnMethods = {"getResourceBundle"})
     public void removeResourceBundle(String bundleName, String locale) 
         throws CLIException, SSOException {
         entering("removeResourceBundle", null);
         String[] args = (locale.length() == 0) ? new String[3] : new String[5];
         
-        args[0] = "remove-resource-bundle";
+        args[0] = "remove-res-bundle";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + 
             IArgument.RESOURCE_BUNDLE_NAME;
         args[2] = bundleName;
