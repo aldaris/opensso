@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.10 2007-12-19 21:04:36 sean_brydon Exp $
+# $Id: AMAgentConfiguration.template,v 1.11 2008-01-04 02:04:57 huacui Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -253,8 +253,6 @@ com.sun.identity.agents.config.locale.country = US
 #     ALL.
 #   - remote.logfile: Specifies the file name to be used on the remote server
 #     if the log.disposition is set to REMOTE or ALL.
-#   - local.logfile: Specifies the complete path to the local audit log file 
-#     to be used by the Agent.
 #   - local.log.rotate: A flag that indicates if the rotation of audit log
 #     local file is enabled or disabled.
 #   - local.log.size: The size in bytes of the local audit log file, beyond
@@ -264,7 +262,6 @@ com.sun.identity.agents.config.locale.country = US
 com.sun.identity.agents.config.audit.accesstype = LOG_NONE
 com.sun.identity.agents.config.log.disposition = REMOTE
 com.sun.identity.agents.config.remote.logfile = @AUDIT_LOG_FILENAME@
-com.sun.identity.agents.config.local.logfile = @AUDIT_LOGS_DIR@/@AUDIT_LOG_FILENAME@
 com.sun.identity.agents.config.local.log.rotate = false
 com.sun.identity.agents.config.local.log.size = 52428800
 
@@ -801,15 +798,6 @@ com.iplanet.am.sdk.remote.pollingTime=1
 #
 com.sun.identity.sm.notification.enabled=true
 com.sun.identity.sm.cacheTime=1
-
-#
-# SAML SERVICE PROPERTIES
-#   Server protocol, host and port to be used for SAML service.
-# Hot-Swap Enabled: No
-#
-com.iplanet.am.localserver.protocol=@AGENT_PREF_PROTO@
-com.iplanet.am.localserver.host=@AGENT_HOST@
-com.iplanet.am.localserver.port=@AGENT_PREF_PORT@
 
 #
 # AUTHENTICATION SERVICE PROPERTIES

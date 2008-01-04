@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.19 2008-01-03 18:14:21 veiming Exp $
+   $Id: AgentService.xml,v 1.20 2008-01-04 02:01:33 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -923,15 +923,6 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.identity.agents.config.local.logfile"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a127">
-                        <DefaultValues>
-                            <Value>@AUDIT_LOGS_DIR@/@AUDIT_LOG_FILENAME@</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
                         name="com.sun.identity.agents.config.local.log.rotate"
                         type="single"
                         syntax="boolean"
@@ -1498,7 +1489,7 @@
                         validator="ListValueValidator"
                         i18nKey="a187">
                         <DefaultValues>
-                            <Value>[@AGENT_PREF_PORT@]=@AGENT_PREF_PROTO@</Value>
+                            <Value>[@AGENT_PORT@]=@AGENT_PROTO@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -1776,7 +1767,7 @@
                         syntax="string"
                         i18nKey="a217">
                         <DefaultValues>
-                            <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@@AGENT_APP_URI@/notification</Value>
+                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@@AGENT_APP_URI@/notification</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -1855,33 +1846,6 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.iplanet.am.localserver.protocol"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a226">
-                        <DefaultValues>
-                            <Value>@AGENT_PREF_PROTO@</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.iplanet.am.localserver.host"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a227">
-                        <DefaultValues>
-                            <Value>@AGENT_HOST@</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.iplanet.am.localserver.port"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a228">
-                        <DefaultValues>
-                            <Value>@AGENT_PREF_PORT@</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
                         name="com.iplanet.am.server.protocol"
                         type="single"
                         syntax="string"
@@ -1945,7 +1909,7 @@
                         syntax="string"
                         i18nKey="a236">
                         <DefaultValues>
-                            <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@@AGENT_APP_URI@/notification</Value>
+                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@@AGENT_APP_URI@/notification</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -1954,7 +1918,7 @@
                         syntax="string"
                         i18nKey="a109">
                         <DefaultValues>
-                            <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@@AGENT_APP_URI@/notification</Value>
+                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@@AGENT_APP_URI@/notification</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema

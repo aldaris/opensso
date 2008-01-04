@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.6 2008-01-03 18:14:20 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.7 2008-01-04 02:00:19 huacui Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -322,9 +322,9 @@ public class AgentConfiguration {
 
         if (agentURL != null) {
             String port = Integer.toString(agentURL.getPort());
-            map.put("AGENT_PREF_PROTO", agentURL.getProtocol());
+            map.put("AGENT_PROTO", agentURL.getProtocol());
             map.put("AGENT_HOST", agentURL.getHost());
-            map.put("AGENT_PREF_PORT", port);
+            map.put("AGENT_PORT", port);
 
             if (agentType.equals(AGENT_TYPE_J2EE)) {
                 String uri = getURI(agentURL);
