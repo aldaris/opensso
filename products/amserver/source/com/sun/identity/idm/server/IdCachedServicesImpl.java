@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.10 2007-12-07 19:32:09 goodearth Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.11 2008-01-04 00:00:43 dlarson Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -480,7 +480,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
 
         // Clear the cache, get identity DN
         AMIdentity id = new AMIdentity(token, name, type, orgName, amsdkDN);
-        String dn = id.getUniversalId();
+        String dn = id.getUniversalId().toLowerCase();
         idRepoCache.remove(dn);
     }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.11 2007-12-07 19:33:01 goodearth Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.12 2008-01-03 23:59:22 dlarson Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -481,7 +481,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         
         // Clear the cache, get identity DN
         AMIdentity id = new AMIdentity (token, name, type, orgName, amsdkDN);
-        String dn = id.getUniversalId ();
+        String dn = id.getUniversalId().toLowerCase();
         idRepoCache.remove (dn);
     }
     
