@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.3 2008-01-03 00:26:15 veiming Exp $
+   $Id: configure.jsp,v 1.4 2008-01-04 18:49:58 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -183,11 +183,15 @@
 
                     // [START] Swap protocol, host, port and deployment URI
                     //         to form IDP metadata XML and import it
+                    metaXML = metaXML.replaceAll(remoteSPEntityID,
+                        "@remoteSPEntityID@");
                     String spMetaXML = metaXML.replaceAll(localProto, proto);
                     spMetaXML = spMetaXML.replaceAll(localHost, host);
                     spMetaXML = spMetaXML.replaceAll(localPort, port);
                     spMetaXML = spMetaXML.replaceAll(localDeploymentURI,
                         deploymenturi);
+                    spMetaXML = spMetaXML.replaceAll("@remoteSPEntityID@",
+                        remoteSPEntityID);
                     EntityDescriptorElement spDescriptor =
                         (EntityDescriptorElement)
                             SAML2MetaUtils.convertStringToJAXB(spMetaXML);
