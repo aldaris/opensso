@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.7 2008-01-04 02:00:19 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.8 2008-01-04 05:54:57 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -311,13 +311,6 @@ public class AgentConfiguration {
             map.put("SERVER_HOST", serverURL.getHost());
             map.put("SERVER_PORT", port);
             map.put("AM_SERVICES_DEPLOY_URI", uri);
-
-            if (agentType.equals(AGENT_TYPE_J2EE)) {
-                String logFileName = serverURL.getHost();
-                logFileName = "amAgent_" + logFileName.replaceAll("\\.", "_") +
-                    "_" + port + ".log";
-                map.put("AUDIT_LOG_FILENAME", logFileName);
-            }
         }
 
         if (agentURL != null) {
@@ -333,6 +326,13 @@ public class AgentConfiguration {
                         "create.agent.invalid.agent.url.missing.uri", null);
                 }
                 map.put("AGENT_APP_URI", uri);
+            }
+
+            if (agentType.equals(AGENT_TYPE_J2EE)) {
+                String logFileName = agentURL.getHost();
+                logFileName = "amAgent_" + logFileName.replaceAll("\\.", "_") +
+                    "_" + port + ".log";
+                map.put("AUDIT_LOG_FILENAME", logFileName);
             }
         }
 
