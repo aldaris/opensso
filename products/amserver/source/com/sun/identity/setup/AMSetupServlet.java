@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.34 2007-12-20 20:19:18 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.35 2008-01-04 21:00:07 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -551,13 +551,28 @@ public class AMSetupServlet extends HttpServlet {
         
         try {
             String configDir = getPresetConfigDir();
-            if ((configDir == null) || (configDir.length() == 0)) {
+            boolean preConfigured = (configDir != null) &&
+                (configDir.length() == 0);
+            if (!preConfigured) {
                 bootstrap = Bootstrap.readFile(bootstrap) + "/bootstrap";
             }
 
-            frdr = new FileReader(bootstrap);
-            BufferedReader brdr = new BufferedReader(frdr);
-            res = brdr.readLine();
+            File test = new File(bootstrap);
+            if (test.exists()) {
+                frdr = new FileReader(bootstrap);
+                BufferedReader brdr = new BufferedReader(frdr);
+                res = brdr.readLine();
+            } else {
+                res = getBootStrapFile();
+                if (preConfigured) {
+                    if (res.endsWith("/bootstrap")) {
+                        int idx = res.lastIndexOf("/bootstrap");
+                        res = res.substring(0, idx);
+                    }
+                } else {
+                    res = Bootstrap.readFile(res);
+                }
+            }
         } catch (FileNotFoundException e) {
             // ignore bootstrap file is missing if war is not configured.
         } catch (IOException e) {
@@ -1300,6 +1315,18 @@ public class AMSetupServlet extends HttpServlet {
         }
         return found;
     }
+    
+    private static boolean isAgentServiceLoad(SSOToken token) {
+        try {
+            ServiceSchemaManager ssm = new ServiceSchemaManager(
+                "AgentService", token);
+            return (ssm != null);
+        } catch (SSOException ex) {
+            return false;
+        } catch (SMSException ex) {
+            return false;
+        }
+    }
 
     /**
      * Creates Identities for WS Security
@@ -1309,9 +1336,12 @@ public class AMSetupServlet extends HttpServlet {
     private static void createIdentitiesForWSSecurity(
         String serverURL,
         String deployuri
-    ) throws IdRepoException, SSOException
-    {
+    ) throws IdRepoException, SSOException {
         SSOToken token = getAdminSSOToken();
+        
+        if (!isAgentServiceLoad(token)) {
+            return;
+        }
         AMIdentityRepository idrepo = new AMIdentityRepository(token, "/");
         //createUser(idrepo, "jsmith", "John", "Smith");
         //createUser(idrepo, "jondoe", "Jon", "Doe");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.9 2007-11-07 19:13:58 veiming Exp $
+ * $Id: SystemProperties.java,v 1.10 2008-01-04 21:00:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -168,8 +168,10 @@ public class SystemProperties {
             try {
                 String newConfigFileLoc = props
                         .getProperty(Constants.AM_NEW_CONFIGFILE_PATH);
-                if ((newConfigFileLoc.length() > 0)
-                        && (!newConfigFileLoc.equals(NEWCONFDIR))) {
+                if ((newConfigFileLoc != null) &&
+                    (newConfigFileLoc.length() > 0) && 
+                    !newConfigFileLoc.equals(NEWCONFDIR)
+                ) {
                     String hostName = InetAddress.getLocalHost().getHostName()
                             .toLowerCase();
                     String serverURI = props.getProperty(

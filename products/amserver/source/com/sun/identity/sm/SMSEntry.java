@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.31 2007-12-19 17:44:17 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.32 2008-01-04 21:00:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -204,23 +204,6 @@ public class SMSEntry implements Cloneable {
         readActionSet.add(READ);
         modifyActionSet.add(MODIFY);
 
-        // Cache internal users
-        String adminUser = SystemProperties.get(AUTH_SUPER_USER, "");
-        if (adminUser != null && adminUser.length() != 0) {
-            specialUserSet.add(new DN(adminUser).toRFCString().toLowerCase());
-        }
-
-        if (SystemProperties.isServerMode()) {
-            // Add adminDN to the specialUserSet
-            adminUser = com.iplanet.am.util.AdminUtils.getAdminDN();
-            if (adminUser != null && adminUser.length() != 0) {
-                specialUserSet.add(new DN(adminUser).toRFCString()
-                    .toLowerCase());
-            }
-        }
-        if (debug.messageEnabled()) {
-            debug.message("SMSEntry: Special User Set: " + specialUserSet);
-        }
         // Check if backend has permission check enabled
         String proxy = SystemProperties.get(DB_PROXY_ENABLE);
         if (proxy != null && proxy.equalsIgnoreCase("true")) {
@@ -273,6 +256,23 @@ public class SMSEntry implements Cloneable {
         // are retrieved/initialized.
 
         initSMSObject();
+        // Cache internal users
+        String adminUser = SystemProperties.get(AUTH_SUPER_USER, "");
+        if (adminUser != null && adminUser.length() != 0) {
+            specialUserSet.add(new DN(adminUser).toRFCString().toLowerCase());
+        }
+
+        if (SystemProperties.isServerMode()) {
+            // Add adminDN to the specialUserSet
+            adminUser = com.iplanet.am.util.AdminUtils.getAdminDN();
+            if (adminUser != null && adminUser.length() != 0) {
+                specialUserSet.add(new DN(adminUser).toRFCString()
+                    .toLowerCase());
+            }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("SMSEntry: Special User Set: " + specialUserSet);
+        }
     }
     
     private static void initSMSObject() {
