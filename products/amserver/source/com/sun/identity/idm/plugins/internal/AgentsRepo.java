@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.14 2007-12-18 18:40:24 veiming Exp $
+ * $Id: AgentsRepo.java,v 1.15 2008-01-04 02:39:17 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,8 +108,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
 
     private static String agentNameforNotificationSet = null;
     private static IdType agentIdTypeforNotificationSet;
-    private static String notificationURLname="com.sun.am.notification.url";
+    private static String notificationURLname = 
+        "com.sun.identity.client.notification.url";
     public static final String AGENT_CONFIG_SERVICE = "agentconfig";
+    static final String AGENT_NOTIFICATION = "AgentConfigChangeNotification";
+    static final String AGENT_ID = "agentName";
+    static final String AGENT_IDTYPE = "IdType";
 
 
     public AgentsRepo() {
@@ -1379,17 +1383,30 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 break;
             }
             String modItem = null;
-            String name = agentNameforNotificationSet 
-                + " of IdType "+ agentIdTypeforNotificationSet;
-
-            if (debug.messageEnabled()) {
-                debug.message("AgentsRepo.sendNotificationSet():name "+name);
-            }
 
             // To be consistent and for easy web agent parsing, the 
             // notification set should start with 
             // "AgentConfigChangeNotification"
-            modItem = "AgentConfigChangeNotification " + name;
+            StringBuffer xmlsb = new StringBuffer(1000);
+            xmlsb.append("<")
+                 .append(AGENT_NOTIFICATION)
+                 .append(" ")
+                 .append(AGENT_ID)
+                 .append("=\"")
+                 .append(agentNameforNotificationSet)
+                 .append("\"")
+                 .append(" ")
+                 .append(AGENT_IDTYPE)
+                 .append("=\"")
+                 .append(agentIdTypeforNotificationSet.getName())
+                 .append("\"/>");
+            
+                 modItem = xmlsb.toString();
+
+            if (debug.messageEnabled()) {
+                debug.message("AgentsRepo.sendNotificationSet():modItem " + 
+                    modItem);
+            }
 
             // If notification URLs are present, send notifications
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
