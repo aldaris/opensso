@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteConfiguration.java,v 1.1 2007-10-17 23:00:32 veiming Exp $
+ * $Id: SiteConfiguration.java,v 1.2 2008-01-05 01:33:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,7 @@ public class SiteConfiguration extends ConfigurationBase {
                 String foName = (String)i.next();
                 ServiceConfig s = accessPoint.getSubConfig(foName);
                 Map mapValues = s.getAttributes();
-                setId = (Set)map.get(ATTR_FAILOVER_ID);
+                setId = (Set)mapValues.get(ATTR_FAILOVER_ID);
                 info.add(foName + "|" + (String)setId.iterator().next()); 
             }
         }
