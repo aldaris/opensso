@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: PMDefaultAuthLevelCondition.jsp,v 1.1 2006-05-04 06:56:34 veiming Exp $
+   $Id: PMDefaultAuthLevelCondition.jsp,v 1.2 2008-01-07 20:41:15 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -29,7 +29,7 @@
 <%@ page info="PMLDAPRoleSubject" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <jato:useViewBean
-    className="com.sun.identity.console.policy.PMDefaultAuthLevelCondition" >
+    className="com.sun.identity.console.policy.PMDefaultAuthLevelConditionViewBean" >
 
 <cc:i18nbundle baseName="amConsole" id="amConsole"
     locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
