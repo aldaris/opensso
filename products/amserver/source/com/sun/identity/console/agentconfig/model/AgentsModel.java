@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModel.java,v 1.2 2008-01-03 18:14:21 veiming Exp $
+ * $Id: AgentsModel.java,v 1.3 2008-01-07 20:38:49 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,15 +71,21 @@ public interface AgentsModel
      *
      * @param name Name of agent.
      * @param type Type of agent.
+     * @param password Password of agent.
      * @throws AMConsoleException if agent cannot be created.
      */
-    void createAgent(String name, String type) throws AMConsoleException;
+    void createAgent(
+        String name,
+        String type,
+        String password
+    ) throws AMConsoleException;
 
     /**
      * Creates agent.
      *
      * @param name Name of agent.
      * @param type Type of agent.
+     * @param password Password of agent.
      * @param serverURL Server URL.
      * @param agentURL Agent URL.
      * @throws AMConsoleException if agent cannot be created.
@@ -87,6 +93,7 @@ public interface AgentsModel
     void createAgent(
         String name,
         String type,
+        String password,
         String serverURL,
         String agentURL
     ) throws AMConsoleException;

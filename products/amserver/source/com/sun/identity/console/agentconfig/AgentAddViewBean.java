@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentAddViewBean.java,v 1.2 2008-01-03 18:14:20 veiming Exp $
+ * $Id: AgentAddViewBean.java,v 1.3 2008-01-07 20:38:49 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,8 @@ public class AgentAddViewBean
     private static final String DEFAULT_DISPLAY_URL =
         "/console/agentconfig/AgentAdd.jsp";
     private static final String TF_NAME = "tfName";
+    private static final String TF_PASSWORD = "tfPassword";
+    private static final String TF_PASSWORD_CONFIRM = "tfPasswordConfirm";
     private static final String TF_SERVER_URL = "tfServerURL";
     private static final String TF_AGENT_URL = "tfAgentURL";
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
@@ -155,27 +157,47 @@ public class AgentAddViewBean
         String agentName = (String)propertySheetModel.getValue(TF_NAME);
         agentName = agentName.trim();
 
-        try {
-            if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
-                agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)
-            ) {
-                String serverURL = (String)propertySheetModel.getValue(
-                    TF_SERVER_URL);
-                serverURL = serverURL.trim();
-                String agentURL = (String)propertySheetModel.getValue(
-                    TF_AGENT_URL);
-                agentURL = agentURL.trim();
-                model.createAgent(agentName, agentType, serverURL, agentURL);
+        String password = (String)propertySheetModel.getValue(TF_PASSWORD);
+        String passwordConfirm = (String)propertySheetModel.getValue(
+            TF_PASSWORD_CONFIRM);
+        password = password.trim();
+        passwordConfirm = passwordConfirm.trim();
+
+        if (password.length() > 0) {
+            if (password.equals(passwordConfirm)) {
+                try {
+                    if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
+                        agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)
+                    ) {
+                        String serverURL = (String)propertySheetModel.getValue(
+                            TF_SERVER_URL);
+                        serverURL = serverURL.trim();
+                        String agentURL = (String)propertySheetModel.getValue(
+                            TF_AGENT_URL);
+                        agentURL = agentURL.trim();
+                        model.createAgent(agentName, agentType, password,
+                            serverURL, agentURL);
+                    } else {
+                        model.createAgent(agentName, agentType, password);
+                    }
+                    forwardToAgentsViewBean();
+                } catch (AMConsoleException e) {
+                    setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                        e.getMessage());
+                    forwardTo();
+                }
             } else {
-                model.createAgent(agentName, agentType);
+                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    model.getLocalizedString("agents.passwords.not.match"));
+                forwardTo();
             }
-            forwardToAgentsViewBean();
-        } catch (AMConsoleException e) {
+        } else {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
+                model.getLocalizedString("agents.password.blank"));
             forwardTo();
         }
     }
+
     
     /**
      * Handles cancel request.

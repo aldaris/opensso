@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.2 2008-01-03 18:14:21 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.3 2008-01-07 20:38:49 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,7 @@ import com.sun.identity.sm.SMSException;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -222,17 +223,21 @@ public class AgentsModelImpl
      *
      * @param name Name of agent.
      * @param type Type of agent.
+     * @param password Password of agent.
      * @throws AMConsoleException if agent cannot be created.
      */
-    public void createAgent(String name, String type) 
+    public void createAgent(String name, String type, String password) 
         throws AMConsoleException {
         String realmName = "/";
         String[] params = {realmName, name, type};
 
         try {
             logEvent("ATTEMPT_CREATE_AGENT", params);
-            AgentConfiguration.createAgent(getUserSSOToken(), name, type, 
-                AgentConfiguration.getDefaultValues(type));
+            Map map = AgentConfiguration.getDefaultValues(type);
+            Set set = new HashSet(2);
+            map.put(AgentConfiguration.ATTR_NAME_PWD, set);
+            set.add(password);
+            AgentConfiguration.createAgent(getUserSSOToken(), name, type, map);
             logEvent("SUCCEED_CREATE_AGENT", params);
         } catch (ConfigurationException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};
@@ -262,6 +267,7 @@ public class AgentsModelImpl
      *
      * @param name Name of agent.
      * @param type Type of agent.
+     * @param password Password of agent.
      * @param serverURL Server URL.
      * @param agentURL Agent URL.
      * @throws AMConsoleException if agent cannot be created.
@@ -269,6 +275,7 @@ public class AgentsModelImpl
     public void createAgent(
         String name,
         String type,
+        String password,
         String serverURL,
         String agentURL
     ) throws AMConsoleException {
@@ -277,8 +284,12 @@ public class AgentsModelImpl
 
         try {
             logEvent("ATTEMPT_CREATE_AGENT", params);
+            Map map = AgentConfiguration.getDefaultValues(type);
+            Set set = new HashSet(2);
+            map.put(AgentConfiguration.ATTR_NAME_PWD, set);
+            set.add(password);
             AgentConfiguration.createAgent(getUserSSOToken(), name, type,
-                AgentConfiguration.getDefaultValues(type), serverURL, agentURL);
+                map, serverURL, agentURL);
             logEvent("SUCCEED_CREATE_AGENT", params);
         } catch (ConfigurationException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};

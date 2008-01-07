@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyAgentAddJ2EE.xml,v 1.1 2008-01-03 21:52:02 veiming Exp $
+   $Id: propertyAgentAddJ2EE.xml,v 1.2 2008-01-07 20:38:50 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,6 +33,14 @@
             <attribute name="localizeDisplayFieldValue" value="false" />
 	    <attribute name="size" value="50" />
 	</cc>
+    </property>
+    <property required="true">
+        <label name="lblPassword" defaultValue="agent.attribute.password" />
+        <cc name="tfPassword" tagclass="com.sun.web.ui.taglib.html.CCPasswordTag" />
+    </property>
+    <property required="true">
+        <label name="lblPasswordConfirm" defaultValue="agent.attribute.password.confirm" />
+        <cc name="tfPasswordConfirm" tagclass="com.sun.web.ui.taglib.html.CCPasswordTag" />
     </property>
     <property required="true">
 	<label name="lblServerURL" defaultValue="agent.attribute.server.url.name" labelFor="tfServerURL" />

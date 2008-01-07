@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.8 2008-01-04 05:54:57 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.9 2008-01-07 20:38:49 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,6 +57,7 @@ public class AgentConfiguration {
 
     public final static String AGENT_TYPE_J2EE = "J2EEAgent";
     public final static String AGENT_TYPE_WEB = "WebAgent";
+    public final static String ATTR_NAME_PWD = "userpassword";
   
     private AgentConfiguration() {
     }
