@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.22 2007-12-21 18:51:50 veiming Exp $
+   $Id: build.xml,v 1.23 2008-01-07 20:37:09 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -45,6 +45,29 @@
         <antcall target="fedlibrary-nightly" />
         <antcall target="openfm-nightly" />
         <antcall target="remove-amserver-bits" />
+    </target>
+
+    <target name="server-war">
+        <mkdir dir="${prd.nightly.dist.dir}" />
+        <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
+            target="sample-war" />
+        <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"
+            todir="${library.extlib.dir}"  />
+        <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
+            target="build" />
+        <copy todir="${fm.base.dir}/extlib">
+            <fileset file="${amserver.dist.dir}/console.jar" />
+            <fileset file="${amserver.dist.dir}/opensso.jar" />
+            <fileset file="${amserver.dist.dir}/opensso_server_samples.war" />
+            <fileset file="${sharedlib.dist.dir}/opensso-sharedlib.jar" />
+        </copy>
+
+        <!-- fake a copy to pass check-openfm-jars.xml -->
+        <copy file="${amserver.dist.dir}/console.jar" 
+            tofile="${fm.base.dir}/extlib/opensso-test.jar" />
+        <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
+            target="war" />
+        <delete file="${fm.base.dir}/extlib/opensso-test.jar" />
     </target>
 
     <target name="remove-amserver-bits">
@@ -192,6 +215,7 @@
         <echo message=" clean        : cleans generated files for all products"/>
         <echo message=" cvsdiff      : generates diffs under diffs subdirectory"/>
         <echo message=" nightly      : performs nightly builds for all products"/>
+        <echo message=" server-war   : builds server war file"/>
         <echo message=" server-nightly: performs nightly builds for server products"/>
         <echo message=" agents-nightly: performs nightly builds for agents products"/>
         <echo message=" srczip       : creates zip file containing the OpenSSO source code"/>

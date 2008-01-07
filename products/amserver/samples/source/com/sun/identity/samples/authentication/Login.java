@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Login.java,v 1.2 2007-11-05 17:59:24 ericow Exp $
+ * $Id: Login.java,v 1.3 2008-01-07 20:37:10 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import javax.security.auth.callback.TextOutputCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 public class Login {
     private String loginIndexName;

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.59 2008-01-03 18:20:54 veiming Exp $
+   $Id: build.xml,v 1.60 2008-01-07 20:37:09 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -351,6 +351,10 @@
         <ant antfile="${amserver.demobase.dir}/build.xml" inheritRefs="true"/>
     </target>
 
+    <target name="sample-war" depends="war">
+        <ant antfile="${amserver.samples.dir}/server/build.xml" inheritRefs="true"/>
+    </target>
+
     <target name="samples" depends="clientsdk,war">
         <ant antfile="${amserver.samples.dir}/build.xml" inheritRefs="true"/>
     </target>
@@ -365,7 +369,7 @@
         </tstamp>
 
         <filter token="DATE" value="${nightly.date}" />
-         <echo>$$(nightly.date)=$(nightly.date)</echo>
+         <echo>$$(nightly.date)=${nightly.date}</echo>
 
         <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"
             tofile="${amserver.dist.dir}/opensso-sharedlib.jar" />
