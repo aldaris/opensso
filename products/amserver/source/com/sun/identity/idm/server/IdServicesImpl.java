@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.25 2007-12-14 20:58:19 veiming Exp $
+ * $Id: IdServicesImpl.java,v 1.26 2008-01-07 22:22:22 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2513,6 +2513,11 @@ public class IdServicesImpl implements IdServices {
             Set opSet = idRepoPlugin.getSupportedOperations(type);
             if (opSet != null && opSet.contains(op)) {
                 pluginClasses.add(idRepoPlugin);
+            } else {
+                Object[] args = { idRepoPlugin.getClass().getName(), 
+                    IdOperation.READ.getName(), type.getName() };
+                throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                    "305", args);
             }
         }
         
@@ -2527,9 +2532,12 @@ public class IdServicesImpl implements IdServices {
             AdminTokenAction.getInstance());
         
         if (!orgExist(token, orgName)) {
-            debug.message(
-        "IdServicesImpl.getAllConfiguredPlugins: organization does not exist.");
-            return pluginClasses;
+            String rName = DNMapper.orgNameToRealmName(orgName);
+            debug.error("IdServicesImpl.getAllConfiguredPlugins: "
+                + "Realm " + rName + " does not exist.");
+            Object[] args = { rName };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                    "312", args);
         }
         
         if (ServiceManager.isConfigMigratedTo70()
