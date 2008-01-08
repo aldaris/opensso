@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAttributes.java,v 1.4 2007-07-30 18:01:24 veiming Exp $
+ * $Id: GetAttributes.java,v 1.5 2008-01-08 21:56:22 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,10 +33,19 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.console.idm.model.BackwardCompSupport;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -72,15 +81,18 @@ public class GetAttributes extends IdentityCommand {
                 "ATTEMPT_IDREPO_GET_ATTRIBUTES", params);
             AMIdentity amid = new AMIdentity(
                 adminSSOToken, idName, idType, realm, null); 
-            Map values = null;
-
+            Set attrSchemas = getAttributeSchemas(type, adminSSOToken);
+            Set attrNames = new HashSet();
+            Map rawValues = null;
+            
             if ((attributeNames != null) && !attributeNames.isEmpty()) {
-                Set attrNames = new HashSet();
                 attrNames.addAll(attributeNames);
-                values = amid.getAttributes(attrNames);
+                rawValues = amid.getAttributes(attrNames);
             } else {
-                values = amid.getAttributes();
+                rawValues = amid.getAttributes();
             }
+            
+            Map values = correctAttributeNames(rawValues, attrSchemas);
             Object[] args = {idName};
 
             if ((values != null) && !values.isEmpty()) {
@@ -93,7 +105,9 @@ public class GetAttributes extends IdentityCommand {
                     String attrName = (String)i.next();
                     Set attrValues = (Set)values.get(attrName);
                     arg[0] = attrName;
-                    arg[1] = tokenize(attrValues);
+                    
+                    arg[1] = isPassword(attrSchemas, attrName) ? "********" :
+                        tokenize(attrValues);
                     outputWriter.printlnMessage(MessageFormat.format(msg, 
                         (Object[])arg));
                 }
@@ -109,6 +123,12 @@ public class GetAttributes extends IdentityCommand {
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_IDREPO_GET_ATTRIBUTES", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SMSException e) {
+            String[] args = {realm, type, idName, e.getMessage()};
+            debugError("GetAttributes.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_IDREPO_GET_ATTRIBUTES", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             String[] args = {realm, type, idName, e.getMessage()};
             debugError("GetAttributes.handleRequest", e);
@@ -117,4 +137,76 @@ public class GetAttributes extends IdentityCommand {
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
     }
+    
+    private boolean isPassword(Set attrSchemas, String attrName) {
+        boolean isPwd = false;
+        for (Iterator i = attrSchemas.iterator(); i.hasNext(); ) {
+            AttributeSchema as = (AttributeSchema)i.next();
+            if (attrName.equals(as.getName())) {
+                 AttributeSchema.Syntax syntax = as.getSyntax();
+                 isPwd = (syntax != null) && 
+                     (syntax == AttributeSchema.Syntax.PASSWORD);
+                 break;
+            }
+        }
+        return isPwd;
+    }
+    
+    private Map correctAttributeNames(Map raw, Set attrSchemas) {
+        Map map = new HashMap(attrSchemas.size() *2);
+        Map values = new HashMap(raw.size() *2);
+        
+        for (Iterator i = attrSchemas.iterator(); i.hasNext(); ) {
+            AttributeSchema as = (AttributeSchema)i.next();
+            String name = as.getName();
+            map.put(name.toLowerCase(), name);
+        }
+        
+        for (Iterator i = raw.keySet().iterator(); i.hasNext(); ) {
+            String k = (String)i.next();
+            String actualAttrname = (String)map.get(k);
+            if (actualAttrname != null) {
+                values.put(actualAttrname, raw.get(k));
+            }
+        }
+        
+        return values;
+    }
+    
+    private Set getAttributeSchemas(String idType, SSOToken token)
+        throws SMSException, SSOException, IdRepoException {
+        Set attributeSchemas = Collections.EMPTY_SET;
+        String serviceName = getSvcNameForIdType(idType);
+        if (serviceName != null) {
+            ServiceSchemaManager svcSchemaMgr = new ServiceSchemaManager(
+                serviceName, token);
+            ServiceSchema svcSchema = svcSchemaMgr.getSchema(idType);
+            if (svcSchema != null) {
+                attributeSchemas = svcSchema.getAttributeSchemas();
+            }
+        }
+        
+        for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
+            AttributeSchema as = (AttributeSchema)i.next();
+            String i18nKey = as.getI18NKey();
+            if ((i18nKey == null) || (i18nKey.trim().length() == 0)) {
+                i.remove();
+            }
+        }
+        return attributeSchemas;
+    }
+    
+    private String getSvcNameForIdType(String idType)
+        throws IdRepoException {
+        String serviceName = IdUtils.getServiceName(IdUtils.getType(idType));
+        if ((serviceName == null) || (serviceName.trim().length() == 0)) {
+            if (ServiceManager.isCoexistenceMode()) {
+                BackwardCompSupport support = BackwardCompSupport.getInstance();
+                serviceName = support.getServiceName(idType);
+            }
+        }
+        return serviceName;
+    }
+  
+
 }
