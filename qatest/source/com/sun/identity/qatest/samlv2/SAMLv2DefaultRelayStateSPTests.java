@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.2 2007-09-10 22:36:54 mrudulahg Exp $
+ * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.3 2008-01-08 20:59:39 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -547,6 +547,10 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             configMap.put(TestConstants.KEY_SSO_INIT_RESULT, 
                     (String)configMap.get(TestConstants.KEY_SSO_INIT_RESULT + 
                     "RS"));
+           configMap.put("urlparams", "RelayState=" + configMap.get(
+                   "RelayState"));
+           log(Level.FINEST, "SPSSOInitPostRSdefaultRS", "ConfigMap " +
+                   configMap); 
             SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false);
             log(Level.FINE, "SPSSOInitPostRSdefaultRS", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
