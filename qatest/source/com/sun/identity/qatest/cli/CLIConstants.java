@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.4 2007-09-12 18:45:36 cmwesley Exp $
+ * $Id: CLIConstants.java,v 1.5 2008-01-08 17:59:41 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,21 +81,21 @@ public interface CLIConstants {
     public static final String SHOW_MEMBERSHIPS_SUBCOMMAND = "show-memberships";
     
     /**
-     * String for the "add-attribute-defaults" sub-command
+     * String for the "add-attr-defs" sub-command
      */
     public static final String ADD_ATTRIBUTE_DEFAULTS_SUBCOMMAND = 
-            "add-attribute-defaults";
+            "add-attr-defs";
     
     /**
-     * String for the "add-attributes" sub-command
+     * String for the "add-attrs" sub-command
      */
-    public static final String ADD_ATTRIBUTES_SUBCOMMAND = "add-attributes";
+    public static final String ADD_ATTRIBUTES_SUBCOMMAND = "add-attrs";
     
     /**
-     * String for the "add-circle-of-trust-member" sub-command
+     * String for the "add-cot-member" sub-command
      */
     public static final String ADD_CIRCLE_OF_TRUST_MEMBER_SUBCOMMAND = 
-            "add-circle-of-trust-member";
+            "add-cot-member";
     
     /**
      * String for the "add-plugin-interface" sub-command
@@ -104,22 +104,22 @@ public interface CLIConstants {
             "add-plugin-interface";
     
     /**
-     * String for the "add-realm-attributes" sub-command
+     * String for the "add-realm-attrs" sub-command
      */
     public static final String ADD_REALM_ATTRIBUTES_SUBCOMMAND = 
-            "add-realm-attributes";
+            "add-realm-attrs";
     
     /**
-     * String for the "add-resource-bundle" sub-command
+     * String for the "add-res-bundle" sub-command
      */
     public static final String ADD_RESOURCE_BUNDLE_SUBCOMMAND = 
-            "add-resource-bundle";
+            "add-res-bundle";
     
     /**
-     * String for the "add-service-identity" sub-command
+     * String for the "add-svc-identity" sub-command
      */
     public static final String ADD_SERVICE_IDENTITY_SUBCOMMAND = 
-            "add-service-idenity";
+            "add-svc-idenity";
     
     /**
      * String for the "add-sub-schema" sub-command
@@ -127,10 +127,10 @@ public interface CLIConstants {
     public static final String ADD_SUB_SCHEMA_SUBCOMMAND = "add-sub-schema";
     
     /**
-     * String for the "create-auth-configuration" sub-command
+     * String for the "create-auth-cfg" sub-command
      */
     public static final String CREATE_AUTH_CONFIGURATION_SUBCOMMAND = 
-            "create-auth-configuration";
+            "create-auth-cfg";
     
     /**
      * String for the "create-auth-instance" sub-command
@@ -139,10 +139,10 @@ public interface CLIConstants {
             "create-auth-instance";
     
     /**
-     * String for the "create-circle-of-trust" sub-command
+     * String for the "create-cot" sub-command
      */
     public static final String CREATE_CIRCLE_OF_TRUST_SUBCOMMAND = 
-            "create-circle-of-trust";
+            "create-cot";
     
     /**
      * String for the "create-datastore" sub-command
@@ -150,10 +150,10 @@ public interface CLIConstants {
     public static final String CREATE_DATASTORE_SUBCOMMAND = "create-datastore";
     
     /**
-     * String for the "create-metadata-template" sub-command
+     * String for the "create-metadata-templ" sub-command
      */
     public static final String CREATE_METADATA_TEMPLATE_SUBCOMMAND = 
-            "create-metadata-template";
+            "create-metadata-templ";
     
     /**
      * String for the "create-policies" sub-command
@@ -161,33 +161,27 @@ public interface CLIConstants {
     public static final String CREATE_POLICIES_SUBCOMMAND = "create-policies";
     
     /**
-     * String for the "create-service" sub-command
+     * String for the "create-svc" sub-command
      */
-    public static final String CREATE_SERVICE_SUBCOMMAND = "create-service";
+    public static final String CREATE_SERVICE_SUBCOMMAND = "create-svc";
     
     /**
-     * String for the "create-serverconfig-xml" sub-command
+     * String for the "create-svrcfg-xml" sub-command
      */
     public static final String CREATE_SERVERCONFIG_XML_SUBCOMMAND = 
-            "create-serverconfig-xml";
+            "create-svrcfg-xml";
     
     /**
-     * String for the "create-subconfiguration" sub-command
+     * String for the "create-subcfg" sub-command
      */
     public static final String CREATE_SUB_CONFIGURATION_SUBCOMMAND = 
-            "create-sub-configuration";
+            "create-sub-cfg";
     
     /**
-     * String for the "show-identity-types" sub-command
-     */
-    public static final String SHOW_IDENTITY_TYPES_SUBCOMMAND = 
-            "show-identity-types";   
-    
-    /**
-     * String for the "delete-realm-attribute" sub-command
+     * String for the "delete-realm-attr" sub-command
      */
     public static final String DELETE_REALM_ATTRIBUTE_SUBCOMMAND = 
-            "delete-realm-attribute";
+            "delete-realm-attr";
     
     /**
      * String for the "get-realm" sub-command
@@ -195,10 +189,10 @@ public interface CLIConstants {
     public static final String GET_REALM_SUBCOMMAND = "get-realm";
     
     /**
-     * String for the "set-realm-attributes" sub-command
+     * String for the "set-realm-attrs" sub-command
      */
     public static final String SET_REALM_ATTRIBUTES_SUBCOMMAND = 
-            "set-realm-attributes";
+            "set-realm-attrs";
     
     /**
      * String for the "get-identity" sub-command
@@ -274,8 +268,8 @@ public interface CLIConstants {
             "update-datastores"; 
     
     /**
-     * String for the "set-service-attributes"
+     * String for the "set-svc-attrs"
      */
     public static final String SET_SERVICE_ATTRIBUTES_SUBCOMMAND = 
-            "set-service-attributes";
+            "set-svc-attrs";
 }

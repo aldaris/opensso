@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GlobalConstants.java,v 1.1 2007-05-31 19:39:32 cmwesley Exp $
+ * $Id: GlobalConstants.java,v 1.2 2008-01-08 17:59:41 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,7 +67,7 @@ public interface GlobalConstants {
     /**
      * Short verbose argument/option
      */
-    static final String SHORT_VERBOSE_ARGUMENT = "V";
+    static final String SHORT_VERBOSE_ARGUMENT = "v";
     
     /**
      * Version argument/option
@@ -77,7 +77,7 @@ public interface GlobalConstants {
     /**
      * Short version argument/option
      */
-    static final String SHORT_VERSION_ARGUMENT = "v";
+    static final String SHORT_VERSION_ARGUMENT = "V";
     
     /**
      * Help argument/option
