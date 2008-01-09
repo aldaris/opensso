@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.26 2008-01-07 22:22:22 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.27 2008-01-09 21:36:28 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2508,17 +2508,18 @@ public class IdServicesImpl implements IdServices {
         
         // Add only the plugins which support the given operation
         Iterator iter = otherPlugins.iterator();
+        Object[] args = { "", op.getName(), type.getName() };
         while (iter.hasNext()) {
             IdRepo idRepoPlugin = (IdRepo) iter.next();
+            args[0] = idRepoPlugin.getClass().getName();
             Set opSet = idRepoPlugin.getSupportedOperations(type);
             if (opSet != null && opSet.contains(op)) {
                 pluginClasses.add(idRepoPlugin);
-            } else {
-                Object[] args = { idRepoPlugin.getClass().getName(), 
-                    IdOperation.READ.getName(), type.getName() };
-                throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-                    "305", args);
             }
+        }
+        if (pluginClasses == null || pluginClasses.isEmpty()) {
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                    "305", args); 
         }
         
         return pluginClasses;
