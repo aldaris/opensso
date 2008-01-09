@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMX509KeyManager.java,v 1.1 2007-10-22 15:06:32 beomsuk Exp $
+ * $Id: AMX509KeyManager.java,v 1.2 2008-01-09 19:11:20 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.X509KeyManager;
 
 import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.security.SecurityDebug;
 
@@ -60,7 +61,8 @@ public class AMX509KeyManager implements X509KeyManager {
                      System.getProperty("javax.net.ssl.keyStore", null);
     private String keyStoreProvider = 
                      System.getProperty("javax.net.ssl.keyStoreProvider", null);
-    static private String certAlias = null;
+    static private String certAlias = System.getProperty(
+                     Constants.CLIENT_CERTIFICATE_ALIAS, null);
     private X509KeyManager sunX509KeyManager = null;
     private KeyStore keyStore = null;
     KeyStore.Builder builder = null;

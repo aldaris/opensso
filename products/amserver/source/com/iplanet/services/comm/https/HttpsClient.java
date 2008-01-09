@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpsClient.java,v 1.1 2007-12-14 21:33:37 beomsuk Exp $
+ * $Id: HttpsClient.java,v 1.2 2008-01-09 19:11:20 beomsuk Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import org.mozilla.jss.ssl.SSLSocket;
 import sun.misc.RegexpPool;
 import sun.net.www.http.HttpClient;
 import java.net.SocketException;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 
 /**
@@ -128,7 +129,8 @@ public final class HttpsClient extends HttpClient
 
     private SSLSocket sslSocket = null;
 
-    private String nickName;
+    private String nickName = System.getProperty(
+                     Constants.CLIENT_CERTIFICATE_ALIAS, null);
 
     /**
      * Re-initialize the dontProxy list, and other properties we depend on.
