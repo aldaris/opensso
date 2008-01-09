@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigurationKeyConstants.java,v 1.2 2007-10-13 00:09:09 huacui Exp $
+ * $Id: IConfigurationKeyConstants.java,v 1.3 2008-01-09 01:10:25 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -160,16 +160,10 @@ public interface IConfigurationKeyConstants {
      public static final String[] CONFIG_STATIC_SUBKEY_LIST = new String[] {
              CONFIG_SUBKEY_CONFIG_REPOSITORY_LOCATION,
              CONFIG_SUBKEY_SERVICE_RESOLVER,
-             CONFIG_SUBKEY_USER_MAPPING_MODE,
-             CONFIG_SUBKEY_USER_ATTRIBUTE_NAME,
-             CONFIG_SUBKEY_USER_PRINCIPAL,
              CONFIG_SUBKEY_LOCALE_LANG,
              CONFIG_SUBKEY_LOCALE_COUNTRY,
-             CONFIG_SUBKEY_USER_ID_PROPERTY,
              CONFIG_SUBKEY_AUDIT_LOG_MODE,
              CONFIG_SUBKEY_ANONYMOUS_USER_NAME,
-             CONFIG_SUBKEY_CLIENT_IP_HEADER,
-             CONFIG_SUBKEY_CLIENT_HOSTNAME_HEADER,
              CONFIG_SUBKEY_ORG_NAME
      };
      

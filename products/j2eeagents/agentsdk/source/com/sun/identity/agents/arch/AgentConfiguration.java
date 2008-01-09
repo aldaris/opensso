@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.10 2007-12-22 00:52:02 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.11 2008-01-09 01:10:25 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -775,20 +775,19 @@ public class AgentConfiguration implements
     }
     
     private static synchronized void setUserMappingMode() {
-        if (!isInitialized()) {
-            UserMappingMode mode = UserMappingMode.get(
-                getProperty(CONFIG_USER_MAPPING_MODE));
+        UserMappingMode mode = UserMappingMode.get(
+        getProperty(CONFIG_USER_MAPPING_MODE));
         
-                if (mode == null) {
-                    throw new RuntimeException("Unknown User Mapping Mode: "
+        if (mode == null) {
+            throw new RuntimeException("Unknown User Mapping Mode: "
                     + getProperty(CONFIG_USER_MAPPING_MODE));
-                }
-                _userMappingMode = mode;
+        }
+        _userMappingMode = mode;
         
-                if (isLogMessageEnabled()) {        
-                    logMessage("AgentConfiguration: User Mapping mode set to: " 
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration.setUserMappingMode: User Mapping"
+                    + " mode set to: "
                     + _userMappingMode);
-                }
         }
     }
     
@@ -831,42 +830,37 @@ public class AgentConfiguration implements
     }
     
     private static synchronized void setUserAttributeName() {
-        if (!isInitialized()) {
-            String userAttributeName = getProperty(CONFIG_USER_ATTRIBUTE_NAME);
-                if (userAttributeName == null || 
-                userAttributeName.trim().length() == 0) 
-                {
-                    userAttributeName = DEFAULT_USER_ATTRIBUTE_NAME;
-                    logError(
-                        "AgentConfiguation: Unable to load user attribute name,"
-                        + "Using default value: " + userAttributeName);
-                }
-                _userAttributeName = userAttributeName;
+        String userAttributeName = getProperty(CONFIG_USER_ATTRIBUTE_NAME);
+        if (userAttributeName == null ||
+                userAttributeName.trim().length() == 0) {
+            userAttributeName = DEFAULT_USER_ATTRIBUTE_NAME;
+            logError("AgentConfiguation.setUserAttributeName: Unable to load"
+                    + " user attribute name. Using default value: " 
+                    + userAttributeName);
+        }
+        _userAttributeName = userAttributeName;
         
-                if (isLogMessageEnabled()) {
-                    logMessage(
-                        "AgentConfiguration: User attribute name set to: "
-                        + _userAttributeName);
-                }
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration.setUserAttributeName: User"
+                    + " attribute name set to: "
+                    + _userAttributeName);
         }
     }
     
     private static synchronized void setUserPrincipalEnabledFlag() {
-        if (!isInitialized()) {
-            String userPrinsipalFlagString = getProperty(CONFIG_USER_PRINCIPAL);
+        String userPrinsipalFlagString = getProperty(CONFIG_USER_PRINCIPAL);
+        if (userPrinsipalFlagString == null ||
+                userPrinsipalFlagString.trim().length() == 0) {
+            userPrinsipalFlagString = DEFAULT_USE_DN;
+        }
         
-                if (userPrinsipalFlagString == null || 
-                        userPrinsipalFlagString.trim().length() == 0) {
-                    userPrinsipalFlagString = DEFAULT_USE_DN;
-                }
+        _userPrincipalEnabled = Boolean.valueOf(
+                userPrinsipalFlagString).booleanValue();
         
-                _userPrincipalEnabled = Boolean.valueOf(
-                        userPrinsipalFlagString).booleanValue();
-        
-                if (isLogMessageEnabled()) {
-                    logMessage("AgentConfiguration: use-DN is set to: " 
-                            + _userPrincipalEnabled);
-                }
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration.setUserPrincipalEnabledFlag: use-DN"
+                    + " User Principal Enabled Flag is set to: " 
+                    + _userPrincipalEnabled);
         }
     }
     
@@ -924,23 +918,21 @@ public class AgentConfiguration implements
     }
     
     private static synchronized void setUserIdPropertyName() {
-        if (!isInitialized()) {
-            String propertyName = getProperty(CONFIG_USER_ID_PROPERTY);
-                if (propertyName == null || propertyName.trim().length() == 0) {
-                    propertyName = DEFAULT_USER_ID_PROPERTY;
-                    if (isLogWarningEnabled()) {
-                        logWarning(
-                            "AgentConfiguration: No value specified for user"
-                            +" property name. Using default: " + propertyName);
-                    }
-                }
-                _userIdPropertyName = propertyName;
-        
-                if (isLogMessageEnabled()) {
-                    logMessage("AgentConfiguration: User property name set to: "
-                    + _userIdPropertyName);
-                }
+        String propertyName = getProperty(CONFIG_USER_ID_PROPERTY);
+        if (propertyName == null || propertyName.trim().length() == 0) {
+            propertyName = DEFAULT_USER_ID_PROPERTY;
+            if (isLogWarningEnabled()) {
+                logWarning("AgentConfiguration.setUserIdPropertyName: No value"
+                     + " specified for user id property name. Using default: " 
+                     + propertyName);
+            }
         }
+        _userIdPropertyName = propertyName;       
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration.setUserIdPropertyName: User id"
+                    + " property name set to: "
+                    + _userIdPropertyName);
+            }
     }
     
     //this property is a hot swappable ClientSDK property
@@ -1031,23 +1023,21 @@ public class AgentConfiguration implements
     }
     
     private static synchronized void setClientIPAddressHeader() {
-        if (!isInitialized()) {
             _clientIPAddressHeader = getProperty(CONFIG_CLIENT_IP_HEADER);
             if (isLogMessageEnabled()) {
-                logMessage("AgentConfiguration: Client IP Address Header: "
+                logMessage("AgentConfiguration.setClientIPAddressHeader:"
+                        + " Client IP Address Header: "
                         + _clientIPAddressHeader);
             }
-        }
     }
     
     private static synchronized void setClientHostNameHeader() {
-        if (!isInitialized()) {
-            _clientHostNameHeader = getProperty(CONFIG_CLIENT_HOSTNAME_HEADER);
-            if (isLogMessageEnabled()) {
-                logMessage("AgentConfiguration: Client Hostname Header: "
-                        + _clientHostNameHeader);
+        _clientHostNameHeader = getProperty(CONFIG_CLIENT_HOSTNAME_HEADER);
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration.setClientHostNameHeader: Client"
+                    + " Hostname Header: "
+                    + _clientHostNameHeader);
             }
-        }
     }
     
     private static synchronized void initializeConfiguration() {
@@ -1058,20 +1048,27 @@ public class AgentConfiguration implements
             registerAgentNotificationHandler();
             
             //now set some class fields with property values
-            setUserMappingMode();
             setAuditLogMode();
-            setUserAttributeName();
-            setUserPrincipalEnabledFlag();
-            setUserIdPropertyName();
-            setAnonymousUserName();
-            setClientIPAddressHeader();
-            setClientHostNameHeader();
-            
-            //set some fields as some cleintsdk props also used by agent code
+            setAnonymousUserName();           
+            setHotSwappableConfigProps();          
+            //set some fields as some clientsdk props also used by agent code
             setSSOTokenName();   
             setHotSwappableClientSDKProps();                      
             markInitialized(); 
         }
+    }
+    
+    /**
+     * Some properties managed by this class are hotswappable and should be
+     * set on initialization and reload of configuration property values
+     */
+    private static void setHotSwappableConfigProps() {
+        setUserMappingMode();
+        setUserAttributeName();
+        setUserPrincipalEnabledFlag();
+        setUserIdPropertyName();
+        setClientIPAddressHeader();
+        setClientHostNameHeader();
     }
     
     /**
@@ -1213,7 +1210,9 @@ public class AgentConfiguration implements
                     System.setProperty(nextKey, nextValue);
                 }
             }
-            //set local copies of some current values we store
+            //set local copies of config property values stored by this class
+            setHotSwappableConfigProps();
+            //set local copies of some clientsdk property values we store
             setHotSwappableClientSDKProps();
             
             result = true;            

@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.11 2008-01-04 02:04:08 huacui Exp $
+# $Id: AMAgentConfiguration.template,v 1.12 2008-01-09 01:10:25 sean_brydon Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -202,7 +202,7 @@ com.sun.identity.agents.config.filter.mode = ALL
 #     user-ID of the authenticated user in session. This property is used
 #     when the user.mapping.mode is set to USER_ID and the user.principal 
 #     flag is set to false.
-# Hot-Swap Enabled: No
+# Hot-Swap Enabled: Yes
 # Examples:
 #    com.sun.identity.agents.config.user.mapping.mode = PROFILE_ATTRIBUTE
 #    com.sun.identity.agents.config.user.attribute.name = employeenumber
@@ -218,7 +218,7 @@ com.sun.identity.agents.config.user.token = UserToken
 #     address of the client. May be left blank if not used.
 #   - client.hostname.header: Specifies a HTTP header name that holds the
 #     Hostname of the client. May be left blank if not used.
-# Hot-Swap Enabled: No
+# Hot-Swap Enabled: Yes
 # Example:
 #   com.sun.identity.agents.config.client.ip.header = X-Proxy-Client-IP
 #   com.sun.identity.agents.config.client.hostname.header = X-Proxy-Client-Host
