@@ -17,12 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISArchiveVerify.java,v 1.5 2007-05-04 21:47:29 bigfatrat Exp $
+ * $Id: ISArchiveVerify.java,v 1.6 2008-01-09 04:19:33 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
-
-
 
 package com.sun.identity.log.cli;
 
@@ -47,6 +45,8 @@ import com.sun.identity.log.secure.VerifierList;
 import com.sun.identity.log.spi.IVerifierOutput;
 import com.sun.identity.log.spi.VerifierAction;
 import com.sun.identity.security.keystore.AMPassword;
+import com.sun.identity.setup.Bootstrap;
+import com.sun.identity.tools.bundles.VersionCheck;
 
 /**
  * This Archive verify class provides the way for verifying LogRecords that 
@@ -105,6 +105,17 @@ public class ISArchiveVerify{
     }
 
     static private void runCommand(String[] argv) throws Exception {
+        try {
+            Bootstrap.load();
+        } catch (Exception e) {
+            System.err.println("Cannot bootstrap the system" + e.getMessage());
+            System.exit(1);
+        }
+
+        if (VersionCheck.isValid() == 1) {
+            System.exit(1);
+        }
+
         int ln = 0;
         int path = 0;
         int uname = 0;
