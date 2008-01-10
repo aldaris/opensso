@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigurationKeyConstants.java,v 1.3 2008-01-09 01:10:25 sean_brydon Exp $
+ * $Id: IConfigurationKeyConstants.java,v 1.4 2008-01-10 20:50:53 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,7 +162,6 @@ public interface IConfigurationKeyConstants {
              CONFIG_SUBKEY_SERVICE_RESOLVER,
              CONFIG_SUBKEY_LOCALE_LANG,
              CONFIG_SUBKEY_LOCALE_COUNTRY,
-             CONFIG_SUBKEY_AUDIT_LOG_MODE,
              CONFIG_SUBKEY_ANONYMOUS_USER_NAME,
              CONFIG_SUBKEY_ORG_NAME
      };

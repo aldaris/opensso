@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.11 2008-01-09 01:10:25 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.12 2008-01-10 20:50:53 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -792,19 +792,18 @@ public class AgentConfiguration implements
     }
     
     private static synchronized void setAuditLogMode() {
-        if (!isInitialized()) {
-            AuditLogMode mode = AuditLogMode.get(
-                    getProperty(CONFIG_AUDIT_LOG_MODE));
+        AuditLogMode mode = AuditLogMode.get(
+                getProperty(CONFIG_AUDIT_LOG_MODE));
         
-                if (mode == null) {
-                    throw new RuntimeException("Unknown Audit Log Mode: " 
+        if (mode == null) {
+            throw new RuntimeException("Unknown Audit Log Mode: "
                     + getProperty(CONFIG_AUDIT_LOG_MODE));
-                }
-                _auditLogMode = mode;
-                if (isLogMessageEnabled()) {
-                    logMessage("AgentConfiguration: Audit Log mode set to: "
+        }
+        _auditLogMode = mode;
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration.setAuditLogMode: Audit Log mode"
+                    + " set to: "
                     + _auditLogMode);
-                }
         }
     }
     
@@ -1048,7 +1047,6 @@ public class AgentConfiguration implements
             registerAgentNotificationHandler();
             
             //now set some class fields with property values
-            setAuditLogMode();
             setAnonymousUserName();           
             setHotSwappableConfigProps();          
             //set some fields as some clientsdk props also used by agent code
@@ -1063,6 +1061,7 @@ public class AgentConfiguration implements
      * set on initialization and reload of configuration property values
      */
     private static void setHotSwappableConfigProps() {
+        setAuditLogMode();
         setUserMappingMode();
         setUserAttributeName();
         setUserPrincipalEnabledFlag();

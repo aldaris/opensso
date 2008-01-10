@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuditResultHandler.java,v 1.1 2006-09-28 23:30:41 huacui Exp $
+ * $Id: AuditResultHandler.java,v 1.2 2008-01-10 20:50:53 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ implements IAuditResultHandler {
     throws AgentException {
         super.initialize(context, mode);
         initAmAgentLog();
+        setAuditLogMode(AgentConfiguration.getAuditLogMode());       
     }
 
     /**
@@ -93,7 +94,7 @@ implements IAuditResultHandler {
     
     private boolean logAllowEnabled() {
         boolean result = false;
-        switch(AgentConfiguration.getAuditLogMode().getIntValue()) {
+        switch(getAuditLogMode().getIntValue()) {
                     case AuditLogMode.INT_MODE_ALLOW:
                     case AuditLogMode.INT_MODE_BOTH:
                         result = true;
@@ -104,7 +105,7 @@ implements IAuditResultHandler {
     
     private boolean logDenyEnabled() {
         boolean result = false;
-        switch(AgentConfiguration.getAuditLogMode().getIntValue()) {
+        switch(getAuditLogMode().getIntValue()) {
                 case AuditLogMode.INT_MODE_DENY:
                 case AuditLogMode.INT_MODE_BOTH:
                     result = true;
@@ -118,8 +119,7 @@ implements IAuditResultHandler {
      * @return true if the result handler is enabled, false otherwise
      */
     public boolean isActive() {
-        return !AgentConfiguration.getAuditLogMode().equals(
-                AuditLogMode.MODE_NONE);
+        return !getAuditLogMode().equals(AuditLogMode.MODE_NONE);
     }
 
     /**
@@ -184,8 +184,15 @@ implements IAuditResultHandler {
     private IAmAgentLog getAmAgentLog() {
         return _amAgentLog;
     }
-
-    private int _auditLogMode;
-    private String _unknownUserName;
+    
+    private void setAuditLogMode (AuditLogMode auditLogMode) {
+        _auditLogMode = auditLogMode;
+    }
+    
+    private AuditLogMode getAuditLogMode() {
+        return _auditLogMode;
+    }
+    
+    private AuditLogMode _auditLogMode = AuditLogMode.MODE_BOTH;
     private IAmAgentLog _amAgentLog;
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealmBase.java,v 1.2 2007-11-27 02:15:18 sean_brydon Exp $
+ * $Id: AmRealmBase.java,v 1.3 2008-01-10 20:50:54 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,7 +40,9 @@ import com.sun.identity.agents.log.IAmAgentLog;
 
 
 /**
- * The base class for agent realm implementation
+ * The base class for agent realm implementation. 
+ * This class is initialized at agent start up and also on an agent 
+ * configuration reload.
  */
 public abstract class AmRealmBase extends AgentBase implements IAmRealm {
     
@@ -83,7 +85,8 @@ public abstract class AmRealmBase extends AgentBase implements IAmRealm {
 
     public void initialize() throws AgentException {
         initMembershipCache();
-        initAmAgentLog();        
+        initAmAgentLog(); 
+        setAuditLogMode(AgentConfiguration.getAuditLogMode().getIntValue());
     }
     
     private void cacheMembership(String userName, Set membershipSet, 
@@ -100,7 +103,7 @@ public abstract class AmRealmBase extends AgentBase implements IAmRealm {
     
     private boolean logAllowEnabled() {
         boolean result = false;
-        switch(AgentConfiguration.getAuditLogMode().getIntValue()) {
+        switch(getAuditLogMode()) {
                     case AuditLogMode.INT_MODE_ALLOW:
                     case AuditLogMode.INT_MODE_BOTH:
                         result = true;
@@ -111,7 +114,7 @@ public abstract class AmRealmBase extends AgentBase implements IAmRealm {
     
     private boolean logDenyEnabled() {
         boolean result = false;
-        switch(AgentConfiguration.getAuditLogMode().getIntValue()) {
+        switch(getAuditLogMode()) {
                 case AuditLogMode.INT_MODE_DENY:
                 case AuditLogMode.INT_MODE_BOTH:
                     result = true;
@@ -162,8 +165,17 @@ public abstract class AmRealmBase extends AgentBase implements IAmRealm {
     private IAmAgentLog getAmAgentLog() {
         return _amAgentLog;
     }
+    
+    private void setAuditLogMode (int auditLogMode) {
+        _auditLogMode = auditLogMode;
+    }
+    
+    private int getAuditLogMode() {
+        return _auditLogMode;
+    }    
         
    
     private AmRealmMembershipCache _membershipCache;
-    private IAmAgentLog _amAgentLog;    
+    private IAmAgentLog _amAgentLog;
+    private int _auditLogMode;
 }
