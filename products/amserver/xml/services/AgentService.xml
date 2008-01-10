@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.20 2008-01-04 02:01:33 huacui Exp $
+   $Id: AgentService.xml,v 1.21 2008-01-10 23:54:51 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2793,7 +2793,47 @@
                         i18nKey="a333">
                     </AttributeSchema>
                 </SubSchema>
-                
+                <SubSchema name="2.2_Agent" inheritance="multiple">
+                    <AttributeSchema name="userpassword"
+                        type="single"
+                        syntax="password"
+                        validator="RequiredValueValidator"
+                        i18nKey="a100">
+                        <DefaultValues>
+                            <Value>&#160;</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="description"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a500">
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceKeyValue"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a501">
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceStatus"
+                        type="single_choice"
+                        syntax="string"
+                        validator="RequiredValueValidator"
+                        i18nKey="a101">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a102">Active</ChoiceValue>
+                            <ChoiceValue i18nKey="a103">Inactive</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Active</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>                
+                </SubSchema>
             </Organization>
         </Schema>
         <Configuration>
