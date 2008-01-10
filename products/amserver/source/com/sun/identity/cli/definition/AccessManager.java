@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.52 2008-01-03 00:22:27 veiming Exp $
+ * $Id: AccessManager.java,v 1.53 2008-01-10 22:15:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1982,7 +1982,9 @@ public class AccessManager {
         },
         optionAliases={},
         macro="authentication",
-        optionalOptions={},
+        optionalOptions={
+            "withdefaults|w|u|Set this flag to get default configuration."
+            },
         resourceStrings={
             "list-server-config-succeeded=The followings are the configuration of {0}.",
             "list-server-config-no-results=There are no configuration."

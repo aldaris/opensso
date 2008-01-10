@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListServerConfig.java,v 1.1 2007-10-17 23:00:28 veiming Exp $
+ * $Id: ListServerConfig.java,v 1.2 2008-01-10 22:15:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,7 @@ import java.util.logging.Level;
  * Searches for realms command.
  */
 public class ListServerConfig extends AuthenticatedCommand {
+    private static final String OPTION_WITH_DEFAULTS = "withdefaults";
     /**
      * Lists Server Configuration.
      *
@@ -73,6 +74,12 @@ public class ListServerConfig extends AuthenticatedCommand {
             Properties prop = ServerConfiguration.getServerInstance(
                 adminSSOToken, serverName);
             if ((prop != null) && !prop.isEmpty()) {
+                if (isOptionSet(OPTION_WITH_DEFAULTS)) {
+                    Properties defProp = ServerConfiguration.getDefaults(
+                        adminSSOToken);
+                    defProp.putAll(prop);
+                    prop = defProp;
+                }
                 outputWriter.printlnMessage(MessageFormat.format(
                     getResourceString("list-server-config-succeeded"), 
                     (Object[])params));
