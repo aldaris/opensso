@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyServerEditSecurity.xml,v 1.3 2007-12-20 20:09:08 veiming Exp $
+   $Id: propertyServerEditSecurity.xml,v 1.4 2008-01-11 21:58:52 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -177,6 +177,112 @@
         </cc>
         <fieldhelp name="helpcsccom-sun-identity-saml-zmlsig-certalias" 
             defaultValue="amconfig.help.com.sun.identity.saml.xmlsig.certalias" />
+    </property>
+    </section>
+    <section name="secCRLCache" defaultValue="amconfig.header.crlcache" >
+    <property>
+        <label name="lblcsccom.sun.identity.crl.cache.directory.host"
+            defaultValue="amconfig.com.sun.identity.crl.cache.directory.host"
+            labelFor="csccom.sun.identity.crl.cache.directory.host" />
+        <cc name="csccom.sun.identity.crl.cache.directory.host"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="50" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblcsccom.sun.identity.crl.cache.directory.port"
+            defaultValue="amconfig.com.sun.identity.crl.cache.directory.port"
+            labelFor="csccom.sun.identity.crl.cache.directory.port" />
+        <cc name="csccom.sun.identity.crl.cache.directory.port"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="10" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblcsccom.sun.identity.crl.cache.directory.ssl"
+            defaultValue="amconfig.com.sun.identity.crl.cache.directory.ssl"
+            labelFor="csccom.sun.identity.crl.cache.directory.ssl" />
+        <cc name="csccom.sun.identity.crl.cache.directory.ssl"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="amconfig.choice.yes" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblcsccom.sun.identity.crl.cache.directory.user"
+            defaultValue="amconfig.com.sun.identity.crl.cache.directory.user"
+            labelFor="csccom.sun.identity.crl.cache.directory.user" />
+        <cc name="csccom.sun.identity.crl.cache.directory.user"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="50" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblcsccom.sun.identity.crl.cache.directory.password"
+            defaultValue="amconfig.com.sun.identity.crl.cache.directory.password"
+            labelFor="csccom.sun.identity.crl.cache.directory.password" />
+        <cc name="csccom.sun.identity.crl.cache.directory.password"
+            tagclass="com.sun.web.ui.taglib.html.CCPasswordTag">
+        </cc>
+    </property>
+    <property>
+        <label name="lblcsccom.sun.identity.crl.cache.directory.searchlocs"
+            defaultValue="amconfig.com.sun.identity.crl.cache.directory.searchlocs"
+            labelFor="csccom.sun.identity.crl.cache.directory.searchlocs" />
+        <cc name="csccom.sun.identity.crl.cache.directory.searchlocs"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="50" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblcsccom.sun.identity.crl.cache.directory.searchattr"
+            defaultValue="amconfig.com.sun.identity.crl.cache.directory.searchattr"
+            labelFor="csccom.sun.identity.crl.cache.directory.searchattr" />
+        <cc name="csccom.sun.identity.crl.cache.directory.searchattr"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="50" />
+        </cc>
+        <fieldhelp name="helpcsccom-sun-identity-crl-cache-directory-searchattr" 
+            defaultValue="amconfig.help.com.sun.identity.crl.cache.directory.searchattr" />
+    </property>
+    </section>
+    <section name="secOCSPCheck" defaultValue="amconfig.header.ocsp.check" >
+    <property>
+        <label name="lblcsccom.sun.identity.authentication.ocspCheck"
+            defaultValue="amconfig.com.sun.identity.authentication.ocspCheck"
+            labelFor="csccom.sun.identity.authentication.ocspCheck" />
+        <cc name="csccom.sun.identity.authentication.ocspCheck"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="amconfig.choice.yes" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblcsccom.sun.identity.authentication.ocsp.responder.url"
+            defaultValue="amconfig.com.sun.identity.authentication.ocsp.responder.url"
+            labelFor="csccom.sun.identity.authentication.ocsp.responder.url" />
+        <cc name="csccom.sun.identity.authentication.ocsp.responder.url"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="50" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblcsccom.sun.identity.authentication.ocsp.responder.nickname"
+            defaultValue="amconfig.com.sun.identity.authentication.ocsp.responder.nickname"
+            labelFor="csccom.sun.identity.authentication.ocsp.responder.nickname" />
+        <cc name="csccom.sun.identity.authentication.ocsp.responder.nickname"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="50" />
+        </cc>
+    </property>
+    </section>
+    <section name="secFIPS" defaultValue="amconfig.header.fips" >
+    <property>
+        <label name="lblcsccom.sun.identity.security.fipsmode"
+            defaultValue="amconfig.com.sun.identity.security.fipsmode"
+            labelFor="csccom.sun.identity.security.fipsmode" />
+        <cc name="csccom.sun.identity.security.fipsmode"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="amconfig.choice.yes" />
+        </cc>
     </property>
     </section>
 </propertysheet>
