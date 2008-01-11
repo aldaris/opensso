@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationConstants.java,v 1.3 2007-08-28 00:37:59 qcheng Exp $
+ * $Id: WSFederationConstants.java,v 1.4 2008-01-11 19:23:52 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,21 +69,6 @@ public final class WSFederationConstants {
     public static final String URN_OASIS_NAMES_TC_SAML_11 = 
         "urn:oasis:names:tc:SAML:1.1";
     /**
-     * User Principal Name (UPN) claim URI.
-     */ 
-    public static final String CLAIMS_UPN_URI = 
-        "http://schemas.xmlsoap.org/claims/UPN";
-    /**
-     * Email address claim URI.
-     */ 
-    public static final String CLAIMS_EMAIL_ADDRESS_URI = 
-        "http://schemas.xmlsoap.org/claims/EmailAddress";
-    /**
-     * Common name claim URI.
-     */ 
-    public static final String CLAIMS_COMMON_NAME_URI = 
-        "http://schemas.xmlsoap.org/claims/CommonName";
-    /**
      * Group claim URI.
      */ 
     public static final String CLAIMS_GROUP_URI = 
@@ -93,21 +78,6 @@ public final class WSFederationConstants {
      */ 
     public static final String WS_ADDRESSING_URI = 
         "http://schemas.xmlsoap.org/ws/2004/08/addressing";
-    /**
-     * Display name for UPN claim.
-     */ 
-    public static final String CLAIMS_UPN_DISPLAY_NAME = 
-        "User Principal Name";
-    /**
-     * Display name for Email Address claim.
-     */ 
-    public static final String CLAIMS_EMAIL_ADDRESS_DISPLAY_NAME = 
-        "Email Address";
-    /**
-     * Display name for Common Name claim.
-     */ 
-    public static final String CLAIMS_COMMON_NAME_DISPLAY_NAME = 
-        "Common Name";
     /**
      * Display name for Group claim.
      */ 
@@ -274,5 +244,34 @@ public final class WSFederationConstants {
     /**
      * HTTP request parameter for ws-federation entity id
      */
-    public static final String ENTITYID_PARAM = "wsfed-entityid"; 
+    public static final String ENTITYID_PARAM = "wsfed-entityid";     
+    /**
+     * Claim type URIs, as defined in 'WS-Federation: Passive Requestor 
+     * Interoperability Profile' document
+     */
+    public static final String[] NAMED_CLAIM_TYPES = {
+        "http://schemas.xmlsoap.org/claims/UPN", 
+        "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress", 
+        "http://schemas.xmlsoap.org/claims/CommonName" };
+    /**
+     * Claim type Displey names
+     */
+    public static final String[] NAMED_CLAIM_DISPLAY_NAMES = {
+        "UPN", 
+        "Email Address", 
+        "Common Name" };
+    /**
+     * Index into NAMED_CLAIM_TYPES and NAMED_CLAIM_DISPLAY_NAMES arrays for UPN
+     */
+    public static final int NAMED_CLAIM_UPN = 0;
+    /**
+     * Index into NAMED_CLAIM_TYPES and NAMED_CLAIM_DISPLAY_NAMES arrays for 
+     * Email Address
+     */
+    public static final int NAMED_CLAIM_EMAILADDRESS = 1;
+    /**
+     * Index into NAMED_CLAIM_TYPES and NAMED_CLAIM_DISPLAY_NAMES arrays for 
+     * Common Name
+     */
+    public static final int NAMED_CLAIM_COMMONNAME = 2;
 }

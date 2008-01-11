@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.2 2007-08-01 21:04:05 superpat7 Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.3 2008-01-11 19:23:53 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,8 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
                 WSFederationConstants.UPN_DOMAIN);
 
             nameID = new NameIdentifier(upn, null, 
-                WSFederationConstants.CLAIMS_UPN_URI);
+                WSFederationConstants.NAMED_CLAIM_TYPES[
+                WSFederationConstants.NAMED_CLAIM_UPN]);
         }
         catch (SAMLException se){
             throw new WSFederationException(se);

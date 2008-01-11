@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.24 2007-12-15 06:27:23 hengming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.25 2008-01-11 19:23:52 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1759,9 +1759,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         UriNamedClaimTypesOfferedElement uncto = 
             objFactory.createUriNamedClaimTypesOfferedElement();
         ClaimType ct = objFactory.createClaimType();
-        ct.setUri(WSFederationConstants.CLAIMS_UPN_URI);
+        ct.setUri(WSFederationConstants.NAMED_CLAIM_TYPES[
+            WSFederationConstants.NAMED_CLAIM_UPN]);
         DisplayNameType dnt = objFactory.createDisplayNameType();
-        dnt.setValue(WSFederationConstants.CLAIMS_UPN_DISPLAY_NAME);
+        dnt.setValue(WSFederationConstants.NAMED_CLAIM_DISPLAY_NAMES[
+            WSFederationConstants.NAMED_CLAIM_UPN]);
         ct.setDisplayName(dnt);
         uncto.getClaimType().add(ct);
         fed.getAny().add(uncto);
