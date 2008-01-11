@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amNaming.xml,v 1.7 2007-11-14 20:38:35 veiming Exp $
+   $Id: amNaming.xml,v 1.8 2008-01-11 21:51:06 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/iPlanetAMNamingService"
             i18nFileName="amNaming"
-            revisionNumber="20"
+            revisionNumber="30"
             i18nKey="iplanet-am-naming-service-description">
              <Global>
                 <AttributeSchema name="serviceObjectClasses"
