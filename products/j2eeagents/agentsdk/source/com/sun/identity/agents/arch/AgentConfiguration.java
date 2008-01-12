@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.12 2008-01-10 20:50:53 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.13 2008-01-12 01:19:40 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -534,17 +534,23 @@ public class AgentConfiguration implements
     }
     
     private static SSOToken getAppSSOToken() throws AgentException {
-        try {
-            if ((_appSSOToken == null) ||
-               (!SSOTokenManager.getInstance().isValidToken(_appSSOToken))) {
+        if (_appSSOToken != null) {
+            try {
+               // check if token is still valid with the session server.
+               // This refreshSession call throws a SSOException if the token
+               // is not valid any more.
+               SSOTokenManager.getInstance().refreshSession(_appSSOToken);
+            } catch (SSOException se) {
                 if (isLogMessageEnabled()) {
-                    logMessage("AgentConfiguration: " +
-                       "need to reauthenticate to get a new app SSO token");
+                    logMessage("AgentConfiguration.getAppSSOToken: " +
+                       "The app SSO token is invalid, indicating opensso " +
+                       "server may have restarted, so need to " + 
+                       "reauthenticate to get a new app SSO token");
                 }
                 setAppSSOToken();
             }
-        } catch (SSOException se) {
-            throw new AgentException(se);
+        } else {
+            setAppSSOToken();
         }
         return _appSSOToken;
     }
