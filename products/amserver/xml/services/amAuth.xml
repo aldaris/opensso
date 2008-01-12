@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.8 2007-10-15 17:55:05 rajeevangal Exp $
+    $Id: amAuth.xml,v 1.9 2008-01-12 01:07:17 dillidorai Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/authentication/iPlanetAMAuthService"
             i18nFileName="amAuth"
-            revisionNumber="40"
+            revisionNumber="50"
             i18nKey="iplanet-am-auth-service-description">
             <Global>
                 <AttributeSchema name="iplanet-am-auth-supported-auth-modules"
