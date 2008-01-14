@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.31 2007-12-03 22:37:10 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.32 2008-01-14 19:14:31 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -188,6 +188,8 @@ public class LDAPv3Repo extends IdRepo {
     private String uniqueMemberAttr = null;
 
     private String memberURLAttr = null;
+
+    private String defaultGrpMem = null;
 
     private String isActiveAttrName = null;
 
@@ -394,6 +396,9 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String LDAPv3Config_UNIQUEMEMBER = 
         "sun-idrepo-ldapv3-config-uniquemember";
+
+    private static final String LDAPv3Config_DEFAULTGROUPMEMBER = 
+        "sun-idrepo-ldapv3-config-dftgroupmember";
 
     private static final String LDAPv3Config_MEMBERURL =
         "sun-idrepo-ldapv3-config-memberurl";
@@ -838,6 +843,8 @@ public class LDAPv3Repo extends IdRepo {
                 LDAPv3Config_MEMBEROF);
         uniqueMemberAttr = getPropertyStringValue(configParams,
                 LDAPv3Config_UNIQUEMEMBER);
+        defaultGrpMem = getPropertyStringValue(configParams,
+                LDAPv3Config_DEFAULTGROUPMEMBER);
         memberURLAttr = getPropertyStringValue(configParams,
                 LDAPv3Config_MEMBERURL);
         userAtttributesAllowed = new CaseInsensitiveHashSet();
@@ -1648,6 +1655,10 @@ public class LDAPv3Repo extends IdRepo {
             ldapAttrSet.add(new LDAPAttribute(LDAP_OBJECT_CLASS, attrValues));
 
         }
+        if (type.equals(IdType.GROUP) && (defaultGrpMem != null)) {  
+            // add default user to group.
+            ldapAttrSet.add(new LDAPAttribute(uniqueMemberAttr, defaultGrpMem));
+        }
         if (debug.messageEnabled()) {
             debug.message("    : before ld.add: eDN=" + eDN);
         }
@@ -1664,6 +1675,31 @@ public class LDAPv3Repo extends IdRepo {
             connPool.close(ld);
             attrMap = origAttrMap;
             handleLDAPException(lde, eDN);
+        }
+        if (type.equals(IdType.GROUP) && (defaultGrpMem != null)) {
+            if (memberOfAttr != null) {
+                try { 
+                    checkConnPool();
+                    ld = connPool.getConnection();
+                    LDAPAttribute mbrOf = new LDAPAttribute(memberOfAttr, eDN);
+                    LDAPModification modMemberOf = 
+                        new LDAPModification(LDAPModification.ADD, mbrOf);
+                    ld.modify(defaultGrpMem, modMemberOf);
+                    if (cacheEnabled) {
+                        ldapCache.flushEntries(defaultGrpMem, LDAPv2.SCOPE_BASE);
+                    }
+                    connPool.close(ld);
+                } catch (LDAPException lde) {
+                    debug.error("LDAPv3Repo.create failed mod user. errorCode=" +
+                        lde.getLDAPResultCode() + "  " + lde.getLDAPErrorMessage());
+                    if (debug.messageEnabled()) {
+                        debug.message("LDAPv3Repo.create failed unable to mod user", lde);
+                    }
+                    connPool.close(ld);
+                    attrMap = origAttrMap;
+                    handleLDAPException(lde, eDN);
+                }
+            }
         }
         attrMap = origAttrMap;
         return eDN;

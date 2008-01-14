@@ -160,26 +160,6 @@
              <Value>memberOf</Value>
           </AttributeValuePair>
           <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-agent-search-attribute"/>
-             <Value></Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-agent-container-name"/>
-             <Value></Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-agent-container-value"/>
-             <Value></Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-agent-search-filter"/>
-             <Value></Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-agent-objectclass"/>
-             <Value></Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
              <Attribute name="sun-idrepo-ldapv3-config-authenticatable-type"/>
              <Value>User</Value>
           </AttributeValuePair>

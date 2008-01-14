@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.13 2007-10-31 22:27:00 exu Exp $
+   $Id: idRepoService.xml,v 1.14 2008-01-14 19:12:55 kenwho Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -305,7 +305,6 @@
                                insenstive. -->
                                <Value>realm=read,create,edit,delete,service</Value>
                                <Value>user=read,create,edit,delete,service</Value>
-                               <Value>agent=read,create,edit,delete</Value>
                                <Value>group=read,create,edit,delete</Value>
                         </DefaultValues>
                     </AttributeSchema>
@@ -669,6 +668,12 @@
                         </DefaultValues>
                     </AttributeSchema>
 
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-dftgroupmember"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a20251">
+                    </AttributeSchema>
+
                     <AttributeSchema name="sun-idrepo-ldapv3-config-roles-search-attribute"
                         type="single"
                         syntax="string"
@@ -774,81 +779,15 @@
                         i18nKey="a2035">
                     </AttributeSchema>
 
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-attribute"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a20351">
-                        <DefaultValues>
-                            <Value>@USER_NAMING_ATTR@</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-container-name"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2036">
-                        <DefaultValues>
-                            <Value>ou</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-container-value"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2037">
-                        <DefaultValues>
-                            <Value>agents</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-filter"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a20371">
-                        <DefaultValues>
-                            <Value>(objectClass=sunIdentityServerDevice)</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-objectclass"
-                        type="list"
-                        syntax="string"
-                        i18nKey="a2038">
-                        <DefaultValues>
-                            <Value>sunIdentityServerDevice</Value>
-                            <Value>top</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-attributes"
-                        type="list"
-                        syntax="string"
-                        i18nKey="a20381">
-                        <DefaultValues>
-                            <Value>cn</Value>
-                            <Value>dn</Value>
-                            <Value>objectclass</Value>
-                            <Value>sunIdentityServerDeviceKeyValue</Value>
-                            <Value>sunIdentityServerDeviceStatus</Value>
-                            <Value>sunIdentityServerDeviceType</Value>
-                            <Value>sunIdentityServerDeviceVersion</Value>
-                            <Value>sunxmlkeyvalue</Value>
-                            <Value>uid</Value>
-                            <Value>userpassword</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
                     <AttributeSchema name="sun-idrepo-ldapv3-config-authenticatable-type"
                         type="multiple_choice"
                         syntax="string"
                         i18nKey="a20385">
                         <ChoiceValues>
                             <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
-                            <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>User</Value>
-                            <Value>Agent</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1000,7 +939,6 @@
                                insenstive. -->
                                <Value>realm=read,create,edit,delete,service</Value>
                                <Value>user=read,create,edit,delete,service</Value>
-                               <Value>agent=read,create,edit,delete</Value>
                                <Value>group=read,create,edit,delete</Value>
                                <Value>role=read,create,edit,delete</Value>
                                <Value>filteredrole=read,create,edit,delete</Value>
@@ -1501,84 +1439,15 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-attribute"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a20351">
-                        <DefaultValues>
-                            <Value>@USER_NAMING_ATTR@</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-container-name"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2036">
-                        <DefaultValues>
-                            <Value>ou</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-container-value"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2037">
-                        <DefaultValues>
-                            <Value>agents</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-filter"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a20371">
-                        <DefaultValues>
-                            <Value>(objectClass=sunIdentityServerDevice)</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-objectclass"
-                        type="list"
-                        syntax="string"
-                        i18nKey="a2038">
-                        <DefaultValues>
-                            <Value>iplanet-am-user-service</Value>
-                            <Value>iplanetPreferences</Value>
-                            <Value>sunIdentityServerDevice</Value>
-                            <Value>top</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-attributes"
-                        type="list"
-                        syntax="string"
-                        i18nKey="a20381">
-                        <DefaultValues>
-                            <Value>cn</Value>
-                            <Value>description</Value>
-                            <Value>dn</Value>
-                            <Value>objectclass</Value>
-                            <Value>sunIdentityServerDeviceKeyValue</Value>
-                            <Value>sunIdentityServerDeviceStatus</Value>
-                            <Value>sunIdentityServerDeviceType</Value>
-                            <Value>sunIdentityServerDeviceVersion</Value>
-                            <Value>sunxmlkeyvalue</Value>
-                            <Value>uid</Value>
-                            <Value>userpassword</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
                     <AttributeSchema name="sun-idrepo-ldapv3-config-authenticatable-type"
                         type="multiple_choice"
                         syntax="string"
                         i18nKey="a20385">
                         <ChoiceValues>
                             <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
-                            <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>User</Value>
-                            <Value>Agent</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1739,7 +1608,6 @@
                                insenstive. -->
                                <Value>realm=read,create,edit,delete,service</Value>
                                <Value>user=read,create,edit,delete,service</Value>
-                               <Value>agent=read,create,edit,delete</Value>
                                <Value>group=read,create,edit,delete</Value>
                         </DefaultValues>
                     </AttributeSchema>
@@ -2208,81 +2076,15 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-attribute"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a20351">
-                        <DefaultValues>
-                            <Value>@USER_NAMING_ATTR@</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-container-name"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2036">
-                        <DefaultValues>
-                            <Value>cn</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-container-value"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2037">
-                        <DefaultValues>
-                            <Value>users</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-filter"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a20371">
-                        <DefaultValues>
-                            <Value>(objectClass=sunIdentityServerDevice)</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-objectclass"
-                        type="list"
-                        syntax="string"
-                        i18nKey="a2038">
-                        <DefaultValues>
-                            <Value>sunIdentityServerDevice</Value>
-                            <Value>top</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-attributes"
-                        type="list"
-                        syntax="string"
-                        i18nKey="a20381">
-                        <DefaultValues>
-                            <Value>cn</Value>
-                            <Value>dn</Value>
-                            <Value>objectclass</Value>
-                            <Value>sunIdentityServerDeviceKeyValue</Value>
-                            <Value>sunIdentityServerDeviceStatus</Value>
-                            <Value>sunIdentityServerDeviceType</Value>
-                            <Value>sunIdentityServerDeviceVersion</Value>
-                            <Value>sunxmlkeyvalue</Value>
-                            <Value>uid</Value>
-                            <Value>userpassword</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
                     <AttributeSchema name="sun-idrepo-ldapv3-config-authenticatable-type"
                         type="multiple_choice"
                         syntax="string"
                         i18nKey="a20385">
                         <ChoiceValues>
                             <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
-                            <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>User</Value>
-                            <Value>Agent</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
