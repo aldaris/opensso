@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaManager.java,v 1.3 2007-08-01 21:04:37 superpat7 Exp $
+ * $Id: WSFederationMetaManager.java,v 1.4 2008-01-14 21:52:35 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -652,8 +652,8 @@ public class WSFederationMetaManager {
                 if ((cotList != null) && !cotList.isEmpty()) {
                     for (Iterator iter = cotList.iterator(); 
                         iter.hasNext();) {
-                        cotm.addCircleOfTrustMember(realm, (String)iter.next(), 
-                            WSFEDERATION, federationId); 
+                        cotm.addCircleOfTrustMember(realm, (String)iter.next(),
+                                COTConstants.WS_FED, federationId); 
                      }               
                  }
              }
@@ -737,9 +737,11 @@ public class WSFederationMetaManager {
                 if ((cotList != null) && !cotList.isEmpty()) {
                     for (Iterator iter = cotList.iterator(); 
                         iter.hasNext();) {
-                        String a = (String) iter.next(); 
-                        cotm.removeCircleOfTrustMember(realm, 
-                                       a, WSFEDERATION,federationId);
+                        String a = ((String) iter.next()).trim();
+                        if (a.length() > 0) {
+                            cotm.removeCircleOfTrustMember(realm, 
+                                       a, COTConstants.WS_FED,federationId);
+                        }
                      }               
                  }
              }
