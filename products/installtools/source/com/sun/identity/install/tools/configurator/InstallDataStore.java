@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallDataStore.java,v 1.1 2006-09-28 07:37:27 rarcot Exp $
+ * $Id: InstallDataStore.java,v 1.2 2008-01-15 22:41:37 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,7 +139,7 @@ class InstallDataStore implements Serializable, InstallConstants {
         return (StateData) getInstancesMap().get(instanceName);
     }
 
-    private void setIsExistingStore(boolean isExistingStore) {
+    public void setIsExistingStore(boolean isExistingStore) {
         this.isExistingStore = isExistingStore;
     }
 
@@ -185,6 +185,7 @@ class InstallDataStore implements Serializable, InstallConstants {
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
+        sb.append(LINE_SEP);
         sb.append("***BEGIN**************InstallDataStore*****************");
         sb.append(LINE_SEP);
         sb.append("  isExistingStore  : ").append(isExistingStore);

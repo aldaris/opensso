@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.13 2008-01-10 20:50:54 sean_brydon Exp $
+# $Id: AMAgentConfiguration.template,v 1.14 2008-01-15 22:41:38 leiming Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -736,8 +736,8 @@ com.sun.identity.agents.config.default.privileged.attribute[0] = AUTHENTICATED_U
 com.sun.identity.agents.config.privileged.attribute.type[0] = Group
 com.sun.identity.agents.config.privileged.attribute.tolowercase[Group] = false
 com.sun.identity.agents.config.privileged.session.attribute[0] = 
-com.sun.identity.agents.config.privileged.attribute.mapping.enable=true
-
+com.sun.identity.agents.config.privileged.attribute.mapping.enable = true
+com.sun.identity.agents.config.privileged.attribute.mapping[] =
 
 #
 # SSO TOKEN COOKIE NAME

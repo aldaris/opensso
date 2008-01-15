@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Driver.java,v 1.2 2007-09-13 23:57:23 madan_ranganath Exp $
+ * $Id: Driver.java,v 1.3 2008-01-15 22:41:37 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -368,6 +368,11 @@ abstract public class Driver implements InstallConstants {
         _serverLocatorHandler = new ServerLocatorHandler(locatorClass);
     }
 
+    public void setMigrateServerLocatorHandler(InstallRunInfo installRunInfo) {
+        String locatorClass = installRunInfo.getHomeDirLocator();
+        _serverLocatorHandler = new MigrateServerLocatorHandler(locatorClass);
+    }
+    
     public void setOperationType(int type) {
         _operationType = type;
     }

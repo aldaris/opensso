@@ -18,7 +18,7 @@
             <class name="HomeDirLocator" type="custom"/>
         </home-dir-locator>
         <instance-finder-interactions>
-            <interaction lookupkey="STARTUP_SCR">
+            <interaction lookupkey="STARTUP_SCRIPT">
                 <i18n key="INT_STARTUP_SCR" group="wl10Tools"/>
                 <default-value-finder>
                     <class name="StartupScriptFinder" type="custom"/>
@@ -246,4 +246,57 @@
             </task>
         </instance-tasks>
     </uninstall>	
+    <migrate>
+        <common-interactions/>
+        <instance-interactions/>
+        <common-tasks>
+            <task name="REMOVE_MBEANS_JAR">
+                <class name="RemoveMbeansTask" type="custom"/>
+            </task>
+            <task name="COPY_MBEANS_JAR">
+                <class name="CopyMbeansTask" type="custom"/>
+            </task>
+        </common-tasks>
+        <instance-tasks>
+            <task name="BACKUP_FILE">
+                <class name="BackupFileTask" type="system"/>
+                <property name="BACK_UP_FILE_LOOKUP_KEY" 
+                          value="AGENT_ENV_FILE_PATH"/>
+            </task> 
+            <task name="UNCONFIGURE_STARTUP_SCRIPT">
+                <class name="UnconfigureStartupScriptTask" type="custom"/>
+            </task>
+            
+            <task name="CREATE_LAYOUT">
+                <class name="CreateLayoutTask" type="system"/>
+            </task>
+            <task name="GENERATE_AUDIT_LOGFILE_NAME">
+           		<class name="AuditLogFileNameTask" type="system"/>
+           		<property name="HOSTNAME_LOOKUP_KEY"
+           				  value="AGENT_HOST"/>
+           	    <property name="PORT_LOOKUP_KEY"
+           	    		  value="AGENT_PREF_PORT"/>
+           	    <property name="LOGFILE_NAME_OUTPUT_KEY"
+           	    		  value="AUDIT_LOG_FILENAME"/>
+           	</task>
+            <task name="CONFIGURE_AGENT_PROPS">
+            	<class name="MigrateConfigurePropertiesTask" type="system"/>    
+                <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
+                                      value="AMAgent.template"/>
+                <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
+                                      value="AMAgent.properties"/>
+                <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
+                                      value="AMAgentConfiguration.template"/>
+                <property name="CONFIG_FILENAME_AGENT_CONFIG"
+                                      value="AMAgentConfiguration.properties"/>
+            </task>
+            <task name="CONFIGURE_STARTUP_SCRIPT">
+                <class name="ConfigureStartupScriptTask" type="custom"/>
+            </task>
+            <task name="CONFIGURE_WEBLOGIC_PROPERTIES">
+                <class name="ConfigureWeblogicProperties" type="custom"/>
+            </task>
+        </instance-tasks>
+            
+    </migrate>
 </configure>

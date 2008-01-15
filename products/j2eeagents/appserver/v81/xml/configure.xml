@@ -273,4 +273,63 @@
 			</task>
 		</instance-tasks>
 	</uninstall>	
+        <migrate>
+            <common-interactions/>
+            <instance-interactions/>
+            <common-tasks>
+                <task name="BACKUP_FILE">
+                    <class name="BackupFileTask" type="system"/>
+                    <property name="BACK_UP_FILE_LOOKUP_KEY" 
+                              value="AS_LOGIN_CONF_FILE"/>
+                </task>                                             
+                <task name="BACKUP_FILE">
+                    <class name="BackupFileTask" type="system"/>
+                    <property name="BACK_UP_FILE_LOOKUP_KEY" 
+                              value="AS_SERVER_POLICY_FILE"/>
+                </task> 
+                <task name="UNCONFIGURE_LOGIN_CONF">
+                    <class name="UnconfigureLoginConfTask" type="custom"/>				
+                </task>
+                <task name="REMOVE_JAVA_PERMS">
+                    <class name="UnconfigureServerPolicyTask" type="custom"/>
+                </task>
+            </common-tasks>
+            <instance-tasks>
+                <task name="BACKUP_FILE">
+                    <class name="BackupFileTask" type="system"/>
+                    <property name="BACK_UP_FILE_LOOKUP_KEY" 
+                              value="AS_DOMAIN_XML_FILE"/>
+                </task>   
+                <task name="UNCONFIGURE_DOMAIN_XML">
+                    <class name="UnconfigureDomainXMLTask" type="custom"/>				
+                </task>
+                
+                <task name="CREATE_LAYOUT">
+                    <class name="CreateLayoutTask" type="system"/>
+                </task>
+                <task name="GENERATE_AUDIT_LOGFILE_NAME">
+                    <class name="AuditLogFileNameTask" type="system"/>
+                    <property name="HOSTNAME_LOOKUP_KEY"
+                              value="AGENT_HOST"/>
+                    <property name="PORT_LOOKUP_KEY"
+                              value="AGENT_PREF_PORT"/>
+                    <property name="LOGFILE_NAME_OUTPUT_KEY"
+                              value="AUDIT_LOG_FILENAME"/>
+                </task>
+                <task name="CONFIGURE_AGENT_PROPS">
+                    <class name="MigrateConfigurePropertiesTask" type="system"/>    
+                    <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
+                              value="AMAgent.template"/>
+                    <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
+                              value="AMAgent.properties"/>
+                    <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
+                              value="AMAgentConfiguration.template"/>
+                    <property name="CONFIG_FILENAME_AGENT_CONFIG"
+                              value="AMAgentConfiguration.properties"/>
+                </task>
+                <task name="CONFIGURE_DOMAIN_XML">                  
+                    <class name="ConfigureDomainXMLTask" type="custom"/>                                
+                </task> 
+            </instance-tasks>
+        </migrate>
 </configure>

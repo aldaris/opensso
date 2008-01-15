@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallConstants.java,v 1.4 2007-10-12 20:43:49 madan_ranganath Exp $
+ * $Id: InstallConstants.java,v 1.5 2008-01-15 22:41:37 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,9 @@ public interface InstallConstants extends ICommonToolsConstants {
     
     /** Field STR_UNINSTALL **/
     public static final String STR_UNINSTALL = "uninstall";
+    
+    /** Field STR_INSTALL **/
+    public static final String STR_MIGRATE = "migrate";
     
     /** Field STR_LOG_CONFIG_FILE_PATH **/
     public static final String STR_LOG_CONFIG_FILE_PATH = 
@@ -88,6 +91,14 @@ public interface InstallConstants extends ICommonToolsConstants {
     public static final String LOC_DR_ERR_PRODUCT_LOCATOR_WRITE = 
         "DR_ERR_PRODUCT_LOCATOR_WRITE";
     
+    /** Field DR_ERR_PRODUCT_LOCATOR_BACKUP **/
+    public static final String LOC_DR_ERR_PRODUCT_LOCATOR_BACKUP = 
+        "DR_ERR_PRODUCT_LOCATOR_BACKUP";
+    
+    /** Field DR_ERR_PRODUCT_LOCATOR_BACKUP **/
+    public static final String LOC_DR_ERR_PRODUCT_ALREADY_MIGRATED = 
+        "DR_ERR_PRODUCT_ALREADY_MIGRATED";
+    
     /** Field LOC_DR_ERR_INVALID_INSTALL_HOME **/
     public static final String LOC_DR_ERR_INVALID_INSTALL_HOME =
         "DR_ERR_INVALID_INSTALL_HOME";
@@ -113,6 +124,11 @@ public interface InstallConstants extends ICommonToolsConstants {
     /** Field STR_CONFIG_DIR_PREFIX_TAG **/
     public static final String STR_CONFIG_DIR_PREFIX_TAG = 
         "PRODUCT_INSTANCE_CONFIG_DIR";
+    
+    /** Field STR_CONFIG_DIR_MIGRATE_PREFIX_TAG **/
+    public static final String STR_CONFIG_DIR_PREFIX_MIGRATE_TAG = 
+        "PRODUCT_INSTANCE_CONFIG_MIGRATE_DIR";
+    
     
     /** Field STR_DEBUG_DIR_PREFIX **/
     public static final String STR_DEBUG_DIR_PREFIX_TAG = "DEBUG_LOGS_DIR";

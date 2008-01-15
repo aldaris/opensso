@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationLoader.java,v 1.1 2006-09-28 07:37:20 rarcot Exp $
+ * $Id: ConfigurationLoader.java,v 1.2 2008-01-15 22:41:37 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,10 @@ public class ConfigurationLoader {
         return _uninstallRunInfo;
     }
 
+    public InstallRunInfo getMigrateRunInfo() {
+        return _migrateRunInfo;
+    }
+    
     private void loadConfigurationFile(File configFile) throws InstallException
     {       XMLDocument xmlDoc = null;
         try {
@@ -74,6 +78,7 @@ public class ConfigurationLoader {
         initExitMessage(root);
         initInstall(root);
         initUninstall(root);
+        initMigrate(root);
     }
 
     private void initWelcomeMessage(XMLElement root) throws InstallException {
@@ -104,6 +109,21 @@ public class ConfigurationLoader {
         setUninstallRunInfo(info);
     }
 
+    private void initMigrate(XMLElement root) throws InstallException {
+        XMLElement migrateElement = getUniqueElement(STR_MIGRATE, root);
+        ArrayList commonInteractions = getCommonInteractions(migrateElement);
+        ArrayList instanceInteractions = getInstanceInteractions(
+                migrateElement);
+        ArrayList commonTasks = getCommonTasks(migrateElement);
+        ArrayList instanceTasks = getInstanceTasks(migrateElement);
+
+        InstallRunInfo info = new InstallRunInfo(false,
+                getHomeDirLocatorClass(), getInstanceFinderInteractions(),
+                commonInteractions, instanceInteractions, commonTasks,
+                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo());
+        setMigrateRunInfo(info);
+    }    
+    
     private void initInstall(XMLElement root) throws InstallException {
         XMLElement installElement = getUniqueElement(STR_INSTALL, root);
         ArrayList commonInteractions = getCommonInteractions(installElement);
@@ -465,6 +485,10 @@ public class ConfigurationLoader {
     private void setUninstallRunInfo(InstallRunInfo info) {
         _uninstallRunInfo = info;
     }
+    
+    private void setMigrateRunInfo(InstallRunInfo info) {
+        _migrateRunInfo = info;
+    }
 
     private I18NInfo getWelcomeMessageInfo() {
         return _welcomeMessageInfo;
@@ -491,6 +515,8 @@ public class ConfigurationLoader {
     private InstallRunInfo _installRunInfo;
 
     private InstallRunInfo _uninstallRunInfo;
+    
+    private InstallRunInfo _migrateRunInfo;
 
     private I18NInfo _welcomeMessageInfo;
 
@@ -599,6 +625,8 @@ public class ConfigurationLoader {
 
     public static final String STR_UNINSTALL = "uninstall";
 
+    public static final String STR_MIGRATE = "migrate";
+    
     public static final String ERROR_CONFIG_FILE_NOT_FOUND = 
         "error_config_file_not_found";
 

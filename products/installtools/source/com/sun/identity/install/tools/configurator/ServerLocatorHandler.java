@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerLocatorHandler.java,v 1.1 2006-09-28 07:37:33 rarcot Exp $
+ * $Id: ServerLocatorHandler.java,v 1.2 2008-01-15 22:41:37 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,7 +98,7 @@ class ServerLocatorHandler implements InstallConstants {
         return productHome;
     }
 
-    private String readProductHome() throws InstallException {
+    protected String readProductHome() throws InstallException {
         String firstLine = null;
         BufferedReader br = null;
         try {
@@ -141,7 +141,7 @@ class ServerLocatorHandler implements InstallConstants {
         }
     }
 
-    private String getServerHomeDir(IStateAccess stateAccess)
+    protected String getServerHomeDir(IStateAccess stateAccess)
             throws InstallException {
         IServerHomeDirLocator locator = null;
         try {
@@ -157,7 +157,7 @@ class ServerLocatorHandler implements InstallConstants {
         return locator.getServerDirectory(stateAccess);
     }
 
-    private String getServerLocatorClass() {
+    protected String getServerLocatorClass() {
         return serverLocatorClass;
     }
 
@@ -165,7 +165,7 @@ class ServerLocatorHandler implements InstallConstants {
         return productInstallLocatorFile;
     }
 
-    private void setProductLocatorFile(String file) {
+    protected void setProductLocatorFile(String file) {
         productInstallLocatorFile = file;
     }
 

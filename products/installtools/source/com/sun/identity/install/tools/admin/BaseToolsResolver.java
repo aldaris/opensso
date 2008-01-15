@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BaseToolsResolver.java,v 1.1 2006-09-28 07:37:17 rarcot Exp $
+ * $Id: BaseToolsResolver.java,v 1.2 2008-01-15 22:41:36 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import com.sun.identity.install.tools.handler.InstallHandler;
 import com.sun.identity.install.tools.handler.UninstallAllHandler;
 import com.sun.identity.install.tools.handler.UninstallHandler;
+import com.sun.identity.install.tools.handler.MigrateHandler;
 import com.sun.identity.install.tools.handler.VersionHandler;
 import com.sun.identity.install.tools.util.LocalizedMessage;
 
@@ -51,6 +52,11 @@ public abstract class BaseToolsResolver {
         result.add(new ToolsOptionsInfo(UninstallAllHandler.class.getName(),
                 STR_UNINSTALL_ALL_OPTION, LocalizedMessage
                         .get(LOC_HR_MSG_UNINSTALL_ALL_SHORT_HELP), false));
+        
+        result.add(new ToolsOptionsInfo(MigrateHandler.class.getName(),
+                STR_MIGRATE_OPTION,
+                LocalizedMessage.get(LOC_HR_MSG_MIGRATE_SHORT_HELP),
+                true));        
 
         return result;
     }
@@ -78,6 +84,8 @@ public abstract class BaseToolsResolver {
     public static final String STR_VERSION_OPTION = "--version";
 
     public static final String STR_UNINSTALL_ALL_OPTION = "--uninstallAll";
+    
+    public static final String STR_MIGRATE_OPTION = "--migrate";
 
     public static final String LOC_HR_MSG_INSTALL_SHORT_HELP = 
         "HR_MSG_INSTALL_SHORT_HELP";
@@ -90,4 +98,7 @@ public abstract class BaseToolsResolver {
 
     public static final String LOC_HR_MSG_UNINSTALL_ALL_SHORT_HELP = 
         "HR_MSG_UNINSTALL_ALL_SHORT_HELP";
+    
+     public static final String LOC_HR_MSG_MIGRATE_SHORT_HELP =
+        "HR_MSG_MIGRATE_SHORT_HELP";
 }
