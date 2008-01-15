@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.9 2007-11-02 01:41:40 ericow Exp $
+ * $Id: ISAuthConstants.java,v 1.10 2008-01-15 22:31:48 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -286,6 +286,9 @@ public interface ISAuthConstants {
 
     public static final String LOCKOUT_DURATION = AUTH_ATTR_PREFIX
             + "lockout-duration";
+
+    public static final String LOCKOUT_MULTIPLIER = 
+            "sunLockoutDurationMultiplier";
 
     public static final String LOGIN_FAILURE_COUNT = AUTH_ATTR_PREFIX
             + "login-failure-count";

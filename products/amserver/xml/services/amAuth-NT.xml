@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth-NT.xml,v 1.5 2007-10-17 23:00:53 veiming Exp $
+    $Id: amAuth-NT.xml,v 1.6 2008-01-15 22:34:29 pawand Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -158,6 +158,14 @@
                     i18nKey="a130">
                     <DefaultValues>
                         <Value>0</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="sunLockoutDurationMultiplier"
+                    type="single"
+                    syntax="number"
+                    i18nKey="a1301">
+                    <DefaultValues>
+                        <Value>1</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-login-failure-count" 

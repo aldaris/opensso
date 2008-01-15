@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccountLockoutInfo.java,v 1.1 2005-11-01 00:30:55 arvindp Exp $
+ * $Id: AccountLockoutInfo.java,v 1.2 2008-01-15 22:32:23 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,8 @@ public class AccountLockoutInfo {
     private int userWarningCount = 0;
 
     private String userToken = null;
+
+    private long actualLockoutDuration=0;
 
     /**
      * Returns the current failure count stored in this object.
@@ -67,6 +69,15 @@ public class AccountLockoutInfo {
     public long getLockoutAt() {
         return lockoutAt;
     }
+    
+    /**
+     * Returns the actual time the user needs be locked out.
+     *
+     * @return the actual time the user needs be locked out.
+     */
+     public long getActualLockoutDuration() {
+         return actualLockoutDuration;
+     }
 
     /**
      * Returns true if user was locked out
@@ -105,6 +116,14 @@ public class AccountLockoutInfo {
      */
     public void setLockoutAt(long now) {
         lockoutAt = now;
+    }
+
+    /**
+     * Sets the actual Lockout Duration
+     *
+     * @param aActualLockoutDuration actul current lockout duration*/
+    public void setActualLockoutDuration(long aActualLockoutDuration) {
+        actualLockoutDuration = aActualLockoutDuration;
     }
 
     /**

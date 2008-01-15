@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.9 2007-03-26 20:49:07 manish_rustagi Exp $
+ * $Id: ISAccountLockout.java,v 1.10 2008-01-15 22:32:23 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,6 +64,10 @@ public class ISAccountLockout {
     private static final String LAST_FAILED_END ="</LastInvalidAt>";
     private static final String LOCKEDOUT_AT_BEGIN ="<LockedoutAt>";
     private static final String LOCKEDOUT_AT_END ="</LockedoutAt>";
+    private static final String ACTUAL_LOCKOUT_DURATION_BEGIN =
+        "<ActualLockoutDuration>";
+    private static final String ACTUAL_LOCKOUT_DURATION_END =
+        "</ActualLockoutDuration>";
     private static final String END_XML="</InvalidPassword>";
     
     private boolean failureLockoutMode = false;
@@ -75,6 +79,7 @@ public class ISAccountLockout {
     private int lockoutUserWarning = 3;
     private int userWarningCount = 0;
     private long failureLockoutDuration = 0;
+    private int failureLockoutMultiplier = 1;
     private String lockoutAttrValue=null;
     private String lockoutAttrName=null;
     private String bundleName = null;
@@ -116,6 +121,7 @@ public class ISAccountLockout {
         String lockoutAttrName,
         String lockoutAttrValue,
         long lockoutFailureDuration,
+        int lockoutFailureMultiplier,
         String bundleName
     ) {
         this.failureLockoutMode = failureLockoutMode;
@@ -126,6 +132,7 @@ public class ISAccountLockout {
         this.lockoutAttrName = lockoutAttrName;
         this.lockoutAttrValue = lockoutAttrValue;
         this.failureLockoutDuration = lockoutFailureDuration;
+        this.failureLockoutMultiplier = lockoutFailureMultiplier;
         
         if (lockoutFailureDuration > 0) {
             memoryLocking = true;
@@ -175,6 +182,7 @@ public class ISAccountLockout {
         AMIdentity amIdentity, AccountLockoutInfo acInfo) {
         if (acInfo == null) {
             acInfo = new AccountLockoutInfo();
+            acInfo.setActualLockoutDuration(failureLockoutDuration);
             loginFailHash.put(userDN,acInfo);
         }
         
@@ -205,7 +213,7 @@ public class ISAccountLockout {
             Map attrMap = new HashMap();
             Set invalidAttempts = new HashSet();
             String invalidXML = createInvalidAttemptsXML(
-                fail_count,now,lockedAt);
+                fail_count,now,lockedAt, acInfo.getActualLockoutDuration());
             invalidAttempts.add(invalidXML);
             
             if (debug.messageEnabled()) {
@@ -287,6 +295,7 @@ public class ISAccountLockout {
             int invalid_attempts = 0;
             long last_failed = 0;
             long locked_out_at = 0;
+            long actual_lockout_duration = failureLockoutDuration;
             
             if ((xmlFromDS != null) && (xmlFromDS.length() !=0) &&
                 (xmlFromDS.indexOf(BEGIN_XML) != -1)
@@ -300,12 +309,21 @@ public class ISAccountLockout {
                 String locked_out_at_str = getElement(xmlFromDS,
                     LOCKEDOUT_AT_BEGIN, LOCKEDOUT_AT_END);
                 locked_out_at = Long.parseLong(locked_out_at_str);
+                String actualLockoutDuration = getElement(xmlFromDS,
+                    ACTUAL_LOCKOUT_DURATION_BEGIN, ACTUAL_LOCKOUT_DURATION_END);
+                if ((actualLockoutDuration != null) &&
+                    (actualLockoutDuration.length() != 0)) {
+                    actual_lockout_duration = Long.parseLong(
+                        actualLockoutDuration);
+                } else {
+                    actual_lockout_duration = failureLockoutDuration;
+                }
             }
             
             acInfo.setLastFailTime(last_failed);
             acInfo.setFailCount(invalid_attempts);
             acInfo.setLockoutAt(locked_out_at);
-            
+            acInfo.setActualLockoutDuration(actual_lockout_duration);
             if (locked_out_at > 0) {
                 acInfo.setLockout(true);
             }
@@ -498,12 +516,12 @@ public class ISAccountLockout {
             long now = System.currentTimeMillis();
             long lockOutTime = acInfo.getLockoutAt();
             
-            if ((lockOutTime + failureLockoutDuration) < now) {
+            if ((lockOutTime + acInfo.getActualLockoutDuration()) < now) {
                 // exceeded lockout time. unlock and return false..
                 if (debug.messageEnabled()) {
                     debug.message("isLockedOut returns false. " +
                         "loginFailureLockoutDuration=" +
-                        failureLockoutDuration +
+                        acInfo.getActualLockoutDuration() +
                         " lockOutTime=" + lockOutTime +
                         " now=" + now );
                 }
@@ -620,37 +638,67 @@ public class ISAccountLockout {
     public void resetLockoutAttempts(
         String userDN,
         AMIdentity amIdentity,
-        AccountLockoutInfo acInfo
+        AccountLockoutInfo acInfo,
+        boolean resetDuration
     ) {
         debug.message("entering ISAccountLockout.resetLockoutAttempts");
+        if (debug.messageEnabled()) {
+            debug.message("ISAccountLockout.resetLockoutAttempts:: "+
+                "resetDuration ="+resetDuration);
+        }
+        int fail_count = 0;
+        long lastFailTime = 0;
+        long locked_out_at = 0;
+        long actualLockoutDuration = failureLockoutDuration;
+        long currentLockoutDuration = acInfo.getActualLockoutDuration();
+        if (acInfo != null) {
+            fail_count = acInfo.getFailCount();
+            lastFailTime = acInfo.getLastFailTime();
+            locked_out_at = acInfo.getLockoutAt();
+            long now = System.currentTimeMillis();
+            if (!resetDuration) { 
+                actualLockoutDuration = currentLockoutDuration;
+                if (debug.messageEnabled()) {
+                    debug.message("ISAccountLockout.resetLockoutAttempts::"
+                        +"Locked out At ="+locked_out_at);
+                }
+                if (locked_out_at > 0) {
+                if (debug.messageEnabled()) {
+                    debug.message("ISAccountLockout.resetLockoutAttempts::"
+                        +" Using the multiplier");
+                }
+                    actualLockoutDuration = failureLockoutMultiplier*
+                        (currentLockoutDuration);
+                }
+            }
+        }
+
         if (storeInvalidAttemptsInDS) {
             try {
-                int fail_count = 0;
-                long lastFailTime = 0;
-                long locked_out_at = 0;
-                if (acInfo != null) {
-                    fail_count = acInfo.getFailCount();
-                    lastFailTime = acInfo.getLastFailTime();
-                    locked_out_at = acInfo.getLockoutAt();
-                }
-                
-                if ((fail_count !=0)||(lastFailTime !=0)||(locked_out_at !=0)) {
+                if ((fail_count !=0)||(lastFailTime !=0)||(locked_out_at !=0)||
+                    (actualLockoutDuration != currentLockoutDuration)) {
                     Map attrMap = new HashMap();
                     Set invalidAttempts = new HashSet();
-                    String invalidXML = createInvalidAttemptsXML(0,0,0);
+                    String invalidXML = createInvalidAttemptsXML(0,0,0,
+                        actualLockoutDuration);
                     invalidAttempts.add(invalidXML);
                     attrMap.put(INVALID_ATTEMPTS_XML_ATTR,invalidAttempts);
                     setLockoutObjectClass(amIdentity);
                     amIdentity.setAttributes(attrMap);
+                    debug.message("Saving XML = "+invalidXML);
                     amIdentity.store();
                 }
-                debug.message("ISAccountLockout.resetLockoutAttempts done");
-            } catch (Exception e) {
-                debug.message("ISAccountLockout.resetLockoutAttempts", e);
+                debug.message("ISAccountLockout::resetLockoutAttempts done");
+            } catch (Exception exp) {
+                debug.message("error reseting Lockout Attempts");
             }
-        } else {
-            loginFailHash.remove(userDN);
-        }
+        } 
+        //loginFailHash.remove(userDN);
+        acInfo.setFailCount(0);
+        acInfo.setLastFailTime(0);
+        acInfo.setLockoutAt(0);
+        acInfo.setLockout(false);
+        acInfo.setActualLockoutDuration(actualLockoutDuration);
         
     }
     
@@ -664,13 +712,17 @@ public class ISAccountLockout {
      *
      */
     private static String createInvalidAttemptsXML(
-        int invalidCount, long lastFailed, long lockedOutAt) {
+        int invalidCount, long lastFailed, long lockedOutAt, 
+        long actualLockoutDuration) {
         StringBuffer xmlBuffer = new StringBuffer(150);
         xmlBuffer.append(BEGIN_XML).append(INVALID_PASS_COUNT_BEGIN)
             .append(String.valueOf(invalidCount)).append(INVALID_PASS_COUNT_END)
             .append(LAST_FAILED_BEGIN).append(String.valueOf(lastFailed))
             .append(LAST_FAILED_END).append(LOCKEDOUT_AT_BEGIN)
             .append(String.valueOf(lockedOutAt)).append(LOCKEDOUT_AT_END)
+            .append(ACTUAL_LOCKOUT_DURATION_BEGIN)
+            .append(String.valueOf(actualLockoutDuration))
+            .append(ACTUAL_LOCKOUT_DURATION_END)
             .append(END_XML);
         return xmlBuffer.toString();
     }
