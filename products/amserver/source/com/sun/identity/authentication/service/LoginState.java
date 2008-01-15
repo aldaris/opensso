@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.18 2007-12-12 06:58:26 pawand Exp $
+ * $Id: LoginState.java,v 1.19 2008-01-15 22:31:19 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -234,6 +234,10 @@ public class LoginState {
      * Max time for loginFailureLockout.
      */
     public long loginFailureLockoutDuration = 0;
+    /**
+     * Multiplier for Memory Lockout Duration
+     */
+    public int loginFailureLockoutMultiplier = 0;
     /**
      * Default max time for loginFailureLockout.
      */
@@ -738,6 +742,15 @@ public class LoginState {
                     debug.error("auth-lockout-duration bad format.");
                 }
                 loginFailureLockoutDuration *= 60*1000;
+            }
+
+            tmp = Misc.getMapAttr(attrs, ISAuthConstants.LOCKOUT_MULTIPLIER);
+            if (tmp != null) {
+                try {
+                    loginFailureLockoutMultiplier = Integer.parseInt(tmp);
+                }catch(NumberFormatException e) {
+                    ad.debug.error("auth-lockout-multiplier bad format.");
+                }
             }
             
             tmp = CollectionHelper.getMapAttr(
@@ -4524,7 +4537,15 @@ public class LoginState {
     public long getLoginFailureLockoutDuration() {
         return loginFailureLockoutDuration;
     }
-    
+
+    /**
+     * Return multiplier for Memory Lockout
+     * @return LoginLockout multiplier
+     */
+    public int getLoginFailureLockoutMultiplier() {
+        return loginFailureLockoutMultiplier;
+    }
+
     /**
      * Sets old authentication context.
      *

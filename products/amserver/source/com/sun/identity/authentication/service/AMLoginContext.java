@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.7 2007-12-12 06:58:26 pawand Exp $
+ * $Id: AMLoginContext.java,v 1.8 2008-01-15 22:31:20 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -470,7 +470,7 @@ public class AMLoginContext {
                             loginState.logSuccess();
                             if (amAccountLockout.isLockoutEnabled()) {
                                 amAccountLockout.resetPasswdLockout(
-                                    loginState.getUserDN());
+                                    loginState.getUserDN(), true);
                             }
                             st.setStatus(LoginStatus.AUTH_SUCCESS);
                             loginState.updateSessionForFailover();

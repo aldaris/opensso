@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAccountLockout.java,v 1.3 2007-07-24 22:58:54 kenwho Exp $
+ * $Id: AMAccountLockout.java,v 1.4 2008-01-15 22:31:19 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,6 +60,7 @@ class AMAccountLockout {
     private String loginLockoutNotification = null;
     private int loginLockoutUserWarning = 3;
     private long loginFailureLockoutDuration = 0;
+    private int loginFailureLockoutMultiplier = 0;
     /**
      * Value of login lockout attribute
      */
@@ -98,6 +99,8 @@ class AMAccountLockout {
         loginLockoutAttrValue = loginState.getLoginLockoutAttrValue();
         loginFailureLockoutDuration =
             loginState.getLoginFailureLockoutDuration();
+        loginFailureLockoutMultiplier =
+            loginState.getLoginFailureLockoutMultiplier();
         loginFailureLockoutMode = loginState.getLoginFailureLockoutMode();
         loginFailureLockoutStoreInDS = loginState.
         getLoginFailureLockoutStoreInDS();
@@ -106,7 +109,8 @@ class AMAccountLockout {
             loginFailureLockoutTime, loginFailureLockoutCount,
             loginLockoutNotification, loginLockoutUserWarning,
             loginLockoutAttrName, loginLockoutAttrValue,
-            loginFailureLockoutDuration, bundleName);
+            loginFailureLockoutDuration, loginFailureLockoutMultiplier,
+            bundleName);
 
         isAccountLockout.setStoreInvalidAttemptsInDS(
         loginFailureLockoutStoreInDS);
@@ -199,8 +203,9 @@ class AMAccountLockout {
      * Resets the account if passed authentication after a failure.
      *
      * @param token User name.
+     * @param resetDuration boolean
      */
-    public void resetPasswdLockout(String token) {
+    public void resetPasswdLockout(String token, boolean resetDuration) {
         try {
             // remove the hash entry for login failure for tokenID
             String userDN = null;
@@ -218,7 +223,8 @@ class AMAccountLockout {
                 if (acInfo == null) {
                     acInfo = isAccountLockout.getAcInfo(userDN,amIdentity);
                 }
-                isAccountLockout.resetLockoutAttempts(userDN,amIdentity,acInfo);
+                isAccountLockout.resetLockoutAttempts(userDN,amIdentity,acInfo,
+                    resetDuration);
                 warnUser = 0;
             }
         
@@ -304,7 +310,7 @@ class AMAccountLockout {
                 if (acInfo != null) {
                     locked = isAccountLockout.isLockedOut(acInfo);
                     if ((!locked) && acInfo.isLockout()) {
-                        resetPasswdLockout(aUserName);
+                        resetPasswdLockout(aUserName, false);
                     }
                 }
                 
@@ -346,11 +352,11 @@ class AMAccountLockout {
                 if (isAccountValid(amIdentity)) {
                     locked = isAccountLockout.isAccountLocked(amIdentity) ;
                     if (locked) {
-                        resetPasswdLockout(aUserName);
+                        resetPasswdLockout(aUserName, false);
                     }
                 } else  {
                     locked=true;
-                    resetPasswdLockout(aUserName);
+                    resetPasswdLockout(aUserName, false);
                 }
             }
             
