@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.39 2007-12-14 07:04:06 qcheng Exp $
+   $Id: build.xml,v 1.40 2008-01-15 06:44:17 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -242,6 +242,7 @@
             <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/idm" />
             <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/images" />
             <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/js" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/css" />
             <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/policy" />
             <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/realm" />
             <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/service" />

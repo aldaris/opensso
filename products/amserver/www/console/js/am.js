@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.js,v 1.2 2007-10-17 23:00:50 veiming Exp $
+ * $Id: am.js,v 1.3 2008-01-15 06:44:18 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,5 +115,48 @@ function countCheckboxesInTable(formName, tblName) {
                                                                                 
     return cbCount;
 }
+
+function getXmlHttpRequestObject() {
+    if(window.ActiveXObject) {
+        return new ActiveXObject("Microsoft.XMLHTTP"); //IE
+    } else {
+        return new XMLHttpRequest(); 
+    }
+}
+
+function ajaxGet(req, url, callback) {
+    if (req.readyState == 4 || req.readyState == 0) {
+        req.open("GET", url, true);
+        req.onreadystatechange = callback;
+        req.send(null);
+    }
+}
+
+function ajaxPost(req, url, params, callback) {
+    if (req.readyState == 4 || req.readyState == 0) {
+        req.open("POST", url, true);
+        req.setRequestHeader("Content-type",
+           "application/x-www-form-urlencoded");
+        req.setRequestHeader("Content-length", params.length);
+        req.setRequestHeader("Connection", "close");
+        req.onreadystatechange = callback;
+        req.send(params);
+    }
+}
+
+function fade() {
+    var maindiv = document.getElementById('main');
+    maindiv.style.opacity = 0.6;
+    maindiv.style.backgroundColor = 'darkgray';
+    document.getElementById('dlg').style.display='block';
+}
+
+function focusMain() {
+    var maindiv = document.getElementById('main');
+    maindiv.style.opacity = 1.0
+    maindiv.style.backgroundColor = 'white';
+    document.getElementById('dlg').style.display='none';
+}
+
 
 

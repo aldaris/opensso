@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.25 2008-01-11 19:23:52 superpat7 Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.26 2008-01-15 06:44:19 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
+import com.sun.identity.workflow.CreateSAML2HostedProviderTemplate;
 import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.ClaimType;
@@ -61,6 +62,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.security.cert.CertificateEncodingException;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -136,7 +139,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         if (!isWebBased || (extendedData != null)) {
             buildConfigTemplate();
         }
-
         if (!isWebBased || (metadata != null)) {
             buildDescriptorTemplate();
         }
@@ -363,8 +365,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     
     private void buildDescriptorTemplate()
     throws CLIException {
-        String url =  protocol + "://" + host + ":" + port + deploymentURI;
-        
         Writer pw = null;
         try {
             if (!isWebBased && (metadata != null) && (metadata.length() > 0)) {
@@ -372,36 +372,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             } else {
                 pw = new StringWriter();
             }
-            pw.write(
-                    "<EntityDescriptor\n" +
-                    "    xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"\n" +
-                    "    entityID=\"" + entityID + "\">\n");
-            
-            if (idpAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(idpAlias);
-                addIdentityProviderTemplate(pw, url);
-            }
-            if (spAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(spAlias);
-                addServiceProviderTemplate(pw, url);
-            }
-            if (attraAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(attraAlias);
-                addAttributeAuthorityTemplate(pw, url);
-            }
-            if (attrqAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(attrqAlias);
-                addAttributeQueryTemplate(pw, url);
-            }
-            if (pdpAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(pdpAlias);
-                addPDPTemplate(pw, url);
-            }
-            if (pepAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(pepAlias);
-                addPEPTemplate(pw, url);
-            }
-            pw.write("</EntityDescriptor>\n");
+
+            String xml =
+                CreateSAML2HostedProviderTemplate.buildMetaDataTemplate(
+                    entityID, getWorkflowParamMap());
+            pw.write(xml);
             
             if (!isWebBased) {
                 Object[] objs = { metadata, realm };
@@ -427,386 +402,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
     }
     
-    private void addIdentityProviderTemplate(Writer pw, String url)
-        throws IOException, SAML2MetaException {
-        String maStr = buildMetaAliasInURI(idpAlias);
-        
-        pw.write(
-                "    <IDPSSODescriptor\n" +
-                "        WantAuthnRequestsSigned=\"false\"\n" +
-                "        protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n"
-                );
-        
-        String idpSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                idpSCertAlias);
-        if (idpSX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"signing\">\n" +
-                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + idpSX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-        
-        String idpEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                idpECertAlias);
-        if (idpEX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"encryption\">\n" +
-                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + idpEX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "            <EncryptionMethod Algorithm=" +
-                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
-                    "                <KeySize xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
-                    "128</KeySize>\n" +
-                    "            </EncryptionMethod>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-        
-        pw.write(
-                "        <ArtifactResolutionService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
-                "            Location=\"" + url + "/ArtifactResolver" + maStr + "\"\n" +
-                "            index=\"0\"\n" +
-                "            isDefault=\"1\"/>\n" +
-                
-                "        <SingleLogoutService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
-                "            Location=\"" + url + "/IDPSloRedirect" + maStr + "\"\n" +
-                "            ResponseLocation=\"" + url + "/IDPSloRedirect" + maStr + "\"/>\n" +
-                "        <SingleLogoutService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
-                "            Location=\"" + url + "/IDPSloSoap" + maStr + "\"/>\n" +
-                "        <ManageNameIDService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
-                "            Location=\"" + url + "/IDPMniRedirect" + maStr + "\"\n" +
-                "            ResponseLocation=\"" + url + "/IDPMniRedirect" + maStr + "\"/>\n" +
-                "        <ManageNameIDService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
-                "            Location=\"" + url + "/IDPMniSoap" + maStr + "\"/>\n" +
-                "        <NameIDFormat>\n" +
-                "            urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\n" +
-                "        </NameIDFormat>\n" +
-                "        <NameIDFormat>\n" +
-                "            urn:oasis:names:tc:SAML:2.0:nameid-format:transient\n" +
-                "        </NameIDFormat>\n" +
-                "        <SingleSignOnService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
-                "            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
-                "        <SingleSignOnService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
-                "            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
-                "        <SingleSignOnService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
-                "            Location=\"" + url + "/SSOSoap" + maStr + "\"/>\n" +
-                "    </IDPSSODescriptor>\n"
-                );
-    }
-    
-    private void addAttributeAuthorityTemplate(Writer pw, String url)
-        throws IOException, SAML2MetaException {
-        String maStr = buildMetaAliasInURI(attraAlias);
-        
-        pw.write(
-                "    <AttributeAuthorityDescriptor\n" +
-                "        protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n"
-                );
-        
-        String attraSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                attraSCertAlias);
-        if (attraSX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"signing\">\n" +
-                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + attraSX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-        
-        String attraEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                attraECertAlias);
-        if (attraEX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"encryption\">\n" +
-                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + attraEX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "            <EncryptionMethod Algorithm=" +
-                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
-                    "                <KeySize xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
-                    "128</KeySize>\n" +
-                    "            </EncryptionMethod>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-        
-        pw.write(
-                "        <AttributeService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
-                "            Location=\"" + url + "/AttributeServiceSoap/" + SAML2Constants.DEFAULT_ATTR_QUERY_PROFILE_ALIAS + maStr + "\"/>\n" +
-                "        <AttributeService\n" +
-                "            xmlns:x509qry=\"urn:oasis:names:tc:SAML:metadata:X509:query\"\n" +
-                "            x509qry:supportsX509Query=\"true\"\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
-                "            Location=\"" + url + "/AttributeServiceSoap/" + SAML2Constants.X509_SUBJECT_ATTR_QUERY_PROFILE_ALIAS + maStr + "\"/>\n" +
-                "        <AttributeProfile>" + SAML2Constants.BASIC_ATTRIBUTE_PROFILE + "</AttributeProfile>\n" +
-
-                "    </AttributeAuthorityDescriptor>\n"
-                );
-    }
-
-    private void addServiceProviderTemplate(Writer pw, String url)
-    throws IOException, SAML2MetaException {
-        String maStr = buildMetaAliasInURI(spAlias);
-        pw.write(
-                "    <SPSSODescriptor\n" +
-                "        AuthnRequestsSigned=\"false\"\n" +
-                "        WantAssertionsSigned=\"false\"\n" +
-                "        protocolSupportEnumeration=\n" +
-                "            \"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
-        
-        String spSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                spSCertAlias);
-        String spEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                spECertAlias);
-        
-        if (spSX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"signing\">\n" +
-                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + spSX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-        
-        if (spEX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"encryption\">\n" +
-                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + spEX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "            <EncryptionMethod Algorithm=" +
-                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
-                    "                <KeySize xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
-                    "128</KeySize>\n" +
-                    "            </EncryptionMethod>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-        
-        pw.write(
-                "        <SingleLogoutService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
-                "            Location=\"" + url + "/SPSloRedirect" + maStr + "\"\n" +
-                "            ResponseLocation=\"" + url + "/SPSloRedirect" + maStr + "\"/>\n" +
-                "        <SingleLogoutService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
-                "            Location=\"" + url + "/SPSloSoap" + maStr + "\"/>\n" +
-                "        <ManageNameIDService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
-                "            Location=\"" + url + "/SPMniRedirect" + maStr + "\"\n" +
-                "            ResponseLocation=\"" + url + "/SPMniRedirect" + maStr + "\"/>\n" +
-                "        <ManageNameIDService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
-                "            Location=\"" + url + "/SPMniSoap" + maStr + "\"\n" +
-                "            ResponseLocation=\"" + url + "/SPMniSoap" + maStr + "\"/>\n" +
-                "        <NameIDFormat>\n" +
-                "            urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\n" +
-                "        </NameIDFormat>\n" +
-                "        <NameIDFormat>\n" +
-                "            urn:oasis:names:tc:SAML:2.0:nameid-format:transient\n" +
-                "        </NameIDFormat>\n" +
-                "        <AssertionConsumerService\n" +
-                "            isDefault=\"true\"\n" +
-                "            index=\"0\"\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact\"\n" +
-                "            Location=\"" + url + "/Consumer" + maStr + "\"/>\n" +
-                "        <AssertionConsumerService\n" +
-                "            index=\"1\"\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
-                "            Location=\"" + url + "/Consumer" + maStr + "\"/>\n" +
-                "        <AssertionConsumerService\n" +
-                "            index=\"2\"\n" +
-                "            Binding=\"" + SAML2Constants.PAOS + "\"\n" +
-                "            Location=\"" + url + "/Consumer/ECP" + maStr + "\"/>\n" +
-                "    </SPSSODescriptor>\n"
-                );
-    }
-    
-    private void addAttributeQueryTemplate(Writer pw, String url)
-    throws IOException, SAML2MetaException {
-        String maStr = buildMetaAliasInURI(attrqAlias);
-        pw.write(
-                "    <RoleDescriptor\n" +
-                "        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "        xmlns:query=\"urn:oasis:names:tc:SAML:metadata:ext:query\"\n" +
-                "        xsi:type=\"query:AttributeQueryDescriptorType\"\n" +
-                "        protocolSupportEnumeration=\n" +
-                "            \"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
-        
-        String attrqSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                attrqSCertAlias);
-        String attrqEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                attrqECertAlias);
-        
-        if (attrqSX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"signing\">\n" +
-                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + attrqSX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-        
-        if (attrqEX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"encryption\">\n" +
-                    "            <KeyInfo xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + attrqEX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "            <EncryptionMethod Algorithm=" +
-                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
-                    "                <KeySize xmlns=\"" + SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
-                    "128</KeySize>\n" +
-                    "            </EncryptionMethod>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-        
-        pw.write(
-                "        <NameIDFormat>\n" +
-                "            urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\n" +
-                "        </NameIDFormat>\n" +
-                "        <NameIDFormat>\n" +
-                "            urn:oasis:names:tc:SAML:2.0:nameid-format:transient\n" +
-                "        </NameIDFormat>\n" +
-                "        <NameIDFormat>\n" +
-                "            urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName\n" +
-                "        </NameIDFormat>\n" +
-                "    </RoleDescriptor>\n"
-                );
-    }
-
-    private void addPDPTemplate(Writer pw, String url)
-        throws IOException, SAML2MetaException {
-        String maStr = buildMetaAliasInURI(pdpAlias);
-        pw.write(
-            "    <XACMLPDPDescriptor " + 
-            "protocolSupportEnumeration=" +
-            "\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
-
-        String pdpSX509Cert  = SAML2MetaSecurityUtils.buildX509Certificate(
-                pdpSCertAlias);
-        String pdpEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                pdpECertAlias);
-
-        if (pdpSX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"signing\">\n" +
-                    "            <KeyInfo xmlns=\"" + 
-                                    SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + pdpSX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-
-        if (pdpEX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"encryption\">\n" +
-                    "            <KeyInfo xmlns=\"" +
-                                    SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certif5icate>\n" + pdpEX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "            <EncryptionMethod Algorithm=" +
-                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
-                    "                <KeySize xmlns=\"" + 
-                                    SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
-                    "128</KeySize>\n" +
-                    "            </EncryptionMethod>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-
-       pw.write(
-            "         <XACMLAuthzService " +
-                       "Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"" +
-            " Location=\"" + url + "/saml2query" + maStr + "\"/>\n" +
-            "    </XACMLPDPDescriptor>\n");
-    }
-    
-    private void addPEPTemplate(Writer pw, String url)
-        throws IOException, SAML2MetaException {
-        pw.write("    <XACMLAuthzDecisionQueryDescriptor " +
-            "WantAssertionsSigned=\"false\" " +
-            "protocolSupportEnumeration=" +
-            "\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
-        
-        String pepSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                pepSCertAlias);
-        String pepEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
-                pepECertAlias);
-
-        if (pepSX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"signing\">\n" +
-                    "            <KeyInfo xmlns=\"" +
-                                    SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + pepSX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-
-        if (pepEX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"encryption\">\n" +
-                    "            <KeyInfo xmlns=\"" + 
-                                    SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + pepEX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "            <EncryptionMethod Algorithm=" +
-                    "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
-                    "                <KeySize xmlns=\"" + 
-                                    SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
-                    "128</KeySize>\n" +
-                    "            </EncryptionMethod>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-        pw.write("    </XACMLAuthzDecisionQueryDescriptor>\n");
-    }
-    
     private static String buildMetaAliasInURI(String alias) {
         return "/" + SAML2MetaManager.NAME_META_ALIAS_IN_URI + alias;
     }    
@@ -814,7 +409,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private void buildConfigTemplate()
         throws CLIException {
         Writer pw = null;
-        String url =  protocol + "://" + host + ":" + port + deploymentURI;
         try {
             if (!isWebBased && (extendedData != null) &&
                 (extendedData.length() > 0)
@@ -823,39 +417,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             } else {
                 pw = new StringWriter();
             }
-            
-            pw.write(
-                    "<EntityConfig xmlns=\"urn:sun:fm:SAML:2.0:entityconfig\"\n"+
-                    "    xmlns:fm=\"urn:sun:fm:SAML:2.0:entityconfig\"\n" +
-                    "    hosted=\"1\"\n" +
-                    "    entityID=\"" + entityID + "\">\n\n");
-            
-            if (idpAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(idpAlias);
-                buildIDPConfigTemplate(pw, url);
-            }
-            if (spAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(spAlias);
-                buildSPConfigTemplate(pw, url);
-            }
-            if (attraAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(attraAlias);
-                buildAttributeAuthorityConfigTemplate(pw, url);
-            }
-            if (attrqAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(attrqAlias);
-                buildAttributeQueryConfigTemplate(pw, url);
-            }
-            if (pdpAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(pdpAlias);
-                buildPDPConfigTemplate(pw);
-            }
-            if (pepAlias != null) {
-                realm = SAML2MetaUtils.getRealmByMetaAlias(pepAlias);
-                buildPEPConfigTemplate(pw);
-            }
-            
-            pw.write("</EntityConfig>\n");
+
+            String xml =
+                CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
+                entityID, getWorkflowParamMap());
+            pw.write(xml);
             
             if (!isWebBased) {
                 Object[] objs = {extendedData, realm};
@@ -877,335 +443,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                         ((StringWriter)pw).toString());
             }
         }
-    }
-    
-    private void buildIDPConfigTemplate(Writer pw, String url)
-        throws IOException {
-        pw.write(
-                "    <IDPSSOConfig metaAlias=\"" + idpAlias + "\">\n" +
-                "        <Attribute name=\"" + SAML2Constants.ENTITY_DESCRIPTION + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
-                "            <Value>" + idpSCertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
-                "            <Value>" + idpECertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_ON + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_USER + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_PASSWD + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.AUTO_FED_ENABLED + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.AUTO_FED_ATTRIBUTE + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" +
-                SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE + "\">\n" +
-                "            <Value>600</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.IDP_AUTHNCONTEXT_MAPPER_CLASS +
-                "\">\n" +
-                "            <Value>com.sun.identity.saml2.plugins.DefaultIDPAuthnContextMapper"
-                + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.IDP_AUTHNCONTEXT_CLASSREF_MAPPING+
-                "\">\n" +
-                "            <Value>" + SAML2Constants.CLASSREF_PASSWORD_PROTECTED_TRANSPORT +
-                "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.IDP_ACCOUNT_MAPPER +"\">\n" +
-                "            <Value>com.sun.identity.saml2.plugins.DefaultIDPAccountMapper" +
-                "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.IDP_ATTRIBUTE_MAPPER +"\">\n" +
-                "            <Value>com.sun.identity.saml2.plugins.DefaultIDPAttributeMapper" +
-                "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.IDP_ECP_SESSION_MAPPER_CLASS +"\">\n" +
-                "            <Value>" + SAML2Constants.DEFAULT_IDP_ECP_SESSION_MAPPER_CLASS +
-                "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.ATTRIBUTE_MAP +"\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_NAMEID_ENCRYPTED+"\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_ARTIFACT_RESOLVE_SIGNED +
-                "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_LOGOUT_REQUEST_SIGNED +
-                "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_LOGOUT_RESPONSE_SIGNED +
-                "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_MNI_REQUEST_SIGNED +
-                "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_MNI_RESPONSE_SIGNED +
-                "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.DISCO_BOOTSTRAPPING_ENABLED +
-                "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\""+SAML2Constants.ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE
-             + "\">\n" +
-                "            <Value>600</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\""+SAML2Constants.SAE_APP_SECRET_LIST+"\">\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\""+SAML2Constants.SAE_IDP_URL+"\">\n" +
-                "            <Value>" + url + "/idpsaehandler/metaAlias" + idpAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "    </IDPSSOConfig>\n"
-                );
-    }
-    
-    private void buildSPConfigTemplate(Writer pw, String url)
-        throws IOException {
-        pw.write(
-                "    <SPSSOConfig metaAlias=\"" + spAlias + "\">\n" +
-                "        <Attribute name=\"" + SAML2Constants.ENTITY_DESCRIPTION + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
-                "            <Value>" + spSCertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
-                "            <Value>" + spECertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_ON + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_USER + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_PASSWD + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.AUTO_FED_ENABLED + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.AUTO_FED_ATTRIBUTE + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.TRANSIENT_FED_USER + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.SP_ADAPTER_CLASS + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.SP_ADAPTER_ENV + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.SP_ACCOUNT_MAPPER + "\">\n" +
-                "            <Value>com.sun.identity.saml2.plugins.DefaultSPAccountMapper" +
-                "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.SP_ATTRIBUTE_MAPPER + "\">\n" +
-                "            <Value>com.sun.identity.saml2.plugins.DefaultSPAttributeMapper" +
-                "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.SP_AUTHCONTEXT_MAPPER + "\">\n" +
-                "            <Value>" + SAML2Constants.DEFAULT_SP_AUTHCONTEXT_MAPPER +
-                "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\""+ SAML2Constants.SP_AUTH_CONTEXT_CLASS_REF_ATTR+
-                "\">\n" +
-                "            <Value>" + SAML2Constants.SP_AUTHCONTEXT_CLASSREF_VALUE +
-                "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE +
-                "\">\n" +
-                "           <Value>" + SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE_VALUE +
-                "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.ATTRIBUTE_MAP + "\">\n" +
-                "           <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.AUTH_MODULE_NAME + "\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.LOCAL_AUTH_URL + "\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.INTERMEDIATE_URL + "\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.DEFAULT_RELAY_STATE + "\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.ASSERTION_TIME_SKEW+"\">\n" +
-                "           <Value>300</Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.WANT_ATTRIBUTE_ENCRYPTED+"\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.WANT_ASSERTION_ENCRYPTED+"\">"
-                + "\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.WANT_NAMEID_ENCRYPTED+"\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.WANT_ARTIFACT_RESPONSE_SIGNED +
-                "\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.WANT_LOGOUT_REQUEST_SIGNED +
-                "\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.WANT_LOGOUT_RESPONSE_SIGNED +
-                "\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.WANT_MNI_REQUEST_SIGNED+"\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.WANT_MNI_RESPONSE_SIGNED+"\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\""+SAML2Constants.SAE_APP_SECRET_LIST+"\">\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\""+SAML2Constants.SAE_SP_URL+"\">\n" +
-                "           <Value>" + url + "/spsaehandler/metaAlias" + spAlias + "</Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\""+SAML2Constants.SAE_SP_LOGOUT_URL+"\">\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.ECP_REQUEST_IDP_LIST_FINDER_IMPL + "\">\n" +
-                "           <Value>com.sun.identity.saml2.plugins.ECPIDPFinder</Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.ECP_REQUEST_IDP_LIST + "\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.ENABLE_IDP_PROXY + "\">\n" +
-                "           <Value>false</Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.IDP_PROXY_LIST + "\">\n" +
-                "           <Value></Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.IDP_PROXY_COUNT + "\">\n" +
-                "           <Value>0</Value>\n" +
-                "       </Attribute>\n" +
-                "       <Attribute name=\"" + SAML2Constants.USE_INTRODUCTION_FOR_IDP_PROXY + "\">\n" +
-                "           <Value>false</Value>\n" +
-                "       </Attribute>\n" +
-                "    </SPSSOConfig>\n");
-    }
-    
-    private void buildAttributeAuthorityConfigTemplate(Writer pw, String url)
-        throws IOException {
-        pw.write(
-                "    <AttributeAuthorityConfig metaAlias=\"" + attraAlias + "\">\n" +
-                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
-                "            <Value>" + attraSCertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
-                "            <Value>" + attraECertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.DEFAULT_ATTR_QUERY_PROFILE_ALIAS + "_" + SAML2Constants.ATTRIBUTE_AUTHORITY_MAPPER + "\">\n" +
-                "            <Value>" + SAML2Constants.DEFAULT_ATTRIBUTE_AUTHORITY_MAPPER_CLASS + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.X509_SUBJECT_ATTR_QUERY_PROFILE_ALIAS + "_" + SAML2Constants.ATTRIBUTE_AUTHORITY_MAPPER + "\">\n" +
-                "            <Value>com.sun.identity.saml2.plugins.X509SubjectAttributeAuthorityMapper</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.X509_SUBJECT_DATA_STORE_ATTR_NAME + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "    </AttributeAuthorityConfig>\n"
-                );
-    }
-
-    private void buildAttributeQueryConfigTemplate(Writer pw, String url)
-        throws IOException {
-        pw.write(
-                "    <AttributeQueryConfig metaAlias=\"" + attrqAlias + "\">\n" +
-                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
-                "            <Value>" + attrqSCertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
-                "            <Value>" + attrqECertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "    </AttributeQueryConfig>\n"
-                );
-    }
-
-    private void buildPDPConfigTemplate(Writer pw)
-        throws IOException {
-        pw.write(
-                "    <XACMLPDPConfig metaAlias=\"" + pdpAlias + "\">\n" +
-                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
-                "            <Value>" + pdpSCertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
-                "            <Value>" + pdpECertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_ON +  "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_USER +  "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_PASSWD +  "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED +  "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
-                "        </Attribute>\n" +
-                "   </XACMLPDPConfig>\n");
-    }
-    
-    private void buildPEPConfigTemplate(Writer pw)
-        throws IOException {
-        pw.write(
-                "   <XACMLAuthzDecisionQueryConfig metaAlias=\"" + pepAlias + "\">\n" +
-                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
-                "            <Value>" + pepSCertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
-                "            <Value>" + pepECertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_ON +  "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_USER +  "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_PASSWD +  "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_RESPONSED_SIGNED +  "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" +
-                            SAML2Constants.WANT_ASSERTION_ENCRYPTED +  "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
-                "        </Attribute>\n" +            
-                "  </XACMLAuthzDecisionQueryConfig>\n");
     }
     
     private void buildIDFFConfigTemplate()
@@ -1954,5 +1191,33 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
         
         fedConfig.getIDPSSOConfigOrSPSSOConfig().add(spSSOConfig);
+    }
+
+    private Map getWorkflowParamMap() {
+        Map map = new HashMap();
+        map.put(CreateSAML2HostedProviderTemplate.P_IDP, idpAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_SP, spAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_AUTHORITY, attraAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_QUERY_PROVIDER,
+            attrqAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_PDP, pdpAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_PEP, pepAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_IDP_E_CERT, idpECertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_IDP_S_CERT, idpSCertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_SP_E_CERT, spECertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_SP_S_CERT, spSCertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_AUTHORITY_E_CERT,
+            attraECertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_AUTHORITY_S_CERT,
+            attraSCertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_QUERY_PROVIDER_E_CERT,
+            attrqECertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_QUERY_PROVIDER_S_CERT,
+            attrqSCertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_PDP_E_CERT, pdpECertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_PDP_S_CERT, pdpSCertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_PEP_E_CERT, pepECertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_PEP_S_CERT, pepSCertAlias);
+        return map;
     }
 }
