@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentGroup.java,v 1.2 2008-01-03 18:14:20 veiming Exp $
+ * $Id: CreateAgentGroup.java,v 1.3 2008-01-15 03:42:18 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,6 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.AuthenticatedCommand;
-import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
@@ -43,8 +42,6 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,8 +91,13 @@ public class CreateAgentGroup extends AuthenticatedCommand {
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
 
+            Map inheritedValues = AgentConfiguration.getDefaultValues(
+                agentType);
+            //overwrite inherited values with what user has given
+            inheritedValues.putAll(attributeValues);
+            
             AgentConfiguration.createAgentGroup(adminSSOToken, groupName,
-                agentType, attributeValues);
+                agentType, inheritedValues);
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("create-agent-group-succeeded"),
                 (Object[])params));

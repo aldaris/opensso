@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.9 2008-01-07 20:38:49 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.10 2008-01-15 03:42:18 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -733,6 +733,7 @@ public class AgentConfiguration {
     private static Map parseAttributeMap(String agentType, Map attrValues)
         throws SMSException, SSOException {
         Map result = new HashMap();
+        result.putAll(attrValues);
         Set attributeSchemas = getAgentAttributeSchemas(agentType);
         
         if ((attributeSchemas != null) && !attributeSchemas.isEmpty()) {
@@ -743,8 +744,6 @@ public class AgentConfiguration {
                     result.put(as.getName(), values);
                 }
             }
-        } else {
-            result.putAll(attrValues);
         }
         
         return result;
@@ -829,28 +828,31 @@ public class AgentConfiguration {
             for (Iterator i = asNames.iterator(); i.hasNext(); ) {
                 String name = (String)i.next();
                 Set values = (Set)attrValues.get(name);
-                if (!asValidatorType.contains(name)) {
-                    if (asListType.contains(name)) {
-                        for (Iterator j = values.iterator(); j.hasNext(); ) {
-                            String val = (String)j.next();
-                            int idx = val.indexOf("]=");
-                            
-                            if (idx != -1) {
-                                Set set = new HashSet(2);
-                                set.add(val.substring(idx+2));
-                                String indice = val.substring(0, idx+1);
-                                indice = indice.replaceAll("=", "\\\\=");
-                                result.put(name + indice, set);
-                            } else {
-                                Set set = new HashSet(2);
-                                set.add(val);
-                                // this is for special case, where attribute can
-                                // be list and non list type
-                                result.put(name, set);
+                
+                if (values != null) {
+                    if (!asValidatorType.contains(name)) {
+                        if (asListType.contains(name)) {
+                            for (Iterator j = values.iterator(); j.hasNext();) {
+                                String val = (String) j.next();
+                                int idx = val.indexOf("]=");
+
+                                if (idx != -1) {
+                                    Set set = new HashSet(2);
+                                    set.add(val.substring(idx + 2));
+                                    String indice = val.substring(0, idx + 1);
+                                    indice = indice.replaceAll("=", "\\\\=");
+                                    result.put(name + indice, set);
+                                } else {
+                                    Set set = new HashSet(2);
+                                    set.add(val);
+                                    // this is for special case, where attribute
+                                    // can be list and non list type
+                                    result.put(name, set);
+                                }
                             }
+                        } else {
+                            result.put(name, values);
                         }
-                    } else {
-                        result.put(name, values);
                     }
                 }
             }
