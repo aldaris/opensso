@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.21 2008-01-10 23:54:51 huacui Exp $
+   $Id: AgentService.xml,v 1.22 2008-01-15 00:47:29 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -109,10 +109,14 @@
                     <AttributeSchema
                         name="com.sun.am.policy.agents.config.local.log.rotate"
                         type="single"
-                        syntax="string"
+                        syntax="boolean"
                         i18nKey="a402">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
-                            <Value>@LOG_ROTATION@</Value>
+                            <Value>true</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -130,7 +134,7 @@
                         syntax="string"
                         i18nKey="a404">
                         <DefaultValues>
-                            <Value>amAuthLog.@AGENT_HOST@.@AGENT_PREF_PORT@.log</Value>
+                            <Value>amAuthLog.@AGENT_HOST@.@AGENT_PORT@.log</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -148,16 +152,7 @@
                         syntax="string"
                         i18nKey="a109">
                         <DefaultValues>
-                            <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/UpdateAgentCacheServlet?shortcircuit</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.am.notification.url"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a406">
-                        <DefaultValues>
-                            <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/UpdateAgentCacheServlet?shortcircuit</Value>
+                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@/UpdateAgentCacheServlet?shortcircuit</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -357,7 +352,7 @@
                         syntax="string"
                         i18nKey="a426">
                         <DefaultValues>
-                            <Value>@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/amagent</Value>
+                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@/amagent</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -740,15 +735,33 @@
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
-                     <AttributeSchema
-                         name="com.sun.am.policy.agents.config.freeformproperties"
-                         type="list"
-                         syntax="string"
-                         i18nKey="a463">
-                         <DefaultValues>
-                             <Value></Value>
-                         </DefaultValues>
-                     </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.am.agents.config.polling.interval"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a463">
+                        <DefaultValues>
+                            <Value>60</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.am.agents.config.cleanup.interval"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a464">
+                        <DefaultValues>
+                            <Value>30</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.freeformproperties"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a465">
+                        <DefaultValues>
+                            <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                 </SubSchema>
                 <SubSchema name="J2EEAgent" inheritance="multiple">
                      <AttributeSchema
