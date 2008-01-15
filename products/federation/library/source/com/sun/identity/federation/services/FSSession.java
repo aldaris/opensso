@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSession.java,v 1.1 2006-10-30 23:14:25 qcheng Exp $
+ * $Id: FSSession.java,v 1.2 2008-01-15 22:51:57 stanguy Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
 import com.sun.identity.liberty.ws.disco.common.DiscoConstants;
 import com.sun.identity.saml.assertion.AttributeStatement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class FSSession{
     private List sessionPartners = null;
     private String sessionID = null;
     private String sessionIndex = null;
-    private Map extraSessionAtributes = null;
+    private Map extraSessionAttributes = null;
     private String authnContext = null;
     private AttributeStatement statement = null;
     private NodeList resourceOfferings = null;
@@ -64,10 +65,12 @@ public class FSSession{
         List sessionPartners
     )
     {
-        this.sessionPartners = new ArrayList();
         this.sessionID = sessionID;
+        this.extraSessionAttributes = new HashMap();
         if (sessionPartners != null){
             this.sessionPartners = sessionPartners;
+        } else {
+            this.sessionPartners = new ArrayList();
         }
     }
     
@@ -76,8 +79,7 @@ public class FSSession{
      * @param sessionID authentication session ID
      */
     public FSSession(String sessionID) {
-        this.sessionPartners = new ArrayList();
-        this.sessionID = sessionID;
+        this( sessionID, null );
     }
     
     /**
@@ -183,7 +185,7 @@ public class FSSession{
      * @param value value of the attribute
      */
     public void addAttribute(String key, String value) {
-        extraSessionAtributes.put(key, value);
+        extraSessionAttributes.put(key, value);
     }
     
     /**
@@ -192,7 +194,7 @@ public class FSSession{
      * @return value of the attribute
      */
     public String getAttribute(String key) {
-        return(String)extraSessionAtributes.get(key);
+        return(String)extraSessionAttributes.get(key);
     }
     
     boolean isEquals(String sessionId) {

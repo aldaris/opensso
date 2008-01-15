@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: idff-testng.xml,v 1.1 2006-10-30 23:17:14 qcheng Exp $
+   $Id: idff-testng.xml,v 1.2 2008-01-15 22:51:56 stanguy Exp $
  
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,6 +39,16 @@
         </groups>
         <classes>
             <class name="com.sun.identity.federation.MessageTest"/>
+        </classes>
+    </test>
+    <test name="ID-FF_FSSession">
+        <groups>
+            <run>
+                <include name="idff-fssession" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.federation.services.FSSessionTest"/>
         </classes>
     </test>
 </suite>
