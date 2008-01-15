@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmSAML2SOAPBinding.xml,v 1.1 2007-08-24 16:43:29 bina Exp $
+   $Id: fmSAML2SOAPBinding.xml,v 1.2 2008-01-15 01:21:28 asyhuang Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -42,11 +42,12 @@
             serviceHierarchy="/DSAMEConfig/sunfmSAML2SOAPBindingService" 
             i18nFileName="fmSAML2SOAPBindingConfiguration" 
             revisionNumber="10"
-            i18nKey="sunfmSAML2SOAPBindingDescription">
+            i18nKey="sunfmSAML2SOAPBindingDescription"
+            propertiesViewBeanURL="../service/SCSAML2SOAPBinding">
             <Global> 
                 <AttributeSchema name="sunSAML2RequestHandlerList" 
                     type="list" 
-                    syntax="string"
+                    syntax="string" 
                     i18nKey="a101">
                 </AttributeSchema> 
             </Global>
