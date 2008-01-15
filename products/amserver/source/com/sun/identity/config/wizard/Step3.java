@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.2 2007-11-12 14:51:12 lhazlewood Exp $
+ * $Id: Step3.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */

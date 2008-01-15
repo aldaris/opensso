@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.2 2007-11-12 14:51:13 lhazlewood Exp $
+ * $Id: Step6.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ public class Step6 extends Page {
     public Step6(){}
 
     public void onInit() {
+        super.onInit();
         String newInstanceUrl = (String)getContext().getSessionAttribute( Step2.NEW_INSTANCE_URL_SESSION_KEY );
         add( "newInstanceUrl", newInstanceUrl );
 

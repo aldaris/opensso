@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Create.java,v 1.2 2007-11-12 14:51:12 lhazlewood Exp $
+ * $Id: Create.java,v 1.3 2008-01-15 19:58:59 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,9 +50,6 @@ public class Create extends AjaxPage {
     public ActionLink validatePasswordLink = new ActionLink("validatePassword", ldapStoreValidator, "validatePassword");
     public ActionLink validateBaseDNLink = new ActionLink("validateBaseDN", ldapStoreValidator, "validateBaseDN");
 
-
-    public void onInit() {
-    }
 
     public boolean validateRealmName() {
         String realmName = toString("realmName");

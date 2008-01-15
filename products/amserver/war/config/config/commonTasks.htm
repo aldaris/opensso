@@ -86,25 +86,25 @@
     }
 </style>
 <div id="container" align="center" onclick="AjaxUtils.ajax_hideTooltip()">
-    <h1 align="left">Common Tasks</h1>
+    <h1 align="left">$page.getLocalizedString("configuration.common_tasks.title")</h1>
     <div id="createPanel" class="panel" align="left">
         <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-        <h1>New widgets and wizards to help you get started.</h1>
+        <h1>$page.getLocalizedString("configuration.common_tasks.widgest_wizard_header")</h1>
         <div class="body">
-            <h2>Access Management</h2>
+            <h2>$page.getLocalizedString("configuration.common_tasks.access_management")</h2>
             <ul>
-                <li><a onclick="Update(1)" href="javaScript:void(0);">Create a realm</a> <a id="ttprealm" href="#" onmouseover="AjaxUtils.ajax_showTooltip('$context/config/realm/createTooltip.htm',this);return false;" ><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></a></li>
-                <li><a onclick="Update(2)" href="javaScript:void(0);">Select an admin for a realm</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
-                <li><a onclick="Update(3)" href="javaScript:void(0);">Configure a user store</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
-                <li><a onclick="Update(4)" href="javaScript:void(0);">Configure an authentication store</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
-                <li><a onclick="Update(5)" href="javaScript:void(0);">Configure &amp; deploy an agent</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
-                <li><a onclick="Update(6)" href="javaScript:void(0);">Protect a resource</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
-                <li><a onclick="Update(7)" href="javaScript:void(0);">Add another instance</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
+                <li><a onclick="Update(1)" href="javaScript:void(0);">$page.getLocalizedString("configuration.common_tasks.create_realm")</a> <a id="ttprealm" href="#" onmouseover="AjaxUtils.ajax_showTooltip('$context/config/realm/createTooltip.htm',this);return false;" ><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></a></li>
+                <li><a onclick="Update(2)" href="javaScript:void(0);">$page.getLocalizedString("configuration.common_tasks.select_admin")</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
+                <li><a onclick="Update(3)" href="javaScript:void(0);">$page.getLocalizedString("configuration.common_tasks.configure_user_store")</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
+                <li><a onclick="Update(4)" href="javaScript:void(0);">$page.getLocalizedString("configuration.common_tasks.configure_auth_store")</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
+                <li><a onclick="Update(5)" href="javaScript:void(0);">$page.getLocalizedString("configuration.common_tasks.configure_deploy_agent")</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
+                <li><a onclick="Update(6)" href="javaScript:void(0);">$page.getLocalizedString("configuration.common_tasks.protect_resource")</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
+                <li><a onclick="Update(7)" href="javaScript:void(0);">$page.getLocalizedString("configuration.common_tasks.add_instance")</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
             </ul>
-            <h2>Federation</h2>
+            <h2>$page.getLocalizedString("configuration.common_tasks.federation")</h2>
             <ul>
-              	<li><a onclick="Update(8);" href="javaScript:void(0);">Configure this system as a service provider</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
-                <li><a onclick="Update(9);" href="javaScript:void(0);">Configure this system as an identity provider</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
+              	<li><a onclick="Update(8);" href="javaScript:void(0);">$page.getLocalizedString("configuration.common_tasks.configure_service_provider")</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
+                <li><a onclick="Update(9);" href="javaScript:void(0);">$page.getLocalizedString("configuration.common_tasks.configure_identity_provider")</a><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></li>
             </ul>
         </div>
         <b class="xbottom"><b class="xb1"></b><b class="xb2"></b><b class="xb3"></b><b class="xb4"></b></b>
@@ -113,18 +113,22 @@
     <div id="modifyPanel" class="panel" align="left">
         <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
 
-        <h1>Shortcuts to modify your existing FAM settings.</h1>
+        <h1>$page.getLocalizedString("configuration.common_tasks.shortcuts_header")</h1>
 
         <div class="body">
             <div id="configSelectBox">
                 <form action="commonTasks.htm">
+<<<<<<< commonTasks.htm
+                    <label for="configSelect" class="blue">$page.getLocalizedString("configuration.common_tasks.select_configuration")</label>
+=======
                     <label for="configSelect">Select a configuration:</label>
+>>>>>>> 1.3
                     <select name="configSelect" id="configSelect">
                         <option value="blah">Foobar 1</option>
                     </select>
                 </form>
             </div>
-            <h2>Access Management</h2>
+            <h2>$page.getLocalizedString("configuration.common_tasks.access_management")</h2>
             <ul>
                 <li><a href="#">Edit something</a></li>
                 <li><a href="#">Edit or modify something else</a></li>
@@ -133,7 +137,7 @@
                 <li><a href="#">Edit or modify something else</a></li>
                 <li><a href="#">Edit or modify something else</a></li>
             </ul>
-            <h2>Federation</h2>
+            <h2>$page.getLocalizedString("configuration.common_tasks.federation")</h2>
             <ul>
                 <li><a href="#">Edit or modify something else</a></li>
                 <li><a href="#">Edit or modify something else</a></li>

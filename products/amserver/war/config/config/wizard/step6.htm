@@ -1,3 +1,141 @@
+<<<<<<< step6.htm
+<style type="text/css">
+    .summaryPanel {
+        float: left;
+        margin-right: 10px;
+    }
+
+    .summaryPanel .bd {
+        height: 100px;
+    }
+
+    .summaryPanel ol {
+        padding: 0;
+        margin: 0;
+        font-size: smaller;
+    }
+
+    .summaryPanel li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .summaryPanel label {
+        float: left;
+        margin-right: 0.5em;
+        width: 55px;
+    }
+    #loadBalancingSummary label {
+        width: 25px;    
+    }
+</style>
+          
+<h1>$page.getLocalizedString("configuration.wizard.step6.title")</h1>
+<p>$page.getLocalizedString("configuration.wizard.step6.label")</p>
+
+<div class="summaryPanel" style="width:120px">
+    <div class="hd">$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step2.title")</div>
+    <div class="bd">
+        <span>
+            #if ( $newInstanceUrl )
+            $page.getLocalizedString("configuration.wizard.step6.summaryPanel.step2.existingInstance") '$newInstanceUrl'
+            #else
+            $page.getLocalizedString("configuration.wizard.step6.summaryPanel.step2.newInstance")
+            #end
+        </span>
+    </div>
+</div>
+
+<div class="summaryPanel">
+    <div class="hd">$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.title")</div>
+    <div class="bd">
+        #if ( $newInstanceUrl )
+        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom")</span>
+        #elseif ( $configStore )
+        <ol>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.name"):</label>
+                <span>$configStore.name</span>
+            </li>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.host"):</label>
+                <span>$configStore.hostName</span>
+            </li>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.port"):</label>
+                <span>$configStore.hostPort</span>
+            </li>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.baseDN"):</label>
+                <span>$configStore.baseDN</span>
+            </li>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.credentials"):</label>
+                <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.provided")</span>
+            </li>
+        </ol>
+        #else
+        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.default")</span>
+        #end
+    </div>
+</div>
+
+<div class="summaryPanel">
+    <div class="hd">$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.title")</div>
+    <div class="bd">
+        #if ( $newInstanceUrl )
+        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom")</span>
+        #elseif ( $userStore )
+        <ol>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.name"):</label>
+                <span>$userStore.name</span>
+            </li>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.host"):</label>
+                <span>$userStore.hostName</span>
+            </li>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.port"):</label>
+                <span>$userStore.hostPort</span>
+            </li>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.baseDN"):</label>
+                <span>$userStore.baseDN</span>
+            </li>
+            <li>
+                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.credentials"):</label>
+                <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.provided")</span>
+            </li>
+        </ol>
+        #else
+        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.default")</span>
+        #end
+    </div>
+</div>
+
+<div class="summaryPanel" style="margin-right:0;width:140px">
+    <div class="hd">$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step5.title")</div>
+    <div id="loadBalancingSummary" class="bd">
+        #if ( $newInstanceUrl )
+        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step5.custom")</span>
+        #elseif ( $loadBalancerHost )
+        <ol>
+            <li>
+                <label>Host:</label>
+                <span>$loadBalancerHost</span>
+            </li>
+            <li>
+                <label>Port:</label>
+                <span>$loadBalancerPort</span>
+            </li>
+        </ol>
+        #else
+        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step5.noBalancing")</span>
+        #end
+    </div>
+=======
 <h1>Step 6: Summary</h1>
 <p>Please take a moment to confirm that your settings are correct.</p>
 
@@ -110,4 +248,5 @@
         #end
     </div>
 	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
+>>>>>>> 1.2
 </div>

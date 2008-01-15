@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.2 2007-11-12 14:51:10 lhazlewood Exp $
+ * $Id: LDAP.java,v 1.3 2008-01-15 19:58:59 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ public class LDAP extends AjaxPage {
 
     protected LDAPStoreValidator ldapStoreValidator = new LDAPStoreValidator(this);
 
-    public LDAPStore ldapStore = null;
+    public LDAPStore ldapStore = new LDAPStore();
 
     public ActionLink validateStoreNameLink = new ActionLink("validateStoreName", ldapStoreValidator, "validateStoreName");
     public ActionLink validateHostLink = new ActionLink("validateHost", ldapStoreValidator, "validateHost");
@@ -44,10 +44,6 @@ public class LDAP extends AjaxPage {
     public ActionLink validatePasswordLink = new ActionLink("validatePassword", ldapStoreValidator, "validatePassword");
     public ActionLink validateBaseDNLink = new ActionLink("validateBaseDN", ldapStoreValidator, "validateBaseDN");
 
-
-    public void onInit() {
-        ldapStore = new LDAPStore();
-    }
 
     public void onPost() {
         ldapStore.getRealm().setName(toString("realmName"));

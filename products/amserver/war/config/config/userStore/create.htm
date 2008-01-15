@@ -38,7 +38,7 @@
     }
 
     function Cancel() {
-        document.location = "$context/commonTasks.htm";
+        document.location = "$context/config/commonTasks.htm";
     }
 
     function validateUserStoreName() {
@@ -149,32 +149,32 @@
 		<form id="userStoreForm" >
 			<br />
 			<div class="bodywhite">
-				<h2>Add a User Store</h2>
-				<small>Fusce rhoncus rutrum nunc. Ut ut pede vel sem scelerisque commodo. Vestibulum non libero vulputate arcu gravida auctor. Phasellus quis felis in nulla laoreet ornare.</small>
+				<h2>$page.getLocalizedString("configuration.userStore.create.title")</h2>
+				<small>$page.getLocalizedString("configuration.userStore.create.comment")</small>
 			</div>
 			<div class="bodywhite">
-				<div class="OrangeSmall" style="float:left">Enter the store details</div><div class="OrangeVerySmall" id="allfields">* ALL Fields are Required</div><br />
-				<div class="width_160"><p>User Store Name:</p></div>
+				<div class="OrangeSmall" style="float:left">$page.getLocalizedString("configuration.userStore.create.storeDetails")</div><div class="OrangeVerySmall" id="allfields">* $page.getLocalizedString("configuration.userStore.create.allFields")</div><br />
+				<div class="width_160"><p>$page.getLocalizedString("configuration.userStore.create.storeName"):</p></div>
 				<p><input type="text" id="user_storeName" name="user_storeName" class="inputsBlue" style="width:150px" value="$!userStore.name" onkeyup="APP.callDelayed(this, validateUserStoreName);"/>
                 <span id="user_storeNameStatus"></span></p>
             </div>
 			<div class="bodywhite">
 				<div class="width_160">
-				<p>Directory Host Name:</p>
-				<p>Port:</p>
-				<p>Is this a secure port?:</p>
+				<p>$page.getLocalizedString("configuration.userStore.create.hostName"):</p>
+				<p>$page.getLocalizedString("configuration.userStore.create.port"):</p>
+				<p>$page.getLocalizedString("configuration.userStore.create.securePort"):</p>
 				</div>
 				<p><input type="text" id="user_hostName" name="user_hostName" class="inputsBlue" style="width:150px" value="$!userStore.hostName" onkeyup="APP.callDelayed(this, validateUserHostName);"/>
                 <span id="user_hostNameStatus"></span></p>
 				<p><input type="text" id="user_hostPort" name="user_hostPort" class="inputsBlue" style="width:40px" value="$!userStore.hostPort" onkeyup="APP.callDelayed(this, validateUserHostPort);"/>
                 <span id="user_hostPortStatus"></span></p>
-                <p><input type="radio" id="user_hostPortSecureNo" name="user_hostPortSecure" checked="checked" value="false"/>&nbsp;No&nbsp;
-                <input type="radio" id="user_hostPortSecureYes" name="user_hostPortSecure" value="true"/>Yes</p>
+                <p><input type="radio" id="user_hostPortSecureNo" name="user_hostPortSecure" checked="checked" value="false"/>&nbsp;$page.getLocalizedString("configuration.userStore.create.noOption")&nbsp;
+                <input type="radio" id="user_hostPortSecureYes" name="user_hostPortSecure" value="true"/>$page.getLocalizedString("configuration.userStore.create.yesOption")</p>
 			</div>
 			<div class="bodywhite">
 				<div class="width_160">
-					<p>Directory Login ID:</p>
-					<p>Directory Password:</p>
+					<p>$page.getLocalizedString("configuration.userStore.create.loginID"):</p>
+					<p>$page.getLocalizedString("configuration.userStore.create.password"):</p>
 				</div>
 				<p><input type="text" id="user_login" name="user_login" class="inputsBlue" style="width:150px" value="$!userStore.login" onkeyup="APP.callDelayed(this, validateUserLogin);"/>
                 <span id="user_loginStatus"></span></p>
@@ -183,14 +183,14 @@
             </div>
 			<div class="bodywhite">
 				<div class="width_160">
-				<p>Directory Base DN:</p>
+				<p>$page.getLocalizedString("configuration.userStore.create.baseDN"):</p>
 				</div>
 				<p><input type="text" id="user_baseDN" name="user_baseDN" class="inputsBlue" style="width:150px" value="$!userStore.baseDN" onkeyup="APP.callDelayed(this, validateUserBaseDN);"/>
                 <span id="user_baseDNStatus"></span></p>
 			</div>
 			<div class="subbody">
-				<button id="btnCancel" class="buttonBlue" type="button" value="Cancel" onclick="Cancel();">Cancel</button>
-				<button id="addStoreButton" class="buttonBlue" type="button" value="ADD THIS STORE" onclick="AddUserStore();">ADD THIS STORE</button>
+				<button id="btnCancel" class="buttonBlue" type="button" value="Cancel" onclick="Cancel();">$page.getLocalizedString("configuration.userStore.create.cancel")</button>
+				<button id="addStoreButton" class="buttonBlue" type="button" value="ADD THIS STORE" onclick="AddUserStore();">$page.getLocalizedString("configuration.userStore.create.addStore")</button>
 			</div>
 		</form>
 	</div>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.2 2007-11-12 14:51:13 lhazlewood Exp $
+ * $Id: Step2.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,9 +37,11 @@ public class Step2 extends AjaxPage {
     public ActionLink checkNewInstanceUrlLink = new ActionLink( "checkNewInstanceUrl", this, "checkNewInstanceUrl" );
 
     public Step2() {
+
     }
 
     public void onInit() {
+        super.onInit();
         String newInstanceUrl = (String)getContext().getSessionAttribute( NEW_INSTANCE_URL_SESSION_KEY );
         if ( newInstanceUrl != null ) {
             addModel( "newInstanceUrl", newInstanceUrl );
@@ -55,7 +57,7 @@ public class Step2 extends AjaxPage {
     public boolean checkNewInstanceUrl() {
         String newInstanceUrl = toString( "newInstanceUrl" );
         if ( newInstanceUrl == null ) {
-            writeToResponse( "Please specify a url." );
+            writeToResponse( super.getLocalizedString("configuration.wizard.step2.tooltip") );
         } else {
             try {
                 getConfigurator().testNewInstanceUrl( newInstanceUrl );

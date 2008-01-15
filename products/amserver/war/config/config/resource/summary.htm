@@ -24,20 +24,20 @@ function protectresource(){
     <div id="createPanel" class="createpanel" align="left">
         <br />
         <div class="bodywhite">
-            <h2>Protect a Resource - Summary</h2>
-            <small>Si quaedam nimis antique, si peraque dure dicere credit eos, ignave multa fatetur, et sapit et mecum facit et Iova</small>
+            <h2>$page.getLocalizedString("configuration.protect.summary.title")</h2>
+            <small>$page.getLocalizedString("configuration.protect.summary.comment")</small>
         </div>
         <br />
         <div class="bodywhite">
             <div id="names">
-                <p class="OrangeSmall">Selected URL pattern:</p>
-                <p class="OrangeSmall">2 Users:</p>
+                <p class="OrangeSmall">$page.getLocalizedString("configuration.protect.summary.selectedURL"):</p>
+                <p class="OrangeSmall">$page.getLocalizedString("configuration.protect.summary.users"):</p>
                 <br>
-                <p class="OrangeSmall">Condition:</p>
+                <p class="OrangeSmall">$page.getLocalizedString("configuration.protect.summary.condition"):</p>
             </div>
             
             <div style="float:left">HTTP://someserver.com/finance/*</div>
-            <div align="right"><a class="blue">Edit</a></div>
+            <div align="right"><a class="blue">$page.getLocalizedString("configuration.protect.summary.edit")</a></div>
 
             <p>User FirstName, Lastname</p>
 
@@ -47,8 +47,8 @@ function protectresource(){
 
         </div>
         <div class="subbody">
-            <button type="button" value="close" onClick="javascript:closed();">CLOSE</button>&nbsp;&nbsp;&nbsp;&nbsp;
-            <button type="button" value="next" onClick="javascript:protectresource();">PROTECT THIS RESOURCE</button>
+            <button type="button" value="close" onClick="javascript:closed();">$page.getLocalizedString("configuration.protect.summary.close")</button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" value="next" onClick="javascript:protectresource();">$page.getLocalizedString("configuration.protect.summary.protect")</button>
         </div>
     </div>
 </div>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Window.java,v 1.2 2007-11-12 14:51:10 lhazlewood Exp $
+ * $Id: Window.java,v 1.3 2008-01-15 19:58:59 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,7 @@ import net.sf.click.control.ActionLink;
  */
 public class Window extends AjaxPage {
 
-    public WindowStore windowStore = null;
+    public WindowStore windowStore = new WindowStore();
 
     public ActionLink validateServicePrincipalLink = new ActionLink("validateServicePrincipal", this, "validateServicePrincipal");
     public ActionLink validateFileNameLink = new ActionLink("validateFileName", this, "validateFileName");    
@@ -40,10 +40,6 @@ public class Window extends AjaxPage {
     public ActionLink validateServiceNameLink = new ActionLink("validateServiceName", this, "validateServiceName");
     public ActionLink validateDomainNameLink = new ActionLink("validateDomainName", this, "validateDomainName");
 
-
-    public void onInit() {
-        windowStore = new WindowStore();
-    }
 
     public boolean validateServicePrincipal() {
         return validateRequiredField("kerberosServicePrincipal");

@@ -182,7 +182,7 @@
     function userStoreStoreNameValidated(response) {
         validUserStoreStoreName = (response.responseText == "true");
         if (validUserStoreStoreName) {
-            DOM.get("userStore_storeNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Store name provided</small>";
+            DOM.get("userStore_storeNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.realm.create_realm.store_name_provided')</small>";
        }
         else {
             DOM.get("userStore_storeNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -193,7 +193,7 @@
     function userStoreHostNameValidated(response) {
         validUserStoreHostName = (response.responseText == "true");
         if (validUserStoreHostName) {
-            DOM.get("userStore_hostNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Directory</small>";
+            DOM.get("userStore_hostNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.realm.create_realm.located_directory')</small>";
        }
         else {
             DOM.get("userStore_hostNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -215,7 +215,7 @@
     function userStoreLoginValidated(response) {
         validUserStoreLogin = (response.responseText == "true");
         if (validUserStoreLogin) {
-            DOM.get("userStore_loginStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Logged in</small>";
+            DOM.get("userStore_loginStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.realm.create_realm.logged_in')</small>";
        }
         else {
             DOM.get("userStore_loginStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -237,7 +237,7 @@
     function userStoreBaseDNValidated(response) {
         validUserStoreBaseDN = (response.responseText == "true");
         if (validUserStoreBaseDN) {
-            DOM.get("userStore_baseDNStatus").innerHTML = "<img alt='info' class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Base DN</small><br/>";
+            DOM.get("userStore_baseDNStatus").innerHTML = "<img alt='info' class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.realm.create_realm.located_base_dn')</small><br/>";
        }
         else {
             DOM.get("userStore_baseDNStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -279,7 +279,7 @@
     function authStoreStoreNameValidated(response) {
         validAuthStoreStoreName = (response.responseText == "true");
         if (validAuthStoreStoreName) {
-            DOM.get("authStore_storeNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Store name provided</small>";
+            DOM.get("authStore_storeNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.realm.create_realm.store_name_provided')</small>";
        }
         else {
             DOM.get("authStore_storeNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -290,7 +290,7 @@
     function authStoreHostNameValidated(response) {
         validAuthStoreHostName = (response.responseText == "true");
         if (validAuthStoreHostName) {
-            DOM.get("authStore_hostNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Directory</small>";
+            DOM.get("authStore_hostNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.realm.create_realm.located_directory')</small>";
        }
         else {
             DOM.get("authStore_hostNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -312,7 +312,7 @@
     function authStoreLoginValidated(response) {
         validAuthStoreLogin = (response.responseText == "true");
         if (validAuthStoreLogin) {
-            DOM.get("authStore_loginStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Logged in</small>";
+            DOM.get("authStore_loginStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.realm.create_realm.logged_in')</small>";
        }
         else {
             DOM.get("authStore_loginStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -334,7 +334,7 @@
     function authStoreBaseDNValidated(response) {
         validAuthStoreBaseDN = (response.responseText == "true");
         if (validAuthStoreBaseDN) {
-            DOM.get("authStore_baseDNStatus").innerHTML = "<img alt='info' class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Base DN</small><br/>";
+            DOM.get("authStore_baseDNStatus").innerHTML = "<img alt='info' class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.realm.create_realm.located_base_dn')</small><br/>";
        }
         else {
             DOM.get("authStore_baseDNStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -416,7 +416,7 @@
 
         var option = document.createElement('OPTION');
         option.value = "administrators";
-        option.text = "Administrators";
+        option.text = "$page.getLocalizedString('configuration.realm.create_realm.option.administrators')";
         option.selected = "selected";
         combo.options.add(option, combo.options.length);
 
@@ -429,7 +429,7 @@
 
         option = document.createElement('OPTION');
         option.value = "_create_new_role_";
-        option.text = "Create a New Role";
+        option.text = "$page.getLocalizedString('configuration.realm.create_realm.option.create_new_role')";
         combo.options.add(option, combo.options.length);
     }
 
@@ -499,46 +499,46 @@
 		<form id="createRealmForm" action="create.htm">
 			<br />
 			<div class="bodywhite">
-				<h2>Create a Realm</h2>
-				<small>Si quaedam nimis antique, si peraque dure dicere credit eos, ignave multa fatetur, et sapit et mecum facit et Iova.</small>
+				<h2>$page.getLocalizedString("configuration.realm.create_realm.title")</h2>
+				<small>$page.getLocalizedString("configuration.realm.create_realm.description")</small>
 			</div>
 			<br />
-			<p class="OrangeVerySmall" id="allfields">* ALL Fields are Required</p>
+			<p class="OrangeVerySmall" id="allfields">$page.getLocalizedString("configuration.realm.create_realm.all_fields_required")</p>
 			<div class="bodywhite">
-					<p class="OrangeSmall">Enter the new realm name:</p>
+					<p class="OrangeSmall">$page.getLocalizedString("configuration.realm.create_realm.enter_new_realm_name")</p>
 					<input type="text" name="realmName" id="realmName" size="20" onkeyup="APP.callDelayed(this, validateRealmName);"/>
                     <span id="realmNameStatus"></span>
             </div>
 			<div class="bodywhite">
-				<p class="OrangeSmall">Do you want to constrain the policies within this realm?</p>
-                <input type="radio" name="constrainPolicies" id="constrainPoliciesYes" value="Yes" onclick="displayConstrainPolicies(true);"/>Yes &nbsp;
-                <input type="radio" name="constrainPolicies" id="constrainPoliciesNo" value="No" onclick="displayConstrainPolicies(false);"/>No
+				<p class="OrangeSmall">$page.getLocalizedString("configuration.realm.create_realm.constraint_policies")</p>
+                <input type="radio" name="constrainPolicies" id="constrainPoliciesYes" value="Yes" onclick="displayConstrainPolicies(true);"/>$page.getLocalizedString("configuration.realm.create_realm.yes") &nbsp;
+                <input type="radio" name="constrainPolicies" id="constrainPoliciesNo" value="No" onclick="displayConstrainPolicies(false);"/>$page.getLocalizedString("configuration.realm.create_realm.no")
 				<div id="constrainPolicies" style="display:none">
-					<p class="OrangeSmall">Host Name Constraints:&nbsp;
+					<p class="OrangeSmall">$page.getLocalizedString("configuration.realm.create_realm.host_name_constraints")&nbsp;
 					<input type="text" name="hostName" id="hostName" size="20" onkeyup="APP.callDelayed(this, validateHostName);"/>
                     <span id="hostNameStatus"></span></p>
-                    <p class="blue" style="padding-left:260px">Add another</p>
-					<p class="OrangeSmall">Enter URL Pattern: <img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/>&nbsp;
+                    <p class="blue" style="padding-left:260px">$page.getLocalizedString("configuration.realm.create_realm.add_another")</p>
+					<p class="OrangeSmall">$page.getLocalizedString("configuration.realm.create_realm.enter_url_pattern") <img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/>&nbsp;
 					<input type="text" name="urlPattern" id="urlPattern" size="20" /></p>
 				</div>
 			</div>
 			<div class="bodywhite">
-				<p class="OrangeSmall">Do you want to configure a user store for this realm?</p>
-				<input type="radio" name="configureUserStore" id="configureUserStoreYes" value="Yes" onclick="displayConfigureUserStore(true);" />Yes&nbsp;&nbsp;
-				<input type="radio" name="configureUserStore" id="configureUserStoreNo" value="No" onclick="displayConfigureUserStore(false);"/>No
+				<p class="OrangeSmall">$page.getLocalizedString("configuration.realm.create_realm.configure_user_store")</p>
+				<input type="radio" name="configureUserStore" id="configureUserStoreYes" value="Yes" onclick="displayConfigureUserStore(true);" />$page.getLocalizedString("configuration.realm.create_realm.yes")&nbsp;&nbsp;
+				<input type="radio" name="configureUserStore" id="configureUserStoreNo" value="No" onclick="displayConfigureUserStore(false);"/>$page.getLocalizedString("configuration.realm.create_realm.no")
 				<div id="userStore" style="display:none">
 					<div class="bodywhite">
-						<div class="middletitle">Enter the store details</div><div class="OrangeVerySmall">* ALL Fields are Required</div>
+						<div class="middletitle">Enter the store details</div><div class="OrangeVerySmall">$page.getLocalizedString("configuration.realm.create_realm.all_fields_required")</div>
 					</div>
 					<div class="bodywhite">
 						<div class="width_160">
-						<p>User Store Name:</p>
-						<p>Directory Host Name:</p>
-						<p>Port:</p>
-						<p>Is this a secure port?:</p>
-						<p>Directory Login ID:</p>
-						<p>Directory Password:</p>
-						<p>Directory Base DN:</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.user_store_name")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.host_name")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.port")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.secure_port")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.login")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.password")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.base_dn")</p>
 						</div>
 						<p>
                             <input class="inputsBlue" type="text" id="userStore_storeName" name="userStore_storeName" style="width:150px" onkeyup="APP.callDelayed(this, validateUserStoreStoreName);"/>
@@ -553,8 +553,8 @@
                             <span id="userStore_hostPortStatus"></span>
                         </p>
 						<p>
-                            <input type="radio" id="userStore_securePortNo" name="userStore_securePort" checked="checked" value="No"/>&nbsp;No&nbsp;
-						    <input type="radio" id="userStore_securePortYes" name="userStore_securePort" value="Yes"/>Yes
+                            <input type="radio" id="userStore_securePortNo" name="userStore_securePort" checked="checked" value="No"/>&nbsp;$page.getLocalizedString("configuration.realm.create_realm.no")&nbsp;
+						    <input type="radio" id="userStore_securePortYes" name="userStore_securePort" value="Yes"/>$page.getLocalizedString("configuration.realm.create_realm.yes")
                         </p>
 						<p>
                             <input class="inputsBlue" type="text" id="userStore_login" name="userStore_login" style="width:150px" onkeyup="APP.callDelayed(this, validateUserStoreLogin);"/>
@@ -571,23 +571,23 @@
 				</div>
 			</div>
 			<div class="bodywhite">
-				<p class="OrangeSmall">Do you want to configure the authentication store?</p>
-				<input type="radio" name="configureAuthStore" id="configureAuthStoreYes" value="Yes" onclick="displayConfigureAuthStore(true);"/>Yes&nbsp;&nbsp;
-				<input type="radio" name="configureAuthStore" id="authenticationNo" value="No" onclick="displayConfigureAuthStore(false);"/>No
+				<p class="OrangeSmall">$page.getLocalizedString("configuration.realm.create_realm.configure_auth_store")</p>
+				<input type="radio" name="configureAuthStore" id="configureAuthStoreYes" value="Yes" onclick="displayConfigureAuthStore(true);"/>$page.getLocalizedString("configuration.realm.create_realm.yes")&nbsp;&nbsp;
+				<input type="radio" name="configureAuthStore" id="authenticationNo" value="No" onclick="displayConfigureAuthStore(false);"/>$page.getLocalizedString("configuration.realm.create_realm.no")
 				<div id="authStore" style="display:none">
-					<p><input type="checkbox" name="chkLocated" id="chkLocated" size="20" />&nbsp;Use the same configuration as the user store:</p>
+					<p><input type="checkbox" name="chkLocated" id="chkLocated" size="20" />&nbsp;$page.getLocalizedString("configuration.realm.create_realm.use_configuration_user_store")</p>
 					<div class="bodywhite">
-						<div class="middletitle">Enter the store details</div><div class="OrangeVerySmall" align="right">* ALL Fields are Required</div>
+						<div class="middletitle">$page.getLocalizedString("configuration.realm.create_realm.enter_store_details")</div><div class="OrangeVerySmall" align="right">$page.getLocalizedString("configuration.realm.create_realm.all_fields_required")</div>
 					</div>
 					<div class="bodywhite">
 						<div class="width_160">
-						<p>User Store Name:</p>
-						<p>Directory Host Name:</p>
-						<p>Port:</p>
-						<p>Is this a secure port?:</p>
-						<p>Directory Login ID:</p>
-						<p>Directory Password:</p>
-						<p>Directory Base DN:</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.user_store_name")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.host_name")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.port")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.secure_port")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.login")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.password")</p>
+						<p>$page.getLocalizedString("configuration.realm.create_realm.base_dn")</p>
 						</div>
 						<p>
                             <input class="inputsBlue" type="text" id="authStore_storeName" name="authStore_storeName" style="width:150px" onkeyup="APP.callDelayed(this, validateAuthStoreStoreName);"/>
@@ -620,23 +620,23 @@
 				</div>
 			</div>
 			<div class="bodywhite">
-				<p class="OrangeSmall">Do you want to Assign an admin for this realm?</p>
-				<input type="radio" name="assignAdmin" id="assignAdminYes" value="Yes" onclick="displayAssignAdmin(true);"/>Yes&nbsp;&nbsp;
-				<input type="radio" name="assignAdmin" id="assignAdminNo" value="No" onclick="displayAssignAdmin(false);"/>No
+				<p class="OrangeSmall">$page.getLocalizedString("configuration.realm.create_realm.assign_admin")</p>
+				<input type="radio" name="assignAdmin" id="assignAdminYes" value="Yes" onclick="displayAssignAdmin(true);"/>$page.getLocalizedString("configuration.realm.create_realm.yes")&nbsp;&nbsp;
+				<input type="radio" name="assignAdmin" id="assignAdminNo" value="No" onclick="displayAssignAdmin(false);"/>$page.getLocalizedString("configuration.realm.create_realm.no")
 			</div>
 			<div id="assignAdmin" style="display:none" class="bodySpace" align="left">
-				<p>Locate your new admin and drag their name to the realm administrators box</p>
+				<p>$page.getLocalizedString("configuration.realm.create_realm.locale_admin_and_drag")</p>
 				<div id="demo" class="yui-navset tab">
 					<ul class="yui-nav">
-						<li class="selected"><a href="#tab1"><em>Realm Users</em></a></li>
+						<li class="selected"><a href="#tab1"><em>$page.getLocalizedString("configuration.realm.create_realm.realm_users_header")</em></a></li>
 					</ul>
 					<div class="yui-content">
                         <div>
                             <div class="bodywhite bodySpace2">
-                                <input type="text" id="search" value="*"/><button type="button" onclick="reloadRealmUsersTable();">search</button>
+                                <input type="text" id="search" value="*"/><button type="button" onclick="reloadRealmUsersTable();">$page.getLocalizedString("configuration.realm.create_realm.search")</button>
                             </div>
                             <div class="bodywhite">
-                                Displaying <span id="realmUsersTable_startIndex"></span> - <span id="realmUsersTable_endIndex"></span> of <span id="realmUsersTable_ofTotal"></span> realm users
+                                $page.getLocalizedString("configuration.realm.create_realm.displaying") <span id="realmUsersTable_startIndex"></span> - <span id="realmUsersTable_endIndex"></span> $page.getLocalizedString("configuration.realm.create_realm.of") <span id="realmUsersTable_ofTotal"></span> $page.getLocalizedString("configuration.realm.create_realm.realm_users")
                              </div>
                             <div id="realmUsersContentSearch" >
                                 <div id="realmUsersTable"></div>
@@ -648,17 +648,17 @@
 				<div style="width:20px;float:left">&nbsp;</div>
 				<div id="demo" class="yui-navset tab">
 					<ul class="yui-nav">
-						<li class="selected"><a href="#tab1"><em>Realm Administrators</em></a></li>
+						<li class="selected"><a href="#tab1"><em>$page.getLocalizedString("configuration.realm.create_realm.realm_administrators")</em></a></li>
 					</ul>
                     <div class="yui-content" style="height:465px">
                         <div>
                             <div class="bodywhite">
-                                <font class="commonblack">Select a role</font>&nbsp;
+                                <font class="commonblack">$page.getLocalizedString("configuration.realm.create_realm.select_role")</font>&nbsp;
                                 <select id="role" name="role" style="width:150px" onchange="changeRole(this);">
                                 </select>
                             </div>
                             <div class="bodywhite">
-                                Displaying <span id="adminsTable_startIndex"></span> - <span id="adminsTable_endIndex"></span> of <span id="adminsTable_ofTotal"></span> administrators
+                                $page.getLocalizedString("configuration.realm.create_realm.displaying") <span id="adminsTable_startIndex"></span> - <span id="adminsTable_endIndex"></span> $page.getLocalizedString("configuration.realm.create_realm.of") <span id="adminsTable_ofTotal"></span> $page.getLocalizedString("configuration.realm.create_realm.administrators")
                             </div>
                             <div id="contentSearch">
                                 <div id="adminsTable"></div>
@@ -670,9 +670,16 @@
 			</div>
 
 			<div class="subbody" align="right">
+<<<<<<< create.htm
+				<br />
+				<button id="btnCancel" type="button" value="Cancel" onclick="Cancel();">$page.getLocalizedString("configuration.realm.create_realm.button.cancel")</button>
+				<button id="createRealmButton" type="button" value="CREATE REALM" onclick="save();">$page.getLocalizedString("configuration.realm.create_realm.button.create_realm")</button>
+			</div>
+=======
 				<button id="btnCancel" type="button" value="Cancel" onclick="Cancel();">Cancel</button>
 				<button id="createRealmButton" type="button" value="CREATE REALM" onclick="save();">CREATE REALM</button>
 			</div>			
+>>>>>>> 1.3
 		</form>
 	</div>
 	<br /><br /><br />

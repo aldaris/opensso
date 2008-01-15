@@ -44,8 +44,8 @@
         admins: {}
     };
     var tableColumnDefs = [
-        {key:"firstName", label:"First Name", sortable:true},
-        {key:"lastName", label:"Last Name", sortable:true}
+        {key:"firstName", label:"$page.getLocalizedString('configuration.realm.admin.firstName')", sortable:true},
+        {key:"lastName", label:"$page.getLocalizedString('configuration.realm.admin.lastName')", sortable:true}
     ];
     var responseSchema = {
         resultsList: "records",
@@ -99,7 +99,7 @@
     }
 
     function cancel() {
-        document.location = "$context/commonTasks.htm";
+        document.location = "$context/config/commonTasks.htm";
     }
 
     function save() {
@@ -187,12 +187,12 @@
 	<div id="createPanel" class="createpanel" align="left">
 		<br />
 		<div class="bodywhite">
-			<h2>Assign an administrator to a realm</h2>
-			<small>Locate your new admin and drag their name to the realm administrators box.</small>
+			<h2>$page.getLocalizedString("configuration.realm.admin.title")</h2>
+			<small>$page.getLocalizedString("configuration.realm.admin.comment")</small>
 		</div>
 
         <div class="bodywhite">
-            Select the realm that this store will be added to
+            $page.getLocalizedString("configuration.realm.admin.realmLabel")
             <div id="realmsTable"></div>
             <br/><br/>
         </div>
@@ -200,15 +200,15 @@
         <div class="bodySpace">
 			<div id="demo" class="yui-navset tab">
 				<ul class="yui-nav">
-					<li class="selected"><a href="#tab1"><em>Realm Users</em></a></li>
+					<li class="selected"><a href="#tab1"><em>$page.getLocalizedString("configuration.realm.admin.realmsGridTitle")</em></a></li>
 				</ul>
 				<div class="yui-content" style="height:465px">
 					<div>
 						<div class="bodywhite">
-						<input type="text" id="search" value="*"/><button type="button" onclick="reloadRealmUsersTable();">search</button>
+						<input type="text" id="search" value="*"/><button type="button" onclick="reloadRealmUsersTable();">$page.getLocalizedString("configuration.realm.admin.search")</button>
 						</div>
 						<div class="bodywhite">
-                            Displaying <span id="realmUsersTable_startIndex"></span> - <span id="realmUsersTable_endIndex"></span> of <span id="realmUsersTable_ofTotal"></span> realm users
+                            $page.getLocalizedString("configuration.realm.admin.displaying")<span id="realmUsersTable_startIndex"></span> - <span id="realmUsersTable_endIndex"></span> $page.getLocalizedString("configuration.realm.admin.of") <span id="realmUsersTable_ofTotal"></span> $page.getLocalizedString("configuration.realm.admin.realmUsers")
 						 </div>
 						<div id="realmUsersContentSearch" >
                             <div id="realmUsersTable"></div>
@@ -220,17 +220,17 @@
 			<div style="width:20px;float:left">&nbsp;</div>
 			<div id="demo" class="yui-navset tab">
 				<ul class="yui-nav">
-					<li class="selected"><a href="#tab1"><em>Realm Administrators</em></a></li>
+					<li class="selected"><a href="#tab1"><em>$page.getLocalizedString("configuration.realm.admin.realmAdminTitle")</em></a></li>
 				</ul>
 				<div class="yui-content" style="height:465px">
 					<div>
 						<div class="bodywhite">
-							<font class="commonblack">Select a role</font>&nbsp;
+							<font class="commonblack">$page.getLocalizedString("configuration.realm.admin.administrators.selectRole")</font>&nbsp;
 							<select id="role" name="role" style="width:150px" onchange="changeRole(this);">
 							</select>
 						</div>
 						<div class="bodywhite">
-                            Displaying <span id="adminsTable_startIndex"></span> - <span id="adminsTable_endIndex"></span> of <span id="adminsTable_ofTotal"></span> administrators 
+                            $page.getLocalizedString("configuration.realm.admin.displaying") <span id="adminsTable_startIndex"></span> - <span id="adminsTable_endIndex"></span> $page.getLocalizedString("configuration.realm.admin.of") <span id="adminsTable_ofTotal"></span> $page.getLocalizedString("configuration.realm.admin.administrators") 
 						</div>
 						<div id="contentSearch">
                             <div id="adminsTable"></div>
@@ -241,8 +241,8 @@
 			</div>
 		</div>
 		<div class="subbody">
-			<button type="button" value="Cancel" onClick="javascript:cancel();">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
-			<button type="button" id="saveButton" onclick="save();">Save</button>
+			<button type="button" value="Cancel" onClick="javascript:cancel();">$page.getLocalizedString("configuration.realm.admin.cancel")</button>&nbsp;&nbsp;&nbsp;&nbsp;
+			<button type="button" id="saveButton" onclick="save();">$page.getLocalizedString("configuration.realm.admin.save")</button>
 		</div>
 		<br />
 	</div>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step5.java,v 1.2 2007-11-12 14:51:12 lhazlewood Exp $
+ * $Id: Step5.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,9 +37,11 @@ public class Step5 extends AjaxPage {
     public ActionLink clearLink = new ActionLink("clear", this, "clear" );
     public ActionLink validateLink = new ActionLink("validate", this, "validate" );
 
-    public Step5(){}
+    public Step5(){        
+    }
 
     public void onInit() {
+        super.onInit();
         String host = (String)getContext().getSessionAttribute( LOAD_BALANCER_HOST_SESSION_KEY );
         Integer port = (Integer)getContext().getSessionAttribute( LOAD_BALANCER_PORT_SESSION_KEY );
         if ( host != null ) {
@@ -60,17 +62,17 @@ public class Step5 extends AjaxPage {
     public boolean validate() {
         String host = toString("host");
         if ( host == null ) {
-            writeInvalid( "Please specify a host" );
+            writeInvalid( super.getLocalizedString("configuration.wizard.step5.hostName.tooltip") );
         } else {
             int port = toInt("port");
             if ( port > 65535 ) {
-                writeInvalid( "Please use a port less than or equal to 65535" );
+                writeInvalid(super.getLocalizedString("configuration.wizard.step5.port.tooltip"));
             } else {
                 try {
                     getConfigurator().testLoadBalancer( host, port );
                     getContext().setSessionAttribute( LOAD_BALANCER_HOST_SESSION_KEY, host );
                     getContext().setSessionAttribute( LOAD_BALANCER_PORT_SESSION_KEY, Integer.valueOf( port ) );
-                    writeValid("Load Balancer found" );
+                    writeValid(super.getLocalizedString("configuration.wizard.step5.balancerFound"));
                 } catch ( Exception ex ) {
                     writeInvalid( ex.getMessage() );
                 }

@@ -71,7 +71,7 @@
     function userStoreNameValidated(response) {
         userStoreNameValid = (response.responseText == "true");
         if (userStoreNameValid) {
-            DOM.get("user_storeNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Store name provided</small>";
+            DOM.get("user_storeNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.authentication_store.certificate.store_name_provided')</small>";
        }
         else {
             DOM.get("user_storeNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -82,7 +82,7 @@
     function userHostNameValidated(response) {
         userHostNameValid = (response.responseText == "true");
         if (userHostNameValid) {
-            DOM.get("user_hostNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Directory</small>";
+            DOM.get("user_hostNameStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.authentication_store.certificate.located_directory')</small>";
        }
         else {
             DOM.get("user_hostNameStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -104,7 +104,7 @@
     function userLoginValidated(response) {
         userLoginValid = (response.responseText == "true");
         if (userLoginValid) {
-            DOM.get("user_loginStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Logged in</small>";
+            DOM.get("user_loginStatus").innerHTML = "<img class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.authentication_store.certificate.logged_in')</small>";
        }
         else {
             DOM.get("user_loginStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -126,7 +126,7 @@
     function userBaseDNValidated(response) {
         userBaseDNValid = (response.responseText == "true");
         if (userBaseDNValid) {
-            DOM.get("user_baseDNStatus").innerHTML = "<img alt='info' class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>Located Base DN</small><br/>";
+            DOM.get("user_baseDNStatus").innerHTML = "<img alt='info' class='hand' src='$context/assets/images/check_true.JPG'>&nbsp;<small>$page.getLocalizedString('configuration.authentication_store.certificate.located_base_dn')</small><br/>";
        }
         else {
             DOM.get("user_baseDNStatus").innerHTML = "<small>" + response.responseText + "</small>";
@@ -152,30 +152,30 @@
 	<div id="certificateCreatePanel" class="createpanel">
 		<form id="certificateForm" >
             <div class="bodywhite" >
-                <p class="OrangeSmall">Certificate User ID attribute:&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
-                <input type="radio" name="userId" id="userId1" value="Subject CN" onchange="selectUserIdOption();"/>&nbsp;Subject CN<br />
-                <input type="radio" name="userId" id="userId2" value="Subject DN" onchange="selectUserIdOption();"/>&nbsp;Subject DN<br />
-                <input type="radio" name="userId" id="userId3" value="Email Address" onchange="selectUserIdOption();"/>&nbsp;Email Address<br />
-                <input type="radio" name="userId" id="userId4" value="Subject UID" onchange="selectUserIdOption();"/>&nbsp;Subject UID	<br />
-                <input type="radio" name="userId" id="userId5" value="Other" onchange="selectUserIdOption();"/>&nbsp;Other	<br />
+                <p class="OrangeSmall">$page.getLocalizedString("configuration.authentication_store.certificate.user_id_attribute")&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
+                <input type="radio" name="userId" id="userId1" value="Subject CN" onchange="selectUserIdOption();"/>&nbsp;$page.getLocalizedString("configuration.authentication_store.certificate.subject_cn")<br />
+                <input type="radio" name="userId" id="userId2" value="Subject DN" onchange="selectUserIdOption();"/>&nbsp;$page.getLocalizedString("configuration.authentication_store.certificate.subject_dn")<br />
+                <input type="radio" name="userId" id="userId3" value="Email Address" onchange="selectUserIdOption();"/>&nbsp;$page.getLocalizedString("configuration.authentication_store.certificate.email")<br />
+                <input type="radio" name="userId" id="userId4" value="Subject UID" onchange="selectUserIdOption();"/>&nbsp;$page.getLocalizedString("configuration.authentication_store.certificate.subject_uid")	<br />
+                <input type="radio" name="userId" id="userId5" value="Other" onchange="selectUserIdOption();"/>&nbsp;$page.getLocalizedString("configuration.authentication_store.certificate.other")	<br />
             </div>
             <div class="bodywhite" >
-                <p class="OrangeSmall">Additional certificate options (not required):</p>
-                <input type="checkbox" name="checkAgainstLDAP" id="checkAgainstLDAP" onclick="showOption(this, 1); this.value = (this.checked ? 'true' : 'false');"/>&nbsp;Check the certificate against the LDAP Directory&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                <p class="OrangeSmall">$page.getLocalizedString("configuration.authentication_store.certificate.additional_options")</p>
+                <input type="checkbox" name="checkAgainstLDAP" id="checkAgainstLDAP" onclick="showOption(this, 1); this.value = (this.checked ? 'true' : 'false');"/>&nbsp;$page.getLocalizedString("configuration.authentication_store.certificate.check_against_ldap")&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
                 <div id="option1" style="display:none">
                         <div class="bodywhite">
-                            <div class="OrangeVerySmall" id="allfields">* ALL Fields are Required</div><br />
+                            <div class="OrangeVerySmall" id="allfields">$page.getLocalizedString("configuration.authentication_store.certificate.all_fields_required")</div><br />
                             <div class="width_160">
-								<p>User Store Name:</p>
+								<p>$page.getLocalizedString("configuration.authentication_store.certificate.user_store_name")</p>
 							</div>
                             <p><input class="inputsBlue" type="text" id="user_storeName" name="user_storeName" style="width:150px" value="$!certificateStore.userStore.name" onkeyup="APP.callDelayed(this, validateUserStoreName);"/>
                             <span id="user_storeNameStatus"></span></p>
                         </div>
                         <div class="bodywhite">
                             <div class="width_160">
-								<p>Directory Host Name:</p>
-								<p>Port:</p>
-								<p>Is this a secure port?:</p>
+								<p>$page.getLocalizedString("configuration.authentication_store.certificate.host_name")</p>
+								<p>$page.getLocalizedString("configuration.authentication_store.certificate.port")</p>
+								<p>$page.getLocalizedString("configuration.authentication_store.certificate.secure_port")</p>
 							</div>
                             <p><input class="inputsBlue" type="text" id="user_hostName" name="user_hostName" style="width:150px" value="$!certificateStore.userStore.hostName" onkeyup="APP.callDelayed(this, validateUserHostName);"/>
                             <span id="user_hostNameStatus"></span></p>
@@ -188,8 +188,8 @@
                         </div>
                         <div class="bodywhite">
                             <div class="width_160">
-								<p>Directory Login ID:</p>
-								<p>Directory Password:</p>
+								<p>$page.getLocalizedString("configuration.authentication_store.certificate.login")</p>
+								<p>$page.getLocalizedString("configuration.authentication_store.certificate.password")</p>
 							</div>
                             <p><input class="inputsBlue" type="text" id="user_login" name="user_login" style="width:150px" value="$!certificateStore.userStore.login" onkeyup="APP.callDelayed(this, validateUserLogin);"/>
                             <span id="user_loginStatus"></span></p>
@@ -199,21 +199,21 @@
                         </div>
                         <div class="bodywhite">
                             <div class="width_160">
-								<p>Directory Base DN:</p>
-								<p>Search Attribute<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
+								<p>$page.getLocalizedString("configuration.authentication_store.certificate.base_dn")</p>
+								<p>$page.getLocalizedString("configuration.authentication_store.certificate.search_attribute")<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
 							</div>
                             <p><input class="inputsBlue" type="text" id="user_baseDN" name="user_baseDN" style="width:150px" value="$!certificateStore.userStore.baseDN" onkeyup="APP.callDelayed(this, validateUserBaseDN);"/>
                             <span id="user_baseDNStatus"></span></p>
-                            <p><select><option>Select One ...</option></select></p>
+                            <p><select><option>$page.getLocalizedString("configuration.authentication_store.certificate.select_one")</option></select></p>
                         </div>
                  </div>
-                <input type="checkbox" name="checkAgainstCRL" id="checkAgainstCRL" onclick="showOption(this, 2); this.value = (this.checked ? 'true' : 'false');"/>&nbsp;Check the certificate against the certificate revocation list (CRL)&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                <input type="checkbox" name="checkAgainstCRL" id="checkAgainstCRL" onclick="showOption(this, 2); this.value = (this.checked ? 'true' : 'false');"/>&nbsp;$page.getLocalizedString("configuration.authentication_store.certificate.check_against_crl")&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
                 <div id="option2" style="display:none;padding-left:20px">
-                    the search attribute is from the issuer's certificate<br />
-                    Search Attribute:&nbsp;
+                    $page.getLocalizedString("configuration.authentication_store.certificate.search_description")<br />
+                    $page.getLocalizedString("configuration.authentication_store.certificate.search_attribute"):&nbsp;
                     <input class="inputsBlue" type="text" id="searchAttribute" name="searchAttribute" style="width:150px"/><br />
                 </div>
-                <input type="checkbox" name="checkAgainstOSCP" id="checkAgainstOSCP" onclick="this.value = (this.checked ? 'true' : 'false');"/>&nbsp;Check the certificate against OSCP&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+                <input type="checkbox" name="checkAgainstOSCP" id="checkAgainstOSCP" onclick="this.value = (this.checked ? 'true' : 'false');"/>&nbsp;$page.getLocalizedString("configuration.authentication_store.certificate.check_against_oscp")&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
             </div>
 		</form>
 	</div>

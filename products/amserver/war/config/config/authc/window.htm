@@ -102,24 +102,24 @@
 <div id="windowDesktopMainPanel" align="center">
     <div id="windowDesktopCreatePanel" class="createpanel">
         <div class="bodywhite">
-            <div class="middletitle OrangeSmall">Enter the store details</div><div class="OrangeVerySmall" id="allfields">* ALL Fields are Required</div><br />
-            <p class="OrangeSmall">Kerberos service principal:<br />
+            <div class="middletitle OrangeSmall">$page.getLocalizedString("configuration.authentication_store.window.enter_store_details")</div><div class="OrangeVerySmall" id="allfields">* ALL Fields are Required</div><br />
+            <p class="OrangeSmall">$page.getLocalizedString("configuration.authentication_store.window.kerberos_service_principal")<br />
             <input type="text" id="kerberosServicePrincipal" name="kerberosServicePrincipal" value="$!windowStore.kerberosServicePrincipal" onkeyup="APP.callDelayed(this, validateServicePrincipal);"/>
             <span id="servicePrincipalStatus"></span></p>
 
-            <p class="OrangeSmall">Key tab file name:&nbsp;<a id="ttprealm" href="#" onmouseover="AjaxUtils.ajax_showTooltip('$context/config/authc/keytabFileTooltip.htm',this);return false;"  onmouseout="AjaxUtils.ajax_hideTooltip();" ><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></a><br />
+            <p class="OrangeSmall">$page.getLocalizedString("configuration.authentication_store.window.key_tab_file_name")&nbsp;<a id="ttprealm" href="#" onmouseover="AjaxUtils.ajax_showTooltip('$context/config/authc/keytabFileTooltip.htm',this);return false;"  onmouseout="AjaxUtils.ajax_hideTooltip();" ><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></a><br />
             <input type="text" id="kerberosFileName" name="kerberosFileName" value="$!windowStore.kerberosFileName" onkeyup="APP.callDelayed(this, validateFileName);"/>
             <span id="fileNameStatus"></span></p>
 
-             <p class="OrangeSmall">Kerberos realm:&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+             <p class="OrangeSmall">$page.getLocalizedString("configuration.authentication_store.window.kerberos_realm")&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
             <input type="text" id="kerberosRealm" name="kerberosRealm" value="$!windowStore.kerberosRealm" onkeyup="APP.callDelayed(this, validateRealm);"/>
             <span id="realmStatus"></span></p>
 
-            <p class="OrangeSmall">Kerberos service name:&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+            <p class="OrangeSmall">$page.getLocalizedString("configuration.authentication_store.window.kerberos_service_name")&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
             <input type="text" id="kerberosServiceName" name="kerberosServiceName" value="$!windowStore.kerberosServiceName" onkeyup="APP.callDelayed(this, validateServiceName);"/>
             <span id="serviceNameStatus"></span></p>
 
-            <p class="OrangeSmall">Return principal with domain name:&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+            <p class="OrangeSmall">$page.getLocalizedString("configuration.authentication_store.window.domain_name")&nbsp;<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
             <input type="text" id="domainName" name="domainName" value="$!windowStore.domainName" onkeyup="APP.callDelayed(this, validateDomainName);"/>
             <span id="domainNameStatus"></span></p>
         </div>

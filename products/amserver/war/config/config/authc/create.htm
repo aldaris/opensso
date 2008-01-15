@@ -20,7 +20,7 @@
     var selectedRealm = null;
 
     var tableColumnDefs = [
-        {key:"realmName", label:"Realms", sortable:true}
+        {key:"realmName", label:"$page.getLocalizedString('configuration.authentication_store.realms.header')", sortable:true}
     ];
     var responseSchema = {
         resultsList: "records",
@@ -99,12 +99,12 @@
         <form id="authenticationStoreForm" >
             <br />
             <div class="bodywhite">
-                <h2>Configure an Authentication Store</h2>
-                <small>Fusce rhoncus rutrum nunc. Ut ut pede vel sem scelerisque commodo. Vestibulum non libero vulputate arcu gravida auctor. Phasellus quis felis in nulla laoreet orn.</small>
+                <h2>$page.getLocalizedString("configuration.authentication_store.title")</h2>
+                <small>$page.getLocalizedString("configuration.authentication_store.description")</small>
             </div>
             <br />
             <div class="bodywhite">
-                Select the realm that this store will be added to
+                $page.getLocalizedString("configuration.authentication_store.select_realm")
                 <div id="realmsTable"></div>
                 <br/>
 				<br/>
@@ -112,23 +112,23 @@
             <br />
             <div class="bodywhite">
                 <br/>
-                <p class="OrangeSmall">Select authentication source</p>
+                <p class="OrangeSmall">$page.getLocalizedString("configuration.authentication_store.select_authentication_store")</p>
                 <select name="authenticationSource" id="authenticationSource" style="width:200px" onchange="selectAuthentication();">
-                    <option value="None">Select One</option>
-                    <option value="LDAP">LDAP (Including Active Directory)</option>
-                    <option value="Certificate">Certificate</option>
-                    <option value="Windows Desktop SSO">Windows Desktop SSO</option>
-                    <option value="Data Store">Data Store</option>
-                    <option value="Federation">Federation</option>
-                    <option value="HTTP Basic">HTTP Basic</option>
-                    <option value="JDBC">JDBC</option>
-                    <option value="Anonymous">Anonymous</option>
+                    <option value="None">$page.getLocalizedString("configuration.authentication_store.select_one")</option>
+                    <option value="LDAP">$page.getLocalizedString("configuration.authentication_store.ldap")</option>
+                    <option value="Certificate">$page.getLocalizedString("configuration.authentication_store.certificate")</option>
+                    <option value="Windows Desktop SSO">$page.getLocalizedString("configuration.authentication_store.windows_desktop")</option>
+                    <option value="Data Store">$page.getLocalizedString("configuration.authentication_store.data_store")</option>
+                    <option value="Federation">$page.getLocalizedString("configuration.authentication_store.federation")</option>
+                    <option value="HTTP Basic">$page.getLocalizedString("configuration.authentication_store.http_basic")</option>
+                    <option value="JDBC">$page.getLocalizedString("configuration.authentication_store.jdbc")</option>
+                    <option value="Anonymous">$page.getLocalizedString("configuration.authentication_store.anonymous")</option>
                 </select><br/><br/>
             </div>
             <div id="configureAuthenticationStoreBody"></div>
             <div class="subbody">
-                <button type="button" value="Cancel" onClick="cancel();">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="addStoreButton" type="button" value="addStore" onClick="addToStore();">ADD TO STORE</button>
+                <button type="button" value="Cancel" onClick="cancel();">$page.getLocalizedString("configuration.authentication_store.button.cancel")</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="addStoreButton" type="button" value="addStore" onClick="addToStore();">$page.getLocalizedString("configuration.authentication_store.button.add_to_store")</button>
             </div>
         </form>
     </div>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPStoreWizardPage.java,v 1.2 2007-11-12 14:51:13 lhazlewood Exp $
+ * $Id: LDAPStoreWizardPage.java,v 1.3 2008-01-15 19:58:59 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,7 @@ public class LDAPStoreWizardPage extends AjaxPage {
     }
 
     public void onInit() {
+        super.onInit();
         addModel( "type", getType() );
         addModel( "typeTitle", getTypeTitle() );
         addModel( "pageNum", Integer.valueOf( getPageNum() ) );

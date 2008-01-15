@@ -41,17 +41,17 @@
 	<div id="mainPanel" align="center">
         <form id="roleForm">
             <div id="createPanel bodySpace" class="createpanel" align="left" style="width:370px;">
-                <p><strong>Enter a name for this new role:</strong><br />
+                <p><strong>$page.getLocalizedString("configuration.realm.addRole.newRole"):</strong><br />
                 <input type="text" id="roleName" name="roleName"/></p>
-                <p>Select the administrative privileges for this new role</p>
+                <p>$page.getLocalizedString("configuration.realm.addRole.privileges"):</p>
                 <div class="bodywhite">
-                    <p><input type="checkbox" id="read_write_log_files" name="read_write_log_files"/>&nbsp;Read & write to all log files</p>
-                    <p><input type="checkbox" id="read_log_files" name="read_log_files"/>&nbsp;Read access to all log files</p>
-                    <p><input type="checkbox" id="write_log_files" name="write_log_files"/>&nbsp;Write access to all log files</p>
-                    <p><input type="checkbox" id="read_write_policy_properties_only" name="read_write_policy_properties_only"/>&nbsp;Read & write access for policy properties only</p>
-                    <p><input type="checkbox" id="read_write_access_all_realms_and_policy_properties" name="read_write_access_all_realms_and_policy_properties"/>&nbsp;Read & write access to all realm & policy properties</p>
+                    <p><input type="checkbox" id="read_write_log_files" name="read_write_log_files"/>&nbsp;$page.getLocalizedString("configuration.realm.addRole.privileges.rwAll")</p>
+                    <p><input type="checkbox" id="read_log_files" name="read_log_files"/>&nbsp;$page.getLocalizedString("configuration.realm.addRole.privileges.rAll")</p>
+                    <p><input type="checkbox" id="write_log_files" name="write_log_files"/>&nbsp;$page.getLocalizedString("configuration.realm.addRole.privileges.wAll")</p>
+                    <p><input type="checkbox" id="read_write_policy_properties_only" name="read_write_policy_properties_only"/>&nbsp;$page.getLocalizedString("configuration.realm.addRole.privileges.rwPoliciesOnly")</p>
+                    <p><input type="checkbox" id="read_write_access_all_realms_and_policy_properties" name="read_write_access_all_realms_and_policy_properties"/>&nbsp;$page.getLocalizedString("configuration.realm.addRole.privileges.rwAllPoliciesReam")</p>
                 </div>
-                <p id="links"><a class="pointer" onclick="cancel();">Cancel</a>&nbsp;|&nbsp;<a class="pointer" onclick="saveRole();">Save</a><p>
+                <p id="links"><a class="pointer" onclick="cancel();">$page.getLocalizedString("configuration.realm.addRole.cancel")</a>&nbsp;|&nbsp;<a class="pointer" onclick="saveRole();">$page.getLocalizedString("configuration.realm.addRole.save")</a><p>
             </div>
         </form>
     </div>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NewPassword.java,v 1.2 2007-11-12 14:51:14 lhazlewood Exp $
+ * $Id: NewPassword.java,v 1.3 2008-01-15 19:58:58 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,11 +37,12 @@ public class NewPassword extends AjaxPage {
     public Form newPasswordForm = new Form("newPasswordForm");
 
     public void onInit() {
+        super.onInit();
         newPasswordForm.add( new HiddenField("username", "amAdmin" ) );
-        newPasswordForm.add( new PasswordField( "password", getMessage("newPassword.password"), true ) );
-        newPasswordForm.add( new PasswordField( "passwordConfirm", getMessage("newPassword.passwordConfirm"), true ) );
+        newPasswordForm.add(new PasswordField("password", getLocalizedString("configuration.new_password.password"), true));
+        newPasswordForm.add(new PasswordField("passwordConfirm", getLocalizedString("configuration.new_password.confirm"), true));
 
-        Submit submit = new Submit("save", getMessage("save"), this, "onSubmit" );
+        Submit submit = new Submit("save", getLocalizedString("configuration.new_password.save"), this, "onSubmit");
         submit.setAttribute( "onclick", "submitNewPasswordForm(); return false;");
 
         newPasswordForm.add( submit );
@@ -54,7 +55,7 @@ public class NewPassword extends AjaxPage {
             String passwordConfirm = newPasswordForm.getField( "passwordConfirm" ).getValue();
 
             if ( !password.equals(passwordConfirm) ) {
-                newPasswordForm.setError( getMessage( "newPassword.error" ) );
+                newPasswordForm.setError(getLocalizedString("configuration.new_password.error"));
                 getContext().getResponse().setHeader( "formError", "true" );
             } else {
                 String username = newPasswordForm.getField("username").getValue();

@@ -292,12 +292,12 @@
     <div id="createPanel" class="createpanel">
         <br />
             <div class="bodywhite">
-            <h2>Protect a Resource</h2>
-            <small>Si quaedam nimis antique, si peraque dure dicere credit eos, ignave multa fatetur, et sapit et mecum facit et Iova</small>
+            <h2>$page.getLocalizedString("configuration.protect.title")</h2>
+            <small>$page.getLocalizedString("configuration.protect.comment")</small>
         </div>
         <br />
         <div class="bodywhite">
-            <p class="OrangeSmall">Select or create a URL pattern:</p>
+            <p class="OrangeSmall">$page.getLocalizedString("configuration.protect.instructionsLabel"):</p>
             <select multiple size="3" name="urlPattern" id="urlPattern"></select><br>
             <!--<p class="blue links"><a class="pointer">Delete</a>&nbsp;|&nbsp;<a class="pointer">Add New</a></p-->
 			<div id="options1" class="yui-navset links">
@@ -305,38 +305,38 @@
 					<div id="tabOption1">
 					</div>
 					<div id="tabOption2" style="width:220px">
-						<p align="left"><b>New URL Pattern:</b><br />
+						<p align="left"><b>$page.getLocalizedString("configuration.protect.newURL")</b><br />
 						<input id="newUrlPattern" name="newUrlPattern" style="width:200px"/></p>
-						<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs1');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="addUrlPattern();">Save</a></p>
+						<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs1');">$page.getLocalizedString("configuration.protect.cancel")</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="addUrlPattern();">$page.getLocalizedString("configuration.protect.save")</a></p>
 					</div>
 				</div>
 				<ul class="yui-nav" style="text-align:right">
-					<li><a href="javascript:void(0);" onclick="removeUrlPattern();"><em>Delete</em></a></li>
-					<li><a href="#tab2" onclick="show(2,this,'contentTabs1')"><em>Add New</em></a></li>
+					<li><a href="javascript:void(0);" onclick="removeUrlPattern();"><em>$page.getLocalizedString("configuration.protect.delete")</em></a></li>
+					<li><a href="#tab2" onclick="show(2,this,'contentTabs1')"><em>$page.getLocalizedString("configuration.protect.addNew")</em></a></li>
 				</ul>
 			</div>
         </div>
         <div class="bodywhite">
-            <font class="OrangeSmall">Add a subject</font><br />
-            <font class="OrangeSmall">Select a subject type:</font><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
+            <font class="OrangeSmall">$page.getLocalizedString("configuration.protect.subject")</font><br />
+            <font class="OrangeSmall">$page.getLocalizedString("configuration.protect.subjectType"):</font><img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/><br />
             <select id="subject" onchange="changeSubject()">
-                <option value="0">Select ...</option>
-                <option value="1">Users</option>
-                <option value="2">Group</option>
-                <option value="3">Role</option>
+                <option value="0">$page.getLocalizedString("configuration.protect.select")</option>
+                <option value="1">$page.getLocalizedString("configuration.protect.users")</option>
+                <option value="2">$page.getLocalizedString("configuration.protect.group")</option>
+                <option value="3">$page.getLocalizedString("configuration.protect.role")</option>
             </select><br><br />
             <div id="divUser" style="display:none" class="bodySpace" align="left">
                 <div id="demo" class="yui-navset widthTab">
                     <ul class="yui-nav">
-                        <li class="selected"><a href="#tab1"><em>Select user(s)</em></a></li>
+                        <li class="selected"><a href="#tab1"><em>$page.getLocalizedString("configuration.protect.selectUser")</em></a></li>
                     </ul>
                     <div class="yui-content" style="height:465px">
                         <div>
                             <div class="bodywhite">
-                            <input type="text" id="search" value="*"/><button type="button" onclick="reloadRealmUsersTable();">search</button>
+                            <input type="text" id="search" value="*"/><button type="button" onclick="reloadRealmUsersTable();">$page.getLocalizedString("configuration.protect.search")</button>
                             </div>
                             <div class="bodywhite">
-                                Displaying <span id="usersTable_startIndex"></span> - <span id="usersTable_endIndex"></span> of <span id="usersTable_ofTotal"></span> realm users
+                                $page.getLocalizedString("configuration.protect.displaying") <span id="usersTable_startIndex"></span> - <span id="usersTable_endIndex"></span> of <span id="usersTable_ofTotal"></span> $page.getLocalizedString("configuration.protect.realmUsers")
                              </div>
                             <div id="realmUsersContentSearch" >
                                 <div id="usersTable"></div>
@@ -348,7 +348,7 @@
             </div>
         </div>
         <div class="bodywhite" id="haveCondition" >
-			<p class="OrangeSmall">Select the conditions:</p>
+			<p class="OrangeSmall">$page.getLocalizedString("configuration.protect.conditions"):</p>
                 <select multiple id="existentConditions" name="existentConditions" size="3" style="width:200px"></select><br>
                 <!--<p class="blue links"><a class="pointer">Delete</a>&nbsp;|&nbsp;<a class="pointer">Add New</a></p>-->
 				<div id="options2" class="yui-navset links">
@@ -356,50 +356,50 @@
 						<div id="tabOption1">
 						</div>
 						<div id="tabOption2" style="width:300px" align="left">
-							<p class="OrangeSmall">Select the type of condition(s):</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew1" value="activeSessionTime"/>&nbsp;Active Session Time</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew2" value="authByModuleChain"/>&nbsp;Authentication by Module Chain</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew3" value="authByType"/>&nbsp;Authentication by type</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew4" value="minAuthLevel"/>&nbsp;Minimum Authentication Level</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew5" value="maxAuthLEvel"/>&nbsp;Maximum Authentication Level</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew6" value="authToRealm"/>&nbsp;Authentication to a Realm</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew7" value="currentSessionProperties"/>&nbsp;Current Session Properties</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew8" value="identityMembership"/>&nbsp;Identity Membership</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew9" value="ipAddress" onclick="changeChecksAddCondition();"/>&nbsp;IP Address</p>
+							<p class="OrangeSmall">$page.getLocalizedString("configuration.protect.conditions.type"):</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew1" value="activeSessionTime"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.moduleChain")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew2" value="authByModuleChain"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.moduleChain")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew3" value="authByType"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.minimunLevel")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew4" value="minAuthLevel"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.minimunLevel")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew5" value="maxAuthLEvel"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.MaximunLevel")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew6" value="authToRealm"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.realm")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew7" value="currentSessionProperties"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.Identity")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew8" value="identityMembership"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.Identity")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew9" value="ipAddress" onclick="changeChecksAddCondition();"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.ipAddress")</p>
 							<div id="option10" style="display:none">
-								<p class="OrangeSmall">Enter the IP Address Information:<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
-								<p>Name:</font><input name="name" id="name" type="text"/></p>
-								<p>IP Address from&nbsp;
+								<p class="OrangeSmall">$page.getLocalizedString("configuration.protect.conditions.type.ipAddress.info"):<img class="balloonIcon" src="$context/assets/images/balloon_icon.png" alt="#"/></p>
+								<p><font>$page.getLocalizedString("configuration.protect.conditions.type.ipAddress.name"):</font><input name="name" id="name" type="text"/></p>
+								<p>$page.getLocalizedString("configuration.protect.conditions.type.ipAddress.from")&nbsp;
 								<input type="text" name="fromIP1" id="fromIP1" style="width:30px;"/>
 								<input type="text" name="fromIP2" id="fromIP2" style="width:30px;"/>
 								<input type="text" name="fromIP3" id="fromIP3" style="width:30px;"/>
 								<input type="text" name="fromIP4" id="fromIP4" style="width:30px;"/></p>
-								<p>IP Address to&nbsp;
+								<p>$page.getLocalizedString("configuration.protect.conditions.type.ipAddress.to")&nbsp;
 								<input type="text" name="toIP1" id="toIP1" style="width:30px;"/>&nbsp;
 								<input type="text" name="toIP2" id="toIP2" style="width:30px;"/>&nbsp;
 								<input type="text" name="toIP3" id="toIP3" style="width:30px;"/>
 								<input type="text" name="toIP4" id="toIP4" style="width:30px;"/></p>
-								<p>DNS Name&nbsp;
+								<p>$page.getLocalizedString("configuration.protect.conditions.type.ipAddress.dns")&nbsp;
 								<input  type="text" name="dnsName" id="dnsName"/></p>
-								<p class="OrangeSmall">Parameter Type:</p>
-								<input type="radio" id="staticType" name="paramterType" value="static"/>&nbsp;Static&nbsp;&nbsp;
-								<input type="radio" id="dynamicType" name="parameterType" value="dynamic"/>&nbsp;Dinamic<br/>
+								<p class="OrangeSmall">$page.getLocalizedString("configuration.protect.conditions.type.ipAddress.parameter"):</p>
+								<input type="radio" id="staticType" name="paramterType" value="static"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.ipAddress.static")&nbsp;&nbsp;
+								<input type="radio" id="dynamicType" name="parameterType" value="dynamic"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.ipAddress.dynamic")<br/>
 							</div>
-							<p><input type="checkbox" name="conditionType" id="conditionNew10" value="dnsName"/>&nbsp;DNS Name</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew11" value="ldapFilter"/>&nbsp;LDAP Filter Condition</p>
-							<p><input type="checkbox" name="conditionType" id="conditionNew12" value="time"/>&nbsp;Time (day, date, time, and timezone)</p>
-							<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs2');">Cancel</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="addCondition();">Save</a></p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew10" value="dnsName"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.dnsName")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew11" value="ldapFilter"/>&nbsp;$page.getLocalizedString("configuration.protect.conditions.type.ldap")</p>
+							<p><input type="checkbox" name="conditionType" id="conditionNew12" value="time"/>&nbsp$page.getLocalizedString("configuration.protect.conditions.type.time");</p>
+							<p align="right" style="color:#000066"><a class="pointer" onclick="cancelPopUp('contentTabs2');">$page.getLocalizedString("configuration.protect.conditions.type.cancel")</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class="pointer" onclick="addCondition();">$page.getLocalizedString("configuration.protect.conditions.type.save")</a></p>
 						</div>
 					</div>
 					<ul class="yui-nav" style="text-align:right">
-						<li><a href="javascript:void(0);" onclick="removeCondition(1,this,'contentTabs2');"><em>Delete</em></a></li>
-						<li><a href="#tab2" onclick="show(2,this,'contentTabs2')"><em>Add New</em></a></li>
+						<li><a href="javascript:void(0);" onclick="removeCondition(1,this,'contentTabs2');"><em>$page.getLocalizedString("configuration.protect.delete")</em></a></li>
+						<li><a href="#tab2" onclick="show(2,this,'contentTabs2')"><em>$page.getLocalizedString("configuration.protect.addNew")</em></a></li>
 					</ul>
 				</div>
             </div>
         <div class="subbody">
-            <button type="button" name="closeButton" id="closeButton" value="close" onClick="javascript:closed();">Close</button>&nbsp;&nbsp;&nbsp;&nbsp;
-            <button type="button" name="nextButton" id="nextButton" value="next" onClick="javascript:next();">Next</button>
+            <button type="button" name="closeButton" id="closeButton" value="close" onClick="javascript:closed();">$page.getLocalizedString("configuration.protect.conditions.type.close")</button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" name="nextButton" id="nextButton" value="next" onClick="javascript:next();">$page.getLocalizedString("configuration.protect.conditions.type.next")</button>
         </div>
     </div>
 </div>

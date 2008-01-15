@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step1.java,v 1.2 2007-11-12 14:51:13 lhazlewood Exp $
+ * $Id: Step1.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,10 +42,11 @@ public class Step1 extends AjaxPage {
     }
 
     public void onInit() {
+        super.onInit();
         HiddenField hidden = new HiddenField( "skipStep1", "false" );
         form.add( hidden );
 
-        Checkbox cb = new Checkbox( "skipStep1Checkbox", "Skip this step in the future." );
+        Checkbox cb = new Checkbox( "skipStep1Checkbox", super.getLocalizedString("configuration.wizard.step1.skip") );
         cb.setAttribute( "onclick", "toggleSkipStep1();");
         form.add( cb );
 

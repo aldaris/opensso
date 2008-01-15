@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JDBC.java,v 1.2 2007-11-12 14:51:10 lhazlewood Exp $
+ * $Id: JDBC.java,v 1.3 2008-01-15 19:58:59 jefberpe Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,12 +31,8 @@ import com.sun.identity.config.util.AjaxPage;
  */
 public class JDBC extends AjaxPage {
 
-    public JDBCStore jdbcStore;
+    public JDBCStore jdbcStore = new JDBCStore();
 
-
-    public void onInit() {
-        jdbcStore = new JDBCStore();
-    }
 
     public void onPost() {
         jdbcStore.getRealm().setName(toString("realmName"));
