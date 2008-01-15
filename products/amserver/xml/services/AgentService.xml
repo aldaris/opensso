@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.22 2008-01-15 00:47:29 madan_ranganath Exp $
+   $Id: AgentService.xml,v 1.23 2008-01-15 21:53:56 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1758,9 +1758,15 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.iplanet.services.debug.level"
-                        type="single"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a215">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a250">off</ChoiceValue>
+                            <ChoiceValue i18nKey="a251">error</ChoiceValue>
+                            <ChoiceValue i18nKey="a252">warning</ChoiceValue>
+                            <ChoiceValue i18nKey="a253">message</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>error</Value>
                         </DefaultValues>
