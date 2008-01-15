@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.9 2007-11-20 00:47:05 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.10 2008-01-15 17:43:29 dlarson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,6 @@ import java.util.Set;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
-import java.util.Collections;
 import java.io.FileOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +58,6 @@ import com.sun.identity.shared.Constants;
 import com.iplanet.am.util.SystemProperties;
 
 import com.sun.identity.liberty.ws.authnsvc.AuthnSvcClient;
-import com.sun.identity.liberty.ws.authnsvc.AuthnSvcConstants;
 import com.sun.identity.liberty.ws.authnsvc.AuthnSvcException;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLRequest;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLResponse;
@@ -70,7 +68,6 @@ import com.sun.identity.liberty.ws.soapbinding.SOAPBindingConstants;
 
 import com.sun.identity.wss.security.SecurityException;
 import com.sun.identity.wss.security.SecurityToken;
-import com.sun.identity.wss.security.AssertionToken;
 import com.sun.identity.wss.security.AssertionTokenSpec;
 import com.sun.identity.wss.security.SAML2TokenSpec;
 import com.sun.identity.wss.security.SecurityMechanism;
@@ -103,7 +100,7 @@ import com.sun.identity.wss.sts.FAMSTSException;
  * OASIS web services security specification and as well as the Liberty
  * Identity Web services security framework.
  *
- */  
+ */
 public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
     private String providerName = null;
@@ -115,17 +112,17 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     private static String FORWARD_SLASH = "/";
     private static MessageAuthenticator authenticator = null;
     
-     /**
+    /**
      * Property for web services authenticator.
      */
     private static final String WSS_AUTHENTICATOR =
-       "com.sun.identity.wss.security.authenticator";
+            "com.sun.identity.wss.security.authenticator";
     
-        /**
+    /**
      * Property string for liberty authentication service url.
      */
     private static final String LIBERTY_AUTHN_URL =
-                  "com.sun.identity.liberty.authnsvc.url";
+            "com.sun.identity.liberty.authnsvc.url";
     
     private static final String MECHANISM_SSOTOKEN = "SSOTOKEN";
 
@@ -138,13 +135,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      */
     public void init(Map config) throws SecurityException {
         if(debug.messageEnabled()) {
-           debug.message("SOAPRequestHandler.Init map:" + config);
+            debug.message("SOAPRequestHandler.Init map:" + config);
         }
         providerName = (String)config.get(PROVIDER_NAME);
         if( (providerName == null) || (providerName.length() == 0) ) {
-           debug.error("SOAPRequestHandler.init:: provider name is null"); 
-           throw new SecurityException(
-                 bundle.getString("SOAPRequestHandlerInitFailed"));
+            debug.error("SOAPRequestHandler.init:: provider name is null");
+            throw new SecurityException(
+                    bundle.getString("SOAPRequestHandlerInitFailed"));
         }
     }
 
@@ -170,45 +167,55 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      * @exception SecurityException if any error occured during validation.
      */
     public Object validateRequest(SOAPMessage soapRequest,
-                        Subject subject,
-                        Map sharedState,
-                        HttpServletRequest request,
-                        HttpServletResponse response)
-        throws SecurityException {
+            Subject subject,
+            Map sharedState,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws SecurityException {
 
-        debug.message("SOAPRequestHandler.validateRequest: Init"); 
+        debug.message("SOAPRequestHandler.validateRequest: Init");
         ProviderConfig config = getWSPConfig();
 
         if(isLibertyMessage(soapRequest)) {
            if(debug.messageEnabled()) {
-              debug.message("SOAPRequestHandler.validateRequest:: Incoming " +
-              "SOAPMessage is of liberty message type.");
-           }
-           MessageProcessor processor = new MessageProcessor(config);
-           try {
-               return processor.validateRequest(soapRequest, subject, 
-                      sharedState, request);
-           } catch (SOAPBindingException sbe) {
-               debug.error("SOAPRequestHandler.validateRequest:: SOAP" +
-               "BindingException:: ", sbe);
-               throw new SecurityException(sbe.getMessage());
-           }
+                debug.message("SOAPRequestHandler.validateRequest:: Incoming " +
+                        "SOAPMessage is of liberty message type.");
+            }
+            MessageProcessor processor = new MessageProcessor(config);
+            try {
+                return processor.validateRequest(soapRequest, subject,
+                        sharedState, request);
+            } catch (SOAPBindingException sbe) {
+                debug.error("SOAPRequestHandler.validateRequest:: SOAP" +
+                        "BindingException:: ", sbe);
+                throw new SecurityException(sbe.getMessage());
+            }
         }
 
-        SecureSOAPMessage secureMsg = 
-                           new SecureSOAPMessage(soapRequest, false);
+        SecureSOAPMessage secureMsg =
+                new SecureSOAPMessage(soapRequest, false);
 
-        if((config.isRequestEncryptEnabled()) || 
-           (config.isRequestHeaderEncryptEnabled())) {
+        secureMsg.parseSecurityHeader(
+                (Node) (secureMsg.getSecurityHeaderElement()));
+
+        if ((config.isRequestEncryptEnabled()) ||
+                (config.isRequestHeaderEncryptEnabled())) {
             secureMsg.decrypt((config.isRequestEncryptEnabled()),
-                              (config.isRequestHeaderEncryptEnabled()));
+                    (config.isRequestHeaderEncryptEnabled()));
             soapRequest = secureMsg.getSOAPMessage();
         }
 
-        secureMsg.parseSecurityHeader(
-            (Node)(secureMsg.getSecurityHeaderElement()));
-        SecurityMechanism securityMechanism = 
-            secureMsg.getSecurityMechanism();
+        if (config.isRequestSignEnabled()) {
+            if (!secureMsg.verifySignature()) {
+                debug.error("SOAPRequestHandler.validateRequest:: Signature " +
+                        "verification failed.");
+                throw new SecurityException(
+                        bundle.getString("signatureValidationFailed"));
+            }
+        }
+
+        SecurityMechanism securityMechanism =
+                secureMsg.getSecurityMechanism();
         String uri = securityMechanism.getURI();
 
         List list = config.getSecurityMechanisms();
@@ -217,45 +224,36 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             debug.message("List of getSecurityMechanisms : " + list);
             debug.message("current uri : " + uri);
         }
-        
+
         if(!list.contains(uri)) {
            if( (!list.contains(
-                SecurityMechanism.WSS_NULL_ANONYMOUS_URI)) &&
-               (!list.contains(
+                    SecurityMechanism.WSS_NULL_ANONYMOUS_URI)) &&
+                    (!list.contains(
                 SecurityMechanism.WSS_TLS_ANONYMOUS_URI))&&
-               (!list.contains(
-                SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI))) {
-               throw new SecurityException(
-                   bundle.getString("unsupportedSecurityMechanism"));
-           } else {
-              if(debug.messageEnabled()) {
-                 debug.message("SOAPRequestHandler.validateRequest:: " +
-                  "provider is not configured for the incoming message " +
-                  " level type but allows anonymous");
-              }
-              return subject;
-           }
-        }
-
-        if(SecurityMechanism.WSS_NULL_ANONYMOUS_URI.equals(uri) ||
-           (SecurityMechanism.WSS_TLS_ANONYMOUS_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI.equals(uri))) {
-           return subject;
-        }
-        
-        if(config.isRequestSignEnabled()) {
-            if(!secureMsg.verifySignature()) {
-                debug.error("SOAPRequestHandler.validateRequest:: Signature " +
-                "verification failed.");
+                    (!list.contains(
+                    SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI))) {
                 throw new SecurityException(
-                    bundle.getString("signatureValidationFailed"));
+                        bundle.getString("unsupportedSecurityMechanism"));
+            } else {
+              if(debug.messageEnabled()) {
+                    debug.message("SOAPRequestHandler.validateRequest:: " +
+                            "provider is not configured for the incoming message " +
+                            " level type but allows anonymous");
+                }
+                return subject;
             }
         }
 
-        subject = (Subject)getAuthenticator().authenticate(subject, 
-               secureMsg.getSecurityMechanism(),
-               secureMsg.getSecurityToken(),
-               config, secureMsg, false);
+        if(SecurityMechanism.WSS_NULL_ANONYMOUS_URI.equals(uri) ||
+                (SecurityMechanism.WSS_TLS_ANONYMOUS_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI.equals(uri))) {
+            return subject;
+        }
+
+        subject = (Subject) getAuthenticator().authenticate(subject,
+                secureMsg.getSecurityMechanism(),
+                secureMsg.getSecurityToken(),
+                config, secureMsg, false);
 
         removeValidatedHeaders(config, soapRequest);
 
@@ -274,66 +272,66 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      * @exception SecurityException if any error occurs during securing. 
      */
     public SOAPMessage secureResponse (SOAPMessage soapMessage, 
-              Map sharedState) throws SecurityException {
+            Map sharedState) throws SecurityException {
 
-        debug.message("SOAPRequestHandler.secureResponse: Init"); 
-        ProviderConfig config = getWSPConfig(); 
-        
+        debug.message("SOAPRequestHandler.secureResponse: Init");
+        ProviderConfig config = getWSPConfig();
+
         Object req = sharedState.get(SOAPBindingConstants.LIBERTY_REQUEST);
         if(req != null) {
-           MessageProcessor processor = new MessageProcessor(config);
-           try {
-               return processor.secureResponse(soapMessage, sharedState);
-           } catch (SOAPBindingException sbe) {
-               debug.error("SOAPRequestHandler.secureResponse:: SOAP" +
-               "BindingException.", sbe);
-               throw new SecurityException(sbe.getMessage());
-           }
+            MessageProcessor processor = new MessageProcessor(config);
+            try {
+                return processor.secureResponse(soapMessage, sharedState);
+            } catch (SOAPBindingException sbe) {
+                debug.error("SOAPRequestHandler.secureResponse:: SOAP" +
+                        "BindingException.", sbe);
+                throw new SecurityException(sbe.getMessage());
+            }
         }
 
         if(!config.isResponseSignEnabled() && 
-            !config.isResponseEncryptEnabled()) {
+                !config.isResponseEncryptEnabled()) {
             return soapMessage;
         }
-        
+
         SSOToken token = (SSOToken)AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         SecurityTokenFactory factory = SecurityTokenFactory.getInstance(token);
 
         String keyAlias = SystemConfigurationUtil.getProperty(
-                    Constants.SAML_XMLSIG_CERT_ALIAS);
+                Constants.SAML_XMLSIG_CERT_ALIAS);
         if(!config.useDefaultKeyStore()) {
-           keyAlias = config.getKeyAlias();
+            keyAlias = config.getKeyAlias();
         }
         String[] certAlias = {keyAlias};
-        X509TokenSpec tokenSpec = new X509TokenSpec(certAlias, 
-                 BinarySecurityToken.X509V3,
-                 BinarySecurityToken.BASE64BINARY);
+        X509TokenSpec tokenSpec = new X509TokenSpec(certAlias,
+                BinarySecurityToken.X509V3,
+                BinarySecurityToken.BASE64BINARY);
 
-        SecurityToken securityToken = 
+        SecurityToken securityToken =
                 factory.getSecurityToken(tokenSpec);
 
-        SecureSOAPMessage secureMessage = 
-                   new SecureSOAPMessage(soapMessage, true);
+        SecureSOAPMessage secureMessage =
+                new SecureSOAPMessage(soapMessage, true);
 
         secureMessage.setSecurityToken(securityToken);
         secureMessage.setSecurityMechanism(
-                   SecurityMechanism.WSS_NULL_X509_TOKEN);
+                SecurityMechanism.WSS_NULL_X509_TOKEN);
 
         if(config.isResponseSignEnabled()) {            
             secureMessage.sign(keyAlias);
         }
-        
+
         if(config.isResponseEncryptEnabled()) {            
             secureMessage.encrypt(keyAlias,
-                                  (config.isResponseEncryptEnabled()),
-                                  false);
+                    (config.isResponseEncryptEnabled()),
+                    false);
         }
-        
+
         soapMessage = secureMessage.getSOAPMessage();
 
-        return soapMessage; 
-         
+        return soapMessage;
+
     }
 
     /**
@@ -350,97 +348,99 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      * @exception SecurityException if any failure for securing the request.
      */
     public SOAPMessage secureRequest (
-                   SOAPMessage soapMessage, 
-                   Subject subject,
-                   Map sharedState) throws SecurityException {
+            SOAPMessage soapMessage,
+            Subject subject,
+            Map sharedState) throws SecurityException {
 
         WSSUtils.debug.message("SOAPRequestHandler.secureRequest: Init");
         if(WSSUtils.debug.messageEnabled()) {
-           WSSUtils.debug.message("SOAPRequestHandler.secureRequest: " + 
-           "Shared Map" + sharedState);
+            WSSUtils.debug.message("SOAPRequestHandler.secureRequest: " +
+                    "Shared Map" + sharedState);
         }
 
         ProviderConfig config = getProviderConfig(sharedState);
         if(config == null) {
            if(WSSUtils.debug.messageEnabled()) {
               WSSUtils.debug.message("SOAPRequestHandler.secureRequest: "+
-              "Provider configuration from shared map is null");
-           }
-           config = getWSCConfig();
+                        "Provider configuration from shared map is null");
+            }
+            config = getWSCConfig();
         }
- 
-        SecurityToken securityToken = null;        
+
+        SecurityToken securityToken = null;
         List secMechs = config.getSecurityMechanisms();
         if(secMechs == null || secMechs.isEmpty()) {
-           throw new SecurityException(
-                 bundle.getString("securityMechNotConfigured"));
+            throw new SecurityException(
+                    bundle.getString("securityMechNotConfigured"));
         }
 
         String sechMech = (String)secMechs.iterator().next();
-        SecurityMechanism securityMechanism = 
-                  SecurityMechanism.getSecurityMechanism(sechMech);
+        SecurityMechanism securityMechanism =
+                SecurityMechanism.getSecurityMechanism(sechMech);
+        SecureSOAPMessage secureMessage = null;
         String uri = securityMechanism.getURI();
-        if(SecurityMechanism.WSS_NULL_ANONYMOUS_URI.equals(uri) ||
-           (SecurityMechanism.WSS_TLS_ANONYMOUS_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI.equals(uri))) {
-           return soapMessage;
-        }
-
-        if(securityMechanism.isTALookupRequired()) {
-           SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
-           SSOToken ssoToken = subjectSecurity.ssoToken;
+        if (((SecurityMechanism.WSS_NULL_ANONYMOUS_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_TLS_ANONYMOUS_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI.equals(uri)))) {
+            secureMessage =
+                    new SecureSOAPMessage(soapMessage, true);
+        } else {
+            if (securityMechanism.isTALookupRequired()) {
+                SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
+                SSOToken ssoToken = subjectSecurity.ssoToken;
            if(securityMechanism.getURI().equals
                    (SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
                if(subjectSecurity.ssoToken == null) {
-                  throw new SecurityException(
-                        bundle.getString("invalidSSOToken"));
-               }
+                        throw new SecurityException(
+                                bundle.getString("invalidSSOToken"));
+                    }
                return getSecureMessageFromLiberty(subjectSecurity.ssoToken, subject,
-                      soapMessage, sharedState, config);
-            } else {               
-               try {
-                   TrustAuthorityClient client = new TrustAuthorityClient();
-                   TrustAuthorityConfig taconfig = 
-                           config.getTrustAuthorityConfig();
-                   String taName = taconfig.getName();
+                            soapMessage, sharedState, config);
+                } else {
+                    try {
+                        TrustAuthorityClient client = new TrustAuthorityClient();
+                        TrustAuthorityConfig taconfig =
+                                config.getTrustAuthorityConfig();
+                        String taName = taconfig.getName();
                    if(taName != null) {
-                      ThreadLocalService.setServiceName(taName);
-                   }
-                   securityToken = client.getSecurityToken(config, 
-                                   subjectSecurity.ssoToken);
-               } catch (FAMSTSException stsEx) {
-                   debug.error("SOAPRequestHandler.secureRequest: exception" +
-                           "in obtaining STS Token", stsEx);
-                   throw new SecurityException(stsEx.getMessage());
-               }
-            }
+                            ThreadLocalService.setServiceName(taName);
+                        }
+                        securityToken = client.getSecurityToken(config,
+                                subjectSecurity.ssoToken);
+                    } catch (FAMSTSException stsEx) {
+                        debug.error("SOAPRequestHandler.secureRequest: exception" +
+                                "in obtaining STS Token", stsEx);
+                        throw new SecurityException(stsEx.getMessage());
+                    }
+                }
             
-        } else {
-             securityToken = getSecurityToken(
-                  securityMechanism, config, subject);
-        }
+            } else {
+                securityToken = getSecurityToken(
+                        securityMechanism, config, subject);
+            }
         
-        SecureSOAPMessage secureMessage = 
-                   new SecureSOAPMessage(soapMessage, true);
-        secureMessage.setSecurityToken(securityToken);
+        secureMessage = 
+                    new SecureSOAPMessage(soapMessage, true);
+            secureMessage.setSecurityToken(securityToken);
+        }
 
         secureMessage.setSecurityMechanism(securityMechanism);
         
         String keyAlias = SystemConfigurationUtil.getProperty(
-                          Constants.SAML_XMLSIG_CERT_ALIAS);
+                Constants.SAML_XMLSIG_CERT_ALIAS);
         if(!config.useDefaultKeyStore()) {
             keyAlias = config.getKeyAlias();
         }
-        
+
         if(config.isRequestSignEnabled()) {            
             secureMessage.sign(keyAlias);
-        }        
-        
+        }
+
         if((config.isRequestEncryptEnabled()) || 
-           (config.isRequestHeaderEncryptEnabled())) {            
+                (config.isRequestHeaderEncryptEnabled())) {
             secureMessage.encrypt(keyAlias,
-                                  (config.isRequestEncryptEnabled()),
-                                  (config.isRequestHeaderEncryptEnabled()));
+                    (config.isRequestEncryptEnabled()),
+                    (config.isRequestHeaderEncryptEnabled()));
         }
 
         soapMessage = secureMessage.getSOAPMessage();
@@ -460,47 +460,47 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      *            response.
      */
     public void validateResponse (SOAPMessage soapMessage, 
-                     Map sharedState) throws SecurityException {
+            Map sharedState) throws SecurityException {
 
         debug.message("SOAPRequestHandler.validateResponse:: Init");
         ProviderConfig config = getProviderConfig(sharedState);
         if(config == null) {
            if(WSSUtils.debug.messageEnabled()) {
               WSSUtils.debug.message("SOAPRequestHandler.validateResponse: "+
-              "Provider configuration from shared map is null");
-           }
-           config = getWSCConfig();
+                        "Provider configuration from shared map is null");
+            }
+            config = getWSCConfig();
         }
         if(isLibertyMessage(soapMessage)) {
-           MessageProcessor processor = new MessageProcessor(config);
-           try {
-               processor.validateResponse(soapMessage, sharedState);
-               return;
-           } catch (SOAPBindingException sbe) {
-               debug.error("SOAPRequestHandler.validateResponse:: SOAP" +
-               "BindingException. ", sbe);
-               throw new SecurityException(sbe.getMessage());
-           }
+            MessageProcessor processor = new MessageProcessor(config);
+            try {
+                processor.validateResponse(soapMessage, sharedState);
+                return;
+            } catch (SOAPBindingException sbe) {
+                debug.error("SOAPRequestHandler.validateResponse:: SOAP" +
+                        "BindingException. ", sbe);
+                throw new SecurityException(sbe.getMessage());
+            }
         }
 
-        SecureSOAPMessage secureMessage = 
-            new SecureSOAPMessage(soapMessage, false);
-        
+        SecureSOAPMessage secureMessage =
+                new SecureSOAPMessage(soapMessage, false);
+
         if(config.isResponseEncryptEnabled()) {
             secureMessage.decrypt((config.isResponseEncryptEnabled()), false);
             soapMessage = secureMessage.getSOAPMessage();
         }
-        
+
         secureMessage.parseSecurityHeader(
             (Node)(secureMessage.getSecurityHeaderElement()));
 
         if(config.isResponseSignEnabled()) {           
            if(!secureMessage.verifySignature()) {
-              debug.error("SOAPRequestHandler.validateResponse:: Signature" +
-              " Verification failed");
-              throw new SecurityException(
-                    bundle.getString("signatureValidationFailed"));
-           }
+                debug.error("SOAPRequestHandler.validateResponse:: Signature" +
+                        " Verification failed");
+                throw new SecurityException(
+                        bundle.getString("signatureValidationFailed"));
+            }
         }
 
         removeValidatedHeaders(config, soapMessage);
@@ -510,42 +510,42 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      * Initialize the system properties before the SAML module is invoked.
      */
     private void initializeSystemProperties(ProviderConfig config)
-                 throws IOException {
+            throws IOException {
 
-        String keyStoreFile = config.getKeyStoreFile(); 
+        String keyStoreFile = config.getKeyStoreFile();
         String ksPasswd = config.getKeyStoreEncryptedPasswd();
         String keyPasswd = config.getKeyEncryptedPassword();
         String certAlias = config.getKeyAlias();
 
         if(keyStoreFile == null || ksPasswd == null) {
            if(debug.messageEnabled()) {
-              debug.message("SOAPRequestHandler.initSystemProperties:: " +
-              "Provider config does not have keystore information. Will " +
-              "fallback to the default configuration in AMConfig.");
-           }
-           return;
+                debug.message("SOAPRequestHandler.initSystemProperties:: " +
+                        "Provider config does not have keystore information. Will " +
+                        "fallback to the default configuration in AMConfig.");
+            }
+            return;
         }
 
         if(keyStoreFile.indexOf(BACK_SLASH) != -1) {
-           keyStoreFile.replaceAll(BACK_SLASH, FORWARD_SLASH);
+            keyStoreFile.replaceAll(BACK_SLASH, FORWARD_SLASH);
         }
 
         int index = keyStoreFile.lastIndexOf(FORWARD_SLASH);
-        String storePassFile = 
-              keyStoreFile.substring(0, index) + "/.storepassfile";
+        String storePassFile =
+                keyStoreFile.substring(0, index) + "/.storepassfile";
         String keyPassFile = keyStoreFile.substring(0, index) + "/.keypassfile";
-        
+
         if(debug.messageEnabled()) {
-           debug.message("SOAPRequestHandler.initSystemProperties:: " +
+            debug.message("SOAPRequestHandler.initSystemProperties:: " +
            "\n" +  "KeyStoreFile: " + keyStoreFile + "\n" +
            "Encrypted keystore password: " + ksPasswd + "\n" +
            "Encrypted key password: " + keyPasswd + "\n" +
            "Location of the store encrypted password: " + storePassFile + "\n"+
-           "Location of the key encrypted password: " + keyPassFile);
+                    "Location of the key encrypted password: " + keyPassFile);
         }
 
         if(keyPasswd == null) {
-           keyPasswd = ksPasswd;
+            keyPasswd = ksPasswd;
         }
         FileOutputStream out = new FileOutputStream(new File(keyPassFile));
         out.write(keyPasswd.getBytes());
@@ -555,42 +555,42 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         out1.flush();
 
         SystemProperties.initializeProperties(
-             Constants.SAML_XMLSIG_KEYSTORE, keyStoreFile);
+                Constants.SAML_XMLSIG_KEYSTORE, keyStoreFile);
         SystemProperties.initializeProperties(
-             Constants.SAML_XMLSIG_STORE_PASS, storePassFile);
+                Constants.SAML_XMLSIG_STORE_PASS, storePassFile);
         SystemProperties.initializeProperties(
-             Constants.SAML_XMLSIG_KEYPASS, keyPassFile);
+                Constants.SAML_XMLSIG_KEYPASS, keyPassFile);
         SystemProperties.initializeProperties(
-             Constants.SAML_XMLSIG_CERT_ALIAS, certAlias);
+                Constants.SAML_XMLSIG_CERT_ALIAS, certAlias);
     }
 
     private ProviderConfig getWSPConfig() throws SecurityException {
 
         ProviderConfig config = null;
         try {
-            config = ProviderConfig.getProvider(providerName, 
-                          ProviderConfig.WSP);
+            config = ProviderConfig.getProvider(providerName,
+                    ProviderConfig.WSP);
             if(config == null) {
-               debug.error("SOAPRequestHandler.getWSPConfig:: Provider" +
-               " configuration is null");
-               throw new SecurityException(
-                     bundle.getString("noProviderConfig"));
+                debug.error("SOAPRequestHandler.getWSPConfig:: Provider" +
+                        " configuration is null");
+                throw new SecurityException(
+                        bundle.getString("noProviderConfig"));
             }
             if(!config.useDefaultKeyStore()) {
-               initializeSystemProperties(config);
+                initializeSystemProperties(config);
             }
 
         } catch (ProviderException pe) {
             debug.error("SOAPRequestHandler.getWSPConfig:: Provider" +
-               " configuration read failure", pe);
+                    " configuration read failure", pe);
             throw new SecurityException(
-                     bundle.getString("cannotInitializeProvider"));
+                    bundle.getString("cannotInitializeProvider"));
 
         } catch (IOException ie) {
             debug.error("SOAPRequestHandler.getWSPConfig:: Provider" +
-               " configuration read failure", ie);
+                    " configuration read failure", ie);
             throw new SecurityException(
-                     bundle.getString("cannotInitializeProvider"));
+                    bundle.getString("cannotInitializeProvider"));
         }
         return config;
     }
@@ -599,29 +599,29 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         ProviderConfig config = null;
         try {
-            config = ProviderConfig.getProvider(providerName, 
-                          ProviderConfig.WSC);
+            config = ProviderConfig.getProvider(providerName,
+                    ProviderConfig.WSC);
             if(config == null) {
-               debug.error("SOAPRequestHandler.getWSCConfig:: Provider" +
-               " configuration is null");
-               throw new SecurityException(
-                     bundle.getString("noProviderConfig"));
+                debug.error("SOAPRequestHandler.getWSCConfig:: Provider" +
+                        " configuration is null");
+                throw new SecurityException(
+                        bundle.getString("noProviderConfig"));
             }
             if(!config.useDefaultKeyStore()) {
-               initializeSystemProperties(config);
+                initializeSystemProperties(config);
             }
 
         } catch (ProviderException pe) {
             debug.error("SOAPRequestHandler.getWSCConfig:: Provider" +
-               " configuration read failure", pe);
+                    " configuration read failure", pe);
             throw new SecurityException(
-                     bundle.getString("cannotInitializeProvider"));
+                    bundle.getString("cannotInitializeProvider"));
 
         } catch (IOException ie) {
             debug.error("SOAPRequestHandler.getWSCConfig:: Provider" +
-               " configuration read failure", ie);
+                    " configuration read failure", ie);
             throw new SecurityException(
-                     bundle.getString("cannotInitializeProvider"));
+                    bundle.getString("cannotInitializeProvider"));
         }
         return config;
     }
@@ -630,13 +630,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      * Returns the security token for the configured security mechanism.
      */
     private SecurityToken getSecurityToken(
-             SecurityMechanism secMech, 
-             ProviderConfig config, 
-             Subject subject) throws SecurityException {
+            SecurityMechanism secMech,
+            ProviderConfig config,
+            Subject subject) throws SecurityException {
 
         String uri = secMech.getURI();
         String certAlias = SystemConfigurationUtil.getProperty(
-                               Constants.SAML_XMLSIG_CERT_ALIAS);
+                Constants.SAML_XMLSIG_CERT_ALIAS);
         if(!config.useDefaultKeyStore()) {
             certAlias = config.getKeyAlias();
         }
@@ -656,47 +656,47 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
            SecurityMechanism.WSS_CLIENT_TLS_X509_TOKEN_URI.equals(uri)) {
 
            if(debug.messageEnabled()) {
-              debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
-              "X509 token");
-           }
-           String[] aliases = {certAlias};
-           X509TokenSpec tokenSpec = new X509TokenSpec(
-              aliases, BinarySecurityToken.X509V3, 
-              BinarySecurityToken.BASE64BINARY);
+                debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
+                        "X509 token");
+            }
+            String[] aliases = {certAlias};
+            X509TokenSpec tokenSpec = new X509TokenSpec(
+                    aliases, BinarySecurityToken.X509V3,
+                    BinarySecurityToken.BASE64BINARY);
            securityToken = factory.getSecurityToken(tokenSpec);
 
         } else if(
            (SecurityMechanism.WSS_NULL_SAML_HK_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_TLS_SAML_HK_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_NULL_SAML_SV_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_TLS_SAML_SV_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_TLS_SAML_HK_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_NULL_SAML_SV_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_TLS_SAML_SV_URI.equals(uri)) ||
            (SecurityMechanism.WSS_CLIENT_TLS_SAML_SV_URI.equals(uri)) ) {
 
            if(debug.messageEnabled()) {
-              debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
-              "SAML token");
-           }
-           NameIdentifier ni = null;
-           try {
-               SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
-               SSOToken userToken = subjectSecurity.ssoToken;
+                debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
+                        "SAML token");
+            }
+            NameIdentifier ni = null;
+            try {
+                SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
+                SSOToken userToken = subjectSecurity.ssoToken;
                if(userToken != null) {
-                  ni = new NameIdentifier(userToken.getPrincipal().getName());
-               } else {
-                  ni = new NameIdentifier(config.getProviderName());
-               }
-           } catch (Exception ex) {
-               throw new SecurityException(ex.getMessage());
-           }
+                    ni = new NameIdentifier(userToken.getPrincipal().getName());
+                } else {
+                    ni = new NameIdentifier(config.getProviderName());
+                }
+            } catch (Exception ex) {
+                throw new SecurityException(ex.getMessage());
+            }
 
-           AssertionTokenSpec tokenSpec = new AssertionTokenSpec(ni,
-                 secMech, certAlias); 
+            AssertionTokenSpec tokenSpec = new AssertionTokenSpec(ni,
+                    secMech, certAlias);
            securityToken = factory.getSecurityToken(tokenSpec); 
 
         } else if(
             (SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI.equals(uri)) ||
-            (SecurityMechanism.WSS_TLS_USERNAME_TOKEN_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_TLS_USERNAME_TOKEN_URI.equals(uri)) ||
             (SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_URI.equals(uri))
             || (SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI.equals(uri)) 
             || (SecurityMechanism.WSS_TLS_USERNAME_TOKEN_PLAIN_URI.equals(uri)) 
@@ -704,8 +704,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 equals(uri))){
 
             if(debug.messageEnabled()) {
-               debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
-               "UserName token");
+                debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
+                        "UserName token");
             }
             List creds = null;
 
@@ -714,7 +714,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 creds = subjectSecurity.userCredentials;
             } catch (Exception ex) {
                 if(debug.messageEnabled()) {
-                    debug.message("SOAPRequestHandler.getSecurityToken:: " + 
+                    debug.message("SOAPRequestHandler.getSecurityToken:: " +
                                   "getSubjectSecurity error :" 
                                   + ex.getMessage());
                 }
@@ -724,12 +724,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 creds = config.getUsers();
             }
             if(creds == null || creds.isEmpty()) {
-               debug.error("SOAPRequestHandler.getSecurityToken:: No users " +
-               " are configured.");
-               throw new SecurityException(
-                     bundle.getString("nousers"));
+                debug.error("SOAPRequestHandler.getSecurityToken:: No users " +
+                        " are configured.");
+                throw new SecurityException(
+                        bundle.getString("nousers"));
             }
-            PasswordCredential credential = 
+            PasswordCredential credential =
                    (PasswordCredential)creds.iterator().next();
             UserNameTokenSpec tokenSpec = new UserNameTokenSpec();
             if((SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI.equals(uri)) 
@@ -745,43 +745,43 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             tokenSpec.setUserName(credential.getUserName());
             tokenSpec.setPassword(credential.getPassword());
             securityToken = factory.getSecurityToken(tokenSpec);
-            
+
         } else if(
            (SecurityMechanism.WSS_NULL_SAML2_HK_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_TLS_SAML2_HK_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_NULL_SAML2_SV_URI.equals(uri)) ||
-           (SecurityMechanism.WSS_TLS_SAML2_SV_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_TLS_SAML2_HK_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_NULL_SAML2_SV_URI.equals(uri)) ||
+                (SecurityMechanism.WSS_TLS_SAML2_SV_URI.equals(uri)) ||
            (SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV_URI.equals(uri)) ) {
 
            if(debug.messageEnabled()) {
-              debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
-              "SAML2 token");
-           }
-           NameID ni = null;
-           try {
-               AssertionFactory assertionFactory = 
-                       AssertionFactory.getInstance();
+                debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
+                        "SAML2 token");
+            }
+            NameID ni = null;
+            try {
+                AssertionFactory assertionFactory =
+                        AssertionFactory.getInstance();
                ni = assertionFactory.createNameID();
-               SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
-               SSOToken userToken = subjectSecurity.ssoToken;
+                SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
+                SSOToken userToken = subjectSecurity.ssoToken;
                if(userToken != null) {
-                  ni.setValue(userToken.getPrincipal().getName());
-               } else {
-                  ni.setValue(config.getProviderName());               
-               }               
-               
-           } catch (Exception ex) {
-               throw new SecurityException(ex.getMessage());
-           }
+                    ni.setValue(userToken.getPrincipal().getName());
+                } else {
+                    ni.setValue(config.getProviderName());
+                }
 
-           SAML2TokenSpec tokenSpec = new SAML2TokenSpec(ni,
-                 secMech, certAlias); 
+            } catch (Exception ex) {
+                throw new SecurityException(ex.getMessage());
+            }
+
+            SAML2TokenSpec tokenSpec = new SAML2TokenSpec(ni,
+                    secMech, certAlias);
            securityToken = factory.getSecurityToken(tokenSpec);                                 
-            
+
         } else {
             throw new SecurityException(
-                  bundle.getString("unsupportedSecurityMechanism"));
+                    bundle.getString("unsupportedSecurityMechanism"));
         }
         return securityToken;
     }
@@ -790,7 +790,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      * Place holder class for the subject credential objects.
      */
     private class SubjectSecurity {
-        SSOToken ssoToken = null; 
+        SSOToken ssoToken = null;
         ResourceOffering discoRO = null;
         List discoCredentials = null;
         List userCredentials = null;
@@ -801,18 +801,18 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      */
     private SubjectSecurity getSubjectSecurity(Subject subject) {
 
-        final SubjectSecurity subjectSecurity = new SubjectSecurity(); 
+        final SubjectSecurity subjectSecurity = new SubjectSecurity();
         final Subject sub = subject;
         AccessController.doPrivileged(
-             new PrivilegedAction() {
-                 public Object run() {
-                     Set creds = sub.getPrivateCredentials();
+                new PrivilegedAction() {
+                    public Object run() {
+                        Set creds = sub.getPrivateCredentials();
                      if(creds == null || creds.isEmpty()) {
-                        return null;
-                     }
+                            return null;
+                        }
                      Iterator iter =  creds.iterator();
                      while(iter.hasNext()) {
-                         Object credObj = iter.next();
+                            Object credObj = iter.next();
                          if(credObj instanceof SSOToken) {
                             subjectSecurity.ssoToken = (SSOToken)credObj;
                          } else if(credObj instanceof ResourceOffering) {
@@ -820,41 +820,41 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                          } else if(credObj instanceof List) {
                             List list = (List)credObj;
                             if(list != null && list.size() > 0) {
-                                if (list.get(0) instanceof SecurityAssertion) {
-                                    subjectSecurity.discoCredentials = list;
+                                    if (list.get(0) instanceof SecurityAssertion) {
+                                        subjectSecurity.discoCredentials = list;
                                 } else if (
                                   list.get(0) instanceof PasswordCredential) {
-                                    subjectSecurity.userCredentials = list;
+                                        subjectSecurity.userCredentials = list;
+                                    }
                                 }
                             }
-                         }
-                     }
-                     return null;
-                 }
-             });
+                        }
+                        return null;
+                    }
+                });
         return subjectSecurity;
     }
 
     /**
      * Returns the configured message authenticator.
      */
-    public static MessageAuthenticator getAuthenticator() 
-                throws SecurityException {
+    public static MessageAuthenticator getAuthenticator()
+            throws SecurityException {
 
         if(authenticator != null) {
-           return authenticator;
+            return authenticator;
         }
         String classImpl = SystemConfigurationUtil.getProperty(
-                WSS_AUTHENTICATOR, 
-               "com.sun.identity.wss.security.handler.DefaultAuthenticator");
+                WSS_AUTHENTICATOR,
+                "com.sun.identity.wss.security.handler.DefaultAuthenticator");
         try {
             Class authnClass = Class.forName(classImpl);
             authenticator = (MessageAuthenticator)authnClass.newInstance();
         } catch (Exception ex) {
             debug.error("SOAPRequestHandler.getAuthenticator:: Unable to " +
-            "get the authenticator", ex);
-           throw new SecurityException(
-                 bundle.getString("authenticatorNotFound"));
+                    "get the authenticator", ex);
+            throw new SecurityException(
+                    bundle.getString("authenticatorNotFound"));
         }
         return authenticator;
     }
@@ -876,36 +876,36 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      * @return SecurityException if there is any error occured.
      */
     private SOAPMessage getSecureMessageFromLiberty(
-          SSOToken ssoToken, 
-          Subject subject,
-          SOAPMessage soapMessage,
-          Map sharedData,
-          ProviderConfig providerConfig)
-     throws SecurityException {
+            SSOToken ssoToken,
+            Subject subject,
+            SOAPMessage soapMessage,
+            Map sharedData,
+            ProviderConfig providerConfig)
+            throws SecurityException {
 
-       try {
-           SSOTokenManager.getInstance().validateToken(ssoToken);
-           ResourceOffering discoRO = getDiscoveryResourceOffering(
-                                      subject, ssoToken);
+        try {
+            SSOTokenManager.getInstance().validateToken(ssoToken);
+            ResourceOffering discoRO = getDiscoveryResourceOffering(
+                    subject, ssoToken);
            if(debug.messageEnabled()) {
               debug.message("SOAPRequestHandler.getSecureMessageFromLiberty:: "+
               "Discovery service resource offering. " + discoRO.toString());
-           }
-           List credentials = getDiscoveryCredentials(subject);
-           MessageProcessor processor = new MessageProcessor(providerConfig);
-           return processor.secureRequest(discoRO, credentials, 
-                  providerConfig.getServiceType(), soapMessage, sharedData); 
+            }
+            List credentials = getDiscoveryCredentials(subject);
+            MessageProcessor processor = new MessageProcessor(providerConfig);
+            return processor.secureRequest(discoRO, credentials,
+                    providerConfig.getServiceType(), soapMessage, sharedData);
 
-       } catch (SSOException se) {
-           debug.error("SOAPRequestHandler.getSecureMessageFromLiberty:: " +
-           "Invalid sso token", se);
-           throw new SecurityException(
-                 bundle.getString("invalidSSOToken"));
-       } catch (SOAPBindingException sbe) {
-           debug.error("SOAPRequestHandler.getSecureMessageFromLiberty:: " +
-           " SOAPBinding exception", sbe);
-           throw new SecurityException(sbe.getMessage());
-       }
+        } catch (SSOException se) {
+            debug.error("SOAPRequestHandler.getSecureMessageFromLiberty:: " +
+                    "Invalid sso token", se);
+            throw new SecurityException(
+                    bundle.getString("invalidSSOToken"));
+        } catch (SOAPBindingException sbe) {
+            debug.error("SOAPRequestHandler.getSecureMessageFromLiberty:: " +
+                    " SOAPBinding exception", sbe);
+            throw new SecurityException(sbe.getMessage());
+        }
     }
 
     /**
@@ -919,36 +919,36 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
            if(debug.messageEnabled()) {
               debug.message("SOAPRequestHandler.getDiscoveryResourceOffering::"
               + " subject contains resource offering.");
-           }
-           return subjectSecurity.discoRO;
+            }
+            return subjectSecurity.discoRO;
         }
 
-        // If the creds not present, authenticate to the IDP via AuthnService.
+// If the creds not present, authenticate to the IDP via AuthnService.
         SASLResponse saslResponse =  getSASLResponse(ssoToken);
         if(saslResponse == null) {
-           debug.error("SOAPRequestHandler.getDiscoveryResourceOffering:: " +
-           "SASL Response is null");
-           throw new SecurityException(
-                 bundle.getString("SASLFailure"));
+            debug.error("SOAPRequestHandler.getDiscoveryResourceOffering:: " +
+                    "SASL Response is null");
+            throw new SecurityException(
+                    bundle.getString("SASLFailure"));
         }
-        
-        final ResourceOffering discoRO = saslResponse.getResourceOffering(); 
+
+        final ResourceOffering discoRO = saslResponse.getResourceOffering();
         if(discoRO == null) {
-           throw new SecurityException(
-                 bundle.getString("resourceOfferingMissing"));
+            throw new SecurityException(
+                    bundle.getString("resourceOfferingMissing"));
         }
         final List credentials = saslResponse.getCredentials();
         final Subject sub = subject;
         if(discoRO != null) {
-           AccessController.doPrivileged(
-               new PrivilegedAction() {
-                   public Object run() {
-                       sub.getPrivateCredentials().add(discoRO);
+            AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            sub.getPrivateCredentials().add(discoRO);
                        if(credentials != null) {
-                          sub.getPrivateCredentials().add(credentials);
-                       }
-                       return null;
-                   }
+                                sub.getPrivateCredentials().add(credentials);
+                            }
+                            return null;
+                        }
                }
            );
         } 
@@ -966,82 +966,82 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     /**
      * Returns the <code>SASLResponse</code> using user's SSOToken.
      */
-    private SASLResponse getSASLResponse(SSOToken ssoToken) 
-                   throws SecurityException {
+    private SASLResponse getSASLResponse(SSOToken ssoToken)
+            throws SecurityException {
         SASLRequest saslReq = new SASLRequest(MECHANISM_SSOTOKEN);
         try {
             String authURL = SystemConfigurationUtil.getProperty(LIBERTY_AUTHN_URL);
             if(authURL == null) {
                 debug.error("SOAPRequestHandler.getSASLResponse:: AuthnURL " +
-               " not present in the configuration.");
-               throw new SecurityException(
-                     bundle.getString("authnURLMissing"));
+                        " not present in the configuration.");
+                throw new SecurityException(
+                        bundle.getString("authnURLMissing"));
             }
 
             SASLResponse saslResp = AuthnSvcClient.sendRequest(
-                     saslReq, authURL); 
+                    saslReq, authURL);
             if(!saslResp.getStatusCode().equals(SASLResponse.CONTINUE)) {
-               debug.error("SOAPRequestHandler.getSASLResponse:: ABORT");
-               throw new SecurityException(
-                     bundle.getString("SASLFailure"));
+                debug.error("SOAPRequestHandler.getSASLResponse:: ABORT");
+                throw new SecurityException(
+                        bundle.getString("SASLFailure"));
             }
 
             String serverMechanism = saslResp.getServerMechanism();
             saslReq = new SASLRequest(serverMechanism);
             saslReq.setData(ssoToken.getTokenID().toString().getBytes("UTF-8"));
-            saslReq.setRefToMessageID(saslResp.getMessageID()); 
+            saslReq.setRefToMessageID(saslResp.getMessageID());
             saslResp = AuthnSvcClient.sendRequest(saslReq, authURL);
             if(!saslResp.getStatusCode().equals(SASLResponse.OK)) {
-               debug.error("SOAPRequestHandler.getSASLResponse:: SASL Failure");
-               throw new SecurityException(
-                     bundle.getString("SASLFailure"));
+                debug.error("SOAPRequestHandler.getSASLResponse:: SASL Failure");
+                throw new SecurityException(
+                        bundle.getString("SASLFailure"));
             }
             return saslResp;
 
         } catch (AuthnSvcException ae) {
             debug.error("SOAPRequestHandler.getSASLResponse:: Exception", ae);
             throw new SecurityException(
-                     bundle.getString("SASLFailure"));
+                    bundle.getString("SASLFailure"));
         } catch (UnsupportedEncodingException uae) {
             debug.error("SOAPRequestHandler.getSASLResponse:: Exception", uae);
             throw new SecurityException(
-                     bundle.getString("SASLFailure"));
+                    bundle.getString("SASLFailure"));
         }
     }
 
     /**
      * Checks if the received SOAP Message is a liberty request.
      */
-    private boolean isLibertyMessage(SOAPMessage soapMessage) 
-                throws SecurityException {
+    private boolean isLibertyMessage(SOAPMessage soapMessage)
+            throws SecurityException {
         try {
             SOAPHeader soapHeader = soapMessage.getSOAPPart().
-                         getEnvelope().getHeader();
+                    getEnvelope().getHeader();
             if(soapHeader == null) {
-               return false;
+                return false;
             }
             NodeList headerChildNodes = soapHeader.getChildNodes();
             if((headerChildNodes == null) ||
-                        (headerChildNodes.getLength() == 0)) {
-               return false;
+                    (headerChildNodes.getLength() == 0)) {
+                return false;
             }
             for(int i=0; i < headerChildNodes.getLength(); i++) {
                 Node currentNode = headerChildNodes.item(i);
                 if(currentNode.getNodeType() != Node.ELEMENT_NODE) {
-                   continue;
+                    continue;
                 }
                 if((SOAPBindingConstants.TAG_CORRELATION.equals(
-                    currentNode.getLocalName())) && 
-                   (SOAPBindingConstants.NS_SOAP_BINDING.equals(
-                    currentNode.getNamespaceURI()))) {
-                   return true;
+                        currentNode.getLocalName())) &&
+                        (SOAPBindingConstants.NS_SOAP_BINDING.equals(
+                        currentNode.getNamespaceURI()))) {
+                    return true;
                 }
             }
-            return false; 
+            return false;
         } catch (SOAPException se) {
             debug.error("SOAPRequest.isLibertyRequest:: SOAPException", se);
             throw new SecurityException(se.getMessage());
-        } 
+        }
     }
 
     /**
@@ -1049,69 +1049,69 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      */
     private ProviderConfig getProviderConfig(Map sharedMap) {
         if((sharedMap == null) || (sharedMap.isEmpty())) {
-           return null;
+            return null;
         }
-        
+
         try {
-            String serviceName = ThreadLocalService.getServiceName();            
+            String serviceName = ThreadLocalService.getServiceName();
             if(serviceName == null) {
-               serviceName = getServiceName(sharedMap);
+                serviceName = getServiceName(sharedMap);
             } else {
-               // If we find the service name, that is of TA service name
-               // So, create provider config from TA.
+                // If we find the service name, that is of TA service name
+                // So, create provider config from TA.
                if(debug.messageEnabled()) {
-                  debug.message("SOAPRequestHandler.getProviderConfig: " +
-                        "Service Name found in thread local" + serviceName);
-               }
-               ThreadLocalService.removeServiceName(serviceName);
+                    debug.message("SOAPRequestHandler.getProviderConfig: " +
+                            "Service Name found in thread local" + serviceName);
+                }
+                ThreadLocalService.removeServiceName(serviceName);
                STSConfig stsConfig = (STSConfig)
                        TrustAuthorityConfig.getConfig(serviceName, 
-                       TrustAuthorityConfig.STS_TRUST_AUTHORITY);
-               ProviderConfig pc = 
+                        TrustAuthorityConfig.STS_TRUST_AUTHORITY);
+                ProviderConfig pc =
                     ProviderConfig.getProvider(serviceName, ProviderConfig.WSC);
-               pc.setSecurityMechanisms(stsConfig.getSecurityMech());
-               pc.setRequestSignEnabled(stsConfig.isRequestSignEnabled());
-               pc.setRequestEncryptEnabled(stsConfig.isRequestEncryptEnabled());
-               pc.setDefaultKeyStore(true);
-               pc.setUsers(stsConfig.getUsers());
-               
-               return pc;
+                pc.setSecurityMechanisms(stsConfig.getSecurityMech());
+                pc.setRequestSignEnabled(stsConfig.isRequestSignEnabled());
+                pc.setRequestEncryptEnabled(stsConfig.isRequestEncryptEnabled());
+                pc.setDefaultKeyStore(true);
+                pc.setUsers(stsConfig.getUsers());
+
+                return pc;
             }
             if(!ProviderConfig.isProviderExists(serviceName,  
-                     ProviderConfig.WSC)) {
-               return null;
+                    ProviderConfig.WSC)) {
+                return null;
             }
 
-            ProviderConfig config = 
-                 ProviderConfig.getProvider(serviceName, ProviderConfig.WSC);
+            ProviderConfig config =
+                    ProviderConfig.getProvider(serviceName, ProviderConfig.WSC);
             if(!config.useDefaultKeyStore()) {
-               initializeSystemProperties(config);
+                initializeSystemProperties(config);
             }
             return config;
         } catch (ProviderException pe) {
             WSSUtils.debug.error("SOAPRequestHandler.getProviderConfig: from" +
-                "shared map: Exception", pe);
+                    "shared map: Exception", pe);
             return null;
         } catch (IOException ie) {
             WSSUtils.debug.error("SOAPRequestHandler.getProviderConfig: from" +
-                "shared map: IOException", ie);
+                    "shared map: IOException", ie);
             return null;
         }
-        
+
     }
-    
+
     private String getServiceName(Map sharedMap) {
-        
+
         // Check first if thread local has the service name.
-        
+
         if((sharedMap == null) || (sharedMap.isEmpty())) {
-           return null;
+            return null;
         }
         QName service = (QName)sharedMap.get("javax.xml.ws.wsdl.service");
         if(service == null) {
-           return null;
+            return null;
         }
-        return service.getLocalPart();                    
+        return service.getLocalPart();
     }
 
     /**
@@ -1125,32 +1125,32 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         return WSSUtils.print(node);
     }
 
-    // Removes the validated headers.
+// Removes the validated headers.
     private void removeValidatedHeaders(ProviderConfig config,
-              SOAPMessage soapMessage) {
+            SOAPMessage soapMessage) {
 
         SOAPHeader header = null;
         try {
             header = soapMessage.getSOAPPart().getEnvelope().getHeader();
         } catch (SOAPException se) {
             WSSUtils.debug.error("SOAPRequestHandler.removeValidateHeaders: " +
-               "Failed to read the SOAP Header.");
+                    "Failed to read the SOAP Header.");
         }
         if(header != null) {
-           Iterator iter = header.examineAllHeaderElements();
+            Iterator iter = header.examineAllHeaderElements();
            while(iter.hasNext()) {
               SOAPHeaderElement headerElement = (SOAPHeaderElement)iter.next();
               if(!config.preserveSecurityHeader()) {
                  if("Security".equalsIgnoreCase(
-                    headerElement.getElementName().getLocalName())) {
-                    headerElement.detachNode();
-                 }
-              }
+                            headerElement.getElementName().getLocalName())) {
+                        headerElement.detachNode();
+                    }
+                }
               if("Correlation".equalsIgnoreCase(
-                 headerElement.getElementName().getLocalName())) {
-                 headerElement.detachNode();
-              }
-           }
+                        headerElement.getElementName().getLocalName())) {
+                    headerElement.detachNode();
+                }
+            }
         }
     }
     

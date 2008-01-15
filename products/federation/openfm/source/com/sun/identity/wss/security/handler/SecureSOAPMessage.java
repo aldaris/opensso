@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.9 2007-11-19 20:38:42 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.10 2008-01-15 17:43:29 dlarson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -495,14 +495,21 @@ public class SecureSOAPMessage {
      public void sign(String certAlias) throws SecurityException {
 
          Document doc = toDocument();
-         String tokenType = securityToken.getTokenType();
+         String tokenType = null;
+         // securityToken=null if the secmech is Anonymous
+         if (securityToken!=null) {
+             tokenType = securityToken.getTokenType();
+         }
 
          if(SecurityToken.WSS_SAML_TOKEN.equals(tokenType) ||
                  SecurityToken.WSS_SAML2_TOKEN.equals(tokenType)) {
             signWithAssertion(doc, certAlias);
          } else if(SecurityToken.WSS_X509_TOKEN.equals(tokenType)) {
             signWithBinaryToken(doc, certAlias);
-         } else if (SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)){
+            // treat Anonymous secmech (securityToken=null) same as UserName
+            // Token
+         } else if ((SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)) ||
+                 (null==securityToken)){
              signWithUNToken(doc, certAlias);
          } else {
             debug.error("SecureSOAPMessage.sign:: Invalid token type for" +
@@ -735,7 +742,13 @@ public class SecureSOAPMessage {
          throws SecurityException {
 
          Document doc = toDocument();
-         String tokenType = securityToken.getTokenType();
+         String tokenType = null;
+         // securityToken=null if the secmech is Anonymous
+         if (securityToken == null) {
+             tokenType = SecurityToken.WSS_X509_TOKEN;
+         } else {
+             tokenType = securityToken.getTokenType();
+         }
          Map elmMap = new HashMap();
          Document encryptedDoc = null;
          String searchType = null;
@@ -825,7 +838,8 @@ public class SecureSOAPMessage {
 
              if(debug.messageEnabled()) {
                  debug.message("SecureSOAPMessage.encrypt:: wsseHeader: " 
-                     + "after Encrypt : " + WSSUtils.print(wsseHeader));
+                     + "after Encrypt : " 
+                     + WSSUtils.print(soapMessage.getSOAPPart()));
              }
              // EncryptedData elements
              NodeList nodes = encryptedDoc.getElementsByTagNameNS(
