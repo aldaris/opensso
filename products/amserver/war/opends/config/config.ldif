@@ -44,7 +44,7 @@ ds-cfg-time-limit: 60 seconds
 ds-cfg-lookthrough-limit: 5000
 ds-cfg-writability-mode: enabled
 ds-cfg-bind-with-dn-requires-password: true
-ds-cfg-reject-unauthenticated-requests: false
+ds-cfg-reject-unauthenticated-requests: true
 ds-cfg-default-password-policy: cn=Default Password Policy,cn=Password Policies,cn=config
 ds-cfg-return-bind-error-messages: false
 ds-cfg-idle-time-limit: 0 seconds
@@ -1817,7 +1817,7 @@ objectClass: ds-cfg-directory-string-attribute-syntax
 cn: Directory String
 ds-cfg-java-class: org.opends.server.schema.DirectoryStringSyntax
 ds-cfg-enabled: true
-ds-cfg-allow-zero-length-values: false
+ds-cfg-allow-zero-length-values: true
 
 dn: cn=Distinguished Name,cn=Syntaxes,cn=config
 objectClass: top
