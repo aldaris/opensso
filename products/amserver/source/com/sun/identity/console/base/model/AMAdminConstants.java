@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminConstants.java,v 1.6 2007-12-17 19:42:51 veiming Exp $
+ * $Id: AMAdminConstants.java,v 1.7 2008-01-15 22:38:15 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,6 +169,11 @@ public interface AMAdminConstants {
      * Last tab visited before opening a profile object.
      */
     String PREVIOUS_TAB_ID = "PreviousTabID";
+
+    /**
+     * Organization node identifier.
+     */
+    int ORGANIZATION_NODE_ID = 7;
 
     /**
      * Realm node identifier.
@@ -353,4 +358,10 @@ public interface AMAdminConstants {
      */
     String ROLE_DISPLAY_OPTION_ATTRIBUTE_NAME =
         "iplanet-am-role-display-options";
+
+    /**
+     * User Management Enabled Attribute name. This attribute is found in
+     * Administration Console service.
+     */
+    String CONSOLE_UM_ENABLED_ATTR = "iplanet-am-admin-console-um-enabled";
 }

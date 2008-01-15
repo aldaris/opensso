@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPrimaryMastHeadViewBean.java,v 1.4 2007-12-19 22:25:13 veiming Exp $
+ * $Id: AMPrimaryMastHeadViewBean.java,v 1.5 2008-01-15 22:38:14 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,9 +122,9 @@ public abstract class AMPrimaryMastHeadViewBean
 
         DelegationConfig dConfig = DelegationConfig.getInstance();
         if (!dConfig.isUncontrolledViewBean(getClass().getName())) {
-            if (tabModel.getNodeCount() == 0) {
+            if ((tabModel == null) || (tabModel.getNodeCount() == 0)) {
                 EndUserViewBean vb = (EndUserViewBean)
-                getViewBean(EndUserViewBean.class);
+                    getViewBean(EndUserViewBean.class);
                 vb.forwardTo(rc);
                 forwarded = true;
             }

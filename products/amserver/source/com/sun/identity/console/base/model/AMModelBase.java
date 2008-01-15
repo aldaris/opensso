@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.6 2007-12-17 19:42:51 veiming Exp $
+ * $Id: AMModelBase.java,v 1.7 2008-01-15 22:38:15 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -989,7 +989,8 @@ public class AMModelBase
      * typically should not be displayed in the console. 
      *
      * @param realmName Name of Realm.
-     * @return a list of special user identities that cannot be displayed.
+     * @return a set of <code>AMIdentity</code> entries that should not be 
+     *     displayed in the console.
      */
     public Set getSpecialUsers(String realmName) {
         Set identities = null;
@@ -999,9 +1000,9 @@ public class AMModelBase
             IdSearchResults results = repo.getSpecialIdentities(IdType.USER);
             identities = results.getSearchResults();
         } catch (IdRepoException e) {
-            debug.warning("AMModelBase.getSpecialIdentities", e);
+            debug.warning("AMModelBase.getSpecialUsers", e);
         } catch (SSOException e) {
-            debug.warning("AMModelBase.getSpecialIdentities", e);
+            debug.warning("AMModelBase.getSpecialUsers", e);
         }
         
         return (identities == null) ? Collections.EMPTY_SET : identities;

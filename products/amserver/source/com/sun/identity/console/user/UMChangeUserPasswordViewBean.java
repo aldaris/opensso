@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMChangeUserPasswordViewBean.java,v 1.1 2007-02-07 20:28:29 jonnelson Exp $
+ * $Id: UMChangeUserPasswordViewBean.java,v 1.2 2008-01-15 22:39:16 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.CloseWindowViewBean;
 import com.sun.identity.console.base.model.AMConsoleException;
+import com.sun.identity.console.base.model.AMFormatUtils;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.idm.EntityEditViewBean;
@@ -121,7 +122,7 @@ public class UMChangeUserPasswordViewBean
         String userId = (String)getPageSessionAttribute(
             EntityEditViewBean.UNIVERSAL_ID);
         UMChangeUserPasswordModel model = (UMChangeUserPasswordModel)getModel();
-        String[] arg = {model.getUserName(userId)};
+        String[] arg = { AMFormatUtils.getIdentityDisplayName(model, userId) };
         ptModel.setPageTitleText(MessageFormat.format(
             model.getLocalizedString("page.title.user.change.password"), 
             (Object[])arg));

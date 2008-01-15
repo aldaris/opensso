@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSystemConfig.java,v 1.3 2007-03-09 05:51:00 veiming Exp $
+ * $Id: AMSystemConfig.java,v 1.4 2008-01-15 22:38:15 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,4 +112,15 @@ public class AMSystemConfig
         }
         return tmp;
     }
+
+    /** this value is set to true if directory is iPlanet DIT compliance */
+    public static boolean iPlanetCompliantDIT;
+
+    static {
+        String s = SystemProperties.get("com.iplanet.am.compliance");
+        if ((s != null) && s.equalsIgnoreCase("true")) {
+            iPlanetCompliantDIT = true;
+        }
+    }
 }
+

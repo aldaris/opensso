@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimePolicyModelImpl.java,v 1.1 2007-02-07 20:23:36 jonnelson Exp $
+ * $Id: TimePolicyModelImpl.java,v 1.2 2008-01-15 22:39:15 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,8 @@ public class TimePolicyModelImpl
     private static List propertyNames = new ArrayList();
 
     static {
-        propertyNames.add("startdate");
-        propertyNames.add("enddate");
+        propertyNames.add("StartDate");
+        propertyNames.add("EndDate");
     }
 
     /**
