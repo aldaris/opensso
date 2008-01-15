@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.6 2008-01-15 19:58:59 jefberpe Exp $
+ * $Id: AjaxPage.java,v 1.7 2008-01-15 20:48:31 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,15 +52,12 @@ public abstract class AjaxPage extends Page {
     public static Debug debug = Debug.getInstance("amConfigurator");
     
     public AjaxPage() {
-<<<<<<< AjaxPage.java
     }
 
     public void onInit() {
         super.onInit();
         initializeResourceBundle();
         addModel("page", this);
-=======
->>>>>>> 1.5
     }
 
     public boolean isRendering() {

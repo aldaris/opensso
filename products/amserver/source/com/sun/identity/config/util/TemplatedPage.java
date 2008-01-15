@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TemplatedPage.java,v 1.5 2008-01-15 19:58:59 jefberpe Exp $
+ * $Id: TemplatedPage.java,v 1.6 2008-01-15 20:48:31 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,12 +69,7 @@ public abstract class TemplatedPage extends AjaxPage {
     }
 
     public final void onInit() {
-<<<<<<< TemplatedPage.java
-        super.onInit();
-        addModel( "title", i18n( getTitle() ) );
-=======
         addModel("title", getTitle());
->>>>>>> 1.4
         List sessionStatusMessages = getStatusMessageCodes();
         if ( sessionStatusMessages != null && !sessionStatusMessages.isEmpty() ) {
             Iterator i = sessionStatusMessages.iterator();
