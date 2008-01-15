@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.15 2008-01-15 04:17:56 bina Exp $
+   $Id: idRepoService.xml,v 1.16 2008-01-15 07:42:52 bina Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,7 @@
     <Service name="sunIdentityRepositoryService" version="1.0">
         <Schema
             i18nFileName="amIdRepoService"
-            revisionNumber="30"
+            revisionNumber="40"
             i18nKey="">
             
             <Global>
