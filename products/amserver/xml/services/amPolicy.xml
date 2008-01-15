@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.5 2007-05-01 21:25:29 veiming Exp $
+    $Id: amPolicy.xml,v 1.6 2008-01-15 04:17:56 bina Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,7 @@
     <Service name="iPlanetAMPolicyService" version="1.0">
         <Schema
             i18nFileName="amPolicy"
-            revisionNumber="40"
+            revisionNumber="50"
             i18nKey="iplanet-policy-service-name">
 
             <Organization>
