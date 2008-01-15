@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
-* $Id: AMAdminUtils.java,v 1.3 2007-02-07 20:19:40 jonnelson Exp $
+* $Id: AMAdminUtils.java,v 1.4 2008-01-15 01:18:04 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,8 +132,13 @@ public class AMAdminUtils {
      * @return a hash set containing a given object.
      */
     public static Set wrapInSet(Object obj) {
-        Set set = new HashSet(2);
-        set.add(obj);
+        Set set = null;
+        if (obj != null){
+            set = new HashSet(2);
+            set.add(obj);
+        } else {
+            set = Collections.EMPTY_SET;
+        }
         return set;
     }
 
