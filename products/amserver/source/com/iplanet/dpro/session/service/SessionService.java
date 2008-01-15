@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.14 2008-01-15 03:58:50 alanchu Exp $
+ * $Id: SessionService.java,v 1.15 2008-01-15 22:12:43 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,9 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.HttpURLConnectionManager;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
+import com.sun.identity.common.TaskRunnable;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchResults;
@@ -176,7 +179,7 @@ public class SessionService {
     // Session Constraints specific properties
     private static final String SESSION_CONSTRAINT = 
         "iplanet-am-session-enable-session-constraint";
-
+    
     private static final String DENY_LOGIN_IF_DB_IS_DOWN =
         "iplanet-am-session-deny-login-if-db-is-down";
 
@@ -281,6 +284,13 @@ public class SessionService {
 
         threadPool = new ThreadPool("amSession", poolSize, threshold, true,
                 sessionDebug);
+        ShutdownManager.getInstance().addShutdownListener(
+            new ShutdownListener() {
+                public void shutdown() {
+                    threadPool.shutdown();
+                }
+            }
+        );
         if (threadPool != null) {
             try {
                 maxSessions = Integer.parseInt(SystemProperties
@@ -307,6 +317,8 @@ public class SessionService {
     private SecureRandom secureRandom = null;
 
     private Hashtable sessionTable = null;
+    
+    private Set remoteSessionSet = null;
 
     private Hashtable sessionHandleTable = new Hashtable();
 
@@ -335,12 +347,12 @@ public class SessionService {
 
     private static boolean isSiteEnabled = false;
 
-
+    
     /* the following group of members are for session constraints */
     private static boolean isSessionConstraintEnabled = false;
-    
-    private static boolean denyLoginIfDBIsDown = false;
 
+    private static boolean denyLoginIfDBIsDown = false;
+    
     private static boolean bypassConstratintForToplevelAdmin = false;
 
     private static int constraintResultingBehavior = 
@@ -389,9 +401,9 @@ public class SessionService {
     private ClusterStateService clusterStateService = null;
 
     private static AMSessionRepository sessionRepository = null;
-    
-    private static boolean initialized = false;
 
+    private static boolean initialized = false;
+    
     /**
      * Returns Session Service. If a Session Service already exists then it
      * returns the existing one. Else it creates a new one and returns.
@@ -403,14 +415,14 @@ public class SessionService {
                 synchronized (SessionService.class) {
                     if (sessionService == null) {
                         sessionService = new SessionService();
-                        initialized = true;                        
+                        initialized = true;
                     }
                 }
             }
         }
+
         return sessionService;
     }
-
 
     /**
      * Returns the name of the cookie/URL parameter used by J2EE container for
@@ -614,7 +626,7 @@ public class SessionService {
                 + (isSiteEnabled ? thisSessionServerID : sessionServerID);
         session.putProperty(Constants.AM_CTX_ID, amCtxId);
         session.putProperty(Session.lbCookieName, getLocalServerID());
-
+        session.reschedule();
         return session;
     }
 
@@ -699,16 +711,17 @@ public class SessionService {
         InternalSession session = (InternalSession) sessionTable.remove(sid);
 
         if (session != null) {
+            remoteSessionSet.remove(sid);
+            session.cancelScheduledRun();
             removeSessionHandle(session);
             removeRestrictedTokens(session);
             isSessionStored = session.getIsISstored();
-        }
-
-        // Session Constraint
-        if ((session != null) && (session.getState() == Session.VALID)) {
-            decrementActiveSessions();
-            SessionCount.decrementSessionCount(session);
-        }
+            // Session Constraint
+            if (session.getState() == Session.VALID) {
+                decrementActiveSessions();
+                SessionCount.decrementSessionCount(session);
+            }
+        }        
 
         if (isSessionFailoverEnabled() && isSessionStored) {
             if (getUseInternalRequestRouting()) {
@@ -1087,6 +1100,7 @@ public class SessionService {
     public static int getNotificationQueueSize() {
         return threadPool.getCurrentSize();
     }
+
     
     /**
      * Add a listener to a Internal Session.
@@ -1421,7 +1435,7 @@ public class SessionService {
             if (sns.sendToLocal()) { 
                 threadPool.run(sns);
             }
-
+            
         } catch (ThreadPoolException e) {
             sessionDebug.error("Sending Notification Error: ", e);
         }
@@ -1619,6 +1633,7 @@ public class SessionService {
             }
 
             sessionTable = new Hashtable();
+            remoteSessionSet = Collections.synchronizedSet(new HashSet());
             if (stats.isEnabled()) {
                 maxSessionStats = new SessionMaxStats(sessionTable);
                 stats.addStatsListener(maxSessionStats);
@@ -1710,17 +1725,12 @@ public class SessionService {
                                         + ", using default");
                     }
 
-                    clusterStateService = new ClusterStateService(
+                    clusterStateService = new ClusterStateService(this,
                             thisSessionServerID, timeout, period,
                             clusterMemberMap);
                     getRepository();
                 }
             }
-
-            Thread sm = new SessionMonitor(this, sessionTable);
-            sm.setDaemon(true);
-            sm.setName("amSessionMonitor");
-            sm.start();
         } catch (Exception ex) {
             sessionDebug.error(
                     "SessionService.SessionService(): Initialization Failed",
@@ -1820,7 +1830,7 @@ public class SessionService {
     static public boolean isSessionConstraintEnabled() {
         return isSessionConstraintEnabled;
     }
-
+    
     static public boolean denyLoginIfDBIsDown() {
         return denyLoginIfDBIsDown;
     }
@@ -1900,7 +1910,7 @@ public class SessionService {
                 sessionDebug.message("SessionService.postInit: "+
                     "denyLoginIfDBIsDown="+ denyLoginIfDBIsDown);
             }
-
+            
             String bypassConstratintStr = CollectionHelper.getMapAttr(
                 attrs, BYPASS_CONSTRAINT_ON_TOPLEVEL_ADMINS, "NO");
             if (bypassConstratintStr.equalsIgnoreCase("YES")) {
@@ -2025,7 +2035,7 @@ public class SessionService {
             session = sess;
             eventType = evttype;
         }
-        
+
         /**
          * returns true if remote URL exists else returns false.
          */
@@ -2097,8 +2107,7 @@ public class SessionService {
             }
             return remoteURLExists;
         }
-
-
+        
         /**
          * Thread which sends the Session Notification.
          * 
@@ -2163,7 +2172,6 @@ public class SessionService {
             }
         }
     }
-
 
     /**
      * Returns the User of the Session
@@ -2440,12 +2448,12 @@ public class SessionService {
         // switch to non-local mode for cached cient side session
         // image
         Session.markNonLocal(sid);
-
         InternalSession is = (InternalSession) sessionTable.remove(sid);
-        removeSessionHandle(is);
-        removeRestrictedTokens(is);
-
-        if (is == null) {
+        if (is != null) {
+            is.cancelScheduledRun();
+            removeSessionHandle(is);
+            removeRestrictedTokens(is);
+        } else {
             if (sessionDebug.messageEnabled()) {
                 sessionDebug.message("releaseSession: session not found  "
                         + sid);
@@ -2604,6 +2612,13 @@ public class SessionService {
             return;
 
         sess.putProperty(Session.lbCookieName, getLocalServerID());
+        if (getUseInternalRequestRouting()) {
+            SessionID sid = sess.getID();
+            String primaryID = sid.getExtension(SessionID.PRIMARY_ID);
+            if (!isLocalServer(primaryID)) {
+                remoteSessionSet.add(sid);
+            }
+        }
         sessionTable.put(sess.getID(), sess);
 
         String sessionHandle = sess.getSessionHandle();
@@ -2616,6 +2631,31 @@ public class SessionService {
         }
     }
 
+    /**
+     * function to remove remote sessions when primary server is up
+     */
+    public void cleanUpRemoteSessions() {
+        if (getUseInternalRequestRouting()) {
+            synchronized (remoteSessionSet) {
+                for (Iterator iter = remoteSessionSet.iterator();
+                    iter.hasNext();) {
+                    SessionID sid = (SessionID) iter.next();
+                    // getCurrentHostServer automatically releases local
+                    // session replica if it does not belong locally
+                    String hostServer = null;
+                    try {
+                        hostServer = getCurrentHostServer(sid);
+                    } catch (Exception ex) {
+                    }
+                    // if session does not belong locally remove it
+                    if (!isLocalServer(hostServer)) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Utility method to check if session has to be destroyed and to remove it
      * if so Note that contrary to the name sess.shouldDestroy() has non-trivial

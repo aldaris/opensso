@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.6 2007-12-11 22:02:58 subashvarma Exp $
+ * $Id: InternalSession.java,v 1.7 2008-01-15 22:12:42 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,12 +33,18 @@ import com.iplanet.dpro.session.TokenRestriction;
 import com.iplanet.dpro.session.share.SessionBundle;
 import com.iplanet.dpro.session.share.SessionEncodeURL;
 import com.iplanet.dpro.session.share.SessionInfo;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.session.util.SessionUtils;
 import com.sun.identity.shared.Constants;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,7 +70,7 @@ import javax.servlet.http.HttpSession;
  * 
  */
 
-public class InternalSession implements Serializable {
+public class InternalSession implements TaskRunnable, Serializable {
 
     /* user universal unique ID*/
     private String uuid;
@@ -146,7 +152,7 @@ public class InternalSession implements Serializable {
      * This is the Time(seconds) when the session timedout. Value zero means the
      * session has not timed out.
      */
-    private long timedOutAt = 0;
+    private volatile long timedOutAt = 0;
 
     /**
      * Logical version timestamp used to implement optimistic concurrency
@@ -187,6 +193,13 @@ public class InternalSession implements Serializable {
     private static final String LOG_MSG_SESSION_MAX_LIMIT_REACHED = 
         "SESSION_MAX_LIMIT_REACHED";
 
+    private transient volatile TaskRunnable nextTask = null;
+    private transient volatile TaskRunnable previousTask = null;
+    private transient volatile TaskRunnable headTask = null;
+    private transient TimerPool timerPool = null;
+    private transient long scheduledTime;
+    private volatile boolean reschedulePossible;
+    
     /*
      * default idle time for invalid sessions
      */
@@ -308,14 +321,214 @@ public class InternalSession implements Serializable {
      * @ param sid SessionID
      */
     InternalSession(SessionID sid) {
+        reschedulePossible = maxDefaultIdleTime > maxIdleTime;
+        scheduledTime = -1;
         sessionID = sid;
         sessionState = Session.INVALID;
-        setCreationTime();
-        setLatestAccessTime();
+        timerPool = SystemTimerPool.getTimerPool();
         sessionProperties = new Properties();
         willExpireFlag = true;
     }
 
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @param headTask The HeadTask indicate the time to run this task.
+     */
+    public void setHeadTask(TaskRunnable headTask) {
+        synchronized (this) {
+            this.headTask = headTask;
+            if (headTask != null) {
+                scheduledTime = headTask.scheduledExecutionTime();
+            } else {
+                scheduledTime = -1;
+            }
+        }
+    }
+
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @return The long value indicates the time this task is scheduled.
+     */
+    public long scheduledExecutionTime() {
+        synchronized (this) {
+            return scheduledTime;
+        }
+    }
+    
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @return The HeadTask of this task.
+     */
+    public TaskRunnable getHeadTask() {
+        // no need to synchronize for single operation
+        return headTask;
+    }
+    
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @return The task previous to this one.
+     */
+    public TaskRunnable previous() {
+        return previousTask;
+    }
+    
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @return The task next to this one.
+     */
+    public TaskRunnable next() {
+        return nextTask;
+    }
+    
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @param The task previous to this one.
+     */
+    public void setPrevious(TaskRunnable task) {
+        previousTask = task;
+    }
+    
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @param The task next to this one.
+     */
+    public void setNext(TaskRunnable task) {
+        nextTask = task;
+    }
+    
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @return false since this class will not be used as container.
+     */
+    public boolean addElement(Object obj) {
+        return false;
+    }
+    
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @return false since this class will not be used as container.
+     */
+    public boolean removeElement(Object obj) {
+        return false;
+    }
+    
+    /**
+     * Implements for TaskRunnable.
+     *
+     * @return true since this class will not be used as container.
+     */
+    public boolean isEmpty() {
+        return true;
+    }
+    
+    /**
+     * Implements for GeneralTaskRunnable.
+     *
+     * @return -1 since it is not a periodic task.
+     */
+    public long getRunPeriod() {
+        return -1;
+    }
+    
+    /**
+     * The function to run when timeout.
+     */
+    public void run() {
+        if (!isTimedOut()) {
+            if (sessionState == Session.INVALID) {
+                setState(Session.DESTROYED);
+                ss.removeInternalSession(sessionID);
+                ss.sendEvent(this, SessionEvent.DESTROY);
+            } else {
+                long timeLeft = getTimeLeft();
+                if (timeLeft == 0) {
+                    changeStateAndNotify(SessionEvent.MAX_TIMEOUT);
+                    if (timerPool != null) {
+                        timerPool.schedule(this, new Date((timedOutAt +
+                            (purgeDelay * 60)) * 1000));
+                    }
+                } else {
+                    long idleTimeLeft = (maxIdleTime * 60) - getIdleTime();
+                    if (idleTimeLeft <= 0 && sessionState != Session.INACTIVE) {
+                        changeStateAndNotify(SessionEvent.IDLE_TIMEOUT);
+                        if (timerPool != null) {
+                            timerPool.schedule(this, new Date((timedOutAt +
+                                (purgeDelay * 60)) * 1000));
+                        }
+                    } else {
+                        long timeToWait = Math.min(timeLeft, idleTimeLeft);
+                        if (timerPool != null) {
+                            timerPool.schedule(this, new Date(((
+                                System.currentTimeMillis() / 1000) +
+                                timeToWait) * 1000));
+                        }
+                    }
+                }        
+            }
+        } else {
+            ss.logEvent(this, SessionEvent.DESTROY);
+            setState(Session.DESTROYED);
+            ss.removeInternalSession(sessionID);
+            ss.sendEvent(this, SessionEvent.DESTROY);
+        }
+    }
+    
+    /**
+     * Cancel the scheduled run of this task from TimerPool.
+     */
+    protected void cancelScheduledRun() {
+        synchronized (this) {
+            if (headTask != null) {
+                synchronized (headTask) {
+                    previousTask.setNext(nextTask);
+                    if (nextTask != null) {
+                       nextTask.setPrevious(previousTask);
+                    }
+                    nextTask = null;
+                }
+            }
+            headTask = null;
+            scheduledTime = -1;
+        }
+    }
+    
+    /**
+     * Schedule this task to TimerPool according to the current state.
+     */
+    protected void reschedule() {
+        if ((timerPool != null) && (reschedulePossible ||
+            (scheduledExecutionTime() == -1))) {
+            long timeoutTime = Long.MAX_VALUE;
+            switch (sessionState) {
+                case Session.INVALID:
+                    timeoutTime = (creationTime +
+                        (maxDefaultIdleTime * 60)) * 1000;
+                    break;
+                case Session.VALID:
+                    timeoutTime = Math.min((latestAccessTime +
+                        (maxIdleTime * 60)) * 1000,  (creationTime +
+                        (maxSessionTime * 60)) * 1000);
+                    break;
+            }
+            if (timeoutTime < scheduledExecutionTime()) {
+                cancelScheduledRun();
+            }
+            if (scheduledExecutionTime() == -1) {
+                Date time = new Date(timeoutTime);
+                timerPool.schedule(this, time);
+            }
+        }
+    }
+    
     /**
      * Returns the SessionID of this Internal Session.
      * @return SessionID for the internal session object
@@ -399,6 +612,9 @@ public class InternalSession implements Serializable {
      */
     public void setMaxSessionTime(long t) {
         maxSessionTime = t;
+        if (scheduledExecutionTime() != -1) {
+            reschedule();
+        }
         updateForFailover();
     }
 
@@ -417,11 +633,15 @@ public class InternalSession implements Serializable {
      */
     public void setMaxIdleTime(long t) {
         maxIdleTime = t;
+        reschedulePossible = maxDefaultIdleTime > maxIdleTime;
         if (httpSession != null) {
             int httpIdleTime = httpSession.getMaxInactiveInterval();
             if (maxIdleTime > httpIdleTime) {
                 httpSession.setMaxInactiveInterval(((int) maxIdleTime) * 60);
             }
+        }
+        if (scheduledExecutionTime() != -1) {
+            reschedule();
         }
         updateForFailover();
     }
@@ -783,6 +1003,7 @@ public class InternalSession implements Serializable {
         }
         setLatestAccessTime();
         setState(Session.VALID);
+        reschedule();
         SessionService.getSessionService().logEvent(this,
                 SessionEvent.SESSION_CREATION);
         SessionService.getSessionService().sendEvent(this,
@@ -811,9 +1032,11 @@ public class InternalSession implements Serializable {
      * Changes the state of the session to ACTIVE from IN-ACTIVE.
      */
     public void reactivate() {
+        cancelScheduledRun();
         setCreationTime();
         setLatestAccessTime();
         setState(Session.VALID);
+        reschedule();
         SessionService.getSessionService().logEvent(this,
                 SessionEvent.REACTIVATION);
         SessionService.getSessionService().sendEvent(this,
@@ -831,6 +1054,8 @@ public class InternalSession implements Serializable {
             maxSessionTime = Long.MAX_VALUE / 60;
             maxIdleTime = Long.MAX_VALUE / 60;
             maxCachingTime = SessionService.applicationMaxCachingTime;
+            cancelScheduledRun();
+            timerPool = null;
         }
         willExpireFlag = expire;
     }
@@ -896,7 +1121,7 @@ public class InternalSession implements Serializable {
             }
         }
     }
-
+    
     /**
      * Changes the state of the session and sends Session Notification when
      * session times out.
@@ -1337,5 +1562,72 @@ public class InternalSession implements Serializable {
         }
         return System.currentTimeMillis() / 1000
                 + Math.min(getTimeLeft(), timeLeft);
+    }
+    
+    /**
+     * Correctly read and reschedule this session when it is read.
+     */
+    private void readObject(ObjectInputStream oin) throws IOException,
+        ClassNotFoundException {
+        oin.defaultReadObject();
+        scheduledTime = -1;
+        if (willExpireFlag) {
+            timerPool = SystemTimerPool.getTimerPool();   
+            if (!isTimedOut()) {
+                if (sessionState == Session.INVALID) {
+                    long expectedTime = creationTime +
+                        (maxDefaultIdleTime * 60);
+                    if (expectedTime > (System.currentTimeMillis() / 1000)) {
+                        if (timerPool != null) {
+                            timerPool.schedule(this, new Date(expectedTime *
+                                1000));
+                        }
+                    } else {
+                        setState(Session.DESTROYED);
+                        ss.removeInternalSession(sessionID);
+                        ss.sendEvent(this, SessionEvent.DESTROY);
+                    }
+                } else {
+                    long timeLeft = getTimeLeft();
+                    if (timeLeft == 0) {
+                        changeStateAndNotify(SessionEvent.MAX_TIMEOUT);
+                        if (timerPool != null) {
+                            timerPool.schedule(this, new Date((timedOutAt +
+                                (purgeDelay * 60)) * 1000));
+                        }
+                    } else {
+                        long idleTimeLeft = (maxIdleTime * 60) - getIdleTime();
+                        if (idleTimeLeft <= 0 && 
+                            sessionState != Session.INACTIVE) {
+                            changeStateAndNotify(SessionEvent.IDLE_TIMEOUT);
+                            if (timerPool != null) {
+                                timerPool.schedule(this, new Date((timedOutAt +
+                                    (purgeDelay * 60)) * 1000));
+                            }
+                        } else {
+                            long timeToWait = Math.min(timeLeft, idleTimeLeft);
+                            if (timerPool != null) {
+                                timerPool.schedule(this, new Date(((
+                                    System.currentTimeMillis() / 1000) +
+                                    timeToWait) * 1000));
+                            }
+                        }
+                    }        
+                }
+            } else {
+                long expectedTime = timedOutAt + purgeDelay * 60;
+                if (expectedTime > (System.currentTimeMillis() / 1000)) {
+                    if (timerPool != null) {
+                        timerPool.schedule(this, new Date(expectedTime *
+                            1000));
+                    }
+                } else {
+                    ss.logEvent(this, SessionEvent.DESTROY);
+                    setState(Session.DESTROYED);
+                    ss.removeInternalSession(sessionID);
+                    ss.sendEvent(this, SessionEvent.DESTROY);
+                }
+            }
+        }
     }
 }

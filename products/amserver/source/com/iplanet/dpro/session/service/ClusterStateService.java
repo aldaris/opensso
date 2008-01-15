@@ -17,20 +17,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClusterStateService.java,v 1.1 2005-11-01 00:29:54 arvindp Exp $
+ * $Id: ClusterStateService.java,v 1.2 2008-01-15 22:12:42 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.service;
 
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TimerPool;
+import com.sun.identity.common.TaskRunnable;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A <code>ClusterStateService </code> class implements monitoring the state of 
@@ -39,7 +46,7 @@ import java.util.Map;
  * 
  */
 
-public class ClusterStateService implements Runnable {
+public class ClusterStateService extends GeneralTaskRunnable {
 
     private class ServerInfo implements Comparable {
         String id;
@@ -55,6 +62,9 @@ public class ClusterStateService implements Runnable {
 
     /** Servers in the cluster environment*/
     private Map servers = new HashMap();
+    
+    /** Servers are down in the cluster environment*/
+    private Set downServers = new HashSet();
 
     /** Server Information */
     private ServerInfo[] serverSelectionList = new ServerInfo[0];
@@ -74,8 +84,9 @@ public class ClusterStateService implements Runnable {
 
     // server instance id 
     private String localServerId = null;
-
-    private Thread checker;
+    
+    // SessionService
+    private SessionService ss = null;
 
     /**
      * Constructs an instance for the cluster service
@@ -89,9 +100,9 @@ public class ClusterStateService implements Runnable {
      *            map if server id - > url for all cluster members
      * @throws Exception
      */
-    public ClusterStateService(String localServerId, int timeout, long period,
-            Map members) throws Exception {
-
+    public ClusterStateService(SessionService ss, String localServerId,
+            int timeout, long period, Map members) throws Exception {
+        this.ss = ss;
         this.localServerId = localServerId;
         this.timeout = timeout;
         this.period = period;
@@ -104,17 +115,17 @@ public class ClusterStateService implements Runnable {
             URL url = new URL((String) entry.getValue());
             info.address = new InetSocketAddress(url.getHost(), url.getPort());
             info.isUp = checkServerUp(info);
+            if (!info.isUp) {
+                downServers.add(info.id);
+            }
             servers.put(info.id, info);
             serverSelectionList[getNextSelected()] = info;
         }
 
         // to ensure that ordering in different server instances is identical
         Arrays.sort(serverSelectionList);
-
-        checker = new Thread(this);
-        checker.setName("ClusterStateService");
-        checker.setDaemon(true);
-        checker.start();
+        SystemTimer.getTimer().schedule(this, new Date((
+            System.currentTimeMillis() / 1000) * 1000));
     }
 
     /**
@@ -176,28 +187,67 @@ public class ClusterStateService implements Runnable {
     }
 
     /**
+     * Implements for GeneralTaskRunnable
+     * 
+     * @return The run period of the task.
+     */
+    public long getRunPeriod() {
+        return period;
+    }
+    
+    /**
+     * Implements for GeneralTaskRunnable.
+     *
+     * @return false since this class will not be used as container.
+     */
+    public boolean addElement(Object obj) {
+        return false;
+    }
+    
+    /**
+     * Implements for GeneralTaskRunnable.
+     *
+     * @return false since this class will not be used as container.
+     */
+    public boolean removeElement(Object obj) {
+        return false;
+    }
+    
+    /**
+     * Implements for GeneralTaskRunnable.
+     *
+     * @return true since this class will not be used as container.
+     */
+    public boolean isEmpty() {
+        return true;
+    }
+    
+    /**
      * Monitoring logic used by background thread
      */
     public void run() {
-        while (true) {
-
-            try {
-
-                long nextRun = System.currentTimeMillis() + period;
+        try {
+            boolean cleanRemoteSessions = false;
+            synchronized (servers) {
 
                 Iterator i = servers.values().iterator();
-
                 while (i.hasNext()) {
                     ServerInfo info = (ServerInfo) i.next();
                     info.isUp = checkServerUp(info);
+                    if (!info.isUp) {
+                        downServers.add(info.id);
+                    } else {
+                        if (!downServers.isEmpty() &&
+                            downServers.remove(info.id)) {
+                            cleanRemoteSessions = true;
+                        }
+                    }
                 }
-                long sleeptime = nextRun - System.currentTimeMillis();
-                if (sleeptime > 0) {
-                    Thread.sleep(sleeptime);
-                }
-            } catch (Exception e) {
             }
-
+            if (cleanRemoteSessions) {
+                ss.cleanUpRemoteSessions();
+            }
+        } catch (Exception e) {
         }
     }
 

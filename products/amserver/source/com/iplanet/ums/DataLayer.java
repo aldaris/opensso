@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.10 2007-12-13 18:44:17 goodearth Exp $
+ * $Id: DataLayer.java,v 1.11 2008-01-15 22:12:43 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,8 @@ import com.iplanet.services.ldap.ServerInstance;
 import com.iplanet.services.ldap.event.EventService;
 import com.iplanet.services.util.I18n;
 import com.sun.identity.common.LDAPConnectionPool;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.security.ServerInstanceAction;
 import com.sun.identity.shared.debug.Debug;
 import java.security.AccessController;
@@ -1414,9 +1416,17 @@ public class DataLayer implements java.io.Serializable {
             connOptions.put("referrals", new Boolean(referrals));
             connOptions.put("searchconstraints", _defaultSearchConstraints);
 
-            // Pass the valid bind credentials from the configuration.
             _ldapPool = new LDAPConnectionPool("DataLayer", poolMin, poolMax,
                 hostName, 389, connDN, connPWD, _trialConn, connOptions);
+            ShutdownManager.getInstance().addShutdownListener(
+                new ShutdownListener() {
+                    public void shutdown() {
+                        if (_ldapPool != null) {
+                            _ldapPool.destroy();
+                        }
+                    }
+                }
+            );
 
         } catch (LDAPException e) {
             debug.error("Exception in DataLayer.initLdapPool:", e);

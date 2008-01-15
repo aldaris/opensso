@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FallBackManager.java,v 1.1 2007-04-09 23:22:58 goodearth Exp $
+ * $Id: FallBackManager.java,v 1.2 2008-01-15 22:12:44 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,8 @@ import java.util.*;
 import java.io.*;
 import com.sun.identity.common.LDAPConnPoolUtils;
 import com.sun.identity.common.LDAPConnectionPool;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.TaskRunnable;
 import com.sun.identity.shared.Constants;
 import com.iplanet.am.util.Debug;
 import netscape.ldap.LDAPConnection;
@@ -37,13 +39,14 @@ import com.iplanet.services.ldap.event.EventException;
 import com.iplanet.services.ldap.event.EventService;
 
 
-public class FallBackManager extends Thread {
+public class FallBackManager extends GeneralTaskRunnable {
 
     public static Debug debug = Debug.getInstance("LDAPConnectionPool");
 
     // 1 sec = 1000 milliseconds. 5 * 60 seconds * 1000 = 5 minutes 
     private static final long DEFAULT_SERVER_CHECK_INTERVAL = 15;
     private long sleepTime = DEFAULT_SERVER_CHECK_INTERVAL;
+    private volatile long runPeriod;
 
     public FallBackManager() {
 
@@ -79,24 +82,57 @@ public class FallBackManager extends Thread {
         }
     }
 
+    /**
+     * Implements for GeneralTaskRunnable.
+     *
+     * @return the run period of this task.
+     */
+    public long getRunPeriod() {
+        return runPeriod;
+    }
+    
+    /**
+     * Implements for GeneralTaskRunnable.
+     *
+     * @return false since this class will not be used as container.
+     */
+    public boolean addElement(Object obj) {
+        return false;
+    }
+    
+    /**
+     * Implements for GeneralTaskRunnable.
+     *
+     * @return false since this class will not be used as container.
+     */
+    public boolean removeElement(Object obj) {
+        return false;
+    }
+    
+    /**
+     * Implements for GeneralTaskRunnable.
+     *
+     * @return false since this class will not be used as container.
+     */
+    public boolean isEmpty() {
+        return true;
+    }
+    
     public void run() {
-        Thread thisThread = Thread.currentThread();
-        boolean foundDown = true;
-        while (foundDown) {
-            try {
-                foundDown = false;
-
-                if ( (LDAPConnPoolUtils.connectionPoolsStatus != null)
-                    && (!LDAPConnPoolUtils.connectionPoolsStatus.isEmpty()) ) {
-                    Set keyset1 = LDAPConnPoolUtils.connectionPoolsStatus.
-                        keySet();
+        boolean foundDown = false;
+        try {
+            if ( (LDAPConnPoolUtils.connectionPoolsStatus != null)
+                && (!LDAPConnPoolUtils.connectionPoolsStatus.isEmpty()) ) {
+                synchronized (LDAPConnPoolUtils.connectionPoolsStatus) {
+                    Set keyset1 = LDAPConnPoolUtils.connectionPoolsStatus
+                        .keySet();
                     Iterator iter1 = keyset1.iterator();
                     while (iter1.hasNext()) {
                         String key = (String)iter1.next();
                         LDAPConnectionPool fbConn  = 
                             (LDAPConnectionPool)LDAPConnPoolUtils.
                                 connectionPoolsStatus.get(key);
-                        foundDown = true;
+                        foundDown =true;
                         StringTokenizer st = new StringTokenizer(key,":");
                         String downName = (String)st.nextToken();
                         String downHost = (String)st.nextToken();
@@ -109,15 +145,13 @@ public class FallBackManager extends Thread {
                         }
                         if ((downHost != null) && (downHost.length() != 0)
                             && (downPort != null) && (downPort.length()!= 0)) {
-                            int intPort = (Integer.valueOf(downPort)).
-                                intValue();
+                            int intPort = (Integer.valueOf(downPort))
+                                .intValue();
                             try {
-                                LDAPConnection ldapConn =
-                                    new LDAPConnection();
+                                LDAPConnection ldapConn = new LDAPConnection();
                                 ldapConn.connect(downHost, intPort);
                                 if (ldapConn.isConnected()) {
-                                    fbConn.fallBack(ldapConn);
-                                    
+                                    fbConn.fallBack(ldapConn);                                    
                                     // To facilitate event service/persistant 
                                     // notifications to fallback
                                     // Instantiate EventService
@@ -139,20 +173,19 @@ public class FallBackManager extends Thread {
                         }
                     }
                 }
-            } catch (Exception exp) {
-                debug.error("FallBackManager:Error in FallBack Manager Thread",
-                    exp);
             }
-            if (!foundDown) {
-                debug.message("Returning back from FallBackManager thread."+
-                    foundDown);
-                debug.message("exiting FallBackManager thread..");
-                return;
-            }
-            try {
-                thisThread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-            }
+        } catch (Exception exp) {
+            debug.error("FallBackManager:Error in FallBack Manager Thread",
+                exp);
+        }
+        if (!foundDown) {
+            runPeriod = -1;
+            setHeadTask(null);
+            debug.message("Returning back from FallBackManager thread."+
+                foundDown);
+            debug.message("exiting FallBackManager thread..");
+        } else {
+            runPeriod = sleepTime;
         }
     } //end of thread - run()
 }

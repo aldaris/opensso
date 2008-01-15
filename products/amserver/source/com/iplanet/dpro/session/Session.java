@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.11 2007-12-11 22:03:55 subashvarma Exp $
+ * $Id: Session.java,v 1.12 2008-01-15 22:12:42 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 package com.iplanet.dpro.session;
 
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.am.util.ThreadPool;
+import com.iplanet.am.util.ThreadPoolException;
 import com.iplanet.dpro.session.service.SessionService;
 import com.iplanet.dpro.session.share.SessionBundle;
 import com.iplanet.dpro.session.share.SessionEncodeURL;
@@ -36,7 +38,13 @@ import com.iplanet.services.comm.share.Request;
 import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.naming.WebtopNaming;
+import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SearchResults;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.session.util.RestrictedTokenAction;
@@ -44,6 +52,7 @@ import com.sun.identity.session.util.RestrictedTokenContext;
 import com.sun.identity.session.util.SessionUtils;
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.servlet.http.HttpServletResponse;
@@ -84,7 +93,7 @@ import javax.servlet.http.HttpServletResponse;
  * @see com.iplanet.dpro.session.SessionListener
  */
 
-public class Session {
+public class Session extends GeneralTaskRunnable {
 
     /**
      * Used for uniquely referencing this Session object.
@@ -137,7 +146,7 @@ public class Session {
      * This is the time value (computed as System.currentTimeMillis()/1000) when
      * the session timed out. Value zero means the session has not timed out.
      */
-    private long timedOutAt = 0;
+    private volatile long timedOutAt = 0;
 
     /**
      * Four possible values for the state of the session 0 - Invalid 1 - 
@@ -165,7 +174,7 @@ public class Session {
      * Last time the client sent a request associated with this session, as the
      * number of seconds since midnight January 1, 1970 GMT.
      */
-    private long latestRefreshTime;
+    private volatile long latestRefreshTime;
 
     /**
      * Session Tracking Cookie Name
@@ -177,7 +186,7 @@ public class Session {
     /**
      * Indicates whether the latest access time need to be reset on the session.
      */
-    boolean needToReset = false;
+    volatile boolean needToReset = false;
 
     private SessionService sessionService = null;
 
@@ -237,15 +246,15 @@ public class Session {
      * Indicates whether session to use polling or notifications to clear the
      * client cache
      */
-    private static boolean pollingEnabled = Boolean.valueOf(SystemProperties
-                     .get("com.iplanet.am.session.client.polling.enable"))
-                     .booleanValue();
-
+    private static boolean pollingEnabled = false;
+    
     /**
-     * Session Poller. Invoke this only when the users choose polling method for
-     * the session cache updation
+     * Indicates whether to enable or disable the session cleanup thread.
      */
-    private static Thread sp;
+    private static boolean sessionCleanupEnabled = 
+        Boolean.valueOf(SystemProperties.
+                get("com.iplanet.am.session.client.cleanup.enable", "true"))
+                .booleanValue();
 
     /**
      * The session table indexed by Session ID objects.
@@ -272,15 +281,34 @@ public class Session {
      * This is used only in polling mode to find the polling state of this
      * session.
      */
-    private boolean isPolling = false;
+    private volatile boolean isPolling = false;
 
     private static String serverID = null;
+    
+    private static TimerPool timerPool = null;
+    
+    static private ThreadPool threadPool = null;
+    private static final int DEFAULT_POOL_SIZE = 5;
+    private static final int DEFAULT_THRESHOLD = 10000;
+    private static boolean cacheBasedPolling = Boolean.valueOf(
+            SystemProperties
+                    .get("com.iplanet.am.session.client.polling.cacheBased",
+                            "false")).booleanValue();
+    
+    private SessionPollerSender sender = null;    
 
     static {
         try {
             serverID = WebtopNaming.getAMServerID();
         } catch (Exception le) {
             serverID = null;
+        }
+        
+        if (!isServerMode()) {
+            pollingEnabled = 
+                Boolean.valueOf(SystemProperties
+                        .get("com.iplanet.am.session.client.polling.enable", 
+                                "false")).booleanValue();
         }
 
         String purgeDelayProperty = SystemProperties.get(
@@ -290,17 +318,40 @@ public class Session {
         } catch (Exception le) {
             purgeDelay = 120;
         }
-
+        
         if (pollingEnabled) {
-            synchronized (Session.class) {
-                if (sp == null) {
-                    sp = new SessionPoller(sessionTable);
-                    sp.setName("amSessionPollerMain");
-                    sp.setDaemon(true);
-                    sp.start();
-                }
-            }
+            int poolSize;
+           int threshold;
+           try {
+               poolSize = Integer.parseInt(SystemProperties.get(
+                   Constants.POLLING_THREADPOOL_SIZE));
+           } catch (Exception e) {
+               poolSize = DEFAULT_POOL_SIZE;
+           }
+           try {
+               threshold = Integer.parseInt(SystemProperties.get(
+                   Constants.POLLING_THREADPOOL_THRESHOLD));
+           } catch (Exception e) {
+               threshold = DEFAULT_THRESHOLD;
+           }
+           threadPool = new ThreadPool("amSessionPoller", poolSize, 
+               threshold, true, sessionDebug);
+           ShutdownManager.getInstance().addShutdownListener(
+               new ShutdownListener() {
+                   public void shutdown() {
+                       threadPool.shutdown();
+                   }
+               }
+           );
+        } else {
+            sessionDebug.message("Session Cache cleanup is set to "
+                + sessionCleanupEnabled); 
         }
+        
+        if (pollingEnabled || sessionCleanupEnabled) {
+            timerPool = SystemTimerPool.getTimerPool();
+        }
+        
     }
 
     /**
@@ -309,7 +360,6 @@ public class Session {
      */
     protected void setIsPolling(boolean b) {
         isPolling = b;
-
     }
 
     /**
@@ -328,7 +378,6 @@ public class Session {
         if (isServerMode()) {
             sessionService = SessionService.getSessionService();
         }
-        latestRefreshTime = System.currentTimeMillis() / 1000;
     }
 
     /**
@@ -339,6 +388,94 @@ public class Session {
         return cookieName;
     }
 
+    public boolean addElement(Object obj) {
+        return false;
+    }
+    
+    public boolean removeElement(Object obj) {
+        return false;
+    }
+    
+    public boolean isEmpty() {
+        return true;
+    }
+    
+    public long getRunPeriod() {
+        return -1;
+    }
+    
+    public void run() {
+        if (pollingEnabled) {
+            final SessionID sid = getID();
+            try {
+                if (!getIsPolling()) {
+                    long expectedTime = -1;
+                    if (maxIdleTime < (Long.MAX_VALUE / 60)) {
+                        expectedTime = (latestRefreshTime +
+                            (maxIdleTime * 60)) * 1000;
+                        if (cacheBasedPolling) {
+                            expectedTime = Math.min(expectedTime,
+                                (latestRefreshTime + (maxCachingTime * 60))
+                                * 1000);
+                        }
+                    }
+                    if (expectedTime > scheduledExecutionTime()) {
+                        timerPool.schedule(this, new Date(expectedTime));
+                        return;
+                    }
+                    if (sender == null) {
+                        sender = new SessionPollerSender(this, sessionDebug);
+                    }
+                    RestrictedTokenContext.doUsing(getContext(),
+                        new RestrictedTokenAction() {
+                            public Object run() throws Exception {
+                                try {
+                                    setIsPolling(true);
+                                    threadPool.run(sender);
+                                } catch (ThreadPoolException e) {
+                                    setIsPolling(false);
+                                    sessionDebug.error("Send Polling Error: ",
+                                        e);
+                                }
+                                return null;
+                            }
+                    });
+                }
+            } catch (SessionException se) {
+                Session.removeSID(sid);
+                sessionDebug.message(
+                    "session is not in timeout state so clean it", se);
+            } catch (Exception ex) {
+                sessionDebug.error("Exception encountered while polling", ex);
+            }
+        } else {
+            if (sessionCleanupEnabled) {
+                if (sessionDebug.messageEnabled()) {
+                    sessionDebug.message("Session Cache Cleaner started");
+                }
+                long expectedTime = -1;
+                if (maxSessionTime < (Long.MAX_VALUE / 60)) {
+                    expectedTime = (latestRefreshTime + (maxSessionTime * 60))
+                        * 1000;
+                }
+                if (expectedTime > scheduledExecutionTime()) {
+                    timerPool.schedule(this, new Date(expectedTime));
+                    return;
+                }
+                try {                        
+                    Session.removeSID(getID());
+                    if (sessionDebug.messageEnabled()) {
+                        sessionDebug.message("Session Destroyed, Caching "
+                            + "time exceeded the Max Session Time");
+                    }
+                } catch (Exception ex) {
+                    sessionDebug.error("Exception occured while cleaning "
+                        + "up Session Cache", ex);
+                }
+            }
+        }
+    }
+    
     /**
      * Returns load balancer cookie value for the Session.
      *
@@ -434,7 +571,7 @@ public class Session {
      * Returns the maximum session idle time in minutes.
      * 
      * @return The maximum session idle time.
-     */
+     */    
     public long getMaxIdleTime() {
         return maxIdleTime;
     }
@@ -453,7 +590,7 @@ public class Session {
         if (timedOutAt > 0) {
             return true;
         }
-        if (maxCachingTimeReached()) {
+        if (!cacheBasedPolling && maxCachingTimeReached()){
             try {
                 refresh(false);
             } catch (SessionTimedOutException e) {
@@ -507,7 +644,7 @@ public class Session {
      *            during communication with session service.
      */
     public long getIdleTime() throws SessionException {
-        if (maxCachingTimeReached())
+        if (!cacheBasedPolling && maxCachingTimeReached())
             refresh(false);
         return sessionIdleTime;
     }
@@ -522,7 +659,7 @@ public class Session {
      *            service.
      */
     public long getTimeLeft() throws SessionException {
-        if (maxCachingTimeReached())
+        if (!cacheBasedPolling && maxCachingTimeReached())
             refresh(false);
         return sessionTimeLeft;
     }
@@ -541,7 +678,7 @@ public class Session {
      *            service.
      */
     public int getState(boolean reset) throws SessionException {
-        if (maxCachingTimeReached()) {
+        if (!cacheBasedPolling && maxCachingTimeReached()) {
             refresh(reset);
         } else {
             if (reset) {
@@ -579,12 +716,11 @@ public class Session {
      */
     public String getProperty(String name) throws SessionException {
         if (name != lbCookieName) {
-            if (maxCachingTimeReached() || 
-        	!sessionProperties.containsKey(name)) {
+            if ((!cacheBasedPolling && maxCachingTimeReached()) || 
+                !sessionProperties.containsKey(name)) {
                 refresh(false);
             }
-        } 
-        
+        }    
         return (String) sessionProperties.get(name);
     }
 
@@ -614,6 +750,18 @@ public class Session {
         }
     }
 
+    /**
+     * Used to find out if the maximum caching time has reached or not.
+     */
+    protected boolean maxCachingTimeReached() {
+        long cachingtime = System.currentTimeMillis() / 1000
+                - latestRefreshTime;
+        if (cachingtime > maxCachingTime * 60)
+            return true;
+        else
+            return false;
+    }
+    
     /**
      * Gets the Session Service URL for this session object.
      * 
@@ -799,14 +947,12 @@ public class Session {
             } catch (Exception e) {
                 throw new SessionException(e);
             }
-
-            if (session.maxCachingTimeReached())
+            if (!cacheBasedPolling && session.maxCachingTimeReached())
                 session.refresh(false);
             return session;
         }
         session = new Session(sid);
         session.refresh(true);
-
         session.context = RestrictedTokenContext.getCurrent();
 
         sessionTable.put(sid, session);
@@ -816,6 +962,23 @@ public class Session {
         return session;
     }
 
+    private void scheduleToTimerPool() {
+        if (pollingEnabled) {
+            long timeoutTime = (latestRefreshTime + (maxIdleTime * 60)) * 1000;
+            if (cacheBasedPolling) {
+                timeoutTime = Math.min((latestRefreshTime +
+                    (maxCachingTime * 60)) * 1000, timeoutTime);
+            }
+            timerPool.schedule(this, new Date(timeoutTime));
+        } else {
+            if ((sessionCleanupEnabled) && (maxSessionTime < (Long.MAX_VALUE /
+                60))) {
+                timerPool.schedule(this, new Date((latestRefreshTime +
+                    (maxSessionTime * 60)) * 1000));
+            }
+        }
+    }
+    
     /**
      * Returns a Session Response object based on the XML document received from
      * remote Session Server. This is in response to a request that we send to
@@ -1002,18 +1165,6 @@ public class Session {
     }
 
     /**
-     * Used to find out if the maximum caching time has reached or not.
-     */
-    protected boolean maxCachingTimeReached() {
-        long cachingtime = System.currentTimeMillis() / 1000
-                - latestRefreshTime;
-        if (cachingtime > maxCachingTime * 60)
-            return true;
-        else
-            return false;
-    }
-
-    /**
      * Returns all the valid sessions for a particular Session Service URL. If a
      * user is not allowed to access the Sessions of the input Session Server,
      * it will return null.
@@ -1161,7 +1312,10 @@ public class Session {
             info = (SessionInfo) infos.elementAt(0);
         }
         update(info);
-        latestRefreshTime = System.currentTimeMillis() / 1000;
+        if ((scheduledExecutionTime() == -1) ||
+            (maxCachingTime < maxIdleTime)) {
+            scheduleToTimerPool();
+        }
     }
 
     /**
@@ -1265,7 +1419,7 @@ public class Session {
      * @param svcurl Session Service URL.
      * @param sreq Session Request object.
      * @exception SessionException 
-     */
+     */    
     private SessionResponse getSessionResponse(URL svcurl, SessionRequest sreq)
             throws SessionException {
         if (isServerMode() && SessionService.getUseInternalRequestRouting()) {
@@ -1368,7 +1522,6 @@ public class Session {
      * @return the encoded URL if cookies are not supported or the URL if
      *         cookies are supported.
      */
-
     public String encodeURL(String url, boolean escape) {
         return encodeURL(url, escape, cookieName);
     }
@@ -1429,7 +1582,6 @@ public class Session {
      * @return the encoded URL if cookies are not supported or the URL if
      *         cookies are supported.
      */
-
     public String encodeURL(String url, short encodingScheme, boolean escape) {
         return encodeURL(url, encodingScheme, escape, cookieName);
     }
@@ -1596,4 +1748,65 @@ public class Session {
         }
         return foundCookieName;
     }
+    
+    class SessionPollerSender implements Runnable {
+        SessionInfo info = null;
+
+        Session session = null;
+
+        SessionID sid = null;
+        
+        Debug debug = null;
+
+        public SessionPollerSender(Session sess, Debug sessionDebug) {
+            session = sess;
+            sid = session.getID();
+            debug = sessionDebug;
+        }
+
+        public void run() {
+            try {
+                SessionRequest sreq = new SessionRequest(
+                        SessionRequest.GetSession, sid.toString(), false);
+                SessionResponse sres = Session.sendPLLRequest(session
+                        .getSessionServiceURL(), sreq);
+
+                if (sres.getException() != null) {
+                    Session.removeSID(sid);
+                    return;
+                }
+
+                Vector infos = sres.getSessionInfoVector();
+                info = (SessionInfo) infos.elementAt(0);
+            } catch (Exception ex) {
+                Session.removeSID(sid);
+                if (debug.messageEnabled())
+                    debug.message("Could not connect to the session server"
+                            + ex.getMessage());
+            }
+
+            if (info != null) {
+                if (debug.messageEnabled()) {
+                    debug.message("Updating" + info.toXMLString());
+                }
+                try {
+                    if (info.state.equals("invalid")
+                            || info.state.equals("destroyed")) {
+                        Session.removeSID(sid);
+                    } else {
+                        session.update(info);
+                        session.scheduleToTimerPool();
+                    }
+                } catch (SessionException se) {
+                    Session.removeSID(sid);
+                    debug.error("Exception encountered while update in polling",
+                           se);
+                }
+            } else {
+                Session.removeSID(sid);
+            }
+            session.setIsPolling(false);
+        }
+    }
+    
 }

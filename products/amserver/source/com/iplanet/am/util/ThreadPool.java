@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.4 2007-12-11 22:04:22 subashvarma Exp $
+ * $Id: ThreadPool.java,v 1.5 2008-01-15 22:12:41 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,16 +44,16 @@ import com.sun.identity.shared.debug.Debug;
  */
 public class ThreadPool {
 
-    // FIXME poolSize is not being enforced
     private int poolSize;
-
     private int threshold;
-
     private String poolName;
-
     private Debug debug;
-
-    private java.util.ArrayList taskList = new java.util.ArrayList();
+    private java.util.ArrayList taskList;
+    private int busyThreadCount;
+    private int currentThreadCount;
+    private boolean shutdownThePool;
+    private boolean daemon;
+    private WorkerThread[] threads;
 
     /**
      * Constructs a thread pool with given parameters.
@@ -71,20 +71,57 @@ public class ThreadPool {
      *            Debug object to send debugging message to.
      */
     public ThreadPool(String name, int poolSize, int threshold, boolean daemon,
-            Debug debug) {
-        this.debug = debug;
-        this.poolSize = poolSize;
-        this.threshold = threshold;
+        Debug debug) {
+	this.debug = debug;
+	this.poolSize = poolSize;
+	this.threshold = threshold;
         this.poolName = name;
-        if (debug.messageEnabled()) {
+        // initialize the size of the ArrayList, it doesn't need to expand
+        // during runtime.
+        this.taskList = new java.util.ArrayList(threshold);
+        this.busyThreadCount = 0;
+        this.currentThreadCount = 0;
+        this.daemon = daemon;
+        this.shutdownThePool = false;
+        this.threads = new WorkerThread[poolSize];
+	if (debug.messageEnabled()) {
             debug.message("Initiating login thread pool size = "
                     + this.poolSize + "\nThreshold = " + threshold);
         }
-        for (int i = 0; i < poolSize; i++) {
-            WorkerThread thread = new WorkerThread(name + "[" + i + "]");
-            thread.setDaemon(daemon);
-            thread.start();
+        synchronized (this) {
+            createThreads(poolSize);
         }
+    }
+    
+    /**
+     * Create thread for the pool.
+     *
+     * @threadsToCreate number of threads of the pool after creation
+     */
+    protected void createThreads(int threadsToCreate) {
+        if (threadsToCreate > poolSize) {
+            threadsToCreate = poolSize;
+        }
+        for (int i = currentThreadCount; i < threadsToCreate; i++) {
+            threads[i - busyThreadCount] = new WorkerThread(poolName, this);
+            threads[i - busyThreadCount].setDaemon(daemon);
+            threads[i - busyThreadCount].start();
+        }
+        currentThreadCount = threadsToCreate;
+    }
+    
+    private WorkerThread getAvailableThread() {
+        WorkerThread t = null;
+        synchronized (this) {
+            if (currentThreadCount == busyThreadCount) {
+                createThreads(poolSize);
+            }
+            // get threads from the end of the array
+            t = threads[currentThreadCount - busyThreadCount - 1];
+            threads[currentThreadCount - busyThreadCount - 1] = null;
+            busyThreadCount++;
+        }
+        return t;
     }
 
     /**
@@ -94,31 +131,97 @@ public class ThreadPool {
      *            user defined task.
      * @throws ThreadPoolException
      */
-    public final void run(Runnable task) throws ThreadPoolException {
-        synchronized (taskList) {
-            if (taskList.size() >= threshold) {
-                throw new ThreadPoolException(poolName
-                        + " thread pool's task queue is full.");
-            } else {
-                taskList.add(task);
-                taskList.notify();
+    public final void run(Runnable task) throws ThreadPoolException 
+    {
+        WorkerThread t = null;
+        synchronized (this) {
+            if (busyThreadCount == poolSize) {
+                if (taskList.size() >= threshold) {
+                    throw new ThreadPoolException(poolName + 
+                        " thread pool's task queue is full.");
+                } else {
+                    taskList.add(task);
+                }
             }
+            else{
+                t = getAvailableThread();
+            }
+        }
+        if ((t != null) && (task != null)) {
+            t.runTask(task);
         }
     }
 
-    /**
-     * Fetches a task from the task queue for a thread.
-     */
-    protected Runnable getTask() {
-        synchronized (taskList) {
-            while (taskList.isEmpty()) {
-                try {
-                    taskList.wait();
-                } catch (InterruptedException e) {
+    protected synchronized void deductCurrentThreadCount(){
+        currentThreadCount--;
+        busyThreadCount--;
+        if (!taskList.isEmpty()) {
+            WorkerThread t = getAvailableThread();
+            t.setShouldWait(false);
+            t.runTask((Runnable)taskList.remove(0));
+        }
+    }
+    
+    // return the thread to the thread pool
+    protected synchronized void returnThread(WorkerThread t) {
+        if(shutdownThePool) {
+            t.terminate();
+            // notify the thread pool when all threads are backed
+            // need to discuss whether the thread pool need to wait until all
+            // threads are terminated.  For stand alone application, the answer
+            // is yes, however, our application is run under web container.
+            // The reason why we need shutdown because it has a parameter daemon
+            // in the constructor, if it is set to false, the old implementation
+            // has no way to stop the running threads.  For the new
+            // implementation, if daemon is set to false, it is necessary to
+            // call shutdown.  If daemon is set to true, it is nice to call it
+            // because the thread pool has better knownledge than the web
+            // container to stop the threads in the pool.
+            t.setNeedReturn(false);
+            busyThreadCount--;
+            if(busyThreadCount == 0){
+                notify();
+            }
+            return;
+        }
+        if (!taskList.isEmpty()){
+            t.setShouldWait(false);
+            t.runTask((Runnable)taskList.remove(0));
+        }
+        else{
+            t.setShouldWait(true);
+            busyThreadCount--;
+            // return threads from the end of array
+            threads[currentThreadCount - busyThreadCount - 1] = t;
+        }
+    }
+    
+    // terminate all the threads since the pass-in parameter of daemon may be
+    // false
+    public synchronized void shutdown() {
+        if(!shutdownThePool) {
+            shutdownThePool = true;
+            for(int i = 0; i < currentThreadCount - busyThreadCount; i++) {
+                // terminate the thread from the beginning of the array
+                threads[i].terminate();
+            }
+            while(busyThreadCount != 0){
+                try{
+                    // wait if there are threads running, it will be notified
+                    // when they all back.
+                    wait();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
-            return (Runnable) taskList.remove(0);
+            currentThreadCount = busyThreadCount = 0;
+            threads = null;
         }
+    }
+    
+    // for test only
+    public synchronized int getCurrentThreadCount() {
+        return currentThreadCount;
     }
     
     /*
@@ -127,26 +230,105 @@ public class ThreadPool {
     public int getCurrentSize() {
         return taskList.size();
     }
-
+    
     // private thread class that fetches tasks from the task queue and
     // executes them.
     private class WorkerThread extends Thread {
-        public WorkerThread(String name) {
-            setName(name);
+        
+        private Runnable task = null;
+        private ThreadPool pool;
+        private boolean shouldWait;
+        private boolean needReturn;
+        private boolean shouldTerminate;
+        
+        public WorkerThread(String name, ThreadPool pool) {
+	    setName(name);
+            this.pool = pool;
+            this.shouldTerminate = false;
+            this.needReturn = true;
+            this.shouldWait = true;
         }
-
-        /**
-         * Starts the thread pool.
-         */
+        
+        public synchronized void setShouldWait(boolean value){
+            this.shouldWait = value;
+        }    
+ 
+	/**
+	 * Starts the thread pool.
+	 */
         public void run() {
+            boolean localShouldTerminate = false;
+            Runnable localTask = null;
+            WorkerThread t = this;
             while (true) {
-                Runnable task = getTask();
-                try {
-                    task.run();
-                } catch (Exception e) {
-                    debug.error("Running task " + task, e);
+                try{
+                    synchronized (this) {
+                        if ((shouldWait) && (!shouldTerminate)){
+                            this.wait();
+                        }
+                        // need a local copy because they may be changed after
+                        // leaving synchronized block.
+                        localShouldTerminate = shouldTerminate;
+                        localTask = task;
+                    }
+                    if (localShouldTerminate) {
+                        // we may need to log something here!
+                        break;
+                    }
+                    if(localTask != null){
+                        localTask.run();
+                    }
+                } catch (RuntimeException ex) {
+                    debug.error("Running task " + task, ex);
+                    // decide what to log here
+                    pool.deductCurrentThreadCount();
+                    localShouldTerminate = true;
+                    needReturn = false;
+                } catch (Exception ex) {
+                    // don't need to rethrow
+                    debug.error("Running task " + task, ex);
+	        } catch (Throwable e) {
+		    debug.error("Running task " + task, e);
+                    // decide what to log here
+                    pool.deductCurrentThreadCount();
+                    localShouldTerminate = true;
+                    needReturn = false;
+                    // rethrow Error here
+                    throw new Error(e);
+	        } finally {
+                    // the thread may has returned already if shutdown is
+                    // called.
+                    if (needReturn) {
+                        pool.returnThread(t);
+                    }
                 }
-            }
+                if (localShouldTerminate) {
+                    // we may need to log something here!
+                    break;
+                }
+	    }
+        }
+    
+        public synchronized void runTask(Runnable toRun) {
+            this.task = toRun;
+            // Although the thread may not in wait state when this function
+            // is called (the taskList is not empty), it doesn't hurt to
+            // call it.  getState method can check whether the Thread is
+            // waiting, but it is available in jdk1.5 or newer.
+            this.notify();
+        }
+        
+        // terminate the thread pool when daemon is set to false
+        // it is better to have a way to terminate the thread pool
+        public synchronized void terminate() {
+            shouldTerminate = true;
+            this.notify();
+        }
+        
+        public synchronized void setNeedReturn(boolean value){
+            // this will be set by ThreadPool.returnThread when shutdown is
+            // called.
+            needReturn = value;
         }
     }
 }

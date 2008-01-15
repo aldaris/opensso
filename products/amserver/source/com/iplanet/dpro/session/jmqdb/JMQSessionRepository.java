@@ -17,13 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JMQSessionRepository.java,v 1.3 2007-10-17 23:00:17 veiming Exp $
+ * $Id: JMQSessionRepository.java,v 1.4 2008-01-15 22:12:42 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.jmqdb;
 
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
@@ -35,6 +39,7 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.session.util.SessionUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.jms.IllegalStateException;
@@ -44,7 +49,8 @@ import javax.jms.IllegalStateException;
  * is used in session failover mode to store/recover serialized
  * state of InternalSession object
  */
-public class JMQSessionRepository implements AMSessionRepository, Runnable {
+public class JMQSessionRepository extends GeneralTaskRunnable implements
+    AMSessionRepository {
 
     /* Operations */
     static public final String READ = "READ";
@@ -138,10 +144,6 @@ public class JMQSessionRepository implements AMSessionRepository, Runnable {
      */
     private static long runPeriod = 1 * 60 * 1000; // 1 min in milliseconds
 
-    /**
-     * Repository clean up background thread
-     */
-    private Thread checker;
 
     static Debug debug = SessionService.sessionDebug;
 
@@ -211,10 +213,8 @@ public class JMQSessionRepository implements AMSessionRepository, Runnable {
 
         initPersistSession();
 
-        checker = new Thread(this);
-        checker.setName("JDBCSessionRepositoryChecker");
-        checker.setDaemon(true);
-        checker.start();
+        SystemTimer.getTimer().schedule(this, new Date((
+            System.currentTimeMillis() / 1000) * 1000));
     }
 
     /**
@@ -457,6 +457,22 @@ public class JMQSessionRepository implements AMSessionRepository, Runnable {
         }
     }
 
+    public long getRunPeriod() {
+        return runPeriod;
+    }
+    
+    public boolean addElement(Object obj) {
+        return false;
+    }
+    
+    public boolean removeElement(Object obj) {
+        return false;
+    }
+    
+    public boolean isEmpty() {
+        return true;
+    }
+    
     /**
      * Monitoring logic used by background thread This thread is used for both
      * clenup expired sessions in the repository and for the Database health
@@ -464,45 +480,36 @@ public class JMQSessionRepository implements AMSessionRepository, Runnable {
      * healthCheckPeriod.
      */
     public void run() {
-        while (true) {
+        
+        try {
 
-            try {
-                long nextRun = System.currentTimeMillis() + runPeriod;
-
-                if (debug.messageEnabled()) {
-                    debug.message("Cleaning expired session records");
-                }
-
-                /*
-                 * Clean up is done based on the cleanUpPeriod even though the
-                 * thread runs based on the runPeriod.
-                 */
-                if (cleanUpValue <= 0) {
-                    deleteExpired();
-                    cleanUpValue = cleanUpPeriod;
-                }
-                cleanUpValue = cleanUpValue - runPeriod;
-
-                /*
-                 * HealthChecking is done based on the runPeriod but only when
-                 * the Database is down.
-                 */
-                if (!isDatabaseUp) {
-                    initPersistSession();
-                    logDBStatus();
-                }
-
-                long sleeptime = nextRun - System.currentTimeMillis();
-
-                if (sleeptime > 0) {
-                    Thread.sleep(sleeptime);
-                }
-            } catch (Exception e) {
-                debug.error("JMQSessionRepository.run(): Exception in thread",
-                        e);
+            if (debug.messageEnabled()) {
+                debug.message("Cleaning expired session records");
             }
 
+            /*
+             * Clean up is done based on the cleanUpPeriod even though the
+             * thread runs based on the runPeriod.
+             */
+            if (cleanUpValue <= 0) {
+                deleteExpired();
+                cleanUpValue = cleanUpPeriod;
+            }
+            cleanUpValue = cleanUpValue - runPeriod;
+
+            /*
+             * HealthChecking is done based on the runPeriod but only when
+             * the Database is down.
+             */
+            if (!isDatabaseUp) {
+                initPersistSession();
+                logDBStatus();
+            }
+        } catch (Exception e) {
+            debug.error("JMQSessionRepository.run(): Exception in thread",
+                    e);
         }
+
     }
 
 }

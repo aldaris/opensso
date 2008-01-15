@@ -17,13 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.7 2007-12-13 18:43:50 goodearth Exp $
+ * $Id: LDAPConnectionPool.java,v 1.8 2008-01-15 22:12:44 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
 
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.SystemTimerPool;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Calendar;
@@ -189,7 +192,7 @@ public class LDAPConnectionPool {
      * @param max maximum number of connections
      * @param ldc connection to clone 
      * @exception LDAPException on failure to create connections 
-     */ 
+     */
     public LDAPConnectionPool(
         String name,
         int min,
@@ -278,8 +281,8 @@ public class LDAPConnectionPool {
         this.authpw = authpw;
         this.ldc = ldc;
         this.idleTime = idleTimeInSecs * 1000;
-        this.stayAlive = true;
         this.defunct = false;
+        this.reinitInProgress = false;
 
         createPool();
         if (debug.messageEnabled()) {
@@ -294,18 +297,37 @@ public class LDAPConnectionPool {
      * Destroy the whole pool - called during a shutdown
      */
     public void destroy() {
-        stayAlive = false;
-        // if idle timeout property is not set, cleanupThread will be
-        // null. null checked here to avoid NPE.
-        if (cleanupThread != null) {
-            cleanupThread.interrupt();
-            while (cleanupThread.isAlive()) {
+        if (cleaner != null) {
+            cleaner.cancel();
+        }
+        synchronized (this) {
+            if (!defunct) {
+                defunct = true;
+                for (int i = 0; 
+                    i < currentConnectionCount - busyConnectionCount; i++) {
+                    if ((pool[i] != null) && (pool[i].isConnected())) {
+                        try {
+                            backupPool.remove(pool[i]);
+                            currentPool.remove(pool[i]);
+                            pool[i].disconnect();
+                        } catch (LDAPException e) {
+                            debug.error("LDAPConnection pool:" + name +
+                                ":Error during disconnect.", e);
+                        }
+                    }
+                }
+                currentConnectionCount = busyConnectionCount = 0;
+                pool = null;
+            }
+            if ((ldc != null) && (ldc.isConnected())) {
                 try {
-                    Thread.sleep(1000);
-                } catch(InterruptedException iex) {}
+                    ldc.disconnect();
+                } catch(LDAPException e) {
+                    debug.error("LDAPConnection pool:" + name +
+                        ":Error during disconnect.", e);
+                }
             }
         }
-        destroyPool(pool);
     }
 
     /**
@@ -334,31 +356,26 @@ public class LDAPConnectionPool {
      * @param timeout timeout in milliseconds
      * @return an active connection or <CODE>null</CODE> if timed out. 
      */
-    public synchronized LDAPConnection getConnection(int timeout) {
+    public LDAPConnection getConnection(int timeout) {
         LDAPConnection con = null;
-        long waitTime = 0;
-        while ((con = getConnFromPool()) == null ) {
-            long t0 = System.currentTimeMillis();
-
-            if (timeout < 0) {
-                break;
-            }
-
-            synchronized (pool) {
-                try {
-                    if (defunct) return con;
-                    pool.wait(timeout);
-                } catch (InterruptedException e) {
-                    return null;
+        synchronized (this) {
+            try {
+                if (busyConnectionCount == maxSize) {
+                    waitCount++;
+                    if (timeout > 0) {
+                        this.wait(timeout);
+                    } else {
+                        this.wait();
+                    }
+                    waitCount--;
                 }
+                con = getConnFromPool();
+            } catch (InterruptedException e) {
             }
-
-            waitTime += System.currentTimeMillis() - t0;
-            timeout -= (timeout > 0) ? waitTime : 0;
         }
         return con;
     }
-
+    
     /**
      * Gets a connection from the pool
      *
@@ -371,48 +388,30 @@ public class LDAPConnectionPool {
      */
     protected LDAPConnection getConnFromPool() {
         LDAPConnection con = null;
-        LDAPConnectionObject ldapconnobj = null;
-
-        // Get an available connection
-        for (int i = 0; i < ((pool.size()< maxSize)?pool.size():maxSize); ++i) {
-            // Get the ConnectionObject from the pool
-            LDAPConnectionObject co = (LDAPConnectionObject)pool.get(i);
-            synchronized (co) {
-                if (co.isAvailable()) {  // Conn available?
-                    ldapconnobj = co;
-                    co.setInUse(true);
-                    break;
+        if ((currentConnectionCount == busyConnectionCount) &&
+            (currentConnectionCount < maxSize)) {
+            // create connection
+            try {
+                con = createConnection(LDAPConnPoolUtils.connectionPoolsStatus);
+                backupPool.add(con);
+                currentConnectionCount++;
+                busyConnectionCount++;
+            } catch(Exception ex) {
+                debug.error("LDAPConnection pool:" + name +
+                    ":Error while adding a connection.", ex);
+            }
+        } else {
+            if (currentConnectionCount > busyConnectionCount) {
+                con = pool[currentConnectionCount - busyConnectionCount - 1];
+                pool[currentConnectionCount - busyConnectionCount - 1] = null;
+                busyConnectionCount++;
+                currentPool.remove(con);
+                if ((cleaner != null) && 
+                    ((currentConnectionCount - busyConnectionCount) >=
+                    minSize)) {
+                    cleaner.removeElement(null);
                 }
             }
-        }
-
-        if ((ldapconnobj == null) && (pool.size() < maxSize)) {
-	    /*
-             * If there there were no conns in pool, can we grow
-             * the pool?
-             */
-            synchronized (pool) {
-
-                if ((maxSize < 0) || ((maxSize > 0) &&
-                                      (pool.size() < maxSize))) {
-        
-                    // Yes we can grow it
-                    ldapconnobj = addConnection();
-        
-                    // If a new connection was created, use it
-                    if (ldapconnobj != null) {
-                        ldapconnobj.setInUse(true);
-                        pool.add(ldapconnobj);
-                    }
-                } else {
-                    debug.message("LDAPConnection pool:" + name +
-                                  ":All pool connections in use");
-                }
-            }
-        }
-
-        if (ldapconnobj != null) {
-            con = ldapconnobj.getLDAPConn();
         }
         return con;
     }
@@ -425,11 +424,53 @@ public class LDAPConnectionPool {
      *
      * @param ld a connection to return to the pool
      */
-    public void close (LDAPConnection ld) {
-        if (find(deprecatedPool, ld) != -1) {
-            removeFromPool(deprecatedPool, ld);
-        } else {
-            removeFromPool(pool, ld);
+    public void close(LDAPConnection ld) {
+        synchronized(this) {
+            if (defunct) {
+                if (ld != null) {
+                    if (backupPool.remove(ld) || deprecatedPool.remove(ld)) {
+                        if (ld.isConnected()) {
+                            try {
+                                ld.disconnect();
+                            } catch(LDAPException ex) {
+                                debug.error("LDAPConnection pool:" + name +
+                                    ":Error during disconnect.", ex);
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (ld != null) {
+                    if (reinitInProgress) {
+                        if (deprecatedPool.remove(ld)) {
+                            try{
+                                ld.disconnect();
+                            } catch(LDAPException ex) {
+                                debug.error("LDAPConnection pool:" + name +
+                                    ":Error during disconnect.", ex);
+                            }
+                            if (deprecatedPool.isEmpty()) {
+                                reinitInProgress = false;
+                            }
+                            return;
+                        }
+                    }
+                    if (backupPool.contains(ld) && currentPool.add(ld)) {
+                        busyConnectionCount--;
+                        // return connections from the end of array                    
+                        pool[currentConnectionCount - busyConnectionCount - 1] =
+                            ld;
+                        if ((cleaner != null) &&
+                            ((currentConnectionCount - busyConnectionCount) > 
+                            minSize)) {
+                            cleaner.addElement(null);
+                        }
+                        if (waitCount > 0) {
+                            this.notify();
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -441,7 +482,7 @@ public class LDAPConnectionPool {
      *
      * @param ld a connection to return to the pool
      */
-    public void close( LDAPConnection ld , int errCode) {
+    public void close(LDAPConnection ld , int errCode) {
         if (debug.messageEnabled()) {
             debug.message("LDAPConnectionPool:close(): errCode "+errCode);
         }
@@ -453,51 +494,18 @@ public class LDAPConnectionPool {
                 && (!LDAPConnPoolUtils.connectionPoolsStatus.isEmpty()) ) {
                 // Initiate the fallback to primary server by invoking a
                 // FallBackManager thread which pings if the primary is up.
-                if (fMgr == null || !fMgr.isAlive()) {
+                if (fMgr == null) {
                     fMgr = new FallBackManager();
-                    fMgr.start();
                 }
+                if (fMgr.scheduledExecutionTime() == -1) {
+                    SystemTimer.getTimer().schedule(fMgr, new Date((
+                        System.currentTimeMillis() / 1000) * 1000));
+                }
+                
             }
         }
-        if(find(deprecatedPool, ld) != -1) {
-            removeFromPool(deprecatedPool, ld);
-        } else {
-            removeFromPool(pool, ld);
-        }
-    }
-
-    private void removeFromPool(ArrayList thePool, LDAPConnection ld) {
-        int index = find(thePool, ld);
-        if (index != -1) {
-            LDAPConnectionObject co = 
-                (LDAPConnectionObject)thePool.get(index);
-
-            co.setInUse (false);  // Mark as available
-            synchronized (thePool) {
-                thePool.notify();
-            }
-        }
-    }
-  
-    private void disconnect(LDAPConnectionObject ldapconnObject) {
-        if (ldapconnObject != null) {
-            if (debug.messageEnabled()) {
-                debug.message("In LDAPConnectionPool:disconnect()");
-            }
-            if (ldapconnObject.isAvailable()) {
-                ldapconnObject.setAsDestroyed();
-                LDAPConnection ld = ldapconnObject.getLDAPConn();
-                if ( (ld != null) && (ld.isConnected()) ) {
-                    try {
-                        ld.disconnect();
-                    } catch (LDAPException e) {
-                        debug.error("LDAPConnection pool:" + name +
-                                    ":Error during disconnect.", e);
-                    }
-                 }
-                 ldapconnObject.setLDAPConn(null); // Clear conn
-            }
-        }
+        // need to check failover.
+        close(ld);
     }
  
     private void createPool() throws LDAPException {
@@ -526,54 +534,26 @@ public class LDAPConnectionPool {
         }
 
         // To avoid resizing we set the size to twice the max pool size.
-        pool = new ArrayList(maxSize * 2); 
-        deprecatedPool = new ArrayList(maxSize * 2);
-        setUpPool (minSize); // Initialize it
+        pool = new LDAPConnection[maxSize];
+        backupPool = new HashSet();
+        currentPool = new HashSet();
+        for (int i = 0; i < minSize; i++) {
+            pool[i] = createConnection(LDAPConnPoolUtils.connectionPoolsStatus);
+            backupPool.add(pool[i]);
+            currentPool.add(pool[i]);
+        }
+        currentConnectionCount = minSize;
+        busyConnectionCount = 0;
+        waitCount = 0;
     }
 
-    private LDAPConnectionObject addConnection() {
-        LDAPConnectionObject ldapconnobj = null;
+    private LDAPConnection createConnection(HashMap aConnectionPoolsStatus)
+        throws LDAPException {
 
-        if (defunct) {
-            debug.error("LDAPConnection pool:" + name +
-                          ":Defunct connection pool object.  " +
-                          "Cannot add connections.");
-            return ldapconnobj;
-        }
-        try {
-            ldapconnobj = 
-                createConnection(LDAPConnPoolUtils.connectionPoolsStatus);
-        } catch (Exception ex) {
-            debug.error("LDAPConnection pool:" + name +
-                        ":Error while adding a connection.", ex);
-        }
-        if (ldapconnobj != null) {
-            debug.message("LDAPConnection pool:" + name +
-                          ":adding a connection to pool...");
-        }
-        return ldapconnobj;
-    }
-  
-    private void setUpPool (int size) throws LDAPException {
-        synchronized (pool) {
-            // Loop on creating connections
-            while (pool.size() < size) {
-                pool.add(createConnection(
-                    LDAPConnPoolUtils.connectionPoolsStatus));
-            }
-        }
-    }
-
-    private LDAPConnectionObject createConnection(
-        HashMap aConnectionPoolsStatus
-    ) throws LDAPException {
-
-        LDAPConnectionObject co = new LDAPConnectionObject();
         // Make LDAP connection, using template if available
         LDAPConnection newConn =
             (ldc != null) ? (LDAPConnection)ldc.clone() :
             new LDAPConnection();
-        co.setLDAPConn(newConn);
         String key = name + ":" + host + ":" + port + ":" + authdn;
         try {
             if (newConn.isConnected()) {
@@ -644,137 +624,21 @@ public class LDAPConnectionPool {
             }
             throw le;
         }
-        co.setInUse (false); // Mark not in use
-        return co;
+        return newConn;
     }
-
-    private int find(ArrayList list, LDAPConnection con ) {
-        // Find the matching Connection in the pool
-        if (con != null) {
-            for (int i = 0; i < list.size(); i++) {
-                LDAPConnectionObject co = 
-                    (LDAPConnectionObject)list.get(i);
-                if (((Object)co.getLDAPConn()).equals(con)) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Wrapper for LDAPConnection object in pool
-     */
-    class LDAPConnectionObject implements java.lang.Comparable {
-        LDAPConnectionObject() {
-            inUse = false;
-            destroyed = false;
-        }
-
-        /**
-         * Returns the associated LDAPConnection.
-         *
-         * @return the LDAPConnection.
-         * 
-         */
-        LDAPConnection getLDAPConn() {
-            return !destroyed ? this.ld : null;
-        }
-
-        /**
-         * Sets the associated LDAPConnection
-         *
-         * @param ld the LDAPConnection
-         * 
-         */
-        void setLDAPConn (LDAPConnection ld) {
-            this.ld = ld;
-        }
-
-        /**
-         * Marks a connection in use or available
-         *
-         * @param inUse <code>true</code> to mark in use, <code>false</code>
-         * if available
-         * 
-         */
-        void setInUse (boolean inUse) {
-            this.inUse = inUse;
-            if (inUse) {
-                expirationTime = Long.MAX_VALUE;
-            } else {
-                expirationTime = System.currentTimeMillis() + idleTime;
-            }
-        }
-
-        /**
-         * Used by comparator to sort before cleanup.
-         */
-        public synchronized int compareTo (Object l) {
-            return (int)
-                (((LDAPConnectionObject)l).expirationTime-this.expirationTime);
-        }
-
-        /**
-         * Method called by purge thread to check
-         * if this connection can be reaped.
-         *
-         * @param currTime given current time, this method will return
-         * if the connection has been idle too long.
-         */
-        boolean canPurge (long currTime) {
-            return destroyed || (!inUse && (currTime >= expirationTime));
-        }
-
-        /**
-         * Returns whether the connection is available
-         * for use by another user.
-         *
-         * @return <code>true</code> if available.
-         */
-        boolean isAvailable() {
-            return !destroyed && !inUse;
-        }
-  
-        /**
-         * Set the methoed as destroyed so that it will
-         * not return a LDAP Connection
-         */
-        public void setAsDestroyed() {
-            this.destroyed = true; 
-        }
-
-        /**
-         * Debug method
-         *
-         * @returns user-friendly rendering of the object.
-         */
-        public String toString() {
-            return "LDAPConnection=" + ld + ",inUse=" + inUse +
-                   " IsDestroyed=" + destroyed;
-        }
-
-        private LDAPConnection ld;   // LDAP Connection
-        private boolean inUse;       // In use? (true = yes)
-        private long expirationTime; // time in future when
-                                     // when connection considered stale
-        private boolean destroyed;   // destroyed is set when the connection
-                                     // has been cleaned up.
-    }
-
+    
     private void createIdleCleanupThread() {
         if (idleTime > 0) {
-            cleaner = new CleanupTask(pool);
-            cleanupThread = new Thread(cleaner, name + "-cleanupThread");
-            cleanupThread.start();
+            cleaner = new CleanupTask(this, idleTime / 2, idleTime);
+            SystemTimerPool.getTimerPool().schedule(cleaner, new
+                Date(((System.currentTimeMillis() + idleTime) / 1000) * 1000));
             if (debug.messageEnabled()) {
                 debug.message("LDAPConnection pool: " + name +
-                              ": Cleanup thread created successfully.");
+                              ": Cleanup task created successfully.");
             }
         }
-        return;
     }
-
+    
     static {
         debug = Debug.getInstance("LDAPConnectionPool");
         String retryErrs = SystemProperties.get(LDAP_CONNECTION_ERROR_CODES);
@@ -789,7 +653,7 @@ public class LDAPConnectionPool {
                              retryErrorCodes);
         }
     }
-
+    
     private void createHostList(String hostNameFromConfig) {
         StringTokenizer st = new StringTokenizer(hostNameFromConfig);
         while(st.hasMoreElements()) {
@@ -816,238 +680,164 @@ public class LDAPConnectionPool {
      *
      * @param ld master LDAP connection with new parameters.
      */
+    
     public synchronized void reinitialize(LDAPConnection ld)
         throws LDAPException
     {
-        synchronized (pool) {
-            synchronized (deprecatedPool) {
-                deprecatedPool.addAll(pool);
-                stayAlive = false;
-                // if idle timeout property is not set, cleanupThread will be
-                // null. null checked here to avoid NPE.
-                if (cleanupThread != null) {
-                    cleanupThread.interrupt();
-                    while (cleanupThread.isAlive()) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException iex) {}
-                    }
-                }
-                
-                pool.clear();
-                pool = new ArrayList();
-                this.host = ld.getHost();
-                this.port = ld.getPort();
-                this.authdn = ld.getAuthenticationDN();
-                this.authpw = ld.getAuthenticationPassword();
-                this.ldc = (LDAPConnection)ld.clone();
-                if (debug.messageEnabled()) {
-                    debug.message("LDAPConnection pool: " + name +
-                                  ": reinitializing connection pool: Host:" +
-                                  host + " Port:" + port + "Auth DN:" + authdn);
-                }
-                createPool();
-                createIdleCleanupThread();
-                if (debug.messageEnabled()) {
-                    debug.message("LDAPConnection pool: " + name +
-                                  ": reinitialized successfully.");
-                }
+        if (!reinitInProgress) {
+            reinitInProgress = true;
+        }
+        if (cleaner != null) {
+            cleaner.cancel();
+        }
+        for (int i = 0; i < currentConnectionCount - busyConnectionCount;
+            i++) {
+            if ((pool[i] != null) && (pool[i].isConnected())) {
+                currentPool.remove(pool[i]);
+                backupPool.remove(pool[i]);
+                pool[i].disconnect();
             }
+        }
+        if (deprecatedPool == null) {
+            deprecatedPool = backupPool;
+        } else {
+            deprecatedPool.addAll(backupPool);
+        }
+        this.host = ld.getHost();
+        this.port = ld.getPort();
+        this.authdn = ld.getAuthenticationDN();
+        this.authpw = ld.getAuthenticationPassword();
+        this.ldc = (LDAPConnection) ld.clone();
+        if (debug.messageEnabled()) {
+            debug.message("LDAPConnection pool: " + name +
+                ": reinitializing connection pool: Host:" +
+                host + " Port:" + port + "Auth DN:" + authdn);
+        }
+        createPool();
+        createIdleCleanupThread();
+        if (debug.messageEnabled()) {
+            debug.message("LDAPConnection pool: " + name +
+                ": reinitialized successfully.");
         }
     }
 
-    private void destroyPool (ArrayList connPool) {
-        synchronized (connPool) {
-            this.defunct = true;
-            while (pool.size() > 0) {
-                for (int i = 0; i < connPool.size(); ++i) {
-                    LDAPConnectionObject lObj =
-                        (LDAPConnectionObject)pool.get(i);
-                    synchronized (lObj) {
-                        if (lObj.isAvailable()) {
-                            pool.remove(lObj);
-                            disconnect(lObj);
-                        }
-                    }
-                }
-
-                // sleep for a second before retrying
-                if (pool.size() > 0) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException iex) {
-                        debug.error ("LDAPConnection pool:" + name +
-                                    ":Interrupted in destroy method while " +
-                                    "waiting for connections to be released.");
-                    }
-                }
+    private void decreaseCurrentConnection() {
+        synchronized (this) {
+            try {
+                LDAPConnection con = pool[currentConnectionCount -
+                    busyConnectionCount - 1];
+                currentPool.remove(con);
+                backupPool.remove(con);
+                con.disconnect();
+            } catch (LDAPException e) {
+                debug.error("LDAPConnection pool:" + name +
+                    ":Error during disconnect.", e);
             }
+            pool[currentConnectionCount - busyConnectionCount - 1] = null;
+            currentConnectionCount--;
         }
     }
-
-    /**
-     * Set minimum and maximum connnections that is maintained by
-     * the connection pool object.
-     *
-     * @param min minimum number
-     * @param max maximum number
-     */
-    public synchronized void resetPoolLimits(int min, int max) {
-        if ((maxSize > 0) && (maxSize != max) && (min < max)) {
-            if (debug.messageEnabled()) {
-                debug.message ("LDAPConnection pool:" + name +
-                               ": is being resized: Old Min/Old Max:" +
-                               minSize + '/' + maxSize + ": New Min/Max:" +
-                               min + '/' + max);
+    
+    public class CleanupTask extends GeneralTaskRunnable {
+        
+        private LDAPConnectionPool pool;
+        private long runPeriod;
+        private long timeoutPeriod;
+        private int counterNeeded;
+        private int thisTurn;
+        private int[] nextTurn;
+        private Object nextTurnLock;
+        
+        public CleanupTask(LDAPConnectionPool pool, long runPeriod,
+            long timeoutPeriod) throws IllegalArgumentException {   
+            if ((runPeriod < 0) || (timeoutPeriod < 0)){
+                throw new IllegalArgumentException();
             }
-
-            int oldSize = this.maxSize;
-            this.minSize = min;
-            this.maxSize = max;
-
-            synchronized (pool) {
-                if (oldSize > max) {
-                    // if idle time is not set
-                    if (cleaner == null) {
-                        int diff = oldSize - max;
-                        while (diff > 0) {
-                            for (int i = 0; i < pool.size() &&
-                                        (pool.size() > maxSize); ++i)
-                            {
-                                LDAPConnectionObject ldO =
-                                        (LDAPConnectionObject)pool.get(i);
-                                synchronized (ldO) {
-                                    if (ldO.isAvailable()) {
-                                        pool.remove(i);
-                                        disconnect(ldO);
-                                        --diff;
-                                    }
-                                }
-                            }
-                            // wait for one second and retry till diff
-                            // connections are removed.
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException iex) {}
-                        }
-                    }
-                } else {
-                    if (debug.messageEnabled()) {
-                        debug.message("LDAPConnection pool:" + name +
-                               ":Ensuring pool buffer capacity to:" +
-                               max * 2);
-                    }
-                    pool.ensureCapacity(max * 2);
+            counterNeeded = (int) (timeoutPeriod / runPeriod);
+            if ((timeoutPeriod % runPeriod) > 0) {
+                counterNeeded++;
+            }
+            this.runPeriod = runPeriod;
+            this.timeoutPeriod = timeoutPeriod;
+            this.pool = pool;
+            this.thisTurn = 0;
+            this.nextTurn = new int[counterNeeded];
+            this.nextTurnLock = new Object();
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
+        public long getTimeoutPeriod() {
+            return timeoutPeriod;
+        }
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public boolean removeElement(Object obj) {
+            synchronized (this) {
+                if (thisTurn > 0) {
+                    thisTurn--;
+                    return true;
                 }
             }
-        }
-    }
-
-    public class CleanupTask implements Runnable {
-        CleanupTask(ArrayList cleanupPool) {
-            this.cleanupPool = cleanupPool;
-        }
-
-        private void checkDeprecatedConnections() {
-            synchronized (deprecatedPool) {
-                if (debug.messageEnabled()) {
-                    debug.message("LDAPConnection pool:" + name +
-                           ": found " + deprecatedPool.size() +
-                           " connection(s) to clean.");
-                }
-
-                for (int i = 0; i < deprecatedPool.size(); ++i) {
-                    LDAPConnectionObject lObj =
-                            (LDAPConnectionObject)deprecatedPool.get(i);
-                    synchronized(lObj) {
-                        if (lObj.isAvailable()) {
-                            deprecatedPool.remove(i);
-                            disconnect(lObj);
-                        }
+            synchronized (nextTurnLock) {
+                for (int i = 0; i < counterNeeded - 1; i++) {
+                    if (nextTurn[i] > 0) {
+                        nextTurn[i]--;
+                        return true;
                     }
                 }
             }
+            return false;
         }
-
+        
+        public boolean addElement(Object obj) {
+            synchronized (nextTurn) {
+                nextTurn[counterNeeded - 1]++;
+            }
+            return true;
+        }
+        
         public void run() {
-            int sleepTime = (int)(idleTime/2);
-            while (stayAlive) {
-                try {
-                    Thread.sleep(sleepTime);
-                } catch(InterruptedException iex) {
-                    continue;
+            synchronized (this) {
+                for (int i = 0; i < thisTurn; i++) {
+                    pool.decreaseCurrentConnection();
                 }
-
-                if (debug.messageEnabled()) {
-                    debug.message("LDAPConnection pool: " + name +
-                                  ": starting cleanup.");
-                }
-
-                int startPoolSize = cleanupPool.size();
-
-                // check on connections deprecated earlier
-                if (deprecatedPool.size() > 0)
-                    checkDeprecatedConnections();
-
-                synchronized (cleanupPool) {
-                    Collections.sort(cleanupPool);
-
-                    // Case: max size is reset to a lower limit
-                    // Action: Move excess connections to deprecatedPool
-                    // if they are currently used.  If not, remove
-                    // them and disconnect.
-                    if (maxSize < cleanupPool.size()) {
-                        int diff = cleanupPool.size() - maxSize;
-                        while (diff-- > 0) {
-                            LDAPConnectionObject lObj =
-                                (LDAPConnectionObject)cleanupPool.get(0);
-                            synchronized (lObj) {
-                                cleanupPool.remove(0);
-                                if (!lObj.isAvailable()) {
-                                    synchronized (deprecatedPool) {
-                                        deprecatedPool.add(lObj);
-                                    }
-                                } else {
-                                    disconnect(lObj);
-                                }
-                            }
+                thisTurn = 0;
+            }
+            synchronized (nextTurnLock) {
+                for (int i = 0; i < counterNeeded + 1; i++) {
+                    if (i == 0) {
+                        synchronized (this) {
+                            thisTurn = nextTurn[0];
+                        }
+                    } else {
+                        if (i == counterNeeded) {
+                            nextTurn[counterNeeded - 1] = 0;
+                        } else {
+                            nextTurn[i - 1] = nextTurn[i];
                         }
                     }
-
-                    /*
-                     * for now this code removes all code that's
-                     * timed out.  The pool could shrink to 0, but
-                     * on a request for new connection, it would
-                     * clone and grow as per demand.
-                     */
-                    long now = System.currentTimeMillis();
-                    for (int i = 0; i < cleanupPool.size(); ++i) {
-                        LDAPConnectionObject ldO =
-                            (LDAPConnectionObject)cleanupPool.get(i);
-                        synchronized (ldO) {
-                            if (ldO.canPurge(now)) {
-                                cleanupPool.remove(i);
-                                LDAPConnection ld = ldO.getLDAPConn();
-                                try {
-                                    ld.disconnect();
-                                } catch (LDAPException e) {
-                                    debug.error("LDAPConnection pool:" + name +
-                                                ":Error during disconnect.", e);
-                                }
-                            }
-                        }
-                    }
-                }
-                if (debug.messageEnabled()) {
-                    debug.message("LDAPConnection pool: " + name +
-                                ": finished cleanup: Start pool size:" +
-                                startPoolSize + ": end pool size:" +
-                                cleanupPool.size());
                 }
             }
         }
-
-        private ArrayList cleanupPool = null;
+        
+        public void cancel() {
+            if (headTask != null) {
+                synchronized(headTask) {
+                    previousTask.setNext(nextTask);
+                    if (nextTask != null) {
+                        nextTask.setPrevious(previousTask);
+                        nextTask = null;
+                    }
+                }
+            }
+        }
+        
     }
 
     /**
@@ -1091,8 +881,8 @@ public class LDAPConnectionPool {
                     && (upPort != null) && (upPort.length() != 0)
                     && ((con.getHost()!=null) && (con.getHost().
                         equalsIgnoreCase(upHost))) ) {
-                    newConn =
-                        failoverAndfallback(upHost,upPort,newConn,"fallback");
+                    newConn = failoverAndfallback(upHost, upPort, newConn,
+                        "fallback");
                     break;
                 }
             }
@@ -1148,7 +938,7 @@ public class LDAPConnectionPool {
                 && ((ld.getHost() !=null) && (!ld.getHost().
                     equalsIgnoreCase(upHost)))) {
                 newConn =
-                    failoverAndfallback(upHost,upPort,newConn,"failover");
+                    failoverAndfallback(upHost, upPort, newConn, "failover");
                 break;
             }
             // This check is for MMR DS instances on the same machine, but
@@ -1161,7 +951,8 @@ public class LDAPConnectionPool {
                 if ((ld.getHost().equalsIgnoreCase(upHost)) &&
                     (ld.getPort() != thisPort)) {
                     newConn =
-                        failoverAndfallback(upHost,upPort,newConn,"failover");
+                        failoverAndfallback(upHost, upPort, newConn,
+                        "failover");
                     break;
                 }
             }
@@ -1312,15 +1103,15 @@ public class LDAPConnectionPool {
                     }
                 }
             }
+            //Since reinitialize is cloning the LDAPConnection, disconnect the
+            //original one here to avoid memory leak.
+            if ((newConn != null) && (newConn.isConnected())) {
+                newConn.disconnect();
+            }
         } catch ( LDAPException lde ) {
             debug.error("LDAPConnectionPool:reinit()" +
                 ":Error while reinitializing connection from pool.", lde);
         }
-        LDAPConnectionObject ldapco = new LDAPConnectionObject();
-        ldapco.setLDAPConn(newConn);
-        //Since reinitialize is cloning the LDAPConnection, disconnect the
-        //original one here to avoid memory leak.
-        disconnect(ldapco);
     }
 
     private String name;          // name of connection pool;
@@ -1336,13 +1127,18 @@ public class LDAPConnectionPool {
     // searchConstraints,LDAPConnection.MAXBACKLOG,LDAPConnection.REFERRALS
     private HashMap connOptions;
     private LDAPConnection ldc = null;          // Connection to clone
-    private java.util.ArrayList pool;           // the actual pool
-    private java.util.ArrayList deprecatedPool; // the pool to be purged.
+    private LDAPConnection[] pool;
+    
     private long idleTime;        // idle time in milli seconds
-    private boolean stayAlive;    // boolean flag to exit cleanup loop
     private boolean defunct;      // becomes true after calling destroy
-    private Thread cleanupThread; // cleanup thread
     private CleanupTask cleaner;  // cleaner object
+    private int busyConnectionCount;
+    private int currentConnectionCount;
+    private int waitCount;
+    private boolean reinitInProgress;
+    private HashSet deprecatedPool;
+    private HashSet backupPool;
+    private HashSet currentPool;
     static FallBackManager fMgr;
 }
 

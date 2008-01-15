@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JDBCSessionRepository.java,v 1.2 2006-08-25 21:19:39 veiming Exp $
+ * $Id: JDBCSessionRepository.java,v 1.3 2008-01-15 22:12:42 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,11 +31,16 @@ import com.iplanet.dpro.session.SessionID;
 import com.iplanet.dpro.session.service.AMSessionRepository;
 import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.service.SessionService;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.session.util.SessionUtils;
 import com.sun.identity.shared.debug.Debug;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -49,7 +54,8 @@ import javax.sql.DataSource;
  * @see com.iplanet.dpro.session.service.AMSessionRepository
  */
 
-public class JDBCSessionRepository implements Runnable, AMSessionRepository {
+public class JDBCSessionRepository extends GeneralTaskRunnable implements
+    AMSessionRepository {
 
      /* Data Source */
      private static DataSource dataSource = null;
@@ -132,11 +138,6 @@ public class JDBCSessionRepository implements Runnable, AMSessionRepository {
      * the smallest value of cleanUPPeriod and healthCheckPeriod.
      */
     private static long runPeriod = 1 * 60 * 1000; // 1 min in milliseconds
-
-    /**
-     * Repository clean up background thread
-     */
-    private Thread checker;
 
     static Debug debug = SessionService.sessionDebug;
 
@@ -260,10 +261,8 @@ public class JDBCSessionRepository implements Runnable, AMSessionRepository {
             }
         }
 
-        checker = new Thread(this);
-        checker.setName("JDBCSessionRepositoryChecker");
-        checker.setDaemon(true);
-        checker.start();
+        SystemTimer.getTimer().schedule(this, new Date((
+            System.currentTimeMillis() / 1000) * 1000));
     }
 
     /**
@@ -836,6 +835,22 @@ public class JDBCSessionRepository implements Runnable, AMSessionRepository {
 
     }
 
+    public long getRunPeriod() {
+        return runPeriod;
+    }
+    
+    public boolean addElement(Object obj) {
+        return false;
+    }
+    
+    public boolean removeElement(Object obj) {
+        return false;
+    }
+    
+    public boolean isEmpty() {
+        return true;
+    }
+    
     /**
      * Monitoring logic used by background thread This thread is used for both
      * clenup expired sessions in the repository and for the Database health
@@ -843,41 +858,27 @@ public class JDBCSessionRepository implements Runnable, AMSessionRepository {
      * healthCheckPeriod.
      */
     public void run() {
-        while (true) {
-
-            try {
-                long nextRun = System.currentTimeMillis() + runPeriod;
-
-                if (debug.messageEnabled()) {
-                    debug.message("Cleaning expired session records");
-                }
-
-                /*
-                 * Clean up is done based on the cleanUpPeriod even though the
-                 * thread runs based on the runPeriod.
-                 */
-                if (cleanUpValue <= 0) {
-                    deleteExpired();
-                    cleanUpValue = cleanUpPeriod;
-                }
-                cleanUpValue = cleanUpValue - runPeriod;
-
-                /*
-                 * HealthChecking is done based on the runPeriod but only when
-                 * the Database is down.
-                 */
-                if (!isDatabaseUp) {
-                    checkDatabaseAvailability();
-                }
-
-                long sleeptime = nextRun - System.currentTimeMillis();
-
-                if (sleeptime > 0) {
-                    Thread.sleep(sleeptime);
-                }
-            } catch (Exception e) {
+        try {
+            if (debug.messageEnabled()) {
+                debug.message("Cleaning expired session records");
             }
-
+            /*
+             * Clean up is done based on the cleanUpPeriod even though the
+             * thread runs based on the runPeriod.
+             */
+            if (cleanUpValue <= 0) {
+                deleteExpired();
+                cleanUpValue = cleanUpPeriod;
+            }
+            cleanUpValue = cleanUpValue - runPeriod;
+            /*
+             * HealthChecking is done based on the runPeriod but only when
+             * the Database is down.
+             */
+            if (!isDatabaseUp) {
+                checkDatabaseAvailability();
+            }
+        } catch (Exception e) {
         }
     }
 

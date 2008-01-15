@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.7 2007-12-13 18:42:15 goodearth Exp $
+ * $Id: SMDataLayer.java,v 1.8 2008-01-15 22:12:44 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,8 @@ import netscape.ldap.LDAPBind;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPSearchConstraints;
-
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
@@ -245,6 +246,15 @@ class SMDataLayer {
 
             _ldapPool = new LDAPConnectionPool("SMS", poolMin, poolMax,
                 hostName, 389, connDN, connPWD, _trialConn, connOptions);
+            ShutdownManager.getInstance().addShutdownListener(
+                new ShutdownListener() {
+                    public void shutdown() {
+                        if (_ldapPool != null) {
+                            _ldapPool.destroy();
+                        }
+                    }
+                }
+            );
 
         } catch (LDAPServiceException ex) {
             debug.error("SMDataLayer:initLdapPool()-"

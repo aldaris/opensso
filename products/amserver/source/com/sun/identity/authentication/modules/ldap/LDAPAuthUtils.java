@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.10 2007-07-26 20:34:34 kenwho Exp $
+ * $Id: LDAPAuthUtils.java,v 1.11 2008-01-15 22:12:43 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,8 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.LDAPConnectionPool;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.shared.debug.Debug;
@@ -298,6 +300,14 @@ public class LDAPAuthUtils {
                         ldc.authenticate(verNum, bindingUser, bindingPwd);
                         conPool = new LDAPConnectionPool(key + "-AuthLDAP",
                             min, max, ldc);
+                        final LDAPConnectionPool tempConPool = conPool;
+                        ShutdownManager.getInstance().addShutdownListener(
+                            new ShutdownListener() {
+                                public void shutdown() {
+                                    tempConPool.destroy();
+                                }
+                            }
+                        );
                         connectionPools.put(key, conPool);
                         if (aConnectionPoolsStatus != null) {
                             aConnectionPoolsStatus.put(key, STATUS_UP);

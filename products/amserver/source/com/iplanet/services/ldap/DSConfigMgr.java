@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.9 2007-11-08 21:01:09 veiming Exp $
+ * $Id: DSConfigMgr.java,v 1.10 2008-01-15 22:12:43 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,8 @@ import com.iplanet.services.util.XMLException;
 import com.iplanet.services.util.XMLParser;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.common.LDAPConnectionPool;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.security.ServerInstanceAction;
 import com.sun.identity.shared.debug.Debug;
 import java.io.FileInputStream;
@@ -317,9 +319,20 @@ public class DSConfigMgr {
         try {
             ServerInstance si = getServerInstance(DEFAULT,
                     LDAPUser.Type.AUTH_ANONYMOUS);
-            return (new LDAPConnectionPool("DSConfigMgr",
-                    si.getMinConnections(),
-                    si.getMaxConnections(), anonymousConnection));
+            LDAPConnectionPool pool = new LDAPConnectionPool(
+                    "DSConfigMgr", si.getMinConnections(),
+                    si.getMaxConnections(), anonymousConnection);
+            final LDAPConnectionPool finalPool = pool;
+            ShutdownManager.getInstance().addShutdownListener(
+                new ShutdownListener() {
+                    public void shutdown() {
+                        if (finalPool != null) {
+                            finalPool.destroy();
+                        }
+                    }
+                }
+            );
+            return pool;
         } catch (LDAPException le) {
             if (debugger.messageEnabled()) {
                 debugger.message("Failed to create anon conn pool" + le);

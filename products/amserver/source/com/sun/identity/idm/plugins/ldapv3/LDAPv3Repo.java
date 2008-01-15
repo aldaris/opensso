@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.32 2008-01-14 19:14:31 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.33 2008-01-15 22:12:44 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,8 @@ import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.common.LDAPConnectionPool;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
@@ -188,7 +190,7 @@ public class LDAPv3Repo extends IdRepo {
     private String uniqueMemberAttr = null;
 
     private String memberURLAttr = null;
-
+    
     private String defaultGrpMem = null;
 
     private String isActiveAttrName = null;
@@ -396,7 +398,7 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String LDAPv3Config_UNIQUEMEMBER = 
         "sun-idrepo-ldapv3-config-uniquemember";
-
+    
     private static final String LDAPv3Config_DEFAULTGROUPMEMBER = 
         "sun-idrepo-ldapv3-config-dftgroupmember";
 
@@ -659,6 +661,15 @@ public class LDAPv3Repo extends IdRepo {
                 maxPoolSize, ldapServerName, ldapPort, 
                 ldc.getAuthenticationDN(), ldc.getAuthenticationPassword(), 
                 ldc, connOptions);
+            ShutdownManager.getInstance().addShutdownListener(
+                new ShutdownListener() {
+                    public void shutdown() {
+                        if (connPool != null) {
+                            connPool.destroy();
+                        }
+                    }
+                }
+            );
 
         } catch (LDAPException lde) {
             int resultCode = lde.getLDAPResultCode();
