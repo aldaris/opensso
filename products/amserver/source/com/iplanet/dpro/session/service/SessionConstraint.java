@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionConstraint.java,v 1.2 2006-08-25 21:19:41 veiming Exp $
+ * $Id: SessionConstraint.java,v 1.3 2008-01-15 03:58:50 alanchu Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,33 +134,53 @@ public class SessionConstraint {
         // Step 1: get constraints for the given user via IDRepo
         int quota = getSessionQuota(is);
 
-        try {
-            // Step 2: get the information (session id and expiration
-            // time) of all sessions for the given user from all
-            // AM servers and/or session repository
-            Map sessions = SessionCount.getAllSessionsByUUID(is.getUUID());
-            if (sessions != null) {
-                sessionCount = sessions.size();
-            }
-
-            // Step 3: checking the constraints
-            if (sessionCount >= quota) {
-
-                // If the session quota is exhausted, invoke the
-                // pluggin to determine the desired behavior.
-                reject = quotaExhaustionAction.action(is, sessions);
-                if (debug.messageEnabled()) {
-                    debug.message("Session quota exhausted or "
-                            + " session repository is not " + "available.");
-                }
+	// Step 2: get the information (session id and expiration
+	// time) of all sessions for the given user from all
+	// AM servers and/or session repository
+	Map sessions = null;
+	try {
+	    sessions  =
+		SessionCount.getAllSessionsByUUID(is.getUUID());
+	} catch (Exception e) {
+	    if (getSS().denyLoginIfDBIsDown()) {
+		if (debug.messageEnabled()) {
+		    debug.message("SessionConstraint." +
+                        "checkQuotaAndPerformAction: " +
+                        "denyLoginIfDBIsDown=true => "+
+			"The session repository is down and "+
+			"the login request will be rejected. ");
+		}
+                return true;
             } else {
-                SessionCount.incrementSessionCount(is);
+		if (debug.messageEnabled()) {
+	            debug.message("SessionConstraint." +
+                        "checkQuotaAndPerformAction: " +
+                        "denyLoginIfDBIsDown=false => "+
+	   		"The session repository is down and "+
+	                          "there will be no constraint checking.");
+	   	}
+	   	return false;
             }
-        } catch (Exception e) {
-            debug.error("Exception in checkQuotaAndPerformAction", e);
-            reject = true;
-        }
-        return reject;
+	 }
+
+	 if (sessions != null) {
+	    sessionCount = sessions.size();
+	}
+
+	// Step 3: checking the constraints
+	if (sessionCount >= quota) {
+	    // If the session quota is exhausted, invoke the
+	    // pluggin to determine the desired behavior.
+	    reject = quotaExhaustionAction.action(is, sessions);
+	    if (debug.messageEnabled()) {
+			debug.message("SessionConstraint." +
+                        "checkQuotaAndPerformAction: " +
+                        "Session quota exhausted.");
+            }
+	} else {
+	    SessionCount.incrementSessionCount(is);
+	}
+	return reject;
     }
 
     /*
@@ -229,8 +249,8 @@ public class SessionConstraint {
         try {
             AMIdentity iden = IdUtils.getIdentity(SessionCount.getAdminToken(),
                     is.getUUID());
-            Map serviceAttrs = iden.getServiceAttributes(AM_SESSION_SERVICE);
-
+            Map serviceAttrs = 
+                iden.getServiceAttributesAscending(AM_SESSION_SERVICE);
             Set s = (Set) serviceAttrs.get(SESSION_QUOTA_ATTR_NAME);
             Iterator attrs = s.iterator();
             if (attrs.hasNext()) {

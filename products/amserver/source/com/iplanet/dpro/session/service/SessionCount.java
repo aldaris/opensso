@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCount.java,v 1.3 2006-08-25 21:19:42 veiming Exp $
+ * $Id: SessionCount.java,v 1.4 2008-01-15 03:58:50 alanchu Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -217,8 +217,8 @@ public class SessionCount {
         try {
             sessions = repo.getSessionsByUUID(uuid);
         } catch (Exception e) {
-            debug.error("Session repository is not available therefore "
-                    + "no new user session will be created.", e);
+            debug.error("SessionCount.getSessionsFromRepository: "+
+                "Session repository is not available", e);            
             throw e;
         }
         return sessions;

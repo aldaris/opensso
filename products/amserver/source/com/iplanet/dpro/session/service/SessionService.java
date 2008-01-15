@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.13 2007-12-11 22:02:21 subashvarma Exp $
+ * $Id: SessionService.java,v 1.14 2008-01-15 03:58:50 alanchu Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -177,6 +177,9 @@ public class SessionService {
     private static final String SESSION_CONSTRAINT = 
         "iplanet-am-session-enable-session-constraint";
 
+    private static final String DENY_LOGIN_IF_DB_IS_DOWN =
+        "iplanet-am-session-deny-login-if-db-is-down";
+
     private static final String MAX_WAIT_TIME_FOR_CONSTARINT = 
         "iplanet-am-session-constraint-max-wait-time";
 
@@ -332,7 +335,11 @@ public class SessionService {
 
     private static boolean isSiteEnabled = false;
 
+
+    /* the following group of members are for session constraints */
     private static boolean isSessionConstraintEnabled = false;
+    
+    private static boolean denyLoginIfDBIsDown = false;
 
     private static boolean bypassConstratintForToplevelAdmin = false;
 
@@ -1814,6 +1821,10 @@ public class SessionService {
         return isSessionConstraintEnabled;
     }
 
+    static public boolean denyLoginIfDBIsDown() {
+        return denyLoginIfDBIsDown;
+    }
+
     static public boolean bypassConstratintForToplevelAdmin() {
         return bypassConstratintForToplevelAdmin;
     }
@@ -1877,6 +1888,17 @@ public class SessionService {
             if (sessionDebug.messageEnabled()) {
                 sessionDebug.message("isSessionConstraintEnabled="
                         + isSessionConstraintEnabled);
+            }
+
+            String denyLoginStr =
+                CollectionHelper.getMapAttr(attrs,
+                    DENY_LOGIN_IF_DB_IS_DOWN, "NO");
+            if (denyLoginStr.equalsIgnoreCase("YES")) {
+                denyLoginIfDBIsDown = true;
+            }
+            if (sessionDebug.messageEnabled()) {
+                sessionDebug.message("SessionService.postInit: "+
+                    "denyLoginIfDBIsDown="+ denyLoginIfDBIsDown);
             }
 
             String bypassConstratintStr = CollectionHelper.getMapAttr(

@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amSession.xml,v 1.1 2006-08-29 07:52:32 veiming Exp $
+   $Id: amSession.xml,v 1.2 2008-01-15 03:59:25 alanchu Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/iPlanetAMSessionService"
             i18nFileName="amSession"
-            revisionNumber="30"
+            revisionNumber="40"
             i18nKey="iplanet-am-session-service-description">
             <Global>
                 <AttributeSchema name="serviceObjectClasses"
@@ -75,6 +75,18 @@
                         <Value>OFF</Value>
                     </DefaultValues>
                 </AttributeSchema>
+		<AttributeSchema name="iplanet-am-session-deny-login-if-db-is-down"
+                    type="single_choice"
+                    syntax="string"
+                    i18nKey="a119c">
+                    <ChoiceValues>
+			<ChoiceValue i18nKey="choiceYES">YES</ChoiceValue>
+			<ChoiceValue i18nKey="choiceNO">NO</ChoiceValue>
+                    </ChoiceValues>
+                    <DefaultValues>
+			<Value>NO</Value>
+                    </DefaultValues>
+		</AttributeSchema>             
          <AttributeSchema name="iplanet-am-session-notification-property-list"
                     type="list"
                     syntax="string"
