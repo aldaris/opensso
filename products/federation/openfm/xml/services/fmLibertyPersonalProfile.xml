@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmLibertyPersonalProfile.xml,v 1.1 2007-08-24 16:43:29 bina Exp $
+   $Id: fmLibertyPersonalProfile.xml,v 1.2 2008-01-15 04:15:28 bina Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,7 +35,7 @@
         <Schema 
             serviceHierarchy="/DSAMEConfig/sunIdentityServerLibertyPPService"
             i18nFileName="fmLibertyPersonalProfileConfiguration" 
-            revisionNumber="20"
+            revisionNumber="30"
             i18nKey="sunIdentityServerLibertyPPService">
 
             <Global> 

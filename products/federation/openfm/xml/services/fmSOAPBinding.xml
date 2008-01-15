@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmSOAPBinding.xml,v 1.4 2007-10-09 19:02:43 veiming Exp $
+   $Id: fmSOAPBinding.xml,v 1.5 2008-01-15 04:15:28 bina Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,7 @@
         <Schema 
             serviceHierarchy="/DSAMEConfig/sunIdentityServerSOAPBinding" 
             i18nFileName="fmSOAPBindingConfiguration" 
-            revisionNumber="50"
+            revisionNumber="40"
             i18nKey="sunIdentityServerSOAPBindingDescription"
             propertiesViewBeanURL="../service/SCSOAPBinding"> 
             <Global> 

@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmDisco.xml,v 1.3 2007-11-01 22:04:04 exu Exp $
+   $Id: fmDisco.xml,v 1.4 2008-01-15 04:15:28 bina Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,7 +35,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/sunIdentityServerDiscoveryService"
             i18nFileName="fmDiscoConfiguration"
-            revisionNumber="30"
+            revisionNumber="40"
             i18nKey="sunIdentityServerDiscoServiceDescription"
             propertiesViewBeanURL="../service/SMDiscoveryService">
             <Global>
