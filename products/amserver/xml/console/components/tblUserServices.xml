@@ -1,0 +1,30 @@
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+
+<!DOCTYPE table SYSTEM "table.dtd" >
+
+<table>
+    <actions>
+        <cc name="tblButtonAdd" 
+            tagclass="com.sun.web.ui.taglib.html.CCButtonTag" />
+        <cc name="tblButtonDelete" 
+            tagclass="com.sun.web.ui.taglib.html.CCButtonTag">
+    	<attribute name="dynamic" value="true" />
+    	<attribute name="disabled" value="true" />
+        </cc>
+    </actions>
+    <column name="tblColName" sortname="tblDataName" rowheader="true">
+        <cc name="tblDataActionHref" 
+            tagclass="com.sun.web.ui.taglib.html.CCHrefTag">
+            <cc name="tblDataName" 
+                tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" ><attribute name="bundleID" value="" /></cc>
+        </cc>
+    </column>
+</table>
+
+

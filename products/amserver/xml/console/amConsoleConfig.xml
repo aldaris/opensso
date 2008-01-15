@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amConsoleConfig.xml,v 1.5 2007-12-17 19:42:53 veiming Exp $
+   $Id: amConsoleConfig.xml,v 1.6 2008-01-15 22:26:13 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,14 @@
 	status="tab.realm.status"
 	permissions="sunAMRealmService,sunIdentityRepositoryService,iPlanetAMPolicyService" />
 
-        
+    <tab id="7" viewbean="com.sun.identity.console.dm.OrganizationViewBean"
+        url="../dm/Organization"
+        label="tab.dm.label"
+        tooltip="tab.dm.tooltip"
+        status="tab.dm.status"
+        controller="com.sun.identity.console.controller.DMTabController"
+        permissions="sunAMRealmService" />
+
     <tab id="4" 
         viewbean="com.sun.identity.console.service.SCConfigAuthViewBean"
 	url="none"
@@ -201,11 +208,90 @@
             status="tab.serverconfiguration.showmenu.advanced.tooltip"
             permissions="iPlanetAMPlatformService" />
     </profile>
+
+    <profile id="organization">
+        <tab id="1"
+            viewbean="com.sun.identity.console.dm.OrganizationGeneralViewBean"
+            url="../dm/OrganizationGeneral"
+            label="realm.showmenu.label.properties"
+            tooltip="tab.sub.realm.tooltip"
+            status="tab.sub.realm.status"
+            permissions="sunAMRealmService" />
+    </profile>
+
+    <profile id="container">
+        <tab id="1"
+            viewbean="com.sun.identity.console.dm.ContainerGeneralViewBean"
+            url="../dm/ContainerGeneral"
+            label="container.showmenu.label.properties"
+            tooltip="tab.sub.container.tooltip"
+            status="tab.sub.container.status"
+            permissions="sunAMRealmService" />
+    </profile>
+
+    <profile id="roles">
+        <tab id="1"
+            viewbean="com.sun.identity.console.dm.RoleMembersViewBean"
+            url="../dm/RoleMembers"
+            tooltip="role.members.tooltip"
+            status="role.members.status"
+            label="role.members.label"
+            permissions="sunAMRealmService" />
+        <tab id="2"
+            viewbean="com.sun.identity.console.dm.RoleGeneralViewBean"
+            url="../dm/RoleGeneral"
+            label="role.general.label"
+            tooltip="role.general.tooltip"
+            status="role.general.status"
+            permissions="sunAMRealmService" />
+    </profile>
+
+    <profile id="groups">
+        <tab id="1"
+            viewbean="com.sun.identity.console.dm.GroupMembersViewBean"
+            url="../dm/GroupMembers"
+            tooltip="group.members.tooltip"
+            status="group.members.status"
+            label="group.members.label"
+            permissions="sunAMRealmService" />
+        <tab id="2"
+            viewbean="com.sun.identity.console.dm.GroupGeneralViewBean"
+            url="../dm/GroupGeneral"
+            label="group.general.label"
+            tooltip="group.general.tooltip"
+            status="group.general.status"
+            permissions="sunAMRealmService"/>
+    </profile>
+
+    <profile id="users">
+        <tab id="1"
+            viewbean="com.sun.identity.console.dm.UserGeneralViewBean"
+            url="../dm/UserGeneral"
+            label="user.general.label"
+            tooltip="user.general.tooltip"
+            status="user.general.status"
+            permissions="sunAMRealmService" />
+        <tab id="2"
+            viewbean="com.sun.identity.console.dm.UserRolesViewBean"
+            url="../dm/UserRoles"
+            label="user.roles.label"
+            tooltip="user.roles.tooltip"
+            status="user.roles.status"
+            permissions="sunAMRealmService" />
+        <tab id="3"
+            viewbean="com.sun.identity.console.dm.UserGroupsViewBean"
+            url="../dm/UserGroups"
+            label="user.groups.label"
+            tooltip="user.groups.tooltip"
+            status="user.groups.status"
+            permissions="sunAMRealmService" />
+    </profile>
+
 </profiletabs>
 
 <servicesconfig>
     <hidden names="iPlanetAMPolicyService, iPlanetAMEntrySpecificService" />
-    <consoleservice realmEnableHideAttrName="iplanet-am-admin-console-um-enabled, iplanet-am-admin-console-online-help, iplanet-am-admin-console-custom-jsp-dir, iplanet-am-admin-console-pc-display, iplanet-am-admin-console-ou-display, iplanet-am-admin-console-gc-display, iplanet-am-admin-console-compliance-user-deletion, iplanet-am-admin-console-group-pclist, iplanet-am-admin-console-group-type,iplanet-am-admin-console-dctree,iplanet-am-admin-console-dctree-attr-list,iplanet-am-admin-console-special-search-filters,iplanet-am-admin-console-compliance-admin-groups,iplanet-am-admin-console-role-display-options,iplanet-am-admin-console-role-default-acis,iplanet-am-admin-console-dynamic-aci-list,iplanet-am-console-service-view-bean,iplanet-am-admin-console-default-pc,iplanet-am-admin-console-default-gc,iplanet-am-admin-console-group-default-pc,iplanet-am-admin-console-user-profile-class,iplanet-am-admin-console-user-role-display,iplanet-am-admin-console-user-groups-display,iplanet-am-admin-console-user-groups-subscribe,iplanet-am-admin-console-user-service-display,iplanet-am-admin-console-default-roles,iplanet-am-admin-console-view-menu,iplanet-am-required-services,iplanet-am-admin-console-user-search-key,iplanet-am-admin-console-user-return-attribute,iplanet-am-user-create-notification-list,iplanet-am-user-delete-notification-list,iplanet-am-user-modify-notification-list,iplanet-am-admin-console-display-options,iplanet-am-admin-console-enduser-profile-class,iplanet-am-console-service-listeners,iplanet-am-admin-console-pre-post-processing-modules,iplanet-am-admin-console-invalid-chars,iplanet-am-admin-console-user-password-validation-class" />
+    <consoleservice realmEnableHideAttrName="iplanet-am-admin-console-um-enabled, iplanet-am-admin-console-online-help, iplanet-am-admin-console-custom-jsp-dir, iplanet-am-admin-console-pc-display, iplanet-am-admin-console-ou-display, iplanet-am-admin-console-gc-display, iplanet-am-admin-console-compliance-user-deletion, iplanet-am-admin-console-group-pclist, iplanet-am-admin-console-group-type,iplanet-am-admin-console-dctree,iplanet-am-admin-console-dctree-attr-list,iplanet-am-admin-console-special-search-filters,iplanet-am-admin-console-compliance-admin-groups,iplanet-am-admin-console-role-display-options,iplanet-am-admin-console-role-default-acis,iplanet-am-admin-console-dynamic-aci-list,iplanet-am-console-service-view-bean,iplanet-am-admin-console-default-pc,iplanet-am-admin-console-default-gc,iplanet-am-admin-console-group-default-pc,iplanet-am-admin-console-user-profile-class,iplanet-am-admin-console-user-role-display,iplanet-am-admin-console-user-groups-display,iplanet-am-admin-console-user-groups-subscribe,iplanet-am-admin-console-user-service-display,iplanet-am-admin-console-default-roles,iplanet-am-admin-console-view-menu,iplanet-am-required-services,iplanet-am-user-create-notification-list,iplanet-am-user-delete-notification-list,iplanet-am-user-modify-notification-list,iplanet-am-admin-console-display-options,iplanet-am-admin-console-enduser-profile-class,iplanet-am-console-service-listeners,iplanet-am-admin-console-pre-post-processing-modules,iplanet-am-admin-console-invalid-chars,iplanet-am-admin-console-user-password-validation-class" />
     <identityservice order="user,agent,*role,*group" />
     <agentservice order="WebAgent,J2EEAgent,WSPAgent,WSCAgent,STSAgent,DiscoveryAgent" />
 </servicesconfig>
