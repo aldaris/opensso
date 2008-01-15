@@ -1,4 +1,3 @@
-<<<<<<< step4.htm
 <style type="text/css">
     #userStoreFieldset label {
         width: 12em;
@@ -72,62 +71,4 @@
             </ol>
         </fieldset>
     </div>
-=======
-<h1>Step 4: User Store Details<img class="pointer" src="$context/assets/images/message.gif"/></h1>
-
-<p>Please select the configuration option you would like to use.</p>
-<input type="radio" id="userStoreDefault" name="userStoreCustom" style="margin-left:1em" value="false" checked="checked" onclick="disableCustomConfig('user');"/>
-<span>Default Configuration</span><br/>
-<input type="radio" id="userStoreCustom" name="userStoreCustom" style="margin-left:1em" value="true" onclick="enableCustomConfig('user');"/>
-<span>Custom Configuration</span>
-
-<div id="userStoreSameAsConfigStoreDiv" style="display:none">
-    <input type="checkbox" name="userStoreSameAsConfigStore" style="margin-left:2em" onclick="copyConfigStoreFieldsToUserStoreFields();"/><span style="font-size:smaller">Same as the Configuration Store</span>
-</div>
-
-<div id="userStoreModule" style="width:570px;display:none">
-    <p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
-    <div class="hd">User Store LDAP Server Details</div>
-    <div class="bd" style="height:280px">
-        <fieldset id="userStoreFieldset">
-            <ol>
-                <li class="endChunk">
-                    <label for="userStoreName">User Store Name<em>*</em></label>
-                    <input id="userStoreName" name="userStoreName" type="text" class="text" style="width:150px"/>
-                    <img class="pointer" src="$context/assets/images/check_true.JPG">
-                    <small>Store name provided</small>
-                </li>
-                <li class="beginChunk">
-                    <label for="userStoreHost">Directory Host Name<em>*</em></label>
-                    <input id="userStoreHost" name="userStoreHost" type="text" class="text" style="width:150px"/>
-                    <img class="pointer" src="$context/assets/images/check_true.JPG">
-                    <small>Located Directory</small>
-                </li>
-                <li>
-                    <label for="userStorePort">Port<em>*</em></label>
-                    <input id="userStorePort" name="userStorePort" type="text" class="text" value="389" style="width:40px"/>
-                </li>
-                <li class="endChunk">
-                    <label>Is this a secure port?<em>*</em></label>
-                    <input id="userStoreSecurePortNo" name="userStoreSecurePort" type="radio" value="false" checked="checked" onclick="enableStandardPort('user');"/><span>No</span>
-                    <input id="userStoreSecurePortYes" name="userStoreSecurePort" type="radio" value="true" onclick="enableSecurePort('user');"/><span>Yes</span>
-                </li>
-                <li class="beginChunk">
-                    <label for="userStoreLoginId">Directory Login ID<em>*</em></label>
-                    <input id="userStoreLoginId" name="userStoreLoginId" type="text" class="text" style="width:150px"/>
-                    <img class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Logged in</small>
-                </li>
-                <li class="endChunk">
-                    <label for="userStorePassword">Directory Password<em>*</em></label>
-                    <input id="userStorePassword" name="userStorePassword" type="password" class="text" style="width:150px"/>
-                </li>
-                <li class="beginChunk">
-                    <label for="userStoreBaseDN">Directory Base DN<em>*</em></label>
-                    <input id="userStoreBaseDN" name="userStoreBaseDN" type="text" class="text" style="width:150px"/>
-                    <img alt="info" class="pointer" src="$context/assets/images/check_true.JPG">&nbsp;<small>Located Base DN</small>
-                </li>
-            </ol>
-        </fieldset>
-    </div>
->>>>>>> 1.2
 </div>

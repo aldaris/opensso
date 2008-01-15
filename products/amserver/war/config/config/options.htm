@@ -214,21 +214,11 @@
     
     <div id="options" align="left" style="width:800px">
         #if ( $upgrade )
-<<<<<<< options.htm
         <h1>$page.getLocalizedString("configuration.options.upgrade_available.title")</h1>
         <h4>$page.getLocalizedString("configuration.options.upgrade_available.subtitle")</h4>
-=======
-        <h1>Upgrade Available</h1>
-        <h4>Select an upgrade option.</h4>
->>>>>>> 1.4
         #else
-<<<<<<< options.htm
         <h1>$page.getLocalizedString("configuration.options.configuration_options.title")</h1>
         <h4>$page.getLocalizedString("configuration.options.configuration_options.subtitle")</h4>
-=======
-        <h1>Configuration Options</h1>
-        <h4>Select a configuration option.</h4>
->>>>>>> 1.4
         #end
 
         <div class="borderRight">
@@ -237,17 +227,9 @@
             $page.getLocalizedString("configuration.options.upgrade_to_fam.description")
             <a id="upgradeLink" class="blue pointer">$page.getLocalizedString("configuration.options.upgrade_to_fam.upgrade_to_fam_link")</a>
             #else
-<<<<<<< options.htm
             <h3>$page.getLocalizedString("configuration.options.demo_evaluation.title")</h3>
             $page.getLocalizedString("configuration.options.demo_evaluation.description")
             <a id="DemoConfiguration" class="blue pointer" onclick="setOption(1);">$page.getLocalizedString("configuration.options.demo_evaluation.demo_configuration")</a>
-=======
-            <h3>Demo & Evaluation</h3>
-            <p>This option should be primarily used for evaluation purposes. FAM will automatically configure the config store and the user
-               store to your local system.</p>
-            <p>If you intend on placing this on a production server then you should select 'Custom Configuration' instead.</p>
-            <a id="DemoConfiguration" class="blue pointer" onclick="setOption(1);">Demo Configuration</a>
->>>>>>> 1.4
             #end
         </div>
         <div>
@@ -286,11 +268,7 @@
 	}
 </style>
 <div id="confirmUpgrade" align="center" style="width:600px;visibility:hidden">
-<<<<<<< options.htm
     <div class="hd">$page.getLocalizedString("configuration.options.confirm_upgrade.header")</div>
-=======
-    <div class="header">Confirm Upgrade</div>
->>>>>>> 1.4
     <div class="bd" style="background-color: white; height: 150px">
 		<h2>$page.getLocalizedString("configuration.options.confirm_upgrade.body")</h2>
         <div class="colum">
@@ -304,11 +282,7 @@
     </div>
 </div>
 <div id="upgradePartiallyComplete" style="width:400px;visibility:hidden">
-<<<<<<< options.htm
-    <div class="hd">$page.getLocalizedString("configuration.options.upgrade_complete1.header1")</div>
-=======
-    <div class="header">Upgrade Complete!</div>
->>>>>>> 1.4
+  <div class="hd">$page.getLocalizedString("configuration.options.upgrade_complete1.header1")</div>
     <div class="bd" style="background-color: white">
 	    <h2>$page.getLocalizedString("configuration.options.upgrade_complete1.header2")</h2>
         $page.getLocalizedString("configuration.options.upgrade_complete1.body")
@@ -319,11 +293,7 @@
     </div>
 </div>
 <div id="upgradeComplete" style="width:400px;visibility:hidden">
-<<<<<<< options.htm
     <div class="hd">$page.getLocalizedString("configuration.options.upgrade_complete2.header")</div>
-=======
-    <div class="header">Upgrade Complete</div>
->>>>>>> 1.4
     <div class="bd" style="background-color: white; text-align: center">
 	    <h2>$page.getLocalizedString("configuration.options.upgrade_complete2.body")</h2>
 	    <a id="launchConsoleLink2" class="blueSmall pointer">$page.getLocalizedString("configuration.options.upgrade_complete2.launch_link")</a>

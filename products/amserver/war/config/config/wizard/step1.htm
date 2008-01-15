@@ -1,4 +1,3 @@
-<<<<<<< step1.htm
 <script type="text/javascript">
     var skipStep1 = "$wizardStep1Form.fields.skipStep1.value";
     function toggleSkipStep1() {
@@ -30,45 +29,4 @@
             <li>$page.getLocalizedString("configuration.wizard.step1.item3")</li>
         </ol>
     </div>
-=======
-<script type="text/javascript">
-    var skipStep1 = "$wizardStep1Form.fields.skipStep1.value";
-    function toggleSkipStep1() {
-        if ( skipStep1 == "true" ) {
-            $('wizardStep1Form_skipStep1').value = "false";
-            skipStep1 = "false";
-            startingTab = 1;
-        } else {
-            $('wizardStep1Form_skipStep1').value = "true";
-            skipStep1 = "true";
-            startingTab = 2;
-        }
-
-        AjaxUtils.doPost("wizardStep1", "$context/config/wizard/step1.htm", AjaxUtils.serializeForm("wizardStep1Form"), null, null);
-    }
-</script>
-<div style="float:left; width:500px">
-    <h1>Step 1: Welcome to the FAM Custom Configuration Wizard</h1>
-    <p>Condimentum lorem est tempus enim gravida quam, vel mollis vulputate, sed tristique tristique nulla.
-       Vestibulum dolor vulputate, arcu fusce ipsum a, nulla risus diam. Velit habitasse tincidunt tristique,
-       maecenas eget tortor sed eu sagittis mauris, orci aliquam ac. Urna ante.</p>
-    <!--
-    this is the don't show this page again checkbox
-    <small>$wizardStep1Form</small>
-    -->
-    
-</div>
-<div id="tab1RequiredInfoPanel" style="width:230px;float:right; display:none;">
-    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-	<div class="headerBox">Required Information</div>
-    <div class="bodyBox">
-        <p>You may need the following information to complete this process:</p>
-        <ol>
-            <li>Something</li>
-            <li>Something else</li>
-            <li>Still need something else</li>
-        </ol>
-    </div>
-	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
->>>>>>> 1.2
 </div>

@@ -1,4 +1,3 @@
-<<<<<<< step2.htm
 <script type="text/javascript">
 
     function newInstanceUrlValidated( response ) {
@@ -70,79 +69,4 @@
     <span>$page.getLocalizedString("configuration.wizard.step2.instanceURL")</span>
     <input id="newInstanceUrl" name="newInstanceUrl" type="text" class="text" #if ($newInstanceUrl)value="$newInstanceUrl"#{end} style="width:200px" onkeyup="APP.callDelayed(this,validateNewInstanceUrl)"/>
     <span id="newInstanceUrlStatus"></span>
-
-=======
-<script type="text/javascript">
-
-    function newInstanceUrlValidated( response ) {
-        if ( response.responseText == "true" ) {
-            $('nextTabButton').disabled = false;
-            $('newInstanceUrlStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                                                  '<small>FAM Server found</small>';
-        } else {
-            $('nextTabButton').disabled = true;
-            $('newInstanceUrlStatus').innerHTML = response.responseText;
-        }
-    }
-    function validateNewInstanceUrl() {
-        var callUrl = "$context$path?actionLink=checkNewInstanceUrl&newInstanceUrl=" + $('newInstanceUrl').value
-        AjaxUtils.call(callUrl, newInstanceUrlValidated );
-    }
-
-    function enableFirstFAMInstance() {
-        firstFAMInstance = true;
-        $('famAssociationDiv').style.display = "none";
-        $('firstFAMInstanceTrue').checked = true;
-        $('firstFAMInstanceFalse').checked = false;
-        nextTab = rangeCheck(currentTab + 1);
-        previousTab = rangeCheck(currentTab - 1);
-        $('tab3').style.color = "";
-        $('tab4').style.color = "";
-        $('tab5').style.color = "";
-        $('nextTabButton').disabled = false;
-        $('newInstanceUrl').value = null;
-        $('newInstanceUrlStatus').innerHTML = "";
-        AjaxUtils.call("$context/config/wizard/step2.htm?actionLink=clear");
-    }
-
-    function disableFirstFAMInstance() {
-        firstFAMInstance = false;
-        $('famAssociationDiv').style.display = "";
-        $('firstFAMInstanceTrue').checked = false;
-        $('firstFAMInstanceFalse').checked = true;
-        $('tab3').style.color = "#D3D3D3";
-        $('tab4').style.color = "#D3D3D3";
-        $('tab5').style.color = "#D3D3D3";
-        nextTab = 6;
-        previousTab = 2;
-        $('nextTabButton').disabled = true;
-    }
-
-    function step2Init() {
-        if ( firstFAMInstance ) {
-            $('firstFAMInstanceTrue').checked = true;
-            $('firstFAMInstanceFalse').checked = false;
-            $('famAssociationDiv').style.display = "none";
-        } else {
-            $('firstFAMInstanceFalse').checked = true;
-            $('firstFAMInstanceTrue').checked = false;
-            $('famAssociationDiv').style.display = "";
-            validateNewInstanceUrl();
-        }
-    }
-    YAHOO.util.Event.onDOMReady(step2Init);
-</script>
-<h1>Step 2: FAM Association <img class="pointer" src="$context/assets/images/message.gif"/></h1>
-<p>Would you like to add this FAM instance to an existing deployment?</p>
-<input type="radio" id="firstFAMInstanceTrue" name="firstFamInstance" style="margin-left:1em" value="true" onclick="enableFirstFAMInstance();"/>
-<span>No, this is the first FAM instance of a new deployment</span><br/>
-<input type="radio" id="firstFAMInstanceFalse" name="firstFamInstance" style="margin-left:1em" value="false" #if ($newInstanceUrl) checked="checked"#{end} onclick="disableFirstFAMInstance();"/>
-<span>Yes, there are one or more existing sites</span>
-
-<div id="famAssociationDiv" style="margin-left: 1em; margin-top: 1em; #if (!$newInstanceUrl)display:none#{end}">
-    <span>New Instance URL</span>
-    <input id="newInstanceUrl" name="newInstanceUrl" type="text" class="text" #if ($newInstanceUrl)value="$newInstanceUrl"#{end} style="width:200px" onkeyup="APP.callDelayed(this,validateNewInstanceUrl)"/>
-    <span id="newInstanceUrlStatus"></span>
-
->>>>>>> 1.2
 </div>
