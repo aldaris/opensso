@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.35 2008-01-04 21:00:07 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.36 2008-01-15 07:53:59 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -409,10 +409,8 @@ public class AMSetupServlet extends HttpServlet {
              * requiring the keystore.jks file in OpenSSO workspace. The
              * createIdentitiesForWSSecurity is for the JavaEE/NetBeans 
              * integration that we had done.
-             * TODO: Uncomment these two line after we have fixed all 
-             *       related issue in OpenSSO workspace.
              */
-            //createPasswordFiles(basedir, deployuri);
+            createPasswordFiles(basedir, deployuri);
             createIdentitiesForWSSecurity(serverURL, deployuri);
             isConfiguredFlag = true;
             configured = true;
@@ -1177,7 +1175,7 @@ public class AMSetupServlet extends HttpServlet {
         writeContent(location + ".storepass", pwd);
 
         InputStream in = servletCtx.getResourceAsStream(
-                "/WEB-INF/template/sms/keystore.jks");
+                "/WEB-INF/template/keystore/keystore.jks");
         byte[] b = new byte[2007];
         in.read(b);
         in.close();
