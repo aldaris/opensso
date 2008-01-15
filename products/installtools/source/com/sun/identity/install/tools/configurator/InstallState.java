@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallState.java,v 1.1 2006-09-28 07:37:28 rarcot Exp $
+ * $Id: InstallState.java,v 1.2 2008-01-15 23:42:19 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -227,7 +227,7 @@ public class InstallState implements InstallConstants {
         return iFinderData;
     }
 
-    private void setStateAccess(PersistentStateAccess stateAccess) {
+    protected void setStateAccess(PersistentStateAccess stateAccess) {
         pStateAccess = stateAccess;
     }
 
