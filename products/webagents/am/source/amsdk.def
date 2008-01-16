@@ -83,7 +83,10 @@ EXPORTS
 	encode_base64;
 	decode_base64;
 
-	
+        am_agent_init;
+        am_web_get_agent_configuration;
+	am_web_delete_agent_configuration;
+
 
 
 	DllMain;
