@@ -36,6 +36,7 @@ extern const char *POLICY_SERVICE;
 extern const char *POLICY_RESPONSE;
 extern const char *RESOURCE_RESULT;
 extern const char *SESSION_NOTIFICATION;
+extern const char *AGENT_CONFIG_CHANGE_NOTIFICATION;
 extern const char *ADD_LISTENER_RESPONSE;
 extern const char *REMOVE_LISTENER_RESPONSE;
 extern const char *SESSION;

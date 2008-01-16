@@ -246,7 +246,7 @@ am_policy_evaluate(am_policy_t policy_handle,
 		      am_map_t policy_response_map_ptr,
 		      am_policy_result_t *policy_res) {
 
-	return am_policy_evaluate_ignore_url_notenforced(policy_handle,
+    return am_policy_evaluate_ignore_url_notenforced(policy_handle,
 		      sso_token,
 		      resource_name,
 		      action_name,
@@ -254,7 +254,7 @@ am_policy_evaluate(am_policy_t policy_handle,
 		      policy_response_map_ptr,
 		      policy_res,
 		      AM_FALSE,
-			  NULL);
+		      NULL);
 }
 
 /*
@@ -269,7 +269,7 @@ am_policy_evaluate_ignore_url_notenforced(am_policy_t policy_handle,
 		      am_map_t policy_response_map_ptr,
 		      am_policy_result_t *policy_res,
 		      am_bool_t ignorePolicyResult,
-		      char **am_revision_number) {
+		      am_properties_t properties) {
     try {
 	enginePtr->policy_evaluate(policy_handle,
 				   sso_token,
@@ -279,7 +279,7 @@ am_policy_evaluate_ignore_url_notenforced(am_policy_t policy_handle,
 				   policy_response_map_ptr,
 				   policy_res,
 				   ignorePolicyResult,
-				   am_revision_number);
+				   *reinterpret_cast<Properties *>(properties));
     } catch(InternalException &ie) {
 	Log::Level lvl = Log::LOG_ERROR;
 	if(ie.getStatusCode() == AM_INVALID_SESSION) {
@@ -585,12 +585,14 @@ am_policy_invalidate_session(am_policy_t policy_handle,
  */
 extern "C" am_status_t
 am_policy_service_initialize_cac(am_policy_t policy_handle, 
-                                 const char* ssoTokenId) {
+                                 const char* ssoTokenId,
+				 am_properties_t properties) {
 
     am_status_t status = AM_SUCCESS;
     SSOToken ssot;
     std::string ssoTokenStr(ssoTokenId); 
     Service *serviceInstance = enginePtr->getServicePublic(policy_handle);
-    serviceInstance->init_from_agent_cac(ssoTokenStr);
+    serviceInstance->init_from_agent_cac(ssoTokenStr,
+                                   *reinterpret_cast<Properties *>(properties));
     return status;
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.6 2007-10-25 19:04:35 subbae Exp $
+ * $Id: iws_agent.c,v 1.7 2008-01-16 01:34:37 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -59,12 +59,12 @@
 #define	MAGIC_STR		"sunpostpreserve"
 #define	POST_PRESERVE_URI	"/dummypost/"MAGIC_STR
 
-typedef struct agent_info {
+typedef struct agent_props {
     am_properties_t agent_bootstrap_props;
     am_properties_t agent_config_props;
-} agent_info_t;
+} agent_props_t;
 
-static agent_info_t agent_info = {
+static agent_props_t agent_props = {
     AM_PROPERTIES_NULL
 };
 
@@ -73,7 +73,7 @@ boolean_t isRESTServiceAvailable = B_FALSE;
 char* gtemp_buff = NULL;
 static CRITICAL initLock;
 
-void init_at_request_cac();
+void init_at_request();
 
 int send_data(const char *msg, Session *sn, Request *rq) {
     int len = msg != NULL?strlen(msg):0;
@@ -109,7 +109,8 @@ int send_data(const char *msg, Session *sn, Request *rq) {
 
 static int do_redirect(Session *sn, Request *rq, am_status_t status,
 			am_policy_result_t *policy_result,
-			const char *original_url, const char* method) {
+			const char *original_url, const char* method,
+                        void* agent_config) {
     int retVal = REQ_ABORTED;
     char *redirect_url = NULL;
     const am_map_t advice_map = policy_result->advice_map;
@@ -117,12 +118,10 @@ static int do_redirect(Session *sn, Request *rq, am_status_t status,
 
     ret = am_web_get_url_to_redirect(status, advice_map,
 				     original_url, method,
-				     AM_RESERVED, &redirect_url);
+				     AM_RESERVED, &redirect_url, agent_config);
     if(ret == AM_SUCCESS && redirect_url != NULL) {
 	char *advice_txt = NULL;
-    char *am_rev_number = am_web_get_am_revision_number();
-	if ((am_rev_number != NULL) && (!strcmp(am_rev_number,"7.0")) && 
-        (policy_result->advice_string != NULL)) {
+	if (policy_result->advice_string != NULL) {
 	    ret = am_web_build_advice_response(policy_result, redirect_url,
 					       &advice_txt);
 	    am_web_log_debug("do_redirect(): policy status=%s, "
@@ -185,7 +184,7 @@ static int do_deny(Session *sn, Request *rq, am_status_t status) {
 */
 
 static void register_post_data(Session *sn, Request *rq,char *url,
-			       const char *key)
+			       const char *key, void* agent_config)
 {
     int i = 0;
     char *body = NULL;
@@ -226,7 +225,7 @@ static void register_post_data(Session *sn, Request *rq,char *url,
 
     am_web_log_debug("Register POST data key :%s",key);
 
-    if(am_web_postcache_insert(key,&post_data) == B_FALSE){
+    if(am_web_postcache_insert(key,&post_data, agent_config) == B_FALSE){
 	am_web_log_warning("Register POST data insert into"
 			  " hash table failed:%s",key);
     }
@@ -247,13 +246,15 @@ static void register_post_data(Session *sn, Request *rq,char *url,
   * invisible name value pairs
 */
 static int create_buffer_withpost(const char *key, am_web_postcache_data_t
-				  postentry, Session *sn, Request *rq)
+				  postentry, Session *sn, Request *rq,
+                                  void* agent_config)
 {
     char *buffer_page = NULL;
     int nsapi_status;
     char msg_length[8];
 
-    buffer_page = am_web_create_post_page(key,postentry.value,postentry.url);
+    buffer_page = am_web_create_post_page(key,postentry.value,postentry.url,
+                                           agent_config);
 
     /* Use the protocol_status function to set the status of the
      * response before calling protocol_start_response.
@@ -312,6 +313,8 @@ NSAPI_PUBLIC int append_post_data(pblock *param, Session *sn, Request *rq)
     const char *actionurl	    = NULL;
 
     uri = pblock_findval("uri", rq->reqpb);
+    void* agent_config = am_web_get_agent_configuration();
+
 
     if (uri != NULL){
 	post_data_query = uri + strlen(POST_PRESERVE_URI);
@@ -323,7 +326,7 @@ NSAPI_PUBLIC int append_post_data(pblock *param, Session *sn, Request *rq)
 	am_web_log_debug("POST Magic Query Value  : %s",post_data_query);
 
 	if (am_web_postcache_lookup(post_data_query,
-				    &get_data) == B_TRUE) {
+				    &get_data, agent_config) == B_TRUE) {
 
 	    // Now that the data is found, find the data and the URL to redirect
 	    postdata_cache = get_data.value;
@@ -333,7 +336,7 @@ NSAPI_PUBLIC int append_post_data(pblock *param, Session *sn, Request *rq)
 
 	    // Create the buffer string that is to be written
 	    return create_buffer_withpost(post_data_query,
-					  get_data,sn, rq);
+					  get_data,sn, rq, agent_config);
 
 	} else {
 	    am_web_log_debug(" Found magic URI but entry not in POST"
@@ -348,8 +351,6 @@ NSAPI_PUBLIC int append_post_data(pblock *param, Session *sn, Request *rq)
 	return(REQ_ABORTED);
     }
 }
-
-
 
 /*
  * update the agent cache from the listener response.  Any response without a
@@ -406,9 +407,12 @@ static int handle_notification(Session *sn, Request *rq)
   * Input:  As defined by a SAF
   * Output: As defined by a SAF
 */
-
-
 NSAPI_PUBLIC int process_notification(pblock *param, Session *sn, Request *rq)
+{
+    return REQ_PROCEED;
+}
+
+static int process_new_notification(pblock *param, Session *sn, Request *rq)
 {
     handle_notification(sn, rq);
 
@@ -441,8 +445,8 @@ NSAPI_PUBLIC void agent_cleanup(void *args) {
 	free(gtemp_buff);
 	gtemp_buff= NULL;
     }
-    am_properties_destroy(agent_info.agent_bootstrap_props);
-    am_web_cleanup_cac(isRESTServiceAvailable);
+    am_properties_destroy(agent_props.agent_bootstrap_props);
+    am_web_cleanup(isRESTServiceAvailable);
     crit_terminate(initLock);
 }
 
@@ -466,7 +470,7 @@ NSAPI_PUBLIC int web_agent_init(pblock *param, Session *sn, Request *rq)
     int nsapi_status = REQ_PROCEED;
     char *temp_buf = NULL;
     char *agent_bootstrap_file = NULL;
-    char *agent_config_file = NULL;
+    char *agent_config_file = NULL;    
 
     initLock = crit_init();
 
@@ -502,12 +506,14 @@ NSAPI_PUBLIC int web_agent_init(pblock *param, Session *sn, Request *rq)
 	    nsapi_status = REQ_ABORTED;
 	}
 
-	status = am_properties_create(&agent_info.agent_bootstrap_props);
+	status = am_properties_create(&agent_props.agent_bootstrap_props);
 	if(status == AM_SUCCESS) {
-	    status = am_properties_load(agent_info.agent_bootstrap_props, 
+	    status = am_properties_load(agent_props.agent_bootstrap_props, 
                                     agent_bootstrap_file);
 	    if(status == AM_SUCCESS) {
-		status = am_web_init_cac(agent_bootstrap_file, 
+                //this is where the agent config info is passed from filter code
+                //to amsdk. Not sure why agent_props is required.
+		status = am_web_init(agent_bootstrap_file, 
                                          agent_config_file);
 		system_free(agent_bootstrap_file);
 		system_free(agent_config_file);
@@ -713,9 +719,8 @@ char * get_post_assertion_data(Session *sn, Request *rq, char *url)
 
 }
 
-
-
-int getISCookie(const char *cookie, char **dpro_cookie) {
+int getISCookie(const char *cookie, char **dpro_cookie,
+                void* agent_config) {
     char *loc = NULL;
     char *marker = NULL;
     int length = 0;
@@ -723,7 +728,7 @@ int getISCookie(const char *cookie, char **dpro_cookie) {
 
 
     if (cookie != NULL) {
-	const char* cookieName = am_web_get_cookie_name();
+	const char* cookieName = am_web_get_cookie_name(agent_config);
 	if (cookieName != NULL && cookieName[0] != '\0') {
 		length = 2+strlen(cookieName);
 		search_cookie = (char *)malloc(length);
@@ -755,7 +760,7 @@ int getISCookie(const char *cookie, char **dpro_cookie) {
 	}
 
 	if (loc) {
-	    loc = loc + am_web_get_cookie_name_len() + 1;
+	    loc = loc + am_web_get_cookie_name_len(agent_config) + 1;
 	    while (*loc == ' ') {
 		++loc;
 	    }
@@ -800,7 +805,7 @@ static void set_method(void ** args, char * orig_req){
 }
 
 am_status_t get_request_url(Session *sn, Request *rq, char **request_url,
-			    char **orig_req) {
+			    char **orig_req, void* agent_config) {
     am_status_t retVal = AM_SUCCESS;
     const char *protocol = "HTTP";
     const char *host_hdr = pblock_findval(HOST_HDR, rq->headers);
@@ -812,7 +817,7 @@ am_status_t get_request_url(Session *sn, Request *rq, char **request_url,
     }
 
     if(query != NULL) {
-	am_web_log_max_debug("validate_session_policy(): query=%s", query);
+	am_web_log_max_debug("get_request_url(): query=%s", query);
 	retVal = am_web_get_parameter_value(query,
 							REQUEST_METHOD_TYPE,
 							orig_req);
@@ -827,7 +832,7 @@ am_status_t get_request_url(Session *sn, Request *rq, char **request_url,
 
     retVal = am_web_get_request_url(host_hdr, protocol, server_hostname,
 				    server_portnum, uri, query,
-				    request_url);
+				    request_url, agent_config);
     if(retVal == AM_SUCCESS) {
 	am_web_log_debug("get_request_url(): "
 			 "request_url=\"%s\"", *request_url);
@@ -850,6 +855,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     char *dpro_cookie = NULL;
     am_status_t status = AM_FAILURE;
     int  requestResult = REQ_ABORTED;
+    int  notifResult = REQ_ABORTED;
     const char *ruser = NULL;
     am_map_t env_parameter_map = NULL;
     am_policy_result_t result = AM_POLICY_RESULT_INITIALIZER;
@@ -875,7 +881,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
         if(agentInitialized != B_TRUE){
             am_web_log_debug("validate_session_policy : "
                 "Will call init");
-            init_at_request_cac(); 
+            init_at_request(); 
             if(agentInitialized != B_TRUE){
                 am_web_log_error("validate_session_policy : "
                    " Agent is still not intialized");
@@ -903,21 +909,26 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 
     path_info = pblock_findval(PATH_INFO, rq->headers);
     method = pblock_findval(REQUEST_METHOD, rq->reqpb);
+    
+    void* agent_config = am_web_get_agent_configuration();
 
-    status = get_request_url(sn, rq, &request_url, &orig_req);
+    status = get_request_url(sn, rq, &request_url, &orig_req, agent_config);
     am_web_log_debug("validate_session_policy(): "
 					"request_url=\"%s\"", request_url);
 
     /* Check for magic notification URL */
-    if (B_TRUE==am_web_is_notification(request_url)) {
+    if (B_TRUE==am_web_is_notification(request_url, agent_config)) {
+	notifResult = process_new_notification(param, sn, rq);
 	am_web_free_memory(request_url);
-        return REQ_PROCEED;
+        am_web_delete_agent_configuration(agent_config);
+        return notifResult;
     }
 
-    if (getISCookie(pblock_findval(COOKIE_HDR, rq->headers), &dpro_cookie)
+    if (getISCookie(pblock_findval(COOKIE_HDR, rq->headers), &dpro_cookie, agent_config)
 	== REQ_ABORTED)
     {
 	am_web_free_memory(request_url);
+        am_web_delete_agent_configuration(agent_config);
 	return REQ_ABORTED;
     }
 
@@ -934,7 +945,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
      *  the POST then it is IS 6.x.
      */
 
-    if(am_web_is_cdsso_enabled() == B_TRUE ) {
+    if(am_web_is_cdsso_enabled(agent_config) == B_TRUE ) {
 	if((strcmp(method, FORM_METHOD_POST) == 0)
 	    && (orig_req != NULL) 
             && (strlen(orig_req) > 0)) {
@@ -943,7 +954,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 		    args, &dpro_cookie,
 		    &request_url,
 		    &orig_req, method, response,
-		    B_FALSE, set_cookie, set_method);
+		    B_FALSE, set_cookie, set_method, agent_config);
 		if( status == AM_SUCCESS) {
 			// Set back the original clf-request attribute
 			int clf_reqSize = 0;
@@ -983,7 +994,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 			    args, &dpro_cookie,
 			    (char*)query, &request_url,
 			    &orig_req, method,
-			    set_cookie, set_method);
+			    set_cookie, set_method, agent_config);
 	}
     }
 
@@ -1005,7 +1016,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 					  path_info, method,
 					  pblock_findval(REQUEST_IP_ADDR,
 							 sn->client),
-					  env_parameter_map, &result);
+					  env_parameter_map, &result, agent_config);
 
 	am_map_destroy(env_parameter_map);
     }
@@ -1036,15 +1047,15 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 	    " allowing access to the url as it is in not enforced list");
 	}
 
-        if (am_web_is_logout_url(request_url) == B_TRUE) {
-            (void)am_web_logout_cookies_reset(reset_cookie, args);
+        if (am_web_is_logout_url(request_url, agent_config) == B_TRUE) {
+            (void)am_web_logout_cookies_reset(reset_cookie, args, agent_config);
         }
 
 	// set LDAP user attributes to http header
 	status = am_web_result_attr_map_set(&result, set_header,
                                                set_cookie_in_response,
                                                set_header_attr_as_cookie,
-                                               get_cookie_sync, args);
+                                               get_cookie_sync, args, agent_config);
 	if (status != AM_SUCCESS) {
 	    am_web_log_error("am_web_result_attr_map_set failed, "
                             "status = %s (%d)",
@@ -1059,39 +1070,39 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 			 result.remote_user ? result.remote_user :
 			 "unknown user");
 	requestResult = do_redirect(sn, rq, status, &result,
-				    request_url, method);
+				    request_url, method, agent_config);
 	break;
 
     case AM_INVALID_SESSION:
-	am_web_do_cookies_reset(reset_cookie, args);
+	am_web_do_cookies_reset(reset_cookie, args, agent_config);
 	// No magic URI, No SSO Token....
 	if (strcmp(method, FORM_METHOD_POST) == 0 &&
-	    B_TRUE==am_web_is_postpreserve_enabled()) {
+	    B_TRUE==am_web_is_postpreserve_enabled(agent_config)) {
 	    // Create the magic URI, actionurl
 	    post_urls_t *post_urls;
-	    post_urls = am_web_create_post_preserve_urls(request_url);
+	    post_urls = am_web_create_post_preserve_urls(request_url, agent_config);
 
 	    register_post_data(sn,rq,post_urls->action_url,
-			       post_urls->post_time_key);
+			       post_urls->post_time_key, agent_config);
 
 	    am_web_log_debug("validate_session_policy(): "
 				"AM_INVALID_SESSION in POST ");
   	    requestResult =  do_redirect(sn, rq, status, &result,
-					 post_urls->dummy_url, method);
+					 post_urls->dummy_url, method, agent_config);
 	    // call cleanup routine
 	    am_web_clean_post_urls(post_urls);
 	} else {
 	    am_web_log_debug("validate_session_policy(): "
 				"AM_INVALID_SESSION in GET");
 	    requestResult = do_redirect(sn, rq, status, &result,
-					request_url, method);
+					request_url, method, agent_config);
 	}
 	break;
 
     case AM_INVALID_FQDN_ACCESS:
         // Redirect to self with correct FQDN - no post preservation
         requestResult = do_redirect(sn, rq, status, &result,
-                                    request_url, method);
+                                    request_url, method, agent_config);
         break;
 
     case AM_INVALID_ARGUMENT:
@@ -1107,6 +1118,8 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     am_policy_result_destroy(&result);
     am_web_free_memory(dpro_cookie);
     am_web_free_memory(request_url);
+
+    am_web_delete_agent_configuration(agent_config);
 
     am_web_log_max_debug("validate_session_policy(): "
 			 "Completed handling request with status: %s.",
@@ -1132,10 +1145,10 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 * during the first request.  
 */
 
-void init_at_request_cac()
+void init_at_request()
 {
     am_status_t status;
-    status = am_agent_init_cac(&agentInitialized,
+    status = am_agent_init(&agentInitialized,
                                &isRESTServiceAvailable);
     if (status != AM_SUCCESS) {
         log_error(LOG_FAILURE, "URL Access Agent: ", NULL, NULL,

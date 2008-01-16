@@ -42,7 +42,6 @@
 #include "am_web.h"
 #include "am_policy.h"
 #include "am_log.h"
-#include "http.h"
 #include "key_value_map.h"
 #include "p_cache.h"
 #include "fqdn_handler.h"
@@ -85,15 +84,6 @@
 #endif
 
 USING_PRIVATE_NAMESPACE
-#define bool_to_am_bool_t(x) (x?AM_TRUE:AM_FALSE)
-#define	HTTP_PREFIX	"http://"
-#define	HTTP_PREFIX_LEN	(sizeof(HTTP_PREFIX) - 1)
-#define	HTTP_DEF_PORT	80
-#define	HTTPS_PREFIX	"https://"
-#define	HTTPS_PREFIX_LEN (sizeof(HTTPS_PREFIX) - 1)
-#define HTTPS_DEF_PORT	443
-#define MSG_MAX_LEN 1024
-#define AM_REVISION_LEN 10
 
 /*
  * Names of the various advices that we need to process.
@@ -107,19 +97,6 @@ USING_PRIVATE_NAMESPACE
 #define	AUTH_REALM_KEY			"AuthenticateToRealmConditionAdvice"
 #define	AUTH_REALM_URL_PREFIX		"&realm="
 #define	AUTH_REALM_URL_PREFIX_LEN	(sizeof(AUTH_REALM_URL_PREFIX) - 1)
-
-/*
- * How long to wait in attempting to connect to an Access Manager AUTH server.
- */
-#define CONNECT_TIMEOUT	2
-
-/*
- * POST preservation related strings
-*/
-#define MAGIC_STR		"sunpostpreserve"
-#define DUMMY_NOTENFORCED	"/dummypost*"
-#define DUMMY_REDIRECT		"/dummypost/"
-#define POSTHASHTBL_INITIAL_SIZE 31
 
 #define REQUEST_METHOD_TYPE 	"sunwMethod"
 #define COMPOSITE_ADVICE_KEY "sunamcompositeadvice"
@@ -174,108 +151,18 @@ static const char *sector_three =  "<INPUT TYPE=hidden NAME=\"";
 static const char *sector_four  =  "\" VALUE=\"";
 static const char *sector_five  =  "</FORM>\n</BODY>\n</HTML>\n";
 
-static const char *am_70_revision_number = "7.0";
-static const char *am_63_revision_number = "6.3";
-
-typedef enum {
-    SET_ATTRS_NONE,
-    SET_ATTRS_AS_HEADER,
-    SET_ATTRS_AS_COOKIE
-} set_user_attrs_mode_t;
-
-static const char * attrCookiePrefix = "HTTP_";
-static const char * attrCookieMaxAge = "300";
-static const char * profileMode = "NONE";
-static const char * sessionMode = "NONE";
-static const char * responseMode = "NONE";
-static const char * sessionAttributes = "SESSION_ATTRIBUTES";
-static const char * responseAttributes = "RESPONSE_ATTRIBUTES";
-static set_user_attrs_mode_t setUserProfileAttrsMode = SET_ATTRS_NONE;
-static set_user_attrs_mode_t setUserSessionAttrsMode = SET_ATTRS_NONE;
-static set_user_attrs_mode_t setUserResponseAttrsMode = SET_ATTRS_NONE;
-static std::list<std::string> attrList;
-static const char * attrMultiValueSeparator = "|";
 static const char * sunwErrCode = "sunwerrcode";
 
-/*
- * For logging access to remote IS
- */
-#define LOG_TYPE_NONE    "LOG_NONE"
-#define LOG_TYPE_ALLOW   "LOG_ALLOW"
-#define LOG_TYPE_DENY    "LOG_DENY"
-#define LOG_TYPE_BOTH    "LOG_BOTH"
-
-#define LOG_ACCESS_NONE    0x0
-#define LOG_ACCESS_ALLOW   0x1
-#define LOG_ACCESS_DENY    0x2
-
-/**
- * instance
- */
 static int initialized = AM_FALSE;
 
-typedef struct url_info {
-    char *url;
-    size_t url_len;
-    char *protocol;
-    char *host;
-    unsigned short port;
-    am_bool_t has_parameters;
-    am_bool_t has_patterns;
-} url_info_t;
-
-typedef struct url_info_list {
-    unsigned int size;
-    url_info_t *list;
-} url_info_list_t;
-
-
-/**
-  * POST data structure to hold name value pair
-*/
-typedef struct name_value_pair {
-    char *name;
-    char *value;
-} name_value_pair_t;
-
-
-/**
-  * POST data structure to hold an array of name value pairs
-*/
-typedef struct post_struct {
-    char *buffer;
-    name_value_pair_t *namevalue;
-    int count;
-} post_struct_t;
-
-
-/**
-  * Data Structure to hold Cookie information passed to set_cookie function.
-  */
-typedef struct {
-    char *name;	    // name of cookie.
-    char *value;    // value of cookie.
-    char *domain;   // cookie domain, or NULL if no domain.
-    char *path;    // cookie path, or NULL if no path.
-    char *max_age;  // max age, or NULL if no max age.
-    PRBool isSecure;  //if cookie is secure or not
-} cookie_info_t;
-
-typedef struct cookie_info_list {
-    unsigned int size;
-    cookie_info_t *list;
-} cookie_info_list_t;
-
-#define URL_INFO_PTR_NULL		((url_info_t *) NULL)
+#define URL_INFO_PTR_NULL		((Utils::url_info_t *) NULL)
 #define URL_INFO_LIST_INITIALIZER	{ 0, URL_INFO_PTR_NULL }
 #define URL_INFO_INITIALIZER {NULL, 0, NULL, 0, AM_FALSE }
 
-#define COOKIE_INFO_PTR_NULL ((cookie_info_t *) NULL)
+#define COOKIE_INFO_PTR_NULL ((Utils::cookie_info_t *) NULL)
 #define COOKIE_INFO_INITIALIZER {NULL, NULL, NULL, NULL, NULL, AM_FALSE}
 #define COOKIE_INFO_LIST_INITIALIZER {0, COOKIE_INFO_PTR_NULL}
 
-#define IIS_FILTER_PRIORITY  "DEFAULT"
-// cac add
 #define URL_REDIRECT_PARAM  "goto"
 #define INSTANCE_NAME  "unused"
 
@@ -283,291 +170,49 @@ typedef struct cookie_info_list {
 extern "C" int decrypt_base64(const char *, char *);
 extern "C" int decode_base64(const char *, char *);
 
-/**
- * Access Manager Policy agent bootstrap information
- */
-typedef struct boot_info_t {
-    const char *agent_props_location;
-    const char *agent_passwd;
-    const char *agent_name;
-    const char *agent_config_file;
-    am_policy_t policy_handle;
-    am_properties_t properties;
-    url_info_list_t naming_url_list;
-} boot_info_t;
 
-static boot_info_t boot_info = {
+static Utils::boot_info_t boot_info = {
     NULL,           // AGENT PROPERTIES LOCATION
     NULL,           // AGENT Password 
     NULL,           // AGENT name 
     NULL,           // AGENT config file name 
     (unsigned int) -1,      // policy handle
     AM_PROPERTIES_NULL,      // properties
-    URL_INFO_LIST_INITIALIZER	// login_url_list
-};
-
-/**
- * Access Manager Policy agent
- */
-typedef struct agent_info_t {
-    am_log_module_id_t log_module;
-    am_log_module_id_t remote_LogID;
-    am_properties_t properties;
-    url_info_list_t not_enforced_list;
-    std::set<std::string> *not_enforce_IPAddr;
-    PRBool reverse_the_meaning_of_not_enforced_list;
-    PRBool ignore_policy_evaluation_if_notenforced;
-    PRBool do_sso_only;
-    const char *instance_name;
-    const char *cookie_name;
-    size_t cookie_name_len;
-    PRBool is_cookie_secure;
-    const char *access_denied_url;
-    PRLock *lock;
-    url_info_list_t login_url_list;
-    url_info_list_t cdsso_server_url_list;
-    PRBool notification_enabled;
-    const char *notification_url;
-    PRBool url_comparison_ignore_case;
-    am_policy_t policy_handle;
-    unsigned long postcacheentry_life;
-    PostCache *postcache_handle;
-    PRBool postdatapreserve_enabled;
-    const char *postcache_url;
-    const char *url_redirect_param;
-    const char *user_id_param;
-    const char *authLogType_param;
-    const char *dummy_post_url;
-#if defined(WINNT)
-    HINSTANCE hInst;
-#endif
-    const char *locale;
-    const char *unauthenticated_user;
-    PRBool anon_remote_user_enable;
-    PRBool check_client_ip;
-
-    PRBool fqdn_check_enable;
-    FqdnHandler *fqdn_handler;
-    const char *fqdn_default;
-    size_t fqdn_default_len;
-
-    PRBool cookie_reset_enabled;
-    std::set<std::string> *cookie_domain_list;
-    PRBool cdsso_enabled;
-    cookie_info_list_t cookie_list;
-    const char *cookie_reset_default_domain;
-    url_info_t agent_server_url;
-    url_info_list_t logout_url_list;
-    cookie_info_list_t logout_cookie_reset_list;
-    PRBool getClientHostname;
-    unsigned log_access_type;
-    PRBool denyOnLogFailure;
-    PRBool convert_mbyte;
-    PRBool encode_url_special_chars;
-    PRBool override_protocol;	// whether to override protocol in request url
-    PRBool override_host;	// whether to override host in request url
-    PRBool override_port;	// whether to override port in request url
-    PRBool override_notification_url;	// whether to override the notification
-					// url the same way as other rq urls
-	PRBool ignore_path_info;
-	unsigned long connection_timeout;   //connection timeout in sec to check if active login server alive
-    PRBool ignore_server_check;	// ignore server check before redirection
-	const char *authtype;   //value of authtype in IIS6 agent
-    PRBool override_host_port;	// used by Proxy agent
-    char *am_revision_number;	// AM revision number    
-    const char *iis6_replaypasswd_key; // IIS6 replay passwd key
-    const char *filter_priority; //IIS 5 filter priority
-	PRBool owa_enabled;	// OWA enabled in IIS6
-	PRBool owa_enabled_change_protocol;	// OWA enabled change protocol in IIS6
-	const char *owa_enabled_session_timeout_url; // OWA enabled session timeout url
-    AgentProfileService* agentProfileServiceObj;
-} agent_info_t;
-
-static agent_info_t agent_info = {
-    AM_LOG_ALL_MODULES,	    // log_module
-    AM_LOG_ALL_MODULES,	    // remote_LogID
-    AM_PROPERTIES_NULL,	    // properties
-    URL_INFO_LIST_INITIALIZER,	// not_enforced_list
-    NULL,		    // not_enforce_IPAddr
-    AM_FALSE,		    // reverse_the_meaning_of_not_enforced_list
-    AM_FALSE,		    // ignore_policy_evaluation_if_notenforced
-    AM_FALSE,		    // do_sso_only
-    INSTANCE_NAME,	    // instance_name
-    NULL,		    // cookie_name
-    0,			    // cookie_name_len
-    AM_FALSE,		    // is_cookie_secure
-    NULL,		    // access_denied_url
-    (PRLock *) NULL,	    // lock
     URL_INFO_LIST_INITIALIZER,	// login_url_list
-    URL_INFO_LIST_INITIALIZER,	// cdsso_server_url_list
-    AM_FALSE,		    // notification enabled
-    NULL,		    // notification_url
-    false,		    // url_comparison_ignore_case
-    (unsigned int) -1,	    // policy_handle
-    0,			    // postcacheentry_life
-    NULL,		    // postcache_handle
-    AM_TRUE,		    // postdatapreserve_enabled
-    NULL,		    // postcache_url
-    URL_REDIRECT_PARAM,	    // url_redirect_param
-    NULL,		    // user_id_param
-    NULL,		    // authLogType_param
-    NULL,		    // dummy_post_url
-#if defined(WINNT)
-    NULL,		    // hInst
-#endif
-    NULL,		    // locale
-    NULL,		    // unauthenticated_user
-    AM_FALSE,		    // anon_remote_user_enable
-    AM_FALSE,		    // check_client_ip
-    AM_TRUE,		    // fqdn_check_enable
-    NULL,		    // fqdn_handler
-    NULL,		    // fqdn_default
-    0,			    // fqdn_default_len
-    AM_FALSE,		    // cookie_reset_enabled
-    NULL,		    // cookie_domain_list
-    AM_FALSE,		    // cdsso_enabled
-    COOKIE_INFO_LIST_INITIALIZER,   // cookie_list
-    NULL,		    // cookie_reset_default_domain
-    URL_INFO_INITIALIZER,   // agent_server_url
-    URL_INFO_LIST_INITIALIZER,	// logout_url_list
-    COOKIE_INFO_LIST_INITIALIZER,   // logout_cookie_reset_list
-    AM_FALSE,		    // getClientHostname
-    (unsigned int)-1,	    // log_access_type
-    AM_FALSE,		    // denyOnLogFailure
-    AM_FALSE,		    // convert_mbyte
-    AM_FALSE,		    // encode_url_special_chars
-    AM_FALSE,		    // override_protocol
-    AM_FALSE,		    // override_host
-    AM_FALSE,		    // override_port
-    AM_FALSE,		    // override_notification_url
-    AM_FALSE,
-    0,			    // connection_timeout
-    AM_FALSE,		    // used by ignore_server_check
-    NULL,                    // authtype in iis agent
-    AM_FALSE,		    // used by Proxy agent
-    NULL,		    // AM revision number
-    NULL,		    // IIS6 Replay passwd key
-    IIS_FILTER_PRIORITY,     // IIS5 default priority
-	AM_FALSE,			//owa enabled
-	AM_FALSE,			//owa enabled change protocol
-	NULL ,               // owa enabled session timeout url
-    NULL	//agent profile service handle
+    1024
 };
+
+AgentProfileService* agentProfileService;
 
 /**
  *                    -------- helper functions --------
  */
 
-/*
- *------------------------------- FQDN HANDLER FUNCTIONS ---------------------------
- */
-
-static am_status_t
-unload_fqdn_handler()
-{
-    am_status_t result = AM_FAILURE;
-
-    try {
-        if (agent_info.fqdn_handler != NULL) {
-            delete agent_info.fqdn_handler;
-        }
-        result = AM_SUCCESS;
-    } catch (...) {
-        am_web_log_error("unload_fqdn_handler() failed with exception");
-    }
-
-    return result;
-}
-
 /* Throws std::exception's from fqdn_handler functions */
-static am_status_t
-load_fqdn_handler(bool ignore_case)
-{
-    am_status_t result = AM_FAILURE;
+inline am_bool_t is_valid_fqdn_access(const char *url, 
+                                      void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
 
-    try {
-        const Properties *properties = reinterpret_cast<Properties *>(
-						agent_info.properties);
-        agent_info.fqdn_handler = new FqdnHandler(*properties,
-						  ignore_case,
-						  agent_info.log_module);
-        result = AM_SUCCESS;
-     } catch (...) {
-        am_web_log_error("load_fqdn_handler() failed with exception");
-     }
-
-     return result;
-}
-
-/* Throws std::exception's from fqdn_handler functions */
-inline am_bool_t is_valid_fqdn_access(const char *url) {
-    if(AM_TRUE == agent_info.fqdn_check_enable) {
-        return (agent_info.fqdn_handler->isValidFqdnResource(url)?AM_TRUE:AM_FALSE);
+    if(AM_TRUE == (*agentConfigPtr)->fqdn_check_enable) {
+        return ((*agentConfigPtr)->fqdn_handler->isValidFqdnResource(url)?AM_TRUE:AM_FALSE);
     } else {
 	return AM_TRUE;
     }
 }
 
-/*
- *------------------------------- FQDN HANDLER FUNCTIONS OVER ----------------------
- */
-
-static void cleanup_url_info_list(url_info_list_t *url_list)
-{
-    unsigned int i;
-
-    if (url_list->list != NULL) {
-	for (i = 0; i < url_list->size; i++) {
-	    if (url_list->list[i].url != NULL) {
-		free(url_list->list[i].url);
-		url_list->list[i].url = NULL;
-	    }
-	    if (url_list->list[i].host != NULL) {
-		free(url_list->list[i].host);
-		url_list->list[i].host = NULL;
-	    }
-	}
-	free(url_list->list);
-	url_list->list = NULL;
-    }
-
-    url_list->size = 0;
-}
+void populate_am_resource_traits(am_resource_traits_t &rsrcTraits,
+                                 void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
 
 
-void cleanup_cookie_info(cookie_info_t *cookie_data)
-{
-    if (cookie_data != NULL) {
-	if (cookie_data->name != NULL) {
-	    free(cookie_data->name);
-	    cookie_data->name = NULL;
-	}
-	if (cookie_data->value != NULL) {
-	    free(cookie_data->value);
-	    cookie_data->value = NULL;
-	}
-	if (cookie_data->domain != NULL) {
-	    free(cookie_data->domain);
-	    cookie_data->domain = NULL;
-	}
-	if (cookie_data->max_age != NULL) {
-	    free(cookie_data->max_age);
-	    cookie_data->max_age = NULL;
-	}
-	if (cookie_data->path != NULL) {
-	    free(cookie_data->path);
-	    cookie_data->path = NULL;
-	}
-    }
-}
-
-void populate_am_resource_traits(am_resource_traits_t &rsrcTraits) {
     rsrcTraits.cmp_func_ptr = &am_policy_compare_urls;
     rsrcTraits.has_patterns = &am_policy_resource_has_patterns;
     rsrcTraits.get_resource_root = &am_policy_get_url_resource_root;
     rsrcTraits.separator = '/';
     rsrcTraits.ignore_case =
-	(agent_info.url_comparison_ignore_case) ? B_TRUE : B_FALSE;
+	((*agentConfigPtr)->url_comparison_ignore_case) ? B_TRUE : B_FALSE;
     rsrcTraits.canonicalize = &am_policy_resource_canonicalize;
     rsrcTraits.str_free = &free;
     return;
@@ -593,23 +238,6 @@ void encode_url( const char *orig_url, char *dest_url)
     strncat(dest_url, buffer, strlen(buffer));
 }
 
-static void cleanup_cookie_info_list(cookie_info_list_t *cookie_list)
-{
-   unsigned int i;
-
-   if (cookie_list != NULL) {
-        for (i = 0; i < cookie_list->size; i++) {
-            cleanup_cookie_info(&(cookie_list->list[i]));
-        }
-        free(cookie_list->list);
-   }
-   cookie_list->list = NULL;
-   cookie_list->size = 0;
-}
-
-
-
-
 void getFullQualifiedHostName(const am_map_t env_parameter_map,
 			      PRNetAddr *address,
 			      PRHostEnt *hostEntry)
@@ -624,7 +252,7 @@ void getFullQualifiedHostName(const am_map_t env_parameter_map,
 	hostName = hostEntry->h_name;
 
 	if (hostName) {
-	    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		"getFullQualifiedHostName: map_insert: "
 		"hostname=%s", hostName);
 	    am_map_insert(env_parameter_map, "requestDnsName",
@@ -633,7 +261,7 @@ void getFullQualifiedHostName(const am_map_t env_parameter_map,
 
 	alias = hostEntry->h_aliases[i++];
 	while (alias) {
-	    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		"getFullQualifiedHostName: map_insert: "
 		"alias=%s", alias);
 	    am_map_insert(env_parameter_map, "requestDnsName",
@@ -648,7 +276,7 @@ void getFullQualifiedHostName(const am_map_t env_parameter_map,
 void get_string(UINT key, char *buf, size_t buflen) {
 
     if (buf != NULL) {
-	if (LoadString(agent_info.hInst, key, buf, buflen) == 0) {
+	if (LoadString(agentConfig->hInst, key, buf, buflen) == 0) {
 	    buf[0] = '\0';
 	    return;
 	}
@@ -712,29 +340,29 @@ void mbyte_to_wchar(const char * orig_str,char *dest_str,int dest_len)
     size = dest_len;
     memset(dest_str, 0, dest_len);
     char * native_encoding = nl_langinfo(CODESET);
-    Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+    Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
 	"i18n using native encoding %s.", native_encoding);
     iconv_t encoder = iconv_open(native_encoding,  "UTF-8" );
     if (encoder == (iconv_t)-1) {
 	 /*
 	  * iconv_open failed
 	  */
-	 Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+	 Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
 		  "iconv_open failed");
 	 strcpy(dest_str, origstr);
      } else {
 	/* Perform iconv conversion */
-	Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+	Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
 		 "i18n b4 convlen = %d  size = %d", len, size);
 #if defined(X86_64)
 	int ret = iconv(encoder, &origstr, &(size_t)len, &dest_str, &(size_t)size);
 #else
 	int ret = iconv(encoder, &origstr, &len, &dest_str, &size);
 #endif
-	Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+	Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
 		 "i18n len = %d  size = %d", len, size);
 	if (ret < 0) {
-	    Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+	    Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
 		     "iconv conversion failed" );
 	    strcpy(dest_str, origstr);
 	}
@@ -747,73 +375,14 @@ void mbyte_to_wchar(const char * orig_str,char *dest_str,int dest_len)
  * NOTE: this function may be called more than once so don't add
  * any code in here that could cause problems if called twice.
  */
-static void cleanup_properties(agent_info_t *info_ptr)
+
+static am_bool_t is_server_alive(const Utils::url_info_t *info_ptr, 
+                                 void* agent_config)
 {
-    if (info_ptr->properties != AM_PROPERTIES_NULL) {
-	am_properties_destroy(info_ptr->properties);
-	info_ptr->properties = AM_PROPERTIES_NULL;
-    }
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
 
-    cleanup_url_info_list(&info_ptr->not_enforced_list);
-    info_ptr->instance_name = NULL;
-    info_ptr->cookie_name = NULL;
-    info_ptr->cookie_name_len = 0;
-    cleanup_url_info_list(&info_ptr->cdsso_server_url_list);
-    info_ptr->access_denied_url = NULL;
-    if (((PRLock *) NULL) != info_ptr->lock) {
-	PR_DestroyLock(info_ptr->lock);
-	info_ptr->lock = (PRLock *) NULL;
-    }
-    if (info_ptr->not_enforce_IPAddr != NULL) {
-	delete info_ptr->not_enforce_IPAddr;
-	info_ptr->not_enforce_IPAddr = NULL;
-    }
-    cleanup_url_info_list(&info_ptr->login_url_list);
-    info_ptr->notification_url = NULL;
-    info_ptr->unauthenticated_user = NULL;
 
-    info_ptr->url_redirect_param = NULL;
-    info_ptr->user_id_param = NULL;
-    info_ptr->authLogType_param = NULL;
-    info_ptr->fqdn_default = NULL;
-    info_ptr->fqdn_default_len = 0;
-
-    if (info_ptr->dummy_post_url != NULL) {
-	free((void *)info_ptr->dummy_post_url);
-	info_ptr->dummy_post_url = NULL;
-    }
-
-    if (info_ptr->cookie_domain_list != NULL) {
-	delete info_ptr->cookie_domain_list;
-	info_ptr->cookie_domain_list = NULL;
-    }
-
-    cleanup_cookie_info_list(&info_ptr->cookie_list);
-    info_ptr->cookie_reset_default_domain = NULL;
-
-    if (info_ptr->agent_server_url.url != NULL) {
-	free(info_ptr->agent_server_url.url);
-	info_ptr->agent_server_url.url = NULL;
-    }
-    if (info_ptr->agent_server_url.host != NULL) {
-	free(info_ptr->agent_server_url.host);
-	info_ptr->agent_server_url.host = NULL;
-    }
-
-	if (info_ptr->notification_url) {
-		free((void *)info_ptr->notification_url);
-		info_ptr->notification_url = NULL;
-	}
-	if (info_ptr->am_revision_number) {
-		free((void *)info_ptr->am_revision_number);
-		info_ptr->am_revision_number = NULL;
-	}
-    info_ptr->iis6_replaypasswd_key = NULL;
-	info_ptr->owa_enabled_session_timeout_url = NULL;
-}
-
-static am_bool_t is_server_alive(const url_info_t *info_ptr)
-{
     am_bool_t status = AM_FALSE;
     char	buffer[PR_NETDB_BUF_SIZE];
     PRNetAddr	address;
@@ -821,17 +390,18 @@ static am_bool_t is_server_alive(const url_info_t *info_ptr)
     PRIntn	hostIndex;
     PRStatus	prStatus;
     PRFileDesc *tcpSocket;
-	unsigned timeout = 0;
+    unsigned timeout = 0;
+    
     prStatus = PR_GetHostByName(info_ptr->host, buffer, sizeof(buffer),
 				&hostEntry);
     if (PR_SUCCESS == prStatus) {
 	hostIndex = PR_EnumerateHostEnt(0, &hostEntry, info_ptr->port,
 					&address);
 	if (hostIndex >= 0) {
-		timeout = (unsigned) (agent_info.connection_timeout);
+		timeout = (unsigned) ((*agentConfigPtr)->connection_timeout);
 
 		if (((PRFileDesc *) NULL) != tcpSocket) {
-		Log::log(agent_info.log_module, Log::LOG_DEBUG,
+		Log::log(boot_info.log_module, Log::LOG_DEBUG,
 			"is_server_alive(): Connection timeout set to %i", timeout);
 	    }
 		tcpSocket = PR_NewTCPSocket();
@@ -845,7 +415,7 @@ static am_bool_t is_server_alive(const url_info_t *info_ptr)
 	    	prStatus = PR_Close(tcpSocket);
 	    	if (prStatus != PR_SUCCESS) {
 		    PRErrorCode error = PR_GetError();
-		    Log::log(agent_info.log_module, Log::LOG_ERROR,
+		    Log::log(boot_info.log_module, Log::LOG_ERROR,
 			     "is_server_alive(): NSPR Error while calling "
 			     "PR_Close(): %d.", error);
 	        }
@@ -856,25 +426,30 @@ static am_bool_t is_server_alive(const url_info_t *info_ptr)
     return status;
 }
 
-static url_info_t *find_active_login_server(agent_info_t *info_ptr) {
-    url_info_t *result = URL_INFO_PTR_NULL;
+static Utils::url_info_t *find_active_login_server(void* agent_config) 
+{
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+    Utils::url_info_t *result = URL_INFO_PTR_NULL;
     unsigned int i = 0;
-    url_info_list_t *url_list = NULL;
+    Utils::url_info_list_t *url_list = NULL;
 
     if(initialized == AM_TRUE) {
-	PR_Lock(info_ptr->lock);
+	PR_Lock((*agentConfigPtr)->lock);
 
-	if(agent_info.cdsso_enabled) {
-	    url_list = &info_ptr->cdsso_server_url_list;
+	if((*agentConfigPtr)->cdsso_enabled) {
+	    url_list = &(*agentConfigPtr)->cdsso_server_url_list;
 	} else {
-	    url_list = &info_ptr->login_url_list;
+	    url_list = &(*agentConfigPtr)->login_url_list;
 	}
 
-	if (agent_info.ignore_server_check == AM_FALSE) {
+	if ((*agentConfigPtr)->ignore_server_check == AM_FALSE) {
 	    for (i = 0; i < url_list->size; ++i) {
 		    am_web_log_max_debug("find_active_login_server(): "
 		    "Trying server: %s", url_list->list[i].url);
-		    if (is_server_alive(&url_list->list[i])) {
+		    if (is_server_alive(&url_list->list[i], agent_config)) {
 			    result = &url_list->list[i];
 			    break;
 		    }
@@ -883,7 +458,7 @@ static url_info_t *find_active_login_server(agent_info_t *info_ptr) {
 	    result = &url_list->list[i];
 	}
 
-	PR_Unlock(info_ptr->lock);
+	PR_Unlock((*agentConfigPtr)->lock);
     } else {
 	am_web_log_error("find_active_login_server(): "
 			 "Library not initialized.");
@@ -893,549 +468,13 @@ static url_info_t *find_active_login_server(agent_info_t *info_ptr) {
 }
 
 
-/* Throws std::exception's from string methods */
-void parseIPAddresses(const std::string &property,
-		      std::set<std::string> &ipAddrSet )
-{
-    size_t space = 0, curPos = 0;
-    std::string iplist(property);
-    size_t size = iplist.size();
-
-    while(space < size) {
-        space = iplist.find(' ', curPos);
-        std::string ipAddr;
-        if (space == std::string::npos) {
-            ipAddr = iplist.substr(curPos, size - curPos);
-            space = size;
-        } else {
-            ipAddr = iplist.substr(curPos, space - curPos);
-        }
-        curPos = space+1;
-        if(ipAddr.size() == 0)
-            continue;
-        ipAddrSet.insert(ipAddr);
-        am_web_log_info("parseIPAddresses(): add ipAddr: %s", ipAddr.c_str());
-    }
-    am_web_log_info("parseIPAddresses(): exit.");
-}
-
-/* Throws std::exception's from string methods */
-void parseCookieDomains(const std::string &property,
-			std::set<std::string> &CDListSet)
-{
-    size_t space = 0, curPos = 0;
-    std::string cdlist(property);
-    size_t size = cdlist.size();
-
-    while(space < size) {
-        space = cdlist.find(' ', curPos);
-        std::string cookiedomain;
-        if (space == std::string::npos) {
-            cookiedomain = cdlist.substr(curPos, size - curPos);
-            space = size;
-        } else {
-            cookiedomain = cdlist.substr(curPos, space - curPos);
-        }
-        curPos = space+1;
-        if(cookiedomain.size() == 0)
-            continue;
-        CDListSet.insert(cookiedomain);
-        am_web_log_info("parseCookieDomains(): add cookiedomain: %s",
-			cookiedomain.c_str());
-    }
-    am_web_log_info("parseCookieDomains(): exit.");
-}
-
-/*
- * Parse a cookie string represenation of the form
- * name[=value][;Domain=value][;Max-Age=value][;Path=value]
- *
- * Throws std::exception's from string methods.
- */
-am_status_t parseCookie(std::string cookie, cookie_info_t *cookie_data)
-{
-   char *holder = NULL;
-   char* temp_str = const_cast<char*>(cookie.c_str());
-
-   if ( cookie_data == NULL || temp_str == NULL) {
-        am_web_log_error("parseCookie() : Invalid cookie => %s", cookie.c_str());
-        return AM_INVALID_ARGUMENT;
-   }
-
-   cleanup_cookie_info(cookie_data);
-
-   //Process name=value
-
-   char *token = NULL;
-   std::string tempstr;
-   token = strtok_r(temp_str, ";", &holder);
-   if (token == NULL) {
-       am_web_log_error("parseCookie() : Invalid cookie Name => %s", token);
-       return AM_INVALID_ARGUMENT;
-   }
-   tempstr = token;
-   Utils::trim(tempstr);
-   token = const_cast<char*>(tempstr.c_str());
-   int len = strlen(token);
-   char *loc = strchr(token, '=');
-   if (loc == NULL) {
-       cookie_data->name = (char *)malloc(len+1);
-       if (cookie_data->name == NULL) {
-	   am_web_log_error("parseCookie(): failed to allocate %u bytes",
-                            len+1);
-           return AM_NO_MEMORY;
-       }
-       strcpy(cookie_data->name, token);
-   } else {
-       len = len - strlen(loc);
-       cookie_data->name = (char *)malloc(len+1);
-       if (cookie_data->name == NULL) {
-	   am_web_log_error("parseCookie(): failed to allocate %u bytes",
-                            len+1);
-           return AM_NO_MEMORY;
-       }
-       strncpy(cookie_data->name, token, len);
-       cookie_data->name[len]='\0';
-       cookie_data->value = (char *) malloc(strlen(loc));
-       if (cookie_data->name == NULL) {
-	   am_web_log_error("parseCookie(): failed to allocate %u bytes",
-                            strlen(loc));
-           cleanup_cookie_info(cookie_data);
-           return AM_NO_MEMORY;
-       }
-       strcpy(cookie_data->value, loc+1);
-   }
-
-   token = NULL;
-   token = strtok_r(NULL, ";", &holder);
-
-   while (token != NULL)  {
-      tempstr = token;
-      Utils::trim(tempstr);
-      token = const_cast<char *>(tempstr.c_str());
-      len = strlen(token);
-      loc = NULL;
-      loc = strstr(token, "Domain=");
-      if (loc != NULL) {
-           loc = loc + strlen("Domain=");
-           len = strlen(loc);
-           cookie_data->domain = (char *)malloc(len+1);
-           if (cookie_data->domain == NULL) {
-	       am_web_log_error("parseCookie() :  "
-				"failed to allocate %u bytes", len+1);
-               cleanup_cookie_info(cookie_data);
-               return AM_NO_MEMORY;
-           }
-           if (loc[0] == '.') {
-              strcpy(cookie_data->domain, loc+1);
-              cookie_data->domain[len-1] = '\0';
-           } else {
-              strcpy(cookie_data->domain, loc);
-              cookie_data->domain[len] = '\0';
-           }
-      } else  {
-           loc = strstr(token, "Max-Age=");
-           if (loc != NULL) {
-              loc = loc + strlen("Max-Age=");
-              len = strlen(loc);
-              cookie_data->max_age = (char *)malloc(len+1);
-              if (cookie_data->max_age == NULL) {
-	          am_web_log_error("parseCookie() : "
-				   "failed to allocate %u bytes", len+1);
-                  cleanup_cookie_info(cookie_data);
-                  return AM_NO_MEMORY;
-              }
-              strcpy(cookie_data->max_age, loc);
-           } else  {
-      	      loc = strstr(token, "Path=");
-              if (loc != NULL) {
-                  loc = loc + strlen("Path=");
-           	  len = strlen(loc);
-           	  cookie_data->path = (char *)malloc(len+1);
-           	  if (cookie_data->path == NULL) {
-	              am_web_log_error("parseCookie() : "
-				       "failed to allocate %u bytes", len+1);
-               	      cleanup_cookie_info(cookie_data);
-                      return AM_NO_MEMORY;
-                  }
-                  strcpy(cookie_data->path, loc);
-              } else  {
-  		  am_web_log_warning("Unprocessed token => %s", token);
-              }
-           }
-      }
-      token = strtok_r(NULL, ";", &holder);
-   }
-
-   return AM_SUCCESS;
-}
-
-
-
-am_status_t initCookieResetList(cookie_info_list_t *cookie_list)
-{
-   const char *DEFAULT_PATH = "/";
-
-   if (cookie_list == NULL || cookie_list->list == NULL) {
-	am_web_log_warning("initCookieResetList() : NULL cookie_list" );
-        return AM_INVALID_ARGUMENT;
-   }
-
-   for (size_t i=0; i < cookie_list->size; ++i) {
-
-       cookie_info_t *cookie_data = &cookie_list->list[i];
-       if (cookie_data != NULL) {
-
-           if ( cookie_data->domain == NULL ) {
-                int domain_len = strlen(agent_info.cookie_reset_default_domain);
-                cookie_data->domain = (char *) malloc(domain_len +1);
-                if (cookie_data->domain == NULL) {
-                    am_web_log_error("parseCookie(): "
-                                     "failed to allocate %u bytes",
-                                     domain_len + 1);
-                    cleanup_cookie_info(cookie_data);
-                    return AM_NO_MEMORY;
-                }
-                strcpy(cookie_data->domain,
-                       agent_info.cookie_reset_default_domain);
-           }
-
-           if (cookie_data->max_age != NULL) {
-               if (cookie_data->max_age[0] == '\0') {
-                   free(cookie_data->max_age);
-                   // max_age cannot be an empty string for with older browsers
-	           // netscape 4.79, IE 5.5, mozilla < 1.4.
-		   // If specified as an empty string in the config,
-		   // don't set it at all in the cookie header.
-		   cookie_data->max_age = NULL;
-	       }
-	   }
-	   else {
-	       // by default, delete cookie on reset.
-	       cookie_data->max_age = const_cast<char*>("0");
-	   }
-
-	   if (cookie_data->path != NULL) {
-               if (cookie_data->path[0] == '\0') {
-                   free(cookie_data->path);
-	           // path must be '/' for older browsers IE,
-		   // netscape 4.79 to work
-                   cookie_data->path = strdup(DEFAULT_PATH);
-	       }
-	   }
-	   else {
-	       cookie_data->path = strdup(DEFAULT_PATH);
-	   }
-       }
-       am_web_log_debug("initCookieResetList(): "
-                        "initialized cookie: "
-                        "%s, domain %s, max_page %s, path %s",
-                        cookie_data->name, cookie_data->domain,
-                        cookie_data->max_age, cookie_data->path);
-   }
-   return AM_SUCCESS;
-}
-
-
-/* Throws std::exception's from string methods */
-am_status_t parseCookieList(const char *property, char sep,
-			    cookie_info_list_t *cookie_list)
-{
-    size_t num_cookies = 0;
-
-    if ( property == NULL || cookie_list == NULL) {
-       am_web_log_warning(
-		"parseCookieList() : cookie_list or property is NULL");
-       return AM_INVALID_ARGUMENT;
-    }
-
-    cleanup_cookie_info_list(cookie_list);
-
-    const char *temp_ptr = property;
-
-    // removing leading spaces and separators.
-    while (*temp_ptr == ' ' || *temp_ptr == sep) {
-        temp_ptr += 1;
-    }
-
-    if ( *temp_ptr == '\0') {
-	cookie_list->size = 0;
-        cookie_list->list = NULL;
-        return AM_SUCCESS;
-    }
-
-    /* Calculate num elems */
-    do {
-        num_cookies += 1;
-
-        while (*temp_ptr != '\0' && *temp_ptr != ' ' &&
-               *temp_ptr != sep) {
-            temp_ptr += 1;
-        }
-        while (*temp_ptr == ' ' || *temp_ptr == sep) {
-            temp_ptr += 1;
-        }
-    } while (*temp_ptr != '\0');
-
-    cookie_list->list = (cookie_info_t *) calloc(num_cookies,
-						sizeof(cookie_info_t));
-    if ( cookie_list->list == NULL) {
-	am_web_log_error("parseCookieList() : failed to allocate %u bytes",
-				num_cookies * sizeof(cookie_info_t));
-	return AM_NO_MEMORY;
-    }
-
-    memset(cookie_list->list, 0, num_cookies * sizeof(cookie_info_t));
-
-    size_t space = 0, curPos = 0, idx = 0;
-    std::string cookies(property);
-    Utils::trim(cookies);
-    size_t size = cookies.size();
-
-    while(space < size) {
-	space = cookies.find(',', curPos);
-        std::string cookie;
-        if (space == std::string::npos) {
-	    cookie = cookies.substr(curPos, size - curPos);
-            space = size;
-        } else {
-            cookie = cookies.substr(curPos, space - curPos);
-        }
-        curPos = space+1;
-        Utils::trim(cookie);
-        if (cookie.size() == 0)
-           continue;
-
-        if ( AM_SUCCESS == parseCookie(cookie, &cookie_list->list[idx]) ) {
-	     idx++;
-	} else {
-	     am_web_log_warning("Failed to Parse cookie: %s", cookie.c_str());
-        }
-
-    }
-    cookie_list->size = idx;
-    return AM_SUCCESS;
-}
-
-
-static am_status_t parse_url(const char *url_str, size_t len,
-				url_info_t *entry_ptr,
-				am_bool_t validateURLs)
-{
-    const char *url = url_str;
-    size_t url_len = len;
-    std::string normalizedURL;
-    am_status_t status = AM_SUCCESS;
-    size_t host_offset = 0;
-    const char *protocol;
-
-    if (NULL != url) {
-	/**
-	 * FIX_NEXT_RELEASE
-	 * This is a hack that I've put here.  The next release,
-	 * we should be doing away with anything to do with URLs that's
-	 * not in URL class.
-	 *
-	 * For now, compare wether it is a URL we are talking about or
-	 * some regular expression like *.gif.
-	 * If it is a URL, then, normalize it.
-	 */
-	if(strncasecmp(url, HTTP_PREFIX, HTTP_PREFIX_LEN) == 0 ||
-	   strncasecmp(url, HTTPS_PREFIX, HTTPS_PREFIX_LEN) == 0) {
-	    try {
-		URL urlObject(url, len);
-		urlObject.getURLString(normalizedURL);
-		url = normalizedURL.c_str();
-		url_len = normalizedURL.size();
-		protocol = urlObject.getProtocolString();
-	        Log::log(agent_info.log_module, Log::LOG_DEBUG,
-		         "parse_url(%s): Normalized URL: %s",
-			 url_str, url);
-	    } catch(InternalException &iex) {
-		Log::log(agent_info.log_module, Log::LOG_ERROR,
-			 "parse_url(%s) failed with error: %s",
-			 url_str, iex.getMessage());
-		status = AM_INVALID_ARGUMENT;
-	    } catch(std::exception &ex) {
-		Log::log(agent_info.log_module, Log::LOG_ERROR,
-			 "parse_url(%s) failed with error: %s",
-			 url_str, ex.what());
-		status = AM_INVALID_ARGUMENT;
-	    } catch(...) {
-		Log::log(agent_info.log_module, Log::LOG_ERROR,
-			 "parse_url(%s) failed with unknown exception.",
-			 url_str);
-		status = AM_INVALID_ARGUMENT;
-	    }
-	}
-
-	if(validateURLs == AM_TRUE && status == AM_SUCCESS) {
-	    if(url_len >= MIN_URL_LEN) {
-		if (strncasecmp(url, HTTPS_PREFIX, HTTPS_PREFIX_LEN) == 0) {
-		    entry_ptr->port = HTTPS_DEF_PORT;
-		    host_offset = HTTPS_PREFIX_LEN;
-		} else if (strncasecmp(url, HTTP_PREFIX,
-				       HTTP_PREFIX_LEN) == 0){
-		    entry_ptr->port = HTTP_DEF_PORT;
-		    host_offset = HTTP_PREFIX_LEN;
-		} else {
-		    status = AM_INVALID_ARGUMENT;
-		}
-	    } else {
-		status = AM_INVALID_ARGUMENT;
-	    }
-	}
-    } else {
-	status = AM_INVALID_ARGUMENT;
-    }
-
-    if (AM_SUCCESS == status) {
-	entry_ptr->url = (char *)malloc(url_len + 1);
-	entry_ptr->host = (char *)malloc(url_len - host_offset + 1);
-	entry_ptr->protocol = const_cast<char *>(protocol);
-	if (NULL != entry_ptr->url && NULL != entry_ptr->host) {
-	    char *temp_ptr;
-
-	    memcpy(entry_ptr->url, url, url_len);
-	    entry_ptr->url[url_len] = '\0';
-	    entry_ptr->url_len = url_len;
-	    if (strchr(entry_ptr->url, '?') != NULL) {
-		entry_ptr->has_parameters = AM_TRUE;
-	    } else {
-		entry_ptr->has_parameters = AM_FALSE;
-	    }
-
-	    if (am_policy_resource_has_patterns(entry_ptr->url)==B_TRUE) {
-		entry_ptr->has_patterns = AM_TRUE;
-	    } else {
-		entry_ptr->has_patterns = AM_FALSE;
-	    }
-
-	    url_len -= host_offset;
-	    url += host_offset;
-	    if (url_len > 0) {
-		memcpy(entry_ptr->host, url, url_len);
-	    }
-	    entry_ptr->host[url_len] = '\0';
-
-	    temp_ptr = strchr(entry_ptr->host, '/');
-	    if (temp_ptr != NULL) {
-		*temp_ptr = '\0';
-	    }
-
-	    temp_ptr = strchr(entry_ptr->host, ':');
-	    if (NULL != temp_ptr) {
-		*(temp_ptr++) = '\0';
-
-		entry_ptr->port = 0;
-		while (isdigit(*temp_ptr)) {
-		    entry_ptr->port = (entry_ptr->port * 10) + *temp_ptr - '0';
-		    temp_ptr += 1;
-		}
-	    }
-	} else {
-	    if (NULL == entry_ptr->url) {
-		am_web_log_error("parse_url() failed to allocate %u bytes for "
-				"URL.", url_len + 1);
-	    } else {
-		free(entry_ptr->url);
-		entry_ptr->url = NULL;
-	    }
-	    if (NULL == entry_ptr->host) {
-		am_web_log_error("parse_url() failed to allocate %u bytes for "
-				"host name.", url_len + 1);
-	    } else {
-		free(entry_ptr->host);
-		entry_ptr->host = NULL;
-	    }
-	    status = AM_NO_MEMORY;
-	}
-    }
-
-    return status;
-}
-
-static am_status_t parse_url_list(const char *url_list_str, char sep,
-				  url_info_list_t *list_ptr,
-				  am_bool_t validateURLs)
-{
-    am_status_t status = AM_SUCCESS;
-    int num_elements = 0;
-
-    cleanup_url_info_list(list_ptr);
-
-    if (url_list_str != NULL) {
-	const char *temp_ptr = url_list_str;
-
-	// removing leading spaces and separators.
-	while (*temp_ptr == ' ' || *temp_ptr == sep) {
-	    temp_ptr += 1;
-	}
-
-	if (*temp_ptr != '\0') {
-	    url_list_str = temp_ptr;
-
-	    /* Calculate num elems */
-	    do {
-		num_elements += 1;
-
-		while (*temp_ptr != '\0' && *temp_ptr != ' ' &&
-		       *temp_ptr != sep) {
-		    temp_ptr += 1;
-		}
-		while (*temp_ptr == ' ' || *temp_ptr == sep) {
-		    temp_ptr += 1;
-		}
-	    } while (*temp_ptr != '\0');
-
-	    list_ptr->list = (url_info_t *) calloc(num_elements,
-						   sizeof(list_ptr->list[0]));
-	    if (NULL != list_ptr->list) {
-		temp_ptr = url_list_str;
-		do {
-		    size_t len = 0;
-
-		    while (temp_ptr[len] != '\0' && temp_ptr[len] != ' ' &&
-			   temp_ptr[len] != sep) {
-			len += 1;
-		    }
-
-		    status = parse_url(temp_ptr, len,
-				       &list_ptr->list[list_ptr->size],
-				       validateURLs);
-
-		    if (AM_SUCCESS == status) {
-			temp_ptr += len;
-			list_ptr->size += 1;
-		    } else {
-			break;
-		    }
-
-		    while (*temp_ptr == ' ' || *temp_ptr == sep) {
-			temp_ptr += 1;
-		    }
-		} while (*temp_ptr != '\0');
-	    } else {
-		am_web_log_error("parse_url_list() failed to allocate %u bytes "
-				"for URL list",
-				num_elements * sizeof(url_info_t));
-		status = AM_NO_MEMORY;
-	    }
-	}
-    }
-
-    return status;
-}
-
 
 /** 
  * Loads bootstrap file into boot_info structure.
- * This function is used by CAC enabled agents. 
- *
  * Throws std::exception's from url parsing routines. 
  */
 static am_status_t
-load_bootstrap_properties(boot_info_t *boot_ptr, 
+load_bootstrap_properties(Utils::boot_info_t *boot_ptr, 
                           const char *boot_file, 
                           const char *config_file, 
                           boolean_t initializeLog)
@@ -1454,8 +493,7 @@ load_bootstrap_properties(boot_info_t *boot_ptr,
         parameter = boot_file;
         status = am_properties_load(boot_ptr->properties, boot_file);
     }
-
-    /* Set the log file pointer early enough */
+    // Set the log file pointer early enough
     if (initializeLog) {
 
         if (AM_SUCCESS == status) {
@@ -1463,9 +501,10 @@ load_bootstrap_properties(boot_info_t *boot_ptr,
 	    status = am_log_init(boot_ptr->properties);
         }
 
-        /* Add agent log module, level */
+        // Add agent log module, level 
         if (AM_SUCCESS == status) {
-	    agent_info.log_module = AM_LOG_ALL_MODULES;
+	    //boot_info.log_module = AM_LOG_ALL_MODULES;
+	    boot_ptr->log_module = AM_LOG_ALL_MODULES;
         }
     }
 
@@ -1505,14 +544,14 @@ load_bootstrap_properties(boot_info_t *boot_ptr,
     }
 
 
-    /* Get the naming URL.*/
+    // Get the naming URL.
     if (AM_SUCCESS == status) {
 	const char *property_str;
 	parameter = AM_COMMON_NAMING_URL_PROPERTY;
 	status = am_properties_get(boot_ptr->properties, parameter,
 				   &property_str);
 	if (AM_SUCCESS == status) {
-	    status = parse_url_list(property_str, ' ',
+	    status = Utils::parse_url_list(property_str, ' ',
 				    &boot_ptr->naming_url_list, AM_TRUE);
 	}
     }
@@ -1521,1658 +560,16 @@ load_bootstrap_properties(boot_info_t *boot_ptr,
     return status;
 }
 
-/**
- * This function copies bootstrap properties to agent_info structure,
- * as agent_info.properties is used in underlying layers of code,
- * This function is used by CAC enabled agents. 
- */ 
-static am_status_t
-copy_bootstrap_to_agent_info(boot_info_t *boot_ptr, am_properties_t properties)
-{
-    const char *thisfunc = "copy_bootstrap_to_agent_info()";
-    const char *function_name = "am_properties_get";
-    am_status_t status = AM_SUCCESS;
-    const char *parameter = "";
-    const char *encrypt_passwd = NULL;
-    const char *namingURL = NULL;
-    const char *agentName = NULL;
-    const char *agentPasswd = NULL;
-    const char *certDir = NULL;
-    const char *certDbPrefix = NULL;
-    const char *trustServerCerts = NULL;
-    const char *certDbPasswd = NULL;
-    const char *certAlias = NULL;
-    const char *connReceiveTimeout = NULL;
-    const char *connTimeout = NULL;
-    const char *connTcpDelay = NULL;
-
-
-    if (AM_SUCCESS == status) {
-        parameter = AM_POLICY_PASSWORD_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &agentPasswd);
-        am_properties_set(properties, parameter,
-                                      agentPasswd);
-    }
-
-    if (AM_SUCCESS == status) {
-        parameter = AM_POLICY_USER_NAME_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &agentName);
-        am_properties_set(properties, parameter,
-                                      agentName);
-    }
-
-    if (AM_SUCCESS == status) {
-        function_name = "am_properties_get";
-        parameter = AM_COMMON_NAMING_URL_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &namingURL);
-        am_properties_set(properties, parameter,
-                                      namingURL);
-     }
-
-    if (AM_SUCCESS == status) {
-        parameter = AM_COMMON_SSL_CERT_DIR_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &certDir);
-        am_properties_set(properties, parameter,
-                                      certDir);
-    }
-
-    if (AM_SUCCESS == status) {
-        parameter = AM_COMMON_CERT_DB_PREFIX_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &certDbPrefix);
-        am_properties_set(properties, parameter,
-                                      certDbPrefix);
-    }
-    if (AM_SUCCESS == status) {
-        parameter = AM_COMMON_TRUST_SERVER_CERTS_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &trustServerCerts);
-        am_properties_set(properties, parameter,
-                                      trustServerCerts);
-    }
-    if (AM_SUCCESS == status) {
-        parameter = AM_COMMON_CERT_DB_PASSWORD_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &certDbPasswd);
-        am_properties_set(properties, parameter,
-                                      certDbPasswd);
-    }
-    if (AM_SUCCESS == status) {
-        parameter = AM_AUTH_CERT_ALIAS_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &certAlias);
-        am_properties_set(properties, parameter,
-                                      certAlias);
-    }
-    if (AM_SUCCESS == status) {
-        parameter = AM_COMMON_RECEIVE_TIMEOUT_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &connReceiveTimeout);
-        am_properties_set(properties, parameter,
-                                      connReceiveTimeout);
-    }
-    if (AM_SUCCESS == status) {
-        parameter = AM_COMMON_TCP_NODELAY_ENABLE_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &connTcpDelay);
-        am_properties_set(properties, parameter,
-                                      connTcpDelay);
-    }
-    if (AM_SUCCESS == status) {
-        parameter = AM_COMMON_CONNECT_TIMEOUT_PROPERTY;
-        status = am_properties_get(boot_ptr->properties, parameter,
-                                   &connTimeout);
-        am_properties_set(properties, parameter,
-                                      connTimeout);
-    }
-    return status;
-}
-
-
-/* Throws std::exception's from url parsing routines. */
-static am_status_t
-load_agent_properties(agent_info_t *info_ptr, 
-                      const char *file_name, 
-                      boolean_t initializeLog)
-{
-    const char *thisfunc = "load_agent_properties()";
-    am_status_t status;
-    const char *function_name = "am_properties_create";
-    const char *parameter = "";
-    const char *agent_prefix_url = NULL;
-    char *dummy_url = NULL;
-    char *redirecturl = NULL;
-    int tempurl_len = 0;
-    const char *encrypt_passwd = NULL;
-    char decrypt_passwd[100] = "";
-    int decrypt_status;
-    const char *url_redirect_default = "goto";
-    const char *user_id_default = "UserToken";
-    const char *authLogType_default = LOG_TYPE_NONE;
-    bool urlstatssl = false;
-    bool urlstatnonssl = false;
-    const char *filterPriority_default=IIS_FILTER_PRIORITY;
-
-    cleanup_properties(info_ptr);
-
-    status = am_properties_create(&info_ptr->properties);
-    if (AM_SUCCESS == status) {
-	function_name = "am_properties_load";
-	parameter = file_name;
-	status = am_properties_load(info_ptr->properties, file_name);
-    }
-
-    if (AM_SUCCESS == status) {
-	int do_sleep = 0;
-
-	parameter = AM_WEB_PROPERTY_PREFIX "stopInInit";
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0, &do_sleep);
-	if (AM_SUCCESS != status) {
-	    do_sleep = 0;
-	    status = AM_SUCCESS;
-	}
-
-#if	defined(WINNT)
-	if (do_sleep) {
-	    DebugBreak();
-	}
-#else
-	while (do_sleep) {
-	    sleep(1);
-	}
-#endif
-    }
-
-    /* Set the log file pointer early enough */
-    if (initializeLog) {
-	if (AM_SUCCESS == status) {
-	    //this will set log file and default levels from the properties.
-	    status = am_log_init(info_ptr->properties);
-    	}
-
-    	/* Add agent log module, level */
-    	if (AM_SUCCESS == status) {
-	    status = am_log_add_module("PolicyAgent", &agent_info.log_module);
-	    if (AM_SUCCESS != status) {
-		agent_info.log_module = AM_LOG_ALL_MODULES;
-	    }
-    	}
-    }
-
-    /* Get dpro cookie name.*/
-    if (AM_SUCCESS == status) {
-	function_name = "am_properties_get";
-	parameter = AM_COMMON_COOKIE_NAME_PROPERTY;
-	status = am_properties_get(info_ptr->properties, parameter,
-				      &info_ptr->cookie_name);
-	if (AM_SUCCESS == status) {
-	    info_ptr->cookie_name_len = strlen(info_ptr->cookie_name);
-	}
-    }
-    
-    /* Get the is_cookie_secure flag */
-    if (AM_SUCCESS == status) {
-      parameter = AM_COMMON_COOKIE_SECURE_PROPERTY;
-      status = am_properties_get_boolean_with_default(
-            info_ptr->properties, parameter,
-            AM_FALSE, &info_ptr->is_cookie_secure);
-    }
-
-     /* Get fqdn.check.enable */
-    if (AM_SUCCESS == status) {
-        parameter = AM_WEB_FQDN_CHECK_ENABLE;
-        status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                           parameter,
-                                                           AM_TRUE,
-                                                           &info_ptr->fqdn_check_enable);
-     }
-
-
-    /* Get fqdn_default value */
-    if (AM_SUCCESS == status) {
-        function_name = "am_properties_get";
-        parameter = AM_WEB_FQDN_DEFAULT;
-        status = am_properties_get(info_ptr->properties, parameter,
-                                   &info_ptr->fqdn_default);
-        if (AM_SUCCESS == status) {
-            info_ptr->fqdn_default_len = strlen(info_ptr->fqdn_default);
-            const char *temp = strchr(info_ptr->fqdn_default, '.');
-            if (temp != NULL) {
-                 info_ptr->cookie_reset_default_domain = ++temp;
-            }
-        }
-    }
-
-    /* Get the cookie domain list. */
-    if (AM_SUCCESS == status) {
-        const char *cookie_domain_listptr;
-        info_ptr->cookie_domain_list = NULL;
-        parameter = AM_WEB_COOKIE_DOMAIN_LIST;
-        status = am_properties_get_with_default(info_ptr->properties, parameter,
-				                NULL, &cookie_domain_listptr);
-        if(NULL != cookie_domain_listptr && '\0' != cookie_domain_listptr[0]) {
-	    am_web_log_info("calling parseCookieDomains(): "
-                            "cookie_domain_listptr: %s",
-                            cookie_domain_listptr);
-            info_ptr->cookie_domain_list = new std::set<std::string>();
-            if(info_ptr->cookie_domain_list == NULL) {
-	        status = AM_NO_MEMORY;
-            }
-            else {
-	        parseCookieDomains(cookie_domain_listptr,
-                                   *(info_ptr->cookie_domain_list));
-            }
-        }
-    }
-
-    /* Get the denied URL.*/
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_ACCESS_DENIED_URL_PROPERTY;
-	status = am_properties_get_with_default(info_ptr->properties,
-						parameter, NULL,
-						&info_ptr->access_denied_url);
-
-	if(info_ptr->access_denied_url != NULL) {
-	    urlstatnonssl = (strncasecmp(info_ptr->access_denied_url,
-                                         HTTP_PREFIX, HTTP_PREFIX_LEN) == 0);
-	    urlstatssl = (strncasecmp(info_ptr->access_denied_url,
-                                      HTTPS_PREFIX, HTTPS_PREFIX_LEN) == 0);
-
-	    if( (urlstatnonssl == false) && (urlstatssl == false) ){
-		am_web_log_warning(
-			"Invalid URL (%s) for property (%s) specified",
-                        info_ptr->access_denied_url == NULL ? "NULL" :
-                            info_ptr->access_denied_url,
-			AM_WEB_ACCESS_DENIED_URL_PROPERTY);
-	    }
-
-	}
-
-	if ((AM_SUCCESS == status &&
-		info_ptr->access_denied_url != NULL &&
-		'\0' == *info_ptr->access_denied_url) ||
-	    ((urlstatnonssl == false) && (urlstatssl == false))) {
-	    /*
-	     * Treat an empty property value as if the property was not
-	     * specified at all.
-	     */
-	    info_ptr->access_denied_url = NULL;
-	    am_web_log_warning("Setting access_denied_url to null");
-	}
-    }
-
-    /* Get the UnAuthenticated User info */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_ANONYMOUS_USER;
-	status = am_properties_get_with_default(info_ptr->properties,
-						   parameter, NULL,
-						   &info_ptr->unauthenticated_user);
-	if (AM_SUCCESS == status &&
-            info_ptr->unauthenticated_user != NULL &&
-            '\0' == *info_ptr->unauthenticated_user) {
-
-	    /*
-	     * Treat an empty property value as if the property was not
-	     * specified at all.
-	     */
-	    info_ptr->unauthenticated_user = NULL;
-	}
-    }
-
-
-    /* Get the Anonymous Remote User Enabled flag */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_ANON_REMOTE_USER_ENABLE;
-	if (info_ptr->unauthenticated_user != NULL) {
-	    status = am_properties_get_boolean_with_default(
-			  info_ptr->properties, parameter,
-			  AM_FALSE, &info_ptr->anon_remote_user_enable);
-        } else {
-	    am_web_log_warning("Invalid  Unauthenticated User : %s Disabled",
-				parameter);
-	    info_ptr->anon_remote_user_enable = AM_FALSE;
-        }
-    }
-
-    /* Get the User Id param  */
-    // The user_id_param of agent_info is actually not used.
-    // but keep it so size of agent_info remains the same for backwards compat.
-    // the actual parameter that's used to get user id is done in service.cpp.
-    if (AM_SUCCESS == status) {
-	parameter = AM_POLICY_USER_ID_PARAM_PROPERTY;
-	status = am_properties_get_with_default(info_ptr->properties, parameter,
-			user_id_default, &info_ptr->user_id_param);
-    }
-
-    /* Get the auth log type param  */
-    if (AM_SUCCESS == status) {
-	parameter = AM_LOG_ACCESS_TYPE_PROPERTY;
-	status = am_properties_get_with_default(info_ptr->properties,
-			    parameter, authLogType_default,
-			    &info_ptr->authLogType_param);
-	info_ptr->log_access_type = 0;
-	if (!strcasecmp(info_ptr->authLogType_param, LOG_TYPE_ALLOW)) {
-	    info_ptr->log_access_type |= LOG_ACCESS_ALLOW;
-	}
-	else if (!strcasecmp(info_ptr->authLogType_param, LOG_TYPE_DENY)) {
-	    info_ptr->log_access_type |= LOG_ACCESS_DENY;
-	}
-	else if (!strcasecmp(info_ptr->authLogType_param, LOG_TYPE_BOTH)) {
-	    info_ptr->log_access_type |= LOG_ACCESS_ALLOW|LOG_ACCESS_DENY;
-	}
-    }
-
-    /* Get the deny on log failure param */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_DENY_ON_LOG_FAILURE;
-	am_properties_get_boolean_with_default(info_ptr->properties,
-					       parameter, AM_TRUE,
-					       &info_ptr->denyOnLogFailure);
-    }
-
-    /* Get the CDSSO URL */
-    if(AM_SUCCESS == status) {
-	int fetchCDSSOURL = AM_FALSE;
-	const char *property_str = NULL;
-	parameter = AM_WEB_CDSSO_ENABLED_PROPERTY;
-	am_properties_get_boolean_with_default(info_ptr->properties,
-						  parameter, AM_FALSE,
-						  &fetchCDSSOURL);
-	if(fetchCDSSOURL) {
-	    parameter = AM_WEB_CDC_SERVLET_URL_PROPERTY;
-	    status = am_properties_get(info_ptr->properties,
-				       parameter,
-				       &property_str);
-	    if(AM_SUCCESS == status &&
-		    property_str != NULL && property_str[0] != '\0') {
-		status = parse_url_list(property_str, ' ',
-					&info_ptr->cdsso_server_url_list,
-					AM_TRUE);
-	    } else {
-		if (status == AM_SUCCESS &&
-		    (property_str == NULL || property_str[0] == '\0')) {
-		    status = AM_NOT_FOUND;
-		}
-
-		am_web_log_error("am_web_init(): "
-				 "CDSSO is enabled but could not get value "
-				 "for property %s: %s.",
-				 AM_WEB_CDSSO_ENABLED_PROPERTY,
-				 am_status_to_string(status));
-	    }
-	}
-    }
-
-    /* Get the dummy redirect url */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_URI_PREFIX;
-	status = am_properties_get(info_ptr->properties, parameter,
-				      &agent_prefix_url);
-
-	if (AM_SUCCESS == status) {
-	    char *tempurl = NULL;
-	    char *tempptr = NULL;
-
-	    status = parse_url(agent_prefix_url, strlen(agent_prefix_url),
-                                       &info_ptr->agent_server_url,
-                                       AM_TRUE);
-	    if ( AM_SUCCESS == status) {
-		am_web_log_info("%s: %s : Value => %s",
-				thisfunc, AM_WEB_URI_PREFIX,
-				info_ptr->agent_server_url.url);
-	    } else {
-		am_web_log_warning(
-			"%s: Invalid URL for %s: Value = %s",
-			thisfunc, AM_WEB_URI_PREFIX, agent_prefix_url);
-	    }
-
-	    tempurl = strdup(agent_prefix_url);
-
-	    // We take the agent URI, http://hostname:80/uri,
-	    // keep looking for first three "/". once we are
-	    // after the three "/", we replace the rest with '\0'
-	    // So http://hostname:80/uri -> //hostname:80/
-	    if (tempurl != NULL){
-		tempptr =  strchr(tempurl,'/');
-		if (tempptr != NULL){
-		        tempptr = strchr(tempptr + 1,'/');
-		    if (tempptr != NULL) {
-			tempptr = strchr(tempptr + 1,'/');
-			if (tempptr != NULL){
-			    *tempptr = '\0';
-			} else {
-                   	    status = AM_INVALID_ARGUMENT;
-               		}
-		    } else  {
-			status = AM_INVALID_ARGUMENT;
-		    }
-		} else {
-		    status = AM_INVALID_ARGUMENT;
-		}
-
-		tempurl_len = strlen(tempurl);
-
-		// check that the allocation worked.
-		dummy_url = (char *) malloc(tempurl_len +
-					    sizeof(DUMMY_NOTENFORCED)+1);
-		strcpy(dummy_url,tempurl);
-		strcat(dummy_url,DUMMY_NOTENFORCED);
-		info_ptr->dummy_post_url = dummy_url;
-
-		redirecturl = (char *) malloc(tempurl_len +
-					      sizeof(DUMMY_REDIRECT)+1);
-		strcpy(redirecturl,tempurl);
-		strcat(redirecturl,DUMMY_REDIRECT);
-
-		info_ptr->postcache_url = redirecturl;
-
-		free(tempurl);
-	    } else {
-		status = AM_NO_MEMORY;
-	    }
-	} else {
-	    am_web_log_error("%s: Invalid URL for %s : Value => %s",
-			     thisfunc, AM_WEB_URI_PREFIX, agent_prefix_url);
-	}
-    }
-
-
-    /* Get the login URL.*/
-    if (AM_SUCCESS == status) {
-	const char *property_str;
-	parameter = AM_POLICY_LOGIN_URL_PROPERTY;
-	status = am_properties_get(info_ptr->properties, parameter,
-				   &property_str);
-	if (AM_SUCCESS == status) {
-	    status = parse_url_list(property_str, ' ',
-				    &info_ptr->login_url_list, AM_TRUE);
-	}
-    }
-
-    /* Get the notification URL.*/
-    if (AM_SUCCESS == status) {
-	parameter = AM_COMMON_NOTIFICATION_ENABLE_PROPERTY;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-						parameter, B_FALSE,
-	    reinterpret_cast<int *>(&info_ptr->notification_enabled));
-	if (info_ptr->notification_enabled) {
-	    parameter = AM_COMMON_NOTIFICATION_URL_PROPERTY;
-	    status = am_properties_get_with_default(info_ptr->properties,
-						   parameter, "",
-						   &info_ptr->notification_url);
- 	    if (info_ptr->notification_url == NULL ||
-		strlen(info_ptr->notification_url) == 0) {
-		    info_ptr->notification_enabled = AM_FALSE;
-	    }
-	}
-    }
-
-     /* Get url string comparision case sensitivity values. */
-     if (AM_SUCCESS == status) {
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-	    AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY, AM_FALSE,
-	    reinterpret_cast<int *>(&info_ptr->url_comparison_ignore_case));
-    }
-
-    /* Get the POST data cache preserve status */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_POST_CACHE_DATA_PRESERVE;
-	status =
-	    am_properties_get_boolean_with_default(info_ptr->properties,
-						   parameter,
-						   AM_FALSE,
-						   reinterpret_cast<int *>
-						   (&info_ptr->postdatapreserve_enabled));
-    }
-
-
-    /* Get the POST cache entry lifetime */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_POST_CACHE_ENTRY_LIFETIME;
-	status = am_properties_get_unsigned_with_default(info_ptr->properties,
-							    parameter, 3UL,
-							    &info_ptr->postcacheentry_life);
-    }
-
-    /* Get locale setting */
-    if(AM_SUCCESS == status) {
-	parameter = AM_WEB_PROPERTY_PREFIX "locale";
-	am_properties_get_with_default(info_ptr->properties, parameter,
-					  NULL, &info_ptr->locale);
-    }
-
-     /* Get client_ip_validation.enable.*/
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_CHECK_CLIENT_IP_PROPERTY;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-							   parameter,
-							   AM_FALSE,
-							   &info_ptr->check_client_ip);
-     }
-
-	if (AM_SUCCESS == status) {
-	parameter = AM_WEB_CONVERT_MBYTE_ENABLE;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-							   parameter,
-							   AM_FALSE,
-							   &info_ptr->convert_mbyte);
-     }
-
-     if (AM_SUCCESS == status) {
-	parameter = AM_WEB_ENCODE_URL_SPECIAL_CHARS;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-							   parameter,
-							   AM_FALSE,
-							   &info_ptr->encode_url_special_chars);
-     }
-
-     /* Get notenforced_client_IP_address */
-    if (AM_SUCCESS == status) {
-    const char *not_enforced_ipstr;
-    parameter = AM_WEB_NOT_ENFORCED_IPADDRESS;
-    status = am_properties_get_with_default(info_ptr->properties,
-                               parameter,
-                               NULL,
-                               &not_enforced_ipstr);
-    if (not_enforced_ipstr != NULL)
-        am_web_log_info("calling parseIPAddresses(): not_enforced_ipstr: %s",
-			not_enforced_ipstr);
-	info_ptr->not_enforce_IPAddr = new std::set<std::string>();
-	if(info_ptr->not_enforce_IPAddr == NULL) {
-	   status = AM_NO_MEMORY;
-	}
-	if (AM_SUCCESS == status && not_enforced_ipstr != NULL) {
-	    parseIPAddresses(not_enforced_ipstr,
-		    *(info_ptr->not_enforce_IPAddr));
-	}
-    }
-
-
-    /* Get the not enforced list.*/
-    if (AM_SUCCESS == status) {
-	const char *not_enforced_str;
-
-	parameter = AM_WEB_NOT_ENFORCED_LIST_PROPERTY;
-	status = am_properties_get_with_default(info_ptr->properties,
-						   parameter,
-						   NULL,
-						   &not_enforced_str);
-
-	if (AM_SUCCESS == status) {
-	    status = parse_url_list(not_enforced_str, ' ',
-				    &info_ptr->not_enforced_list, AM_FALSE);
-	}
-    }
-
-    /* Get reverse_the_meaning_of_notenforcedList */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_REVERSE_NOT_ENFORCED_LIST;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                        parameter,
-                                                        AM_FALSE,
-                                                        &info_ptr->reverse_the_meaning_of_not_enforced_list);
-     }
-
-    /* Get ignore_policy_evaluation_if_notenforced */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_IGNORE_POLICY_EVALUATION_IF_NOT_ENFORCED;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                        parameter,
-                                                        AM_FALSE,
-                                                        &info_ptr->ignore_policy_evaluation_if_notenforced);
-     }
-
-     /* Get do_sso_only.*/
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_DO_SSO_ONLY;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                        parameter,
-                                                        AM_FALSE,
-                                                        &info_ptr->do_sso_only);
-     }
-
-    /* Get CDSSO Enabled/Disabled */
-    if (AM_SUCCESS == status) {
-       parameter = AM_WEB_CDSSO_ENABLED_PROPERTY;
-       status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                       parameter,
-                                                       AM_FALSE,
-                                                       &info_ptr->cdsso_enabled);
-    }
-
-    /* Get Logout URLs if any */
-    if (AM_SUCCESS == status) {
-        info_ptr->logout_url_list.size = 0;
-        parameter = AM_WEB_LOGOUT_URL_PROPERTY;
-        const char *logout_url_str;
-        status = am_properties_get_with_default(info_ptr->properties,
-                                                parameter,
-                                                NULL,
-                                                &logout_url_str);
-        if (AM_SUCCESS == status && logout_url_str != NULL) {
-            am_web_log_max_debug("am_web_init(): Logout URL is %s.",
-                                 logout_url_str);
-	    status = parse_url_list(logout_url_str, ' ',
-				    &info_ptr->logout_url_list, AM_TRUE);
-        }
-    }
-
-    /* Get Logout Cookie reset list if any */
-    if (AM_SUCCESS == status) {
-        info_ptr->logout_cookie_reset_list.size = 0;
-        info_ptr->logout_cookie_reset_list.list = NULL;
-        parameter = AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY;
-        const char *logout_cookie_reset_str = NULL;
-        status = am_properties_get_with_default(info_ptr->properties,
-                                               parameter,
-                                               NULL,
-                                               &logout_cookie_reset_str);
-        if (AM_SUCCESS == status) {
-            if (NULL != logout_cookie_reset_str &&
-                '\0' != logout_cookie_reset_str[0]) {
-                am_web_log_max_debug("logout cookie reset list is %s.",
-                                     logout_cookie_reset_str);
-	        status = parseCookieList(logout_cookie_reset_str, ',',
-                                         &info_ptr->logout_cookie_reset_list);
-                if (AM_SUCCESS == status) {
-                    status = initCookieResetList(
-                                  &info_ptr->logout_cookie_reset_list);
-                }
-            }
-            else {
-	        am_web_log_max_debug("no cookies to be reset on logout.");
-            }
-        }
-    }
-
-    /* Get Reset Cookie Enabled/Disabled */
-    if (AM_SUCCESS == status) {
-       parameter = AM_WEB_COOKIE_RESET_ENABLED;
-       status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                       parameter,
-                                                       AM_FALSE,
-                                                       &info_ptr->cookie_reset_enabled);
-    }
-
-    /* Get the List of Cookies to be Reset */
-
-    if (AM_SUCCESS == status) {
-        if (info_ptr->cookie_reset_enabled == AM_TRUE) {
-            const char *cookie_str = NULL;
-            parameter = AM_WEB_COOKIE_RESET_LIST;
-            status = am_properties_get_with_default(info_ptr->properties,
-                                                    parameter,
-                                                    NULL,
-                                                    &cookie_str);
-	    if (AM_SUCCESS == status &&
-                cookie_str != NULL && '\0' != cookie_str[0]) {
-                am_web_log_max_debug("%s: cookies to be reset: %s",
-				     thisfunc, cookie_str);
-	            status = parseCookieList(
-	 			cookie_str, ',', &info_ptr->cookie_list);
-                    if ( AM_SUCCESS == status) {
- 	 		status = initCookieResetList(&info_ptr->cookie_list);
- 	 	   }
-            }
-            else {
-	        info_ptr->cookie_reset_enabled = AM_FALSE;
-                am_web_log_max_debug("%s: no cookies to be reset.", thisfunc);
-            }
-        }
-        else {
-	    am_web_log_max_debug(
-		    "%s: cookie reset enabled property %s is false",
-		    thisfunc, AM_WEB_COOKIE_RESET_ENABLED);
-        }
-    }
-
-    /* Get whether client's host name should be looked up and given to policy */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_GET_CLIENT_HOSTNAME;
-	status = am_properties_get_boolean_with_default(
-				agent_info.properties,
-				parameter, (int)true,
-				&agent_info.getClientHostname);
-	if (status != AM_SUCCESS) {
-	    am_web_log_warning("%s: Error %s while getting %s property. "
-			       "Defaulting to true.", thisfunc,
-			       am_status_to_string(status),
-			       parameter);
-	    agent_info.getClientHostname = true;
-	    status = AM_SUCCESS;
-	}
-    }
-
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OVERRIDE_PROTOCOL;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_protocol));
-    }
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OVERRIDE_HOST;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_host));
-    }
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OVERRIDE_PORT;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_port));
-    }
-    if (AM_SUCCESS == status && info_ptr->notification_enabled) {
-	parameter = AM_WEB_OVERRIDE_NOTIFICATION_URL;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_notification_url));
-    }
-
-    /* Reset the shared secret to the decrypted password */
-    if (AM_SUCCESS == status) {
-	parameter = AM_POLICY_PASSWORD_PROPERTY;
-	status = am_properties_get(info_ptr->properties, parameter,
-				   &encrypt_passwd);
-	if (AM_SUCCESS == status) {
-	    if(encrypt_passwd != NULL){
-		decrypt_status = decrypt_base64(encrypt_passwd, decrypt_passwd);
-		if(decrypt_status == 0){
-		    am_properties_set(info_ptr->properties, parameter,
-				      decrypt_passwd);
-		}else {
-		    status=static_cast<am_status_t>(decrypt_status);
-		}
-	    }else {
-		status=AM_FAILURE;
-	    }
-	}
-    }
-
-	if (AM_SUCCESS == status) {
-	parameter = AM_COMMON_IGNORE_PATH_INFO;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->ignore_path_info));
-    }
-
-	if (AM_SUCCESS == status) {
-	parameter = AM_WEB_CONNECTION_TIMEOUT;
-	status = am_properties_get_positive_number(info_ptr->properties,
-				parameter, CONNECT_TIMEOUT, &info_ptr->connection_timeout);
-    }
-
-
-	/* To skip is_server_alive()? */
-	if (AM_SUCCESS == status) {
-	  parameter = AM_COMMON_IGNORE_SERVER_CHECK;
-	  status = am_properties_get_boolean_with_default(info_ptr->properties,
-	                                                  parameter,
-	                                                  AM_FALSE,
-	                                            &info_ptr->ignore_server_check);
-	}
-
-	/* Get iis6 auth_type property */
-	if (AM_SUCCESS == status) {
-		parameter = AM_WEB_AUTHTYPE_IN_IIS6_AGENT;
-         	status = am_properties_get_with_default(info_ptr->properties, 
-                                                 parameter, "dsame", 
-                                                 &(info_ptr->authtype));
-
-     }
-
-    /* Get iis6 replay passwd key if defined */
-    if (AM_SUCCESS == status) {
-        function_name = "am_properties_get";
-        parameter = AM_COMMON_PROPERTY_PREFIX_IIS6_REPLAYPASSWD_KEY;
-        status = am_properties_get_with_default(info_ptr->properties, parameter,
-                                   NULL, &info_ptr->iis6_replaypasswd_key);
-    }
-
-   /* Get the IIS5 filter priority param  */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_FILTER_PRIORITY;
-	status = am_properties_get_with_default(info_ptr->properties,
-			    parameter, filterPriority_default,
-			    &info_ptr->filter_priority);
-	am_web_log_info("Default priority => %s : Actual priority  => %s",
-			    filterPriority_default,info_ptr->filter_priority);
-
-    }
-
-
-	// get owa_enabled flag
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OWA_ENABLED;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->owa_enabled));
-    }
-
-	// get owa_enabled_change_protocol flag
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OWA_ENABLED_CHANGE_PROTOCOL;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->owa_enabled_change_protocol));
-    }
-
-	// get owa_enabled_session_timeout_url
-    if (AM_SUCCESS == status) {
-        function_name = "am_properties_get";
-        parameter = AM_WEB_OWA_ENABLED_SESSION_TIMEOUT_URL;
-        status = am_properties_get_with_default(info_ptr->properties, parameter,
-                              NULL, &info_ptr->owa_enabled_session_timeout_url);
-    }
-
-    // get proxy's override_host_port
-    if (AM_SUCCESS == status) {
-	parameter = AM_PROXY_OVERRIDE_HOST_PORT_PROPERTY;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_host_port));
-    }
-
-	std::string notURL_str;
-	const char* normURL = NULL;
-
-	if (agent_info.notification_url != NULL &&
-	    strlen(agent_info.notification_url) > 0) {
-	    URL url(agent_info.notification_url);
-	    url.getURLString(notURL_str);
-	    normURL = notURL_str.c_str();
-
-	    if (normURL == NULL || *normURL == '\0') {
-		status = AM_FAILURE;
-	    } else {
-		agent_info.notification_url = strdup(normURL);
-
-		if (!agent_info.notification_url) {
-			status = AM_NO_MEMORY;
-		}
-	    }
-	}
-
-    if (AM_SUCCESS == status) {
-	info_ptr->lock = PR_NewLock();
-	if (NULL == info_ptr->lock) {
-	    status = AM_NSPR_ERROR;
-	}
-    }
-
-    if (AM_SUCCESS != status) {
-	cleanup_properties(info_ptr);
-        am_web_log_error("initialization error: %s(%s) failed, error = %s "
-			"(%d): exiting...", function_name, parameter,
-			am_status_to_string(status), status);
-    }
-
-    return status;
-}
-
-/**
- * Loads properties, fetched either locally or from
- * from FAM,  to agent_info structure.
- * This function is used by CAC enabled agents. 
- *
- * Throws std::exception's from url parsing routines. 
- */
-static am_status_t
-load_agent_properties_cac(agent_info_t *info_ptr, boolean_t initializeLog)
-{
-    const char *thisfunc = "load_agent_properties()";
-    am_status_t status;
-    const char *function_name = "am_properties_create";
-    const char *parameter = "";
-    const char *agent_prefix_url = NULL;
-    char *dummy_url = NULL;
-    char *redirecturl = NULL;
-    int tempurl_len = 0;
-    const char *encrypt_passwd = NULL;
-    char decrypt_passwd[100] = "";
-    int decrypt_status;
-    const char *url_redirect_default = "goto";
-    const char *user_id_default = "UserToken";
-    const char *authLogType_default = LOG_TYPE_NONE;
-    bool urlstatssl = false;
-    bool urlstatnonssl = false;
-    const char *filterPriority_default=IIS_FILTER_PRIORITY;
-
-    //cleanup_properties(info_ptr);
-
-    int do_sleep = 0;
-
-    parameter = AM_WEB_PROPERTY_PREFIX "stopInInit";
-    status = am_properties_get_boolean_with_default(
-		    info_ptr->properties, parameter, 0, &do_sleep);
-    if (AM_SUCCESS != status) {
-	do_sleep = 0;
-	status = AM_SUCCESS;
-    }
-
-#if	defined(WINNT)
-    if (do_sleep) {
-	DebugBreak();
-    }
-#else
-    while (do_sleep) {
-	sleep(1);
-    }
-#endif
-
-    /* Set the log file pointer early enough */
-    if (initializeLog) {
-
-    	/* Add agent log module, level */
-        if (AM_SUCCESS == status) {
-            status = am_log_add_module("PolicyAgent",
-                                    &agent_info.log_module);
-            if (AM_SUCCESS != status) {
-                agent_info.log_module = AM_LOG_ALL_MODULES;
-            }
-        }
-    }
-
-    /* Get dpro cookie name.*/
-    if (AM_SUCCESS == status) {
-	function_name = "am_properties_get";
-	parameter = AM_COMMON_COOKIE_NAME_PROPERTY;
-	status = am_properties_get(info_ptr->properties, parameter,
-				      &info_ptr->cookie_name);
-	if (AM_SUCCESS == status) {
-	    info_ptr->cookie_name_len = strlen(info_ptr->cookie_name);
-	}
-    }
-    
-    /* Get the is_cookie_secure flag */
-    if (AM_SUCCESS == status) {
-      parameter = AM_COMMON_COOKIE_SECURE_PROPERTY;
-      status = am_properties_get_boolean_with_default(
-            info_ptr->properties, parameter,
-            AM_FALSE, &info_ptr->is_cookie_secure);
-    }
-
-     /* Get fqdn.check.enable */
-    if (AM_SUCCESS == status) {
-        parameter = AM_WEB_FQDN_CHECK_ENABLE;
-        status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                  parameter,
-                                                  AM_TRUE,
-                                                  &info_ptr->fqdn_check_enable);
-     }
-
-
-    /* Get fqdn_default value */
-    if (AM_SUCCESS == status) {
-        function_name = "am_properties_get";
-        parameter = AM_WEB_FQDN_DEFAULT;
-        status = am_properties_get(info_ptr->properties, parameter,
-                                   &info_ptr->fqdn_default);
-        if (AM_SUCCESS == status) {
-            info_ptr->fqdn_default_len = strlen(info_ptr->fqdn_default);
-            const char *temp = strchr(info_ptr->fqdn_default, '.');
-            if (temp != NULL) {
-                 info_ptr->cookie_reset_default_domain = ++temp;
-            }
-        }
-    }
-
-    /* Get the cookie domain list. */
-    if (AM_SUCCESS == status) {
-        const char *cookie_domain_listptr;
-        info_ptr->cookie_domain_list = NULL;
-        parameter = AM_WEB_COOKIE_DOMAIN_LIST;
-        status = am_properties_get_with_default(info_ptr->properties, parameter,
-				                NULL, &cookie_domain_listptr);
-        if(NULL != cookie_domain_listptr && '\0' != cookie_domain_listptr[0]) {
-	    am_web_log_info("calling parseCookieDomains(): "
-                            "cookie_domain_listptr: %s",
-                            cookie_domain_listptr);
-            info_ptr->cookie_domain_list = new std::set<std::string>();
-            if(info_ptr->cookie_domain_list == NULL) {
-	        status = AM_NO_MEMORY;
-            }
-            else {
-	        parseCookieDomains(cookie_domain_listptr,
-                                   *(info_ptr->cookie_domain_list));
-            }
-        }
-    }
-
-    /* Get the denied URL.*/
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_ACCESS_DENIED_URL_PROPERTY;
-	status = am_properties_get_with_default(info_ptr->properties,
-						parameter, NULL,
-						&info_ptr->access_denied_url);
-
-	if(info_ptr->access_denied_url != NULL) {
-	    urlstatnonssl = (strncasecmp(info_ptr->access_denied_url,
-                                         HTTP_PREFIX, HTTP_PREFIX_LEN) == 0);
-	    urlstatssl = (strncasecmp(info_ptr->access_denied_url,
-                                      HTTPS_PREFIX, HTTPS_PREFIX_LEN) == 0);
-
-	    if( (urlstatnonssl == false) && (urlstatssl == false) ){
-		am_web_log_warning(
-			"Invalid URL (%s) for property (%s) specified",
-                        info_ptr->access_denied_url == NULL ? "NULL" :
-                            info_ptr->access_denied_url,
-			AM_WEB_ACCESS_DENIED_URL_PROPERTY);
-	    }
-
-	}
-
-	if ((AM_SUCCESS == status &&
-		info_ptr->access_denied_url != NULL &&
-		'\0' == *info_ptr->access_denied_url) ||
-	    ((urlstatnonssl == false) && (urlstatssl == false))) {
-	    /*
-	     * Treat an empty property value as if the property was not
-	     * specified at all.
-	     */
-	    info_ptr->access_denied_url = NULL;
-	    am_web_log_warning("Setting access_denied_url to null");
-	}
-    }
-
-    /* Get the UnAuthenticated User info */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_ANONYMOUS_USER;
-	status = am_properties_get_with_default(info_ptr->properties,
-						   parameter, NULL,
-						   &info_ptr->unauthenticated_user);
-	if (AM_SUCCESS == status &&
-            info_ptr->unauthenticated_user != NULL &&
-            '\0' == *info_ptr->unauthenticated_user) {
-
-	    /*
-	     * Treat an empty property value as if the property was not
-	     * specified at all.
-	     */
-	    info_ptr->unauthenticated_user = NULL;
-	}
-    }
-
-
-    /* Get the Anonymous Remote User Enabled flag */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_ANON_REMOTE_USER_ENABLE;
-	if (info_ptr->unauthenticated_user != NULL) {
-	    status = am_properties_get_boolean_with_default(
-			  info_ptr->properties, parameter,
-			  AM_FALSE, &info_ptr->anon_remote_user_enable);
-        } else {
-	    am_web_log_warning("Invalid  Unauthenticated User : %s Disabled",
-				parameter);
-	    info_ptr->anon_remote_user_enable = AM_FALSE;
-        }
-    }
-
-    /* Get the User Id param  */
-    // The user_id_param of agent_info is actually not used.
-    // but keep it so size of agent_info remains the same for backwards compat.
-    // the actual parameter that's used to get user id is done in service.cpp.
-    if (AM_SUCCESS == status) {
-	parameter = AM_POLICY_USER_ID_PARAM_PROPERTY;
-	status = am_properties_get_with_default(info_ptr->properties, parameter,
-			user_id_default, &info_ptr->user_id_param);
-    }
-
-    /* Get the auth log type param  */
-    if (AM_SUCCESS == status) {
-	parameter = AM_LOG_ACCESS_TYPE_PROPERTY;
-	status = am_properties_get_with_default(info_ptr->properties,
-			    parameter, authLogType_default,
-			    &info_ptr->authLogType_param);
-	info_ptr->log_access_type = 0;
-	if (!strcasecmp(info_ptr->authLogType_param, LOG_TYPE_ALLOW)) {
-	    info_ptr->log_access_type |= LOG_ACCESS_ALLOW;
-	}
-	else if (!strcasecmp(info_ptr->authLogType_param, LOG_TYPE_DENY)) {
-	    info_ptr->log_access_type |= LOG_ACCESS_DENY;
-	}
-	else if (!strcasecmp(info_ptr->authLogType_param, LOG_TYPE_BOTH)) {
-	    info_ptr->log_access_type |= LOG_ACCESS_ALLOW|LOG_ACCESS_DENY;
-	}
-    }
-
-    /* Get the deny on log failure param */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_DENY_ON_LOG_FAILURE;
-	am_properties_get_boolean_with_default(info_ptr->properties,
-					       parameter, AM_TRUE,
-					       &info_ptr->denyOnLogFailure);
-    }
-
-    /* Get the CDSSO URL */
-    if(AM_SUCCESS == status) {
-	int fetchCDSSOURL = AM_FALSE;
-	const char *property_str = NULL;
-	parameter = AM_WEB_CDSSO_ENABLED_PROPERTY;
-	am_properties_get_boolean_with_default(info_ptr->properties,
-						  parameter, AM_FALSE,
-						  &fetchCDSSOURL);
-	if(fetchCDSSOURL) {
-	    parameter = AM_WEB_CDC_SERVLET_URL_PROPERTY;
-	    status = am_properties_get(info_ptr->properties,
-				       parameter,
-				       &property_str);
-	    if(AM_SUCCESS == status &&
-		    property_str != NULL && property_str[0] != '\0') {
-		status = parse_url_list(property_str, ' ',
-					&info_ptr->cdsso_server_url_list,
-					AM_TRUE);
-	    } else {
-		if (status == AM_SUCCESS &&
-		    (property_str == NULL || property_str[0] == '\0')) {
-		    status = AM_NOT_FOUND;
-		}
-
-		am_web_log_error("am_web_init(): "
-				 "CDSSO is enabled but could not get value "
-				 "for property %s: %s.",
-				 AM_WEB_CDSSO_ENABLED_PROPERTY,
-				 am_status_to_string(status));
-	    }
-	}
-    }
-
-    /* Get the dummy redirect url */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_URI_PREFIX;
-	status = am_properties_get(info_ptr->properties, parameter,
-				      &agent_prefix_url);
-
-	if (AM_SUCCESS == status) {
-	    char *tempurl = NULL;
-	    char *tempptr = NULL;
-
-	    status = parse_url(agent_prefix_url, strlen(agent_prefix_url),
-                                       &info_ptr->agent_server_url,
-                                       AM_TRUE);
-	    if ( AM_SUCCESS == status) {
-		am_web_log_info("%s: %s : Value => %s",
-				thisfunc, AM_WEB_URI_PREFIX,
-				info_ptr->agent_server_url.url);
-	    } else {
-		am_web_log_warning(
-			"%s: Invalid URL for %s: Value = %s",
-			thisfunc, AM_WEB_URI_PREFIX, agent_prefix_url);
-	    }
-
-	    tempurl = strdup(agent_prefix_url);
-
-	    // We take the agent URI, http://hostname:80/uri,
-	    // keep looking for first three "/". once we are
-	    // after the three "/", we replace the rest with '\0'
-	    // So http://hostname:80/uri -> //hostname:80/
-	    if (tempurl != NULL){
-		tempptr =  strchr(tempurl,'/');
-		if (tempptr != NULL){
-		        tempptr = strchr(tempptr + 1,'/');
-		    if (tempptr != NULL) {
-			tempptr = strchr(tempptr + 1,'/');
-			if (tempptr != NULL){
-			    *tempptr = '\0';
-			} else {
-                   	    status = AM_INVALID_ARGUMENT;
-               		}
-		    } else  {
-			status = AM_INVALID_ARGUMENT;
-		    }
-		} else {
-		    status = AM_INVALID_ARGUMENT;
-		}
-
-		tempurl_len = strlen(tempurl);
-
-		// check that the allocation worked.
-		dummy_url = (char *) malloc(tempurl_len +
-					    sizeof(DUMMY_NOTENFORCED)+1);
-		strcpy(dummy_url,tempurl);
-		strcat(dummy_url,DUMMY_NOTENFORCED);
-		info_ptr->dummy_post_url = dummy_url;
-
-		redirecturl = (char *) malloc(tempurl_len +
-					      sizeof(DUMMY_REDIRECT)+1);
-		strcpy(redirecturl,tempurl);
-		strcat(redirecturl,DUMMY_REDIRECT);
-
-		info_ptr->postcache_url = redirecturl;
-
-		free(tempurl);
-	    } else {
-		status = AM_NO_MEMORY;
-	    }
-	} else {
-	    am_web_log_error("%s: Invalid URL for %s : Value => %s",
-			     thisfunc, AM_WEB_URI_PREFIX, agent_prefix_url);
-	}
-    }
-
-
-    /* Get the login URL.*/
-    if (AM_SUCCESS == status) {
-	const char *property_str;
-	parameter = AM_POLICY_LOGIN_URL_PROPERTY;
-	status = am_properties_get(info_ptr->properties, parameter,
-				   &property_str);
-	if (AM_SUCCESS == status) {
-	    status = parse_url_list(property_str, ' ',
-				    &info_ptr->login_url_list, AM_TRUE);
-	}
-    }
-
-    /* Get the notification URL.*/
-    if (AM_SUCCESS == status) {
-	parameter = AM_COMMON_NOTIFICATION_ENABLE_PROPERTY;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-						parameter, B_FALSE,
-	    reinterpret_cast<int *>(&info_ptr->notification_enabled));
-	if (info_ptr->notification_enabled) {
-	    parameter = AM_COMMON_NOTIFICATION_URL_PROPERTY;
-	    status = am_properties_get_with_default(info_ptr->properties,
-						   parameter, "",
-						   &info_ptr->notification_url);
- 	    if (info_ptr->notification_url == NULL ||
-		strlen(info_ptr->notification_url) == 0) {
-		    info_ptr->notification_enabled = AM_FALSE;
-	    }
-	}
-    }
-
-     /* Get url string comparision case sensitivity values. */
-     if (AM_SUCCESS == status) {
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-	    AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY, AM_FALSE,
-	    reinterpret_cast<int *>(&info_ptr->url_comparison_ignore_case));
-    }
-
-    /* Get the POST data cache preserve status */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_POST_CACHE_DATA_PRESERVE;
-	status =
-	    am_properties_get_boolean_with_default(info_ptr->properties,
-						   parameter,
-						   AM_FALSE,
-						   reinterpret_cast<int *>
-						   (&info_ptr->postdatapreserve_enabled));
-    }
-
-
-    /* Get the POST cache entry lifetime */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_POST_CACHE_ENTRY_LIFETIME;
-	status = am_properties_get_unsigned_with_default(info_ptr->properties,
-							    parameter, 3UL,
-							    &info_ptr->postcacheentry_life);
-    }
-
-    /* Get locale setting */
-    if(AM_SUCCESS == status) {
-	parameter = AM_WEB_PROPERTY_PREFIX "locale";
-	am_properties_get_with_default(info_ptr->properties, parameter,
-					  NULL, &info_ptr->locale);
-    }
-
-     /* Get client_ip_validation.enable.*/
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_CHECK_CLIENT_IP_PROPERTY;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-							   parameter,
-							   AM_FALSE,
-							   &info_ptr->check_client_ip);
-     }
-
-	if (AM_SUCCESS == status) {
-	parameter = AM_WEB_CONVERT_MBYTE_ENABLE;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-							   parameter,
-							   AM_FALSE,
-							   &info_ptr->convert_mbyte);
-     }
-
-     if (AM_SUCCESS == status) {
-	parameter = AM_WEB_ENCODE_URL_SPECIAL_CHARS;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-							   parameter,
-							   AM_FALSE,
-							   &info_ptr->encode_url_special_chars);
-     }
-
-     /* Get notenforced_client_IP_address */
-    if (AM_SUCCESS == status) {
-    const char *not_enforced_ipstr;
-    parameter = AM_WEB_NOT_ENFORCED_IPADDRESS;
-    status = am_properties_get_with_default(info_ptr->properties,
-                               parameter,
-                               NULL,
-                               &not_enforced_ipstr);
-    if (not_enforced_ipstr != NULL)
-        am_web_log_info("calling parseIPAddresses(): not_enforced_ipstr: %s",
-			not_enforced_ipstr);
-	info_ptr->not_enforce_IPAddr = new std::set<std::string>();
-	if(info_ptr->not_enforce_IPAddr == NULL) {
-	   status = AM_NO_MEMORY;
-	}
-	if (AM_SUCCESS == status && not_enforced_ipstr != NULL) {
-	    parseIPAddresses(not_enforced_ipstr,
-		    *(info_ptr->not_enforce_IPAddr));
-	}
-    }
-
-
-    /* Get the not enforced list.*/
-    if (AM_SUCCESS == status) {
-	const char *not_enforced_str;
-
-	parameter = AM_WEB_NOT_ENFORCED_LIST_PROPERTY;
-	status = am_properties_get_with_default(info_ptr->properties,
-						   parameter,
-						   NULL,
-						   &not_enforced_str);
-
-	if (AM_SUCCESS == status) {
-	    status = parse_url_list(not_enforced_str, ' ',
-				    &info_ptr->not_enforced_list, AM_FALSE);
-	}
-    }
-
-    /* Get reverse_the_meaning_of_notenforcedList */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_REVERSE_NOT_ENFORCED_LIST;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                        parameter,
-                                                        AM_FALSE,
-                                                        &info_ptr->reverse_the_meaning_of_not_enforced_list);
-     }
-
-    /* Get ignore_policy_evaluation_if_notenforced */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_IGNORE_POLICY_EVALUATION_IF_NOT_ENFORCED;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                        parameter,
-                                                        AM_FALSE,
-                                                        &info_ptr->ignore_policy_evaluation_if_notenforced);
-     }
-
-     /* Get do_sso_only.*/
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_DO_SSO_ONLY;
-	status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                        parameter,
-                                                        AM_FALSE,
-                                                        &info_ptr->do_sso_only);
-     }
-
-    /* Get CDSSO Enabled/Disabled */
-    if (AM_SUCCESS == status) {
-       parameter = AM_WEB_CDSSO_ENABLED_PROPERTY;
-       status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                       parameter,
-                                                       AM_FALSE,
-                                                       &info_ptr->cdsso_enabled);
-    }
-
-    /* Get Logout URLs if any */
-    if (AM_SUCCESS == status) {
-        info_ptr->logout_url_list.size = 0;
-        parameter = AM_WEB_LOGOUT_URL_PROPERTY;
-        const char *logout_url_str;
-        status = am_properties_get_with_default(info_ptr->properties,
-                                                parameter,
-                                                NULL,
-                                                &logout_url_str);
-        if (AM_SUCCESS == status && logout_url_str != NULL) {
-            am_web_log_max_debug("am_web_init(): Logout URL is %s.",
-                                 logout_url_str);
-	    status = parse_url_list(logout_url_str, ' ',
-				    &info_ptr->logout_url_list, AM_TRUE);
-        }
-    }
-
-    /* Get Logout Cookie reset list if any */
-    if (AM_SUCCESS == status) {
-        info_ptr->logout_cookie_reset_list.size = 0;
-        info_ptr->logout_cookie_reset_list.list = NULL;
-        parameter = AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY;
-        const char *logout_cookie_reset_str = NULL;
-        status = am_properties_get_with_default(info_ptr->properties,
-                                               parameter,
-                                               NULL,
-                                               &logout_cookie_reset_str);
-        if (AM_SUCCESS == status) {
-            if (NULL != logout_cookie_reset_str &&
-                '\0' != logout_cookie_reset_str[0]) {
-                am_web_log_max_debug("logout cookie reset list is %s.",
-                                     logout_cookie_reset_str);
-	        status = parseCookieList(logout_cookie_reset_str, ',',
-                                         &info_ptr->logout_cookie_reset_list);
-                if (AM_SUCCESS == status) {
-                    status = initCookieResetList(
-                                  &info_ptr->logout_cookie_reset_list);
-                }
-            }
-            else {
-	        am_web_log_max_debug("no cookies to be reset on logout.");
-            }
-        }
-    }
-
-    /* Get Reset Cookie Enabled/Disabled */
-    if (AM_SUCCESS == status) {
-       parameter = AM_WEB_COOKIE_RESET_ENABLED;
-       status = am_properties_get_boolean_with_default(info_ptr->properties,
-                                                       parameter,
-                                                       AM_FALSE,
-                                                       &info_ptr->cookie_reset_enabled);
-    }
-
-    /* Get the List of Cookies to be Reset */
-
-    if (AM_SUCCESS == status) {
-        if (info_ptr->cookie_reset_enabled == AM_TRUE) {
-            const char *cookie_str = NULL;
-            parameter = AM_WEB_COOKIE_RESET_LIST;
-            status = am_properties_get_with_default(info_ptr->properties,
-                                                    parameter,
-                                                    NULL,
-                                                    &cookie_str);
-	    if (AM_SUCCESS == status &&
-                cookie_str != NULL && '\0' != cookie_str[0]) {
-                am_web_log_max_debug("%s: cookies to be reset: %s",
-				     thisfunc, cookie_str);
-	            status = parseCookieList(
-	 			cookie_str, ',', &info_ptr->cookie_list);
-                    if ( AM_SUCCESS == status) {
- 	 		status = initCookieResetList(&info_ptr->cookie_list);
- 	 	   }
-            }
-            else {
-	        info_ptr->cookie_reset_enabled = AM_FALSE;
-                am_web_log_max_debug("%s: no cookies to be reset.", thisfunc);
-            }
-        }
-        else {
-	    am_web_log_max_debug(
-		    "%s: cookie reset enabled property %s is false",
-		    thisfunc, AM_WEB_COOKIE_RESET_ENABLED);
-        }
-    }
-
-    /* Get whether client's host name should be looked up and given to policy */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_GET_CLIENT_HOSTNAME;
-	status = am_properties_get_boolean_with_default(
-				agent_info.properties,
-				parameter, (int)true,
-				&agent_info.getClientHostname);
-	if (status != AM_SUCCESS) {
-	    am_web_log_warning("%s: Error %s while getting %s property. "
-			       "Defaulting to true.", thisfunc,
-			       am_status_to_string(status),
-			       parameter);
-	    agent_info.getClientHostname = true;
-	    status = AM_SUCCESS;
-	}
-    }
-
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OVERRIDE_PROTOCOL;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_protocol));
-    }
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OVERRIDE_HOST;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_host));
-    }
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OVERRIDE_PORT;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_port));
-    }
-    if (AM_SUCCESS == status && info_ptr->notification_enabled) {
-	parameter = AM_WEB_OVERRIDE_NOTIFICATION_URL;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_notification_url));
-    }
-
-	if (AM_SUCCESS == status) {
-	parameter = AM_COMMON_IGNORE_PATH_INFO;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->ignore_path_info));
-    }
-
-	if (AM_SUCCESS == status) {
-	parameter = AM_WEB_CONNECTION_TIMEOUT;
-	status = am_properties_get_positive_number(info_ptr->properties,
-				parameter, CONNECT_TIMEOUT, &info_ptr->connection_timeout);
-    }
-
-
-	/* To skip is_server_alive()? */
-	if (AM_SUCCESS == status) {
-	  parameter = AM_COMMON_IGNORE_SERVER_CHECK;
-	  status = am_properties_get_boolean_with_default(info_ptr->properties,
-	                                                  parameter,
-	                                                  AM_FALSE,
-	                                            &info_ptr->ignore_server_check);
-	}
-
-	/* Get iis6 auth_type property */
-	if (AM_SUCCESS == status) {
-		parameter = AM_WEB_AUTHTYPE_IN_IIS6_AGENT;
-         	status = am_properties_get_with_default(info_ptr->properties, 
-                                                 parameter, "dsame", 
-                                                 &(info_ptr->authtype));
-
-     }
-
-    /* Get iis6 replay passwd key if defined */
-    if (AM_SUCCESS == status) {
-        function_name = "am_properties_get";
-        parameter = AM_COMMON_PROPERTY_PREFIX_IIS6_REPLAYPASSWD_KEY;
-        status = am_properties_get_with_default(info_ptr->properties, parameter,
-                                   NULL, &info_ptr->iis6_replaypasswd_key);
-    }
-
-   /* Get the IIS5 filter priority param  */
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_FILTER_PRIORITY;
-	status = am_properties_get_with_default(info_ptr->properties,
-			    parameter, filterPriority_default,
-			    &info_ptr->filter_priority);
-	am_web_log_info("Default priority => %s : Actual priority  => %s",
-			    filterPriority_default,info_ptr->filter_priority);
-
-    }
-
-
-	// get owa_enabled flag
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OWA_ENABLED;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->owa_enabled));
-    }
-
-	// get owa_enabled_change_protocol flag
-    if (AM_SUCCESS == status) {
-	parameter = AM_WEB_OWA_ENABLED_CHANGE_PROTOCOL;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->owa_enabled_change_protocol));
-    }
-
-	// get owa_enabled_session_timeout_url
-    if (AM_SUCCESS == status) {
-        function_name = "am_properties_get";
-        parameter = AM_WEB_OWA_ENABLED_SESSION_TIMEOUT_URL;
-        status = am_properties_get_with_default(info_ptr->properties, parameter,
-                              NULL, &info_ptr->owa_enabled_session_timeout_url);
-    }
-
-    // get proxy's override_host_port
-    if (AM_SUCCESS == status) {
-	parameter = AM_PROXY_OVERRIDE_HOST_PORT_PROPERTY;
-	status = am_properties_get_boolean_with_default(
-			info_ptr->properties, parameter, 0,
-			&(info_ptr->override_host_port));
-    }
-
-	std::string notURL_str;
-	const char* normURL = NULL;
-
-	if (agent_info.notification_url != NULL &&
-	    strlen(agent_info.notification_url) > 0) {
-	    URL url(agent_info.notification_url);
-	    url.getURLString(notURL_str);
-	    normURL = notURL_str.c_str();
-
-	    if (normURL == NULL || *normURL == '\0') {
-		status = AM_FAILURE;
-	    } else {
-		agent_info.notification_url = strdup(normURL);
-
-		if (!agent_info.notification_url) {
-			status = AM_NO_MEMORY;
-		}
-	    }
-	}
-
-    if (AM_SUCCESS == status) {
-	info_ptr->lock = PR_NewLock();
-	if (NULL == info_ptr->lock) {
-	    status = AM_NSPR_ERROR;
-	}
-    }
-
-    if (AM_SUCCESS != status) {
-	cleanup_properties(info_ptr);
-        am_web_log_error("initialization error: %s(%s) failed, error = %s "
-			"(%d): exiting...", function_name, parameter,
-			am_status_to_string(status), status);
-    }
-
-    return status;
-}
-
 #if defined(WINNT)
 extern "C" AM_WEB_EXPORT DWORD
-am_web_get_iis_filter_priority() {
+am_web_get_iis_filter_priority(void* agent_config) {
+
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
 
     DWORD priorityFlag =0; 
-    const char *amAgentPriorityflag =agent_info.filter_priority;
+    const char *amAgentPriorityflag = (*agentConfigPtr)->filter_priority;
     if(strncasecmp(amAgentPriorityflag ,"DEFAULT",7) == 0)
         priorityFlag = 0x00020000;         
     else if(strncasecmp(amAgentPriorityflag ,"MEDIUM",6) == 0)
@@ -3253,67 +650,24 @@ am_web_http_decode(const char *source, size_t len)
     return result;
 }
 
-/**
- * Loads local agent properties file.
- * This function is used by CAC enabled agents.
- */
-static am_status_t
-load_local_properties(const char * agentConfigFile)
-{
-    am_status_t status;
-    const char *thisfunc = "load_local_properties";
-    
-    status = am_properties_create(&agent_info.properties);
-    if (AM_SUCCESS == status) {
-        status = am_properties_load(agent_info.properties, agentConfigFile);
-        am_properties_set(agent_info.properties,
-            AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY,
-            AGENT_PROPERTIES_LOCAL);
-        if (AM_SUCCESS == status) {
-            try {
-                status = load_agent_properties_cac(&agent_info, B_TRUE);
-            }
-            catch(InternalException& ex) {
-                am_web_log_error("%s: Exception encountered while loading "
-                "agent configuration properties: %s: %s",
-                thisfunc, ex.what(), ex.getMessage());
-                status = ex.getStatusCode();
-            }
-            catch(std::bad_alloc& exb) {
-                status = AM_NO_MEMORY;
-            }
-            catch(std::exception& exs) {
-                am_web_log_error("%s: Exception encountered while loading "
-                "agent configuration properties: %s",
-                thisfunc, exs.what());
-                status = AM_FAILURE;
-            }
-            catch(...) {
-                am_web_log_error("%s: Unknown exception encountered "
-                "while loading agent configuration properties.", thisfunc);
-                status = AM_FAILURE;
-            }
-            
-        }
-    }
-   return status;
-}
 
 /**
- * Initializes agent during first request.
- * This function is used by CAC enabled agents. 
+ * Initializes agent during first request. 
  */
 extern "C" AM_WEB_EXPORT am_status_t
-am_agent_init_cac(boolean_t* pAgentInitialized,
+am_agent_init(boolean_t* pAgentInitialized,
                   boolean_t* pRESTServiceAvailable)
 {
-    const char *thisfunc = "am_agent_init_cac";
+    const char *thisfunc = "am_agent_init";
     am_status_t status = AM_SUCCESS;
     const Properties *properties = NULL;
     string agentSSOToken; 
-    am_status_t authStatus = AM_FAILURE;
+    am_status_t restStatus = AM_FAILURE;
+    //change the below member to boolean
     int agentAuthenticated = AM_FALSE;
     SSOToken ssoToken;
+    AgentConfigurationRefCntPtr* agentConfigPtr;
+    void* agent_config;
 
 
     // check for rest service url presence by doing naming request
@@ -3330,151 +684,30 @@ am_agent_init_cac(boolean_t* pAgentInitialized,
     string userName(boot_info.agent_name);
     string passwd(boot_info.agent_passwd);
     const Properties& propPtr =
-    *reinterpret_cast<Properties *>(boot_info.properties);
+        *reinterpret_cast<Properties *>(boot_info.properties);
     const char * agentConfigFile = boot_info.agent_config_file;
-    
-    if( agent_info.agentProfileServiceObj == NULL) {
-        agent_info.agentProfileServiceObj =
-            new AgentProfileService(propPtr);
+          
+    if (agentProfileService == NULL) {
+        agentProfileService = new AgentProfileService(propPtr,boot_info);
     }
     
-    status = agent_info.agentProfileServiceObj->isRESTServiceAvailable();
-    
-    if(status == AM_REST_SERVICE_NOT_AVAILABLE) {
-        //since rest service url is not available, treat as local
-        am_web_log_info("Identity REST Services Endpoint URL not available. "
-            "Agent tries to load local agent configuration file, %s.",
-            agentConfigFile);
-        
-        *pRESTServiceAvailable = B_FALSE;
-        agentAuthenticated = AM_TRUE;  //set to true for local
-        status = load_local_properties(agentConfigFile);
-        if (status == AM_SUCCESS ) {
-            copy_bootstrap_to_agent_info(&boot_info, agent_info.properties);
-        } else {
-            am_web_log_error("Identity REST Services Endpoint URL not"
-                " available. Also failed to load local agent configuration file"
-                ", %s. Please check for any configuration errors during "
-                "installation.", agentConfigFile);
-        }
-        
-    } else if (status == AM_SUCCESS) {
-        
-        // rest url is present, so fetch attributes and determine repo type
-        *pRESTServiceAvailable = B_TRUE;
-        
-        authStatus = agent_info.agentProfileServiceObj->agentLogin(propPtr,
-                                                                userName,
-                                                                passwd,
-                                                                agentSSOToken);
-        
-        if(authStatus == AM_SUCCESS){
-            agentAuthenticated = AM_TRUE;
-            am_properties_t tmpPropPtr;
-            status = am_properties_create(&tmpPropPtr);
-            
-            if(status == AM_SUCCESS) {
-                
-                status =
-                    agent_info.agentProfileServiceObj->getAgentAttributes(
-                                                                agentSSOToken,
-                                                                tmpPropPtr);
-                
-                if(status == AM_SUCCESS) {
-                    
-                    const char* repoType = NULL;
-                    boolean_t repoKeyPresent;
-                    repoKeyPresent = am_properties_is_set(tmpPropPtr,
-                        AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY);
-                    
-                    if( repoKeyPresent == B_TRUE) {
-                        
-                        status = am_properties_get(tmpPropPtr,
-                            AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY,
-                            &repoType );
-                        if(status == AM_SUCCESS) {
-                            
-                            if(strcasecmp(repoType, 
-                               AGENT_PROPERTIES_LOCAL) == 0) {
-                                //LOCAL repo type
-                                am_web_log_info("Repository type property is "
-                                " set to %s in agent profile, %s. ",
-                                repoType, userName.c_str());
-                                status = load_local_properties(agentConfigFile);
-                                if(status == AM_SUCCESS) {
-                                    copy_bootstrap_to_agent_info(&boot_info,
-                                        agent_info.properties);
-                                } else {
-                                    am_web_log_error("Repository type property "
-                                    " is set to %s in agent profile, %s. "
-                                    "But Agent failed to load local %s file",
-                                    repoType, 
-                                    userName.c_str(), agentConfigFile);
-                                }
-                                
-                            }  else if(strcasecmp(repoType, 
-                                       AGENT_PROPERTIES_CENTRALIZED) == 0) {
-                                // REMOTE repo type
-                                status = 
-                                   am_properties_create(&agent_info.properties);
+    if (agentProfileService != NULL) {
+         agent_config = am_web_get_agent_configuration();
+         agentConfigPtr = 
+             (AgentConfigurationRefCntPtr*) agent_config;
 
-                                status = 
-                                    am_properties_copy(tmpPropPtr, 
-                                                       &agent_info.properties);
-                                
-                                copy_bootstrap_to_agent_info(&boot_info, 
-                                                        agent_info.properties);
-                                
-                                status = 
-                                    load_agent_properties_cac(&agent_info, 
-                                                              B_TRUE);
-                            } else { //treat as misconfiguration
-                                am_web_log_error("Repository type property is "
-                                    "present  in agent profile, %s, "
-                                    "but invalid value is present, %s."
-                                    "Sepcify valid value (local|centralized) "
-                                    "to make agent function properly.",
-                                    userName.c_str(), repoType);
-                                status = AM_REPOSITORY_TYPE_INVALID;
-                            }
-                        } else { //treat as misconfiguration
-                            am_web_log_error("Repository type property is "
-                                "present in agent profile, %s, "
-                                "but invalid value is present, %s."
-                                "Sepcify valid value (local|centralized) "
-                                "to make agent function properly.",
-                                userName.c_str(), repoType);
-                            status = AM_REPOSITORY_TYPE_INVALID;
-                        }
-                        
-                    } else { // repository property doesn't exist
-                        am_web_log_warning("Repository type property is not "
-                            " present in agent profile, %s. So Agent tries to load "
-                            "from local %s file",
-                            userName.c_str(), agentConfigFile);
-                        status = load_local_properties(agentConfigFile);
-                        if(status == AM_SUCCESS) {
-                            copy_bootstrap_to_agent_info(&boot_info, 
-                                agent_info.properties);
-                        } else {
-                            am_web_log_error("Agent failed to load local file, "
-                                "%s", agentConfigFile);
-                        }
-                        
-                    }
-                } else {
-                    am_web_log_error("There is an error while fetching"
-                        " attributes using REST service. Status: %s ",
-                        userName.c_str(), am_status_to_string(status));
-                    status = AM_REST_ATTRS_SERVICE_FAILURE;
-                }
-                
-            }
-            
+    }
+    
+    if ((*agentConfigPtr) == NULL) {
+        status = AM_FAILURE;
+    }
+    else {
+        restStatus = agentProfileService->isRESTServiceAvailable();
+        if (restStatus == AM_REST_SERVICE_NOT_AVAILABLE) {
+           *pRESTServiceAvailable = B_FALSE;
         } else {
-            agentAuthenticated = AM_FALSE;
+           *pRESTServiceAvailable = B_TRUE;
         }
-        
     }
 
     if (AM_SUCCESS == status) {
@@ -3486,36 +719,37 @@ am_agent_init_cac(boolean_t* pAgentInitialized,
         conversion routines will work correctly. Setting LC_MESSAGE to a
         different value  can be useful to run the agent in non English locale
         and dump the log in English  */
-        if(agent_info.locale != NULL) {
-            setlocale(LC_MESSAGES,agent_info.locale);
+        if((*agentConfigPtr)->locale != NULL) {
+            setlocale(LC_MESSAGES,(*agentConfigPtr)->locale);
             setlocale(LC_CTYPE,"");
             setlocale(LC_NUMERIC,"");
             setlocale(LC_TIME,"");
             setlocale(LC_MONETARY,"");
             am_web_log_info("%s: Logging Locale: %s",
-                            thisfunc, agent_info.locale);
+                            thisfunc, (*agentConfigPtr)->locale);
         } else {
             setlocale(LC_ALL,"");
             am_web_log_info("am_web_init(): Logging Locale: OS locale");
         }
 	textdomain(domainname);
 	#endif
-	populate_am_resource_traits(rsrcTraits);
+	populate_am_resource_traits(rsrcTraits, agent_config);
 
-	status = am_policy_init(agent_info.properties);
+	status = am_policy_init((*agentConfigPtr)->properties);
 	if (AM_SUCCESS == status) {
 	    /* initialize policy */
 	    status = am_policy_service_init("iPlanetAMWebAgentService",
 						INSTANCE_NAME,
 						rsrcTraits,
-						agent_info.properties,
-						&agent_info.policy_handle);
+						(*agentConfigPtr)->properties,
+						&boot_info.policy_handle);
 	    if (AM_SUCCESS == status) {
 		initialized = AM_TRUE;
 		if(*pRESTServiceAvailable == B_TRUE && 
 		   !agentSSOToken.empty()) {
-		    am_policy_service_initialize_cac(agent_info.policy_handle,
-                                                     agentSSOToken.c_str());
+		    am_policy_service_initialize_cac(boot_info.policy_handle,
+                                                     agentSSOToken.c_str(), 
+                                                     (*agentConfigPtr)->properties);
 		}
 	    } else {
 		am_web_log_error("%s unable to "
@@ -3529,275 +763,33 @@ am_agent_init_cac(boolean_t* pAgentInitialized,
 				am_status_to_string(status), status);
 	}
 
-	status = am_log_add_module("RemoteLog", &agent_info.remote_LogID);
+	status = am_log_add_module("RemoteLog", &(*agentConfigPtr)->remote_LogID);
 	if (AM_SUCCESS != status) {
-	    agent_info.remote_LogID = AM_LOG_ALL_MODULES;
+	    (*agentConfigPtr)->remote_LogID = AM_LOG_ALL_MODULES;
 	    status = AM_SUCCESS;
 	}
 
-	if (AM_SUCCESS == status) {
-	    properties = reinterpret_cast<Properties *>(agent_info.properties);
-	    if (agent_info.postdatapreserve_enabled == AM_TRUE) {
-		try {
-		    agent_info.postcache_handle = new PostCache(*properties);
-		}
-		catch(InternalException& exi) {
-		    status = exi.getStatusCode();
-		}
-		catch(std::exception& exs) {
-		    am_web_log_error("%s: exception encountered while "
-				     "initializing post cache handle: %s.",
-				     thisfunc, exs.what());
-		    status = AM_FAILURE;
-		}
-		catch(...) {
-		    am_web_log_error("%s: Unknown exception encountered "
-				     "while initializing post cache handle.",
-				     thisfunc);
-		    status = AM_FAILURE;
-		}
-	      }
-	    }
-
-	    // initialize the FQDN handler
-	    if (AM_SUCCESS == status) {
-	        try {
-		  status = load_fqdn_handler(rsrcTraits.ignore_case?true:false);
-		}
-		catch(std::bad_alloc& exb) {
-		    status = AM_NO_MEMORY;
-		}
-		catch(std::exception& exs) {
-		    am_web_log_error("%s: exception encountered while "
-				     "loading fqdn handler: %s",
-				     thisfunc, exs.what());
-		    status = AM_FAILURE;
-		}
-		catch(...) {
-		    am_web_log_error("%s: Unknown exception encountered "
-				     "while loading fqdn handler.",
-				     thisfunc);
-		    status = AM_FAILURE;
-		}
-	    }
-
     }
 
-	if (AM_SUCCESS == status) {
-	    const Properties& propertiesRef =
-		*reinterpret_cast<Properties *>(agent_info.properties);
-
-	    status = am_properties_get_with_default(agent_info.properties,
-			      	                   AM_POLICY_PROFILE_ATTRS_MODE,
-			      	                   AM_POLICY_SET_ATTRS_AS_NONE,
-			      			   &profileMode);
-	    if (status == AM_SUCCESS &&
-		    profileMode != NULL && profileMode[0] != '\0') {
-		if ((!strcasecmp(profileMode, AM_POLICY_SET_ATTRS_AS_COOKIE)) ||
-		(!strcasecmp(profileMode, AM_POLICY_SET_ATTRS_AS_COOKIE_OLD))) {
-		    setUserProfileAttrsMode = SET_ATTRS_AS_COOKIE;
-		}
-		else if ((!strcasecmp(profileMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER)) ||
-				 (!strcasecmp(profileMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER_OLD))) {
-		    setUserProfileAttrsMode = SET_ATTRS_AS_HEADER;
-	        }
-		else {
-		    // anything other than COOKIE or HEADER will be NONE
-		    setUserProfileAttrsMode = SET_ATTRS_NONE;
-		}
-	    }
-	    else {
-		setUserProfileAttrsMode = SET_ATTRS_NONE;
-	    }
-
-	    status = am_properties_get_with_default(agent_info.properties,
-			      	                   AM_POLICY_SESSION_ATTRS_MODE,
-			      	                   AM_POLICY_SET_ATTRS_AS_NONE,
-			      			   &sessionMode);
-	    if (status == AM_SUCCESS &&
-		    sessionMode != NULL && sessionMode[0] != '\0') {
-		if ((!strcasecmp(sessionMode, AM_POLICY_SET_ATTRS_AS_COOKIE)) ||
-		(!strcasecmp(sessionMode, AM_POLICY_SET_ATTRS_AS_COOKIE_OLD))) {
-		    setUserSessionAttrsMode = SET_ATTRS_AS_COOKIE;
-		}
-		else if ((!strcasecmp(sessionMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER)) ||
-			(!strcasecmp(sessionMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER_OLD))) {
-		    setUserSessionAttrsMode = SET_ATTRS_AS_HEADER;
-	        }
-		else {
-		    // anything other than COOKIE or HEADER will be NONE
-		    setUserSessionAttrsMode = SET_ATTRS_NONE;
-		}
-	    }
-	    else {
-		setUserSessionAttrsMode = SET_ATTRS_NONE;
-	    }
-
-	    status = am_properties_get_with_default(agent_info.properties,
-			      	                 AM_POLICY_RESPONSE_ATTRS_MODE,
-			      	                 AM_POLICY_SET_ATTRS_AS_NONE,
-			      			 &responseMode);
-	    if (status == AM_SUCCESS &&
-		    responseMode != NULL && responseMode[0] != '\0') {
-	     if ((!strcasecmp(responseMode, AM_POLICY_SET_ATTRS_AS_COOKIE)) ||
-	     (!strcasecmp(responseMode, AM_POLICY_SET_ATTRS_AS_COOKIE_OLD))) {
-		    setUserResponseAttrsMode = SET_ATTRS_AS_COOKIE;
-		}
-		else if ((!strcasecmp(responseMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER)) ||
-			(!strcasecmp(responseMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER_OLD))) {
-		    setUserResponseAttrsMode = SET_ATTRS_AS_HEADER;
-	        }
-		else {
-		    // anything other than COOKIE or HEADER will be NONE
-		    setUserResponseAttrsMode = SET_ATTRS_NONE;
-		}
-	    }
-	    else {
-		setUserResponseAttrsMode = SET_ATTRS_NONE;
-	    }
-
-	    if (AM_SUCCESS == status) {
-	        status = am_properties_get_with_default(
-				 agent_info.properties,
-		    	         AM_POLICY_ATTRS_MULTI_VALUE_SEPARATOR,
-			         "|",
-			         &attrMultiValueSeparator);
-	    }
-
-	    try {
-	      if (setUserProfileAttrsMode == SET_ATTRS_AS_COOKIE) {
-		  Properties attributeMap;
-		  const std::string &headerAttrs =
-			propertiesRef.get(AM_POLICY_PROFILE_ATTRS_MAP, "");
-		  attributeMap.parsePropertyKeyValue(headerAttrs, ',','|');
-		  Log::log(agent_info.log_module, Log::LOG_DEBUG,
-			   "Profile Attributes count=%u", attributeMap.size());
-		  Properties::iterator iter;
-		  for(iter = attributeMap.begin();
-		        iter != attributeMap.end(); iter++) {
-                     string attr = (*iter).second;
-		     Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
-				 "Profile Attribute=%s", attr.c_str());
-			attrList.push_back(attr);
-		  }
-	      }
-
-	      if (setUserSessionAttrsMode == SET_ATTRS_AS_COOKIE) {
-		    // Repeat the same for the session attribute map
-		    Properties sessionAttributeMap;
-		    const std::string &sessionAttrs =
-			propertiesRef.get(AM_POLICY_SESSION_ATTRS_MAP, "");
-		    sessionAttributeMap.parsePropertyKeyValue(sessionAttrs,
-							      ',','|');
-		    Log::log(agent_info.log_module, Log::LOG_DEBUG,
-			    "Session Attributes count=%u",
-			     sessionAttributeMap.size());
-		    Properties::iterator iter_sessionAttr;
-		    for(iter_sessionAttr = sessionAttributeMap.begin();
-			    iter_sessionAttr != sessionAttributeMap.end();
-			       iter_sessionAttr++) {
-			string attr = (*iter_sessionAttr).second;
-			Log::log(agent_info.log_module,
-				 Log::LOG_MAX_DEBUG,
-				 "Session Attribute=%s", attr.c_str());
-			attrList.push_back(attr);
-		    }
-                }
-
-	       if (setUserResponseAttrsMode == SET_ATTRS_AS_COOKIE) {
-		    // Repeat the same for the response attribute map
-		    Properties responseAttributeMap;
-		    const std::string &responseAttrs =
-			propertiesRef.get(AM_POLICY_RESPONSE_ATTRS_MAP, "");
-		    responseAttributeMap.parsePropertyKeyValue(responseAttrs,
-							      ',','|');
-		    Log::log(agent_info.log_module, Log::LOG_DEBUG,
-			    "Response Attributes count=%u",
-			     responseAttributeMap.size());
-		    Properties::iterator iter_responseAttr;
-		    for(iter_responseAttr = responseAttributeMap.begin();
-			iter_responseAttr != responseAttributeMap.end();
-			iter_responseAttr++) {
-			string attr = (*iter_responseAttr).second;
-			Log::log(agent_info.log_module,
-				 Log::LOG_MAX_DEBUG,
-				 "Response Attribute=%s", attr.c_str());
-			attrList.push_back(attr);
-		    }
-               }
-	     } catch (InternalException& exi) {
-		    status = exi.getStatusCode();
-	     } catch (std::bad_alloc& exb) {
-		    am_web_log_error("%s: Bad alloc error encountered while "
-				     "parsing LDAP attributes as cookie: %s",
-				     thisfunc, exb.what());
-		    status = AM_NO_MEMORY;
-	     } catch (std::exception& exs) {
-		    am_web_log_error("%s: Exception encountered while "
-				     "parsing LDAP attributes as cookie: %s",
-				     thisfunc, exs.what());
-		    status = AM_FAILURE;
-	     } catch (...) {
-		    am_web_log_error("%s: Unknown exception encountered while "
-				     "parsing LDAP attributes as cookie.",
-				     thisfunc);
-		    status = AM_FAILURE;
-	    }
-	}
-
-	if (AM_SUCCESS == status) {
-	    status = am_properties_get_with_default(
-		    	agent_info.properties,
-		    	AM_POLICY_PROFILE_ATTRS_COOKIE_PFX,
-			"HTTP_",
-			&attrCookiePrefix);
-	    am_web_log_debug("%s: Using cookie prefix %s.",
-			     thisfunc, attrCookiePrefix);
-	}
-
-	if (AM_SUCCESS == status) {
-	    status = am_properties_get_with_default(
-		    	agent_info.properties,
-		    	AM_POLICY_PROFILE_ATTRS_COOKIE_MAX_AGE,
-			"300",
-			&attrCookieMaxAge);
-	    am_web_log_debug("%s: Using cookie max-age %s.",
-			     thisfunc, attrCookieMaxAge);
-	}
-
-	if (AM_SUCCESS == status) {
-		*pAgentInitialized = B_TRUE;
-        } else {
-	    if (agent_info.fqdn_handler != NULL) {
-                delete agent_info.fqdn_handler;
-            }
-            if(*pRESTServiceAvailable == B_TRUE &&
-                agentAuthenticated == AM_TRUE) {
-                agent_info.agentProfileServiceObj->agentLogout(propPtr); 
-            }
-
-	    cleanup_properties(&agent_info);
-	}
+    if (AM_SUCCESS == status) {
+        *pAgentInitialized = B_TRUE;
+    } else {
+        if(*pRESTServiceAvailable == B_TRUE &&
+            agentAuthenticated == AM_TRUE) {
+            agentProfileService->agentLogout(propPtr); 
+        }
+    }
     return status;
 }
 
-
 /**
- * This function is used by CAC enabled agents. 
- * Agent plugin init function calls 
- * to load bootstrap properties fiile.
+ * Agent plugin init function calls to load bootstrap properties fiile.
  */
 extern "C" AM_WEB_EXPORT am_status_t
-am_web_init_cac(const char *agent_bootstrap_file,
+am_web_init(const char *agent_bootstrap_file,
                 const char *agent_config_file)
 {
-    const char *thisfunc = "am_web_init_cac";
+    const char *thisfunc = "am_web_init";
     am_status_t status = AM_SUCCESS;
     am_status_t authStatus = AM_FAILURE;
     string agentSSOToken; 
@@ -3833,361 +825,16 @@ am_web_init_cac(const char *agent_bootstrap_file,
             }
         }
     }
-
     return status;
 }
 
-
 /**
- * initialize agent instance
+ * Performs cleanup.
  */
 extern "C" AM_WEB_EXPORT am_status_t
-am_web_init(const char *config_file)
+am_web_cleanup(boolean_t isRESTServiceAvailable)
 {
-    const char *thisfunc = "am_web_init";
-    am_status_t status = AM_SUCCESS;
-    const Properties *properties = NULL;
-
-
-    if (! initialized) {
-	// initialize log here so any error before properties file is
-	// loaded will go to stderr. After it's loaded will go to log file.
-	status = Log::initialize();
-
-	if (AM_SUCCESS == status) {
-	    try {
-		status = load_agent_properties(&agent_info, config_file, B_TRUE);
-	    }
-	    catch(InternalException& ex) {
-		am_web_log_error("%s: Exception encountered while loading "
-				 "agent properties: %s: %s",
-				 thisfunc, ex.what(), ex.getMessage());
-		status = ex.getStatusCode();
-	    }
-	    catch(std::bad_alloc& exb) {
-		status = AM_NO_MEMORY;
-	    }
-	    catch(std::exception& exs) {
-		am_web_log_error("%s: Exception encountered while loading "
-				 "agent properties: %s",
-				 thisfunc, exs.what());
-		status = AM_FAILURE;
-	    }
-	    catch(...) {
-		am_web_log_error("%s: Unknown exception encountered "
-				 "while loading agent properties.", thisfunc);
-		status = AM_FAILURE;
-	    }
-	}
-
-	if (AM_SUCCESS == status) {
-	    am_resource_traits_t rsrcTraits;
-#if !defined(WINNT) && !defined(HPUX) && !defined(AIX)
-/* Logging locale is set as per the value defined in the properties file
-   However we need to set the rest of locale behaviour so that code
-   conversion routines will work correctly. Setting LC_MESSAGE to a
-   different value  can be useful to run the agent in non English locale
-   and dump the log in English  */
-	    if(agent_info.locale != NULL) {
-		setlocale(LC_MESSAGES,agent_info.locale);
-		setlocale(LC_CTYPE,"");
-		setlocale(LC_NUMERIC,"");
-		setlocale(LC_TIME,"");
-		setlocale(LC_MONETARY,"");
-		am_web_log_info("%s: Logging Locale: %s",
-			        thisfunc, agent_info.locale);
-	    } else {
-		setlocale(LC_ALL,"");
-		am_web_log_info("am_web_init(): Logging Locale: OS locale");
-	    }
-	    textdomain(domainname);
-#endif
-	    populate_am_resource_traits(rsrcTraits);
-	    status = am_policy_init(agent_info.properties);
-	    if (AM_SUCCESS == status) {
-		/* initialize policy */
-		status = am_policy_service_init("iPlanetAMWebAgentService",
-						INSTANCE_NAME,
-						rsrcTraits,
-						agent_info.properties,
-						&agent_info.policy_handle);
-		if (AM_SUCCESS == status) {
-		    initialized = TRUE;
-		} else {
-		    am_web_log_error("%s(%s) unable to "
-				    "initialize the agent's policy object",
-				    thisfunc, config_file);
-		}
-	    } else {
-		am_web_log_error("%s(%s) unable to initialize "
-				"the AM SDK, status = %s (%d)",
-				thisfunc, config_file,
-				am_status_to_string(status), status);
-	    }
-	    status = am_log_add_module("RemoteLog",
-				       &agent_info.remote_LogID);
-	    if (AM_SUCCESS != status) {
-	      agent_info.remote_LogID = AM_LOG_ALL_MODULES;
-	      status = AM_SUCCESS;
-	    }
-
-	    if (AM_SUCCESS == status) {
-	      properties =
-		    reinterpret_cast<Properties *>(agent_info.properties);
-	      if (agent_info.postdatapreserve_enabled == AM_TRUE) {
-		try {
-		    agent_info.postcache_handle = new PostCache(*properties);
-		}
-		catch(InternalException& exi) {
-		    status = exi.getStatusCode();
-		}
-		catch(std::exception& exs) {
-		    am_web_log_error("%s: exception encountered while "
-				     "initializing post cache handle: %s.",
-				     thisfunc, exs.what());
-		    status = AM_FAILURE;
-		}
-		catch(...) {
-		    am_web_log_error("%s: Unknown exception encountered "
-				     "while initializing post cache handle.",
-				     thisfunc);
-		    status = AM_FAILURE;
-		}
-	      }
-	    }
-
-	    // initialize the FQDN handler
-	    if (AM_SUCCESS == status) {
-	        try {
-		  status = load_fqdn_handler(rsrcTraits.ignore_case?true:false);
-		}
-		catch(std::bad_alloc& exb) {
-		    status = AM_NO_MEMORY;
-		}
-		catch(std::exception& exs) {
-		    am_web_log_error("%s: exception encountered while "
-				     "loading fqdn handler: %s",
-				     thisfunc, exs.what());
-		    status = AM_FAILURE;
-		}
-		catch(...) {
-		    am_web_log_error("%s: Unknown exception encountered "
-				     "while loading fqdn handler.",
-				     thisfunc);
-		    status = AM_FAILURE;
-		}
-	    }
-
-	}
-
-	if (AM_SUCCESS == status) {
-	    const Properties& propertiesRef =
-		*reinterpret_cast<Properties *>(agent_info.properties);
-
-	    status = am_properties_get_with_default(agent_info.properties,
-			      	                   AM_POLICY_PROFILE_ATTRS_MODE,
-			      	                   AM_POLICY_SET_ATTRS_AS_NONE,
-			      			   &profileMode);
-	    if (status == AM_SUCCESS &&
-		    profileMode != NULL && profileMode[0] != '\0') {
-		if ((!strcasecmp(profileMode, AM_POLICY_SET_ATTRS_AS_COOKIE)) ||
-		(!strcasecmp(profileMode, AM_POLICY_SET_ATTRS_AS_COOKIE_OLD))) {
-		    setUserProfileAttrsMode = SET_ATTRS_AS_COOKIE;
-		}
-		else if ((!strcasecmp(profileMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER)) ||
-				 (!strcasecmp(profileMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER_OLD))) {
-		    setUserProfileAttrsMode = SET_ATTRS_AS_HEADER;
-	        }
-		else {
-		    // anything other than COOKIE or HEADER will be NONE
-		    setUserProfileAttrsMode = SET_ATTRS_NONE;
-		}
-	    }
-	    else {
-		setUserProfileAttrsMode = SET_ATTRS_NONE;
-	    }
-
-	    status = am_properties_get_with_default(agent_info.properties,
-			      	                   AM_POLICY_SESSION_ATTRS_MODE,
-			      	                   AM_POLICY_SET_ATTRS_AS_NONE,
-			      			   &sessionMode);
-	    if (status == AM_SUCCESS &&
-		    sessionMode != NULL && sessionMode[0] != '\0') {
-		if ((!strcasecmp(sessionMode, AM_POLICY_SET_ATTRS_AS_COOKIE)) ||
-		(!strcasecmp(sessionMode, AM_POLICY_SET_ATTRS_AS_COOKIE_OLD))) {
-		    setUserSessionAttrsMode = SET_ATTRS_AS_COOKIE;
-		}
-		else if ((!strcasecmp(sessionMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER)) ||
-			(!strcasecmp(sessionMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER_OLD))) {
-		    setUserSessionAttrsMode = SET_ATTRS_AS_HEADER;
-	        }
-		else {
-		    // anything other than COOKIE or HEADER will be NONE
-		    setUserSessionAttrsMode = SET_ATTRS_NONE;
-		}
-	    }
-	    else {
-		setUserSessionAttrsMode = SET_ATTRS_NONE;
-	    }
-
-	    status = am_properties_get_with_default(agent_info.properties,
-			      	                 AM_POLICY_RESPONSE_ATTRS_MODE,
-			      	                 AM_POLICY_SET_ATTRS_AS_NONE,
-			      			 &responseMode);
-	    if (status == AM_SUCCESS &&
-		    responseMode != NULL && responseMode[0] != '\0') {
-	     if ((!strcasecmp(responseMode, AM_POLICY_SET_ATTRS_AS_COOKIE)) ||
-	     (!strcasecmp(responseMode, AM_POLICY_SET_ATTRS_AS_COOKIE_OLD))) {
-		    setUserResponseAttrsMode = SET_ATTRS_AS_COOKIE;
-		}
-		else if ((!strcasecmp(responseMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER)) ||
-			(!strcasecmp(responseMode,
-			    	     AM_POLICY_SET_ATTRS_AS_HEADER_OLD))) {
-		    setUserResponseAttrsMode = SET_ATTRS_AS_HEADER;
-	        }
-		else {
-		    // anything other than COOKIE or HEADER will be NONE
-		    setUserResponseAttrsMode = SET_ATTRS_NONE;
-		}
-	    }
-	    else {
-		setUserResponseAttrsMode = SET_ATTRS_NONE;
-	    }
-
-	    if (AM_SUCCESS == status) {
-	        status = am_properties_get_with_default(
-				 agent_info.properties,
-		    	         AM_POLICY_ATTRS_MULTI_VALUE_SEPARATOR,
-			         "|",
-			         &attrMultiValueSeparator);
-	    }
-
-	    try {
-	      if (setUserProfileAttrsMode == SET_ATTRS_AS_COOKIE) {
-		  Properties attributeMap;
-		  const std::string &headerAttrs =
-			propertiesRef.get(AM_POLICY_PROFILE_ATTRS_MAP, "");
-		  attributeMap.parsePropertyKeyValue(headerAttrs, ',','|');
-		  Log::log(agent_info.log_module, Log::LOG_DEBUG,
-			   "Profile Attributes count=%u", attributeMap.size());
-		  Properties::iterator iter;
-		  for(iter = attributeMap.begin();
-		        iter != attributeMap.end(); iter++) {
-                     string attr = (*iter).second;
-		     Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
-				 "Profile Attribute=%s", attr.c_str());
-			attrList.push_back(attr);
-		  }
-	      }
-
-	      if (setUserSessionAttrsMode == SET_ATTRS_AS_COOKIE) {
-		    // Repeat the same for the session attribute map
-		    Properties sessionAttributeMap;
-		    const std::string &sessionAttrs =
-			propertiesRef.get(AM_POLICY_SESSION_ATTRS_MAP, "");
-		    sessionAttributeMap.parsePropertyKeyValue(sessionAttrs,
-							      ',','|');
-		    Log::log(agent_info.log_module, Log::LOG_DEBUG,
-			    "Session Attributes count=%u",
-			     sessionAttributeMap.size());
-		    Properties::iterator iter_sessionAttr;
-		    for(iter_sessionAttr = sessionAttributeMap.begin();
-			    iter_sessionAttr != sessionAttributeMap.end();
-			       iter_sessionAttr++) {
-			string attr = (*iter_sessionAttr).second;
-			Log::log(agent_info.log_module,
-				 Log::LOG_MAX_DEBUG,
-				 "Session Attribute=%s", attr.c_str());
-			attrList.push_back(attr);
-		    }
-                }
-
-	       if (setUserResponseAttrsMode == SET_ATTRS_AS_COOKIE) {
-		    // Repeat the same for the response attribute map
-		    Properties responseAttributeMap;
-		    const std::string &responseAttrs =
-			propertiesRef.get(AM_POLICY_RESPONSE_ATTRS_MAP, "");
-		    responseAttributeMap.parsePropertyKeyValue(responseAttrs,
-							      ',','|');
-		    Log::log(agent_info.log_module, Log::LOG_DEBUG,
-			    "Response Attributes count=%u",
-			     responseAttributeMap.size());
-		    Properties::iterator iter_responseAttr;
-		    for(iter_responseAttr = responseAttributeMap.begin();
-			iter_responseAttr != responseAttributeMap.end();
-			iter_responseAttr++) {
-			string attr = (*iter_responseAttr).second;
-			Log::log(agent_info.log_module,
-				 Log::LOG_MAX_DEBUG,
-				 "Response Attribute=%s", attr.c_str());
-			attrList.push_back(attr);
-		    }
-               }
-	     } catch (InternalException& exi) {
-		    status = exi.getStatusCode();
-	     } catch (std::bad_alloc& exb) {
-		    am_web_log_error("%s: Bad alloc error encountered while "
-				     "parsing LDAP attributes as cookie: %s",
-				     thisfunc, exb.what());
-		    status = AM_NO_MEMORY;
-	     } catch (std::exception& exs) {
-		    am_web_log_error("%s: Exception encountered while "
-				     "parsing LDAP attributes as cookie: %s",
-				     thisfunc, exs.what());
-		    status = AM_FAILURE;
-	     } catch (...) {
-		    am_web_log_error("%s: Unknown exception encountered while "
-				     "parsing LDAP attributes as cookie.",
-				     thisfunc);
-		    status = AM_FAILURE;
-	    }
-	}
-
-	if (AM_SUCCESS == status) {
-	    status = am_properties_get_with_default(
-		    	agent_info.properties,
-		    	AM_POLICY_PROFILE_ATTRS_COOKIE_PFX,
-			"HTTP_",
-			&attrCookiePrefix);
-	    am_web_log_debug("%s: Using cookie prefix %s.",
-			     thisfunc, attrCookiePrefix);
-	}
-
-	if (AM_SUCCESS == status) {
-	    status = am_properties_get_with_default(
-		    	agent_info.properties,
-		    	AM_POLICY_PROFILE_ATTRS_COOKIE_MAX_AGE,
-			"300",
-			&attrCookieMaxAge);
-	    am_web_log_debug("%s: Using cookie max-age %s.",
-			     thisfunc, attrCookieMaxAge);
-	}
-
-	if (AM_SUCCESS != status) {
-	    if (agent_info.fqdn_handler != NULL) {
-                delete agent_info.fqdn_handler;
-            }
-	    cleanup_properties(&agent_info);
-	}
-    }
-
-    return status;
-}
-
-
-
-/**
- * Cleanup method used by CAC enabled agents.
- */
-extern "C" AM_WEB_EXPORT am_status_t
-am_web_cleanup_cac(boolean_t isRESTServiceAvailable)
-{
-    const char *thisfunc = "am_web_cleanup_cac()";
+    const char *thisfunc = "am_web_cleanup()";
     am_status_t status = AM_FAILURE;
 
     if (initialized) {
@@ -4196,106 +843,29 @@ am_web_cleanup_cac(boolean_t isRESTServiceAvailable)
 	if(isRESTServiceAvailable == B_TRUE){
 	    const Properties& propPtr = 
             *reinterpret_cast<Properties *>(boot_info.properties);
-	    agent_info.agentProfileServiceObj->agentLogout(propPtr); 
+	    agentProfileService->agentLogout(propPtr); 
 	    am_web_log_debug("%s: Agent logout done.", thisfunc);
 	} 
 
-	cleanup_properties(&agent_info);
-
-	if (agent_info.postdatapreserve_enabled) {
-	    if(agent_info.postcache_handle != NULL){
-		delete agent_info.postcache_handle;
-		Log::log(agent_info.log_module, Log::LOG_DEBUG,
-			 "POST cache hashtable shutdown.");
-	    } else {
-		am_web_log_warning("%s: POST cache hashtable was enabled but "
-				   "no post cache handle was found.", thisfunc);
-		status = AM_FAILURE;
-	    }
-	}
-
-        if (AM_SUCCESS == status) {
-	    try {
-		status = unload_fqdn_handler();
-	    }
-	    catch (std::exception& exs) {
-		am_web_log_error("%s: Exception caught while unloading "
-				 "fqdn handler: %s", thisfunc, exs.what());
-		status = AM_FAILURE;
-	    }
-	    catch (...) {
-		am_web_log_error("%s: Unknown exception caught while unloading "
-				 "fqdn handler.", thisfunc);
-		status = AM_FAILURE;
-	    }
-        }
 	status = am_cleanup();
 
 	initialized = AM_FALSE;
     } else {
 	status = AM_SUCCESS;
     }
-
-    return status;
-}
-
-
-/**
- * Method to close an initialized policy evaluator
- */
-extern "C" AM_WEB_EXPORT am_status_t
-am_web_cleanup()
-{
-    const char *thisfunc = "am_web_cleanup()";
-    am_status_t status = AM_FAILURE;
-
-    if (initialized) {
-	 am_web_log_debug("%s: cleanup sequence initiated.", thisfunc);
-
-	cleanup_properties(&agent_info);
-
-	if (agent_info.postdatapreserve_enabled) {
-	    if(agent_info.postcache_handle != NULL){
-		delete agent_info.postcache_handle;
-		Log::log(agent_info.log_module, Log::LOG_DEBUG,
-			 "POST cache hashtable shutdown.");
-	    } else {
-		am_web_log_warning("%s: POST cache hashtable was enabled but "
-				   "no post cache handle was found.", thisfunc);
-		status = AM_FAILURE;
-	    }
-	}
-
-        if (AM_SUCCESS == status) {
-	    try {
-		status = unload_fqdn_handler();
-	    }
-	    catch (std::exception& exs) {
-		am_web_log_error("%s: Exception caught while unloading "
-				 "fqdn handler: %s", thisfunc, exs.what());
-		status = AM_FAILURE;
-	    }
-	    catch (...) {
-		am_web_log_error("%s: Unknown exception caught while unloading "
-				 "fqdn handler.", thisfunc);
-		status = AM_FAILURE;
-	    }
-        }
-	status = am_cleanup();
-
-	initialized = AM_FALSE;
-    } else {
-	status = AM_SUCCESS;
-    }
-
     return status;
 }
 
 // -- supporting methods for am_web_is_access_allowed
 
 /* Throws std::exceptions's from URL methods */
-am_bool_t in_not_enforced_list(URL &urlObj)
+am_bool_t in_not_enforced_list(URL &urlObj,
+                               void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "in_not_enforced_list";
     std::string baseURL_str;
     const char *baseURL;
@@ -4304,7 +874,7 @@ am_bool_t in_not_enforced_list(URL &urlObj)
     am_bool_t found = AM_FALSE;
     size_t i = 0;
     am_resource_traits_t rsrcTraits;
-    populate_am_resource_traits(rsrcTraits);
+    populate_am_resource_traits(rsrcTraits, agent_config);
 
     am_bool_t access_denied_url_match_flag = AM_FALSE;
     am_bool_t dummy_post_url_match_flag = AM_FALSE;
@@ -4313,9 +883,9 @@ am_bool_t in_not_enforced_list(URL &urlObj)
     url = url_str.c_str();
     urlObj.getBaseURL(baseURL_str);
     baseURL = baseURL_str.c_str();
-
+    
     /* First check is the access denied URL */
-    if (agent_info.access_denied_url != NULL) {
+    if ((*agentConfigPtr)->access_denied_url != NULL) {
     /*we append the sunwerrorcode as a querystring to the access denied url
     if the policy denies access to the resouce. This query parameter
     needs to be removed from the url if present before comparison */
@@ -4324,7 +894,7 @@ am_bool_t in_not_enforced_list(URL &urlObj)
     std::string accessDeniedUrlStr;
     const char* access_denied_url = NULL;
 
-    URL accessDeniedUrlObj(agent_info.access_denied_url);
+    URL accessDeniedUrlObj((*agentConfigPtr)->access_denied_url);
     accessDeniedUrlObj.getURLString(accessDeniedUrlStr);
     access_denied_url = accessDeniedUrlStr.c_str();
 
@@ -4336,7 +906,7 @@ am_bool_t in_not_enforced_list(URL &urlObj)
     }
 
 	am_web_log_debug("Matching %s with access_denied_url %s",
-		         url, agent_info.access_denied_url);
+		         url, (*agentConfigPtr)->access_denied_url);
         am_resource_match_t access_denied_url_match;
         access_denied_url_match = am_policy_compare_urls(&rsrcTraits,
 					access_denied_url, accessUrl, B_FALSE);
@@ -4346,10 +916,10 @@ am_bool_t in_not_enforced_list(URL &urlObj)
     }
 
     // Check for dummy post url
-    if (agent_info.dummy_post_url != NULL) {
+    if ((*agentConfigPtr)->dummy_post_url != NULL) {
         am_resource_match_t dummy_post_url_match;
         dummy_post_url_match = am_policy_compare_urls(&rsrcTraits,
-					agent_info.dummy_post_url,
+					(*agentConfigPtr)->dummy_post_url,
                                         baseURL, B_TRUE);
         if ( (AM_EXACT_MATCH == dummy_post_url_match)  ||
 	     ( AM_EXACT_PATTERN_MATCH == dummy_post_url_match )) {
@@ -4358,45 +928,45 @@ am_bool_t in_not_enforced_list(URL &urlObj)
     }
 
     if (access_denied_url_match_flag == AM_TRUE) {
-        Log::log(agent_info.log_module, Log::LOG_DEBUG,
+        Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		 "%s: The requested URL %s "
 		 "is the access denied URL which is always not enforced.",
 		 thisfunc, url);
         found = AM_TRUE;
     } else if (dummy_post_url_match_flag == AM_TRUE) {
-	Log::log(agent_info.log_module, Log::LOG_DEBUG,
+	Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		 "%s: The requested URL %s, base URL %s, "
 		 "is the dummy post URL which is always not enforced.",
 		  thisfunc, url, baseURL);
         found = AM_TRUE;
     } else {
         for (i = 0;
-	    (i < agent_info.not_enforced_list.size) && (AM_FALSE == found);
+	    (i < (*agentConfigPtr)->not_enforced_list.size) && (AM_FALSE == found);
 	     i++) {
 	    am_resource_match_t match_status;
 
-	    if (agent_info.not_enforced_list.list[i].has_patterns==AM_TRUE) {
+	    if ((*agentConfigPtr)->not_enforced_list.list[i].has_patterns==AM_TRUE) {
 	        match_status = am_policy_compare_urls(
-	            &rsrcTraits, agent_info.not_enforced_list.list[i].url,
+	            &rsrcTraits, (*agentConfigPtr)->not_enforced_list.list[i].url,
 	            baseURL, B_TRUE);
 	    } else {
 	        match_status = am_policy_compare_urls(
-	            &rsrcTraits, agent_info.not_enforced_list.list[i].url,
+	            &rsrcTraits, (*agentConfigPtr)->not_enforced_list.list[i].url,
 	            url, B_FALSE);
 	    }
 
 	    if (AM_EXACT_MATCH == match_status ||
 	        AM_EXACT_PATTERN_MATCH == match_status) {
-	        Log::log(agent_info.log_module, Log::LOG_DEBUG, "%s(%s): "
+	        Log::log(boot_info.log_module, Log::LOG_DEBUG, "%s(%s): "
 			 "matched '%s' entry in not-enforced list", thisfunc,
-			 url, agent_info.not_enforced_list.list[i].url);
+			 url, (*agentConfigPtr)->not_enforced_list.list[i].url);
 
 	        found = AM_TRUE;
 	    }
         }
 
-        if (agent_info.reverse_the_meaning_of_not_enforced_list == AM_TRUE) {
-            Log::log(agent_info.log_module, Log::LOG_DEBUG,
+        if ((*agentConfigPtr)->reverse_the_meaning_of_not_enforced_list == AM_TRUE) {
+            Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		     "%s: not enforced list is reversed, "
 		     "only matches will be enforced.", thisfunc);
             if (found == AM_TRUE) {
@@ -4407,10 +977,10 @@ am_bool_t in_not_enforced_list(URL &urlObj)
         }
 
         if (AM_TRUE == found) {
-	    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		     "%s: allowing access to %s ", thisfunc, url);
         } else {
-	    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		     "%s: enforcing access control for %s ", thisfunc, url);
         }
     }
@@ -4419,19 +989,24 @@ am_bool_t in_not_enforced_list(URL &urlObj)
 }
 
 void set_host_ip_in_env_map(const char *client_ip,
-			    const am_map_t env_parameter_map)
+			    const am_map_t env_parameter_map,
+                            void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     PRStatus prStatus;
     PRNetAddr address;
     PRHostEnt hostEntry;
     char buffer[PR_NETDB_BUF_SIZE];
 
-    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 	     "set_host_ip_in_env_map: map_insert: "
 	     "client_ip=%s", client_ip);
     am_map_insert(env_parameter_map, "requestIp", client_ip, AM_TRUE);
 
-    if (agent_info.getClientHostname) {
+    if ((*agentConfigPtr)->getClientHostname) {
 	prStatus = PR_StringToNetAddr(client_ip, &address);
 	if (PR_SUCCESS == prStatus) {
 	    prStatus = PR_GetHostByAddr(
@@ -4496,7 +1071,7 @@ am_status_t eval_action_results_map(const KeyValueMap &action_results_map,
 	    }
 	}
     } else {
-	Log::log(agent_info.log_module, Log::LOG_DEBUG,
+	Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		 "eval_action_results_map(%s, %s) denying "
 		 "access: no action information found",
 		 url, action_name);
@@ -4511,8 +1086,14 @@ am_status_t eval_action_results_map(const KeyValueMap &action_results_map,
 }
 
 extern "C" AM_WEB_EXPORT am_status_t
-am_web_get_token_from_assertion(char * enc_assertion, char **token )
+am_web_get_token_from_assertion(char * enc_assertion, 
+                                char **token,
+                                void* agent_config )
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_get_token_from_assertion()";
     am_status_t status = AM_FAILURE;
     char * str = NULL;
@@ -4574,7 +1155,7 @@ am_web_get_token_from_assertion(char * enc_assertion, char **token )
 	    }
 	} catch(XMLTree::ParseException &ex) {
 	    am_web_log_error("Could not find %s cookie in the Liberty "
-		             "AuthnResponse", agent_info.cookie_name);
+		             "AuthnResponse", (*agentConfigPtr)->cookie_name);
 	    status = AM_NOT_FOUND;
         }
 	catch (std::bad_alloc& exb) {
@@ -4608,7 +1189,7 @@ am_web_get_token_from_assertion(char * enc_assertion, char **token )
  * Throws: std::exception's from string methods.
  */
 static const char *
-buildSetCookieHeader(cookie_info_t *cookie)
+buildSetCookieHeader(Utils::cookie_info_t *cookie)
 {
     char *reset_header = NULL;
     if (cookie != NULL && cookie->name != NULL) {
@@ -4782,21 +1363,26 @@ create_authn_request_query_string(string requestID, string providerID,
  * Returns true if something in url was overridden, false otherwise.
  */
 static bool
-overrideProtoHostPort(URL& url)
+overrideProtoHostPort(URL& url, 
+                      void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     bool override = false;
-    if (agent_info.override_protocol) {
-	url.setProtocol(std::string(agent_info.agent_server_url.protocol));
+    if ((*agentConfigPtr)->override_protocol) {
+	url.setProtocol(std::string((*agentConfigPtr)->agent_server_url.protocol));
 	override = true;
     }
 
-    if (agent_info.override_host || url.getHost().size() == 0) {
-	url.setHost(agent_info.agent_server_url.host);
+    if ((*agentConfigPtr)->override_host || url.getHost().size() == 0) {
+	url.setHost((*agentConfigPtr)->agent_server_url.host);
 	override = true;
     }
 
-    if (agent_info.override_port) {
-	url.setPort(agent_info.agent_server_url.port);
+    if ((*agentConfigPtr)->override_port) {
+	url.setPort((*agentConfigPtr)->agent_server_url.port);
 	override = true;
     }
     return override;
@@ -4806,8 +1392,13 @@ am_status_t
 log_access(am_status_t access_status,
 	   const char *remote_user,
 	   const char *user_sso_token,
-	   const char *url)
+	   const char *url,
+           void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     am_status_t status = AM_SUCCESS;
     char fmtStr[MSG_MAX_LEN];
 #if	defined(WINNT)
@@ -4816,15 +1407,15 @@ log_access(am_status_t access_status,
     const char *key = NULL;
 #endif
 
-    if (agent_info.log_access_type != LOG_ACCESS_NONE) {
+    if ((*agentConfigPtr)->log_access_type != LOG_ACCESS_NONE) {
 	switch(access_status) {
 	case AM_SUCCESS:
-	    if (agent_info.log_access_type & LOG_ACCESS_ALLOW) {
+	    if ((*agentConfigPtr)->log_access_type & LOG_ACCESS_ALLOW) {
 		key = AM_WEB_ALLOW_USER_MSG;
 	    }
 	    break;
 	case AM_ACCESS_DENIED:
-	    if (agent_info.log_access_type & LOG_ACCESS_DENY) {
+	    if ((*agentConfigPtr)->log_access_type & LOG_ACCESS_DENY) {
 		key = AM_WEB_DENIED_USER_MSG;
 	    }
 	    break;
@@ -4834,9 +1425,9 @@ log_access(am_status_t access_status,
 	if (key != NULL) {
 	    memset(fmtStr, 0, sizeof(fmtStr));
 	    get_string(key, fmtStr, sizeof(fmtStr));
-	    Log::log(agent_info.remote_LogID, Log::LOG_INFO,
+	    Log::log((*agentConfigPtr)->remote_LogID, Log::LOG_INFO,
 		     fmtStr, remote_user, url);
-	    status = Log::rlog(agent_info.remote_LogID,
+	    status = Log::rlog((*agentConfigPtr)->remote_LogID,
 			       AM_LOG_LEVEL_INFORMATION, user_sso_token,
 			       fmtStr, remote_user, url);
 	}
@@ -4854,8 +1445,13 @@ am_web_is_access_allowed(const char *sso_token,
 			 const char *action_name,
 			 const char *client_ip,
 			 const am_map_t env_parameter_map,
-			 am_policy_result_t *result)
+			 am_policy_result_t *result,
+                         void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_is_access_allowed()";
     am_status_t status = AM_SUCCESS;
     am_bool_t foundInNotEnforcedList = AM_FALSE;
@@ -4884,7 +1480,7 @@ am_web_is_access_allowed(const char *sso_token,
     if (url_str == NULL || action_name == NULL ||
 	*url_str == '\0' || action_name == '\0' ||
 	env_parameter_map == NULL || result == NULL ||
-	(AM_TRUE == agent_info.check_client_ip &&
+	(AM_TRUE == (*agentConfigPtr)->check_client_ip &&
 	    NULL == client_ip || *client_ip == '\0')) {
 	status = AM_INVALID_ARGUMENT;
     }
@@ -4892,12 +1488,12 @@ am_web_is_access_allowed(const char *sso_token,
 	// parse & canonicalize URL
 	try {
 	    if(path_info != NULL) {
-	        Log::log(agent_info.log_module, Log::LOG_DEBUG,
+	        Log::log(boot_info.log_module, Log::LOG_DEBUG,
 			 "%s: url '%s' path_info '%s'.",
 			 thisfunc, url_str, path_info);
 
-		if (AM_TRUE == agent_info.ignore_path_info) {
-		  Log::log(agent_info.log_module, Log::LOG_DEBUG, 
+		if (AM_TRUE == (*agentConfigPtr)->ignore_path_info) {
+		  Log::log(boot_info.log_module, Log::LOG_DEBUG, 
           "am_web_is_access_allowed(): ignoring path info %s.", path_info);
 		} else {
 			pInfo=path_info;
@@ -4905,7 +1501,7 @@ am_web_is_access_allowed(const char *sso_token,
 	    }
 
 		URL urlObject(url_str, pInfo);
-	    (void)overrideProtoHostPort(urlObject);
+	    (void)overrideProtoHostPort(urlObject, agent_config);
 	    urlObject.getURLString(normalizedURL);
 	    url = normalizedURL.c_str();
 	    am_web_log_max_debug("am_web_is_access_allowed(): "
@@ -4915,13 +1511,13 @@ am_web_is_access_allowed(const char *sso_token,
 		status = AM_INVALID_ARGUMENT;
 	    }
 	} catch(InternalException &iex) {
-	    Log::log(agent_info.log_module, Log::LOG_ERROR, iex);
+	    Log::log(boot_info.log_module, Log::LOG_ERROR, iex);
 	    status = iex.getStatusCode();
 	} catch(std::exception &ex) {
-	    Log::log(agent_info.log_module, Log::LOG_ERROR, ex);
+	    Log::log(boot_info.log_module, Log::LOG_ERROR, ex);
 	    status = AM_FAILURE;
 	} catch(...) {
-	    Log::log(agent_info.log_module, Log::LOG_ERROR,
+	    Log::log(boot_info.log_module, Log::LOG_ERROR,
 		     "%s: Unknown exception during URL canonicalization.");
 	    status = AM_FAILURE;
 	}
@@ -4930,7 +1526,7 @@ am_web_is_access_allowed(const char *sso_token,
     // check FQDN access
     if (status == AM_SUCCESS) {
 	try {
-	    if (AM_FALSE == is_valid_fqdn_access(url)) {
+	    if (AM_FALSE == is_valid_fqdn_access(url, agent_config)) {
 		status = AM_INVALID_FQDN_ACCESS;
 	    }
 	}
@@ -4950,9 +1546,9 @@ am_web_is_access_allowed(const char *sso_token,
     if (status == AM_SUCCESS) {
 	try {
 	    /* see if it client ip is in the not enforced client ip list. */
-	    if (agent_info.not_enforce_IPAddr != NULL) {
-	        if (agent_info.not_enforce_IPAddr->find(client_ip) !=
-				agent_info.not_enforce_IPAddr->end()) {
+	    if ((*agentConfigPtr)->not_enforce_IPAddr != NULL) {
+	        if ((*agentConfigPtr)->not_enforce_IPAddr->find(client_ip) !=
+				(*agentConfigPtr)->not_enforce_IPAddr->end()) {
 		    inNotenforceIP = AM_TRUE;
 		    am_web_log_debug("%s: client_ip %s is not enforced",
 				     thisfunc, client_ip);
@@ -4967,7 +1563,8 @@ am_web_is_access_allowed(const char *sso_token,
 	     * fails; no need otherwise */
 	    if (AM_FALSE == inNotenforceIP) {
 		URL url_again(url, pInfo);
-		foundInNotEnforcedList = in_not_enforced_list(url_again);
+		foundInNotEnforcedList = in_not_enforced_list(url_again,
+                                             agent_config);
 	    }
 	}
 	catch (std::bad_alloc& exb) {
@@ -4991,8 +1588,8 @@ am_web_is_access_allowed(const char *sso_token,
 
     // check if it's the logout URL
     if (status == AM_SUCCESS) {
-	if (agent_info.logout_url_list.size > 0 &&
-	    am_web_is_logout_url(url) == B_TRUE) {
+	if ((*agentConfigPtr)->logout_url_list.size > 0 &&
+	    am_web_is_logout_url(url, agent_config) == B_TRUE) {
 	    isLogoutURL = AM_TRUE;
 	    am_web_log_max_debug("%s: url %s IS logout url.", thisfunc,url);
 	}
@@ -5014,7 +1611,7 @@ am_web_is_access_allowed(const char *sso_token,
     if (sso_token == NULL || '\0' == sso_token[0]) {
 	    if(url != NULL && strlen(url) > 0) {
             am_web_get_parameter_value(url,
-                                       am_web_get_cookie_name(),
+                                       am_web_get_cookie_name(agent_config),
                                        &urlSSOToken);
 
             if (urlSSOToken != NULL) {
@@ -5024,7 +1621,7 @@ am_web_is_access_allowed(const char *sso_token,
                 modifiedURL = (char *) malloc(strlen(url));
                 if(modifiedURL != NULL) {
                     am_web_remove_parameter_from_query(url,
-                                                   am_web_get_cookie_name(),
+                                                   am_web_get_cookie_name(agent_config),
                                                    &modifiedURL);
                     url = modifiedURL;
                     am_web_log_debug("am_web_is_access_allowed(): "
@@ -5042,7 +1639,7 @@ am_web_is_access_allowed(const char *sso_token,
     // also not logout url. 
     // If the accessed URL is logout url, then it requires processing.
     if (isNotEnforced == AM_TRUE &&
-	agent_info.ignore_policy_evaluation_if_notenforced &&
+	(*agentConfigPtr)->ignore_policy_evaluation_if_notenforced &&
         isLogoutURL == AM_FALSE ) {
            am_web_log_debug("URL = %s is in notenforced list and  "
                            "ignore_policy_evaluation_if_notenforced is set to "
@@ -5071,14 +1668,14 @@ am_web_is_access_allowed(const char *sso_token,
 	    am_status_t eval_status = AM_SUCCESS;
 	    /* the following should not throw exceptions */
 	    if (client_ip != NULL && *client_ip != '\0') {
-		set_host_ip_in_env_map(client_ip, env_parameter_map);
+		set_host_ip_in_env_map(client_ip, env_parameter_map, agent_config);
 	    }
             if (isNotEnforced == AM_TRUE &&
-		setUserProfileAttrsMode == SET_ATTRS_NONE)  {
+		(*agentConfigPtr)->setUserProfileAttrsMode == SET_ATTRS_NONE)  {
 		  am_web_log_debug("URL = %s is in notenforced list and ldap "
                                    "attribute mode is NONE", url);
             } else {
-               if (agent_info.encode_url_special_chars == AM_TRUE ) {
+               if ((*agentConfigPtr)->encode_url_special_chars == AM_TRUE ) {
                    encodedUrlSize = (strlen(url)+1)*4;
                    encodedUrl = (char *) malloc (encodedUrlSize);
 
@@ -5104,26 +1701,25 @@ am_web_is_access_allowed(const char *sso_token,
 	       } 
 
                 if (AM_TRUE == isNotEnforced ||
-                    AM_TRUE == agent_info.do_sso_only) {
+                    AM_TRUE == (*agentConfigPtr)->do_sso_only) {
                         ignorePolicyResult = AM_TRUE;
                 }
-                if(agent_info.am_revision_number == NULL)
-		    agent_info.am_revision_number = (char *)malloc(AM_REVISION_LEN);
+                
 		eval_status = am_policy_evaluate_ignore_url_notenforced(
-						 agent_info.policy_handle,
+						 boot_info.policy_handle,
 						 sso_token, url, action_name,
 						 env_parameter_map,
 						 reinterpret_cast<am_map_t>
 					          (&action_results_map),
 						 result,
 						 ignorePolicyResult,
-					        &agent_info.am_revision_number);
+					         (*agentConfigPtr)->properties);
 
 		// if eval policy success, check policy decision in the result
 		// if it is enforced and not in do_sso_only mode.
 		if (eval_status == AM_SUCCESS) {
 		    if (AM_FALSE == isNotEnforced &&
-			AM_FALSE == agent_info.do_sso_only) {
+			AM_FALSE == (*agentConfigPtr)->do_sso_only) {
 			try {
 			    if (action_results_map.size() == 0) {
 				am_web_log_debug("%s(%s, %s) denying access: "
@@ -5161,7 +1757,7 @@ am_web_is_access_allowed(const char *sso_token,
 		     * replaced by an new and more appropriate function call
 		     * which only evaluates if the current session
 		     * is valid or not.  */
-		    if (AM_TRUE == agent_info.do_sso_only &&
+		    if (AM_TRUE == (*agentConfigPtr)->do_sso_only &&
 			(eval_status == AM_NO_POLICY ||
 			eval_status == AM_INVALID_ACTION_TYPE)) {
 			am_web_log_debug("%s(%s, %s) do_sso_only - ignore "
@@ -5189,7 +1785,7 @@ am_web_is_access_allowed(const char *sso_token,
 		// now check if the ip address matches what is in sso token,
 		// if check client ip address is true and url is enforced.
 		if (AM_SUCCESS == status && AM_FALSE == isNotEnforced &&
-		    AM_TRUE == agent_info.check_client_ip &&
+		    AM_TRUE == (*agentConfigPtr)->check_client_ip &&
 		    result->remote_IP != NULL) {
 		    if (client_ip == NULL ||
 			strcmp(result->remote_IP, client_ip) != 0) {
@@ -5214,7 +1810,7 @@ am_web_is_access_allowed(const char *sso_token,
 	    if (isLogoutURL && sso_token != NULL && sso_token[0] != '\0') {
 		am_web_log_debug("invalidating session %s", sso_token);
 		am_status_t logout_status =
-		    am_policy_invalidate_session(agent_info.policy_handle,
+		    am_policy_invalidate_session(boot_info.policy_handle,
 						 sso_token);
 		if (AM_SUCCESS != logout_status) {
 		    am_web_log_warning(
@@ -5233,11 +1829,11 @@ am_web_is_access_allowed(const char *sso_token,
     // now set user in the result.
     // result->remote_user gets freed in am_policy_result_destroy().
     if (AM_SUCCESS == status && result->remote_user == NULL) {
-	if (AM_TRUE == agent_info.anon_remote_user_enable &&
-	    agent_info.unauthenticated_user != NULL &&
-	    *agent_info.unauthenticated_user != '\0') {
+    if (AM_TRUE == (*agentConfigPtr)->anon_remote_user_enable &&
+	    (*agentConfigPtr)->unauthenticated_user != NULL &&
+	    *(*agentConfigPtr)->unauthenticated_user != '\0') {
 
-	    result->remote_user = strdup(agent_info.unauthenticated_user);
+	    result->remote_user = strdup((*agentConfigPtr)->unauthenticated_user);
 	}
 	else {
 	    result->remote_user = NULL;
@@ -5256,7 +1852,7 @@ am_web_is_access_allowed(const char *sso_token,
      * not enforced list would cause a recursion tailspin.
      */
     if (AM_FALSE == isNotEnforced) {
-	log_status = log_access(status, result->remote_user, sso_token, url);
+	log_status = log_access(status, result->remote_user, sso_token, url, agent_config);
 	if (log_status == AM_SUCCESS) {
 	    am_web_log_debug("%s: Successfully logged to remote server "
 			     "for %s action by user %s to resource %s.",
@@ -5270,7 +1866,7 @@ am_web_is_access_allowed(const char *sso_token,
 			     action_name, rmtUsr, url);
 	    if (log_status == AM_NSPR_ERROR) {
 		status = AM_INVALID_SESSION;
-	    } else if (agent_info.denyOnLogFailure) {
+	    } else if ((*agentConfigPtr)->denyOnLogFailure) {
 		status = AM_ACCESS_DENIED;
 	    }
 	}
@@ -5285,32 +1881,37 @@ am_web_is_access_allowed(const char *sso_token,
 }
 
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_notification(const char *request_url)
+am_web_is_notification(const char *request_url,
+                       void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_is_notification()";
     boolean_t result = B_FALSE;
     std::string request_url_str;
 
-    if (am_policy_is_notification_enabled(agent_info.policy_handle)) {
+    if (am_policy_is_notification_enabled(boot_info.policy_handle)) {
 	try {
 	    // check override proto/host/port for notification url.
 	    // this would be true if notifications url is coming from
 	    // outside a firewall.
 		URL url(request_url);
 
-	    if (agent_info.override_notification_url) {
-			overrideProtoHostPort(url);
+	    if ((*agentConfigPtr)->override_notification_url) {
+			overrideProtoHostPort(url, agent_config);
 	    }
 
 		url.getURLString(request_url_str);
 		request_url = request_url_str.c_str();
 
-		if (!strcasecmp(request_url, agent_info.notification_url)) {
+		if (!strcasecmp(request_url, (*agentConfigPtr)->notification_url)) {
 			result = B_TRUE;
 		} else {
 			am_web_log_max_debug("%s, %s is not notification url %s.",
 					 thisfunc, request_url,
-					 agent_info.notification_url);
+					 (*agentConfigPtr)->notification_url);
 		}
 	}
 	catch (std::exception& ex) {
@@ -5333,11 +1934,11 @@ am_web_handle_notification(const char *data,
 {
     am_status_t status;
 
-    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 	     "am_web_handle_notification() data is: %.*s", data_length,
 	     data);
 
-    status = am_policy_notify(agent_info.policy_handle,
+    status = am_policy_notify(boot_info.policy_handle,
 				 data, data_length);
     if (AM_SUCCESS != status) {
 	am_web_log_error("am_web_handle_notification() error processing "
@@ -5349,14 +1950,21 @@ am_web_handle_notification(const char *data,
 
 /* Throws std::exception's from string methods */
 am_status_t
-getValid_FQDN_URL(const char *goto_url, string &result) {
+getValid_FQDN_URL(const char *goto_url, 
+                  string &result, 
+                  void* agent_config) {
+
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     am_status_t retVal = AM_SUCCESS;
     const std::string newURL(
-		agent_info.fqdn_handler->getValidFqdnResource(goto_url));
+		(*agentConfigPtr)->fqdn_handler->getValidFqdnResource(goto_url));
     if(!newURL.empty()) {
 	result = newURL;
     } else {
-	Log::log(agent_info.log_module, Log::LOG_ERROR,
+	Log::log(boot_info.log_module, Log::LOG_ERROR,
 		 "getValid_FQDN_URL(): Cannot find valid FQDN URL.");
 	retVal = AM_FAILURE;
     }
@@ -5407,7 +2015,8 @@ am_web_remove_authnrequest(char *inpString, char **outString) {
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_get_request_url(const char *host_hdr, const char *protocol,
 		       const char *hostname, size_t port, const char *uri,
-		       const char *query, char **request_url) {
+		       const char *query, char **request_url,
+                       void* agent_config) {
     am_status_t retVal = AM_SUCCESS;
     URL url;
 
@@ -5440,7 +2049,7 @@ am_web_get_request_url(const char *host_hdr, const char *protocol,
 	    if(port > 0 && port < 65536) url.setPort(port);
 	}
     }
-    overrideProtoHostPort(url);
+    overrideProtoHostPort(url, agent_config);
     std::string urlStr;
     url.getURLString(urlStr);
 
@@ -5463,7 +2072,8 @@ am_web_check_cookie_in_post(void **args, char **dpro_cookie,
 			    char *response,
 			    boolean_t responseIsCookie,
 			    am_status_t (*set_cookie)(const char*, void**),
-			    void (*set_method)(void **, char *)) {
+			    void (*set_method)(void **, char *), 
+                            void* agent_config) {
     char *recv_token = NULL;
     am_status_t status = AM_SUCCESS;
 
@@ -5476,7 +2086,7 @@ am_web_check_cookie_in_post(void **args, char **dpro_cookie,
 	if(responseIsCookie) {
 	    recv_token = strdup(response);
 	} else {
-	    status = am_web_get_token_from_assertion(response, &recv_token);
+	    status = am_web_get_token_from_assertion(response, &recv_token, agent_config);
 	}
 
 	if(status == AM_SUCCESS) {
@@ -5484,7 +2094,7 @@ am_web_check_cookie_in_post(void **args, char **dpro_cookie,
 			     "recv_token : \"%s\"", recv_token);
 
 	    // Set cookie in browser for the foreign domain.
-	    am_web_do_cookie_domain_set(set_cookie, args, recv_token);
+	    am_web_do_cookie_domain_set(set_cookie, args, recv_token, agent_config);
     	    *dpro_cookie = strdup(recv_token);
 	    if(*dpro_cookie == NULL) {
 	        am_web_log_error("am_web_check_cookie_in_post(): "
@@ -5521,18 +2131,18 @@ am_web_check_cookie_in_query(
 		const char *query, char **request_url,
 		char ** orig_req, char *method,
 		am_status_t (*set_cookie)(const char*, void**),
-		void (*set_method)(void **, char *)
-		) {
+		void (*set_method)(void **, char *),
+                void* agent_config) {
     char *recv_token = NULL;
     am_status_t status = AM_FAILURE;
 
     if(query != NULL && strlen(query) > 0) {
         status = am_web_get_parameter_value(query,
-			am_web_get_cookie_name(), &recv_token);
+			am_web_get_cookie_name(agent_config), &recv_token);
 	if (status == AM_SUCCESS) {
 	    am_web_log_debug("am_web_check_cookie_in_query(): "
 			"Received Token from query = \"%s\"", recv_token);
-	    am_web_do_cookie_domain_set(set_cookie, args, recv_token);
+	    am_web_do_cookie_domain_set(set_cookie, args, recv_token, agent_config);
 
 	    *dpro_cookie = strdup(recv_token);
 	    if(*dpro_cookie == NULL){
@@ -5544,7 +2154,7 @@ am_web_check_cookie_in_query(
         	status = AM_NO_MEMORY;
 	    } else {
 	        status = am_web_remove_parameter_from_query(*request_url,
-						am_web_get_cookie_name(),
+						am_web_get_cookie_name(agent_config),
 						request_url);
 	        status = am_web_remove_parameter_from_query(*request_url,
 						URL_REDIRECT_PARAM,
@@ -5564,7 +2174,7 @@ am_web_check_cookie_in_query(
 		    	am_status_to_string(status),status);
 
 	    status = am_web_remove_parameter_from_query(*request_url,
-						am_web_get_cookie_name(),
+						am_web_get_cookie_name(agent_config),
 						request_url);
 	    status = am_web_remove_parameter_from_query(*request_url,
 						URL_REDIRECT_PARAM,
@@ -5581,15 +2191,21 @@ am_web_check_cookie_in_query(
 }
 
 /* now used by function add_cdsso_elements_to_redirect_url only */
-static char *prtime_2_str(char *buffer, size_t buffer_len)
+static char *prtime_2_str(char *buffer, 
+                          size_t buffer_len, 
+                          void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     PRTime timestamp;
     PRExplodedTime exploded_time;
     int n_written = 0;
 
-    PR_Lock(agent_info.lock);
+    PR_Lock((*agentConfigPtr)->lock);
     timestamp = PR_Now();
-    PR_Unlock(agent_info.lock);
+    PR_Unlock((*agentConfigPtr)->lock);
 
     PR_ExplodeTime(timestamp, PR_LocalTimeParameters, &exploded_time);
     n_written = snprintf(buffer, buffer_len, "%d-%02d-%02dT%02d:%02d:%02dZ",
@@ -5605,11 +2221,16 @@ static char *prtime_2_str(char *buffer, size_t buffer_len)
 }
 
 /* Throws std::exception's from string methods */
-string add_cdsso_elements_to_redirect_url() {
-    string providerId = agent_info.agent_server_url.url;
+string add_cdsso_elements_to_redirect_url(void* agent_config) {
+
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+    string providerId = (*agentConfigPtr)->agent_server_url.url;
 
 	const char* orgName = NULL;
-	am_status_t status = am_properties_get( agent_info.properties,
+	am_status_t status = am_properties_get( (*agentConfigPtr)->properties,
 								AM_POLICY_ORG_NAME_PROPERTY,
 								&orgName );
 
@@ -5631,7 +2252,7 @@ string add_cdsso_elements_to_redirect_url() {
     // issue instant
     char *strtime = NULL;
     strtime = (char *) malloc ( AM_WEB_MAX_POST_KEY_LENGTH );
-    prtime_2_str(strtime,AM_WEB_MAX_POST_KEY_LENGTH);
+    prtime_2_str(strtime,AM_WEB_MAX_POST_KEY_LENGTH, agent_config);
     string strIssueInstant;
     if(strtime != NULL && strlen(strtime) > 0) {
             strIssueInstant = strtime;
@@ -5656,9 +2277,10 @@ extern "C" AM_WEB_EXPORT am_status_t
 am_web_get_redirect_url(am_status_t status,
 			const am_map_t advice_map,
 			const char *goto_url,
-			char **redirect_url) {
+			char **redirect_url,
+                        void* agent_config) {
     return am_web_get_url_to_redirect(status, advice_map, goto_url, NULL,
-				      NULL, redirect_url);
+				      NULL, redirect_url, agent_config);
 }
 
 extern "C" AM_WEB_EXPORT am_status_t
@@ -5667,8 +2289,13 @@ am_web_get_url_to_redirect(am_status_t status,
 			   const char *goto_url,
 			   const char* method,
 			   void *reserved,
-			   char **redirect_url)
+			   char **redirect_url,
+                           void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_get_url_to_redirect";
     am_status_t ret = AM_SUCCESS;
     *redirect_url = NULL;
@@ -5681,7 +2308,7 @@ am_web_get_url_to_redirect(am_status_t status,
 	std::string orig_url;
 	// override the goto URL to agent's protocol, host or port
 	// if configured
-	if (overrideProtoHostPort(gotoURL)) {
+	if (overrideProtoHostPort(gotoURL, agent_config)) {
 	    gotoURL.getURLString(orig_url);
 	    goto_url = orig_url.c_str();
 	}
@@ -5694,7 +2321,9 @@ am_web_get_url_to_redirect(am_status_t status,
 	    try {
 		std::string valid_fqdn;
 		if ((ret =
-		    getValid_FQDN_URL(goto_url, valid_fqdn)) != AM_SUCCESS) {
+		    getValid_FQDN_URL(goto_url, 
+                                      valid_fqdn, 
+                                      agent_config)) != AM_SUCCESS) {
 		    am_web_log_error("%s: getValid_FQDN_URL failed with error: "
 				     "%s", thisfunc, am_status_to_string(ret));
 		}
@@ -5799,11 +2428,12 @@ am_web_get_url_to_redirect(am_status_t status,
 	    if ((AM_INVALID_SESSION == status) || (auth_advice_value_len > 0) ||
 		(strcmp(session_adv_value, AM_WEB_ACTION_DENIED) == 0)) {
 		try {
-		    url_info_t *url_info_ptr;
+		    Utils::url_info_t *url_info_ptr;
 		    std::string encoded_url;
 		    std::string retVal;
 
-		    url_info_ptr = find_active_login_server(&agent_info);
+		    url_info_ptr = find_active_login_server(agent_config);
+		    //url_info_ptr = find_active_login_server(&agent_info);
 		    if (NULL == url_info_ptr) {
 			am_web_log_warning("%s: unable to find active Access "
 					   "Manager Auth server.", thisfunc);
@@ -5814,7 +2444,7 @@ am_web_get_url_to_redirect(am_status_t status,
 			retVal.append((url_info_ptr->has_parameters) ?"&":"?");
 			retVal.append(URL_REDIRECT_PARAM);
 			retVal.append("=");
-			if(agent_info.cdsso_enabled == AM_TRUE &&
+			if((*agentConfigPtr)->cdsso_enabled == AM_TRUE &&
 				method != NULL) {
 			    string temp_url = goto_url;
 			    temp_url.append(
@@ -5829,19 +2459,14 @@ am_web_get_url_to_redirect(am_status_t status,
 				PRIVATE_NAMESPACE_NAME::Http::encode(goto_url);
 			}
 			retVal.append(encoded_url);
-			char *am_rev_number = am_web_get_am_revision_number();
-			if ((am_rev_number != NULL) && (!strcmp(am_rev_number,am_63_revision_number))) {
-				retVal.append(auth_advice_url_prefix);
-				retVal.append(auth_advice_value);
-			}
-
-			if(agent_info.cdsso_enabled == AM_TRUE) {
+                        
+			if((*agentConfigPtr)->cdsso_enabled == AM_TRUE) {
 			    am_web_log_debug("%s: The goto_url and url before "
 					     "appending cdsso elements: "
 					     "[%s] [%s]", thisfunc,
 					     goto_url, retVal.c_str());
 			    retVal.append("&");
-			    retVal.append(add_cdsso_elements_to_redirect_url());
+			    retVal.append(add_cdsso_elements_to_redirect_url(agent_config));
 			}
 
 			*redirect_url = strdup(retVal.c_str());
@@ -5867,9 +2492,9 @@ am_web_get_url_to_redirect(am_status_t status,
 		}
 	    }
 	    /* redirect user to the access denied url if it was configured. */
-	    else if (agent_info.access_denied_url != NULL) {
+	    else if ((*agentConfigPtr)->access_denied_url != NULL) {
 		char codeStr[10];
-		std::string redirStr = agent_info.access_denied_url;
+		std::string redirStr = (*agentConfigPtr)->access_denied_url;
 		std::size_t t = redirStr.find('?');
 		if(t == std::string::npos) {
 		    PUSH_BACK_CHAR(redirStr,'?');
@@ -5915,7 +2540,7 @@ am_web_get_url_to_redirect(am_status_t status,
  * If any cookie reset function fails the last failed status is returned.
  */
 am_status_t
-am_web_reset_cookies_list(const cookie_info_list_t *cookies_list,
+am_web_reset_cookies_list(const Utils::cookie_info_list_t *cookies_list,
                           am_status_t (*setFunc)(const char *, void **),
                           void **args)
 {
@@ -5923,7 +2548,7 @@ am_web_reset_cookies_list(const cookie_info_list_t *cookies_list,
     am_status_t status = AM_SUCCESS;
     am_status_t tmpStatus = AM_SUCCESS;
 
-    cookie_info_t *cookies = cookies_list->list;
+    Utils::cookie_info_t *cookies = cookies_list->list;
     unsigned int size = cookies_list->size;
     if (cookies != NULL) {
 	try {
@@ -5965,18 +2590,24 @@ am_web_reset_cookies_list(const cookie_info_list_t *cookies_list,
  */
 am_status_t
 am_web_reset_ldap_attribute_cookies(
-     am_status_t (*setFunc)(const char *, void **), void **args)
+     am_status_t (*setFunc)(const char *, void **), 
+     void **args, 
+     void* agent_config)
 {
+
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
     const char *thisfunc = "am_web_reset_ldap_attribute_cookies()";
     am_status_t status = AM_SUCCESS;
     am_status_t tmpStatus = AM_SUCCESS;
 
     // Reset cookies from ldap Attributes
-    if ((setUserProfileAttrsMode == SET_ATTRS_AS_COOKIE) ||
-       (setUserSessionAttrsMode == SET_ATTRS_AS_COOKIE)  ||
-       (setUserResponseAttrsMode == SET_ATTRS_AS_COOKIE) &&
-	    (attrList.size() > 0)) {
-	cookie_info_t attr_cookie;
+    if (((*agentConfigPtr)->setUserProfileAttrsMode == SET_ATTRS_AS_COOKIE) ||
+       ((*agentConfigPtr)->setUserSessionAttrsMode == SET_ATTRS_AS_COOKIE)  ||
+       ((*agentConfigPtr)->setUserResponseAttrsMode == SET_ATTRS_AS_COOKIE) &&
+	    ((*agentConfigPtr)->attrList.size() > 0)) {
+	Utils::cookie_info_t attr_cookie;
 	attr_cookie.value = const_cast<char*>("");
 	attr_cookie.domain = NULL;
         // This must be null to work with older browsers
@@ -5986,15 +2617,17 @@ am_web_reset_ldap_attribute_cookies(
 
 	try {
 	    std::list<std::string>::const_iterator iter;
-	    for(iter = attrList.begin(); iter != attrList.end(); iter++) {
+	    for(iter = (*agentConfigPtr)->attrList.begin(); 
+                iter != (*agentConfigPtr)->attrList.end(); iter++) {
+
 		std::string attr = (*iter);
-		std::string cookie_name(attrCookiePrefix);
+		std::string cookie_name((*agentConfigPtr)->attrCookiePrefix);
 		cookie_name.append(const_cast<char*>(attr.c_str()));
 		attr_cookie.name = const_cast<char*>(cookie_name.c_str());
 		char *cookie_header =
 		    const_cast<char*>(buildSetCookieHeader(&attr_cookie));
 		if (cookie_header != NULL) {
-		    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+		    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 			     "RESET cookie_header=%s", cookie_header);
 		    tmpStatus =  setFunc(cookie_header, args);
 		    if (AM_SUCCESS != tmpStatus)
@@ -6030,21 +2663,26 @@ am_web_reset_ldap_attribute_cookies(
  */
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_do_cookies_reset(am_status_t (*setFunc)(const char *, void **),
-			void **args)
+			void **args, 
+                        void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     am_status_t status = AM_SUCCESS;
     am_status_t tmpStatus = AM_SUCCESS;
 
     // Reset cookies from properties file.
-    if (agent_info.cookie_reset_enabled == AM_TRUE) {
-        tmpStatus  = am_web_reset_cookies_list(&agent_info.cookie_list,
+    if ((*agentConfigPtr)->cookie_reset_enabled == AM_TRUE) {
+        tmpStatus  = am_web_reset_cookies_list(&(*agentConfigPtr)->cookie_list,
 					       setFunc, args);
         if (AM_SUCCESS != tmpStatus) {
             status = tmpStatus;
         }
     }
 
-    tmpStatus = am_web_reset_ldap_attribute_cookies(setFunc, args);
+    tmpStatus = am_web_reset_ldap_attribute_cookies(setFunc, args, agent_config);
     if (AM_SUCCESS != tmpStatus) {
         status = tmpStatus;
     }
@@ -6060,16 +2698,21 @@ am_web_do_cookies_reset(am_status_t (*setFunc)(const char *, void **),
  */
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_logout_cookies_reset(am_status_t (*setFunc)(const char *, void **),
-                            void **args)
+                            void **args, 
+                            void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_logout_cookies_reset()";
     am_status_t status = AM_SUCCESS;
-    if (NULL != agent_info.logout_cookie_reset_list.list &&
-        agent_info.logout_cookie_reset_list.size >= 0) {
+    if (NULL != (*agentConfigPtr)->logout_cookie_reset_list.list &&
+        (*agentConfigPtr)->logout_cookie_reset_list.size >= 0) {
 	am_web_log_debug("%s: Resetting logout cookies upon logout.",
 			thisfunc);
         status = am_web_reset_cookies_list(
-                     &agent_info.logout_cookie_reset_list,
+                     &(*agentConfigPtr)->logout_cookie_reset_list,
                      setFunc, args);
     }
     else {
@@ -6079,14 +2722,6 @@ am_web_logout_cookies_reset(am_status_t (*setFunc)(const char *, void **),
     return status;
 }
 
-extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_cdsso_enabled() {
-	boolean_t status = B_FALSE;
-	if(agent_info.cdsso_enabled == AM_TRUE) {
-	    status = B_TRUE;
-	}
-	return status;
-}
 
 /*
  * This function sets the iPlanetDirectoryPro cookie for each domain
@@ -6100,24 +2735,30 @@ am_web_is_cdsso_enabled() {
  */
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_do_cookie_domain_set(am_status_t (*setFunc)(const char *, void **),
-			    void **args, const char *cookie_val)
+			    void **args, 
+                            const char *cookie_val, 
+                            void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_do_cookie_domain_set()";
     am_status_t status = AM_SUCCESS;
     am_status_t setStatus = AM_SUCCESS;
 
-    cookie_info_t cookieInfo;
-    cookieInfo.name = const_cast<char*>(agent_info.cookie_name);
+    Utils::cookie_info_t cookieInfo;
+    cookieInfo.name = const_cast<char*>((*agentConfigPtr)->cookie_name);
     cookieInfo.value = const_cast<char*>(cookie_val);
     cookieInfo.domain = NULL;
     // This must be null to work with older browsers
     // netscape 4.79, IE 5.5, mozilla < 1.4.
     cookieInfo.max_age = NULL;
     cookieInfo.path = const_cast<char*>("/");
-    cookieInfo.isSecure = agent_info.is_cookie_secure;
+    cookieInfo.isSecure = (*agentConfigPtr)->is_cookie_secure;
 
     try {
-	std::set<std::string> *cookie_domains = agent_info.cookie_domain_list;
+	std::set<std::string> *cookie_domains = (*agentConfigPtr)->cookie_domain_list;
 	if (NULL == cookie_domains || cookie_domains->size() <= 0) {
 	    const char *cookie_header = buildSetCookieHeader(&cookieInfo);
 	    am_web_log_debug("am_web_do_cookie_domain_set(): "
@@ -6167,14 +2808,15 @@ extern "C" AM_WEB_EXPORT am_status_t
 am_web_do_result_attr_map_set(am_policy_result_t *result,
 			      am_status_t (*setFunc)(const char *,
 						     const char *, void **),
-			      void **args)
+			      void **args, 
+                              void* agent_config)
 {
 	return am_web_result_attr_map_set(result,
 					  setFunc,
 					  NULL,
 					  NULL,
 					  NULL,
-					  args);
+					  args, agent_config);
 }
 
 /*
@@ -6189,8 +2831,13 @@ am_web_result_attr_map_set(
 	am_status_t (*set_cookie_in_response)(const char *, void **),
 	am_status_t (*set_header_attr_as_cookie)(const char *, void **),
 	am_status_t (*getCookieFunc)(const char * ,char **, void **),
-	void **args)
+	void **args, 
+        void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_result_attr_map_set()";
     am_status_t retVal = AM_SUCCESS;
     char str[2048];
@@ -6216,15 +2863,15 @@ am_web_result_attr_map_set(
 	      switch (i) {
 		  case 0:
 		       attrMap = result->attr_profile_map;
-		       mode = profileMode;
+		       mode = (*agentConfigPtr)->profileMode;
 		       break;
 		  case 1:
 		       attrMap = result->attr_session_map;
-		       mode = sessionMode;
+		       mode = (*agentConfigPtr)->sessionMode;
 		       break;
 		  case 2:
 		       attrMap = result->attr_response_map;
-		       mode = responseMode;
+		       mode = (*agentConfigPtr)->responseMode;
 		       break;
                   default:
 		       break;
@@ -6244,7 +2891,7 @@ am_web_result_attr_map_set(
                   std::string values;
                   am_status_t set_sts = AM_SUCCESS;
                   const KeyValueMap::key_type &keyRef = iter_header->first;
-                  Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+                  Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
                     "%s: User attribute is %s.", thisfunc, keyRef.c_str());
 
                   // Clear the header
@@ -6278,7 +2925,7 @@ am_web_result_attr_map_set(
                     if(values.size() > 1) {
                       std::size_t t = values.rfind(',');
                       values.erase(t);
-                      Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+                      Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
                                "%s: Calling container-specific header setter "
                                "function. ", thisfunc);
                       if (values.c_str() != NULL) {
@@ -6290,8 +2937,8 @@ am_web_result_attr_map_set(
                             new_str = str;
                          }
                        }
-                       if (agent_info.convert_mbyte == AM_TRUE ) {
-                           Log::log(agent_info.log_module,
+                       if ((*agentConfigPtr)->convert_mbyte == AM_TRUE ) {
+                           Log::log(boot_info.log_module,
                                     Log::LOG_MAX_DEBUG,
                                     "i18n encoding in native ");
                            if (new_str != NULL) {
@@ -6304,7 +2951,7 @@ am_web_result_attr_map_set(
                                                 new_str_size);
                           }
                        } else {
-                              Log::log(agent_info.log_module,
+                              Log::log(boot_info.log_module,
                                        Log::LOG_MAX_DEBUG,
                                        "i18n encoding in utf-8 ");
                               retVal = setFunc(keyRef.c_str(), values.c_str(),
@@ -6332,7 +2979,7 @@ am_web_result_attr_map_set(
                     std::string values;
                     am_status_t set_sts = AM_SUCCESS;
                     const KeyValueMap::key_type &keyRef = iter_cookie->first;
-                    Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+                    Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
                              "%s: User attribute is %s.", thisfunc,
                              keyRef.c_str());
                     std::string hdr_or_cookie_name_s(keyRef.c_str());
@@ -6342,10 +2989,10 @@ am_web_result_attr_map_set(
                     // Clear that cookie
                     char *cookie_hdr = NULL;
                     char *cookie_header =  NULL;
-                    cookie_info_t clear_cookie;
-                    std::string c_name(attrCookiePrefix);
-                    cookie_info_t attr_cookie;
-                    std::string cookie_name(attrCookiePrefix);
+                    Utils::cookie_info_t clear_cookie;
+                    std::string c_name((*agentConfigPtr)->attrCookiePrefix);
+                    Utils::cookie_info_t attr_cookie;
+                    std::string cookie_name((*agentConfigPtr)->attrCookiePrefix);
                     c_name.append(hdr_or_cookie_name);
                     clear_cookie.name = const_cast<char*>(c_name.c_str());
                     clear_cookie.value = const_cast<char*>("");
@@ -6394,7 +3041,7 @@ am_web_result_attr_map_set(
                     if(values.size() > 1) {
                        std::size_t t = values.rfind(',');
                        values.erase(t);
-                       Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+                       Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
                                "%s: Calling container-specific cookie setter "
                                "function. %d", thisfunc);
 
@@ -6404,7 +3051,7 @@ am_web_result_attr_map_set(
                        attr_cookie.value = const_cast<char*>(values.c_str());
                        attr_cookie.domain = NULL;
                        attr_cookie.max_age =
-                           const_cast<char*>(attrCookieMaxAge);
+                           const_cast<char*>((*agentConfigPtr)->attrCookieMaxAge);
                        attr_cookie.path = const_cast<char*>("/");
                        cookie_header =
                            (char*)(buildSetCookieHeader(&attr_cookie));
@@ -6413,7 +3060,7 @@ am_web_result_attr_map_set(
                              retVal =  set_cookie_in_response(cookie_header,
                                                               args);
                           } else {
-                             Log::log(agent_info.log_module, Log::LOG_INFO,
+                             Log::log(boot_info.log_module, Log::LOG_INFO,
                                       "%s: response header setting function "
                                       "is NULL", thisfunc);
                           }
@@ -6421,7 +3068,7 @@ am_web_result_attr_map_set(
                              retVal = set_header_attr_as_cookie(cookie_header,
                                                                 args);
                           } else {
-                             Log::log(agent_info.log_module, Log::LOG_INFO,
+                             Log::log(boot_info.log_module, Log::LOG_INFO,
                                       "%s: request header setting function "
                                       "is NULL", thisfunc);
                           }
@@ -6447,10 +3094,10 @@ am_web_result_attr_map_set(
         }
 
              if (retVal == AM_SUCCESS) {
-                Log::log(agent_info.log_module, Log::LOG_DEBUG,
+                Log::log(boot_info.log_module, Log::LOG_DEBUG,
                     "%s: Successfully set all attributes.", thisfunc);
              } else {
-                Log::log(agent_info.log_module, Log::LOG_ERROR,
+                Log::log(boot_info.log_module, Log::LOG_ERROR,
                     "%s: Error while setting attributes: %s",
                     thisfunc, am_status_to_string(retVal));
              }
@@ -6460,57 +3107,83 @@ am_web_result_attr_map_set(
 }
 
 extern "C" AM_WEB_EXPORT const char *
-am_web_get_user_id_param()
+am_web_get_user_id_param(void* agent_config)
 {
-    return agent_info.user_id_param;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+    return (*agentConfigPtr)->user_id_param;
 }
 
 extern "C" AM_WEB_EXPORT const char *
-am_web_get_cookie_name()
+am_web_get_cookie_name(void* agent_config)
 {
-    return agent_info.cookie_name;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+    return (*agentConfigPtr)->cookie_name;
 }
 
 extern "C" AM_WEB_EXPORT size_t
-am_web_get_cookie_name_len()
+am_web_get_cookie_name_len(void* agent_config)
 {
-    return agent_info.cookie_name_len;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+    return (*agentConfigPtr)->cookie_name_len;
 }
 
 extern "C" AM_WEB_EXPORT const char *
-am_web_get_notification_url()
+am_web_get_notification_url(void* agent_config)
 {
-    return agent_info.notification_url;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+    return (*agentConfigPtr)->notification_url;
 }
 
 extern "C" AM_WEB_EXPORT const char *
-am_web_get_agent_server_host()
+am_web_get_agent_server_host(void* agent_config)
 {
-    return agent_info.agent_server_url.host;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+    return (*agentConfigPtr)->agent_server_url.host;
 }
 
 extern "C" AM_WEB_EXPORT int
-am_web_get_agent_server_port()
+am_web_get_agent_server_port(void* agent_config)
 {
-   return agent_info.agent_server_url.port;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+   return (*agentConfigPtr)->agent_server_url.port;
 }
 
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_in_not_enforced_list(const char *url, const char *path_info) {
+am_web_is_in_not_enforced_list(const char *url, 
+                               const char *path_info,
+                               void* agent_config) {
     boolean_t retVal = B_FALSE;
     try {
 	std::string pInfo;
 	if(path_info != NULL) pInfo = path_info;
 
 	URL urlObj(url, pInfo);
-	if(in_not_enforced_list(urlObj) == AM_TRUE)
+	if(in_not_enforced_list(urlObj, agent_config) == AM_TRUE)
 	    retVal = B_TRUE;
     } catch(InternalException &iex) {
-	Log::log(agent_info.log_module, Log::LOG_ERROR, iex);
+	Log::log(boot_info.log_module, Log::LOG_ERROR, iex);
     } catch(std::exception &ex) {
-	Log::log(agent_info.log_module, Log::LOG_ERROR, ex);
+	Log::log(boot_info.log_module, Log::LOG_ERROR, ex);
     } catch(...) {
-	Log::log(agent_info.log_module, Log::LOG_ERROR,
+	Log::log(boot_info.log_module, Log::LOG_ERROR,
 		 "am_web_is_in_not_enforced_list(): "
 		 "Unknown exception encountered.");
     }
@@ -6518,22 +3191,28 @@ am_web_is_in_not_enforced_list(const char *url, const char *path_info) {
 }
 
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_in_not_enforced_ip_list(const char *ip) {
+am_web_is_in_not_enforced_ip_list(const char *ip, 
+                                  void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     boolean_t retVal = B_FALSE;
-    if(ip != NULL && agent_info.not_enforce_IPAddr != NULL &&
-       agent_info.not_enforce_IPAddr->size() > 0) {
-	retVal = (agent_info.not_enforce_IPAddr->find(ip) !=
-		  agent_info.not_enforce_IPAddr->end())?B_TRUE:B_FALSE;
+    if(ip != NULL && (*agentConfigPtr)->not_enforce_IPAddr != NULL &&
+       (*agentConfigPtr)->not_enforce_IPAddr->size() > 0) {
+	retVal = ((*agentConfigPtr)->not_enforce_IPAddr->find(ip) !=
+		  (*agentConfigPtr)->not_enforce_IPAddr->end())?B_TRUE:B_FALSE;
     }
     return retVal;
 }
 
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_valid_fqdn_url(const char *url)
+am_web_is_valid_fqdn_url(const char *url,
+                         void* agent_config)
 {
     boolean_t ret = B_FALSE;
     try {
-	ret = (AM_TRUE==is_valid_fqdn_access(url)) ? B_TRUE : B_FALSE;
+	ret = (AM_TRUE==is_valid_fqdn_access(url, agent_config)) ? B_TRUE : B_FALSE;
     }
     catch (...) {
 	am_web_log_error("am_web_is_valid_fqdn_url(): "
@@ -6550,13 +3229,13 @@ am_web_is_valid_fqdn_url(const char *url)
 extern "C" AM_WEB_EXPORT boolean_t
 am_web_is_debug_on()
 {
-    return am_log_is_level_enabled(agent_info.log_module, AM_LOG_DEBUG);
+    return am_log_is_level_enabled(boot_info.log_module, AM_LOG_DEBUG);
 }
 
 extern "C" AM_WEB_EXPORT boolean_t
 am_web_is_max_debug_on()
 {
-    return am_log_is_level_enabled(agent_info.log_module,
+    return am_log_is_level_enabled(boot_info.log_module,
 				      AM_LOG_MAX_DEBUG);
 }
 
@@ -6566,27 +3245,33 @@ am_web_log_always(const char *fmt, ...)
     va_list args;
 
     va_start(args, fmt);
-    am_log_vlog(agent_info.log_module, AM_LOG_ALWAYS, fmt, args);
+    am_log_vlog(boot_info.log_module, AM_LOG_ALWAYS, fmt, args);
     va_end(args);
 }
 
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_log_auth(am_web_access_t accessType, const char *fmt, ...)
+am_web_log_auth(am_web_access_t accessType, 
+                const char *fmt, 
+                void* agent_config, ...)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     va_list args;
 
     va_start(args, fmt);
     switch(accessType) {
     case AM_ACCESS_DENY:
-        if (strcasecmp(agent_info.authLogType_param, "LOG_DENY") == 0 ||
-              strcasecmp(agent_info.authLogType_param, "LOG_BOTH") == 0) {
-            am_log_vlog(agent_info.remote_LogID, AM_LOG_AUTH_REMOTE, fmt, args);
+        if (strcasecmp((*agentConfigPtr)->authLogType_param, "LOG_DENY") == 0 ||
+              strcasecmp((*agentConfigPtr)->authLogType_param, "LOG_BOTH") == 0) {
+            am_log_vlog((*agentConfigPtr)->remote_LogID, AM_LOG_AUTH_REMOTE, fmt, args);
         }
         break;
     case AM_ACCESS_ALLOW:
-        if (strcasecmp(agent_info.authLogType_param, "LOG_ALLOW") == 0 ||
-              strcasecmp(agent_info.authLogType_param, "LOG_BOTH") == 0) {
-            am_log_vlog(agent_info.remote_LogID, AM_LOG_AUTH_REMOTE, fmt, args);
+        if (strcasecmp((*agentConfigPtr)->authLogType_param, "LOG_ALLOW") == 0 ||
+              strcasecmp((*agentConfigPtr)->authLogType_param, "LOG_BOTH") == 0) {
+            am_log_vlog((*agentConfigPtr)->remote_LogID, AM_LOG_AUTH_REMOTE, fmt, args);
         }
         break;
     }
@@ -6601,7 +3286,7 @@ am_web_log_error(const char *fmt, ...)
     va_list args;
 
     va_start(args, fmt);
-    am_log_vlog(agent_info.log_module, AM_LOG_ERROR, fmt, args);
+    am_log_vlog(boot_info.log_module, AM_LOG_ERROR, fmt, args);
     va_end(args);
 }
 
@@ -6611,7 +3296,7 @@ am_web_log_warning(const char *fmt, ...)
     va_list args;
 
     va_start(args, fmt);
-    am_log_vlog(agent_info.log_module, AM_LOG_WARNING, fmt, args);
+    am_log_vlog(boot_info.log_module, AM_LOG_WARNING, fmt, args);
     va_end(args);
 }
 
@@ -6621,7 +3306,7 @@ am_web_log_info(const char *fmt, ...)
     va_list args;
 
     va_start(args, fmt);
-    am_log_vlog(agent_info.log_module, AM_LOG_INFO, fmt, args);
+    am_log_vlog(boot_info.log_module, AM_LOG_INFO, fmt, args);
     va_end(args);
 }
 
@@ -6631,7 +3316,7 @@ am_web_log_debug(const char *fmt, ...)
     va_list args;
 
     va_start(args, fmt);
-    am_log_vlog(agent_info.log_module, AM_LOG_DEBUG, fmt, args);
+    am_log_vlog(boot_info.log_module, AM_LOG_DEBUG, fmt, args);
     va_end(args);
 }
 
@@ -6641,7 +3326,7 @@ am_web_log_max_debug(const char *fmt, ...)
     va_list args;
 
     va_start(args, fmt);
-    am_log_vlog(agent_info.log_module, AM_LOG_MAX_DEBUG, fmt, args);
+    am_log_vlog(boot_info.log_module, AM_LOG_MAX_DEBUG, fmt, args);
     va_end(args);
 }
 
@@ -6654,10 +3339,14 @@ am_web_log_max_debug(const char *fmt, ...)
 */
 
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_postpreserve_enabled() {
+am_web_is_postpreserve_enabled(void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
 
     return static_cast<bool>(
-	    agent_info.postdatapreserve_enabled)==true?B_TRUE:B_FALSE;
+	    (*agentConfigPtr)->postdatapreserve_enabled)==true?B_TRUE:B_FALSE;
 }
 
 /**
@@ -6666,14 +3355,19 @@ am_web_is_postpreserve_enabled() {
 
 extern "C" AM_WEB_EXPORT boolean_t
 am_web_postcache_insert(const char *key,
-			const am_web_postcache_data_t *value)
+			const am_web_postcache_data_t *value,
+                        void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     boolean_t ret = B_FALSE;
     PostCacheEntryRefCntPtr postEntry;
-    if(agent_info.postcache_handle != NULL) {
+    if((*agentConfigPtr)->postcache_handle != NULL) {
 	try {
 	    postEntry = new PostCacheEntry(value->value, value->url);
-	    ret = agent_info.postcache_handle->post_hash_insert(key,postEntry)?
+	    ret = (*agentConfigPtr)->postcache_handle->post_hash_insert(key,postEntry)?
 		   B_TRUE:B_FALSE;
 	} catch (...) {
 	    am_web_log_error("am_web_postcache_insert(): "
@@ -6686,15 +3380,20 @@ am_web_postcache_insert(const char *key,
 
 extern "C" AM_WEB_EXPORT boolean_t
 am_web_postcache_lookup(const char *key,
-		        am_web_postcache_data_t *postdata_entry)
+		        am_web_postcache_data_t *postdata_entry,
+                        void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_postcache_lookup()";
     PostCacheEntryRefCntPtr value;
     boolean_t ret = B_FALSE;
 
-    if(agent_info.postcache_handle  != NULL) {
+    if((*agentConfigPtr)->postcache_handle  != NULL) {
 	try {
-	    value =  agent_info.postcache_handle->post_hash_get(key);
+	    value =  (*agentConfigPtr)->postcache_handle->post_hash_get(key);
 	    if(value != NULL) {
 	        postdata_entry->value = strdup(value->getPostData());
 	        postdata_entry->url = strdup(value->getDestUrl());
@@ -6724,12 +3423,17 @@ am_web_postcache_lookup(const char *key,
 */
 
 extern "C" AM_WEB_EXPORT void
-am_web_postcache_remove(const char *key)
+am_web_postcache_remove(const char *key, 
+                        void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_postcache_remove()";
     try {
-	 if(agent_info.postcache_handle != NULL) {
-	     agent_info.postcache_handle->post_hash_remove(key);
+	 if((*agentConfigPtr)->postcache_handle != NULL) {
+	     (*agentConfigPtr)->postcache_handle->post_hash_remove(key);
 	 }
     }
     catch (std::bad_alloc& exb) {
@@ -6749,15 +3453,21 @@ am_web_postcache_remove(const char *key)
   * Method to convert PRTime to string
 */
 
-static char *prtime_to_string(char *buffer, size_t buffer_len)
+static char *prtime_to_string(char *buffer, 
+                              size_t buffer_len, 
+                              void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     PRTime timestamp;
     PRExplodedTime exploded_time;
     int n_written = 0;
 
-    PR_Lock(agent_info.lock);
+    PR_Lock((*agentConfigPtr)->lock);
     timestamp = PR_Now();
-    PR_Unlock(agent_info.lock);
+    PR_Unlock((*agentConfigPtr)->lock);
 
     PR_ExplodeTime(timestamp, PR_LocalTimeParameters, &exploded_time);
     n_written = snprintf(buffer, buffer_len, "%d-%02d-%02d%02d:%02d:%02d.%03d",
@@ -6824,30 +3534,35 @@ am_web_postcache_data_cleanup(am_web_postcache_data_t * const postentry_struct) 
 */
 
 extern "C" AM_WEB_EXPORT post_urls_t *
-am_web_create_post_preserve_urls(const char *request_url)
+am_web_create_post_preserve_urls(const char *request_url,
+                                 void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     char *dummy_url	= NULL;
     char *time_str	= NULL;
     post_urls_t *url_data = (post_urls_t *)malloc (sizeof(post_urls_t));
     int posturllen = 0;
     int keyvaluelen = 0;
 
-    if (agent_info.postcache_url != NULL){
-	posturllen = strlen(agent_info.postcache_url);
+    if ((*agentConfigPtr)->postcache_url != NULL){
+	posturllen = strlen((*agentConfigPtr)->postcache_url);
     }
 
     time_str = (char *) malloc ( AM_WEB_MAX_POST_KEY_LENGTH );
-    prtime_to_string(time_str,AM_WEB_MAX_POST_KEY_LENGTH);
+    prtime_to_string(time_str,AM_WEB_MAX_POST_KEY_LENGTH, agent_config);
 
     if(time_str != NULL) {
 	keyvaluelen =  strlen(time_str);
     }
 
-    if (agent_info.postcache_url != NULL){
+    if ((*agentConfigPtr)->postcache_url != NULL){
 	dummy_url = (char *)malloc (posturllen +
 				    strlen(MAGIC_STR) + keyvaluelen + 1);
 
-	strcpy(dummy_url,agent_info.postcache_url);
+	strcpy(dummy_url,(*agentConfigPtr)->postcache_url);
 	strcat(dummy_url, MAGIC_STR);
 	strcat(dummy_url, time_str);
 
@@ -6893,15 +3608,15 @@ static char* escapeQuotationMark(char*& ptr)
   * Create a data structure for the encoded post data, helper function
   * to create the html page
 */
-post_struct_t *
+Utils::post_struct_t *
 split_post_data(const char * test_string)
 {
     char * str = NULL;
     char * ptr = NULL;
     std::size_t i = 0;
     unsigned int num_sectors = 0;
-    post_struct_t *post_data =
-		    (post_struct_t *) malloc(sizeof(post_struct_t) * 1);
+    Utils::post_struct_t *post_data =
+		    (Utils::post_struct_t *) malloc(sizeof(Utils::post_struct_t) * 1);
 
 
     //Create the tokens with name value pair separated with "&"
@@ -6916,8 +3631,8 @@ split_post_data(const char * test_string)
     }
 
     if(post_data != NULL){
-	post_data->namevalue = (name_value_pair_t *)
-			       malloc (sizeof(name_value_pair_t) * num_sectors);
+	post_data->namevalue = (Utils::name_value_pair_t *)
+			       malloc (sizeof(Utils::name_value_pair_t) * num_sectors);
 	post_data->count = num_sectors;
 
 	// Parse the name value pair in a structure in one pass
@@ -6962,13 +3677,16 @@ split_post_data(const char * test_string)
   * invisible name value pairs
 */
 extern "C" AM_WEB_EXPORT char *
-am_web_create_post_page(const char *key, const char *postdata, const char *actionurl)
+am_web_create_post_page(const char *key, 
+                        const char *postdata, 
+                        const char *actionurl,
+                        void* agent_config)
 {
     char *buffer_page = NULL;
     int num_sectors = 0;
     int i =0;
     int totalchars = 0;
-    post_struct_t *post_data = split_post_data(postdata);
+    Utils::post_struct_t *post_data = split_post_data(postdata);
 
     num_sectors = post_data->count;
 
@@ -7002,10 +3720,10 @@ am_web_create_post_page(const char *key, const char *postdata, const char *actio
 
     // Now remove the entry from the hashtable
     if(key != NULL){
-	am_web_postcache_remove(key);
+	am_web_postcache_remove(key, agent_config);
     }
 
-    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 	     "HTML page for post %s :",buffer_page);
 
     if(post_data->namevalue != NULL){
@@ -7211,8 +3929,12 @@ am_web_is_cookie_present(const char *cookie, const char *value,
 }
 
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_logout_url(const char *url)
+am_web_is_logout_url(const char *url,
+                     void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
     const char *thisfunc = "am_web_is_logout_url";
     boolean_t found = B_FALSE;
     if (NULL != url && '\0' != url[0]) {
@@ -7220,28 +3942,28 @@ am_web_is_logout_url(const char *url)
 	    // normalize the given url before comparison.
 	    URL url_obj(url);
 	    // override protocol/host/port if configured.
-	    (void)overrideProtoHostPort(url_obj);
+	    (void)overrideProtoHostPort(url_obj, agent_config);
 	    std::string url_str;
 	    url_obj.getURLString(url_str);
 	    const char *norm_url = url_str.c_str();
-	    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		     "%s(%s): normalized URL %s.\n", thisfunc, url, norm_url);
 	    unsigned int i;
 	    for (i = 0;
-		(i < agent_info.logout_url_list.size) && (B_FALSE == found);
+		(i < (*agentConfigPtr)->logout_url_list.size) && (B_FALSE == found);
 		 i++) {
 		am_resource_traits_t rsrcTraits;
-		populate_am_resource_traits(rsrcTraits);
+		populate_am_resource_traits(rsrcTraits, agent_config);
 		am_resource_match_t match_status;
 		boolean_t usePatterns =
-		    agent_info.logout_url_list.list[i].has_patterns==AM_TRUE? B_TRUE:B_FALSE;
+		    (*agentConfigPtr)->logout_url_list.list[i].has_patterns==AM_TRUE? B_TRUE:B_FALSE;
 		match_status = am_policy_compare_urls(
-		    &rsrcTraits, agent_info.logout_url_list.list[i].url, norm_url, usePatterns);
+		    &rsrcTraits, (*agentConfigPtr)->logout_url_list.list[i].url, norm_url, usePatterns);
 		if (match_status == AM_EXACT_MATCH ||
 		    match_status == AM_EXACT_PATTERN_MATCH) {
-		    Log::log(agent_info.log_module, Log::LOG_DEBUG,
+		    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 			"%s(%s): matched '%s' entry in logout url list",
-			thisfunc, url, agent_info.logout_url_list.list[i].url);
+			thisfunc, url, (*agentConfigPtr)->logout_url_list.list[i].url);
 		    found = B_TRUE;
 		    break;
 		}
@@ -7671,11 +4393,12 @@ get_token_from_assertion(
 	am_web_req_method_t method,
 	am_web_get_post_data_t get_post_data,
 	am_web_free_post_data_t free_post_data,
-	char **sso_token)
+	char **sso_token,
+        void* agent_config)
 {
     const char *thisfunc = "get_token_from_assertion()";
     am_status_t sts = AM_SUCCESS;
-    const char *cookieName = am_web_get_cookie_name();
+    const char *cookieName = am_web_get_cookie_name(agent_config);
     char *postdata = NULL;
 
     // check method arg
@@ -7732,7 +4455,7 @@ get_token_from_assertion(
 	    sts = AM_NOT_FOUND;
 	}
 	else if ((sts = am_web_get_token_from_assertion(
-			    postdata, sso_token)) != AM_SUCCESS ||
+			    postdata, sso_token, agent_config)) != AM_SUCCESS ||
 		 *sso_token == NULL || (*sso_token)[0] == '\0') {
 	    am_web_log_error("%s: Failed to get sso token from assertion, "
 			     "status %s, sso_token %s",
@@ -7768,12 +4491,13 @@ get_token_from_assertion(
  */
 static am_status_t
 remove_cdsso_params_from_query(char **query,
-				   am_web_req_method_t method)
+                               am_web_req_method_t method,
+                               void* agent_config)
 {
     const char *thisfunc = "remove_cdsso_params_from_query()";
     am_status_t sts = AM_SUCCESS;
     am_status_t remove_sts = AM_SUCCESS;
-    const char *cookieName = am_web_get_cookie_name();
+    const char *cookieName = am_web_get_cookie_name(agent_config);
     const char *cdsso_params[] = {
 		    REQUEST_METHOD_TYPE_PARAM,
 		    cookieName,
@@ -7870,7 +4594,7 @@ set_cookie_in_cookie_header(char *cookie_header,
  * Set a cookie in the cookie request header.
  */
 static am_status_t
-set_cookie_in_request(cookie_info_t *cookie_info,
+set_cookie_in_request(Utils::cookie_info_t *cookie_info,
 		      am_web_request_params_t *req_params,
 		      am_web_request_func_t *req_func,
 		      bool do_set)
@@ -7951,7 +4675,7 @@ add_cookie_in_response(const char *set_cookie_header_val, void **args)
 }
 
 static am_status_t
-set_cookie_in_request_and_response(cookie_info_t *cookie_info,
+set_cookie_in_request_and_response(Utils::cookie_info_t *cookie_info,
 				   am_web_request_params_t *req_params,
 				   am_web_request_func_t *req_func,
 				   bool do_set)
@@ -8007,19 +4731,23 @@ set_cookie_in_request_and_response(cookie_info_t *cookie_info,
 static am_status_t
 set_cookie_in_domains(const char *sso_token,
 		      am_web_request_params_t *req_params,
-		      am_web_request_func_t *req_func)
+		      am_web_request_func_t *req_func,
+                      void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
     const char *thisfunc = "set_cookie_in_domains()";
     am_status_t sts = AM_SUCCESS;
     am_status_t setSts = AM_SUCCESS;
-    cookie_info_t cookieInfo;
+    Utils::cookie_info_t cookieInfo;
 
     if (sso_token == NULL || sso_token[0] == '\0' || req_func == NULL) {
 	sts = AM_INVALID_ARGUMENT;
     }
     else {
-	std::set<std::string> *cookie_domains = agent_info.cookie_domain_list;
-	cookieInfo.name = (char *)agent_info.cookie_name;
+	std::set<std::string> *cookie_domains = (*agentConfigPtr)->cookie_domain_list;
+	cookieInfo.name = (char *)(*agentConfigPtr)->cookie_name;
 	cookieInfo.value = (char *)sso_token;
 	cookieInfo.domain = NULL;
 	// This must be null (not empty string) for older browsers
@@ -8033,7 +4761,7 @@ set_cookie_in_domains(const char *sso_token,
 	    sts = set_cookie_in_request_and_response(
 			    &cookieInfo, req_params, req_func, true);
 	    am_web_log_debug("%s: setting cookie %s in default domain "
-			     "returned %s", thisfunc, agent_info.cookie_name,
+			     "returned %s", thisfunc, (*agentConfigPtr)->cookie_name,
 			     am_status_to_string(sts));
 	}
 	else {
@@ -8045,7 +4773,7 @@ set_cookie_in_domains(const char *sso_token,
 			    &cookieInfo, req_params, req_func, true);
 		am_web_log_debug("%s: setting cookie %s in domain %s"
 				 "returned %s", thisfunc,
-				 agent_info.cookie_name,
+				 (*agentConfigPtr)->cookie_name,
 				 cookieInfo.domain,
 				 am_status_to_string(sts));
 		if (setSts != AM_SUCCESS) {
@@ -8103,7 +4831,8 @@ process_cdsso(
 	am_web_request_params_t *req_params,
 	am_web_request_func_t *req_func,
 	am_web_req_method_t orig_method,
-	char **sso_token)
+	char **sso_token,
+        void* agent_config)
 {
     const char *thisfunc = "process_cdsso()";
     am_status_t sts = AM_SUCCESS;
@@ -8129,14 +4858,15 @@ process_cdsso(
 					     req_params->method,
 					     req_func->get_post_data,
 					     req_func->free_post_data,
-					     sso_token)) != AM_SUCCESS) {
+					     sso_token,
+                                             agent_config)) != AM_SUCCESS) {
 	am_web_log_error("%s: Error getting token from assertion: %s",
 			 thisfunc, am_status_to_string(sts));
     }
     // Now set the cookie and method.
     else {
 	// set cookie in domain
-	local_sts = set_cookie_in_domains(*sso_token, req_params, req_func);
+	local_sts = set_cookie_in_domains(*sso_token, req_params, req_func, agent_config);
         if (local_sts != AM_SUCCESS) {
 	    // ignore error but give a warning
 	    am_web_log_warning("%s: cookie domain set of sso_token [%s] "
@@ -8171,9 +4901,13 @@ process_cdsso(
  */
 static am_status_t
 set_user_attributes(am_policy_result_t *result,
-			 am_web_request_params_t *req_params,
-			 am_web_request_func_t *req_func)
+                    am_web_request_params_t *req_params,
+                    am_web_request_func_t *req_func,
+                    void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
      const char *thisfunc = "set_user_attributes()";
      am_status_t sts = AM_SUCCESS;
      am_status_t set_sts = AM_SUCCESS;
@@ -8186,9 +4920,9 @@ set_user_attributes(am_policy_result_t *result,
          sts = AM_INVALID_ARGUMENT;
      }
      // if attributes mode is none, we're done.
-     else if ((SET_ATTRS_NONE == setUserProfileAttrsMode) &&
-              (SET_ATTRS_NONE == setUserSessionAttrsMode) &&
-              (SET_ATTRS_NONE == setUserResponseAttrsMode)) {
+     else if ((SET_ATTRS_NONE == (*agentConfigPtr)->setUserProfileAttrsMode) &&
+              (SET_ATTRS_NONE == (*agentConfigPtr)->setUserSessionAttrsMode) &&
+              (SET_ATTRS_NONE == (*agentConfigPtr)->setUserResponseAttrsMode)) {
                 am_web_log_debug("%s: set user attributes option set to none.",
                                   thisfunc);
                 sts = AM_SUCCESS;
@@ -8203,9 +4937,9 @@ set_user_attributes(am_policy_result_t *result,
     }
     // if set user LDAP attribute option is headers and set
     // request headers is null, return.
-    else if (((SET_ATTRS_AS_HEADER == setUserProfileAttrsMode) ||
-    		 (SET_ATTRS_AS_HEADER == setUserSessionAttrsMode) ||
-    		 (SET_ATTRS_AS_HEADER == setUserResponseAttrsMode)) &&
+    else if (((SET_ATTRS_AS_HEADER == (*agentConfigPtr)->setUserProfileAttrsMode) ||
+    		 (SET_ATTRS_AS_HEADER == (*agentConfigPtr)->setUserSessionAttrsMode) ||
+    		 (SET_ATTRS_AS_HEADER == (*agentConfigPtr)->setUserResponseAttrsMode)) &&
                    NULL == req_func->set_header_in_request.func) {
               am_web_log_warning("%s: set user attributes option is "
                                  "HEADER but no set request header "
@@ -8214,9 +4948,9 @@ set_user_attributes(am_policy_result_t *result,
     }
     // if set user LDAP attribute cookies option is "cookie" and
     // functions are not provided to set cookie, log a warning.
-    else if (((SET_ATTRS_AS_COOKIE == setUserProfileAttrsMode) ||
-              (SET_ATTRS_AS_COOKIE == setUserSessionAttrsMode) ||
-              (SET_ATTRS_AS_COOKIE == setUserResponseAttrsMode)) &&
+    else if (((SET_ATTRS_AS_COOKIE == (*agentConfigPtr)->setUserProfileAttrsMode) ||
+              (SET_ATTRS_AS_COOKIE == (*agentConfigPtr)->setUserSessionAttrsMode) ||
+              (SET_ATTRS_AS_COOKIE == (*agentConfigPtr)->setUserResponseAttrsMode)) &&
                 (NULL == req_func->set_header_in_request.func ||
                  NULL == req_func->add_header_in_response.func)) {
               am_web_log_warning("%s: set user attributes option is "
@@ -8240,13 +4974,14 @@ set_user_attributes(am_policy_result_t *result,
          }
          if (cookie_header_val != NULL) {
             std::list<std::string>::const_iterator attr_iter;
-            std::list<std::string>::const_iterator attr_end=attrList.end();
-            for(attr_iter = attrList.begin(); attr_iter != attr_end;
+            std::list<std::string>::const_iterator attr_end = 
+                (*agentConfigPtr)->attrList.end();
+            for(attr_iter = (*agentConfigPtr)->attrList.begin(); attr_iter != attr_end;
                                               attr_iter++) {
                const char * header_name = (*attr_iter).c_str();
-               if ((SET_ATTRS_AS_HEADER == setUserProfileAttrsMode) ||
-                   (SET_ATTRS_AS_HEADER == setUserSessionAttrsMode) ||
-                   (SET_ATTRS_AS_HEADER == setUserResponseAttrsMode)) {
+               if ((SET_ATTRS_AS_HEADER == (*agentConfigPtr)->setUserProfileAttrsMode) ||
+                   (SET_ATTRS_AS_HEADER == (*agentConfigPtr)->setUserSessionAttrsMode) ||
+                   (SET_ATTRS_AS_HEADER == (*agentConfigPtr)->setUserResponseAttrsMode)) {
                         set_sts = req_func->set_header_in_request.func(
                                          req_func->set_header_in_request.args,
                                          header_name, NULL);
@@ -8256,14 +4991,14 @@ set_user_attributes(am_policy_result_t *result,
                                               thisfunc, header_name);
                         }
                 }
-                else if ((SET_ATTRS_AS_COOKIE == setUserProfileAttrsMode) ||
-                         (SET_ATTRS_AS_COOKIE == setUserSessionAttrsMode) ||
-                         (SET_ATTRS_AS_COOKIE == setUserResponseAttrsMode)) {
+                else if ((SET_ATTRS_AS_COOKIE == (*agentConfigPtr)->setUserProfileAttrsMode) ||
+                         (SET_ATTRS_AS_COOKIE == (*agentConfigPtr)->setUserSessionAttrsMode) ||
+                         (SET_ATTRS_AS_COOKIE == (*agentConfigPtr)->setUserResponseAttrsMode)) {
                      // for cookie, remove all cookies of the same name
                      // in the cookie header.
-                     std::string cookie_name(attrCookiePrefix);
+                     std::string cookie_name((*agentConfigPtr)->attrCookiePrefix);
                      cookie_name.append(*attr_iter);
-                     cookie_info_t cookie_info;
+                     Utils::cookie_info_t cookie_info;
                      cookie_info.name = (char *)cookie_name.c_str();
                      cookie_info.value = NULL;
                      cookie_info.domain = NULL;
@@ -8286,15 +5021,15 @@ set_user_attributes(am_policy_result_t *result,
 	      switch (i) {
 		  case 0:
 		       attrMap = result->attr_profile_map;
-		       mode = profileMode;
+		       mode = (*agentConfigPtr)->profileMode;
 		       break;
 		  case 1:
 		       attrMap = result->attr_session_map;
-		       mode = sessionMode;
+		       mode = (*agentConfigPtr)->sessionMode;
 		       break;
 		  case 2:
 		       attrMap = result->attr_response_map;
-		       mode = responseMode;
+		       mode = (*agentConfigPtr)->responseMode;
 		       break;
                   default:
 		       break;
@@ -8313,7 +5048,7 @@ set_user_attributes(am_policy_result_t *result,
                   const KeyValueMap::mapped_type &valuesRef = iter->second;
                   std::size_t num_values = valuesRef.size();
                   const char *key = keyRef.c_str();
-                  Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+                  Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
 			           "%s: For user attribute %s, iterating over %u values.",
 			           thisfunc, key, num_values);
 
@@ -8351,7 +5086,7 @@ set_user_attributes(am_policy_result_t *result,
                    const KeyValueMap::mapped_type &valuesRef = iter->second;
                    std::size_t num_values = valuesRef.size();
                    const char *key = keyRef.c_str();
-                   Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
+                   Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
                       "%s: For user attribute %s, iterating over %u values.",
                       thisfunc, key, num_values);
 
@@ -8364,13 +5099,13 @@ set_user_attributes(am_policy_result_t *result,
                       }
                    }
 
-                   cookie_info_t cookie_info;
-                   std::string cookie_name(attrCookiePrefix);
+                   Utils::cookie_info_t cookie_info;
+                   std::string cookie_name((*agentConfigPtr)->attrCookiePrefix);
                    cookie_name.append(key);
                    cookie_info.name = (char *)cookie_name.c_str();
                    cookie_info.value = (char*)values.c_str();
                    cookie_info.domain = NULL;
-                   cookie_info.max_age = (char *)attrCookieMaxAge;
+                   cookie_info.max_age = (char *)(*agentConfigPtr)->attrCookieMaxAge;
                    cookie_info.path = const_cast<char*>("/");
                    // set cookie in request and response.
                    set_sts = set_cookie_in_request_and_response(
@@ -8414,8 +5149,13 @@ static am_web_result_t
 process_access_success(char *url,
 		       am_policy_result_t policy_result,
 		       am_web_request_params_t *req_params,
-		       am_web_request_func_t *req_func)
+		       am_web_request_func_t *req_func,
+                       void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "process_access_success()";
     am_web_result_t result = AM_WEB_RESULT_OK;
     am_status_t sts = AM_SUCCESS;
@@ -8429,7 +5169,7 @@ process_access_success(char *url,
     //      to decide whether or not to allow null user.
     //   2) if ignore_policy_evaluation_if_notenforced is set 
     //      to true, the remote user is not set to anything
-    if ((agent_info.ignore_policy_evaluation_if_notenforced) &&
+    if (((*agentConfigPtr)->ignore_policy_evaluation_if_notenforced) &&
             (policy_result.remote_user == NULL)) {
        am_web_log_debug("%s: ignore_policy_evaluation_if_notenforced is "
                         "set to true and remote user is NULL: "
@@ -8453,9 +5193,9 @@ process_access_success(char *url,
     // everything ok - now do things post access allowed.
     else {
 	// if logout url, reset any logout cookies
-	if (am_web_is_logout_url(url)) {
+	if (am_web_is_logout_url(url, agent_config)) {
 	    args[0] = req_func;
-	    sts = am_web_logout_cookies_reset(add_cookie_in_response, args);
+	    sts = am_web_logout_cookies_reset(add_cookie_in_response, args, agent_config);
 	    if (sts != AM_SUCCESS) {
 		am_web_log_warning("%s: Resetting logout cookies after [%s], "
 				   "returned %s.", thisfunc, url,
@@ -8463,7 +5203,7 @@ process_access_success(char *url,
 	    }
 	}
 	// set any profile,session or response attributes in the header or cookie.
-	sts = set_user_attributes(&policy_result, req_params, req_func);
+	sts = set_user_attributes(&policy_result, req_params, req_func, agent_config);
 	if (sts != AM_SUCCESS) {
 	    am_web_log_warning("%s: For url [%s], "
 			       "set user LDAP attributes returned %s.",
@@ -8486,7 +5226,8 @@ process_access_redirect(char *url,
 			am_policy_result_t policy_result,
 			am_web_request_func_t *req_func,
 			char **redirect_url,
-			char **advice_response)
+			char **advice_response,
+                        void* agent_config)
 {
     const char *thisfunc = "process_access_redirect()";
     am_status_t sts = AM_SUCCESS;
@@ -8499,20 +5240,22 @@ process_access_redirect(char *url,
 					 url,
 					 am_web_method_num_to_str(method),
 					 NULL,
-					 redirect_url);
+					 redirect_url,
+                                         agent_config);
 	am_web_log_debug("%s: get redirect url returned %s, redirect url [%s].",
 			 thisfunc, am_status_to_name(sts),
 			 *redirect_url == NULL ? "NULL" : *redirect_url);
 
-	char *am_rev_number = am_web_get_am_revision_number();
-	if ((am_rev_number != NULL) && (!strcmp(am_rev_number, am_70_revision_number)) && (policy_result.advice_string != NULL) && (advice_response != NULL)) {
+	if ((policy_result.advice_string != NULL) && (advice_response != NULL)) {
 		char* advice_res = (char *) malloc(2048 * sizeof(char));
 		if (advice_res) {
-			am_status_t ret = am_web_build_advice_response(&policy_result, *redirect_url,
-												       &advice_res);
+			am_status_t ret = am_web_build_advice_response(&policy_result, 
+                                               *redirect_url,
+					       &advice_res);
 
 			am_web_log_debug("process_access_redirect(): policy status=%s, "
-							"advice response[%s]", am_status_to_string(ret),
+							"advice response[%s]", 
+                                                        am_status_to_string(ret),
 							*advice_response);
 
 			if(ret != AM_SUCCESS) {
@@ -8557,8 +5300,13 @@ static am_status_t
 get_sso_token(am_web_request_params_t *req_params,
 	      am_web_request_func_t *req_func,
 	      char **sso_token,
-	      am_web_req_method_t *orig_method)
+	      am_web_req_method_t *orig_method,
+              void* agent_config)
 {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "get_sso_token()";
     am_status_t sts = AM_NOT_FOUND;
 
@@ -8570,7 +5318,7 @@ get_sso_token(am_web_request_params_t *req_params,
     // get the sso token from assertion and ignore the cookie in the agent's
     // domain, in case user has logged out of IS but sso token cookie in
     // agent's domain has not been updated.
-    if (agent_info.cdsso_enabled == AM_TRUE &&
+    if ((*agentConfigPtr)->cdsso_enabled == AM_TRUE &&
 	(sts = get_original_method(req_params, orig_method)) != AM_SUCCESS &&
 	sts != AM_NOT_FOUND) {
 	am_web_log_error("%s: Error while checking if original method "
@@ -8581,10 +5329,10 @@ get_sso_token(am_web_request_params_t *req_params,
 	     *orig_method == AM_WEB_REQUEST_POST) {
 	// this can only be if we're in cdsso and original method in
 	// query parameters was a valid get or post.
-	sts = process_cdsso(req_params, req_func, *orig_method, sso_token);
+	sts = process_cdsso(req_params, req_func, *orig_method, sso_token, agent_config);
     }
     else {
-	sts = get_cookie_val(am_web_get_cookie_name(),
+	sts = get_cookie_val(am_web_get_cookie_name(agent_config),
 			     req_params->cookie_header_val, sso_token);
     }
 
@@ -8613,8 +5361,9 @@ get_sso_token(am_web_request_params_t *req_params,
  */
 static am_web_result_t
 process_request(am_web_request_params_t *req_params,
-	        am_web_request_func_t *req_func,
-		char *data_buf, size_t data_buf_size)
+                am_web_request_func_t *req_func,
+                char *data_buf, size_t data_buf_size, 
+                void* agent_config)
 {
     const char *thisfunc = "process_request()";
     am_status_t sts = AM_SUCCESS;
@@ -8627,7 +5376,7 @@ process_request(am_web_request_params_t *req_params,
     char *redirect_url = NULL;
 	char *advice_response = NULL;
     void *args[1];
-    boolean_t cdsso_enabled = am_web_is_cdsso_enabled();
+    boolean_t cdsso_enabled = am_web_is_cdsso_enabled(agent_config);
 
     // initialize reserved field to NULL
     req_params->reserved = NULL;
@@ -8636,7 +5385,7 @@ process_request(am_web_request_params_t *req_params,
     // OK if it's not found - am_web_is_access_allowed will check if
     // access is enforced.
     if ((sts = get_sso_token(req_params, req_func,
-			      &sso_token, &orig_method)) != AM_SUCCESS &&
+			      &sso_token, &orig_method, agent_config)) != AM_SUCCESS &&
 	 sts != AM_NOT_FOUND) {
 	am_web_log_error("%s: Error while getting sso token from "
 			 "cookie or cdsso assertion: %s",
@@ -8655,9 +5404,9 @@ process_request(am_web_request_params_t *req_params,
 	// remove any remaining cdsso parameters from url and query
 	// even in non cdsso mode.
 	(void)remove_cdsso_params_from_query(&req_params->url,
-					    req_params->method);
+					    req_params->method, agent_config);
 	(void)remove_cdsso_params_from_query(&req_params->query,
-					    req_params->method);
+					    req_params->method, agent_config);
 	am_web_log_debug("%s: removed cdsso params from url and query. "
 			 "New values: url [%s] query [%s]",
 			 thisfunc, req_params->url,
@@ -8673,7 +5422,7 @@ process_request(am_web_request_params_t *req_params,
 	sts = am_web_is_access_allowed(
 			sso_token, req_params->url, req_params->path_info,
 			am_web_method_num_to_str(orig_method),
-			req_params->client_ip, env_map, &policy_result);
+			req_params->client_ip, env_map, &policy_result, agent_config);
 	am_web_log_info("%s: Access check for URL %s returned %s.",
 			thisfunc, req_params->url, am_status_to_string(sts));
 
@@ -8684,12 +5433,12 @@ process_request(am_web_request_params_t *req_params,
 	    // to be set in the web container.
 	    // Note - the method passed must be that of this request.
 	    result = process_access_success(req_params->url, policy_result,
-					    req_params, req_func);
+					    req_params, req_func, agent_config);
 	    break;
 	case AM_INVALID_SESSION:
 	    // reset cookies on invalid session.
 	    args[0] = req_func;
-	    local_sts = am_web_do_cookies_reset(add_cookie_in_response, args);
+	    local_sts = am_web_do_cookies_reset(add_cookie_in_response, args, agent_config);
 	    if (local_sts != AM_SUCCESS) {
 		am_web_log_warning("%s: all_cookies_reset after "
 				   "access to url [%s] returned "
@@ -8702,7 +5451,7 @@ process_request(am_web_request_params_t *req_params,
 					     sts, policy_result,
 					     req_func,
 					     &redirect_url,
-						 NULL);
+						 NULL, agent_config);
 	    break;
 	case AM_ACCESS_DENIED:
 	case AM_INVALID_FQDN_ACCESS:
@@ -8710,7 +5459,7 @@ process_request(am_web_request_params_t *req_params,
 					     sts, policy_result,
 					     req_func,
 					     &redirect_url,
-						 &advice_response);
+						 &advice_response, agent_config);
 	    break;
 	case AM_INVALID_ARGUMENT:
 	case AM_NO_MEMORY:
@@ -8769,9 +5518,15 @@ process_request(am_web_request_params_t *req_params,
 
 extern "C" AM_WEB_EXPORT am_web_result_t
 am_web_process_request(am_web_request_params_t *req_params,
-		       am_web_request_func_t *req_func,
-		       am_status_t *render_sts)
+                       am_web_request_func_t *req_func,
+                       am_status_t *render_sts, 
+                       void* agent_config)
 {
+
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
     const char *thisfunc = "am_web_process_request()";
     am_status_t sts = AM_SUCCESS;
     am_web_result_t result = AM_WEB_RESULT_ERROR;
@@ -8811,7 +5566,8 @@ am_web_process_request(am_web_request_params_t *req_params,
 	result = AM_WEB_RESULT_ERROR;
     }
     // Process notification if it's a notification url
-    else if (B_TRUE == am_web_is_notification(req_params->url)) {
+    else if (B_TRUE == am_web_is_notification(req_params->url,
+                                              agent_config)) {
 	if (NULL == req_func->get_post_data.func) {
 	    am_web_log_warning("%s: Notification message received but "
 			       "ignored because no get post data "
@@ -8843,7 +5599,7 @@ am_web_process_request(am_web_request_params_t *req_params,
     // Now process access check.
     else {
 	result = process_request(req_params, req_func,
-				 data_buf, sizeof(data_buf));
+				 data_buf, sizeof(data_buf), agent_config);
     }
 
     // render web result
@@ -8985,9 +5741,12 @@ am_web_build_advice_response(const am_policy_result_t *policy_result,
  * in the IIS6 agent should be replaced by "Basic"
  */
 extern "C" AM_WEB_EXPORT const char *
-am_web_get_authType()
+am_web_get_authType(void* agent_config)
 {
-	return agent_info.authtype;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+	return (*agentConfigPtr)->authtype;
 }
 
 /*
@@ -8995,37 +5754,39 @@ am_web_get_authType()
  * for the Proxy agent
  */
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_proxy_override_host_port_set() {
-    return (AM_TRUE==agent_info.override_host_port) ? B_TRUE : B_FALSE;
+am_web_is_proxy_override_host_port_set(void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    return (AM_TRUE==(*agentConfigPtr)->override_host_port) ? B_TRUE : B_FALSE;
 }
 
-/*
- * Method to determine if the override_host_port is set
- * for the Proxy agent
- */
-extern "C" AM_WEB_EXPORT char *
-am_web_get_am_revision_number() {
-    return agent_info.am_revision_number;
-}
+
 /*
  * Method to get the IIS6 agent replay passwd key
  *
  */
 extern "C" AM_WEB_EXPORT const char *
-am_web_get_iis6_replaypasswd_key() {
-    return agent_info.iis6_replaypasswd_key;
+am_web_get_iis6_replaypasswd_key(void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    return (*agentConfigPtr)->iis6_replaypasswd_key;
 }
 
 /*
  * Method to check whether OWA is deployed on IIS6
  */
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_owa_enabled() {
-	boolean_t status = B_FALSE;
-	if(agent_info.owa_enabled == AM_TRUE) {
-	    status = B_TRUE;
-	}
-	return status;
+am_web_is_owa_enabled(void* agent_config) {
+    boolean_t status = B_FALSE;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    if((*agentConfigPtr)->owa_enabled == AM_TRUE) {
+        status = B_TRUE;
+    }
+    return status;
 }
 
 
@@ -9033,12 +5794,15 @@ am_web_is_owa_enabled() {
  * Method to convert http to https if OWA is deployed on IIS6
  */
 extern "C" AM_WEB_EXPORT boolean_t
-am_web_is_owa_enabled_change_protocol() {
-	boolean_t status = B_FALSE;
-	if(agent_info.owa_enabled_change_protocol == AM_TRUE) {
-	    status = B_TRUE;
-	}
-	return status;
+am_web_is_owa_enabled_change_protocol(void* agent_config) {
+    boolean_t status = B_FALSE;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    if((*agentConfigPtr)->owa_enabled_change_protocol == AM_TRUE) {
+        status = B_TRUE;
+    }
+    return status;
 }
 
 
@@ -9046,15 +5810,57 @@ am_web_is_owa_enabled_change_protocol() {
  * Method to convert http to https if OWA is deployed on IIS6
  */
 extern "C" AM_WEB_EXPORT const char *
-am_web_is_owa_enabled_session_timeout_url() {
-    return agent_info.owa_enabled_session_timeout_url;
+am_web_is_owa_enabled_session_timeout_url(void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    return (*agentConfigPtr)->owa_enabled_session_timeout_url;
+}
+
+/**
+ * Method to return the latest instance of agent configuration 
+ * from agent configuration cache.
+ * The returned instance gets used to serve requests.
+ */
+extern "C" AM_WEB_EXPORT void*
+am_web_get_agent_configuration() {
+    void *agentC = NULL;
+        if (agentProfileService != NULL) {
+            agentC = new AgentConfigurationRefCntPtr(
+                       agentProfileService->getAgentConfigInstance());
+        }
+    return agentC;
+}
+
+/**
+ * Method to delete ref counted object associated with
+ * the latest instance of agent configuration. 
+ */
+extern "C" AM_WEB_EXPORT void
+am_web_delete_agent_configuration(void *agentC) {
+    AgentConfigurationRefCntPtr* x = 
+        (AgentConfigurationRefCntPtr*) agentC;
+    delete(x);
+}
+
+extern "C" AM_WEB_EXPORT boolean_t
+am_web_is_cdsso_enabled(void* agent_config) {
+    boolean_t status = B_FALSE;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    if((*agentConfigPtr)->cdsso_enabled == AM_TRUE) {
+        status = B_TRUE;
+    }
+
+    return status;
 }
 
 #if defined(WINNT)
 AM_BEGIN_EXTERN_C
 BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpvReserved) {
         if(fdwReason == DLL_PROCESS_ATTACH) {
-                agent_info.hInst = hInst;
+                agentConfig->hInst = hInst;
         }
         return TRUE;
 }

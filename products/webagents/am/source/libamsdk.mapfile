@@ -1,6 +1,6 @@
 SUNW_1.0 {
 	global:
-		am_agent_init_cac;
+		am_agent_init;
 		am_cleanup;
 
 		am_http_cookie_encode;
@@ -205,7 +205,6 @@ SUNW_2.1.2 {
 SUNW_2.2 {
 	global:
 		am_web_build_advice_response;
-		am_web_get_am_revision_number;
 		am_web_get_request_url;
 
 	local:

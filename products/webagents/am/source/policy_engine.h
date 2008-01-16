@@ -93,7 +93,7 @@ class PolicyEngine {
 			 am_map_t,
 			 am_policy_result_t *,
 			 am_bool_t,
-			 char **);
+                 	 Properties& );
 
     /* Throws:
      *	NSPRException upon NSPR error 

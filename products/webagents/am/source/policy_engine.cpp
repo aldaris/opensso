@@ -261,7 +261,12 @@ PolicyEngine::policy_notification_handler(Service *serviceEntry,
 	XMLElement rootElement = tree.getRootElement();
 	string nodeName;
 
-
+        // Agent Config Change notification.
+	if (rootElement.isNamed(AGENT_CONFIG_CHANGE_NOTIFICATION)) {
+            serviceEntry->agent_config_change_notify();
+            return;
+        }
+        
 	// Session service notification.
 	if(rootElement.isNamed(SESSION_NOTIFICATION)) {
 	    XMLElement sessionElem;
@@ -421,7 +426,7 @@ PolicyEngine::policy_evaluate(am_policy_t hdl, const char *ssoToken,
 			      const am_map_t env,
 			      am_map_t response, am_policy_result_t *policy_res,
 	                      am_bool_t ignorePolicyResult,
-	                      char **am_revision_number)
+	                      Properties& properties)
 {
 
     Service *serviceEntry = getService(hdl);
@@ -443,7 +448,7 @@ PolicyEngine::policy_evaluate(am_policy_t hdl, const char *ssoToken,
     const KeyValueMap &kvmap = reinterpret_cast<const KeyValueMap &>(*env);
     try {
 	serviceEntry->getPolicyResult(ssoToken, resName, actionName,
-				      kvmap, response, policy_res, ignorePolicyResult, am_revision_number);
+				      kvmap, response, policy_res, ignorePolicyResult, properties);
     } catch(XMLTree::ParseException &ex) {
 	throw InternalException("PolicyEngine::policy_evaluate",
 				ex.getMessage(),

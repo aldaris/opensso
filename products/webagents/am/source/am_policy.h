@@ -124,6 +124,18 @@ am_policy_destroy(am_policy_t policy);
  * Method to evaluate a non-boolean policy question for a resource.
  */
 AM_EXPORT am_status_t
+am_policy_evaluate(am_policy_t policy_handle,
+		      const char *sso_token,
+		      const char *resource_name,
+		      const char *action_name,
+		      const am_map_t env_parameter_map,
+		      am_map_t policy_response_map_ptr,
+		      am_policy_result_t *policy_result);
+
+/*
+ * Method to evaluate a non-boolean policy question for a resource.
+ */
+AM_EXPORT am_status_t
 am_policy_evaluate_ignore_url_notenforced(am_policy_t policy_handle,
 		      const char *sso_token,
 		      const char *resource_name,
@@ -132,19 +144,7 @@ am_policy_evaluate_ignore_url_notenforced(am_policy_t policy_handle,
 		      am_map_t policy_response_map_ptr,
 		      am_policy_result_t *policy_result,
 		      am_bool_t ignorePolicyResult,
-		      char **am_revision_number);
-
-/*
- * Method to evaluate a non-boolean policy question for a resource.
- */
-AM_EXPORT am_status_t
-am_policy_evaluate(am_policy_t policy_handle,
-		      const char *sso_token,
-		      const char *resource_name,
-		      const char *action_name,
-		      const am_map_t env_parameter_map,
-		      am_map_t policy_response_map_ptr,
-		      am_policy_result_t *policy_result);
+		      am_properties_t properties);
 
 /*
  * Method to check if notification is enabled in the SDK.
@@ -213,7 +213,8 @@ am_policy_invalidate_session(am_policy_t policy_handle,
 
 AM_EXPORT am_status_t
 am_policy_service_initialize_cac(am_policy_t policy_handle, 
-                                 const char* ssoTokenId);
+                                 const char* ssoTokenId,
+				 am_properties_t properties);
 
 AM_END_EXTERN_C
 

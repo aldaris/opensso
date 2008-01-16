@@ -28,6 +28,7 @@
 #include <prprf.h>
 #include "properties.h"
 #include "utils.h"
+#include "url.h"
 
 using std::string;
 using namespace Utils;
@@ -36,6 +37,7 @@ USING_PRIVATE_NAMESPACE;
 const char *POLICY_SERVICE="PolicyService";
 const char *POLICY_RESPONSE="PolicyResponse";
 const char *SESSION_NOTIFICATION="SessionNotification";
+const char *AGENT_CONFIG_CHANGE_NOTIFICATION="AgentConfigChangeNotification";
 const char *ADD_LISTENER_RESPONSE="AddPolicyListenerResponse";
 const char *REMOVE_LISTENER_RESPONSE="RemovePolicyListenerResponse";
 const char *SESSION="Session";
@@ -93,6 +95,13 @@ const static string STAR("*");
 #error "no constant available for the maximum value of a 64-bit integer"
 #endif
 #define PRE_SCALE_MAX	(MAX_64_BIT_INT / PR_USEC_PER_MSEC)
+
+#define	HTTP_PREFIX	"http://"
+#define	HTTP_PREFIX_LEN (sizeof(HTTP_PREFIX) - 1)
+#define	HTTP_DEF_PORT	80
+#define	HTTPS_PREFIX	"https://"
+#define	HTTPS_PREFIX_LEN (sizeof(HTTPS_PREFIX) - 1)
+#define HTTPS_DEF_PORT	443
 
 /* This is the entity reference table.  It is mandatory that & be the
  * first tag to be replaced and so when modifying this structure in future
@@ -533,4 +542,609 @@ Utils::get_prime(unsigned int number)
     }
 
     return number;
+}
+
+
+void Utils::parseIPAddresses(const std::string &property,
+        std::set<std::string> &ipAddrSet ) {
+    size_t space = 0, curPos = 0;
+    std::string iplist(property);
+    size_t size = iplist.size();
+    
+    while(space < size) {
+        space = iplist.find(' ', curPos);
+        std::string ipAddr;
+        if (space == std::string::npos) {
+            ipAddr = iplist.substr(curPos, size - curPos);
+            space = size;
+        } else {
+            ipAddr = iplist.substr(curPos, space - curPos);
+        }
+        curPos = space+1;
+        if(ipAddr.size() == 0)
+            continue;
+        ipAddrSet.insert(ipAddr);
+    }
+}
+
+/* Throws std::exception's from string methods */
+
+/* Throws std::exception's from string methods */
+void Utils::parseCookieDomains(const std::string &property,
+        std::set<std::string> &CDListSet) {
+    size_t space = 0, curPos = 0;
+    std::string cdlist(property);
+    size_t size = cdlist.size();
+    
+    while(space < size) {
+        space = cdlist.find(' ', curPos);
+        std::string cookiedomain;
+        if (space == std::string::npos) {
+            cookiedomain = cdlist.substr(curPos, size - curPos);
+            space = size;
+        } else {
+            cookiedomain = cdlist.substr(curPos, space - curPos);
+        }
+        curPos = space+1;
+        if(cookiedomain.size() == 0)
+            continue;
+        CDListSet.insert(cookiedomain);
+    }
+}
+
+void Utils::cleanup_cookie_info(cookie_info_t *cookie_data) 
+{
+    if (cookie_data != NULL) {
+        if (cookie_data->name != NULL) {
+            free(cookie_data->name);
+            cookie_data->name = NULL;
+        }
+        if (cookie_data->value != NULL) {
+            free(cookie_data->value);
+            cookie_data->value = NULL;
+        }
+        if (cookie_data->domain != NULL) {
+            free(cookie_data->domain);
+            cookie_data->domain = NULL;
+        }
+        if (cookie_data->max_age != NULL) {
+            if (cookie_data->max_age[0] != '0') {
+
+                free(cookie_data->max_age);
+                cookie_data->max_age = NULL;
+            }
+        }
+        if (cookie_data->path != NULL) {
+            free(cookie_data->path);
+            cookie_data->path = NULL;
+        }
+    }
+}
+
+void Utils::cleanup_url_info_list(url_info_list_t *url_list) {
+    unsigned int i;
+
+    if (url_list->list != NULL) {
+        if(url_list->size > 0 ) {
+
+            for (i = 0; i < url_list->size; i++) {
+
+                if (url_list->list[i].url != NULL) {
+                    free(url_list->list[i].url);
+                    url_list->list[i].url = NULL;
+                }
+                if (url_list->list[i].host != NULL) {
+                    free(url_list->list[i].host);
+                    url_list->list[i].host = NULL;
+                }
+            }
+
+            free(url_list->list);
+
+            url_list->list = NULL;
+        }
+    }
+    
+    url_list->size = 0;
+}
+
+/*
+ * Parse a cookie string represenation of the form
+ * name[=value][;Domain=value][;Max-Age=value][;Path=value]
+ *
+ * Throws std::exception's from string methods.
+ */
+am_status_t Utils::parseCookie(std::string cookie,
+        cookie_info_t *cookie_data) {
+    char *holder = NULL;
+    char* temp_str = const_cast<char*>(cookie.c_str());
+    
+    if ( cookie_data == NULL || temp_str == NULL) {
+        return AM_INVALID_ARGUMENT;
+    }
+    
+    cleanup_cookie_info(cookie_data);
+    
+    //Process name=value
+    
+    char *token = NULL;
+    std::string tempstr;
+    token = strtok_r(temp_str, ";", &holder);
+    if (token == NULL) {
+        return AM_INVALID_ARGUMENT;
+    }
+    tempstr = token;
+    Utils::trim(tempstr);
+    token = const_cast<char*>(tempstr.c_str());
+    int len = strlen(token);
+    char *loc = strchr(token, '=');
+    if (loc == NULL) {
+        cookie_data->name = (char *)malloc(len+1);
+        if (cookie_data->name == NULL) {
+            return AM_NO_MEMORY;
+        }
+        strcpy(cookie_data->name, token);
+    } else {
+        len = len - strlen(loc);
+        cookie_data->name = (char *)malloc(len+1);
+        if (cookie_data->name == NULL) {
+            return AM_NO_MEMORY;
+        }
+        strncpy(cookie_data->name, token, len);
+        cookie_data->name[len]='\0';
+        cookie_data->value = (char *) malloc(strlen(loc));
+        if (cookie_data->name == NULL) {
+            cleanup_cookie_info(cookie_data);
+            return AM_NO_MEMORY;
+        }
+        strcpy(cookie_data->value, loc+1);
+    }
+    
+    token = NULL;
+    token = strtok_r(NULL, ";", &holder);
+    
+    while (token != NULL)  {
+        tempstr = token;
+        Utils::trim(tempstr);
+        token = const_cast<char *>(tempstr.c_str());
+        len = strlen(token);
+        loc = NULL;
+        loc = strstr(token, "Domain=");
+        if (loc != NULL) {
+            loc = loc + strlen("Domain=");
+            len = strlen(loc);
+            cookie_data->domain = (char *)malloc(len+1);
+            if (cookie_data->domain == NULL) {
+                cleanup_cookie_info(cookie_data);
+                return AM_NO_MEMORY;
+            }
+            if (loc[0] == '.') {
+                strcpy(cookie_data->domain, loc+1);
+                cookie_data->domain[len-1] = '\0';
+            } else {
+                strcpy(cookie_data->domain, loc);
+                cookie_data->domain[len] = '\0';
+            }
+        } else  {
+            loc = strstr(token, "Max-Age=");
+            if (loc != NULL) {
+                loc = loc + strlen("Max-Age=");
+                len = strlen(loc);
+                cookie_data->max_age = (char *)malloc(len+1);
+                if (cookie_data->max_age == NULL) {
+                    cleanup_cookie_info(cookie_data);
+                    return AM_NO_MEMORY;
+                }
+                strcpy(cookie_data->max_age, loc);
+            } else  {
+                loc = strstr(token, "Path=");
+                if (loc != NULL) {
+                    loc = loc + strlen("Path=");
+                    len = strlen(loc);
+                    cookie_data->path = (char *)malloc(len+1);
+                    if (cookie_data->path == NULL) {
+                        cleanup_cookie_info(cookie_data);
+                        return AM_NO_MEMORY;
+                    }
+                    strcpy(cookie_data->path, loc);
+                } else  {
+                }
+            }
+        }
+        token = strtok_r(NULL, ";", &holder);
+    }
+    
+    return AM_SUCCESS;
+}
+
+
+am_status_t Utils::parse_url(const char *url_str,
+        size_t len,
+        url_info_t *entry_ptr,
+        am_bool_t validateURLs) {
+    const char *url = url_str;
+    size_t url_len = len;
+    std::string normalizedURL;
+    am_status_t status = AM_SUCCESS;
+    size_t host_offset = 0;
+    const char *protocol;
+    
+    if (NULL != url) {
+        /**
+         * FIX_NEXT_RELEASE
+         * This is a hack that I've put here.  The next release,
+         * we should be doing away with anything to do with URLs that's
+         * not in URL class.
+         *
+         * For now, compare wether it is a URL we are talking about or
+         * some regular expression like *.gif.
+         * If it is a URL, then, normalize it.
+         */
+        if(strncasecmp(url, HTTP_PREFIX, HTTP_PREFIX_LEN) == 0 ||
+                strncasecmp(url, HTTPS_PREFIX, HTTPS_PREFIX_LEN) == 0) {
+            try {
+                URL urlObject(url, len);
+                urlObject.getURLString(normalizedURL);
+                url = normalizedURL.c_str();
+                url_len = normalizedURL.size();
+                protocol = urlObject.getProtocolString();
+            } catch(InternalException &iex) {
+                status = AM_INVALID_ARGUMENT;
+            } catch(std::exception &ex) {
+                status = AM_INVALID_ARGUMENT;
+            } catch(...) {
+                status = AM_INVALID_ARGUMENT;
+            }
+        }
+        
+        if(validateURLs == AM_TRUE && status == AM_SUCCESS) {
+            if(url_len >= MIN_URL_LEN) {
+                if (strncasecmp(url, HTTPS_PREFIX, HTTPS_PREFIX_LEN) == 0) {
+                    entry_ptr->port = HTTPS_DEF_PORT;
+                    host_offset = HTTPS_PREFIX_LEN;
+                } else if (strncasecmp(url, HTTP_PREFIX,
+                        HTTP_PREFIX_LEN) == 0){
+                    entry_ptr->port = HTTP_DEF_PORT;
+                    host_offset = HTTP_PREFIX_LEN;
+                } else {
+                    status = AM_INVALID_ARGUMENT;
+                }
+            } else {
+                status = AM_INVALID_ARGUMENT;
+            }
+        }
+    } else {
+        status = AM_INVALID_ARGUMENT;
+    }
+    
+    if (AM_SUCCESS == status) {
+        entry_ptr->url = (char *)malloc(url_len + 1);
+        entry_ptr->host = (char *)malloc(url_len - host_offset + 1);
+        entry_ptr->protocol = const_cast<char *>(protocol);
+        if (NULL != entry_ptr->url && NULL != entry_ptr->host) {
+            char *temp_ptr;
+            
+            memcpy(entry_ptr->url, url, url_len);
+            entry_ptr->url[url_len] = '\0';
+            entry_ptr->url_len = url_len;
+            if (strchr(entry_ptr->url, '?') != NULL) {
+                entry_ptr->has_parameters = AM_TRUE;
+            } else {
+                entry_ptr->has_parameters = AM_FALSE;
+            }
+            
+            if (am_policy_resource_has_patterns(entry_ptr->url)==B_TRUE) {
+                entry_ptr->has_patterns = AM_TRUE;
+            } else {
+                entry_ptr->has_patterns = AM_FALSE;
+            }
+            
+            url_len -= host_offset;
+            url += host_offset;
+            if (url_len > 0) {
+                memcpy(entry_ptr->host, url, url_len);
+            }
+            entry_ptr->host[url_len] = '\0';
+            
+            temp_ptr = strchr(entry_ptr->host, '/');
+            if (temp_ptr != NULL) {
+                *temp_ptr = '\0';
+            }
+            
+            temp_ptr = strchr(entry_ptr->host, ':');
+            if (NULL != temp_ptr) {
+                *(temp_ptr++) = '\0';
+                
+                entry_ptr->port = 0;
+                while (isdigit(*temp_ptr)) {
+                    entry_ptr->port = (entry_ptr->port * 10) + *temp_ptr - '0';
+                    temp_ptr += 1;
+                }
+            }
+        } else {
+            if (NULL == entry_ptr->url) {
+            } else {
+                free(entry_ptr->url);
+                entry_ptr->url = NULL;
+            }
+            if (NULL == entry_ptr->host) {
+            } else {
+                free(entry_ptr->host);
+                entry_ptr->host = NULL;
+            }
+            status = AM_NO_MEMORY;
+        }
+    }
+    
+    return status;
+}
+
+
+am_status_t Utils::parse_url_list(const char *url_list_str,
+        char sep,
+        url_info_list_t *list_ptr,
+        am_bool_t validateURLs) {
+    am_status_t status = AM_SUCCESS;
+    int num_elements = 0;
+    cleanup_url_info_list(list_ptr);
+    if (url_list_str != NULL) {
+        const char *temp_ptr = url_list_str;
+        
+        // removing leading spaces and separators.
+        while (*temp_ptr == ' ' || *temp_ptr == sep) {
+            temp_ptr += 1;
+        }
+        
+        if (*temp_ptr != '\0') {
+            url_list_str = temp_ptr;
+            
+            /* Calculate num elems */
+            do {
+                num_elements += 1;
+                
+                while (*temp_ptr != '\0' && *temp_ptr != ' ' &&
+                        *temp_ptr != sep) {
+                    temp_ptr += 1;
+                }
+                while (*temp_ptr == ' ' || *temp_ptr == sep) {
+                    temp_ptr += 1;
+                }
+            } while (*temp_ptr != '\0');
+            
+            list_ptr->list = (url_info_t *) calloc(num_elements,
+                    sizeof(list_ptr->list[0]));
+            if (NULL != list_ptr->list) {
+                temp_ptr = url_list_str;
+                do {
+                    size_t len = 0;
+                    
+                    while (temp_ptr[len] != '\0' && temp_ptr[len] != ' ' &&
+                            temp_ptr[len] != sep) {
+                        len += 1;
+                    }
+                    
+                    status = parse_url(temp_ptr, len,
+                            &list_ptr->list[list_ptr->size],
+                            validateURLs);
+                    
+                    if (AM_SUCCESS == status) {
+                        temp_ptr += len;
+                        list_ptr->size += 1;
+                    } else {
+                        break;
+                    }
+                    
+                    while (*temp_ptr == ' ' || *temp_ptr == sep) {
+                        temp_ptr += 1;
+                    }
+                } while (*temp_ptr != '\0');
+            } else {
+                status = AM_NO_MEMORY;
+            }
+        }
+    }
+    
+    return status;
+}
+
+void Utils::cleanup_cookie_info_list(
+        cookie_info_list_t *cookie_list) {
+    unsigned int i;
+    
+    if (cookie_list != NULL) {
+        for (i = 0; i < cookie_list->size; i++) {
+            cleanup_cookie_info(&(cookie_list->list[i]));
+        }
+        free(cookie_list->list);
+    }
+    cookie_list->list = NULL;
+    cookie_list->size = 0;
+}
+
+
+am_status_t Utils::parseCookieList(const char *property,
+        char sep,
+        cookie_info_list_t *cookie_list) {
+    size_t num_cookies = 0;
+    
+    if ( property == NULL || cookie_list == NULL) {
+        return AM_INVALID_ARGUMENT;
+    }
+    
+    cleanup_cookie_info_list(cookie_list);
+    
+    const char *temp_ptr = property;
+    
+    // removing leading spaces and separators.
+    while (*temp_ptr == ' ' || *temp_ptr == sep) {
+        temp_ptr += 1;
+    }
+    
+    if ( *temp_ptr == '\0') {
+        cookie_list->size = 0;
+        cookie_list->list = NULL;
+        return AM_SUCCESS;
+    }
+    
+    /* Calculate num elems */
+    do {
+        num_cookies += 1;
+        
+        while (*temp_ptr != '\0' && *temp_ptr != ' ' &&
+                *temp_ptr != sep) {
+            temp_ptr += 1;
+        }
+        while (*temp_ptr == ' ' || *temp_ptr == sep) {
+            temp_ptr += 1;
+        }
+    } while (*temp_ptr != '\0');
+    
+    cookie_list->list = (cookie_info_t *) calloc(num_cookies,
+            sizeof(cookie_info_t));
+    if ( cookie_list->list == NULL) {
+        return AM_NO_MEMORY;
+    }
+    
+    memset(cookie_list->list, 0, num_cookies * sizeof(cookie_info_t));
+    
+    size_t space = 0, curPos = 0, idx = 0;
+    std::string cookies(property);
+    Utils::trim(cookies);
+    size_t size = cookies.size();
+    
+    while(space < size) {
+        space = cookies.find(',', curPos);
+        std::string cookie;
+        if (space == std::string::npos) {
+            cookie = cookies.substr(curPos, size - curPos);
+            space = size;
+        } else {
+            cookie = cookies.substr(curPos, space - curPos);
+        }
+        curPos = space+1;
+        Utils::trim(cookie);
+        if (cookie.size() == 0)
+            continue;
+        
+        if ( AM_SUCCESS == parseCookie(cookie, &cookie_list->list[idx]) ) {
+            idx++;
+        } else {
+        }
+        
+    }
+    cookie_list->size = idx;
+    return AM_SUCCESS;
+}
+
+am_status_t Utils::initCookieResetList(cookie_info_list_t *cookie_list, const char* cookie_reset_default_domain)
+{
+   const char *DEFAULT_PATH = "/";
+
+   if (cookie_list == NULL || cookie_list->list == NULL) {
+        return AM_INVALID_ARGUMENT;
+   }
+
+   for (size_t i=0; i < cookie_list->size; ++i) {
+
+       cookie_info_t *cookie_data = &cookie_list->list[i];
+       if (cookie_data != NULL) {
+
+           if ( cookie_data->domain == NULL ) {
+                int domain_len = strlen(cookie_reset_default_domain);
+                cookie_data->domain = (char *) malloc(domain_len +1);
+                if (cookie_data->domain == NULL) {
+                    cleanup_cookie_info(cookie_data);
+                    return AM_NO_MEMORY;
+                }
+                strcpy(cookie_data->domain,
+                       cookie_reset_default_domain);
+           }
+
+           if (cookie_data->max_age != NULL) {
+               if (cookie_data->max_age[0] == '\0') {
+                   free(cookie_data->max_age);
+                   // max_age cannot be an empty string for with older browsers
+	           // netscape 4.79, IE 5.5, mozilla < 1.4.
+		   // If specified as an empty string in the config,
+		   // don't set it at all in the cookie header.
+		   cookie_data->max_age = NULL;
+	       }
+	   }
+	   else {
+	       // by default, delete cookie on reset.
+	       cookie_data->max_age = const_cast<char*>("0");
+	   }
+
+	   if (cookie_data->path != NULL) {
+               if (cookie_data->path[0] == '\0') {
+                   free(cookie_data->path);
+	           // path must be '/' for older browsers IE,
+		   // netscape 4.79 to work
+                   cookie_data->path = strdup(DEFAULT_PATH);
+	       }
+	   }
+	   else {
+	       cookie_data->path = strdup(DEFAULT_PATH);
+	   }
+       }
+   }
+   return AM_SUCCESS;
+}
+
+am_status_t Utils::initCookieResetList(
+        cookie_info_list_t *cookie_list,
+        int domain_len,
+        const char* cookieResetDefaultDomain) 
+{
+    const char *DEFAULT_PATH = "/";
+    
+    if (cookie_list == NULL || cookie_list->list == NULL) {
+        return AM_INVALID_ARGUMENT;
+    }
+    
+    for (size_t i=0; i < cookie_list->size; ++i) {
+        
+        cookie_info_t *cookie_data = &cookie_list->list[i];
+        if (cookie_data != NULL) {
+            
+            if ( cookie_data->domain == NULL ) {
+                
+                cookie_data->domain = (char *) malloc(domain_len +1);
+                if (cookie_data->domain == NULL) {
+                    cleanup_cookie_info(cookie_data);
+                    return AM_NO_MEMORY;
+                }
+                strcpy(cookie_data->domain,
+                        cookieResetDefaultDomain);
+            }
+            
+            if (cookie_data->max_age != NULL) {
+                if (cookie_data->max_age[0] == '\0') {
+                    free(cookie_data->max_age);
+                    // max_age cannot be an empty string for with older browsers
+                    // netscape 4.79, IE 5.5, mozilla < 1.4.
+                    // If specified as an empty string in the config,
+                    // don't set it at all in the cookie header.
+                    cookie_data->max_age = NULL;
+                }
+            }
+            else {
+                // by default, delete cookie on reset.
+                cookie_data->max_age = const_cast<char*>("0");
+            }
+            
+            if (cookie_data->path != NULL) {
+                if (cookie_data->path[0] == '\0') {
+                    free(cookie_data->path);
+                    // path must be '/' for older browsers IE,
+                    // netscape 4.79 to work
+                    cookie_data->path = strdup(DEFAULT_PATH);
+                }
+            }
+            else {
+                cookie_data->path = strdup(DEFAULT_PATH);
+            }
+        }
+    }
+    return AM_SUCCESS;
 }

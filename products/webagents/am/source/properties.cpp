@@ -238,7 +238,6 @@ am_status_t Properties::parseBuffer(char *buffer)
     am_status_t status = AM_SUCCESS;
     char *nextLine;
     int len;
-    char ver[10] = {'\0'};
 
     try {
 	for (buffer = skipWhitespaceAndComments(buffer);
@@ -266,29 +265,10 @@ am_status_t Properties::parseBuffer(char *buffer)
 	    while ((len > 0) && (buffer[len] == ' ')) {
 		buffer[len--] = '\0';
 	    }
-
-            if (key == AM_WEB_AGENTS_VERSION_OLD) {
-                strcpy(ver, buffer);
-                if (!strncmp(ver, "2.1", 3)) {
-                    create_old_to_new_attributes_map();
-                }
-            }
             
-            if (!strncmp(ver, "2.1", 3)) {
-                // First resolve backward compatibility issue
-                const char *new_property_name = get_new_property_name(key);
-                if (new_property_name != NULL) {
-                    std::string newkey(new_property_name);
-		    set(newkey, buffer);
-                } else {
-                    set(key,buffer);
-                }
-	    } else {
-		// XXX - Should handle backslash escapes in the value
-		set(key, buffer);
-	    }
+            // XXX - Should handle backslash escapes in the value
+            set(key, buffer);
 	}
-
 	if (*buffer) {
 	    status = AM_FAILURE;
 	}
@@ -408,141 +388,13 @@ bool Properties::isSet(const std::string& key) const
     return find(key) != end();
 }
 
-// Create a hash map of old-to-new properties
-void Properties::create_old_to_new_attributes_map()
-{
-	newAttributesMap = reinterpret_cast<KeyValueMap *>(new KeyValueMap());
-	if (newAttributesMap != NULL) {
-	    newAttributesMap->insert(AM_COMMON_COOKIE_NAME_PROPERTY_OLD,AM_COMMON_COOKIE_NAME_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_NAMING_URL_PROPERTY_OLD,AM_COMMON_NAMING_URL_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_COOKIE_NAME_PROPERTY_OLD,AM_COMMON_COOKIE_NAME_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_NAMING_URL_PROPERTY_OLD,AM_COMMON_NAMING_URL_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_LOG_LEVELS_PROPERTY_OLD,AM_COMMON_LOG_LEVELS_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_SSL_CERT_DIR_PROPERTY_OLD,AM_COMMON_SSL_CERT_DIR_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_CERT_DB_PREFIX_PROPERTY_OLD,AM_COMMON_CERT_DB_PREFIX_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_TRUST_SERVER_CERTS_PROPERTY_OLD,AM_COMMON_TRUST_SERVER_CERTS_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_NOTIFICATION_ENABLE_PROPERTY_OLD,AM_COMMON_NOTIFICATION_ENABLE_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_NOTIFICATION_URL_PROPERTY_OLD,AM_COMMON_NOTIFICATION_URL_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_LOADBALANCE_PROPERTY_OLD,AM_COMMON_LOADBALANCE_PROPERTY,false);
-	    newAttributesMap->insert(AM_POLICY_LOGIN_URL_PROPERTY_OLD,AM_POLICY_LOGIN_URL_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_LOG_FILE_PROPERTY_OLD,AM_COMMON_LOG_FILE_PROPERTY,false);
-	    newAttributesMap->insert(AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY_OLD,AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY,false);
-	    newAttributesMap->insert(AM_POLICY_HASH_TIMEOUT_MINS_PROPERTY_OLD,AM_POLICY_HASH_TIMEOUT_MINS_PROPERTY,false);
-	    newAttributesMap->insert(AM_POLICY_USER_ID_PARAM_PROPERTY_OLD,AM_POLICY_USER_ID_PARAM_PROPERTY,false);
-	    newAttributesMap->insert(AM_POLICY_USER_ID_PARAM_TYPE_PROPERTY_OLD,AM_POLICY_USER_ID_PARAM_TYPE_PROPERTY,false);
-	    newAttributesMap->insert(AM_COMMON_SERVER_LOG_FILE_PROPERTY_OLD,AM_COMMON_SERVER_LOG_FILE_PROPERTY,false);
-	    newAttributesMap->insert(AM_POLICY_PROFILE_ATTRS_MODE_OLD,AM_POLICY_PROFILE_ATTRS_MODE,false);
-	    newAttributesMap->insert(AM_POLICY_PROFILE_ATTRS_MAP_OLD,AM_POLICY_PROFILE_ATTRS_MAP,false);
-	    newAttributesMap->insert(AM_POLICY_PROFILE_ATTRS_COOKIE_PFX_OLD,AM_POLICY_PROFILE_ATTRS_COOKIE_PFX,false);
-	    newAttributesMap->insert(AM_POLICY_PROFILE_ATTRS_COOKIE_MAX_AGE_OLD,AM_POLICY_PROFILE_ATTRS_COOKIE_MAX_AGE,false);
-	    newAttributesMap->insert(AM_LOG_ACCESS_TYPE_PROPERTY_OLD,AM_LOG_ACCESS_TYPE_PROPERTY,false);
-	    newAttributesMap->insert(AM_WEB_URI_PREFIX_OLD,AM_WEB_URI_PREFIX,false);
-	    newAttributesMap->insert(AM_WEB_DO_SSO_ONLY_OLD,AM_WEB_DO_SSO_ONLY,false);
-	    newAttributesMap->insert(AM_WEB_ACCESS_DENIED_URL_PROPERTY_OLD,AM_WEB_ACCESS_DENIED_URL_PROPERTY,false);
-	    newAttributesMap->insert(AM_WEB_FQDN_DEFAULT_OLD,AM_WEB_FQDN_DEFAULT,false);
-	    newAttributesMap->insert(AM_WEB_FQDN_MAP_OLD,AM_WEB_FQDN_MAP,false);
-	    newAttributesMap->insert(AM_WEB_COOKIE_RESET_ENABLED_OLD,AM_WEB_COOKIE_RESET_ENABLED,false);
-	    newAttributesMap->insert(AM_WEB_COOKIE_RESET_LIST_OLD,AM_WEB_COOKIE_RESET_LIST,false);
-	    newAttributesMap->insert(AM_WEB_COOKIE_DOMAIN_LIST_OLD,AM_WEB_COOKIE_DOMAIN_LIST,false);
-	    newAttributesMap->insert(AM_WEB_ANONYMOUS_USER_OLD,AM_WEB_ANONYMOUS_USER,false);
-	    newAttributesMap->insert(AM_WEB_ANON_REMOTE_USER_ENABLE_OLD,AM_WEB_ANON_REMOTE_USER_ENABLE,false);
-	    newAttributesMap->insert(AM_WEB_NOT_ENFORCED_LIST_PROPERTY_OLD,AM_WEB_NOT_ENFORCED_LIST_PROPERTY,false);
-	    newAttributesMap->insert(AM_WEB_REVERSE_NOT_ENFORCED_LIST_OLD,AM_WEB_REVERSE_NOT_ENFORCED_LIST,false);
-	    newAttributesMap->insert(AM_WEB_NOT_ENFORCED_IPADDRESS_OLD,AM_WEB_NOT_ENFORCED_IPADDRESS,false);
-	    newAttributesMap->insert(AM_WEB_POST_CACHE_DATA_PRESERVE_OLD,AM_WEB_POST_CACHE_DATA_PRESERVE,false);
-	    newAttributesMap->insert(AM_WEB_POST_CACHE_ENTRY_LIFETIME_OLD,AM_WEB_POST_CACHE_ENTRY_LIFETIME,false);
-	    newAttributesMap->insert(AM_WEB_POST_CACHE_CLEANPUP_INTERVAL_OLD,AM_WEB_POST_CACHE_CLEANPUP_INTERVAL,false);
-	    newAttributesMap->insert(AM_WEB_CDSSO_ENABLED_PROPERTY_OLD,AM_WEB_CDSSO_ENABLED_PROPERTY,false);
-	    newAttributesMap->insert(AM_WEB_CDC_SERVLET_URL_PROPERTY_OLD,AM_WEB_CDC_SERVLET_URL_PROPERTY,false);
-	    newAttributesMap->insert(AM_WEB_CHECK_CLIENT_IP_PROPERTY_OLD,AM_WEB_CHECK_CLIENT_IP_PROPERTY,false);
-	    newAttributesMap->insert(AM_WEB_LOGOUT_URL_PROPERTY_OLD,AM_WEB_LOGOUT_URL_PROPERTY,false);
-	    newAttributesMap->insert(AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY_OLD,AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY,false);
-	    newAttributesMap->insert(AM_WEB_GET_CLIENT_HOSTNAME_OLD,AM_WEB_GET_CLIENT_HOSTNAME,false);
-	    newAttributesMap->insert(AM_WEB_CONVERT_MBYTE_ENABLE_OLD,AM_WEB_CONVERT_MBYTE_ENABLE,false);
-	    newAttributesMap->insert(AM_COMMON_IGNORE_PATH_INFO_OLD,AM_COMMON_IGNORE_PATH_INFO,false);
-	    newAttributesMap->insert(AM_WEB_OVERRIDE_HOST_OLD,AM_WEB_OVERRIDE_HOST,false);
-	    newAttributesMap->insert(AM_WEB_OVERRIDE_PORT_OLD,AM_WEB_OVERRIDE_PORT,false);
-	    newAttributesMap->insert(AM_WEB_OVERRIDE_NOTIFICATION_URL_OLD,AM_WEB_OVERRIDE_NOTIFICATION_URL,false);
-	    newAttributesMap->insert(AM_AUTH_CERT_ALIAS_PROPERTY_OLD,AM_AUTH_CERT_ALIAS_PROPERTY,false);
-	    newAttributesMap->insert(AM_POLICY_FETCH_FROM_ROOT_RSRC_PROPERTY_OLD,AM_POLICY_FETCH_FROM_ROOT_RSRC_PROPERTY,false);
-	    newAttributesMap->insert(AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY_OLD,AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY,false);
-	    newAttributesMap->insert(AM_WEB_DENY_ON_LOG_FAILURE_OLD,AM_WEB_DENY_ON_LOG_FAILURE,false);
-	    newAttributesMap->insert(AM_DOMINO_CHECK_NAME_DB_PROPERTY_OLD,AM_DOMINO_CHECK_NAME_DB_PROPERTY,false);
-
-	}
-}
-
-// Create a hash map of new-to-old properties
-const char* Properties::get_old_property_name(const std::string& key) const
-{
-        if (key == AM_COMMON_NAMING_URL_PROPERTY)
-	   return AM_COMMON_NAMING_URL_PROPERTY_OLD;
-        if (key == AM_COMMON_NOTIFICATION_ENABLE_PROPERTY)
-	   return AM_COMMON_NOTIFICATION_ENABLE_PROPERTY_OLD;
-        if (key == AM_COMMON_NOTIFICATION_URL_PROPERTY)
-	    return AM_COMMON_NOTIFICATION_URL_PROPERTY_OLD;
-        if (key == AM_COMMON_TRUST_SERVER_CERTS_PROPERTY)
-	    return AM_COMMON_TRUST_SERVER_CERTS_PROPERTY_OLD;
-        if (key == AM_COMMON_CERT_DB_PASSWORD_PROPERTY)
-	   return AM_COMMON_CERT_DB_PASSWORD_PROPERTY_OLD;
-        if (key == AM_AUTH_CERT_ALIAS_PROPERTY)
-	   return AM_AUTH_CERT_ALIAS_PROPERTY_OLD;
-        if (key == AM_COMMON_LOG_LEVELS_PROPERTY)
-	   return AM_COMMON_LOG_LEVELS_PROPERTY_OLD;
-        if (key == AM_COMMON_LOG_FILE_PROPERTY)
-	   return AM_COMMON_LOG_FILE_PROPERTY_OLD;
-        if (key == AM_COMMON_SSL_CERT_DIR_PROPERTY)
-	    return AM_COMMON_SSL_CERT_DIR_PROPERTY_OLD;
-        if (key == AM_COMMON_CERT_DB_PREFIX_PROPERTY)
-	    return AM_COMMON_CERT_DB_PREFIX_PROPERTY_OLD;
-        if (key == AM_COMMON_COOKIE_NAME_PROPERTY)
-	   return AM_COMMON_COOKIE_NAME_PROPERTY_OLD;
-        if (key == AM_COMMON_LOADBALANCE_PROPERTY)
-	   return AM_COMMON_LOADBALANCE_PROPERTY_OLD;
-        if (key == AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY)
-	   return AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY_OLD;
-        if (key == AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY)
-	   return AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY_OLD;
-        if (key == AM_COMMON_LOADBALANCE_PROPERTY)
-	   return AM_COMMON_LOADBALANCE_PROPERTY_OLD;
-        if (key == AM_COMMON_IGNORE_PATH_INFO)
-	   return AM_COMMON_IGNORE_PATH_INFO_OLD;
-        
-        return NULL;
-}
-
-const char* Properties::get_new_property_name(const std::string& key) const
-{
-    if (newAttributesMap != NULL && newAttributesMap->size() > 0) {
-       KeyValueMap::const_iterator iter = newAttributesMap->find(key);
-       if (iter != newAttributesMap->end() && 
-           iter->second.size() > 0) {
-            return iter->second[0].c_str();
-       }
-    }
-    return NULL;
-}
-
 /* Throws std::invalid_argument if a value for key is not found. */
 const std::string& Properties::get(const std::string& key) const
 {
-    char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
-
     if (iter == end()) {
-	const char* prop_name = get_old_property_name(key);
-	if (prop_name != NULL) {
-	    strcpy(tmpProp,prop_name);
-	    const std::string old_property_name(tmpProp);	
-    	    iter = find(old_property_name);
-	    if (iter == end()) {
-		throw std::invalid_argument(key + " not found");
-	    }
-	} else {
-	    throw std::invalid_argument(key + " not found");
-	}
+        throw std::invalid_argument(key + " not found");
     }
-
     return iter->second;
 }
 
@@ -550,18 +402,7 @@ const std::string& Properties::get(const std::string& key,
 				   const std::string& defaultValue,
 				   bool terse) const
 {
-    char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
-
-    if (iter == end()) {
-	const char* prop_name = get_old_property_name(key);
-	if (prop_name != NULL) {
-	    strcpy(tmpProp, prop_name);
-	    const std::string old_property_name(tmpProp);
-    	    iter = find(old_property_name);
-	} 
-    }
-
     if (iter == end()) {
         if (terse) {
 	    Log::log(logID, Log::LOG_MAX_DEBUG, 
@@ -638,23 +479,11 @@ unsigned long Properties::getPositiveNumber(const std::string& key,
  */
 unsigned long Properties::getUnsigned(const std::string& key) const
 {
-    char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
 
     if (iter == end()) {
-	const char* prop_name = get_old_property_name(key);
-	if (prop_name != NULL) {
-	    strcpy(tmpProp,prop_name);
-	    const std::string old_property_name(tmpProp);	
-    	    iter = find(old_property_name);
-	    if (iter == end()) {
-		throw std::invalid_argument(key + " not found");
-	    }
-	} else {
-	    throw std::invalid_argument(key + " not found");
-	}
+        throw std::invalid_argument(key + " not found");
     }
-
     return parseUnsigned(key, iter->second);
 }
 
@@ -663,17 +492,7 @@ unsigned long Properties::getUnsigned(const std::string& key,
 				      bool terse) const
 {
     unsigned long result;
-    char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
-
-    if (iter == end()) {
-	const char* prop_name = get_old_property_name(key);
-	if (prop_name != NULL) {
-	    strcpy(tmpProp,prop_name);
-	    const std::string old_property_name(tmpProp);
-    	    iter = find(old_property_name);
-	} 
-    }
 
     if (iter == end()) {
         if (terse) {
@@ -694,7 +513,6 @@ unsigned long Properties::getUnsigned(const std::string& key,
            result = defaultValue;
 	}
     }
-
     return result;
 }
 
@@ -729,41 +547,18 @@ long Properties::parseSigned(const std::string& key,
  */
 long Properties::getSigned(const std::string& key) const
 {
-    char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
-
     if (iter == end()) {
-	const char* prop_name = get_old_property_name(key);
-	if (prop_name != NULL) {
-	    strcpy(tmpProp,prop_name);
-	    const std::string old_property_name(tmpProp);	
-    	    iter = find(old_property_name);
-	    if (iter == end()) {
-		throw std::invalid_argument(key + " not found");
-	    }
-	} else {
-	    throw std::invalid_argument(key + " not found");
-	}
+        throw std::invalid_argument(key + " not found");
     }
-
     return parseSigned(key, iter->second);
 }
 
 long Properties::getSigned(const std::string& key, long defaultValue,
 						   bool terse) const
 {
-    long result;
-    char tmpProp[100] = {'\0'};
+    long result;  
     const_iterator iter = find(key);
-
-    if (iter == end()) {
-	const char* prop_name = get_old_property_name(key);
-	if (prop_name != NULL) {
-	    strcpy(tmpProp, prop_name);
-	    const std::string old_property_name(tmpProp);
-    	    iter = find(old_property_name);
-	} 
-    }
 
     if (iter == end()) {
         if (terse) {
@@ -823,41 +618,19 @@ bool Properties::parseBool(const std::string& key,
  */
 bool Properties::getBool(const std::string& key) const
 {
-    char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
 
     if (iter == end()) {
-	const char* prop_name = get_old_property_name(key);
-	if (prop_name != NULL) {
-	    strcpy(tmpProp,prop_name);
-	    const std::string old_property_name(tmpProp);	
-    	    iter = find(old_property_name);
-	    if (iter == end()) {
-		throw std::invalid_argument(key + " not found");
-	    }
-	} else {
-	    throw std::invalid_argument(key + " not found");
-	}
+        throw std::invalid_argument(key + " not found");
     }
-
     return parseBool(key, iter->second);
 }
 
 bool Properties::getBool(const std::string& key, bool defaultValue,
 						 bool terse) const
 {
-    bool result;
-    char tmpProp[100] = {'\0'};
+    bool result;  
     const_iterator iter = find(key);
-
-    if (iter == end()) {
-	const char* prop_name = get_old_property_name(key);
-	if (prop_name != NULL) {
-	    strcpy(tmpProp,prop_name);
-	    const std::string old_property_name(tmpProp);
-    	    iter = find(old_property_name);
-	} 
-    }
 
     if (iter == end()) {
         if (terse) {

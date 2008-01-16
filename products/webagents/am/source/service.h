@@ -50,6 +50,8 @@
 #include "thread_function.h"
 #include "pnotify_handler.h"
 #include "ht_cleaner.h"
+#include "agent_config_fetch.h"
+#include "agent_config_cache_cleanup.h"
 
 BEGIN_PRIVATE_NAMESPACE
 
@@ -63,46 +65,39 @@ class Service {
  private:
     Log::ModuleId logID;
     Properties svcParams;    
-    bool initialized;
-    bool threadPoolCreated;
+    bool initialized;   
     std::string serviceName;
     std::string instanceName;
     bool notificationEnabled;
     std::string notificationURL;
     HashTable<PolicyEntry> policyTable;
-    Properties profileAttributesMap;
-    Properties sessionAttributesMap;
-    Properties responseAttributesMap;
-    bool fetchProfileAttrs;
-    bool fetchSessionAttrs;
-    bool fetchResponseAttrs;
-    std::list<std::string> attrList;
-
+    Properties init_profileAttributesMap;  
     PolicyEntryRefCntPtr mPolicyEntry;
     SessionInfo mAppSessionInfo;
-
     am_resource_traits_t rsrcTraits;
     std::list<std::string> notenforcedList;
+    
+    bool threadPoolCreated;
     ThreadPool *tPool;
     HTCleaner<PolicyEntry> *htCleaner;
+    
+    bool threadPoolAgentFetchCreated;
+    ThreadPool *tPoolAgentFetch;
+    AgentConfigFetch *agentConfigFetch;
+
+    bool threadPoolAgentConfigCleanupCreated;
+    ThreadPool *tPoolAgentConfigCleanup;
+    AgentConfigCacheCleanup *agentConfigCleanup;
+
     Mutex lock;
-
     ServiceInfo namingSvcInfo;
-
     bool alwaysTrustServerCert;
     AuthService authSvc;
     AuthContext authCtx;               // Agent's auth context
     NamingService namingSvc;
     PolicyService *policySvc;
 
-    bool mFetchFromRootResource;     // whether to fetch policy from root rsrc.
-    unsigned long mOrdNum;
-    int mUserIdParamType;
-    std::string mUserIdParam;
-    bool mLoadBalancerEnable;
-    SSOTokenService &mSSOTokenSvc;
-    bool mCookieEncoded;
-    bool do_sso_only;
+    SSOTokenService &mSSOTokenSvc;  
     bool isLocalRepo;
 
     /* 
@@ -121,9 +116,7 @@ class Service {
 
     am_status_t do_agent_auth_logout();
 
-    void initialize();
-    void initialize_cac(SSOToken); 
-
+    void initialize(SSOToken ssoToken, Properties& properties);
 
     void update_policy(const SSOToken &, const std::string &,
 		       const std::string &,
@@ -131,19 +124,25 @@ class Service {
                        SessionInfo &,
 		       policy_fetch_scope_t scope,
 		       bool refetchPolicy,
-                       PolicyEntryRefCntPtr &);
+                       PolicyEntryRefCntPtr &,
+                       const std::list<std::string> &,
+                       Properties &);
 
     bool do_update_policy(const SSOToken &ssoTok, const string &resName,
 		       const string &actionName,
 		       const KeyValueMap &env,
                        SessionInfo &sessionInfo,
 		       policy_fetch_scope_t scope,
-                       PolicyEntryRefCntPtr &);
+                       PolicyEntryRefCntPtr &,
+                       const std::list<std::string> &,
+                       Properties &);
 
     void update_policy_list(const SSOToken &,
 			    const std::vector<std::string> &,
 			    const std::string&, const KeyValueMap &,
-                            PolicyEntryRefCntPtr &);
+                            PolicyEntryRefCntPtr &,
+                            const std::list<std::string> &,
+                            Properties &);
 
     void process_policy_response(PolicyEntryRefCntPtr,
 				 const KeyValueMap &,
@@ -208,16 +207,22 @@ class Service {
 
     void policy_notify(const std::string &,
 		       NotificationType);
+    
+    void agent_config_change_notify();
 
     am_status_t invalidate_session(const char *ssoTokenId);
 
     void flushPolicyEntry(const SSOToken&);
 
     void setRemUserAndAttrs(am_policy_result_t *policy_res,
-				    PolicyEntryRefCntPtr uPolicyEntry,
-				    const SessionInfo sessionInfo,
-				    std::string& resName,
-				    const std::vector<PDRefCntPtr>& results) const;
+                            PolicyEntryRefCntPtr uPolicyEntry,
+                            const SessionInfo sessionInfo,
+                            std::string& resName,
+                            const std::vector<PDRefCntPtr>& results,
+                            Properties& properties,
+                            Properties& profileAttributesMap,
+                            Properties& sessionAttributesMap,
+                            Properties& responseAttributesMap) const;
 
     void getPolicyResult(const char * /*ssoToken*/,
 			 const char * /*resName */,
@@ -226,9 +231,9 @@ class Service {
 			 am_map_t /*response*/,
 			 am_policy_result_t * /*policy_result*/,
 			 am_bool_t /*ignorePolicyResult*/,
-			 char ** /*am revision number*/);
+			 Properties&  /*Agent Configuration properties*/);
 
-    void init_from_agent_cac(std::string);
+    void init_from_agent_cac(std::string, Properties&);
 
 private:
     std::vector<std::string> serverHandledAdvicesList;

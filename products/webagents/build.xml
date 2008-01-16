@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2007-06-05 19:36:41 subbae Exp $
+   $Id: build.xml,v 1.6 2008-01-16 01:26:45 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -85,10 +85,7 @@
     </target>
 
     <target name="all">
-        <antcall target="apache" />
         <antcall target="sjsws" />
-        <antcall target="apache22" />
-        <antcall target="iis6"/>
     </target>
 
     <target name="apache" depends="preparebuild">

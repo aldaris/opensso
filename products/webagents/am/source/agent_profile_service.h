@@ -33,7 +33,11 @@
 
 #include "thread_pool.h"
 #include "auth_svc.h"
-
+#include "agent_configuration.h"
+#include "agent_config_cache.h"
+#include "am_web.h"
+#include "utils.h"
+//#include "am_web_utils.h"
 
 
 BEGIN_PRIVATE_NAMESPACE
@@ -49,7 +53,7 @@ BEGIN_PRIVATE_NAMESPACE
 
 class AgentProfileService: public BaseService {
 public:
-    explicit AgentProfileService(const Properties& props);
+    explicit AgentProfileService(const Properties& props, Utils::boot_info_t boot_info_prop);
     virtual ~AgentProfileService();
 
     am_status_t getAgentAttributes( const std::string ssoToken,  
@@ -61,6 +65,18 @@ public:
 
     am_status_t agentLogout(const Properties &config); 
     am_status_t isRESTServiceAvailable();
+    
+    inline void setRepoType(std::string repType) {
+        repositoryType = repType;
+    }
+    
+    inline std::string getRepoType() {
+        return repositoryType;
+    }
+    
+    void fetchAndUpdateAgentConfigCache();
+    void deleteOldAgentConfigInstances();
+    AgentConfigurationRefCntPtr getAgentConfigInstance();
 
 private:
 
@@ -72,6 +88,13 @@ private:
     ServiceInfo mNamingServiceInfo;
     NamingService mNamingService;
     AuthContext mAuthCtx;
+    bool agentAuthnd;
+    std::string agentSSOToken; 
+    std::string repositoryType;
+    AgentConfigCache agentConfigCache;
+    Utils::boot_info_t boot_info;
+
+    Utils::url_info_list_t not_enforced_list_c;
 
     void setRestSvcInfo(std::string restURL);
     void setAuthSvcInfo(std::string restURL);

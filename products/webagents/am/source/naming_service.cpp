@@ -40,7 +40,7 @@ namespace {
     const char namingRequestPrefix[] = {
 	"\">\n"
 	  "<Request><![CDATA[\n"
-	    "<NamingRequest vers=\"1.0\" reqid=\""
+	    "<NamingRequest vers=\"3.0\" reqid=\""
     };
 
     const char sessidPrefix[] = {

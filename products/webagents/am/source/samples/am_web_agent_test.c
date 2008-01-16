@@ -351,7 +351,7 @@ main(int argc, char *argv[])
 
     // load properties
     // initialize web agent
-    status = am_web_init(prop_file);
+    // status = am_web_init(prop_file);
     fail_on_error(status, "am_web_init");
 
     // do access check 
@@ -378,10 +378,10 @@ main(int argc, char *argv[])
 
 	// insert sso token into cookie header val if provided.
 	if (ssoTokenID != NULL) {
-	    sprintf(buf, "%s=%s;%s",
-		    am_web_get_cookie_name(), ssoTokenID, 
-		    cookie_header == NULL ? "" : cookie_header);
-	    req_params.cookie_header_val = buf;
+	    //sprintf(buf, "%s=%s;%s",
+	//	    am_web_get_cookie_name(), ssoTokenID, 
+	//	    cookie_header == NULL ? "" : cookie_header);
+	 //   req_params.cookie_header_val = buf;
 	}
 	else {
 	    req_params.cookie_header_val = cookie_header;
@@ -402,7 +402,7 @@ main(int argc, char *argv[])
 	req_func.render_result.func = render_result;
 	req_func.render_result.args = args;
 
-	result = am_web_process_request(&req_params, &req_func, &sts);
+	//result = am_web_process_request(&req_params, &req_func, &sts);
 
 	printf("am_web_process_request() returned status %s, result %s.\n",
 		    am_status_to_name(sts), get_http_code_str(result));

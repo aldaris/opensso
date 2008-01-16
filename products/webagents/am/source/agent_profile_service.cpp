@@ -29,6 +29,28 @@
 * 4. Agent logout
 */
 
+#if	defined(WINNT)
+#define _X86_
+#include <windef.h>
+#include <winbase.h>
+#include <winuser.h>
+#include <winnls.h>
+#include <windows.h>
+#if	!defined(strncasecmp)
+#define	strncasecmp	strnicmp
+#define	strcasecmp	stricmp
+#endif
+
+#if     !defined(snprintf)
+#define snprintf        _snprintf
+#endif
+#else /* WINNT */
+#include <unistd.h>
+#endif /* WINNT */
+
+//--------------------
+
+
 #include <prlock.h>
 #include <prnetdb.h>
 #include <prmem.h>
@@ -62,27 +84,313 @@ const std::string hostPart("%host");
 const std::string portPart("%port");
 const std::string uriPart("%uri");
 const std::size_t MAX_PORT_LENGTH = 5;
+const unsigned long DEFAULT_TIMEOUT = 3;
 
-
-AgentProfileService::AgentProfileService(const Properties& config)
+AgentProfileService::AgentProfileService(const Properties& config, 
+                                         Utils::boot_info_t boot_info_prop)
     : BaseService("Agent Profile Service",
                 config,
                 config.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY, ""),
                 config.get(AM_AUTH_CERT_ALIAS_PROPERTY, ""),
                 config.getBool(AM_COMMON_TRUST_SERVER_CERTS_PROPERTY, false)),
-    mNamingServiceURL(config.get(AM_COMMON_NAMING_URL_PROPERTY, "")),
-    mNamingServiceInfo(mNamingServiceURL),
-    mNamingService(config,
-                   config.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY,""),
-                   config.get(AM_AUTH_CERT_ALIAS_PROPERTY,""),
-                   config.getBool(AM_COMMON_TRUST_SERVER_CERTS_PROPERTY, false))
+                agentAuthnd(false),
+                mNamingServiceURL(config.get(AM_COMMON_NAMING_URL_PROPERTY, "")),
+                mNamingServiceInfo(mNamingServiceURL),
+                mNamingService(config,
+                config.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY,""),
+                config.get(AM_AUTH_CERT_ALIAS_PROPERTY,""),
+                config.getBool(AM_COMMON_TRUST_SERVER_CERTS_PROPERTY, false))
 {
+    /*
+      * Instantiate AgentConfigCache 
+      * Instantiate AgentConfigurationObj
+      * Instantiate AgentConfigFetch;
+      * Set Repo Type
+      * fetchAndUpdateAgentConfigCache() : this function will put the 
+      * first instance of AgentConfirutationObj object into the AgentConfigCache.
+      */
 
-} // constructor
-
+    boot_info = boot_info_prop;
+    if(isRESTServiceAvailable()==AM_REST_SERVICE_NOT_AVAILABLE){
+        setRepoType("local");
+    }
+    else{
+        setRepoType("remote");
+    }
+    fetchAndUpdateAgentConfigCache();
+} 
 
 AgentProfileService::~AgentProfileService()
 {
+}
+
+/*
+ * This function retrieves the latest AgentConfiguration instance from the
+ * cache.
+ */
+AgentConfigurationRefCntPtr AgentProfileService::getAgentConfigInstance()
+{
+    return agentConfigCache.getLatestAgentConfigInstance();
+}
+
+/*
+ * This function reads the bootstrap properties and updates the properties 
+ * object which already has agent configuration data in it.
+ */
+am_status_t
+load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t properties)
+{
+    const char *thisfunc = "load_bootinfo_to_properties()";
+    const char *function_name = "am_properties_get";
+    am_status_t status = AM_SUCCESS;
+    const char *parameter = "";
+    const char *encrypt_passwd = NULL;
+    const char *namingURL = NULL;
+    const char *agentName = NULL;
+    const char *agentPasswd = NULL;
+    const char *certDir = NULL;
+    const char *certDbPrefix = NULL;
+    const char *trustServerCerts = NULL;
+    const char *certDbPasswd = NULL;
+    const char *certAlias = NULL;
+    const char *connReceiveTimeout = NULL;
+    const char *connTimeout = NULL;
+    const char *connTcpDelay = NULL;
+
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_POLICY_PASSWORD_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &agentPasswd);
+        am_properties_set(properties, parameter,
+                                      agentPasswd);
+    }
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_POLICY_USER_NAME_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &agentName);
+        am_properties_set(properties, parameter,
+                                      agentName);
+    }
+
+    if (AM_SUCCESS == status) {
+        function_name = "am_properties_get";
+        parameter = AM_COMMON_NAMING_URL_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &namingURL);
+        am_properties_set(properties, parameter,
+                                      namingURL);
+     }
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_SSL_CERT_DIR_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &certDir);
+        am_properties_set(properties, parameter,
+                                      certDir);
+    }
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_CERT_DB_PREFIX_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &certDbPrefix);
+        am_properties_set(properties, parameter,
+                                      certDbPrefix);
+    }
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_TRUST_SERVER_CERTS_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &trustServerCerts);
+        am_properties_set(properties, parameter,
+                                      trustServerCerts);
+    }
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_CERT_DB_PASSWORD_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &certDbPasswd);
+        am_properties_set(properties, parameter,
+                                      certDbPasswd);
+    }
+    if (AM_SUCCESS == status) {
+        parameter = AM_AUTH_CERT_ALIAS_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &certAlias);
+        am_properties_set(properties, parameter,
+                                      certAlias);
+    }
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_RECEIVE_TIMEOUT_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &connReceiveTimeout);
+        am_properties_set(properties, parameter,
+                                      connReceiveTimeout);
+    }
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_TCP_NODELAY_ENABLE_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &connTcpDelay);
+        am_properties_set(properties, parameter,
+                                      connTcpDelay);
+    }
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_CONNECT_TIMEOUT_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &connTimeout);
+        am_properties_set(properties, parameter,
+                                      connTimeout);
+    }
+    return status;
+}
+
+/*
+ * This function fetches the agent configuration data from either the flat file
+ * or FAM REST server and updates the AgentConfigCache with the latest object of
+ * AgentConfiguration object. This function is invoked once by the constructor
+ * of this class and periodically by the polling and notification thread.
+ */
+void AgentProfileService::fetchAndUpdateAgentConfigCache()
+{
+    //check for REMOTE/LOCAL, then fetch attributes 
+    //set latestConfigkey to the current time and then update AgentConfigCache
+    //with a new entry that has the latestConfigKey as the key and agentConfig
+    //as the value.
+
+    const char *thisfunc = "fetchAndUpdateAgentConfigCache()";
+    am_properties_t properties;
+    am_status_t status;
+    am_status_t authStatus = AM_FAILURE;
+    std::string userName(boot_info.agent_name);
+    std::string passwd(boot_info.agent_passwd);
+    const char* agentConfigFile = boot_info.agent_config_file;
+    const Properties& propPtr =
+        *reinterpret_cast<Properties *>(boot_info.properties);
+
+    if (getRepoType() == "local") {
+        am_properties_create(&properties);
+        status = am_properties_load(properties,agentConfigFile);
+        if (status != AM_SUCCESS ) {
+            am_web_log_error("%s: Identity REST Services Endpoint URL not"
+                " available. Also failed to load local agent configuration file"
+                ", %s. Please check for any configuration errors during "
+                "installation.", thisfunc, agentConfigFile);
+        }
+    }
+    else {
+        //if agent is not authenticated, call agentLogin() and then make a REST
+        //fetch request to the FAM server for agent attributes. Then load this
+        //attributes to the AgentConfiguration object.
+        //populate properties using FAM REST responses
+        if (!agentAuthnd){
+            authStatus = agentLogin(propPtr, userName, passwd, agentSSOToken);
+            if (authStatus == AM_SUCCESS){
+                agentAuthnd = true;
+            } else {
+                agentAuthnd = false;
+            }
+        } 
+        
+        if (agentAuthnd) {
+            am_properties_t tmpPropPtr;
+            status = am_properties_create(&tmpPropPtr);
+            
+            if (status == AM_SUCCESS) {
+                status = getAgentAttributes(agentSSOToken, tmpPropPtr);               
+                if (status == AM_SUCCESS) {
+                    const char* repoType = NULL;
+                    boolean_t repoKeyPresent;
+                    repoKeyPresent = am_properties_is_set(tmpPropPtr,
+                        AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY);
+                    
+                    if( repoKeyPresent == B_TRUE) {
+                        status = am_properties_get(tmpPropPtr,
+                            AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY,
+                            &repoType );
+                        if (status == AM_SUCCESS) {
+                            if (strcasecmp(repoType, AGENT_PROPERTIES_LOCAL) == 0) {
+                                //LOCAL repo type
+                                am_web_log_info("%s:Repository type property is "
+                                                "set to %s in agent profile, "
+                                                "%s. ", thisfunc, repoType, 
+                                                userName.c_str());
+                                am_properties_create(&properties);
+                                status = am_properties_load(properties,
+                                                            agentConfigFile);
+                                if (status != AM_SUCCESS) {
+                                   am_web_log_error("%s: Repository type property "
+                                                    "is set to %s in agent "
+                                                    "profile, %s. But Agent "
+                                                    "failed to load local %s "
+                                                    "file", thisfunc, repoType, 
+                                                    userName.c_str(), 
+                                                    agentConfigFile);
+                                }                               
+                            }  else if (strcasecmp(repoType, 
+                                       AGENT_PROPERTIES_CENTRALIZED) == 0) {
+                                // REMOTE repo type
+                                am_properties_create(&properties);
+                                am_properties_copy(tmpPropPtr, &properties);
+                            } else { //treat as misconfiguration
+                                am_web_log_error("%s: Repository type property is "
+                                    "present  in agent profile, %s, "
+                                    "but invalid value is present, %s."
+                                    "Sepcify valid value (local|centralized) "
+                                    "to make agent function properly.",
+                                    thisfunc, userName.c_str(), repoType);
+                                status = AM_REPOSITORY_TYPE_INVALID;
+                            }
+                        } else { //treat as misconfiguration
+                            am_web_log_error("%s:Repository type property is "
+                                "present in agent profile, %s, "
+                                "but invalid value is present, %s."
+                                "Sepcify valid value (local|centralized) "
+                                "to make agent function properly.",
+                                thisfunc, userName.c_str(), repoType);
+                            status = AM_REPOSITORY_TYPE_INVALID;
+                        }
+                        
+                    } else { // repository property doesn't exist
+                        am_web_log_warning("%s:Repository type property is not "
+                                            "present in agent profile, %s. "
+                                            "So Agent tries to load "
+                                            "from local %s file", thisfunc,
+                                            userName.c_str(), agentConfigFile);
+                        am_properties_create(&properties);
+                        status = am_properties_load(properties,agentConfigFile);
+                        if (status != AM_SUCCESS) {
+                            am_web_log_error("%s: Agent failed to load local"
+                                             "file, %s", thisfunc, agentConfigFile);
+                        }                        
+                    }
+                } else {
+                    am_web_log_error("%s:There is an error while fetching"
+                                     " attributes using REST service. "
+                                     "Status: %s ", thisfunc,
+                                     userName.c_str(), 
+                                     am_status_to_string(status));
+                    status = AM_REST_ATTRS_SERVICE_FAILURE;
+                }                
+            }           
+        }
+    }
+    //Insert the AMAgentConfiguration object in the hast table with the current
+    //time stamp as its key.
+    AgentConfigurationRefCntPtr agentConfig;
+    agentConfig = new AgentConfiguration(properties);
+    if (status == AM_SUCCESS ) {
+        status = load_bootinfo_to_properties(&boot_info, 
+                agentConfig->getProperties());
+    }  
+    agentConfigCache.populateAgentConfigCacheTable(agentConfig);
+}
+
+/*
+ * This function deletes any old agent config instances that are
+ * stored in the agentConfigCacheTable
+ */
+void AgentProfileService::deleteOldAgentConfigInstances()
+{
+    agentConfigCache.deleteOldAgentConfigInstances();
 }
 
 /**
@@ -94,7 +402,6 @@ am_status_t AgentProfileService::getAgentAttributes(
     const std::string appSSOToken, 
     am_properties_t properties)
 {
-
     am_status_t status = AM_FAILURE;
     Http::Response response;
     const char *parameter = NULL;
@@ -130,14 +437,13 @@ am_status_t AgentProfileService::getAgentAttributes(
     } else {
         status = AM_REST_ATTRS_SERVICE_FAILURE;
     }
-
-
    return status;
 
 }
 
 /**
- * Agent logout 
+ * This function logs out the agent user. This function will be called
+ * when the web container is stopped.
  */
 am_status_t
 AgentProfileService::agentLogout(const Properties &config)
@@ -322,7 +628,8 @@ AgentProfileService::setRestSvcInfo(std::string restURL)
 
 
 /**
- * Does Agent authentication 
+ * This function performs Agent authentication to retrieve the agent
+ * agent configuration data from the FAM server
  */
 am_status_t AgentProfileService::agentLogin(const Properties &config, 
                                             const std::string userName, 
@@ -440,7 +747,10 @@ am_status_t AgentProfileService::agentLogin(const Properties &config,
 }
 
 /**
- * Checks for REST service url element present in naming response.
+ * This fnunction checks whether the incoming naming response has the 
+ * REST service url in it. If it has then the agent determines that it is
+ * interacting with the FAM server. If not present then the agent is interacting 
+ * with the old AM server
  */
 am_status_t AgentProfileService::isRESTServiceAvailable()
 {
@@ -576,4 +886,3 @@ void AgentProfileService::parseURL(std::string serviceURL,
              parsedServiceURL.c_str());
     return;
 } 
-
