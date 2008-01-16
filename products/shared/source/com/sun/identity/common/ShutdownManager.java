@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShutdownManager.java,v 1.1 2007-09-13 18:12:19 ww203982 Exp $
+ * $Id: ShutdownManager.java,v 1.2 2008-01-16 20:17:42 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,14 +37,21 @@ public class ShutdownManager {
     
     protected static ShutdownManager instance;
     
-    protected Set listeners;
+    public static final int HIGHEST_LEVEL = 3;
+    public static final int DEFAULT_LEVEL = 2;
+    public static final int LOWEST_LEVEL = 1;
+    
+    protected Set[] listeners;
     
     /**
      * Constructor of ShutdownManager.
      */
     
     protected ShutdownManager() {
-        listeners = new HashSet();
+        listeners = new HashSet[HIGHEST_LEVEL];
+        for (int i = 0; i < HIGHEST_LEVEL; i++) {
+            listeners[i] = new HashSet();
+        }
     }
     
     /**
@@ -67,8 +74,28 @@ public class ShutdownManager {
      */
     
     public void addShutdownListener(ShutdownListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
+        try {
+            addShutdownListener(listener, DEFAULT_LEVEL);
+        } catch(IllegalArgumentException ex) {
+        }
+    }
+    
+    /**
+     * Adds a ShutdownListener to this ShutdownManager with indicated level.
+     *
+     * @param listener The listener to be added
+     * @param level The level of the shutdown listener
+     */
+    
+    public void addShutdownListener(ShutdownListener listener, int level)
+        throws IllegalArgumentException {
+        if ((level > HIGHEST_LEVEL) || (level < LOWEST_LEVEL)) {
+            throw new IllegalArgumentException("Level out of range!");
+        } else {
+            synchronized (listeners) {
+                removeShutdownListener(listener);
+                listeners[level - 1].add(listener);
+            }
         }
     }
     
@@ -80,7 +107,11 @@ public class ShutdownManager {
     
     public void removeShutdownListener(ShutdownListener listener) {
         synchronized (listeners) {
-            listeners.remove(listener);
+            for (int i = 0; i < HIGHEST_LEVEL; i++) {
+                if (listeners[i].remove(listener)) {
+                    break;
+                }
+            }
         }
     }
 
@@ -90,9 +121,12 @@ public class ShutdownManager {
     
     public void shutdown() {
         synchronized (listeners) {
-            for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-                ShutdownListener element = (ShutdownListener) iter.next();
-                element.shutdown();
+            for (int i = HIGHEST_LEVEL; i >= LOWEST_LEVEL; i--) {
+                for (Iterator iter = listeners[i - 1].iterator();
+                    iter.hasNext();) {
+                    ShutdownListener element = (ShutdownListener) iter.next();
+                    element.shutdown();
+                }
             }
         }
     }
