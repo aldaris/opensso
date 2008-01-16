@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredIdentityTypes.java,v 1.4 2007-03-21 22:33:38 veiming Exp $
+ * $Id: ConfiguredIdentityTypes.java,v 1.5 2008-01-16 01:08:38 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,13 @@ public class ConfiguredIdentityTypes extends ChoiceValues {
     public Map getChoiceValues(Map envParams) {
         Map answer = new HashMap();
         String orgDN = null;
-        
+        String installTime = 
+            SystemProperties.get(Constants.SYS_PROPERTY_INSTALL_TIME);
+        if ((installTime != null) && (installTime.equals("true"))) {
+            answer.put((IdType.USER).getName(),(IdType.USER).getName());
+            answer.put((IdType.AGENT).getName(),(IdType.AGENT).getName());
+            return (answer);
+        }    
         if (envParams != null) {
             orgDN = (String)envParams.get(Constants.ORGANIZATION_NAME);
         }
