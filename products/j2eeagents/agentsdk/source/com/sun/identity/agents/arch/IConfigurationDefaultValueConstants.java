@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigurationDefaultValueConstants.java,v 1.1 2006-09-28 23:21:44 huacui Exp $
+ * $Id: IConfigurationDefaultValueConstants.java,v 1.2 2008-01-16 00:55:50 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,17 +54,11 @@ public interface IConfigurationDefaultValueConstants {
    /**
     * Default User Attribute Name value.
     */
-    public static final String DEFAULT_USER_ATTRIBUTE_NAME =
-        "employeenumber";
+    public static final String DEFAULT_USER_ATTRIBUTE_NAME = "employeenumber";
     
    /**
     * Default use-DN flag value.
     */
     public static final String DEFAULT_USE_DN = "false";
     
-   /**
-    * Default name for the anonymous user.
-    */
-    public static final String DEFAULT_ANONYMOUS_USER_NAME =
-        "ANONYMOUS";
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IUtilConstants.java,v 1.1 2006-09-29 00:06:35 huacui Exp $
+ * $Id: IUtilConstants.java,v 1.2 2008-01-16 00:55:51 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,13 +55,15 @@ public interface IUtilConstants {
 
     /** Field COOKIE_RESET_STRING **/
     public static final String COOKIE_RESET_STRING = "reset";
-    
-    
-    /** Filed HTTP_METHOD_GET **/
+       
+    /** Field HTTP_METHOD_GET **/
     public static final String HTTP_METHOD_GET = "GET";
     
-    /** Filed HTTP_METHOD_POST **/
+    /** Field HTTP_METHOD_POST **/
     public static final String HTTP_METHOD_POST = "POST";
+         
+     /** Field Default name for the anonymous user **/
+    public static final String ANONYMOUS_USER_NAME = "ANONYMOUS";
 
 }
 

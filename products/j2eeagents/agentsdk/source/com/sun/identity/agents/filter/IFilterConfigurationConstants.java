@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFilterConfigurationConstants.java,v 1.7 2007-11-07 00:50:05 sean_brydon Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.8 2008-01-16 00:55:50 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,9 +228,6 @@ public interface IFilterConfigurationConstants {
     public static final String CONFIG_RESPONSE_ATTRIBUTE_MAP =
         "response.attribute.mapping";
 
-    public static final String CONFIG_COMPOSITE_ADVICE_FILENAME =
-        "composite.advice.file";
-
     public static final String CONFIG_WEBSERVICE_ENABLE_FLAG =
         "webservice.enable";
 
@@ -318,9 +315,6 @@ public interface IFilterConfigurationConstants {
     public static final String DEFAULT_ATTRIBUTE_SEPARATOR = "|";
 
     public static final boolean DEFAULT_ATTRIBUTE_ENCODE = true;
-
-    public static final String DEFAULT_COMPOSITE_ADVICE_FILENAME =
-        "CompositeAdviceForm.txt";
 
     public static final boolean DEFAULT_WEBSERVICE_ENABLE_FLAG = false;
 

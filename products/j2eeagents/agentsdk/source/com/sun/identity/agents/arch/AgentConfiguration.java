@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.13 2008-01-12 01:19:40 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.14 2008-01-16 00:55:50 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -320,16 +320,7 @@ public class AgentConfiguration implements
      public static String getApplicationPassword() {
          return _applicationPassword;
      }    
-     
-    /**
-     * Returns the anonymous user name.
-     * 
-     * @return the user name for anonymous user.
-     */
-     public static String getAnonymousUserName() {
-         return _anonymousUserName;
-     }
-    
+        
    /**
     * Would be called by agent configuration notification handler when the 
     * agent housekeeping app receives configuration update notifications from
@@ -813,27 +804,6 @@ public class AgentConfiguration implements
         }
     }
     
-    private static synchronized void setAnonymousUserName() {
-        if (!isInitialized()) {
-            String name = getProperty(CONFIG_ANONYMOUS_USER_NAME);
-                if (name == null || name.trim().length() == 0) {
-                    name = DEFAULT_ANONYMOUS_USER_NAME;
-                    if (isLogWarningEnabled()) {
-                        logWarning(
-                            "AgentConfiguration: No name specified for user "
-                            +"anonymous. Using default: " + name);
-                    }
-                }
-        
-                _anonymousUserName = name;
-                if (isLogMessageEnabled()) {
-                    logMessage(
-                        "AgentConfiguration: Anonymous user name set to: "
-                        + _anonymousUserName);
-                }
-        }
-    }
-    
     private static synchronized void setUserAttributeName() {
         String userAttributeName = getProperty(CONFIG_USER_ATTRIBUTE_NAME);
         if (userAttributeName == null ||
@@ -1052,8 +1022,7 @@ public class AgentConfiguration implements
             bootStrapClientConfiguration();  
             registerAgentNotificationHandler();
             
-            //now set some class fields with property values
-            setAnonymousUserName();           
+            //now set some class fields with property values         
             setHotSwappableConfigProps();          
             //set some fields as some clientsdk props also used by agent code
             setSSOTokenName();   
@@ -1361,7 +1330,6 @@ public class AgentConfiguration implements
     private static String _applicationPassword;
     private static String _userIdPropertyName;
     private static AuditLogMode _auditLogMode = AuditLogMode.MODE_BOTH;
-    private static String _anonymousUserName;
     private static String _sessionNotificationURL;
     private static String _policyNotificationURL;
     private static String _clientNotificationURL;

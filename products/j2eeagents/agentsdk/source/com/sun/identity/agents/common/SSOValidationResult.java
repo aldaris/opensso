@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOValidationResult.java,v 1.1 2006-09-28 23:25:59 huacui Exp $
+ * $Id: SSOValidationResult.java,v 1.2 2008-01-16 00:55:50 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.agents.arch.AgentConfiguration;
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.util.TransportToken;
+import com.sun.identity.agents.util.IUtilConstants;
 
 /**
  * The class represents SSO Token validation result
@@ -84,7 +85,7 @@ public final class SSOValidationResult implements Serializable {
     public String getUserPrincipal() {
         String result = _userPrincipal;
         if (result == null) {
-            result = AgentConfiguration.getAnonymousUserName();
+            result = IUtilConstants.ANONYMOUS_USER_NAME;
         }
         return result;
     }
@@ -92,7 +93,7 @@ public final class SSOValidationResult implements Serializable {
     public String getUserId() {
         String result = _userId;
         if (result == null) {
-            result = AgentConfiguration.getAnonymousUserName();
+            result = IUtilConstants.ANONYMOUS_USER_NAME;
         }
         return result;
     }

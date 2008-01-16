@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLPolicyTaskHandler.java,v 1.4 2007-12-14 18:18:42 huacui Exp $
+ * $Id: URLPolicyTaskHandler.java,v 1.5 2008-01-16 00:55:50 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,9 +169,7 @@ public class URLPolicyTaskHandler extends AmFilterTaskHandler
     
     
     private void initCompositeAdviceFormContent() throws AgentException {
-        String fileName = getManager().getConfigurationString(
-                CONFIG_COMPOSITE_ADVICE_FILENAME,
-                DEFAULT_COMPOSITE_ADVICE_FILENAME);
+        String fileName = COMPOSITE_ADVICE_FILENAME;
         if (isLogMessageEnabled()) {
             logMessage("URLPolicyTaskHandler: Composite Advice form file is: " 
                     + fileName);
@@ -292,4 +290,6 @@ public class URLPolicyTaskHandler extends AmFilterTaskHandler
     
     private IAmWebPolicy _amWebPolicy;
     private String _compositeAdviceFormContent;
+    private static final String COMPOSITE_ADVICE_FILENAME =
+            "CompositeAdviceForm.txt";
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealm.java,v 1.4 2007-11-27 02:15:18 sean_brydon Exp $
+ * $Id: AmRealm.java,v 1.5 2008-01-16 00:55:51 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -174,7 +174,7 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
             SSOValidationResult ssoValidationResult) {
         AmRealmAuthenticationResult result = AmRealmAuthenticationResult.FAILED;
         SSOToken ssoToken = null;
-        String userName = AgentConfiguration.getAnonymousUserName();
+        String userName = IUtilConstants.ANONYMOUS_USER_NAME;
         try {
             if (ssoValidationResult.isValid()) {
                 userName = ssoValidationResult.getUserId();

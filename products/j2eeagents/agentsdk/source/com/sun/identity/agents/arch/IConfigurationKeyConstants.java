@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigurationKeyConstants.java,v 1.4 2008-01-10 20:50:53 sean_brydon Exp $
+ * $Id: IConfigurationKeyConstants.java,v 1.5 2008-01-16 00:55:50 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,12 +131,6 @@ public interface IConfigurationKeyConstants {
          "audit.accesstype";
      
     /**
-     * Configuration subkey for anonymous user name.
-     */
-     public static final String CONFIG_SUBKEY_ANONYMOUS_USER_NAME =
-         "anonymous.user.name";
-     
-    /**
      * Configuration subkey for client IP header
      */
      public static final String CONFIG_SUBKEY_CLIENT_IP_HEADER =
@@ -162,7 +156,6 @@ public interface IConfigurationKeyConstants {
              CONFIG_SUBKEY_SERVICE_RESOLVER,
              CONFIG_SUBKEY_LOCALE_LANG,
              CONFIG_SUBKEY_LOCALE_COUNTRY,
-             CONFIG_SUBKEY_ANONYMOUS_USER_NAME,
              CONFIG_SUBKEY_ORG_NAME
      };
      
@@ -227,12 +220,6 @@ public interface IConfigurationKeyConstants {
      */
      public static final String CONFIG_AUDIT_LOG_MODE =
          AGENT_CONFIG_PREFIX + CONFIG_SUBKEY_AUDIT_LOG_MODE;
-     
-    /**
-     * Global configuration key for anonymous user name.
-     */
-     public static final String CONFIG_ANONYMOUS_USER_NAME =
-         AGENT_CONFIG_PREFIX + CONFIG_SUBKEY_ANONYMOUS_USER_NAME;
      
     /**
      * Configuration subkey for client IP header
