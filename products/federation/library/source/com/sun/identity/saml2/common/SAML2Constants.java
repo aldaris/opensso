@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.19 2007-12-15 06:15:50 hengming Exp $
+ * $Id: SAML2Constants.java,v 1.20 2008-01-16 04:34:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,6 +121,13 @@ public interface SAML2Constants {
           "urn:oasis:names:tc:SAML:1.1:nameid-format:";
 
     /**
+     * String to represent Encrypted Format Name Identifier
+     */
+    public String ENCRYPTED =
+                NAMEID_FORMAT_NAMESPACE + "encrypted";
+
+
+    /**
      * String to represent Persitent Name Identifier
      */
     public String PERSISTENT =
@@ -172,6 +179,9 @@ public interface SAML2Constants {
 
     public String INVALID_ATTR_NAME_OR_VALUE =
         "urn:oasis:names:tc:SAML:2.0:status:InvalidAttrNameOrValue";
+
+    public String INVALID_NAME_ID_POLICY =
+        "urn:oasis:names:tc:SAML:2.0:status:InvalidNameIDPolicy";
 
     /**
      * Basic name format
@@ -315,6 +325,21 @@ public interface SAML2Constants {
      * Constant for AttributeQuery
      */
     public String ATTRIBUTE_QUERY = "AttributeQuery";
+
+    /**
+     * Constant for AuthnQuery
+     */
+    public String AUTHN_QUERY = "AuthnQuery";
+
+    /**
+     * Constant for AttributeQuery
+     */
+    public String NAME_ID_MAPPING_REQUEST = "NameIDMappingRequest";
+
+    /**
+     * Constant for AttributeQuery
+     */
+    public String NAME_ID_MAPPING_RESPONSE = "NameIDMappingResponse";
 
     /**
      * Constant for Attribute
@@ -734,6 +759,11 @@ public interface SAML2Constants {
     String ATTR_QUERY_ROLE = "AttrQueryRole";
 
     /**
+     * Authentication Authority Role
+     */
+    String AUTHN_AUTH_ROLE = "AuthnAuthRole";
+
+    /**
      * Unknown Role
      */
     public String UNKNOWN_ROLE = "UNKNOWN";
@@ -1101,6 +1131,12 @@ public interface SAML2Constants {
      */
     public String DISCO_BOOTSTRAPPING_ENABLED =
         "discoveryBootstrappingEnabled";
+
+    /**
+     * Cache Assertion
+     */
+    public String ASSERTION_CACHE_ENABLED =
+        "assertionCacheEnabled";
 
     /**
      * Attribute name format for ID-WSF 1.1 Discovery bootstrap

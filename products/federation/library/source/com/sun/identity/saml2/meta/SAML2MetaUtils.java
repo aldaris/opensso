@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaUtils.java,v 1.3 2007-12-15 06:19:00 hengming Exp $
+ * $Id: SAML2MetaUtils.java,v 1.4 2008-01-16 04:34:45 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ import com.sun.identity.saml2.jaxb.entityconfig.AttributeType;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.AuthnAuthorityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
@@ -418,6 +419,33 @@ public final class SAML2MetaUtils {
             Object obj = iter.next();
             if (obj instanceof AttributeQueryDescriptorElement) {
                 return (AttributeQueryDescriptorElement)obj;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns authentication authority descriptor in an entity descriptor.
+     *
+     * @param eDescriptor The entity descriptor.
+     * @return an <code>AuthnAuthorityDescriptorElement</code> object for
+     *     the entity or null if not found. 
+     */
+    public static AuthnAuthorityDescriptorElement
+        getAuthnAuthorityDescriptor(EntityDescriptorElement eDescriptor)
+    {
+        if (eDescriptor == null) {
+            return null;
+        }
+
+        List list =
+            eDescriptor.getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
+
+        for(Iterator iter = list.iterator(); iter.hasNext();) {
+            Object obj = iter.next();
+            if (obj instanceof AuthnAuthorityDescriptorElement) {
+                return (AuthnAuthorityDescriptorElement)obj;
             }
         }
 

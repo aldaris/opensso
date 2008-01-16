@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.26 2008-01-15 06:44:19 veiming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.27 2008-01-16 04:42:24 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,12 +84,15 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private String spAlias;
     private String attraAlias;
     private String attrqAlias;
+    private String authnaAlias;
     private String pdpAlias;
     private String pepAlias;
     private String idpSCertAlias;
     private String idpECertAlias;
     private String attraSCertAlias;
     private String attraECertAlias;
+    private String authnaSCertAlias;
+    private String authnaECertAlias;
     private String pdpSCertAlias;
     private String pdpECertAlias;
     private String spSCertAlias;
@@ -177,6 +180,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             FedCLIConstants.ARGUMENT_ATTRIBUTE_AUTHORITY);
         attrqAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_ATTRIBUTE_QUERY_PROVIDER);
+        authnaAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_AUTHN_AUTHORITY);
         pdpAlias = getStringOptionValue(FedCLIConstants.ARGUMENT_PDP);
         pepAlias = getStringOptionValue(FedCLIConstants.ARGUMENT_PEP);
         
@@ -203,6 +208,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             FedCLIConstants.ARGUMENT_ATTRQ_S_CERT_ALIAS);
         attrqECertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_ATTRQ_E_CERT_ALIAS);
+
+        authnaSCertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_AUTHNA_S_CERT_ALIAS);
+        authnaECertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_AUTHNA_E_CERT_ALIAS);
 
         pdpSCertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_PDP_S_CERT_ALIAS);
@@ -235,6 +245,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
         if ((attrqAlias != null) && !attrqAlias.startsWith("/")) {
             attrqAlias = "/" + attrqAlias;
+        }
+        if ((authnaAlias != null) && !authnaAlias.startsWith("/")) {
+            authnaAlias = "/" + authnaAlias;
         }
         if ((pdpAlias != null) && !pdpAlias.startsWith("/")) {
             pdpAlias = "/" + pdpAlias;
@@ -269,6 +282,12 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         if (attrqECertAlias == null) {
             attrqECertAlias = "";
         }
+        if (authnaSCertAlias == null) {
+            authnaSCertAlias = "";
+        }
+        if (authnaECertAlias == null) {
+            authnaECertAlias = "";
+        }
         if (pdpSCertAlias == null) {
             pdpSCertAlias = "";
         }
@@ -286,8 +305,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private void validateOptions()
     throws CLIException {
         if ((idpAlias == null) && (spAlias == null) && (pdpAlias == null) && 
-            (pepAlias == null) && (attraAlias == null) && (attrqAlias == null)
-        ) {
+            (pepAlias == null) && (attraAlias == null) &&
+            (attrqAlias == null) && (authnaAlias == null)) {
+
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-role-null"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
@@ -322,6 +342,14 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             ) {
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-attrq-null-with-cert-alias"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
+        if ((authnaAlias == null) &&
+            ((authnaSCertAlias != null) || (authnaECertAlias != null))
+            ) {
+            throw new CLIException(getResourceString(
+                "create-meta-template-exception-authna-null-with-cert-alias"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
 
@@ -1200,6 +1228,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         map.put(CreateSAML2HostedProviderTemplate.P_ATTR_AUTHORITY, attraAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_ATTR_QUERY_PROVIDER,
             attrqAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_AUTHN_AUTHORITY, authnaAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_PDP, pdpAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_PEP, pepAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_IDP_E_CERT, idpECertAlias);
@@ -1214,6 +1243,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             attrqECertAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_ATTR_QUERY_PROVIDER_S_CERT,
             attrqSCertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_AUTHN_AUTHORITY_E_CERT,
+            authnaECertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_AUTHN_AUTHORITY_S_CERT,
+            authnaSCertAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_PDP_E_CERT, pdpECertAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_PDP_S_CERT, pdpSCertAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_PEP_E_CERT, pepECertAlias);

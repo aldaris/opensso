@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryUtil.java,v 1.1 2007-12-15 06:31:23 hengming Exp $
+ * $Id: AttributeQueryUtil.java,v 1.2 2008-01-16 04:36:53 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -366,6 +366,11 @@ public class AttributeQueryUtil {
             SAML2Constants.ATTR_QUERY_ROLE);
 
         PrivateKey signingKey = keyProvider.getPrivateKey(alias);
+        if (signingKey == null) {
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("missingSigningCertAlias"));
+        }
+
         X509Certificate signingCert = null;
         if (includeCert) {
             signingCert = keyProvider.getX509Certificate(alias);
@@ -623,6 +628,11 @@ public class AttributeQueryUtil {
             attrAuthorityEntityID, SAML2Constants.ATTR_AUTH_ROLE);
 
         PrivateKey signingKey = keyProvider.getPrivateKey(alias);
+        if (signingKey == null) {
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("missingSigningCertAlias"));
+        }
+
         X509Certificate signingCert = null;
         if (includeCert) {
             signingCert = keyProvider.getX509Certificate(alias);
@@ -993,6 +1003,10 @@ public class AttributeQueryUtil {
                 SAML2Utils.bundle.getString("invalidIssuerInResponse"));
         }
 
+        if (!response.isSigned()) {
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "responseNotSigned"));
+        }
 
         X509Certificate signingCert =
             KeyUtil.getVerificationCert(aad, attrAuthorityEntityID,

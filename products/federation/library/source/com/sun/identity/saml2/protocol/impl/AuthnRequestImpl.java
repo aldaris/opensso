@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnRequestImpl.java,v 1.3 2007-10-04 04:35:51 hengming Exp $
+ * $Id: AuthnRequestImpl.java,v 1.4 2008-01-16 04:38:59 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -651,7 +651,7 @@ public class AuthnRequestImpl extends RequestAbstractImpl
      * @param element the Document Element of this object.
      * @throws SAML2Exception if error parsing the Document Element.
      */ 
-    private void parseDOMElement(Element element) throws SAML2Exception {
+    protected void parseDOMElement(Element element) throws SAML2Exception {
 	AssertionFactory assertionFactory = AssertionFactory.getInstance();
 	ProtocolFactory protoFactory = ProtocolFactory.getInstance();
         requestId = element.getAttribute(SAML2Constants.ID);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.8 2007-11-14 18:55:30 ww203982 Exp $
+ * $Id: IDPCache.java,v 1.9 2008-01-16 04:36:53 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,14 @@ public class IDPCache {
      * Value : AuthnRequest object
      */
     public static PeriodicCleanUpMap authnRequestCache = new PeriodicCleanUpMap(
+        SPCache.interval * 1000, SPCache.interval * 1000); 
+
+    /**
+     * Cache saves the assertion objects.
+     * Key : user ID String
+     * Value : list of assertion objects
+     */
+    public static PeriodicCleanUpMap assertionCache = new PeriodicCleanUpMap(
         SPCache.interval * 1000, SPCache.interval * 1000); 
 
     /**

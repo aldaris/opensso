@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryImpl.java,v 1.1 2007-08-29 23:41:12 dillidorai Exp $
+ * $Id: XACMLAuthzDecisionQueryImpl.java,v 1.2 2008-01-16 04:40:48 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -363,7 +363,7 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
     }
     
     
-    private void parseDOMElement(Element element) throws SAML2Exception {
+    protected void parseDOMElement(Element element) throws SAML2Exception {
         //TODO: fix
         String value = null;
         if (element == null) {

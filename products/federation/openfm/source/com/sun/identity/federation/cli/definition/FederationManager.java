@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.22 2008-01-03 00:22:28 veiming Exp $
+ * $Id: FederationManager.java,v 1.23 2008-01-16 04:42:24 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,18 +65,21 @@ public class FederationManager {
             "identityprovider|i|s|Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.",
             "attrqueryprovider|S|s|Specify metaAlias for hosted attribute query provider to be created. The format must be <realm name>/<identifier>.",
             "attrauthority|I|s|Specify metaAlias for hosted attribute authority to be created. The format must be <realm name>/<identifier>.",
+            "authnauthority|C|s|Specify metaAlias for hosted authentication authority to be created. The format must be <realm name>/<identifier>.",
             "xacmlpep|e|s|Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.",
             "xacmlpdp|p|s|Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.",
             "spscertalias|a|s|Service provider signing certificate alias",
             "idpscertalias|b|s|Identity provider signing certificate alias",
             "attrqscertalias|A|s|Attribute query provider signing certificate alias",
             "attrascertalias|B|s|Attribute authority signing certificate alias",
+            "authnascertalias|D|s|Authentication authority signing certificate alias",
             "xacmlpdpscertalias|t|s|Policy decision point signing certificate alias",
             "xacmlpepscertalias|k|s|Policy enforcement point signing certificate alias",
             "specertalias|r|s|Service provider encryption certificate alias",
             "idpecertalias|g|s|Identity provider encryption certificate alias.",
             "attrqecertalias|R|s|Attribute query provider encryption certificate alias",
             "attraecertalias|G|s|Attribute authority encryption certificate alias.",
+            "authnaecertalias|E|s|Authentication authority encryption certificate alias.",
             "xacmlpdpecertalias|j|s|Policy decision point encryption certificate alias",
             "xacmlpepecertalias|z|s|Policy enforcement point encryption certificate alias",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
@@ -86,6 +89,7 @@ public class FederationManager {
             "create-meta-template-exception-sp-null-with-cert-alias=Service Provider Certificate Alias is provided without Service Provider Name.",
             "create-meta-template-exception-attra-null-with-cert-alias=Attribute Authority Certificate Alias is provided without Attribute Authority Name.",
             "create-meta-template-exception-attrq-null-with-cert-alias=Attribute Query Provider Certificate Alias is provided without Attribute Query Provider Name.",
+            "create-meta-template-exception-authna-null-with-cert-alias=Authentication Authority Certificate Alias is provided without Authentication Authority Name.",
             "create-meta-template-exception-pdp-null-with-cert-alias=Policy Decision Point Certificate Alias is provided without Policy Decision Point Name",
             "create-meta-template-exception-pep-null-with-cert-alias=Policy Enforcement Point Certificate Alias is provided without Policy Enforcement Point Name",
             "create-meta-template-exception-protocol-not-found=Protocol is not found in configuration file.",

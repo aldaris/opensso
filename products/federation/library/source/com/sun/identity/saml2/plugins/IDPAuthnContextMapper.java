@@ -17,13 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAuthnContextMapper.java,v 1.2 2006-11-30 05:47:41 qcheng Exp $
+ * $Id: IDPAuthnContextMapper.java,v 1.3 2008-01-16 04:35:38 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 
 package com.sun.identity.saml2.plugins;
+
+import java.util.List;
 
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.protocol.AuthnRequest;
@@ -56,5 +58,22 @@ public interface IDPAuthnContextMapper {
         AuthnRequest authnRequest,
         String idpEntityID,
         String realm) throws SAML2Exception;
+
+   /** 
+    * Returns true if the specified AuthnContextClassRef matches a list of
+    * requested AuthnContextClassRef.
+    *
+    * @param authnRequest a list of requested AuthnContextClassRef's
+    * @param acClassRef AuthnContextClassRef
+    * @param comparison the type of comparison
+    * @param realm the realm to which the Identity Provider belongs
+    * @param idpEntityID the Entity ID of the Identity Provider    
+    * 
+    * @return true if the specified AuthnContextClassRef matches a list of
+    *     requested AuthnContextClassRef
+    */
+    public boolean isAuthnContextMatching(List requestedACClassRefs,
+        String acClassRef, String comparison, String realm,
+        String idpEntityID);
 
 }

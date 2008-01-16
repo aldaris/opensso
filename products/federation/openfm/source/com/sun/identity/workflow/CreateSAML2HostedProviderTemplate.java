@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.1 2008-01-15 06:44:20 veiming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.2 2008-01-16 04:43:25 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,9 @@ public class CreateSAML2HostedProviderTemplate {
     public static final String P_ATTR_QUERY_PROVIDER = "attrq";
     public static final String P_ATTR_QUERY_PROVIDER_E_CERT = "attrqecert";
     public static final String P_ATTR_QUERY_PROVIDER_S_CERT = "attrqscert";
+    public static final String P_AUTHN_AUTHORITY = "authna";
+    public static final String P_AUTHN_AUTHORITY_E_CERT = "authnaecert";
+    public static final String P_AUTHN_AUTHORITY_S_CERT = "authnascert";
     public static final String P_PDP = "pdp";
     public static final String P_PDP_E_CERT = "pdpecert";
     public static final String P_PDP_S_CERT = "pdpscert";
@@ -106,6 +109,13 @@ public class CreateSAML2HostedProviderTemplate {
         if (attrqAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(attrqAlias);
             buildAttributeQueryConfigTemplate(buff, attrqAlias, url, mapParams);
+        }
+
+        String authnaAlias = (String)mapParams.get(P_AUTHN_AUTHORITY);
+        if (authnaAlias != null) {
+            String realm = SAML2MetaUtils.getRealmByMetaAlias(authnaAlias);
+            buildAuthnAuthorityConfigTemplate(buff, authnaAlias, url,
+                mapParams);
         }
 
         String pdpAlias = (String)mapParams.get(P_PDP);
@@ -228,6 +238,10 @@ public class CreateSAML2HostedProviderTemplate {
             "        </Attribute>\n" +
             "        <Attribute name=\"" +
             SAML2Constants.DISCO_BOOTSTRAPPING_ENABLED + "\">\n" +
+            "            <Value>false</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"" +
+            SAML2Constants.ASSERTION_CACHE_ENABLED + "\">\n" +
             "            <Value>false</Value>\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"" +
@@ -484,6 +498,31 @@ public class CreateSAML2HostedProviderTemplate {
         );
     }
 
+    private static void buildAuthnAuthorityConfigTemplate(
+        StringBuffer buff,
+        String authnaAlias,
+        String url,
+        Map mapParams
+    )  {
+        String authnaECertAlias =
+            (String)mapParams.get(P_AUTHN_AUTHORITY_E_CERT);
+        String authnaSCertAlias =
+            (String)mapParams.get(P_AUTHN_AUTHORITY_S_CERT);
+
+        buff.append(
+            "    <AuthnAuthorityConfig metaAlias=\"" + authnaAlias + "\">\n"+
+            "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS +
+            "\">\n" +
+            "            <Value>" + authnaSCertAlias + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"" +
+            SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
+            "            <Value>" + authnaECertAlias + "</Value>\n" +
+            "        </Attribute>\n" +
+            "    </AuthnAuthorityConfig>\n"
+        );
+    }
+
     private static void buildPDPConfigTemplate(
         StringBuffer buff,
         String pdpAlias,
@@ -599,6 +638,12 @@ public class CreateSAML2HostedProviderTemplate {
         if (attrqAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(attrqAlias);
             addAttributeQueryTemplate(buff, attrqAlias, url, mapParams);
+        }
+
+        String authnaAlias = (String)mapParams.get(P_AUTHN_AUTHORITY);
+        if (authnaAlias != null) {
+            String realm = SAML2MetaUtils.getRealmByMetaAlias(authnaAlias);
+            addAuthnAuthorityTemplate(buff, authnaAlias, url, mapParams);
         }
 
         String pdpAlias = (String)mapParams.get(P_PDP);
@@ -944,6 +989,67 @@ public class CreateSAML2HostedProviderTemplate {
             "            urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName\n" +
             "        </NameIDFormat>\n" +
             "    </RoleDescriptor>\n");
+    }
+
+    private static void addAuthnAuthorityTemplate(
+        StringBuffer buff,
+        String authnaAlias,
+        String url,
+        Map mapParams
+    ) throws SAML2MetaException {
+        String maStr = buildMetaAliasInURI(authnaAlias);
+        
+        buff.append(
+            "    <AuthnAuthorityDescriptor\n" +
+            "        protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
+        
+        String authnaECertAlias =
+            (String)mapParams.get(P_AUTHN_AUTHORITY_E_CERT);
+        String authnaSCertAlias =
+            (String)mapParams.get(P_AUTHN_AUTHORITY_S_CERT);
+
+        String authnaSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+            authnaSCertAlias);
+        if (authnaSX509Cert != null) {
+            buff.append(
+                "        <KeyDescriptor use=\"signing\">\n" +
+                "            <KeyInfo xmlns=\"" +
+                SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                "                <X509Data>\n" +
+                "                    <X509Certificate>\n" + authnaSX509Cert +
+                "                    </X509Certificate>\n" +
+                "                </X509Data>\n" +
+                "            </KeyInfo>\n" +
+                "        </KeyDescriptor>\n");
+        }
+        
+        String authnaEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+            authnaECertAlias);
+        if (authnaEX509Cert != null) {
+            buff.append(
+                "        <KeyDescriptor use=\"encryption\">\n" +
+                "            <KeyInfo xmlns=\"" +
+                SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                "                <X509Data>\n" +
+                "                    <X509Certificate>\n" + authnaEX509Cert +
+                "                    </X509Certificate>\n" +
+                "                </X509Data>\n" +
+                "            </KeyInfo>\n" +
+                "            <EncryptionMethod Algorithm=" +
+                "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
+                "                <KeySize xmlns=\"" +
+                SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
+                "128</KeySize>\n" +
+                "            </EncryptionMethod>\n" +
+                "        </KeyDescriptor>\n");
+        }
+        
+        buff.append(
+            "        <AuthnQueryService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
+            "            Location=\"" + url + "/AuthnQueryServiceSoap" +
+            maStr + "\"/>\n" +
+            "    </AuthnAuthorityDescriptor>\n");
     }
 
     private static void addPDPTemplate(

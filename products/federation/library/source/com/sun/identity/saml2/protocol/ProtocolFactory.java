@@ -17,12 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProtocolFactory.java,v 1.2 2007-12-15 06:23:24 hengming Exp $
+ * $Id: ProtocolFactory.java,v 1.3 2008-01-16 04:38:59 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
-
-
 
 package com.sun.identity.saml2.protocol;
 
@@ -34,27 +32,30 @@ import com.sun.identity.saml2.protocol.impl.ArtifactImpl;
 import com.sun.identity.saml2.protocol.impl.ArtifactResolveImpl;
 import com.sun.identity.saml2.protocol.impl.ArtifactResponseImpl;
 import com.sun.identity.saml2.protocol.impl.AttributeQueryImpl;
+import com.sun.identity.saml2.protocol.impl.AuthnQueryImpl;
 import com.sun.identity.saml2.protocol.impl.AuthnRequestImpl;
 import com.sun.identity.saml2.protocol.impl.ExtensionsImpl;
 import com.sun.identity.saml2.protocol.impl.GetCompleteImpl;
 import com.sun.identity.saml2.protocol.impl.IDPEntryImpl;
 import com.sun.identity.saml2.protocol.impl.IDPListImpl;
+import com.sun.identity.saml2.protocol.impl.LogoutRequestImpl;
+import com.sun.identity.saml2.protocol.impl.LogoutResponseImpl;
+import com.sun.identity.saml2.protocol.impl.ManageNameIDRequestImpl;
+import com.sun.identity.saml2.protocol.impl.ManageNameIDResponseImpl;
+import com.sun.identity.saml2.protocol.impl.NameIDMappingRequestImpl;
+import com.sun.identity.saml2.protocol.impl.NameIDMappingResponseImpl;
 import com.sun.identity.saml2.protocol.impl.NameIDPolicyImpl;
+import com.sun.identity.saml2.protocol.impl.NewEncryptedIDImpl;
+import com.sun.identity.saml2.protocol.impl.NewIDImpl;
 import com.sun.identity.saml2.protocol.impl.RequestedAuthnContextImpl;
 import com.sun.identity.saml2.protocol.impl.RequesterIDImpl;
+import com.sun.identity.saml2.protocol.impl.ResponseImpl;
 import com.sun.identity.saml2.protocol.impl.ScopingImpl;
 import com.sun.identity.saml2.protocol.impl.SessionIndexImpl;
 import com.sun.identity.saml2.protocol.impl.StatusMessageImpl;
 import com.sun.identity.saml2.protocol.impl.StatusImpl;
 import com.sun.identity.saml2.protocol.impl.StatusCodeImpl;
 import com.sun.identity.saml2.protocol.impl.StatusDetailImpl;
-import com.sun.identity.saml2.protocol.impl.LogoutRequestImpl;
-import com.sun.identity.saml2.protocol.impl.LogoutResponseImpl;
-import com.sun.identity.saml2.protocol.impl.ManageNameIDRequestImpl;
-import com.sun.identity.saml2.protocol.impl.ManageNameIDResponseImpl;
-import com.sun.identity.saml2.protocol.impl.NewEncryptedIDImpl;
-import com.sun.identity.saml2.protocol.impl.NewIDImpl;
-import com.sun.identity.saml2.protocol.impl.ResponseImpl;
 
 /**
  * This is the factory class to obtain object instances for concrete elements in
@@ -132,6 +133,59 @@ public class ProtocolFactory  {
             return new AttributeQueryImpl(value);
 	} else {
             return (AttributeQuery) obj;
+	}
+    }
+
+    /**
+     * Returns the <code>AuthnQuery</code> Object.
+     *
+     * @return the <code>AuthnQuery</code> object.
+     * @throws SAML2Exception if <code>AuthnQuery</code> cannot be created.
+     */
+    public AuthnQuery createAuthnQuery() throws SAML2Exception {
+	Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.AUTHN_QUERY);
+	if (obj == null) {
+            return new AuthnQueryImpl();
+	} else {
+            return (AuthnQuery) obj;
+	}
+    }
+    
+    /**
+     * Returns the <code>AuthnQuery</code> Object.
+     *
+     * @param value the Document Element of <code>AuthnQuery</code> object.
+     * @return the <code>AuthnQuery</code> object.
+     * @throws SAML2Exception if <code>AuthnQuery</code> cannot be created.
+     */
+    
+    public AuthnQuery createAuthnQuery(Element value)
+        throws SAML2Exception {
+	Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.AUTHN_QUERY, value);
+	if (obj == null) {
+            return new AuthnQueryImpl(value);
+	} else {
+            return (AuthnQuery) obj;
+	}
+    }
+    
+    /**
+     * Returns the <code>AuthnQuery</code> Object.
+     *
+     * @param value <code>AuthnQuery</code> XML String.
+     * @return the <code>AuthnQuery</code> object.
+     * @throws SAML2Exception if <code>AuthnQuery</code> cannot be created.
+     */
+    public AuthnQuery createAuthnQuery(String value)
+        throws SAML2Exception {
+	Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.AUTHN_QUERY, value);
+	if (obj == null) {
+            return new AuthnQueryImpl(value);
+	} else {
+            return (AuthnQuery) obj;
 	}
     }
 
@@ -1323,6 +1377,118 @@ public class ProtocolFactory  {
 	} else {
             return (Response) obj;
 	}
+    }
+
+    /**
+     * Returns the <code>NameIDMappingRequest</code> Object.
+     *
+     * @return the <code>NameIDMappingRequest</code> object.
+     */
+    public NameIDMappingRequest createNameIDMappingRequest() {
+        Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.NAMEIDMAPPING_REQ);
+        if (obj == null) {
+            return new NameIDMappingRequestImpl();
+        } else {
+            return (NameIDMappingRequest) obj;
+        }
+    }
+     
+    /**
+     * Returns the <code>NameIDMappingRequest</code> Object.
+     *
+     * @param elem the Document Element of <code>NameIDMappingRequest</code>
+     *     object.
+     * @return the <code>NameIDMappingRequest</code> object.
+     * @throws SAML2Exception if <code>NameIDMappingRequest</code> cannot be
+     *     created.
+     */
+    public NameIDMappingRequest createNameIDMappingRequest(Element elem)
+        throws SAML2Exception {
+
+        Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.NAMEIDMAPPING_REQ, elem);
+        if (obj == null) {
+            return new NameIDMappingRequestImpl(elem);
+        } else {
+            return (NameIDMappingRequest) obj;
+        }
+    }
+    
+    /**
+     * Returns the <code>NameIDMappingRequest</code> Object.
+     *
+     * @param value <code>NameIDMappingRequest</code> XML String.
+     * @return the <code>NameIDMappingRequest</code> object.
+     * @throws SAML2Exception if <code>NameIDMappingRequest</code> cannot be
+     *     created.
+     */
+    public NameIDMappingRequest createNameIDMappingRequest(String value)
+        throws SAML2Exception {
+
+        Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.NAMEIDMAPPING_REQ, value);
+        if (obj == null) {
+            return new NameIDMappingRequestImpl(value);
+        } else {
+            return (NameIDMappingRequest) obj;
+        }
+    }
+
+    /**
+     * Returns the <code>NameIDMappingResponse</code> Object.
+     *
+     * @return the <code>NameIDMappingResponse</code> object.
+     */
+    public NameIDMappingResponse createNameIDMappingResponse() {
+        Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.NAMEIDMAPPING_RES);
+        if (obj == null) {
+            return new NameIDMappingResponseImpl();
+        } else {
+            return (NameIDMappingResponse) obj;
+        }
+    }
+     
+    /**
+     * Returns the <code>NameIDMappingResponse</code> Object.
+     *
+     * @param elem the Document Element of <code>NameIDMappingResponse</code>
+     *     object.
+     * @return the <code>NameIDMappingResponse</code> object.
+     * @throws SAML2Exception if <code>NameIDMappingResponse</code> cannot be
+     *     created.
+     */
+    public NameIDMappingResponse createNameIDMappingResponse(Element elem)
+        throws SAML2Exception {
+
+        Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.NAMEIDMAPPING_RES, elem);
+        if (obj == null) {
+            return new NameIDMappingResponseImpl(elem);
+        } else {
+            return (NameIDMappingResponse) obj;
+        }
+    }
+    
+    /**
+     * Returns the <code>NameIDMappingResponse</code> Object.
+     *
+     * @param value <code>NameIDMappingResponse</code> XML String.
+     * @return the <code>NameIDMappingResponse</code> object.
+     * @throws SAML2Exception if <code>NameIDMappingResponse</code> cannot be
+     *     created.
+     */
+    public NameIDMappingResponse createNameIDMappingResponse(String value)
+        throws SAML2Exception {
+
+        Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.NAMEIDMAPPING_RES, value);
+        if (obj == null) {
+            return new NameIDMappingResponseImpl(value);
+        } else {
+            return (NameIDMappingResponse) obj;
+        }
     }
 }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAccountMapper.java,v 1.2 2006-11-30 05:47:40 qcheng Exp $
+ * $Id: IDPAccountMapper.java,v 1.3 2008-01-16 04:35:38 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 
 package com.sun.identity.saml2.plugins;
 
+import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.common.SAML2Exception;
 
 /**
@@ -84,4 +85,21 @@ public interface IDPAccountMapper {
         java.lang.String realm
     ) throws SAML2Exception;
 
+    /**
+     * Returns the user's disntinguished name or the universal ID for the
+     * corresponding  <code>SAML</code> <code>NameID</code>.
+     * This method returns the universal ID or the DN based on the
+     * deployment of the SAMLv2 plugin base platform.
+     *
+     * @param nameID <code>SAML</code> <code>NameID</code> that needs to be
+     *     mapped to the user.
+     * @param hostEntityID <code>EntityID</code> of the hosted provider.
+     * @param remoteEntityID <code>EntityID</code> of the remote provider.
+     * @param realm realm or the organization name that may be used to find
+     *        the user information.
+     * @return user's disntinguished name or the universal ID.
+     * @exception SAML2Exception if any failure.
+     */
+    public String getIdentity(NameID nameID, String hostEntityID,
+        String remoteEntityID, String realm) throws SAML2Exception;
 }

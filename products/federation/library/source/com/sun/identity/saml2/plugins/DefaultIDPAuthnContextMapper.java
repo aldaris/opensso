@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAuthnContextMapper.java,v 1.2 2006-11-30 05:47:40 qcheng Exp $
+ * $Id: DefaultIDPAuthnContextMapper.java,v 1.3 2008-01-16 04:35:38 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,9 @@ import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.profile.IDPSSOUtil;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -125,12 +127,15 @@ public class DefaultIDPAuthnContextMapper
                         // the first element is an AuthnContextClassRef 
                         classRef = ((String)st.nextToken()).trim();
                         if (classRef.equals(requestedClassRef)) {
-                            authTypeAndValues = new HashSet();
-                            while (st.hasMoreTokens()) {
-                                String authTypeAndValue = 
-                                    ((String)st.nextToken()).trim();
-                                if (authTypeAndValue.length() != 0) {
-                                    authTypeAndValues.add(authTypeAndValue);
+                            if (st.hasMoreTokens()) {
+                                String level = st.nextToken();
+                                authTypeAndValues = new HashSet();
+                                while (st.hasMoreTokens()) {
+                                    String authTypeAndValue = 
+                                        st.nextToken().trim();
+                                    if (authTypeAndValue.length() != 0) {
+                                        authTypeAndValues.add(authTypeAndValue);
+                                    }
                                 }
                             }
                             break;
@@ -147,12 +152,14 @@ public class DefaultIDPAuthnContextMapper
                 if (st.hasMoreTokens()) {
                     // the first element is an AuthnContextClassRef 
                     classRef = ((String)st.nextToken()).trim();
-                    authTypeAndValues = new HashSet();
-                    while (st.hasMoreTokens()) {
-                        String authTypeAndValue = 
-                            ((String)st.nextToken()).trim();
-                        if (authTypeAndValue.length() != 0) {
-                            authTypeAndValues.add(authTypeAndValue);
+                    if (st.hasMoreTokens()) {
+                        String level = st.nextToken();
+                        authTypeAndValues = new HashSet();
+                        while (st.hasMoreTokens()) {
+                            String authTypeAndValue = st.nextToken().trim();
+                            if (authTypeAndValue.length() != 0) {
+                                authTypeAndValues.add(authTypeAndValue);
+                            }
                         }
                     }
                 } 
@@ -170,4 +177,146 @@ public class DefaultIDPAuthnContextMapper
         } 
         return info;
     } 
+
+   /** 
+    * Returns true if the specified AuthnContextClassRef matches a list of
+    * requested AuthnContextClassRef.
+    *
+    * @param authnRequest a list of requested AuthnContextClassRef's
+    * @param acClassRef AuthnContextClassRef
+    * @param comparison the type of comparison
+    * @param realm the realm to which the Identity Provider belongs
+    * @param idpEntityID the Entity ID of the Identity Provider    
+    * 
+    * @return true if the specified AuthnContextClassRef matches a list of
+    *     requested AuthnContextClassRef
+    */
+    public boolean isAuthnContextMatching(List requestedACClassRefs,
+        String acClassRef, String comparison, String realm,
+        String idpEntityID) {
+
+        if ((comparison == null) || (comparison.length() == 0) ||
+            (comparison.equals("exact"))) {
+            for(Iterator iter = requestedACClassRefs.iterator();
+                iter.hasNext();) {
+
+                String requstedACClassRef = (String)iter.next();
+                if (requstedACClassRef.equals(acClassRef)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        Map acClassRefLevelMap = getACClassRefLevelMap(realm, idpEntityID);
+        Integer levelInt = (Integer)acClassRefLevelMap.get(acClassRef);
+        int level = (levelInt == null) ? 0 : levelInt.intValue();
+
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message("DefaultIDPAuthnContextMapper." +
+                "isAuthnContextMatching: acClassRef = " + acClassRef +
+                ", level = " + level + ", comparison = " + comparison);
+        }
+        if (comparison.equals("minimum")) {
+            for(Iterator iter = requestedACClassRefs.iterator();
+                iter.hasNext();) {
+
+                String requstedACClassRef = (String)iter.next();
+                Integer requestedLevelInt =
+                    (Integer)acClassRefLevelMap.get(requstedACClassRef);
+                int requestedLevel = (requestedLevelInt == null) ?
+                    0 : requestedLevelInt.intValue();
+
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("DefaultIDPAuthnContextMapper." +
+                        "isAuthnContextMatching: requstedACClassRef = " +
+                        requstedACClassRef + ", level = " + requestedLevel);
+                }
+
+                if (level >= requestedLevel) {
+                    return true;
+                }
+            }
+            return false;
+        } else if (comparison.equals("better")) {
+            for(Iterator iter = requestedACClassRefs.iterator();
+                iter.hasNext();) {
+
+                String requstedACClassRef = (String)iter.next();
+                Integer requestedLevelInt =
+                    (Integer)acClassRefLevelMap.get(requstedACClassRef);
+                int requestedLevel = (requestedLevelInt == null) ?
+                    0 : requestedLevelInt.intValue();
+
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("DefaultIDPAuthnContextMapper." +
+                        "isAuthnContextMatching: requstedACClassRef = " +
+                        requstedACClassRef + ", level = " + requestedLevel);
+                }
+
+                if (level <= requestedLevel) {
+                    return false;
+                }
+            }
+            return true;
+        } else if (comparison.equals("maximum")) {
+            for(Iterator iter = requestedACClassRefs.iterator();
+                iter.hasNext();) {
+
+                String requstedACClassRef = (String)iter.next();
+                Integer requestedLevelInt =
+                    (Integer)acClassRefLevelMap.get(requstedACClassRef);
+                int requestedLevel = (requestedLevelInt == null) ?
+                    0 : requestedLevelInt.intValue();
+
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("DefaultIDPAuthnContextMapper." +
+                        "isAuthnContextMatching: requstedACClassRef = " +
+                        requstedACClassRef + ", level = " + requestedLevel);
+                }
+
+                if (level <= requestedLevel) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return false;
+    }
+
+    private Map getACClassRefLevelMap(String realm, String idpEntityID) {
+
+        List values = SAML2Utils.getAllAttributeValueFromSSOConfig(realm,
+            idpEntityID, SAML2Constants.IDP_ROLE,
+            SAML2Constants.IDP_AUTHNCONTEXT_CLASSREF_MAPPING);
+
+        Map resultMap = new HashMap();
+
+        if ((values != null) && (values.size() != 0)) {
+            for (int i = 0; i < values.size(); i++) {
+
+                String value = ((String) values.get(i)).trim();
+                StringTokenizer st = new StringTokenizer(value, "|");
+
+                if (st.hasMoreTokens()) {
+                    String classRef = st.nextToken().trim();
+                    if (st.hasMoreTokens()) {
+                        String level = st.nextToken();
+                        try {
+                            resultMap.put(classRef, new Integer(level));
+                        } catch (NumberFormatException nfe) {
+                            if (SAML2Utils.debug.messageEnabled()) {
+                                SAML2Utils.debug.message(
+                                   "DefaultIDPAuthnContextMapper." +
+                                   "getACClassRefLevelMap:", nfe);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return resultMap;
+    }
 }

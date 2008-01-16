@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestAbstractImpl.java,v 1.3 2007-12-15 06:23:25 hengming Exp $
+ * $Id: RequestAbstractImpl.java,v 1.4 2008-01-16 04:38:59 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,17 +37,23 @@ import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.protocol.Extensions;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.RequestAbstract;
+import com.sun.identity.saml2.xmlsig.SigManager;
+
 import java.security.PublicKey;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.security.Signature;
-import com.sun.identity.saml2.xmlsig.SigManager;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import org.w3c.dom.Element;
-
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This abstract class defines methods for setting and retrieving attributes and
@@ -71,6 +77,7 @@ public abstract class RequestAbstractImpl implements RequestAbstract {
     protected boolean isMutable = false;
     protected String  signatureString = null;
     protected String  signedXMLString = null; 
+    protected String elementName = "";
  
     /**
      * Sets the <code>Issuer</code> object.
@@ -323,8 +330,10 @@ public abstract class RequestAbstractImpl implements RequestAbstract {
      * @return a String representation of this Object.
      * @throws SAML2Exception if it could not create String object
      */
-    abstract public String toXMLString() throws SAML2Exception;
-    
+    public String toXMLString() throws SAML2Exception {
+        return toXMLString(true,false);
+    }
+  
     /**
      * Returns a String representation of this Object.
      *
@@ -335,11 +344,44 @@ public abstract class RequestAbstractImpl implements RequestAbstract {
      * @throws SAML2Exception if it could not create String object.
      * @return a String representation of this Object.
      */
-    abstract public String toXMLString(boolean includeNSPrefix,
-                                       boolean declareNS) throws SAML2Exception;
+    public String toXMLString(boolean includeNSPrefix, boolean declareNS)
+        throws SAML2Exception {
 
-    protected String getAttributesString() 
-    throws SAML2Exception {
+        if (isSigned && signedXMLString != null) {
+            return signedXMLString;
+        }
+
+        Set namespaces = new HashSet();
+        StringBuffer attrs = new StringBuffer();
+        StringBuffer childElements = new StringBuffer();
+
+        getXMLString(namespaces, attrs, childElements, includeNSPrefix,
+            declareNS);
+
+        StringBuffer xmlString = new StringBuffer(1000);
+        xmlString.append(SAML2Constants.START_TAG);
+        if (includeNSPrefix) {
+            xmlString.append(SAML2Constants.PROTOCOL_PREFIX);
+        }
+        xmlString.append(elementName);
+        if (!namespaces.isEmpty()) {
+            for(Iterator iter = namespaces.iterator(); iter.hasNext();) {
+                xmlString.append(SAML2Constants.SPACE)
+                         .append((String)iter.next());
+            }
+        }
+        xmlString.append(attrs).append(SAML2Constants.END_TAG)
+                 .append(SAML2Constants.NEWLINE).append(childElements)
+                 .append(SAML2Constants.START_TAG).append("/");
+        if (includeNSPrefix) {
+            xmlString.append(SAML2Constants.PROTOCOL_PREFIX);
+        }
+	xmlString.append(elementName).append(SAML2Constants.END_TAG);
+
+        return xmlString.toString();
+    }
+
+    protected String getAttributesString() throws SAML2Exception {
         StringBuffer xml = new StringBuffer();
 
         xml.append("ID=\"");
@@ -508,6 +550,38 @@ public abstract class RequestAbstractImpl implements RequestAbstract {
                 declareNS)).append(SAML2Constants.NEWLINE);
 	}
 
+    }
+
+    /** 
+     * Parses the Docuemnt Element for this object.
+     * 
+     * @param element the Document Element of this object.
+     * @throws SAML2Exception if error parsing the Document Element.
+     */ 
+    protected void parseDOMElement(Element element) throws SAML2Exception {
+
+        parseDOMAttributes(element);
+
+        List childElementList = new ArrayList();
+        NodeList nList = element.getChildNodes();
+        if ((nList !=null) && (nList.getLength() >0)) {
+            for (int i = 0; i < nList.getLength(); i++) {
+                Node childNode = nList.item(i);
+                if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                    childElementList.add(childNode);
+                }
+            }
+        }
+        ListIterator iter = childElementList.listIterator();
+        parseDOMChileElements(iter);
+        if (iter.hasNext()) {
+            if (SAML2SDKUtils.debug.messageEnabled()) {
+                SAML2SDKUtils.debug.message("RequestAbstractImpl." +
+                    "parseDOMElement: Unexpected child element found");
+            }
+            throw new SAML2Exception(
+                SAML2SDKUtils.bundle.getString("schemaViolation"));
+        }
     }
 
     /** 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.2 2007-01-02 21:57:59 weisun2 Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.3 2008-01-16 04:35:37 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 
 package com.sun.identity.saml2.plugins;
 
+import java.security.PrivateKey;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -110,5 +111,57 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
         nameID.setSPNameQualifier(remoteEntityID);
         nameID.setSPProvidedID(null);
         return nameID;
+    }
+
+    /**
+     * Returns the user's disntinguished name or the universal ID for the
+     * corresponding  <code>SAML</code> <code>NameID</code>.
+     * This method returns the universal ID or the DN based on the
+     * deployment of the SAMLv2 plugin base platform.
+     *
+     * @param nameID <code>SAML</code> <code>NameID</code> that needs to be
+     *     mapped to the user.
+     * @param hostEntityID <code>EntityID</code> of the hosted provider.
+     * @param remoteEntityID <code>EntityID</code> of the remote provider.
+     * @param realm realm or the organization name that may be used to find
+     *        the user information.
+     * @return user's disntinguished name or the universal ID.
+     * @exception SAML2Exception if any failure.
+     */
+    public String getIdentity(NameID nameID, String hostEntityID,
+        String remoteEntityID, String realm) throws SAML2Exception {
+
+        if (nameID == null) {
+            return null;
+        }
+
+        if (hostEntityID == null) {
+            throw new SAML2Exception(bundle.getString("nullHostEntityID")); 
+        }
+
+        if (remoteEntityID == null) {
+            throw new SAML2Exception(bundle.getString("nullRemoteEntityID")); 
+        }
+
+        if (realm == null) {
+            throw new SAML2Exception(bundle.getString("nullRealm")); 
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("DefaultIDPAccountMapper.getIdentity: " +
+                "realm = " + realm + ", hostEntityID = " + hostEntityID +
+                ", remoteEntityID = " + remoteEntityID);
+        }
+
+        try {
+            return dsProvider.getUserID(realm, SAML2Utils.getNameIDKeyMap(
+                nameID, hostEntityID, remoteEntityID));
+
+        } catch (DataStoreProviderException dse) {
+            debug.error(
+                "DefaultIDPAccountMapper.getIdentity(NameIDMappingRequest): ",
+                dse);
+            throw new SAML2Exception(dse.getMessage());
+        }
     }
 }

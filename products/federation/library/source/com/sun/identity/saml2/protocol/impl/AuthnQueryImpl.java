@@ -17,66 +17,65 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryImpl.java,v 1.2 2008-01-16 04:38:59 hengming Exp $
+ * $Id: AuthnQueryImpl.java,v 1.1 2008-01-16 04:38:59 hengming Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.saml2.protocol.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.sun.identity.saml2.assertion.AssertionFactory;
-import com.sun.identity.saml2.assertion.Attribute;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2SDKUtils;
-import com.sun.identity.saml2.protocol.AttributeQuery;
+import com.sun.identity.saml2.protocol.AuthnQuery;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.saml2.protocol.RequestedAuthnContext ;
 import com.sun.identity.shared.xml.XMLUtils;
 
-public class AttributeQueryImpl
-    extends SubjectQueryAbstractImpl implements AttributeQuery {
+public class AuthnQueryImpl extends SubjectQueryAbstractImpl
+    implements AuthnQuery {
 
-    protected List attributes;
+    protected RequestedAuthnContext requestedAuthnContext;
+    protected String sessionIndex;
 
     /**
-     * Constructor to create <code>AttributeQuery</code> Object .
+     * Constructor to create <code>AuthnQuery</code> Object .
      */
-    public AttributeQueryImpl() {
-        elementName = SAML2Constants.ATTRIBUTE_QUERY;
+    public AuthnQueryImpl() {
+        elementName = SAML2Constants.AUTHN_QUERY;
         isMutable = true;
     }
 
     /**
-     * Constructor to create <code>AttributeQuery</code> Object.
+     * Constructor to create <code>AuthnQuery</code> Object.
      *
      * @param element the Document Element Object.
-     * @throws SAML2Exception if error creating <code>AttributeQuery</code> 
+     * @throws SAML2Exception if error creating <code>AuthnQuery</code> 
      *     Object. 
      */
-    public AttributeQueryImpl(Element element) throws SAML2Exception {
+    public AuthnQueryImpl(Element element) throws SAML2Exception {
         parseDOMElement(element);
-        elementName = SAML2Constants.ATTRIBUTE_QUERY;
+        elementName = SAML2Constants.AUTHN_QUERY;
         if (isSigned) {
             signedXMLString = XMLUtils.print(element);
         }
     }
 
     /**
-     * Constructor to create <code>AttributeQuery</code> Object.
+     * Constructor to create <code>AuthnQuery</code> Object.
      *
      * @param xmlString the XML String.
-     * @throws SAML2Exception if error creating <code>AttributeQuery</code> 
+     * @throws SAML2Exception if error creating <code>AuthnQuery</code> 
      *     Object. 
      */
-    public AttributeQueryImpl(String xmlString) throws SAML2Exception {
+    public AuthnQueryImpl(String xmlString) throws SAML2Exception {
         Document xmlDocument = 
             XMLUtils.toDOMDocument(xmlString,SAML2SDKUtils.debug);
         if (xmlDocument == null) {
@@ -84,35 +83,63 @@ public class AttributeQueryImpl
                 SAML2SDKUtils.bundle.getString("errorObtainingElement"));
         }
         parseDOMElement(xmlDocument.getDocumentElement());
-        elementName = SAML2Constants.ATTRIBUTE_QUERY;
+        elementName = SAML2Constants.AUTHN_QUERY;
         if (isSigned) {
             signedXMLString = xmlString;
         }
     }
 
-    /** 
-     * Returns <code>Attribute</code> objects. 
+    /**
+     * Returns the <code>RequestedAuthnContext</code> object.
      *
-     * @return the <code>Attribute</code> objects. 
-     * @see #setAttributes(List)
+     * @return the <code>RequestedAuthnContext</code> object.
+     * @see #setRequestedAuthnContext(RequestedAuthnContext)
      */
-    public List getAttributes() {
-        return attributes;
+    public RequestedAuthnContext getRequestedAuthnContext()
+    {
+        return requestedAuthnContext;
     }
   
-    /** 
-     * Sets the <code>Attribute</code> objects. 
+    /**
+     * Sets the <code>RequestedAuthnContext</code> object.
      *
-     * @param attributes the new <code>Attribute</code> objects. 
+     * @param requestedAuthnContext the new <code>RequestedAuthnContext</code>
+     *     object.
      * @throws SAML2Exception if the object is immutable.
-     * @see #getAttributes
+     * @see #getRequestedAuthnContext
      */
-    public void setAttributes(List attributes) throws SAML2Exception {
-         if (!isMutable) {
+    public void setRequestedAuthnContext(
+        RequestedAuthnContext requestedAuthnContext) throws SAML2Exception {
+
+        if (!isMutable) {
             throw new SAML2Exception(
-                    SAML2SDKUtils.bundle.getString("objectImmutable"));
+                SAML2SDKUtils.bundle.getString("objectImmutable"));
         }
-        this.attributes = attributes;
+        this.requestedAuthnContext = requestedAuthnContext;
+    }
+
+    /**
+     * Returns the value of the <code>SessionIndex</code> attribute.
+     *
+     * @return value of <code>SessionIndex</code> attribute.
+     * @see #setSessionIndex(String)
+     */
+    public String getSessionIndex() {
+        return sessionIndex;
+    }
+
+    /**
+     * Sets the value of <code>SessionIndex</code> attribute.
+     *
+     * @param sessionIndex new value of the <code>SessionIndex</code> attribute.     * @throws SAML2Exception if the object is immutable.
+     * @see #getSessionIndex
+     */
+    public void setSessionIndex(String sessionIndex) throws SAML2Exception{
+        if (!isMutable) {
+            throw new SAML2Exception(
+                SAML2SDKUtils.bundle.getString("objectImmutable"));
+        }
+        this.sessionIndex = sessionIndex;
     }
 
     protected void getXMLString(Set namespaces, StringBuffer attrs,
@@ -127,13 +154,17 @@ public class AttributeQueryImpl
         super.getXMLString(namespaces, attrs, childElements, includeNSPrefix,
             declareNS);
 
-        if ((attributes != null) && (!attributes.isEmpty())) {
-            for(Iterator iter = attributes.iterator(); iter.hasNext(); ) {
-                Attribute attribute = (Attribute)iter.next();
-                childElements.append(attribute.toXMLString(includeNSPrefix,
-                    declareNS)).append(SAML2Constants.NEWLINE);
-            }
-        }
+	if ((sessionIndex != null) && (sessionIndex.length() > 0)) {
+	    attrs.append(SAML2Constants.SPACE)
+                 .append(SAML2Constants.SESSION_INDEX)
+	         .append(SAML2Constants.EQUAL).append(SAML2Constants.QUOTE)
+	         .append(sessionIndex).append(SAML2Constants.QUOTE);
+	}
+
+	if (requestedAuthnContext != null) {
+            childElements.append(requestedAuthnContext.toXMLString(
+                includeNSPrefix, declareNS)).append(SAML2Constants.NEWLINE);
+	}
     }
 
     /** 
@@ -144,6 +175,7 @@ public class AttributeQueryImpl
      */ 
     protected void parseDOMAttributes(Element element) throws SAML2Exception {
         super.parseDOMAttributes(element);
+        sessionIndex = element.getAttribute(SAML2Constants.SESSION_INDEX);
     }
 
     /** 
@@ -154,17 +186,16 @@ public class AttributeQueryImpl
      */ 
     protected void parseDOMChileElements(ListIterator iter)
         throws SAML2Exception {
+
         super.parseDOMChileElements(iter);
 
-        AssertionFactory assertionFactory = AssertionFactory.getInstance();
-        while(iter.hasNext()) {
+        ProtocolFactory pFactory = ProtocolFactory.getInstance();
+        if(iter.hasNext()) {
             Element childElement = (Element)iter.next();
             String localName = childElement.getLocalName() ;
-            if (SAML2Constants.ATTRIBUTE.equals(localName)) {
-                if (attributes == null) {
-                    attributes = new ArrayList();
-                }
-                attributes.add(assertionFactory.createAttribute(childElement));
+            if (SAML2Constants.REQ_AUTHN_CONTEXT.equals(localName)) {
+                requestedAuthnContext =
+                    pFactory.createRequestedAuthnContext(childElement);
             } else {
                 iter.previous();
             }

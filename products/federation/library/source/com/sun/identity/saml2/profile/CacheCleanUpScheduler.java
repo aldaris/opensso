@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheCleanUpScheduler.java,v 1.1 2007-11-14 18:55:29 ww203982 Exp $
+ * $Id: CacheCleanUpScheduler.java,v 1.2 2008-01-16 04:36:53 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ public class CacheCleanUpScheduler {
         pool.schedule(SPCache.mniRequestHash, nextRun);
         pool.schedule(SPCache.relayStateHash, nextRun);
         pool.schedule(IDPCache.authnRequestCache, nextRun);
+        pool.schedule(IDPCache.assertionCache, nextRun);
     }
     
 }

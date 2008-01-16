@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.15 2007-12-15 06:15:50 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.16 2008-01-16 04:34:09 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,10 +43,13 @@ import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Assertion;
 import com.sun.identity.saml2.assertion.Attribute;
+import com.sun.identity.saml2.assertion.AttributeStatement;
 import com.sun.identity.saml2.assertion.AudienceRestriction;
 import com.sun.identity.saml2.assertion.AuthnStatement;
 import com.sun.identity.saml2.assertion.Conditions;
 import com.sun.identity.saml2.assertion.EncryptedAssertion;
+import com.sun.identity.saml2.assertion.EncryptedAttribute;
+import com.sun.identity.saml2.assertion.EncryptedID;
 import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.assertion.Subject;
@@ -55,6 +58,7 @@ import com.sun.identity.saml2.assertion.SubjectConfirmationData;
 import com.sun.identity.saml2.idpdiscovery.IDPDiscoveryConstants;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
+import com.sun.identity.saml2.key.EncInfo;
 import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.plugins.DefaultSPAuthnContextMapper;
@@ -2101,6 +2105,28 @@ public class SAML2Utils extends SAML2SDKUtils {
     }
  
     /**
+     * Returns boolean value of specified attribute from SSOConfig.
+     * This method is used for boolean-valued attributes.
+     * @param realm realm of hosted entity.
+     * @param hostEntityId name of hosted entity.
+     * @param entityRole role of hosted entity.
+     * @param attrName attribute name for the value.
+     * @return value of specified attribute from SSOConfig.
+     */
+    public static boolean getBooleanAttributeValueFromSSOConfig(String realm,
+        String hostEntityId, String entityRole, String attrName) {
+
+        List value = (List) getAllAttributeValueFromSSOConfig(realm, 
+            hostEntityId, entityRole, attrName);
+
+        if ((value == null) || (value.isEmpty())) {
+            return false;
+        }
+
+        return SAML2Constants.TRUE.equalsIgnoreCase((String)value.get(0));
+    }
+    
+    /**
      * Returns single value of specified attribute from SSOConfig.
      * This method is used for single-valued attributes.
      * @param realm realm of hosted entity.
@@ -2131,7 +2157,7 @@ public class SAML2Utils extends SAML2SDKUtils {
             return null;
         }
     }
-    
+
     /**
      * Returns all values of specified attribute from SSOConfig.
      * @param realm realm of hosted entity.
@@ -2160,6 +2186,10 @@ public class SAML2Utils extends SAML2SDKUtils {
             } else if (entityRole.equalsIgnoreCase(
                 SAML2Constants.ATTR_AUTH_ROLE)) {
                 config = saml2MetaManager.getAttributeAuthorityConfig(realm,
+                    hostEntityId);
+            } else if (entityRole.equalsIgnoreCase(
+                SAML2Constants.AUTHN_AUTH_ROLE)) {
+                config = saml2MetaManager.getAuthnAuthorityConfig(realm,
                     hostEntityId);
             } else if (entityRole.equalsIgnoreCase(
                 SAML2Constants.ATTR_QUERY_ROLE)) {
@@ -3274,7 +3304,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         
         return wantSigned.equalsIgnoreCase("true") ? true : false;
     }
-    
+
     /**
      * Checks certificate validity with configured CRL 
      * @param x509 certificate 

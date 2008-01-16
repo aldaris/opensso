@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.10 2007-12-15 06:26:15 hengming Exp $
+   $Id: web.xml,v 1.11 2008-01-16 04:41:25 hengming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -206,6 +206,14 @@
             <servlet-class>com.sun.identity.saml2.servlet.AttributeServiceSOAP</servlet-class>
         </servlet>
         <servlet>
+            <servlet-name>AuthnQueryServiceSoap</servlet-name>
+            <servlet-class>com.sun.identity.saml2.servlet.AuthnQueryServiceSOAP</servlet-class>
+        </servlet>
+        <servlet>
+            <servlet-name>NameIDMappingServiceSOAP</servlet-name>
+            <servlet-class>com.sun.identity.saml2.servlet.NameIDMappingServiceSOAP</servlet-class>
+        </servlet>
+        <servlet>
             <servlet-name>Consumer</servlet-name>
             <jsp-file>/saml2/jsp/spAssertionConsumer.jsp</jsp-file>
         </servlet>
@@ -317,6 +325,14 @@
         <servlet-mapping>
             <servlet-name>SSORedirect</servlet-name>
             <url-pattern>/SSORedirect/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>NameIDMappingServiceSOAP</servlet-name>
+            <url-pattern>/NIMSoap/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>AuthnQueryServiceSoap</servlet-name>
+            <url-pattern>/AuthnQueryServiceSoap/*</url-pattern>
         </servlet-mapping>
         <servlet-mapping>
             <servlet-name>AttributeServiceSoap</servlet-name>

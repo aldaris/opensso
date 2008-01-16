@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionImpl.java,v 1.4 2007-09-11 22:01:48 weisun2 Exp $
+ * $Id: AssertionImpl.java,v 1.5 2008-01-16 04:33:17 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -743,6 +743,11 @@ public class AssertionImpl implements Assertion {
     */
     public String toXMLString(boolean includeNSPrefix, boolean declareNS)
         throws SAML2Exception {
+
+        if ((signature != null) && (signedXMLString != null)) {
+            return signedXMLString;
+        }
+
         StringBuffer sb = new StringBuffer(2000);
         String NS = "";
         String appendNS = "";
