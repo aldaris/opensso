@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.27 2008-01-09 21:36:28 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.28 2008-01-16 00:12:32 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2477,10 +2477,10 @@ public class IdServicesImpl implements IdServices {
             }
 
             // add the "AgentRepoUser" plugin only if revision number of
-            // sunIdentityRepository service is greater than or equal to 40.
+            // sunIdentityRepository service is greater than or equal to 30.
             // This is for backward compatibility.
 
-            if (svcRevisionNumber >= 40) {
+            if (svcRevisionNumber >= 30) {
                 IdRepo agentRepo = getAgentRepoPlugin(token, orgName);
             
                 Set agOpSet = agentRepo.getSupportedOperations(type);
