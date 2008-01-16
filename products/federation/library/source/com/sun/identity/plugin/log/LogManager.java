@@ -18,21 +18,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.1 2006-10-30 23:15:29 qcheng Exp $
+ * $Id: LogManager.java,v 1.2 2008-01-16 18:45:56 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.plugin.log;
 
-import com.sun.identity.shared.debug.Debug;
-
 import com.sun.identity.common.SystemConfigurationUtil;
-import com.sun.identity.plugin.log.LogException;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * The <code>LogManager</code> is used to get an instance of
  * the <code>Logger</code> implementation class.
+ * If the system property com.sun.identity.plugin.log.class is set, this class
+ * will be used as log provider instead of the default implementation.
  */
 
 public final class LogManager {
@@ -51,10 +51,9 @@ public final class LogManager {
     public static Logger getLogger(String componentName)
     throws LogException {
         Logger logProvider = null;
-        String pluginName = "com.sun.identity.plugin.log.impl.LogProvider"; 
-                // TODO : Change to use SystemConfiguration
-		// instead of assuming the default impl.
-		// SystemConfigurationUtil.getProperty(LOG_PROVIDER_NAME);
+        String pluginName = SystemConfigurationUtil.getProperty(
+            LOG_PROVIDER_NAME, "com.sun.identity.plugin.log.impl.LogProvider");
+
         try {
             if (pluginName != null && pluginName.length() > 0) {
                 Class logProviderClass =
