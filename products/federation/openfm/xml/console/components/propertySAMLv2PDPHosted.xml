@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2PDPHosted.xml,v 1.1 2007-10-09 01:07:25 asyhuang Exp $
+   $Id: propertySAMLv2PDPHosted.xml,v 1.2 2008-01-17 19:26:06 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -94,6 +94,7 @@
                     <label name="lblXACMLAuthzServiceLocation" defaultValue="samlv2.entityDescriptor.provider.attribute.label.XACMLAuthzServiceLocation" labelFor="XACMLAuthzServiceLocation" />
                     <cc name="XACMLAuthzServiceLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
                         <attribute name="autoSubmit" value="false" />
+                        <attribute name="size" value="75" />
                         <attribute name="localizeDisplayFieldValue" value="false" />   
                     </cc>
                 </property>   
