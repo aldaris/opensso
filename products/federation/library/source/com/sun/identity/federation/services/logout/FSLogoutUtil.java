@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutUtil.java,v 1.6 2007-10-16 21:49:17 exu Exp $
+ * $Id: FSLogoutUtil.java,v 1.7 2008-01-17 09:19:39 mchlbgs Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1013,12 +1013,12 @@ public class FSLogoutUtil {
                     providerAlias);
                 BaseConfigType hostedConfig = null;
                 if (hostedEntityId != null &&
-                    hostedEntityId.equalsIgnoreCase(IFSConstants.IDP))
+                    IFSConstants.IDP.equalsIgnoreCase(hostedRole))
                 {
                     hostedConfig = metaManager.getIDPDescriptorConfig(
                         realm, hostedEntityId);
-                } else if (hostedEntityId != null &&
-                    hostedEntityId.equalsIgnoreCase(IFSConstants.SP))
+               } else if (hostedEntityId != null &&
+                    IFSConstants.SP.equalsIgnoreCase(hostedRole))
                 {
                     hostedConfig = metaManager.getSPDescriptorConfig(
                         realm, hostedEntityId);
