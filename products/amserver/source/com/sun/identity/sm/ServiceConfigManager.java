@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManager.java,v 1.4 2007-03-21 22:33:48 veiming Exp $
+ * $Id: ServiceConfigManager.java,v 1.5 2008-01-17 19:16:59 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,8 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.io.InputStream;
 import java.util.Collections;
@@ -51,6 +53,7 @@ import org.w3c.dom.NodeList;
 public class ServiceConfigManager {
     // Instance variables
     private SSOToken token;
+
 
     private String serviceName;
 
@@ -405,6 +408,13 @@ public class ServiceConfigManager {
      */
     public void removeGlobalConfiguration(String groupName)
             throws SMSException, SSOException {
+
+        if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE) ||
+            serviceName.equalsIgnoreCase(ISAuthConstants.AUTH_SERVICE_NAME)) {
+            String[] args = { serviceName };
+            throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                    "sms-SERVICE_CORE_CANNOT_DELETE", args));
+        }
         if ((groupName == null) || groupName.length() == 0) {
             groupName = SMSUtils.DEFAULT;
         }

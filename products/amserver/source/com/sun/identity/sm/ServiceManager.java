@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.13 2007-11-10 04:38:29 veiming Exp $
+ * $Id: ServiceManager.java,v 1.14 2008-01-17 19:16:59 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,8 +29,10 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.security.AdminTokenAction;
@@ -566,6 +568,12 @@ public class ServiceManager {
         // Search for (&(ou=<serviceName>)(objectclass=top))
         // construct the rdn with the given version, look for the entry
         // in iDS and if entry exists(service with that version), delete.
+        if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE) ||
+            serviceName.equalsIgnoreCase(ISAuthConstants.AUTH_SERVICE_NAME)) {
+            Object args[] = { serviceName };
+            throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                    "sms-SERVICE_CORE_CANNOT_DELETE", args));
+        }
         SMSEntry.validateToken(token);
         String[] objs = { serviceName };
         Iterator results = SMSEntry.search(
@@ -610,6 +618,13 @@ public class ServiceManager {
      */
     public void deleteService(String serviceName) throws SMSException,
             SSOException {
+        if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE) ||
+            serviceName.equalsIgnoreCase(ISAuthConstants.AUTH_SERVICE_NAME)) {
+            Object args[] = { serviceName };
+            throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                    "sms-SERVICE_CORE_CANNOT_DELETE", args));
+        }
+
         Iterator versions = getServiceVersions(serviceName).iterator();
         while (versions.hasNext()) {
             String version = (String) versions.next();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSException.java,v 1.3 2006-08-25 21:21:27 veiming Exp $
+ * $Id: SMSException.java,v 1.4 2008-01-17 19:16:59 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -502,5 +502,8 @@ public class SMSException extends Exception implements L10NMessage {
 
     /** If the root LDAP cause is <code> INSUFFICIENT_ACCESS_RIGHTS </code> */
     public static int STATUS_NO_PERMISSION = 8;
+
+    /** the operation is not allowed. */
+    public static int STATUS_NOT_ALLOW = 9;
 
 }

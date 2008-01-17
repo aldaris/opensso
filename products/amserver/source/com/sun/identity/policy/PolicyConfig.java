@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyConfig.java,v 1.3 2007-12-10 20:41:38 dillidorai Exp $
+ * $Id: PolicyConfig.java,v 1.4 2008-01-17 19:16:58 kenwho Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -359,6 +359,7 @@ public class PolicyConfig implements com.sun.identity.sm.ServiceListener {
         if (globalSchema != null) {
             Map attributeDefaults =  globalSchema.getAttributeDefaults();
             setContinueEvaluationOnDenyDecision(attributeDefaults);
+            setOrgAliasMappedResourcesEnabled(attributeDefaults);
             setAdvicesHandleableByAM(attributeDefaults);
             setOrgAliasMappedResourcesEnabled(attributeDefaults);
             processResourceMap(attributeDefaults);
