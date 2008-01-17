@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.11 2007-11-30 01:01:27 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.12 2008-01-17 20:59:51 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -903,18 +903,39 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         BaseConfigType baseConfig,
         Map values
         ) throws AMConsoleException {
-            List attrList = baseConfig.getAttribute();
-            for (Iterator i = attrList.iterator(); i.hasNext(); ) {
-                AttributeElement avpnew = (AttributeElement)i.next();
-                String name = avpnew.getName();
-                Set set = (Set)values.get(name);
-                if (set != null) {
-                   avpnew.getValue().clear();
-                   avpnew.getValue().addAll(set);
+        List attrList = baseConfig.getAttribute();
+        try {
+            if (!attrList.isEmpty()) {
+                for (Iterator it = attrList.iterator(); it.hasNext(); ) {
+                    AttributeElement avpnew = (AttributeElement)it.next();
+                    String name = avpnew.getName();
+                    Set set = (Set)values.get(name);
+                    if (set != null) {
+                        avpnew.getValue().clear();
+                        avpnew.getValue().addAll(set);
+                    }
                 }
-            } 
-    }
-    
+            } else {
+                ObjectFactory objFactory = new ObjectFactory();
+                for (Iterator iter = values.keySet().iterator(); 
+                    iter.hasNext();) {
+                    AttributeElement avp = 
+                            objFactory.createAttributeElement();
+                    String key = (String)iter.next();
+                    avp.setName(key);
+                    Set set = (Set) values.get(key);
+                    if (set != null) {
+                        avp.getValue().addAll(set);
+                    }
+                    baseConfig.getAttribute().add(avp);
+                }
+            }
+        } catch (JAXBException e) {
+            debug.warning
+                    ("SAMLv2ModelImpl.java.updateBaseConfig", e);
+            throw new AMConsoleException(e.getMessage());
+        }
+    }    
 
     /**
      * Saves the NameIdFormat.
