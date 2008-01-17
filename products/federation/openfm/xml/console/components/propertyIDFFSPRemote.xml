@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyIDFFSPRemote.xml,v 1.3 2007-12-11 23:03:39 asyhuang Exp $
+   $Id: propertyIDFFSPRemote.xml,v 1.4 2008-01-17 23:06:05 asyhuang Exp $
    
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,35 +46,12 @@
                 <option label="urn:liberty:iff:2002-12" value="urn:liberty:iff:2002-12" />
             </cc>
         </property>                       
-        <property>
-            <label name="lblSigningKey" defaultValue="idff.entityDescriptor.provider.attribute.label.Signing" />
-            <ccgroup>
-                <property>
-                    <label name="lblSigningKeyAlias" defaultValue="idff.entityDescriptor.provider.attribute.label.Signing.KeyAlias" labelFor="tfSigningKeyAlias" />
-                    <cc name="signingCertAlias" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-            </ccgroup>
-        </property>          
-        <property>
-            <label name="txtEncryptionKey" defaultValue="idff.entityDescriptor.provider.attribute.label.Encryption" />
-            <ccgroup>
-                <property>
-                    <label name="lblEncryptionKeyAlias" defaultValue="idff.entityDescriptor.provider.attribute.label.Encryption.KeyAlias" labelFor="tfEncryptionKeyAlias" />
-                    <cc name="encryptionCertAlias" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>                               
-                <property>
-                    <label name="lblEnableNameIdentifierEncryption" defaultValue="idff.entityDescriptor.provider.attribute.label.enableNameIdentifierEncryption" labelFor="cbEnableNameIdentifierEncryption" />
-                    <cc name="enableNameIDEncryption" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                        <attribute name="label" value="label.Enable" />
-                    </cc>                          
-                </property>
-            </ccgroup>  
+        
+        <property>           
+            <label name="lblEnableNameIdentifierEncryption" defaultValue="idff.entityDescriptor.provider.attribute.label.enableNameIdentifierEncryption" labelFor="cbEnableNameIdentifierEncryption" />
+            <cc name="enableNameIDEncryption" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+                <attribute name="label" value="label.Enable" />
+            </cc>                                         
         </property>           
         <property>
             <label name="lblSignAuthenticationRequest" defaultValue="idff.entityDescriptor.provider.attribute.label.signAuthenticationRequest" labelFor="cbAuthnRequestsSigned" />
@@ -201,31 +178,19 @@
         </property>
         <property required="true">
             <label name="lblSupportedSSOProfile" defaultValue="idff.entityDescriptor.provider.attribute.label.supportedSSOProfile" labelFor="supportedSSOProfile" />
-            <cc name="supportedSSOProfile" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag" >    
-                <attribute name="layout" value="horizontal" />
-                <option label="http://projectliberty.org/profiles/brws-art" value="http://projectliberty.org/profiles/brws-art" />
-                <option label="http://projectliberty.org/profiles/brws-post" value="http://projectliberty.org/profiles/brws-post" />             
-                <option label="http://projectliberty.org/profiles/lecp" value="http://projectliberty.org/profiles/lecp" />
+            <cc name="supportedSSOProfile" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >                    
+                <option label="idff.entityDescriptor.provider.attribute.option.profile.BrowserArt" value="http://projectliberty.org/profiles/brws-art" />
+                <option label="idff.entityDescriptor.provider.attribute.option.profile.BrowserPost" value="http://projectliberty.org/profiles/brws-post" />             
+                <option label="idff.entityDescriptor.provider.attribute.option.profile.LECP" value="http://projectliberty.org/profiles/lecp" />
             </cc>
         </property>     
     </section>    
     <section name="spCcnfiguration" defaultValue="idff.entityDescriptor.provider.section.title.spConfiguration" >              
-        <property required="true">
+        <property>
             <label name="lblAlias" defaultValue="idff.entityDescriptor.provider.attribute.label.alias" labelFor="tfAlias" />
-            <cc name="tfAlias" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-                <attribute name="size" value="30" />
+            <cc name="tfAlias" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" >                         
             </cc>
-        </property>          
-        <property required="true">
-            <label name="lblAuthenticationType" defaultValue="idff.entityDescriptor.provider.attribute.label.authenticationType" labelFor="authType" />
-            <cc name="authType" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag" >
-                <attribute name="layout" value="horizontal" />
-                <option label="idff.entityDescriptor.provider.attribute.option.authenticationType.local" value="local" />
-                <option label="idff.entityDescriptor.provider.attribute.option.authenticationType.remote" value="remote" />
-            </cc>
-        </property>                  
+        </property>           
         <property>
             <label name="lblForcedAuthenticationAtIdentityProvider" defaultValue="idff.entityDescriptor.provider.attribute.label.forcedAuthenticationAtIdentityProvider"  labelFor="cbForcedAuthenticationAtIdentityProvider" />
             <cc name="forceAuthn" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
@@ -343,30 +308,7 @@
             </cc>
         </property>   
     </section>    
-    <section  name="plugin" defaultValue="idff.entityDescriptor.provider.section.title.plugin">     
-        <property>
-            <label name="lblNameIdentifierImplementation" defaultValue="idff.entityDescriptor.provider.attribute.label.nameIdentifierImplementation" labelFor="tfNameIdentifierImplementation" />
-            <cc name="nameIDImplementationClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>                                      
-        <property>
-            <label name="lblUserProviderClass" defaultValue="idff.entityDescriptor.provider.attribute.label.userProviderClass" labelFor="userProviderClass" />
-            <cc name="userProviderClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>      
-        <property>
-            <label name="lblFederationSPAdapterEnv" defaultValue="idff.entityDescriptor.provider.attribute.label.federationSPAdapterEnv" labelFor="federationSPAdapterEnv" />
-            <cc name="federationSPAdapterEnv" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>  
+    <section name="spAttributeMapper" defaultValue="idff.entityDescriptor.provider.section.title.spAttributeMapper">     
         <property>
             <label name="lblSunIdentityServerProviderAttributeMapperClass" defaultValue="idff.entityDescriptor.provider.attribute.label.sunIdentityServerProviderAttributeMapperClass" />
             <cc name="attributeMapperClass" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
