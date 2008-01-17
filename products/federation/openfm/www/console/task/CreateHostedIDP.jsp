@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedIDP.jsp,v 1.1 2008-01-15 06:44:20 veiming Exp $
+   $Id: CreateHostedIDP.jsp,v 1.2 2008-01-17 06:36:28 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -49,12 +49,10 @@
     }
 
     function openWindow(fieldName) {
-        selectWin = window.open('../federation/FileChooser', fieldName,
-            'height=650,width=650,top=' +
+        selectWin = window.open('../federation/FileUploader', fieldName,
+            'height=300,width=650,top=' +
             ((screen.height-(screen.height/2))-(500/2)) +
-            ',left=' +
-            ((screen.width-650)/2) +
-            ',scrollbars,resizable');
+            ',left=' + ((screen.width-650)/2));
         selectWin.focus();
     }
 
@@ -65,9 +63,91 @@
         if (radio.value == 'yes') {
             infodiv.style.display = 'none';
             metadiv.style.display = 'block';
+            document.getElementById('cotsection').style.display = 'none';
+            document.getElementById('cotq').style.display = 'none';
+            document.getElementById('cottf').style.display = 'none';
+            document.getElementById('cotchoice').style.display = 'none';
         } else {
             infodiv.style.display = 'block';
             metadiv.style.display = 'none';
+            document.getElementById('cotsection').style.display = 'display';
+            var realm = frm.elements['CreateHostedIDP.tfRealm'].value;
+            getCircleOfTrust(realm);
+        }
+    }
+
+    function metaOptionSelect(radio) {
+        if (radio.value == 'url') {
+            frm.elements['CreateHostedIDP.tfMetadataFileURL'].style.display = '';
+            frm.elements['CreateHostedIDP.btnMetadata'].style.display = 'none';
+            document.getElementById('metadatafilename').style.display = 'none';
+        } else {
+            frm.elements['CreateHostedIDP.tfMetadataFileURL'].style.display = 'none';
+            frm.elements['CreateHostedIDP.btnMetadata'].style.display = '';
+            document.getElementById('metadatafilename').style.display = '';
+        }
+    }
+
+    function extendedOptionSelect(radio) {
+        if (radio.value == 'url') {
+            frm.elements['CreateHostedIDP.tfExtendedFileURL'].style.display = '';
+            frm.elements['CreateHostedIDP.btnExtendedFile'].style.display = 'none';
+            document.getElementById('extendedfilename').style.display = 'none';
+        } else {
+            frm.elements['CreateHostedIDP.tfExtendedFileURL'].style.display = 'none';
+            frm.elements['CreateHostedIDP.btnExtendedFile'].style.display = '';
+            document.getElementById('extendedfilename').style.display = '';
+        }
+    }
+
+    function realmSelect(radio) {
+    	getCircleOfTrust(radio.value);
+    }
+
+    function cotOptionSelect(radio) {
+        var ans = radio.value;
+        if (ans == 'yes') {
+            document.getElementById('cotchoice').style.display = 'block';
+            document.getElementById('cottf').style.display = 'none';
+            frm.elements['CreateHostedIDP.tfCOT'].value = '';
+        } else {
+            document.getElementById('cotchoice').style.display = 'none';
+            document.getElementById('cottf').style.display = 'block';
+        }
+    }
+
+    function getExtendedData() {
+        var extRadio = getRadioVal('CreateHostedIDP.radioExtendedData');
+        var extended = (extRadio == 'url') ?
+            frm.elements['CreateHostedIDP.tfExtendedFileURL'].value :
+            frm.elements['CreateHostedIDP.tfExtendedFile'].value;
+        extended = extended.replace(/^\s+/, "");
+        extended = extended.replace(/\s+$/, "");
+        return extended;
+    }
+
+    function getCircleOfTrustFromExt() {
+        var extended = getExtendedData();
+        if (extended.length == 0) {
+            return;
+        }
+
+        fade();
+        document.getElementById('dlg').innerHTML = '<center>' + 
+            msgGetCOTs + '</center>';
+        var url = "../console/ajax/AjaxProxy.jsp";
+        var params = 'locale=' + userLocale +
+            '&class=com.sun.identity.workflow.GetCircleOfTrusts' + 
+            '&extendeddata=' + escape(extended);
+        ajaxPost(ajaxObj, url, params, circleOfTrust);
+    }
+
+    function hideRealm() {
+        var frm = document.forms['CreateHostedIDP'];
+        var realmobj = frm.elements['CreateHostedIDP.tfRealm'];
+        if (realmobj.options.length < 2) {
+            document.getElementById('realmlbl').style.display = 'none';
+            document.getElementById('realmfld').style.display = 'none';
         }
     }
 </script>
@@ -92,11 +172,15 @@
 <div id="dlg" class="dvs"></div>
 
 <script language="javascript">
+    hideRealm();
+
     var msgConfiguring = "<cc:text name="txtConfiguring" defaultValue="configure.provider.waiting" bundleID="amConsole" escape="false" />";
     var msgConfigured = "<cc:text name="txtConfigured" defaultValue="configure.provider.done" bundleID="amConsole" escape="false" />";
     var msgError = "<cc:text name="txtConfigured" defaultValue="configure.provider.error" bundleID="amConsole" escape="false" />";
+    var closeBtn = "<cc:text name="txtConfigured" defaultValue="ajax.close.button" bundleID="amConsole" escape="false" />";
+    var msgGetCOTs = "<cc:text name="txtConfigured" defaultValue="configure.provider.get.cots" bundleID="amConsole" escape="false" />";
 
-    var hasMetaData = 'yes';
+    var hasMetaData = 'no';
     var frm = document.forms['CreateHostedIDP'];
     var btn1 = frm.elements['CreateHostedIDP.button1'];
     btn1.onclick = submitPage;
@@ -105,6 +189,18 @@
     var userLocale = "<% viewBean.getUserLocale().toString(); %>";
 
     function submitPage() {
+        if (document.getElementById('cotsection').style.display != 'block') {
+            var extended = getExtendedData();
+            if (extended.length > 0) {
+                if (hasMetaData) {
+                    getCircleOfTrustFromExt();
+                } else {
+                    var realm = frm.elements['CreateHostedIDP.tfRealm'].value;
+                    getCircleOfTrust(realm);
+                }
+                return false;
+            }
+        }
         fade();
         document.getElementById('dlg').innerHTML = '<center>' + 
         msgConfiguring + '</center>';
@@ -116,37 +212,105 @@
     }
 
     function getData() {
+        var cot;
+        var cotRadio = getRadioVal('CreateHostedIDP.radioCOT');
+        if (cotRadio == "yes") {
+            cot = frm.elements['CreateHostedIDP.choiceCOT'].value;
+        } else {
+            cot = frm.elements['CreateHostedIDP.tfCOT'].value;
+        }
         if (hasMetaData == "yes") {
-            return "&metadata=" +
-            escape(frm.elements['CreateHostedIDP.tfMetadataFile'].value) +
-            "&extendeddata=" +
-            escape(frm.elements['CreateHostedIDP.tfExtendedFile'].value);
+            var metaRadio = getRadioVal('CreateHostedIDP.radioMeta');
+            var meta = (metaRadio == 'url') ?
+                frm.elements['CreateHostedIDP.tfMetadataFileURL'].value :
+                frm.elements['CreateHostedIDP.tfMetadataFile'].value;
+            var extRadio = getRadioVal('CreateHostedIDP.radioExtendedData');
+            var extended = (extRadio == 'url') ?
+                frm.elements['CreateHostedIDP.tfExtendedFileURL'].value :
+                frm.elements['CreateHostedIDP.tfExtendedFile'].value;
+
+            return "&metadata=" + escape(meta) +
+                "&extendeddata=" + escape(extended) +
+                "&cot=" + escape(cot);
         } else {
             var realm = frm.elements['CreateHostedIDP.tfRealm'].value;
-            var metaalias = frm.elements['CreateHostedIDP.tfMetaAlias'].value;
-
-            if (metaalias.indexOf('/') == 0) {
-                metaalias = metaalias.substring(1);
-            }
-            metaalias = (realm == "/") ? "/" + metaalias :
-                realm + "/" + metaalias;
-
             return "&entityId=" +
             escape(frm.elements['CreateHostedIDP.tfEntityId'].value) +
-            "&metaalias=" + escape(metaalias) +
             "&realm=" + escape(realm) +
             "&idpecert=" +
             escape(frm.elements['CreateHostedIDP.tfEncKey'].value) +
             "&idpscert=" +
             escape(frm.elements['CreateHostedIDP.tfSigningKey'].value) +
-            "&cot=" +
-            escape(frm.elements['CreateHostedIDP.tfCOT'].value);
+            "&cot=" + escape(cot);
+        }
+    }
+
+    function getCircleOfTrust(realm) {
+        var url = "../console/ajax/AjaxProxy.jsp";
+        var params = 'locale=' + userLocale +
+            '&class=com.sun.identity.workflow.GetCircleOfTrusts' + 
+            '&realm=' + escape(realm);
+        ajaxPost(ajaxObj, url, params, circleOfTrust);
+    }
+
+    function circleOfTrust() {
+        if (ajaxObj.readyState == 4) {
+            var result = ajaxObj.responseText;
+            var status = result.substring(0, result.indexOf('|'));
+            var result = result.substring(result.indexOf('|') +1);
+            var msg = '';
+            if (status == 0) {
+                document.getElementById('cotsection').style.display = 'block';
+                result = result.replace(/^\s+/, '');
+                result = result.replace(/\s+$/, '');
+                if (result.length == 0) {
+                    document.getElementById('cotq').style.display = 'none';
+                    document.getElementById('cotchoice').style.display = 'none';
+                    document.getElementById('cottf').style.display = 'block';
+                    chooseRadio('CreateHostedIDP.radioCOT', 'no');
+                } else {
+                    var cots = result.split('|');
+                    var choiceCOT = frm.elements['CreateHostedIDP.choiceCOT'];
+                    for (var i = 0; i < cots.length; i++) {
+                        choiceCOT.options[i] = new Option(cots[i], cots[i]);
+                    }
+                    document.getElementById('cotq').style.display = 'block';
+                    document.getElementById('cotchoice').style.display = 'block';
+                    document.getElementById('cottf').style.display = 'none';
+                    chooseRadio('CreateHostedIDP.radioCOT', 'yes');
+                }
+                focusMain();
+            } else {
+                msg = '<center><p>' + result + '</p></center>';
+	        msg = msg + '<center>' +  closeBtn + '</center>';
+                document.getElementById('dlg').innerHTML = msg;
+                document.getElementById('cotsection').style.display = 'none';
+                ajaxObj = getXmlHttpRequestObject();
+            }
+        }
+    }
+
+    function chooseRadio(name, value) {
+	var r = frm.elements[name];
+        for (var i = 0; i < r.length; i++) {
+	    if (r[i].value == value) {
+                r[i].checked = true;
+            }
+        }
+    }
+
+    function getRadioVal(name) {
+	var r = frm.elements[name];
+        for (var i = 0; i < r.length; i++) {
+            if (r[i].checked) {
+                return r[i].value;
+            }
         }
     }
 
     function createRemoteSP() {
         var cot = frm.elements['CreateHostedIDP.tfCOT'].value;
-        document.location = 'CreateRemoteSP?cot=' + cot + '&' + data;
+        document.location.replace('CreateRemoteSP?cot=' + cot + '&' + data);
     }
 
     function configured() {
@@ -164,10 +328,15 @@
             } else {
                 msg = '<center><p>' + result + '</p></center>';
 		msg = msg + '<center>' +  msgError + '</center>';
+                ajaxObj = getXmlHttpRequestObject();
             }
             document.getElementById('dlg').innerHTML = msg;
         }
     }
+
+    frm.elements['CreateHostedIDP.tfMetadataFileURL'].style.display = 'none';
+    frm.elements['CreateHostedIDP.tfExtendedFileURL'].style.display = 'none';
+    getCircleOfTrust('/');
 </script>
 
 </jato:useViewBean>

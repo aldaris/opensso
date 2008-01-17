@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Home.jsp,v 1.1 2008-01-15 06:44:19 veiming Exp $
+   $Id: Home.jsp,v 1.2 2008-01-17 06:36:27 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -35,12 +35,14 @@
 <cc:i18nbundle baseName="amConsole" id="amConsole"
     locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
 
-<cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2004" fireDisplayEvents="true">
+<cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2008" fireDisplayEvents="true">
 
+<link id="styleSheet" href="../console/css/commontask.css" type="text/css" rel="stylesheet" />
+<link id="styleSheet" href="../console/css/css_master.css" type="text/css" rel="stylesheet" />
+<script language="javascript" src="../com_sun_web_ui/js/browserVersion.js"></script>
 <script language="javascript" src="../console/js/am.js"></script>
+<script language="javascript" src="../console/js/tasksPage.js"></script>
 
-<cc:form name="Home" method="post">
-<jato:hidden name="szCache" />
 <script language="javascript">
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
@@ -48,7 +50,72 @@
 </script>
 <cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();"/>
 
-</cc:form>
+<div id="info1" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
+<div><a href="#" id="close1" onclick="closeAll(1); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateHostedIDP" defaultValue="commontask.create.hosted.idp" bundleID="amConsole" /></span></p></div>
+
+<div id="info11" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
+<div><a href="#" id="close11" onclick="closeAll(11); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpDoc" defaultValue="commontask.doc" bundleID="amConsole" /></span></p></div>
+
+<div class="TskPgeFllPge" id="TskPge" onclick="hideAllMenus()">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr valign="top"><td>&nbsp;</td><td colspan="4"></td></tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td width="40%"><img alt="" src="../console/images/tasks/spacer.gif" width="220" height="1" /></td>
+    <td width="9%">&nbsp;</td>
+    <td width="39%"><img alt="" src="../console/images/tasks/spacer.gif" width="220" height="1" /></td>
+    <td width="7%">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td valign="top">
+
+    <span class="TskPgeSbHdr">SAMLv2</span>
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="TskPgeBtmSpc">
+    <tr><td class="TskPgeBckgrTd">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif1" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="100%;" class="TskPgeTskCntrTd"><a href="CreateHostedIDP" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'">
+         <span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span>  
+         <span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtCreateHostedIDP" defaultValue="commontask.label.create.hosted.idp" bundleID="amConsole" /></span>         
+         </a></td>
+         <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top">
+         <a href="#" onclick="test(1); event.cancelBubble = true; return false;"  onmouseover="hoverImg(1); event.cancelBubble = true;" onmouseout="outImg(1); event.cancelBubble = true;" onfocus="hoverImg(1); event.cancelBubble = true;" onblur="outImg(1); event.cancelBubble = true;" id="i1"><img alt="" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg1" /></a></td>
+          </tr>
+          </table>
+    </td></tr>
+    </table>
+
+
+    <td>&nbsp;</td>
+    <td valign="top">
+    <span class="TskPgeSbHdr">Documentation</span>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="TskPgeBtmSpc">
+    <tr><td class="TskPgeBckgrTd">
+        <table id="button2" width="100%"  border="0" cellspacing="0" cellpadding="0">
+        <tr>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif11" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="100%" class="TskPgeTskCntrTd"><a href="http://docs.sun.com/app/docs/coll/1292.1?l=en&q=Access+Manager+7" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'">
+        <span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span>
+        <span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtLblDoc" defaultValue="commontask.label.doc" bundleID="amConsole"/></span></a></td>
+        <td width="3%" align="right" valign="top" class="TskPgeTskRghtTd" >
+        <a href="#" onclick="test(11); event.cancelBubble = true; return false;" onmouseover="hoverImg(11); event.cancelBubble = true;" onmouseout="outImg(11); event.cancelBubble = true;" onfocus="hoverImg(11); event.cancelBubble = true;" onblur="outImg(11); event.cancelBubble = true;" id="i11"><img alt="" id="togImg11" src="../console/images/tasks/rightToggle.gif" width="29" height="21"  border="0" /></a></td>
+        </tr>
+        </table></td>
+      </tr>
+    </table>       
+
+    <td>&nbsp;</td>
+  </tr>  
+  <tr class="TskPgeBtmTr">
+    <td colspan="5">&nbsp;</td>
+  </tr>
+</table>
+</div>
+
+
 
 </cc:header>
 </jato:useViewBean>

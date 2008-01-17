@@ -17,3 +17,4 @@
 <neednodealwith classname="com.sun.identity.console.idm.WebServiceProviderEditViewBean" />
 <neednodealwith classname="com.sun.identity.console.idm.WebServiceUserCredAddViewBean" />
 <neednodealwith classname="com.sun.identity.console.idm.WebServiceUserCredEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.task.HomeViewBean" />

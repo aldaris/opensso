@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Task.java,v 1.1 2008-01-15 06:44:20 veiming Exp $
+ * $Id: Task.java,v 1.2 2008-01-17 06:36:25 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,13 @@ package com.sun.identity.workflow;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -65,8 +72,17 @@ public abstract class Task
         return resBundle.getString(key);
     }
 
+    protected String getContent(String resName)
+        throws WorkflowException {
+        if (resName.startsWith("http://")) {
+            return getWebContent(resName);
+        } else {
+            return resName;
+        }
+    }
+    
     protected String getFileContent(String filename)
-        throws WorkflowException{
+        throws WorkflowException {
         StringBuffer buff = new StringBuffer();
         try {
             FileReader input = new FileReader(filename);
@@ -81,4 +97,38 @@ public abstract class Task
             throw new WorkflowException(e.getMessage());
         }
     }
+    
+    private static String getWebContent(String url)
+        throws WorkflowException {
+        try {
+            StringBuffer content = new StringBuffer();
+            URL urlObj = new URL(url);
+            URLConnection conn = urlObj.openConnection();
+            if (conn instanceof HttpURLConnection) {
+                HttpURLConnection httpConnection = (HttpURLConnection)conn;
+                httpConnection.setRequestMethod("GET");
+                httpConnection.setDoOutput(true);
+
+                httpConnection.connect();
+                int response = httpConnection.getResponseCode();
+                InputStream is = httpConnection.getInputStream();
+                BufferedReader dataInput = new BufferedReader(
+                    new InputStreamReader(is));
+                String line = dataInput.readLine();
+
+                while (line != null) {
+                    content.append(line).append('\n');
+                    line = dataInput.readLine();
+                }
+            }
+            return content.toString();
+        } catch (ProtocolException e) {
+            throw new WorkflowException(e.getMessage());
+        } catch (MalformedURLException e) {
+            throw new WorkflowException(e.getMessage());
+        } catch (IOException e) {
+            throw new WorkflowException(e.getMessage());
+        }
+    }
+
 }

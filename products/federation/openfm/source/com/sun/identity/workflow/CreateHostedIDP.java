@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDP.java,v 1.1 2008-01-15 06:44:20 veiming Exp $
+ * $Id: CreateHostedIDP.java,v 1.2 2008-01-17 06:36:25 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,9 +26,12 @@ package com.sun.identity.workflow;
 
 import com.sun.identity.cot.COTException;
 import com.sun.identity.saml2.meta.SAML2MetaException;
+import com.sun.identity.saml2.meta.SAML2MetaManager;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Creates Hosted Identity Provider.
@@ -56,11 +59,12 @@ public class CreateHostedIDP
         if (hasMetaData) {
             String extendedDataFile = getString(params,
                 ParameterKeys.P_EXENDED_DATA);
-            metadata = getFileContent(metadataFile);
-            extendedData = getFileContent(extendedDataFile);
+            metadata = getContent(metadataFile);
+            extendedData = getContent(extendedDataFile);
         } else {
             String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
-            String metaAlias = getString(params, ParameterKeys.P_META_ALIAS);
+            String metaAlias = generateMetaAlias(
+                getString(params, ParameterKeys.P_REALM));
             Map map = new HashMap();
             map.put(CreateSAML2HostedProviderTemplate.P_IDP, metaAlias);
             map.put(CreateSAML2HostedProviderTemplate.P_IDP_E_CERT,
@@ -96,6 +100,29 @@ public class CreateHostedIDP
         return getMessage("idp.configured", locale) + "|||realm=" + realm;
     }
     
+    private String generateMetaAlias(String realm)
+        throws WorkflowException {
+        try {
+            Set metaAliases = new HashSet();
+            SAML2MetaManager mgr = new SAML2MetaManager();
+            metaAliases.addAll(
+                mgr.getAllHostedIdentityProviderMetaAliases(realm));
+            metaAliases.addAll(
+                mgr.getAllHostedServiceProviderMetaAliases(realm));
+            String metaAlias = (realm.equals("/")) ? "/idp" : realm + "/idp";
+            int counter = 1;
+
+            while (metaAliases.contains(metaAlias)) {
+                metaAlias = metaAlias + Integer.toString(counter);
+                counter++;
+            }
+            System.out.println(metaAlias);
+            return metaAlias;
+        } catch (SAML2MetaException e) {
+            throw new WorkflowException(e.getMessage());
+        }
+    }
+
     private void validateParameters(Map params)
         throws WorkflowException {
         String metadata = getString(params, ParameterKeys.P_META_DATA);
@@ -111,7 +138,7 @@ public class CreateHostedIDP
             throw new WorkflowException("both-meta-extended-data-required",
                 null);
         }
-        if ((params.size() == 2) &&
+        if ((params.size() == 3) &&
             params.containsKey(ParameterKeys.P_META_DATA) &&
             params.containsKey(ParameterKeys.P_EXENDED_DATA) &&
             !hasMetaData && !hasExtendedData
@@ -119,51 +146,22 @@ public class CreateHostedIDP
             throw new WorkflowException("both-meta-extended-data-required",
                 null);
         }
-        
+
+        String cotname = getString(params, ParameterKeys.P_COT);
+        if ((cotname == null) || (cotname.trim().length() == 0)) {
+            throw new WorkflowException("missing-cot", null);
+        }
+            
         if (!hasMetaData && !hasExtendedData) {
             String realm = getString(params, ParameterKeys.P_REALM);
             if ((realm == null) || (realm.trim().length() == 0)) {
                 throw new WorkflowException("missing-realm", null);
             }
             
-            String metaAlias = getString(params, ParameterKeys.P_META_ALIAS);
-            if ((metaAlias == null) || (metaAlias.trim().length() == 0)) {
-                throw new WorkflowException("missing-metaalias", null);
-            } else {
-                String metaalias = metaAlias;
-                if (realm.equals("/")) {
-                    if (!metaalias.startsWith("/")) {
-                        Object[] param = {metaalias};
-                        throw new WorkflowException(
-                            "metaalias-no-prefix-with-realm", param);
-                    }
-                    metaalias = metaalias.substring(1);
-                } else {
-                    if (!metaalias.startsWith(realm + "/")) {
-                        Object[] param = {metaalias};
-                        throw new WorkflowException(
-                            "metaalias-no-prefix-with-realm", param);
-                    }
-                    metaalias = metaalias.substring(realm.length() +1);
-                }
-                
-                if (metaalias.indexOf("/") != -1) {
-                    Object[] param = {metaalias};
-                    throw new WorkflowException(
-                        "invalid-metaalias-slash", param);
-                }
-            }
-            
             String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
             if ((entityId == null) || (entityId.trim().length() == 0)) {
                 throw new WorkflowException("missing-entity-id", null);
             }
-            
-            String cotname = getString(params, ParameterKeys.P_COT);
-            if ((cotname == null) || (cotname.trim().length() == 0)) {
-                throw new WorkflowException("missing-cot", null);
-            }
-            
         }
     }
 }

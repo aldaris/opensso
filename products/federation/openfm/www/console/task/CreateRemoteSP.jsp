@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteSP.jsp,v 1.1 2008-01-15 06:44:20 veiming Exp $
+   $Id: CreateRemoteSP.jsp,v 1.2 2008-01-17 06:36:28 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -47,13 +47,23 @@
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
     function openWindow(fieldName) {
-	selectWin = window.open('../federation/FileChooser', fieldName,
-	    'height=650,width=650,top=' +
-	    ((screen.height-(screen.height/2))-(500/2)) +
-	    ',left=' +
-	    ((screen.width-650)/2) +
-	    ',scrollbars,resizable');
-	selectWin.focus();
+        selectWin = window.open('../federation/FileUploader', fieldName,
+            'height=300,width=650,top=' +
+            ((screen.height-(screen.height/2))-(500/2)) +
+            ',left=' + ((screen.width-650)/2));
+        selectWin.focus();
+    }
+
+    function metaOptionSelect(radio) {
+        if (radio.value == 'url') {
+            frm.elements['CreateRemoteSP.tfMetadataFileURL'].style.display = '';
+            frm.elements['CreateRemoteSP.btnMetadata'].style.display = 'none';
+            document.getElementById('metadatafilename').style.display = 'none';
+        } else {
+            frm.elements['CreateRemoteSP.tfMetadataFileURL'].style.display = 'none';
+            frm.elements['CreateRemoteSP.btnMetadata'].style.display = '';
+            document.getElementById('metadatafilename').style.display = '';
+        }
     }
 </script>
 
@@ -100,9 +110,12 @@
 
     function getData() {
         var realm = frm.elements['CreateRemoteSP.tfRealm'].value;
+        var metaRadio = getRadioVal('CreateRemoteSP.radioMeta');
+        var meta = (metaRadio == 'url') ?
+            frm.elements['CreateRemoteSP.tfMetadataFileURL'].value :
+            frm.elements['CreateRemoteSP.tfMetadataFile'].value;
 
-        return "&metadata=" +
-            escape(frm.elements['CreateRemoteSP.tfMetadataFile'].value) +
+        return "&metadata=" + escape(meta) +
             "&realm=" + escape(realm) +
             "&cot=" +
             escape(frm.elements['CreateRemoteSP.tfcot'].value);
@@ -122,6 +135,7 @@
     	    document.getElementById('dlg').innerHTML = msg;
         }
     }
+    frm.elements['CreateRemoteSP.btnMetadata'].style.display = 'none';
 </script>
 
 </jato:useViewBean>

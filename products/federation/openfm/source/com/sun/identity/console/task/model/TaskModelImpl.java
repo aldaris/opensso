@@ -17,16 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.1 2008-01-15 06:44:19 veiming Exp $
+ * $Id: TaskModelImpl.java,v 1.2 2008-01-17 06:36:27 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.task.model;
 
-import com.iplanet.sso.SSOException;
+import com.sun.identity.saml.xmlsig.JKSKeyProvider;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModelBase;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,4 +58,31 @@ public class TaskModelImpl
         results.add("/");
         return results;
     }
+
+    /**
+     * Returns a set of signing keys.
+     *
+     * @return a set of signing keys.
+     */
+    public Set getSigningKeys()
+        throws AMConsoleException {
+        try {
+            Set keyEntries = new HashSet();
+            JKSKeyProvider kp = new JKSKeyProvider();
+            KeyStore ks = kp.getKeyStore();
+            Enumeration e = ks.aliases();
+            if (e != null) {
+                while (e.hasMoreElements()) {
+                    String alias = (String) e.nextElement();
+                    if (ks.isKeyEntry(alias)) {
+                        keyEntries.add(alias);
+                    }
+                }
+            }
+            return keyEntries;
+        } catch (KeyStoreException e) {
+            throw new AMConsoleException(e.getMessage());
+        }
+    }
 }
+

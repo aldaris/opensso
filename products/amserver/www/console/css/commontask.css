@@ -1,4 +1,5 @@
-/* The contents of this file are subject to the terms
+/**
+ * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,22 +18,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ParameterKeys.java,v 1.2 2008-01-17 06:36:25 veiming Exp $
+ * $Id: commontask.css,v 1.1 2008-01-17 06:36:22 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.workflow;
+/* TASKS PAGE */
+*html body span.TskPgeTskLftBtm {bottom: -5px;}
+*html body span.TskPgeTskRghtBtm {bottom: -5px; right:-1px}     
+*html body span.TskPgeTskRghtTp {right:-1px;}
+*html body span.TskPgeTskRghtBrdr {height:18px; top: 20%; right:-1px;}
+span.TskPgeTskLftBtm, span.TskPgeTskLftTp, span.TskPgeTskRghtBtm, span.TskPgeTskRghtTp, span.TskPgeTskRghtBrdr {cursor:hand;}
+/*---*/
 
-/**
- * List of parameter keys.
- */
-public interface ParameterKeys {
-    String P_ENTITY_ID = "entityId";
-    String P_META_DATA = "metadata";
-    String P_EXENDED_DATA = "extendeddata";
-    String P_REALM = "realm";
-    String P_IDP_E_CERT = "idpecert";
-    String P_IDP_S_CERT = "idpscert";
-    String P_COT = "cot";
-}
+

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2007-10-02 00:29:47 dillidorai Exp $
+   $Id: build.xml,v 1.10 2008-01-17 06:36:28 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -98,8 +98,13 @@
 
     <target name="preparebuild">
         <mkdir dir="${test.package.dir}"/>
+        <mkdir dir="${test.package.dir}/mock" />
         <mkdir dir="${fm.dist.dir}"/>
         <mkdir dir="${test.classes.dir}"/>
+
+        <copy todir="${test.package.dir}/mock">
+            <fileset dir="${openfm.unittest.dir}/mock" />
+        </copy>
     </target>
 
     <target name="clean">

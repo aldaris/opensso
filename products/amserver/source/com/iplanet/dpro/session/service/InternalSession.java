@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.7 2008-01-15 22:12:42 ww203982 Exp $
+ * $Id: InternalSession.java,v 1.8 2008-01-17 06:36:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -388,7 +388,7 @@ public class InternalSession implements TaskRunnable, Serializable {
     /**
      * Implements for TaskRunnable.
      *
-     * @param The task previous to this one.
+     * @param task The task previous to this one.
      */
     public void setPrevious(TaskRunnable task) {
         previousTask = task;
@@ -397,7 +397,7 @@ public class InternalSession implements TaskRunnable, Serializable {
     /**
      * Implements for TaskRunnable.
      *
-     * @param The task next to this one.
+     * @param task The task next to this one.
      */
     public void setNext(TaskRunnable task) {
         nextTask = task;

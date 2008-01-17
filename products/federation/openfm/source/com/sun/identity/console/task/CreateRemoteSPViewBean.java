@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteSPViewBean.java,v 1.1 2008-01-15 06:44:19 veiming Exp $
+ * $Id: CreateRemoteSPViewBean.java,v 1.2 2008-01-17 06:36:27 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.console.task;
 
 import com.iplanet.jato.view.View;
+import com.iplanet.jato.view.event.ChildContentDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.AMPropertySheet;
@@ -51,6 +52,7 @@ public class CreateRemoteSPViewBean
     private static final String PAGETITLE = "pgtitle";
     private static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
     private static final String REALM = "tfRealm";
+    private static final String RADIO_META  = "radioMeta";
     private static final String COT = "tfcot";
     
     private CCPageTitleModel ptModel;
@@ -119,5 +121,22 @@ public class CreateRemoteSPViewBean
         if ((realm != null) && (realm.trim().length() > 0)) {
             setDisplayFieldValue(REALM, realm);
         }
+
+        String value = (String)getDisplayFieldValue(RADIO_META);
+        if ((value == null) || value.equals("")){
+            setDisplayFieldValue(RADIO_META, "url");
+        }
+    }
+    
+    public String endPropertyAttributesDisplay(
+        ChildContentDisplayEvent event
+    ) {
+        String html = event.getContent();
+        int idx = html.indexOf("tfMetadataFile\"");
+        idx = html.lastIndexOf("<input ", idx);
+        html = html.substring(0, idx) +
+            "<span id=\"metadatafilename\"></span>" +
+            html.substring(idx);
+        return html;
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModel.java,v 1.1 2008-01-15 06:44:19 veiming Exp $
+ * $Id: TaskModel.java,v 1.2 2008-01-17 06:36:27 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,5 +38,13 @@ public interface TaskModel
      * @throws AMConsoleException if realm cannot be retrieved.
      */
     Set getRealms()
+        throws AMConsoleException;
+    
+    /**
+     * Returns a set of signing keys.
+     *
+     * @return a set of signing keys.
+     */
+    Set getSigningKeys()
         throws AMConsoleException;
 }
