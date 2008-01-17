@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgent.java,v 1.4 2008-01-15 03:42:18 veiming Exp $
+ * $Id: CreateAgent.java,v 1.5 2008-01-17 21:22:10 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,13 +96,8 @@ public class CreateAgent extends AuthenticatedCommand {
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
             
-            Map inheritedValues = AgentConfiguration.getDefaultValues(
-                agentType);
-            //overwrite inherited values with what user has given
-            inheritedValues.putAll(attributeValues);
-            
             AgentConfiguration.createAgent(adminSSOToken, agentName, 
-                agentType, inheritedValues);
+                agentType, attributeValues);
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("create-agent-succeeded"),
                 (Object[])params));

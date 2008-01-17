@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.10 2008-01-15 03:42:18 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.11 2008-01-17 21:22:10 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -175,13 +175,16 @@ public class AgentConfiguration {
         Set setAgentType = new HashSet(2);
         setAgentType.add(agentType);
         attributeValues.put(IdConstants.AGENT_TYPE, setAgentType);
-
+        Map inheritedValues = getDefaultValues(agentType);
+        //overwrite inherited values with what user has given
+        inheritedValues.putAll(attributeValues);
+            
          if ((serverURL != null) || (agentURL != null)) {
-            tagswapAttributeValues(attributeValues, agentType, serverURL,
+            tagswapAttributeValues(inheritedValues, agentType, serverURL,
                 agentURL);
          }
 
-        amir.createIdentity(IdType.AGENTGROUP, agentGroupName, attributeValues);
+        amir.createIdentity(IdType.AGENTGROUP, agentGroupName, inheritedValues);
     }
     /**
      * Creates an agent.
@@ -279,12 +282,15 @@ public class AgentConfiguration {
         Set setAgentType = new HashSet(2);
         setAgentType.add(agentType);
         attributeValues.put(IdConstants.AGENT_TYPE, setAgentType);
-
+        Map inheritedValues = getDefaultValues(agentType);
+        //overwrite inherited values with what user has given
+        inheritedValues.putAll(attributeValues);
+        
         if ((serverURL != null) || (agentURL != null)) {
-            tagswapAttributeValues(attributeValues, agentType, serverURL,
+            tagswapAttributeValues(inheritedValues, agentType, serverURL,
                 agentURL);
         }
-        amir.createIdentity(IdType.AGENTONLY, agentName, attributeValues);
+        amir.createIdentity(IdType.AGENTONLY, agentName, inheritedValues);
     }
 
     private static void tagswapAttributeValues(
@@ -733,7 +739,6 @@ public class AgentConfiguration {
     private static Map parseAttributeMap(String agentType, Map attrValues)
         throws SMSException, SSOException {
         Map result = new HashMap();
-        result.putAll(attrValues);
         Set attributeSchemas = getAgentAttributeSchemas(agentType);
         
         if ((attributeSchemas != null) && !attributeSchemas.isEmpty()) {
@@ -744,6 +749,8 @@ public class AgentConfiguration {
                     result.put(as.getName(), values);
                 }
             }
+        } else {
+            result.putAll(attrValues);
         }
         
         return result;
