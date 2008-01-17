@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.4 2007-11-30 00:13:33 veiming Exp $
+ * $Id: Main.java,v 1.5 2008-01-17 01:44:20 bina Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,7 @@ import netscape.ldap.LDAPException;
  */
 
 
-class Main
+public class Main
 {
     static final String AUTH_CORE_SERVICE = "iPlanetAMAuthService";
 
@@ -251,7 +251,7 @@ class Main
         }
     }
 
-    Main() {
+    public Main() {
     }
 
 /**
@@ -287,7 +287,7 @@ class Main
         return null;
     }
 
-    private void parseCommandLine(String[] argv) throws AdminException {
+    public void parseCommandLine(String[] argv) throws AdminException {
         if (!ArgumentValidator.validateArguments(argv, bundle)) {
             System.err.println(bundle.getString("usage"));
             System.exit(1);
@@ -663,7 +663,7 @@ class Main
     /**
      * Actual execution of the operations are performed here
      */
-    private void runCommand()
+    public void runCommand()
         throws AdminException, LDAPException
     {
         boolean bError = false;
