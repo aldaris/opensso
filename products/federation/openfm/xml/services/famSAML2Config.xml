@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSAML2Config.xml,v 1.1 2007-10-09 19:02:42 veiming Exp $
+   $Id: famSAML2Config.xml,v 1.2 2008-01-17 00:33:34 beomsuk Exp $
                                                                                 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -119,6 +119,22 @@
                         <Value>com.sun.identity.saml2.xmlsig.FMSigProvider</Value>
                     </DefaultValues>
                 </AttributeSchema>
+                <AttributeSchema name="SigningCertValidation" 
+                    type="single" 
+                    syntax="boolean" 
+                    i18nKey="a109">
+                    <DefaultValues>
+                        <Value>false</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="CACertValidation" 
+                    type="single" 
+                    syntax="boolean" 
+                    i18nKey="a110">
+                    <DefaultValues>
+                        <Value>false</Value>
+                    </DefaultValues>
+                </AttributeSchema>                
             </Global> 
         </Schema> 
     </Service> 
