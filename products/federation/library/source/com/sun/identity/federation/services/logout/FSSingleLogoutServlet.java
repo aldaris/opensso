@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutServlet.java,v 1.2 2008-01-16 17:08:32 mchlbgs Exp $
+ * $Id: FSSingleLogoutServlet.java,v 1.3 2008-01-17 18:08:30 qwcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,8 +134,6 @@ public class FSSingleLogoutServlet extends HttpServlet {
         RequestDispatcher dispatcher =
             getServletConfig().getServletContext().getRequestDispatcher(
                         processLogout.toString()) ;
-        // -mb- to force error
-        dispatcher = null ;
         if ( dispatcher == null ) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(
