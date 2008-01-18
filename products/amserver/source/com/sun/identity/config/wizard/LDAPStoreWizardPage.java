@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPStoreWizardPage.java,v 1.3 2008-01-15 19:58:59 jefberpe Exp $
+ * $Id: LDAPStoreWizardPage.java,v 1.4 2008-01-18 06:18:33 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,19 +26,26 @@ package com.sun.identity.config.wizard;
 import com.sun.identity.config.pojos.LDAPStore;
 import com.sun.identity.config.util.AjaxPage;
 import net.sf.click.control.ActionLink;
+import com.sun.identity.setup.AMSetupServlet;
+import java.io.File;
 
-/**
- * @author Les Hazlewood
+/*
+ * LDAPStoreWizardPage is the base for steps 2,3, and 4.
  */
 public class LDAPStoreWizardPage extends AjaxPage {
 
     public LDAPStore store = null;
 
-    public ActionLink clearLink = new ActionLink( "clearStore", this, "clearStore" );
-    public ActionLink checkNameLink = new ActionLink( "checkName", this, "checkName" );
-    public ActionLink checkHostLink = new ActionLink( "checkServer", this, "checkServer" );
-    public ActionLink checkBaseDNLink = new ActionLink( "checkBaseDN", this, "checkBaseDN" );
-    public ActionLink checkLoginIdLink = new ActionLink( "checkLoginId", this, "checkLoginId" );
+    public ActionLink clearLink = 
+        new ActionLink("clearStore", this, "clearStore");
+    public ActionLink checkNameLink = 
+        new ActionLink("checkName", this, "checkName");
+    public ActionLink checkHostLink = 
+        new ActionLink("checkServer", this, "checkServer");
+    public ActionLink checkBaseDNLink = 
+        new ActionLink("checkBaseDN", this, "checkBaseDN");
+    public ActionLink checkLoginIdLink = 
+        new ActionLink("checkLoginId", this, "checkLoginId");
 
     private String type = "config";
     private String typeTitle = "Configuration";
@@ -81,25 +88,24 @@ public class LDAPStoreWizardPage extends AjaxPage {
     }
 
     public void onInit() {
-        super.onInit();
-        addModel( "type", getType() );
-        addModel( "typeTitle", getTypeTitle() );
-        addModel( "pageNum", Integer.valueOf( getPageNum() ) );
+        addModel("type", getType());
+        addModel("typeTitle", getTypeTitle());
+        addModel("pageNum", Integer.valueOf( getPageNum()));
         store = getConfig();
-        addModel( "usingCustomStore", Boolean.valueOf( store != null ) );
+        addModel("usingCustomStore", Boolean.valueOf( store != null));
 
         store = ensureConfig();
-        addModel( "store", store );
+        addModel("store", store);
     }
 
     public boolean clearStore() {
-        getContext().removeSessionAttribute( getStoreSessionName() );
-        setPath( null );
+        getContext().removeSessionAttribute( getStoreSessionName());
+        setPath(null);
         return false;
     }
 
     protected LDAPStore getConfig() {
-        return (LDAPStore)getContext().getSessionAttribute( getStoreSessionName() );
+        return (LDAPStore)getContext().getSessionAttribute(getStoreSessionName());
     }
 
     protected LDAPStore ensureConfig() {
@@ -110,91 +116,92 @@ public class LDAPStoreWizardPage extends AjaxPage {
         return store;
     }
 
-    protected void save( LDAPStore config ) {
-        getContext().setSessionAttribute( getStoreSessionName(), config );
+    protected void save(LDAPStore config) {
+        getContext().setSessionAttribute(getStoreSessionName(), config);
     }
 
     public boolean checkName() {
-        String storeName = toString( "name" );
-        if ( storeName != null ) {
+        String storeName = toString("name");
+        if (storeName != null) {
             LDAPStore config = ensureConfig();
-            config.setName( storeName );
-            save( config );
-            writeToResponse( "true" );
+            config.setName(storeName );
+            save(config);
+            writeToResponse("true");
         } else {
-            writeToResponse( "Please specify a name." );
+            writeToResponse(getLocalizedString("missing.host.name"));
         }
-        //ajax response - rendered directly - prevent click from rendering a velocity template:
+        //ajax response - rendered directly - prevent click from 
+        //rendering a velocity template:
         setPath( null );
         return false;
     }
 
     public boolean checkServer() {
-        String host = toString( "host" );
-        int port = toInt( "port" );
-        boolean portSecure = toBoolean( "securePort" );
+        String host = toString("host");
+        int port = toInt("port");
+        boolean portSecure = toBoolean("securePort");
 
         if ( host == null ) {
-            writeToResponse( "Please specify a host." );
+            writeToResponse(getLocalizedString("missing.host.name"));
         } else if ( port > 65535 ) {
-            writeToResponse( "Please use a port less than or equal to 65535" );
+            writeToResponse(getLocalizedString("invalid.port.number"));
         } else {
             try {
                 LDAPStore store = ensureConfig();
-                store.setHostName( host );
-                store.setHostPort( port );
-                store.setHostPortSecure( portSecure );
+                store.setHostName(host);
+                store.setHostPort(port);
+                store.setHostPortSecure(portSecure);
 
-                getConfigurator().testHost( store );
-                save( store );
-                writeToResponse( "true" );
-            } catch ( Exception e ) {
-                writeToResponse( e.getMessage() );
+                getConfigurator().testHost(store);
+                save(store);
+                writeToResponse("true");
+            } catch (Exception e) {
+                writeToResponse(e.getMessage());
             }
         }
 
-        setPath( null );
+        setPath(null);
         return false;
     }
 
     public boolean checkBaseDN() {
-        String baseDN = toString( "baseDN" );
-        if ( baseDN == null ) {
-            writeToResponse( "Please specify a Base DN." );
+        String baseDN = toString("baseDN");
+        if (baseDN == null) {
+            writeToResponse(getLocalizedString("missing.base.dn"));
         } else {
             LDAPStore store = ensureConfig();
-            store.setBaseDN( baseDN );
+            store.setBaseDN(baseDN);
             try {
-                getConfigurator().testBaseDN( store );
-                save( store );
-                writeToResponse( "true" );
-            } catch ( Exception e ) {
-                writeToResponse( e.getMessage() );
+                getConfigurator().testBaseDN(store);
+                save(store);
+                writeToResponse("true");
+            } catch (Exception e) {
+                writeToResponse(e.getMessage());
             }
         }
 
-        setPath( null );
+        setPath(null);
         return false;
     }
 
     public boolean checkLoginId() {
-        String loginId = toString( "loginId" );
-        String password = toString( "password" );
-        if ( loginId == null ) {
-            writeToResponse( "Please specify a login ID" );
+        String loginId = toString("loginId");
+        String password = toString("password");
+        if (loginId == null) {
+            writeToResponse(getLocalizedString("missing.login.id"));
         } else if ( password == null ) {
-            writeToResponse( "Please specify a password." );
+            writeToResponse(getLocalizedString("missing.password"));
         } else {
             LDAPStore store = ensureConfig();
-            store.setUsername( loginId );
-            store.setPassword( password );
+            store.setUsername(loginId);
+            store.setPassword(password);
 
             try {
-                getConfigurator().testLoginId( store );
+                getConfigurator().testLoginId( store);
                 save( store );
-                writeToResponse( "true" );
-            } catch ( Exception e ) {
-                writeToResponse( e.getMessage() );
+                writeToResponse("true");
+            } catch (Exception e) {
+                writeToResponse(e.getMessage());
             }
         }
         setPath( null );
