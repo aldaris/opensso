@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.7 2008-01-15 20:48:31 jonnelson Exp $
+ * $Id: AjaxPage.java,v 1.8 2008-01-18 06:34:45 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,16 +26,16 @@ package com.sun.identity.config.util;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.config.Configurator;
 import com.sun.identity.config.DummyConfigurator;
+import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import java.io.IOException;
+import java.io.File;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import net.sf.click.Page;
 
-/**
- * 
- */
+
 public abstract class AjaxPage extends Page {
 
     public static final String RESPONSE_TEMPLATE = "{\"valid\":${valid}, \"body\":\"${body}\"}";
@@ -44,6 +44,7 @@ public abstract class AjaxPage extends Page {
     private Configurator configurator = null;
     
     private boolean rendering = false;
+    private String hostName;
     
     // localization properties
     protected ResourceBundle rb = null;
@@ -153,5 +154,52 @@ public abstract class AjaxPage extends Page {
             // do nothing
         }
         return (localizedValue == null) ? i18nKey : localizedValue;
+    }
+    
+    public String getHostName() { 
+        if (hostName == null) {
+            hostName = getContext().getRequest().getServerName();
+        }
+        return hostName;
+    }
+    
+    public String getBaseDir() {
+        String basedir = AMSetupServlet.getPresetConfigDir();
+        if ((basedir == null) || (basedir.length() == 0)) {
+            String tmp = System.getProperty("user.home");
+            if (File.separatorChar == '\\') {
+                tmp = tmp.replace('\\', '/');
+            }
+            basedir = tmp;
+        } 
+        
+        return basedir;
+    }
+    
+    public String getCookieDomain() {
+        String cookieDomain = "";           
+        String subDomain;
+        String topLevelDomain;
+        String hostname = getHostName();
+        
+        int idx1 = hostname.lastIndexOf(".");
+        if ((idx1 != -1) && (idx1 != (hostname.length() -1))) {
+            topLevelDomain = hostname.substring(idx1+1);
+            int idx2 = hostname.lastIndexOf(".", idx1-1);
+            if ((idx2 != -1) && (idx2 != (idx1 -1))) {
+                subDomain = hostname.substring(idx2+1, idx1);
+                try {
+                    Integer.parseInt(topLevelDomain);  
+                } catch (NumberFormatException e) {
+                    try {
+                        Integer.parseInt(subDomain);  
+                    } catch (NumberFormatException e1) {
+                        cookieDomain = "." + subDomain + "." + topLevelDomain;
+                    }
+                }
+            }
+        }
+        
+        return cookieDomain;
     }
 }

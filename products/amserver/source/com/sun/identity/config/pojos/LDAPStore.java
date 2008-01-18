@@ -17,22 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPStore.java,v 1.3 2007-11-12 14:51:14 lhazlewood Exp $
+ * $Id: LDAPStore.java,v 1.4 2008-01-18 06:34:45 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.pojos;
 
+import java.io.Serializable;
+
 /**
  * @author Les Hazlewood
  */
-public class LDAPStore extends AuthenticationStore {
+public class LDAPStore implements Serializable {
 
     private String name;
     private String hostName;
     private int hostPort = 389;
     private boolean hostPortSecure = false;
-    private String baseDN = null;
+    private String baseDN;
     private String username;
     private String password;
 

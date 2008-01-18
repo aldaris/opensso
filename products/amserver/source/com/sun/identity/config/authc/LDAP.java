@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.3 2008-01-15 19:58:59 jefberpe Exp $
+ * $Id: LDAP.java,v 1.4 2008-01-18 06:34:45 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,7 @@ public class LDAP extends AjaxPage {
 
 
     public void onPost() {
+        /*
         ldapStore.getRealm().setName(toString("realmName"));
         ldapStore.setName(toString("user_storeName"));
         ldapStore.setHostName(toString("user_hostName"));
@@ -56,10 +57,11 @@ public class LDAP extends AjaxPage {
         ldapStore.setBaseDN(toString("user_baseDN"));
 
         save(ldapStore);
+         **/
     }
 
     protected void save(LDAPStore ldapStore) {
-        getConfigurator().addAuthenticationStore(ldapStore);
+      //  getConfigurator().addAuthenticationStore(ldapStore);
     }
 
 }
