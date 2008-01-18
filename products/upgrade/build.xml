@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2008-01-18 08:03:11 bina Exp $
+   $Id: build.xml,v 1.2 2008-01-18 22:55:22 bina Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,7 +33,7 @@
     <import file="./upgrade.xml" />
 
 
-<taskdef resource="extlib/antcontrib.properties">
+<taskdef resource="upgrade/extlib/buildUpgrade.properties">
   <classpath>
     <pathelement location="${upgrade.extlib.dir}/ant-contrib-1.0b3.jar" />
   </classpath>

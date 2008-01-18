@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.23 2008-01-07 20:37:09 veiming Exp $
+   $Id: build.xml,v 1.24 2008-01-18 22:55:22 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,6 +32,7 @@
     <import file="federation/openfm/openfm.xml" />
     <import file="installtools/installtools.xml" />
     <import file="j2eeagents/j2eeagents.xml" />
+    <import file="upgrade/upgrade.xml" />
 
     <target name="nightly">
         <delete dir="${prd.nightly.dist.dir}" />
@@ -44,6 +45,7 @@
         <antcall target="amserver-nightly" />
         <antcall target="fedlibrary-nightly" />
         <antcall target="openfm-nightly" />
+        <antcall target="upgrade-nightly" />
         <antcall target="remove-amserver-bits" />
     </target>
 
@@ -134,6 +136,15 @@
 
     </target>
 
+    <target name="upgrade-nightly">
+        <copy todir="${upgrade.extlib.dir}">
+            <fileset file="${extlib.dir}/ant-contrib-1.0b3.jar" />
+        </copy>
+        <ant antfile="${upgrade.basedir}/build.xml" inheritRefs="true" target="nightly" />
+        <copy file="${upgrade.dist.dir}/opensso.zip"
+	    todir="${prd.nightly.dist.dir}/openfm" />
+    </target>
+
     <target name="srczip">
         <mkdir dir="${prd.nightly.dist.dir}" />
         <ant antfile="build-srczip.xml" inheritRefs="true"/>
@@ -157,6 +168,8 @@
             target="clean" />
         <ant antfile="${sharedlib.dir}/build.xml" inheritRefs="true"
             target="clean" />
+        <ant antfile="${upgrade.base.dir}/build.xml" inheritRefs="true"
+           target="clean" /> 
     </target>
 
     <target name="build-diff">
