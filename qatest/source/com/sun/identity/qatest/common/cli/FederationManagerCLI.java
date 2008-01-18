@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.11 2007-12-20 22:55:57 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.12 2008-01-18 15:04:31 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -445,6 +445,19 @@ public class FederationManagerCLI extends CLIUtility
         for (String name: nameList) {
             addArgument(name);
         }
+    }
+    
+    /**
+     * Add the "--append" argument to the argument list.
+     */
+    private void addAppendArgument() {
+        String appendArg;
+        if (useLongOptions) {
+            appendArg = PREFIX_ARGUMENT_LONG + APPEND_ARGUMENT;
+        } else {
+            appendArg = PREFIX_ARGUMENT_SHORT + SHORT_APPEND_ARGUMENT;
+        }
+        addArgument(appendArg);           
     }
     
     /**
@@ -922,9 +935,10 @@ public class FederationManagerCLI extends CLIUtility
     public int addRealmAttributes(String realm, String serviceName, 
             String attributeValues, boolean useDatafile)
     throws Exception {
-        setSubcommand(ADD_REALM_ATTRIBUTES_SUBCOMMAND);
+        setSubcommand(SET_REALM_ATTRIBUTES_SUBCOMMAND);
         addRealmArguments(realm);
         addServiceNameArguments(serviceName);
+        addAppendArgument();
         
         if (!useDatafile) {
             addAttributevaluesArguments(attributeValues);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListRealmsTest.java,v 1.6 2007-12-20 22:55:57 cmwesley Exp $
+ * $Id: ListRealmsTest.java,v 1.7 2008-01-18 15:03:02 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -326,21 +326,23 @@ public class ListRealmsTest extends TestCommon implements CLIExitCodes {
                     log(Level.FINEST, "cleanup", "setupRealmToDelete: " + 
                         realms[i]);
                     Reporter.log("SetupRealmToDelete: " + realms[i]);
-                    int exitStatus = cli.deleteRealm(realms[i], true); 
-                    cli.logCommand("cleanup");
-                    cli.resetArgList();
+                    int exitStatus = cleanupCli.deleteRealm(realms[i], true); 
+                    cleanupCli.logCommand("cleanup");
+                    cleanupCli.resetArgList();
                     if (exitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup", 
                                 "Realm deletion returned the failed exit " +
                                 "status " + exitStatus + ".");
                         assert false;
                     }
-                    if (cleanupCli.findRealms(realms[i])) {
+                    FederationManagerCLI listCli = 
+                            new FederationManagerCLI(useDebugOption, 
+                            useVerboseOption, useLongOptions);
+                    if (listCli.findRealms(realms[i])) {
                         log(Level.SEVERE, "cleanup", "Deleted realm " + 
                                 realms[i] + " still exists.");
                         assert false;
                     }
-                    cleanupCli.resetArgList();
                 }
             }
             exiting("cleanup");

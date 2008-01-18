@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.6 2007-12-20 22:54:52 cmwesley Exp $
+ * $Id: CreateIdentityTest.java,v 1.7 2008-01-18 15:03:02 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -317,7 +317,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
     throws Exception {
-        int exitStatus = -1;
+        int cleanupExitStatus = -1;
 
         entering("cleanup", null);
         try {            
@@ -358,19 +358,23 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                             Reporter.log("IdNameToRemove: " + idName);
                             Reporter.log("IdentityTypeToRemove: " + idType);
                             
-                            exitStatus = 
-                                    cli.deleteIdentities(idRealm, idName, 
+                            FederationManagerCLI cleanupCli = 
+                                    new FederationManagerCLI(useDebugOption, 
+                                    useVerboseOption, useLongOptions);
+                            cleanupExitStatus = 
+                                    cleanupCli.deleteIdentities(idRealm, idName, 
                                     idType);
-                            cli.resetArgList();
-                            if (exitStatus != SUCCESS_STATUS) {
+                            cleanupCli.resetArgList();
+                            if (cleanupExitStatus != SUCCESS_STATUS) {
                                 log(Level.SEVERE, "cleanup", 
-                                        "The deletion of" + idType + 
-                                        "identity " + idName + 
+                                        "The deletion of " + idType + 
+                                        " identity " + idName + 
                                         " returned the failed exit status " +
-                                        exitStatus + ".");
+                                        cleanupExitStatus + ".");
                                 assert false;
                             }
-                            if (cli.findIdentities(idRealm, "*", idType, idName)) {
+                            if (cli.findIdentities(idRealm, "*", idType, 
+                                    idName)) {
                                 log(Level.SEVERE, "cleanup", "The " + idType + 
                                         "identity " + idName + 
                                         " was not deleted.");
@@ -392,10 +396,10 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                     log(Level.FINEST, "cleanup", "setupRealmToDelete: " + 
                         realms[i]);
                     Reporter.log("SetupRealmToDelete: " + realms[i]);
-                    exitStatus = cli.deleteRealm(realms[i], true); 
+                    cleanupExitStatus = cli.deleteRealm(realms[i], true); 
                     cli.logCommand("cleanup");
                     cli.resetArgList();
-                    if (exitStatus != SUCCESS_STATUS) {
+                    if (cleanupExitStatus != SUCCESS_STATUS) {
                         assert false;
                     }
                 } 

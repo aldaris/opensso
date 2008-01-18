@@ -17,28 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAuthInstancesTest.java,v 1.2 2007-12-20 22:55:57 cmwesley Exp $
+ * $Id: ListAuthInstancesTest.java,v 1.3 2008-01-18 15:03:02 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
 
-import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.AuthContext.IndexType;
-import com.sun.identity.authentication.AuthContext.Status;
-import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -153,7 +144,8 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
                     for (int i=0; i < instances.length; i++) {
                         String[] instanceData = instances[i].split(",");
                         instanceBuffer.append(instanceData[0]).append(",").
-                                append(instanceData[1]);
+                                append(instanceData[1]).append(",").
+                                append(instanceData[2]);
                         if (i < instances.length - 1) {
                             instanceBuffer.append(";");
                         }
@@ -297,7 +289,7 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 
     throws Exception {
-        int exitStatus = -1;
+        int cleanupExitStatus = -1;
 
         entering("cleanup", null);
         try {            
@@ -317,25 +309,33 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
                 log(Level.FINE, "cleanup", "Deleting auth instances " + 
                         cleanupInstances);
                 String[] instancesToDelete = cleanupInstances.split(";");
-                FederationManagerCLI listCli = 
-                        new FederationManagerCLI(useDebugOption, 
-                        useVerboseOption, useLongOptions);
 
                 for (String instance: instancesToDelete) {
                     String[] instanceData = instance.split(",");
-                    exitStatus = cli.deleteAuthInstances(instanceData[0], 
-                            instanceData[1]);
-                    cli.logCommand("cleanup");
-                    cli.resetArgList();
-                    if (exitStatus != SUCCESS_STATUS) {
+                    String instanceRealm = instanceData[0];
+                    String nameToDelete = instanceData[1];
+                    String typeToDelete = instanceData[2];
+                    FederationManagerCLI listCli = 
+                            new FederationManagerCLI(useDebugOption, 
+                            useVerboseOption, useLongOptions);                   
+                    cleanupExitStatus = 
+                            listCli.deleteAuthInstances(instanceRealm, 
+                            nameToDelete);
+                    listCli.logCommand("cleanup");
+                    listCli.resetArgList();
+                    log(Level.FINE, "cleanup", "Deleting authentication " +
+                            "instance " + nameToDelete + " ...");
+                    if (cleanupExitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup", "The deletion of auth " + 
-                                "instance " + instanceData[1] + 
-                                " failed with status " + exitStatus + ".");
+                                "instance " + nameToDelete + " in realm " + 
+                                instanceRealm + " failed with status " + 
+                                cleanupExitStatus + ".");
                         assert false;
                     }
-                    if (listCli.findAuthInstances(realm, name)) {
-                        log(Level.SEVERE, "cleanup", "Auth instance " + name + 
-                                " was found after deletion.");
+                    if (listCli.findAuthInstances(instanceRealm, 
+                            nameToDelete + "," + typeToDelete)) {
+                        log(Level.SEVERE, "cleanup", "Auth instance " + 
+                                nameToDelete + " was found after deletion.");
                         assert false;
                     }  
                     listCli.resetArgList();
@@ -348,13 +348,15 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
                     log(Level.FINE, "cleanup", "Removing realm " + 
                         realms[i]);
                     Reporter.log("SetupRealmToDelete: " + realms[i]);
-                    exitStatus = cli.deleteRealm(realms[i], true); 
-                    cli.logCommand("cleanup");
-                    cli.resetArgList();
-                    if (exitStatus != SUCCESS_STATUS) {
+                    FederationManagerCLI cleanupCli = 
+                            new FederationManagerCLI(useDebugOption, 
+                            useVerboseOption, useLongOptions);  
+                    cleanupExitStatus = cleanupCli.deleteRealm(realms[i], true); 
+                    cleanupCli.logCommand("cleanup");
+                    if (cleanupExitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup", "The removal of realm " + 
                                 realms[i] + " failed with exit status " + 
-                                exitStatus + ".");
+                                cleanupExitStatus + ".");
                         assert false;
                     }
                 } 

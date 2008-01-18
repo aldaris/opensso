@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetIdentityTest.java,v 1.1 2007-08-16 17:45:42 cmwesley Exp $
+ * $Id: GetIdentityTest.java,v 1.2 2008-01-18 15:03:02 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,7 +133,11 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
                 assert false;
             }
 
-            if (!cli.createIdentities(setupIdentities)) {
+            FederationManagerCLI idCli = 
+                    new FederationManagerCLI(useDebugOption, useVerboseOption, 
+                    useLongOptions);
+
+            if (!idCli.createIdentities(setupIdentities)) {
                 log(Level.SEVERE, "setup", 
                         "All the identities failed to be created.");                
                 assert false;
@@ -250,6 +254,7 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
                 expectedMessage = msg;                
             }
 
+            cli.resetArgList();
             commandStatus = cli.getIdentity(realm, idName, idType, 
                     attributeNames);
             cli.logCommand("testGetIdentityAttributes");

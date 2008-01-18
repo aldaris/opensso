@@ -17,28 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAuthInstanceTest.java,v 1.1 2007-09-21 14:01:13 cmwesley Exp $
+ * $Id: GetAuthInstanceTest.java,v 1.2 2008-01-18 15:03:02 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
 
-import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.AuthContext.IndexType;
-import com.sun.identity.authentication.AuthContext.Status;
-import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -62,7 +53,9 @@ import org.testng.Reporter;
  * CLI_get-auth-instance13, CLI_get-auth-instance14, CLI_get-auth-instance15, 
  * CLI_get-auth-instance16, CLI_get-auth-instance17, CLI_get-auth-instance18,
  * CLI_get-auth-instance19, CLI_get-auth-instance20, CLI_get-auth-instance21, 
- * CLI_get-auth-instance22, CLI_get-auth-instance23, CLI_get-auth-instance24
+ * CLI_get-auth-instance22, CLI_get-auth-instance23, CLI_get-auth-instance24,
+ * CLI_get-auth-instance25, CLI_get-auth-instance26, CLI_get-auth-instance27,
+ * CLI_get-auth-instance28
  */
 public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
     
@@ -309,7 +302,7 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
     throws Exception {
-        int exitStatus = -1;
+        int cleanupExitStatus = -1;
 
         entering("cleanup", null);
         try {            
@@ -327,15 +320,18 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
             if (expectedExitCode.equals(
                     new Integer(SUCCESS_STATUS).toString())) {
                 log(Level.FINE, "cleanup", "Deleting auth instance " + name);
-                exitStatus = cli.deleteAuthInstances(authRealm, name);
-                cli.logCommand("cleanup");
-                if (exitStatus != SUCCESS_STATUS) {
+                FederationManagerCLI cleanupCli = 
+                        new FederationManagerCLI(useDebugOption, useVerboseOption, 
+                        useLongOptions);
+                cleanupExitStatus = cleanupCli.deleteAuthInstances(authRealm, 
+                        name);
+                cleanupCli.logCommand("cleanup");
+                if (cleanupExitStatus != SUCCESS_STATUS) {
                     log(Level.SEVERE, "cleanup", "The deletion of auth " + 
-                            "instance " + name + "failed with status " + 
-                            exitStatus + ".");
+                            "instance " + name + " failed with status " + 
+                            cleanupExitStatus + ".");
                     assert false;
                 }
-                cli.resetArgList();
             }
             
             if (!setupRealms.equals("")) {
@@ -344,13 +340,13 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
                     log(Level.FINE, "cleanup", "Removing realm " + 
                         realms[i]);
                     Reporter.log("SetupRealmToDelete: " + realms[i]);
-                    exitStatus = cli.deleteRealm(realms[i], true); 
+                    cleanupExitStatus = cli.deleteRealm(realms[i], true); 
                     cli.logCommand("cleanup");
                     cli.resetArgList();
-                    if (exitStatus != SUCCESS_STATUS) {
+                    if (cleanupExitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup", "The removal of realm " + 
                                 realms[i] + " failed with exit status " + 
-                                exitStatus + ".");
+                                cleanupExitStatus + ".");
                         assert false;
                     }
                 } 

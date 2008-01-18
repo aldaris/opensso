@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAuthInstanceTest.java,v 1.1 2007-09-12 16:24:10 cmwesley Exp $
+ * $Id: UpdateAuthInstanceTest.java,v 1.2 2008-01-18 15:03:02 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,16 +25,12 @@
 package com.sun.identity.qatest.cli;
 
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.AuthContext.IndexType;
-import com.sun.identity.authentication.AuthContext.Status;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
@@ -80,7 +76,9 @@ import org.testng.Reporter;
  * CLI_update-auth-instance45, CLI_update-auth-instance46,
  * CLI_update-auth-instance47, CLI_update-auth-instance48,
  * CLI_update-auth-instance49, CLI_update-auth-instance50, 
- * CLI_update-auth-instance51, CLI_update-auth-instance52
+ * CLI_update-auth-instance51, CLI_update-auth-instance52,
+ * CLI_update-auth-instance53, CLI_update-auth-instance54,
+ * CLI_update-auth-instance55, CLI_update-auth-instance56
  */
 public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
     
@@ -484,15 +482,17 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
             if (expectedExitCode.equals(
                     new Integer(SUCCESS_STATUS).toString())) {
                 log(Level.FINE, "cleanup", "Deleting auth instance " + name);
-                exitStatus = cli.deleteAuthInstances(authRealm, name);
-                cli.logCommand("cleanup");
+                FederationManagerCLI cleanupCli = 
+                        new FederationManagerCLI(useDebugOption, 
+                        useVerboseOption, useLongOptions);
+                exitStatus = cleanupCli.deleteAuthInstances(authRealm, name);
+                cleanupCli.logCommand("cleanup");
                 if (exitStatus != SUCCESS_STATUS) {
                     log(Level.SEVERE, "cleanup", "The deletion of auth " + 
-                            "instance " + name + "failed with status " + 
+                            "instance " + name + " failed with status " + 
                             exitStatus + ".");
                     assert false;
                 }
-                cli.resetArgList();
             }
             
             if (!setupRealms.equals("")) {
