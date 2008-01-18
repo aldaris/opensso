@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.1 2007-12-17 19:42:44 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.2 2008-01-18 17:43:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,8 +137,10 @@ public class GenericAgentProfileViewBean
             
             try {
                 if (!submitCycle) {
+                    // !isGroup should that we do not inherit value is
+                    // the identity is a group.
                     Map attrValues = model.getAttributeValues(
-                        universalId, true);
+                        universalId, !isGroup);
                     propertySheetModel.clear();
                     AMPropertySheet prop = (AMPropertySheet)getChild(
                         PROPERTY_ATTRIBUTE);
