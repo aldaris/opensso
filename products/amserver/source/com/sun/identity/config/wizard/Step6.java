@@ -17,42 +17,52 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
+ * $Id: Step6.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
 import com.sun.identity.config.pojos.LDAPStore;
-import net.sf.click.Page;
+import com.sun.identity.config.util.AjaxPage;
+import com.sun.identity.setup.AMSetupServlet;
+import com.sun.identity.setup.SetupConstants;
+import net.sf.click.control.ActionLink;
 
-/**
- * @author Les Hazlewood
- */
-public class Step6 extends Page {
+public class Step6 extends AjaxPage {
 
-    public Step6(){}
-
+    public ActionLink validateInputLink = 
+        new ActionLink("validateInput", this, "validateInput" );
+    
+    public Step6() {
+    }
+    
     public void onInit() {
-        super.onInit();
-        String newInstanceUrl = (String)getContext().getSessionAttribute( Step2.NEW_INSTANCE_URL_SESSION_KEY );
-        add( "newInstanceUrl", newInstanceUrl );
+        addModel("encryptionKey", AMSetupServlet.getRandomString());
+        addModel("serverURL", getServerURL());
+        addModel("cookieDomain", getCookieDomain());
+        addModel("platformLocale", SetupConstants.DEFAULT_PLATFORM_LOCALE);
+        addModel("configDirectory", getBaseDir());
+    }   
 
-        LDAPStore configStore = (LDAPStore)getContext().getSessionAttribute( Step3.LDAP_STORE_SESSION_KEY );
-        add( "configStore", configStore );
-
-        LDAPStore userStore = (LDAPStore)getContext().getSessionAttribute( Step4.LDAP_STORE_SESSION_KEY );
-        add( "userStore", userStore );
-
-        String loadBalancerHost = (String)getContext().getSessionAttribute( Step5.LOAD_BALANCER_HOST_SESSION_KEY );
-        add( "loadBalancerHost", loadBalancerHost );
-        Integer loadBalancerPort = (Integer)getContext().getSessionAttribute( Step5.LOAD_BALANCER_PORT_SESSION_KEY );
-        add( "loadBalancerPort", loadBalancerPort );
+    private String getServerURL() {        
+        String hostname = (String)getContext().getRequest().getServerName();
+        int portnum  = (int)getContext().getRequest().getServerPort();
+        String protocol = (String)getContext().getRequest().getScheme();
+        return protocol + "://" + hostname + ":" + portnum;
     }
 
-    protected void add( String key, Object value ) {
-        if ( value != null ) {
-            addModel( key, value );
+    public boolean validateInput() {
+        String key = toString("key");
+        String value = toString("value");
+ 
+        if (value == null) {        
+            writeToResponse(getLocalizedString("missing.required.field"));
+        } else { 
+            getContext().setSessionAttribute(key, value);
+            writeToResponse("OK");                               
         }
+        setPath(null);
+        return false;
     }
 }

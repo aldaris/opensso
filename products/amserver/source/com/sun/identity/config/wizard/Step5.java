@@ -17,64 +17,65 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step5.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
+ * $Id: Step5.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
 import com.sun.identity.config.util.AjaxPage;
+import com.sun.identity.setup.AMSetupServlet;
 import net.sf.click.control.ActionLink;
 
-/**
- * @author Les Hazlewood
- */
 public class Step5 extends AjaxPage {
 
-    public static final String LOAD_BALANCER_HOST_SESSION_KEY = "wizardLoadBalancerHostName";
-    public static final String LOAD_BALANCER_PORT_SESSION_KEY = "wizardLoadBalancerPort";
+    public static final String LOAD_BALANCER_HOST_SESSION_KEY = 
+        "wizardLoadBalancerHostName";
+    public static final String LOAD_BALANCER_PORT_SESSION_KEY = 
+        "wizardLoadBalancerPort";
 
-    public ActionLink clearLink = new ActionLink("clear", this, "clear" );
-    public ActionLink validateLink = new ActionLink("validate", this, "validate" );
+    public ActionLink clearLink = new ActionLink("clear", this, "clear");
+    public ActionLink validateLink = new ActionLink("validate",this,"validate");
 
-    public Step5(){        
-    }
+    public Step5() {}
 
     public void onInit() {
-        super.onInit();
-        String host = (String)getContext().getSessionAttribute( LOAD_BALANCER_HOST_SESSION_KEY );
-        Integer port = (Integer)getContext().getSessionAttribute( LOAD_BALANCER_PORT_SESSION_KEY );
+        String host = (String)getContext().getSessionAttribute(
+            LOAD_BALANCER_HOST_SESSION_KEY);
+        Integer port = (Integer)getContext().getSessionAttribute( 
+            LOAD_BALANCER_PORT_SESSION_KEY);
+        
         if ( host != null ) {
-            addModel("host", host );
+            addModel("host", host);
         }
         if ( port != null ) {
-            addModel("port", port );
+            addModel("port", port);
         }
     }
 
     public boolean clear() {
-        getContext().removeSessionAttribute( LOAD_BALANCER_HOST_SESSION_KEY );
-        getContext().removeSessionAttribute( LOAD_BALANCER_PORT_SESSION_KEY );
+        getContext().removeSessionAttribute(LOAD_BALANCER_HOST_SESSION_KEY);
+        getContext().removeSessionAttribute(LOAD_BALANCER_PORT_SESSION_KEY);
         setPath(null);
         return false;
     }
 
     public boolean validate() {
         String host = toString("host");
-        if ( host == null ) {
-            writeInvalid( super.getLocalizedString("configuration.wizard.step5.hostName.tooltip") );
+        if (host == null) {
+            writeInvalid(getLocalizedString("missing.host.name"));
         } else {
             int port = toInt("port");
-            if ( port > 65535 ) {
-                writeInvalid(super.getLocalizedString("configuration.wizard.step5.port.tooltip"));
+            if (port > 65535) {
+                writeInvalid(getLocalizedString("invalid.port.number"));
             } else {
-                try {
-                    getConfigurator().testLoadBalancer( host, port );
+                // test host for access( host, port );
+                if (AMSetupServlet.canUseAsPort(host, port)) {
+                    writeValid("OK");
                     getContext().setSessionAttribute( LOAD_BALANCER_HOST_SESSION_KEY, host );
                     getContext().setSessionAttribute( LOAD_BALANCER_PORT_SESSION_KEY, Integer.valueOf( port ) );
-                    writeValid(super.getLocalizedString("configuration.wizard.step5.balancerFound"));
-                } catch ( Exception ex ) {
-                    writeInvalid( ex.getMessage() );
+                } else {
+                    writeInvalid(getLocalizedString("contact.host.failed"));
                 }
             }
         }
@@ -82,5 +83,4 @@ public class Step5 extends AjaxPage {
         setPath(null);
         return false;
     }
-
 }

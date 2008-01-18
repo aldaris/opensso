@@ -17,83 +17,124 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step1.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
+ * $Id: Step1.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
 import com.sun.identity.config.util.AjaxPage;
+import com.sun.identity.setup.SetupConstants;
+import net.sf.click.control.ActionLink;
 import net.sf.click.Context;
-import net.sf.click.control.Checkbox;
 import net.sf.click.control.Form;
 import net.sf.click.control.HiddenField;
+import net.sf.click.control.FieldSet;
+import net.sf.click.control.Label;
+import net.sf.click.control.PasswordField;
 
-import javax.servlet.http.Cookie;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import com.iplanet.am.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
- * @author Les Hazlewood
+ * This is the first step in the advanced configuration flow.
+ * The user will be required to add the default admin password and
+ * the agent passwords.
  */
 public class Step1 extends AjaxPage {
-
-    public Form form = new Form("wizardStep1Form");
-
-    public Step1() {
-    }
-
-    public void onInit() {
-        super.onInit();
-        HiddenField hidden = new HiddenField( "skipStep1", "false" );
-        form.add( hidden );
-
-        Checkbox cb = new Checkbox( "skipStep1Checkbox", super.getLocalizedString("configuration.wizard.step1.skip") );
-        cb.setAttribute( "onclick", "toggleSkipStep1();");
-        form.add( cb );
-
-        if ( isSkipped( getContext() ) ) {
-            ((Checkbox)form.getField("skipStep1Checkbox")).setChecked( true );
-            form.getField("skipStep1").setValue("true");    
+    
+    // these two links required for client side validation calls.
+    public ActionLink validateLink = 
+        new ActionLink("checkAdminPassword", this, "checkAdminPassword" );
+    public ActionLink validateAgent = 
+        new ActionLink("checkAgentPassword", this, "checkAgentPassword" );
+    
+    private java.util.Locale configLocale = null;
+ 
+    public boolean checkAdminPassword() {
+        String adminPassword = toString("admin");
+        String adminConfirm = toString("adminConfirm");
+ 
+        if (adminPassword == null || adminConfirm == null) {        
+            writeInvalid(getLocalizedString("missing.required.field"));
+        } else {
+            if (adminPassword.length() < 8) {
+                writeInvalid(getLocalizedString("invalid.password.length"));
+            } else if (!adminPassword.equals(adminConfirm)) {
+                writeInvalid(getLocalizedString("passwords.do.not.match"));
+            } else {writeValid("OK");
+                getContext().setSessionAttribute(
+                    SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPassword);                
+            }         
         }
-    }
-
-    public static boolean isSkipped( Context context ) {
-        Cookie[] cookies = context.getRequest().getCookies();
-        if ( cookies != null && cookies.length > 0 ) {
-            for( int i = 0; i < cookies.length; i++ ) {
-                Cookie cookie = cookies[i];
-                if ( cookie.getName().equals( "wizardSkipStep1" ) ) {
-                    return true;
-                }
-            }
-        }
+        setPath(null);
         return false;
     }
+    
+    public boolean checkAgentPassword() {
+        String agentPassword = toString("agent");
+        String agentConfirm = toString("agentConfirm");
+        String tmpadmin = (String)getContext().getSessionAttribute(
+            SetupConstants.CONFIG_VAR_ADMIN_PWD);
+         
+        if (agentPassword == null || agentConfirm == null) {        
+            writeInvalid(getLocalizedString("missing.required.field"));
+        } else if (agentPassword.equals(tmpadmin)) {
+            writeInvalid(getLocalizedString("agent.admin.passwords.match"));
+        } else if (agentPassword.length() < 8) {
+            writeInvalid(getLocalizedString("invalid.password.length"));
+        } else if (!agentPassword.equals(agentConfirm)) {
+            writeInvalid(getLocalizedString("passwords.do.not.match"));             
+        } else {
+            writeValid("OK");
+            getContext().setSessionAttribute(
+                SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, agentPassword);              
+        }
+        setPath(null);
+        return false;
+    }    
+    
+    protected void initializeResourceBundle() {
+        HttpServletRequest req = (HttpServletRequest)getContext().getRequest();
+        HttpServletResponse res = (HttpServletResponse)getContext().getResponse();
 
-    public boolean disableStep() {
-        Cookie cookie = new Cookie( "wizardSkipStep1", "true" );
-        cookie.setMaxAge( Integer.MAX_VALUE );
-        cookie.setPath( getContext().getRequest().getContextPath() );
-        getContext().getResponse().addCookie( cookie );
-        form.getField("skipStep1").setValue("true");
-        return true;
+        setLocale(req);
+        try {
+            req.setCharacterEncoding("UTF-8");
+            res.setContentType("text/html; charset=UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            //Do nothing.
+        }
     }
 
-    public boolean enableStep() {
-        Cookie cookie = new Cookie( "wizardSkipStep1", null );
-        cookie.setMaxAge( 0 );
-        cookie.setPath( getContext().getRequest().getContextPath() );
-        getContext().getResponse().addCookie( cookie );
-        form.getField("skipStep1").setValue("false");
-        return true;
-    }
+    private void setLocale (HttpServletRequest request) {      
+        if (request != null) {
+            String superLocale = request.getParameter("locale");
 
-    public void onPost() {
-        if ( form.isValid() ) {
-            if ( "true".equals( form.getField("skipStep1" ).getValue() ) ) {
-                disableStep();
+            if (superLocale != null && superLocale.length() > 0) {
+                configLocale = new java.util.Locale(superLocale);
             } else {
-                enableStep();
+                String acceptLangHeader =
+                    (String)request.getHeader("Accept-Language");
+                if ((acceptLangHeader !=  null) &&
+                     (acceptLangHeader.length() > 0)) {
+                    String acclocale = 
+                        Locale.getLocaleStringFromAcceptLangHeader(
+                            acceptLangHeader);
+                    configLocale = new java.util.Locale(acclocale);
+                }
+            }
+            try {
+                rb = ResourceBundle.getBundle(RB_NAME, configLocale);
+            } catch (MissingResourceException mre) {
+
             }
         }
     }
 }
+

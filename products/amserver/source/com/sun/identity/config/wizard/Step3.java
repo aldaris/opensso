@@ -17,23 +17,44 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
+ * $Id: Step3.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
+import net.sf.click.control.ActionLink;
+
 /**
- * @author Les Hazlewood
+ * Step 3 is for selecting the embedded or external configuration store 
  */
 public class Step3 extends LDAPStoreWizardPage {
 
     public static final String LDAP_STORE_SESSION_KEY = "wizardCustomConfigStore";
-
+    public ActionLink validateRootSuffixLink = 
+        new ActionLink("validateRootSuffix", this, "validateRootSuffix");
+    
     public Step3() {
         setType("config");
-        setTypeTitle( "Configuration" );
+        setTypeTitle("Configuration");
         setPageNum(3);
         setStoreSessionName( LDAP_STORE_SESSION_KEY );
+    }
+    
+    public void onInit() {
+        addModel("rootSuffix", "dc=opensso,dc=java,dc=net");
+        super.onInit();        
+    }       
+
+    public boolean validateRootSuffix() {
+        String rootsuffix = toString("rootSuffix");
+        
+        if (rootsuffix == null) {
+            writeToResponse(getLocalizedString("missing.required.field"));
+        } else {
+            writeToResponse("true");
+        }
+        setPath(null);        
+        return false;    
     }
 }

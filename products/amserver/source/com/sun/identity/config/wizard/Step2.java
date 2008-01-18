@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
+ * $Id: Step2.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,50 +26,43 @@ package com.sun.identity.config.wizard;
 import com.sun.identity.config.util.AjaxPage;
 import net.sf.click.control.ActionLink;
 
-/**
- * @author Les Hazlewood
- */
-public class Step2 extends AjaxPage {
+public class Step2 extends LDAPStoreWizardPage {
 
-    public static final String NEW_INSTANCE_URL_SESSION_KEY = "wizardNewInstanceUrl";
+    public static final String LDAP_STORE_SESSION_KEY = "wizardCustomConfigStore";
 
-    public ActionLink clearLink = new ActionLink( "clear", this, "clear" );
-    public ActionLink checkNewInstanceUrlLink = new ActionLink( "checkNewInstanceUrl", this, "checkNewInstanceUrl" );
-
+    public ActionLink clearLink = new ActionLink("clear", this, "clear");
+    public ActionLink validateConfigBaseDirLink = 
+        new ActionLink("validateConfigBaseDir", this, "validateConfigBaseDir");
+    
     public Step2() {
-
+        setType("config");
+        setTypeTitle( "Configuration" );
+        setPageNum(2);
+        setStoreSessionName(LDAP_STORE_SESSION_KEY);
     }
-
+    
     public void onInit() {
-        super.onInit();
-        String newInstanceUrl = (String)getContext().getSessionAttribute( NEW_INSTANCE_URL_SESSION_KEY );
-        if ( newInstanceUrl != null ) {
-            addModel( "newInstanceUrl", newInstanceUrl );
-        }
-    }
-
+        addModel("configBaseDir", getBaseDir());
+        addModel("configStoreBaseDN", "dc=opensso,dc=java,dc=net");
+        addModel("configStoreLoginId", "cn=Directory Manager");
+    }   
+    
     public boolean clear() {
-        getContext().removeSessionAttribute( NEW_INSTANCE_URL_SESSION_KEY );
+        getContext().removeSessionAttribute(LDAP_STORE_SESSION_KEY);
         setPath( null );
         return false;
     }
 
-    public boolean checkNewInstanceUrl() {
-        String newInstanceUrl = toString( "newInstanceUrl" );
-        if ( newInstanceUrl == null ) {
-            writeToResponse( super.getLocalizedString("configuration.wizard.step2.tooltip") );
-        } else {
-            try {
-                getConfigurator().testNewInstanceUrl( newInstanceUrl );
-                //it is valid, save to http session for access at end of wizard
-                getContext().setSessionAttribute( NEW_INSTANCE_URL_SESSION_KEY, newInstanceUrl );
-                writeToResponse( "true" );
-            } catch ( Exception e ) {
-                writeToResponse( e.getMessage() );
-            }
+    public boolean validateConfigBaseDir() {
+        // verify base directory
+        String path = toString("configBaseDir");
+        if (path == null) {
+            writeToResponse(getLocalizedString("missing.required.field"));            
+        } else {                   
+            getContext().setSessionAttribute("ConfigBaseDir", path);
+            writeToResponse("true");
         }
-
-        setPath( null );
+        setPath(null);        
         return false;
     }
 }

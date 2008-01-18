@@ -17,29 +17,29 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.3 2008-01-15 19:59:00 jefberpe Exp $
+ * $Id: Step4.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
 /**
- * @author Les Hazlewood
+ * Step 4 is the input of the remote user data store properties.
  */
 public class Step4 extends LDAPStoreWizardPage {
 
     public static final String LDAP_STORE_SESSION_KEY = "wizardCustomUserStore";
 
     public Step4() {
-
         setType("user");
-        setTypeTitle( "User" );
+        setTypeTitle("User");
         setPageNum(4);
         setStoreSessionName( LDAP_STORE_SESSION_KEY );
     }
     
     public void onInit() {
+        //uses the same template.  The rendered page is changed based on the above 3 props.
+        //setPath("/config/wizard/step3.htm"); 
         super.onInit();
-        setPath("/config/wizard/step3.htm"); //uses the same template.  The rendered page is changed based on the above 3 props.
-    }
+    }   
 }
