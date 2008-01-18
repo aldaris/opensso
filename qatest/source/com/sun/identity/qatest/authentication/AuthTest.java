@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.9 2007-12-18 22:06:16 sridharev Exp $
+ * $Id: AuthTest.java,v 1.10 2008-01-18 00:42:50 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -166,8 +166,8 @@ public class AuthTest extends TestCommon {
             FederationManager am = new FederationManager(amadmURL);
             WebClient webClient = new WebClient();
             consoleLogin(webClient, loginURL, adminUser, adminPassword);
-            am.createSubConfiguration(webClient, module_servicename,
-                        module_subconfigname, list, realm, module_subconfigid);
+            am.createSubCfg(webClient, module_servicename,
+                        module_subconfigname, list, realm, module_subconfigid, "0");
 
             list.clear();
             String svcData = "iplanet-am-auth-configuration=" + 
@@ -175,9 +175,9 @@ public class AuthTest extends TestCommon {
                     " REQUIRED</Value></AttributeValuePair>";
             log(Level.FINEST, "setup", svcData);
             list.add(svcData);
-            am.createSubConfiguration(webClient, service_servicename,
+            am.createSubCfg(webClient, service_servicename,
                     service_subconfigname, list, realm,
-                    service_subconfigid);
+                    service_subconfigid, "0");
 
             int iIdx = service_subconfigname.indexOf("/");
             svcName = service_subconfigname.substring(iIdx+1,
@@ -197,7 +197,7 @@ public class AuthTest extends TestCommon {
 
             list.clear();
             list.add("iplanet-am-auth-configuration=" + svcName);
-            am.addServiceIdentity(webClient, realm, rolename, "Role",
+            am.addSvcIdentity(webClient, realm, rolename, "Role",
                     service_servicename, list);
             consoleLogout(webClient, logoutURL);
         } catch(Exception e) {
@@ -323,7 +323,7 @@ public class AuthTest extends TestCommon {
             list.clear();
             list.add(rolename);
             am.deleteIdentities(webClient, realm, list, "Role");
-            am.deleteSubConfiguration(webClient, service_servicename,
+            am.deleteSubCfg(webClient, service_servicename,
                     service_subconfigname, realm); 
             list.clear();
             list.add(module_subconfigname);

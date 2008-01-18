@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.5 2007-11-20 23:31:17 rmisra Exp $
+ * $Id: MultiProtocolCommon.java,v 1.6 2008-01-18 00:42:51 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,20 +62,20 @@ public class MultiProtocolCommon extends TestCommon {
             FederationManager spfm = new FederationManager(spurl);
             HtmlPage spmetaPage;
             if (signed) {
-                spmetaPage = spfm.createMetadataTemplate(webClient,
+                spmetaPage = spfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
                         true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
-                        null, null, null,
+                        null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null,
+                        null, null, null, null,
                         (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null, spec);
+                        null, null, null, null, spec);
             } else {
-                spmetaPage = spfm.createMetadataTemplate(webClient,
+                spmetaPage = spfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
                         true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
                         null, null, null, null, null, null, null, null, null,
-                        null, null, spec);
+                        null, null, null, null, null, null, null, null, spec);
             }
             
             arrMetadata[0] = getMetadataFromPage(spmetaPage, spec);
@@ -124,22 +124,22 @@ public class MultiProtocolCommon extends TestCommon {
             FederationManager idpfm = new FederationManager(idpurl);
             HtmlPage idpmetaPage;
             if (signed) {
-                idpmetaPage = idpfm.createMetadataTemplate(webClient,
+                idpmetaPage = idpfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
                         true, null, (String)m.get(
                         TestConstants.KEY_IDP_METAALIAS),
-                        null, null,null,
+                        null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
-                        null, null, (String)m.get(
+                        null, null, null, null, (String)m.get(
                         TestConstants.KEY_IDP_CERTALIAS),
-                        null, null, spec);
+                        null, null, null, null, spec);
             } else {
-                idpmetaPage = idpfm.createMetadataTemplate(webClient,
+                idpmetaPage = idpfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
                         null, null, null, null, null, null, null, null, null,
-                        spec);
+                        null, null, null, null, null, null, spec);
             }
             
             arrMetadata[0] = getMetadataFromPage(idpmetaPage, spec);

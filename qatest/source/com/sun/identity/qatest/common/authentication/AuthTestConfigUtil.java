@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.5 2007-10-22 19:27:51 rmisra Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.6 2008-01-18 00:42:51 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -179,8 +179,8 @@ public class AuthTestConfigUtil extends TestCommon {
         FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
-        am.createSubConfiguration(webClient, modServname,
-                modSubconf, modConfdata, realm, modConfId);
+        am.createSubCfg(webClient, modServname,
+                modSubconf, modConfdata, realm, modConfId, "0");
         consoleLogout(webClient, logoutURL);
     }
     
@@ -200,8 +200,8 @@ public class AuthTestConfigUtil extends TestCommon {
         FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
-        am.createSubConfiguration(webClient, servicename, subconfigname, 
-                servData, realm, subconfigid);
+        am.createSubCfg(webClient, servicename, subconfigname, 
+                servData, realm, subconfigid, "0");
         consoleLogout(webClient, logoutURL);
     }
     

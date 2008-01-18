@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.6 2007-09-10 22:34:49 mrudulahg Exp $
+ * $Id: SAMLv2Common.java,v 1.7 2008-01-18 00:42:51 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -886,20 +886,20 @@ public class SAMLv2Common extends TestCommon {
             FederationManager spfm = new FederationManager(spurl);
             HtmlPage spmetaPage;
             if (signed) {
-                spmetaPage = spfm.createMetadataTemplate(webClient,
+                spmetaPage = spfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
                         true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
-                        null, null, null,
+                        null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null,
+                        null, null, null, null,
                         (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null, "saml2");
+                        null, null, null, null, "saml2");
             } else {
-                spmetaPage = spfm.createMetadataTemplate(webClient,
+                spmetaPage = spfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
                         true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
                         null, null, null, null, null, null, null, null, null,
-                        null, null, "saml2");
+                        null, null, null, null, null, null, null, null, "saml2");
             }
             
             String spPage = spmetaPage.getWebResponse().getContentAsString();
@@ -911,7 +911,6 @@ public class SAMLv2Common extends TestCommon {
                         spPage.indexOf("EntityConfig") - 4,
                         spPage.lastIndexOf("EntityConfig") + 13);
             } else {
-                System.out.println(spPage);
                 arrMetadata[0] = null;
                 arrMetadata[1] = null;
                 assert false;
@@ -960,22 +959,22 @@ public class SAMLv2Common extends TestCommon {
             FederationManager idpfm = new FederationManager(idpurl);
             HtmlPage idpmetaPage;
             if (signed) {
-                idpmetaPage = idpfm.createMetadataTemplate(webClient,
+                idpmetaPage = idpfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
-                        null, null,
+                        null, null, null, null,
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
-                        null, null,
+                        null, null, null, null,
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
-                        null, "saml2");
+                        null, null, null, "saml2");
             } else {
-                idpmetaPage = idpfm.createMetadataTemplate(webClient,
+                idpmetaPage = idpfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
                         null, null, null, null, null, null, null, null, null,
-                        "saml2");
+                        null, null, null, null, null, null, "saml2");
             }
             String idpPage = idpmetaPage.getWebResponse().getContentAsString();
             if (idpPage.indexOf("EntityDescriptor") != -1) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.3 2007-09-10 22:36:53 mrudulahg Exp $
+ * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.4 2008-01-18 00:42:53 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -219,7 +219,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             //Set Dynamic user creation to true. 
             List listDyn = new ArrayList();
             listDyn.add("iplanet-am-auth-dynamic-profile-creation=createAlias");
-            HtmlPage spServiceAtt = fmSP.setServiceAttributes(webClient, 
+            HtmlPage spServiceAtt = fmSP.setSvcAttrs(webClient, 
                     configMap.get(TestConstants.KEY_SP_REALM), 
                     "iPlanetAMAuthService", listDyn);
             if (spServiceAtt.getWebResponse().getContentAsString().
@@ -519,7 +519,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             //Set Dynamic user creation to false (default). 
             List listDyn = new ArrayList();
             listDyn.add("iplanet-am-auth-dynamic-profile-creation=false");
-            HtmlPage spServiceAtt = fmSP.setServiceAttributes(webClient, 
+            HtmlPage spServiceAtt = fmSP.setSvcAttrs(webClient, 
                     configMap.get(TestConstants.KEY_SP_REALM), 
                     "iPlanetAMAuthService", listDyn);
             if (spServiceAtt.getWebResponse().getContentAsString().

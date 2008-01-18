@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.10 2007-12-19 16:27:42 rmisra Exp $
+ * $Id: PolicyCommon.java,v 1.11 2008-01-18 00:42:51 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -906,8 +906,8 @@ public class PolicyCommon extends TestCommon {
             realmStatus.add("sunOrganizationStatus=Active");
             consoleLogin(webClient, loginURL, adminUser, adminPassword);
             realmCheckPage = fmadm.createRealm(webClient, realmName);
-            fmadm.setRealmAttributes(webClient,
-                    realmName, "sunIdentityRepositoryService", realmStatus);
+            fmadm.setRealmAttrs(webClient,
+                    realmName, "sunIdentityRepositoryService", false, realmStatus);
             log(logLevel, "createRealm", "Realm:" + realmName);
             log(Level.FINER, "createRealm", newline +
                     realmCheckPage.asXml(), null);
@@ -953,7 +953,7 @@ public class PolicyCommon extends TestCommon {
             List dnsAliasEnable = new ArrayList();
             dnsAliasEnable.add("sun-am-policy-config-org-alias-" +
                     "mapped-resources-enabled=" + value);
-            HtmlPage orgServiceAtt = fmadm.setAttributeDefaults(webClient,
+            HtmlPage orgServiceAtt = fmadm.setAttrDefs(webClient,
                     "iPlanetAMPolicyConfigService", "global", null,
                     dnsAliasEnable);
             log(logLevel, "setDynamicReferral", "configured the global " +
@@ -1004,8 +1004,8 @@ public class PolicyCommon extends TestCommon {
                                 dynamicRefResource);
                     }
                 }
-                HtmlPage realmAtt = fmadm.setRealmAttributes(webClient,
-                        strPeAtOrg, "sunIdentityRepositoryService", dnsAlias);
+                HtmlPage realmAtt = fmadm.setRealmAttrs(webClient,
+                        strPeAtOrg, "sunIdentityRepositoryService", false, dnsAlias);
                 log(logLevel, "createDynamicReferral",
                         realmAtt.getWebResponse().getContentAsString());
             }
@@ -1032,7 +1032,7 @@ public class PolicyCommon extends TestCommon {
             String action = serviceAction;
             if (action.equals("add")) {
                 
-                HtmlPage policyServiceAtt = fmadm.addServiceAttributes
+                HtmlPage policyServiceAtt = fmadm.addSvcAttrs
                         (webClient, strRealm, "iPlanetAMPolicyConfigService",
                         dynRespList);
                 log(logLevel, "", "setDynamicRespAttribute" +
@@ -1040,7 +1040,7 @@ public class PolicyCommon extends TestCommon {
                 
             } else if(action.equals("set")) {
                 
-                HtmlPage policyServiceAtt = fmadm.setServiceAttributes
+                HtmlPage policyServiceAtt = fmadm.setSvcAttrs
                         (webClient, strRealm, "iPlanetAMPolicyConfigService",
                         dynRespList);
                 log(logLevel, "modifyDynamicRespAttribute",
@@ -1049,7 +1049,7 @@ public class PolicyCommon extends TestCommon {
                 
             } else if (action.equals("remove")) {
                 
-                HtmlPage policyServiceAtt = fmadm.removeServiceAttributes
+                HtmlPage policyServiceAtt = fmadm.removeSvcAttrs
                         (webClient, strRealm, "iPlanetAMPolicyConfigService",
                         dynRespList);
                 log(logLevel, "modifyDynamicRespAttribute",

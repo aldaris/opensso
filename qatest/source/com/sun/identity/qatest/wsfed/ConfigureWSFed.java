@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureWSFed.java,v 1.2 2007-10-05 23:37:17 mrudulahg Exp $
+ * $Id: ConfigureWSFed.java,v 1.3 2008-01-18 00:42:53 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,11 +110,11 @@ public class ConfigureWSFed extends WSFedCommon {
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
-            HtmlPage spcotPage = spfm.listCircleOfTrusts(webClient,
+            HtmlPage spcotPage = spfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM));
             if (!spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.createCircleOfTrust(webClient,
+                spcotPage = spfm.createCot(webClient,
                         configMap.get(TestConstants.KEY_SP_COT),
                         configMap.get(TestConstants.KEY_SP_REALM),
                         null, null);
@@ -172,13 +172,13 @@ public class ConfigureWSFed extends WSFedCommon {
             consoleLogin(webClient, idpurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-            HtmlPage idpcotPage = idpfm.listCircleOfTrusts(webClient,
+            HtmlPage idpcotPage = idpfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM));
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
                 log(Level.FINEST, "ConfigureWSFed", "COT exists at IDP side");
             } else {
-                idpcotPage = idpfm.createCircleOfTrust(webClient,
+                idpcotPage = idpfm.createCot(webClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM),
                         null, null);

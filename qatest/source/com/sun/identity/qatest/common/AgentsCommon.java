@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsCommon.java,v 1.4 2007-11-28 02:46:45 rmisra Exp $
+ * $Id: AgentsCommon.java,v 1.5 2008-01-18 00:42:51 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -821,7 +821,7 @@ public class AgentsCommon extends TestCommon {
        try {
            WebClient webClient = new WebClient();
            consoleLogin(webClient, loginURL, adminUser, adminPassword);
-           HtmlPage page = fmadm.setServiceAttributes(webClient,
+           HtmlPage page = fmadm.setSvcAttrs(webClient,
                      strRealm, "iPlanetAMPolicyConfigService", dynRespList);
            log(Level.FINEST, "setDynamicRespAttribute",
                    page.getWebResponse().getContentAsString());

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAE.java,v 1.1 2007-11-15 18:53:48 rmisra Exp $
+ * $Id: UnconfigureSAE.java,v 1.2 2008-01-18 00:42:52 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -155,13 +155,13 @@ public class UnconfigureSAE extends TestCommon {
             }
             
             //Delete COT on IDP side.
-            HtmlPage idpcotPage = idpfm.listCircleOfTrusts(webClient,
+            HtmlPage idpcotPage = idpfm.listCots(webClient,
                     configMap.get (TestConstants.KEY_IDP_REALM));
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains (configMap.get (TestConstants.KEY_IDP_COT))) {
                 log (Level.FINEST, "UnconfigureSAE", "COT exists at IDP side",
                         null);
-                idpcotPage = idpfm.deleteCircleOfTrust(webClient,
+                idpcotPage = idpfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM));
                 if (!idpcotPage.getWebResponse().getContentAsString().
@@ -222,11 +222,11 @@ public class UnconfigureSAE extends TestCommon {
             }
             
             //Delete COT on sp side.
-            HtmlPage spcotPage = spfm.listCircleOfTrusts (webClient,
+            HtmlPage spcotPage = spfm.listCots (webClient,
                     configMap.get (TestConstants.KEY_SP_REALM));
             if (spcotPage.getWebResponse().getContentAsString().
                     contains (configMap.get (TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.deleteCircleOfTrust (webClient,
+                spcotPage = spfm.deleteCot (webClient,
                         configMap.get (TestConstants.KEY_SP_COT),
                         configMap.get (TestConstants.KEY_SP_REALM));
                 if (!spcotPage.getWebResponse().getContentAsString().

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2.java,v 1.5 2007-09-10 22:36:55 mrudulahg Exp $
+ * $Id: UnconfigureSAMLv2.java,v 1.6 2008-01-18 00:42:53 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
     
     /** Creates a new instance of UnconfigureSAMLv2 */
     public UnconfigureSAMLv2() {
-        super ("UnconfigureSAMLv2");
+        super("UnconfigureSAMLv2");
     }
     
     /**
@@ -58,8 +58,8 @@ public class UnconfigureSAMLv2 extends TestCommon {
     throws Exception {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
-        } catch (Exception e) {
-            log (Level.SEVERE, "getWebClient", e.getMessage(), null);
+        } catch(Exception e) {
+            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
@@ -69,10 +69,10 @@ public class UnconfigureSAMLv2 extends TestCommon {
      * Configure sp & idp
      * @DocTest: SAML2|Unconfigure SP & IDP by deleting entities & COT's 
      */
-    @AfterSuite (groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void UnconfigureSAMLv2()
     throws Exception {
-        entering ("UnconfigureSAMLv2", null);
+        entering("UnconfigureSAMLv2", null);
         String spurl;
         String idpurl;
         try {
@@ -81,7 +81,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
             getWebClient();
             
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            log (logLevel, "UnconfigureSAMLv2", "Map:" + configMap);
+            log(logLevel, "UnconfigureSAMLv2", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + "://" + 
                     configMap.get(TestConstants.KEY_SP_HOST) + ":"
@@ -92,16 +92,16 @@ public class UnconfigureSAMLv2 extends TestCommon {
                     + configMap.get(TestConstants.KEY_IDP_PORT)
                     + configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             
-            consoleLogin (webClient, spurl + "/UI/Login",
+            consoleLogin(webClient, spurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            consoleLogin (webClient, idpurl + "/UI/Login",
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-        } catch (Exception e) {
-            log (Level.SEVERE, "UnconfigureSAMLv2", e.getMessage(), null);
+        } catch(Exception e) {
+            log(Level.SEVERE, "UnconfigureSAMLv2", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
@@ -111,23 +111,23 @@ public class UnconfigureSAMLv2 extends TestCommon {
             FederationManager idpfm = new FederationManager(idpurl);
             
             HtmlPage idpEntityPage = idpfm.listEntities(webClient,
-                    configMap.get (TestConstants.KEY_IDP_REALM), "saml2");
+                    configMap.get(TestConstants.KEY_IDP_REALM), "saml2");
             //Delete IDP & SP entities on IDP
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log (logLevel, "UnconfigureSAMLv2", "idp entity exists at sp. ",
+                log(logLevel, "UnconfigureSAMLv2", "idp entity exists at sp. ",
                         null);
-                HtmlPage idpDeleteEntityPage = idpfm.deleteEntity (webClient,
-                        configMap.get (TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get (TestConstants.KEY_IDP_REALM), false,
+                HtmlPage idpDeleteEntityPage = idpfm.deleteEntity(webClient,
+                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
+                        configMap.get(TestConstants.KEY_IDP_REALM), false,
                         "saml2");
                 if (idpDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("Descriptor is deleted for entity, " +
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                    log (logLevel, "UnconfigureSAMLv2", "Deleted IDP entity " +
+                    log(logLevel, "UnconfigureSAMLv2", "Deleted IDP entity " +
                             "on IDP side", null);
                 } else {
-                    log (logLevel, "UnconfigureSAMLv2", "Couldnt delete sp " +
+                    log(logLevel, "UnconfigureSAMLv2", "Couldnt delete sp " +
                             "entity on IDP side", null);
                     assert false;
                 }
@@ -135,118 +135,118 @@ public class UnconfigureSAMLv2 extends TestCommon {
             
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log (logLevel, "UnconfigureSAMLv2", "sp entity exists at idp. ",
+                log(logLevel, "UnconfigureSAMLv2", "sp entity exists at idp. ",
                         null);
-                HtmlPage spDeleteEntityPage = idpfm.deleteEntity (webClient,
+                HtmlPage spDeleteEntityPage = idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false,
                         "saml2");
                 if (spDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("Descriptor is deleted for entity, " +
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log (logLevel, "UnconfigureSAMLv2", "Deleted sp entity " +
+                    log(logLevel, "UnconfigureSAMLv2", "Deleted sp entity " +
                             "on IDP side", null);
                 } else {
-                    log (logLevel, "UnconfigureSAMLv2", "Couldnt delete sp " +
+                    log(logLevel, "UnconfigureSAMLv2", "Couldnt delete sp " +
                             "entity on IDP side", null);
                     assert false;
                 }
             }
             
             //Delete COT on IDP side.
-            HtmlPage idpcotPage = idpfm.listCircleOfTrusts(webClient,
-                    configMap.get (TestConstants.KEY_IDP_REALM));
+            HtmlPage idpcotPage = idpfm.listCots(webClient,
+                    configMap.get(TestConstants.KEY_IDP_REALM));
             if (idpcotPage.getWebResponse().getContentAsString().
-                    contains (configMap.get (TestConstants.KEY_IDP_COT))) {
-                log (logLevel, "UnconfigureSAMLv2", "COT exists at IDP side",
+                    contains(configMap.get(TestConstants.KEY_IDP_COT))) {
+                log(logLevel, "UnconfigureSAMLv2", "COT exists at IDP side",
                         null);
-                idpcotPage = idpfm.deleteCircleOfTrust(webClient,
+                idpcotPage = idpfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM));
                 if (!idpcotPage.getWebResponse().getContentAsString().
                         contains("Circle of trust, " +
                         configMap.get(TestConstants.KEY_IDP_COT)
                         + " is deleted.")) {
-                    log (logLevel, "UnconfigureSAMLv2", "Couldn't delete " +
+                    log(logLevel, "UnconfigureSAMLv2", "Couldn't delete " +
                             "COT at IDP side" +
                             idpcotPage.getWebResponse().getContentAsString(), null);
                 } else {
-                    log (logLevel, "UnconfigureSAMLv2", "Deleted COT " +
+                    log(logLevel, "UnconfigureSAMLv2", "Deleted COT " +
                             "at IDP side", null);                    
                 }
             }
             
-            HtmlPage spEntityPage = spfm.listEntities (webClient,
-                    configMap.get (TestConstants.KEY_SP_REALM), "saml2");
+            HtmlPage spEntityPage = spfm.listEntities(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM), "saml2");
             //Delete SP & IDP entities on sp
             if (spEntityPage.getWebResponse().getContentAsString().
-                    contains (configMap.get (TestConstants.KEY_SP_ENTITY_NAME))) {
-                log (logLevel, "UnconfigureSAMLv2", "sp entity exists at sp. ",
+                    contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                log(logLevel, "UnconfigureSAMLv2", "sp entity exists at sp. ",
                         null);
-                HtmlPage spDeleteEntityPage = spfm.deleteEntity (webClient,
-                        configMap.get (TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get (TestConstants.KEY_SP_REALM), false,
+                HtmlPage spDeleteEntityPage = spfm.deleteEntity(webClient,
+                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
+                        configMap.get(TestConstants.KEY_SP_REALM), false,
                         "saml2");
                 if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains ("Descriptor is deleted for entity, " +
-                        configMap.get (TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log (logLevel, "UnconfigureSAMLv2", "Deleted sp entity on " +
+                        contains("Descriptor is deleted for entity, " +
+                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    log(logLevel, "UnconfigureSAMLv2", "Deleted sp entity on " +
                             "SP side", null);
                 } else {
-                    log (logLevel, "UnconfigureSAMLv2", "Couldnt delete idp " +
+                    log(logLevel, "UnconfigureSAMLv2", "Couldnt delete idp " +
                             "entity on SP side", null);
                     assert false;
                 }
             }
             if (spEntityPage.getWebResponse().getContentAsString().
-                    contains (configMap.get (TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log (logLevel, "UnconfigureSAMLv2", "idp entity exists at sp. ", 
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                log(logLevel, "UnconfigureSAMLv2", "idp entity exists at sp. ", 
                         null);
-                HtmlPage idpDeleteEntityPage = spfm.deleteEntity (webClient,
-                        configMap.get (TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get (TestConstants.KEY_SP_REALM), false,
+                HtmlPage idpDeleteEntityPage = spfm.deleteEntity(webClient,
+                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
+                        configMap.get(TestConstants.KEY_SP_REALM), false,
                         "saml2");
                 if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains ("Descriptor is deleted for entity, " +
-                        configMap.get (TestConstants.KEY_IDP_ENTITY_NAME))) {
-                    log (logLevel, "UnconfigureSAMLv2", "Deleted idp entity on " +
+                        contains("Descriptor is deleted for entity, " +
+                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                    log(logLevel, "UnconfigureSAMLv2", "Deleted idp entity on " +
                             "SP side", null);
                 } else {
-                    log (logLevel, "UnconfigureSAMLv2", "Couldnt delete idp " +
+                    log(logLevel, "UnconfigureSAMLv2", "Couldnt delete idp " +
                             "entity on SP side", null);
                     assert false;
                 }
             }
             
             //Delete COT on sp side.
-            HtmlPage spcotPage = spfm.listCircleOfTrusts (webClient,
-                    configMap.get (TestConstants.KEY_SP_REALM));
+            HtmlPage spcotPage = spfm.listCots(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM));
             if (spcotPage.getWebResponse().getContentAsString().
-                    contains (configMap.get (TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.deleteCircleOfTrust (webClient,
-                        configMap.get (TestConstants.KEY_SP_COT),
-                        configMap.get (TestConstants.KEY_SP_REALM));
+                    contains(configMap.get(TestConstants.KEY_SP_COT))) {
+                spcotPage = spfm.deleteCot(webClient,
+                        configMap.get(TestConstants.KEY_SP_COT),
+                        configMap.get(TestConstants.KEY_SP_REALM));
                 if (!spcotPage.getWebResponse().getContentAsString().
                         contains("Circle of trust, "
-                        + configMap.get (TestConstants.KEY_SP_COT)
+                        + configMap.get(TestConstants.KEY_SP_COT)
                         + " is deleted.")) {
-                    log (logLevel, "UnconfigureSAMLv2", "Couldn't delete " +
+                    log(logLevel, "UnconfigureSAMLv2", "Couldn't delete " +
                             "COT at SP side" +
                             spcotPage.getWebResponse().getContentAsString(), null);
                     assert false;
                 } else {
-                    log (logLevel, "UnconfigureSAMLv2", "Deleted COT " +
+                    log(logLevel, "UnconfigureSAMLv2", "Deleted COT " +
                             "at SP side", null);                    
                 }
             }
-        } catch (Exception e) {
-            log (Level.SEVERE, "UnconfigureSAMLv2", e.getMessage(), null);
+        } catch(Exception e) {
+            log(Level.SEVERE, "UnconfigureSAMLv2", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         } finally {
-            consoleLogout (webClient, spurl);
-            consoleLogout (webClient, idpurl);
+            consoleLogout(webClient, spurl);
+            consoleLogout(webClient, idpurl);
         }
-        exiting ("UnconfigureSAMLv2");
+        exiting("UnconfigureSAMLv2");
     }
 }

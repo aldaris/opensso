@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id $
+ * $Id: FederationManager.java,v 1.7 2008-01-18 00:42:51 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,49 @@ public class FederationManager {
     }
 
 
+    public static int getExitCode(HtmlPage p) {
+        int val = -1;
+        String content = p.getWebResponse().getContentAsString();
+        int start = content.indexOf("<!-- CLI Exit Code: ");
+        if (start != -1) {
+            int end = content.indexOf("-->", start);
+            if (end != -1) {
+                String exitCode = content.substring(start+20, end);
+                val = Integer.parseInt(exitCode);
+            }
+        }
+        return val;
+    }
+
+    /**
+     * Do multiple requests in one command.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param batchfile Name of file that contains commands and options.
+     * @param batchstatus Name of status file.
+     */
+    public HtmlPage doBatch(
+        WebClient webClient,
+        String batchfile,
+        String batchstatus
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "do-batch");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (batchfile != null) {
+            HtmlTextArea tabatchfile = (HtmlTextArea)form.getTextAreasByName("batchfile").get(0);
+            tabatchfile.setText(batchfile);
+        }
+
+        if (batchstatus != null) {
+            HtmlTextInput txtbatchstatus = (HtmlTextInput)form.getInputByName("batchstatus");
+            txtbatchstatus.setValueAttribute(batchstatus);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
     /**
      * Add resource bundle to data store.
      *
@@ -57,13 +100,13 @@ public class FederationManager {
      * @param bundlefilename Resource bundle physical file name.
      * @param bundlelocale Locale of the resource bundle.
      */
-    public HtmlPage addResourceBundle(
+    public HtmlPage addResBundle(
         WebClient webClient,
         String bundlename,
         String bundlefilename,
         String bundlelocale
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "add-resource-bundle");
+        URL cmdUrl = new URL(amadmUrl + "add-res-bundle");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -82,7 +125,6 @@ public class FederationManager {
             txtbundlelocale.setValueAttribute(bundlelocale);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -93,12 +135,12 @@ public class FederationManager {
      * @param bundlename Resource Bundle Name.
      * @param bundlelocale Locale of the resource bundle.
      */
-    public HtmlPage listResourceBundle(
+    public HtmlPage listResBundle(
         WebClient webClient,
         String bundlename,
         String bundlelocale
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "list-resource-bundle");
+        URL cmdUrl = new URL(amadmUrl + "list-res-bundle");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -111,7 +153,6 @@ public class FederationManager {
             HtmlTextInput txtbundlelocale = (HtmlTextInput)form.getInputByName("bundlelocale");
             txtbundlelocale.setValueAttribute(bundlelocale);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -123,12 +164,12 @@ public class FederationManager {
      * @param bundlename Resource Bundle Name.
      * @param bundlelocale Locale of the resource bundle.
      */
-    public HtmlPage removeResourceBundle(
+    public HtmlPage removeResBundle(
         WebClient webClient,
         String bundlename,
         String bundlelocale
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "remove-resource-bundle");
+        URL cmdUrl = new URL(amadmUrl + "remove-res-bundle");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -142,7 +183,6 @@ public class FederationManager {
             txtbundlelocale.setValueAttribute(bundlelocale);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -152,11 +192,11 @@ public class FederationManager {
      * @param webClient HTML Unit Web Client object.
      * @param xmlfile XML file(s) that contains schema.
      */
-    public HtmlPage createService(
+    public HtmlPage createSvc(
         WebClient webClient,
         String xmlfile
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "create-service");
+        URL cmdUrl = new URL(amadmUrl + "create-svc");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -164,7 +204,6 @@ public class FederationManager {
             HtmlTextArea taxmlfile = (HtmlTextArea)form.getTextAreasByName("xmlfile").get(0);
             taxmlfile.setText(xmlfile);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -176,12 +215,12 @@ public class FederationManager {
      * @param servicename Service Name(s).
      * @param deletepolicyrule Delete policy rule.
      */
-    public HtmlPage deleteService(
+    public HtmlPage deleteSvc(
         WebClient webClient,
         List servicename,
         boolean deletepolicyrule
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "delete-service");
+        URL cmdUrl = new URL(amadmUrl + "delete-svc");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -198,7 +237,6 @@ public class FederationManager {
         HtmlCheckBoxInput cbdeletepolicyrule = (HtmlCheckBoxInput)form.getInputByName("deletepolicyrule");
         cbdeletepolicyrule.setChecked(deletepolicyrule);
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -208,11 +246,11 @@ public class FederationManager {
      * @param webClient HTML Unit Web Client object.
      * @param xmlfile XML file(s) that contains schema.
      */
-    public HtmlPage updateService(
+    public HtmlPage updateSvc(
         WebClient webClient,
         String xmlfile
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "update-service");
+        URL cmdUrl = new URL(amadmUrl + "update-svc");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -220,7 +258,6 @@ public class FederationManager {
             HtmlTextArea taxmlfile = (HtmlTextArea)form.getTextAreasByName("xmlfile").get(0);
             taxmlfile.setText(xmlfile);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -234,14 +271,14 @@ public class FederationManager {
      * @param attributeschemafile XML file containing attribute schema definition.
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage addAttributes(
+    public HtmlPage addAttrs(
         WebClient webClient,
         String servicename,
         String schematype,
         String attributeschemafile,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "add-attributes");
+        URL cmdUrl = new URL(amadmUrl + "add-attrs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -265,7 +302,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -288,7 +324,6 @@ public class FederationManager {
             txtentrydn.setValueAttribute(entrydn);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -310,7 +345,6 @@ public class FederationManager {
             HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
             txtrealm.setValueAttribute(realm);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -338,7 +372,6 @@ public class FederationManager {
 
         HtmlCheckBoxInput cbrecursive = (HtmlCheckBoxInput)form.getInputByName("recursive");
         cbrecursive.setChecked(recursive);
-
 
         return (HtmlPage)form.submit();
     }
@@ -374,7 +407,6 @@ public class FederationManager {
         HtmlCheckBoxInput cbrecursive = (HtmlCheckBoxInput)form.getInputByName("recursive");
         cbrecursive.setChecked(recursive);
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -386,13 +418,13 @@ public class FederationManager {
      * @param servicename Service Name.
      * @param attributevalues Attribute values e.g. homeaddress=here.
      */
-    public HtmlPage addServiceRealm(
+    public HtmlPage addSvcRealm(
         WebClient webClient,
         String realm,
         String servicename,
         List attributevalues
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "add-service-realm");
+        URL cmdUrl = new URL(amadmUrl + "add-svc-realm");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -416,7 +448,6 @@ public class FederationManager {
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -427,12 +458,12 @@ public class FederationManager {
      * @param realm Name of realm.
      * @param mandatory Include Mandatory services.
      */
-    public HtmlPage showRealmServices(
+    public HtmlPage showRealmSvcs(
         WebClient webClient,
         String realm,
         boolean mandatory
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "show-realm-services");
+        URL cmdUrl = new URL(amadmUrl + "show-realm-svcs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -444,7 +475,6 @@ public class FederationManager {
         HtmlCheckBoxInput cbmandatory = (HtmlCheckBoxInput)form.getInputByName("mandatory");
         cbmandatory.setChecked(mandatory);
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -454,11 +484,11 @@ public class FederationManager {
      * @param webClient HTML Unit Web Client object.
      * @param realm Name of realm.
      */
-    public HtmlPage listRealmAssignableServices(
+    public HtmlPage listRealmAssignableSvcs(
         WebClient webClient,
         String realm
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "list-realm-assignable-services");
+        URL cmdUrl = new URL(amadmUrl + "list-realm-assignable-svcs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -466,7 +496,6 @@ public class FederationManager {
             HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
             txtrealm.setValueAttribute(realm);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -478,12 +507,12 @@ public class FederationManager {
      * @param realm Name of realm.
      * @param servicename Name of service to be removed.
      */
-    public HtmlPage removeServiceRealm(
+    public HtmlPage removeSvcRealm(
         WebClient webClient,
         String realm,
         String servicename
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "remove-service-realm");
+        URL cmdUrl = new URL(amadmUrl + "remove-svc-realm");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -496,7 +525,6 @@ public class FederationManager {
             HtmlTextInput txtservicename = (HtmlTextInput)form.getInputByName("servicename");
             txtservicename.setValueAttribute(servicename);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -527,23 +555,22 @@ public class FederationManager {
             txtservicename.setValueAttribute(servicename);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
     /**
-     * Show realm's service attribute values.
+     * Get realm's service attribute values.
      *
      * @param webClient HTML Unit Web Client object.
      * @param realm Name of realm.
      * @param servicename Name of service.
      */
-    public HtmlPage showRealmServiceAttributes(
+    public HtmlPage getRealmSvcAttrs(
         WebClient webClient,
         String realm,
         String servicename
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "show-realm-service-attributes");
+        URL cmdUrl = new URL(amadmUrl + "get-realm-svc-attrs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -557,7 +584,6 @@ public class FederationManager {
             txtservicename.setValueAttribute(servicename);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -569,13 +595,13 @@ public class FederationManager {
      * @param servicename Name of service.
      * @param attributename Name of attribute to be removed.
      */
-    public HtmlPage deleteRealmAttribute(
+    public HtmlPage deleteRealmAttr(
         WebClient webClient,
         String realm,
         String servicename,
         String attributename
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "delete-realm-attribute");
+        URL cmdUrl = new URL(amadmUrl + "delete-realm-attr");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -594,7 +620,6 @@ public class FederationManager {
             txtattributename.setValueAttribute(attributename);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -606,13 +631,13 @@ public class FederationManager {
      * @param servicename Name of service.
      * @param attributevalues Attribute values e.g. homeaddress=here.
      */
-    public HtmlPage setServiceAttributes(
+    public HtmlPage setSvcAttrs(
         WebClient webClient,
         String realm,
         String servicename,
         List attributevalues
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-service-attributes");
+        URL cmdUrl = new URL(amadmUrl + "set-svc-attrs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -636,112 +661,24 @@ public class FederationManager {
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
-
-     /**
-     * add service attribute values in a realm.
-     *
-     * @param webClient HTML Unit Web Client object.
-     * @param realm Name of realm.
-     * @param servicename Name of service.
-     * @param attributevalues Attribute values e.g. homeaddress=here.
-     */
-    public HtmlPage addServiceAttributes(
-        WebClient webClient,
-        String realm,
-        String servicename,
-        List attributevalues
-    ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "add-service-attributes");
-        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
-        HtmlForm form = (HtmlForm)page.getForms().get(0);
-
-        if (realm != null) {
-            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
-            txtrealm.setValueAttribute(realm);
-        }
-
-        if (servicename != null) {
-            HtmlTextInput txtservicename = (HtmlTextInput)form.getInputByName("servicename");
-            txtservicename.setValueAttribute(servicename);
-        }
-
-        if (attributevalues != null) {
-            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
-            String[] fakeOptions = new String[attributevalues.size()];
-            int cnt = 0;
-            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
-                fakeOptions[cnt++] = (String)i.next();
-            }
-            slattributevalues.fakeSelectedAttribute(fakeOptions);
-        }
-
-
-        return (HtmlPage)form.submit();
-    }
-    
-    /**
-     * add service attribute values in a realm.
-     *
-     * @param webClient HTML Unit Web Client object.
-     * @param realm Name of realm.
-     * @param servicename Name of service.
-     * @param attributevalues Attribute values e.g. homeaddress=here.
-     */
-    public HtmlPage removeServiceAttributes(
-        WebClient webClient,
-        String realm,
-        String servicename,
-        List attributevalues
-    ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "remove-service-attributes");
-        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
-        HtmlForm form = (HtmlForm)page.getForms().get(0);
-
-        if (realm != null) {
-            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
-            txtrealm.setValueAttribute(realm);
-        }
-
-        if (servicename != null) {
-            HtmlTextInput txtservicename = (HtmlTextInput)form.getInputByName("servicename");
-            txtservicename.setValueAttribute(servicename);
-        }
-
-        if (attributevalues != null) {
-            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
-            String[] fakeOptions = new String[attributevalues.size()];
-            int cnt = 0;
-            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
-                fakeOptions[cnt++] = (String)i.next();
-            }
-            slattributevalues.fakeSelectedAttribute(fakeOptions);
-        }
-
-
-        return (HtmlPage)form.submit();
-    }
-    
- 
-
 
     /**
-     * Add attribute value to a realm.
+     * Remove service attribute values in a realm.
      *
      * @param webClient HTML Unit Web Client object.
      * @param realm Name of realm.
      * @param servicename Name of service.
-     * @param attributevalues Attribute values e.g. homeaddress=here.
+     * @param attributevalues Attribute values to be removed e.g. homeaddress=here.
      */
-    public HtmlPage addRealmAttributes(
+    public HtmlPage removeSvcAttrs(
         WebClient webClient,
         String realm,
         String servicename,
         List attributevalues
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "add-realm-attributes");
+        URL cmdUrl = new URL(amadmUrl + "remove-svc-attrs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -765,6 +702,46 @@ public class FederationManager {
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
 
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Add service attribute values in a realm.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param realm Name of realm.
+     * @param servicename Name of service.
+     * @param attributevalues Attribute values to be added e.g. homeaddress=here.
+     */
+    public HtmlPage addSvcAttrs(
+        WebClient webClient,
+        String realm,
+        String servicename,
+        List attributevalues
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "add-svc-attrs");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (servicename != null) {
+            HtmlTextInput txtservicename = (HtmlTextInput)form.getInputByName("servicename");
+            txtservicename.setValueAttribute(servicename);
+        }
+
+        if (attributevalues != null) {
+            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
+            String[] fakeOptions = new String[attributevalues.size()];
+            int cnt = 0;
+            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributevalues.fakeSelectedAttribute(fakeOptions);
+        }
 
         return (HtmlPage)form.submit();
     }
@@ -775,15 +752,17 @@ public class FederationManager {
      * @param webClient HTML Unit Web Client object.
      * @param realm Name of realm.
      * @param servicename Name of service.
+     * @param append Set this flag to append the values to existing ones.
      * @param attributevalues Attribute values e.g. homeaddress=here.
      */
-    public HtmlPage setRealmAttributes(
+    public HtmlPage setRealmAttrs(
         WebClient webClient,
         String realm,
         String servicename,
+        boolean append,
         List attributevalues
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-realm-attributes");
+        URL cmdUrl = new URL(amadmUrl + "set-realm-attrs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -797,6 +776,9 @@ public class FederationManager {
             txtservicename.setValueAttribute(servicename);
         }
 
+        HtmlCheckBoxInput cbappend = (HtmlCheckBoxInput)form.getInputByName("append");
+        cbappend.setChecked(append);
+
         if (attributevalues != null) {
             HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
             String[] fakeOptions = new String[attributevalues.size()];
@@ -806,7 +788,6 @@ public class FederationManager {
             }
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -836,7 +817,6 @@ public class FederationManager {
             HtmlTextArea taxmlfile = (HtmlTextArea)form.getTextAreasByName("xmlfile").get(0);
             taxmlfile.setText(xmlfile);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -872,7 +852,6 @@ public class FederationManager {
             slpolicynames.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -907,7 +886,6 @@ public class FederationManager {
             slpolicynames.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -920,14 +898,14 @@ public class FederationManager {
      * @param attributenames Attribute name(s).
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage removeAttributeDefaults(
+    public HtmlPage removeAttrDefs(
         WebClient webClient,
         String servicename,
         String schematype,
         List attributenames,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "remove-attribute-defaults");
+        URL cmdUrl = new URL(amadmUrl + "remove-attr-defs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -955,7 +933,6 @@ public class FederationManager {
             HtmlTextInput txtsubschemaname = (HtmlTextInput)form.getInputByName("subschemaname");
             txtsubschemaname.setValueAttribute(subschemaname);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -969,14 +946,14 @@ public class FederationManager {
      * @param attributevalues Attribute values e.g. homeaddress=here.
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage addAttributeDefaults(
+    public HtmlPage addAttrDefs(
         WebClient webClient,
         String servicename,
         String schematype,
         List attributevalues,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "add-attribute-defaults");
+        URL cmdUrl = new URL(amadmUrl + "add-attr-defs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1005,12 +982,11 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
     /**
-     * Show default attribute values in schema.
+     * Get default attribute values in schema.
      *
      * @param webClient HTML Unit Web Client object.
      * @param servicename Name of service.
@@ -1018,14 +994,14 @@ public class FederationManager {
      * @param subschemaname Name of sub schema.
      * @param attributenames Attribute name(s).
      */
-    public HtmlPage showAttributeDefaults(
+    public HtmlPage getAttrDefs(
         WebClient webClient,
         String servicename,
         String schematype,
         String subschemaname,
         List attributenames
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "show-attribute-defaults");
+        URL cmdUrl = new URL(amadmUrl + "get-attr-defs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1054,7 +1030,6 @@ public class FederationManager {
             slattributenames.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1067,14 +1042,14 @@ public class FederationManager {
      * @param subschemaname Name of sub schema.
      * @param attributevalues Attribute values e.g. homeaddress=here.
      */
-    public HtmlPage setAttributeDefaults(
+    public HtmlPage setAttrDefs(
         WebClient webClient,
         String servicename,
         String schematype,
         String subschemaname,
         List attributevalues
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-defaults");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-defs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1102,7 +1077,6 @@ public class FederationManager {
             }
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -1118,7 +1092,7 @@ public class FederationManager {
      * @param subschemaname Name of sub schema.
      * @param choicevalues Choice value e.g. o102=Inactive.
      */
-    public HtmlPage setAttributeChoiceValues(
+    public HtmlPage setAttrChoicevals(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1127,7 +1101,7 @@ public class FederationManager {
         String subschemaname,
         List choicevalues
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-choice-values");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-choicevals");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1164,7 +1138,6 @@ public class FederationManager {
             slchoicevalues.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1181,7 +1154,7 @@ public class FederationManager {
      * @param falsei18nkey Internationalization key for false value.
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeBooleanValues(
+    public HtmlPage setAttrBoolValues(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1192,7 +1165,7 @@ public class FederationManager {
         String falsei18nkey,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-boolean-values");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-bool-values");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1236,7 +1209,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1250,7 +1222,7 @@ public class FederationManager {
      * @param choicevalues Choice values e.g. Inactive
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage removeAttributeChoiceValues(
+    public HtmlPage removeAttrChoicevals(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1258,7 +1230,7 @@ public class FederationManager {
         List choicevalues,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "remove-attribute-choice-values");
+        URL cmdUrl = new URL(amadmUrl + "remove-attr-choicevals");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1292,7 +1264,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1306,7 +1277,7 @@ public class FederationManager {
      * @param type Attribute Schema Type
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeType(
+    public HtmlPage setAttrType(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1314,7 +1285,7 @@ public class FederationManager {
         String type,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-type");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-type");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1343,7 +1314,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1357,7 +1327,7 @@ public class FederationManager {
      * @param uitype Attribute Schema UI Type
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeUiType(
+    public HtmlPage setAttrUiType(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1365,7 +1335,7 @@ public class FederationManager {
         String uitype,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-ui-type");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-ui-type");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1394,7 +1364,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1408,7 +1377,7 @@ public class FederationManager {
      * @param syntax Attribute Schema Syntax
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeSyntax(
+    public HtmlPage setAttrSyntax(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1416,7 +1385,7 @@ public class FederationManager {
         String syntax,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-syntax");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-syntax");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1445,7 +1414,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1459,7 +1427,7 @@ public class FederationManager {
      * @param i18nkey Attribute Schema I18n Key
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeI18nKey(
+    public HtmlPage setAttrI18nKey(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1467,7 +1435,7 @@ public class FederationManager {
         String i18nkey,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-i18n-key");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-i18n-key");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1496,7 +1464,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1510,7 +1477,7 @@ public class FederationManager {
      * @param url Attribute Schema Properties View Bean URL
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeViewBeanUrl(
+    public HtmlPage setAttrViewBeanUrl(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1518,7 +1485,7 @@ public class FederationManager {
         String url,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-view-bean-url");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-view-bean-url");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1547,7 +1514,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1561,7 +1527,7 @@ public class FederationManager {
      * @param any Attribute Schema Any value
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeAny(
+    public HtmlPage setAttrAny(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1569,7 +1535,7 @@ public class FederationManager {
         String any,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-any");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-any");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1598,7 +1564,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1612,7 +1577,7 @@ public class FederationManager {
      * @param defaultvalues Default value(s) to be deleted
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage deleteAttributeDefaultValues(
+    public HtmlPage deleteAttrDefValues(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1620,7 +1585,7 @@ public class FederationManager {
         List defaultvalues,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "delete-attribute-default-values");
+        URL cmdUrl = new URL(amadmUrl + "delete-attr-def-values");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1654,7 +1619,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1668,7 +1632,7 @@ public class FederationManager {
      * @param validator validator class name
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeValidator(
+    public HtmlPage setAttrValidator(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1676,7 +1640,7 @@ public class FederationManager {
         String validator,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-validator");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-validator");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1705,7 +1669,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1719,7 +1682,7 @@ public class FederationManager {
      * @param range Start range
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeStartRange(
+    public HtmlPage setAttrStartRange(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1727,7 +1690,7 @@ public class FederationManager {
         String range,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-start-range");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-start-range");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1755,7 +1718,6 @@ public class FederationManager {
             HtmlTextInput txtsubschemaname = (HtmlTextInput)form.getInputByName("subschemaname");
             txtsubschemaname.setValueAttribute(subschemaname);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -1770,7 +1732,7 @@ public class FederationManager {
      * @param range End range
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage setAttributeEndRange(
+    public HtmlPage setAttrEndRange(
         WebClient webClient,
         String servicename,
         String schematype,
@@ -1778,7 +1740,7 @@ public class FederationManager {
         String range,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-attribute-end-range");
+        URL cmdUrl = new URL(amadmUrl + "set-attr-end-range");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1807,7 +1769,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1820,14 +1781,14 @@ public class FederationManager {
      * @param attributeschema Name of attribute schema to be removed.
      * @param subschemaname Name of sub schema.
      */
-    public HtmlPage deleteAttribute(
+    public HtmlPage deleteAttr(
         WebClient webClient,
         String servicename,
         String schematype,
         List attributeschema,
         String subschemaname
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "delete-attribute");
+        URL cmdUrl = new URL(amadmUrl + "delete-attr");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1856,7 +1817,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1867,12 +1827,12 @@ public class FederationManager {
      * @param servicename Name of service.
      * @param i18nkey I18n Key.
      */
-    public HtmlPage setServiceI18nKey(
+    public HtmlPage setSvcI18nKey(
         WebClient webClient,
         String servicename,
         String i18nkey
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-service-i18n-key");
+        URL cmdUrl = new URL(amadmUrl + "set-svc-i18n-key");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1886,7 +1846,6 @@ public class FederationManager {
             txti18nkey.setValueAttribute(i18nkey);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1897,12 +1856,12 @@ public class FederationManager {
      * @param servicename Name of service.
      * @param url Service Schema Properties View Bean URL
      */
-    public HtmlPage setServiceViewBeanUrl(
+    public HtmlPage setSvcViewBeanUrl(
         WebClient webClient,
         String servicename,
         String url
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-service-view-bean-url");
+        URL cmdUrl = new URL(amadmUrl + "set-svc-view-bean-url");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -1915,7 +1874,6 @@ public class FederationManager {
             HtmlTextInput txturl = (HtmlTextInput)form.getInputByName("url");
             txturl.setValueAttribute(url);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -1946,7 +1904,6 @@ public class FederationManager {
             txtrevisionnumber.setValueAttribute(revisionnumber);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1969,7 +1926,6 @@ public class FederationManager {
             txtservicename.setValueAttribute(servicename);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -1982,16 +1938,18 @@ public class FederationManager {
      * @param attributevalues Attribute values e.g. homeaddress=here.
      * @param realm Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).
      * @param subconfigid ID of parent configuration(Sub Configuration shall be added to root configuration if this option is not provided).
+     * @param priority Priority of the sub configuration.
      */
-    public HtmlPage createSubConfiguration(
+    public HtmlPage createSubCfg(
         WebClient webClient,
         String servicename,
         String subconfigname,
         List attributevalues,
         String realm,
-        String subconfigid
+        String subconfigid,
+        String priority
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "create-sub-configuration");
+        URL cmdUrl = new URL(amadmUrl + "create-sub-cfg");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2025,6 +1983,10 @@ public class FederationManager {
             txtsubconfigid.setValueAttribute(subconfigid);
         }
 
+        if (priority != null) {
+            HtmlTextInput txtpriority = (HtmlTextInput)form.getInputByName("priority");
+            txtpriority.setValueAttribute(priority);
+        }
 
         return (HtmlPage)form.submit();
     }
@@ -2037,13 +1999,13 @@ public class FederationManager {
      * @param subconfigname Name of sub configuration.
      * @param realm Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).
      */
-    public HtmlPage deleteSubConfiguration(
+    public HtmlPage deleteSubCfg(
         WebClient webClient,
         String servicename,
         String subconfigname,
         String realm
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "delete-sub-configuration");
+        URL cmdUrl = new URL(amadmUrl + "delete-sub-cfg");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2062,7 +2024,6 @@ public class FederationManager {
             txtrealm.setValueAttribute(realm);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2076,7 +2037,7 @@ public class FederationManager {
      * @param attributevalues Attribute values e.g. homeaddress=here.
      * @param realm Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).
      */
-    public HtmlPage setSubConfiguration(
+    public HtmlPage setSubCfg(
         WebClient webClient,
         String servicename,
         String subconfigname,
@@ -2084,7 +2045,7 @@ public class FederationManager {
         List attributevalues,
         String realm
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-sub-configuration");
+        URL cmdUrl = new URL(amadmUrl + "set-sub-cfg");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2117,7 +2078,6 @@ public class FederationManager {
             HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
             txtrealm.setValueAttribute(realm);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -2161,7 +2121,6 @@ public class FederationManager {
             HtmlTextInput txtsubschemaname = (HtmlTextInput)form.getInputByName("subschemaname");
             txtsubschemaname.setValueAttribute(subschemaname);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -2211,7 +2170,6 @@ public class FederationManager {
             txtsubschemaname.setValueAttribute(subschemaname);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2254,7 +2212,6 @@ public class FederationManager {
             HtmlTextInput txtinheritance = (HtmlTextInput)form.getInputByName("inheritance");
             txtinheritance.setValueAttribute(inheritance);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -2299,7 +2256,6 @@ public class FederationManager {
             txti18nkey.setValueAttribute(i18nkey);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2312,14 +2268,14 @@ public class FederationManager {
      * @param pluginname Name of Plug-in.
      * @param url Properties view bean URL.
      */
-    public HtmlPage setPluginSchemaViewBeanUrl(
+    public HtmlPage setPluginViewbeanUrl(
         WebClient webClient,
         String servicename,
         String interfacename,
         String pluginname,
         String url
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-plugin-schema-view-bean-url");
+        URL cmdUrl = new URL(amadmUrl + "set-plugin-viewbean-url");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2342,7 +2298,6 @@ public class FederationManager {
             HtmlTextInput txturl = (HtmlTextInput)form.getInputByName("url");
             txturl.setValueAttribute(url);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -2392,7 +2347,6 @@ public class FederationManager {
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2434,7 +2388,6 @@ public class FederationManager {
             txtidtype.setValueAttribute(idtype);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2451,7 +2404,6 @@ public class FederationManager {
         String realm,
         String filter,
         String idtype
-       
     ) throws Exception {
         URL cmdUrl = new URL(amadmUrl + "list-identities");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
@@ -2482,12 +2434,12 @@ public class FederationManager {
      * @param realm Name of realm.
      * @param idtype Type of Identity such as User, Role and Group.
      */
-    public HtmlPage showIdentityOperations(
+    public HtmlPage showIdentityOps(
         WebClient webClient,
         String realm,
         String idtype
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "show-identity-operations");
+        URL cmdUrl = new URL(amadmUrl + "show-identity-ops");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2501,6 +2453,27 @@ public class FederationManager {
             txtidtype.setValueAttribute(idtype);
         }
 
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Show the supported data type in a realm
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param realm Name of realm.
+     */
+    public HtmlPage showDataTypes(
+        WebClient webClient,
+        String realm
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "show-data-types");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
 
         return (HtmlPage)form.submit();
     }
@@ -2524,7 +2497,6 @@ public class FederationManager {
             txtrealm.setValueAttribute(realm);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2536,13 +2508,13 @@ public class FederationManager {
      * @param idname Name of identity.
      * @param idtype Type of Identity such as User, Role and Group.
      */
-    public HtmlPage listIdentityAssignableServices(
+    public HtmlPage listIdentityAssignableSvcs(
         WebClient webClient,
         String realm,
         String idname,
         String idtype
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "list-identity-assignable-services");
+        URL cmdUrl = new URL(amadmUrl + "list-identity-assignable-svcs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2561,25 +2533,24 @@ public class FederationManager {
             txtidtype.setValueAttribute(idtype);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
     /**
-     * Show the service in an identity
+     * Get the service in an identity
      *
      * @param webClient HTML Unit Web Client object.
      * @param realm Name of realm.
      * @param idname Name of identity.
      * @param idtype Type of Identity such as User, Role and Group.
      */
-    public HtmlPage showIdentityServices(
+    public HtmlPage getIdentitySvcs(
         WebClient webClient,
         String realm,
         String idname,
         String idtype
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "show-identity-services");
+        URL cmdUrl = new URL(amadmUrl + "get-identity-svcs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2597,7 +2568,6 @@ public class FederationManager {
             HtmlTextInput txtidtype = (HtmlTextInput)form.getInputByName("idtype");
             txtidtype.setValueAttribute(idtype);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -2611,14 +2581,14 @@ public class FederationManager {
      * @param idtype Type of Identity such as User, Role and Group.
      * @param servicename Name of service.
      */
-    public HtmlPage showIdentityServiceAttributes(
+    public HtmlPage showIdentitySvcAttrs(
         WebClient webClient,
         String realm,
         String idname,
         String idtype,
         String servicename
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "show-identity-service-attributes");
+        URL cmdUrl = new URL(amadmUrl + "show-identity-svc-attrs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2641,7 +2611,6 @@ public class FederationManager {
             HtmlTextInput txtservicename = (HtmlTextInput)form.getInputByName("servicename");
             txtservicename.setValueAttribute(servicename);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -2691,7 +2660,6 @@ public class FederationManager {
             slattributenames.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2735,7 +2703,6 @@ public class FederationManager {
             txtmembershipidtype.setValueAttribute(membershipidtype);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2778,7 +2745,6 @@ public class FederationManager {
             HtmlTextInput txtmembershipidtype = (HtmlTextInput)form.getInputByName("membershipidtype");
             txtmembershipidtype.setValueAttribute(membershipidtype);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -2830,7 +2796,6 @@ public class FederationManager {
             txtidtype.setValueAttribute(idtype);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2881,7 +2846,6 @@ public class FederationManager {
             txtidtype.setValueAttribute(idtype);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2895,7 +2859,7 @@ public class FederationManager {
      * @param servicename Name of service.
      * @param attributevalues Attribute values e.g. homeaddress=here.
      */
-    public HtmlPage addServiceIdentity(
+    public HtmlPage addSvcIdentity(
         WebClient webClient,
         String realm,
         String idname,
@@ -2903,7 +2867,7 @@ public class FederationManager {
         String servicename,
         List attributevalues
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "add-service-identity");
+        URL cmdUrl = new URL(amadmUrl + "add-svc-identity");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2937,7 +2901,6 @@ public class FederationManager {
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -2950,14 +2913,14 @@ public class FederationManager {
      * @param idtype Type of Identity such as User, Role and Group.
      * @param servicename Name of service.
      */
-    public HtmlPage removeServiceIdentity(
+    public HtmlPage removeSvcIdentity(
         WebClient webClient,
         String realm,
         String idname,
         String idtype,
         String servicename
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "remove-service-identity");
+        URL cmdUrl = new URL(amadmUrl + "remove-svc-identity");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -2980,7 +2943,6 @@ public class FederationManager {
             HtmlTextInput txtservicename = (HtmlTextInput)form.getInputByName("servicename");
             txtservicename.setValueAttribute(servicename);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -2995,7 +2957,7 @@ public class FederationManager {
      * @param servicename Name of service.
      * @param attributevalues Attribute values e.g. homeaddress=here.
      */
-    public HtmlPage setIdentityServiceAttributes(
+    public HtmlPage setIdentitySvcAttrs(
         WebClient webClient,
         String realm,
         String idname,
@@ -3003,7 +2965,7 @@ public class FederationManager {
         String servicename,
         List attributevalues
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-identity-service-attributes");
+        URL cmdUrl = new URL(amadmUrl + "set-identity-svc-attrs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -3037,7 +2999,6 @@ public class FederationManager {
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3050,14 +3011,14 @@ public class FederationManager {
      * @param idtype Type of Identity such as User, Role and Group.
      * @param attributevalues Attribute values e.g. homeaddress=here.
      */
-    public HtmlPage setIdentityAttributes(
+    public HtmlPage setIdentityAttrs(
         WebClient webClient,
         String realm,
         String idname,
         String idtype,
         List attributevalues
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "set-identity-attributes");
+        URL cmdUrl = new URL(amadmUrl + "set-identity-attrs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -3085,7 +3046,6 @@ public class FederationManager {
             }
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -3122,7 +3082,6 @@ public class FederationManager {
             HtmlTextInput txtidtype = (HtmlTextInput)form.getInputByName("idtype");
             txtidtype.setValueAttribute(idtype);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -3172,7 +3131,6 @@ public class FederationManager {
             slprivileges.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3221,7 +3179,6 @@ public class FederationManager {
             slprivileges.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3244,7 +3201,6 @@ public class FederationManager {
             txtrealm.setValueAttribute(realm);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3254,7 +3210,7 @@ public class FederationManager {
      * @param webClient HTML Unit Web Client object.
      * @param realm Name of realm.
      * @param name Name of authentication instance.
-     * @param authtype Type of authentication instance e.g. LDAP, Datastore.
+     * @param authtype Type of authentication instance e.g. LDAP, DataStore.
      */
     public HtmlPage createAuthInstance(
         WebClient webClient,
@@ -3280,7 +3236,6 @@ public class FederationManager {
             HtmlTextInput txtauthtype = (HtmlTextInput)form.getInputByName("authtype");
             txtauthtype.setValueAttribute(authtype);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -3315,7 +3270,6 @@ public class FederationManager {
             }
             slnames.fakeSelectedAttribute(fakeOptions);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -3358,7 +3312,6 @@ public class FederationManager {
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3388,7 +3341,6 @@ public class FederationManager {
             txtname.setValueAttribute(name);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3398,11 +3350,11 @@ public class FederationManager {
      * @param webClient HTML Unit Web Client object.
      * @param realm Name of realm.
      */
-    public HtmlPage listAuthConfigurations(
+    public HtmlPage listAuthCfgs(
         WebClient webClient,
         String realm
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "list-auth-configurations");
+        URL cmdUrl = new URL(amadmUrl + "list-auth-cfgs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -3410,7 +3362,6 @@ public class FederationManager {
             HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
             txtrealm.setValueAttribute(realm);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -3422,12 +3373,12 @@ public class FederationManager {
      * @param realm Name of realm.
      * @param name Name of authentication configuration.
      */
-    public HtmlPage createAuthConfiguration(
+    public HtmlPage createAuthCfg(
         WebClient webClient,
         String realm,
         String name
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "create-auth-configuration");
+        URL cmdUrl = new URL(amadmUrl + "create-auth-cfg");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -3441,7 +3392,6 @@ public class FederationManager {
             txtname.setValueAttribute(name);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3452,12 +3402,12 @@ public class FederationManager {
      * @param realm Name of realm.
      * @param names Name of authentication configurations.
      */
-    public HtmlPage deleteAuthConfigurations(
+    public HtmlPage deleteAuthCfgs(
         WebClient webClient,
         String realm,
         List names
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "delete-auth-configurations");
+        URL cmdUrl = new URL(amadmUrl + "delete-auth-cfgs");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -3476,7 +3426,6 @@ public class FederationManager {
             slnames.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3487,12 +3436,12 @@ public class FederationManager {
      * @param realm Name of realm.
      * @param name Name of authentication configuration.
      */
-    public HtmlPage getAuthConfigurationEntries(
+    public HtmlPage getAuthCfgEntr(
         WebClient webClient,
         String realm,
         String name
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "get-auth-configuration-entries");
+        URL cmdUrl = new URL(amadmUrl + "get-auth-cfg-entr");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -3506,7 +3455,6 @@ public class FederationManager {
             txtname.setValueAttribute(name);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3519,14 +3467,14 @@ public class FederationManager {
      * @param entries formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.
      * @param datafile Name of file that contains formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.
      */
-    public HtmlPage updateAuthConfigurationEntries(
+    public HtmlPage updateAuthCfgEntr(
         WebClient webClient,
         String realm,
         String name,
         List entries,
         String datafile
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "update-auth-configuration-entries");
+        URL cmdUrl = new URL(amadmUrl + "update-auth-cfg-entr");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -3555,7 +3503,6 @@ public class FederationManager {
             tadatafile.setText(datafile);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3577,7 +3524,6 @@ public class FederationManager {
             HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
             txtrealm.setValueAttribute(realm);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -3627,7 +3573,6 @@ public class FederationManager {
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3661,7 +3606,6 @@ public class FederationManager {
             }
             slnames.fakeSelectedAttribute(fakeOptions);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -3704,6 +3648,1180 @@ public class FederationManager {
             slattributevalues.fakeSelectedAttribute(fakeOptions);
         }
 
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Get server configuration XML from centralized data store
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name, e.g. http://samples.com:8080/fam
+     */
+    public HtmlPage getSvrcfgXml(
+        WebClient webClient,
+        String servername
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "get-svrcfg-xml");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Set server configuration XML to centralized data store
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param xmlfile XML file that contains configuration.
+     */
+    public HtmlPage setSvrcfgXml(
+        WebClient webClient,
+        String servername,
+        String xmlfile
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "set-svrcfg-xml");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        if (xmlfile != null) {
+            HtmlTextArea taxmlfile = (HtmlTextArea)form.getTextAreasByName("xmlfile").get(0);
+            taxmlfile.setText(xmlfile);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Create a new agent configuration.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentname Name of agent.
+     * @param agenttype Type of agent. e.g. WebLogicAgent, WebAgent
+     * @param attributevalues properties e.g. homeaddress=here.
+     */
+    public HtmlPage createAgent(
+        WebClient webClient,
+        String agentname,
+        String agenttype,
+        List attributevalues
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "create-agent");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentname != null) {
+            HtmlTextInput txtagentname = (HtmlTextInput)form.getInputByName("agentname");
+            txtagentname.setValueAttribute(agentname);
+        }
+
+        if (agenttype != null) {
+            HtmlTextInput txtagenttype = (HtmlTextInput)form.getInputByName("agenttype");
+            txtagenttype.setValueAttribute(agenttype);
+        }
+
+        if (attributevalues != null) {
+            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
+            String[] fakeOptions = new String[attributevalues.size()];
+            int cnt = 0;
+            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributevalues.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Delete agent configurations.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentnames Names of agent.
+     */
+    public HtmlPage deleteAgents(
+        WebClient webClient,
+        List agentnames
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "delete-agents");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentnames != null) {
+            HtmlSelect slagentnames= (HtmlSelect)form.getSelectByName("agentnames");
+            String[] fakeOptions = new String[agentnames.size()];
+            int cnt = 0;
+            for (Iterator i = agentnames.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slagentnames.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Update agent configuration.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentname Name of agent.
+     * @param set Set this flag to overwrite properties values.
+     * @param attributevalues properties e.g. homeaddress=here.
+     */
+    public HtmlPage updateAgent(
+        WebClient webClient,
+        String agentname,
+        boolean set,
+        List attributevalues
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "update-agent");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentname != null) {
+            HtmlTextInput txtagentname = (HtmlTextInput)form.getInputByName("agentname");
+            txtagentname.setValueAttribute(agentname);
+        }
+
+        HtmlCheckBoxInput cbset = (HtmlCheckBoxInput)form.getInputByName("set");
+        cbset.setChecked(set);
+
+        if (attributevalues != null) {
+            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
+            String[] fakeOptions = new String[attributevalues.size()];
+            int cnt = 0;
+            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributevalues.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Remove agent's properties.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentname Name of agent.
+     * @param attributenames properties name(s).
+     */
+    public HtmlPage agentRemoveProps(
+        WebClient webClient,
+        String agentname,
+        List attributenames
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "agent-remove-props");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentname != null) {
+            HtmlTextInput txtagentname = (HtmlTextInput)form.getInputByName("agentname");
+            txtagentname.setValueAttribute(agentname);
+        }
+
+        if (attributenames != null) {
+            HtmlSelect slattributenames= (HtmlSelect)form.getSelectByName("attributenames");
+            String[] fakeOptions = new String[attributenames.size()];
+            int cnt = 0;
+            for (Iterator i = attributenames.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributenames.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List agent configurations.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param filter Filter (Pattern).
+     * @param agenttype Type of agent. e.g. WebLogicAgent, WebAgent
+     */
+    public HtmlPage listAgents(
+        WebClient webClient,
+        String filter,
+        String agenttype
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-agents");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (filter != null) {
+            HtmlTextInput txtfilter = (HtmlTextInput)form.getInputByName("filter");
+            txtfilter.setValueAttribute(filter);
+        }
+
+        if (agenttype != null) {
+            HtmlTextInput txtagenttype = (HtmlTextInput)form.getInputByName("agenttype");
+            txtagenttype.setValueAttribute(agenttype);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Show agent profile.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentname Name of agent.
+     * @param inherit Set this to inherit properties from parent group.
+     */
+    public HtmlPage showAgent(
+        WebClient webClient,
+        String agentname,
+        boolean inherit
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "show-agent");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentname != null) {
+            HtmlTextInput txtagentname = (HtmlTextInput)form.getInputByName("agentname");
+            txtagentname.setValueAttribute(agentname);
+        }
+
+        HtmlCheckBoxInput cbinherit = (HtmlCheckBoxInput)form.getInputByName("inherit");
+        cbinherit.setChecked(inherit);
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Show agent types.
+     *
+     * @param webClient HTML Unit Web Client object.
+     */
+    public HtmlPage showAgentTypes(
+        WebClient webClient
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "show-agent-types");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Show agent group profile.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentgroupname Name of agent group.
+     */
+    public HtmlPage showAgentGrp(
+        WebClient webClient,
+        String agentgroupname
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "show-agent-grp");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentgroupname != null) {
+            HtmlTextInput txtagentgroupname = (HtmlTextInput)form.getInputByName("agentgroupname");
+            txtagentgroupname.setValueAttribute(agentgroupname);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Create a new agent group.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentgroupname Name of agent group.
+     * @param agenttype Type of agent group. e.g. WebLogicAgent, WebAgent
+     * @param attributevalues properties e.g. homeaddress=here.
+     */
+    public HtmlPage createAgentGrp(
+        WebClient webClient,
+        String agentgroupname,
+        String agenttype,
+        List attributevalues
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "create-agent-grp");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentgroupname != null) {
+            HtmlTextInput txtagentgroupname = (HtmlTextInput)form.getInputByName("agentgroupname");
+            txtagentgroupname.setValueAttribute(agentgroupname);
+        }
+
+        if (agenttype != null) {
+            HtmlTextInput txtagenttype = (HtmlTextInput)form.getInputByName("agenttype");
+            txtagenttype.setValueAttribute(agenttype);
+        }
+
+        if (attributevalues != null) {
+            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
+            String[] fakeOptions = new String[attributevalues.size()];
+            int cnt = 0;
+            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributevalues.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Delete agent groups.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentgroupnames Names of agent group.
+     */
+    public HtmlPage deleteAgentGrps(
+        WebClient webClient,
+        List agentgroupnames
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "delete-agent-grps");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentgroupnames != null) {
+            HtmlSelect slagentgroupnames= (HtmlSelect)form.getSelectByName("agentgroupnames");
+            String[] fakeOptions = new String[agentgroupnames.size()];
+            int cnt = 0;
+            for (Iterator i = agentgroupnames.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slagentgroupnames.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List agent groups.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param filter Filter (Pattern).
+     * @param agenttype Type of agent. e.g. WebLogicAgent, WebAgent
+     */
+    public HtmlPage listAgentGrps(
+        WebClient webClient,
+        String filter,
+        String agenttype
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-agent-grps");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (filter != null) {
+            HtmlTextInput txtfilter = (HtmlTextInput)form.getInputByName("filter");
+            txtfilter.setValueAttribute(filter);
+        }
+
+        if (agenttype != null) {
+            HtmlTextInput txtagenttype = (HtmlTextInput)form.getInputByName("agenttype");
+            txtagenttype.setValueAttribute(agenttype);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List agents in agent group.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentgroupname Name of agent group.
+     * @param filter Filter (Pattern).
+     */
+    public HtmlPage listAgentGrpMembers(
+        WebClient webClient,
+        String agentgroupname,
+        String filter
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-agent-grp-members");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentgroupname != null) {
+            HtmlTextInput txtagentgroupname = (HtmlTextInput)form.getInputByName("agentgroupname");
+            txtagentgroupname.setValueAttribute(agentgroupname);
+        }
+
+        if (filter != null) {
+            HtmlTextInput txtfilter = (HtmlTextInput)form.getInputByName("filter");
+            txtfilter.setValueAttribute(filter);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List agent's membership.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentname Name of agent.
+     */
+    public HtmlPage showAgentMembership(
+        WebClient webClient,
+        String agentname
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "show-agent-membership");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentname != null) {
+            HtmlTextInput txtagentname = (HtmlTextInput)form.getInputByName("agentname");
+            txtagentname.setValueAttribute(agentname);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Add agents to a agent group.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentgroupname Name of agent group.
+     * @param agentnames Names of agents.
+     */
+    public HtmlPage addAgentToGrp(
+        WebClient webClient,
+        String agentgroupname,
+        List agentnames
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "add-agent-to-grp");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentgroupname != null) {
+            HtmlTextInput txtagentgroupname = (HtmlTextInput)form.getInputByName("agentgroupname");
+            txtagentgroupname.setValueAttribute(agentgroupname);
+        }
+
+        if (agentnames != null) {
+            HtmlSelect slagentnames= (HtmlSelect)form.getSelectByName("agentnames");
+            String[] fakeOptions = new String[agentnames.size()];
+            int cnt = 0;
+            for (Iterator i = agentnames.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slagentnames.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Remove agents from a agent group.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentgroupname Name of agent group.
+     * @param agentnames Names of agents.
+     */
+    public HtmlPage removeAgentFromGrp(
+        WebClient webClient,
+        String agentgroupname,
+        List agentnames
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "remove-agent-from-grp");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentgroupname != null) {
+            HtmlTextInput txtagentgroupname = (HtmlTextInput)form.getInputByName("agentgroupname");
+            txtagentgroupname.setValueAttribute(agentgroupname);
+        }
+
+        if (agentnames != null) {
+            HtmlSelect slagentnames= (HtmlSelect)form.getSelectByName("agentnames");
+            String[] fakeOptions = new String[agentnames.size()];
+            int cnt = 0;
+            for (Iterator i = agentnames.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slagentnames.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Update agent group configuration.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param agentgroupname Name of agent group.
+     * @param set Set this flag to overwrite properties values.
+     * @param attributevalues properties e.g. homeaddress=here.
+     */
+    public HtmlPage updateAgentGrp(
+        WebClient webClient,
+        String agentgroupname,
+        boolean set,
+        List attributevalues
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "update-agent-grp");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (agentgroupname != null) {
+            HtmlTextInput txtagentgroupname = (HtmlTextInput)form.getInputByName("agentgroupname");
+            txtagentgroupname.setValueAttribute(agentgroupname);
+        }
+
+        HtmlCheckBoxInput cbset = (HtmlCheckBoxInput)form.getInputByName("set");
+        cbset.setChecked(set);
+
+        if (attributevalues != null) {
+            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
+            String[] fakeOptions = new String[attributevalues.size()];
+            int cnt = 0;
+            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributevalues.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List server configuration.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name, e.g. http://samples.com:8080/fam
+     */
+    public HtmlPage listServerCfg(
+        WebClient webClient,
+        String servername
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-server-cfg");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Update server configuration.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param attributevalues Attribute values e.g. homeaddress=here.
+     */
+    public HtmlPage updateServerCfg(
+        WebClient webClient,
+        String servername,
+        List attributevalues
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "update-server-cfg");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        if (attributevalues != null) {
+            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
+            String[] fakeOptions = new String[attributevalues.size()];
+            int cnt = 0;
+            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributevalues.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Remove server configuration.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param propertynames Name of properties to be removed.
+     */
+    public HtmlPage removeServerCfg(
+        WebClient webClient,
+        String servername,
+        List propertynames
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "remove-server-cfg");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        if (propertynames != null) {
+            HtmlSelect slpropertynames= (HtmlSelect)form.getSelectByName("propertynames");
+            String[] fakeOptions = new String[propertynames.size()];
+            int cnt = 0;
+            for (Iterator i = propertynames.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slpropertynames.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Create a server instance.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param serverconfigxml Server Configuration XML file name.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
+     */
+    public HtmlPage createServer(
+        WebClient webClient,
+        String servername,
+        String serverconfigxml,
+        List attributevalues
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "create-server");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        if (serverconfigxml != null) {
+            HtmlTextArea taserverconfigxml = (HtmlTextArea)form.getTextAreasByName("serverconfigxml").get(0);
+            taserverconfigxml.setText(serverconfigxml);
+        }
+
+        if (attributevalues != null) {
+            HtmlSelect slattributevalues= (HtmlSelect)form.getSelectByName("attributevalues");
+            String[] fakeOptions = new String[attributevalues.size()];
+            int cnt = 0;
+            for (Iterator i = attributevalues.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slattributevalues.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Delete a server instance.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name, e.g. http://samples.com:8080/fam
+     */
+    public HtmlPage deleteServer(
+        WebClient webClient,
+        String servername
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "delete-server");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List all server instances.
+     *
+     * @param webClient HTML Unit Web Client object.
+     */
+    public HtmlPage listServers(
+        WebClient webClient
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-servers");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Create a site.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     * @param siteurl Site's primary URL, e.g. http://site.samples.com:8080
+     * @param secondaryurls Secondary URLs
+     */
+    public HtmlPage createSite(
+        WebClient webClient,
+        String sitename,
+        String siteurl,
+        List secondaryurls
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "create-site");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        if (siteurl != null) {
+            HtmlTextInput txtsiteurl = (HtmlTextInput)form.getInputByName("siteurl");
+            txtsiteurl.setValueAttribute(siteurl);
+        }
+
+        if (secondaryurls != null) {
+            HtmlSelect slsecondaryurls= (HtmlSelect)form.getSelectByName("secondaryurls");
+            String[] fakeOptions = new String[secondaryurls.size()];
+            int cnt = 0;
+            for (Iterator i = secondaryurls.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slsecondaryurls.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Delete a site.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     */
+    public HtmlPage deleteSite(
+        WebClient webClient,
+        String sitename
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "delete-site");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List all sites.
+     *
+     * @param webClient HTML Unit Web Client object.
+     */
+    public HtmlPage listSites(
+        WebClient webClient
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-sites");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Display members of a site.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     */
+    public HtmlPage showSiteMembers(
+        WebClient webClient,
+        String sitename
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "show-site-members");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Add members to a site.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     * @param servernames Server names, e.g. http://samples.com:8080/fam
+     */
+    public HtmlPage addSiteMembers(
+        WebClient webClient,
+        String sitename,
+        List servernames
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "add-site-members");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        if (servernames != null) {
+            HtmlSelect slservernames= (HtmlSelect)form.getSelectByName("servernames");
+            String[] fakeOptions = new String[servernames.size()];
+            int cnt = 0;
+            for (Iterator i = servernames.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slservernames.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Remove members from a site.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     * @param servernames Server names, e.g. http://samples.com:8080/fam
+     */
+    public HtmlPage removeSiteMembers(
+        WebClient webClient,
+        String sitename,
+        List servernames
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "remove-site-members");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        if (servernames != null) {
+            HtmlSelect slservernames= (HtmlSelect)form.getSelectByName("servernames");
+            String[] fakeOptions = new String[servernames.size()];
+            int cnt = 0;
+            for (Iterator i = servernames.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slservernames.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Set the primary URL of a site.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     * @param siteurl Site's primary URL, e.g. http://site.samples.com:8080
+     */
+    public HtmlPage setSitePriUrl(
+        WebClient webClient,
+        String sitename,
+        String siteurl
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "set-site-pri-url");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        if (siteurl != null) {
+            HtmlTextInput txtsiteurl = (HtmlTextInput)form.getInputByName("siteurl");
+            txtsiteurl.setValueAttribute(siteurl);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Show site profile.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     */
+    public HtmlPage showSite(
+        WebClient webClient,
+        String sitename
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "show-site");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Set Site Secondary URLs.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     * @param secondaryurls Secondary URLs
+     */
+    public HtmlPage setSiteSecUrls(
+        WebClient webClient,
+        String sitename,
+        List secondaryurls
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "set-site-sec-urls");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        if (secondaryurls != null) {
+            HtmlSelect slsecondaryurls= (HtmlSelect)form.getSelectByName("secondaryurls");
+            String[] fakeOptions = new String[secondaryurls.size()];
+            int cnt = 0;
+            for (Iterator i = secondaryurls.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slsecondaryurls.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Add Site Secondary URLs.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     * @param secondaryurls Secondary URLs
+     */
+    public HtmlPage addSiteSecUrls(
+        WebClient webClient,
+        String sitename,
+        List secondaryurls
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "add-site-sec-urls");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        if (secondaryurls != null) {
+            HtmlSelect slsecondaryurls= (HtmlSelect)form.getSelectByName("secondaryurls");
+            String[] fakeOptions = new String[secondaryurls.size()];
+            int cnt = 0;
+            for (Iterator i = secondaryurls.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slsecondaryurls.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Remove Site Secondary URLs.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param sitename Site name, e.g. mysite
+     * @param secondaryurls Secondary URLs
+     */
+    public HtmlPage removeSiteSecUrls(
+        WebClient webClient,
+        String sitename,
+        List secondaryurls
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "remove-site-sec-urls");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (sitename != null) {
+            HtmlTextInput txtsitename = (HtmlTextInput)form.getInputByName("sitename");
+            txtsitename.setValueAttribute(sitename);
+        }
+
+        if (secondaryurls != null) {
+            HtmlSelect slsecondaryurls= (HtmlSelect)form.getSelectByName("secondaryurls");
+            String[] fakeOptions = new String[secondaryurls.size()];
+            int cnt = 0;
+            for (Iterator i = secondaryurls.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            slsecondaryurls.fakeSelectedAttribute(fakeOptions);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Clone a server instance.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name
+     * @param cloneservername Clone server name
+     */
+    public HtmlPage cloneServer(
+        WebClient webClient,
+        String servername,
+        String cloneservername
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "clone-server");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        if (cloneservername != null) {
+            HtmlTextInput txtcloneservername = (HtmlTextInput)form.getInputByName("cloneservername");
+            txtcloneservername.setValueAttribute(cloneservername);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Export a server instance.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name
+     */
+    public HtmlPage exportServer(
+        WebClient webClient,
+        String servername
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "export-server");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Import a server instance.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param servername Server name
+     * @param xmlfile XML file that contains configuration.
+     */
+    public HtmlPage importServer(
+        WebClient webClient,
+        String servername,
+        String xmlfile
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "import-server");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (servername != null) {
+            HtmlTextInput txtservername = (HtmlTextInput)form.getInputByName("servername");
+            txtservername.setValueAttribute(servername);
+        }
+
+        if (xmlfile != null) {
+            HtmlTextArea taxmlfile = (HtmlTextArea)form.getTextAreasByName("xmlfile").get(0);
+            taxmlfile.setText(xmlfile);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Show the supported authentication modules in a realm
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param realm Name of realm.
+     */
+    public HtmlPage showAuthModules(
+        WebClient webClient,
+        String realm
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "show-auth-modules");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Registers authentication module.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param authmodule Java class name of authentication module.
+     */
+    public HtmlPage registerAuthModule(
+        WebClient webClient,
+        String authmodule
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "register-auth-module");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (authmodule != null) {
+            HtmlTextInput txtauthmodule = (HtmlTextInput)form.getInputByName("authmodule");
+            txtauthmodule.setValueAttribute(authmodule);
+        }
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Unregisters authentication module.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param authmodule Java class name of authentication module.
+     */
+    public HtmlPage unregisterAuthModule(
+        WebClient webClient,
+        String authmodule
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "unregister-auth-module");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (authmodule != null) {
+            HtmlTextInput txtauthmodule = (HtmlTextInput)form.getInputByName("authmodule");
+            txtauthmodule.setValueAttribute(authmodule);
+        }
 
         return (HtmlPage)form.submit();
     }
@@ -3713,42 +4831,54 @@ public class FederationManager {
      *
      * @param webClient HTML Unit Web Client object.
      * @param entityid Entity ID
-     * @param metadata Specify file name for the standard metadata to be created.
-     * @param extended Specify file name for the standard metadata to be created.
+     * @param metadatafile Specify file name for the standard metadata to be created.
+     * @param extendeddatafile Specify file name for the standard metadata to be created.
      * @param serviceprovider Specify metaAlias for hosted service provider to be created. The format must be <realm name>/<identifier>.
      * @param identityprovider Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.
+     * @param attrqueryprovider Specify metaAlias for hosted attribute query provider to be created. The format must be <realm name>/<identifier>.
+     * @param attrauthority Specify metaAlias for hosted attribute authority to be created. The format must be <realm name>/<identifier>.
      * @param xacmlpep Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.
      * @param xacmlpdp Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.
      * @param spscertalias Service provider signing certificate alias
      * @param idpscertalias Identity provider signing certificate alias
+     * @param attrqscertalias Attribute query provider signing certificate alias
+     * @param attrascertalias Attribute authority signing certificate alias
      * @param xacmlpdpscertalias Policy decision point signing certificate alias
      * @param xacmlpepscertalias Policy enforcement point signing certificate alias
      * @param specertalias Service provider encryption certificate alias
      * @param idpecertalias Identity provider encryption certificate alias.
+     * @param attrqecertalias Attribute query provider encryption certificate alias
+     * @param attraecertalias Attribute authority encryption certificate alias.
      * @param xacmlpdpecertalias Policy decision point encryption certificate alias
      * @param xacmlpepecertalias Policy enforcement point encryption certificate alias
      * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
-    public HtmlPage createMetadataTemplate(
+    public HtmlPage createMetadataTempl(
         WebClient webClient,
         String entityid,
-        boolean metadata,
-        boolean extended,
+        boolean metadatafile,
+        boolean extendeddatafile,
         String serviceprovider,
         String identityprovider,
+        String attrqueryprovider,
+        String attrauthority,
         String xacmlpep,
         String xacmlpdp,
         String spscertalias,
         String idpscertalias,
+        String attrqscertalias,
+        String attrascertalias,
         String xacmlpdpscertalias,
         String xacmlpepscertalias,
         String specertalias,
         String idpecertalias,
+        String attrqecertalias,
+        String attraecertalias,
         String xacmlpdpecertalias,
         String xacmlpepecertalias,
         String spec
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "create-metadata-template");
+        URL cmdUrl = new URL(amadmUrl + "create-metadata-templ");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -3757,11 +4887,11 @@ public class FederationManager {
             txtentityid.setValueAttribute(entityid);
         }
 
-        HtmlCheckBoxInput cbmetadata = (HtmlCheckBoxInput)form.getInputByName("metadata");
-        cbmetadata.setChecked(metadata);
+        HtmlCheckBoxInput cbmetadatafile = (HtmlCheckBoxInput)form.getInputByName("meta-data-file");
+        cbmetadatafile.setChecked(metadatafile);
 
-        HtmlCheckBoxInput cbextended = (HtmlCheckBoxInput)form.getInputByName("extended");
-        cbextended.setChecked(extended);
+        HtmlCheckBoxInput cbextendeddatafile = (HtmlCheckBoxInput)form.getInputByName("extended-data-file");
+        cbextendeddatafile.setChecked(extendeddatafile);
 
         if (serviceprovider != null) {
             HtmlTextInput txtserviceprovider = (HtmlTextInput)form.getInputByName("serviceprovider");
@@ -3771,6 +4901,16 @@ public class FederationManager {
         if (identityprovider != null) {
             HtmlTextInput txtidentityprovider = (HtmlTextInput)form.getInputByName("identityprovider");
             txtidentityprovider.setValueAttribute(identityprovider);
+        }
+
+        if (attrqueryprovider != null) {
+            HtmlTextArea taattrqueryprovider = (HtmlTextArea)form.getTextAreasByName("attrqueryprovider").get(0);
+            taattrqueryprovider.setText(attrqueryprovider);
+        }
+
+        if (attrauthority != null) {
+            HtmlTextArea taattrauthority = (HtmlTextArea)form.getTextAreasByName("attrauthority").get(0);
+            taattrauthority.setText(attrauthority);
         }
 
         if (xacmlpep != null) {
@@ -3793,6 +4933,16 @@ public class FederationManager {
             txtidpscertalias.setValueAttribute(idpscertalias);
         }
 
+        if (attrqscertalias != null) {
+            HtmlTextArea taattrqscertalias = (HtmlTextArea)form.getTextAreasByName("attrqscertalias").get(0);
+            taattrqscertalias.setText(attrqscertalias);
+        }
+
+        if (attrascertalias != null) {
+            HtmlTextArea taattrascertalias = (HtmlTextArea)form.getTextAreasByName("attrascertalias").get(0);
+            taattrascertalias.setText(attrascertalias);
+        }
+
         if (xacmlpdpscertalias != null) {
             HtmlTextInput txtxacmlpdpscertalias = (HtmlTextInput)form.getInputByName("xacmlpdpscertalias");
             txtxacmlpdpscertalias.setValueAttribute(xacmlpdpscertalias);
@@ -3813,6 +4963,16 @@ public class FederationManager {
             txtidpecertalias.setValueAttribute(idpecertalias);
         }
 
+        if (attrqecertalias != null) {
+            HtmlTextArea taattrqecertalias = (HtmlTextArea)form.getTextAreasByName("attrqecertalias").get(0);
+            taattrqecertalias.setText(attrqecertalias);
+        }
+
+        if (attraecertalias != null) {
+            HtmlTextArea taattraecertalias = (HtmlTextArea)form.getTextAreasByName("attraecertalias").get(0);
+            taattraecertalias.setText(attraecertalias);
+        }
+
         if (xacmlpdpecertalias != null) {
             HtmlTextInput txtxacmlpdpecertalias = (HtmlTextInput)form.getInputByName("xacmlpdpecertalias");
             txtxacmlpdpecertalias.setValueAttribute(xacmlpdpecertalias);
@@ -3828,7 +4988,6 @@ public class FederationManager {
             txtspec.setValueAttribute(spec);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3837,16 +4996,16 @@ public class FederationManager {
      *
      * @param webClient HTML Unit Web Client object.
      * @param realm Realm where entity resides.
-     * @param metadata Specify file name for the standard metadata to be imported.
-     * @param extended Specify file name for the extended entity configuration to be imported.
+     * @param metadatafile Standard metadata to be imported.
+     * @param extendeddatafile Extended entity configuration to be imported.
      * @param cot Specify name of the Circle of Trust this entity belongs.
      * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
     public HtmlPage importEntity(
         WebClient webClient,
         String realm,
-        String metadata,
-        String extended,
+        String metadatafile,
+        String extendeddatafile,
         String cot,
         String spec
     ) throws Exception {
@@ -3859,14 +5018,14 @@ public class FederationManager {
             txtrealm.setValueAttribute(realm);
         }
 
-        if (metadata != null) {
-            HtmlTextArea tametadata = (HtmlTextArea)form.getTextAreasByName("metadata").get(0);
-            tametadata.setText(metadata);
+        if (metadatafile != null) {
+            HtmlTextArea tametadatafile = (HtmlTextArea)form.getTextAreasByName("meta-data-file").get(0);
+            tametadatafile.setText(metadatafile);
         }
 
-        if (extended != null) {
-            HtmlTextArea taextended = (HtmlTextArea)form.getTextAreasByName("extended").get(0);
-            taextended.setText(extended);
+        if (extendeddatafile != null) {
+            HtmlTextArea taextendeddatafile = (HtmlTextArea)form.getTextAreasByName("extended-data-file").get(0);
+            taextendeddatafile.setText(extendeddatafile);
         }
 
         if (cot != null) {
@@ -3879,7 +5038,6 @@ public class FederationManager {
             txtspec.setValueAttribute(spec);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -3890,8 +5048,8 @@ public class FederationManager {
      * @param entityid Entity ID
      * @param realm Realm where data resides
      * @param sign Set this flag to sign the metadata
-     * @param metadata Metadata
-     * @param extended Extended data
+     * @param metadatafile Metadata
+     * @param extendeddatafile Extended data
      * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
     public HtmlPage exportEntity(
@@ -3899,8 +5057,8 @@ public class FederationManager {
         String entityid,
         String realm,
         boolean sign,
-        boolean metadata,
-        boolean extended,
+        boolean metadatafile,
+        boolean extendeddatafile,
         String spec
     ) throws Exception {
         URL cmdUrl = new URL(amadmUrl + "export-entity");
@@ -3920,17 +5078,16 @@ public class FederationManager {
         HtmlCheckBoxInput cbsign = (HtmlCheckBoxInput)form.getInputByName("sign");
         cbsign.setChecked(sign);
 
-        HtmlCheckBoxInput cbmetadata = (HtmlCheckBoxInput)form.getInputByName("metadata");
-        cbmetadata.setChecked(metadata);
+        HtmlCheckBoxInput cbmetadatafile = (HtmlCheckBoxInput)form.getInputByName("meta-data-file");
+        cbmetadatafile.setChecked(metadatafile);
 
-        HtmlCheckBoxInput cbextended = (HtmlCheckBoxInput)form.getInputByName("extended");
-        cbextended.setChecked(extended);
+        HtmlCheckBoxInput cbextendeddatafile = (HtmlCheckBoxInput)form.getInputByName("extended-data-file");
+        cbextendeddatafile.setChecked(extendeddatafile);
 
         if (spec != null) {
             HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
             txtspec.setValueAttribute(spec);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -3973,7 +5130,6 @@ public class FederationManager {
             txtspec.setValueAttribute(spec);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -4003,7 +5159,6 @@ public class FederationManager {
             txtspec.setValueAttribute(spec);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -4016,14 +5171,14 @@ public class FederationManager {
      * @param trustedproviders Trusted Providers
      * @param prefix Prefix URL for idp discovery reader and writer URL.
      */
-    public HtmlPage createCircleOfTrust(
+    public HtmlPage createCot(
         WebClient webClient,
         String cot,
         String realm,
         List trustedproviders,
         String prefix
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "create-circle-of-trust");
+        URL cmdUrl = new URL(amadmUrl + "create-cot");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -4052,7 +5207,6 @@ public class FederationManager {
             txtprefix.setValueAttribute(prefix);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -4063,12 +5217,12 @@ public class FederationManager {
      * @param cot Circle of Trust
      * @param realm Realm where circle of trust resides
      */
-    public HtmlPage deleteCircleOfTrust(
+    public HtmlPage deleteCot(
         WebClient webClient,
         String cot,
         String realm
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "delete-circle-of-trust");
+        URL cmdUrl = new URL(amadmUrl + "delete-cot");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -4082,7 +5236,6 @@ public class FederationManager {
             txtrealm.setValueAttribute(realm);
         }
 
-
         return (HtmlPage)form.submit();
     }
 
@@ -4090,13 +5243,13 @@ public class FederationManager {
      * List circles of trust.
      *
      * @param webClient HTML Unit Web Client object.
-     * @param realm Realm where circles of trust reside
+     * @param realm Realm where circle of trusts reside
      */
-    public HtmlPage listCircleOfTrusts(
+    public HtmlPage listCots(
         WebClient webClient,
         String realm
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "list-circles-of-trust");
+        URL cmdUrl = new URL(amadmUrl + "list-cots");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -4104,7 +5257,6 @@ public class FederationManager {
             HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
             txtrealm.setValueAttribute(realm);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -4117,13 +5269,13 @@ public class FederationManager {
      * @param realm Realm where circle of trust resides
      * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
-    public HtmlPage listCircleOfTrustMembers(
+    public HtmlPage listCotMembers(
         WebClient webClient,
         String cot,
         String realm,
         String spec
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "list-circle-of-trust-members");
+        URL cmdUrl = new URL(amadmUrl + "list-cot-members");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -4141,7 +5293,6 @@ public class FederationManager {
             HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
             txtspec.setValueAttribute(spec);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -4155,14 +5306,14 @@ public class FederationManager {
      * @param realm Realm where circle of trust resides
      * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
-    public HtmlPage removeCircleOfTrustMember(
+    public HtmlPage removeCotMember(
         WebClient webClient,
         String cot,
         String entityid,
         String realm,
         String spec
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "remove-circle-of-trust-member");
+        URL cmdUrl = new URL(amadmUrl + "remove-cot-member");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -4185,7 +5336,6 @@ public class FederationManager {
             HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
             txtspec.setValueAttribute(spec);
         }
-
 
         return (HtmlPage)form.submit();
     }
@@ -4199,14 +5349,14 @@ public class FederationManager {
      * @param realm Realm where circle of trust resides
      * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
-    public HtmlPage addCircleOfTrustMember(
+    public HtmlPage addCotMember(
         WebClient webClient,
         String cot,
         String entityid,
         String realm,
         String spec
     ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "add-circle-of-trust-member");
+        URL cmdUrl = new URL(amadmUrl + "add-cot-member");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
         HtmlForm form = (HtmlForm)page.getForms().get(0);
 
@@ -4229,7 +5379,6 @@ public class FederationManager {
             HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
             txtspec.setValueAttribute(spec);
         }
-
 
         return (HtmlPage)form.submit();
     }

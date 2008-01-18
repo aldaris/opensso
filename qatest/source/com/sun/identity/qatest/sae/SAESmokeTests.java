@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAESmokeTests.java,v 1.2 2007-12-20 22:43:12 rmisra Exp $
+ * $Id: SAESmokeTests.java,v 1.3 2008-01-18 00:42:52 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -622,14 +622,14 @@ public class SAESmokeTests extends TestCommon {
                 consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-                serviceAtt = fmadm.setServiceAttributes(webClient,
+                serviceAtt = fmadm.setSvcAttrs(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM),
                     "iPlanetAMAuthService", listDyn);
             } else if (id.equals("IDP")) {
                 consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-                serviceAtt = fmadm.setServiceAttributes(webClient,
+                serviceAtt = fmadm.setSvcAttrs(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM),
                     "iPlanetAMAuthService", listDyn);
             }

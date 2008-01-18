@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureWSFed.java,v 1.1 2007-10-05 18:23:47 mrudulahg Exp $
+ * $Id: UnconfigureWSFed.java,v 1.2 2008-01-18 00:42:53 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,7 +46,7 @@ public class UnconfigureWSFed extends TestCommon {
     private String idpurl;
     
     /** Creates a new instance of UnconfigureWSFed */
-    public UnconfigureWSFed () {
+    public UnconfigureWSFed() {
         super("UnconfigureWSFed");
     }
     
@@ -57,9 +57,9 @@ public class UnconfigureWSFed extends TestCommon {
     throws Exception {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
-        } catch (Exception e) {
-            log (Level.SEVERE, "getWebClient", e.getMessage());
-            e.printStackTrace ();
+        } catch(Exception e) {
+            log(Level.SEVERE, "getWebClient", e.getMessage());
+            e.printStackTrace();
             throw e;
         }
     }
@@ -68,7 +68,7 @@ public class UnconfigureWSFed extends TestCommon {
      * Configure sp & idp
      * @DocTest: IDFF|Unconfigure SP & IDP by deleting entities & COT's 
      */
-    @AfterSuite (groups={"ds_ds_sec", "ff_ds_sec"})
+    @AfterSuite(groups={"ds_ds_sec", "ff_ds_sec"})
     public void UnconfigureWSFed()
     throws Exception {
         entering("UnconfigureWSFed", null);
@@ -80,7 +80,7 @@ public class UnconfigureWSFed extends TestCommon {
             getWebClient();
             
             configMap = getMapFromResourceBundle("WSFedTestConfigData");
-            log (Level.FINEST, "UnconfigureWSFed", "Map:" + configMap);
+            log(Level.FINEST, "UnconfigureWSFed", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + "://" + 
                     configMap.get(TestConstants.KEY_SP_HOST) + ":" + 
@@ -91,17 +91,17 @@ public class UnconfigureWSFed extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_PORT) + 
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             
-            consoleLogin (webClient, spurl + "/UI/Login",
+            consoleLogin(webClient, spurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            consoleLogin (webClient, idpurl + "/UI/Login",
+            consoleLogin(webClient, idpurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-        } catch (Exception e) {
-            log (Level.SEVERE, "UnconfigureWSFed", e.getMessage());
-            e.printStackTrace ();
+        } catch(Exception e) {
+            log(Level.SEVERE, "UnconfigureWSFed", e.getMessage());
+            e.printStackTrace();
             throw e;
         }
         
@@ -110,22 +110,22 @@ public class UnconfigureWSFed extends TestCommon {
             FederationManager idpfm = new FederationManager(idpurl);
             
             HtmlPage idpEntityPage = idpfm.listEntities(webClient,
-                    configMap.get (TestConstants.KEY_IDP_REALM), "wsfed");
+                    configMap.get(TestConstants.KEY_IDP_REALM), "wsfed");
             //Delete IDP & SP entities on IDP
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log (Level.FINEST, "UnconfigureWSFed", "IDP entity exists at IDP.");
-                HtmlPage idpDeleteEntityPage = idpfm.deleteEntity (webClient,
+                log(Level.FINEST, "UnconfigureWSFed", "IDP entity exists at IDP.");
+                HtmlPage idpDeleteEntityPage = idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false,
                         "wsfed");
                 if (idpDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("Descriptor is deleted for entity, " +
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                    log (Level.FINEST, "UnconfigureWSFed", "Delete IDP entity on " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Delete IDP entity on " +
                             "IDP side");
                 } else {
-                    log (Level.FINEST, "UnconfigureWSFed", "Couldnt delete IDP " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Couldnt delete IDP " +
                             "entity on IDP side");
                     assert false;
                 }
@@ -133,51 +133,51 @@ public class UnconfigureWSFed extends TestCommon {
             
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log (Level.FINEST, "UnconfigureWSFed", "SP entity exists at IDP.");
-                HtmlPage spDeleteEntityPage = idpfm.deleteEntity (webClient,
+                log(Level.FINEST, "UnconfigureWSFed", "SP entity exists at IDP.");
+                HtmlPage spDeleteEntityPage = idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false,
                         "wsfed");
                 if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains ("Descriptor is deleted for entity, " +
-                        configMap.get (TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log (Level.FINEST, "UnconfigureWSFed", "Deleted SP entity on " +
+                        contains("Descriptor is deleted for entity, " +
+                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    log(Level.FINEST, "UnconfigureWSFed", "Deleted SP entity on " +
                             "IDP side");
                 } else {
-                    log (Level.FINEST, "UnconfigureWSFed", "Couldnt delete SP " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Couldnt delete SP " +
                             "entity on IDP side");
                     assert false;
                 }
             }
             
             //Delete COT on IDP side.
-            HtmlPage idpcotPage = idpfm.listCircleOfTrusts(webClient,
+            HtmlPage idpcotPage = idpfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM));
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
-                log (Level.FINEST, "UnconfigureWSFed", "COT exists at IDP side");
-                idpcotPage = idpfm.deleteCircleOfTrust(webClient,
+                log(Level.FINEST, "UnconfigureWSFed", "COT exists at IDP side");
+                idpcotPage = idpfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM));
                 if (!idpcotPage.getWebResponse().getContentAsString().
                         contains("Circle of trust, " +
                         configMap.get(TestConstants.KEY_IDP_COT)
                         + " is deleted.")) {
-                    log (Level.FINEST, "UnconfigureWSFed", "Couldn't delete " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Couldn't delete " +
                             "COT at IDP side" +
                             idpcotPage.getWebResponse().getContentAsString());
                 } else {
-                    log (Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
                             "at IDP side");                    
                 }
             }
             
-            HtmlPage spEntityPage = spfm.listEntities (webClient,
-                    configMap.get (TestConstants.KEY_SP_REALM), "wsfed");
+            HtmlPage spEntityPage = spfm.listEntities(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM), "wsfed");
             //Delete SP & IDP entities on sp
             if (spEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log (Level.FINEST, "UnconfigureWSFed", "SP entity exists at SP. ");
+                log(Level.FINEST, "UnconfigureWSFed", "SP entity exists at SP. ");
                 HtmlPage spDeleteEntityPage = spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false,
@@ -185,10 +185,10 @@ public class UnconfigureWSFed extends TestCommon {
                 if (spDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("Descriptor is deleted for entity, " +
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log (Level.FINEST, "UnconfigureWSFed", "Deleted SP entity on " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Deleted SP entity on " +
                             "SP side");
                 } else {
-                    log (Level.FINEST, "UnconfigureWSFed", "Couldnt delete idp " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Couldnt delete idp " +
                             "entity on SP side");
                     assert false;
                 }
@@ -196,53 +196,53 @@ public class UnconfigureWSFed extends TestCommon {
             
             if (spEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log (Level.FINEST, "UnconfigureWSFed", "IDP entity exists at SP.");
+                log(Level.FINEST, "UnconfigureWSFed", "IDP entity exists at SP.");
                 HtmlPage idpDeleteEntityPage = spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false,
                         "wsfed");
-                if (idpDeleteEntityPage.getWebResponse().getContentAsString ().
+                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("Descriptor is deleted for entity, " +
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                    log (Level.FINEST, "UnconfigureWSFed", "Deleted IDP entity on " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Deleted IDP entity on " +
                             "SP side");
                 } else {
-                    log (Level.FINEST, "UnconfigureWSFed", "Couldnt delete IDP " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Couldnt delete IDP " +
                             "entity on SP side");
                     assert false;
                 }
             }
             
             //Delete COT on sp side.
-            HtmlPage spcotPage = spfm.listCircleOfTrusts(webClient,
+            HtmlPage spcotPage = spfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM));
             if (spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.deleteCircleOfTrust (webClient,
+                spcotPage = spfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_SP_COT),
                         configMap.get(TestConstants.KEY_SP_REALM));
                 if (!spcotPage.getWebResponse().getContentAsString().
-                        contains ("Circle of trust, "
-                        + configMap.get (TestConstants.KEY_SP_COT)
+                        contains("Circle of trust, "
+                        + configMap.get(TestConstants.KEY_SP_COT)
                         + " is deleted.")) {
-                    log (Level.FINEST, "UnconfigureWSFed", "Couldn't delete " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Couldn't delete " +
                             "COT at SP side" +
                             spcotPage.getWebResponse().getContentAsString());
                     assert false;
                 } else {
-                    log (Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
+                    log(Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
                             "at SP side");                    
                 }
             }
-        } catch (Exception e) {
-            log (Level.SEVERE, "UnconfigureWSFed", e.getMessage());
+        } catch(Exception e) {
+            log(Level.SEVERE, "UnconfigureWSFed", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
             consoleLogout(webClient, spurl);
             consoleLogout(webClient, idpurl);
         }
-        exiting ("UnconfigureWSFed");
+        exiting("UnconfigureWSFed");
     }
 }
 

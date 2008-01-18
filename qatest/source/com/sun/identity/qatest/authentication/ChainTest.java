@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.3 2007-08-07 23:35:19 rmisra Exp $
+ * $Id: ChainTest.java,v 1.4 2008-01-18 00:42:50 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -231,7 +231,7 @@ public class ChainTest extends TestCommon{
             FederationManager am = new FederationManager(url);
             WebClient webClient = new WebClient();
             consoleLogin(webClient, url, adminUser, adminPassword);
-            HtmlPage page = (HtmlPage)am.deleteAuthConfigurations
+            HtmlPage page = (HtmlPage)am.deleteAuthCfgs
                     (webClient,realm,chainList);
             log(logLevel, "cleanup", "Page:" + page.asXml());
             am.deleteAuthInstances(webClient,realm,instanceNames);

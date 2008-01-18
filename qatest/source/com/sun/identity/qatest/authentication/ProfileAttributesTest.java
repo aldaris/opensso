@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.3 2007-08-25 02:22:03 sridharev Exp $
+ * $Id: ProfileAttributesTest.java,v 1.4 2008-01-18 00:42:50 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,7 +124,7 @@ public class ProfileAttributesTest extends TestCommon {
             String attributeVal = getProfileAttribute(locTestProfile);
             attributevalues.add(attributeVal);
             consoleLogin(webClient, url, adminUser, adminPassword);
-            fm.setServiceAttributes(webClient, realm, servicename, attributevalues);
+            fm.setSvcAttrs(webClient, realm, servicename, attributevalues);
             if (!userExists) {
                 createUser(testUser, testUserpass);
             }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.9 2007-11-20 23:31:18 rmisra Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.10 2008-01-18 00:42:52 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,11 +146,11 @@ public class ConfigureSAMLv2 extends TestCommon {
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
-            HtmlPage spcotPage = spfm.listCircleOfTrusts(spWebClient,
+            HtmlPage spcotPage = spfm.listCots(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM));
             if (!spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.createCircleOfTrust(spWebClient,
+                spcotPage = spfm.createCot(spWebClient,
                         configMap.get(TestConstants.KEY_SP_COT),
                         configMap.get(TestConstants.KEY_SP_REALM),
                         null, null);
@@ -209,14 +209,14 @@ public class ConfigureSAMLv2 extends TestCommon {
                     (String)configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
-            HtmlPage idpcotPage = idpfm.listCircleOfTrusts(idpWebClient,
+            HtmlPage idpcotPage = idpfm.listCots(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM));
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
                 log(logLevel, "configureSAMLv2", "COT exists at IDP side",
                         null);
             } else {
-                idpcotPage = idpfm.createCircleOfTrust(idpWebClient,
+                idpcotPage = idpfm.createCot(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM),
                         null, null);

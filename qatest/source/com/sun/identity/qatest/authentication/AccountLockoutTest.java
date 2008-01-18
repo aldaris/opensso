@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccountLockoutTest.java,v 1.2 2007-08-07 23:35:19 rmisra Exp $
+ * $Id: AccountLockoutTest.java,v 1.3 2008-01-18 00:42:50 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -144,7 +144,7 @@ public class AccountLockoutTest extends TestCommon {
             attributevalues.add("iplanet-am-auth-login-failure-count="
                     + lockoutattempts);
             consoleLogin(webClient, url, adminUser, adminPassword);
-            fm.setServiceAttributes(webClient, realm, servicename, attributevalues);
+            fm.setSvcAttrs(webClient, realm, servicename, attributevalues);
             if (!userExists) {
                 createUser(lockUser, lockUserpass);
                 createUser(warnUser, warnUserpass);
