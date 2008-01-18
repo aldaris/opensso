@@ -407,6 +407,9 @@ com/sun/identity/common/configuration/ConfigurationObserver.class
 com/sun/identity/common/configuration/ConfigurationListener.class
 com/sun/identity/common/configuration/ServerConfiguration.class
 com/sun/identity/common/configuration/ConfigurationBase.class
+com/sun/identity/common/configuration/ConfigurationException.class
+com/sun/identity/common/configuration/SiteConfiguration.class
+com/sun/identity/common/configuration/UnknownPropertyNameException.class
 
 com/sun/identity/protocol/LDAPSocketFactory.class
 com/sun/identity/protocol/SSLSocketFactoryManager.class
