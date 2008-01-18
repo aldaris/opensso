@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSummary.java,v 1.4 2008-01-18 06:10:31 jonnelson Exp $
+ * $Id: DefaultSummary.java,v 1.5 2008-01-18 22:15:34 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -143,8 +143,6 @@ public class DefaultSummary extends AjaxPage {
                 if (agentPassword.equals(agentConfirm)) {
                     if (!agentPassword.equals(password)) {
                         if (!AMSetupServlet.processRequest(request, response)) {
-                            defaultForm.setError(getLocalizedString("configuration.error"));
-                        } else {
                             // configuration failed.
                             // tbd: get the reason for the failure.
                             defaultForm.setError(getLocalizedString(
