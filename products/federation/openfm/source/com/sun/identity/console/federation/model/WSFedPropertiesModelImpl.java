@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModelImpl.java,v 1.6 2007-11-16 22:12:37 babysunil Exp $
+ * $Id: WSFedPropertiesModelImpl.java,v 1.7 2008-01-18 23:06:18 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,13 +35,14 @@ import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 import com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.UriNamedClaimTypesOfferedElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.ClaimType;
+import com.sun.identity.wsfederation.jaxb.wsfederation.DisplayNameType;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.TokenIssuerEndpointElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.TokenIssuerNameElement;
 import com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.wsfederation.jaxb.wsfederation.DescriptionType;
-
 import java.util.Set;
 import javax.xml.bind.JAXBException;
 import javax.servlet.http.HttpServletRequest;
@@ -221,43 +222,28 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     }
     
     /**
-     * Returns UriNamedClaimTypesOffered for the FederationElement passed.
+     * Returns display name of claim type.
      *
      * @param fedElem is the FederationElement Object.
-     * @return UriNamedClaimTypesOffered for the FederationElement passed.
+     * @return display name of claim type.
      */
-    public Map getClaimType(FederationElement fedElem) {
-        UriNamedClaimTypesOfferedElement claimTypes =
-            WSFederationMetaManager.getUriNamedClaimTypesOffered(fedElem);
-        DescriptionType desc = null;
+    public String getClaimType(FederationElement fedElem) {
         List claimList = null;
-        List stringList  = new ArrayList();
-        Map claimMap = new HashMap();
-        Set uri = new HashSet(2);
-        Set displayName = new HashSet(2);
-        Set description = new HashSet(2);
+        String displayName = null;
+        UriNamedClaimTypesOfferedElement UriNamedclaimTypes =
+                WSFederationMetaManager.getUriNamedClaimTypesOffered(fedElem);
         
         //assuming there is only 1 claim type object now
-        if(claimTypes != null) {
+        if(UriNamedclaimTypes != null) {
             int iClaim = 0;
             int arr = 0;
-            claimList = claimTypes.getClaimType();
+            claimList = UriNamedclaimTypes.getClaimType();
             for(iClaim = 0; iClaim < claimList.size(); iClaim += 1) {
-                ClaimType ct = (ClaimType)claimList.get(iClaim);
-                uri.add(ct.getUri());
-                displayName.add(ct.getDisplayName().getValue());
-                desc = ct.getDescription();
-                if (desc != null) {
-                    description.add(desc.getValue());
-                }
+                ClaimType claimType = (ClaimType)claimList.get(iClaim);
+                displayName = claimType.getDisplayName().getValue();
             }
-            
-            // TBD-- display format need to be decided
-            claimMap.put("claimtypeDisplayUri", uri);
-            claimMap.put("claimtypeDisplayName", displayName);
-            claimMap.put("claimtypeDisplayDescr", desc);
         }
-        return claimMap;
+        return displayName;
     }
     
     /**
@@ -380,7 +366,9 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             FederationConfigElement fed =
                 WSFederationMetaManager.getEntityConfig(realm,fedId);
             if (fed == null) {
-                createExtendedObject(realm, fedId, location, SERVICE_PROVIDER);
+                SPEX_DATA_MAP.put(TF_DISPNAME, Collections.EMPTY_SET);
+                createExtendedObject(
+                    realm, fedId, location, SERVICE_PROVIDER, SPEX_DATA_MAP);
                 fed = WSFederationMetaManager.getEntityConfig(realm,fedId);
             }
             SPSSOConfigElement  spsso = getspsso(fed);
@@ -419,7 +407,9 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             FederationConfigElement fed =
                     WSFederationMetaManager.getEntityConfig(realm,fedId);
             if (fed == null) {
-                createExtendedObject(realm, fedId, location, IDENTITY_PROVIDER);
+                IDPEX_DATA_MAP.put(TF_DISPNAME, Collections.EMPTY_SET);
+                createExtendedObject(
+                   realm, fedId, location, IDENTITY_PROVIDER, IDPEX_DATA_MAP);
                 fed = WSFederationMetaManager.getEntityConfig(realm,fedId);
             }
             IDPSSOConfigElement  idpsso = getidpsso(fed);
@@ -444,16 +434,69 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     /**
      * Saves the standard attribute values for the IDP.
      *
-     * @param fedElem is standard metadata object.
-     * @param idpStdValues Map of standard attribute values.
+     * @param fedElem is standard metadata object
+     * @param idpStdValues contain standard attribute values of idp.
+     * @param realm to which the entity belongs.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setIDPSTDAttributeValues(
         FederationElement fedElem,
-        Map idpStdValues
+        Map idpStdValues,
+        String realm
     ) throws AMConsoleException {
-        
-        //TBD once backend is completed
+        List claimList = null;
+        ClaimType claimType = null;
+        DisplayNameType displayName = null;
+        String value = null;
+        UriNamedClaimTypesOfferedElement UriNamedclaimTypes =
+                WSFederationMetaManager.getUriNamedClaimTypesOffered(fedElem);
+        if(UriNamedclaimTypes != null) {
+            int iClaim = 0;
+            claimList = UriNamedclaimTypes.getClaimType();
+            for(iClaim = 0; iClaim < claimList.size(); iClaim += 1) {
+                claimType = (ClaimType)claimList.get(iClaim);
+                displayName = claimType.getDisplayName();
+            }
+        }
+        HashSet set = (HashSet) idpStdValues.get(
+                WSFedPropertiesModel.TFCLAIM_TYPES);
+        Iterator i = set.iterator();
+        while ((i !=  null)&& (i.hasNext())) {
+            value = (String) i.next();
+        }
+        if ((value.toString()).equals(
+                WSFederationConstants.NAMED_CLAIM_DISPLAY_NAMES[
+                    WSFederationConstants.NAMED_CLAIM_COMMONNAME])) {
+            displayName.setValue(
+                    WSFederationConstants.NAMED_CLAIM_DISPLAY_NAMES[
+            WSFederationConstants.NAMED_CLAIM_COMMONNAME]);
+            claimType.setUri(WSFederationConstants.NAMED_CLAIM_TYPES[
+            WSFederationConstants.NAMED_CLAIM_COMMONNAME]);
+        } else if (value.toString().equals(
+                WSFederationConstants.NAMED_CLAIM_DISPLAY_NAMES[
+                    WSFederationConstants.NAMED_CLAIM_EMAILADDRESS])) {
+            displayName.setValue(
+                WSFederationConstants.NAMED_CLAIM_DISPLAY_NAMES[
+                    WSFederationConstants.NAMED_CLAIM_EMAILADDRESS]);
+            claimType.setUri(
+                    WSFederationConstants.NAMED_CLAIM_TYPES[
+            WSFederationConstants.NAMED_CLAIM_EMAILADDRESS]);
+        } else if (value.toString().equals(
+                WSFederationConstants.NAMED_CLAIM_DISPLAY_NAMES[
+            WSFederationConstants.NAMED_CLAIM_UPN])) {
+            displayName.setValue(
+                WSFederationConstants.NAMED_CLAIM_DISPLAY_NAMES[
+            WSFederationConstants.NAMED_CLAIM_UPN]);
+            claimType.setUri(WSFederationConstants.NAMED_CLAIM_TYPES[
+            WSFederationConstants.NAMED_CLAIM_UPN]);
+        }
+        try {
+            WSFederationMetaManager.setFederation(realm, fedElem);
+        } catch (WSFederationMetaException e) {
+            debug.warning
+                    ("WSFedPropertiesModelImpl.setIDPSTDAttributeValues", e);
+            throw new AMConsoleException(e.getMessage());
+        }
     }
     
     /**
@@ -529,6 +572,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
      * @param fedId is the entity id.
      * @param location is either hosted or remote
      * @param role is SP, IDP or SP/IDP.
+     * @param keys which contain all extended attribute keys.
      * @throws WSFederationMetaException, JAXBException,
      *     AMConsoleException if saving of attribute value fails.
      */
@@ -536,7 +580,8 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         String realm,
         String fedId,
         String location,
-        String role
+        String role,
+        Map keys
     ) throws WSFederationMetaException, JAXBException, AMConsoleException {
         try {
             ObjectFactory objFactory = new ObjectFactory();
@@ -554,7 +599,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             FederationConfigElement eConfig =
                 WSFederationMetaManager.getEntityConfig(realm, fedId);
             if (eConfig == null) {
-                BaseConfigType bctype = null;
+                BaseConfigType bctype = null;                
                 FederationConfigElement ele =
                     objFactory.createFederationConfigElement();
                 ele.setFederationID(fedId);
@@ -570,22 +615,22 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
                     BaseConfigType bctype_idp = null;
                     BaseConfigType bctype_sp = null;
                     bctype_idp = objFactory.createIDPSSOConfigElement();
+                    bctype_idp = createAttributeElement(keys, bctype_idp);
                     bctype_sp = objFactory.createSPSSOConfigElement();
+                    bctype_sp = createAttributeElement(keys, bctype_sp);
                     ll.add(bctype_idp);
                     ll.add(bctype_sp);
                 } else if (role.equals(IDENTITY_PROVIDER)) {
                     bctype = objFactory.createIDPSSOConfigElement();
-                    // bctype.getAttribute().add(atype);
+                    //bctype.getAttribute().add(atype);
+                    bctype = createAttributeElement(keys, bctype);
                     ll.add(bctype);
                 } else if (role.equals(SERVICE_PROVIDER)) {
-                    bctype = objFactory.createSPSSOConfigElement();
-                    
-                    //bctype.getAttribute().add(atype);
+                    bctype = objFactory.createSPSSOConfigElement();                    
+                    bctype = createAttributeElement(keys, bctype);
                     ll.add(bctype);
                 }
                 WSFederationMetaManager.setEntityConfig(realm,ele);
-                FederationConfigElement jdfg =
-                        WSFederationMetaManager.getEntityConfig(realm,fedId);
             }
         } catch (JAXBException e) {
             debug.warning("WSFedPropertiesModelImpl.createExtendedObject", e);
@@ -594,6 +639,34 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             debug.warning("WSFedPropertiesModelImpl.createExtendedObject", e);
             throw new AMConsoleException(getErrorString(e));
         }
+    }
+    
+    /**
+     * Returns BaseConfig object after updating with Attribute Elements.
+     * @param values contain the keys for extended metadata attributes.
+     * @param bconfig is the BaseConfigType object passed.
+     *
+     * @return BaseConfig object after updating with Attribute Elements.
+     */
+    private BaseConfigType createAttributeElement(
+            Map values,
+            BaseConfigType bconfig
+            )throws AMConsoleException {
+        try {
+            ObjectFactory objFactory = new ObjectFactory();
+            for (Iterator iter=values.keySet().iterator();
+            iter.hasNext();) {
+                AttributeElement avp = objFactory.createAttributeElement();
+                String key = (String)iter.next();
+                avp.setName(key);
+                bconfig.getAttribute().add(avp);
+            }
+        } catch (JAXBException e) {
+            debug.warning
+                    ("WSFedPropertiesModelImpl.createAttributeElement", e);
+            throw new AMConsoleException(e.getMessage());
+        }
+        return bconfig;
     }
     
     /**

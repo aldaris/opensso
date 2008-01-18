@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWSFedSPViewRemote.xml,v 1.1 2007-08-28 19:04:28 babysunil Exp $
+   $Id: propertyWSFedSPViewRemote.xml,v 1.2 2008-01-18 23:00:36 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -64,17 +64,6 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property> 
-        <property>
-            <label name="lblSPAccountMapper"
-                 defaultValue="wsfedsp.attribute.label.spAccountMapper"
-                     labelFor="spAccountMapper" />
-            <cc name="spAccountMapper" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
         </property>
         <property>
             <label name="lblSPAttributeMapper"
@@ -85,44 +74,6 @@
                 <attribute name="size" value="75" />
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>
-        <property>
-            <label name="lblSPAuthncontextMapper"
-                 defaultValue="wsfedsp.attribute.label.spAuthncontextMapper"
-                    labelFor="spAuthncontextMapper" />
-            <cc name="spAuthncontextMapper" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>
-        <property>
-            <label name="lblSPAuthncontextClassrefMapping"
-                 defaultValue=
-                    "wsfedsp.attribute.label.spAuthncontextClassrefMapping" 
-                    labelFor="spAuthncontextClassrefMapping" />
-            <cc name="spAuthncontextClassrefMapping" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>
-        <property>
-            <label name="lblSPAuthncontextComparisonType"
-                 defaultValue=
-                    "wsfedsp.attribute.label.spAuthncontextComparisonType"
-                    labelFor="spAuthncontextComparisonType" />
-            <cc name="spAuthncontextComparisonType" 
-                tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
-                <attribute name="onChange" value="switchView1('actionMenu')" />
-                <option label="wsfed.actions.label" value="ignore" />
-                <option label="wsfed.sp.label1" value="exact" />
-                <option label="wsfed.sp.label2" value="minimum" />
-                <option label="wsfed.sp.label3" value="maximum" />
-                <option label="wsfed.sp.label4" value="better" />
             </cc>
         </property>
         <property>

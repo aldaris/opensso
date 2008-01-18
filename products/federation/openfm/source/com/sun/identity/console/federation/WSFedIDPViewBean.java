@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedIDPViewBean.java,v 1.4 2007-08-28 19:05:52 babysunil Exp $
+ * $Id: WSFedIDPViewBean.java,v 1.5 2008-01-18 23:05:28 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.federation.model.WSFedPropertiesModel;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,6 +44,7 @@ import java.util.HashSet;
 public class WSFedIDPViewBean extends WSFedGeneralBase {
     public static final String DEFAULT_DISPLAY_URL =
             "/console/federation/WSFedIDP.jsp";
+    private static final String strUPN = "User Principal Name";
     
     public WSFedIDPViewBean() {
         super("WSFedIDP");
@@ -58,11 +60,9 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
         //sets the extended meta data values for the Idp
         ps.setAttributeValues(getExtendedValues(), model);
         
-        //TBD -once api is ready
-        //sets the standard meta data values for the Idp
-        //ps.setAttributeValues(getStandardValues(), model);
-        
-        setDisplayFieldValue(WSFedPropertiesModel.TFCLAIM_TYPES, "UPN");
+        //sets the claimtype display name
+        setDisplayFieldValue(WSFedPropertiesModel.TFCLAIM_TYPES, 
+                getStandardValues());       
     }
     
     protected void createPropertyModel() {
@@ -105,7 +105,7 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
             //TBD--claimtype saving once backend api is complete
             FederationElement fedElem =
                     model.getEntityDesc(realm, entityName);
-            //model.setIDPSTDAttributeValues(fedElem, idpStdValues);
+            model.setIDPSTDAttributeValues(fedElem, idpStdValues, realm);
             
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                     "wsfed.idp.property.updated");
@@ -142,10 +142,21 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
         return tmpMap;
     }
     
-    private Map getStandardValues() {
-        Map tmpMap = new HashMap(10);
+    private String getStandardValues() {
+        String claimName = null;
         WSFedPropertiesModel model = (WSFedPropertiesModel)getModel();
-        //TBD - once backend api gets ready
-        return tmpMap;
+        try {
+            FederationElement fedElem =
+                        model.getEntityDesc(realm, entityName);
+            claimName = model.getClaimType(fedElem);
+            if (claimName.equals(strUPN)) {
+                claimName = WSFederationConstants.NAMED_CLAIM_DISPLAY_NAMES[
+                    WSFederationConstants.NAMED_CLAIM_UPN];                
+            }
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+        }
+        return claimName;
     }
 }

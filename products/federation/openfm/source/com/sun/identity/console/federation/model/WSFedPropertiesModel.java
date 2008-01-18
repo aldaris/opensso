@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModel.java,v 1.5 2007-10-26 00:08:11 jonnelson Exp $
+ * $Id: WSFedPropertiesModel.java,v 1.6 2008-01-18 23:06:04 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -213,12 +213,12 @@ public interface WSFedPropertiesModel extends EntityModel {
     String getTokenEndpoint(FederationElement fedElem);
     
     /**
-     * Returns UriNamedClaimTypesOffered for the FederationElement passed.
+     * Returns display name of claim type.
      *
      * @param fedElem is the FederationElement Object.
-     * @return UriNamedClaimTypesOffered for the FederationElement passed.
+     * @return display name of claim type.
      */
-    Map getClaimType(FederationElement fedElem);
+    String getClaimType(FederationElement fedElem);
     
     /**
      * Returns Signing Certificate for the FederationElement passed.
@@ -263,12 +263,16 @@ public interface WSFedPropertiesModel extends EntityModel {
     /**
      * Saves the standard attribute values for the IDP.
      *
-     * @param fedElem is standard metadata object
-     * @param spStdValues contain standard attribute values.
+     * @param fedElem is standard metadata object.
+     * @param idpStdValues contain standard attribute values of idp.
+     * @param realm to which the entity belongs.
      * @throws AMConsoleException if saving of attribute value fails.
      */
-    void setIDPSTDAttributeValues(FederationElement fedElem, Map spStdValues)
-        throws AMConsoleException;
+    void setIDPSTDAttributeValues(
+        FederationElement fedElem,
+        Map idpStdValues,
+        String realm
+    ) throws AMConsoleException;
     
     /**
      * Saves the standard attribute values from the General page.

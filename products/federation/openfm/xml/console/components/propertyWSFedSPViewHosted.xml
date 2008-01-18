@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWSFedSPViewHosted.xml,v 1.1 2007-08-28 19:04:41 babysunil Exp $
+   $Id: propertyWSFedSPViewHosted.xml,v 1.2 2008-01-18 22:59:54 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -88,6 +88,24 @@
             </cc>
         </property>
         <property>
+            <label name="lblSPAttributeMap"
+                 defaultValue="wsfedsp.attribute.label.spattributeMap"
+                    labelFor="attributeMap" />
+            <ccgroup>
+                <property>
+                    <cc name="attributeMap" 
+                        tagclass=
+                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                        <attribute name="name" value="list" />
+                        <attribute name="listboxLabel"
+                                   value="label.current.value" />
+                        <attribute name="textboxLabel"
+                                   value="label.new.value" />
+                    </cc>                    
+                </property>
+            </ccgroup>
+        </property>
+        <property>
             <label name="lblSPAuthncontextMapper"
                  defaultValue="wsfedsp.attribute.label.spAuthncontextMapper"
                     labelFor="spAuthncontextMapper" />
@@ -124,24 +142,6 @@
                 <option label="wsfed.sp.label3" value="maximum" />
                 <option label="wsfed.sp.label4" value="better" />
             </cc>
-        </property>
-        <property>
-            <label name="lblSPAttributeMap"
-                 defaultValue="wsfedsp.attribute.label.spattributeMap"
-                    labelFor="attributeMap" />
-            <ccgroup>
-                <property>
-                    <cc name="attributeMap" 
-                        tagclass=
-                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
-                        <attribute name="name" value="list" />
-                        <attribute name="listboxLabel"
-                                   value="label.current.value" />
-                        <attribute name="textboxLabel"
-                                   value="label.new.value" />
-                    </cc>                    
-                </property>
-            </ccgroup>
         </property>
         <property>
             <label name="lblSPDefaultRelayState"

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWSFedIDPViewHosted.xml,v 1.1 2007-08-28 19:03:44 babysunil Exp $
+   $Id: propertyWSFedIDPViewHosted.xml,v 1.2 2008-01-18 23:01:34 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,7 +49,7 @@
                 <attribute name="onChange" value="switchView1('actionMenu')" />
                 <option label="wsfed.actions.label" value="ignore" />
                 <option label="wsfed.idp.label1" value="UPN" />
-                <option label="wsfed.idp.label2" value="Email" />
+                <option label="wsfed.idp.label2" value="Email Address" />
                 <option label="wsfed.idp.label3" value="Common Name" />
              </cc>
         </property>
@@ -116,8 +116,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>
-        
+        </property>        
         <property>
             <label name="lblIDPAttributeMap"
                defaultValue="wsfedidp.attribute.label.idpattributeMap"
