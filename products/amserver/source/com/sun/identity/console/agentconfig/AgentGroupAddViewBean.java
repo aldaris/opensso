@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentGroupAddViewBean.java,v 1.2 2008-01-03 18:14:20 veiming Exp $
+ * $Id: AgentGroupAddViewBean.java,v 1.3 2008-01-18 17:45:38 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,11 +122,11 @@ public class AgentGroupAddViewBean
         String xml;
 
         if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE)) {
-            xml = "com/sun/identity/console/propertyAgentAddJ2EE.xml";
+            xml = "com/sun/identity/console/propertyAgentGroupAddJ2EE.xml";
         } else if (agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)) {
-            xml = "com/sun/identity/console/propertyAgentAddWeb.xml";
+            xml = "com/sun/identity/console/propertyAgentGroupAddWeb.xml";
         } else{
-            xml = "com/sun/identity/console/propertyAgentAdd.xml";
+            xml = "com/sun/identity/console/propertyAgentGroupAdd.xml";
         }
 
         propertySheetModel = new AMPropertySheetModel(
@@ -160,11 +160,8 @@ public class AgentGroupAddViewBean
                 String serverURL = (String)propertySheetModel.getValue(
                     TF_SERVER_URL);
                 serverURL = serverURL.trim();
-                String agentURL = (String)propertySheetModel.getValue(
-                    TF_AGENT_URL);
-                agentURL = agentURL.trim();
                 model.createAgentGroup(agentGroupName, agentType, serverURL,
-                    agentURL);
+                    null);
             } else {
                 model.createAgentGroup(agentGroupName, agentType);
             }

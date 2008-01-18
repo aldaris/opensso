@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.11 2008-01-17 21:22:10 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.12 2008-01-18 17:45:37 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -136,12 +136,13 @@ public class AgentConfiguration {
             throw new ConfigurationException(
                 "create.agent.invalid.server.url", null);
         }
-        if ((agentURL == null) || (agentURL.trim().length() == 0)) {
-            throw new ConfigurationException(
-                "create.agent.invalid.agent.url", null);
+
+        URL urlAgent = null;
+        if ((agentURL != null) && (agentURL.trim().length() > 0)) {
+            urlAgent = new URL(agentURL);
         }
         createAgentGroup(ssoToken, "/", agentGroupName, agentType, attrValues,
-            new URL(serverURL), new URL(agentURL));
+            new URL(serverURL), urlAgent);
     }
 
     /**
