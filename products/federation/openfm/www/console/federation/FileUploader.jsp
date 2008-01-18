@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: FileUploader.jsp,v 1.1 2008-01-17 06:36:26 veiming Exp $
+   $Id: FileUploader.jsp,v 1.2 2008-01-18 22:27:53 veiming Exp $
    
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -63,9 +63,10 @@
                     labelName = fldName.substring(idx+1);
                     fldName = fldName.substring(0, idx);
                 }
+                var idx = labelName.indexOf('|');
                 if (idx != -1) {
-                    methodName = fldName.substring(idx+1);
-                    fldName = fldName.substring(0, idx);
+                    methodName = labelName.substring(idx+1);
+                    labelName = labelName.substring(0, idx);
                 }
 	        var parent = opener.document.forms[0];
 	        var field = parent.elements[parent.name + '.' + fldName];
