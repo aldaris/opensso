@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.25 2008-01-18 19:50:09 madan_ranganath Exp $
+   $Id: AgentService.xml,v 1.26 2008-01-18 21:06:01 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1341,6 +1341,16 @@
                            <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema> 
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.cdsso.domain"
+                        type="list"
+                        syntax="string"
+                        validator="ListValueValidator"
+                        i18nKey="a170">
+                        <DefaultValues>
+                            <Value>[0]=</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.logout.application.handler"
                         type="list"
