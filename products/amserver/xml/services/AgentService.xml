@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.24 2008-01-16 23:18:22 madan_ranganath Exp $
+   $Id: AgentService.xml,v 1.25 2008-01-18 19:50:09 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -621,7 +621,7 @@
                             <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
-                            <Value>true</Value>
+                            <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
