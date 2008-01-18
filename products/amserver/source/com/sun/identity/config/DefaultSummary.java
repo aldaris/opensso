@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSummary.java,v 1.3 2007-12-20 23:27:00 jonnelson Exp $
+ * $Id: DefaultSummary.java,v 1.4 2008-01-18 06:10:31 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,8 @@ public class DefaultSummary extends AjaxPage {
         HttpServletRequest request = getContext().getRequest();
         
         defaultForm.setColumns(2);
-        FieldSet fieldSet = new FieldSet("fieldSet", "Configuration Default Values");
+        FieldSet fieldSet = new FieldSet(
+            "fieldSet", "Configuration Default Values");
         defaultForm.add(fieldSet);
         fieldSet.setShowBorder(true);              
         
@@ -67,19 +68,15 @@ public class DefaultSummary extends AjaxPage {
         defaultForm.add(new HiddenField("username", "amAdmin" ) );        
         fieldSet.add(new PasswordField(
             SetupConstants.CONFIG_VAR_ADMIN_PWD, 
-            //getLocalizedString("configurator.password"), true ), 2);
             "Administrator Password", true), 2);
         fieldSet.add(new PasswordField(
             SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD, 
-            //getLocalizedString("configurator.confirmadminpasswd"), true ), 2);
             "Retype Administrator Password", true ), 2);
         fieldSet.add(new PasswordField(
             SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, 
-            //getLocalizedString("configurator.urlaccessagent.password"), true ), 2);
             "Default Agent Password", true ), 2);
         fieldSet.add(new PasswordField(
             SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM, 
-            //getLocalizedString("configurator.urlaccessagent.confirmpassword"), true ), 2);
             "Retype Default Agent Password", true ), 2);
                 
         defaultForm.add(new HiddenField(
@@ -114,7 +111,8 @@ public class DefaultSummary extends AjaxPage {
         defaultForm.add(new HiddenField(SetupConstants.CONFIG_VAR_DATA_STORE,
             SetupConstants.SMS_EMBED_DATASTORE));                       
                 
-        defaultForm.add(new HiddenField("PLATFORM_LOCALE", "en_US"));
+        defaultForm.add(new HiddenField(SetupConstants.CONFIG_VAR_PLATFORM_LOCALE, 
+            SetupConstants.DEFAULT_PLATFORM_LOCALE));
         
         Submit submit = new Submit("save", getMessage("save"), this, "onSubmit" );
         submit.setAttribute( "onclick", "submitDefaultSummaryForm(); return false;");
@@ -122,58 +120,6 @@ public class DefaultSummary extends AjaxPage {
         defaultForm.add(submit);
     }
 
-    private String getBaseDir() {
-        String basedir;
-        String configDir = AMSetupServlet.getPresetConfigDir();
-        if ((configDir == null) || (configDir.length() == 0)) {
-            basedir = System.getProperty("user.home");
-            if (File.separatorChar == '\\') {
-                basedir = basedir.replace('\\', '/');
-            }
-        } else {            
-            basedir = configDir;
-        }    
-        
-        return basedir;
-    }
-    
-    protected String getCookieDomain() {
-        if (cookieDomain != null) {
-            return cookieDomain;
-        }
-           
-        String subDomain;
-        String topLevelDomain;
-        String hostname = getHostName();
-        
-        int idx1 = hostname.lastIndexOf(".");
-        if ((idx1 != -1) && (idx1 != (hostname.length() -1))) {
-            topLevelDomain = hostname.substring(idx1+1);
-            int idx2 = hostname.lastIndexOf(".", idx1-1);
-            if ((idx2 != -1) && (idx2 != (idx1 -1))) {
-                subDomain = hostname.substring(idx2+1, idx1);
-                try {
-                    Integer.parseInt(topLevelDomain);  
-                } catch (NumberFormatException e) {
-                    try {
-                        Integer.parseInt(subDomain);  
-                    } catch (NumberFormatException e1) {
-                        cookieDomain = "." + subDomain + "." + topLevelDomain;
-                    }
-                }
-            }
-        }
-        
-        return cookieDomain;
-    }
-    
-    protected String getHostName() { 
-        if (hostName == null) {
-            hostName = getContext().getRequest().getServerName();
-        }
-        return hostName;
-    }
-    
     public boolean onSubmit() {            
         HttpServletResponse response = getContext().getResponse();
         HttpServletRequest request = getContext().getRequest();

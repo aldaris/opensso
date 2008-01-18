@@ -1,0 +1,97 @@
+<h1>Step 7: Summary</h1>
+<p>Please take a moment to confirm that your settings are correct.</p>
+
+
+<div class="summaryPanel">
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox">Configuration Store Details</div>
+    <div class="bodyBox">
+
+        #if ($configStore)
+        <ol>
+            <li>
+                <label>Host:</label>
+                <span>$configStore.hostName</span>
+            </li>
+            <li>
+                <label>Port:</label>
+                <span>$configStore.hostPort</span>
+            </li>
+            <li>
+                <label>Root Suffix:</label>
+                <span>$configStore.baseDN</span>
+            </li>
+            <li>
+                <label>User Name:</label>
+                <span>$configStore.username</span>
+            </li>
+            <li>
+                <label>Credentials:</label>
+                <span>Provided</span>
+            </li>
+            <li>
+                <label>Directory:</label>
+                <span>$ConfigBaseDir</span>
+            </li>
+        </ol>
+	#else
+        <span>Embeded Configuration</span>
+        #end
+    </div>
+	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
+</div>
+
+<div class="summaryPanel">
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox">User Store Details</div>
+    <div class="bodyBox">
+    #if ( $userStore )
+        <ol>
+            <li>
+                <label>Host:</label>
+                <span>$userStore.hostName</span>
+            </li>
+            <li>
+                <label>Port:</label>
+                <span>$userStore.hostPort</span>
+            </li>
+            <li>
+                <label>Base DN:</label>
+                <span>$userStore.baseDN</span>
+            </li>
+            <li>
+                <label>Credentials:</label>
+                <span>Provided</span>
+            </li>
+        </ol>
+        #else
+        <span>Default Configuration</span>
+        #end
+    </div>
+	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
+</div>
+
+<div class="summaryPanel" style="margin-right:0;width:140px">
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox">Load Balancing</div>
+    <div id="loadBalancingSummary" class="bodyBox">
+        #if ( $newInstanceUrl )
+        <span>Previously configured</span>
+        #elseif ( $loadBalancerHost )
+        <ol>
+            <li>
+                <label>Host:</label>
+                <span>$loadBalancerHost</span>
+            </li>
+            <li>
+                <label>Port:</label>
+                <span>$loadBalancerPort</span>
+            </li>
+        </ol>
+        #else
+        <span>This instance will not be deployed behind a load balancer.</span>
+        #end
+    </div>
+	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
+</div>
+

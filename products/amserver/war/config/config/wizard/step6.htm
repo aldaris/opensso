@@ -1,137 +1,90 @@
-<style type="text/css">
-    .summaryPanel {
-        float: left;
-        margin-right: 10px;
+<script type="text/javascript">
+
+    var field = "";
+
+    function validateServerURL() {
+	field = "serverURL";
+        validate();
     }
 
-    .summaryPanel .bd {
-        height: 100px;
+    function validateLocale() {
+	field = "platformLocale";
+        validate();
+    } 
+
+    function validateConfigDir() {
+	field = "configDirectory";
+        validate();
+    } 
+
+    function validateEncryptionKey() {
+	field = "encryptionKey";
+        validate();
+    } 
+
+    function validateCookieDomain() {
+	field = "cookieDomain";
+        validate();
+    } 
+
+    function validate() {
+	var callUrl = "$context$path?actionLink=validateInput";
+	var key = "&key=" + $(field);
+        var value = "&value=" + $(field).value;
+        AjaxUtils.call(callUrl+key+value, fieldValidated);
+    }
+    function fieldValidated(response) {
+        if (response.responseText == "true") {
+            $(field + 'Status').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
+		  '<small>ok</small>';
+ 		$('nextTabButton').disabled = false;
+        } else {
+            $(field + 'Status').innerHTML = response.responseText;
+        }
+	field = "";
     }
 
-    .summaryPanel ol {
-        padding: 0;
-        margin: 0;
-        font-size: smaller;
-    }
+</script>
 
-    .summaryPanel li {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
+<h1>Step 6: Server Settings</h1>
+<p>Confirm the following settings to use for the server.</p>
 
-    .summaryPanel label {
-        float: left;
-        margin-right: 0.5em;
-        width: 55px;
-    }
-    #loadBalancingSummary label {
-        width: 25px;    
-    }
-</style>
-          
-<h1>$page.getLocalizedString("configuration.wizard.step6.title")</h1>
-<p>$page.getLocalizedString("configuration.wizard.step6.label")</p>
+<div id="serverSettingsDiv" style="width:570px">
+    <p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox" style="margin-left:10px">Server Settings</div>
+    <div class="bodyBox" style="height:220px;margin-left:10px">	
+        <fieldset id="serverFieldSet" style="padding:0px; margin-top:-100px">
 
-<div class="summaryPanel" style="width:120px">
-    <div class="hd">$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step2.title")</div>
-    <div class="bd">
-        <span>
-            #if ( $newInstanceUrl )
-            $page.getLocalizedString("configuration.wizard.step6.summaryPanel.step2.existingInstance") '$newInstanceUrl'
-            #else
-            $page.getLocalizedString("configuration.wizard.step6.summaryPanel.step2.newInstance")
-            #end
-        </span>
+            <ol>
+                <li>
+                    <label for="serverURL">Server URL<em>*</em></label>
+                    <input id="serverURL" name="serverURL" type="text" class="text" style="width:150px" value="$serverURL" onkeyup="APP.callDelayed(this, validateServerURL)"/>
+                    <span id="serverURLStatus"></span>
+                </li>
+                <li>
+		    <label for="cookieDomain">Cookie Domain<em>*</em></label>
+                    <input id="cookieDomain" name="cookieDomain" type="text" class="text" style="width:150px" value="$cookieDomain" onkeyup="APP.callDelayed(this, validateCookieDomain)"/>
+                    <span id="cookieDomainStatus"></span>
+                </li>
+                <li>
+		    <label for="platformLocale">Platform Locale<em>*</em></label>
+                    <input id="platformLocale" name="platformLocale" type="text" class="text" style="width:150px" value="$platformLocale" onkeyup="APP.callDelayed(this, validateLocale)"/>
+		    <span id="platformLocaleStatus"></span>
+                </li>
+                <li>
+		    <label for="encryptionKey">Encryption Key<em>*</em></label>
+                    <input id="encryptionKey" name="encryptionKey" type="text" class="text" style="width:200px" value="$encryptionKey" onkeyup="APP.callDelayed(this, validateEncryptionKey)"/>
+                    <span id="encryptionKeyStatus"></span>
+                </li>
+                <li>
+		    <label for="configDirectory">Configuration Directory<em>*</em></label>
+                    <input id="configDirectory" name="configDirectory" type="text" class="text" style="width:150px" value="$configDirectory" onkeyup="APP.callDelayed(this, validateConfigDir)"/>
+                    <span id="configDirectoryStatus"></span>
+                </li>
+            </ol>
+        </fieldset>
     </div>
+    <div style="margin-left:10px"><b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b></div>
 </div>
 
-<div class="summaryPanel">
-    <div class="hd">$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.title")</div>
-    <div class="bd">
-        #if ( $newInstanceUrl )
-        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom")</span>
-        #elseif ( $configStore )
-        <ol>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.name"):</label>
-                <span>$configStore.name</span>
-            </li>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.host"):</label>
-                <span>$configStore.hostName</span>
-            </li>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.port"):</label>
-                <span>$configStore.hostPort</span>
-            </li>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.baseDN"):</label>
-                <span>$configStore.baseDN</span>
-            </li>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.credentials"):</label>
-                <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.custom.provided")</span>
-            </li>
-        </ol>
-        #else
-        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step3.default")</span>
-        #end
-    </div>
-</div>
-
-<div class="summaryPanel">
-    <div class="hd">$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.title")</div>
-    <div class="bd">
-        #if ( $newInstanceUrl )
-        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom")</span>
-        #elseif ( $userStore )
-        <ol>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.name"):</label>
-                <span>$userStore.name</span>
-            </li>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.host"):</label>
-                <span>$userStore.hostName</span>
-            </li>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.port"):</label>
-                <span>$userStore.hostPort</span>
-            </li>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.baseDN"):</label>
-                <span>$userStore.baseDN</span>
-            </li>
-            <li>
-                <label>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.credentials"):</label>
-                <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.custom.provided")</span>
-            </li>
-        </ol>
-        #else
-        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step4.default")</span>
-        #end
-    </div>
-</div>
-
-<div class="summaryPanel" style="margin-right:0;width:140px">
-    <div class="hd">$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step5.title")</div>
-    <div id="loadBalancingSummary" class="bd">
-        #if ( $newInstanceUrl )
-        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step5.custom")</span>
-        #elseif ( $loadBalancerHost )
-        <ol>
-            <li>
-                <label>Host:</label>
-                <span>$loadBalancerHost</span>
-            </li>
-            <li>
-                <label>Port:</label>
-                <span>$loadBalancerPort</span>
-            </li>
-        </ol>
-        #else
-        <span>$page.getLocalizedString("configuration.wizard.step6.summaryPanel.step5.noBalancing")</span>
-        #end
-    </div>
-</div>

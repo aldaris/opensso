@@ -1,8 +1,5 @@
 <script type="text/javascript">
 
-    function ${type}StoreNameValidated( response ) {
-        storeNameValidated('$type', response);
-    }
     function ${type}StoreServerValidated( response ) {
         storeServerValidated( '$type', response );
     }
@@ -13,9 +10,6 @@
         storeLoginIdValidated( '$type', response );
     }
 
-    function validate${type}StoreName() {
-        validateStoreName('$type');
-    }
     function validate${type}StoreServer() {
         validateStoreServer('$type');
     }
@@ -26,96 +20,85 @@
         validateStoreLoginId('$type');
     }
 
-    function step${pageNum}Init() {
+
+    function validateRootSuffix() {
+        var callUrl = "$context$path?actionLink=validateRootSuffix&rootSuffix=" + $('rootSuffix').value
+        AjaxUtils.call(callUrl, rootSuffixValidated);
+    }
+    function rootSuffixValidated(response) {
+        if ( response.responseText == "true" ) {
+            $('rootSuffixStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' + '<small>ok</small>';
+ 		$('nextTabButton').disabled = false;
+        } else {
+            $('rootSuffixStatus').innerHTML = response.responseText;
+        }
+    }
+
+    function initialize() {
         if ( $usingCustomStore ) {
             enableCustomConfig('$type');
             validateStore('$type');
         }
     }
-    YAHOO.util.Event.onDOMReady(step${pageNum}Init);
+
+
+    YAHOO.util.Event.onDOMReady(initialize);
 
 </script>
 
-<style type="text/css">
-    #configStoreFieldset label {
-        width: 12em;
-    }
-    #userStoreFieldset label {
-        width: 12em;
-    }
-    .beginChunk {
-        padding-top: 1em;
-    }
-    .endChunk {
-        border-bottom: 1px solid #4993dd;
-        padding-bottom: 1em;
-    }
-    .singleChunk {
-        padding-top: 1em;
-        padding-bottom: 1em;
-        border-bottom: 1px solid #4993dd;
-    }
-    #allfields{
-		 text-align:right;
-    }
-</style>
+<h1>Step 3: Configuration Store Settings<img class="pointer" src="$context/assets/images/message.gif"/></h1>
+<p>Select the configuration option you would like to use. Choose external to use an existing data store.</p>
 
-<h1>$typeTitle $page.getLocalizedString("configuration.wizard.step3.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
-
-<p>$page.getLocalizedString("configuration.wizard.step3.instructionsLabel")</p>
-
-<input type="radio" id="${type}StoreDefault" name="${type}StoreCustom" style="margin-left:1em" value="false" #if ( !$usingCustomStore ) checked="checked" #{end} onclick="disableCustomConfig('$type');"/>
-<span>$page.getLocalizedString("configuration.wizard.step3.defaultConfig")</span><br/>
-<input type="radio" id="${type}StoreCustom" name="${type}StoreCustom" style="margin-left:1em" value="true" #if ( $usingCustomStore ) checked="checked" #{end}onclick="enableCustomConfig('$type');"/>
-<span>$page.getLocalizedString("configuration.wizard.step3.customConfig")</span>
-
-#if ($pageNum == 4 )
-<div id="userStoreSameAsConfigStoreDiv" style="display:none">
-    <input type="checkbox" name="userStoreSameAsConfigStore" style="margin-left:2em" onclick="copyConfigStoreFieldsToUserStoreFields();"/><span style="font-size:smaller">$page.getLocalizedString("configuration.wizard.step3.sameConfig")</span>
-</div>
-#end
-
-<div id="${type}StoreModule" style="width:570px;#if ( !$usingCustomStore )display:none#{end}">
-    <p id="allfields" class="OrangeVerySmall">*&nbsp;$page.getLocalizedString("configuration.wizard.step3.allFields")</p>
-    <div class="hd">$typeTitle $page.getLocalizedString("configuration.wizard.step3.customConfig.title")</div>
-    <div class="bd" style="height:280px">
-        <fieldset id="${type}StoreFieldset">
+<input type="radio" id="${type}StoreDefault" name="${type}StoreCustom" style="margin-left:1em" value="false" checked="checked" onclick="disableCustomConfig('$type');"/>
+<span>Embeded Store</span><br/>
+<input type="radio" id="${type}StoreCustom" name="${type}StoreCustom" style="margin-left:1em" value="true" onclick="enableCustomConfig('$type');"/>
+<span>External Store</span>
+<div id="${type}StoreModule" style="width:570px; display:none">
+    <p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox" style="margin-left:10px">Configuration Store Details</div>
+    <div class="bodyBox" style="height:230px;margin-left:10px">	
+        <fieldset id="${type}StoreFieldset" style="padding:0px; margin-top:-80px">
             <ol>
-                <li class="endChunk">
-                    <label for="${type}StoreName">$page.getLocalizedString("configuration.wizard.step3.customConfig.storeName")<em>*</em></label>
-                    <input id="${type}StoreName" name="${type}StoreName" type="text" class="text" style="width:150px" value="#if($store.name)$store.name#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreName )"/>
-                    <span id="${type}StoreNameStatus"></span>
-                </li>
                 <li class="beginChunk">
-                    <label for="${type}StoreHost">$page.getLocalizedString("configuration.wizard.step3.customConfig.hostName")<em>*</em></label>
+                    <label for="${type}StoreHost">Directory Host Name<em>*</em></label>
                     <input id="${type}StoreHost" name="${type}StoreHost" type="text" class="text" style="width:150px" value="#if($store.hostName)$store.hostName#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreServer )"/>
                     <span id="${type}StoreHostStatus"></span>
                 </li>
                 <li>
-                    <label for="${type}StorePort">$page.getLocalizedString("configuration.wizard.step3.customConfig.port")<em>*</em></label>
+                    <label for="${type}StorePort">Port<em>*</em></label>
                     <input id="${type}StorePort" name="${type}StorePort" type="text" class="text" style="width:40px" value="$store.hostPort" onkeyup="APP.callDelayed(this, validate${type}StoreServer )"/>
                 </li>
                 <li class="endChunk">
-                    <label>$page.getLocalizedString("configuration.wizard.step3.customConfig.securePort")<em>*</em></label>
-                    <input id="${type}StoreSecurePortNo" name="${type}StoreSecurePort" type="radio" value="false" #if ( !$store.hostPortSecure ) checked="checked" #{end}onclick="enableStandardPort('$type'); validate${type}StoreServer();"/><span>$page.getLocalizedString("configuration.wizard.step3.customConfig.noOption")</span>
-                    <input id="${type}StoreSecurePortYes" name="${type}StoreSecurePort" type="radio" value="true" #if ( $store.hostPortSecure ) checked="checked" #{end}onclick="enableSecurePort('$type'); validate${type}StoreServer();"/><span>$page.getLocalizedString("configuration.wizard.step3.customConfig.yesOption")</span>
+                    <label for="${type}StoreSecurePort">Is this a secure port?<em>*</em></label>
+                    <input id="${type}StoreSecurePortNo" name="${type}StoreSecurePort" type="radio" value="false" #if ( !$store.hostPortSecure ) checked="checked" #{end}onclick="enableStandardPort('$type'); validate${type}StoreServer();"/><span>No</span>
+                    <input id="${type}StoreSecurePortYes" name="${type}StoreSecurePort" type="radio" value="true" #if ( $store.hostPortSecure ) checked="checked" #{end}onclick="enableSecurePort('$type'); validate${type}StoreServer();"/><span>Yes</span>
                 </li>
                 <li class="singleChunk">
-                    <label for="${type}StoreBaseDN">$page.getLocalizedString("configuration.wizard.step3.customConfig.directoryBase")<em>*</em></label>
+                    <label for="${type}StoreBaseDN">Directory Base DN<em>*</em></label>
                     <input id="${type}StoreBaseDN" name="${type}StoreBaseDN" type="text" class="text" style="width:150px" value="#if($store.baseDN)$store.baseDN#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreBaseDN )"/>
                     <span id="${type}StoreBaseDNStatus"></span>
                 </li>
                 <li class="beginChunk">
-                    <label for="${type}StoreLoginId">$page.getLocalizedString("configuration.wizard.step3.customConfig.directoryLogin")<em>*</em></label>
+                    <label for="${type}StoreLoginId">Directory Login ID<em>*</em></label>
                     <input id="${type}StoreLoginId" name="${type}StoreLoginId" type="text" class="text" style="width:150px" value="#if($store.username)$store.username#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreLoginId )"/>
                     <span id="${type}StoreLoginIdStatus"></span>
                 </li>
                 <li>
-                    <label for="${type}StorePassword">$page.getLocalizedString("configuration.wizard.step3.customConfig.directoryPassword")<em>*</em></label>
+                    <label for="${type}StorePassword">Directory Password<em>*</em></label>
                     <input id="${type}StorePassword" name="${type}StorePassword" type="password" class="text" style="width:150px" value="#if($store.password)$store.password#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreLoginId )"/>
                 </li>
+		#if (${type} == "config") 
+                <li>
+                    <label for="rootSuffix">Root Suffix<em>*</em></label>
+                    <input id="rootSuffix" name="rootSuffix" type="text" class="text" style="width:150px" value="$rootSuffix" onkeyup="APP.callDelayed(this, validateRootSuffix )"/>
+                    <span id="rootSuffixStatus"></span>
+                </li>
 
+		#end
             </ol>
         </fieldset>
     </div>
+	<div style="margin-left:10px"><b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b></div>
 </div>
+

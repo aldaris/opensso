@@ -1,32 +1,91 @@
 <script type="text/javascript">
-    var skipStep1 = "$wizardStep1Form.fields.skipStep1.value";
-    function toggleSkipStep1() {
-        if ( skipStep1 == "true" ) {
-            $('wizardStep1Form_skipStep1').value = "false";
-            skipStep1 = "false";
-            startingTab = 1;
-        } else {
-            $('wizardStep1Form_skipStep1').value = "true";
-            skipStep1 = "true";
-            startingTab = 2;
-        }
-
-        AjaxUtils.doPost("wizardStep1", "$context/config/wizard/step1.htm", AjaxUtils.serializeForm("wizardStep1Form"), null, null);
+    function validatePasswords() {
+        var params = "admin=" + $('adminPassword').value + "&adminConfirm=" + $('adminConfirm').value;
+        APP.call( "$context$path", "checkAdminPassword", params, passwordsValid, passwordsInvalid );
+    } 
+    
+    function passwordsValid( body ) {
+        $('nextTabButton').disabled = false;
+        $('adminPasswordStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' + '<small>' + body + '</small>';
     }
+    function passwordsInvalid( body ) {
+        $('nextTabButton').disabled = true;
+        $('adminPasswordStatus').innerHTML = body;
+    }
+  
+    
+    function validateAgentPasswords() {
+        var params = "agent=" + $('agentPassword').value + "&agentConfirm="+ $('agentConfirm').value;
+        APP.call( "$context$path", "checkAgentPassword", params, agentValid, agentInvalid );
+    } 
+    function agentValid( body ) {
+        $('nextTabButton').disabled = false;
+        $('agentPasswordStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' + '<small>' + body + '</small>';
+    }
+    function agentInvalid( body ) {
+        $('nextTabButton').disabled = true;
+        $('agentPasswordStatus').innerHTML = body;
+    }
+
 </script>
-<div style="float: left; width:500px">
-    <h1>$page.getLocalizedString("configuration.wizard.step1.title")</h1>
-    <p>$page.getLocalizedString("configuration.wizard.step1.explanation")</p>
-    <small>$wizardStep1Form</small>
-</div>
-<div id="tab1RequiredInfoPanel" style="width:230px;float:right">
-    <div class="hd">$page.getLocalizedString("configuration.wizard.step1.requiredInfo")</div>
-    <div class="bd">
-        <p>$page.getLocalizedString("configuration.wizard.step1.neededInfo")</p>
-        <ol>
-            <li>$page.getLocalizedString("configuration.wizard.step1.item1")</li>
-            <li>$page.getLocalizedString("configuration.wizard.step1.item2")</li>
-            <li>$page.getLocalizedString("configuration.wizard.step1.item3")</li>
-        </ol>
+<style>
+    table.temp {
+	border-width: 0px 0px 0px 0px;
+    }
+    table.temp th {
+	border-width: 0px 0px 0px 0px;
+    }
+    table.temp td {
+	border-width: 0px 0px 0px 0px;
+    }
+</style>
+
+<div style="float:left; width:500px">
+    <h1>Step 1: General Properties</h1>
+    <p>The first step is to setup a few general properties required for accessing the system. These include the default users and the configuration location
+    </p>
+
+    <div class="summaryPanel" style="width:400px">
+        <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+        <div class="headerBox">Default User Passwords</div>
+        <div class="bodyBox"  style="height:230px">
+            <span>
+                These users are required to make the system work. The passwords
+                must be at least 8 characters in length and may not be the 
+                same value.
+                <p>
+                <table class="temp">
+                    <tr>
+		        <td colspan="2"><b>Default User [amAdmin]</b></td></tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td><input id="adminPassword" name="adminPassword" type="password" value="" class="text"></td>
+                    </tr>
+                    <tr>
+                        <td>Confirm:</td>
+                        <td>
+                            <input id="adminConfirm" name="adminConfirm" type="password" value="" class="text" onkeyup="APP.callDelayed(this,validatePasswords)"/>
+                            <span id="adminPasswordStatus"></span>
+                        </td>
+                    </tr>
+                </table>      
+                <table class="temp">
+                    <tr>
+                        <td colspan="2"><b>Default Agent</b></td></tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td><input id="agentPassword" name="adminPassword" type="password" value="" class="text"></td>
+                    </tr>
+                    <tr>
+                        <td>Confirm:</td>
+                        <td>
+                            <input id="agentConfirm" name="adminConfirm" type="password" value="" class="text" onkeyup="APP.callDelayed(this,validateAgentPasswords)"/>
+                            <span id="agentPasswordStatus"></span>
+                        </td>
+                    </tr>
+                </table>      
+            </span>
+        </div>
+        <b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
     </div>
 </div>

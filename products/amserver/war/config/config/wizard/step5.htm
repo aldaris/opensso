@@ -57,11 +57,11 @@
 
 <h1>Step 5: Load Balancing<img class="pointer" alt="info" src="$context/assets/images/message.gif"/></h1>
 <p>Will this instance be deployed behind a load balancer?</p>
-<input type="radio" id="loadBalancerDisable" #if ($host || $port) checked="checked"#{end}/><span>&nbsp;No</span><br/>
-<input type="radio" id="loadBalancerEnable" #if (!$host && !$port) checked="checked"#{end}/><span>&nbsp;Yes</span>
+<input type="radio" id="loadBalancerDisable" #if (!$host && !$port) checked="checked"#{end}/><span>&nbsp;No</span><br/>
+<input type="radio" id="loadBalancerEnable" #if ($host || $port) checked="checked"#{end}/><span>&nbsp;Yes</span>
 
 <div id="loadBalancerModule" style="width:500px;#if(!$host && !$port)display:none#{end}">
-	<p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
+    <p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
     <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
 	<div class="headerBox" style="margin-left:10px">Load Balancer Details</div>
     <div class="bodyBox" style="height:150px;margin-left:10px">
@@ -79,5 +79,5 @@
             </ol>
         </fieldset>
     </div>
-	<div style="margin-left:10px"><b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b></div>
+    <div style="margin-left:10px"><b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b></div>
 </div>

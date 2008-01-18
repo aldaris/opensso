@@ -1,19 +1,39 @@
 <script type="text/javascript">
+    function configStoreServerValidated( response ) {
+        storeServerValidated( 'config', response );
+    }
+    function configStoreBaseDNValidated( response ) {
+        storeBaseDNValidated('config', response );
+    }
+    function configStoreLoginIdValidated( response ) {
+        storeLoginIdValidated( 'config', response );
+    }
 
-    function newInstanceUrlValidated( response ) {
+    function validateconfigStoreServer() {
+        validateStoreServer('config');
+    }
+    function validateconfigStoreBaseDN() {
+        validateStoreBaseDN('config');
+    }
+    function validateconfigStoreLoginId() {
+        validateStoreLoginId('config');
+    }
+
+
+    function validateConfigBaseDir() {
+        var callUrl = "$context$path?actionLink=validateConfigBaseDir&configBaseDir=" + $('configBaseDir').value
+        AjaxUtils.call(callUrl, baseDirValidated);
+    }
+    function baseDirValidated(response) {
         if ( response.responseText == "true" ) {
-            $('nextTabButton').disabled = false;
-            $('newInstanceUrlStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                                                  '<small>$page.getLocalizedString("configuration.wizard.step2.serverFound")</small>';
+            $('configBaseDirStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
+		  '<small>ok</small>';
+ 		$('nextTabButton').disabled = false;
         } else {
-            $('nextTabButton').disabled = true;
-            $('newInstanceUrlStatus').innerHTML = response.responseText;
+            $('configBaseDirStatus').innerHTML = response.responseText;
         }
     }
-    function validateNewInstanceUrl() {
-        var callUrl = "$context$path?actionLink=checkNewInstanceUrl&newInstanceUrl=" + $('newInstanceUrl').value
-        AjaxUtils.call(callUrl, newInstanceUrlValidated );
-    }
+
 
     function enableFirstFAMInstance() {
         firstFAMInstance = true;
@@ -25,10 +45,10 @@
         $('tab3').style.color = "";
         $('tab4').style.color = "";
         $('tab5').style.color = "";
+        $('tab6').style.color = "";
         $('nextTabButton').disabled = false;
-        $('newInstanceUrl').value = null;
-        $('newInstanceUrlStatus').innerHTML = "";
-        AjaxUtils.call("$context/config/wizard/step2.htm?actionLink=clear");
+       
+        AjaxUtils.call("$context$path?actionLink=clear");
     }
 
     function disableFirstFAMInstance() {
@@ -39,34 +59,68 @@
         $('tab3').style.color = "#D3D3D3";
         $('tab4').style.color = "#D3D3D3";
         $('tab5').style.color = "#D3D3D3";
-        nextTab = 6;
+        $('tab6').style.color = "#D3D3D3";
+        nextTab = 7;
         previousTab = 2;
         $('nextTabButton').disabled = true;
     }
 
-    function step2Init() {
-        if ( firstFAMInstance ) {
-            $('firstFAMInstanceTrue').checked = true;
-            $('firstFAMInstanceFalse').checked = false;
-            $('famAssociationDiv').style.display = "none";
-        } else {
-            $('firstFAMInstanceFalse').checked = true;
-            $('firstFAMInstanceTrue').checked = false;
-            $('famAssociationDiv').style.display = "";
-            validateNewInstanceUrl();
-        }
+    function initialize() {
     }
-    YAHOO.util.Event.onDOMReady(step2Init);
-</script>
-<h1>$page.getLocalizedString("configuration.wizard.step2.title") <img class="pointer" src="$context/assets/images/message.gif"/></h1>
-<p>$page.getLocalizedString("configuration.wizard.step2.instanceQuestion")</p>
-<input type="radio" id="firstFAMInstanceTrue" name="firstFamInstance" style="margin-left:1em" value="true" onclick="enableFirstFAMInstance();"/>
-<span>$page.getLocalizedString("configuration.wizard.step2.noOption")</span><br/>
-<input type="radio" id="firstFAMInstanceFalse" name="firstFamInstance" style="margin-left:1em" value="false" #if ($newInstanceUrl) checked="checked"#{end} onclick="disableFirstFAMInstance();"/>
-<span>$page.getLocalizedString("configuration.wizard.step2.yesOption")</span>
 
-<div id="famAssociationDiv" style="margin-left: 1em; margin-top: 1em; #if (!$newInstanceUrl)display:none#{end}">
-    <span>$page.getLocalizedString("configuration.wizard.step2.instanceURL")</span>
-    <input id="newInstanceUrl" name="newInstanceUrl" type="text" class="text" #if ($newInstanceUrl)value="$newInstanceUrl"#{end} style="width:200px" onkeyup="APP.callDelayed(this,validateNewInstanceUrl)"/>
-    <span id="newInstanceUrlStatus"></span>
+    YAHOO.util.Event.onDOMReady(initialize);
+
+</script>
+
+<h1>Step 2: Associations</h1>
+<p>Would you like to add this instance to an existing deployment?</p>
+<input type="radio" id="firstFAMInstanceTrue" name="firstFamInstance" style="margin-left:1em" value="true" checked="checked" onclick="enableFirstFAMInstance();"/>
+<span>No, this is the first FAM instance of a new deployment</span><br/>
+<input type="radio" id="firstFAMInstanceFalse" name="firstFamInstance" style="margin-left:1em" value="false" onclick="disableFirstFAMInstance();"/>
+<span>Yes, add this instance to the existing deployment</span>
+<div id="famAssociationDiv" style="width:570px; display:none">
+    <p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
+    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+	<div class="headerBox" style="margin-left:10px">$typeTitle Store Details</div>
+    <div class="bodyBox" style="height:230px;margin-left:10px">	
+        <fieldset id="configStoreFieldset" style="padding:0px; margin-top:-80px">
+            <ol>
+                <li class="beginChunk">
+                    <label for="configStoreHost">Directory Host Name<em>*</em></label>
+                    <input id="configStoreHost" name="configStoreHost" type="text" class="text" style="width:150px" value="#if($store.hostName)$store.hostName#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreServer )"/>
+                    <span id="configStoreHostStatus"></span>
+                </li>
+                <li>
+                    <label for="configStorePort">Port<em>*</em></label>
+		    <input id="configStorePort" name="configStorePort" type="text" class="text" style="width:40px" value="#if($store.hostPort)$store.hostPort#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreServer )"/>
+                </li>
+                <li class="endChunk">
+                    <label for="configStoreSecurePort">Is this a secure port?<em>*</em></label>
+                    <input id="configStoreSecurePortNo" name="configStoreSecurePort" type="radio" value="false" #if ( !$store.hostPortSecure ) checked="checked" #{end}onclick="enableStandardPort('config'); validateconfigStoreServer();"/><span>No</span>
+                    <input id="configStoreSecurePortYes" name="configStoreSecurePort" type="radio" value="true" #if ( $store.hostPortSecure ) checked="checked" #{end}onclick="enableSecurePort('config'); validateconfigStoreServer();"/><span>Yes</span>
+                </li>
+                <li class="singleChunk">
+                    <label for="configStoreBaseDN">Directory Base DN<em>*</em></label>
+                    <input id="configStoreBaseDN" name="configStoreBaseDN" type="text" class="text" style="width:150px" value="#if($store.baseDN)$store.baseDN#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreBaseDN )"/>
+                    <span id="configStoreBaseDNStatus"></span>
+                </li>
+                <li class="beginChunk">
+                    <label for="configStoreLoginId">Directory Login ID<em>*</em></label>
+                    <input id="configStoreLoginId" name="configStoreLoginId" type="text" class="text" style="width:150px" value="#if($store.username)$store.username#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreLoginId )"/>
+                    <span id="configStoreLoginIdStatus"></span>
+                </li>
+                <li>
+                    <label for="configStorePassword">Directory Password<em>*</em></label>
+                    <input id="configStorePassword" name="configStorePassword" type="password" class="text" style="width:150px" value="#if($store.password)$store.password#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreLoginId )"/>
+                </li>
+		<li class="beginChunk">
+                    <label for="configBaseDir">Configuration Directory<em>*</em></label>
+                    <input id="configBaseDir" name="configBaseDir" type="text" class="text" style="width:150px" value="$configBaseDir" onkeyup="APP.callDelayed(this, validateConfigBaseDir)"/>
+                    <span id="configBaseDirStatus"></span>
+		</li>
+            </ol>
+        </fieldset>
+    </div>
+    <div style="margin-left:10px"><b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b></div>
 </div>
+
