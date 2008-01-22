@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.12 2008-01-18 17:45:37 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.13 2008-01-22 19:49:03 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -782,7 +782,9 @@ public class AgentConfiguration {
                     } else if (attrName.equals(key)) {
                         // this is for special case, where attribute can be
                         // list and non list type
-                        results.add(set.iterator().next());
+                        if (!set.isEmpty()) {
+                            results.add(set.iterator().next());
+                        }
                     }
                 }
             }
