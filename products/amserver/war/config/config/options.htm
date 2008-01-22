@@ -129,17 +129,6 @@
         }
     }
     
-    function submitNewPasswordForm() {
-        AjaxUtils.doPost("passwordDialog", "$context/config/newPassword.htm", AjaxUtils.serializeForm("newPasswordForm"), onNewPasswordSubmitSuccess, null);
-    }
-
-    function renderPasswordDialog() {
-        YAHOO.sun.identity.config.options.passwordDialog = new YAHOO.widget.Dialog("passwordDialog", { width:"280px", draggable: true, fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
-        YAHOO.sun.identity.config.options.passwordDialog.render();
-    }
-
-    
-    
     function showWizard() {
         renderWizard();
         YAHOO.sun.identity.config.options.wizard.show();
@@ -199,7 +188,6 @@
 
         /* #else 
         */
-        AjaxUtils.load('passwordDialogContainer', "$context/config/newPassword.htm", renderPasswordDialog);
         AjaxUtils.load('defaultSummaryContainer', "$context/config/defaultSummary.htm", renderDefaultSummary);
         AjaxUtils.load('wizardContainer', "$context/config/wizard/wizard.htm", renderWizard);
         /* #end
