@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.24 2008-01-18 22:55:22 bina Exp $
+   $Id: build.xml,v 1.25 2008-01-22 23:52:11 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -137,9 +137,6 @@
     </target>
 
     <target name="upgrade-nightly">
-        <copy todir="${upgrade.extlib.dir}">
-            <fileset file="${extlib.dir}/ant-contrib-1.0b3.jar" />
-        </copy>
         <ant antfile="${upgrade.basedir}/build.xml" inheritRefs="true" target="nightly" />
         <copy file="${upgrade.dist.dir}/opensso.zip"
 	    todir="${prd.nightly.dist.dir}/openfm" />
@@ -169,7 +166,7 @@
         <ant antfile="${sharedlib.dir}/build.xml" inheritRefs="true"
             target="clean" />
         <ant antfile="${upgrade.base.dir}/build.xml" inheritRefs="true"
-           target="clean" /> 
+            target="clean" />
     </target>
 
     <target name="build-diff">
