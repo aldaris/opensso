@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsCommon.java,v 1.5 2008-01-18 00:42:51 rmisra Exp $
+ * $Id: AgentsCommon.java,v 1.6 2008-01-22 23:50:00 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -848,7 +848,7 @@ public class AgentsCommon extends TestCommon {
                set.add(dynRespList.get(i));
            }
            SMSCommon smsc = new SMSCommon(admintoken);
-           smsc.updateServiceAttribute("iPlanetAMPolicyConfigService",
+           smsc.updateSvcAttribute("iPlanetAMPolicyConfigService",
                     "sun-am-policy-dynamic-response-attributes", set,
                     "Organization");
        } catch (Exception e) {

@@ -20,13 +20,13 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-idsvcs-testng.xml,v 1.1 2008-01-22 18:53:58 rmisra Exp $
+ $Id: ff_ds-idsvcs-testng.xml,v 1.2 2008-01-22 23:50:00 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ff_ds-idsvcs" verbose="1">
-    <test name="REST">
+    <test name="IdSvcs">
         <groups>
             <run>
                 <include name="ff_ds"/>
@@ -34,6 +34,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsSOAP"/>
         </classes>
     </test>
 </suite>

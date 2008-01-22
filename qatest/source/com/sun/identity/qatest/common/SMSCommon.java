@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.8 2007-12-18 21:53:13 sridharev Exp $
+ * $Id: SMSCommon.java,v 1.9 2008-01-22 23:50:00 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,7 +142,7 @@ public class SMSCommon extends TestCommon {
      * values for global and organization services which have sub
      * configurations.
      */
-    public void updateServiceAttribute(String serviceName,
+    public void updateSvcAttribute(String serviceName,
             String attributeName, Set set, String type)
             throws Exception {
         ServiceConfigManager scm = new ServiceConfigManager(serviceName,
@@ -163,7 +163,7 @@ public class SMSCommon extends TestCommon {
      * This is only valid for Global, Organization, Dynamic, User and Policy
      * attributes. This directly updates the schema entry for these services.
      */
-    public void updateServiceSchemaAttribute(String serviceName,
+    public void updateSvcSchemaAttribute(String serviceName,
             String attributeName, Set set, String type)
             throws Exception {
         ServiceManager sm = new ServiceManager(admintoken);

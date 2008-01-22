@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsREST.java,v 1.2 2008-01-22 23:50:01 rmisra Exp $
+ * $Id: IdSvcsSOAP.java,v 1.1 2008-01-22 23:50:01 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,9 +33,13 @@ import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.PolicyCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.qatest.idsvcs.IdentityServicesImplService_Impl;
+import com.sun.identity.qatest.idsvcs.IdentityServicesImpl;
+import com.sun.identity.qatest.idsvcs.Token;
+import com.sun.identity.qatest.idsvcs.UserDetails;
+import com.sun.identity.qatest.idsvcs.Attribute;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -48,28 +52,31 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * This class tests the REST interfaces associated with Identity Web Services
+ * This class tests the SOAP interfaces associated with Identity Web Services
  */
-public class IdSvcsREST extends TestCommon {
+public class IdSvcsSOAP extends TestCommon {
     
     private ResourceBundle rb_amconfig;
     private String baseDir;
     private String serverURI;
-    private String polName = "idsvcsRESTPolicyTest";
-    private String userName = "idsvcsresttest";
+    private String polName = "idsvcsSOAPPolicyTest";
+    private String userName = "idsvcssoaptest";
     private HtmlPage page;
     private SSOToken admintoken;
     private SSOToken usertoken;
+    private SSOTokenManager stMgr;
     private IDMCommon idmc;
     private PolicyCommon pc;
     private WebClient webClient;
+    private IdentityServicesImplService_Impl service;
+    private IdentityServicesImpl isimpl;
 
     /**
      * Creates common objects.
      */
-    public IdSvcsREST()
+    public IdSvcsSOAP()
     throws Exception {
-        super("IdSvcsREST");
+        super("IdSvcsSOAP");
         rb_amconfig = ResourceBundle.getBundle("AMConfig");
         admintoken = getToken(adminUser, adminPassword, basedn);
         idmc = new IDMCommon();
@@ -112,480 +119,437 @@ public class IdSvcsREST extends TestCommon {
 
         idmc.createIdentity(admintoken, realm, IdType.USER, userName, map);
 
-        String xmlFile = "idsvcs-rest-policy-test.xml";
+        String xmlFile = "idsvcs-soap-policy-test.xml";
         createPolicyXML(xmlFile);
         pc.createPolicy(xmlFile, realm);
+
+        stMgr = SSOTokenManager.getInstance();
+        service = new IdentityServicesImplService_Impl();
+        isimpl = service.getIdentityServicesImplPort();
 
         exiting("setup");
     }
 
     /**
-     * This test validates the authentication REST interface for super admin
+     * This test validates the authentication SOAP interface for super admin
      * user
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testSuperAdminAuthenticateREST()
+    public void testSuperAdminAuthenticateSOAP()
     throws Exception {
-        entering("testSuperAdminAuthenticateREST", null);
+        entering("testSuperAdminAuthenticateSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + adminUser +
-                    "&password=" + adminPassword);
-            log(Level.FINEST, "testSuperAdminAuthenticateREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(adminUser, adminPassword,
+                    "realm=" + realm);
+            log(Level.FINEST, "testSuperAdminAuthenticateSOAP", "Token: " +
+                    token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testSuperAdminAuthenticateSOAP", "Token ID: " +
+                    tokID);
 
-            SSOTokenManager stMgr = SSOTokenManager.getInstance();
-            usertoken = stMgr.createSSOToken(s1);
+            usertoken = stMgr.createSSOToken(tokID);
             if (!validateToken(usertoken))
                 assert false;
         } catch (Exception e) {
-            log(Level.SEVERE, "testSuperAdminAuthenticateREST", e.getMessage());
+            log(Level.SEVERE, "testSuperAdminAuthenticateSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
             if (validateToken(usertoken))
                 destroyToken(usertoken);
-            Reporter.log("This test validates the authentication REST" +
+            Reporter.log("This test validates the authentication SOAP" +
                     " interface for super admin user");
         }
-        exiting("testSuperAdminAuthenticateREST");
+        exiting("testSuperAdminAuthenticateSOAP");
     }
 
     /**
-     * This test validates the authentication REST interface for a normal user
+     * This test validates the authentication SOAP interface for a normal user
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserAuthenticateREST()
+    public void testNormalUserAuthenticateSOAP()
     throws Exception {
-        entering("testNormalUserAuthenticateREST", null);
+        entering("testNormalUserAuthenticateSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName +
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserAuthenticateREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserAuthenticateSOAP", "Token: " +
+                    token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserAuthenticateSOAP", "Token ID: " +
+                    tokID);
 
-            SSOTokenManager stMgr = SSOTokenManager.getInstance();
-            usertoken = stMgr.createSSOToken(s1);
+            usertoken = stMgr.createSSOToken(tokID);
             if (!validateToken(usertoken))
                 assert false;
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserAuthenticateREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserAuthenticateSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
             if (validateToken(usertoken))
                 destroyToken(usertoken);
-            Reporter.log("This test validates the authentication REST" +
+            Reporter.log("This test validates the authentication SOAP" +
                     " interface for a normal user");
         }
-        exiting("testNormalUserAuthenticateREST");
+        exiting("testNormalUserAuthenticateSOAP");
     }
 
     /**
-     * This test validates the authorization REST interface for a normal user
+     * This test validates the authorization SOAP interface for a normal user
      * where policy resource has allow for both GET and POST request. The
      * action under test is GET.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserPolAAGetREST()
+    public void testNormalUserPolAAGetSOAP()
     throws Exception {
-        entering("testNormalUserPolAAGetREST", null);
+        entering("testNormalUserPolAAGetSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName +
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolAAGetREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserPolAAGetSOAP", "Token: " + token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserPolAAGetSOAP", "Token ID: " +
+                    tokID);
 
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authorize?uri=http://www.restidsvcs1.com:80" +
-                    "&action=GET&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=true") == -1)
-                assert false;
-
+            boolean polRes = isimpl.authorize("http://www.soapidsvcs1.com:80",
+                    "GET", token);
+            log(Level.FINEST, "testNormalUserPolAAGetSOAP",
+                    "Policy evaluation result: " + polRes);
+            assert polRes;
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserPolAAGetREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserPolAAGetSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            Reporter.log("This test validates the authorization REST" +
+            Reporter.log("This test validates the authorization SOAP" +
                     " interface for a normal user where policy resource has" +
                     " allow for both GET and POST request. The action under" +
                     " test is GET.");
-            Reporter.log("Resource: http://www.restidsvcs1.com:80");
+            Reporter.log("Resource: http://www.soapidsvcs1.com:80");
             Reporter.log("Action: GET");
             Reporter.log("Subject: Authenticated Users");
             Reporter.log("Expected Result: Pass");
         }
-        exiting("testNormalUserPolAAGetREST");
+        exiting("testNormalUserPolAAGetSOAP");
     }
 
     /**
-     * This test validates the authorization REST interface for a normal user
+     * This test validates the authorization SOAP interface for a normal user
      * where policy resource has allow for both GET and POST request. The
      * action under test is POST.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserPolAAPostREST()
+    public void testNormalUserPolAAPostSOAP()
     throws Exception {
-        entering("testNormalUserPolAAPostREST", null);
+        entering("testNormalUserPolAAPostSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName +
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolAAPostREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserPolAAPostSOAP", "Token: " + token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserPolAAPostSOAP", "Token ID: " +
+                    tokID);
 
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authorize?uri=http://www.restidsvcs1.com:80" +
-                    "&action=POST&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=true") == -1)
-                assert false;
-
+            boolean polRes = isimpl.authorize("http://www.soapidsvcs1.com:80",
+                    "POST", token);
+            log(Level.FINEST, "testNormalUserPolAAPostSOAP",
+                    "Policy evaluation result: " + polRes);
+            assert polRes;
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserPolAAPostREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserPolAAPostSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            Reporter.log("This test validates the authorization REST" +
+            Reporter.log("This test validates the authorization SOAP" +
                     " interface for a normal user where policy resource" +
                     " has allow for both GET and POST request. The action" +
                     " under test is POST.");
-            Reporter.log("Resource: http://www.restidsvcs1.com:80");
+            Reporter.log("Resource: http://www.soapidsvcs1.com:80");
             Reporter.log("Action: POST");
             Reporter.log("Subject: Authenticated Users");
             Reporter.log("Expected Result: Pass");
         }
-        exiting("testNormalUserPolAAPostREST");
+        exiting("testNormalUserPolAAPostSOAP");
     }
 
     /**
-     * This test validates the authorization REST interface for a normal user
+     * This test validates the authorization SOAP interface for a normal user
      * where policy resource has allow for GET and deny for POST request. The
      * action under test is GET.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserPolADGetREST()
+    public void testNormalUserPolADGetSOAP()
     throws Exception {
-        entering("testNormalUserPolADGetREST", null);
+        entering("testNormalUserPolADGetSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName +
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolADGetREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserPolADGetSOAP", "Token: " + token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserPolADGetSOAP", "Token ID: " +
+                    tokID);
 
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authorize?uri=http://www.restidsvcs2.com:80" +
-                    "&action=GET&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=true") == -1)
-                assert false;
-
+            boolean polRes = isimpl.authorize("http://www.soapidsvcs2.com:80",
+                    "GET", token);
+            log(Level.FINEST, "testNormalUserPolADGetSOAP",
+                    "Policy evaluation result: " + polRes);
+            assert polRes;
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserPolADGetREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserPolADGetSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            Reporter.log("This test validates the authorization REST" +
+            Reporter.log("This test validates the authorization SOAP" +
                     " interface for a normal user where policy resource has" +
                     " allow for GET and deny for POST request. The action" +
                     " under test is GET.");
-            Reporter.log("Resource: http://www.restidsvcs2.com:80");
+            Reporter.log("Resource: http://www.soapidsvcs2.com:80");
             Reporter.log("Action: GET");
             Reporter.log("Subject: Authenticated Users");
             Reporter.log("Expected Result: Pass");
         }
-        exiting("testNormalUserPolADGetREST");
+        exiting("testNormalUserPolADGetSOAP");
     }
 
     /**
-     * This test validates the authorization REST interface for a normal user
+     * This test validates the authorization SOAP interface for a normal user
      * where policy resource has allow for GET and deny for POST request. The
      * action under test is POST.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserPolADPostREST()
+    public void testNormalUserPolADPostSOAP()
     throws Exception {
-        entering("testNormalUserPolADPostREST", null);
+        entering("testNormalUserPolADPostSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName +
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolADPostREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserPolADPostSOAP", "Token: " + token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserPolADPostSOAP", "Token ID: " +
+                    tokID);
 
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authorize?uri=http://www.restidsvcs2.com:80" +
-                    "&action=POST&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=false") == -1)
-                assert false;
-
+            boolean polRes = isimpl.authorize("http://www.soapidsvcs2.com:80",
+                    "POST", token);
+            log(Level.FINEST, "testNormalUserPolADPostSOAP",
+                    "Policy evaluation result: " + polRes);
+            assert !(polRes);
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserPolADPostREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserPolADPostSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            Reporter.log("This test validates the authorization REST" +
+            Reporter.log("This test validates the authorization SOAP" +
                     " interface for a normal user where policy resource has" +
                     " allow for GET and deny for POST request. The action" +
                     " under test is POST.");
-            Reporter.log("Resource: http://www.restidsvcs2.com:80");
+            Reporter.log("Resource: http://www.soapidsvcs2.com:80");
             Reporter.log("Action: POST");
             Reporter.log("Subject: Authenticated Users");
             Reporter.log("Expected Result: Fail");
         }
-        exiting("testNormalUserPolADPostREST");
+        exiting("testNormalUserPolADPostSOAP");
     }
 
     /**
-     * This test validates the authorization REST interface for a normal user
+     * This test validates the authorization SOAP interface for a normal user
      * where policy resource has deny for GET and allow for POST request. The
      * action under test is GET.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserPolDAGetREST()
+    public void testNormalUserPolDAGetSOAP()
     throws Exception {
-        entering("testNormalUserPolDAGetREST", null);
+        entering("testNormalUserPolDAGetSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName +
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolDAGetREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserPolDAGetSOAP", "Token: " + token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserPolDAGetSOAP", "Token ID: " +
+                    tokID);
 
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authorize?uri=http://www.restidsvcs3.com:80" +
-                    "&action=GET&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=false") == -1)
-                assert false;
-
+            boolean polRes = isimpl.authorize("http://www.soapidsvcs3.com:80",
+                    "GET", token);
+            log(Level.FINEST, "testNormalUserPolDAGetSOAP",
+                    "Policy evaluation result: " + polRes);
+            assert !(polRes);
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserPolDAGetREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserPolDAGetSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            Reporter.log("This test validates the authorization REST" +
+            Reporter.log("This test validates the authorization SOAP" +
                     " interface for a normal user where policy resource has" +
                     " deny for GET and allow for POST request. The action" +
                     " under test is GET.");
-            Reporter.log("Resource: http://www.restidsvcs3.com:80");
+            Reporter.log("Resource: http://www.soapidsvcs3.com:80");
             Reporter.log("Action: GET");
             Reporter.log("Subject: Authenticated Users");
             Reporter.log("Expected Result: Fail");
         }
-        exiting("testNormalUserPolDAGetREST");
+        exiting("testNormalUserPolDAGetSOAP");
     }
 
     /**
-     * This test validates the authorization REST interface for a normal user
+     * This test validates the authorization SOAP interface for a normal user
      * where policy resource has deny for GET and allow for POST request. The
      * action under test is POST.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserPolDAPostREST()
+    public void testNormalUserPolDAPostSOAP()
     throws Exception {
-        entering("testNormalUserPolDAPostREST", null);
+        entering("testNormalUserPolDAPostSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName +
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolDAPostREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserPolDAPostSOAP", "Token: " + token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserPolDAPostSOAP", "Token ID: " +
+                    tokID);
 
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authorize?uri=http://www.restidsvcs3.com:80" +
-                    "&action=POST&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=true") == -1)
-                assert false;
-
+            boolean polRes = isimpl.authorize("http://www.soapidsvcs3.com:80",
+                    "POST", token);
+            log(Level.FINEST, "testNormalUserPolDAPostSOAP",
+                    "Policy evaluation result: " + polRes);
+            assert polRes;
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserPolDAPostREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserPolDAPostSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            Reporter.log("This test validates the authorization REST" +
+            Reporter.log("This test validates the authorization SOAP" +
                     " interface for a normal user where policy resource has" +
                     " deny for GET and allow for POST request. The action" +
                     " under test is POST.");
-            Reporter.log("Resource: http://www.restidsvcs3.com:80");
+            Reporter.log("Resource: http://www.soapidsvcs3.com:80");
             Reporter.log("Action: POST");
             Reporter.log("Subject: Authenticated Users");
             Reporter.log("Expected Result: Pass");
         }
-        exiting("testNormalUserPolDAPostREST");
+        exiting("testNormalUserPolDAPostSOAP");
     }
 
     /**
-     * This test validates the authorization REST interface for a normal user
+     * This test validates the authorization SOAP interface for a normal user
      * where policy resource has deny for both GET and POST request. The
      * action under test are both GET.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserPolDDGetREST()
+    public void testNormalUserPolDDGetSOAP()
     throws Exception {
-        entering("testNormalUserPolDDGetREST", null);
+        entering("testNormalUserPolDDGetSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName +
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolDDGetREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserPolDDGetSOAP", "Token: " + token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserPolDDGetSOAP", "Token ID: " +
+                    tokID);
 
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authorize?uri=http://www.restidsvcs4.com:80" +
-                    "&action=GET&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=false") == -1)
-                assert false;
-
+            boolean polRes = isimpl.authorize("http://www.soapidsvcs4.com:80",
+                    "GET", token);
+            log(Level.FINEST, "testNormalUserPolDDGetSOAP",
+                    "Policy evaluation result: " + polRes);
+            assert !(polRes);
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserPolDDGetREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserPolDDGetSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            Reporter.log("This test validates the authorization REST" +
+            Reporter.log("This test validates the authorization SOAP" +
                     " interface for a normal user where policy resource has" +
                     " deny for both GET and POST request. The action under" +
                     " test are both GET.");
-            Reporter.log("Resource: http://www.restidsvcs4.com:80");
+            Reporter.log("Resource: http://www.soapidsvcs4.com:80");
             Reporter.log("Action: GET");
             Reporter.log("Subject: Authenticated Users");
             Reporter.log("Expected Result: Fail");
         }
-        exiting("testNormalUserPolDDGetREST");
+        exiting("testNormalUserPolDDGetSOAP");
     }
 
     /**
-     * This test validates the authorization REST interface for a normal user
+     * This test validates the authorization SOAP interface for a normal user
      * where policy resource has deny for both GET and POST request. The action
      * under test is POST.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserPolDDPostREST()
+    public void testNormalUserPolDDPostSOAP()
     throws Exception {
-        entering("testNormalUserPolDDPostREST", null);
+        entering("testNormalUserPolDDPostSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName + 
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolDDPostREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserPolDDPostSOAP", "Token: " + token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserPolDDPostSOAP", "Token ID: " +
+                    tokID);
 
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authorize?uri=http://www.restidsvcs4.com:80" +
-                    "&action=POST&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=false") == -1)
-                assert false;
-
+            boolean polRes = isimpl.authorize("http://www.soapidsvcs4.com:80",
+                    "POST", token);
+            log(Level.FINEST, "testNormalUserPolDDPostSOAP",
+                    "Policy evaluation result: " + polRes);
+            assert !(polRes);
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserPolDDPostREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserPolDDPostSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            Reporter.log("This test validates the authorization REST" +
+            Reporter.log("This test validates the authorization SOAP" +
                     " interface for a normal user where policy resource has" +
                     " deny for both GET and POST request. The action under" +
                     " test are both POST.");
-            Reporter.log("Resource: http://www.restidsvcs4.com:80");
-            Reporter.log("Action: GET");
+            Reporter.log("Resource: http://www.soapidsvcs4.com:80");
+            Reporter.log("Action: POST");
             Reporter.log("Subject: Authenticated Users");
             Reporter.log("Expected Result: Fail");
         }
-        exiting("testNormalUserPolDDPostREST");
+        exiting("testNormalUserPolDDPostSOAP");
     }
 
     /**
-     * This test validates the attributes REST interface for a normal user. The
+     * This test validates the attributes SOAP interface for a normal user. The
      * current tests validates the retrival of multivalued attribute
      * iplanet-am-user-alias-list.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserAttributesREST()
+    public void testNormalUserAttributesSOAP()
     throws Exception {
-        entering("testNormalUserAttributesREST", null);
+        entering("testNormalUserAttributesSOAP", null);
         try {
-            webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/authenticate?username=" + userName +
-                    "&password=" + userName);
-            log(Level.FINEST, "testNormalUserAttributesREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
-            int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            Token token = isimpl.authenticate(userName, userName, "realm=" +
+                    realm);
+            log(Level.FINEST, "testNormalUserAttributesSOAP", "Token: " +
+                    token);
+            String tokID = token.getId();
+            log(Level.FINEST, "testNormalUserAttributesSOAP", "Token ID: " +
+                    tokID);
 
-            page = (HtmlPage)webClient.getPage(serverURI +
-                    "/identity/attributes?subjectid=" +
-                    URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, userName + "alias1") == -1)
-                assert false;
-            if (getHtmlPageStringIndex(page, userName + "alias2") == -1)
-                assert false;
-            if (getHtmlPageStringIndex(page, userName + "alias3") == -1)
-                assert false;
-
+            String[] attributeNames = {"iplanet-am-user-alias-list"};
+            UserDetails ud = isimpl.attributes(attributeNames, token);
+            Attribute[] attr = ud.getAttributes();
+            for (int i=0; i < attr.length; i++) {
+                log(Level.FINEST, "testNormalUserAttributesSOAP",
+                        "Attribute name: " + attr[i].getName());
+                String[] vals = attr[i].getValues();
+                for (int j=0; j < vals.length; j++) {
+                   log(Level.FINEST, "testNormalUserAttributesSOAP",
+                           "Attribute value: " + vals[j]);
+                   if (vals[j].indexOf(userName + "alias") == -1)
+                       assert false;
+                }
+            }
         } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserAttributesREST", e.getMessage());
+            log(Level.SEVERE, "testNormalUserAttributesSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            Reporter.log("This test validates the attributes REST" +
+            Reporter.log("This test validates the attributes SOAP" +
                     " interface for a normal user. The current tests" +
                     " validates the retrival of multivalued attribute" +
                     " iplanet-am-user-alias-list.");
         }
-        exiting("testNormalUserAttributesREST");
+        exiting("testNormalUserAttributesSOAP");
     }
 
     /**
@@ -645,7 +609,7 @@ public class IdSvcsREST extends TestCommon {
         out.write(newline);
         out.write("<ServiceName name=\"iPlanetAMWebAgentService\"/>");
         out.write(newline);
-        out.write("<ResourceName name=\"http://www.restidsvcs1.com:80\"/>");
+        out.write("<ResourceName name=\"http://www.soapidsvcs1.com:80\"/>");
         out.write(newline);
         out.write("<AttributeValuePair>");
         out.write(newline);
@@ -670,7 +634,7 @@ public class IdSvcsREST extends TestCommon {
         out.write(newline);
         out.write("<ServiceName name=\"iPlanetAMWebAgentService\"/>");
         out.write(newline);
-        out.write("<ResourceName name=\"http://www.restidsvcs2.com:80\"/>");
+        out.write("<ResourceName name=\"http://www.soapidsvcs2.com:80\"/>");
         out.write(newline);
         out.write("<AttributeValuePair>");
         out.write(newline);
@@ -695,7 +659,7 @@ public class IdSvcsREST extends TestCommon {
         out.write(newline);
         out.write("<ServiceName name=\"iPlanetAMWebAgentService\"/>");
         out.write(newline);
-        out.write("<ResourceName name=\"http://www.restidsvcs3.com:80\"/>");
+        out.write("<ResourceName name=\"http://www.soapidsvcs3.com:80\"/>");
         out.write(newline);
         out.write("<AttributeValuePair>");
         out.write(newline);
@@ -720,7 +684,7 @@ public class IdSvcsREST extends TestCommon {
         out.write(newline);
         out.write("<ServiceName name=\"iPlanetAMWebAgentService\"/>");
         out.write(newline);
-        out.write("<ResourceName name=\"http://www.restidsvcs4.com:80\"/>");
+        out.write("<ResourceName name=\"http://www.soapidsvcs4.com:80\"/>");
         out.write(newline);
         out.write("<AttributeValuePair>");
         out.write(newline);

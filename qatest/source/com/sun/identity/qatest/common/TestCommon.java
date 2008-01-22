@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.34 2007-12-17 19:51:34 rmisra Exp $
+ * $Id: TestCommon.java,v 1.35 2008-01-22 23:50:00 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,7 +120,8 @@ public class TestCommon implements TestConstants {
             port = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
             uri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);
             realm = rb_amconfig.getString(TestConstants.KEY_ATT_REALM);
-            cookieDomain = rb_amconfig.getString(TestConstants.KEY_ATT_COOKIE_DOMAIN);
+            cookieDomain = rb_amconfig.getString(
+                    TestConstants.KEY_ATT_COOKIE_DOMAIN);
             notificationSleepTime = new Integer(rb_amconfig.getString(
                     TestConstants.KEY_ATT_NOTIFICATION_SLEEP)).intValue();
         } catch (Exception e) {
@@ -276,7 +277,7 @@ public class TestCommon implements TestConstants {
     throws Exception {
         entering("getBaseDir", null);
         String strCD =  System.getProperty("user.dir");
-        log(Level.FINEST, "getBaseDir", "Current Directory:" + strCD);
+        log(Level.FINEST, "getBaseDir", "Current Directory: " + strCD);
         exiting("getBaseDir");
         return (strCD);
     }
@@ -296,7 +297,7 @@ public class TestCommon implements TestConstants {
                 if ((line.indexOf("=")) != -1)
                     list.add(line);
             }
-            log(Level.FINEST, "getListFromFile", "List :" + list);
+            log(Level.FINEST, "getListFromFile", "List: " + list);
             if (input != null)
                 input.close();
         }
@@ -313,14 +314,14 @@ public class TestCommon implements TestConstants {
             String amadmPassword)
     throws Exception {
         entering("consoleLogin", null);
-        log(Level.FINEST, "consoleLogin", "JavaScript Enabled:" +
+        log(Level.FINEST, "consoleLogin", "JavaScript Enabled: " +
                 webclient.isJavaScriptEnabled());
-        log(Level.FINEST, "consoleLogin", "Redirect Enabled:" +
+        log(Level.FINEST, "consoleLogin", "Redirect Enabled: " +
                 webclient.isRedirectEnabled());
         log(Level.FINEST, "consoleLogin", "URL: " + amUrl);
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
-        log(Level.FINEST, "consoleLogin", "BEFORE CONSOLE LOGIN:" +
+        log(Level.FINEST, "consoleLogin", "BEFORE CONSOLE LOGIN: " +
                 page.getTitleText());
         HtmlForm form = page.getFormByName("Login");
         HtmlHiddenInput txt1 =
@@ -415,12 +416,12 @@ public class TestCommon implements TestConstants {
     throws Exception {
         entering("configureProduct", null);
         
-        log(Level.FINEST, "configureProduct", "Configuration Map:" + map);
+        log(Level.FINEST, "configureProduct", "Configuration Map: " + map);
         
         WebClient webclient = new WebClient();
         String strURL = (String)map.get("serverurl") +
                 (String)map.get("serveruri") + "/configurator.jsp?type=custom";
-        log(Level.FINEST, "configureProduct", "strURL:" + strURL);
+        log(Level.FINEST, "configureProduct", "strURL: " + strURL);
         URL url = new URL(strURL);
         HtmlPage page = null;
         int pageIter = 0;
@@ -489,7 +490,8 @@ public class TestCommon implements TestConstants {
             txtUrlAccessAgentPassword.setValueAttribute((String)map.get(
                     TestConstants.KEY_ATT_SERVICE_PASSWORD));
             HtmlPasswordInput txtUrlAccessAgentPasswordR =
-                    (HtmlPasswordInput)form.getInputByName("AMLDAPUSERPASSWD_CONFIRM");
+                    (HtmlPasswordInput)form.getInputByName(
+                    "AMLDAPUSERPASSWD_CONFIRM");
             txtUrlAccessAgentPasswordR.setValueAttribute((String)map.get(
                     TestConstants.KEY_ATT_SERVICE_PASSWORD));
             
@@ -507,7 +509,7 @@ public class TestCommon implements TestConstants {
 
             String strConfigStore = (String)map.get(
                     TestConstants.KEY_ATT_CONFIG_DATASTORE);
-            log(Level.FINE, "configureProduct", "Config store is:" +
+            log(Level.FINE, "configureProduct", "Config store is: " +
                     strConfigStore);
 
             HtmlRadioButtonInput rbDataStore =
@@ -576,7 +578,7 @@ public class TestCommon implements TestConstants {
             }
             try {
                 page = (HtmlPage)form.submit();
-                log(Level.FINEST, "configureProduct", "Returned Page:" +
+                log(Level.FINEST, "configureProduct", "Returned Page:\n" +
                         page.asXml());
             } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
             }
@@ -585,7 +587,7 @@ public class TestCommon implements TestConstants {
                     "IDToken1=" + map.get(TestConstants.KEY_ATT_AMADMIN_USER) +
                     "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-            log(Level.FINE, "configureProduct", "strNewURL:" + strNewURL);
+            log(Level.FINE, "configureProduct", "strNewURL: " + strNewURL);
             url = new URL(strNewURL);
             try {
                 page = (HtmlPage)webclient.getPage(url);
@@ -614,7 +616,7 @@ public class TestCommon implements TestConstants {
                     (String)map.get("serveruri") + "/UI/Login" + "?" +
                     "IDToken1=" + adminUser + "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);;
-            log(Level.FINE, "configureProduct", "strNewURL:" + strNewURL);
+            log(Level.FINE, "configureProduct", "strNewURL: " + strNewURL);
             url = new URL(strNewURL);
             page = (HtmlPage)webclient.getPage(url);
             if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
@@ -642,14 +644,15 @@ public class TestCommon implements TestConstants {
             String amUrl)
     throws Exception {
         entering("consoleLogout", null);
-        log(Level.FINEST, "consoleLogout", "JavaScript Enabled:" +
+        log(Level.FINEST, "consoleLogout", "JavaScript Enabled: " +
                 webclient.isJavaScriptEnabled());
-        log(Level.FINEST, "consoleLogout", "Redirect Enabled:" +
+        log(Level.FINEST, "consoleLogout", "Redirect Enabled: " +
                 webclient.isRedirectEnabled());
         log(Level.FINEST, "consoleLogout", "URL: " + amUrl);
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
-        log(Level.FINEST, "consoleLogout", page.getTitleText());
+        log(Level.FINEST, "consoleLogout", "Page title after logout: " +
+                page.getTitleText());
         exiting("consoleLogout");
     }
     
@@ -668,7 +671,7 @@ public class TestCommon implements TestConstants {
            log(Level.FINEST, "getHtmlPageStringIndex", "Page object is NULL");
            return 0;
         }
-        log(Level.FINEST, "getHtmlPageStringIndex", "Search string:" +
+        log(Level.FINEST, "getHtmlPageStringIndex", "Search string: " +
                 searchStr);
         log(Level.FINEST, "getHtmlPageStringIndex", "Search page\n:" +
                 strPage);
@@ -689,8 +692,8 @@ public class TestCommon implements TestConstants {
      */
     protected void createFileFromMap(Map properties, String fileName)
     throws Exception {
-        log(Level.FINEST, "createFileFromMap", "Map:" + properties);
-        log(Level.FINEST, "createFileFromMap", "fileName:" + fileName);
+        log(Level.FINEST, "createFileFromMap", "Map: " + properties);
+        log(Level.FINEST, "createFileFromMap", "fileName: " + fileName);
         StringBuffer buff = new StringBuffer();
         for (Iterator i = properties.entrySet().iterator(); i.hasNext(); ) {
             Map.Entry entry = (Map.Entry)i.next();

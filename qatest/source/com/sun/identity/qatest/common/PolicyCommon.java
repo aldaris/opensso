@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.11 2008-01-18 00:42:51 rmisra Exp $
+ * $Id: PolicyCommon.java,v 1.12 2008-01-22 23:50:00 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1521,7 +1521,7 @@ public class PolicyCommon extends TestCommon {
             HtmlPage policyCheckPage  = fmadm.deletePolicies(webClient,
                     realm, pList);
             String xmlString = policyCheckPage.asXml();
-            if (!xmlString.contains("Policy is deleted")) {
+            if (!xmlString.contains("Policies are deleted")) {
                 log(Level.FINEST, "deletePolicy", "Delete Policy" +
                         "is not success " + polName );
                 log(Level.FINEST, "deletePolicy", xmlString);

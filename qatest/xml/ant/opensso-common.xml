@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.8 2007-10-21 03:26:57 bt199000 Exp $
+ $Id: opensso-common.xml,v 1.9 2008-01-22 23:50:00 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -161,7 +161,7 @@
     <target name="clean-all" depends="check-cond" if="cond-is-true">
         <echo message="Cleaning all output, built and reports files and directories..."/>
         <delete>
-            <fileset dir="${SERVER_DIR}" excludes="*.output"/>
+            <fileset dir="${SERVER_DIR}" excludes="*.output, built/classes/**"/>
         </delete>
     </target>
 
@@ -178,6 +178,32 @@
         </javac>
     </target>
 
+    <taskdef name="wscompile" classname="com.sun.xml.rpc.tools.ant.Wscompile">
+        <classpath refid="client.classpath"/>
+    </taskdef>
+
+    <target name="wscompile-idsvcs">
+        <wscompile
+            fork= "false"
+            base="${built.classes.dir}"
+            classpath="${client.cp}"
+            gen="true"
+            verbose="true"
+            config="./xml/idsvcs/idsvcsSoapTest.xml">
+        </wscompile>
+    </target>
+
+    <target name="compile-idsvcs" depends="wscompile-idsvcs">
+        <echo message="Compiling idsvcs test source files"/>
+        <javac destdir="${built.classes.dir}"
+        debug="on"
+        failonerror="true">
+            <src path="./source"/>
+            <include name="com/sun/identity/qatest/idsvcs/**"/>
+            <classpath refid="client.classpath"/>
+        </javac>
+    </target>
+
     <target name="compile-all" depends="clean-all">
         <mkdir dir="${built.classes.dir}"/>
         <mkdir dir="${debug.dir}"/>
@@ -187,6 +213,7 @@
         debug="on"
         failonerror="true">
 	    <src path="./source"/>
+            <exclude name="com/sun/identity/qatest/idsvcs/**"/>
             <classpath refid="client.classpath"/>
         </javac>
     </target>
@@ -219,6 +246,7 @@
         </java>
 
         <copy file="./resources/AMConfig.properties" tofile="${built.classes.dir}/AMConfig.properties"/>
+        <antcall target="compile-idsvcs"/>
 
         <taskdef name="testng" classname="com.beust.testng.TestNGAntTask"
         classpathref="client.classpath"/>
@@ -262,6 +290,7 @@
         </java>
 
         <copy file="./resources/AMConfig.properties" tofile="${built.classes.dir}/AMConfig.properties"/>
+        <antcall target="compile-idsvcs"/>
 
         <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpathref="client.classpath"/>
         <testng classpathref="client.classpath" outputdir="${base.report.dir}">
