@@ -157,4 +157,10 @@
             </task>                        
 		</instance-tasks>
 	</uninstall>	
+	<migrate>
+		<common-interactions/>
+		<instance-interactions/>
+		<common-tasks/>
+		<instance-tasks/>
+	</migrate> 
 </configure>
