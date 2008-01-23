@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amAgent_mod.xml
+
+-->
+
+<Requests>
+
+    <SchemaRequests serviceName="iPlanetAMAgentService"
+        SchemaType="User">
+        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAgentService/20_30/data/amAgent_add.xml" />
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMAgentService"
+        SchemaType="User">
+	<AddDefaultValues>
+	    <AttributeValuePair>
+		<Attribute name="userpassword" />
+		<Value>&#160;</Value>
+	    </AttributeValuePair>
+	</AddDefaultValues>
+	<SetValidator>
+	    <AttributeValuePair>
+		<Attribute name="userpassword" />
+		<Value>RequiredValueValidator</Value>
+	    </AttributeValuePair>
+	</SetValidator>
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMAgentService"
+        SchemaType="User">
+	<SetValidator>
+	    <AttributeValuePair>
+		<Attribute name="sunIdentityServerDeviceStatus" />
+		<Value>RequiredValueValidator</Value>
+	    </AttributeValuePair>
+	</SetValidator>
+    </SchemaRequests>
+
+</Requests>

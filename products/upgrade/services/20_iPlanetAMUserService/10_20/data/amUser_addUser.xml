@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amUser_add1.xml
+
+-->
+
+<Requests>
+	<AttributeSchema name="ChangePassword"
+                    type="single"
+                    syntax="string"
+                    any="display"
+                    uitype="link"
+                    propertiesViewBeanURL="CONSOLE_DEPLOY_URI/user/UMChangeUserPassword"
+                    i18nKey="u1051">
+	</AttributeSchema>
+	<AttributeSchema name="sunIdentityMSISDNNumber"
+                    type="list"
+                    syntax="string"
+                    any="adminDisplay"
+                    i18nKey="u122">
+	</AttributeSchema>
+</Requests>

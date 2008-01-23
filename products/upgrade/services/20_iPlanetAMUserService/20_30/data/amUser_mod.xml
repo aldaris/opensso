@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amUser_mod.xml
+
+-->
+
+
+<Requests>
+
+    <SchemaRequests serviceName="iPlanetAMUserService"
+        SchemaType="User">
+
+	<RemoveAttributeSchema>
+	    <Attribute name="iplanet-am-user-auth-config" />
+	    <Attribute name="sunIdentityServerDiscoEntries" />
+  	</RemoveAttributeSchema>
+
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMUserService"
+        SchemaType="User">
+        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/20_iPlanetAMUserService/20_30/data/amUser_addAttrs.xml" />
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMUserService"
+        SchemaType="User">
+	<AddDefaultValues>
+	    <AttributeValuePair>
+		<Attribute name="uid" />
+		<Value>&#160;</Value>
+	    </AttributeValuePair>
+	</AddDefaultValues>
+	<SetValidator>
+	    <AttributeValuePair>
+		<Attribute name="uid" />
+		<Value>RequiredValueValidator</Value>
+	    </AttributeValuePair>
+	</SetValidator>
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMUserService"
+        SchemaType="User">
+	<AddDefaultValues>
+	    <AttributeValuePair>
+		<Attribute name="sn" />
+		<Value>&#160;</Value>
+	    </AttributeValuePair>
+	</AddDefaultValues>
+	<SetValidator>
+	    <AttributeValuePair>
+		<Attribute name="sn" />
+		<Value>RequiredValueValidator</Value>
+	    </AttributeValuePair>
+	</SetValidator>
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMUserService"
+        SchemaType="User">
+	<AddDefaultValues>
+	    <AttributeValuePair>
+		<Attribute name="cn" />
+		<Value>&#160;</Value>
+	    </AttributeValuePair>
+	</AddDefaultValues>
+	<SetValidator>
+	    <AttributeValuePair>
+		<Attribute name="cn" />
+		<Value>RequiredValueValidator</Value>
+	    </AttributeValuePair>
+	</SetValidator>
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMUserService"
+        SchemaType="User">
+	<AddDefaultValues>
+	    <AttributeValuePair>
+		<Attribute name="userpassword" />
+		<Value>&#160;</Value>
+	    </AttributeValuePair>
+	</AddDefaultValues>
+	<SetValidator>
+	    <AttributeValuePair>
+		<Attribute name="userpassword" />
+		<Value>RequiredValueValidator</Value>
+	    </AttributeValuePair>
+	</SetValidator>
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMUserService"
+        SchemaType="User">
+	<SetValidator>
+	    <AttributeValuePair>
+		<Attribute name="inetuserstatus" />
+		<Value>RequiredValueValidator</Value>
+	    </AttributeValuePair>
+	</SetValidator>
+    </SchemaRequests>
+
+</Requests>
+

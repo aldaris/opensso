@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amUser_add1.xml
+
+-->
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMUserService"
+	SchemaType="User">
+	<ModifyAny>
+	    <AttributeValuePair>
+		<Attribute name="userpassword"/>
+		<Value>required</Value>
+	    </AttributeValuePair>	
+	    <AttributeValuePair>
+		<Attribute name="employeenumber"/>
+		<Value>adminDisplay</Value>
+	    </AttributeValuePair>	
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-user-alias-list"/>
+		<Value>adminDisplay</Value>
+	    </AttributeValuePair>	
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-user-success-url"/>
+		<Value>adminDisplay</Value>
+	    </AttributeValuePair>	
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-user-failure-url"/>
+		<Value>adminDisplay</Value>
+	    </AttributeValuePair>	
+	</ModifyAny>
+
+	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/20_iPlanetAMUserService/10_20/data/amUser_addUser.xml"/>
+    </SchemaRequests>
+</Requests>
