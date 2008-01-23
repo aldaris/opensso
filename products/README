@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.19 2007-12-19 23:53:39 veiming Exp $
+$Id: README,v 1.20 2008-01-23 00:03:13 bina Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -43,6 +43,7 @@ Copyright 2006 Sun Microsystems Inc. All Rights Reserved
         %% 2.6 Obtaining fmsae.dll and agent-csdk
         %% 2.7 Obtaining Open Message Queue binaries, imq.jar and jms.jar
         %% 2.8 Obtaining click.jar and click-extras.jar
+        %% 2.9 Obtaining ant-contrib-1.0b3.jar
     %% 3. Building the workspace
         %% 3.1 build target
         %% 3.2 doc target
@@ -253,6 +254,15 @@ libraries/native to opensso/products/extlib.
       <your workspace>/opensso/products/extlib/click.jar
 2.8.5 copy <temporary directory>/click.1.4-RC-1/dist/click-extras-1.4-RC1.jar to
       <your workspace>/opensso/products/extlib/click-extras.jar
+
+%% 2.9 Obtaining ant-contrib-1.0b3.jar
+2.9.1 Visit http://sourceforge.net/project/showfiles.php?group_id=36177
+2.9.2 Under "Latest File Releases" , click on the link "Download".
+      You wil be brought to a page with list of ant-contrib binaries.
+2.9.3 Download ant-contrib-1.0b3-bin.zip 
+2.9.4 Unzip this zip file in a temporary directory.
+2.9.5 copy <temporary directory>/ant-contrib/ant-contrib-1.0b3.jar to
+      <your workspace>/opensso/products/extlib/ant-contrib-1.0b3.jar
 
 %% 3. Building the workspace
 
