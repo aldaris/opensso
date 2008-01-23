@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.3 2007-11-21 19:00:24 rmisra Exp $
+ * $Id: HeaderAttributeTests.java,v 1.4 2008-01-23 23:51:36 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -250,7 +250,7 @@ public class HeaderAttributeTests extends TestCommon {
 
             Set set = new HashSet();
             set.add("1");
-            smsc.updateServiceAttribute("iPlanetAMPolicyConfigService",
+            smsc.updateSvcAttribute("iPlanetAMPolicyConfigService",
                     "iplanet-am-policy-config-subjects-result-ttl", set,
                     "Organization");
 
@@ -760,7 +760,7 @@ public class HeaderAttributeTests extends TestCommon {
 
             Set set = new HashSet();
             set.add("10");
-            smsc.updateServiceAttribute("iPlanetAMPolicyConfigService",
+            smsc.updateSvcAttribute("iPlanetAMPolicyConfigService",
                     "iplanet-am-policy-config-subjects-result-ttl", set,
                     "Organization");
 

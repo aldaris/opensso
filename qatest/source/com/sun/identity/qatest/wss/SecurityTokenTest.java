@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [ of copyright owner]"
  *
- * $Id: SecurityTokenTest.java,v 1.2 2007-11-13 22:01:07 rmisra Exp $
+ * $Id: SecurityTokenTest.java,v 1.3 2008-01-23 23:51:36 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,7 +107,7 @@ public class SecurityTokenTest extends TestCommon {
         try {
             Set set = new HashSet();
             set.add(getBootsrapDiscoEntry("2005-02:null:X509"));            
-            smsc.updateServiceSchemaAttribute(
+            smsc.updateSvcSchemaAttribute(
                     "sunIdentityServerDiscoveryService",
                     "sunIdentityServerBootstrappingDiscoEntry", set, "Global");
 
@@ -252,7 +252,7 @@ public class SecurityTokenTest extends TestCommon {
         idmc.deleteIdentity(token, realm, IdType.USER, strUser); 
         Set set = new HashSet();
         set.add(getBootsrapDiscoEntry("2003-08:null:null"));            
-        smsc.updateServiceSchemaAttribute("sunIdentityServerDiscoveryService",
+        smsc.updateSvcSchemaAttribute("sunIdentityServerDiscoveryService",
                 "sunIdentityServerBootstrappingDiscoEntry", set, "Global");
         destroyToken(token);
     }
