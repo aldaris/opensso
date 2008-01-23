@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Identity Server 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amAdminConsole_setBooleanValues.xml
+
+-->
+
+<Requests>
+<SchemaRequests serviceName="iPlanetAMAdminConsoleService" SchemaType="Global" i18nKey="">
+    <SetBooleanValues name="iplanet-am-admin-console-liberty-enabled"
+	trueValue="true"
+	trueI18nKey="i18nTrue"
+	falseValue="false"
+	falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-admin-console-pc-display"
+	trueValue="true"
+	trueI18nKey="i18nTrue"
+	falseValue="false"
+	falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-admin-console-ou-display"
+	trueValue="true"
+	trueI18nKey="i18nTrue"
+	falseValue="false"
+	falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-admin-console-gc-display"
+	trueValue="true"
+	trueI18nKey="i18nTrue"
+	falseValue="false"
+	falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-admin-console-dctree"
+	trueValue="true"
+	trueI18nKey="i18nTrue"
+	falseValue="false"
+	falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-admin-console-compliance-admin-groups"
+	trueValue="true"
+	trueI18nKey="i18nTrue"
+	falseValue="false"
+	falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-admin-console-compliance-user-deletion"
+	trueValue="true"
+	trueI18nKey="i18nTrue"
+	falseValue="false"
+	falseI18nKey="i18nFalse"/>
+</SchemaRequests>
+
+<SchemaRequests serviceName="iPlanetAMAdminConsoleService" SchemaType="Organization" i18nKey="">
+    <SetBooleanValues name="iplanet-am-admin-console-user-role-display"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-admin-console-external-attribute-fetch-enabled"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+</SchemaRequests>
+</Requests>

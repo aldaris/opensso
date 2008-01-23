@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amAdminConsole_addDefaultVal.xml
+
+-->
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMAdminConsoleService"
+	SchemaType="Global"
+	i18nKey="">
+	<RemovePartialDefaultValues>
+            <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-dynamic-aci-list"/>
+                         <Value>Group Admin|Group Admin Description|ORGANIZATION:aci: (target="ldap:///GROUPNAME")(targetattr = "*") (version 3.0; acl "Group and people container admin role"; allow (all) roledn = "ldap:///ROLENAME";)##ORGANIZATION:aci: (target="ldap:///ORGANIZATION")(targetfilter=(!(|(!FILTER)(|(nsroledn=cn=Top-level Admin Role,NORMALIZED_RS)(nsroledn=cn=Top-level Help Desk Admin Role,NORMALIZED_RS)(nsroledn=cn=Top-level Policy Admin Role,NORMALIZED_RS)(nsroledn=cn=Organization Admin Role,ORGANIZATION)(nsroledn=cn=Container Admin Role,ORGANIZATION)(nsroledn=cn=Organization Policy Admin Role,ORGANIZATION)))))(targetattr != "iplanet-am-web-agent-access-allow-list || iplanet-am-web-agent-access-not-enforced-list || iplanet-am-domain-url-access-allow || iplanet-am-web-agent-access-deny-list || nsroledn")(version 3.0; acl "Group admin's right to the members"; allow (read,write,search) roledn= "ldap:///ROLENAME";)</Value>
+            </AttributeValuePair>
+	</RemovePartialDefaultValues>
+    </SchemaRequests>
+</Requests>

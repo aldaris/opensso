@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" \-\-data amAdminConsole_mod.xml
+
+-->
+
+<Requests>
+    <AttributeSchema name="iplanet-am-admin-console-invalid-chars"
+	type="single"
+	syntax="string"
+	i18nKey="d1251">
+	<DefaultValues>
+	    <Value>*|(|)|&amp;|!</Value>
+	</DefaultValues>
+    </AttributeSchema>
+</Requests>

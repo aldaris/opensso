@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" \-\-data amAdminConsole_mod.xml
+
+-->
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMAdminConsoleService"
+	SchemaType="Global">
+
+	<RemovePartialDefaultValues>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+		<Value>Organization Policy Admin|Organization Policy Admin Description|</Value>
+	    </AttributeValuePair>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+		<Value>Group Admin|Group Admin Description|</Value>
+	    </AttributeValuePair>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+		<Value>Organization Help Desk Admin|Organization Help Desk Admin Description|actionroleproperties=viewproperties actionagentproperties=fullaccessobject action organizationalunitproperties=viewproperties actionserviceproperties=viewproperties actionorganizationproperties=viewproperties actionpeoplecontainerproperties=viewproperties actiongroupproperties=viewproperties actiongroupcontainerproperties=viewproperties actionuserproperties=fullaccessobject actionpolicyproperties=viewproperties</Value>
+	    </AttributeValuePair>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+		<Value>Container Help Desk Admin|Container Help Desk Admin Description|actionroleproperties=viewproperties actionagentproperties=fullaccessobject actionorganizationalunitproperties=viewproperties actionserviceproperties=viewproperties actionorganizationproperties=viewproperties actionpeoplecontainerproperties=viewproperties actiongroupproperties=viewproperties actiongroupcontainerproperties=viewproperties actionuserproperties=fullaccessobject actionpolicyproperties=viewproperties </Value>
+	    </AttributeValuePair>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+ 		<Value>People Container Admin|People Container Admin Description|organizationnavmenu=organizations,organizationalunits,peoplecontainers,users rootnavmenu=organizations,organizationalunits,peoplecontainers,users organizationalunitnavmenu=organizations,organizationalunits,peoplecontainers,users actionorganizationproperties=noaccessobject actionorganizationalunitproperties=noaccessobject actionuserproperties=fullaccessobject actionroleproperties=viewproperties actionagentproperties=noaccessobject actionpeoplecontainerproperties=fullaccessobject actionserviceproperties=viewproperties actiongroupproperties=viewproperties actionpolicyproperties=noaccessobject actiongroupcontainerproperties=viewproperties</Value>
+	    </AttributeValuePair>
+	</RemovePartialDefaultValues>
+	<AddDefaultValues>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+		<Value>Organization Help Desk Admin|Organization Help Desk Admin Description|actionroleproperties=viewproperties actionorganizationalunitproperties=viewproperties actionserviceproperties=viewproperties actionorganizationproperties=viewproperties actionpeoplecontainerproperties=viewproperties actiongroupproperties=viewproperties action groupcontainerproperties=viewproperties actionuserproperties=fullaccessobject actionpolicy properties=viewproperties</Value>
+	    </AttributeValuePair>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+		<Value>Organization Policy Admin|Organization Policy Admin Description|actionroleproperties=viewproperties actionorganizationalunitproperties=viewproperties actionserviceproperties=fullaccessobject actionorganizationproperties=viewproperties actionpeoplecontainerproperties=viewproperties actiongroupproperties=viewproperties actiongroupcontainerproperties=viewproperties actionuserproperties=modifyproperties actionpolicyproperties=fullaccessobject actionentityproperties=viewproperties</Value>
+	    </AttributeValuePair>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+		<Value>Container Help Desk Admin|Container Help Desk Admin Description|actionroleproperties=viewproperties actionorganizationalunitproperties=viewpropertiesactionserviceproperties=viewproperties actionorganizationproperties=viewproperties action peoplecontainerproperties=viewproperties actiongroupproperties=viewproperties actiongroupcontainerproperties=viewproperties actionuserproperties=fullaccessobject actionpolicyproperties=viewproperties </Value>
+	    </AttributeValuePair>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+		<Value>Group Admin|Group Admin Description|actionroleproperties=noaccessobject actionorganizationalunitproperties=noaccessobject actionserviceproperties=noaccessobject actionorganizationproperties=noaccessobject actionpeoplecontainerproperties=noaccessobject actiongroupproperties=fullaccessobject actiongroupcontainerproperties=noaccessobject actionuserproperties=fullaccessobject actionpolicyproperties=noaccessobject</Value> 
+	    </AttributeValuePair>
+	    <AttributeValuePair>
+		<Attribute name="iplanet-am-admin-console-role-display-options"/>
+		<Value>People Container Admin|People Container Admin Description|organizationnavmenu=organizations,organizationalunits,peoplecontainers,users rootnavmenu=organizations,organizationalunits,peoplecontainers,users organizationalunitnavmenu=organizations,organizationalunits,peoplecontainers,users actionorganizationproperties=noaccessobject actionorganizationalunitproperties=noaccessobject actionuserproperties=fullaccessobject actionroleproperties=viewproperties actionpeoplecontainerproperties=fullaccessobject actionserviceproperties=viewproperties actiongroupproperties=viewproperties actionpolicyproperties=noaccessobject actiongroupcontainerproperties=viewproperties</Value>
+	    </AttributeValuePair>
+	</AddDefaultValues>
+    </SchemaRequests>
+    <SchemaRequests serviceName="iPlanetAMAdminConsoleService"
+	SchemaType="Organization">
+	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/10_iPlanetAMAdminConsoleService/10_20/data/amAdminConsole_addAttr.xml"/>
+    </SchemaRequests>
+</Requests>   
