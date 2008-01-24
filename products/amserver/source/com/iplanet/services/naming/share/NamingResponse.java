@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingResponse.java,v 1.2 2007-11-29 23:14:28 veiming Exp $
+ * $Id: NamingResponse.java,v 1.3 2008-01-24 23:21:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -207,8 +207,16 @@ public class NamingResponse {
                 if (value.indexOf("%uri") != -1) {
                     value = value.replaceAll("%uri", uri);
                 } else {
-                    // Remove "uri" if present
-                    value = value.replaceAll(uri, "");
+                    // strip the URI if the entry is like
+                    // 01=http://whatever.domain.com/opensso
+                    // because previous releases of the agent
+                    // do serverId lookup without the uri.
+                    try {
+                        Integer.parseInt(name);
+                        value = value.replaceAll(uri, "");
+                    } catch (NumberFormatException ex) {
+                        //ignore
+                    }
                 }
                 newNamingTable.put(name, value);
             }
