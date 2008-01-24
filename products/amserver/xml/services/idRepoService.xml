@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.17 2008-01-16 00:09:08 goodearth Exp $
+   $Id: idRepoService.xml,v 1.18 2008-01-24 20:01:30 goodearth Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -127,16 +127,23 @@
                 </AttributeSchema>
 
                 <!-- Schema for linking SMS's organization to
-                     AMSDK's organization. -->
+                     AMSDK's organization. This will not be loaded for 
+                     Embedded DS/OpenDS configuration. The Macros 
+                     XML_COMMENT_START and XML_COMMENT_END are tag swapped with 
+                     xml tag open comments and close comments for this.-->
+@XML_COMMENT_START@
                 <SubSchema name= "amSDK"
                     inheritance = "multiple"
                     i18nKey = "@AMSDK_I18N_KEY@">
-                    <!-- The two attributes below, if defined, allow the IdRepo SDK to
-                        map attribute names and to determine entities supported and
-                        operations supported by this plugin. If no mapping is provided,
-                        the assumption is that the attribute names are the same (no
-                        mapping needed. If the list of entities supported is not provided
-                        then the assumption is that no entities are supported -->
+@XML_COMMENT_END@
+                    <!-- The two attributes below, if defined, allow the IdRepo 
+                        SDK to map attribute names and to determine entities 
+                        supported and operations supported by this plugin. If 
+                        no mapping is provided,the assumption is that the 
+                        attribute names are the same (no mapping needed. If the 
+                        list of entities supported is not provided then the 
+                        assumption is that no entities are supported -->
+@XML_COMMENT_START@
                     <AttributeSchema name="sunIdRepoClass"
                         type = "single"
                         syntax = "string"
@@ -177,6 +184,7 @@
                         validator="validatatorClass for verifying this list against supported list"
                         i18nKey="">
                         <DefaultValues>
+@XML_COMMENT_END@
                             <!-- IdRepos can provide the object types
                                it can manage and the operations that can
                                be performed on these objects, as a key-value
@@ -184,6 +192,7 @@
                                etc., and the operations are limited to create,
                                read, edit and modify. The values are case
                                insenstive. -->
+@XML_COMMENT_START@
                                <Value>user=read,create,edit,delete,service</Value>
                                <Value>agent=read,edit</Value>
                                <Value>role=read,edit,service</Value>
@@ -191,9 +200,12 @@
                                <Value>group=read</Value>
                         </DefaultValues>
                     </AttributeSchema>
-                    <!-- From here on the list of plugin specific attributes for determing
-                          things like organization relating to this realm, authentication source,
-                       user containers, group containers etc etc. -->
+@XML_COMMENT_END@
+                    <!-- From here on the list of plugin specific attributes 
+                        for determining things like organization relating to 
+                        this realm, authentication source,
+                        user containers, group containers etc etc. -->
+@XML_COMMENT_START@
                     <AttributeSchema name="amSDKOrgName"
                         type = "single"
                             syntax = "string"
@@ -256,6 +268,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
+@XML_COMMENT_END@
 
                 <!-- LDAPv3 plugin original 70 (generic ds)  -->
                 <SubSchema name= "LDAPv3"
