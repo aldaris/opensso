@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FormatUtils.java,v 1.4 2007-11-02 01:08:04 veiming Exp $
+ * $Id: FormatUtils.java,v 1.5 2008-01-24 04:26:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -144,5 +144,66 @@ public class FormatUtils {
             }
         }
         return buff.toString();
+    }
+
+    /**
+     * Returns a formatted string. Given a map, a key and value label.
+     * Tabulates the keys and values in the map in this manner.
+     * <pre>
+     * keyLabel       propLabel
+     * -------------- --------------
+     * key1           value1
+     * key2           value2
+     * keyN           valueN
+     * </pre>
+     *
+     * @param keyLabel Label for the key column.
+     * @param propLabel Label for the value column.
+     * @param map Map that contains the information.
+     * @return a formatted string of a map.
+     */
+    public static String formatMap(String keyLabel, String propLabel, Map map) {
+        StringBuffer buff = new StringBuffer();
+        int szColKey = keyLabel.length();
+        for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            szColKey = Math.max(szColKey, key.length());
+        }
+
+        int szColProp = propLabel.length();
+        for (Iterator i = map.values().iterator(); i.hasNext(); ) {
+            String val = (String)i.next();
+            szColProp = Math.max(szColProp, val.length());
+        }
+
+        buff.append(padString(keyLabel, szColKey))
+            .append(" ")
+            .append(propLabel)
+            .append("\n");
+        buff.append(padString("-", "-", szColKey))
+            .append(" ")
+            .append(padString("-", "-", szColProp))
+            .append("\n");
+
+        for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            String prop = (String)map.get(key);
+            buff.append(padString(key, szColKey))
+                .append(" ")
+                .append(padString(prop, szColProp))
+                .append("\n");
+        }
+        return buff.toString();
+    }
+
+    private static String padString(String str, int pad) {
+        return padString(str, " ", pad);
+    }
+
+    private static String padString(String str, String padStr, int pad) {
+        for (int i = str.length(); i < pad; i++) {
+            str += padStr;
+        }
+        return str;
     }
 }

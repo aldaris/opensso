@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.15 2008-01-02 20:09:05 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.16 2008-01-24 04:26:01 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -3797,6 +3797,7 @@
         description="Failed to list datastores.">
         <datainfo>
             <item>name of realm</item>
+            <item>error message</item>
         </datainfo>
         <triggers>
             <item>Execute list datastores Commandline interface.</item>
@@ -5726,6 +5727,37 @@
         </triggers>
         <actions>
             <item>Check if servername is correct.</item>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_LIST_DATASTORE_TYPES" id="4700"
+        loglevel="LL_INFO"
+        description="Attempt to list supported datastore types.">
+        <datainfo />
+        <triggers>
+            <item>Execute list supported datastore types Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_DATASTORE_TYPES" id="4701"
+        loglevel="LL_INFO"
+        description="List supported datastore types succeeded.">
+        <datainfo />
+        <triggers>
+            <item>Execute list supported datastore types Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_DATASTORE_TYPES" id="4702"
+        loglevel="LL_INFO"
+        description="Failed to list supported datastore types.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list supported datastore types Commandline interface.</item>
+        </triggers>
+        <actions>
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>

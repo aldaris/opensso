@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.53 2008-01-10 22:15:24 veiming Exp $
+ * $Id: AccessManager.java,v 1.54 2008-01-24 04:26:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1525,6 +1525,23 @@ public class AccessManager {
             "authentication-set-auth-config-entries-missing-data=Entries and datafile are missing."}
     )
     private String update_auth_cfg_entr;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.datastore.ListDataStoreTypes",
+        description="List the supported data store types",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "datastore-list-datastore-types-desc=Description",
+            "datastore-list-datastore-types-type=Type",
+            "datastore-list-datastore-types-succeeded=Supported Datastore Types:",
+            "datastore-list-datastore-types-no-entries=There are no supported datastore types."
+        }
+    )
+    private String list_datastore_types;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.datastore.ListDataStores",
