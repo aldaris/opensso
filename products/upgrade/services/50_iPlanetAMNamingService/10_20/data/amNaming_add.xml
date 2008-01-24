@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 7.1 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amNaming_add.xml
+
+-->
+
+<Requests>
+
+    <SchemaRequests serviceName="iPlanetAMNamingService"
+        SchemaType="Global"> 
+        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMNamingService/10_20/data/amNaming_addAttr.xml"/>
+    </SchemaRequests>
+</Requests>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<Requests>
+
+<SchemaRequests serviceName="iPlanetAMLoggingService"
+                SchemaType="Global">
+   <GetServiceDefaultValues>
+      <Attribute name ="sun-am-logging-db-read-handler" />
+   </GetServiceDefaultValues>
+</SchemaRequests>
+</Requests>
+

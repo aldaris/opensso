@@ -1,0 +1,89 @@
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE ServicesConfiguration
+    PUBLIC "=//iplanet//Service Management Services (SMS) 1.0 DTD//EN"
+    "jar://com/iplanet/am/amadmin/cli/amAdmin.dtd">
+
+<Requests>
+    <SubSchema name="files"
+        inheritance="multiple"
+        i18nKey="a3000">
+        <AttributeSchema name="RequiredValueValidator"
+            type="validator"
+            syntax="string">
+            <DefaultValues>
+                <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+            </DefaultValues>
+        </AttributeSchema>
+        <AttributeSchema name="sunIdRepoClass"
+            type = "single"
+            syntax = "string"
+            any="required"
+            validator="RequiredValueValidator"
+            i18nKey = "a3010">
+            <DefaultValues>
+                <Value>com.sun.identity.idm.plugins.files.FilesRepo</Value>
+            </DefaultValues>
+        </AttributeSchema>
+        <AttributeSchema name="sunFilesIdRepoDirectory"
+            type="single" syntax="string"
+            validator="RequiredValueValidator" i18nKey="a3020">
+            <DefaultValues>
+                <Value>/var/opt/SUNWam/idm/flatfiles</Value>
+            </DefaultValues>
+        </AttributeSchema>
+        <AttributeSchema name="sunFilesMonitorForChanges"
+            type="single"
+            syntax="boolean"
+            i18nKey="a3022">
+            <DefaultValues>
+	        <Value>true</Value>
+	    </DefaultValues>
+        </AttributeSchema>
+        <AttributeSchema name="sunFilesMonitoringTime"
+            type="single"
+            syntax="string"
+            i18nKey="a3024">
+	    <DefaultValues>
+		<Value>1</Value>
+	    </DefaultValues>
+        </AttributeSchema>
+        <AttributeSchema name="sunFilesObjectClasses"
+            type="list"
+            syntax="string"
+            i18nKey="a3026">
+	    <DefaultValues>
+		<Value>inetorgperson</Value>
+		<Value>inetuser</Value>
+		<Value>organizationalperson</Value>
+		<Value>person</Value>
+		<Value>top</Value>
+	    </DefaultValues>
+        </AttributeSchema>
+        <AttributeSchema name="sunFilesPasswordAttr"
+            type="single" syntax="string" i18nKey="a3030">
+            <DefaultValues>
+                <Value>userPassword</Value>
+            </DefaultValues>
+        </AttributeSchema>
+        <AttributeSchema name="sunFilesStatusAttr"
+            type="single" syntax="string" i18nKey="a3040">
+            <DefaultValues>
+                <Value>inetUserStatus</Value>
+            </DefaultValues>
+        </AttributeSchema>
+        <AttributeSchema name="sunFilesHashAttrs"
+            type="list" syntax="string" i18nKey="a3050">
+            <DefaultValues>
+                <Value>userPassword</Value>
+            </DefaultValues>
+        </AttributeSchema>
+        <AttributeSchema name="sunFilesEncryptAttrs"
+            type="list" syntax="string" i18nKey="a3060">
+        </AttributeSchema>
+     </SubSchema>
+</Requests>

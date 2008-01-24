@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Identity Server 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuth_mod.xml
+
+-->
+
+<Requests>
+	<AttributeSchema name="sunRemoteAuthSecurityEnabled"
+            type="single"
+            syntax="boolean"
+            i18nKey="a146">
+            <DefaultValues>
+		<Value>false</Value>
+            </DefaultValues>
+	</AttributeSchema>
+</Requests>

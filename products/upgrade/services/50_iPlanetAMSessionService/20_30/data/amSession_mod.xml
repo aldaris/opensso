@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amSession_mod.xml
+
+-->
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMSessionService"
+	SchemaType="Global" SubSchema="/Site">
+	<RemoveAttributeSchema>
+            <Attribute name="iplanet-am-session-cluster-serverlist" />
+	</RemoveAttributeSchema>		
+    </SchemaRequests>
+    <SchemaRequests serviceName="iPlanetAMSessionService"
+        SchemaType="Dynamic">
+        <RemoveAttributeSchema>
+            <Attribute name="iplanet-am-session-max-caching-time" />
+        </RemoveAttributeSchema>
+    </SchemaRequests>
+    <SchemaRequests serviceName="iPlanetAMSessionService"
+        SchemaType="Dynamic">
+            <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMSessionService/20_30/data/amSession_modDynamic.xml"/>
+    </SchemaRequests>
+</Requests>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--  MODIFY REQUESTS -->
+
+<Requests>
+<SchemaRequests serviceName="iPlanetAMLoggingService"
+    SchemaType="global">
+
+<ModifySyntax>
+    <AttributeValuePair>
+	<Attribute name="iplanet-am-logging-verify-period-in-seconds"/>
+	<Value>number_range</Value>
+    </AttributeValuePair>
+</ModifySyntax>
+
+
+<AddStartRange>
+    <AttributeValuePair>
+	<Attribute name="iplanet-am-logging-verify-period-in-seconds"/>
+	<Value>1</Value>
+    </AttributeValuePair>
+</AddStartRange>
+
+
+<AddEndRange>
+    <AttributeValuePair>
+	<Attribute name="iplanet-am-logging-verify-period-in-seconds"/>
+	<Value>2147483647</Value>
+    </AttributeValuePair>
+</AddEndRange>
+
+</SchemaRequests>
+</Requests>
+
+

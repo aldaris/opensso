@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2004 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 6.2 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t SetPVUrls.xml
+
+-->
+
+<!--  CREATE REQUESTS -->
+
+<Requests>    
+<SchemaRequests 
+        serviceName="iPlanetAMPolicyService" 
+        SchemaType="Global"> 
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "Organization"
+            pluginInterfaceName = "Subject"
+            propertiesViewBeanURL = "../policy/PMLDAPOrgSubject"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "IdentityServerRoles"
+            pluginInterfaceName = "Subject"
+            propertiesViewBeanURL = "../policy/PMDSAMERoleSubject"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "LDAPGroups"
+            pluginInterfaceName = "Subject"
+            propertiesViewBeanURL = "../policy/PMLDAPGroupSubject"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "LDAPRoles"
+            pluginInterfaceName = "Subject"
+            propertiesViewBeanURL = "../policy/PMLDAPRoleSubject"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "LDAPUsers"
+            pluginInterfaceName = "Subject"
+            propertiesViewBeanURL = "../policy/PMLDAPUserSubject"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "AuthLevelCondition"
+            pluginInterfaceName = "Condition"
+            propertiesViewBeanURL = "../policy/PMDefaultAuthLevelCondition"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "LEAuthLevelCondition"
+            pluginInterfaceName = "Condition"
+            propertiesViewBeanURL = "../policy/PMDefaultAuthLevelCondition"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "AuthSchemeCondition"
+            pluginInterfaceName = "Condition"
+            propertiesViewBeanURL = "../policy/PMDefaultAuthSchemeCondition"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "AuthSchemeCondition"
+            pluginInterfaceName = "Condition"
+            propertiesViewBeanURL = "../policy/PMDefaultAuthSchemeCondition"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "IPCondition"
+            pluginInterfaceName = "Condition"
+            propertiesViewBeanURL = "../policy/PMDefaultIPCondition"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "SimpleTimeCondition"
+            pluginInterfaceName = "Condition"
+            propertiesViewBeanURL = "../policy/PMDefaultTimeCondition"
+            />
+
+    <SetPropertiesViewBeanURLForPluginSchema
+            pluginSchemaName = "SessionCondition"
+            pluginInterfaceName = "Condition"
+            propertiesViewBeanURL = "../policy/PMDefaultSessionCondition"
+            />
+
+</SchemaRequests> 
+</Requests>    

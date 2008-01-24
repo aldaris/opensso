@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+<!-- This file is used by amDelegation_mod.xml -->
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/sun/identity/sm/sms.dtd"
+>
+
+<Requests>
+     <SubSchema name="Privilege" inheritance="multiple">
+          <AttributeSchema name="listOfPermissions" />
+          <AttributeSchema name="defaultSubjectInLegacyMode" />
+     </SubSchema>
+</Requests>
+

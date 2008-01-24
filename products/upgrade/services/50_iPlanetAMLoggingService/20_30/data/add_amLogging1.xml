@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun ONE Access Manager 2005Q3 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t add_amLogging1.xml
+
+-->
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMLoggingService"
+	SchemaType="Global">
+
+	    <AddDefaultValues>
+		<AttributeValuePair>
+		    <Attribute name="iplanet-am-logging-allfields"/>
+		    <Value>ContextID</Value>
+		</AttributeValuePair>
+		<AttributeValuePair>
+		    <Attribute name="iplanet-am-logging-allfields"/>
+		    <Value>MessageID</Value>
+		</AttributeValuePair>
+	    </AddDefaultValues>
+
+	    <AddDefaultValues>
+		<AttributeValuePair>
+		    <Attribute name="iplanet-am-logging-logfields"/>
+		    <Value>ContextID</Value>
+		</AttributeValuePair>
+		<AttributeValuePair>
+		    <Attribute name="iplanet-am-logging-logfields"/>
+		    <Value>MessageID</Value>
+		</AttributeValuePair>
+	    </AddDefaultValues>
+
+	    <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMLoggingService/20_30/data/amLogging_addGlobal1.xml"/>
+    </SchemaRequests>
+</Requests>
+

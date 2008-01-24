@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+    -->
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amPolicyConfig_mod.xml
+
+-->
+
+<Requests>
+
+    <!-- add attribute schema for enableOrgAliasReferral -->
+    <SchemaRequests serviceName="iPlanetAMPolicyConfigService"
+	SchemaType="Global"
+	i18nKey="">
+
+        <AddAttributeSchema fileName="AmreAttributeSchema.xml" />
+
+    </SchemaRequests>
+
+    <!-- Add new conditions to choice values -->
+    <SchemaRequests serviceName="iPlanetAMPolicyConfigService"
+	SchemaType="Organization"
+	i18nKey="">
+
+	<AddChoiceValues>
+
+            <!-- add AuthenticateToRealmCondition as a choice value for 
+                    selected conditions -->
+            <ChoiceValue 
+                    AttributeName="iplanet-am-policy-selected-conditions" 
+                    I18NKey="a135a" value="AuthenticateToRealmCondition" />
+
+            <!-- add AuthenticateToServiceCondition as a choice value for 
+                    selected conditions -->
+            <ChoiceValue 
+                    AttributeName="iplanet-am-policy-selected-conditions" 
+                    I18NKey="a135b" value="AuthenticateToServiceCondition" />
+
+            <!-- add LDAPFilterCondition as a choice value for 
+                    selected conditions -->
+            <ChoiceValue 
+                    AttributeName="iplanet-am-policy-selected-conditions" 
+                    I18NKey="a141fc" value="LDAPFilterCondition" />
+
+	</AddChoiceValues>
+
+    </SchemaRequests>
+
+    <!-- Add new conditions to default values -->
+    <SchemaRequests serviceName="iPlanetAMPolicyConfigService"
+	SchemaType="Organization"
+	i18nKey="">
+
+	<AddDefaultValues>
+
+            <!-- add AuthenticateToRealmCondition as a default value for 
+                    selected conditions -->
+            <AttributeValuePair>
+                <Attribute name="iplanet-am-policy-selected-conditions"/>
+                <Value>AuthenticateToRealmCondition</Value>
+            </AttributeValuePair>
+
+            <!-- add AuthenticateToServiceCondition as a default value for 
+                    selected conditions -->
+            <AttributeValuePair>
+                <Attribute name="iplanet-am-policy-selected-conditions"/>
+                <Value>AuthenticateToServiceCondition</Value>
+            </AttributeValuePair>
+
+            <!-- add LDAPFilterCondition as a default value for 
+                    selected conditions -->
+            <AttributeValuePair>
+                <Attribute name="iplanet-am-policy-selected-conditions"/>
+                <Value>LDAPFilterCondition</Value>
+            </AttributeValuePair>
+
+	</AddDefaultValues>
+
+    </SchemaRequests>
+
+    <!-- Add new AdviceshandleableByAM default values -->
+    <SchemaRequests serviceName="iPlanetAMPolicyConfigService"
+	SchemaType="Global"
+	i18nKey="">
+
+	<AddDefaultValues>
+
+            <!-- add AuthenticateToRealmConditionAdvice and 
+                    AuthenticateToServiceCodnitionAdvice -->
+            <AttributeValuePair>
+                <Attribute name="sun-am-policy-config-advices-handleable-by-am"/>
+                <Value>AuthenticateToRealmConditionAdvice</Value>
+                <Value>AuthenticateToServiceConditionAdvice</Value>
+            </AttributeValuePair>
+
+	</AddDefaultValues>
+
+    </SchemaRequests>
+
+</Requests>

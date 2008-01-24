@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthNT_modValue.xml
+
+-->
+
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMAuthNTService"
+	SchemaType="Organization"
+	i18nKey="">
+	<Modifyi18nKey>
+	    <AttributeValuePair>
+	    <Attribute name="iplanet-am-auth-nt-auth-level"/>
+		<Value>a104</Value>
+	    </AttributeValuePair>
+	</Modifyi18nKey>
+    </SchemaRequests>
+</Requests>

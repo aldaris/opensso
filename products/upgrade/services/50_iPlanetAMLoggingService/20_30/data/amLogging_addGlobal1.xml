@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun ONE Access Manager 2005Q3 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  this file referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t add_amLogging1.xml
+
+-->
+
+<Requests>
+    <AttributeSchema name="sun-am-logging-db-read-handler"
+	type="single"
+	syntax="string"
+	i18nKey="">
+	<DefaultValues>
+	    <Value>com.sun.identity.log.handlers.LogReadDBHandler</Value
+	</DefaultValues>
+    </AttributeSchema>
+</Requests>

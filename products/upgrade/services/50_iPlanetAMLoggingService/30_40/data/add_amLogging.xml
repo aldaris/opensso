@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun ONE Access Manager 2005Q3 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t add_amLogging.xml
+
+-->
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMLoggingService"
+	SchemaType="Global">
+	    <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMLoggingService/30_40/data/amLogging_addGlobal.xml"/>
+    </SchemaRequests>
+</Requests>
+

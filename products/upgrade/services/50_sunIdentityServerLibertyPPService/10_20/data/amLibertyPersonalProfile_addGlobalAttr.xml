@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Identity Server 2005Q4 Admin CLI DTD//EN
+ "
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amLibertyPersonalProfile_mod.xml
+
+-->
+
+<Requests>
+    <AttributeSchema name="sunIdentityServerPPServiceInstanceUpdateEnabled" 
+                      type="single" 
+                      syntax="boolean" 
+                      i18nKey="p113">
+                      <DefaultValues>
+                         <Value>false</Value>
+                      </DefaultValues>
+    </AttributeSchema>
+    <AttributeSchema name="sunIdentityServerPPServiceInstanceUpdateClass" 
+                      type="single" 
+                      syntax="string" 
+                      i18nKey="p114">
+                      <DefaultValues>
+                         <Value>com.sun.identity.liberty.ws.idpp.plugin.IDPPServiceInstanceUpdate</Value>
+                      </DefaultValues>
+    </AttributeSchema>
+    <AttributeSchema name="sunIdentityServerPPAlternateEndPoint" 
+                      type="single" 
+                      syntax="string" 
+                      i18nKey="p115">
+    </AttributeSchema>
+</Requests>

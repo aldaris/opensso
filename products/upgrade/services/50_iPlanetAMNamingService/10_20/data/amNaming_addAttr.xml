@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 7.1 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amNaming_add.xml
+
+-->
+
+<Requests>
+    <AttributeSchema name="iplanet-am-naming-jaxrpc-url"
+        type="single"
+        syntax="url"
+        i18nKey="a114">
+        <DefaultValues>
+	    <Value>%protocol://%host:%portSERVER_DEPLOY_URI/jaxrpc/</Value>
+        </DefaultValues>
+     </AttributeSchema>
+</Requests> 

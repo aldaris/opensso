@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding="XML_ENCODING"?> 
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -s AddAuthenticateToRealmCondition.xml
+
+-->
+
+
+
+<!DOCTYPE ServicesConfiguration
+    PUBLIC "=//iPlanet//Service Management Services (SMS) 1.0 DTD//EN"
+    "jar://com/sun/identity/sm/sms.dtd">
+
+<ServicesConfiguration>
+    <Service name="iPlanetAMPolicyService" version="1.0">
+        <PluginSchema
+            name="LDAPFilterCondition"
+            interfaceName="Condition"
+            className="com.sun.identity.policy.plugins.LDAPFilterCondition"
+            i18nFileName="amPolicy"
+            i18nKey="sun-ldapfilter-condition-name" />
+
+
+    </Service>
+</ServicesConfiguration>

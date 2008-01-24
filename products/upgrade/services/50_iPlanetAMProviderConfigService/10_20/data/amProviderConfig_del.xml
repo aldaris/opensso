@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2006 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+	"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amProviderConfig_del.xml
+
+-->
+
+<Requests>
+
+    <SchemaRequests serviceName="iPlanetAMProviderConfigService"
+	SchemaType="Organization"
+	SubSchema="/EntityDescriptor/Provider">
+        <RemoveAttributeSchema>
+            <Attribute name="sunIdentityServerRelationshipTermNotificationProtocolProfile" />
+        </RemoveAttributeSchema>
+        <RemoveAttributeSchema>
+            <Attribute name="sunIdentityServerIntroductionNotificationProtProfile" />
+        </RemoveAttributeSchema>
+    </SchemaRequests>
+</Requests>
+

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding="XML_ENCODING"?> 
+
+<!--
+    Copyright (c) 2006 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -s AddAuthenticatedAgents.xml
+
+-->
+
+
+
+<!DOCTYPE ServicesConfiguration
+    PUBLIC "=//iPlanet//Service Management Services (SMS) 1.0 DTD//EN"
+    "jar://com/sun/identity/sm/sms.dtd">
+
+<ServicesConfiguration>
+    <Service name="iPlanetAMPolicyService" version="1.0">
+
+        <PluginSchema
+            name="AuthenticatedAgents"
+            interfaceName="Subject"
+            className="com.sun.identity.policy.plugins.AuthenticatedAgents"
+            i18nFileName="amPolicy" />
+
+    </Service>
+</ServicesConfiguration>

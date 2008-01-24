@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" \-\-data amDisco_add.xml
+
+-->
+
+<Requests>
+    <SchemaRequests serviceName="sunIdentityServerDiscoveryService"
+	SchemaType="Global">
+	<AddChoiceValues>
+	    <ChoiceValue
+		 AttributeName="sunIdentityServerDiscoSupportedDirectives"
+		 I18NKey=""
+		 value="GenerateBearerToken"/>
+	    <ChoiceValue
+		AttributeName="sunIdentityServerDiscoSupportedAuthnMechs"
+		I18NKey=""
+		value="urn:liberty:security:2004-04:null:Bearer"/>
+	    <ChoiceValue
+		AttributeName="sunIdentityServerDiscoSupportedAuthnMechs"
+		I18NKey=""
+		value="urn:liberty:security:2004-04:TLS:Bearer"/>
+	    <ChoiceValue
+		AttributeName="sunIdentityServerDiscoSupportedAuthnMechs"
+		I18NKey=""
+		value="urn:liberty:security:2004-04:Client:Bearer"/>
+	    <ChoiceValue
+		AttributeName="sunIdentityServerDiscoSupportedDirectives"
+		I18NKey=""
+		value="GenerateBearerToken"/>
+	</AddChoiceValues>
+	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_sunIdentityServerDiscoveryService/10_20/data/amDisco_addAttr.xml" />
+    </SchemaRequests>
+</Requests>   

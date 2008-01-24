@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" \-\-data amSOAPBinding_mod.xml
+
+-->
+
+<Requests>
+
+    <SchemaRequests serviceName="sunIdentityServerSOAPBinding"
+	SchemaType="Global">
+	<AddChoiceValues>
+             <ChoiceValue  AttributeName="SupportedAuthenticationMechanisms" I18NKey="a10513" value="urn:liberty:security:2005-02:null:X509" />
+             <ChoiceValue  AttributeName="SupportedAuthenticationMechanisms" I18NKey="a10514" value="urn:liberty:security:2005-02:null:SAML"/>
+             <ChoiceValue  AttributeName="SupportedAuthenticationMechanisms" I18NKey="a10515" value="urn:liberty:security:2005-02:null:Bearer" />
+             <ChoiceValue  AttributeName="SupportedAuthenticationMechanisms" I18NKey="a10516" value="urn:liberty:security:2005-02:TLS:X509" />
+             <ChoiceValue  AttributeName="SupportedAuthenticationMechanisms" I18NKey="a10517" value="urn:liberty:security:2005-02:TLS:SAML" />
+             <ChoiceValue  AttributeName="SupportedAuthenticationMechanisms" I18NKey="a10518" value="urn:liberty:security:2005-02:TLS:Bearer" />
+             <ChoiceValue  AttributeName="SupportedAuthenticationMechanisms" I18NKey="a10519" value="urn:liberty:security:2005-02:ClientTLS:X509" />
+             <ChoiceValue  AttributeName="SupportedAuthenticationMechanisms" I18NKey="a10520" value="urn:liberty:security:2005-02:ClientTLS:SAML"/>
+             <ChoiceValue  AttributeName="SupportedAuthenticationMechanisms" I18NKey="a10521" value="urn:liberty:security:2005-02:ClientTLS:Bearer" />
+	</AddChoiceValues>
+    </SchemaRequests>
+    <SchemaRequests serviceName="sunIdentityServerSOAPBinding"
+	SchemaType="Global">
+	<AddDefaultValues>
+	    <AttributeValuePair>
+		<Attribute name="SupportedAuthenticationMechanisms"/>
+                     <Value>urn:liberty:security:2005-02:null:X509</Value>
+                     <Value>urn:liberty:security:2005-02:TLS:X509</Value>
+                     <Value>urn:liberty:security:2005-02:ClientTLS:X509</Value>
+                     <Value>urn:liberty:security:2005-02:null:SAML</Value>
+                     <Value>urn:liberty:security:2005-02:TLS:SAML</Value>
+                     <Value>urn:liberty:security:2005-02:ClientTLS:SAML</Value>
+                     <Value>urn:liberty:security:2005-02:null:Bearer</Value>
+                     <Value>urn:liberty:security:2005-02:TLS:Bearer</Value>
+                     <Value>urn:liberty:security:2005-02:ClientTLS:Bearer</Value>
+	    </AttributeValuePair>
+	</AddDefaultValues>
+    </SchemaRequests>
+</Requests> 

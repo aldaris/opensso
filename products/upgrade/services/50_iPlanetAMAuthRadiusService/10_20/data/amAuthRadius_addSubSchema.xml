@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthRadius_mod.xml
+
+-->
+
+<Requests>
+    <SubSchema name="serverconfig" inheritance="multiple">
+	<AttributeSchema name="iplanet-am-auth-radius-server1"
+	    type="list"
+	    syntax="string"
+	    i18nKey="a101">
+	    <DefaultValues>
+		<Value>127.0.0.1</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+
+	<AttributeSchema name="iplanet-am-auth-radius-server2"
+	    type="list"
+	    syntax="string"
+	    i18nKey="a102">
+	    <DefaultValues>
+		<Value>127.0.0.1</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+
+	<AttributeSchema name="iplanet-am-auth-radius-secret"
+	    type="single"
+	    syntax="password"
+	    i18nKey="a103">
+	</AttributeSchema>
+	<AttributeSchema name="iplanet-am-auth-radius-server-port"
+	    type="single"
+	    syntax="number"
+	    i18nKey="a104">
+	    <DefaultValues>
+		<Value>1645</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="iplanet-am-auth-radius-auth-level"
+	    type="single"
+	    syntax="number"
+	    i18nKey="a500">
+	    <DefaultValues>
+		<Value>0</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="iplanet-am-auth-radius-timeout"
+	    type="single"
+	    syntax="number"
+	    i18nKey="a105">
+	    <DefaultValues>
+		<Value>3</Value>
+	    </DefaultValues>
+	 </AttributeSchema>
+    </SubSchema>
+</Requests>

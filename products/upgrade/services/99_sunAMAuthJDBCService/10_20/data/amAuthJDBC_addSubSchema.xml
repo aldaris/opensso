@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthJDBC_mod.xml
+
+-->
+
+<Requests>
+    <SubSchema name="serverconfig" inheritance="multiple">
+        <AttributeSchema name="sunAMAuthJDBCConnectionType"
+            type="single_choice"
+            syntax="string"
+            i18nKey="a100">
+            <ChoiceValues>
+                <ChoiceValue i18nKey="choiceJNDI">JNDI</ChoiceValue> 
+                <ChoiceValue i18nKey="choiceURL">JDBC</ChoiceValue>
+            </ChoiceValues>
+            <DefaultValues>
+                <Value>JNDI</Value>
+            </DefaultValues>
+       </AttributeSchema>
+       <AttributeSchema name="sunAMAuthJDBCJndiName"
+	    type="single"
+	    syntax="string"
+	    i18nKey="a101">
+	    <DefaultValues>
+	        <Value>java:comp/env/jdbc/samplePool</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="sunAMAuthJDBCDriver"
+	    type="single"
+	    syntax="string"
+	    i18nKey="a102">
+	    <DefaultValues>
+		<Value>com.mysql.jdbc.Driver</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="sunAMAuthJDBCUrl"
+	    type="single"
+	    syntax="string"
+	    i18nKey="a103">
+	    <DefaultValues>
+		<Value>jdbc:mysql://127.0.0.1:3306/test</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="sunAMAuthJDBCDbuser"
+	    type="single"
+	    syntax="string"
+	    i18nKey="a104">
+	    <DefaultValues>
+		<Value>root</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="sunAMAuthJDBCDbpassword"
+	    type="single"
+	    syntax="password"
+	    i18nKey="a105">
+	    <DefaultValues>
+		<Value>password</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="sunAMAuthJDBCPasswordColumn"
+	    type="single"
+	    syntax="string"
+	    i18nKey="a106">
+	    <DefaultValues>
+		<Value>PASSWORD_COLUMN</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="sunAMAuthJDBCStatement"
+	    type="single"
+	    syntax="string"
+	    i18nKey="a107">
+	    <DefaultValues>
+		<Value>select PASSWORD_COLUMN from TABLE where USERNAME_COLUMN = ?</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="sunAMAuthJDBCPasswordSyntaxTransformPlugin"
+	    type="single"
+ 	    syntax="string"
+	    i18nKey="a108">
+	    <DefaultValues>
+		<Value>com.sun.identity.authentication.modules.jdbc.ClearTextTransform</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+	<AttributeSchema name="sunAMAuthJDBCAuthLevel"
+	    type="single"
+	    syntax="number"
+	    i18nKey="a109">
+	    <DefaultValues>
+		<Value>0</Value>
+	    </DefaultValues>
+	</AttributeSchema>
+    </SubSchema>
+</Requests>

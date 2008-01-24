@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Identity Server 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthHTTPBasic_mod.xml
+
+-->
+
+<Requests>
+    <AttributeSchema name="iplanet-am-auth-http-basic-module-configured"
+        type="single_choice"
+        syntax="string"
+        i18nKey="a101">
+        <ChoiceValues>
+            <ChoiceValuesClassName
+                className=
+                    "com.sun.identity.authentication.service.ConfiguredModuleInstances" />
+        </ChoiceValues>
+     </AttributeSchema>
+
+</Requests>

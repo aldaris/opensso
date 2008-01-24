@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthNT_mod.xml
+
+-->
+
+<Requests>
+    <SubSchema name="serverconfig" inheritance="multiple">
+        <AttributeSchema name="iplanet-am-auth-nt-domain"
+	    type="single"
+	    syntax="string"
+	    i18nKey="a101">
+	</AttributeSchema>
+
+        <AttributeSchema name="iplanet-am-auth-nt-host"
+	    type="single"
+	    syntax="string"
+	    i18nKey="a102">
+        </AttributeSchema>
+
+        <AttributeSchema name="iplanet-am-auth-samba-config-file-name"
+  	    type="single"
+	    syntax="string"
+	    i18nKey="a103">
+        </AttributeSchema>
+
+        <AttributeSchema name="iplanet-am-auth-nt-auth-level"
+	    type="single"
+	    syntax="number"
+	    i18nKey="a104">
+	    <DefaultValues>
+                <Value>0</Value>
+	    </DefaultValues>
+        </AttributeSchema>
+    </SubSchema>
+</Requests>

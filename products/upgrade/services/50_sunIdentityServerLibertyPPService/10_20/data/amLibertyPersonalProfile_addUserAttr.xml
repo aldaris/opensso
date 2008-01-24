@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Identity Server 2005Q4 Admin CLI DTD//EN "
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amLibertyPersonalProfile_mod.xml
+
+-->
+
+<Requests>
+    <AttributeSchema name="sunIdentityServerPPAddressCard"
+	type="list" 
+	syntax="string" 
+	uitype="name_value_list"
+	any="display"
+	i18nKey="p138"/>
+    <AttributeSchema name="sunIdentityServerPPMsgContact"
+        type="list" 
+        syntax="string" 
+        uitype="name_value_list"
+        any="display"
+        i18nKey="p139"/>
+    <AttributeSchema name="sunIdentityServerPPFacadeMugShot"
+        type="single" 
+        syntax="url" 
+        any="display"
+        i18nKey="p140"/>
+    <AttributeSchema name="sunIdentityServerPPFacadeWebSite"
+        type="single" 
+        syntax="url" 
+        any="display"
+        i18nKey="p141"/>
+    <AttributeSchema name="sunIdentityServerPPFacadeNamePronounced"
+        type="single" 
+        syntax="url" 
+        any="display"
+        i18nKey="p142"/>
+    <AttributeSchema name="sunIdentityServerPPFacadeGreetSound"
+        type="single" 
+	syntax="url" 
+        any="display"
+        i18nKey="p143"/>
+    <AttributeSchema name="sunIdentityServerPPFacadeGreetMeSound"
+        type="single" 
+        syntax="url" 
+        any="display"
+        i18nKey="p144"/>
+    <AttributeSchema name="sunIdentityServerPPDemographicsDisplayLanguage"
+        type="single" 
+        syntax="url" 
+        any="display"
+        i18nKey="p145"/>
+    <AttributeSchema name="sunIdentityServerPPDemographicsLanguage"
+        type="list" 
+	syntax="string" 
+        any="display"
+        i18nKey="p146"/>
+    <AttributeSchema name="sunIdentityServerPPDemographicsBirthday"
+        type="single" 
+        syntax="string" 
+        any="display"
+        i18nKey="p147"/>
+    <AttributeSchema name="sunIdentityServerPPDemographicsAge"
+        type="single" 
+        syntax="number" 
+        any="display"
+        i18nKey="p148"/>
+    <AttributeSchema name="sunIdentityServerPPDemographicsTimeZone"
+        type="single" 
+        syntax="string" 
+        any="display"
+        i18nKey="p149"/>
+    <AttributeSchema name="sunIdentityServerPPSignKey"
+        type="single" 
+        syntax="string" 
+        i18nKey="p150"/>
+    <AttributeSchema name="sunIdentityServerPPEncryptKey"
+        type="single" 
+        syntax="string" 
+        i18nKey="p151"/>
+    <AttributeSchema name="sunIdentityServerPPEmergencyContact"
+        type="single" 
+        syntax="string" 
+        any="display"
+        i18nKey="p152"/>
+</Requests>

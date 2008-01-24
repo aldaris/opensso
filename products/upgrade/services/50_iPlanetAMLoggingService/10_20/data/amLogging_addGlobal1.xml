@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  this file referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t add_amLogging1.xml
+
+-->
+
+<Requests>
+
+    <AttributeSchema name="sun-am-logging-db-max-in-mem"
+	type="single"
+	syntax="number_range"
+	rangeStart="1" rangeEnd="2147483647"
+	i18nKey="a1191">
+	<DefaultValues>
+	    <Value>2</Value>
+	</DefaultValues>
+    </AttributeSchema>
+
+</Requests>

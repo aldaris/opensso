@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding="XML_ENCODING"?> 
+
+<!--
+    Copyright (c) 2006 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t AddAgentLoggingPolicy.xml
+
+-->
+
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<Requests>
+
+<RealmRequests>
+    <RealmCreatePolicy realm="/sunamhiddenrealmdelegationservicepermissions">
+        <Policy name="ROOT_SUFFIX_HAT^^AgentLogging" referralPolicy="false" active="true" >
+	    <Rule name="delegation-rule1">
+	        <ServiceName name="sunAMDelegationService" />
+                <ResourceName name="sms://*ROOT_SUFFIX/iPlanetAMLoggingService/1.0/application/*" />
+                <AttributeValuePair>
+                    <Attribute name="MODIFY" />
+                    <Value>allow</Value>
+                </AttributeValuePair>
+            </Rule>
+            <Subjects name="Subjects" description="">
+                <Subject name="AuthenticatedAgents" type="AuthenticatedAgents" includeType="inclusive">
+                </Subject>
+            </Subjects>
+        </Policy>
+    </RealmCreatePolicy>
+</RealmRequests>
+
+</Requests>
+

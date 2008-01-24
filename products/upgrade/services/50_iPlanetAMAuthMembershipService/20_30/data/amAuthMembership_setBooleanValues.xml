@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthMembership_setBooleanValues.xml
+
+-->
+
+<Requests>
+<SchemaRequests serviceName="iPlanetAMAuthMembershipService" SchemaType="Organization">
+    <SetBooleanValues name="iplanet-am-auth-membership-ssl-enabled"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-auth-membership-return-user-dn"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+</SchemaRequests>
+<SchemaRequests serviceName="iPlanetAMAuthMembershipService" SchemaType="Organization" SubSchema="/serverconfig">
+    <SetBooleanValues name="iplanet-am-auth-membership-ssl-enabled"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-auth-membership-return-user-dn"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+</SchemaRequests>
+</Requests>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuth_mod.xml
+
+-->
+
+
+<Requests>
+
+    <SchemaRequests serviceName="iPlanetAMAuthService"
+        SchemaType="Organization">
+
+        <Modifyi18nKey>
+            <AttributeValuePair>
+                <Attribute name="iplanet-am-auth-user-container"/>
+                <Value> </Value>
+            </AttributeValuePair>
+        </Modifyi18nKey>
+	
+        <Modifyi18nKey>
+            <AttributeValuePair>
+                <Attribute name="iplanet-am-auth-user-naming-attr"/>
+                <Value> </Value>
+            </AttributeValuePair>
+        </Modifyi18nKey>
+
+	<RemoveAttributeSchema>
+	    <Attribute name="iplanet-am-auth-admin-auth-module" />
+	    <Attribute name="iplanet-am-auth-org-config" />
+	    <Attribute name="iplanet-am-auth-allowed-modules" />
+  	</RemoveAttributeSchema>
+
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMAuthService"
+        SchemaType="Organization"
+        i18nKey="">
+        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthService/20_30/data/amAuth_addAttrs.xml" />
+    </SchemaRequests>
+
+</Requests>

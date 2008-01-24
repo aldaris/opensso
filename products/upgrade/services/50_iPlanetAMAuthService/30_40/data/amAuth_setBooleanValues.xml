@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Identity Server 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthLDAP_setBooleanValues.xml
+
+-->
+
+<Requests>
+ <SchemaRequests serviceName="iPlanetAMAuthService" SchemaType="Organization" i18nKey="">
+    <SetBooleanValues name="iplanet-am-auth-persistent-cookie-mode"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="sunEnableModuleBasedAuth"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-auth-login-failure-lockout-mode"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="sunStoreInvalidAttemptsInDS"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+    <SetBooleanValues name="iplanet-am-auth-username-generator-enabled"
+        trueValue="true"
+        trueI18nKey="i18nTrue"
+        falseValue="false"
+        falseI18nKey="i18nFalse"/>
+</SchemaRequests>
+</Requests>
+

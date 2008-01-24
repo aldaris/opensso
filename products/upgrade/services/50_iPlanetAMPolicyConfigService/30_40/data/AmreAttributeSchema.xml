@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+    -->
+
+<!-- This file is used by amPolicyConfig_mod.xml -->
+<!-- Attribute schema for advices handleable by am -->
+<AttributeSchema name="sun-am-policy-config-org-alias-mapped-resources-enabled" 
+    type="single"
+    syntax="boolean"
+    uitype="radio"
+    i18nKey="a100e">
+    <BooleanValues>
+        <BooleanTrueValue i18nKey="a100b">true</BooleanTrueValue>
+        <BooleanFalseValue i18nKey="a100c">false</BooleanFalseValue>
+    </BooleanValues>
+    <DefaultValues>
+        <Value>false</Value>
+    </DefaultValues>
+</AttributeSchema>

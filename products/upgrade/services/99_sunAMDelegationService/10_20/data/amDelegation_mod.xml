@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amDelegation_mod.xml
+
+-->
+
+<Requests>
+
+    <SchemaRequests serviceName="sunAMDelegationService"
+	SchemaType="Global" SubSchema="/Permissions/Permission">
+	<RemoveAttributeSchema>
+            <Attribute name="defaultSubjectInLegacyMode" />
+	</RemoveAttributeSchema>		
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="sunAMDelegationService"
+        SchemaType="Global">
+        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema.xml"/>
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="sunAMDelegationService"
+        SchemaType="Organization">
+        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema.xml"/>
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="sunAMDelegationService"
+        SchemaType="Global"
+        SubSchema="/Privileges">
+        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema1.xml"/>
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="sunAMDelegationService"
+        SchemaType="Organization"
+        SubSchema="/Privileges">
+        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema1.xml"/>
+    </SchemaRequests>
+
+    <ServiceConfigurationRequests serviceName="sunAMDelegationService">
+        <AddSubConfiguration subConfigName="/Permissions/LogWrite" 
+            subConfigId="Permission" 
+            priority="0">
+            <AttributeValuePair>
+                <Attribute name="resource" />
+                    <Value>*REALM/iPlanetAMLoggingService/1.0/application/*</Value>
+            </AttributeValuePair>
+            <AttributeValuePair>
+                <Attribute name="actions" />
+                    <Value>MODIFY</Value>
+            </AttributeValuePair>
+	</AddSubConfiguration>
+        <AddSubConfiguration subConfigName="/Permissions/LogRead" 
+            subConfigId="Permission" 
+            priority="0">
+            <AttributeValuePair>
+                <Attribute name="resource" />
+                    <Value>*REALM/iPlanetAMLoggingService/1.0/application/*</Value>
+            </AttributeValuePair>
+            <AttributeValuePair>
+                <Attribute name="actions" />
+                    <Value>READ</Value>
+            </AttributeValuePair>
+	</AddSubConfiguration>
+    </ServiceConfigurationRequests>
+
+    <ServiceConfigurationRequests serviceName="sunAMDelegationService">
+        <AddSubConfiguration subConfigName="/Privileges/RealmAdmin" 
+            subConfigId="Privilege" 
+            priority="0">
+            <AttributeValuePair>
+                <Attribute name="listOfPermissions" />
+                    <Value>RealmAdmin</Value>
+            </AttributeValuePair>
+            <AttributeValuePair>
+                <Attribute name="defaultSubjectInLegacyMode" />
+                <Value>id=Organization Admin Role,ou=role,REALM,amsdkdn=cn=Organization Admin Role,REALM</Value>
+            </AttributeValuePair>
+        </AddSubConfiguration>
+        <AddSubConfiguration subConfigName="/Privileges/PolicyAdmin"
+            subConfigId="Privilege"
+            priority="0">
+            <AttributeValuePair>
+                <Attribute name="listOfPermissions" />
+                <Value>PolicyAdmin</Value>
+                <Value>RealmReadOnly</Value>
+                <Value>DatastoresReadOnly</Value>
+            </AttributeValuePair>
+            <AttributeValuePair>
+                <Attribute name="defaultSubjectInLegacyMode" />
+                <Value>id=Organization Policy Admin Role,ou=role,REALM,amsdkdn=cn=Organization Policy Admin Role,REALM</Value>
+            </AttributeValuePair>
+        </AddSubConfiguration>
+        <AddSubConfiguration subConfigName="/Privileges/RealmReadOnly"
+            subConfigId="Privilege"
+            priority="0">
+            <AttributeValuePair>
+                <Attribute name="listOfPermissions" />
+                <Value>RealmReadOnly</Value>
+            </AttributeValuePair>
+            <AttributeValuePair>
+                <Attribute name="defaultSubjectInLegacyMode" />
+                <Value>id=Organization Policy Admin Role,ou=role,REALM,amsdkdn=cn=Organization Policy Admin Role,REALM</Value>
+            </AttributeValuePair>
+        </AddSubConfiguration>
+        <AddSubConfiguration
+            subConfigName="/Privileges/DatastoresReadOnly"
+            subConfigId="Privilege"
+            priority="0">
+            <AttributeValuePair>
+                <Attribute name="listOfPermissions" />
+                <Value>DatastoresReadOnly</Value>
+            </AttributeValuePair>
+            <AttributeValuePair>
+                <Attribute name="defaultSubjectInLegacyMode" />
+                <Value>id=Organization Policy Admin Role,ou=role,REALM,amsdkdn=cn=Organization Policy Admin Role,REALM</Value>
+            </AttributeValuePair>
+        </AddSubConfiguration>
+        <AddSubConfiguration
+            subConfigName="/Privileges/LogAdmin"
+            subConfigId="Privilege"
+            priority="0">
+            <AttributeValuePair>
+                <Attribute name="listOfPermissions" />
+                <Value>LogWrite</Value>
+                <Value>LogRead</Value>
+            </AttributeValuePair>
+        </AddSubConfiguration>
+        <AddSubConfiguration
+            subConfigName="/Privileges/LogRead"
+            subConfigId="Privilege"
+            priority="0">
+            <AttributeValuePair>
+                <Attribute name="listOfPermissions" />
+                <Value>LogRead</Value>
+            </AttributeValuePair>
+        </AddSubConfiguration>
+        <AddSubConfiguration
+            subConfigName="/Privileges/LogWrite"
+            subConfigId="Privilege"
+            priority="0">
+            <AttributeValuePair>
+                <Attribute name="listOfPermissions" />
+                <Value>LogWrite</Value>
+            </AttributeValuePair>
+        </AddSubConfiguration>
+    </ServiceConfigurationRequests>
+
+</Requests>

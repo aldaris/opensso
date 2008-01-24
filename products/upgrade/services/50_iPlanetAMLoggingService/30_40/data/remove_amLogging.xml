@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t remove_amLogging.xml
+
+-->
+
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMLoggingService"
+	SchemaType="Global">
+	<RemoveAttributeSchema>
+	    <Attribute name="iplanet-am-logging-certificate-database-directory" />
+	    <Attribute name="iplanet-am-logging-certificate-database-prefix" />
+	    <Attribute name="iplanet-am-logging-key-database-prefix" />
+	    <Attribute name="iplanet-am-logging-security-module-name" />
+	    <Attribute name="iplanet-am-logging-security-initializer-class-name" />
+	</RemoveAttributeSchema>
+    </SchemaRequests>
+</Requests>

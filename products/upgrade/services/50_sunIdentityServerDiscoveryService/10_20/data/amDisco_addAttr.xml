@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  this file is referenced by:
+
+  amadmin -u "xxx" -w "yyy" \-\-data amDisco_add.xml
+
+-->
+
+<Requests>
+    <AttributeSchema name="sunIdentityServerDiscoOptionSecurityResponse"
+	type="single"
+        syntax="boolean"
+        i18nKey="g109">
+        <DefaultValues>
+	    <Value>false</Value>
+	</DefaultValues>
+    </AttributeSchema>
+
+    <AttributeSchema 
+	name="sunIdentityServerBootstrappingEncryptNIinSessionContext"
+	type="single"
+	syntax="boolean"
+	i18nKey="g203">
+	<DefaultValues>
+	    <Value>false</Value>
+	</DefaultValues>
+    </AttributeSchema>
+
+    <AttributeSchema 
+	name="sunIdentityServerBootstrappingImpliedResource"
+	type="single"
+        syntax="boolean"
+        i18nKey="g204">
+        <DefaultValues>
+	    <Value>false</Value>
+        </DefaultValues>
+    </AttributeSchema>
+</Requests>

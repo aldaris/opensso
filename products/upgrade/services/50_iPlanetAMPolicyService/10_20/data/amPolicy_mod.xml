@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t ums_addschema.xml
+
+-->
+
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMPolicyService"
+	SchemaType="Organization"
+	SubSchema="/Policies">
+            <ModifyInheritanceAttribute inheritance="multiple" />
+    </SchemaRequests>
+    <SchemaRequests serviceName="iPlanetAMPolicyService"
+	SchemaType="Organization"
+	SubSchema="/Resources">
+            <ModifyInheritanceAttribute inheritance="multiple" />
+    </SchemaRequests>
+</Requests>
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+    -->
+
+<!-- This file is used by amPolicyConfig_mod.xml -->
+<!-- Attribute schema for selected response providers -->
+
+<AttributeSchema name="sun-am-policy-selected-responseproviders"
+    type="multiple_choice"
+    syntax="string"
+    i18nKey="a200">
+    <ChoiceValues>
+        <ChoiceValue i18nKey="a201">IDRepoResponseProvider</ChoiceValue>
+    </ChoiceValues>
+    <DefaultValues>
+        <Value>IDRepoResponseProvider</Value>
+    </DefaultValues>
+</AttributeSchema>

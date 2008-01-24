@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Identity Server 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  this file referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t amProviderConfig_add1.xml
+
+-->
+
+<Requests>
+	<AttributeSchema name="sunIdentityServerAffiliateEncryptionKeyalias"
+		type="single"
+		i18nKey="a315">
+	</AttributeSchema>
+</Requests>

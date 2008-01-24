@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthAD_mod.xml
+
+-->
+
+<Requests>
+
+    <SchemaRequests serviceName="sunAMAuthADService"
+        SchemaType="Organization"
+	SubSchema="/serverconfig">
+	
+        <AddDefaultValues>
+            <AttributeValuePair>
+	    <Attribute name="iplanet-am-auth-ldap-server"/>
+		<Value>DIRECTORY_SERVER:DIRECTORY_PORT</Value>
+	    </AttributeValuePair>
+        </AddDefaultValues>
+        <AddDefaultValues>
+            <AttributeValuePair>
+	    <Attribute name="iplanet-am-auth-ldap-base-dn"/>
+		<Value>NORMALIZED_ORGBASE</Value>
+	    </AttributeValuePair>
+        </AddDefaultValues>  
+        <AddDefaultValues>
+            <AttributeValuePair>
+	    <Attribute name="iplanet-am-auth-ldap-bind-dn"/>
+		<Value>cn=amldapuser,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
+	    </AttributeValuePair>
+        </AddDefaultValues>
+        <AddDefaultValues>
+            <AttributeValuePair>
+	    <Attribute name="iplanet-am-auth-ldap-user-naming-attribute"/>
+		<Value>USER_NAMING_ATTR</Value>
+	    </AttributeValuePair>
+        </AddDefaultValues>    
+        <AddDefaultValues>
+            <AttributeValuePair>
+	    <Attribute name="iplanet-am-auth-ldap-user-search-attributes"/>
+		<Value>USER_NAMING_ATTR</Value>
+	    </AttributeValuePair>
+        </AddDefaultValues>  
+        
+        <ModifyInheritanceAttribute inheritance="multiple" />
+
+        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthADService/10_20/data/amAuthAD_addAttrs.xml" />
+	
+        <RemoveAttributeSchema>
+	    <Attribute name="iplanet-am-auth-ldap-auth-level"/>
+	</RemoveAttributeSchema>        
+
+    </SchemaRequests>
+   
+</Requests>

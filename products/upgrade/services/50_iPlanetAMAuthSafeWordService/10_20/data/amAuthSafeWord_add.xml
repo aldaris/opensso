@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthSafeWord_add.xml
+
+-->
+
+<Requests>
+    <SchemaRootNodeRequests serviceName="iPlanetAMAuthSafeWordService">
+	<SetServiceRevisionNumber number="20" />
+    </SchemaRootNodeRequests>
+
+    <SchemaRequests serviceName="iPlanetAMAuthSafeWordService"
+        SchemaType="Organization"
+	i18nKey="">
+	<Modifyi18nKey>
+            <AttributeValuePair>
+            <Attribute name="iplanet-am-auth-safeword-log-path"/>
+		<Value>a105</Value>
+            </AttributeValuePair>
+	</Modifyi18nKey>
+		<Modifyi18nKey>
+            <AttributeValuePair>
+            <Attribute name="iplanet-am-auth-safeword-auth-level"/>
+		<Value>a110</Value>
+            </AttributeValuePair>
+	</Modifyi18nKey>
+	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthSafeWordService/10_20/data/amAuthSafeWord_addAttrs.xml" />
+    </SchemaRequests>
+</Requests>

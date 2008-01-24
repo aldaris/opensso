@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthMembership_mod.xml
+
+-->
+
+<Requests>
+
+    <SchemaRequests serviceName="iPlanetAMAuthMembershipService"
+        SchemaType="Organization"
+	SubSchema="/">
+
+        <AddDefaultValues>
+            <AttributeValuePair>
+	    <Attribute name="iplanet-am-auth-membership-user-naming-attribute"/>
+		<Value>USER_NAMING_ATTR</Value>
+	    </AttributeValuePair>
+        </AddDefaultValues>    
+
+        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthMembershipService/10_20/data/amAuthMembership_addSubSchema.xml"/>
+    </SchemaRequests>
+
+</Requests>

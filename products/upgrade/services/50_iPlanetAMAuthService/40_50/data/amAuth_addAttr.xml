@@ -1,0 +1,5 @@
+ <AttributeSchema name="sunAMUserAttributesSessionMapping"
+                    type="list"
+                    syntax="string"
+                    i18nKey="a147">
+  </AttributeSchema>

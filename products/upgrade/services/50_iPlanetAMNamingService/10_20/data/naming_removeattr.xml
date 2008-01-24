@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t naming_removeattr.xml
+
+-->
+
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMNamingService"
+	SchemaType="Global">
+	<RemoveAttributeSchema>
+	    <Attribute name="iplanet-am-naming-umservice-url" />
+	</RemoveAttributeSchema>
+    </SchemaRequests>
+</Requests>

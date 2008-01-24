@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amLibertyPersonalProfile_mod.xml
+
+-->
+
+
+<Requests>
+    <SchemaRequests serviceName="sunIdentityServerLibertyPPService"
+        SchemaType="Global"
+        i18nKey="">
+        <AddDefaultValues>
+            <AttributeValuePair>
+            <Attribute name="sunIdentityServerPPSupportedContainers"/>
+		<Value>container=AddressCard</Value>
+                <Value>container=MsgContact</Value>
+                <Value>container=Demographics</Value>
+                <Value>container=SignKey</Value>
+                <Value>container=EncryptKey</Value>
+                <Value>container=EmergencyContact</Value>
+            </AttributeValuePair>
+            <AttributeValuePair>
+            <Attribute name="sunIdentityServerPPDSAttributeMapList"/>
+		<Value>AddressCard=sunIdentityServerPPAddressCard</Value>
+		<Value>MsgContact=sunIdentityServerPPMsgContact</Value>
+		<Value>MugShot=sunIdentityServerPPFacadeMugShot</Value>
+		<Value>WebSite=sunIdentityServerPPFacadeWebSite</Value>
+		<Value>NamePronounced=sunIdentityServerPPFacadeNamePronounced</Value>
+		<Value>GreetSound=sunIdentityServerPPFacadeGreetSound</Value>
+		<Value>GreetMeSound=sunIdentityServerPPFacadeGreetMeSound</Value>
+		<Value>DisplayLanguage=sunIdentityServerPPDemographicsDisplayLanguage</Value>
+		<Value>Language=sunIdentityServerPPDemographicsLanguage</Value>
+		<Value>Birthday=sunIdentityServerPPDemographicsBirthday</Value>
+		<Value>Age=sunIdentityServerPPDemographicsAge</Value>
+		<Value>TimeZone=sunIdentityServerPPDemographicsTimeZone</Value>
+		<Value>SignKey=sunIdentityServerPPSignKey</Value>
+		<Value>EncryptKey=sunIdentityServerPPEncryptKey</Value>
+		<Value>EmergencyContact=sunIdentityServerPPEmergencyContact</Value>
+            </AttributeValuePair>
+        </AddDefaultValues>
+	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_sunIdentityServerLibertyPPService/10_20/data/amLibertyPersonalProfile_addGlobalAttr.xml" />
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="sunIdentityServerLibertyPPService"
+        SchemaType="User">
+	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_sunIdentityServerLibertyPPService/10_20/data/amLibertyPersonalProfile_addUserAttr.xml" />
+    </SchemaRequests>
+</Requests>

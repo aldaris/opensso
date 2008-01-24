@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuth_mod.xml
+
+-->
+
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMAuthService"
+        SchemaType="Global"
+        i18nKey="">
+        <AddDefaultValues>
+            <AttributeValuePair>
+            <Attribute name="iplanet-am-auth-authenticators"/>
+		<Value>com.sun.identity.authentication.modules.jdbc.JDBC</Value>
+		<Value>com.sun.identity.authentication.modules.msisdn.MSISDN</Value>
+		<Value>com.sun.identity.authentication.modules.ad.AD</Value>
+		<Value>com.sun.identity.authentication.modules.saml.SAML</Value>
+            </AttributeValuePair>
+        </AddDefaultValues>
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMAuthService"
+        SchemaType="Organization">
+	<ModifyDefaultValues>
+            <AttributeValuePair>
+                <Attribute name="iplanet-am-auth-login-success-url"/>
+                <Value>CONSOLE_DEPLOY_URI</Value>
+            </AttributeValuePair>
+        </ModifyDefaultValues>
+	<AddChoiceValues>
+	    <ChoiceValue AttributeName="iplanet-am-auth-dynamic-profile-creation" I18NKey="CreateWithAlias" value="createAlias"/>
+        </AddChoiceValues>
+    </SchemaRequests>
+</Requests>

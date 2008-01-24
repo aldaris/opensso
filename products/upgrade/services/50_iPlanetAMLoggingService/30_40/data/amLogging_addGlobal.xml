@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun ONE Access Manager 2005Q3 Admin CLI DTD//EN"
+    "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  this file referenced by:
+
+  amadmin -u "xxx" -w "yyy" -t add_amLogging1.xml
+
+-->
+
+<Requests>
+    <AttributeSchema name="iplanet-am-logging-secure-log-helper-class-name"
+        type="single"
+        syntax="string"
+        i18nKey="">
+        <DefaultValues>
+            <Value>com.sun.identity.log.secure.SecureLogHelperJSSImpl</Value>
+        </DefaultValues>
+    </AttributeSchema>
+    <AttributeSchema name="iplanet-am-logging-secure-certificate-store"
+        type="single"
+        syntax="string"
+        i18nKey="">
+        <DefaultValues>
+            <Value>CONFIG_DIR/Logger.jks</Value>
+        </DefaultValues>
+    </AttributeSchema> 		
+    <AttributeSchema name="iplanet-am-logging-secure-signing-algorithm"
+        type="single_choice"
+        syntax="string"
+        i18nKey="a1161">
+        <ChoiceValues>
+            <ChoiceValue i18nKey="choiceMD2withRSA">MD2withRSA</ChoiceValue>
+            <ChoiceValue i18nKey="choiceMD5withRSA">MD5withRSA</ChoiceValue>
+            <ChoiceValue i18nKey="choiceSHA1withDSA">SHA1withDSA</ChoiceValue>
+            <ChoiceValue i18nKey="choiceSHA1withRSA">SHA1withRSA</ChoiceValue>
+        </ChoiceValues>
+        <DefaultValues>
+            <Value>SHA1withRSA</Value>
+        </DefaultValues>
+    </AttributeSchema>
+</Requests>

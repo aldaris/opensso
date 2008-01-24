@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+<!-- This file is used by idRepoServiceAddAttrSchemaRequest.xml -->
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    "jar://com/sun/identity/sm/sms.dtd"
+>
+
+<Requests>
+
+		<!-- LDAPv3 plugin for sun ds with AM-->
+		<SubSchema name= "amSDK"
+		    inheritance = "multiple"
+		    i18nKey = "AMSDK_I18N_KEY">
+		    <AttributeSchema name="sun-idrepo-amSDK-config-people-container-name"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a2054">
+                        <DefaultValues>
+                            <Value>people</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-people-container-value"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a2054">
+                        <DefaultValues>
+                            <Value>people</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-agent-container-name"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a2055">
+                        <DefaultValues>
+                            <Value>ou</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-agent-container-value"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a2056">
+                        <DefaultValues>
+                            <Value>agents</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-recursive-enabled"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a2057">
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-copyconfig-enabled"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a2058">
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+		</SubSchema>
+</Requests>
+
