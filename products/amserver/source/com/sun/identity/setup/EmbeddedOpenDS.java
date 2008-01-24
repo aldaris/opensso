@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.5 2007-12-07 21:25:59 rajeevangal Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.6 2008-01-24 23:14:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,25 +25,16 @@
 package com.sun.identity.setup;
 
 import com.sun.identity.shared.debug.Debug;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.io.InputStream;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.ServletContext;
 
 
-import org.opends.server.config.ConfigException;
 import org.opends.server.core.DirectoryServer;
 import org.opends.server.extensions.ConfigFileHandler;
-import org.opends.server.types.DirectoryException;
-import org.opends.server.types.InitializationException;
 import org.opends.messages.Message;
 import org.opends.server.util.EmbeddedUtils;
 import org.opends.server.types.DirectoryEnvironmentConfig;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.10 2008-01-15 22:12:43 ww203982 Exp $
+ * $Id: DSConfigMgr.java,v 1.11 2008-01-24 23:14:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -395,87 +395,54 @@ public class DSConfigMgr {
         String passwd
     ) throws LDAPServiceException {
         LDAPConnection conn = null;
-
-        if(type == Server.Type.CONN_SSL) {
-            try {
-                conn = new LDAPConnection(
-                    SSLSocketFactoryManager.getSSLSocketFactory());
-            } catch (Exception e) {
-                debugger.error(
-                    "DSConfigMgr.getPrimaryConnection:JSSSocketFactory", e);
-                throw new LDAPServiceException(getString(
-                    IUMSConstants.DSCFG_JSSSFFAIL));
-            }
-        } else {
-            conn = new LDAPConnection();
+        hostName = hostName.trim();
+        if (hostName.length() == 0) {
+            throw new LDAPServiceException(getString(
+                IUMSConstants.DSCFG_SERVER_NOT_FOUND));
         }
-
-        // do not know why we need StringTokenizer here
+        
         StringTokenizer st = new StringTokenizer(hostName);
         String hpName = null;
+        LDAPServiceException exception = null;
 
-        while (st.hasMoreElements()) {
+        while (st.hasMoreElements() && (conn == null)) {
             hpName = (String)st.nextToken();
             if ((hpName != null) && (hpName.length() != 0)) {
                 if (debugger.messageEnabled()) {
                     debugger.message("DSConfigMgr.getPrimaryConnection: " +
                         "host name & port number " + hpName);
                 }
-                break;
-            }
-        }
-
-        if ((hpName == null) && (hpName.length() == 0)) {
-            throw new LDAPServiceException(getString(
-                IUMSConstants.DSCFG_SERVER_NOT_FOUND));
-        }
-
-        int idx = hpName.indexOf(':');
-        if (idx != -1) {
-            String upHost = hpName.substring(0, idx);
-            try {
-                int intPort = Integer.parseInt(hpName.substring(idx +1));
-                int retry = 0;
-            
-                while(retry <= connNumRetry) {
-                    if (debugger.messageEnabled()) {
-                        debugger.message(
-                            "DSConfigMgr.getPrimaryConnection retry: " + retry);
-                    }
-                    try {
-                        if ((authID != null) && (passwd != null)) {
-                            conn.connect(3, upHost, intPort, authID, passwd);
-                        } else {
-                            conn.setOption(LDAPv3.PROTOCOL_VERSION, 
-                                new Integer(3));
-                            conn.connect(upHost, intPort);
-                        }
-                        conn.setOption(LDAPv2.SIZELIMIT, new Integer(0));
-                        break;
-                    } catch (LDAPException e) {
-                        if (!retryErrorCodes.contains(""+ e.getLDAPResultCode())
-                            || (retry == connNumRetry)) {
-                            debugger.error("CDSConfigMgr.getPrimaryConnection:"+
-                                "Exception when connecting to LDAP server", e);
-                            throw new LDAPServiceException(getString(
-                                IUMSConstants.DSCFG_CONNECTFAIL), e);
-                        }
-                        retry++;
-                        try {
-                            Thread.currentThread().sleep(connRetryInterval);
-                        } catch (InterruptedException ex) {
-                        }
-                    }
+                if (hpName.trim().length() == 0) {
+                    throw new LDAPServiceException(getString(
+                        IUMSConstants.DSCFG_SERVER_NOT_FOUND));
                 }
-            } catch (NumberFormatException ex) {
-                throw new LDAPServiceException(getString(
-                    IUMSConstants.DSCFG_SERVER_NOT_FOUND));
+                
+                try {
+                    int idx = hpName.indexOf(':');
+                    if (idx != -1) {
+                        String upHost = hpName.substring(0, idx);
+                        int upPort = Integer.parseInt(hpName.substring(idx +1));
+                        conn = getConnection(upHost, upPort, type, authID, passwd);
+                        exception = null;
+                    } else {
+                        throw new LDAPServiceException(getString(
+                            IUMSConstants.DSCFG_SERVER_NOT_FOUND));
+                    }
+                } catch (LDAPServiceException e) {
+                    exception = e;
+                } catch (NumberFormatException e) {
+                    throw new LDAPServiceException(e.getMessage());
+                }
             }
         }
         
+        if (exception != null) {
+            debugger.error("Connection to LDAP server threw exception:", 
+                exception);
+            throw exception;
+        }
         return conn;
     }
-
 
     private LDAPConnection getConnection(String hostName, int port,
             Server.Type type, String authID, String passwd)
@@ -515,7 +482,7 @@ public class DSConfigMgr {
             } catch (LDAPException e) {
                 if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
                         || retry == connNumRetry) {
-                    debugger.error(
+                    debugger.warning(
                             "Connection to LDAP server threw exception:", e);
                     throw new LDAPServiceException(
                             getString(IUMSConstants.DSCFG_CONNECTFAIL), e);

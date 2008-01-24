@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.36 2008-01-15 07:53:59 qcheng Exp $
+ * $Id: AMSetupServlet.java,v 1.37 2008-01-24 23:14:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,6 +63,7 @@ import com.sun.identity.sm.SMSException;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -107,8 +108,6 @@ import javax.servlet.http.HttpServletResponse;
 public class AMSetupServlet extends HttpServlet {
     private static ServletContext servletCtx = null;
     private static boolean isConfiguredFlag = false;
-
-    private final static String AMCONFIG = "AMConfig";
     private final static String SMS_STR = "sms";
     private static SSOToken adminToken = null;
     private final static String LEGACY_PROPERTIES = "legacy";
@@ -150,7 +149,17 @@ public class AMSetupServlet extends HttpServlet {
         
         if ((!isConfiguredFlag) && (servletCtx != null)) {
             try {
-                isConfiguredFlag = Bootstrap.load(getBootstrap(), false);
+                String bootstrapFile = getBootStrapFile();
+                if (bootstrapFile != null) {
+                    isConfiguredFlag = Bootstrap.load(
+                        new BootstrapData(bootstrapFile), false);
+                } else {
+                    String baseDir = getBaseDir();
+                    if (baseDir != null) {
+                        isConfiguredFlag = loadAMConfigProperties(
+                            baseDir + "/" + SetupConstants.AMCONFIG_PROPERTIES);
+                    }
+                }
             } catch (ConfiguratorException e) {
                  Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "AMSetupServlet.checkConfigProperties: " +
@@ -160,6 +169,35 @@ public class AMSetupServlet extends HttpServlet {
                     "AMSetupServlet.checkConfigProperties", e);
             }
         }
+    }
+    
+    private static boolean loadAMConfigProperties(String fileLocation)
+        throws IOException {
+        boolean loaded = false;
+        File test = new File(fileLocation);
+        
+        if (test.exists()) {
+            FileInputStream fin = null;
+            
+            try {
+                fin = new FileInputStream(fileLocation);
+                if (fin != null) {
+                    Properties props = new Properties();
+                    props.load(fin);
+                    SystemProperties.initializeProperties(props);
+                    loaded =true;
+                }
+            } finally {
+                if (fin != null) {
+                    try {
+                        fin.close();
+                    } catch (IOException e) {
+                        //ignore
+                    }
+                }
+            }
+        }
+        return loaded;
     }
     
     /**
@@ -205,10 +243,11 @@ public class AMSetupServlet extends HttpServlet {
         Map map = ServicesDefaultValues.getDefaultValues();
 
         try {
-            Map bootstrapRes = createBootstrapResource(false);
-            isConfiguredFlag = Bootstrap.load(
-                Bootstrap.createBootstrapResource(bootstrapRes, true), true) || 
-                configure(map);
+/*            Map bootstrapRes = createBootstrapResource(false);
+            isConfiguredFlag = 
+                Bootstrap.load(new BootstrapData(bootstrapRes), true) ||
+                configure(map);*/
+            isConfiguredFlag = configure(map);
             if (isConfiguredFlag) {
                 postInitialize(getAdminSSOToken());
             }
@@ -216,21 +255,32 @@ public class AMSetupServlet extends HttpServlet {
             
             if (isConfiguredFlag) {
                 boolean legacy = ServerConfiguration.isLegacy();
-                bootstrapRes = createBootstrapResource(legacy);
-                String fileBootstrap = getBootStrapFile();
-                String url = Bootstrap.create(fileBootstrap, bootstrapRes, 
-                    legacy);
+                Map bootstrapRes = createBootstrapResource(legacy);
+                String url = BootstrapData.createBootstrapResource(
+                    bootstrapRes, legacy);
+                String basedir = (String) map.get(
+                    SetupConstants.CONFIG_VAR_BASE_DIR);   
+                String fileBootstrap = getBootstrapLocator();
+                if (fileBootstrap != null) {
+                   writeToFileEx(fileBootstrap, basedir);
+                }
 
                 if (!legacy) {
-                    createExtraBootstrapFile(url);
-                    
-                    // this is to store the bootstrap location
-                    SSOToken adminToken = (SSOToken)AccessController.
-                        doPrivileged(AdminTokenAction.getInstance());
+                    writeBootstrapFile(url);
                     Map mapBootstrap = new HashMap(2);
                     Set set = new HashSet(2);
                     set.add(fileBootstrap);
                     mapBootstrap.put(BOOTSTRAP_FILE_LOC, set);
+
+                    if (fileBootstrap == null) {
+                        set.add(getPresetConfigDir());
+                    } else {
+                        set.add(fileBootstrap); 
+                    }
+                    // this is to store the bootstrap location
+                    SSOToken adminToken = (SSOToken)
+                        AccessController.doPrivileged(
+                        AdminTokenAction.getInstance());
                     ServerConfiguration.setServerInstance(adminToken,
                         SystemProperties.getServerInstanceName(), mapBootstrap);
                 }
@@ -492,41 +542,41 @@ public class AMSetupServlet extends HttpServlet {
         String dataStore = (String)map.get(
             SetupConstants.CONFIG_VAR_DATA_STORE);
         if (legacy) {
-            initMap.put(Bootstrap.FF_BASE_DIR,
+            initMap.put(BootstrapData.FF_BASE_DIR,
                 basedir);
         } else if (dataStore.equals(SetupConstants.SMS_FF_DATASTORE)) {
-            initMap.put(Bootstrap.PROTOCOL, Bootstrap.PROTOCOL_FILE);
-            initMap.put(Bootstrap.FF_BASE_DIR,
+            initMap.put(BootstrapData.PROTOCOL, BootstrapData.PROTOCOL_FILE);
+            initMap.put(BootstrapData.FF_BASE_DIR,
                 basedir + deployuri + "/" + SMS_STR );
-            initMap.put(Bootstrap.PWD, 
+            initMap.put(BootstrapData.PWD, 
                 map.get(SetupConstants.CONFIG_VAR_ADMIN_PWD));
-            initMap.put(Bootstrap.BASE_DIR, basedir);
+            initMap.put(BootstrapData.BASE_DIR, basedir);
         } else {
-            initMap.put(Bootstrap.PROTOCOL, Bootstrap.PROTOCOL_LDAP);
-            initMap.put(Bootstrap.DS_HOST, 
+            initMap.put(BootstrapData.PROTOCOL, BootstrapData.PROTOCOL_LDAP);
+            initMap.put(BootstrapData.DS_HOST, 
                 map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST));
-            initMap.put(Bootstrap.DS_PORT, 
+            initMap.put(BootstrapData.DS_PORT, 
                 map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT));
-            initMap.put(Bootstrap.DS_BASE_DN,
+            initMap.put(BootstrapData.DS_BASE_DN,
                 map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX));
-            initMap.put(Bootstrap.DS_MGR,
+            initMap.put(BootstrapData.DS_MGR,
                 map.get(SetupConstants.CONFIG_VAR_DS_MGR_DN));
-            initMap.put(Bootstrap.PWD, 
+            initMap.put(BootstrapData.PWD, 
                 map.get(SetupConstants.CONFIG_VAR_ADMIN_PWD));
-            initMap.put(Bootstrap.DS_PWD, 
+            initMap.put(BootstrapData.DS_PWD, 
                 map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD));
         }
         
         if (dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
-            initMap.put(Bootstrap.EMBEDDED_DS, basedir + "/" +
+            initMap.put(BootstrapData.EMBEDDED_DS, basedir + "/" +
                 SetupConstants.SMS_OPENDS_DATASTORE);
         }
         
-        initMap.put(Bootstrap.SERVER_INSTANCE, serverURL + deployuri);
+        initMap.put(BootstrapData.SERVER_INSTANCE, serverURL + deployuri);
         return initMap;
     }
     
-    private static void createExtraBootstrapFile(String url)
+    private static void writeBootstrapFile(String url)
         throws IOException {
         Map map = ServicesDefaultValues.getDefaultValues();
         String basedir = (String)map.get(
@@ -542,53 +592,6 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
-    static String getBootstrap() {
-        String res = null;
-        String bootstrap = getBootStrapFile();
-        FileReader frdr = null;
-        
-        try {
-            String configDir = getPresetConfigDir();
-            boolean preConfigured = (configDir != null) &&
-                (configDir.length() == 0);
-            if (!preConfigured) {
-                bootstrap = Bootstrap.readFile(bootstrap) + "/bootstrap";
-            }
-
-            File test = new File(bootstrap);
-            if (test.exists()) {
-                frdr = new FileReader(bootstrap);
-                BufferedReader brdr = new BufferedReader(frdr);
-                res = brdr.readLine();
-            } else {
-                res = getBootStrapFile();
-                if (preConfigured) {
-                    if (res.endsWith("/bootstrap")) {
-                        int idx = res.lastIndexOf("/bootstrap");
-                        res = res.substring(0, idx);
-                    }
-                } else {
-                    res = Bootstrap.readFile(res);
-                }
-            }
-        } catch (FileNotFoundException e) {
-            // ignore bootstrap file is missing if war is not configured.
-        } catch (IOException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.getBootStrap: error", e);
-            System.err.println(e.getMessage());
-        } finally {
-            if (frdr != null) {
-                try {
-                    frdr.close();
-                } catch (IOException e) {
-                    //ignore
-                }
-            }
-        }
-        return res;
-    }
-    
     private static void handlePostPlugins(SSOToken adminSSOToken) {
         List plugins = getConfigPluginClasses();
         for (Iterator i = plugins.iterator(); i.hasNext(); ) {
@@ -687,18 +690,96 @@ public class AMSetupServlet extends HttpServlet {
      */
     static String getBootStrapFile()
         throws ConfiguratorException {
-        String bootFile = null;
+        String bootstrap = null;
+        
+        String configDir = getPresetConfigDir();
+        if ((configDir != null) && (configDir.length() > 0)) {
+            bootstrap = configDir + "/bootstrap";
+        } else {
+            String locator = getBootstrapLocator();
+            FileReader frdr = null;
+
+            try {
+                frdr = new FileReader(locator);
+                BufferedReader brdr = new BufferedReader(frdr);
+                bootstrap = brdr.readLine() + "/bootstrap";
+            } catch (IOException e) {
+                throw new ConfiguratorException(e.getMessage());
+            } finally {
+                if (frdr != null) {
+                    try {
+                        frdr.close();
+                    } catch (IOException e) {
+                        //ignore
+                    }
+                }
+            }
+        }
+        
+        if (bootstrap != null) {
+            File test = new File(bootstrap);
+            if (!test.exists()) {
+                bootstrap = null;
+            }
+        }
+        return bootstrap;
+    }
+
+    // this is the file which contains the base dir.
+    // this file is not created if configuration directory is 
+    // preset in bootstrap.properties
+    private static String getBootstrapLocator()
+        throws ConfiguratorException {
+        String configDir = getPresetConfigDir();
+        if ((configDir != null) && (configDir.length() > 0)) {
+            return null;
+        }
+        
         if (servletCtx != null) {
             String path = getNormalizedRealPath(servletCtx);
             if (path != null) {
-                String configDir = getPresetConfigDir();
-
-                if ((configDir != null) && (configDir.length() > 0)) {
-                    bootFile = configDir + "/bootstrap";
-                } else {
-                    bootFile = System.getProperty("user.home") + "/" +
-                        SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_DIR + "/" +
-                        SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + path;
+                return System.getProperty("user.home") + "/" +
+                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_DIR + "/" +
+                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + path;
+            } else {
+                throw new ConfiguratorException(
+                    "Cannot read the bootstrap path");
+            }
+        } else {
+            throw new ConfiguratorException("Servlet Context is null");
+        }
+    }
+    
+    private static String getBaseDir() {
+        String configDir = getPresetConfigDir();
+        if ((configDir != null) && (configDir.length() > 0)) {
+            return configDir;
+        }
+        if (servletCtx != null) {
+            String path = getNormalizedRealPath(servletCtx);
+            if (path != null) {
+                String bootstrap = System.getProperty("user.home") + "/" +
+                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_DIR + "/" +
+                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + path;
+                File test = new File(bootstrap);
+                if (!test.exists()) {
+                    return null;
+                }
+                FileReader frdr = null;
+                try {
+                    frdr = new FileReader(bootstrap);
+                    BufferedReader brdr = new BufferedReader(frdr);
+                    return brdr.readLine();
+                } catch (IOException e) {
+                    throw new ConfiguratorException(e.getMessage());
+                } finally {
+                    if (frdr != null) {
+                        try {
+                            frdr.close();
+                        } catch (IOException e) {
+                            //ignore
+                        }
+                    }
                 }
             } else {
                 throw new ConfiguratorException(
@@ -707,9 +788,10 @@ public class AMSetupServlet extends HttpServlet {
         } else {
             throw new ConfiguratorException("Servlet Context is null");
         }
-        return bootFile;
+        
+ 
     }
-
+    
     public static String getNormalizedRealPath(ServletContext servletCtx) {
         String path = null;
         if (servletCtx != null) {
@@ -897,6 +979,15 @@ public class AMSetupServlet extends HttpServlet {
             }
         }
         return sbuf;
+    }
+    
+    private static void writeToFileEx(String fileName, String content)
+        throws IOException {    
+        File btsFile = new File(fileName);
+        if (!btsFile.getParentFile().exists()) {
+            btsFile.getParentFile().mkdirs();
+        }
+        writeToFile(fileName, content);
     }
     
     static void writeToFile(String fileName, String content) 

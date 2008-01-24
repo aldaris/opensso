@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.6 2007-11-17 00:38:11 veiming Exp $
+ * $Id: Bootstrap.java,v 1.7 2008-01-24 23:14:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,8 +26,6 @@ package com.sun.identity.setup;
 
 import com.iplanet.am.util.AdminUtils;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.ldap.DSConfigMgr;
-import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.AuthContext;
@@ -42,21 +40,17 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfigManager;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.AccessController;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import javax.security.auth.login.LoginException;
 
 /**
@@ -67,40 +61,7 @@ public class Bootstrap {
      * Directory where bootstrap file resides.
      */
     public static final String JVM_OPT_BOOTSTRAP = "bootstrap.dir";
-    
-    static final String PROTOCOL = "protocol";
-    static final String SERVER_INSTANCE = "serverinstance";
-    static final String FF_BASE_DIR = "ffbasedir";
-    static final String BASE_DIR = "basedir";
-    static final String DS_HOST = "dshost";
-    static final String DS_PORT = "dsport";
-    static final String DS_PWD = "dspwd";
-    static final String DS_MGR = "dsmgr";
-    static final String DS_BASE_DN = "dsbasedn";
-    static final String PWD = "pwd";
-    static final String EMBEDDED_DS = "embeddedds";
-    static final String PROT_FILE = "file";
-    static final String PROT_LDAP = "ldap";
-    static final String PROTOCOL_FILE = "file://";
-    static final String PROTOCOL_LDAP = "ldap://";
-    
-    private static final String LOCATION = "location";
-    private static final String PROP_DEBUG_LEVEL = 
-        "com.iplanet.services.debug.level";
-    private static final String PROP_SMS_FILE_DIR =
-        "com.sun.identity.sm.flatfile.root_dir";
-    private static final String PROP_SMS_OBJECT =
-        "com.sun.identity.sm.sms_object_class_name";
-    private static final String PROP_SMS_OBJECT_FILE =
-        "com.sun.identity.sm.flatfile.SMSEnhancedFlatFileObject";
-    private static final String PROP_SMS_OBJECT_LDAP =
-        "com.sun.identity.sm.ldap.SMSLdapObject";
-    private static final String PROP_SECURITY_ENCRYPTOR =
-        "com.iplanet.security.encryptor";
-    private static final String DEFAULT_SECURITY_ENCRYPTOR =
-        "com.iplanet.services.util.JCEEncryption";
     private final static String BOOTSTRAP = "bootstrap";
-
     private static boolean isBootstrap;
 
     private Bootstrap() {
@@ -153,28 +114,18 @@ public class Bootstrap {
             }
         } else {
             isBootstrap = true;
-            String bootstrapFile = basedir + BOOTSTRAP;
-            String urlBootstrap = readFile(bootstrapFile);
-            prop = getConfiguration(urlBootstrap, true);
+            BootstrapData bData = new BootstrapData(basedir + BOOTSTRAP);
+            prop = getConfiguration(bData, true);
         }
         
         return prop;
     }
 
-    static boolean load(String bootstrap, boolean reinit)
+    static boolean load(BootstrapData bootstrap, boolean reinit)
         throws Exception {
-        boolean configured = false;
-        
+        boolean configured = false;  
         if (bootstrap != null) {
-            if (!bootstrap.startsWith(PROTOCOL_FILE) &&
-                !bootstrap.startsWith(PROTOCOL_LDAP)
-            ) {
-                String amConfigProperties =  bootstrap + "/" +
-                    SetupConstants.AMCONFIG_PROPERTIES;
-                configured = loadAMConfigProperties(amConfigProperties);
-            } else {
-                configured = bootstrap(bootstrap, reinit);
-            }
+            configured = bootstrap(bootstrap, reinit);
             isBootstrap = true;
         }
         return configured;
@@ -183,12 +134,12 @@ public class Bootstrap {
     /**
      * Returns <code>true</code> if able to bootstrap the system.
      *
-     * @param bootstrapInfo an URL that contains information on how to
+     * @param bootstrapInfo object that contains information on how to
      *        fetch the server configuration properties.
      * @param reinit <code>true</code> to re initialize the system.
      * @throws Exception if there are errors in bootstrapping.
      */
-    public static boolean bootstrap(String bootstrapInfo, boolean reinit) 
+    public static boolean bootstrap(BootstrapData bootstrapInfo, boolean reinit) 
         throws Exception {
         return (getConfiguration(bootstrapInfo, reinit) != null);
     }
@@ -202,287 +153,54 @@ public class Bootstrap {
      * @throws Exception if properties cannot be loaded.
      */
     private static Properties getConfiguration(
-        String bootstrapInfo,
+        BootstrapData bootstrapData,
         boolean reinit
     ) throws Exception {
         Properties properties = null;
-        Properties prop = new Properties();
-        prop.setProperty(PROP_SECURITY_ENCRYPTOR, DEFAULT_SECURITY_ENCRYPTOR);
-        prop.setProperty(Constants.SERVER_MODE, "true");
-
-        boolean isLdap = false;
-        // need to do this because URL class does not understand ldap://
-        if (bootstrapInfo.startsWith(PROTOCOL_LDAP)) {
-            bootstrapInfo = "http://" +  bootstrapInfo.substring(7);
-            isLdap = true;            
-        }
-        
-        URL url = new URL(bootstrapInfo);
-        String instanceName = null;
-        String dshost = "ds.opensso.java.net";
-        String dsport = "389";
-        String dsbasedn = "dc=opensso,dc=java,dc=net";
-        String dsmgr = "cn=dsameuser,ou=DSAME Users," + dsbasedn;
-        String dspwd = "11111111";
-        Map mapQuery = queryStringToMap(url.getQuery());
-        String pwd = (String)mapQuery.get(PWD);
-        boolean proceed = true;
-
-        //NOTE: need to add more protocol is we support more of them
-        if (!isLdap) {
-            prop.setProperty(PROP_SMS_OBJECT, PROP_SMS_OBJECT_FILE);
-            prop.setProperty(PROP_SMS_FILE_DIR,
-                (String)mapQuery.get(FF_BASE_DIR));
-            instanceName = url.getPath();
-            int idx = instanceName.lastIndexOf('/');
-            if (idx != -1) {
-                instanceName = instanceName.substring(idx+1);
-            }
-            instanceName = URLDecoder.decode(instanceName, "UTF-8");
-            initializeSystemComponents(prop, dsbasedn, reinit, isLdap, dshost,
-                dsport, dsmgr, dspwd, pwd);
-        } else {
-            prop.setProperty(PROP_SMS_OBJECT, PROP_SMS_OBJECT_LDAP);
-            dshost = url.getHost();
-            dsport = Integer.toString(url.getPort());
-            dsbasedn = (String)mapQuery.get(DS_BASE_DN);
-            dsmgr = (String)mapQuery.get(DS_MGR);
-            dspwd = (String)mapQuery.get(DS_PWD);
-            instanceName = URLDecoder.decode(url.getPath(), "UTF-8");
-            if (instanceName.startsWith("/")) {
-                instanceName = instanceName.substring(1);
-            }
-            
-            initializeSystemComponents(prop, dsbasedn, reinit, isLdap, dshost,
-                dsport, dsmgr, dspwd, pwd);
-
-            String embeddedDS = (String)mapQuery.get(EMBEDDED_DS);
-            if ((embeddedDS != null) && (embeddedDS.length() > 0)) {
-                proceed = startEmbeddedDS(embeddedDS);
-            }
-        }
-
-        if (proceed) {
-            String dsameUser = "cn=dsameuser,ou=DSAME Users," + dsbasedn;
-            SSOToken ssoToken = getSSOToken(dsbasedn, dsameUser,
-                Crypt.decode(pwd, Crypt.getHardcodedKeyEncryptor()));
-            try {
-                properties = ServerConfiguration.getServerInstance(
-                    ssoToken, instanceName);
-                if (properties != null) {
-                    SystemProperties.initializeProperties(
-                        properties, true, false);
-                    String serverConfigXML =
-                        ServerConfiguration.getServerConfigXML(
-                            ssoToken, instanceName);
-                    Crypt.reinitialize();
-                    loadServerConfigXML(serverConfigXML);
-                    AdminUtils.initialize();
-                    SMSAuthModule.initialize();
-                    SystemProperties.initializeProperties(
-                        properties, true, true);
-                    DebugPropertiesObserver.getInstance().notifyChanges();
-                    SystemProperties.setServerInstanceName(instanceName);
-
-                    ServiceConfigManager scm = new ServiceConfigManager(
-                        Constants.SVC_NAME_PLATFORM, (SSOToken)AccessController.
-                        doPrivileged(AdminTokenAction.getInstance()));
-                    scm.addListener(ConfigurationObserver.getInstance());
-                }
-            } catch (SMSException e) {
-                //ignore. product is not configured yet.
-                properties = null;
-            }
-        }
-        return properties;
-    }
-    
-    private static void initializeSystemComponents(
-        Properties prop,
-        String dsbasedn, 
-        boolean reinit,
-        boolean isLdap,
-        String dshost,
-        String dsport,
-        String dsmgr,
-        String dspwd,
-        String pwd
-    ) throws LDAPServiceException {
-        String dsameUser = "cn=dsameuser,ou=DSAME Users," + dsbasedn;
-        
-        prop.setProperty(PROP_DEBUG_LEVEL, "error");
-        prop.setProperty("com.sun.identity.authentication.special.users",
-            dsameUser);
-        prop.setProperty("com.sun.identity.authentication.super.user",
-            dsameUser);
-        SystemProperties.initializeProperties(prop, true);
-        
-        String template = (isLdap) ? BOOTSTRAP_SERVER_CONFIG_LDAP :
-            BOOTSTRAP_SERVER_CONFIG_FILE;
-        template = template.replaceAll("@" + DS_HOST + "@", dshost);
-        template = template.replaceAll("@" + DS_PORT + "@", dsport);
-        template = template.replaceAll("@" + DS_MGR + "@", dsmgr);
-        template = template.replaceAll("@" + DS_BASE_DN + "@", dsbasedn);
-        template = template.replaceAll("@" + DS_PWD + "@", dspwd);
-        template = template.replaceAll("@" + PWD + "@", pwd);
-        Crypt.reinitialize();
-        loadServerConfigXML(template);
-        
+        bootstrapData.initSMS();
         if (reinit) {
             AdminUtils.initialize();
             SMSAuthModule.initialize();
         }
-    }
 
-    private static boolean startEmbeddedDS(String odsDir) {
-        boolean started = false;
-        File odsDirFile = new File(odsDir);
+        String dsbasedn = bootstrapData.getBaseDN();
+        String pwd = bootstrapData.getDsameUserPassword();
+        String dsameUser = "cn=dsameuser,ou=DSAME Users," + dsbasedn;
+        String instanceName = bootstrapData.getInstanceName();
 
-        if (odsDirFile.exists()) {
-            if (!EmbeddedOpenDS.isStarted()) {
-                try {
-                    SetupProgress.reportStart("emb.startemb", null);
-                    started = true;
-                    EmbeddedOpenDS.startServer(odsDir);
-                    SetupProgress.reportEnd("emb.success", null);
-                } catch (Exception ex) {
-                    //ignore, it maybe started.
-                }
-            } else {
-                started = true;
-            }
-        }
-        return started;
-    }
-    
-    private static boolean loadAMConfigProperties(String fileLocation)
-        throws IOException {
-        boolean loaded = false;
-        File test = new File(fileLocation);
-        
-        if (test.exists()) {
-            FileInputStream fin = null;
-            
-            try {
-                fin = new FileInputStream(fileLocation);
-                if (fin != null) {
-                    Properties props = new Properties();
-                    props.load(fin);
-                    SystemProperties.initializeProperties(props);
-                    loaded =true;
-                }
-            } finally {
-                if (fin != null) {
-                    try {
-                        fin.close();
-                    } catch (IOException e) {
-                        //ignore
-                    }
-                }
-            }
-        }
-        return loaded;
-    }
-
-    private static void loadServerConfigXML(String xml)
-        throws LDAPServiceException {
-        ByteArrayInputStream bis = null;
+        SSOToken ssoToken = getSSOToken(dsbasedn, dsameUser,
+            Crypt.decode(pwd, Crypt.getHardcodedKeyEncryptor()));
         try {
-            bis = new ByteArrayInputStream(xml.getBytes());
-            DSConfigMgr.initInstance(bis);
-        } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (IOException e) {
-                    //ignore
-                }
+            properties = ServerConfiguration.getServerInstance(
+                ssoToken, instanceName);
+            if (properties != null) {
+                SystemProperties.initializeProperties(
+                    properties, true, false);
+                String serverConfigXML =
+                    ServerConfiguration.getServerConfigXML(
+                    ssoToken, instanceName);
+                Crypt.reinitialize();
+                BootstrapData.loadServerConfigXML(serverConfigXML);
+                AdminUtils.initialize();
+                SMSAuthModule.initialize();
+                SystemProperties.initializeProperties(
+                    properties, true, true);
+                DebugPropertiesObserver.getInstance().notifyChanges();
+                SystemProperties.setServerInstanceName(instanceName);
+
+                ServiceConfigManager scm = new ServiceConfigManager(
+                    Constants.SVC_NAME_PLATFORM, (SSOToken)
+                        AccessController.doPrivileged(
+                        AdminTokenAction.getInstance()));
+                scm.addListener(ConfigurationObserver.getInstance());
             }
+        } catch (SMSException e) {
+            //ignore. product is not configured yet.
+            properties = null;
         }
+        return properties;
     }
-    
-    static String createBootstrapResource(Map configuration, boolean legacy)
-        throws UnsupportedEncodingException
-    {
-        StringBuffer buff = new StringBuffer();
-        
-        String protocol = (String)configuration.get(PROTOCOL);
-        String pwd = Crypt.encode((String)configuration.get(PWD),
-            Crypt.getHardcodedKeyEncryptor());
-        String serverInstance = (String)configuration.get(
-            SERVER_INSTANCE);
-
-        if (legacy) {
-            buff.append((String)configuration.get(FF_BASE_DIR));
-        } else if (protocol.equals(PROTOCOL_FILE)) {
-            buff.append(PROTOCOL_FILE);
-            buff.append((String)configuration.get(BASE_DIR));
-            buff.append("/");
-            buff.append(URLEncoder.encode(serverInstance, "UTF-8"));
-            buff.append("?");
-            buff.append(PWD);
-            buff.append("=");
-            buff.append(URLEncoder.encode(pwd, "UTF-8"));
-            buff.append("&");
-            buff.append(FF_BASE_DIR);
-            buff.append("=");
-            buff.append(URLEncoder.encode(
-                (String)configuration.get(FF_BASE_DIR), "UTF-8"));
-        } else {
-            buff.append(PROTOCOL_LDAP);
-            buff.append((String)configuration.get(DS_HOST));
-            buff.append(":");
-            buff.append((String)configuration.get(DS_PORT));
-            buff.append("/");
-            buff.append(URLEncoder.encode(serverInstance, "UTF-8"));
-            buff.append("?");
-            buff.append(PWD);
-            buff.append("=");
-            buff.append(URLEncoder.encode(pwd, "UTF-8"));
-            
-            String embeddedDS = (String)configuration.get(EMBEDDED_DS);
-            
-            if ((embeddedDS != null) && (embeddedDS.length() > 0)) {
-                buff.append("&");
-                buff.append(EMBEDDED_DS);
-                buff.append("=");
-                buff.append(URLEncoder.encode(embeddedDS, "UTF-8"));
-            }
-            buff.append("&");
-            buff.append(DS_BASE_DN);
-            buff.append("=");
-            buff.append(URLEncoder.encode((String)configuration.get(
-                DS_BASE_DN), "UTF-8"));
-            buff.append("&");
-            buff.append(DS_MGR);
-            buff.append("=");
-            buff.append(URLEncoder.encode((String)configuration.get(
-                DS_MGR), "UTF-8")); 
-            buff.append("&");
-            buff.append(DS_PWD);
-            buff.append("=");
-            buff.append(URLEncoder.encode(
-                Crypt.encode((String)configuration.get(DS_PWD),
-                    Crypt.getHardcodedKeyEncryptor()), "UTF-8")); 
-        }
-        return buff.toString();
-    }
-
-    static String create(
-        String bootstrapFile, 
-        Map configuration, 
-        boolean legacy
-    ) throws IOException {
-        File btsFile = new File(bootstrapFile);
-        if (!btsFile.getParentFile().exists()) {
-            btsFile.getParentFile().mkdirs();
-        }
-
-        String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
-        AMSetupServlet.writeToFile(bootstrapFile, baseDir);
-        return createBootstrapResource(configuration, legacy);
-    }
-    
+   
     private static SSOToken getSSOToken(
         String basedn,
         String bindUser, 
@@ -498,9 +216,10 @@ public class Bootstrap {
         return ssoToken;
     }
 
-    static String readFile(String file) 
+    private static List readFile(String file) 
         throws IOException
     {
+        List list = new ArrayList();
         BufferedReader in = null;
         String str = null;
         
@@ -508,6 +227,10 @@ public class Bootstrap {
             in = new BufferedReader(new FileReader(file));
             if (in.ready()) {
                 str = in.readLine();
+                while (str != null) {
+                    list.add(str);
+                    str = in.readLine();
+                }
             }
         } finally {
             if (in != null) {
@@ -518,21 +241,7 @@ public class Bootstrap {
                 }
             }
         }
-        return str;
-    }
-
-    private static Map queryStringToMap(String str)
-        throws UnsupportedEncodingException {
-        Map map = new HashMap();
-        StringTokenizer st = new StringTokenizer(str, "&");
-
-        while (st.hasMoreTokens()) {
-            String s = st.nextToken();
-            int idx = s.indexOf('=');
-            map.put(s.substring(0, idx), URLDecoder.decode(
-                s.substring(idx +1), "UTF-8"));
-        }
-        return map;
+        return list;
     }
     
     /**
@@ -545,13 +254,24 @@ public class Bootstrap {
         throws IOException {
         String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
         String bootstrapFile = baseDir + "/" + AMSetupServlet.BOOTSTRAP_EXTRA;
-        String url = readFile(bootstrapFile);
-        int start = url.indexOf("&" + PWD + "=");
-        
-        if (start == -1) {
-            start = url.indexOf("?" + PWD + "=");
+        List urls = readFile(bootstrapFile);
+        StringBuffer buff = new StringBuffer();
+        for (Iterator i = urls.iterator(); i.hasNext(); ) {
+            String url = (String)i.next();
+            buff.append(modifyDSAMEUserPassword(url, password)).append("\n");
         }
-
+        
+        AMSetupServlet.writeToFile(
+            SystemProperties.get(AMSetupServlet.BOOTSTRAP_FILE_LOC), 
+            buff.toString());
+    }
+        
+    private static String modifyDSAMEUserPassword(String url, String password) 
+        throws IOException {
+        int start = url.indexOf("&" + BootstrapData.PWD + "=");
+        if (start == -1) {
+            start = url.indexOf("?" + BootstrapData.PWD + "=");
+        }
         if (start != -1) {
             String encPassword = URLEncoder.encode(Crypt.encode(password, 
                 Crypt.getHardcodedKeyEncryptor()), "UTF-8");
@@ -563,34 +283,6 @@ public class Bootstrap {
                     url.substring(end);
             }
         }
-        
-        AMSetupServlet.writeToFile(
-            SystemProperties.get(AMSetupServlet.BOOTSTRAP_FILE_LOC), url);
+        return url;
     }
-
-    private static final String BOOTSTRAP_SERVER_CONFIG_COMMON =
-        "<iPlanetDataAccessLayer>" +
-        "<ServerGroup name=\"default\" minConnPool=\"1\" maxConnPool=\"1\">" +
-        "<Server name=\"Server1\" host=\"@" + DS_HOST + "@\" " +
-        "port=\"@" + DS_PORT + "@\" type=\"SIMPLE\" />" +
-        "<User name=\"User1\" type=\"admin\">" +
-        "<DirDN>cn=dsameuser,ou=DSAME Users,@" + DS_BASE_DN + "@</DirDN>" +
-        "<DirPassword>@" + PWD + "@</DirPassword>" +
-        "</User>" +
-        "<BaseDN>@" + DS_BASE_DN + "@</BaseDN>" +
-        "</ServerGroup>";
-    private static final String BOOTSTRAP_SERVER_CONFIG_FILE =
-        BOOTSTRAP_SERVER_CONFIG_COMMON + "</iPlanetDataAccessLayer>";
-    private static final String BOOTSTRAP_SERVER_CONFIG_LDAP = 
-        BOOTSTRAP_SERVER_CONFIG_COMMON + 
-        "<ServerGroup name=\"sms\" minConnPool=\"1\" maxConnPool=\"10\">" +
-        "<Server name=\"Server1\" host=\"@" + DS_HOST + "@\" " +
-        "port=\"@" + DS_PORT + "@\" type=\"SIMPLE\" />" +
-        "<User name=\"User2\" type=\"admin\">" +
-        "<DirDN>@" + DS_MGR + "@</DirDN>" +
-        "<DirPassword>@" + DS_PWD + "@</DirPassword>" +
-        "</User>" +
-        "<BaseDN>@" + DS_BASE_DN + "@</BaseDN>" +
-        "</ServerGroup>" +
-        "</iPlanetDataAccessLayer>";
 }

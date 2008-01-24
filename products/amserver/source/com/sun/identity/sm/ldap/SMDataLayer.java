@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.8 2008-01-15 22:12:44 ww203982 Exp $
+ * $Id: SMDataLayer.java,v 1.9 2008-01-24 23:14:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -180,6 +180,7 @@ class SMDataLayer {
                 _trialConn = dsCfg.getNewConnection("sms",
                         LDAPUser.Type.AUTH_ADMIN);
                 svrCfg = sg.getServerInstance(LDAPUser.Type.AUTH_ADMIN);
+                hostName = dsCfg.getHostName("sms");
             } else {
                 _trialConn = dsCfg.getNewAdminConnection();
                 svrCfg = dsCfg.getServerInstance(LDAPUser.Type.AUTH_ADMIN);
