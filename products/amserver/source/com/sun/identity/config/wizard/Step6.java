@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
+ * $Id: Step6.java,v 1.5 2008-01-24 20:26:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ public class Step6 extends AjaxPage {
         addModel("cookieDomain", getCookieDomain());
         addModel("platformLocale", SetupConstants.DEFAULT_PLATFORM_LOCALE);
         addModel("configDirectory", getBaseDir());
+        super.onInit();
     }   
 
     private String getServerURL() {        

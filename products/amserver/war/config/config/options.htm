@@ -121,7 +121,6 @@
             if ( configOption == 1 ) {
                 document.location = '$context/config/defaultSummary.htm';
             } else if ( configOption == 2 ) {
-                //AjaxUtils.load('wizardContainer', "$context/config/wizard/wizard.htm", showWizard);
                 YAHOO.sun.identity.config.options.wizard.show();
             } else if ( configOption == 3 ) {
                 document.location = '$context/config/existConf.htm';
@@ -204,50 +203,52 @@
     
     <div id="options" align="left" style="width:800px">
         #if ( $upgrade )
-        <h1>Upgrade Available</h1>
-        <h4>Select an upgrade option.</h4>
+        <h1>$page.getLocalizedString("upgrade.available")</h1>
+        <h4>$page.getLocalizedString("upgrade.available.option")</h4>
         #else
-        <h1>Configuration Options</h1>
-        <h4>Select a configuration option.</h4>
+        <h1>$page.getLocalizedString("configuration.options.title")</h1>
+        <h4>$page.getLocalizedString("configuration.options.subtitle")</h4>
         #end
 
         <div class="borderRight">
-            #if ( $upgrade )
-            <h3>Upgrade to FAM 8.0</h3>
-            <p>Enhancements include WS-Federation and STS.</p>
-            <p>NOTE: you should NOT upgrade if there are still AM7.0 or FM7.0 servers in the deployment that are sharing the configuration.</p>
-            <a id="upgradeLink" class="blue pointer">Upgrade to FAM 8.0</a>
+            #if ($upgrade)
+            <h3>$page.getLocalizedString("upgrade.title")</h3>
+	    $page.getLocalizedString("upgrade.description")
+            <a id="upgradeLink" class="blue pointer">$page.getLocalizedString("upgrade.link")</a>
             #else
-            <h3>Simple Configuration</h3>
-            <p>Enter only the passwords for the default administrator and the agent accessor. All other data is configured using default parameters. This option should be used primarily for evaluation purposes.</p>
-            <p>If you intend on placing this on a production server then you should select 'Custom Configuration' instead.</p>
-            <a id="DemoConfiguration" class="blue pointer" onclick="setOption(1);">Demo Configuration</a>
+            <h3>$page.getLocalizedString("configuration.options.option1.title")</h3>
+	    <p>
+            $page.getLocalizedString("configuration.options.option1.description")
+            </p>
+            <a id="DemoConfiguration" class="blue pointer" onclick="setOption(1);">$page.getLocalizedString("configuration.options.option1.link")</a>
             #end
         </div>
-	<!--
+	<!-- enable if adding third option
         <div class="borderRight">
 	-->
         <div>
-            #if( $upgrade )
-            <h3>Use an existing configuration</h3>
-            <p>Enable this instance to co-exist with your existing AM7.1/FM7.0 instances.</p>
-            <a id="coexistLink" class="blue pointer">Use an existing configuration</a>
+            #if($upgrade)
+            <h3>$page.getLocalizedString("upgrade.existing.title")</h3>
+	    $page.getLocalizedString("upgrade.existing.description")
+            <a id="coexistLink" class="blue pointer">$page.getLocalizedString("upgrade.existing.link")</a>
             #else
-            <h3>Custom Configuration</h3>
-            <p>Allows you to specify all configuration parameters including the type of data store, encryption properties, user data store, etc. This option has the most flexibility in setting up your installation.</p>
-            <a id="CreateNewConf" class="blue pointer" onclick="setOption(2);">Create a New Configuration</a>
+            <h3>$page.getLocalizedString("configuration.options.option2.title")</h3>
+	    $page.getLocalizedString("configuration.options.option2.description")
+            <p>
+            <a id="CreateNewConf" class="blue pointer" onclick="setOption(2);">$page.getLocalizedString("configuration.options.option2.link")</a>
+            </p>
             #end
         </div>
         <!--
         <div>
             #if( $upgrade )
-            <h3>Upgrade from an older version</h3>
-            <p>If your previous deployment is AM 7.0 or older you will need to upgrade to FAM 8.0 since co-existence with older versions is not supported.</p>
-            <a id="upgradeOlderLink" class="blue pointer">Upgrade from an older version</a>
+            <h3>$page.getLocalizedString("upgrade.older.title")</h3>
+	    $page.getLocalizedString("upgrade.older.description")
+            <a id="upgradeOlderLink" class="blue pointer">$page.getLocalizedString("upgrade.older.link")</a>
             #else
-            <h3>Use an Existing Configuration</h3>
-            <p>[Existing Configuration Description Here]</p>
-            <a id="ExistingConfiguration" class="blue pointer" onclick="setOption(3);">Add to an Existing Configuration</a>
+            <h3>$page.getLocalizedString("configuration.options.option3.title")</h3>
+            $page.getLocalizedString("configuration.options.option3.description");
+            <a id="ExistingConfiguration" class="blue pointer" onclick="setOption(3);">$page.getLocalizedString("configuration.options.option3.link")</a>
             #end
         </div>
 	-->
@@ -264,36 +265,35 @@
 	}
 </style>
 <div id="confirmUpgrade" align="center" style="width:600px;visibility:hidden">
-    <div class="header">Confirm Upgrade</div>
+    <div class="header">$page.getLocalizedString("upgrade.confirm.header")</div>
     <div class="bd" style="background-color: white; height: 150px">
-		<h2>Are you certain that there are no AM 7.0 or FM 7.0 servers in deployment that are sharing the configuration?</h2>
+	<h2>$page.getLocalizedString("upgrade.confirm.body")</h2>
         <div class="colum">
-            <p>Yes, I am positive that there are no AM 7.0 or FM 7.0 servers sharing this configuration.</p>
-		    <a id="confirmUpgradeLink" class="blueSmall pointer">Continue with the upgrade</a>
-		</div>
-		<div class="colum">
-            <p>No, I am not sure. I should check before I run the upgrade.</p>
-            <a id="cancelUpgradeLink" class="blueSmall pointer">Show me the other options again.</a>
+            <p>$page.getLocalizedString("upgrade.confirm.yes")</p>
+	    <a id="confirmUpgradeLink" class="blueSmall pointer">$page.getLocalizedString("upgrade.confirm.yes.link")</a>
+	</div>
+	<div class="colum">
+            <p>$page.getLocalizedString("upgrade.confirm.no")</p>
+            <a id="cancelUpgradeLink" class="blueSmall pointer">$page.getLocalizedString("upgrade.confirm.no.link")</a>
         </div>
     </div>
 </div>
 <div id="upgradePartiallyComplete" style="width:400px;visibility:hidden">
     <div class="header">Upgrade Complete!</div>
     <div class="bd" style="background-color: white">
-	    <h2>Upgrade Complete!</h2>
-	    <p>You will not be able to have the full FAM 8.0 functionality until the shared configuration is complete.</p>
-	    <p>This is the gist of the message but I need more information and then I will create more of an alert look and feel to the message</p>
+	    <h2>$page.getLocalizedString("upgrade.option.complete.title")</h2>
+	    $page.getLocalizedString("upgrade.option.complete.description")
 	    <p align="center" class="blue">
-            <a id="downloadInstructionsLink" class="blueSmall pointer">Download these instructions</a> |
-            <a id="launchConsoleLink1" class="blueSmall pointer">Launch the console</a>
+            <a id="downloadInstructionsLink" class="blueSmall pointer">$page.getLocalizedString("download.instructions.link")</a> |
+            <a id="launchConsoleLink1" class="blueSmall pointer">$page.getLocalizedString("launch.console.link")</a>
         </p>
     </div>
 </div>
 <div id="upgradeComplete" style="width:400px;visibility:hidden">
-    <div class="header">Upgrade Complete</div>
+    <div class="header">$page.getLocalizedString("upgrade.option.complete.title")</div>
     <div class="bd" style="background-color: white; text-align: center">
-	    <h2>Upgrade to FAM8.0 Successful</h2>
-	    <a id="launchConsoleLink2" class="blueSmall pointer">Launch the console</a>
+	    <h2>$page.getLocalizedString("upgrade.option.complete.body")</h2>
+	    <a id="launchConsoleLink2" class="blueSmall pointer">$page.getLocalizedString("launch.console.link")</a>
     </div>
 </div>
 #else
@@ -306,27 +306,25 @@
         <div class="bd">
             <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
                 <br/>
-                <h2>Configuration in progress...</h2>
+                <h2>$page.getLocalizedString("configurator.progress")</h2>
                 <img src="$context/assets/images/rel_interstitial_loading.gif" />
             </div>
         </div>
     </div>
     
     <div id="confComplete" style="visibility:hidden">
-        <div class="header">Configuration Complete</div>
+        <div class="header">$page.getLocalizedString("configuration.option1.complete.header")</div>
         <div class="bd">
             <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
 
                 <br>
-                <h1>Configuration Complete!</h1>
+                <h1>$page.getLocalizedString("configuration.option1.complete.message")</h1>
                 <br/>
-                What would you like to do next?
+		$page.getLocalizedString("next.step.message");
                 <br/>
                 <p align="center" class="blueSmall">
-                    <a class="pointer" href="#" onclick="launchConsole(); return false">Proceed to Login `</a>&nbsp;|&nbsp;<a class="pointer" href="#" onclick="startNewConfig(); return false">Create another FAM instance</a>
+                    <a class="pointer" href="#" onclick="launchConsole(); return false">$page.getLocalizedString("go.to.login")</a>&nbsp;|&nbsp;<a class="pointer" href="#" onclick="startNewConfig(); return false">$page.getLocaliezdString("create.another.instance")</a>
                 </div>
         </div>
     </div>
 #end
-
-

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step5.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
+ * $Id: Step5.java,v 1.5 2008-01-24 20:26:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ public class Step5 extends AjaxPage {
         if ( port != null ) {
             addModel("port", port);
         }
+        super.onInit();
     }
 
     public boolean clear() {

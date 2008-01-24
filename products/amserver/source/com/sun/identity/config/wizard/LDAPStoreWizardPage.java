@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPStoreWizardPage.java,v 1.4 2008-01-18 06:18:33 jonnelson Exp $
+ * $Id: LDAPStoreWizardPage.java,v 1.5 2008-01-24 20:26:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,6 +96,7 @@ public class LDAPStoreWizardPage extends AjaxPage {
 
         store = ensureConfig();
         addModel("store", store);
+        addModel("page", this);
     }
 
     public boolean clearStore() {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TemplatedPage.java,v 1.6 2008-01-15 20:48:31 jonnelson Exp $
+ * $Id: TemplatedPage.java,v 1.7 2008-01-24 20:26:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,8 @@ public abstract class TemplatedPage extends AjaxPage {
             codes = new ArrayList();
         }
         codes.add(statusMessageCode);
-        getContext().setSessionAttribute(STATUS_MESSAGE_CODES_SESSION_KEY, codes);
+        getContext().setSessionAttribute(
+            STATUS_MESSAGE_CODES_SESSION_KEY, codes);
     }
 
     protected void clearStatusMessageCodes() {
@@ -71,7 +72,7 @@ public abstract class TemplatedPage extends AjaxPage {
     public final void onInit() {
         addModel("title", getTitle());
         List sessionStatusMessages = getStatusMessageCodes();
-        if ( sessionStatusMessages != null && !sessionStatusMessages.isEmpty() ) {
+        if (sessionStatusMessages != null && !sessionStatusMessages.isEmpty()) {
             Iterator i = sessionStatusMessages.iterator();
             while ( i.hasNext() ) {
                 String messageCode = (String)i.next();
@@ -79,6 +80,8 @@ public abstract class TemplatedPage extends AjaxPage {
             }
             clearStatusMessageCodes();
         }
+        addModel("page", this);
+
         doInit();
     }
 

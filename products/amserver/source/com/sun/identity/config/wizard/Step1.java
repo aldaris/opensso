@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step1.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
+ * $Id: Step1.java,v 1.5 2008-01-24 20:26:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,43 +98,5 @@ public class Step1 extends AjaxPage {
         setPath(null);
         return false;
     }    
-    
-    protected void initializeResourceBundle() {
-        HttpServletRequest req = (HttpServletRequest)getContext().getRequest();
-        HttpServletResponse res = (HttpServletResponse)getContext().getResponse();
-
-        setLocale(req);
-        try {
-            req.setCharacterEncoding("UTF-8");
-            res.setContentType("text/html; charset=UTF-8");
-        } catch (UnsupportedEncodingException uee) {
-            //Do nothing.
-        }
-    }
-
-    private void setLocale (HttpServletRequest request) {      
-        if (request != null) {
-            String superLocale = request.getParameter("locale");
-
-            if (superLocale != null && superLocale.length() > 0) {
-                configLocale = new java.util.Locale(superLocale);
-            } else {
-                String acceptLangHeader =
-                    (String)request.getHeader("Accept-Language");
-                if ((acceptLangHeader !=  null) &&
-                     (acceptLangHeader.length() > 0)) {
-                    String acclocale = 
-                        Locale.getLocaleStringFromAcceptLangHeader(
-                            acceptLangHeader);
-                    configLocale = new java.util.Locale(acclocale);
-                }
-            }
-            try {
-                rb = ResourceBundle.getBundle(RB_NAME, configLocale);
-            } catch (MissingResourceException mre) {
-
-            }
-        }
-    }
 }
 

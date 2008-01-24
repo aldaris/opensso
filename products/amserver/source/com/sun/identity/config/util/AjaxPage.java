@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.8 2008-01-18 06:34:45 jonnelson Exp $
+ * $Id: AjaxPage.java,v 1.9 2008-01-24 20:26:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,8 +31,11 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import java.io.IOException;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import net.sf.click.Page;
 
 
@@ -132,16 +135,47 @@ public abstract class AjaxPage extends Page {
         writeToResponse(response);
     }
     
-    protected void initializeResourceBundle() {
-        ISLocaleContext localeContext = new ISLocaleContext();
-        localeContext.setLocale(getContext().getRequest());
+    public void initializeResourceBundle() {
+        HttpServletRequest req = 
+            (HttpServletRequest)getContext().getRequest();
+        HttpServletResponse res = 
+            (HttpServletResponse)getContext().getResponse();
+
+        setLocale(req);
         try {
-            rb = ResourceBundle.getBundle(RB_NAME, localeContext.getLocale());
-        } catch (MissingResourceException mre) {
-            // do nothing
+            req.setCharacterEncoding("UTF-8");
+            res.setContentType("text/html; charset=UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            //Do nothing.
         }
     }
-    
+
+    private void setLocale (HttpServletRequest request) {
+        if (request != null) {
+            String superLocale = request.getParameter("locale");
+            java.util.Locale configLocale = null;
+            if (superLocale != null && superLocale.length() > 0) {
+                configLocale = new java.util.Locale(superLocale);
+            } else {
+                String acceptLangHeader =
+                    (String)request.getHeader("Accept-Language");
+                if ((acceptLangHeader !=  null) &&
+                    (acceptLangHeader.length() > 0)) 
+                {
+                    String acclocale =
+                        Locale.getLocaleStringFromAcceptLangHeader(
+                            acceptLangHeader);
+                    configLocale = new java.util.Locale(acclocale);
+                }
+            }
+            try {
+                rb = ResourceBundle.getBundle(RB_NAME, configLocale);
+            } catch (MissingResourceException mre) {
+                // do nothing
+            }
+       }
+    }
+
     public String getLocalizedString(String i18nKey) {
         if (rb == null) {
             initializeResourceBundle();

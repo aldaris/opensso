@@ -17,18 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step7.java,v 1.1 2008-01-18 06:23:40 jonnelson Exp $
+ * $Id: Step7.java,v 1.2 2008-01-24 20:26:40 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
 import com.sun.identity.config.pojos.LDAPStore;
+import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.SetupConstants;
 import net.sf.click.Page;
 
 
-public class Step7 extends Page {
+public class Step7 extends AjaxPage {
 
     public Step7(){}
 
@@ -62,6 +63,8 @@ public class Step7 extends Page {
         Integer loadBalancerPort = (Integer)getContext().getSessionAttribute( 
             Step5.LOAD_BALANCER_PORT_SESSION_KEY );
         add( "loadBalancerPort", loadBalancerPort );
+
+        super.onInit();
     }
 
     protected void add( String key, Object value ) {
