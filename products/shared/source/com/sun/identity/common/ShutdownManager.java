@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShutdownManager.java,v 1.2 2008-01-16 20:17:42 ww203982 Exp $
+ * $Id: ShutdownManager.java,v 1.3 2008-01-24 20:34:29 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.common;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,10 +38,6 @@ public class ShutdownManager {
     
     protected static ShutdownManager instance;
     
-    public static final int HIGHEST_LEVEL = 3;
-    public static final int DEFAULT_LEVEL = 2;
-    public static final int LOWEST_LEVEL = 1;
-    
     protected Set[] listeners;
     
     /**
@@ -48,8 +45,9 @@ public class ShutdownManager {
      */
     
     protected ShutdownManager() {
-        listeners = new HashSet[HIGHEST_LEVEL];
-        for (int i = 0; i < HIGHEST_LEVEL; i++) {
+        int size = ShutdownPriority.HIGHEST.getIntValue();
+        listeners = new HashSet[size];
+        for (int i = 0; i < size; i++) {
             listeners[i] = new HashSet();
         }
     }
@@ -74,28 +72,21 @@ public class ShutdownManager {
      */
     
     public void addShutdownListener(ShutdownListener listener) {
-        try {
-            addShutdownListener(listener, DEFAULT_LEVEL);
-        } catch(IllegalArgumentException ex) {
-        }
+        addShutdownListener(listener, ShutdownPriority.DEFAULT);
     }
     
     /**
      * Adds a ShutdownListener to this ShutdownManager with indicated level.
      *
      * @param listener The listener to be added
-     * @param level The level of the shutdown listener
+     * @param priority The priority to shutdown for the shutdown listener
      */
     
-    public void addShutdownListener(ShutdownListener listener, int level)
-        throws IllegalArgumentException {
-        if ((level > HIGHEST_LEVEL) || (level < LOWEST_LEVEL)) {
-            throw new IllegalArgumentException("Level out of range!");
-        } else {
-            synchronized (listeners) {
-                removeShutdownListener(listener);
-                listeners[level - 1].add(listener);
-            }
+    public void addShutdownListener(ShutdownListener listener,
+        ShutdownPriority priority) {
+        synchronized (listeners) {
+            removeShutdownListener(listener);
+            listeners[priority.getIntValue() - 1].add(listener);
         }
     }
     
@@ -107,8 +98,10 @@ public class ShutdownManager {
     
     public void removeShutdownListener(ShutdownListener listener) {
         synchronized (listeners) {
-            for (int i = 0; i < HIGHEST_LEVEL; i++) {
-                if (listeners[i].remove(listener)) {
+            List priorities = ShutdownPriority.getPriorities();
+            for (Iterator i = priorities.iterator(); i.hasNext();) {
+                int index = ((ShutdownPriority) i.next()).getIntValue();
+                if (listeners[index - 1].remove(listener)) {
                     break;
                 }
             }
@@ -121,10 +114,12 @@ public class ShutdownManager {
     
     public void shutdown() {
         synchronized (listeners) {
-            for (int i = HIGHEST_LEVEL; i >= LOWEST_LEVEL; i--) {
-                for (Iterator iter = listeners[i - 1].iterator();
-                    iter.hasNext();) {
-                    ShutdownListener element = (ShutdownListener) iter.next();
+            List priorities = ShutdownPriority.getPriorities();
+            for (Iterator i = priorities.iterator(); i.hasNext();) {
+                int index = ((ShutdownPriority) i.next()).getIntValue();
+                for (Iterator j = listeners[index - 1].iterator();
+                    j.hasNext();) {
+                    ShutdownListener element = (ShutdownListener) j.next();
                     element.shutdown();
                 }
             }
