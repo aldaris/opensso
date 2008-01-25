@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.2 2008-01-16 04:43:25 hengming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.3 2008-01-25 14:25:17 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -737,6 +737,11 @@ public class CreateSAML2HostedProviderTemplate {
             "            ResponseLocation=\"" + url + "/IDPMniRedirect" +
             maStr + "\"/>\n" +
             "        <ManageNameIDService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
+            "            Location=\"" + url + "/IDPMniPOST" +maStr+ "\"\n" +
+            "            ResponseLocation=\"" + url + "/IDPMniPOST" +
+            maStr + "\"/>\n" +
+            "        <ManageNameIDService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
             "            Location=\"" + url + "/IDPMniSoap" + maStr + "\"/>\n" +
             "        <NameIDFormat>\n" +
@@ -754,6 +759,9 @@ public class CreateSAML2HostedProviderTemplate {
             "        <SingleSignOnService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
             "            Location=\"" + url + "/SSOSoap" + maStr + "\"/>\n" +
+            "        <NameIDMappingService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
+            "            Location=\"" + url + "/NIMSoap" + maStr + "\"/>\n" +
             "    </IDPSSODescriptor>\n"
         );
     }
@@ -825,6 +833,11 @@ public class CreateSAML2HostedProviderTemplate {
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
             "            Location=\"" + url + "/SPMniRedirect" + maStr + "\"\n"+
             "            ResponseLocation=\"" + url + "/SPMniRedirect" + maStr +
+            "\"/>\n" +
+            "        <ManageNameIDService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
+            "            Location=\"" + url + "/SPMniPOST" + maStr + "\"\n"+
+            "            ResponseLocation=\"" + url + "/SPMniPOST" + maStr +
             "\"/>\n" +
             "        <ManageNameIDService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +

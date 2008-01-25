@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.11 2008-01-16 04:41:25 hengming Exp $
+   $Id: web.xml,v 1.12 2008-01-25 14:24:31 hengming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -186,6 +186,10 @@
             <jsp-file>/saml2/jsp/idpMNIRedirect.jsp</jsp-file>
         </servlet>
         <servlet>
+            <servlet-name>IDPMniPOST</servlet-name>
+            <jsp-file>/saml2/jsp/idpMNIPOST.jsp</jsp-file>
+        </servlet>
+        <servlet>
             <servlet-name>IDPMniSoap</servlet-name>
             <jsp-file>/saml2/jsp/idpMNISOAP.jsp</jsp-file>
         </servlet>
@@ -236,6 +240,10 @@
         <servlet>
             <servlet-name>SPMniRedirect</servlet-name>
             <jsp-file>/saml2/jsp/spMNIRedirect.jsp</jsp-file>
+        </servlet>
+        <servlet>
+            <servlet-name>SPMniPOST</servlet-name>
+            <jsp-file>/saml2/jsp/spMNIPOST.jsp</jsp-file>
         </servlet>
         <servlet>
             <servlet-name>SPMniSoap</servlet-name>
@@ -295,6 +303,10 @@
             <url-pattern>/SPMniSoap/*</url-pattern>
         </servlet-mapping>
         <servlet-mapping>
+            <servlet-name>SPMniPOST</servlet-name>
+            <url-pattern>/SPMniPOST/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
             <servlet-name>SPMniRedirect</servlet-name>
             <url-pattern>/SPMniRedirect/*</url-pattern>
         </servlet-mapping>
@@ -345,6 +357,10 @@
         <servlet-mapping>
             <servlet-name>IDPMniSoap</servlet-name>
             <url-pattern>/IDPMniSoap/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>IDPMniPOST</servlet-name>
+            <url-pattern>/IDPMniPOST/*</url-pattern>
         </servlet-mapping>
         <servlet-mapping>
             <servlet-name>IDPMniRedirect</servlet-name>
