@@ -22,7 +22,7 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: run-xacml-client-sample.sh,v 1.5 2007-12-11 01:59:25 qcheng Exp $
+#$Id: run-xacml-client-sample.sh,v 1.6 2008-01-25 01:55:24 dillidorai Exp $
 #Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #------------------------------------------------------------------------------
 #
@@ -63,9 +63,9 @@
 # key=/xacmlPdp|class=com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler
 #
 # unzip famAdminTools.zip and setup FAM admin tools
-# fam/bin/famadm create-circle-of-trust -u amadmin -f <password_file> -t xacml-pdp-cot
-# fam/bin/famadm create-metadata-template -u amadmin -f <password_file> -y xacmlPdpEntity -p /xacmlPdp -m xacmlPdp.xml -x xacmlPdp-x.xml
-# fam/bin/famadm import-entity -u amadmin -f <password_file> -t xacml-pdp-cot -m xacmlPdp.xml -x xacmlPdp-x.xml
+# fam/bin/famadm create-cot -t xacml-pdp-cot -u amadmin -f <password_file>
+# fam/bin/famadm create-metadata-templ -y xacmlPdpEntity -p /xacmlPdp -m xacmlPdp.xml -x xacmlPdp-x.xml -u amadmin -f <password_file>
+# fam/bin/famadm import-entity -t xacml-pdp-cot -m xacmlPdp.xml -x xacmlPdp-x.xml -u amadmin -f <password_file>
 #
 #
 # At PEP host, that is the host that would run the FAM acting as PEP metadata
@@ -74,17 +74,17 @@
 # deploy fam.war  and configure it on a supported java ee container
 #
 # unzip famAdminTools.zip and setup FAM admin tools 
-# fam/bin/famadm create-circle-of-trust -u amadmin -f <password_file> -t xacml-pep-cot
-# fam/bin/famadm create-metadata-template -u amadmin -f <password_file> -y xacmlPepEntity -e /xacmlPep -m xacmlPep.xml -x xacmlPep-x.xml
-# fam/bin/famadm import-entity -u amadmin -f <password_file> -t xacml-pep-cot -m xacmlPep.xml -x xacmlPep-x.xml
+# fam/bin/famadm create-cot -t xacml-pep-cot -u amadmin -f <password_file>
+# fam/bin/famadm create-metadata-templ -y xacmlPepEntity -e /xacmlPep -m xacmlPep.xml -x xacmlPep-x.xml -u amadmin -f <password_file>
+# fam/bin/famadm import-entity -t xacml-pep-cot -m xacmlPep.xml -x xacmlPep-x.xml -u amadmin -f <password_file>
 #
 # copy xacmlPdp.xml from PDP host as  xacmlPdp-r.xml to PEP host, do
-# fam/bin/famadm import-entity -u amadmin -f <password_file> -t xacml-pep-cot -m xacmlPdp-r.xml
+# fam/bin/famadm import-entity -t xacml-pep-cot -m xacmlPdp-r.xml -u amadmin -f <password_file>
 #
 #
 # At PDP host, do the following:
 # copy xacmlPep.xml from PEP host as xacmlPep-r.xml to PDP host
-# fam/bin/famadm import-entity -u amadmin -f <password_file> -t xacml-pdp-cot -m xacmlPep-r.xml
+# fam/bin/famadm import-entity -t xacml-pdp-cot -m xacmlPep-r.xml -u amadmin -f <password_file>
 #
 # Then, run this script
 java -classpath resources:lib/openssoclientsdk.jar:lib/j2ee.jar:lib/jaxb-libs.jar:lib/jaxb-impl.jar:lib/webservices-rt.jar:classes samples.xacml.XACMLClientSample xacmlClientSample

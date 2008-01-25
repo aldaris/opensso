@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.3 2007-12-17 19:42:56 veiming Exp $
+ * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.4 2008-01-25 01:55:58 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,8 +31,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.ResourceResult;
 
-import com.sun.identity.policy.client.PolicyEvaluator;
-import com.sun.identity.policy.client.PolicyEvaluatorFactory;
+import com.sun.identity.policy.PolicyEvaluator;
 
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.protocol.RequestAbstract;
@@ -46,14 +45,11 @@ import com.sun.identity.xacml.saml2.XACMLAuthzDecisionStatement;
 
 import javax.xml.soap.SOAPMessage;
 
-//the following imports to support createTestResponse
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Assertion;
 import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
-
-import com.sun.identity.shared.test.UnitTestBase;
 
 import com.sun.identity.shared.xml.XMLUtils;
 
@@ -93,9 +89,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This class is an extension point for all XACML related exceptions.
- * This class also handles message localization in XACML exceptions.
- *
+ * This class is an implementation of SAML2 query RequestHandler to handle
+ * XACMLAuthzDecisionQuery
+ * 
  */
 public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
 
@@ -251,14 +247,22 @@ public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
         //get native policy deicison using native policy evaluator
         if (!evaluationFailed) {
             try {
-                //PolicyEvaluator pe = new PolicyEvaluator(serviceName);
-                PolicyEvaluator pe = PolicyEvaluatorFactory.getInstance()
-                        .getPolicyEvaluator(serviceName);
+                PolicyEvaluator pe = new PolicyEvaluator(serviceName);
                 booleanDecision = pe.isAllowed(ssoToken, resourceName,
                         actionName, environment);
             } catch (SSOException ssoe) {
+                if (XACMLSDKUtils.debug.warningEnabled()) {
+                    XACMLSDKUtils.debug.warning(
+                            "XACMLAuthzDecisionQueryHandler.handleQuery(),"
+                            + "caught exception", ssoe);
+                }
                 evaluationFailed = true;
             } catch (PolicyException pe) {
+                if (XACMLSDKUtils.debug.warningEnabled()) { 
+                    XACMLSDKUtils.debug.warning(
+                            "XACMLAuthzDecisionQueryHandler.handleQuery(),"
+                            + "caught exception", pe);
+                }
                 evaluationFailed = true;
             }
         }
