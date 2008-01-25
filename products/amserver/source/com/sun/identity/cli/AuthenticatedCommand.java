@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedCommand.java,v 1.3 2007-06-26 21:56:13 veiming Exp $
+ * $Id: AuthenticatedCommand.java,v 1.4 2008-01-25 02:23:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,10 @@ package com.sun.identity.cli;
 
 
 import com.iplanet.sso.SSOToken;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.MessageFormat;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
@@ -46,6 +50,7 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
      *
      * @param rc Request Context.
      * @throws CLIException if authentication fails.
+     * @Override this method to get user name and passowrd.
      */
     public void handleRequest(RequestContext rc)
         throws CLIException
@@ -80,8 +85,43 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
     private String getPassword()
         throws CLIException
     {
-        return CLIUtil.getFileContent(getStringOptionValue(
-            AccessManagerConstants.ARGUMENT_PASSWORD_FILE), true);
+        String fileName = getStringOptionValue(
+            AccessManagerConstants.ARGUMENT_PASSWORD_FILE);
+        String password = CLIUtil.getFileContent(fileName, true);
+        validatePwdFilePermissions(fileName);
+        return password;
+    }
+
+    private void validatePwdFilePermissions(String fileName)
+        throws CLIException {
+        if (System.getProperty("path.separator").equals(":")) {
+            try {
+                String[] parameter = {"/bin/ls", "-l", fileName};
+                Process p = Runtime.getRuntime().exec(parameter);
+                BufferedReader stdInput = new BufferedReader(new
+                    InputStreamReader(p.getInputStream()));
+                String s = stdInput.readLine();
+                if (s != null) {
+                    int idx = s.indexOf(" ");
+                    if (idx != -1) {
+                        String permission = s.substring(0, idx);
+                        if (!permission.equals("-r--------")) {
+                            String msg = getCommandManager().getResourceBundle()
+                                .getString(
+                                    "error-message-password-file-not-readonly");
+                            Object[] param = {fileName};
+                            throw new CLIException(MessageFormat.format(
+                                msg, param), 
+                                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                            
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                //ignore, this should not happen because we are able to 
+                // read the file in getPassword method.
+            }
+        }
     }
 
     protected String getAdminUserID() {
