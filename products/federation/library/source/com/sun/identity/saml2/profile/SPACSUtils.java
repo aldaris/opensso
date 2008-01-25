@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.13 2007-12-15 06:22:22 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.14 2008-01-25 14:22:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -608,7 +608,7 @@ public class SPACSUtils {
 
         Status status = artiResp.getStatus();
         if (status == null || !status.getStatusCode().getValue().equals(
-                                        SAML2Constants.STATUS_SUCCESS))
+                                        SAML2Constants.SUCCESS))
         {
             String statusCode =
                 (status == null)?"":status.getStatusCode().getValue();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.16 2008-01-16 04:34:09 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.17 2008-01-25 14:20:01 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,6 +73,7 @@ import com.sun.identity.saml2.profile.IDPCache;
 import com.sun.identity.saml2.profile.SPCache;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.saml2.protocol.RequestAbstract;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.Status;
@@ -97,6 +98,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -333,7 +335,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         
         Status status = response.getStatus();
         if (status == null || !status.getStatusCode().getValue().equals(
-                SAML2Constants.STATUS_SUCCESS)) {
+                SAML2Constants.SUCCESS)) {
             String statusCode =
                     (status == null)?"":status.getStatusCode().getValue();
             if (debug.messageEnabled()) {
@@ -1692,26 +1694,94 @@ public class SAML2Utils extends SAML2SDKUtils {
      * @return Status object.
      */
     public static Status generateStatus(String code, String message) {
+        return generateStatus(code, null, message);
+    }
+    
+    /**
+     * Generates SAMLv2 Status object
+     * @param code Status code value.
+     * @param subCode second-level status code
+     * @param message Status message.
+     * @return Status object.
+     */
+    public static Status generateStatus(String code, String subCode,
+        String message) {
+
         Status status = null;
         try {
             status = ProtocolFactory.getInstance().createStatus();
-            StatusCode statuscode = ProtocolFactory.getInstance()
-            .createStatusCode();
-            statuscode.setValue(code);
-            status.setStatusCode(statuscode);
-            if (message != null && message.length() != 0) {
+            StatusCode statusCode = ProtocolFactory.getInstance()
+                .createStatusCode();
+            statusCode.setValue(code);
+            status.setStatusCode(statusCode);
+            if ((message != null) && (message.length() != 0)) {
                 status.setStatusMessage(message);
             }
-            if (debug.messageEnabled()) {
-                debug.message("SAML2Util.geberateStatus : "
-                        + status.toXMLString());
+            if (subCode != null) {
+                StatusCode subStatusCode = ProtocolFactory.getInstance()
+                    .createStatusCode();
+                subStatusCode.setValue(subCode);
+                statusCode.setStatusCode(subStatusCode);
             }
         } catch (SAML2Exception e) {
-            debug.error("Exeption : ", e);
+            debug.error("SAML2Utils.generateStatus:", e);
         }
         return status;
     }
+
+    /**
+     * Returns a <code>SAML Response</code> object containing error status
+     *
+     * @param request the <code>RequestAbstract</code> object
+     * @param code the error code
+     * @param subCode teh second-level error code
+     * @param statusMsg the error message
+     * @param issuerEntityID the entity id of the issuer
+     * 
+     * @return the <code>SAML Response</code> object containing error status
+     * @exception SAML2Exception if the operation is not successful
+     */
+    public static Response getErrorResponse(
+        RequestAbstract request,
+        String code,
+        String subCode,
+        String statusMsg,
+        String issuerEntityID)
+        throws SAML2Exception {
     
+        String classMethod = "IDPSSOUtil.getErrorResponse: ";
+
+        Response errResp = ProtocolFactory.getInstance().createResponse();
+        errResp.setStatus(generateStatus(code, subCode, statusMsg));
+
+        String responseID = SAML2Utils.generateID();
+        if (responseID == null) {
+            SAML2Utils.debug.error("Unable to generate response ID.");
+            return null;
+        }
+        errResp.setID(responseID);
+
+        if (request != null) {
+            // sp initiated case, need to set InResponseTo attribute
+            errResp.setInResponseTo(request.getID());
+        }
+        errResp.setVersion(SAML2Constants.VERSION_2_0);
+        errResp.setIssueInstant(new Date());
+
+        // set the idp entity id as the response issuer
+        if (issuerEntityID != null) {
+            Issuer issuer = AssertionFactory.getInstance().createIssuer();
+            issuer.setValue(issuerEntityID);
+            errResp.setIssuer(issuer);
+        }
+
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(classMethod + 
+                "Error Response is : " + errResp.toXMLString());
+        }
+        return errResp;    
+    }
+
     /**
      * Returns first Element with given local name in samlp name space inside
      * SOAP message.
@@ -3437,5 +3507,28 @@ public class SAML2Utils extends SAML2SDKUtils {
              attribute.setAttributeValueString(list);
          }
          return attribute;
+    }
+
+    public static void postToTarget(HttpServletResponse response,
+        String SAMLmessageName, String SAMLmessageValue, String relayStateName,
+        String relayStateValue, String targetURL) throws IOException {
+
+        PrintWriter out = response.getWriter();
+        out.println("<HTML>");
+        out.println("<HEAD>\n");
+        out.println("<TITLE>Access rights validated</TITLE>\n");
+        out.println("</HEAD>\n");
+        out.println("<BODY Onload=\"document.forms[0].submit()\">");
+
+        out.println("<FORM METHOD=\"POST\" ACTION=\"" + targetURL + "\">");
+        out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""+ SAMLmessageName
+            + "\" " + "VALUE=\"" + SAMLmessageValue + "\">");
+        if (relayStateValue != null && relayStateValue.length() != 0) {
+            out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""+
+                relayStateName + "\" " +
+                "VALUE=\"" + relayStateValue + "\">");
+        }
+        out.println("</FORM></BODY></HTML>");
+        out.close();
     }
 }

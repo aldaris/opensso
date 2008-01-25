@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryUtil.java,v 1.2 2008-01-16 04:36:53 hengming Exp $
+ * $Id: AttributeQueryUtil.java,v 1.3 2008-01-25 14:22:20 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -194,8 +194,8 @@ public class AttributeQueryUtil {
                 SAML2Utils.debug.message("AttributeQueryUtil." +
                 "processAttributeQuery: ", se);
             }
-            return IDPSSOUtil.getErrorResponse(attrQuery,
-                SAML2Constants.REQUESTER, se.getMessage(), null);
+            return SAML2Utils.getErrorResponse(attrQuery,
+                SAML2Constants.REQUESTER, null, se.getMessage(), null);
         }
 
         try {
@@ -204,8 +204,8 @@ public class AttributeQueryUtil {
         } catch(SAML2Exception se) {
             SAML2Utils.debug.error("AttributeQueryUtil.processAttributeQuery:",
                 se);
-            return IDPSSOUtil.getErrorResponse(attrQuery,
-                SAML2Constants.REQUESTER, se.getMessage(), null);
+            return SAML2Utils.getErrorResponse(attrQuery,
+                SAML2Constants.REQUESTER, null, se.getMessage(), null);
         }
 
         Issuer issuer = attrQuery.getIssuer();
@@ -217,14 +217,14 @@ public class AttributeQueryUtil {
         } catch (SAML2MetaException sme) {
             SAML2Utils.debug.error("AttributeQueryUtil.processAttributeQuery:",
                 sme);
-            return IDPSSOUtil.getErrorResponse(attrQuery,
-                SAML2Constants.RESPONDER,
+            return SAML2Utils.getErrorResponse(attrQuery,
+                SAML2Constants.RESPONDER, null,
                 SAML2Utils.bundle.getString("metaDataError"), null);
         } 
 
         if (aad == null) {
-            return IDPSSOUtil.getErrorResponse(attrQuery,
-                SAML2Constants.REQUESTER,
+            return SAML2Utils.getErrorResponse(attrQuery,
+                SAML2Constants.REQUESTER, null,
                 SAML2Utils.bundle.getString("attrAuthorityNotFound"), null);
         }
 
@@ -237,8 +237,9 @@ public class AttributeQueryUtil {
                 SAML2Utils.debug.message("AttributeQueryUtil." +
                 "processAttributeQuery: ", se);
             }
-            return IDPSSOUtil.getErrorResponse(attrQuery,
-                SAML2Constants.UNKNOWN_PRINCIPAL, se.getMessage(), null);
+            return SAML2Utils.getErrorResponse(attrQuery,
+                SAML2Constants.REQUESTER, SAML2Constants.UNKNOWN_PRINCIPAL,
+                se.getMessage(), null);
         }
 
         if (identity == null) {
@@ -246,8 +247,9 @@ public class AttributeQueryUtil {
                 SAML2Utils.debug.message("AttributeQueryUtil." +
                 "processAttributeQuery: unable to find identity.");
             }
-            return IDPSSOUtil.getErrorResponse(attrQuery,
-                SAML2Constants.UNKNOWN_PRINCIPAL,null, null);
+            return SAML2Utils.getErrorResponse(attrQuery,
+                SAML2Constants.REQUESTER, SAML2Constants.UNKNOWN_PRINCIPAL,
+                null, null);
         }
 
         
@@ -257,7 +259,8 @@ public class AttributeQueryUtil {
             desiredAttrs = verifyDesiredAttributes(aad.getAttribute(),
                 desiredAttrs);
         } catch (SAML2Exception se) {
-            return IDPSSOUtil.getErrorResponse(attrQuery,
+            return SAML2Utils.getErrorResponse(attrQuery,
+                SAML2Constants.REQUESTER, 
                 SAML2Constants.INVALID_ATTR_NAME_OR_VALUE, null, null);
         }
 
@@ -279,8 +282,8 @@ public class AttributeQueryUtil {
                 SAML2Utils.debug.message(
                     "AttributeQueryUtil.processAttributeQuery:", se);
             }
-            return IDPSSOUtil.getErrorResponse(attrQuery,
-                SAML2Constants.RESPONDER, se.getMessage(), null);
+            return SAML2Utils.getErrorResponse(attrQuery,
+                SAML2Constants.RESPONDER, null, se.getMessage(), null);
         }
 
         if (attrQueryProfileAlias.equals(
@@ -300,8 +303,8 @@ public class AttributeQueryUtil {
                         SAML2Utils.debug.message(
                             "AttributeQueryUtil.processAttributeQuery:", se);
                     }
-                    return IDPSSOUtil.getErrorResponse(attrQuery,
-                        SAML2Constants.RESPONDER, se.getMessage(), null);
+                    return SAML2Utils.getErrorResponse(attrQuery,
+                        SAML2Constants.RESPONDER, null, se.getMessage(), null);
                 }
                 assertionList.add(encryptedAssertion);        
                 samlResp.setEncryptedAssertion(assertionList);

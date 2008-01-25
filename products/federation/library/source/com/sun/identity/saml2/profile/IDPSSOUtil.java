@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.15 2008-01-16 04:36:53 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.16 2008-01-25 14:22:21 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -342,8 +342,8 @@ public class IDPSSOUtil {
                 //idp initiated case, will not send error response to sp
                 throw new SAML2Exception(errorMsg);
             }
-            res = IDPSSOUtil.getErrorResponse(authnReq, 
-                SAML2Constants.RESPONDER, errorMsg, idpEntityID);
+            res = SAML2Utils.getErrorResponse(authnReq, 
+                SAML2Constants.RESPONDER, null, errorMsg, idpEntityID);
         } else {
             try {
                 String[] values = {idpMetaAlias};
@@ -662,62 +662,6 @@ public class IDPSSOUtil {
         return res;
     }
 
-    /**
-     * Returns a <code>SAML Response</code> object containing error status
-     *
-     * @param request the <code>RequestAbstract</code> object
-     * @param code the error code
-     * @param statusMsg the error message
-     * @param issuerEntityID the entity id of the issuer
-     * 
-     * @return the <code>SAML Response</code> object containing error status
-     * @exception SAML2Exception if the operation is not successful
-     */
-    public static Response getErrorResponse(
-        RequestAbstract request,
-        String code,
-        String statusMsg,
-        String issuerEntityID)
-        throws SAML2Exception {
-    
-        String classMethod = "IDPSSOUtil.getErrorResponse: ";
-
-        Response errResp = ProtocolFactory.getInstance().createResponse();
-        Status status = ProtocolFactory.getInstance().createStatus();
-        StatusCode statusCode = ProtocolFactory.getInstance().
-                                createStatusCode();
-        statusCode.setValue(code);
-        status.setStatusCode(statusCode);
-        status.setStatusMessage(statusMsg);
-        errResp.setStatus(status);
-
-        String responseID = SAML2Utils.generateID();
-        if (responseID == null) {
-            SAML2Utils.debug.error("Unable to generate response ID.");
-            return null;
-        }
-        errResp.setID(responseID);
-
-        if (request != null) {
-            // sp initiated case, need to set InResponseTo attribute
-            errResp.setInResponseTo(request.getID());
-        }
-        errResp.setVersion(SAML2Constants.VERSION_2_0);
-        errResp.setIssueInstant(new Date());
-
-        // set the idp entity id as the response issuer
-        if (issuerEntityID != null) {
-            Issuer issuer = AssertionFactory.getInstance().createIssuer();
-            issuer.setValue(issuerEntityID);
-            errResp.setIssuer(issuer);
-        }
-
-        if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message(classMethod + 
-                "Error Response is : " + errResp.toXMLString());
-        }
-        return errResp;    
-    }
 
     /**
      * Returns a <code>SAML Assertion</code> object

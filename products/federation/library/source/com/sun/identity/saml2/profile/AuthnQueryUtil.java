@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnQueryUtil.java,v 1.1 2008-01-16 04:36:53 hengming Exp $
+ * $Id: AuthnQueryUtil.java,v 1.2 2008-01-25 14:22:21 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -171,8 +171,8 @@ public class AuthnQueryUtil {
             verifyAuthnQuery(authnQuery, authnAuthorityEntityID, realm);
         } catch(SAML2Exception se) {
             SAML2Utils.debug.error("AuthnQueryUtil.processAuthnQuery:", se);
-            return IDPSSOUtil.getErrorResponse(authnQuery,
-                SAML2Constants.REQUESTER, se.getMessage(), null);
+            return SAML2Utils.getErrorResponse(authnQuery,
+                SAML2Constants.REQUESTER, null, se.getMessage(), null);
         }
 
         Issuer issuer = authnQuery.getIssuer();
@@ -184,14 +184,14 @@ public class AuthnQueryUtil {
                 authnAuthorityEntityID);
         } catch (SAML2MetaException sme) {
             SAML2Utils.debug.error("AuthnQueryUtil.processAuthnQuery:", sme);
-            return IDPSSOUtil.getErrorResponse(authnQuery,
-                SAML2Constants.RESPONDER,
+            return SAML2Utils.getErrorResponse(authnQuery,
+                SAML2Constants.RESPONDER, null,
                 SAML2Utils.bundle.getString("metaDataError"), null);
         } 
 
         if (aad == null) {
-            return IDPSSOUtil.getErrorResponse(authnQuery,
-                SAML2Constants.REQUESTER,
+            return SAML2Utils.getErrorResponse(authnQuery,
+                SAML2Constants.REQUESTER, null,
                 SAML2Utils.bundle.getString("authnQueryServiceNotFound"), null);
         }
 
@@ -199,8 +199,9 @@ public class AuthnQueryUtil {
             authnAuthorityEntityID);
 
         if (nameID == null) {
-            return IDPSSOUtil.getErrorResponse(authnQuery,
-                SAML2Constants.UNKNOWN_PRINCIPAL, null, null);
+            return SAML2Utils.getErrorResponse(authnQuery,
+                SAML2Constants.REQUESTER, SAML2Constants.UNKNOWN_PRINCIPAL,
+                null, null);
         }
 
         IDPAccountMapper idpAcctMapper = SAML2Utils.getIDPAccountMapper(
@@ -210,8 +211,9 @@ public class AuthnQueryUtil {
             authnAuthorityEntityID, spEntityID, realm);
 
         if (userID == null) {
-            return IDPSSOUtil.getErrorResponse(authnQuery,
-                SAML2Constants.UNKNOWN_PRINCIPAL, null, null);
+            return SAML2Utils.getErrorResponse(authnQuery,
+                SAML2Constants.REQUESTER, SAML2Constants.UNKNOWN_PRINCIPAL,
+                null, null);
         }
 
         IDPAuthnContextMapper idpAuthnContextMapper =

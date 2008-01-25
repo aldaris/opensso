@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDMapping.java,v 1.1 2008-01-16 04:36:53 hengming Exp $
+ * $Id: NameIDMapping.java,v 1.2 2008-01-25 14:22:21 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -287,7 +287,7 @@ public class NameIDMapping {
                 nimResponse.setEncryptedID(getEncryptedID(targetSPNameID,
                     realm, spEntityID, SAML2Constants.SP_ROLE));
                 status = SAML2Utils.generateStatus(
-                    SAML2Constants.STATUS_SUCCESS, null);
+                    SAML2Constants.SUCCESS, null);
 	    }
         }
 

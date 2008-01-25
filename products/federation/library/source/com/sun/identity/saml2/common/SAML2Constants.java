@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.20 2008-01-16 04:34:08 hengming Exp $
+ * $Id: SAML2Constants.java,v 1.21 2008-01-25 14:20:01 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -807,18 +807,6 @@ public interface SAML2Constants {
      * encryption certificate alias
      */
     public String ENCRYPTION_CERT_ALIAS = "encryptionCertAlias";
-
-    /**
-     * The permissible top-level <StatusCode> values
-     */
-    public String STATUS_SUCCESS = 
-            "urn:oasis:names:tc:SAML:2.0:status:Success";
-    
-    public String REQUESTER_ERROR = 
-            "urn:oasis:names:tc:SAML:2.0:status:Requester";
-    
-    public String RESPONDER_ERROR = 
-            "urn:oasis:names:tc:SAML:2.0:status:Responder";
     
     /**
      * The entity role

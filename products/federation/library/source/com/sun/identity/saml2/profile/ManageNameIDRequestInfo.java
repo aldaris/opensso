@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ManageNameIDRequestInfo.java,v 1.1 2006-10-30 23:16:36 qcheng Exp $
+ * $Id: ManageNameIDRequestInfo.java,v 1.2 2008-01-25 14:22:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionException;
+import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.protocol.ManageNameIDRequest;
@@ -48,6 +49,8 @@ public class ManageNameIDRequestInfo extends CacheObject {
     HttpServletRequest request;
     HttpServletResponse response;
     static Debug debug = SAML2Utils.debug;
+    Object oldSession = null;
+    NameID nameID = null;
 
     /**
      * Constructor creates the ManageNameIDRequest Info for a request.
@@ -56,13 +59,12 @@ public class ManageNameIDRequestInfo extends CacheObject {
      * @param mniRequest the Authentication Request Object
      * @param relayState the Redirection URL on completion of Request.
      * @param paramsMap Map of other parameters sent by the requester.
+     * @param session session object.
      */
     
     protected ManageNameIDRequestInfo(HttpServletRequest request,
-                            HttpServletResponse response,
-                            ManageNameIDRequest mniRequest,
-                            String relayState,
-                            Map paramsMap) {
+        HttpServletResponse response, ManageNameIDRequest mniRequest,
+        String relayState, Map paramsMap, Object session) {
 
         this.mniRequest = mniRequest;
         this.relayState = relayState;
@@ -70,6 +72,7 @@ public class ManageNameIDRequestInfo extends CacheObject {
         this.request = request;
         this.response = response;
         time = System.currentTimeMillis();
+        oldSession = session;
     }
 
     /**
@@ -140,6 +143,21 @@ public class ManageNameIDRequestInfo extends CacheObject {
             }
             session = paramsMap.get(SAML2Constants.SESSION);
         }
+
+	if (session == null) {
+	    session = oldSession;
+	}
+
         return session;
     }
+
+    public void setNameID(NameID nameID) {
+	this.nameID = nameID;
+    }
+
+    public NameID getNameID() {
+	return nameID;
+    }
+
+
 }

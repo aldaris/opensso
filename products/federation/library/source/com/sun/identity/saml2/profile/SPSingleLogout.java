@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.11 2007-11-15 16:42:45 qcheng Exp $
+ * $Id: SPSingleLogout.java,v 1.12 2008-01-25 14:22:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,10 +75,10 @@ public class SPSingleLogout {
     static AssertionFactory af = AssertionFactory.getInstance();
     static Debug debug = SAML2Utils.debug;
     static final Status SUCCESS_STATUS =
-            SAML2Utils.generateStatus(SAML2Constants.STATUS_SUCCESS,
+            SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
                                 SAML2Utils.bundle.getString("requestSuccess"));
     static final Status PARTIAL_LOGOUT_STATUS =
-            SAML2Utils.generateStatus(SAML2Constants.RESPONDER_ERROR,
+            SAML2Utils.generateStatus(SAML2Constants.RESPONDER,
                                 SAML2Utils.bundle.getString("partialLogout"));
     static SessionProvider sessionProvider = null;
     
@@ -800,7 +800,7 @@ public class SPSingleLogout {
                     debug.error(method +
                                     "LogoutRequest does not contain Name ID");
                     status = SAML2Utils.generateStatus(
-                            SAML2Constants.RESPONDER_ERROR, 
+                            SAML2Constants.RESPONDER, 
                             SAML2Utils.bundle.
                             getString("missing_name_identifier"));
                     break;
@@ -872,7 +872,7 @@ public class SPSingleLogout {
                     } else {
                         debug.error(method + "invalid Name ID received");
                         status = SAML2Utils
-                               .generateStatus(SAML2Constants.RESPONDER_ERROR, 
+                               .generateStatus(SAML2Constants.RESPONDER, 
                                 SAML2Utils.bundle
                                         .getString("invalid_name_identifier"));
                     }
@@ -1054,7 +1054,7 @@ public class SPSingleLogout {
                             status = SUCCESS_STATUS;
                         } else {
                             status = SAML2Utils.generateStatus(
-                                SAML2Constants.STATUS_SUCCESS,
+                                SAML2Constants.SUCCESS,
                                 SAML2Utils.bundle.getString("requestSuccess"));
                             LogoutUtil.setSessionIndex(status, siNotFound);
                         }
@@ -1064,12 +1064,12 @@ public class SPSingleLogout {
         } catch (SessionException se) {
             debug.error("processLogoutRequest: ", se);
             status = 
-                    SAML2Utils.generateStatus(SAML2Constants.RESPONDER_ERROR, 
+                    SAML2Utils.generateStatus(SAML2Constants.RESPONDER, 
                         se.toString());
         } catch (SAML2Exception e) {
             debug.error("processLogoutRequest: " + 
                 "failed to create response", e);
-            status = SAML2Utils.generateStatus(SAML2Constants.RESPONDER_ERROR, 
+            status = SAML2Utils.generateStatus(SAML2Constants.RESPONDER, 
                             e.toString());
         }
         
@@ -1093,7 +1093,7 @@ public class SPSingleLogout {
 
     static boolean isSuccess(LogoutResponse logoutRes) {
         return logoutRes.getStatus().getStatusCode().getValue()
-                        .equals(SAML2Constants.STATUS_SUCCESS);
+                        .equals(SAML2Constants.SUCCESS);
     }
 
     static boolean isNameNotFound(LogoutResponse logoutRes) {
@@ -1101,7 +1101,7 @@ public class SPSingleLogout {
         String  statusMessage = status.getStatusMessage();
 
         return (status.getStatusCode().getValue()
-                     .equals(SAML2Constants.RESPONDER_ERROR) &&
+                     .equals(SAML2Constants.RESPONDER) &&
                 statusMessage != null &&
                 statusMessage.equals(
                      SAML2Utils.bundle.getString("invalid_name_identifier")));

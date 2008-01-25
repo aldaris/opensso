@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.9 2007-12-15 06:22:21 hengming Exp $
+ * $Id: LogoutUtil.java,v 1.10 2008-01-25 14:22:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -445,7 +445,7 @@ public class LogoutUtil {
         boolean success = false;
         String retCode = sloResponse.getStatus().getStatusCode().getValue();
         
-        if (retCode.equalsIgnoreCase(SAML2Constants.STATUS_SUCCESS)) {
+        if (retCode.equalsIgnoreCase(SAML2Constants.SUCCESS)) {
             String inResponseTo = sloResponse.getInResponseTo();
             if (inResponseTo.equals(requestID)) {
                 if (debug.messageEnabled()) {
@@ -665,7 +665,7 @@ public class LogoutUtil {
         String remoteEntity) {
 
         if (status == null) {
-            status = SAML2Utils.generateStatus(SAML2Constants.STATUS_SUCCESS,
+            status = SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
                          SAML2Utils.bundle.getString("requestSuccess"));
         }
         LogoutResponse logoutResponse = ProtocolFactory.getInstance()

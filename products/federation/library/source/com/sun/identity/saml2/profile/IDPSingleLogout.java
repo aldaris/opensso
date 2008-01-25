@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.10 2007-11-15 16:42:45 qcheng Exp $
+ * $Id: IDPSingleLogout.java,v 1.11 2008-01-25 14:22:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -605,7 +605,7 @@ public class IDPSingleLogout {
     private static int getLogoutStatus(LogoutResponse logoutRes) {
         StatusCode statusCode = logoutRes.getStatus().getStatusCode();
         String code = statusCode.getValue();
-        if (code.equals(SAML2Constants.STATUS_SUCCESS)) {
+        if (code.equals(SAML2Constants.SUCCESS)) {
             return SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
         } else {
             return SingleLogoutManager.LOGOUT_FAILED_STATUS;
@@ -1034,7 +1034,7 @@ public class IDPSingleLogout {
                     debug.error("IDPLogoutUtil.processLogoutRequest: " +
                         "IDP no longer has this session index "+ sessionIndex);
                     status = SAML2Utils.generateStatus(
-                            SAML2Constants.RESPONDER_ERROR, 
+                            SAML2Constants.RESPONDER, 
                             SAML2Utils.bundle.getString("invalidSessionIndex"));
                     break;
                 }

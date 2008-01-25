@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProtocolTest.java,v 1.3 2007-01-02 21:59:30 weisun2 Exp $
+ * $Id: ProtocolTest.java,v 1.4 2008-01-25 14:23:27 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -285,7 +285,7 @@ public class ProtocolTest extends UnitTestBase {
             //validate Status Code
             Status  sc = artResp.getStatus();
             assert (sc.getStatusCode().getValue()
-            .equals(SAML2Constants.STATUS_SUCCESS)):"Invalid Status";
+            .equals(SAML2Constants.SUCCESS)):"Invalid Status";
             
             assert(sc.getStatusMessage().equals("Artifact Response Successful"))
             : "Invalid Status Message";
@@ -558,7 +558,7 @@ public class ProtocolTest extends UnitTestBase {
             //validate Status Code
             Status  sc = mngNameIDRes.getStatus();
             assert (sc.getStatusCode().getValue()
-            .equals(SAML2Constants.STATUS_SUCCESS)):"Invalid Status";
+            .equals(SAML2Constants.SUCCESS)):"Invalid Status";
             
             assert(sc.getStatusMessage()
             .equals("ManageNameIDResponse Successful"))
@@ -751,7 +751,7 @@ public class ProtocolTest extends UnitTestBase {
             //validate Status Code
             Status  sc = logoutResponse.getStatus();
             assert (sc.getStatusCode().getValue()
-            .equals(SAML2Constants.STATUS_SUCCESS)):"Invalid Status";
+            .equals(SAML2Constants.SUCCESS)):"Invalid Status";
             
             assert(sc.getStatusMessage().equals("Logout Response Successful"))
             : "Invalue Status Message";
