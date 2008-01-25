@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.16 2007-11-30 19:08:02 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.17 2008-01-25 21:41:24 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,7 @@ public class AgentProvider extends ProviderConfig {
      private static final String USER_NAME = "UserName";
      private static final String USER_PASSWORD = "UserPassword";
      private static final String USER_CREDENTIAL = "UserCredential";
-     private static final String SERVICE_TYPE = "ServiceType";
+     private static final String SERVICE_TYPE = "serviceType";
      private static final String USE_DEFAULT_KEYSTORE = "useDefaultStore";
      private static final String FORCE_AUTHENTICATION = "forceUserAuthn";
      private static final String KEEP_SECURITY_HEADERS = "keepSecurityHeaders";
@@ -285,7 +285,9 @@ public class AgentProvider extends ProviderConfig {
                 }
             }
         } else if(attr.equals(FORCE_AUTHENTICATION)) {
-           this.forceAuthn = Boolean.valueOf(value).booleanValue();
+            if ((value != null) && (value.length() != 0)) {
+                this.forceAuthn = Boolean.valueOf(value).booleanValue();
+            }
         } else if(attr.equals(KEEP_SECURITY_HEADERS)) {
            this.preserveSecHeaders = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(AUTHENTICATION_CHAIN)) {
@@ -349,8 +351,9 @@ public class AgentProvider extends ProviderConfig {
                             Boolean.toString(isRequestHeaderEncrypted));
         config.put(USE_DEFAULT_KEYSTORE, 
                        Boolean.toString(isDefaultKeyStore));
-        config.put(FORCE_AUTHENTICATION,
-                       Boolean.toString(forceAuthn));
+        if((providerType != null) && (providerType.equals(ProviderConfig.WSC))) {
+            config.put(FORCE_AUTHENTICATION,Boolean.toString(forceAuthn));
+        }
         config.put(KEEP_SECURITY_HEADERS,
                        Boolean.toString(preserveSecHeaders));
         if(authenticationChain != null) {
