@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.20 2007-12-20 06:12:39 qcheng Exp $
+   $Id: configurator.jsp,v 1.21 2008-01-25 20:09:22 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -173,7 +173,7 @@
             return;
         } else {
             out.println("<br>");
-            %><config:message i18nKey="configurator.configprogress"/><%
+            %><config:message i18nKey="configurator.progress"/><%
             out.println("...<br>");
             out.flush();
 
