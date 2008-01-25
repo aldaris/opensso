@@ -466,11 +466,16 @@ com/sun/identity/saml2/meta/SAML2MetaUtils.class
 com/sun/identity/saml2/protocol/Artifact.class
 com/sun/identity/saml2/protocol/ArtifactResolve.class
 com/sun/identity/saml2/protocol/ArtifactResponse.class
+com/sun/identity/saml2/protocol/AttributeQuery.class
+com/sun/identity/saml2/protocol/AuthnQuery.class
 com/sun/identity/saml2/protocol/AuthnRequest.class
 com/sun/identity/saml2/protocol/Extensions.class
 com/sun/identity/saml2/protocol/GetComplete.class
 com/sun/identity/saml2/protocol/IDPEntry.class
 com/sun/identity/saml2/protocol/IDPList.class
+com/sun/identity/saml2/protocol/NameIDMappingRequest.class
+com/sun/identity/saml2/protocol/NameIDMappingResponse.class
+com/sun/identity/saml2/protocol/SubjectQueryAbstract.class
 com/sun/identity/saml2/protocol/impl/ArtifactImpl.class
 com/sun/identity/saml2/protocol/impl/ArtifactResolveImpl.class
 com/sun/identity/saml2/protocol/impl/ArtifactResponseImpl.class
