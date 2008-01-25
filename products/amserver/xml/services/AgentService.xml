@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.26 2008-01-18 21:06:01 huacui Exp $
+   $Id: AgentService.xml,v 1.27 2008-01-25 08:11:35 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -104,6 +104,15 @@
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.am.log.level"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a466">
+                        <DefaultValues>
+                            <Value></Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -289,6 +298,19 @@
                         type="single"
                         syntax="boolean"
                         i18nKey="a420">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.am.policy.agents.config.ignore_policy_evaluation_if_notenforced"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a467">
                         <BooleanValues>
                             <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
                             <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
