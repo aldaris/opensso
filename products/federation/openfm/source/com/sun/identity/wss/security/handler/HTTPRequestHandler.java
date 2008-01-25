@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPRequestHandler.java,v 1.3 2007-09-13 07:24:22 mrudul_uchil Exp $
+ * $Id: HTTPRequestHandler.java,v 1.4 2008-01-25 21:39:55 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,7 +113,8 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
         }
 
         try {
-            ProviderConfig pc = ProviderConfig.getProvider(providername,"WSC");
+            ProviderConfig pc = 
+                ProviderConfig.getProvider(providername,ProviderConfig.WSC);
             if(pc == null) {
                return true;
             }
