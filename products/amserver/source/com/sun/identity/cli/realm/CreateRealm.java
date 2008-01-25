@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealm.java,v 1.3 2007-07-24 19:41:55 veiming Exp $
+ * $Id: CreateRealm.java,v 1.4 2008-01-25 21:01:22 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,6 @@ package com.sun.identity.cli.realm;
 
 
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -48,7 +47,7 @@ import java.util.logging.Level;
 public class CreateRealm extends AuthenticatedCommand {
     
     /**
-     * Services a Commandline Request.
+     * Creates a sub realm.
      *
      * @param rc Request Context.
      * @throw CLIException if the request cannot serviced.
@@ -59,7 +58,9 @@ public class CreateRealm extends AuthenticatedCommand {
         ldapLogin();
         SSOToken adminSSOToken = getAdminSSOToken();
         String realm = getStringOptionValue(IArgument.REALM_NAME);
-
+        if (!realm.startsWith("/")) {
+            realm = "/" + realm;
+        }
         String parentRealm = RealmUtils.getParentRealm(realm);
         String childRealm = RealmUtils.getChildRealm(realm);
 
