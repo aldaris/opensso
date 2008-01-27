@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: ConsoleLogMessageIDs.xml,v 1.5 2007-12-17 19:42:53 veiming Exp $
+    $Id: ConsoleLogMessageIDs.xml,v 1.6 2008-01-27 06:57:37 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -8356,9 +8356,7 @@
     <logmessage name="ATTEMPT_GET_SITE_NAMES" id="12001"
         loglevel="LL_INFO"
         description="Attempt to get site names">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>View site and server management page.</item>
        </triggers>
@@ -8367,9 +8365,7 @@
     <logmessage name="SUCCEED_GET_SITE_NAMES" id="12002"
         loglevel="LL_INFO"
         description="Site names are returned.">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>View site and server management page.</item>
        </triggers>
@@ -8804,9 +8800,7 @@
     <logmessage name="ATTEMPT_GET_SERVER_NAMES" id="12081"
         loglevel="LL_INFO"
         description="Attempt to get server names.">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>View site and server management page.</item>
        </triggers>
@@ -8815,9 +8809,7 @@
     <logmessage name="SUCCEED_GET_SERVER_NAMES" id="12082"
         loglevel="LL_INFO"
         description="Server names are returned.">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>View site and server management page.</item>
        </triggers>
@@ -9090,9 +9082,7 @@
     <logmessage name="ATTEMPT_GET_SERVER_DEFAULT_CONFIG" id="12221"
         loglevel="LL_INFO"
         description="Attempt to get server default configuration.">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>View server profile page.</item>
        </triggers>
@@ -9101,9 +9091,7 @@
     <logmessage name="SUCCEED_GET_SERVER_DEFAULT_CONFIG" id="12222"
         loglevel="LL_INFO"
         description="Server default configuration is returned.">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>View server profile page.</item>
        </triggers>

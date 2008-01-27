@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.16 2008-01-24 04:26:01 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.17 2008-01-27 06:57:37 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -4305,9 +4305,7 @@
     <logmessage name="ATTEMPT_LIST_SERVERS" id="3090"
         loglevel="LL_INFO"
         description="Attempt to list servers.">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>Execute list servers Commandline interface.</item>
         </triggers>
@@ -4316,9 +4314,7 @@
     <logmessage name="SUCCEED_LIST_SERVERS" id="3091"
         loglevel="LL_INFO"
         description="Servers are displayed.">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>Execute list servers Commandline interface.</item>
         </triggers>
@@ -4379,9 +4375,7 @@
     <logmessage name="ATTEMPT_LIST_SITES" id="3110"
         loglevel="LL_INFO"
         description="Attempt to list sites.">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>Execute list sites Commandline interface.</item>
         </triggers>
@@ -4390,9 +4384,7 @@
     <logmessage name="SUCCEED_LIST_SITES" id="3111"
         loglevel="LL_INFO"
         description="Sites are displayed.">
-        <datainfo>
-            <item />
-        </datainfo>
+        <datainfo />
         <triggers>
             <item>Execute list sites Commandline interface.</item>
         </triggers>
