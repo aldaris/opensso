@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentPropertyXMLBuilder.java,v 1.1 2007-12-17 19:51:52 veiming Exp $
+ * $Id: AgentPropertyXMLBuilder.java,v 1.2 2008-01-27 06:59:44 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,8 @@ public class AgentPropertyXMLBuilder
     private boolean bGroup;
     private String tabName;
 
-    private static String DUMMY_SECTION = "blank.header";
+    private static final String DUMMY_SECTION = "blank.header";
+    private static final String ATTR_NAME_PWD = "userpassword";
     
     /**
      * Constructor
@@ -144,6 +145,8 @@ public class AgentPropertyXMLBuilder
             AttributeSchema as = (AttributeSchema)i.next();
             String i18nKey = as.getI18NKey();
             if ((i18nKey == null) || (i18nKey.trim().length() == 0)) {
+                i.remove();
+            } else if (bGroup && as.getName().equals(ATTR_NAME_PWD)) {
                 i.remove();
             }
         }
