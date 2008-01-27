@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.7 2008-01-24 23:14:14 veiming Exp $
+ * $Id: Bootstrap.java,v 1.8 2008-01-27 08:01:11 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -261,9 +261,7 @@ public class Bootstrap {
             buff.append(modifyDSAMEUserPassword(url, password)).append("\n");
         }
         
-        AMSetupServlet.writeToFile(
-            SystemProperties.get(AMSetupServlet.BOOTSTRAP_FILE_LOC), 
-            buff.toString());
+        AMSetupServlet.writeToFile(bootstrapFile, buff.toString());
     }
         
     private static String modifyDSAMEUserPassword(String url, String password) 

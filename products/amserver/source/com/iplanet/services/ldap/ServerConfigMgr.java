@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.7 2007-11-30 00:13:32 veiming Exp $
+ * $Id: ServerConfigMgr.java,v 1.8 2008-01-27 08:01:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -357,7 +357,7 @@ public class ServerConfigMgr {
         
         isAMSDKConfigured = ServiceManager.isAMSDKConfigured();
         if (proxyPassword && !isAMSDKConfigured) {
-            System.err.println(i18n.getString("dscfg-proxy-no-suppport"));;
+            System.err.println(i18n.getString("dscfg-proxy-no-suppport"));
             System.exit(1);
         }
         

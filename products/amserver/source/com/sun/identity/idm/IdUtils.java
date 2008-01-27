@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.17 2007-11-21 01:21:39 goodearth Exp $
+ * $Id: IdUtils.java,v 1.18 2008-01-27 08:01:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -288,11 +288,17 @@ public final class IdUtils {
             }
         }
 
+        // Check for Special Users
+        initializeSpecialUsers();
+        if (specialUsers.contains(DNUtils.normalizeDN(amsdkdn))) {
+            return (new AMIdentity(token, LDAPDN.explodeDN(amsdkdn, true)[0],
+                IdType.USER, ROOT_SUFFIX, amsdkdn));
+        }
+
         // Since "amsdkdn is not a UUID, check if realm has AMSDK configured
         // This change is to avoid the issue of IdUtils always checking the 
         // users in AMSDK as IdUtils does not check if AMSDK is configured in 
         // any of the realms. 
-
         try {
             if (((realm != null) &&
                 !OrgConfigViaAMSDK.isAMSDKConfigured(realm)) ||
@@ -303,13 +309,6 @@ public final class IdUtils {
         } catch (SMSException smse) {
             // Ignore the exception and continue
         } 
-
-        // Check for Special Users
-        initializeSpecialUsers();
-        if (specialUsers.contains(DNUtils.normalizeDN(amsdkdn))) {
-            return (new AMIdentity(token, LDAPDN.explodeDN(amsdkdn, true)[0],
-                IdType.USER, ROOT_SUFFIX, amsdkdn));
-        }
 
         // Initialize root realm suffix, org and user naming attributes
         initializeForGetIdentity();
