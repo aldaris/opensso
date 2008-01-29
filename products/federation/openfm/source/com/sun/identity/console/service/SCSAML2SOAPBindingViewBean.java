@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCSAML2SOAPBindingViewBean.java,v 1.1 2008-01-15 01:33:19 asyhuang Exp $
+ * $Id: SCSAML2SOAPBindingViewBean.java,v 1.2 2008-01-29 18:48:14 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -326,6 +326,9 @@ public class SCSAML2SOAPBindingViewBean
                 SCSAML2SOAPBindingModelImpl.ATTRIBUTE_NAME_REQUEST_HANDLER_LIST,
                 tblValues);
             populateRequestHandlerListTable(tblValues);
+            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                    "message.profile.modified");
+            setPageSessionAttribute(PAGE_MODIFIED, "1");
         }
         
         forwardTo();
@@ -399,7 +402,7 @@ public class SCSAML2SOAPBindingViewBean
             unlockPageTrail();
             passPgSessionMap(vb);
             int idx = Integer.parseInt((String)getDisplayFieldValue(
-                TBL_REQUEST_HANDLER_LIST_HREF_EDIT_ACTION));
+                TBL_REQUEST_HANDLER_LIST_HREF_DUP_ACTION));
             vb.setDupIndex(idx);
             vb.forwardTo(getRequestContext());
         } catch (AMConsoleException e) {

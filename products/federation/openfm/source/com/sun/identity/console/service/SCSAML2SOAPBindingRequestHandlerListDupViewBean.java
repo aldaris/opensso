@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCSAML2SOAPBindingRequestHandlerListDupViewBean.java,v 1.1 2008-01-15 01:33:19 asyhuang Exp $
+ * $Id: SCSAML2SOAPBindingRequestHandlerListDupViewBean.java,v 1.2 2008-01-29 18:48:14 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.console.service.model.SCSAML2SOAPBindingModelImpl;
+import com.sun.identity.console.service.model.SAML2SOAPBindingRequestHandler;
 import java.util.Map;
 
 public class SCSAML2SOAPBindingRequestHandlerListDupViewBean
@@ -60,6 +61,16 @@ public class SCSAML2SOAPBindingRequestHandlerListDupViewBean
                 SCSAML2SOAPBindingModelImpl.ATTRIBUTE_NAME_REQUEST_HANDLER_LIST);
             setValues((String)set.get(dupIndex));
         }
+    }
+    
+    protected void setValues(String value) {
+        SAML2SOAPBindingRequestHandler entry = new
+            SAML2SOAPBindingRequestHandler(value);
+        String newKey = entry.strKey + 
+            getModel().getLocalizedString(
+            "soapBinding.service.table.requestHandlerList.action.dup.copy");
+        propertySheetModel.setValue(ATTR_KEY, newKey);
+        propertySheetModel.setValue(ATTR_CLASS, entry.strClass);
     }
     
     protected String getBreadCrumbDisplayName() {
