@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConfigMsgTag.java,v 1.2 2007-01-05 02:41:01 veiming Exp $
+ * $Id: AMConfigMsgTag.java,v 1.3 2008-01-29 16:52:35 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,11 +91,16 @@ public class AMConfigMsgTag
         
 	try {
             if (getPatterntype() != null && 
-                    getPatterntype().equals(MESSAGE_PATTERN)) {
+                getPatterntype().equals(MESSAGE_PATTERN)) 
+            {
                 MessageFormat msgformat = new MessageFormat("");
                 msgformat.setLocale(rb.getLocale());
-                pattern = rb.getString(getI18nKey());
-                msgformat.applyPattern(pattern);
+                try {
+                    pattern = rb.getString(getI18nKey());
+                    msgformat.applyPattern(pattern);
+                } catch (MissingResourceException mre) {
+                    pattern = getI18nKey();
+                }
             }
 	} catch (Exception ex) {
 	    //May not need this.
@@ -113,7 +118,11 @@ public class AMConfigMsgTag
         if (argList.size() > 0) {
             resValue = MessageFormat.format (pattern, argList.toArray());
         } else {
-            resValue = rb.getString (getI18nKey());
+            try {
+                resValue = rb.getString (getI18nKey());
+            } catch (MissingResourceException mre) {
+                resValue = getI18nKey();
+            }
         }
         
         try {
