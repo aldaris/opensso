@@ -111,6 +111,18 @@ am_status_t AgentConfiguration::populateAgentProperties()
 
     function_name = "am_properties_get";
 
+    /* Get the log level */
+
+    parameter = AM_COMMON_LOG_LEVELS_PROPERTY;
+    const char* logLevels;
+    status = am_properties_get_with_default(this->properties,
+                parameter,
+                "all:3",
+                &logLevels);
+    if (AM_SUCCESS == status) {
+       status = am_log_set_levels_from_string(logLevels);
+    }
+
     /* Get dpro cookie name.*/
     parameter = AM_COMMON_COOKIE_NAME_PROPERTY;
     status = am_properties_get(this->properties, parameter,

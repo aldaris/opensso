@@ -155,8 +155,7 @@ com.sun.am.notification.enable = @NOTIFICATION_ENABLE@
 # URL to which notification messages should be sent if notification is
 # enabled, see previous property.
 #
-com.sun.am.notification.url = @AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/UpdateAgentCacheServlet?shortcircuit=false
-
+com.sun.identity.client.notification.url = @AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/UpdateAgentCacheServlet?shortcircuit=false
 
 #
 # This property determines whether URL string case sensitivity is

@@ -12,7 +12,7 @@ BASE_PRODUCT_NAME Access Manager C Development Kit
 
 %files
 /opt/agents/THIRD_PARTY_LICENSE.TXT
-/opt/agents/lib/libamsdk.so.2
+/opt/agents/lib/libamsdk.so.3
 /opt/agents/lib/libxml2.so.2
 /opt/agents/lib/libnspr4.so
 /opt/agents/lib/libplc4.so
