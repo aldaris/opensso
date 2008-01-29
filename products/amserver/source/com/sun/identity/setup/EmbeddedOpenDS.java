@@ -17,13 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.6 2008-01-24 23:14:14 veiming Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.7 2008-01-29 18:55:05 rajeevangal Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
+import com.sun.identity.common.ShutdownPriority;
 import com.sun.identity.shared.debug.Debug;
 import java.io.File;
 import java.io.FileWriter;
@@ -197,6 +200,18 @@ public class EmbeddedOpenDS {
         debug.message("...EmbeddedOpenDS.startServer:DS Server started.");
 
         serverStarted = true;
+
+        ShutdownManager shutdownMan = ShutdownManager.getInstance();
+        shutdownMan.addShutdownListener(new ShutdownListener() {
+            public void shutdown() {
+                try {
+                    shutdownServer("Graceful Shutdown");
+                } catch (Exception ex) {
+                    Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
+                    debug.error("EmbeddedOpenDS:shutdown hook failed", ex);
+                }
+            }
+        }, ShutdownPriority.LOWEST);
     }
     
 
