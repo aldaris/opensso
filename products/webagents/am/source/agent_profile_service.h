@@ -58,10 +58,7 @@ public:
 
     am_status_t getAgentAttributes( const std::string ssoToken,  
                            am_properties_t properties);
-    am_status_t agentLogin(const Properties &config, 
-                           const std::string userName, 
-                           const std::string passwd, 
-                           std::string& appSSOToken); 
+    am_status_t agentLogin();
 
     am_status_t agentLogout(const Properties &config); 
     am_status_t isRESTServiceAvailable();
@@ -72,6 +69,10 @@ public:
     
     inline std::string getRepoType() {
         return repositoryType;
+    }
+
+    std::string getAgentSSOToken() {
+        return agentSSOToken;
     }
     
     void fetchAndUpdateAgentConfigCache();

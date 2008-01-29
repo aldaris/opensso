@@ -106,7 +106,6 @@ AgentProfileService::AgentProfileService(const Properties& config,
       * Instantiate AgentConfigurationObj
       * Instantiate AgentConfigFetch;
       * Set Repo Type
-      * fetchAndUpdateAgentConfigCache() : this function will put the 
       * first instance of AgentConfirutationObj object into the AgentConfigCache.
       */
 
@@ -117,7 +116,6 @@ AgentProfileService::AgentProfileService(const Properties& config,
     else{
         setRepoType("remote");
     }
-    fetchAndUpdateAgentConfigCache();
 } 
 
 AgentProfileService::~AgentProfileService()
@@ -277,20 +275,6 @@ void AgentProfileService::fetchAndUpdateAgentConfigCache()
         }
     }
     else {
-        //if agent is not authenticated, call agentLogin() and then make a REST
-        //fetch request to the FAM server for agent attributes. Then load this
-        //attributes to the AgentConfiguration object.
-        //populate properties using FAM REST responses
-        if (!agentAuthnd){
-            authStatus = agentLogin(propPtr, userName, passwd, agentSSOToken);
-            if (authStatus == AM_SUCCESS){
-                agentAuthnd = true;
-            } else {
-                agentAuthnd = false;
-            }
-        } 
-        
-        if (agentAuthnd) {
             am_properties_t tmpPropPtr;
             status = am_properties_create(&tmpPropPtr);
             
@@ -371,7 +355,6 @@ void AgentProfileService::fetchAndUpdateAgentConfigCache()
                     status = AM_REST_ATTRS_SERVICE_FAILURE;
                 }                
             }           
-        }
     }
     //Insert the AMAgentConfiguration object in the hast table with the current
     //time stamp as its key.
@@ -411,7 +394,6 @@ am_status_t AgentProfileService::getAgentAttributes(
     std::string::size_type pos;
 
     std::string encodedAgentToken = Http::encode(appSSOToken);
-
     std::string urlparam = "?subjectid=";
     urlparam.append(encodedAgentToken);
 
@@ -631,11 +613,12 @@ AgentProfileService::setRestSvcInfo(std::string restURL)
  * This function performs Agent authentication to retrieve the agent
  * agent configuration data from the FAM server
  */
-am_status_t AgentProfileService::agentLogin(const Properties &config, 
-                                            const std::string userName, 
-                                            const std::string passwd, 
-                                            std::string& ssoToken)
+am_status_t AgentProfileService::agentLogin()
 {
+    std::string userName(boot_info.agent_name);
+    std::string passwd(boot_info.agent_passwd);
+    const Properties& config =
+        *reinterpret_cast<Properties *>(boot_info.properties);
     am_status_t status = AM_SUCCESS;
 
     Log::log(logModule, Log::LOG_DEBUG, 
@@ -726,8 +709,8 @@ am_status_t AgentProfileService::agentLogin(const Properties &config,
             status =  AM_AUTH_FAILURE;
         }
 
-        // set the SSO Token.
-        ssoToken = authC.getSSOToken();
+        // set the agent SSO Token.
+        agentSSOToken = authC.getSSOToken();
 
         // save the auth context for logging out when service is destroyed
         mAuthCtx = authC;
@@ -765,16 +748,17 @@ am_status_t AgentProfileService::isRESTServiceAvailable()
                                                cookieList,
                                                namingInfo);
         if (status == AM_SUCCESS) {
+            std::string authURL = 
+                namingInfo.extraProperties.get(authURLAttribute, "", true);
+            parseURL(authURL, false, mAuthURL);
+
             std::string restURL = 
                 namingInfo.extraProperties.get(restURLAttribute, "", true);
             if(!restURL.empty()) {
                Log::log(logModule, Log::LOG_DEBUG,
                      ": Using rest service info from naming response %s:", 
                      restURL.c_str());
-               std::string authURL = 
-                   namingInfo.extraProperties.get(authURLAttribute, "", true);
                parseURL(restURL, true, mRestURL);
-               parseURL(authURL, false, mAuthURL);
             
             } else {
                 status = AM_REST_SERVICE_NOT_AVAILABLE;

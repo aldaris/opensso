@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines.mk,v 1.3 2006-11-13 20:12:30 subbae Exp $
+# $Id: defines.mk,v 1.4 2008-01-29 15:14:50 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -32,8 +32,8 @@
 ifndef	DEFINES_INCLUDED
 DEFINES_INCLUDED := true
 
-AGENT_MAJOR_VER := 2
-AGENT_MINOR_VER := 2
+AGENT_MAJOR_VER := 3
+AGENT_MINOR_VER := 0
 AGENT_VER := $(AGENT_MAJOR_VER)_$(AGENT_MINOR_VER)
 
 OS_ARCH := $(shell uname -s)

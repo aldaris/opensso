@@ -24,6 +24,24 @@ README file for Open Web Single Sign-On - Web Agents
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
 #
+
+
+**********************************************************************************
+
+NOTE: Currently only Webserver 7.0 Agent has Agent 3.0 features enabled. 
+Also this is the only agent that users can build and install (supported platforms are 
+Solaris sparc, Solaris x86 and RHAS Linux 3.0, support on windows is coming shortly). 
+Rest of the Agents for other containers viz. Apache, IIS are yet to have the 
+Agent 3.0 features enabled. They will be done in a timely manner.
+
+If you would like to build any other agent, please use 2.2 agents 
+from opensso branch. Opensso branch details:
+cvs -d :pserver:username@cvs.dev.java.net:/cvs co -r opensso_agent22_branch opensso
+
+Nightly and stable builds are available on opensso web site.
+
+***********************************************************************************
+
 %% Contents:
     %% 1. Platforms
     %% 1.1 Solaris Sparc

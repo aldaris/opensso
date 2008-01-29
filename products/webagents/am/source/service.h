@@ -233,8 +233,6 @@ class Service {
 			 am_bool_t /*ignorePolicyResult*/,
 			 Properties&  /*Agent Configuration properties*/);
 
-    void init_from_agent_cac(std::string, Properties&);
-
 private:
     std::vector<std::string> serverHandledAdvicesList;
     void construct_advice_string(const KeyValueMap &, std::string &) const;

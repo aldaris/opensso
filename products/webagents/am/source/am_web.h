@@ -459,13 +459,12 @@ AM_WEB_EXPORT am_status_t am_web_init(const char *agent_bootstrap_file,
 /**
  * Initializes agent during first request. 
  */
-AM_WEB_EXPORT am_status_t am_agent_init(boolean_t *pAgentAuthenticated, 
-                                          boolean_t* pIsRESTServiceAvailable);
+AM_WEB_EXPORT am_status_t am_agent_init(boolean_t *pAgentAuthenticated);
 
 /**
  * Method to clean up the Agent Toolkit
  */
-AM_WEB_EXPORT am_status_t am_web_cleanup(boolean_t isLocalRepo);
+AM_WEB_EXPORT am_status_t am_web_cleanup();
 
 /**
  *                   -------- policy methods --------

@@ -655,32 +655,16 @@ am_web_http_decode(const char *source, size_t len)
  * Initializes agent during first request. 
  */
 extern "C" AM_WEB_EXPORT am_status_t
-am_agent_init(boolean_t* pAgentInitialized,
-                  boolean_t* pRESTServiceAvailable)
+am_agent_init(boolean_t* pAgentInitialized)
 {
     const char *thisfunc = "am_agent_init";
     am_status_t status = AM_SUCCESS;
     const Properties *properties = NULL;
-    string agentSSOToken; 
-    am_status_t restStatus = AM_FAILURE;
     //change the below member to boolean
     int agentAuthenticated = AM_FALSE;
     SSOToken ssoToken;
     AgentConfigurationRefCntPtr* agentConfigPtr;
     void* agent_config;
-
-
-    // check for rest service url presence by doing naming request
-    // case 1. if not present, then treat as local repository 
-    //         and load properties from local file
-    // if rest url available, then do agent authentication, 
-    //     fetch attributes and
-    //     look for repository type attribute in agent profile
-    // case 2. if repository type attribute has local value then
-    //         load properties from local file
-    // case 3. if repository type attribute has remote/centralized value 
-    //          then load properties from remote
-
     string userName(boot_info.agent_name);
     string passwd(boot_info.agent_passwd);
     const Properties& propPtr =
@@ -688,25 +672,21 @@ am_agent_init(boolean_t* pAgentInitialized,
     const char * agentConfigFile = boot_info.agent_config_file;
           
     if (agentProfileService == NULL) {
-        agentProfileService = new AgentProfileService(propPtr,boot_info);
-    }
+        agentProfileService = new AgentProfileService(propPtr, boot_info);
     
+    }
     if (agentProfileService != NULL) {
-         agent_config = am_web_get_agent_configuration();
-         agentConfigPtr = 
-             (AgentConfigurationRefCntPtr*) agent_config;
-
+        status = agentProfileService->agentLogin();
     }
     
-    if ((*agentConfigPtr) == NULL) {
-        status = AM_FAILURE;
-    }
-    else {
-        restStatus = agentProfileService->isRESTServiceAvailable();
-        if (restStatus == AM_REST_SERVICE_NOT_AVAILABLE) {
-           *pRESTServiceAvailable = B_FALSE;
-        } else {
-           *pRESTServiceAvailable = B_TRUE;
+    if (AM_SUCCESS == status) {
+        agentAuthenticated = AM_TRUE;
+        agentProfileService->fetchAndUpdateAgentConfigCache();
+        agent_config = am_web_get_agent_configuration();
+        agentConfigPtr = 
+             (AgentConfigurationRefCntPtr*) agent_config;
+        if ((*agentConfigPtr) == NULL) {
+            status = AM_FAILURE;
         }
     }
 
@@ -745,12 +725,6 @@ am_agent_init(boolean_t* pAgentInitialized,
 						&boot_info.policy_handle);
 	    if (AM_SUCCESS == status) {
 		initialized = AM_TRUE;
-		if(*pRESTServiceAvailable == B_TRUE && 
-		   !agentSSOToken.empty()) {
-		    am_policy_service_initialize_cac(boot_info.policy_handle,
-                                                     agentSSOToken.c_str(), 
-                                                     (*agentConfigPtr)->properties);
-		}
 	    } else {
 		am_web_log_error("%s unable to "
 				    "initialize the agent's policy object",
@@ -774,8 +748,7 @@ am_agent_init(boolean_t* pAgentInitialized,
     if (AM_SUCCESS == status) {
         *pAgentInitialized = B_TRUE;
     } else {
-        if(*pRESTServiceAvailable == B_TRUE &&
-            agentAuthenticated == AM_TRUE) {
+        if(agentAuthenticated == AM_TRUE) {
             agentProfileService->agentLogout(propPtr); 
         }
     }
@@ -792,7 +765,6 @@ am_web_init(const char *agent_bootstrap_file,
     const char *thisfunc = "am_web_init";
     am_status_t status = AM_SUCCESS;
     am_status_t authStatus = AM_FAILURE;
-    string agentSSOToken; 
     const Properties *properties = NULL;
     am_properties_t tempprop ;
 
@@ -832,7 +804,7 @@ am_web_init(const char *agent_bootstrap_file,
  * Performs cleanup.
  */
 extern "C" AM_WEB_EXPORT am_status_t
-am_web_cleanup(boolean_t isRESTServiceAvailable)
+am_web_cleanup()
 {
     const char *thisfunc = "am_web_cleanup()";
     am_status_t status = AM_FAILURE;
@@ -840,12 +812,10 @@ am_web_cleanup(boolean_t isRESTServiceAvailable)
     if (initialized) {
 	am_web_log_debug("%s: cleanup sequence initiated.", thisfunc);
 
-	if(isRESTServiceAvailable == B_TRUE){
 	    const Properties& propPtr = 
             *reinterpret_cast<Properties *>(boot_info.properties);
 	    agentProfileService->agentLogout(propPtr); 
 	    am_web_log_debug("%s: Agent logout done.", thisfunc);
-	} 
 
 	status = am_cleanup();
 

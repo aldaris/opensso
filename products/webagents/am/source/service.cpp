@@ -1032,7 +1032,10 @@ Service::getPolicyResult(const char *userSSOToken,
     bool mFetchFromRootResource;
 
     if(initialized == false) {
-	    initialize(ssoToken, properties);
+        const SSOToken appSSOToken(
+                           agentProfileService->getAgentSSOToken(),
+                           Http::encode(agentProfileService->getAgentSSOToken()));
+        initialize(appSSOToken, properties);
     }
 
     rsrcTraits.canonicalize(rName, &c_res);
@@ -1447,21 +1450,25 @@ Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
 	    // only one thread get's permission to cleanup.
 	    // others wait till cleanup happens.
 	    if (gotPermToCleanup) {
-            // If we need to update the agent SSOToken
-            // we cleanup the entire cache.
-            policyTable.cleanup();
-            Log::log(logID, Log::LOG_WARNING, "Invoking initialize().");
-            initialize(ssoTok, properties);
+                // If we need to update the agent SSOToken
+                // we cleanup the entire cache.
+                policyTable.cleanup();
+                Log::log(logID, Log::LOG_WARNING, "Invoking initialize().");
+                agentProfileService->agentLogin();
+                const SSOToken appSSOToken(
+                           agentProfileService->getAgentSSOToken(),
+                           Http::encode(agentProfileService->getAgentSSOToken()));
+                initialize(appSSOToken, properties);
 	    } else {
-            int counter = 0;
-            // Just a sleep factor.  The init must happen
-            // in approxiamtely in 6 seconds.
-            Log::log(logID, Log::LOG_WARNING,
+                int counter = 0;
+                // Just a sleep factor.  The init must happen
+                // in approxiamtely in 6 seconds.
+                Log::log(logID, Log::LOG_WARNING,
                      "This thread waiting for initialization to complete.");
-            while (initialized == false && ++counter < 6) {
+                while (initialized == false && ++counter < 6) {
 		        PR_Sleep(PR_TicksPerSecond());
+                }
             }
-        }
         if (initialized == true) {
             Log::log(logID, Log::LOG_WARNING,
 			    "Thread wokeup after successful initialization.");
@@ -1619,19 +1626,3 @@ Service::add_attribute_value_pair_xml(const KeyValueMap::const_iterator &entry,
     adviceStr.append("</AttributeValuePair>\n");
     return;
 }
-
-/**
- * This function gets used by CAC enabled agents.
- * If agent already authenticated during agent initialization, 
- * app ssotoken needs to be passed to service's initialize() 
- * to set policy_entry object.
- */
-void Service::init_from_agent_cac(std::string ssoTokenStr, 
-                                  Properties& properties) {
-    SSOToken ssoToken;
-    if(initialized == false){
-        ssoToken = SSOToken(ssoTokenStr, Http::encode(ssoTokenStr));
-        initialize(ssoToken, properties);
-    }
-}
-

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.7 2008-01-16 01:34:37 madan_ranganath Exp $
+ * $Id: iws_agent.c,v 1.8 2008-01-29 15:14:49 subbae Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -69,7 +69,6 @@ static agent_props_t agent_props = {
 };
 
 boolean_t agentInitialized = B_FALSE;
-boolean_t isRESTServiceAvailable = B_FALSE;
 char* gtemp_buff = NULL;
 static CRITICAL initLock;
 
@@ -446,7 +445,7 @@ NSAPI_PUBLIC void agent_cleanup(void *args) {
 	gtemp_buff= NULL;
     }
     am_properties_destroy(agent_props.agent_bootstrap_props);
-    am_web_cleanup(isRESTServiceAvailable);
+    am_web_cleanup();
     crit_terminate(initLock);
 }
 
@@ -1148,8 +1147,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 void init_at_request()
 {
     am_status_t status;
-    status = am_agent_init(&agentInitialized,
-                               &isRESTServiceAvailable);
+    status = am_agent_init(&agentInitialized);
     if (status != AM_SUCCESS) {
         log_error(LOG_FAILURE, "URL Access Agent: ", NULL, NULL,
             "Initialization of the agent failed: "

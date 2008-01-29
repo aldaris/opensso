@@ -109,9 +109,9 @@ am_status_t AgentConfiguration::populateAgentProperties()
     const char *filterPriority_default=IIS_FILTER_PRIORITY;
     am_resource_traits_t rsrcTraits;
 
-    
-    /* Get dpro cookie name.*/
     function_name = "am_properties_get";
+
+    /* Get dpro cookie name.*/
     parameter = AM_COMMON_COOKIE_NAME_PROPERTY;
     status = am_properties_get(this->properties, parameter,
                 &this->cookie_name);
