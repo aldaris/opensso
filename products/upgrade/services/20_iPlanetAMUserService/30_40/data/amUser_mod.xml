@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amUser_mod.xml
+
+-->
+
+
+<Requests>
+
+    <SchemaRequests serviceName="iPlanetAMUserService"
+        SchemaType="Dynamic">
+
+	<Modifyi18nKey>
+            <AttributeValuePair>
+		<Attribute name="preferredlanguage"/>
+		<Value> </Value>
+            </AttributeValuePair>
+	</Modifyi18nKey>
+
+	<Modifyi18nKey>
+            <AttributeValuePair>
+		<Attribute name="preferredlocale"/>
+		<Value> </Value>
+            </AttributeValuePair>
+	</Modifyi18nKey>
+
+    </SchemaRequests>
+
+    <SchemaRequests serviceName="iPlanetAMUserService"
+        SchemaType="User">
+
+	<Modifyi18nKey>
+            <AttributeValuePair>
+		<Attribute name="preferredlocale"/>
+		<Value> </Value>
+            </AttributeValuePair>
+	</Modifyi18nKey>
+
+    </SchemaRequests>
+
+</Requests>
+
