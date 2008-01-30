@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ums.xml,v 1.2 2007-02-12 22:20:28 kenwho Exp $
+   $Id: ums.xml,v 1.3 2008-01-30 19:49:35 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -35,7 +35,7 @@
 
 <ServicesConfiguration>
     <Service name="DAI" version="1.0">
-        <Schema revisionNumber="20">
+        <Schema revisionNumber="40">
 	<Global>
             <SubSchema name="templates">
                 <SubSchema name="StructureTemplates">
@@ -400,6 +400,9 @@
                             <Value>objectClass=inetAdmin</Value>
                             <Value>objectClass=iplanet-am-managed-person</Value>
                             <Value>objectClass=sunAMAuthAccountLockout</Value>
+                            <Value>objectClass=sunFederationManagerDataStore</Value>
+                            <Value>objectClass=sunIdentityServerLibertyPPService</Value>
+                            <Value>objectClass=sunFMSAML2NameIdentifier</Value>
                             <Value>cn=default</Value>
                             <Value>sn=default</Value>
                             <Value>@USER_NAMING_ATTR@</Value>
