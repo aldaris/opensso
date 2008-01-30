@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListValueValidator.java,v 1.2 2007-12-17 19:42:50 veiming Exp $
+ * $Id: ListValueValidator.java,v 1.3 2008-01-30 21:10:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,12 +27,16 @@ package com.sun.identity.common.configuration;
 import com.sun.identity.sm.ServiceAttributeValidator;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Validates list value in Agent Properties. e.g.
  * <code>com.sun.identity.agents.config.response.attribute.mapping[]=</code>
  */
 public class ListValueValidator implements ServiceAttributeValidator {
+    private static final Pattern pattern = 
+        Pattern.compile("^\\[.*?\\]\\s*?=.*");
     public ListValueValidator() {
     }
 
@@ -49,11 +53,8 @@ public class ListValueValidator implements ServiceAttributeValidator {
             for (Iterator i = values.iterator(); (i.hasNext() && valid);) {
                 String str = (String)i.next();
                 if (str.length() > 0) {
-                    if (str.charAt(0) != '[') {
-                        valid = false;
-                    } else {
-                        valid = (str.indexOf("]=") != -1);
-                    }
+                    Matcher m = pattern.matcher(str);
+                    valid = m.matches();
                 }
             }
         }
