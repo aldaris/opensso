@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPrimaryMastHeadViewBean.java,v 1.5 2008-01-15 22:38:14 jonnelson Exp $
+ * $Id: AMPrimaryMastHeadViewBean.java,v 1.6 2008-01-30 17:38:38 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -202,8 +202,7 @@ public abstract class AMPrimaryMastHeadViewBean
         }
 
         if ((strID == null) || (strID.trim().length() == 0)) {
-            AMViewConfig config = AMViewConfig.getInstance();
-            id = config.getDefaultTabId(realmName, req);
+            id = getDefaultTabId(realmName, req);
         } else {
             try {
                 id = Integer.parseInt(strID);
@@ -217,6 +216,10 @@ public abstract class AMPrimaryMastHeadViewBean
         setPageSessionAttribute("CCTabs.SelectedTabId", Integer.toString(id));
         tabModel.setSelectedNode(id);
     }
+    
+    protected int getDefaultTabId(String realmName, HttpServletRequest req) {
+        return AMViewConfig.getInstance().getDefaultTabId(realmName, req);
+    } 
 
     private CCMastheadModel createMastheadModel() {
         CCMastheadModel mm = new CCMastheadModel();

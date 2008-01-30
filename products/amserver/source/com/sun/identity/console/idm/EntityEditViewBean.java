@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityEditViewBean.java,v 1.4 2007-11-05 22:41:32 jonnelson Exp $
+ * $Id: EntityEditViewBean.java,v 1.5 2008-01-30 17:39:28 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */ 
@@ -34,7 +34,6 @@ import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMFormatUtils;
-import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.idm.model.EntitiesModel;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
@@ -54,6 +53,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest; 
 
 public class EntityEditViewBean
     extends EntityOpViewBeanBase
@@ -267,6 +267,8 @@ public class EntityEditViewBean
         EntitiesModel model = (EntitiesModel)getModel();
         unlockPageTrailForSwapping();
 
+        setPageSessionAttribute(
+            getTrackingTabIDName(), Integer.toString(nodeID)); 
         if (nodeID == TAB_PROFILE) {
             vb = (EntityEditViewBean)getViewBean(EntityEditViewBean.class);
             forwardToOtherEntityViewBean(vb, idType);
@@ -278,6 +280,10 @@ public class EntityEditViewBean
             handleMembersViewForwarding(nodeID, model);
         }
     }
+    
+    protected int getDefaultTabId(String realmName, HttpServletRequest req) {
+        return TAB_PROFILE;
+    } 
 
     private void forwardToOtherEntityViewBean(
         EntityEditViewBean vb,
@@ -434,6 +440,9 @@ public class EntityEditViewBean
      * @param event Request invocation event
      */
     public void handleButton3Request(RequestInvocationEvent event) {
+        removePageSessionAttribute(getTrackingTabIDName());
+        setPageSessionAttribute(
+            getTrackingTabIDName(), Integer.toString(TAB_PROFILE));
         forwardToEntitiesViewBean();
     }
 

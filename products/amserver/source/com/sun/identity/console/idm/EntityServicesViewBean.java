@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityServicesViewBean.java,v 1.1 2007-02-07 20:21:54 jonnelson Exp $
+ * $Id: EntityServicesViewBean.java,v 1.2 2008-01-30 17:40:31 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -319,6 +319,9 @@ public class EntityServicesViewBean
      * @param event Request invocation event
      */
     public void handleButton1Request(RequestInvocationEvent event) {
+        removePageSessionAttribute(getTrackingTabIDName());
+        setPageSessionAttribute(
+            getTrackingTabIDName(), Integer.toString(TAB_PROFILE));
         forwardToEntitiesViewBean();
     }
 }

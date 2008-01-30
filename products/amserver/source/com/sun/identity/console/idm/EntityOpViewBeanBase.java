@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityOpViewBeanBase.java,v 1.1 2007-02-07 20:21:54 jonnelson Exp $
+ * $Id: EntityOpViewBeanBase.java,v 1.2 2008-01-30 17:39:53 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -181,8 +181,9 @@ public abstract class EntityOpViewBeanBase
             EntitiesViewBean.class);
         String entityType = (String)getPageSessionAttribute(ENTITY_TYPE);
 
-        setPageSessionAttribute(super.getTrackingTabIDName(),
-            Integer.toString(entityType.hashCode()));
+        String tabId = Integer.toString(entityType.hashCode());
+        setPageSessionAttribute(super.getTrackingTabIDName(), tabId);
+        setPageSessionAttribute("CCTabs.SelectedTabId", tabId); 
         backTrail();
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
