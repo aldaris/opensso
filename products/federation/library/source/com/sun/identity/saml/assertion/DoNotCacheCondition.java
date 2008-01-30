@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoNotCacheCondition.java,v 1.1 2006-10-30 23:15:38 qcheng Exp $
+ * $Id: DoNotCacheCondition.java,v 1.2 2008-01-30 00:13:19 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,13 @@ import org.w3c.dom.Element;
  */
 public class DoNotCacheCondition extends Condition {
     private SAMLConstants sc;
+
+    /**
+     * Constructs a new <code>DoNotCacheCondition</code>.
+     *
+     */
+    public DoNotCacheCondition() {
+    } 
 
     /**
      * Constructs a <code>DoNotCacheCondition</code> element from 
@@ -119,7 +126,7 @@ public class DoNotCacheCondition extends Condition {
         StringBuffer xml = new StringBuffer(300);
         String o = SAMLUtilsCommon.makeStartElementTagXML(
                         "DoNotCacheCondition", includeNS, declareNS);
-        xml.append(o).append(sc.NL);
+        xml.append(o);
         
         o = SAMLUtilsCommon.makeEndElementTagXML(
                 "DoNotCacheCondition",includeNS);

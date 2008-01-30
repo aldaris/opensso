@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Conditions.java,v 1.2 2007-04-23 16:50:10 hengming Exp $
+ * $Id: Conditions.java,v 1.3 2008-01-30 00:13:18 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -368,7 +368,7 @@ public class Conditions {
      * @param doNotCacheCnd an <code>DoNotCacheCondition</code> object.
      */
     public void setDoNotCacheCondition(DoNotCacheCondition doNotCacheCnd) {
-        if (doNotCache != null) {
+        if (doNotCacheCnd != null) {
             doNotCache = doNotCacheCnd;
         }
     }
