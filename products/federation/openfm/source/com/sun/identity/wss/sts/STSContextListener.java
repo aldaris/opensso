@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSContextListener.java,v 1.1 2007-12-21 20:47:40 mrudul_uchil Exp $
+ * $Id: STSContextListener.java,v 1.2 2008-01-31 20:01:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,7 @@ public class STSContextListener
     
     public void contextDestroyed(ServletContextEvent event) {
         ServletContext context = event.getServletContext();
+        ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader cls = FAMClassLoader.getFAMClassLoader(context);
             stsContextListener = cls.loadClass(
@@ -71,12 +72,15 @@ public class STSContextListener
             ctxDestroyed.invoke(contextListener, args);
         } catch (Throwable ex) {
             ex.printStackTrace();
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldcc);
         }
         
     }
     
     public void contextInitialized(ServletContextEvent event) {
         ServletContext context = event.getServletContext();
+        ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader cls = FAMClassLoader.getFAMClassLoader(context);
             stsContextListener = cls.loadClass(
@@ -92,6 +96,8 @@ public class STSContextListener
             ctxInitialized.invoke(contextListener, args);
         } catch (Throwable ex) {
             ex.printStackTrace();
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldcc);
         }
     }
     

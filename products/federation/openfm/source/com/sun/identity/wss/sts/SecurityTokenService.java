@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenService.java,v 1.1 2007-12-21 20:47:40 mrudul_uchil Exp $
+ * $Id: SecurityTokenService.java,v 1.2 2008-01-31 20:01:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ public class SecurityTokenService extends HttpServlet {
    private Object wsServlet;
     
     public void init(ServletConfig config) throws ServletException {
+         ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
          super.init(config);
          try {
              if(jaxwsServlet == null) {
@@ -67,6 +68,10 @@ public class SecurityTokenService extends HttpServlet {
              initMethod.invoke(wsServlet, args);
          } catch (Exception ex) {
              throw new ServletException(ex);
+         } catch (Throwable ex) {
+             ex.printStackTrace();
+         } finally {
+             Thread.currentThread().setContextClassLoader(oldcc);
          }
     }        
         
@@ -77,6 +82,7 @@ public class SecurityTokenService extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         Object args[] = new Object[2];
         args[0] = request;
         args[1] = response;
@@ -86,6 +92,10 @@ public class SecurityTokenService extends HttpServlet {
             doGetMethod.setAccessible(false);
         } catch (Exception ex) {
             throw new ServletException(ex);
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldcc);
         }
         
     }
@@ -97,22 +107,27 @@ public class SecurityTokenService extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         Object args[] = new Object[2];
         args[0] = request;
         args[1] = response;
         try {
-            doGetMethod.setAccessible(true);
+            doPostMethod.setAccessible(true);
             doPostMethod.invoke(wsServlet, args);
-            doGetMethod.setAccessible(false);
+            doPostMethod.setAccessible(false);
         } catch (Exception ex) {
             throw new ServletException(ex);
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldcc);
         }
     }
     
     /** Returns a short description of the servlet.
      */
     public String getServletInfo() {
-        return "Short description";
+        return "Security Token Service Servlet";
     }
     // </editor-fold>
 }

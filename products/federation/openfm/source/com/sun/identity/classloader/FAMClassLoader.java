@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.1 2007-12-21 20:47:40 mrudul_uchil Exp $
+ * $Id: FAMClassLoader.java,v 1.2 2008-01-31 20:01:40 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,6 @@ import java.util.Arrays;
 public class FAMClassLoader {
     
    public static ClassLoader cl;
-   public static ClassLoader oldcc;
     
     /** Creates a new instance of FAMClassLoader */
     public FAMClassLoader() {
@@ -53,63 +52,54 @@ public class FAMClassLoader {
     public static ClassLoader getFAMClassLoader(ServletContext context) {
         if (cl == null) {
             try {
-                String jarsPath = context.getRealPath("/");
-                System.out.println("getRealPath: " + jarsPath);
+                URL[] urls = jarFinder(context);
 
-                //String jarsResPath = context.getResource("/").getPath();                
-                //jarsPath = jarsPath.substring(1, jarsPath.length());
-                //System.out.println("Resource: " + jarsResPath);
-                
-                //String jarsResPath2 = 
-                //    context.getResource("/WEB-INF/lib").getPath();
-                //System.out.println("Resource WEB-INF : " + jarsResPath2);
-
-                jarsPath = jarsPath + "WEB-INF/lib";
-                System.out.println("Jars path:" + jarsPath);
-                //String jarsPath = "WEB-INF/lib/";                
-                URL[] urls = jarFinder(jarsPath);
-                System.out.println("Jars:" + urls.length);
-
-                oldcc = Thread.currentThread().getContextClassLoader();
+                ClassLoader localcc = FAMClassLoader.class.getClassLoader();
 
                 List<String> mask = 
                     new ArrayList<String>(Arrays.asList(maskedPackages));
 
                 // first create a protected area so that we load WS 2.1 API
-                // and everything that depends on them inside
-                cl = new MaskingClassLoader(oldcc,mask);
+                // and everything that depends on them, inside FAM classloader.
+                localcc = new MaskingClassLoader(localcc,mask);
 
                 // then this classloader loads the API and tools.jar
-                cl = new URLClassLoader(urls, cl);
+                cl = new URLClassLoader(urls, localcc);
 
                 Thread.currentThread().setContextClassLoader(cl);
             } catch (Exception ex) {                
                 ex.printStackTrace();
-            } finally {
-                Thread.currentThread().setContextClassLoader(oldcc);
             }
         }
         return (cl);        
     }
     
-    private static URL[] jarFinder(String path) {
-        List jars = new ArrayList();
-        File file = new File(path);
-        File[] files = file.listFiles(new FileFilter() {
-               public boolean accept(File pathname) {
-                    return pathname.getName().startsWith("webservices-");                           
-               }
-         });
-         try {
-             for (int i=0; i < files.length; i++) {
-                  jars.add(files[i].toURL());
-             }
-             System.out.println("Jars: " + jars);
-         } catch (MalformedURLException mre) {
-             mre.printStackTrace();
-         }
-         return (URL[])jars.toArray(new URL[0]);
+    private static URL[] jarFinder(ServletContext context) {
+        URL[] urls = new URL[jars.length];
+        
+        try {
+            for (int i=0; i < jars.length; i++) {
+                urls[i] = context.getResource("/WEB-INF/lib/" + jars[i]);
+                System.out.println("FAM urls[" + i + "] : " + 
+                                   (urls[i]).toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return urls;
     }
+
+    /**
+     * The list of jar files to be loaded by FAMClassLoader.
+     */
+    public static String[] jars = new String[]{
+        "webservices-api.jar",
+        "webservices-rt.jar",
+        "webservices-tools.jar",
+        "webservices-extra-api.jar",
+        "webservices-extra.jar",
+        "fam.jar"
+    };
 
     /**
      * The list of package prefixes we want the
@@ -125,6 +115,7 @@ public class FAMClassLoader {
         "com.sun.relaxng.",
         "com.sun.xml.xsom.",
         "com.sun.xml.bind.",
+        "com.sun.xml.messaging",
         "com.sun.xml.ws.",
         "com.sun.xml.wss.",
         "com.sun.xml.xwss.",
@@ -133,7 +124,8 @@ public class FAMClassLoader {
         "javax.jws.",
         "javax.jws.soap.",
         "javax.xml.soap.",
-        "com.sun.istack."
+        "com.sun.istack.",
+        "com.sun.identity.wss."
     };
     
     

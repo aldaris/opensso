@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MaskingClassLoader.java,v 1.1 2007-12-21 20:47:40 mrudul_uchil Exp $
+ * $Id: MaskingClassLoader.java,v 1.2 2008-01-31 20:01:40 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,10 +60,10 @@ public class MaskingClassLoader extends ClassLoader {
     protected synchronized Class<?> loadClass(String name, boolean resolve) 
     throws ClassNotFoundException {
         for (String mask : masks) {
-            if(name.startsWith(mask))
+            if(name.startsWith(mask)) {
                 throw new ClassNotFoundException();
+            }
         }
-
         return super.loadClass(name, resolve);
     }
 }
