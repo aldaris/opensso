@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupFilter.java,v 1.4 2007-10-17 23:00:45 veiming Exp $
+ * $Id: AMSetupFilter.java,v 1.5 2008-01-31 22:56:40 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,7 +71,9 @@ public final class AMSetupFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response ;
         try {
             //Check to see if AM is configured 
-            if (AMSetupServlet.isConfigured()) {
+            if (AMSetupServlet.isConfigured() ||
+                httpRequest.getRequestURI().endsWith(".htm")) 
+            {
                 filterChain.doFilter(httpRequest, httpResponse);
             } else {
                 if (isPassthrough() && validateStream(httpRequest)) {
