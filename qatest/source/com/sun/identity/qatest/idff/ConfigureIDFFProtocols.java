@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFFProtocols.java,v 1.3 2007-09-10 22:35:47 mrudulahg Exp $
+ * $Id: ConfigureIDFFProtocols.java,v 1.4 2008-01-31 22:06:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,7 +67,7 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -80,8 +80,8 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
     @Parameters({"ssoprofile", "sloprofile", "terminationprofile", 
     "registrationprofile"})
     @BeforeTest(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void ConfigureIDFFProtocol(String strSSOProfile, String strSLOProfile, 
-            String strTermProfile, String strRegProfile)
+    public void ConfigureIDFFProtocol(String strSSOProfile,
+            String strSLOProfile, String strTermProfile, String strRegProfile)
     throws Exception {
         Object[] params = {strSSOProfile, strSLOProfile, 
             strTermProfile, strRegProfile};
@@ -127,13 +127,22 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                         (String)configMap.get(TestConstants.KEY_SP_REALM),
                         false, true, true, "idff");
+                if (FederationManager.getExitCode(spmetaPage) != 0) {
+                    log(Level.SEVERE, "setup", "exportEntity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 spmetadataext = MultiProtocolCommon.getExtMetadataFromPage(
                         spmetaPage);            
-                spmetadata = MultiProtocolCommon.getMetadataFromPage(spmetaPage);            
+                spmetadata =
+                        MultiProtocolCommon.getMetadataFromPage(spmetaPage);
 
-                //if profile is set to post, change the metadata & run the tests. 
-                log(Level.FINE, "setup", "SSO Profile is set to " + strSSOProfile);
-                log(Level.FINE, "setup", "SLO Profile is set to " + strSLOProfile);
+                //if profile is set to post, change the metadata & run the 
+                //tests.
+                log(Level.FINE, "setup", "SSO Profile is set to " +
+                        strSSOProfile);
+                log(Level.FINE, "setup", "SLO Profile is set to " +
+                        strSLOProfile);
                 log(Level.FINE, "setup", "Termination Profile is set to " + 
                         strTermProfile);
                 log(Level.FINE, "setup", "Registration Profile is set to " + 
@@ -149,24 +158,26 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
                     spmetadatamod = setSPSLOProfile(spmetadata, "soap");
                 } 
                 if (strTermProfile.equals("soap")) {
-                    log(Level.FINEST, "setup", "Change Termination Profile to soap");
+                    log(Level.FINEST, "setup", "Change Termination Profile" +
+                            " to soap");
                     spmetadatamod = setSPTermProfile(spmetadatamod, "soap");
                 }
                 if (strRegProfile.equals("soap")) {
-                    log(Level.FINEST, "setup", "Change Registration Profile to soap");
+                    log(Level.FINEST, "setup", "Change Registration Profile" +
+                            " to soap");
                     spmetadatamod = setSPRegProfile(spmetadatamod, "soap");
                 }
                 
                 log(Level.FINEST, "setup", "Modified SP Metadata is: " + 
                         spmetadatamod);
-                log(Level.FINEST, "setup", "Modified SP Extended Metadata is: " + 
-                        spmetadataextmod);
+                log(Level.FINEST, "setup", "Modified SP Extended Metadata" +
+                        " is: " + spmetadataextmod);
                 
                 //Remove & Import Entity with modified metadata. 
                 log(Level.FINE, "setup", "Since SP metadata have changed, " +
                         "delete SP entity & Import it again. "); 
-                assert (loadSPMetadata(spmetadatamod, spmetadataextmod, fmSP, fmIDP, 
-                        configMap, webClient, false));
+                assert (loadSPMetadata(spmetadatamod, spmetadataextmod, fmSP,
+                        fmIDP, configMap, webClient, false));
             }
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
@@ -188,8 +199,8 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
     @Parameters({"ssoprofile", "sloprofile", "terminationprofile", 
     "registrationprofile"})
     @AfterTest(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void UnconfigureIDFFProtocol(String strSSOProfile, String strSLOProfile, 
-            String strTermProfile, String strRegProfile)
+    public void UnconfigureIDFFProtocol(String strSSOProfile,
+            String strSLOProfile, String strTermProfile, String strRegProfile)
     throws Exception {
         Object[] params = {strSSOProfile, strSLOProfile, 
             strTermProfile, strRegProfile};
@@ -207,7 +218,8 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
             //If any of the profile is diff than the default profile, 
             //then only delete & import the metadata. Else leave it as it is. 
             if (strSSOProfile.equals("post") || strSLOProfile.equals("soap") ||
-                    strTermProfile.equals("soap") || strRegProfile.equals("soap")) {
+                    strTermProfile.equals("soap") ||
+                    strRegProfile.equals("soap")) {
                 //Remove & Import Entity with modified metadata. 
                 log(Level.FINE, "setup", "Since SP metadata have changed, " +
                         "delete SP entity & Import it again. "); 

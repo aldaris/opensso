@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolSmokeTest.java,v 1.1 2007-11-02 00:43:31 mrudulahg Exp $
+ * $Id: MultiProtocolSmokeTest.java,v 1.2 2008-01-31 22:06:28 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,8 +109,10 @@ public class MultiProtocolSmokeTest extends TestCommon {
             multiprotocolConfigMap =
                     getMapFromResourceBundle("MultiProtocolSmokeTest");
             log(Level.FINEST, "setup", "IDFF ConfigMap is : " + idffConfigMap );
-            log(Level.FINEST, "setup", "SAMLv2 ConfigMap is : " + samlv2ConfigMap );
-            log(Level.FINEST, "setup", "WSFed ConfigMap is : " + wsfedConfigMap );
+            log(Level.FINEST, "setup", "SAMLv2 ConfigMap is : " +
+                    samlv2ConfigMap );
+            log(Level.FINEST, "setup", "WSFed ConfigMap is : " +
+                    wsfedConfigMap );
             log(Level.FINEST, "setup", "Multiprotocol ConfigMap is : " +
                     multiprotocolConfigMap );
             
@@ -120,12 +122,12 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     idffConfigMap.get(TestConstants.KEY_SP_PORT) +
                     idffConfigMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
             samlv2spurl = samlv2ConfigMap.get(TestConstants.KEY_SP_PROTOCOL) +
-                    "://" + samlv2ConfigMap.get(TestConstants.KEY_SP_HOST) + ":" +
-                    samlv2ConfigMap.get(TestConstants.KEY_SP_PORT) +
+                    "://" + samlv2ConfigMap.get(TestConstants.KEY_SP_HOST) +
+                    ":" +  samlv2ConfigMap.get(TestConstants.KEY_SP_PORT) +
                     samlv2ConfigMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
             wsfedspurl = wsfedConfigMap.get(TestConstants.KEY_SP_PROTOCOL) +
-                    "://" + wsfedConfigMap.get(TestConstants.KEY_SP_HOST) + ":" +
-                    wsfedConfigMap.get(TestConstants.KEY_SP_PORT) +
+                    "://" + wsfedConfigMap.get(TestConstants.KEY_SP_HOST) +
+                    ":" + wsfedConfigMap.get(TestConstants.KEY_SP_PORT) +
                     wsfedConfigMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
             getWebClient();
             
@@ -153,16 +155,14 @@ public class MultiProtocolSmokeTest extends TestCommon {
             idffConfigMap.put(TestConstants.KEY_IDP_USER_PASSWORD,
                     multiprotocolConfigMap.get(TestConstants.
                     KEY_IDP_USER_PASSWORD));
-            page = fmIDFFSP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmIDFFSP.createIdentity(webClient,
                     idffConfigMap.get(TestConstants.KEY_SP_REALM),
                     multiprotocolConfigMap.get(TestConstants.KEY_IDFF_SP_USER),
-                    "User", list);
-            if (!(page.getWebResponse().getContentAsString().contains("User " +
-                    "is created"))) {
+                    "User", list)) != 0) {
                 log(Level.SEVERE, "setup", "IDFF User is not created " +
                         "successfully.");
-                log(Level.FINEST, "setup", page.getWebResponse().
-                        getContentAsString());
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
                 assert false;
             } else {
                 log(Level.FINE, "setup", "IDFF User is created successfully.");
@@ -193,14 +193,14 @@ public class MultiProtocolSmokeTest extends TestCommon {
             samlv2ConfigMap.put(TestConstants.KEY_IDP_USER_PASSWORD,
                     multiprotocolConfigMap.get(TestConstants.
                     KEY_IDP_USER_PASSWORD));
-            page = fmSAMLv2SP.createIdentity(webClient,
-                    samlv2ConfigMap.get(TestConstants.KEY_SP_REALM),
+            if (FederationManager.getExitCode(fmSAMLv2SP.createIdentity(
+                    webClient, samlv2ConfigMap.get(TestConstants.KEY_SP_REALM),
                     multiprotocolConfigMap.get(TestConstants.
-                    KEY_SAMLv2_SP_USER), "User", list);
-            if (!(page.getWebResponse().getContentAsString().contains("User " +
-                    "is created"))) {
+                    KEY_SAMLv2_SP_USER), "User", list)) != 0) {
                 log(Level.SEVERE, "setup", "SAMLv2 User is not created " +
                         "successfully.");
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
                 assert false;
             } else {
                 log(Level.FINE, "setup", "SAMLv2 User is created successfully");
@@ -221,7 +221,8 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     KEY_WSFed_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
             wsfedConfigMap.put(TestConstants.KEY_SP_USER,
-                    multiprotocolConfigMap.get(TestConstants.KEY_WSFed_SP_USER));
+                    multiprotocolConfigMap.get(
+                    TestConstants.KEY_WSFed_SP_USER));
             wsfedConfigMap.put(TestConstants.KEY_SP_USER_PASSWORD,
                     multiprotocolConfigMap.get(TestConstants.
                     KEY_WSFed_SP_USER_PASSWORD));
@@ -230,14 +231,14 @@ public class MultiProtocolSmokeTest extends TestCommon {
             wsfedConfigMap.put(TestConstants.KEY_IDP_USER_PASSWORD,
                     multiprotocolConfigMap.get(TestConstants.
                     KEY_IDP_USER_PASSWORD));
-            page = fmWSFedSP.createIdentity(webClient,
-                    wsfedConfigMap.get(TestConstants.KEY_SP_REALM),
+            if (FederationManager.getExitCode(fmWSFedSP.createIdentity(
+                    webClient, wsfedConfigMap.get(TestConstants.KEY_SP_REALM),
                     multiprotocolConfigMap.get(TestConstants.KEY_WSFed_SP_USER),
-                    "User", list);
-            if (!(page.getWebResponse().getContentAsString().contains("User " +
-                    "is created"))) {
+                    "User", list)) != 0) {
                 log(Level.SEVERE, "setup", "WSFed User is not created " +
                         "successfully.");
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
                 assert false;
             } else {
                 log(Level.FINE, "setup", "WSFed User is created successfully.");
@@ -245,8 +246,8 @@ public class MultiProtocolSmokeTest extends TestCommon {
             
             // Create idp users
             idpurl = idffConfigMap.get(TestConstants.KEY_IDP_PROTOCOL) +
-                    "://" + idffConfigMap.get(TestConstants.KEY_IDP_HOST) + ":" +
-                    idffConfigMap.get(TestConstants.KEY_IDP_PORT) +
+                    "://" + idffConfigMap.get(TestConstants.KEY_IDP_HOST) +
+                    ":" + idffConfigMap.get(TestConstants.KEY_IDP_PORT) +
                     idffConfigMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             consoleLogin(webClient, idpurl + "/UI/Login",
                     idffConfigMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
@@ -262,10 +263,14 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     multiprotocolConfigMap.get(TestConstants.
                     KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmIDP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
                     idffConfigMap.get(TestConstants.KEY_IDP_REALM),
                     multiprotocolConfigMap.get(TestConstants.KEY_IDP_USER),
-                    "User", list);
+                    "User", list)) != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
+                assert false;
+            }
             
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
@@ -419,8 +424,9 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     KEY_SP_PROTOCOL) +"://" + samlv2ConfigMap.get(TestConstants.
                     KEY_SP_HOST) + ":" + samlv2ConfigMap.get(TestConstants.
                     KEY_SP_PORT) + samlv2ConfigMap.get(TestConstants.
-                    KEY_SP_DEPLOYMENT_URI) + "/saml2/jsp/spSingleLogoutInit.jsp" +
-                    "?metaAlias=/" + samlv2ConfigMap.get(TestConstants.
+                    KEY_SP_DEPLOYMENT_URI) +
+                    "/saml2/jsp/spSingleLogoutInit.jsp" + "?metaAlias=/" +
+                    samlv2ConfigMap.get(TestConstants.
                     KEY_SP_METAALIAS) + "&idpEntityID=" + samlv2ConfigMap.
                     get(TestConstants.KEY_IDP_ENTITY_NAME);
             page = (HtmlPage)webClient.getPage(samlv2SLOurl);
@@ -484,36 +490,53 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     idffConfigMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     idffConfigMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             idList = new ArrayList();
-            idList.add(multiprotocolConfigMap.get(TestConstants.KEY_IDFF_SP_USER));
+            idList.add(multiprotocolConfigMap.get(
+                    TestConstants.KEY_IDFF_SP_USER));
             log(Level.FINE, "cleanup", "IDFF SP users to delete :" +
                     multiprotocolConfigMap.get(TestConstants.KEY_IDFF_SP_USER));
-            HtmlPage page1 = fmIDFFSP.deleteIdentities(webClient,
-                    idffConfigMap.get(TestConstants.KEY_SP_REALM),
-                    idList, "User");
+            if (FederationManager.getExitCode(fmIDFFSP.deleteIdentities(
+                    webClient, idffConfigMap.get(TestConstants.KEY_SP_REALM),
+                    idList, "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
+                        " command failed");
+                assert false;
+            }
             
             //Delete SAMLv2 SP User
             consoleLogin(webClient, samlv2spurl + "/UI/Login",
                     samlv2ConfigMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     samlv2ConfigMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             idList = new ArrayList();
-            idList.add(multiprotocolConfigMap.get(TestConstants.KEY_SAMLv2_SP_USER));
+            idList.add(multiprotocolConfigMap.get(
+                    TestConstants.KEY_SAMLv2_SP_USER));
             log(Level.FINE, "cleanup", "SAMLv2 SP users to delete :" +
-                    multiprotocolConfigMap.get(TestConstants.KEY_SAMLv2_SP_USER));
-            fmSAMLv2SP.deleteIdentities(webClient,
-                    samlv2ConfigMap.get(TestConstants.KEY_SP_REALM), idList,
-                    "User");
+                    multiprotocolConfigMap.get(
+                    TestConstants.KEY_SAMLv2_SP_USER));
+            if (FederationManager.getExitCode(fmSAMLv2SP.deleteIdentities(
+                    webClient, samlv2ConfigMap.get(TestConstants.KEY_SP_REALM),
+                    idList, "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             
             //Delete WSFed SP User
             consoleLogin(webClient, wsfedspurl + "/UI/Login",
                     wsfedConfigMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     wsfedConfigMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             idList = new ArrayList();
-            idList.add(multiprotocolConfigMap.get(TestConstants.KEY_WSFed_SP_USER));
+            idList.add(multiprotocolConfigMap.get(
+                    TestConstants.KEY_WSFed_SP_USER));
             log(Level.FINE, "cleanup", "WSFed SP users to delete :" +
-                    multiprotocolConfigMap.get(TestConstants.KEY_WSFed_SP_USER));
-            fmWSFedSP.deleteIdentities(webClient,
-                    wsfedConfigMap.get(TestConstants.KEY_SP_REALM), idList,
-                    "User");
+                    multiprotocolConfigMap.get(
+                    TestConstants.KEY_WSFed_SP_USER));
+            if (FederationManager.getExitCode(fmWSFedSP.deleteIdentities(
+                    webClient, wsfedConfigMap.get(TestConstants.KEY_SP_REALM),
+                    idList, "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
+                        " command failed");
+                assert false;
+            }
             
             // Create idp users
             consoleLogin(webClient, idpurl + "/UI/Login",
@@ -524,9 +547,13 @@ public class MultiProtocolSmokeTest extends TestCommon {
             idList.add(multiprotocolConfigMap.get(TestConstants.KEY_IDP_USER));
             log(Level.FINE, "cleanup", "idp users to delete :" +
                     multiprotocolConfigMap.get(TestConstants.KEY_IDP_USER));
-            fmIDP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
                     idffConfigMap.get(TestConstants.KEY_IDP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
+                        " command failed");
+                assert false;
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();

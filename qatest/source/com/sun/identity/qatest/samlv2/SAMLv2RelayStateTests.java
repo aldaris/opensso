@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2RelayStateTests.java,v 1.4 2007-09-10 22:36:54 mrudulahg Exp $
+ * $Id: SAMLv2RelayStateTests.java,v 1.5 2008-01-31 22:06:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -114,7 +114,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
-            log(logLevel, "setup", "Map is " + configMap);
+            log(Level.FINEST, "setup", "Map is " + configMap);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_SP_PORT) +
@@ -124,7 +124,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_PORT) +
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             } catch (Exception e) {
-                log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+                log(Level.SEVERE, "getWebClient", e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
@@ -153,10 +153,14 @@ public class SAMLv2RelayStateTests extends TestCommon {
                 list.add("userpassword=" + usersMap.get(
                         TestConstants.KEY_SP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
-                fmSP.createIdentity(webClient,
+                if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                         configMap.get(TestConstants.KEY_SP_REALM),
                         usersMap.get(TestConstants.KEY_SP_USER + i), "User",
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 spuserlist.add(usersMap.get(TestConstants.KEY_SP_USER + i));
                 
                 //create idp user
@@ -166,14 +170,18 @@ public class SAMLv2RelayStateTests extends TestCommon {
                 list.add("userpassword=" + usersMap.get(
                         TestConstants.KEY_IDP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
-                fmIDP.createIdentity(webClient,
-                        configMap.get(TestConstants.KEY_IDP_REALM),
+                if (FederationManager.getExitCode(fmIDP.createIdentity(
+                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User",
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 idpuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + i));
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -191,8 +199,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2SPInitArtSSORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitArtSSORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -208,7 +214,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_SSO_INIT_RESULT + 1));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate1"));
-            log(logLevel, "samlv2SPInitArtSSORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2SPInitArtSSORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitssors_ssoinit", 
@@ -223,13 +229,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitArtSSORS",
+                log(Level.FINEST, "samlv2SPInitArtSSORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitArtSSORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitArtSSORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -244,8 +250,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2SPInitPostSSORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitPostSSORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -261,7 +265,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_SSO_INIT_RESULT + 2));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate2"));
-            log(logLevel, "samlv2SPInitPostSSORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2SPInitPostSSORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitpostssors_ssoinit", 
@@ -275,13 +279,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitPostSSORS",
+                log(Level.FINEST, "samlv2SPInitPostSSORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitPostSSORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitPostSSORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -296,8 +300,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2IDPInitSSORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2IDPInitSSORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -313,7 +315,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_SSO_INIT_RESULT + 3));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate3"));
-            log(logLevel, "samlv2IDPInitSSORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2IDPInitSSORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitssors_idplogin", 
@@ -331,13 +333,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitSSORS",
+                log(Level.FINEST, "samlv2IDPInitSSORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitSSORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitSSORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -352,8 +354,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2IDPInitPostSSORS", null);
         try {
-            log(logLevel, "Running: samlv2IDPInitPostSSORS", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -369,7 +369,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_SSO_INIT_RESULT + 4));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate4"));
-            log(logLevel, "samlv2IDPInitPostSSORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2IDPInitPostSSORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitpostssors_idplogin", 
@@ -387,13 +387,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitPostSSORS",
+                log(Level.FINEST, "samlv2IDPInitPostSSORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitPostSSORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitPostSSORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -408,8 +408,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2SPInitHTTPSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitHTTPSLORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -423,7 +421,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 5));
             configMap.put(TestConstants.KEY_SP_SLO_RESULT,
                     usersMap.get(TestConstants.KEY_SP_SLO_RESULT + 5));
-            log(logLevel, "samlv2SPInitHTTPSLORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2SPInitHTTPSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitslors_ssoinit", 
@@ -440,13 +438,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitHTTPSLORS",
+                log(Level.FINEST, "samlv2SPInitHTTPSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitHTTPSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitHTTPSLORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -461,8 +459,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2SPInitSOAPSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitSOAPSLORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -476,7 +472,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 6));
             configMap.put(TestConstants.KEY_SP_SLO_RESULT,
                     usersMap.get(TestConstants.KEY_SP_SLO_RESULT + 6));
-            log(logLevel, "samlv2SPInitSOAPSLORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2SPInitSOAPSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitpostslors_ssoinit", 
@@ -493,13 +489,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitSOAPSLORS",
+                log(Level.FINEST, "samlv2SPInitSOAPSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitSOAPSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitSOAPSLORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -514,8 +510,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2IDPInitHTTPSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2IDPInitHTTPSLORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -529,7 +523,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 7));
             configMap.put(TestConstants.KEY_IDP_SLO_RESULT,
                     usersMap.get(TestConstants.KEY_IDP_SLO_RESULT + 7));
-            log(logLevel, "samlv2IDPInitHTTPSLORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2IDPInitHTTPSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitslors_idplogin", 
@@ -549,13 +543,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitHTTPSLORS",
+                log(Level.FINEST, "samlv2IDPInitHTTPSLORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitHTTPSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitHTTPSLORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -570,8 +564,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2IDPInitSOAPSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2IDPInitSOAPSLORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -585,7 +577,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 8));
             configMap.put(TestConstants.KEY_IDP_SLO_RESULT,
                     usersMap.get(TestConstants.KEY_IDP_SLO_RESULT + 8));
-            log(logLevel, "samlv2IDPInitSOAPSLORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2IDPInitSOAPSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitpostslors_idplogin", 
@@ -605,13 +597,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitSOAPSLORS",
+                log(Level.FINEST, "samlv2IDPInitSOAPSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitSOAPSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitSOAPSLORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -626,8 +618,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2SPInitArtHTTPSSOSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitArtHTTPSSOSLORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -645,7 +635,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_SP_SLO_RESULT + 9));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate9"));
-            log(logLevel, "samlv2SPInitArtHTTPSSOSLORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2SPInitArtHTTPSSOSLORS", "Map:" +
+                    configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitssoslors_ssoinit", 
@@ -663,13 +654,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitArtHTTPSSOSLORS",
+                log(Level.FINEST, "samlv2SPInitArtHTTPSSOSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitArtHTTPSSOSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitArtHTTPSSOSLORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -677,15 +668,14 @@ public class SAMLv2RelayStateTests extends TestCommon {
     }
     
     /**
-     * @DocTest: SAML2|SP Init SSO/SLO with diff RelayState set POST/SOAP binding
+     * @DocTest: SAML2|SP Init SSO/SLO with diff RelayState set POST/SOAP
+     * binding
      */
     @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void samlv2SPInitPostSOAPSSOSLORS()
     throws Exception {
         entering("samlv2SPInitPostSOAPSSOSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitPostSOAPSSOSLORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -703,7 +693,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_SP_SLO_RESULT + 10));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate10"));
-            log(logLevel, "samlv2SPInitPostSOAPSSOSLORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2SPInitPostSOAPSSOSLORS", "Map:" +
+                    configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitpostssoslors_ssoinit", 
@@ -721,13 +712,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitPostSOAPSSOSLORS",
+                log(Level.FINEST, "samlv2SPInitPostSOAPSSOSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitPostSOAPSSOSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitPostSOAPSSOSLORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -742,8 +733,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2IDPInitArtSOAPSSOSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2IDPInitArtSOAPSSOSLORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -761,7 +750,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_SLO_RESULT + 11));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate11"));
-            log(logLevel, "samlv2IDPInitArtSOAPSSOSLORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2IDPInitArtSOAPSSOSLORS", "Map:" +
+                    configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitssoslors_idplogin", 
@@ -782,13 +772,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitArtSOAPSSOSLORS",
+                log(Level.FINEST, "samlv2IDPInitArtSOAPSSOSLORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitArtSOAPSSOSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitArtSOAPSSOSLORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -804,8 +794,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
     throws Exception {
         entering("samlv2IDPInitPostSOAPSSOSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2IDPInitPostSOAPSSOSLORS\n", null);
-            
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
@@ -823,7 +811,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_SLO_RESULT + 12));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate12"));
-            log(logLevel, "samlv2IDPInitPostSOAPSSOSLORS", "Map:" + configMap);
+            log(Level.FINEST, "samlv2IDPInitPostSOAPSSOSLORS", "Map:" +
+                    configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitpostssoslors_idplogin", 
@@ -844,13 +833,13 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitPostSOAPSSOSLORS",
+                log(Level.FINEST, "samlv2IDPInitPostSOAPSSOSLORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitPostSOAPSSOSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitPostSOAPSSOSLORS", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -868,7 +857,6 @@ public class SAMLv2RelayStateTests extends TestCommon {
         String spurl;
         String idpurl;
         try {
-            log(logLevel, "Entering Cleanup ", null);
             getWebClient();
             
             // delete sp users
@@ -881,31 +869,40 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_PORT) +
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             } catch (Exception e) {
-                log(Level.SEVERE, "cleanup", e.getMessage(), null);
+                log(Level.SEVERE, "cleanup", e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
         try {
-            log(logLevel, "cleanup", "sp users to delete : " + spuserlist);
+            log(Level.FINEST, "cleanup", "sp users to delete : " + spuserlist);
             consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
-            fmSP.deleteIdentities(webClient, configMap.get(
-                    TestConstants.KEY_SP_REALM),
-                    spuserlist, "User");
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
+                        " command failed");
+                assert false;
+            }
             
             // Create idp users
-            log(logLevel, "cleanup", "idp users to delete : " + idpuserlist);
+            log(Level.FINEST, "cleanup", "idp users to delete : " +
+                    idpuserlist);
             consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(idpurl);
-            fmSP.deleteIdentities(webClient, configMap.get(
-                    TestConstants.KEY_IDP_REALM),
-                    idpuserlist, "User");
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
+                    configMap.get(TestConstants.KEY_IDP_REALM), idpuserlist,
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
+                        " command failed");
+                assert false;
+            }
         } catch (Exception e) {
-            log(Level.SEVERE, "cleanup", e.getMessage(), null);
+            log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -913,6 +910,5 @@ public class SAMLv2RelayStateTests extends TestCommon {
             consoleLogout(webClient, idpurl + "/UI/Logout");
         }
         exiting("cleanup");
-    }
-    
+    }    
 }

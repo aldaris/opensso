@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SmokeTest.java,v 1.6 2007-09-10 22:36:54 mrudulahg Exp $
+ * $Id: SAMLv2SmokeTest.java,v 1.7 2008-01-31 22:06:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,9 +109,14 @@ public class SAMLv2SmokeTest extends TestCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmSP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    configMap.get(TestConstants.KEY_SP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_SP_USER), "User", list))
+                    != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
+                assert false;
+            }
             consoleLogout(webClient, spurl + "/UI/Logout");
             
             // Create idp users
@@ -130,12 +135,17 @@ public class SAMLv2SmokeTest extends TestCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmIDP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    configMap.get(TestConstants.KEY_IDP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_IDP_USER), "User", list))
+                    != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command " +
+                        "failed");
+                assert false;
+            }
             consoleLogout(webClient, idpurl + "/UI/Logout");
         } catch (Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -151,7 +161,7 @@ public class SAMLv2SmokeTest extends TestCommon {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -174,7 +184,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPSSOInit", e.getMessage(), null);
+            log(Level.SEVERE, "testSPSSOInit", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -198,7 +208,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPSLO", e.getMessage(), null);
+            log(Level.SEVERE, "testSPSLO", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -222,7 +232,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPTerminate", e.getMessage(), null);
+            log(Level.SEVERE, "testSPTerminate", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -253,7 +263,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testIDPSSO", e.getMessage(), null);
+            log(Level.SEVERE, "testIDPSSO", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -277,7 +287,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testIDPSLO", e.getMessage(), null);
+            log(Level.SEVERE, "testIDPSLO", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -301,7 +311,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testIDPTerminate", e.getMessage(), null);
+            log(Level.SEVERE, "testIDPTerminate", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -326,7 +336,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPSSOInitPost", e.getMessage(), null);
+            log(Level.SEVERE, "testSPSSOInitPost", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -350,7 +360,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPSLOSOAP", e.getMessage(), null);
+            log(Level.SEVERE, "testSPSLOSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -375,7 +385,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPTerminateSOAP", e.getMessage(), null);
+            log(Level.SEVERE, "testSPTerminateSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -407,7 +417,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testIDPSSOInitPost", e.getMessage(), null);
+            log(Level.SEVERE, "testIDPSSOInitPost", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -432,7 +442,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testIDPSLOSOAP", e.getMessage(), null);
+            log(Level.SEVERE, "testIDPSLOSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -457,7 +467,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testIDPTerminateSOAP", e.getMessage(), null);
+            log(Level.SEVERE, "testIDPTerminateSOAP", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -487,9 +497,13 @@ public class SAMLv2SmokeTest extends TestCommon {
             idList.add(configMap.get(TestConstants.KEY_SP_USER));
             log(logLevel, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
-            fmSP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             consoleLogout(webClient, spurl + "/UI/Logout");
             
             // Create idp users
@@ -505,16 +519,19 @@ public class SAMLv2SmokeTest extends TestCommon {
             idList.add(configMap.get(TestConstants.KEY_IDP_USER));
             log(logLevel, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
-            fmIDP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             consoleLogout(webClient, idpurl + "/UI/Logout");
         } catch (Exception e) {
-            log(Level.SEVERE, "cleanup", e.getMessage(), null);
+            log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
         exiting("cleanup");
-    }
-    
+    }    
 }

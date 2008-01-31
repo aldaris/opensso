@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.8 2008-01-23 23:51:37 rmisra Exp $
+ * $Id: FederationManager.java,v 1.9 2008-01-31 22:06:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,7 +52,6 @@ public class FederationManager {
     public static int getExitCode(HtmlPage p) {
         int val = -1;
         String content = p.getWebResponse().getContentAsString();
-        System.out.println("EXITCODE PAGE\n:" + content);
         int start = content.indexOf("<!-- CLI Exit Code: ");
         if (start != -1) {
             int end = content.indexOf("-->", start);

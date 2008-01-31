@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsCommon.java,v 1.6 2008-01-22 23:50:00 rmisra Exp $
+ * $Id: AgentsCommon.java,v 1.7 2008-01-31 22:06:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -420,9 +420,20 @@ public class AgentsCommon extends TestCommon {
                 webClient = new WebClient();
                 consoleLogin(webClient, loginURL, adminUser, adminPassword);
                 if (list != null)
-                    fmadm.createIdentity(webClient, realm, name, type, list);
+                    if (FederationManager.getExitCode(fmadm.createIdentity(
+                    webClient, realm, name, type, list)) != 0) {
+                        log(Level.SEVERE, "createIdentities",
+                                "createIdentity (not null list) famadm" +
+                                " command failed");
+                        assert false;
+                    }
                 else
-                    fmadm.createIdentity(webClient, realm, name, type, null);
+                    if (FederationManager.getExitCode(fmadm.createIdentity(
+                    webClient, realm, name, type, null)) != 0) {
+                        log(Level.SEVERE, "createIdentities", "createIdentity" +
+                                " (null list) famadm command failed");
+                        assert false;
+                    }
                 String isMemberOf = rb.getString(strPolIdx + ".identity" + i +
                         ".isMemberOf");
                 if (isMemberOf.equals("yes")) {
@@ -436,8 +447,13 @@ public class AgentsCommon extends TestCommon {
                         strIDIdx = (String)lstMembers.get(j);
                         memberType = rb.getString(strIDIdx + ".type");
                         memberName = rb.getString(strIDIdx + ".name");
-                        fmadm.addMember(webClient, realm, name, type,
-                                memberName, memberType);
+                        if (FederationManager.getExitCode(fmadm.addMember(
+                                webClient, realm, name, type, memberName,
+                                memberType)) != 0) {
+                            log(Level.SEVERE, "createIdentities", "addMember" +
+                                    " famadm command failed");
+                            assert false;
+                        }
                     }
                 }
             }
@@ -540,10 +556,12 @@ public class AgentsCommon extends TestCommon {
                 policyXML = contents.toString();
                 log(Level.FINEST, "createPolicy", newline + policyXML);
                 HtmlPage policyCheckPage ;
-                policyCheckPage = fmadm.createPolicies(webClient, realm,
-                        policyXML);
-                log(Level.FINEST, "createPolicy", newline +
-                        policyCheckPage.asXml(), null);
+                if (FederationManager.getExitCode(fmadm.createPolicies(
+                        webClient, realm, policyXML)) != 0) {
+                    log(Level.SEVERE, "createPolicy", "createPolicies famadm" +
+                            " command failed");
+                    assert false;
+                }
             }
         } catch(Exception e) {
             log(Level.SEVERE, "createPolicy", e.getMessage());
@@ -574,7 +592,12 @@ public class AgentsCommon extends TestCommon {
                 name = rb.getString(glbPolIdx + ".identity" + i + ".name");
                 list.clear();
                 list.add(name);
-                fmadm.deleteIdentities(webClient, realm, list, type);
+                if (FederationManager.getExitCode(fmadm.deleteIdentities(
+                        webClient, realm, list, type)) != 0) {
+                    log(Level.SEVERE, "deleteIdentities", "deleteIdentities" +
+                            " famadm command failed");
+                    assert false;
+                }
             }
         } catch(Exception e) {
             log(Level.SEVERE, "deleteIdentities", e.getMessage());
@@ -604,7 +627,12 @@ public class AgentsCommon extends TestCommon {
                 name = rb.getString(locPolIdx + i + ".name");
                 list.add(name);
             }
-            fmadm.deletePolicies(webClient, realm, list);
+            if (FederationManager.getExitCode(fmadm.deletePolicies(webClient,
+                    realm, list)) != 0) {
+                log(Level.SEVERE, "deletePolicies", "deletePolicies famadm" +
+                        " command failed");
+                assert false;
+            }
         } catch(Exception e) {
             log(Level.SEVERE, "deletePolicies", e.getMessage());
             e.printStackTrace();
@@ -644,7 +672,8 @@ public class AgentsCommon extends TestCommon {
                     password);
             int iIdx = getHtmlPageStringIndex(page, expResult);
             assert (iIdx != -1);
-        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e) {
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
+        {
             if (resource.indexOf("notvalid") != 0)
                 assert true;
             else
@@ -821,10 +850,13 @@ public class AgentsCommon extends TestCommon {
        try {
            WebClient webClient = new WebClient();
            consoleLogin(webClient, loginURL, adminUser, adminPassword);
-           HtmlPage page = fmadm.setSvcAttrs(webClient,
-                     strRealm, "iPlanetAMPolicyConfigService", dynRespList);
-           log(Level.FINEST, "setDynamicRespAttribute",
-                   page.getWebResponse().getContentAsString());
+           if (FederationManager.getExitCode(fmadm.setSvcAttrs(webClient,
+                     strRealm, "iPlanetAMPolicyConfigService", dynRespList))
+                     != 0) {
+                log(Level.SEVERE, "setDynamicRespAttribute", "setSvcAttrs" +
+                        " famadm command failed");
+                assert false;
+            }
        } catch (Exception e) {
            log(Level.SEVERE, "setDynamicRespAttribute", e.getMessage());
            e.printStackTrace();

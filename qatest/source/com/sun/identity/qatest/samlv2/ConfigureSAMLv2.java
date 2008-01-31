@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.10 2008-01-18 00:42:52 rmisra Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.11 2008-01-31 22:06:28 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             spWebClient = new WebClient(BrowserVersion.MOZILLA_1_0);
             idpWebClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch(Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -94,11 +94,11 @@ public class ConfigureSAMLv2 extends TestCommon {
             idpConfigMap = new HashMap<String, String>();
             getWebClient();
             
-            log(logLevel, "configureSAMLv2", "GroupName received from " +
+            log(Level.FINEST, "configureSAMLv2", "GroupName received from " +
                     "testng is " + strGroupName);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
                     configMap);
-            log(logLevel, "configureSAMLv2", "Map:" + configMap);
+            log(Level.FINEST, "configureSAMLv2", "Map:" + configMap);
             
             String spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)
             + "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":"
@@ -114,10 +114,10 @@ public class ConfigureSAMLv2 extends TestCommon {
             spConfigMap = MultiProtocolCommon.getSPConfigurationMap(configMap);
             boolean spConfigResult = configureProduct(spConfigMap);
             if (spConfigResult) {
-                log(logLevel, "configureSAMLv2", spurl + "is configured" +
+                log(Level.FINEST, "configureSAMLv2", spurl + "is configured" +
                         "Proceed with SAMLv2 SP configuration");
             } else {
-                log(logLevel, "configureSAMLv2", spurl + "is not " +
+                log(Level.FINEST, "configureSAMLv2", spurl + "is not " +
                         "configured successfully. " +
                         "Exiting the SAMLv2 configuration");
                 assert false;
@@ -125,13 +125,14 @@ public class ConfigureSAMLv2 extends TestCommon {
             
             url = new URL(idpurl);
             page = (HtmlPage)idpWebClient.getPage(url);
-            idpConfigMap = MultiProtocolCommon.getIDPConfigurationMap(configMap);
+            idpConfigMap =
+                    MultiProtocolCommon.getIDPConfigurationMap(configMap);
             boolean idpConfigResult = configureProduct(idpConfigMap);
             if (idpConfigResult) {
-                log(logLevel, "configureSAMLv2", idpurl + "is configured" +
+                log(Level.FINEST, "configureSAMLv2", idpurl + "is configured" +
                         "Proceed with SAMLv2 IDP configuration");
             } else {
-                log(logLevel, "configureSAMLv2", idpurl + "is not " +
+                log(Level.FINEST, "configureSAMLv2", idpurl + "is not " +
                         "configured successfully. " +
                         "Exiting the SAMLv2 configuration");
                 assert false;
@@ -148,31 +149,39 @@ public class ConfigureSAMLv2 extends TestCommon {
             
             HtmlPage spcotPage = spfm.listCots(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM));
+            if (FederationManager.getExitCode(spcotPage) != 0) {
+               log(Level.SEVERE, "configureSAMLv2", "listCots famadm command" +
+                       " failed");
+               assert false;
+            }
             if (!spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.createCot(spWebClient,
+                if (FederationManager.getExitCode(spfm.createCot(spWebClient,
                         configMap.get(TestConstants.KEY_SP_COT),
                         configMap.get(TestConstants.KEY_SP_REALM),
-                        null, null);
-                if (!spcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, "
-                        + configMap.get(TestConstants.KEY_SP_COT)
-                        + " is created.")) {
+                        null, null)) != 0) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't create " +
-                            "COT at SP side", null);
+                            "COT at SP side");
+                    log(Level.SEVERE, "configureSAMLv2", "createCot famadm" +
+                            " command failed");
                     assert false;
                 }
             } else {
-                log(logLevel, "configureSAMLv2", "COT exists at SP side", null);
+                log(Level.FINEST, "configureSAMLv2", "COT exists at SP side");
             }
             
             String spMetadata[]= {"",""};
             HtmlPage spEntityPage = spfm.listEntities(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "saml2");
+            if (FederationManager.getExitCode(spEntityPage) != 0) {
+               log(Level.SEVERE, "configureSAMLv2", "listEntities famadm" +
+                       " command failed");
+               assert false;
+            }
             if (!spEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(logLevel, "configureSAMLv2", "sp entity doesnt exist. " +
-                        "Get template & create the entity", null);
+                log(Level.FINEST, "configureSAMLv2", "sp entity doesnt exist." +
+                        " Get template & create the entity");
                 if (strGroupName.contains("sec")) {
                     spMetadata = SAMLv2Common.configureSP(spWebClient,
                             configMap, true);
@@ -180,9 +189,10 @@ public class ConfigureSAMLv2 extends TestCommon {
                     spMetadata = SAMLv2Common.configureSP(spWebClient,
                             configMap, false);
                 }
-                if ((spMetadata[0].equals(null)) || (spMetadata[1].equals(null))) {
+                if ((spMetadata[0].equals(null)) ||
+                        (spMetadata[1].equals(null))) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't configure " +
-                            "SP", null);
+                            "SP");
                     assert false;
                 }
             } else {
@@ -191,6 +201,11 @@ public class ConfigureSAMLv2 extends TestCommon {
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false, true,
                         true, "saml2");
+                if (FederationManager.getExitCode(spExportEntityPage) != 0) {
+                   log(Level.SEVERE, "configureSAMLv2", "exportEntity famadm" +
+                           " command failed");
+                   assert false;
+                }
                 spMetadata[0] = SAMLv2Common.getMetadataFromPage(
                         spExportEntityPage);
                 spMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
@@ -198,10 +213,9 @@ public class ConfigureSAMLv2 extends TestCommon {
             }
             spMetadata[1] = spMetadata[1].replaceAll(
                     configMap.get(TestConstants.KEY_SP_COT), "");
-            log(logLevel, "configureSAMLv2", "sp metadata" + spMetadata[0],
-                    null);
-            log(logLevel, "configureSAMLv2", "sp Ext metadata" + spMetadata[1],
-                    null);
+            log(Level.FINEST, "configureSAMLv2", "sp metadata" + spMetadata[0]);
+            log(Level.FINEST, "configureSAMLv2", "sp Ext metadata" +
+                    spMetadata[1]);
             
             //idp side create cot, load idp metadata
             consoleLogin(idpWebClient, idpurl + "/UI/Login",
@@ -211,21 +225,23 @@ public class ConfigureSAMLv2 extends TestCommon {
             
             HtmlPage idpcotPage = idpfm.listCots(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM));
+            if (FederationManager.getExitCode(idpcotPage) != 0) {
+               log(Level.SEVERE, "configureSAMLv2", "listCots famadm command" +
+                       " failed");
+               assert false;
+            }
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
-                log(logLevel, "configureSAMLv2", "COT exists at IDP side",
-                        null);
+                log(Level.FINEST, "configureSAMLv2", "COT exists at IDP side");
             } else {
-                idpcotPage = idpfm.createCot(idpWebClient,
+                if (FederationManager.getExitCode(idpfm.createCot(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM),
-                        null, null);
-                if (!idpcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, " +
-                        configMap.get(TestConstants.KEY_IDP_COT)
-                        + " is created.")) {
+                        null, null)) != 0) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't create " +
-                            "COT at IDP side", null);
+                            "COT at IDP side");
+                    log(Level.SEVERE, "configureSAMLv2", "createCot famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -233,10 +249,16 @@ public class ConfigureSAMLv2 extends TestCommon {
             String[] idpMetadata = {"",""};
             HtmlPage idpEntityPage = idpfm.listEntities(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "saml2");
+            if (FederationManager.getExitCode(idpEntityPage) != 0) {
+               log(Level.SEVERE, "configureSAMLv2", "listEntities famadm" +
+                       " command failed");
+               assert false;
+            }
             if (!idpEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(logLevel, "configureSAMLv2", "idp entity doesnt exist. " +
-                        "Get template & create the entity", null);
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
+            {
+                log(Level.FINEST, "configureSAMLv2", "idp entity doesnt" +
+                        " exist. Get template & create the entity");
                 if (strGroupName.contains("sec")) {
                     idpMetadata = SAMLv2Common.configureIDP(idpWebClient,
                             configMap, true);
@@ -245,14 +267,14 @@ public class ConfigureSAMLv2 extends TestCommon {
                             configMap, false);
                 }
                 
-                log(logLevel, "configureSAMLv2", "idp metadata" +
-                        idpMetadata[0], null);
-                log(logLevel, "configureSAMLv2", "idp Ext metadata" +
-                        idpMetadata[1], null);
+                log(Level.FINEST, "configureSAMLv2", "idp metadata" +
+                        idpMetadata[0]);
+                log(Level.FINEST, "configureSAMLv2", "idp Ext metadata" +
+                        idpMetadata[1]);
                 if ((idpMetadata[0].equals(null)) || (
                         idpMetadata[1].equals(null))) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't configure " +
-                            "IDP", null);
+                            "IDP");
                     assert false;
                 }
             } else {
@@ -261,6 +283,11 @@ public class ConfigureSAMLv2 extends TestCommon {
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false, true,
                         true, "saml2");
+                if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
+                   log(Level.SEVERE, "configureSAMLv2", "exportEntity famadm" +
+                           " command failed");
+                   assert false;
+                }
                 idpMetadata[0] = SAMLv2Common.getMetadataFromPage(
                         idpExportEntityPage);
                 idpMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
@@ -268,28 +295,28 @@ public class ConfigureSAMLv2 extends TestCommon {
             }
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     configMap.get(TestConstants.KEY_IDP_COT), "");
-            log(logLevel, "configureSAMLv2", "idp metadata" +
-                    idpMetadata[0], null);
-            log(logLevel, "configureSAMLv2", "idp Ext metadata" +
-                    idpMetadata[1], null);
+            log(Level.FINEST, "configureSAMLv2", "idp metadata" +
+                    idpMetadata[0]);
+            log(Level.FINEST, "configureSAMLv2", "idp Ext metadata" +
+                    idpMetadata[1]);
             
             //load spmetadata on idp
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(logLevel, "configureSAMLv2", "sp entity exists at idp. " +
-                        "Delete & load the metadata ", null);
-                HtmlPage spDeleteEntityPage = idpfm.deleteEntity(idpWebClient,
+                log(Level.FINEST, "configureSAMLv2", "sp entity exists at" +
+                        " idp. Delete & load the metadata ");
+                if (FederationManager.getExitCode(idpfm.deleteEntity(
+                        idpWebClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false,
-                        "saml2");
-                if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log(logLevel, "configureSAMLv2", "Delete sp entity on " +
-                            "IDP side", null);
+                        "saml2")) == 0) {
+                    log(Level.FINEST, "configureSAMLv2", "Delete sp entity" +
+                            " on IDP side");
                 } else {
-                    log(logLevel, "configureSAMLv2", "Couldnt delete sp " +
-                            "entity on IDP side", null);
+                    log(Level.SEVERE, "configureSAMLv2", "Couldnt delete sp " +
+                            "entity on IDP side");
+                    log(Level.SEVERE, "configureSAMLv2", "deleteEntity famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -297,34 +324,34 @@ public class ConfigureSAMLv2 extends TestCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             spMetadata[1] = spMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importSPMeta = idpfm.importEntity(idpWebClient,
+            if (FederationManager.getExitCode(idpfm.importEntity(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), spMetadata[0],
                     spMetadata[1],
-                    (String)configMap.get(TestConstants.KEY_IDP_COT), "saml2");
-            if (!importSPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    (String)configMap.get(TestConstants.KEY_IDP_COT), "saml2"))
+                    != 0) {
                 log(Level.SEVERE, "configureSAMLv2", "Couldn't import SP " +
-                        "metadata on IDP side" + importSPMeta.getWebResponse().
-                        getContentAsString(), null);
+                        "metadata on IDP side");
+                log(Level.SEVERE, "configureSAMLv2", "importEntity famadm" +
+                        " command failed");
                 assert false;
             }
             //load idpmetadata on sp
             if (spEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(logLevel, "configureSAMLv2", "idp entity exists at sp. " +
-                        "Delete & load the metadata ", null);
-                HtmlPage idpDeleteEntityPage = spfm.deleteEntity(spWebClient,
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
+            {
+                log(Level.FINEST, "configureSAMLv2", "idp entity exists at" +
+                        " sp. Delete & load the metadata ");
+                if (FederationManager.getExitCode(spfm.deleteEntity(spWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false,
-                        "saml2");
-                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                    log(logLevel, "configureSAMLv2", "Delete idp entity on " +
-                            "SP side", null);
+                        "saml2")) == 0) {
+                    log(Level.FINEST, "configureSAMLv2", "Delete idp entity" +
+                            " on SP side");
                 } else {
-                    log(logLevel, "configureSAMLv2", "Couldnt delete idp " +
-                            "entity on SP side", null);
+                    log(Level.SEVERE, "configureSAMLv2", "Couldnt delete idp " +
+                            "entity on SP side");
+                    log(Level.SEVERE, "configureSAMLv2", "deleteEntity famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -332,21 +359,21 @@ public class ConfigureSAMLv2 extends TestCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importIDPMeta = spfm.importEntity(spWebClient,
+            if (FederationManager.getExitCode(spfm.importEntity(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idpMetadata[0],
                     idpMetadata[1],
-                    (String)configMap.get(TestConstants.KEY_SP_COT), "saml2");
-            if (!importIDPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    (String)configMap.get(TestConstants.KEY_SP_COT), "saml2"))
+                    != 0) {
                 log(Level.SEVERE, "configureSAMLv2", "Couldn't import IDP " +
-                        "metadata on SP side" + importIDPMeta.getWebResponse().
-                        getContentAsString(), null);
+                        "metadata on SP side");
+                log(Level.SEVERE, "configureSAMLv2", "importEntity famadm" +
+                        " command failed");
                 assert false;
             }
             consoleLogout(spWebClient, spurl);
             consoleLogout(idpWebClient, idpurl);
         } catch (Exception e) {
-            log(Level.SEVERE, "configureSAMLv2", e.getMessage(), null);
+            log(Level.SEVERE, "configureSAMLv2", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -388,7 +415,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             spMap.put(TestConstants.KEY_ATT_LOAD_UMS,
                     confMap.get(TestConstants.KEY_SP_LOAD_UMS));
         } catch(Exception e) {
-            log(Level.SEVERE, "getspConfigurationMap", e.getMessage(), null);
+            log(Level.SEVERE, "getspConfigurationMap", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -429,7 +456,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             idpMap.put(TestConstants.KEY_ATT_LOAD_UMS,
                     confMap.get(TestConstants.KEY_SP_LOAD_UMS));
         } catch(Exception e) {
-            log(Level.SEVERE, "getidpConfigurationMap", e.getMessage(), null);
+            log(Level.SEVERE, "getidpConfigurationMap", e.getMessage());
             e.printStackTrace();
             throw e;
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFDefaultURLsTests.java,v 1.2 2007-09-10 22:35:46 mrudulahg Exp $
+ * $Id: IDFFDefaultURLsTests.java,v 1.3 2008-01-31 22:06:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -152,9 +152,14 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmSP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    configMap.get(TestConstants.KEY_SP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_SP_USER), "User", list))
+                    != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
+                assert false;
+            }
             log(Level.FINE, "setup", "SP user created is " + list);
             
             // Create idp users
@@ -164,9 +169,14 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmIDP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    configMap.get(TestConstants.KEY_IDP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_IDP_USER), "User", list))
+                    != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
+                assert false;
+            }
             log(Level.FINE, "setup", "IDP user created is " + list);
             
             //get sp & idp extended metadata
@@ -174,12 +184,23 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_SP_REALM),
                     false, false, true, "idff");
+            if (FederationManager.getExitCode(spmetaPage) != 0) {
+                log(Level.SEVERE, "setup", "exportEntity famadm command" +
+                        " failed");
+                assert false;
+            }
             spmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
             HtmlPage idpmetaPage = fmIDP.exportEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_IDP_REALM),
                     false, false, true, "idff");
-            idpmetadata = MultiProtocolCommon.getExtMetadataFromPage(idpmetaPage);
+            if (FederationManager.getExitCode(idpmetaPage) != 0) {
+                log(Level.SEVERE, "setup", "exportEntity famadm command" +
+                        " failed");
+                assert false;
+            }
+            idpmetadata =
+                    MultiProtocolCommon.getExtMetadataFromPage(idpmetaPage);
             defaultURLsSetup(webClient, spmetadata, idpmetadata, fmSP, fmIDP, 
                     configMap);
         } catch (Exception e) {
@@ -238,7 +259,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
                     "            <Value>" + configMap.get
                     ("idp_terminationDoneURL") + "</Value>\n" + 
                     "        </Attribute>";
-            String spmetadataMod = spmetadata.replaceAll(FEDERATION_DONE_DEFAULT,
+            String spmetadataMod = 
+                    spmetadata.replaceAll(FEDERATION_DONE_DEFAULT,
                     SP_FEDERATION_DONE_VALUE);
             spmetadataMod = spmetadataMod.replaceAll(LOGOUT_DONE_DEFAULT,
                     SP_LOGOUT_DONE_VALUE);
@@ -250,7 +272,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
                     spmetadataMod);
             String idpmetadataMod = idpmetadata.replaceAll(LOGOUT_DONE_DEFAULT,
                     IDP_LOGOUT_DONE_VALUE);
-            idpmetadataMod = idpmetadataMod.replaceAll(REGISTRATION_DONE_DEFAULT,
+            idpmetadataMod =
+                    idpmetadataMod.replaceAll(REGISTRATION_DONE_DEFAULT,
                     IDP_REGISTRATION_DONE_VALUE);
             idpmetadataMod = idpmetadataMod.replaceAll(TERMINATION_DONE_DEFAULT,
                     IDP_TERMINATION_DONE_VALUE);
@@ -307,7 +330,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     throws Exception {
         entering("DefaultURLSPInitSLO", null);
         try {
-            log(Level.FINE, "DefaultURLSPInitSLO", "Running: DefaultURLSPInitSLO");
+            log(Level.FINE, "DefaultURLSPInitSLO",
+                    "Running: DefaultURLSPInitSLO");
             xmlfile = baseDir + "DefaultURLSPInitSLO.xml";
             getxmlSPIDFFLogout(xmlfile, configMap);
             log(Level.FINE, "DefaultURLSPInitSLO", "Run " + xmlfile);
@@ -508,9 +532,13 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             idList.add(configMap.get(TestConstants.KEY_SP_USER));
             log(Level.FINE, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
-            fmSP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
 
             // Create idp users
             consoleLogin(webClient, idpurl + "/UI/Login",
@@ -521,9 +549,13 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             idList.add(configMap.get(TestConstants.KEY_IDP_USER));
             log(Level.FINE, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
-            fmIDP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
 
             //Load default metadata back. 
             assert (loadSPMetadata(null, spmetadata, fmSP, fmIDP,

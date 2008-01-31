@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.4 2008-01-18 00:42:53 rmisra Exp $
+ * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.5 2008-01-31 22:06:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -160,10 +160,14 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                         TestConstants.KEY_IDP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
                 log(Level.FINEST, "setup", "IDP user to be created is " + list);
-                fmIDP.createIdentity(webClient, configMap.get(
-                        TestConstants.KEY_IDP_REALM),
+                if (FederationManager.getExitCode(fmIDP.createIdentity(
+                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User", 
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 idpuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + i));
                 list.clear();
             }
@@ -219,17 +223,16 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             //Set Dynamic user creation to true. 
             List listDyn = new ArrayList();
             listDyn.add("iplanet-am-auth-dynamic-profile-creation=createAlias");
-            HtmlPage spServiceAtt = fmSP.setSvcAttrs(webClient, 
+            if (FederationManager.getExitCode(fmSP.setSvcAttrs(webClient, 
                     configMap.get(TestConstants.KEY_SP_REALM), 
-                    "iPlanetAMAuthService", listDyn);
-            if (spServiceAtt.getWebResponse().getContentAsString().
-                    contains("is modified")) {
+                    "iPlanetAMAuthService", listDyn)) == 0) {
                 log(Level.FINE, "autoFedDynamicUserCreationSetup", 
                         "Successfully enabled Dynamic user creation");
             } else {
                 log(Level.SEVERE, "autoFedDynamicUserCreationSetup", 
-                        "Couldn't enable Dynamic user creation" +
-                        spServiceAtt.getWebResponse().getContentAsString());
+                        "Couldn't enable Dynamic user creation");
+                log(Level.SEVERE, "autoFedDynamicUserCreationSetup",
+                        "setSvcAttrs famadm command failed");
                 assert(false);
             }
             
@@ -238,6 +241,11 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                     configMap.get(TestConstants.KEY_SP_REALM),
                     false, false, true, "saml2");
+            if (FederationManager.getExitCode(spmetaPage) != 0) {
+               log(Level.SEVERE, "autoFedDynamicUserCreationSetup",
+                       "exportEntity famadm command failed");
+               assert false;
+            }
             spmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
             String spmetadataMod = spmetadata.replaceAll(ATTRIB_MAP_DEFAULT,
                     ATTRIB_MAP_VALUE);
@@ -247,30 +255,27 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                     AUTO_FED_ATTRIB_VALUE);
             log(Level.FINEST, "autoFedDynamicUserCreationSetup", "Modified " +
                     "metadata:" + spmetadataMod);
-            HtmlPage deleteExtEntity = fmSP.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    true, "saml2")) != 0) {
                 log(Level.SEVERE, "autoFedDynamicUserCreationSetup", 
-                        "Deletion of Extended entity failed" +
-                        deleteExtEntity.getWebResponse().getContentAsString());
+                        "Deletion of Extended entity failed");
+                log(Level.SEVERE, "autoFedDynamicUserCreationSetup",
+                        "deleteEntity famadm command failed");
                 assert(false);
             } else {
                  log(Level.FINE, "autoFedDynamicUserCreationSetup", "Deleted " +
                          "SP Ext entity");
             }
             
-            HtmlPage importMeta = fmSP.importEntity(webClient,
+            if (FederationManager.getExitCode(fmSP.importEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "", 
-                    spmetadataMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    spmetadataMod, "", "saml2")) != 0) {
                 log(Level.SEVERE, "autoFedDynamicUserCreationSetup", "Failed " +
-                        "to importextended metadata " + 
-                        importMeta.getWebResponse().getContentAsString());
+                        "to importextended metadata");
+                log(Level.SEVERE, "autoFedDynamicUserCreationSetup",
+                        "importEntity famadm command failed");
                 assert(false);
             } else {
                 log(Level.FINE, "autoFedDynamicUserCreationSetup", "Imported " +
@@ -284,7 +289,13 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_IDP_REALM), false, false, 
                     true, "saml2");
-            idpmetadata = MultiProtocolCommon.getExtMetadataFromPage(idpmetaPage);
+            if (FederationManager.getExitCode(idpmetaPage) != 0) {
+               log(Level.SEVERE, "autoFedDynamicUserCreationSetup",
+                       "exportEntity famadm command failed");
+               assert false;
+            }
+            idpmetadata =
+                    MultiProtocolCommon.getExtMetadataFromPage(idpmetaPage);
             String idpmetadataMod = idpmetadata.replaceAll(ATTRIB_MAP_DEFAULT,
                     ATTRIB_MAP_VALUE);
             spmetadataMod = spmetadataMod.replaceAll(AUTO_FED_ENABLED_FALSE,
@@ -294,31 +305,29 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             log(Level.FINEST, "autoFedDynamicUserCreationSetup", "Modified " +
                     "IDP metadata:" + idpmetadataMod);
             
-            deleteExtEntity = fmIDP.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                    true, "saml2")) != 0) {
                 log(Level.SEVERE, "autoFedDynamicUserCreationSetup", 
-                        "Deletion of idp Extended entity failed" + 
-                        deleteExtEntity.getWebResponse().getContentAsString());
+                        "Deletion of idp Extended entity failed");
+                log(Level.SEVERE, "autoFedDynamicUserCreationSetup",
+                        "deleteEntity famadm command failed");
                 assert(false);
             }
             
-            importMeta = fmIDP.importEntity(webClient,
+            if (FederationManager.getExitCode(fmIDP.importEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "", 
-                    idpmetadataMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    idpmetadataMod, "", "saml2")) != 0) {
                 log(Level.SEVERE, "autoFedDynamicUserCreationSetup", "Failed " +
-                        "to import idp extended metadata" + importMeta.
-                        getWebResponse().getContentAsString());
+                        "to import idp extended metadata");
+                log(Level.SEVERE, "autoFedDynamicUserCreationSetup",
+                        "importEntity famadm command failed");
                 assert(false);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "autoFedDynamicUserCreationSetup", e.getMessage());
+            log(Level.SEVERE, "autoFedDynamicUserCreationSetup",
+                    e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -417,7 +426,8 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
     /**
      * Run SP initiated auto federation with Dynamic user creation at sp side 
      * using Post/SOAP Profile
-     * @DocTest: SAML2| SP initiated SSO with dynamic user creation Post/SOAP Profile
+     * @DocTest: SAML2| SP initiated SSO with dynamic user creation Post/SOAP
+     * Profile
      * TestCase ID: SAMLv2_usecase_8_3
      */
     @Test(groups={"ds_ds_sec","ff_ds_sec"})
@@ -519,72 +529,70 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             //Set Dynamic user creation to false (default). 
             List listDyn = new ArrayList();
             listDyn.add("iplanet-am-auth-dynamic-profile-creation=false");
-            HtmlPage spServiceAtt = fmSP.setSvcAttrs(webClient, 
+            if (FederationManager.getExitCode(fmSP.setSvcAttrs(webClient, 
                     configMap.get(TestConstants.KEY_SP_REALM), 
-                    "iPlanetAMAuthService", listDyn);
-            if (spServiceAtt.getWebResponse().getContentAsString().
-                    contains("is modified")) {
+                    "iPlanetAMAuthService", listDyn)) == 0) {
                 log(Level.FINE, "cleanup", "Successfully disabled Dynamic " +
                         "user creation");
             } else {
                 log(Level.SEVERE, "cleanup", "Couldn't disable Dynamic user " +
-                        "creation" +
-                        spServiceAtt.getWebResponse().getContentAsString());
+                        "creation");
+                log(Level.SEVERE, "cleanup", "setSvcAttrs famadm command" +
+                        " failed");
                 assert(false);
             }
 
-            HtmlPage deleteExtEntity = fmSP.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    true, "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Deletion of Extended " +
-                        "entity failed" + deleteExtEntity.getWebResponse().
-                        getContentAsString());
+                        "entity failed");
+                log(Level.SEVERE, "cleanup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             }
             
-            HtmlPage importMeta = fmSP.importEntity(webClient,
+            if (FederationManager.getExitCode(fmSP.importEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "", spmetadata, 
-                    "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    "", "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Failed to import extended " +
-                        "metadata" + importMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata");
+                log(Level.SEVERE, "cleanup", "importEntity famadm command" +
+                        " failed");
                 assert(false);
             }
             consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             log(Level.FINE, "cleanup", "Users to delete are" + idpuserlist);
-            fmIDP.deleteIdentities(webClient, configMap.get(
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
+                    configMap.get(
                     TestConstants.KEY_IDP_REALM),
-                    idpuserlist, "User");
+                    idpuserlist, "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
+                        " command failed");
+                assert false;
+            }
             
-            deleteExtEntity = fmIDP.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                    true, "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Deletion of idp Extended " +
-                        "entity failed" + deleteExtEntity.getWebResponse().
-                        getContentAsString());
+                        "entity failed");
+                log(Level.SEVERE, "cleanup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             }
             
-            importMeta = fmIDP.importEntity(webClient,
+            if (FederationManager.getExitCode(fmIDP.importEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "", 
-                    idpmetadata, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    idpmetadata, "", "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Failed to import idp " +
-                        "extended metadata" + importMeta.getWebResponse().
-                        getContentAsString());
+                        "extended metadata");
+                log(Level.SEVERE, "cleanup", "importEntity famadm command" +
+                        " failed");
                 assert(false);
             }
         } catch (Exception e) {

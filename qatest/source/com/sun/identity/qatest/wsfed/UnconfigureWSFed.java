@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureWSFed.java,v 1.2 2008-01-18 00:42:53 rmisra Exp $
+ * $Id: UnconfigureWSFed.java,v 1.3 2008-01-31 22:06:30 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,41 +111,47 @@ public class UnconfigureWSFed extends TestCommon {
             
             HtmlPage idpEntityPage = idpfm.listEntities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "wsfed");
+            if (FederationManager.getExitCode(idpEntityPage) != 0) {
+               log(Level.SEVERE, "UnconfigureWSFed", "listEntities famadm" +
+                       " command failed");
+               assert false;
+            }
             //Delete IDP & SP entities on IDP
             if (idpEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(Level.FINEST, "UnconfigureWSFed", "IDP entity exists at IDP.");
-                HtmlPage idpDeleteEntityPage = idpfm.deleteEntity(webClient,
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
+            {
+                log(Level.FINEST, "UnconfigureWSFed", "IDP entity exists at" +
+                        " IDP.");
+                if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false,
-                        "wsfed");
-                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                    log(Level.FINEST, "UnconfigureWSFed", "Delete IDP entity on " +
-                            "IDP side");
+                        "wsfed")) == 0) {
+                    log(Level.FINEST, "UnconfigureWSFed", "Delete IDP entity" +
+                            " on IDP side");
                 } else {
-                    log(Level.FINEST, "UnconfigureWSFed", "Couldnt delete IDP " +
-                            "entity on IDP side");
+                    log(Level.SEVERE, "UnconfigureWSFed", "Couldnt delete" +
+                            " IDP entity on IDP side");
+                    log(Level.SEVERE, "UnconfigureWSFed", "deleteEntity" +
+                            " famadm command failed");
                     assert false;
                 }
             }
             
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(Level.FINEST, "UnconfigureWSFed", "SP entity exists at IDP.");
-                HtmlPage spDeleteEntityPage = idpfm.deleteEntity(webClient,
+                log(Level.FINEST, "UnconfigureWSFed", "SP entity exists at" +
+                        " IDP.");
+                if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false,
-                        "wsfed");
-                if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log(Level.FINEST, "UnconfigureWSFed", "Deleted SP entity on " +
-                            "IDP side");
+                        "wsfed")) == 0) {
+                    log(Level.FINEST, "UnconfigureWSFed", "Deleted SP entity" +
+                            " on IDP side");
                 } else {
-                    log(Level.FINEST, "UnconfigureWSFed", "Couldnt delete SP " +
+                    log(Level.SEVERE, "UnconfigureWSFed", "Couldnt delete SP " +
                             "entity on IDP side");
+                    log(Level.SEVERE, "UnconfigureWSFed", "deleteEntity" +
+                            " famadm command failed");
                     assert false;
                 }
             }
@@ -153,19 +159,22 @@ public class UnconfigureWSFed extends TestCommon {
             //Delete COT on IDP side.
             HtmlPage idpcotPage = idpfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM));
+            if (FederationManager.getExitCode(idpcotPage) != 0) {
+               log(Level.SEVERE, "UnconfigureWSFed", "listCots famadm" +
+                       " command failed");
+               assert false;
+            }
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
                 log(Level.FINEST, "UnconfigureWSFed", "COT exists at IDP side");
-                idpcotPage = idpfm.deleteCot(webClient,
+                if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_REALM));
-                if (!idpcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, " +
-                        configMap.get(TestConstants.KEY_IDP_COT)
-                        + " is deleted.")) {
-                    log(Level.FINEST, "UnconfigureWSFed", "Couldn't delete " +
-                            "COT at IDP side" +
-                            idpcotPage.getWebResponse().getContentAsString());
+                        configMap.get(TestConstants.KEY_IDP_REALM))) != 0) {
+                    log(Level.SEVERE, "UnconfigureWSFed", "Couldn't delete " +
+                            "COT at IDP side");
+                    log(Level.SEVERE, "UnconfigureWSFed", "deleteCot famadm" +
+                            " command failed");
+                    assert false;
                 } else {
                     log(Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
                             "at IDP side");                    
@@ -174,41 +183,47 @@ public class UnconfigureWSFed extends TestCommon {
             
             HtmlPage spEntityPage = spfm.listEntities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "wsfed");
+            if (FederationManager.getExitCode(spEntityPage) != 0) {
+               log(Level.SEVERE, "UnconfigureWSFed", "listEntities famadm" +
+                       " command failed");
+               assert false;
+            }
             //Delete SP & IDP entities on sp
             if (spEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(Level.FINEST, "UnconfigureWSFed", "SP entity exists at SP. ");
-                HtmlPage spDeleteEntityPage = spfm.deleteEntity(webClient,
+                log(Level.FINEST, "UnconfigureWSFed", "SP entity exists at" +
+                        " SP. ");
+                if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false,
-                        "wsfed");
-                if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log(Level.FINEST, "UnconfigureWSFed", "Deleted SP entity on " +
-                            "SP side");
+                        "wsfed")) == 0) {
+                    log(Level.FINEST, "UnconfigureWSFed", "Deleted SP entity" +
+                            " on SP side");
                 } else {
-                    log(Level.FINEST, "UnconfigureWSFed", "Couldnt delete idp " +
+                    log(Level.SEVERE, "UnconfigureWSFed", "Couldnt delete SP " +
                             "entity on SP side");
+                    log(Level.SEVERE, "UnconfigureWSFed", "deleteEntity" +
+                            " famadm command failed");
                     assert false;
                 }
             }
             
             if (spEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(Level.FINEST, "UnconfigureWSFed", "IDP entity exists at SP.");
-                HtmlPage idpDeleteEntityPage = spfm.deleteEntity(webClient,
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
+            {
+                log(Level.FINEST, "UnconfigureWSFed", "IDP entity exists at" +
+                        " SP.");
+                if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false,
-                        "wsfed");
-                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                    log(Level.FINEST, "UnconfigureWSFed", "Deleted IDP entity on " +
-                            "SP side");
+                        "wsfed")) == 0) {
+                    log(Level.FINEST, "UnconfigureWSFed", "Deleted IDP entity" +
+                            " on SP side");
                 } else {
-                    log(Level.FINEST, "UnconfigureWSFed", "Couldnt delete IDP " +
-                            "entity on SP side");
+                    log(Level.FINEST, "UnconfigureWSFed", "Couldnt delete" +
+                            " IDP entity on SP side");
+                    log(Level.SEVERE, "UnconfigureWSFed", "deleteEntity" +
+                            " famadm command failed");
                     assert false;
                 }
             }
@@ -216,18 +231,20 @@ public class UnconfigureWSFed extends TestCommon {
             //Delete COT on sp side.
             HtmlPage spcotPage = spfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM));
+            if (FederationManager.getExitCode(spcotPage) != 0) {
+               log(Level.SEVERE, "UnconfigureWSFed", "listCots famadm command" +
+                       " failed");
+               assert false;
+            }
             if (spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.deleteCot(webClient,
+                if (FederationManager.getExitCode(spfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_REALM));
-                if (!spcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, "
-                        + configMap.get(TestConstants.KEY_SP_COT)
-                        + " is deleted.")) {
-                    log(Level.FINEST, "UnconfigureWSFed", "Couldn't delete " +
-                            "COT at SP side" +
-                            spcotPage.getWebResponse().getContentAsString());
+                        configMap.get(TestConstants.KEY_SP_REALM))) != 0) {
+                    log(Level.SEVERE, "UnconfigureWSFed", "Couldn't delete " +
+                            "COT at SP side");
+                    log(Level.SEVERE, "UnconfigureWSFed", "deleteCot famadm" +
+                            " command failed");
                     assert false;
                 } else {
                     log(Level.FINEST, "UnconfigureWSFed", "Deleted COT " +

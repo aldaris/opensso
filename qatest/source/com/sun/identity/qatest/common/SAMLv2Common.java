@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.7 2008-01-18 00:42:51 rmisra Exp $
+ * $Id: SAMLv2Common.java,v 1.8 2008-01-31 22:06:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,12 +54,13 @@ public class SAMLv2Common extends TestCommon {
      * 2. It redirects to idp login. Enter idp user id & password.
      * 3. After successful idp login, it is redirected to sp login page.
      * Enter sp user id & password.
-     * 4. After successful sp login, "Single sign-on succeeded" msg is displayed.
+     * 4. After successful sp login, "Single sign-on succeeded" msg is
+     * displayed.
      * @param xmlFileName is the file to be created.
      * @param Map m contains all the data for xml generation
      * @param bindingType can be artifact or post
-     * @param idpLoginOnly can be used in autofedertion case, where only idplogin
-     * is req
+     * @param idpLoginOnly can be used in autofedertion case, where only
+     * idplogin is req
      */
     public static void getxmlSPInitSSO(String xmlFileName, Map m,
             String bindingType, boolean idpLoginOnly)
@@ -125,12 +126,13 @@ public class SAMLv2Common extends TestCommon {
      * 1. Go to idpSSOInit.jsp on idp side.
      * 2. It redirects to sp login.
      * Enter sp user id & password.
-     * 4. After successful sp login, "Single sign-on succeeded" msg is displayed.
+     * 4. After successful sp login, "Single sign-on succeeded" msg is
+     * displayed.
      * @param xmlFileName is the file to be created.
      * @param Map m contains all the data for xml generation
      * @param bindingType can be artifact or post
-     * @param idpLoginOnly can be used in autofedertion case, where only idplogin
-     * is req
+     * @param idpLoginOnly can be used in autofedertion case, where only
+     * idplogin is req
      */
     public static void getxmlIDPInitSSO(String xmlFileName, Map m,
             String bindingType, boolean idpLoginOnly)
@@ -188,12 +190,14 @@ public class SAMLv2Common extends TestCommon {
      * The flow is as follows
      * 1. Go to spSSOInit.jsp on sp side.
      * 2. It redirects to idp login. Enter idp user id & password.
-     * 3. After successful idp login, "Single sign-on succeeded" msg is displayed
+     * 3. After successful idp login, "Single sign-on succeeded" msg is
+     * displayed
      * @param xmlFileName is the file to be created.
      * @param Map m contains all the data for xml generation
      * @param bindingType can be artifact or post
      */
-    public static void getxmlSPSSO(String xmlFileName, Map m, String bindingType)
+    public static void getxmlSPSSO(String xmlFileName, Map m,
+            String bindingType)
     throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
@@ -899,7 +903,11 @@ public class SAMLv2Common extends TestCommon {
                         (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
                         true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
                         null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null, "saml2");
+                        null, null, null, null, null, null, null, null,
+                        "saml2");
+            }
+            if (FederationManager.getExitCode(spmetaPage) != 0) {
+               assert false;
             }
             
             String spPage = spmetaPage.getWebResponse().getContentAsString();
@@ -915,22 +923,22 @@ public class SAMLv2Common extends TestCommon {
                 arrMetadata[1] = null;
                 assert false;
             }
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
+            {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
                 arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
-                HtmlPage importMeta = spfm.importEntity(webClient,
+                if (FederationManager.getExitCode(spfm.importEntity(webClient,
                         (String)m.get(TestConstants.KEY_SP_REALM),
                         arrMetadata[0], arrMetadata[1],
-                        (String)m.get(TestConstants.KEY_SP_COT), "saml2");
-                if (!importMeta.getWebResponse().getContentAsString().
-                        contains("Import file, web.")) {
-                    assert(false);
+                        (String)m.get(TestConstants.KEY_SP_COT), "saml2")) != 0)
+                {
                     arrMetadata[0] = null;
                     arrMetadata[1] = null;
+                    assert(false);
                 }
             }
         } catch (Exception e) {
@@ -976,6 +984,9 @@ public class SAMLv2Common extends TestCommon {
                         null, null, null, null, null, null, null, null, null,
                         null, null, null, null, null, null, "saml2");
             }
+            if (FederationManager.getExitCode(idpmetaPage) != 0) {
+               assert false;
+            }
             String idpPage = idpmetaPage.getWebResponse().getContentAsString();
             if (idpPage.indexOf("EntityDescriptor") != -1) {
                 arrMetadata[0] = idpPage.substring(
@@ -989,22 +1000,22 @@ public class SAMLv2Common extends TestCommon {
                 arrMetadata[1] = null;
                 assert false;
             }
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
+            {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
                 arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
-                HtmlPage importMeta = idpfm.importEntity(webClient,
+                if (FederationManager.getExitCode(idpfm.importEntity(webClient,
                         (String)m.get(TestConstants.KEY_IDP_REALM),
                         arrMetadata[0], arrMetadata[1],
-                        (String)m.get(TestConstants.KEY_IDP_COT), "saml2");
-                if (!importMeta.getWebResponse().getContentAsString().
-                        contains("Import file, web.")) {
-                    assert(false);
+                        (String)m.get(TestConstants.KEY_IDP_COT), "saml2"))
+                        != 0) {
                     arrMetadata[0] = null;
                     arrMetadata[1] = null;
+                    assert(false);
                 }
             }
         } catch (Exception e) {
@@ -1038,33 +1049,29 @@ public class SAMLv2Common extends TestCommon {
                         metadataext);
                 assert false;
             }
-            HtmlPage idpDeleteEntityPage = fmidp.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmidp.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_IDP_REALM), false,
-                    "saml2");
-            if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                    contains("Descriptor is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                    "saml2")) == 0) {
                 log(Level.FINE, "loadIDPMetadata", "Deleted idp entity on " +
                         "IDP side");
             } else {
                 log(Level.SEVERE, "loadIDPMetadata", "Couldnt delete idp " +
-                        "entity on IDP side" +
-                        idpDeleteEntityPage.getWebResponse().
-                        getContentAsString());
+                        "entity on IDP side");
+                log(Level.SEVERE, "loadIDPMetadata", "deleteEntity (IDP)" +
+                        " famadm command failed");
                 assert false;
             }
-            HtmlPage importIDPMeta = fmidp.importEntity(webClient,
+            if (FederationManager.getExitCode(fmidp.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_REALM),
-                    metadata, metadataext, null, "saml2");
-            if (importIDPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    metadata, metadataext, null, "saml2")) == 0) {
                 log(Level.FINE, "loadIDPMetadata", "Successfully " +
                         "imported IDP metadata on IDP side");
             } else {
                 log(Level.SEVERE, "loadIDPMetadata", "Couldn't import IDP" +
-                        " metadata on IDP side" + importIDPMeta.
-                        getWebResponse().getContentAsString());
+                        " metadata on IDP side");
+                log(Level.SEVERE, "loadIDPMetadata", "importEntity (IDP)" +
+                        " famadm command failed");
                 assert false;
             }
             
@@ -1077,35 +1084,31 @@ public class SAMLv2Common extends TestCommon {
                     "hosted=\"1\"", "hosted=\"0\"");
             log(Level.FINER, "loadIDPMetadata", "IDP Ext. Metadata to load " +
                     "on SP" + metadataext);
-            idpDeleteEntityPage = fmsp.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmsp.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_SP_REALM), false,
-                    "saml2");
-            if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                    contains("Descriptor is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                    "saml2")) == 0) {
                 log(Level.FINE, "loadIDPMetadata", "Deleted idp entity on " +
                         "SP side");
             } else {
                 log(Level.SEVERE, "loadIDPMetadata", "Couldnt delete idp " +
-                        "entity on SP side" +
-                        idpDeleteEntityPage.getWebResponse().
-                        getContentAsString());
+                        "entity on SP side");
+                log(Level.SEVERE, "loadIDPMetadata", "deleteEntity (SP)" +
+                        " famadm command failed");
                 assert false;
             }
-            importIDPMeta = fmsp.importEntity(webClient,
+            if (FederationManager.getExitCode(fmsp.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_REALM), metadata,
                     metadataext,
                     (String)configMap.get(TestConstants.KEY_SP_COT),
-                    "saml2");
-            if (importIDPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    "saml2")) == 0) {
                 log(Level.FINE, "loadIDPMetadata", "Successfully " +
                         "imported SP metadata on IDP side");
             } else {
                 log(Level.SEVERE, "loadIDPMetadata", "Couldn't import SP " +
-                        "metadata on IDP side" + importIDPMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata on IDP side");
+                log(Level.SEVERE, "loadIDPMetadata", "importEntity (SP)" +
+                        " famadm command failed");
                 assert false;
             }
         } catch (Exception e) {
@@ -1138,34 +1141,30 @@ public class SAMLv2Common extends TestCommon {
                         metadataext);
                 assert false;
             }
-            HtmlPage spDeleteEntityPage = fmsp.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmsp.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_SP_REALM), false,
-                    "saml2");
-            if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                    contains("Descriptor is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    "saml2")) == 0) {
                 log(Level.FINEST, "loadSPMetadata", "Deleted sp entity on " +
                         "SP side");
             } else {
                 log(Level.SEVERE, "loadSPMetadata", "Couldnt delete sp " +
-                        "entity on SP side" +
-                        spDeleteEntityPage.getWebResponse().
-                        getContentAsString());
+                        "entity on SP side");
+                log(Level.SEVERE, "loadSPMetadata", "deleteEntity (SP)" +
+                        " famadm command failed");
                 assert false;
             }
 
-            HtmlPage importSPMeta = fmsp.importEntity(webClient,
+            if (FederationManager.getExitCode(fmsp.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_REALM),
-                    metadata, metadataext, null, "saml2");
-            if (importSPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    metadata, metadataext, null, "saml2")) == 0) {
                 log(Level.FINE, "loadSPMetadata", "Successfully " +
                         "imported SP metadata on SP side");
             } else {
                 log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
-                        "metadata on SP side" + importSPMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata on SP side");
+                log(Level.SEVERE, "loadSPMetadata", "importEntity (SP)" +
+                        " famadm command failed");
                 assert false;
             }
 
@@ -1178,42 +1177,37 @@ public class SAMLv2Common extends TestCommon {
                     "hosted=\"1\"", "hosted=\"0\"");
             log(Level.FINER, "loadSPMetadata", "SP Ext. Metadata to load " +
                     "on IDP" + metadataext);
-            spDeleteEntityPage = fmidp.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmidp.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_IDP_REALM), false,
-                    "saml2");
-            if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                    contains("Descriptor is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    "saml2")) == 0) {
                 log(Level.FINE, "loadSPMetadata", "Deleted sp entity on " +
                         "IDP side");
             } else {
                 log(Level.SEVERE, "loadSPMetadata", "Couldnt delete sp " +
-                        "entity on IDP side" +
-                        spDeleteEntityPage.getWebResponse().
-                        getContentAsString());
+                        "entity on IDP side");
+                log(Level.SEVERE, "loadSPMetadata", "deleteEntity (IDP)" +
+                        " famadm command failed");
                 assert false;
             }
-            importSPMeta = fmidp.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM), metadata,
-                    metadataext,
+             if (FederationManager.getExitCode(fmidp.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_IDP_REALM),
+                    metadata, metadataext,
                     (String)configMap.get(TestConstants.KEY_IDP_COT),
-                    "saml2");
-            if (importSPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    "saml2")) == 0) {
                 log(Level.FINE, "loadSPMetadata", "Successfully " +
                         "imported SP metadata on IDP side");
             } else {
                 log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
-                        "metadata on IDP side" + importSPMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata on IDP side");
+                log(Level.SEVERE, "loadSPMetadata", "importEntity (IDP)" +
+                        " famadm command failed");
                 assert false;
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "changeMetadata", e.getMessage());
+            log(Level.SEVERE, "loadSPMetadata", e.getMessage());
             e.printStackTrace();
             throw e;
         }
     }
-
 }

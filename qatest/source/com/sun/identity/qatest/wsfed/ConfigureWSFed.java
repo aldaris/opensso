@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureWSFed.java,v 1.3 2008-01-18 00:42:53 rmisra Exp $
+ * $Id: ConfigureWSFed.java,v 1.4 2008-01-31 22:06:30 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,19 +112,21 @@ public class ConfigureWSFed extends WSFedCommon {
             
             HtmlPage spcotPage = spfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM));
+            if (FederationManager.getExitCode(spcotPage) != 0) {
+               log(Level.SEVERE, "ConfigureWSFed", "listCots famadm command" +
+                       " failed");
+               assert false;
+            }
             if (!spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.createCot(webClient,
+                if (FederationManager.getExitCode(spfm.createCot(webClient,
                         configMap.get(TestConstants.KEY_SP_COT),
                         configMap.get(TestConstants.KEY_SP_REALM),
-                        null, null);
-                if (!spcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, "
-                        + configMap.get(TestConstants.KEY_SP_COT)
-                        + " is created.")) {
+                        null, null)) != 0) {
                     log(Level.SEVERE, "ConfigureWSFed", "Couldn't create " +
-                            "COT at SP side " +
-                            spcotPage.getWebResponse().getContentAsString());
+                            "COT at SP side");
+                    log(Level.SEVERE, "ConfigureWSFed", "createCot famadm" +
+                            " command failed");
                     assert false;
                 }
             } else {
@@ -134,6 +136,11 @@ public class ConfigureWSFed extends WSFedCommon {
             String spMetadata[] = {"", ""};
             HtmlPage spEntityPage = spfm.listEntities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "wsfed");
+            if (FederationManager.getExitCode(spEntityPage) != 0) {
+               log(Level.SEVERE, "ConfigureWSFed", "listEntities famadm" +
+                       " command failed");
+               assert false;
+            }
             if (!spEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
                 log(Level.FINEST, "ConfigureWSFed", "sp entity doesnt exist. " +
@@ -157,6 +164,11 @@ public class ConfigureWSFed extends WSFedCommon {
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false, true,
                         true, "wsfed");
+                if (FederationManager.getExitCode(spExportEntityPage) != 0) {
+                   log(Level.SEVERE, "ConfigureWSFed", "exportEntity famadm" +
+                           " command failed");
+                   assert false;
+                }
                 spMetadata[0] = MultiProtocolCommon.getMetadataFromPage(
                         spExportEntityPage, "wsfed");
                 spMetadata[1] = MultiProtocolCommon.getExtMetadataFromPage(
@@ -171,23 +183,27 @@ public class ConfigureWSFed extends WSFedCommon {
             //idp side create cot, load idp metadata
             consoleLogin(webClient, idpurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
-                    (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
+                    (String)configMap.get(
+                    TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             HtmlPage idpcotPage = idpfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM));
+            if (FederationManager.getExitCode(idpcotPage) != 0) {
+               log(Level.SEVERE, "ConfigureWSFed", "listCots famadm" +
+                       " command failed");
+               assert false;
+            }
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
                 log(Level.FINEST, "ConfigureWSFed", "COT exists at IDP side");
             } else {
-                idpcotPage = idpfm.createCot(webClient,
+                if (FederationManager.getExitCode(idpfm.createCot(webClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM),
-                        null, null);
-                if (!idpcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, " +
-                        configMap.get(TestConstants.KEY_IDP_COT)
-                        + " is created.")) {
+                        null, null)) != 0) {
                     log(Level.SEVERE, "ConfigureWSFed", "Couldn't create " +
                             "COT at IDP side");
+                    log(Level.SEVERE, "ConfigureWSFed", "createCot famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -195,10 +211,16 @@ public class ConfigureWSFed extends WSFedCommon {
             String[] idpMetadata = {"",""};
             HtmlPage idpEntityPage = idpfm.listEntities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "wsfed");
+            if (FederationManager.getExitCode(idpEntityPage) != 0) {
+               log(Level.SEVERE, "ConfigureWSFed", "listEntities famadm" +
+                       " command failed");
+               assert false;
+            }
             if (!idpEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(Level.FINEST, "ConfigureWSFed", "idp entity doesnt exist. " +
-                        "Get template & create the entity");
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
+            {
+                log(Level.FINEST, "ConfigureWSFed", "idp entity doesnt exist." +
+                        " Get template & create the entity");
                 if (strGroupName.contains("sec")) {
                     idpMetadata = MultiProtocolCommon.configureIDP(webClient,
                             configMap, "wsfed", true);
@@ -223,6 +245,11 @@ public class ConfigureWSFed extends WSFedCommon {
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false, true,
                         true, "wsfed");
+                if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
+                   log(Level.SEVERE, "ConfigureWSFed", "exportEntity famadm" +
+                           " command failed");
+                   assert false;
+                }
                 idpMetadata[0] = MultiProtocolCommon.getMetadataFromPage(
                         idpExportEntityPage, "wsfed");
                 idpMetadata[1] = MultiProtocolCommon.getExtMetadataFromPage(
@@ -238,20 +265,19 @@ public class ConfigureWSFed extends WSFedCommon {
             //load spmetadata on idp
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(Level.FINEST, "ConfigureWSFed", "sp entity exists at idp. " +
-                        "Delete & load the metadata ");
-                HtmlPage spDeleteEntityPage = idpfm.deleteEntity(webClient,
+                log(Level.FINEST, "ConfigureWSFed", "sp entity exists at" +
+                        " idp. Delete & load the metadata ");
+                if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false,
-                        "wsfed");
-                if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                        "wsfed")) == 0) {
                     log(Level.FINEST, "ConfigureWSFed", "Delete sp entity on " +
                             "IDP side");
                 } else {
-                    log(Level.FINEST, "ConfigureWSFed", "Couldnt delete sp " +
+                    log(Level.SEVERE, "ConfigureWSFed", "Couldnt delete sp " +
                             "entity on IDP side");
+                    log(Level.SEVERE, "ConfigureWSFed", "deleteEntity famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -259,34 +285,34 @@ public class ConfigureWSFed extends WSFedCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             spMetadata[1] = spMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importSPMeta = idpfm.importEntity(webClient,
+            if (FederationManager.getExitCode(idpfm.importEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), spMetadata[0],
                     spMetadata[1],
-                    (String)configMap.get(TestConstants.KEY_IDP_COT), "wsfed");
-            if (!importSPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    (String)configMap.get(TestConstants.KEY_IDP_COT), "wsfed"))
+                    != 0) {
                 log(Level.SEVERE, "ConfigureWSFed", "Couldn't import SP " +
-                        "metadata on IDP side" + importSPMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata on IDP side");
+                log(Level.SEVERE, "ConfigureWSFed", "importEntity famadm" +
+                        " command failed");
                 assert false;
             }
             //load idpmetadata on sp
             if (spEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(Level.FINEST, "ConfigureWSFed", "idp entity exists at sp. " +
-                        "Delete & load the metadata ");
-                HtmlPage idpDeleteEntityPage = spfm.deleteEntity(webClient,
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
+            {
+                log(Level.FINEST, "ConfigureWSFed", "idp entity exists at" +
+                        " sp. Delete & load the metadata ");
+                if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false,
-                        "wsfed");
-                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                    log(Level.FINEST, "ConfigureWSFed", "Delete idp entity on " +
-                            "SP side");
+                        "wsfed")) == 0) {
+                    log(Level.FINEST, "ConfigureWSFed", "Delete idp entity" +
+                            " on SP side");
                 } else {
                     log(Level.FINEST, "ConfigureWSFed", "Couldnt delete idp " +
                             "entity on SP side");
+                log(Level.SEVERE, "ConfigureWSFed", "deleteEntity famadm" +
+                        " command failed");
                     assert false;
                 }
             }
@@ -294,15 +320,15 @@ public class ConfigureWSFed extends WSFedCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importIDPMeta = spfm.importEntity(webClient,
+            if (FederationManager.getExitCode(spfm.importEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idpMetadata[0],
                     idpMetadata[1],
-                    (String)configMap.get(TestConstants.KEY_SP_COT), "wsfed");
-            if (!importIDPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    (String)configMap.get(TestConstants.KEY_SP_COT), "wsfed"))
+                    != 0) {
                 log(Level.SEVERE, "ConfigureWSFed", "Couldn't import IDP " +
-                        "metadata on SP side" + importIDPMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata on SP side");
+                log(Level.SEVERE, "ConfigureWSFed", "importEntity famadm" +
+                        " command failed");
                 assert false;
             }
         } catch (Exception e) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2TransientUserTests.java,v 1.3 2007-09-10 22:36:55 mrudulahg Exp $
+ * $Id: SAMLv2TransientUserTests.java,v 1.4 2008-01-31 22:06:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,7 +95,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch(Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -126,7 +126,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_PORT) + 
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
         } catch (Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -150,15 +150,19 @@ public class SAMLv2TransientUserTests extends TestCommon {
                 list.add("userpassword=" + usersMap.get(
                         TestConstants.KEY_IDP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
-                fmIDP.createIdentity(webClient, configMap.get(
-                        TestConstants.KEY_IDP_REALM), 
+                if (FederationManager.getExitCode(fmIDP.createIdentity(
+                        webClient, configMap.get(TestConstants.KEY_IDP_REALM), 
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User", 
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 idpuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + i));
                 list.clear();
             }
         } catch(Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -182,7 +186,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
             
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
-            log(logLevel, "transientUserSetup", "Map:" + configMap);
+            log(Level.FINEST, "transientUserSetup", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + 
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" + 
@@ -193,7 +197,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_PORT) + 
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
         } catch (Exception e) {
-            log(Level.SEVERE, "transientUserSetup", e.getMessage(), null);
+            log(Level.SEVERE, "transientUserSetup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -209,34 +213,36 @@ public class SAMLv2TransientUserTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                     configMap.get(TestConstants.KEY_SP_REALM),
                     false, false, true, "saml2");
+            if (FederationManager.getExitCode(spmetaPage) != 0) {
+               log(Level.SEVERE, "transientUserSetup", "exportEntity famadm" +
+                       " command failed");
+               assert false;
+            }
             spmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
             String spmetadataMod = spmetadata.replaceAll(ATTRIB_MAP_DEFAULT,
                     ATTRIB_MAP_VALUE);
             spmetadataMod = spmetadataMod.replaceAll(TRANSIENT_USER_DEFAULT,
                     TRANSIENT_USER_ANON);
-            log(logLevel, "transientUserSetup", "Modified metadata:" +
+            log(Level.FINEST, "transientUserSetup", "Modified metadata:" +
                     spmetadataMod);
-            HtmlPage deleteExtEntity = spfm.deleteEntity(webClient, 
+            if (FederationManager.getExitCode(spfm.deleteEntity(webClient, 
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                     configMap.get(TestConstants.KEY_SP_REALM), 
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " + 
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(logLevel, "transientUserSetup", "Deletion of Extended " +
-                        "entity failed" + deleteExtEntity.getWebResponse().
-                    getContentAsString());
+                    true, "saml2")) != 0) {
+                log(Level.SEVERE, "transientUserSetup", "Deletion of Extended" +
+                        " entity failed");
+                log(Level.SEVERE, "transientUserSetup", "deleteEntity famadm" +
+                        " command failed");
                 assert(false);
             }
              
-            HtmlPage importMeta = spfm.importEntity(webClient, 
+            if (FederationManager.getExitCode(spfm.importEntity(webClient, 
                     configMap.get(TestConstants.KEY_SP_REALM), "", 
-                    spmetadataMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(logLevel, "transientUserSetup", "Failed to import " +
-                        "extended metadata" + importMeta.getWebResponse().
-                        getContentAsString());
+                    spmetadataMod, "", "saml2")) != 0) {
+                log(Level.SEVERE, "transientUserSetup", "Failed to import " +
+                        "extended metadata");
+                log(Level.SEVERE, "transientUserSetup", "importEntity famadm" +
+                        " command failed");
                 assert(false);
             }
             consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
@@ -247,36 +253,40 @@ public class SAMLv2TransientUserTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_IDP_REALM), false, false, 
                     true, "saml2");
-            idpmetadata = MultiProtocolCommon.getExtMetadataFromPage(idpmetaPage);
+            if (FederationManager.getExitCode(idpmetaPage) != 0) {
+               log(Level.SEVERE, "transientUserSetup", "exportEntity famadm" +
+                       " command failed");
+               assert false;
+            }
+            idpmetadata =
+                    MultiProtocolCommon.getExtMetadataFromPage(idpmetaPage);
             String idpmetadataMod = idpmetadata.replaceAll(ATTRIB_MAP_DEFAULT,
                     ATTRIB_MAP_VALUE);
-            log(logLevel, "transientUserSetup", "Modified IDP metadata:" +
+            log(Level.FINEST, "transientUserSetup", "Modified IDP metadata:" +
                     idpmetadataMod);
             
-            deleteExtEntity = idpfm.deleteEntity(webClient, 
+            if (FederationManager.getExitCode(idpfm.deleteEntity(webClient, 
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
-                    configMap.get(TestConstants.KEY_IDP_REALM), true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " + 
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(logLevel, "transientUserSetup", "Deletion of idp " +
-                        "Extended entity failed" + deleteExtEntity.
-                        getWebResponse().getContentAsString());
+                    configMap.get(TestConstants.KEY_IDP_REALM), true, "saml2"))
+                    != 0) {
+                log(Level.SEVERE, "transientUserSetup", "Deletion of idp " +
+                        "Extended entity failed");
+                log(Level.SEVERE, "transientUserSetup", "deleteEntity famadm" +
+                        " command failed");
                 assert(false);
             }
              
-            importMeta = idpfm.importEntity(webClient, 
+            if (FederationManager.getExitCode(idpfm.importEntity(webClient, 
                     configMap.get(TestConstants.KEY_IDP_REALM), "", 
-                    idpmetadataMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(logLevel, "transientUserSetup", "Failed to import idp " +
-                        "extended metadata" + importMeta.getWebResponse().
-                        getContentAsString());
+                    idpmetadataMod, "", "saml2")) != 0) {
+                log(Level.FINEST, "transientUserSetup", "Failed to import" +
+                        " idp extended metadata");
+               log(Level.SEVERE, "transientUserSetup", "exportEntity famadm" +
+                       " command failed");
                 assert(false);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "transientUserSetup", e.getMessage(), null);
+            log(Level.SEVERE, "transientUserSetup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -313,14 +323,14 @@ public class SAMLv2TransientUserTests extends TestCommon {
             SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");            
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "SSONoSPAccSPInit", 
+                log(Level.FINEST, "SSONoSPAccSPInit", 
                         "Inside for loop. value of i is " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] 
                         + ".xml");
                 page = task.execute(webClient);
             }           
         } catch(Exception e) {
-            log(Level.SEVERE, "SSONoSPAccSPInit", e.getMessage(), null);
+            log(Level.SEVERE, "SSONoSPAccSPInit", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -357,14 +367,14 @@ public class SAMLv2TransientUserTests extends TestCommon {
             SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "http");   
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "SSONoSPAccIDPInit", 
+                log(Level.FINEST, "SSONoSPAccIDPInit", 
                         "Inside for loop. value of i is " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] 
                         + ".xml");
                 page = task.execute(webClient);
             }           
         } catch(Exception e) {
-            log(Level.SEVERE, "SSONoSPAccIDPInit", e.getMessage(), null);
+            log(Level.SEVERE, "SSONoSPAccIDPInit", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -398,14 +408,14 @@ public class SAMLv2TransientUserTests extends TestCommon {
             SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");          
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "SSONoSPAccSPInitPost", 
+                log(Level.FINEST, "SSONoSPAccSPInitPost", 
                         "Inside for loop. value of i is " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] 
                         + ".xml");
                 page = task.execute(webClient);
             }           
         } catch(Exception e) {
-            log(Level.SEVERE, "SSONoSPAccSPInitPost", e.getMessage(), null);
+            log(Level.SEVERE, "SSONoSPAccSPInitPost", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -441,14 +451,14 @@ public class SAMLv2TransientUserTests extends TestCommon {
             SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "soap");            
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "SSONoSPAccIDPInitPost", 
+                log(Level.FINEST, "SSONoSPAccIDPInitPost", 
                         "Inside for loop. value of i is " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] 
                         + ".xml");
                 page = task.execute(webClient);
             }           
         } catch(Exception e) {
-            log(Level.SEVERE, "SSONoSPAccIDPInitPost", e.getMessage(), null);
+            log(Level.SEVERE, "SSONoSPAccIDPInitPost", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -480,7 +490,7 @@ public class SAMLv2TransientUserTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_PORT) + 
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
         } catch(Exception e) {
-            log(Level.SEVERE, "cleanup", e.getMessage(), null);
+            log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -491,63 +501,62 @@ public class SAMLv2TransientUserTests extends TestCommon {
             consoleLogin(webClient, spurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            HtmlPage deleteExtEntity = spfm.deleteEntity(webClient, 
+            if (FederationManager.getExitCode(spfm.deleteEntity(webClient, 
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                     configMap.get(TestConstants.KEY_SP_REALM), 
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " + 
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(logLevel, "cleanup", "Deletion of Extended " +
-                        "entity failed" + deleteExtEntity.getWebResponse().
-                        getContentAsString());
+                    true, "saml2")) != 0) {
+                log(Level.SEVERE, "cleanup", "Deletion of Extended " +
+                        "entity failed");
+                log(Level.SEVERE, "cleanup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             }
              
-            HtmlPage importMeta = spfm.importEntity(webClient, 
+            if (FederationManager.getExitCode(spfm.importEntity(webClient, 
                     configMap.get(TestConstants.KEY_SP_REALM),"", 
-                    spmetadata, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(logLevel, "cleanup", "Failed to import extended " +
-                        "metadata" + importMeta.getWebResponse().
-                        getContentAsString());
+                    spmetadata, "", "saml2")) != 0) {
+                log(Level.SEVERE, "cleanup", "Failed to import extended " +
+                        "metadata");
+                log(Level.SEVERE, "cleanup", "importEntity famadm command" +
+                        " failed");
                 assert (false);
             }
             consoleLogin(webClient, idpurl + "/UI/Login", 
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);
-            log(logLevel, "cleanup", "Users to delete are : " + idpuserlist, 
+            log(Level.FINEST, "cleanup", "Users to delete are : " + idpuserlist, 
                     null);
-            fmIDP.deleteIdentities(webClient, 
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient, 
                     configMap.get(TestConstants.KEY_IDP_REALM), 
-                    idpuserlist, "User");
+                    idpuserlist, "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             
-            deleteExtEntity = idpfm.deleteEntity(webClient, 
+            if (FederationManager.getExitCode(idpfm.deleteEntity(webClient, 
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
-                    configMap.get(TestConstants.KEY_IDP_REALM), true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " + 
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(logLevel, "cleanup", "Deletion of idp Extended " +
-                        "entity failed" + deleteExtEntity.getWebResponse().
-                        getContentAsString());
+                    configMap.get(TestConstants.KEY_IDP_REALM), true, "saml2"))
+                    != 0) {
+                log(Level.SEVERE, "cleanup", "Deletion of idp Extended " +
+                        "entity failed");
+                log(Level.SEVERE, "cleanup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             }
              
-            importMeta = idpfm.importEntity(webClient, 
+            if (FederationManager.getExitCode(idpfm.importEntity(webClient, 
                     configMap.get(TestConstants.KEY_IDP_REALM), "", 
-                    idpmetadata, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(logLevel, "cleanup", "Failed to import idp " +
-                        "extended metadata" + importMeta.getWebResponse().
-                        getContentAsString());
+                    idpmetadata, "", "saml2")) != 0) {
+                log(Level.SEVERE, "cleanup", "Failed to import idp " +
+                        "extended metadata");
+                log(Level.SEVERE, "cleanup", "importEntity famadm command" +
+                        " failed");
                 assert(false);
             }
         } catch(Exception e) {
-            log(Level.SEVERE, "cleanup", e.getMessage(), null);
+            log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {

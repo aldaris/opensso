@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.10 2007-11-30 18:46:25 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.11 2008-01-31 22:06:30 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.qatest.setup;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.LDAPCommon;
@@ -122,12 +123,23 @@ public class SetupProduct extends TestCommon {
                             consoleLogin(webClient, loginURL, adminUser,
                                     adminPassword);
 
-                            //delete default datastore if createDatastore is successful
-                            if (createDataStoreUsingfamadm(webClient, famadm, cfg1Data, 0, dCount)) {
-                                list.add(cfg1.getString(TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME));
-                                famadm.deleteDatastores(webClient, realm, list);
+                            //delete default datastore if createDatastore is
+                            //successful
+                            if (createDataStoreUsingfamadm(webClient, famadm,
+                                    cfg1Data, 0, dCount)) {
+                                list.add(cfg1.getString(TestConstants.
+                                        KEY_ATT_CONFIG_DEFDATASTORENAME));
+                                if (FederationManager.getExitCode(
+                                        famadm.deleteDatastores(webClient,
+                                        realm, list)) != 0) {
+                                    log(Level.SEVERE, "SetupProduct",
+                                            "deleteDatastores famadm command" +
+                                            " failed");
+                                    assert false;
+                                }
                             } else {
-                                log(Level.SEVERE, "setup", "DataStore configuration didn't succeed.");
+                                log(Level.SEVERE, "setup", "DataStore" +
+                                        " configuration didn't succeed.");
                             }
                         } catch (Exception e) {
                             log(Level.SEVERE, "setup", e.getMessage());
@@ -152,7 +164,8 @@ public class SetupProduct extends TestCommon {
                             ResourceBundle.getBundle("Configurator-" +
                             serverName2);
                     String strUMDatastore2 = cfg2.getString("umdatastore");
-                    String defDataStoreName2 = cfg2.getString(TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME);
+                    String defDataStoreName2 = cfg2.getString(TestConstants.
+                            KEY_ATT_CONFIG_DEFDATASTORENAME);
                     log(Level.FINE, "SetupProduct", "UM Datastore for " +
                             serverName2 + " is " + strUMDatastore2);
                     if (!(strUMDatastore2.equals("embedded"))) {
@@ -202,20 +215,23 @@ public class SetupProduct extends TestCommon {
                             String adminPassword = cfg3.getString(
                                     TestConstants.KEY_ATT_AMADMIN_PASSWORD);
                             String defDatastoreName1 = cfg3.getString(
-                                    TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME);
+                                    TestConstants.
+                                    KEY_ATT_CONFIG_DEFDATASTORENAME);
                             
-                            String loginURL = protocol + ":" + "//" + host + ":" +
-                                    port + uri + "/UI/Login";
-                            String logoutURL = protocol + ":" + "//" + host + ":" +
-                                    port + uri + "/UI/Logout";
-                            String famadmURL = protocol + ":" + "//" + host + ":" +
-                                    port + uri;
+                            String loginURL = protocol + ":" + "//" + host +
+                                    ":" + port + uri + "/UI/Login";
+                            String logoutURL = protocol + ":" + "//" + host +
+                                    ":" + port + uri + "/UI/Logout";
+                            String famadmURL = protocol + ":" + "//" + host +
+                                    ":" + port + uri;
                             ResourceBundle cfg1Data =
-                                    ResourceBundle.getBundle("configGlobalData");
+                                    ResourceBundle.getBundle(
+                                    "configGlobalData");
                             int dCount = new Integer(cfg1Data.getString(
                                     SMSConstants.SMS_DATASTORE_PARAMS_PREFIX +
                                     "2." +
-                                    SMSConstants.SMS_DATASTORE_COUNT)).intValue();
+                                    SMSConstants.SMS_DATASTORE_COUNT)).
+                                    intValue();
                             WebClient webClient = null;
                             try {
                                 FederationManager famadm =
@@ -223,10 +239,20 @@ public class SetupProduct extends TestCommon {
                                 webClient = new WebClient();
                                 consoleLogin(webClient, loginURL, adminUser,
                                         adminPassword);
-                                //delete default datastore if createDatastore is successful
-                                if (createDataStoreUsingfamadm(webClient, famadm, cfg1Data, 2, dCount)) {
-                                    list.add(cfg3.getString(TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME));
-                                    famadm.deleteDatastores(webClient, realm, list);
+                                //delete default datastore if createDatastore
+                                //is successful
+                                if (createDataStoreUsingfamadm(webClient,
+                                        famadm, cfg1Data, 2, dCount)) {
+                                    list.add(cfg3.getString(TestConstants.
+                                            KEY_ATT_CONFIG_DEFDATASTORENAME));
+                                    if (FederationManager.getExitCode(
+                                            famadm.deleteDatastores(webClient,
+                                            realm, list)) != 0) {
+                                        log(Level.SEVERE, "SetupProduct",
+                                                "deleteDatastores famadm" +
+                                                " command failed");
+                                        assert false;
+                                    }
                                 }
                             } catch (Exception e) {
                                 log(Level.SEVERE, "setup", e.getMessage());
@@ -245,8 +271,8 @@ public class SetupProduct extends TestCommon {
                             getString(TestConstants.KEY_ATT_NAMING_SVC);
                     log(Level.FINE, "SetupProduct", "Server 4 URL: " + strURL);
                     map = getURLComponents(strURL);
-                    log(Level.FINE, "SetupProduct", "Server 4 URL Components: " +
-                            map);
+                    log(Level.FINE, "SetupProduct", "Server 4 URL Components:" +
+                            " " +  map);
                     protocol = (String)map.get("protocol");
                     host = (String)map.get("host");
                     port = (String)map.get("port");
@@ -269,19 +295,21 @@ public class SetupProduct extends TestCommon {
                             String adminPassword = cfg4.getString(
                                     TestConstants.KEY_ATT_AMADMIN_PASSWORD);
                             String defDatastoreName1 = cfg4.getString(
-                                    TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME);
+                                    TestConstants.
+                                    KEY_ATT_CONFIG_DEFDATASTORENAME);
                             
-                            String loginURL = protocol + ":" + "//" + host + ":" +
-                                    port + uri + "/UI/Login";
-                            String logoutURL = protocol + ":" + "//" + host + ":" +
-                                    port + uri + "/UI/Logout";
-                            String famadmURL = protocol + ":" + "//" + host + ":" +
-                                    port + uri;
+                            String loginURL = protocol + ":" + "//" + host +
+                                    ":" + port + uri + "/UI/Login";
+                            String logoutURL = protocol + ":" + "//" + host +
+                                    ":" + port + uri + "/UI/Logout";
+                            String famadmURL = protocol + ":" + "//" + host +
+                                    ":" + port + uri;
                             
                             int dCount = new Integer(cfg1Data.getString(
                                     SMSConstants.SMS_DATASTORE_PARAMS_PREFIX +
                                     "3." +
-                                    SMSConstants.SMS_DATASTORE_COUNT)).intValue();
+                                    SMSConstants.SMS_DATASTORE_COUNT)).
+                                    intValue();
                             WebClient webClient = null;
                             try {
                                 FederationManager famadm =
@@ -289,11 +317,20 @@ public class SetupProduct extends TestCommon {
                                 webClient = new WebClient();
                                 consoleLogin(webClient, loginURL, adminUser,
                                         adminPassword);
-                                //delete default datastore if createDatastore is successful
-                                if (createDataStoreUsingfamadm(webClient, famadm,
-                                        cfg1Data, 3, dCount)) {
-                                    list.add(cfg4.getString(TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME));
-                                    famadm.deleteDatastores(webClient, realm, list);
+                                //delete default datastore if createDatastore
+                                //is successful
+                                if (createDataStoreUsingfamadm(webClient,
+                                        famadm, cfg1Data, 3, dCount)) {
+                                    list.add(cfg4.getString(TestConstants.
+                                            KEY_ATT_CONFIG_DEFDATASTORENAME));
+                                    if (FederationManager.getExitCode(
+                                            famadm.deleteDatastores(webClient,
+                                            realm, list)) != 0) {
+                                        log(Level.SEVERE, "SetupProduct",
+                                                "deleteDatastores famadm" +
+                                                " command failed");
+                                        assert false;
+                                    }
                                 }
                             } catch (Exception e) {
                                 log(Level.SEVERE, "setup", e.getMessage());
@@ -517,14 +554,30 @@ public class SetupProduct extends TestCommon {
             }
             log(Level.FINEST, "setup", "Datastore" +
                     " attributes list:" + list);
+            HtmlPage page = famadm.listDatastores(webClient,
+                    dsRealm);
+            if (FederationManager.getExitCode(page) != 0) {
+                log(Level.SEVERE, "setup", "listDatastores famadm command" +
+                        " failed");
+                assert false;
+            }
             if (getHtmlPageStringIndex(
-                    famadm.listDatastores(webClient,
-                    dsRealm), dsName) == -1)
-                famadm.createDatastore(webClient, dsRealm,
-                        dsName, dsType, list);
+                    page, dsName) == -1)
+                if (FederationManager.getExitCode(famadm.createDatastore(
+                webClient, dsRealm, dsName, dsType, list)) != 0) {
+                    log(Level.SEVERE, "setup", "createDatastore famadm" +
+                            " command failed");
+                    assert false;
+                }
+            page = famadm.listDatastores(webClient,
+                    dsRealm);
+            if (FederationManager.getExitCode(page) != 0) {
+                log(Level.SEVERE, "setup", "listDatastores famadm command" +
+                        " failed");
+                assert false;
+            }
             if (getHtmlPageStringIndex(
-                    famadm.listDatastores(webClient,
-                    dsRealm), dsName) == -1) {
+                    page, dsName) == -1) {
                 log(Level.SEVERE, "setup", "Datastore" +
                     " creation failed: " + list);
                  assert false;

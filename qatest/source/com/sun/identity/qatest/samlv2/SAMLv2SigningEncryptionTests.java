@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SigningEncryptionTests.java,v 1.3 2007-09-10 22:36:54 mrudulahg Exp $
+ * $Id: SAMLv2SigningEncryptionTests.java,v 1.4 2008-01-31 22:06:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -173,7 +173,7 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -231,10 +231,15 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                         TestConstants.KEY_SP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
                 log(Level.FINE, "setup", "SP user to be created is " + list);
-                fmSP.createIdentity(webClient, configMap.get(
+                if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
+                        configMap.get(
                         TestConstants.KEY_SP_REALM),
                         usersMap.get(TestConstants.KEY_SP_USER + i), "User", 
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 spuserlist.add(usersMap.get(TestConstants.KEY_SP_USER + i));
                 list.clear();
 
@@ -246,10 +251,14 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                         TestConstants.KEY_IDP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
                 log(Level.FINE, "setup", "IDP user to be created is " + list);
-                fmIDP.createIdentity(webClient, configMap.get(
-                        TestConstants.KEY_IDP_REALM),
+                if (FederationManager.getExitCode(fmIDP.createIdentity(
+                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User", 
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 idpuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + i));
                 list.clear();
             }
@@ -292,7 +301,8 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             
             //Create xml's for each actions.
             String[] arrActions = {"SignEncryptSPSSOSLOTermArt_ssoinit", 
-            "SignEncryptSPSSOSLOTermArt_slo","SignEncryptSPSSOSLOTermArt_terminate"};
+            "SignEncryptSPSSOSLOTermArt_slo",
+            "SignEncryptSPSSOSLOTermArt_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact",
                     false);
@@ -337,7 +347,8 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, 
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 2));
             
-            log(Level.FINEST, "SignEncryptIDPSSOSLOTermArt", "Map:" + configMap);
+            log(Level.FINEST, "SignEncryptIDPSSOSLOTermArt", "Map:" +
+                    configMap);
             
             String[] arrActions = {"SignEncryptIDPSSOSLOTermArt_idplogin", 
             "SignEncryptIDPSSOSLOTermArt_idpsamlv2ssoinit",
@@ -485,18 +496,26 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            fmSP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             
             // Create idp users
             log(Level.FINE, "cleanup", "idp users to delete : " + idpuserlist);
             consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-            fmIDP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idpuserlist,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
 
             if ((spMetadata[0].equals("")) || (spMetadata[1].equals(""))) {
                 log(Level.FINEST, "cleanup", "Default SP metadata empty so " +
@@ -545,6 +564,11 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false, true,
                         true, "saml2");
+                if (FederationManager.getExitCode(spExportEntityPage) != 0) {
+                   log(Level.SEVERE, "changeMetadata", "exportEntity famadm" +
+                           " command failed");
+                   assert false;
+                }
                 log (Level.FINEST, "changeMetadata", "Export SP metadata " +
                         "page is: " + spExportEntityPage.getWebResponse().
                         getContentAsString());
@@ -571,6 +595,11 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false, true,
                         true, "saml2");
+                if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
+                   log(Level.SEVERE, "changeMetadata", "exportEntity famadm" +
+                           " command failed");
+                   assert false;
+                }
                 log (Level.FINEST, "changeMetadata", "Export IDP metadata" +
                         "is: " + idpExportEntityPage.getWebResponse().
                         getContentAsString());
@@ -775,8 +804,8 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                 log (Level.FINEST, "changeMetadata", "SP ext metadata has " +
                         "changed" + spMetadataMod[1]);
                 samlv2Common = new SAMLv2Common();
-                samlv2Common.loadSPMetadata(spMetadataMod[0], spMetadataMod[1], fmsp, fmidp, 
-                        configMap, webClient);
+                samlv2Common.loadSPMetadata(spMetadataMod[0], spMetadataMod[1],
+                        fmsp, fmidp, configMap, webClient);
             }
             
             //If idpmetadata has changed then only load at sp & idp side.
@@ -788,8 +817,8 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                 log (Level.FINEST, "changeMetadata", "IDP ext metadata has " +
                         "changed" + idpMetadataMod[1]);
                 samlv2Common = new SAMLv2Common();
-                samlv2Common.loadIDPMetadata(idpMetadataMod[0], idpMetadataMod[1], fmsp, 
-                        fmidp, configMap, webClient);
+                samlv2Common.loadIDPMetadata(idpMetadataMod[0],
+                        idpMetadataMod[1], fmsp, fmidp, configMap, webClient);
             }
         } catch (Exception e) {
             log(Level.SEVERE, "changeMetadata", e.getMessage());

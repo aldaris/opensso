@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCommon.java,v 1.6 2007-07-31 20:55:43 mrudulahg Exp $
+ * $Id: IDFFCommon.java,v 1.7 2008-01-31 22:06:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -412,16 +412,19 @@ public class IDFFCommon extends TestCommon {
     throws Exception {
         try {
             if (strProfile.equals("post")) {
-                spmetadataext = spmetadataext.replaceAll(TestConstants.SSO_BROWSER_ARTIFACT_VALUE,
+                spmetadataext = spmetadataext.replaceAll(
+                        TestConstants.SSO_BROWSER_ARTIFACT_VALUE,
                         "TEMP_STRING");
-                spmetadataext = spmetadataext.replaceAll(TestConstants.SSO_BROWSER_POST_VALUE,
+                spmetadataext = spmetadataext.replaceAll(
+                        TestConstants.SSO_BROWSER_POST_VALUE,
                         TestConstants.SSO_BROWSER_ARTIFACT_VALUE);
                 spmetadataext = spmetadataext.replaceAll("TEMP_STRING",
                         TestConstants.SSO_BROWSER_POST_VALUE);
             } else {
-                spmetadataext = spmetadataext.replaceAll(TestConstants.SSO_BROWSER_POST_VALUE,
-                        "TEMP_STRING");
-                spmetadataext = spmetadataext.replaceAll(TestConstants.SSO_BROWSER_ARTIFACT_VALUE,
+                spmetadataext = spmetadataext.replaceAll(
+                        TestConstants.SSO_BROWSER_POST_VALUE, "TEMP_STRING");
+                spmetadataext = spmetadataext.replaceAll(
+                        TestConstants.SSO_BROWSER_ARTIFACT_VALUE,
                         TestConstants.SSO_BROWSER_POST_VALUE);
                 spmetadataext = spmetadataext.replaceAll("TEMP_STRING",
                         TestConstants.SSO_BROWSER_ARTIFACT_VALUE);
@@ -443,16 +446,18 @@ public class IDFFCommon extends TestCommon {
     throws Exception {
         try {
             if (strProfile.equals("soap")) {
-                spmetadata = spmetadata.replaceAll(TestConstants.SLO_HTTP_PROFILE_VALUE,
-                        "TEMP_STRING");
-                spmetadata = spmetadata.replaceAll(TestConstants.SLO_SOAP_PROFILE_VALUE,
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.SLO_HTTP_PROFILE_VALUE, "TEMP_STRING");
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.SLO_SOAP_PROFILE_VALUE,
                         TestConstants.SLO_HTTP_PROFILE_VALUE);
                 spmetadata = spmetadata.replaceAll("TEMP_STRING",
                         TestConstants.SLO_SOAP_PROFILE_VALUE);
             } else {
-                spmetadata = spmetadata.replaceAll(TestConstants.SLO_SOAP_PROFILE_VALUE,
-                        "TEMP_STRING");
-                spmetadata = spmetadata.replaceAll(TestConstants.SLO_HTTP_PROFILE_VALUE,
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.SLO_SOAP_PROFILE_VALUE, "TEMP_STRING");
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.SLO_HTTP_PROFILE_VALUE,
                         TestConstants.SLO_SOAP_PROFILE_VALUE);
                 spmetadata = spmetadata.replaceAll("TEMP_STRING",
                         TestConstants.SLO_HTTP_PROFILE_VALUE);
@@ -474,16 +479,20 @@ public class IDFFCommon extends TestCommon {
     throws Exception {
         try {
             if (strProfile.equals("soap")) {
-                spmetadata = spmetadata.replaceAll(TestConstants.TERMIATION_HTTP_PROFILE_VALUE,
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.TERMIATION_HTTP_PROFILE_VALUE,
                         "TEMP_STRING");
-                spmetadata = spmetadata.replaceAll(TestConstants.TERMIATION_SOAP_PROFILE_VALUE,
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.TERMIATION_SOAP_PROFILE_VALUE,
                         TestConstants.TERMIATION_HTTP_PROFILE_VALUE);
                 spmetadata = spmetadata.replaceAll("TEMP_STRING",
                         TestConstants.TERMIATION_SOAP_PROFILE_VALUE);
             } else {
-                spmetadata = spmetadata.replaceAll(TestConstants.TERMIATION_SOAP_PROFILE_VALUE,
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.TERMIATION_SOAP_PROFILE_VALUE,
                         "TEMP_STRING");
-                spmetadata = spmetadata.replaceAll(TestConstants.TERMIATION_HTTP_PROFILE_VALUE,
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.TERMIATION_HTTP_PROFILE_VALUE,
                         TestConstants.TERMIATION_SOAP_PROFILE_VALUE);
                 spmetadata = spmetadata.replaceAll("TEMP_STRING",
                         TestConstants.TERMIATION_HTTP_PROFILE_VALUE);
@@ -571,20 +580,19 @@ public class IDFFCommon extends TestCommon {
             } else {
                 spDeleteEntityPage = fmSP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                        (String)configMap.get(TestConstants.KEY_SP_REALM), false, 
-                        "idff");
+                        (String)configMap.get(TestConstants.KEY_SP_REALM),
+                        false, "idff");
             }
-            if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                    contains("deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+            if (FederationManager.getExitCode(spDeleteEntityPage) == 0) {
                 log(Level.FINE, "loadSPMetadata", "Deleted SP entity on SP " +
                         "side");
             } else {
-                log(Level.SEVERE, "loadSPMetadata", "Couldnt delete SP " +
-                        "entity on SP side" + spDeleteEntityPage.getWebResponse().
-                        getContentAsString());
+                log(Level.SEVERE, "loadSPMetadata", "Delete SP entity on SP " +
+                        "side failed");
+                log(Level.SEVERE, "loadSPMetadata", "deleteEntity famadm" +
+                        " command failed");
                 status = false;
-            }  
+            }
             
             HtmlPage idpDeleteEntityPage;
             if (extMetadataOnly) {
@@ -598,27 +606,26 @@ public class IDFFCommon extends TestCommon {
                         (String)configMap.get(TestConstants.KEY_IDP_REALM), 
                         false, "idff");
             }
-            if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                    contains("deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+            if (FederationManager.getExitCode(idpDeleteEntityPage) == 0) {
                 log(Level.FINE, "loadSPMetadata", "Deleted SP entity on " +
                         "IDP side");
             } else {
-                log(Level.SEVERE, "loadSPMetadata", "Couldnt delete SP entity " +
-                        "on IDP side" + spDeleteEntityPage.getWebResponse().
-                        getContentAsString());
+                log(Level.SEVERE, "loadSPMetadata", "Delete SP entity on " +
+                        "IDP side failed");
+                log(Level.SEVERE, "loadSPMetadata", "deleteEntity famadm" +
+                        " command failed");
                 status = false;
-            }  
+            }
 
             Thread.sleep(9000);
             HtmlPage importSPMeta = fmSP.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_REALM), 
                     metadata, metadataext, null, "idff");
-            if (!importSPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+            if (FederationManager.getExitCode(importSPMeta) != 0) {
                 log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
-                        "metadata on SP side" + importSPMeta.
-                        getWebResponse().getContentAsString());
+                        "metadata on SP side");
+                log(Level.SEVERE, "loadSPMetadata", "importEntity famadm" +
+                        " command failed");
                 status = false;
             } else {
                  log(Level.FINE, "loadSPMetadata", "Successfully imported " +
@@ -635,11 +642,11 @@ public class IDFFCommon extends TestCommon {
             importSPMeta = fmIDP.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_REALM), 
                     metadata, metadataext, null, "idff");
-            if (!importSPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+            if (FederationManager.getExitCode(importSPMeta) != 0) {
                 log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
-                        "metadata on IDP side" + importSPMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata on IDP side");
+                log(Level.SEVERE, "loadSPMetadata", "importEntity famadm" +
+                        " command failed");
                 status = false;
             } else {
                  log(Level.FINEST, "loadSPMetadata", "Successfully imported " +
@@ -678,7 +685,8 @@ public class IDFFCommon extends TestCommon {
                 }
             } else if ((metadata.equals(null)) || (metadataext.equals(null)) || 
                     (metadata.equals("")) || (metadataext.equals(""))) {
-                log(Level.SEVERE, "loadIDPMetadata", "metadata cannot be empty");
+                log(Level.SEVERE, "loadIDPMetadata", "metadata cannot be" +
+                        " empty");
                 log(Level.FINEST, "loadIDPMetadata", "metadata is : " + 
                         metadata);
                 log(Level.FINEST, "loadIDPMetadata", "ext metadata is : " + 
@@ -688,61 +696,61 @@ public class IDFFCommon extends TestCommon {
             //TODO: Add if condition for ext metadata deletion/addition
             HtmlPage idpDeleteEntityPage;
             if (extMetadataOnly) {
-            idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
+                idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
                     (String)configMap.get(TestConstants.KEY_IDP_REALM), true, 
                     "idff");
             } else {
-            idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
+                idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
                     (String)configMap.get(TestConstants.KEY_IDP_REALM), false, 
                     "idff");
             }
-            if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                    contains("deleted for entity, " +
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+            if (FederationManager.getExitCode(idpDeleteEntityPage) == 0) {
                 log(Level.FINE, "loadIDPMetadata", "Deleted IDP entity on " +
                         "IDP side");
             } else {
-                log(Level.SEVERE, "loadIDPMetadata", "Couldnt delete IDP entity " +
-                        "on IDP side" + idpDeleteEntityPage.getWebResponse().
-                        getContentAsString());
+                log(Level.SEVERE, "loadIDPMetadata", "Couldnt delete IDP" +
+                        " entity on IDP side");
+                log(Level.SEVERE, "loadIDPMetadata", "deleteEntity famadm" +
+                        " command failed");
                 status = false;
             }  
             
             HtmlPage spDeleteEntityPage;
             if (extMetadataOnly) {
                  spDeleteEntityPage = fmSP.deleteEntity(webClient, 
-                        (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
+                        (String)configMap.get(
+                        TestConstants.KEY_IDP_ENTITY_NAME),
                         (String)configMap.get(TestConstants.KEY_SP_REALM), 
                         true, "idff");
             } else {
                  spDeleteEntityPage = fmSP.deleteEntity(webClient, 
-                        (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
+                        (String)configMap.get(
+                        TestConstants.KEY_IDP_ENTITY_NAME),
                         (String)configMap.get(TestConstants.KEY_SP_REALM), 
                         false, "idff");
             }
-            if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                    contains("deleted for entity, " +
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+            if (FederationManager.getExitCode(spDeleteEntityPage) == 0) {
                 log(Level.FINE, "loadIDPMetadata", "Deleted SP entity on " +
                         "IDP side");
             } else {
-                log(Level.SEVERE, "loadIDPMetadata", "Couldnt delete SP entity " +
-                        "on IDP side" + spDeleteEntityPage.getWebResponse().
-                        getContentAsString());
+                log(Level.SEVERE, "loadIDPMetadata", "Delete SP entity on " +
+                        "IDP side faield");
+                log(Level.SEVERE, "loadIDPMetadata", "deleteEntity famadm" +
+                        " command failed");
                 status = false;
-            }  
+            }
 
             Thread.sleep(9000);
             HtmlPage importIDPMeta = fmIDP.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_REALM), 
                     metadata, metadataext, null, "idff");
-            if (!importIDPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+            if (FederationManager.getExitCode(importIDPMeta) != 0) {
                 log(Level.SEVERE, "loadIDPMetadata", "Couldn't import IDP " +
-                        "metadata on IDP side" + importIDPMeta.
-                        getWebResponse().getContentAsString());
+                        "metadata on IDP side");
+                log(Level.SEVERE, "loadIDPMetadata", "importEntity famadm" +
+                        " command failed");
                 status = false;
             } else {
                  log(Level.FINE, "loadIDPMetadata", "Successfully imported " +
@@ -759,11 +767,11 @@ public class IDFFCommon extends TestCommon {
             importIDPMeta = fmSP.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_REALM), 
                     metadata, metadataext, null, "idff");
-            if (!importIDPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+            if (FederationManager.getExitCode(importIDPMeta) != 0) {
                 log(Level.SEVERE, "loadIDPMetadata", "Couldn't import IDP " +
-                        "metadata on SP side" + importIDPMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata on SP side");
+                log(Level.SEVERE, "loadIDPMetadata", "importEntity famadm" +
+                        " command failed");
                 status = false;
             } else {
                  log(Level.FINE, "loadIDPMetadata", "Successfully imported " +

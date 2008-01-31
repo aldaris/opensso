@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFedSmokeTest.java,v 1.1 2007-10-05 18:23:47 mrudulahg Exp $
+ * $Id: WSFedSmokeTest.java,v 1.2 2008-01-31 22:06:30 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,9 +106,14 @@ public class WSFedSmokeTest extends WSFedCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmSP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    configMap.get(TestConstants.KEY_SP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_SP_USER), "User", list))
+                    != 0) {
+               log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                       " failed");
+                assert false;
+            }
             
             // Create idp users
             idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
@@ -126,9 +131,14 @@ public class WSFedSmokeTest extends WSFedCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmIDP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    configMap.get(TestConstants.KEY_IDP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_IDP_USER), "User", list))
+                    != 0) {
+               log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                       " failed");
+                assert false;
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -301,9 +311,13 @@ public class WSFedSmokeTest extends WSFedCommon {
             idList.add(configMap.get(TestConstants.KEY_SP_USER));
             log(Level.FINE, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
-            fmSP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             
             consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
@@ -312,9 +326,13 @@ public class WSFedSmokeTest extends WSFedCommon {
             idList.add(configMap.get(TestConstants.KEY_IDP_USER));
             log(Level.FINE, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
-            fmIDP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();

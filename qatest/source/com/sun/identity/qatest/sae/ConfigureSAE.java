@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAE.java,v 1.3 2008-01-18 00:42:52 rmisra Exp $
+ * $Id: ConfigureSAE.java,v 1.4 2008-01-31 22:06:28 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,18 +149,21 @@ public class ConfigureSAE extends TestCommon {
             
             HtmlPage spcotPage = spfm.listCots(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM));
+            if (FederationManager.getExitCode(spcotPage) != 0) {
+               log(Level.SEVERE, "configureSAE", "listCots famadm command" +
+                       " failed");
+               assert false;
+            }
             if (!spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.createCot(spWebClient,
+                if (FederationManager.getExitCode(spfm.createCot(spWebClient,
                         configMap.get(TestConstants.KEY_SP_COT),
                         configMap.get(TestConstants.KEY_SP_REALM),
-                        null, null);
-                if (!spcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, "
-                        + configMap.get(TestConstants.KEY_SP_COT)
-                        + " is created.")) {
+                        null, null)) != 0) {
                     log(Level.SEVERE, "configureSAE", "Couldn't create " +
                             "COT at SP side");
+                    log(Level.SEVERE, "configureSAE", "createCot famadm" +
+                            " command failed");
                     assert false;
                 }
             } else {
@@ -170,6 +173,11 @@ public class ConfigureSAE extends TestCommon {
             String spMetadata[] = {"",""};
             HtmlPage spEntityPage = spfm.listEntities(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "saml2");
+            if (FederationManager.getExitCode(spEntityPage) != 0) {
+               log(Level.SEVERE, "configureSAE", "listEntities famadm" +
+                       " command failed");
+               assert false;
+            }
             if (!spEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
                 log(Level.FINEST, "configureSAE", "sp entity doesnt exist. " +
@@ -193,6 +201,11 @@ public class ConfigureSAE extends TestCommon {
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), true, true,
                         true, "saml2");
+                if (FederationManager.getExitCode(spExportEntityPage) != 0) {
+                   log(Level.SEVERE, "configureSAE", "exportEntity famadm" +
+                           " command failed");
+                   assert false;
+                }
                 spMetadata[0] = SAMLv2Common.getMetadataFromPage(
                         spExportEntityPage);
                 spMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
@@ -200,10 +213,9 @@ public class ConfigureSAE extends TestCommon {
             }
             spMetadata[1] = spMetadata[1].replaceAll(
                     configMap.get(TestConstants.KEY_SP_COT), "");
-            log(Level.FINEST, "configureSAE", "sp metadata" + spMetadata[0],
-                    null);
-            log(Level.FINEST, "configureSAE", "sp Ext metadata" + spMetadata[1],
-                    null);
+            log(Level.FINEST, "configureSAE", "sp metadata" + spMetadata[0]);
+            log(Level.FINEST, "configureSAE", "sp Ext metadata" +
+                    spMetadata[1]);
             
             //idp side create cot, load idp metadata
             consoleLogin(idpWebClient, idpurl + "/UI/Login",
@@ -213,21 +225,23 @@ public class ConfigureSAE extends TestCommon {
             
             HtmlPage idpcotPage = idpfm.listCots(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM));
+            if (FederationManager.getExitCode(idpcotPage) != 0) {
+               log(Level.SEVERE, "configureSAE", "createMetadataTempl famadm" +
+                       " command failed");
+               assert false;
+            }
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
-                log(Level.FINEST, "configureSAE", "COT exists at IDP side",
-                        null);
+                log(Level.FINEST, "configureSAE", "COT exists at IDP side");
             } else {
-                idpcotPage = idpfm.createCot(idpWebClient,
+                if (FederationManager.getExitCode(idpfm.createCot(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM),
-                        null, null);
-                if (!idpcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, " +
-                        configMap.get(TestConstants.KEY_IDP_COT)
-                        + " is created.")) {
+                        null, null)) != 0) {
                     log(Level.SEVERE, "configureSAE", "Couldn't create " +
                             "COT at IDP side");
+                    log(Level.SEVERE, "configureSAE", "createCot famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -235,6 +249,11 @@ public class ConfigureSAE extends TestCommon {
             String[] idpMetadata = {"",""};
             HtmlPage idpEntityPage = idpfm.listEntities(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "saml2");
+            if (FederationManager.getExitCode(idpEntityPage) != 0) {
+               log(Level.SEVERE, "configureSAE", "listEntities famadm command" +
+                       " failed");
+               assert false;
+            }
             if (!idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
             {
@@ -264,6 +283,11 @@ public class ConfigureSAE extends TestCommon {
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), true, true,
                         true, "saml2");
+                if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
+                   log(Level.SEVERE, "configureSAE", "exportEntity famadm" +
+                           " command failed");
+                   assert false;
+                }
                 idpMetadata[0] = SAMLv2Common.getMetadataFromPage(
                         idpExportEntityPage);
                 idpMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
@@ -281,18 +305,18 @@ public class ConfigureSAE extends TestCommon {
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
                 log(Level.FINEST, "configureSAE", "sp entity exists at idp. " +
                         "Delete & load the metadata ");
-                HtmlPage spDeleteEntityPage = idpfm.deleteEntity(idpWebClient,
+                if (FederationManager.getExitCode(idpfm.deleteEntity(
+                        idpWebClient, 
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false,
-                        "saml2");
-                if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                        "saml2")) == 0) {
                     log(Level.FINEST, "configureSAE", "Delete sp entity on " +
                             "IDP side");
                 } else {
-                    log(Level.FINEST, "configureSAE", "Couldnt delete sp " +
+                    log(Level.SEVERE, "configureSAE", "Couldnt delete sp " +
                             "entity on IDP side");
+                    log(Level.SEVERE, "configureSAE", "deleteEntity famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -300,15 +324,15 @@ public class ConfigureSAE extends TestCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             spMetadata[1] = spMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importSPMeta = idpfm.importEntity(idpWebClient,
+            if (FederationManager.getExitCode(idpfm.importEntity(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), spMetadata[0],
                     spMetadata[1],
-                    (String)configMap.get(TestConstants.KEY_IDP_COT), "saml2");
-            if (!importSPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    (String)configMap.get(TestConstants.KEY_IDP_COT), "saml2"))
+                    != 0) {
                 log(Level.SEVERE, "configureSAE", "Couldn't import SP " +
-                        "metadata on IDP side" + importSPMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata on IDP side");
+                log(Level.SEVERE, "configureSAE", "importEntity famadm" +
+                        " command failed");
                 assert false;
             }
             //load idpmetadata on sp
@@ -317,18 +341,17 @@ public class ConfigureSAE extends TestCommon {
             {
                 log(Level.FINEST, "configureSAE", "idp entity exists at sp. " +
                         "Delete & load the metadata ");
-                HtmlPage idpDeleteEntityPage = spfm.deleteEntity(spWebClient,
+                if (FederationManager.getExitCode(spfm.deleteEntity(spWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false,
-                        "saml2");
-                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                        "saml2")) == 0) {
                     log(Level.FINEST, "configureSAE", "Delete idp entity on " +
                             "SP side");
                 } else {
-                    log(Level.FINEST, "configureSAE", "Couldnt delete idp " +
+                    log(Level.SEVERE, "configureSAE", "Couldnt delete idp " +
                             "entity on SP side");
+                    log(Level.SEVERE, "configureSAE", "deleteEntity famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -336,15 +359,15 @@ public class ConfigureSAE extends TestCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importIDPMeta = spfm.importEntity(spWebClient,
+            if (FederationManager.getExitCode(spfm.importEntity(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idpMetadata[0],
                     idpMetadata[1],
-                    (String)configMap.get(TestConstants.KEY_SP_COT), "saml2");
-            if (!importIDPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    (String)configMap.get(TestConstants.KEY_SP_COT), "saml2"))
+                    != 0) {
                 log(Level.SEVERE, "configureSAE", "Couldn't import IDP " +
-                        "metadata on SP side" + importIDPMeta.getWebResponse().
-                        getContentAsString());
+                        "metadata on SP side");
+                log(Level.SEVERE, "configureSAE", "importEntity famadm" +
+                        " command failed");
                 assert false;
             }
         } catch (Exception e) {

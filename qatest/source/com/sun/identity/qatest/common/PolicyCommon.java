@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.12 2008-01-22 23:50:00 rmisra Exp $
+ * $Id: PolicyCommon.java,v 1.13 2008-01-31 22:06:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,7 @@ public class PolicyCommon extends TestCommon {
             baseDir = getTestBase();
             fmadm = new FederationManager(fmadmURL);
         } catch (Exception e) {
-            log(Level.SEVERE, "PolicyCommon", e.getMessage(), null);
+            log(Level.SEVERE, "PolicyCommon", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -466,17 +466,19 @@ public class PolicyCommon extends TestCommon {
                 webClient = new WebClient();
                 consoleLogin(webClient, loginURL, adminUser, adminPassword);
                 if (list != null){
-                    HtmlPage IdentityCheckPage ;
-                    IdentityCheckPage = fmadm.createIdentity(webClient, realm,
-                            name, type, list);
-                    log(Level.FINER, "createIdentity", newline +
-                            IdentityCheckPage.asXml(), null);
+                    if (FederationManager.getExitCode(fmadm.createIdentity(
+                            webClient, realm, name, type, list)) != 0) {
+                        log(Level.SEVERE, "createIdentities", "createIdentity" +
+                                " (not null list) famadm command failed");
+                        assert false;
+                    }
                 } else{
-                    HtmlPage IdentityCheckPage ;
-                    IdentityCheckPage =fmadm.createIdentity(webClient, realm,
-                            name, type, null);
-                    log(Level.FINER, "createIdentity", newline +
-                            IdentityCheckPage.asXml(), null);
+                    if (FederationManager.getExitCode(fmadm.createIdentity(
+                            webClient, realm, name, type, null)) != 0) {
+                        log(Level.SEVERE, "createIdentities", "createIdentity" +
+                                " (null list) famadm command failed");
+                        assert false;
+                    }
                 }
                 String isMemberOf = rb.getString(strPolIdx + ".identity" + i +
                         ".isMemberOf");
@@ -491,13 +493,18 @@ public class PolicyCommon extends TestCommon {
                         strIDIdx = (String)lstMembers.get(j);
                         memberType = rb.getString(strIDIdx + ".type");
                         memberName = rb.getString(strIDIdx + ".name");
-                        fmadm.addMember(webClient, realm, name, type,
-                                memberName, memberType);
+                        if (FederationManager.getExitCode(fmadm.addMember(
+                                webClient, realm, name, type, memberName,
+                                memberType)) !=0) {
+                            log(Level.SEVERE, "createIdentities", "addMember" +
+                                    " famadm command failed");
+                            assert false;
+                        }
                     }
                 }
             }
         } catch(Exception e) {
-            log(Level.SEVERE, "createIdentities", e.getMessage(), null);
+            log(Level.SEVERE, "createIdentities", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -527,18 +534,16 @@ public class PolicyCommon extends TestCommon {
                 if (input != null)
                     input.close();
                 policyXML = contents.toString();
-                log(logLevel, "createPolicy", newline + policyXML);
-                HtmlPage policyCheckPage ;
-                policyCheckPage = fmadm.createPolicies(webClient, realm,
-                        policyXML);
-                if (getHtmlPageStringIndex(policyCheckPage, "CLIException") != -1) {
-                    log(Level.SEVERE, "createPolicy", "Policy creation failed");
+                log(Level.FINEST, "createPolicy", newline + policyXML);
+                if (FederationManager.getExitCode(fmadm.createPolicies(
+                        webClient, realm, policyXML)) != 0) {
+                    log(Level.SEVERE, "createPolicy", "createPolicies famadm" +
+                            " command failed");
                     assert false;
-                } else
-                    log(Level.FINEST, "createPolicy", "Policy created successfully");
+                }
             }
         } catch(Exception e) {
-            log(Level.SEVERE, "createPolicy", e.getMessage(), null);
+            log(Level.SEVERE, "createPolicy", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -568,10 +573,15 @@ public class PolicyCommon extends TestCommon {
                 name = rb.getString(glbPolIdx + ".identity" + i + ".name");
                 list.clear();
                 list.add(name);
-                fmadm.deleteIdentities(webClient, realm, list, type);
+                if (FederationManager.getExitCode(fmadm.deleteIdentities(
+                        webClient, realm, list, type)) != 0) {
+                    log(Level.SEVERE, "deleteIdentities", "deleteIdentities" +
+                            " famadm command failed");
+                    assert false;
+                }
             }
         } catch(Exception e) {
-            log(Level.SEVERE, "deleteIdentities", e.getMessage(), null);
+            log(Level.SEVERE, "deleteIdentities", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -599,9 +609,14 @@ public class PolicyCommon extends TestCommon {
                 name = rb.getString(locPolIdx + i + ".name");
                 list.add(name);
             }
-            fmadm.deletePolicies(webClient, realm, list);
+            if (FederationManager.getExitCode(fmadm.deletePolicies(webClient,
+                    realm, list)) != 0) {
+                log(Level.SEVERE, "deletePolicies", "deletePolicies famadm" +
+                        " command failed");
+                assert false;
+            }
         } catch(Exception e) {
-            log(Level.SEVERE, "deletePolicies", e.getMessage(), null);
+            log(Level.SEVERE, "deletePolicies", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -631,13 +646,14 @@ public class PolicyCommon extends TestCommon {
                 name = rb.getString(locPolIdx + i + ".name");
                 list.add(name);
             }
-            HtmlPage refPolicyCheckPage ;
-            refPolicyCheckPage = fmadm.deletePolicies(webClient,
-                    strReferringOrg, list);
-            log(Level.FINER, "deleteRefPolicy", newline +
-                    refPolicyCheckPage.asXml(), null);
+            if (FederationManager.getExitCode(fmadm.deletePolicies(webClient,
+                    strReferringOrg, list)) != 0) {
+                log(Level.SEVERE, "deleteReferralPolicies", "deletePolicies" +
+                        " famadm command failed");
+                assert false;
+            }
         } catch(Exception e) {
-            log(Level.SEVERE, "deleteRefPolicies", e.getMessage(), null);
+            log(Level.SEVERE, "deleteRefPolicies", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -679,7 +695,7 @@ public class PolicyCommon extends TestCommon {
             actions.add(action);
             
             boolean pResult = pe.isAllowed(userToken, resource, action, envMap);
-            log(logLevel, "evaluatePolicyThroughAPI", "Policy Decision: " +
+            log(Level.FINEST, "evaluatePolicyThroughAPI", "Policy Decision: " +
                     pResult);
             
             PolicyDecision pd = pe.getPolicyDecision(userToken, resource,
@@ -687,14 +703,14 @@ public class PolicyCommon extends TestCommon {
             
             Map respAttrMap = new HashMap();
             respAttrMap = pd.getResponseAttributes();
-            log(logLevel, "evaluatePolicyThroughAPI", "Policy Decision XML: " +
-                    pd.toXML());
-            log(logLevel, "evaluatePolicyThroughAPI",
+            log(Level.FINEST, "evaluatePolicyThroughAPI", "Policy Decision" +
+                    " XML: " + pd.toXML());
+            log(Level.FINEST, "evaluatePolicyThroughAPI",
                     "Policy Response Attributes: " +  respAttrMap);
             boolean expectedResult = new Boolean(expResult).booleanValue();
             assert (pResult == expectedResult);
         } catch (Exception e) {
-            log(Level.SEVERE, "evaluatePolicyThroughAPI", e.getMessage(), null);
+            log(Level.SEVERE, "evaluatePolicyThroughAPI", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -739,7 +755,7 @@ public class PolicyCommon extends TestCommon {
                 }
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "getPolicyEnvParamMap", e.getMessage(), null);
+            log(Level.SEVERE, "getPolicyEnvParamMap", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -905,14 +921,22 @@ public class PolicyCommon extends TestCommon {
         try {
             realmStatus.add("sunOrganizationStatus=Active");
             consoleLogin(webClient, loginURL, adminUser, adminPassword);
-            realmCheckPage = fmadm.createRealm(webClient, realmName);
-            fmadm.setRealmAttrs(webClient,
-                    realmName, "sunIdentityRepositoryService", false, realmStatus);
-            log(logLevel, "createRealm", "Realm:" + realmName);
-            log(Level.FINER, "createRealm", newline +
-                    realmCheckPage.asXml(), null);
+            if (FederationManager.getExitCode(fmadm.createRealm(webClient,
+                    realmName)) != 0) {
+                log(Level.SEVERE, "createRealm", "createRealm famadm call" +
+                        " failed");
+                assert false;
+            }
+            if (FederationManager.getExitCode(fmadm.setRealmAttrs(webClient,
+                    realmName, "sunIdentityRepositoryService", false
+                    , realmStatus)) != 0) {
+                log(Level.SEVERE, "createRealm", "setRealmAttrs famadm call" +
+                        " failed");
+                assert false;
+            }
+            log(Level.FINEST, "createRealm", "Realm:" + realmName);
         } catch (Exception e) {
-            log(Level.SEVERE, "createRealm", e.getMessage(), null);
+            log(Level.SEVERE, "createRealm", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -930,10 +954,15 @@ public class PolicyCommon extends TestCommon {
         WebClient webClient = new WebClient();
         try {
             consoleLogin(webClient, loginURL, adminUser, adminPassword);
-            fmadm.deleteRealm(webClient, realmName, recursive);
-            log(logLevel, "deleteRealms", "Realm:" + realmName);
+            if (FederationManager.getExitCode(fmadm.deleteRealm(webClient,
+                    realmName, recursive)) != 0) {
+                log(Level.SEVERE, "deleteRealm", "deleteRealm famadm call" +
+                        " failed");
+                assert false;
+            }
+            log(Level.FINEST, "deleteRealms", "Realm:" + realmName);
         } catch (Exception e) {
-            log(Level.SEVERE, "deleteRealm", e.getMessage(), null);
+            log(Level.SEVERE, "deleteRealm", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -953,14 +982,15 @@ public class PolicyCommon extends TestCommon {
             List dnsAliasEnable = new ArrayList();
             dnsAliasEnable.add("sun-am-policy-config-org-alias-" +
                     "mapped-resources-enabled=" + value);
-            HtmlPage orgServiceAtt = fmadm.setAttrDefs(webClient,
+            if (FederationManager.getExitCode(fmadm.setAttrDefs(webClient,
                     "iPlanetAMPolicyConfigService", "global", null,
-                    dnsAliasEnable);
-            log(logLevel, "setDynamicReferral", "configured the global " +
-                    "parameter" + orgServiceAtt.getWebResponse().
-                    getContentAsString());
+                    dnsAliasEnable)) != 0) {
+                log(Level.SEVERE, "setDynamicReferral", "setAttrDefs famadm" +
+                        " command failed");
+                assert false;
+            }
         } catch (Exception e) {
-            log(Level.SEVERE, "setDynamicReferral", e.getMessage(), null);
+            log(Level.SEVERE, "setDynamicReferral", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -1004,13 +1034,16 @@ public class PolicyCommon extends TestCommon {
                                 dynamicRefResource);
                     }
                 }
-                HtmlPage realmAtt = fmadm.setRealmAttrs(webClient,
-                        strPeAtOrg, "sunIdentityRepositoryService", false, dnsAlias);
-                log(logLevel, "createDynamicReferral",
-                        realmAtt.getWebResponse().getContentAsString());
+                if (FederationManager.getExitCode(fmadm.setRealmAttrs(webClient,
+                        strPeAtOrg, "sunIdentityRepositoryService", false,
+                        dnsAlias)) != 0) {
+                    log(Level.SEVERE, "createDynamicReferral", "setRealmAttrs" +
+                            " famadm command failed");
+                    assert false;
+                }
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "createDynamicReferral", e.getMessage(), null);
+            log(Level.SEVERE, "createDynamicReferral", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -1032,32 +1065,33 @@ public class PolicyCommon extends TestCommon {
             String action = serviceAction;
             if (action.equals("add")) {
                 
-                HtmlPage policyServiceAtt = fmadm.addSvcAttrs
+                if (FederationManager.getExitCode(fmadm.addSvcAttrs
                         (webClient, strRealm, "iPlanetAMPolicyConfigService",
-                        dynRespList);
-                log(logLevel, "", "setDynamicRespAttribute" +
-                        policyServiceAtt.getWebResponse().getContentAsString());
-                
+                        dynRespList)) != 0) {
+                    log(Level.SEVERE, "setDynamicRespAttribute",
+                            "addSvcAttrs famadm command failed");
+                    assert false;
+                }
             } else if(action.equals("set")) {
                 
-                HtmlPage policyServiceAtt = fmadm.setSvcAttrs
+                if (FederationManager.getExitCode(fmadm.setSvcAttrs
                         (webClient, strRealm, "iPlanetAMPolicyConfigService",
-                        dynRespList);
-                log(logLevel, "modifyDynamicRespAttribute",
-                        "setDynamicRespAttribute" +
-                        policyServiceAtt.getWebResponse().getContentAsString());
-                
+                        dynRespList)) !=0) {
+                    log(Level.SEVERE, "setDynamicRespAttribute",
+                            "setSvcAttrs famadm command failed");
+                    assert false;
+                }
             } else if (action.equals("remove")) {
-                
-                HtmlPage policyServiceAtt = fmadm.removeSvcAttrs
+                if (FederationManager.getExitCode(fmadm.removeSvcAttrs
                         (webClient, strRealm, "iPlanetAMPolicyConfigService",
-                        dynRespList);
-                log(logLevel, "modifyDynamicRespAttribute",
-                        "setDynamicRespAttribute" +
-                        policyServiceAtt.getWebResponse().getContentAsString());
+                        dynRespList)) != 0) {
+                    log(Level.SEVERE, "setDynamicRespAttribute",
+                            "removeSvcAttrs famadm command failed");
+                    assert false;
+                }
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "setDynamicRespAttribute", e.getMessage(), null);
+            log(Level.SEVERE, "setDynamicRespAttribute", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -1124,7 +1158,7 @@ public class PolicyCommon extends TestCommon {
      */
     public void createIds( Map testIdentityMap)
     throws Exception  {
-        log(logLevel, "createIds" ,"Starting to create Identities");
+        log(Level.FINEST, "createIds" ,"Starting to create Identities");
         String logoutUrl = protocol + ":" + "//" + host + ":" + port
                 + uri + "/UI/Logout";
         WebClient webClient = new WebClient();
@@ -1139,9 +1173,8 @@ public class PolicyCommon extends TestCommon {
             //  + uri + "/UI/Logout";
             //WebClient webClient = new WebClient();
             consoleLogin(webClient, url, adminUser, adminPassword);
-            HtmlPage userCheckPage;
-            log(logLevel, "createIds", "IdentityMap" + identityMap);
-            log(logLevel, "createIds", "test count" + testCount);
+            log(Level.FINEST, "createIds", "IdentityMap" + identityMap);
+            log(Level.FINEST, "createIds", "test count" + testCount);
             
            /*
             * get the password/userid/realm keys (no need to check for avai
@@ -1171,7 +1204,7 @@ public class PolicyCommon extends TestCommon {
                         ".Identity." +  "realmname");
                 List attrList = new ArrayList();
                 attrList.add("userpassword=" + psWord);
-                log(logLevel, "createIds" , "attr count" + attributeCount);
+                log(Level.FINEST, "createIds" , "attr count" + attributeCount);
                 for (j = 0; j < attributeCount; j++){
                     String attrName = (String)identityMap.get("test" + i +
                             ".Identity" + "." + "attribute" + j +".name");
@@ -1181,27 +1214,26 @@ public class PolicyCommon extends TestCommon {
                 }
                 
                 //now verify the user and add the user if not present
-                userCheckPage = fmadm.listIdentities(webClient, rlmName, uName,
-                        type);
+                HtmlPage userCheckPage = fmadm.listIdentities(webClient,
+                        rlmName, uName, type);
+                if (FederationManager.getExitCode(userCheckPage) != 0) {
+                    log(Level.SEVERE, "createIds", "listIdentities (User)" +
+                            " famadm command failed");
+                    assert false;
+                }
                 String xmlString = userCheckPage.asXml();
                 if (xmlString.contains(uName)) {
-                    log(logLevel, "createIds", "User already exists:"
+                    log(Level.FINEST, "createIds", "User already exists:"
                             + uName);
                 } else {
-                    log(logLevel, "createIds", "User is not exists:"
+                    log(Level.FINEST, "createIds", "User does not exists:"
                             + uName);
-                    userCheckPage = fmadm.createIdentity(webClient, rlmName,
-                            uName, type, attrList);
-                    userCheckPage.cleanUp();
-                    userCheckPage = fmadm.listIdentities(webClient, rlmName,
-                            uName, type);
-                    xmlString = userCheckPage.asXml();
-                    if (xmlString.contains(uName)) {
-                        log(logLevel, "createIds", "User " +
-                                "is created successfully:" + uName);
-                    } else {
-                        log(logLevel, "createIds", "User " +
-                                "is not created successfully:" + uName);
+                    if (FederationManager.getExitCode(fmadm.createIdentity(
+                            webClient, rlmName, uName, type, attrList)) != 0) {
+                        log(Level.SEVERE, "createIds", "createIdentity (User" +
+                                ") famadm command failed");
+                        log(Level.FINEST, "createIds", "User " +
+                                "was not created successfully: " + uName);
                         assert false;
                     }
                 }
@@ -1216,27 +1248,53 @@ public class PolicyCommon extends TestCommon {
                             ".Identity" + "." + "memberOfGroup");
                     HtmlPage groupCheckPage = fmadm.listIdentities(webClient,
                             rlmName, grpName, "Group");
+                    if (FederationManager.getExitCode(groupCheckPage) != 0) {
+                        log(Level.SEVERE, "createIds", "listIdentities" +
+                                " (Group) famadm command failed");
+                        assert false;
+                    }
                     if (groupCheckPage.asXml().contains(grpName)) {
-                        log(logLevel, "createIds", "group exists:"
-                                + "add the member" + grpName);
-                        fmadm.addMember(webClient, rlmName, uName,
-                                type, grpName, "GROUP");
+                        log(Level.FINEST, "createIds", "group exists:"
+                                + "add the member " + grpName);
+                        if (FederationManager.getExitCode(fmadm.addMember(
+                                webClient, rlmName, uName, type, grpName,
+                                "GROUP")) != 0) {
+                            log(Level.SEVERE, "createIds", "addMember (Group)" +
+                                    " famadm command failed");
+                            assert false;
+                        }
                     } else {
                         List grpAttrList = new ArrayList();
-                        log(logLevel, "createIds", "group is not found:"
+                        log(Level.FINEST, "createIds", "group is not found:"
                                 + "creating the group" + grpName);
-                        groupCheckPage = fmadm.createIdentity(webClient,
-                                rlmName, grpName, "Group", grpAttrList);
+                        if (FederationManager.getExitCode(fmadm.createIdentity(
+                                webClient, rlmName, grpName, "Group",
+                                grpAttrList)) != 0) {
+                            log(Level.SEVERE, "createIds", "createIdentity" +
+                                    " (Group) famadm command failed");
+                            assert false;
+                        }
                         groupCheckPage = fmadm.listIdentities(webClient,
                                 rlmName, grpName, "Group");
+                        if (FederationManager.getExitCode(groupCheckPage) != 0)
+                        {
+                            log(Level.SEVERE, "createIds", "listIdentities" +
+                                    " (Group) famadm command failed");
+                            assert false;
+                        }
                         if (groupCheckPage.asXml().contains(grpName)) {
-                            log(logLevel, "createIds", "group is " +
+                            log(Level.FINEST, "createIds", "group is " +
                                     "created successfully." +
-                                    "Now add the member" + grpName);
-                            fmadm.addMember(webClient, rlmName, uName,
-                                    type, grpName, "GROUP");
-                            log(logLevel, "createIds", uName +
-                                    "member is  added successfully" + grpName);
+                                    "Now add the member " + grpName);
+                            if (FederationManager.getExitCode(fmadm.addMember(
+                                    webClient, rlmName, uName, type, grpName,
+                                    "GROUP")) != 0) {
+                                log(Level.SEVERE, "createIds", "addMember" +
+                                        " (Group) famadm command failed");
+                                assert false;
+                            }
+                            log(Level.FINEST, "createIds", uName + " member" +
+                                    " is  added successfully " + grpName);
                         }
                     }
                 }
@@ -1246,40 +1304,66 @@ public class PolicyCommon extends TestCommon {
                  * add the user
                  */
                 if (identityMap.containsKey("test" + i + ".Identity." +
-                        "memberOfRole")){
+                        "memberOfRole")) {
                     String roleName = (String)identityMap.get("test" + i +
                             ".Identity." + "memberOfRole");
                     HtmlPage roleCheckPage = fmadm.listIdentities(webClient,
                             rlmName, roleName, "Role");
+                    if (FederationManager.getExitCode(roleCheckPage) != 0) {
+                        log(Level.SEVERE, "createIds", "listIdentities (Role)" +
+                                " famadm command failed");
+                        assert false;
+                    }
                     if (roleCheckPage.asXml().contains(roleName)) {
-                        log(logLevel, "createIds", "Role already exists"
+                        log(Level.FINEST, "createIds", "Role already exists"
                                 + roleName);
-                        fmadm.addMember(webClient, rlmName, uName, type,
-                                roleName, "Role");
-                        log(logLevel, "createIds", "added member to " +
-                                "the role" + roleName);
+                        if (FederationManager.getExitCode(fmadm.addMember(
+                                webClient, rlmName, uName, type, roleName,
+                                "Role")) != 0) {
+                            log(Level.SEVERE, "createIds", "addMember (Role)" +
+                                    " famadm command failed");
+                            assert false;
+                        }
+                        log(Level.FINEST, "createIds", "added member to " +
+                                "the role " + roleName);
                     } else {
                         List roleAttrList = new ArrayList();
-                        log(logLevel,"createIds","Role does not" +
+                        log(Level.FINEST,"createIds","Role does not" +
                                 " exists. :Creating the role"  + roleName);
-                        roleCheckPage = fmadm.createIdentity(webClient, rlmName,
-                                roleName, "Role", roleAttrList);
+                        if (FederationManager.getExitCode(fmadm.createIdentity(
+                                webClient, rlmName, roleName, "Role",
+                                roleAttrList)) != 0) {
+                            log(Level.SEVERE, "createIds", "createIdentity" +
+                                    " (Role) famadm command failed");
+                            assert false;
+                        }
                         roleCheckPage = fmadm.listIdentities(webClient,
                                 rlmName, roleName, "Role");
+                        if (FederationManager.getExitCode(roleCheckPage) != 0) {
+                            log(Level.SEVERE, "createIds", "listIdentities" +
+                                    " (Role) famadm command failed");
+                            assert false;
+                        }
                         if (roleCheckPage.asXml().contains(roleName)) {
-                            log(logLevel, "createIds",
+                            log(Level.FINEST, "createIds",
                                     "Role Created successfully." +
                                     "Now adding the member" + roleName);
-                            fmadm.addMember(webClient, rlmName, uName,
-                                    type, roleName, "Role");
-                            log(logLevel, "createIds", uName +
-                                    "member is  added successfully" + roleName);
+                            if (FederationManager.getExitCode(fmadm.addMember(
+                                    webClient, rlmName, uName, type, roleName,
+                                    "Role")) != 0) {
+                                log(Level.SEVERE, "createIds", "addMember" +
+                                        " (Role) famadm command failed");
+                                assert false;
+                            }
+                            log(Level.FINEST, "createIds", uName +
+                                    " member is  added successfully " +
+                                    roleName);
                         }
                     }
                 }
             }
         } catch(Exception e) {
-            log(logLevel, "createIds", e.getMessage());
+            log(Level.FINEST, "createIds", e.getMessage());
             e.printStackTrace();
         } finally {
             consoleLogout(webClient, logoutUrl);
@@ -1296,7 +1380,7 @@ public class PolicyCommon extends TestCommon {
         String logoutUrl = protocol + ":" + "//" + host + ":" + port
                 + uri + "/UI/Logout";
         WebClient webClient = new WebClient();
-        log(logLevel, "deleteIds" ,"Starting deleteIds");
+        log(Level.FINE, "deleteIds" ,"Starting deleteIds");
         try{
             int i ;
             int j = 0;
@@ -1304,13 +1388,12 @@ public class PolicyCommon extends TestCommon {
             String url = protocol + ":" + "//" + host + ":" +
                     port + uri ;
             consoleLogin(webClient, url, adminUser, adminPassword);
-            HtmlPage htmlpage;
             List idList = new ArrayList();
             
-           /*
-            * Loop thru the map and delete the users and their associated
-            * groups
-            */
+            /**
+             * Loop thru the map and delete the users and their associated
+             * groups
+             */
             for (i = 0; i < testCount; i++) {
                 String uName = (String)identityMap.get("test" + i +
                         ".Identity.username");
@@ -1319,22 +1402,23 @@ public class PolicyCommon extends TestCommon {
                 String rlmName = (String)identityMap.get("test" + i +
                         ".Identity." + "realmname");
                 idList.add(uName);
-                for (Iterator itr = idList.iterator(); itr.hasNext();) {
-                    log(logLevel, "deleteIds", (String) itr.next());
-                }
+                log(Level.FINEST, "deleteIds", "Deleting User: " + uName);
                 
                 // now verify the user and delete the user if already present
-                fmadm.deleteIdentities(webClient, rlmName, idList, type);
-                htmlpage = fmadm.listIdentities(webClient,
-                        rlmName, uName, "USER");
-                String xmlString = htmlpage.asXml();
-                if (xmlString.contains(uName)) {
-                    log(logLevel, "deleteIds", "User is not deleted:" +
-                            uName);
+                HtmlPage userCheckPage=  fmadm.listIdentities(webClient,
+                            rlmName, uName, "User");
+                if (FederationManager.getExitCode(userCheckPage) != 0) {
+                    log(Level.SEVERE, "deleteIds", "listIdentities (User)" +
+                            " famadm command failed");
                     assert false;
-                } else{
-                    log(logLevel, "deleteIds",
-                            "User is deleted properly:" + uName);
+                }
+                if (userCheckPage.asXml().contains(uName)) {
+                    if (FederationManager.getExitCode(fmadm.deleteIdentities(
+                            webClient, rlmName, idList, type)) != 0) {
+                        log(Level.SEVERE, "deleteIds", "deleteIdentities" +
+                                " (User) famadm command failed");
+                        assert false;
+                    }
                 }
                 idList.clear();
                 
@@ -1345,21 +1429,25 @@ public class PolicyCommon extends TestCommon {
                             ".Identity" + "." + "memberOfGroup");
                     HtmlPage groupCheckPage = fmadm.listIdentities(webClient,
                             rlmName, grpName, "Group");
-                    log(logLevel,"deleteIds" , groupCheckPage.asXml());
+                    if (FederationManager.getExitCode(groupCheckPage) != 0) {
+                        log(Level.SEVERE, "deleteIds", "listIdentities" +
+                                " (Group) famadm command failed");
+                        assert false;
+                    }
                     if (groupCheckPage.asXml().contains(grpName)) {
-                        log(logLevel, "deleteIds", "Group Needs to " +
-                                "be deleted" + ":" + grpName);
+                        log(Level.FINEST, "deleteIds", "Group Needs to " +
+                                "be deleted: " + grpName);
                         idList.add(grpName);
-                        fmadm.deleteIdentities(webClient, rlmName, idList,
-                                "Group");
-                        groupCheckPage = fmadm.listIdentities(webClient,
-                                rlmName, grpName,"Group");
-                        if (groupCheckPage.asXml().contains(grpName)) {
-                            log(logLevel, "deleteIds", "Group delete:"
-                                    + "is not success" + grpName);
+                        if (FederationManager.getExitCode(
+                                fmadm.deleteIdentities(webClient, rlmName,
+                                idList, "Group")) != 0) {
+                            log(Level.FINEST, "deleteIds", "Group delete:"
+                                    + "is not success " + grpName);
+                            log(Level.SEVERE, "deleteIds", "deleteIdentities" +
+                                    " (Group) famadm command failed");
                             assert false;
                         } else {
-                            log(logLevel, "deleteIds", "Group is already" +
+                            log(Level.FINEST, "deleteIds", "Group is already" +
                                     "deleted:" + grpName);
                         }
                     }
@@ -1371,22 +1459,27 @@ public class PolicyCommon extends TestCommon {
                             ".Identity" + "." + "memberOfRole");
                     HtmlPage roleCheckPage = fmadm.listIdentities(webClient,
                             rlmName, roleName, "Role");
+                    if (FederationManager.getExitCode(roleCheckPage) != 0) {
+                        log(Level.SEVERE, "deleteIds", "listIdentities (Role)" +
+                                " famadm command failed");
+                        assert false;
+                    }
                     if (roleCheckPage.asXml().contains(roleName)) {
-                        log(logLevel, "deleteIds", "Role need to be" +
-                                " deleted:" + roleName);
+                        log(Level.FINEST, "deleteIds", "Role need to be" +
+                                " deleted: " + roleName);
                         idList.add(roleName);
-                        fmadm.deleteIdentities(webClient, rlmName, idList,
-                                "Role");
-                        roleCheckPage = fmadm.listIdentities(webClient,
-                                rlmName, roleName, "Role");
-                        if (roleCheckPage.asXml().contains(roleName)) {
-                            log(logLevel, "deleteIds", "Role is "+
+                        if (FederationManager.getExitCode(
+                                fmadm.deleteIdentities(webClient, rlmName,
+                                idList, "Role")) != 0) {
+                            log(Level.FINEST, "deleteIds", "Role is "+
                                     "not deleted:" + roleName);
+                            log(Level.SEVERE, "deleteIds", "deleteIdentities" +
+                                    " (Role) famadm command failed");
                             assert false;
                         }
                     } else {
-                        log(logLevel, "deleteIds", "Role" +
-                                " is already deleted:" + roleName);
+                        log(Level.FINEST, "deleteIds", "Role" +
+                            " is already deleted:" + roleName);
                     }
                 }
                 idList.clear();
@@ -1412,15 +1505,15 @@ public class PolicyCommon extends TestCommon {
         try{
             String url = protocol + ":" + "//" + host + ":"
                     + port + uri ;
-            log(logLevel, "createPolicy - URL", url);
+            log(Level.FINEST, "createPolicy - URL", url);
             String fileSeparator = System.getProperty("file.separator");
             consoleLogin(webClient, url, adminUser, adminPassword);
             String createPolicyXMLFile = scenarioname + ".xml";
-            log(logLevel, "createPolicy", createPolicyXMLFile);
+            log(Level.FINEST, "createPolicy", createPolicyXMLFile);
             String absFileName = getBaseDir() + fileSeparator + "xml" +
                     fileSeparator + "policy" + fileSeparator +
                     createPolicyXMLFile;
-            log(logLevel, "createPolicy", absFileName);
+            log(Level.FINEST, "createPolicy", absFileName);
             String policyXML = null;
             if (absFileName != null) {
                 StringBuffer contents = new StringBuffer();
@@ -1434,22 +1527,20 @@ public class PolicyCommon extends TestCommon {
                     input.close();
                 policyXML = contents.toString();
             }
-            log(logLevel, "createPolicy", absFileName);
-            HtmlPage policyCheckPage = fmadm.createPolicies(webClient,
-                    realm, policyXML);
-            String xmlString = policyCheckPage.asXml();
-            if (xmlString.contains("Policies are created")) {
-                log(logLevel, "createPolicy", "create policy is" +
-                        "success" + absFileName);
-                log(logLevel, "createPolicy", xmlString);
-            } else {
-                log(logLevel, "createPolicy",
-                        "not success" + absFileName);
-                log(logLevel, "createPolicy", xmlString);
+            log(Level.FINEST, "createPolicy", absFileName);
+            if (FederationManager.getExitCode(fmadm.createPolicies(webClient,
+                    realm, policyXML)) != 0) {
+                log(Level.FINEST, "createPolicy",
+                        "not success " + absFileName);
+                log(Level.SEVERE, "createPolicy", "createPolicies famadm" +
+                        " command failed");
                 assert false;
+            } else {
+                log(Level.FINEST, "createPolicy", "create policy is" +
+                        "success " + absFileName);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "createPolicy", e.getMessage(), null);
+            log(Level.SEVERE, "createPolicy", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -1477,22 +1568,19 @@ public class PolicyCommon extends TestCommon {
             String url = protocol + ":" + "//" + host + ":"
                     + port + uri ;
             consoleLogin(webClient, url, adminUser, adminPassword);
-            HtmlPage policyCheckPage  = fmadm.deletePolicies(webClient,
-                    realm, pList);
-            String xmlString = policyCheckPage.asXml();
-            if (!xmlString.contains("Policies are deleted")) {
-                log(logLevel, "deletePolicy", "Delete Policy" +
-                        "is not success" + policyName );
-                log(logLevel, "deletePolicies", xmlString);
+            if (FederationManager.getExitCode(fmadm.deletePolicies(webClient,
+                    realm, pList)) != 0) {
+                log(Level.FINEST, "deletePolicies", "Delete Policy" +
+                        "is not success " + policyName );
+                log(Level.SEVERE, "deletePolicies", "deletePolicies famadm" +
+                        " command failed");
                 assert false;
             } else {
-                log(logLevel, "deletePolicies", "is success" +
-                        policyName);
-                log(logLevel, "deletePolicies", xmlString);
+                log(Level.FINEST, "deletePolicies", "Delete Policy" +
+                        "is success " + policyName );
             }
-            log(logLevel, "deletePolicies", "cleaned up the policies");
         } catch (Exception e) {
-            log(Level.SEVERE, "deletePolicies", e.getMessage(), null);
+            log(Level.SEVERE, "deletePolicies", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -1518,20 +1606,17 @@ public class PolicyCommon extends TestCommon {
 
             consoleLogin(webClient, url, adminUser, adminPassword);
 
-            HtmlPage policyCheckPage  = fmadm.deletePolicies(webClient,
-                    realm, pList);
-            String xmlString = policyCheckPage.asXml();
-            if (!xmlString.contains("Policies are deleted")) {
+            if (FederationManager.getExitCode(fmadm.deletePolicies(webClient,
+                    realm, pList)) != 0) {
                 log(Level.FINEST, "deletePolicy", "Delete Policy" +
                         "is not success " + polName );
-                log(Level.FINEST, "deletePolicy", xmlString);
+                log(Level.SEVERE, "deletePolicy", "deletePolicies famadm" +
+                        " command failed");
                 assert false;
             } else {
-                log(Level.FINEST, "deletePolicy", "is success " +
-                        polName);
-                log(Level.FINEST, "deletePolicy", xmlString);
+                log(Level.FINEST, "deletePolicy", "Delete Policy" +
+                        "is success " + polName );
             }
-            log(Level.FINEST, "deletePolicy", "Cleaned up the policy");
         } catch (Exception e) {
             log(Level.SEVERE, "deletePolicy", e.getMessage());
             e.printStackTrace();
@@ -1561,10 +1646,10 @@ public class PolicyCommon extends TestCommon {
                 userToken.setProperty(spName, spValue);
                 String spGetValue = userToken.getProperty(spName);
                 if (spGetValue == spValue) {
-                    log(logLevel, "setProperty", "Session Property is set"
+                    log(Level.FINEST, "setProperty", "Session Property is set"
                             + "Correctly:" + spGetValue);
                 } else {
-                    log(logLevel, "setProperty", "Session Property is not"
+                    log(Level.FINEST, "setProperty", "Session Property is not"
                             + " set Correctly:" + spGetValue);
                 }
             }

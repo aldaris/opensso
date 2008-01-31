@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ForceAuthNTests.java,v 1.5 2007-09-10 22:36:54 mrudulahg Exp $
+ * $Id: SAMLv2ForceAuthNTests.java,v 1.6 2008-01-31 22:06:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,10 +122,15 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                         TestConstants.KEY_SP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
                 log(logLevel, "setup", "SP user to be created is " + list);
-                fmSP.createIdentity(webClient, configMap.get(
+                if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
+                        configMap.get(
                         TestConstants.KEY_SP_REALM),
                         usersMap.get(TestConstants.KEY_SP_USER + i), "User",
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 spuserlist.add(usersMap.get(TestConstants.KEY_SP_USER + i));
                 
                 //create idp user
@@ -136,10 +141,14 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                         TestConstants.KEY_IDP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
                 log(logLevel, "setup", "IDP user to be created is " + list);
-                fmIDP.createIdentity(webClient, configMap.get(
-                        TestConstants.KEY_IDP_REALM),
+                if (FederationManager.getExitCode(fmIDP.createIdentity(
+                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User",
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 idpuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + i));
                 list.clear();
             }
@@ -182,7 +191,8 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER + 1));
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, 
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 1));
-            log(logLevel, "testforceAuthNtrueArt", "Running: testforceAuthNtrueArt");
+            log(logLevel, "testforceAuthNtrueArt",
+                    "Running: testforceAuthNtrueArt");
             getWebClient();
             consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_USER),
@@ -216,7 +226,8 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     }
     
     /**
-     * @DocTest: SAML2|Perform SP init sso with ForceAuthn=true, with post profile
+     * @DocTest: SAML2|Perform SP init sso with ForceAuthn=true, with post
+     * profile
      */
     @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void testforceAuthNtruePost()
@@ -242,7 +253,8 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     "forceauthntruepost_slo", 
                     "forceauthntruepost_terminate"};
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(loginxmlfile, configMap, "post", false);
+            SAMLv2Common.getxmlSPInitSSO(loginxmlfile, configMap, "post",
+                    false);
             configMap.remove("urlparams");
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
             SAMLv2Common.getxmlSPSLO(ssoxmlfile, configMap, "soap");
@@ -280,7 +292,8 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER + 3));
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, 
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 3));
-            log(logLevel, "testforceAuthNfalseArt", "Running: testforceAuthNfalseArt");
+            log(logLevel, "testforceAuthNfalseArt",
+                    "Running: testforceAuthNfalseArt");
             getWebClient();
             consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_USER),
@@ -312,7 +325,8 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     }
     
     /**
-     * @DocTest: SAML2|Perform SP init sso with ForceAuthn=false, with post profile
+     * @DocTest: SAML2|Perform SP init sso with ForceAuthn=false, with post
+     * profile
      */
     @Test(groups={"ds_ds_sec","ff_ds_sec"})
     public void testforceAuthNfalsePost()
@@ -372,15 +386,24 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            fmSP.deleteIdentities(webClient, configMap.get(
-                    TestConstants.KEY_SP_REALM), spuserlist, "User");
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             
             consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-            fmIDP.deleteIdentities(webClient, configMap.get(
-                    TestConstants.KEY_IDP_REALM),
-                    idpuserlist, "User");
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
+                    configMap.get(TestConstants.KEY_IDP_REALM), idpuserlist,
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
@@ -410,7 +433,8 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             String idp_entity_name = (String)m.get(
                     TestConstants.KEY_IDP_ENTITY_NAME);
             String sp_user = (String)m.get(TestConstants.KEY_SP_USER);
-            String sp_userpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
+            String sp_userpw =
+                    (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
             String strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
 
             out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
@@ -429,7 +453,8 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             out.write(newline);
             out.write("<input name=\"IDToken1\" value=\"" + sp_user + "\" />");
             out.write(newline);
-            out.write("<input name=\"IDToken2\" value=\"" + sp_userpw + "\" />");
+            out.write("<input name=\"IDToken2\" value=\"" + sp_userpw +
+                    "\" />");
             out.write(newline);
             out.write("<result text=\"" + strResult + "\" />");
             out.write(newline);

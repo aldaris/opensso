@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.3 2008-01-08 20:59:39 rmisra Exp $
+ * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.4 2008-01-31 22:06:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,9 +112,14 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmSP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    configMap.get(TestConstants.KEY_SP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_SP_USER), "User", list))
+                    != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
+                assert false;
+            }
             
             // Create idp users
             idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
@@ -132,9 +137,14 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmIDP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    configMap.get(TestConstants.KEY_IDP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_IDP_USER), "User", list))
+                    != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
+                assert false;
+            }
             DefaultRelayStateSPSetup(webClient, fmSP, fmIDP, configMap);
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
@@ -160,6 +170,11 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_SP_REALM),
                     false, false, true, "saml2");
+            if (FederationManager.getExitCode(spmetaPage) != 0) {
+               log(Level.SEVERE, "DefaultRelayStateSPSetup", "exportEntity" +
+                       " famadm command failed");
+               assert false;
+            }
             spmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
             DEFAULT_RELAY_STATE_MOD = "       <Attribute " +
                     "name=\"defaultRelayState\">\n" +
@@ -170,30 +185,27 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     DEFAULT_RELAY_STATE_MOD);
             log(Level.FINEST, "DefaultRelayStateSPSetup", "Modified metadata:" +
                     spmetadataMod);
-            HtmlPage deleteExtEntity = fmSP.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_SP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    true, "saml2")) != 0) {
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "Deletion of " +
-                        "Extended entity failed" +
-                        deleteExtEntity.getWebResponse().getContentAsString());
+                        "Extended entity failed");
+                log(Level.SEVERE, "DefaultRelayStateSPSetup", "deleteEntity" +
+                        " famadm command failed");
                 assert(false);
             } else {
                 log(Level.FINE, "DefaultRelayStateSPSetup", "Deleted SP Ext " +
                         "entity");
             }
             
-            HtmlPage importMeta = fmSP.importEntity(webClient,
+            if (FederationManager.getExitCode(fmSP.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_REALM), "",
-                    spmetadataMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    spmetadataMod, "", "saml2")) != 0) {
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "Failed to " +
-                        "import extended metadata " +
-                        importMeta.getWebResponse().getContentAsString());
+                        "import extended metadata");
+                log(Level.SEVERE, "DefaultRelayStateSPSetup", "importEntity" +
+                        " famadm command failed");
                 assert(false);
             } else {
                 log(Level.FINE, "DefaultRelayStateSPSetup", "Imported SP " +
@@ -205,35 +217,38 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_SP_REALM),
                     false, false, true, "saml2");
-            idpmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
+            if (FederationManager.getExitCode(spmetaPage) != 0) {
+               log(Level.SEVERE, "DefaultRelayStateSPSetup", "exportEntity" +
+                       " famadm command failed");
+               assert false;
+            }
+            idpmetadata =
+                    MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
             String idpmetadataMod = idpmetadata.replaceAll(DEFAULT_RELAY_STATE,
                     DEFAULT_RELAY_STATE_MOD);
             log(Level.FINEST, "DefaultRelayStateSPSetup", "Modified SP " +
                     "metadata from IDP side: " + idpmetadataMod);
-            deleteExtEntity = fmIDP.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_IDP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    true, "saml2")) != 0) {
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "Deletion of " +
-                        "Extended entity failed on IDP side" +
-                        deleteExtEntity.getWebResponse().getContentAsString());
+                        "Extended entity failed on IDP side");
+                log(Level.SEVERE, "DefaultRelayStateSPSetup", "deleteEntity " +
+                        "famadm command failed");
                 assert(false);
             } else {
                 log(Level.FINE, "DefaultRelayStateSPSetup", "Deleted SP Ext " +
                         "entity on IDP side");
             }
             
-           importMeta = fmIDP.importEntity(webClient,
+           if (FederationManager.getExitCode(fmIDP.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_REALM), "",
-                    idpmetadataMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    idpmetadataMod, "", "saml2")) != 0) {
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "Failed to " +
-                        "import extended metadata on IDP side" +
-                        importMeta.getWebResponse().getContentAsString());
+                        "import extended metadata on IDP side");
+                log(Level.SEVERE, "DefaultRelayStateSPSetup", "importEntity" +
+                        " famadm command failed");
                 assert(false);
             } else {
                 log(Level.FINE, "DefaultRelayStateSPSetup", "Imported SP " +
@@ -300,7 +315,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
     throws Exception {
         entering("SPSLOHTTPdefaultRS", null);
         try {
-            log(Level.FINE, "SPSLOHTTPdefaultRS", "Running: SPSLOHTTPdefaultRS");
+            log(Level.FINE, "SPSLOHTTPdefaultRS", "Running:" +
+                    " SPSLOHTTPdefaultRS");
             xmlfile = baseDir + "SPSLOHTTPdefaultRS.xml";
             SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http");
             log(Level.FINE, "SPSLOHTTPdefaultRS", "Run " + xmlfile);
@@ -644,9 +660,13 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             idList.add(configMap.get(TestConstants.KEY_SP_USER));
             log(Level.FINE, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
-            fmSP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             
             // Create idp users
             consoleLogin(webClient, idpurl + "/UI/Login",
@@ -656,62 +676,60 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             idList.add(configMap.get(TestConstants.KEY_IDP_USER));
             log(Level.FINE, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
-            fmIDP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
 
-            HtmlPage deleteExtEntity = fmSP.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    true, "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Deletion of " +
-                        "Extended entity failed" +
-                        deleteExtEntity.getWebResponse().getContentAsString());
+                        "Extended entity failed");
+                log(Level.SEVERE, "cleanup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             } else {
                 log(Level.FINE, "cleanup", "Deleted SP Ext entity");
             }
             
-            HtmlPage importMeta = fmSP.importEntity(webClient,
+            if (FederationManager.getExitCode(fmSP.importEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "",
-                    spmetadata, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    spmetadata, "", "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Failed to import extended " +
-                        "metadata " +
-                        importMeta.getWebResponse().getContentAsString());
+                        "metadata");
+                log(Level.SEVERE, "cleanup", "importEntity famadm command" +
+                        " failed");
                 assert(false);
             } else {
                 log(Level.FINE, "cleanup", "Imported SP extended metadata");
             }
 
             //Import SP ext metadata on IDP side 
-            deleteExtEntity = fmIDP.deleteEntity(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                    true, "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Deletion of " +
-                        "Extended entity failed on IDP side" +
-                        deleteExtEntity.getWebResponse().getContentAsString());
+                        "Extended entity failed on IDP side");
+                log(Level.SEVERE, "cleanup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             } else {
                 log(Level.FINE, "cleanup", "Deleted SP Ext entity on IDP side");
             }
             
-           importMeta = fmIDP.importEntity(webClient,
+           if (FederationManager.getExitCode(fmIDP.importEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "",
-                    idpmetadata, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    idpmetadata, "", "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Failed to " +
-                        "import extended metadata on IDP side" +
-                        importMeta.getWebResponse().getContentAsString());
+                        "import extended metadata on IDP side");
+                log(Level.SEVERE, "cleanup", "importEntity famadm command" +
+                        " failed");
                 assert(false);
             } else {
                 log(Level.FINE, "cleanup", "Imported SP " +

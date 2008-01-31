@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ScenarioTests.java,v 1.6 2007-09-10 22:36:54 mrudulahg Exp $
+ * $Id: SAMLv2ScenarioTests.java,v 1.7 2008-01-31 22:06:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -145,9 +145,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 list.add("userpassword=" +
                         configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
                 list.add("inetuserstatus=Active");
-                fmSP.createIdentity(webClient,
+                if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                         configMap.get(TestConstants.KEY_SP_REALM),
-                        configMap.get(TestConstants.KEY_SP_USER), "User", list);
+                        configMap.get(TestConstants.KEY_SP_USER), "User", list))
+                        != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 spuserlist.add(configMap.get(TestConstants.KEY_SP_USER));
                 
                 //create idp user
@@ -157,16 +162,20 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 list.add("userpassword=" +
                         configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
                 list.add("inetuserstatus=Active");
-                fmIDP.createIdentity(webClient,
-                        configMap.get(TestConstants.KEY_IDP_REALM),
+                if (FederationManager.getExitCode(fmIDP.createIdentity(
+                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
                         configMap.get(TestConstants.KEY_IDP_USER), "User",
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 idpuserlist.add(configMap.get(TestConstants.KEY_IDP_USER));
             }
             consoleLogout(webClient, spurl + "/UI/Logout");
             consoleLogout(webClient, idpurl + "/UI/Logout");
         } catch (Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -212,7 +221,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 page = task1.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2Scenario1", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2Scenario1", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -260,7 +269,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 page = task1.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2Scenario2", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2Scenario2", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -305,7 +314,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 page = task1.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2Scenario3", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2Scenario3", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -350,7 +359,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 page = task1.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2Scenario4", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2Scenario4", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -395,7 +404,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 page = task1.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2Scenario5", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2Scenario5", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -438,7 +447,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 page = task1.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2Scenario6", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2Scenario6", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -486,7 +495,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 page = task1.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2Scenario7", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2Scenario7", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -532,7 +541,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 page = task1.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2Scenario8", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2Scenario8", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -561,9 +570,13 @@ public class SAMLv2ScenarioTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
-            fmSP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             consoleLogout(webClient, spurl + "/UI/Logout");
             
             // Create idp users
@@ -576,16 +589,19 @@ public class SAMLv2ScenarioTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);
-            fmIDP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idpuserlist,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             consoleLogout(webClient, idpurl + "/UI/Logout");
         } catch (Exception e) {
-            log(Level.SEVERE, "cleanup", e.getMessage(), null);
+            log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
         exiting("cleanup");
-    }
-    
+    }    
 }

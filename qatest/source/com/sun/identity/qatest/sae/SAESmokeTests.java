@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAESmokeTests.java,v 1.3 2008-01-18 00:42:52 rmisra Exp $
+ * $Id: SAESmokeTests.java,v 1.4 2008-01-31 22:06:28 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -178,16 +178,24 @@ public class SAESmokeTests extends TestCommon {
                     TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
             log(Level.FINEST, "setup", "SP user to be created is " + list);
-            spfm.createIdentity(webClient, configMap.get(
-                    TestConstants.KEY_SP_REALM),
+            if (FederationManager.getExitCode(spfm.createIdentity(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM),
                     saeConfig.getString(TestConstants.KEY_SP_USER), "User",
-                    list);
+                    list)) != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
+                assert false;
+            }
             spuserlist.add(saeConfig.getString(TestConstants.KEY_SP_USER));
             
             HtmlPage spmetaPage = spfm.exportEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_SP_REALM),
                     false, false, true, "saml2");
+            if (FederationManager.getExitCode(spmetaPage) != 0) {
+               log(Level.SEVERE, "setup", "exportEntity famadm command failed");
+               assert false;
+            }
             spmetadataext = 
                     MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
             String spmetadataextMod =
@@ -215,27 +223,24 @@ public class SAESmokeTests extends TestCommon {
             spmetadataextMod = spmetadataextMod.replaceAll(SP_COT, IDP_COT);
 
             // load sp extended metadata on idp
-            HtmlPage deleteExtEntity = idpfm.deleteEntity(webClient,
+            if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(Level.FINEST, "setup", "Deletion of Extended " +
-                        "entity failed:" + deleteExtEntity.getWebResponse().
-                        getContentAsString());
+                    true, "saml2")) != 0) {
+                log(Level.SEVERE, "setup", "Deletion of Extended " +
+                        "entity failed");
+                log(Level.SEVERE, "setup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             }
 
-            HtmlPage importMeta = idpfm.importEntity(webClient,
+            if (FederationManager.getExitCode(idpfm.importEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "",
-                    spmetadataextMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(Level.FINEST, "setup", "Failed to import extended " +
-                        "metadata:" + importMeta.getWebResponse().
-                        getContentAsString());
+                    spmetadataextMod, "", "saml2")) != 0) {
+                log(Level.SEVERE, "setup", "Failed to import extended " +
+                        "metadata");
+                log(Level.SEVERE, "setup", "importEntity famadm command" +
+                        " failed");
                 assert(false);
             }
 
@@ -280,27 +285,24 @@ public class SAESmokeTests extends TestCommon {
                     spmetadataextMod);
 
             // load sp extended metadata on sp
-            deleteExtEntity = spfm.deleteEntity(webClient,
+            if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(Level.FINEST, "setup", "Deletion of Extended " +
-                        "entity failed" + deleteExtEntity.getWebResponse().
-                        getContentAsString());
+                    true, "saml2" )) != 0) {
+                log(Level.SEVERE, "setup", "Deletion of Extended " +
+                        "entity failed");
+                log(Level.SEVERE, "setup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             }
 
-            importMeta = spfm.importEntity(webClient,
+            if (FederationManager.getExitCode(spfm.importEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "",
-                    spmetadataextMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(Level.FINEST, "setup", "Failed to import extended " +
-                        "metadata:" + importMeta.getWebResponse().
-                        getContentAsString());
+                    spmetadataextMod, "", "saml2")) != 0) {
+                log(Level.SEVERE, "setup", "Failed to import extended " +
+                        "metadata");
+                log(Level.SEVERE, "setup", "importEntity famadm command" +
+                        " failed");
                 assert(false);
             }
 
@@ -308,6 +310,10 @@ public class SAESmokeTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_IDP_REALM), false, false,
                     true, "saml2");
+            if (FederationManager.getExitCode(idpmetaPage) != 0) {
+               log(Level.SEVERE, "setup", "exportEntity famadm command failed");
+               assert false;
+            }
             idpmetadataext = MultiProtocolCommon.getExtMetadataFromPage(
                     idpmetaPage);
             if (secMode.equals("symmetric")) {
@@ -334,27 +340,24 @@ public class SAESmokeTests extends TestCommon {
                     idpmetadataextMod);
 
             // load idp extended metadata on idp
-            deleteExtEntity = idpfm.deleteEntity(webClient,
+            if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(Level.FINEST, "setup",  "Deletion of Extended " +
-                        "entity failed:" + deleteExtEntity.getWebResponse().
-                        getContentAsString());
+                    true, "saml2")) != 0) {
+                log(Level.SEVERE, "setup",  "Deletion of Extended " +
+                        "entity failed");
+                log(Level.SEVERE, "setup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             }
 
-            importMeta = idpfm.importEntity(webClient,
+            if (FederationManager.getExitCode(idpfm.importEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "",
-                    idpmetadataextMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(Level.FINEST, "setup", "Failed to import extended " +
-                        "metadata:" + importMeta.getWebResponse().
-                        getContentAsString());
+                    idpmetadataextMod, "", "saml2")) != 0) {
+                log(Level.SEVERE, "setup", "Failed to import extended " +
+                        "metadata");
+                log(Level.SEVERE, "setup", "importEntity famadm command" +
+                        " failed");
                 assert(false);
             }
 
@@ -366,27 +369,24 @@ public class SAESmokeTests extends TestCommon {
             idpmetadataextMod = idpmetadataextMod.replaceAll(IDP_COT, SP_COT);
 
             // load idp extended metadata on sp
-            deleteExtEntity = spfm.deleteEntity(webClient,
+            if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    true, "saml2" );
-            if (!deleteExtEntity.getWebResponse().getContentAsString().
-                    contains("Configuration is deleted for entity, " +
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(Level.FINEST, "setup", "Deletion of Extended " +
-                        "entity failed:" + deleteExtEntity.getWebResponse().
-                        getContentAsString());
+                    true, "saml2")) != 0) {
+                log(Level.SEVERE, "setup", "Deletion of Extended " +
+                        "entity failed");
+                log(Level.SEVERE, "setup", "deleteEntity famadm command" +
+                        " failed");
                 assert(false);
             }
 
-            importMeta = spfm.importEntity(webClient,
+            if (FederationManager.getExitCode(spfm.importEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "",
-                    idpmetadataextMod, "", "saml2");
-            if (!importMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(Level.FINEST, "setup", "Failed to import extended " +
-                        "metadata:" + importMeta.getWebResponse().
-                        getContentAsString());
+                    idpmetadataextMod, "", "saml2")) != 0) {
+                log(Level.SEVERE, "setup", "Failed to import extended " +
+                        "metadata");
+                log(Level.SEVERE, "setup", "importEntity famadm command" +
+                        " failed");
                 assert(false);
             }
         } catch (Exception e) {
@@ -590,9 +590,13 @@ public class SAESmokeTests extends TestCommon {
             consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            spfm.deleteIdentities(webClient, configMap.get(
-                    TestConstants.KEY_SP_REALM),
-                    spuserlist, "User");
+            if (FederationManager.getExitCode(spfm.deleteIdentities(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM),
+                    spuserlist, "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             enableUserProfile("SP", spfm, "false");
             enableUserProfile("IDP", idpfm, "false");
         } catch (Exception e) {
@@ -663,9 +667,12 @@ public class SAESmokeTests extends TestCommon {
     private void setSPAppData(String secMode)
     throws Exception {
         log(Level.FINEST, "setSPAppData", "spurl: " + spurl);
-        String spAppCreateDataFileURL = saeConfig.getString("spAppCreateDataFileURL");
-        log(Level.FINEST, "setSPAppData", "spAppCreateDataFileURL: " + spAppCreateDataFileURL);
-        page = (HtmlPage) webClient.getPage(spurl + "/" + spAppCreateDataFileURL);
+        String spAppCreateDataFileURL = 
+                saeConfig.getString("spAppCreateDataFileURL");
+        log(Level.FINEST, "setSPAppData", "spAppCreateDataFileURL: " +
+                spAppCreateDataFileURL);
+        page = (HtmlPage) webClient.getPage(spurl + "/" +
+                spAppCreateDataFileURL);
 
         form = (HtmlForm)page.getForms().get(0);
 
@@ -724,12 +731,14 @@ public class SAESmokeTests extends TestCommon {
                 setValueAttribute(idp_userid);
 
         String mail_attribute = saeConfig.getString("mail_attribute");
-        log(Level.FINEST, "generateSSOSLOURL", "mail_attribute: " + mail_attribute);
+        log(Level.FINEST, "generateSSOSLOURL", "mail_attribute: " +
+                mail_attribute);
         ((HtmlTextInput)form.getInputByName("mail")).
                 setValueAttribute(mail_attribute);
 
         String branch_attribute = saeConfig.getString("branch_attribute");
-        log(Level.FINEST, "generateSSOSLOURL", "branch_attribute: " + branch_attribute);
+        log(Level.FINEST, "generateSSOSLOURL", "branch_attribute: " +
+                branch_attribute);
         ((HtmlTextInput)form.getInputByName("branch")).
                 setValueAttribute(branch_attribute);
 
@@ -740,7 +749,8 @@ public class SAESmokeTests extends TestCommon {
                 spAppURL);
 
         String idpAppHandler = saeConfig.getString("idpAppHandler");
-        log(Level.FINEST, "generateSSOSLOURL", "idpAppHandler: " + idpAppHandler);
+        log(Level.FINEST, "generateSSOSLOURL", "idpAppHandler: " +
+                idpAppHandler);
         ((HtmlTextInput)form.getInputByName("saeurl")).
                 setValueAttribute(idpurl + "/" +
                 idpAppHandler + "/metaAlias/" +
@@ -760,22 +770,26 @@ public class SAESmokeTests extends TestCommon {
 
         if (secMode.equals("asymmetric")) {
             String idp_keyalias = saeConfig.getString("idp_keyalias");
-            log(Level.FINEST, "generateSSOSLOURL", "idp_keyalias: " + idp_keyalias);
+            log(Level.FINEST, "generateSSOSLOURL", "idp_keyalias: " +
+                    idp_keyalias);
             ((HtmlTextInput)form.getInputByName("secret")).
                     setValueAttribute(idp_keyalias);
 
             String idp_keystore = saeConfig.getString("idp_keystore");
-            log(Level.FINEST, "generateSSOSLOURL", "idp_keystore: " + idp_keystore);
+            log(Level.FINEST, "generateSSOSLOURL", "idp_keystore: " +
+                    idp_keystore);
             ((HtmlTextInput)form.getInputByName("keystore")).
                     setValueAttribute(idp_keystore);
 
             String idp_keypass = saeConfig.getString("idp_keypass");
-            log(Level.FINEST, "generateSSOSLOURL", "idp_keypass: " + idp_keypass);
+            log(Level.FINEST, "generateSSOSLOURL", "idp_keypass: " +
+                    idp_keypass);
             ((HtmlTextInput)form.getInputByName("keypass")).
                     setValueAttribute(idp_keypass);
 
             String idp_storepass = saeConfig.getString("idp_storepass");
-            log(Level.FINEST, "generateSSOSLOURL", "idp_storepass: " + idp_storepass);
+            log(Level.FINEST, "generateSSOSLOURL", "idp_storepass: " + 
+                    idp_storepass);
             ((HtmlTextInput)form.getInputByName("privkeypass")).
                     setValueAttribute(idp_storepass);
         }

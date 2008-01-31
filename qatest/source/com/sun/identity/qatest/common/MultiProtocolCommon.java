@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.6 2008-01-18 00:42:51 rmisra Exp $
+ * $Id: MultiProtocolCommon.java,v 1.7 2008-01-31 22:06:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * This class contains common helper methods for samlv2, IDFF tests
@@ -77,25 +78,27 @@ public class MultiProtocolCommon extends TestCommon {
                         null, null, null, null, null, null, null, null, null,
                         null, null, null, null, null, null, null, null, spec);
             }
+            if (FederationManager.getExitCode(spmetaPage) != 0) {
+               assert false;
+            }
             
             arrMetadata[0] = getMetadataFromPage(spmetaPage, spec);
             arrMetadata[1] = getExtMetadataFromPage(spmetaPage, spec);
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
+            {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
                 arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
-                HtmlPage importMeta = spfm.importEntity(webClient,
+                if (FederationManager.getExitCode(spfm.importEntity(webClient,
                         (String)m.get(TestConstants.KEY_SP_REALM), 
                         arrMetadata[0], arrMetadata[1], 
-                        (String)m.get(TestConstants.KEY_SP_COT), spec);
-                if (!importMeta.getWebResponse().getContentAsString().
-                        contains("Import file, web.")) {
-                    assert(false);
+                        (String)m.get(TestConstants.KEY_SP_COT), spec)) != 0) {
                     arrMetadata[0] = null;
                     arrMetadata[1] = null;
+                    assert(false);
                 }
             }
         } catch (Exception e) {
@@ -141,25 +144,27 @@ public class MultiProtocolCommon extends TestCommon {
                         null, null, null, null, null, null, null, null, null,
                         null, null, null, null, null, null, spec);
             }
+            if (FederationManager.getExitCode(idpmetaPage) != 0) {
+                assert false;
+            }
             
             arrMetadata[0] = getMetadataFromPage(idpmetaPage, spec);
             arrMetadata[1] = getExtMetadataFromPage(idpmetaPage, spec);
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
+            {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
                 arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
-                HtmlPage importMeta = idpfm.importEntity(webClient,
+                if (FederationManager.getExitCode(idpfm.importEntity(webClient,
                         (String)m.get(TestConstants.KEY_IDP_REALM),
                         arrMetadata[0], arrMetadata[1],
-                        (String)m.get(TestConstants.KEY_IDP_COT), spec);
-                if (!importMeta.getWebResponse().getContentAsString().
-                        contains("Import file, web.")) {
-                    assert(false);
+                        (String)m.get(TestConstants.KEY_IDP_COT), spec)) != 0) {
                     arrMetadata[0] = null;
                     arrMetadata[1] = null;
+                    assert(false);
                 }
             }
         } catch (Exception e) {
@@ -470,6 +475,4 @@ public class MultiProtocolCommon extends TestCommon {
         out.write(newline);
         out.close();
     }
-    
 }
-

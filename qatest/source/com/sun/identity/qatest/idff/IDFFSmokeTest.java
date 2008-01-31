@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSmokeTest.java,v 1.7 2007-09-10 22:35:46 mrudulahg Exp $
+ * $Id: IDFFSmokeTest.java,v 1.8 2008-01-31 22:06:28 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,7 @@ public class IDFFSmokeTest extends IDFFCommon {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -124,7 +124,7 @@ public class IDFFSmokeTest extends IDFFCommon {
                     configMap.get(TestConstants.KEY_IDP_PORT) +
                     configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             } catch (Exception e) {
-                log(Level.SEVERE, "setup", e.getMessage(), null);
+                log(Level.SEVERE, "setup", e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
@@ -146,9 +146,14 @@ public class IDFFSmokeTest extends IDFFCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmSP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM),
-                    configMap.get(TestConstants.KEY_SP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_SP_USER), "User", list))
+                    != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
+                assert false;
+            }
             log(Level.FINE, "setup", "SP user created is " + list);
             
             // Create idp users
@@ -158,9 +163,14 @@ public class IDFFSmokeTest extends IDFFCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            fmIDP.createIdentity(webClient,
+            if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM),
-                    configMap.get(TestConstants.KEY_IDP_USER), "User", list);
+                    configMap.get(TestConstants.KEY_IDP_USER), "User", list))
+                    != 0) {
+                log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                        " failed");
+                assert false;
+            }
             log(Level.FINE, "setup", "IDP user created is " + list);
             
             //If any of the profile is diff than the default profile, 
@@ -172,6 +182,11 @@ public class IDFFSmokeTest extends IDFFCommon {
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                         (String)configMap.get(TestConstants.KEY_SP_REALM),
                         false, true, true, "idff");
+                if (FederationManager.getExitCode(spmetaPage) != 0) {
+                    log(Level.SEVERE, "setup", "exportEntity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 spmetadataext = MultiProtocolCommon.getExtMetadataFromPage(
                         spmetaPage);            
                 spmetadata = MultiProtocolCommon.getMetadataFromPage
@@ -215,44 +230,40 @@ public class IDFFSmokeTest extends IDFFCommon {
                 //Remove & Import Entity with modified metadata. 
                 log(Level.FINE, "setup", "Since SP metadata have changed, " +
                         "delete SP entity & Import it again. "); 
-                HtmlPage spDeleteEntityPage = fmSP.deleteEntity(webClient, 
+                if (FederationManager.getExitCode(fmSP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                         (String)configMap.get(TestConstants.KEY_SP_REALM), 
-                        false, "idff");
-                if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                        false, "idff")) == 0) {
                     log(Level.FINE, "setup", "Deleted SP entity on SP side");
                 } else {
                     log(Level.SEVERE, "setup", "Couldnt delete SP entity on " +
-                            "SP side" + spDeleteEntityPage.getWebResponse().
-                            getContentAsString());
+                            "SP side");
+                    log(Level.SEVERE, "setup", "deleteEntity famadm command" +
+                            " failed");
                     assert false;
                 }  
-                HtmlPage idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
+                if (FederationManager.getExitCode(fmIDP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                         (String)configMap.get(TestConstants.KEY_IDP_REALM), 
-                        false, "idff");
-                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                        false, "idff")) == 0) {
                     log(Level.FINE, "setup", "Deleted SP entity on IDP side");
                 } else {
                     log(Level.FINE, "setup", "Couldnt delete SP entity on " +
-                            "IDP side" + spDeleteEntityPage.getWebResponse().
-                            getContentAsString());
+                            "IDP side");
+                    log(Level.SEVERE, "setup", "deleteEntity famadm command" +
+                            " failed");
                     assert false;
                 }  
 
                 Thread.sleep(9000);
-                HtmlPage importSPMeta = fmSP.importEntity(webClient,
+                if (FederationManager.getExitCode(fmSP.importEntity(webClient,
                         (String)configMap.get(TestConstants.KEY_SP_REALM), 
-                        spmetadatamod, spmetadataextmod, null, "idff");
-                if (!importSPMeta.getWebResponse().getContentAsString().
-                        contains("Import file, web.")) {
+                        spmetadatamod, spmetadataextmod, null, "idff")) != 0) {
                     log(Level.SEVERE, "setup", "Couldn't import SP " +
-                            "metadata on SP side" + importSPMeta.
-                            getWebResponse().getContentAsString());
+                            "metadata on SP side");
+                    log(Level.SEVERE, "setup", "importEntoty famadm command" +
+                            " failed");
+                    assert false;
                 } else {
                      log(Level.FINE, "setup", "Successfully imported " +
                              "modified SP entity on SP side");
@@ -265,14 +276,12 @@ public class IDFFSmokeTest extends IDFFCommon {
                         (String)configMap.get(TestConstants.KEY_SP_COT),
                         (String)configMap.get(TestConstants.KEY_IDP_COT));
 
-                importSPMeta = fmIDP.importEntity(webClient,
+                if (FederationManager.getExitCode(fmIDP.importEntity(webClient,
                         (String)configMap.get(TestConstants.KEY_IDP_REALM), 
-                        spmetadatamod, spmetadataextmod, null, "idff");
-                if (!importSPMeta.getWebResponse().getContentAsString().
-                        contains("Import file, web.")) {
+                        spmetadatamod, spmetadataextmod, null, "idff")) != 0) {
                     log(Level.SEVERE, "setup", "Couldn't import SP " +
-                            "metadata on IDP side" + importSPMeta.
-                            getWebResponse().getContentAsString());
+                            "metadata on IDP side");
+                    assert false;
                 } else {
                      log(Level.FINE, "setup", "Successfully imported " +
                              "modified SP entity on IDP side");
@@ -311,7 +320,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPInitFederation", e.getMessage(), null);
+            log(Level.SEVERE, "testSPInitFederation", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -334,7 +343,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPInitSLO", e.getMessage(), null);
+            log(Level.SEVERE, "testSPInitSLO", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -362,7 +371,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPInitSSO", e.getMessage(), null);
+            log(Level.SEVERE, "testSPInitSSO", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -385,7 +394,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPInitNameReg", e.getMessage(), null);
+            log(Level.SEVERE, "testSPInitNameReg", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -409,7 +418,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testSPInitTerminate", e.getMessage(), null);
+            log(Level.SEVERE, "testSPInitTerminate", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -444,7 +453,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testIDPInitSLO", e.getMessage(), null);
+            log(Level.SEVERE, "testIDPInitSLO", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -471,7 +480,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testIDPInitNameReg", e.getMessage(), null);
+            log(Level.SEVERE, "testIDPInitNameReg", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -495,7 +504,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
-            log(Level.SEVERE, "testIDPInitTerminate", e.getMessage(), null);
+            log(Level.SEVERE, "testIDPInitTerminate", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -530,9 +539,13 @@ public class IDFFSmokeTest extends IDFFCommon {
             idList.add(configMap.get(TestConstants.KEY_SP_USER));
             log(Level.FINE, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
-            fmSP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             
             // Create idp users
             consoleLogin(webClient, idpurl + "/UI/Login",
@@ -543,9 +556,13 @@ public class IDFFSmokeTest extends IDFFCommon {
             idList.add(configMap.get(TestConstants.KEY_IDP_USER));
             log(Level.FINE, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
-            fmIDP.deleteIdentities(webClient,
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idList,
-                    "User");
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
             
             //If any of the profile is diff than the default profile, 
             //then only delete & import the metadata. Else leave it as it is. 
@@ -555,44 +572,39 @@ public class IDFFSmokeTest extends IDFFCommon {
                 //Remove & Import Entity with modified metadata. 
                 log(Level.FINE, "setup", "Since SP metadata have changed, " +
                         "delete SP entity & Import it again. "); 
-                HtmlPage spDeleteEntityPage = fmSP.deleteEntity(webClient, 
+                if (FederationManager.getExitCode(fmSP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         (String)configMap.get(TestConstants.KEY_SP_REALM), 
-                        false, "idff");
-                if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                        false, "idff")) == 0) {
                     log(Level.FINE, "setup", "Deleted SP entity on SP side");
                 } else {
                     log(Level.SEVERE, "setup", "Couldnt delete SP entity on " +
-                            "SP side" + spDeleteEntityPage.getWebResponse().
-                            getContentAsString());
+                            "SP side");
+                    log(Level.SEVERE, "setup", "deleteEntity famadm command" +
+                            " failed");
                     assert false;
                 }  
-                HtmlPage idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
+                if (FederationManager.getExitCode(fmIDP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         (String)configMap.get(TestConstants.KEY_IDP_REALM), 
-                        false, "idff");
-                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                        false, "idff")) == 0) {
                     log(Level.FINE, "setup", "Deleted SP entity on IDP side");
                 } else {
                     log(Level.SEVERE, "setup", "Couldnt delete SP entity on " +
-                            "IDP side" + spDeleteEntityPage.getWebResponse().
-                            getContentAsString());
+                            "IDP side");
+                    log(Level.SEVERE, "setup", "deleteEntity famadm command" +
+                            " failed");
                     assert false;
                 }  
 
                 Thread.sleep(9000);
-                HtmlPage importSPMeta = fmSP.importEntity(webClient,
+                if (FederationManager.getExitCode(fmSP.importEntity(webClient,
                         (String)configMap.get(TestConstants.KEY_SP_REALM), 
-                        spmetadata, spmetadataext, null, "idff");
-                if (!importSPMeta.getWebResponse().getContentAsString().
-                        contains("Import file, web.")) {
+                        spmetadata, spmetadataext, null, "idff")) != 0) {
                     log(Level.SEVERE, "setup", "Couldn't import SP " +
-                            "metadata on SP side" + importSPMeta.
-                            getWebResponse().getContentAsString());
+                            "metadata on SP side");
+                    log(Level.SEVERE, "setup", "importEntity famadm command" +
+                            " failed");
                     assert false;
                 } else {
                      log(Level.FINE, "setup", "Successfully imported " +
@@ -606,14 +618,13 @@ public class IDFFSmokeTest extends IDFFCommon {
                 spmetadataext = spmetadataext.replaceAll(
                         (String)configMap.get(TestConstants.KEY_SP_COT),
                         (String)configMap.get(TestConstants.KEY_IDP_COT));
-                importSPMeta = fmIDP.importEntity(webClient,
+                if (FederationManager.getExitCode(fmIDP.importEntity(webClient,
                         (String)configMap.get(TestConstants.KEY_IDP_REALM), 
-                        spmetadata, spmetadataext, null, "idff");
-                if (!importSPMeta.getWebResponse().getContentAsString().
-                        contains("Import file, web.")) {
+                        spmetadata, spmetadataext, null, "idff")) != 0) {
                     log(Level.SEVERE, "setup", "Couldn't import SP " +
-                            "metadata on IDP side" + importSPMeta.
-                            getWebResponse().getContentAsString());
+                            "metadata on IDP side");
+                    log(Level.SEVERE, "setup", "importEntity famadm command" +
+                            " failed");
                     assert false;
                 } else {
                      log(Level.FINE, "setup", "Successfully imported " +

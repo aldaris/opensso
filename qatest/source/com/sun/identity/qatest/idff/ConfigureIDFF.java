@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFF.java,v 1.5 2008-01-18 00:42:52 rmisra Exp $
+ * $Id: ConfigureIDFF.java,v 1.6 2008-01-31 22:06:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class ConfigureIDFF extends TestCommon {
             spWebClient = new WebClient(BrowserVersion.MOZILLA_1_0);
             idpWebClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -82,6 +82,8 @@ public class ConfigureIDFF extends TestCommon {
     throws Exception {
         Object[] params = {strGroupName};
         entering("ConfigureIDFF", params);
+        String spurl = null;
+        String idpurl = null;
         try {
             URL url;
             HtmlPage page;
@@ -91,16 +93,16 @@ public class ConfigureIDFF extends TestCommon {
             idpConfigMap = new HashMap<String, String>();
             getWebClient();
             
-            log(logLevel, "ConfigureIDFF", "GroupName received from " +
+            log(Level.FINEST, "ConfigureIDFF", "GroupName received from " +
                     "testng is " + strGroupName);
             configMap = getMapFromResourceBundle("idffTestConfigData");
-            log(logLevel, "ConfigureIDFF", "Map:" + configMap);
+            log(Level.FINEST, "ConfigureIDFF", "Map:" + configMap);
             
-            String spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)
+            spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)
             + "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_SP_PORT)
                     + configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
-            String idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL)
+            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL)
             + "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_IDP_PORT)
                     + configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
@@ -110,10 +112,10 @@ public class ConfigureIDFF extends TestCommon {
             spConfigMap = MultiProtocolCommon.getSPConfigurationMap(configMap);
             boolean spConfigResult = configureProduct(spConfigMap);
             if (spConfigResult) {
-                log(logLevel, "ConfigureIDFF", spurl + "is configured" +
+                log(Level.FINEST, "ConfigureIDFF", spurl + "is configured. " +
                         "Proceed with IDFF SP configuration");
             } else {
-                log(logLevel, "ConfigureIDFF", spurl + "is not " +
+                log(Level.FINEST, "ConfigureIDFF", spurl + "is not " +
                         "configured successfully. " +
                         "Exiting the IDFF configuration");
                 assert false;
@@ -121,13 +123,14 @@ public class ConfigureIDFF extends TestCommon {
             
             url = new URL(idpurl);
             page = (HtmlPage)idpWebClient.getPage(url);
-            idpConfigMap = MultiProtocolCommon.getIDPConfigurationMap(configMap);
+            idpConfigMap =
+                    MultiProtocolCommon.getIDPConfigurationMap(configMap);
             boolean idpConfigResult = configureProduct(idpConfigMap);
             if (idpConfigResult) {
-                log(logLevel, "ConfigureIDFF", idpurl + "is configured" +
+                log(Level.FINEST, "ConfigureIDFF", idpurl + "is configured. " +
                         "Proceed with IDFF IDP configuration");
             } else {
-                log(logLevel, "ConfigureIDFF", idpurl + "is not " +
+                log(Level.FINEST, "ConfigureIDFF", idpurl + "is not " +
                         "configured successfully. " +
                         "Exiting the IDFF configuration");
                 assert false;
@@ -144,33 +147,39 @@ public class ConfigureIDFF extends TestCommon {
             
             HtmlPage spcotPage = spfm.listCots(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM));
+            if (FederationManager.getExitCode(spcotPage) != 0) {
+                log(Level.SEVERE, "ConfigureIDFF", "listsCot famadm command" +
+                        " failed");
+                assert false;
+            }
             if (!spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                spcotPage = spfm.createCot(spWebClient,
+                if (FederationManager.getExitCode(spfm.createCot(spWebClient,
                         configMap.get(TestConstants.KEY_SP_COT),
                         configMap.get(TestConstants.KEY_SP_REALM),
-                        null, null);
-                if (!spcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, "
-                        + configMap.get(TestConstants.KEY_SP_COT)
-                        + " is created.")) {
+                        null, null)) != 0) {
                     log(Level.SEVERE, "ConfigureIDFF", "Couldn't create " +
-                            "COT at SP side " +
-                            spcotPage.getWebResponse().getContentAsString(),
-                            null);
+                            "COT at SP side ");
+                    log(Level.SEVERE, "ConfigureIDFF", "createCot famadm" +
+                            " command failed");
                     assert false;
                 }
             } else {
-                log(logLevel, "ConfigureIDFF", "COT exists at SP side", null);
+                log(Level.FINEST, "ConfigureIDFF", "COT exists at SP side");
             }
             
             String spMetadata[]= {"",""};
             HtmlPage spEntityPage = spfm.listEntities(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM), "idff");
+            if (FederationManager.getExitCode(spEntityPage) != 0) {
+                log(Level.SEVERE, "ConfigureIDFF", "listsEntities famadm" +
+                        " command failed");
+                assert false;
+            }
             if (!spEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(logLevel, "ConfigureIDFF", "sp entity doesnt exist. " +
-                        "Get template & create the entity", null);
+                log(Level.FINEST, "ConfigureIDFF", "sp entity doesnt exist. " +
+                        "Get template & create the entity");
                 if (strGroupName.contains("sec")) {
                     spMetadata = MultiProtocolCommon.configureSP(spWebClient,
                             configMap, "idff", true);
@@ -181,7 +190,7 @@ public class ConfigureIDFF extends TestCommon {
                 if ((spMetadata[0].equals(null)) || (spMetadata[1].
                         equals(null))) {
                     log(Level.SEVERE, "ConfigureIDFF", "Couldn't configure " +
-                            "SP", null);
+                            "SP");
                     assert false;
                 }
             } else {
@@ -190,6 +199,11 @@ public class ConfigureIDFF extends TestCommon {
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false, true,
                         true, "idff");
+                if (FederationManager.getExitCode(spExportEntityPage) != 0) {
+                    log(Level.SEVERE, "ConfigureIDFF", "exportEntity famadm" +
+                            " command failed");
+                    assert false;
+                }
                 spMetadata[0] = MultiProtocolCommon.getMetadataFromPage(
                         spExportEntityPage);
                 spMetadata[1] = MultiProtocolCommon.getExtMetadataFromPage(
@@ -197,10 +211,9 @@ public class ConfigureIDFF extends TestCommon {
             }
             spMetadata[1] = spMetadata[1].replaceAll(
                     configMap.get(TestConstants.KEY_SP_COT), "");
-            log(logLevel, "ConfigureIDFF", "sp metadata" + spMetadata[0],
-                    null);
-            log(logLevel, "ConfigureIDFF", "sp Ext metadata" + spMetadata[1],
-                    null);
+            log(Level.FINEST, "ConfigureIDFF", "sp metadata" + spMetadata[0]);
+            log(Level.FINEST, "ConfigureIDFF", "sp Ext metadata" +
+                    spMetadata[1]);
             
             //idp side create cot, load idp metadata
             consoleLogin(idpWebClient, idpurl + "/UI/Login",
@@ -210,21 +223,23 @@ public class ConfigureIDFF extends TestCommon {
             
             HtmlPage idpcotPage = idpfm.listCots(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM));
+            if (FederationManager.getExitCode(idpcotPage) != 0) {
+               log(Level.SEVERE, "ConfigureIDFF", "listCots famadm command" +
+                       " failed");
+               assert false;
+            }
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
-                log(logLevel, "ConfigureIDFF", "COT exists at IDP side",
-                        null);
+                log(Level.FINEST, "ConfigureIDFF", "COT exists at IDP side");
             } else {
-                idpcotPage = idpfm.createCot(idpWebClient,
+                if (FederationManager.getExitCode(idpfm.createCot(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM),
-                        null, null);
-                if (!idpcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, " +
-                        configMap.get(TestConstants.KEY_IDP_COT)
-                        + " is created.")) {
+                        null, null)) != 0) {
                     log(Level.SEVERE, "ConfigureIDFF", "Couldn't create " +
-                            "COT at IDP side", null);
+                            "COT at IDP side");
+                    log(Level.SEVERE, "ConfigureIDFF", "createCot famadm" +
+                            " commad failed");
                     assert false;
                 }
             }
@@ -232,10 +247,16 @@ public class ConfigureIDFF extends TestCommon {
             String[] idpMetadata = {"",""};
             HtmlPage idpEntityPage = idpfm.listEntities(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "idff");
+            if (FederationManager.getExitCode(idpEntityPage) != 0) {
+               log(Level.SEVERE, "ConfigureIDFF", "listEntities famadm" +
+                       " command failed");
+               assert false;
+            }
             if (!idpEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(logLevel, "ConfigureIDFF", "idp entity doesnt exist. " +
-                        "Get template & create the entity", null);
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
+            {
+                log(Level.FINEST, "ConfigureIDFF", "idp entity doesnt exist. " +
+                        "Get template & create the entity");
                 if (strGroupName.contains("sec")) {
                     idpMetadata = MultiProtocolCommon.configureIDP(idpWebClient,
                             configMap, "idff", true);
@@ -244,14 +265,14 @@ public class ConfigureIDFF extends TestCommon {
                             configMap, "idff", false);
                 }
                 
-                log(logLevel, "ConfigureIDFF", "idp metadata" +
-                        idpMetadata[0], null);
-                log(logLevel, "ConfigureIDFF", "idp Ext metadata" +
-                        idpMetadata[1], null);
+                log(Level.FINEST, "ConfigureIDFF", "idp metadata" +
+                        idpMetadata[0]);
+                log(Level.FINEST, "ConfigureIDFF", "idp Ext metadata" +
+                        idpMetadata[1]);
                 if ((idpMetadata[0].equals(null)) || (
                         idpMetadata[1].equals(null))) {
                     log(Level.SEVERE, "ConfigureIDFF", "Couldn't configure " +
-                            "IDP", null);
+                            "IDP");
                     assert false;
                 }
             } else {
@@ -260,6 +281,11 @@ public class ConfigureIDFF extends TestCommon {
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false, true,
                         true, "idff");
+                if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
+                   log(Level.SEVERE, "ConfigureIDFF", "exportEntities famadm" +
+                           " command failed");
+                   assert false;
+                }
                 idpMetadata[0] = MultiProtocolCommon.getMetadataFromPage(
                         idpExportEntityPage);
                 idpMetadata[1] = MultiProtocolCommon.getExtMetadataFromPage(
@@ -267,28 +293,28 @@ public class ConfigureIDFF extends TestCommon {
             }
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     configMap.get(TestConstants.KEY_IDP_COT), "");
-            log(logLevel, "ConfigureIDFF", "idp metadata" +
-                    idpMetadata[0], null);
-            log(logLevel, "ConfigureIDFF", "idp Ext metadata" +
-                    idpMetadata[1], null);
+            log(Level.FINEST, "ConfigureIDFF", "idp metadata" +
+                    idpMetadata[0]);
+            log(Level.FINEST, "ConfigureIDFF", "idp Ext metadata" +
+                    idpMetadata[1]);
             
             //load spmetadata on idp
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(logLevel, "ConfigureIDFF", "sp entity exists at idp. " +
-                        "Delete & load the metadata ", null);
-                HtmlPage spDeleteEntityPage = idpfm.deleteEntity(idpWebClient,
+                log(Level.FINEST, "ConfigureIDFF", "sp entity exists at idp. " +
+                        "Delete & load the metadata ");
+                if (FederationManager.getExitCode(idpfm.deleteEntity(
+                        idpWebClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_SP_REALM), false,
-                        "idff");
-                if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log(logLevel, "ConfigureIDFF", "Delete sp entity on " +
-                            "IDP side", null);
+                        "idff")) == 0) {
+                    log(Level.FINEST, "ConfigureIDFF", "Delete sp entity on " +
+                            "IDP side");
                 } else {
-                    log(logLevel, "ConfigureIDFF", "Couldnt delete sp " +
-                            "entity on IDP side", null);
+                    log(Level.FINEST, "ConfigureIDFF", "Couldnt delete sp " +
+                            "entity on IDP side");
+                    log(Level.SEVERE, "ConfigureIDFF", "deleteEntity famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -296,34 +322,34 @@ public class ConfigureIDFF extends TestCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             spMetadata[1] = spMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importSPMeta = idpfm.importEntity(idpWebClient,
+            if (FederationManager.getExitCode(idpfm.importEntity(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), spMetadata[0],
                     spMetadata[1],
-                    (String)configMap.get(TestConstants.KEY_IDP_COT), "idff");
-            if (!importSPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
+                    (String)configMap.get(TestConstants.KEY_IDP_COT), "idff"))
+                    != 0) {
                 log(Level.SEVERE, "ConfigureIDFF", "Couldn't import SP " +
-                        "metadata on IDP side" + importSPMeta.getWebResponse().
-                        getContentAsString(), null);
+                        "metadata on IDP side");
+                log(Level.SEVERE, "ConfigureIDFF", "importEntity famadm" +
+                        " command failed");
                 assert false;
             }
             //load idpmetadata on sp
             if (spEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                log(logLevel, "ConfigureIDFF", "idp entity exists at sp. " +
-                        "Delete & load the metadata ", null);
-                HtmlPage idpDeleteEntityPage = spfm.deleteEntity(spWebClient,
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
+            {
+                log(Level.FINEST, "ConfigureIDFF", "idp entity exists at sp. " +
+                        "Delete & load the metadata ");
+                if (FederationManager.getExitCode(spfm.deleteEntity(spWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_REALM), false,
-                        "idff");
-                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
-                        contains("Descriptor is deleted for entity, " +
-                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
-                    log(logLevel, "ConfigureIDFF", "Delete idp entity on " +
-                            "SP side", null);
+                        "idff")) == 0) {
+                    log(Level.FINEST, "ConfigureIDFF", "Delete idp entity on " +
+                            "SP side");
                 } else {
-                    log(logLevel, "ConfigureIDFF", "Couldnt delete idp " +
-                            "entity on SP side", null);
+                    log(Level.FINEST, "ConfigureIDFF", "Couldnt delete idp " +
+                            "entity on SP side");
+                    log(Level.FINEST, "ConfigureIDFF", "deleteEntity famadm" +
+                            " command failed");
                     assert false;
                 }
             }
@@ -331,23 +357,23 @@ public class ConfigureIDFF extends TestCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importIDPMeta = spfm.importEntity(spWebClient,
+            if (FederationManager.getExitCode(spfm.importEntity(spWebClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idpMetadata[0],
                     idpMetadata[1],
-                    (String)configMap.get(TestConstants.KEY_SP_COT), "idff");
-            if (!importIDPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(Level.SEVERE, "ConfigureIDFF", "Couldn't import IDP " +
-                        "metadata on SP side" + importIDPMeta.getWebResponse().
-                        getContentAsString(), null);
+                    (String)configMap.get(TestConstants.KEY_SP_COT), "idff"))
+                    != 0) {
+                log(Level.SEVERE, "ConfigureIDFF", "Couldn't import IDP");
+                log(Level.SEVERE, "ConfigureIDFF", "importEntity famadm" +
+                        " commad failed");
                 assert false;
             }
-            consoleLogout(spWebClient, spurl);
-            consoleLogout(idpWebClient, idpurl);
         } catch (Exception e) {
-            log(Level.SEVERE, "ConfigureIDFF", e.getMessage(), null);
+            log(Level.SEVERE, "ConfigureIDFF", e.getMessage());
             e.printStackTrace();
             throw e;
+        } finally {
+            consoleLogout(spWebClient, spurl);
+            consoleLogout(idpWebClient, idpurl);
         }
         exiting("ConfigureIDFF");
     }

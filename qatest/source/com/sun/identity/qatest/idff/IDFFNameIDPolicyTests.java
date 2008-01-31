@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFNameIDPolicyTests.java,v 1.3 2007-09-10 22:35:46 mrudulahg Exp $
+ * $Id: IDFFNameIDPolicyTests.java,v 1.4 2008-01-31 22:06:28 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,7 +96,7 @@ public class IDFFNameIDPolicyTests extends IDFFCommon {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
-            log(Level.SEVERE, "getWebClient", e.getMessage(), null);
+            log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -159,10 +159,14 @@ public class IDFFNameIDPolicyTests extends IDFFCommon {
                         TestConstants.KEY_SP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
                 log(Level.FINEST, "setup", "SP user to be created is " + list);
-                fmSP.createIdentity(webClient, configMap.get(
-                        TestConstants.KEY_SP_REALM),
+                if (FederationManager.getExitCode(fmSP.createIdentity(
+                        webClient, configMap.get(TestConstants.KEY_SP_REALM),
                         usersMap.get(TestConstants.KEY_SP_USER + i), "User",
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "exportEntity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 spuserlist.add(usersMap.get(TestConstants.KEY_SP_USER + i));
                 
                 //create idp user
@@ -175,10 +179,14 @@ public class IDFFNameIDPolicyTests extends IDFFCommon {
                         TestConstants.KEY_IDP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
                 log(Level.FINE, "setup", "IDP user to be created is " + list);
-                fmIDP.createIdentity(webClient, configMap.get(
-                        TestConstants.KEY_IDP_REALM),
+                if (FederationManager.getExitCode(fmIDP.createIdentity(
+                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User",
-                        list);
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "exportEntity famadm command" +
+                            " failed");
+                    assert false;
+                }
                 idpuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + i));
                 list.clear();
             }
@@ -188,6 +196,11 @@ public class IDFFNameIDPolicyTests extends IDFFCommon {
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                     (String)configMap.get(TestConstants.KEY_SP_REALM),
                     false, false, true, "idff");
+            if (FederationManager.getExitCode(spmetaPage) != 0) {
+                log(Level.SEVERE, "setup", "exportEntity famadm command" +
+                        " failed");
+                assert false;
+            }
             spmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
@@ -387,15 +400,25 @@ public class IDFFNameIDPolicyTests extends IDFFCommon {
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
 
-            fmSP.deleteIdentities(webClient, configMap.get(
-                    TestConstants.KEY_SP_REALM), spuserlist, "User");
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
+                    "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
+                        " failed");
+                assert false;
+            }
 
             assert (loadSPMetadata(null, spmetadata, fmSP, fmIDP, 
                     configMap, webClient, true));
  
-            fmIDP.deleteIdentities(webClient, configMap.get(
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
+                    configMap.get(
                     TestConstants.KEY_IDP_REALM),
-                    idpuserlist, "User");
+                    idpuserlist, "User")) != 0) {
+                log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
+                        " command failed");
+                assert false;
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
