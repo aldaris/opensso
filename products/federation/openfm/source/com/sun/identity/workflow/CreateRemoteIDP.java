@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteSP.java,v 1.2 2008-01-31 04:08:02 veiming Exp $
+ * $Id: CreateRemoteIDP.java,v 1.1 2008-01-31 04:08:02 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,16 +29,16 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Creates Remote Service Provider.
+ * Creates Remote Identity Provider.
  */
-public class CreateRemoteSP
+public class CreateRemoteIDP
     extends Task
 {
-    public CreateRemoteSP() {
+    public CreateRemoteIDP() {
     }
 
     /**
-     * Creates remote service provider.
+     * Creates remote identity provider.
      *
      * @param locale Locale of the request.
      * @param params Map of creation parameters.
@@ -61,7 +61,7 @@ public class CreateRemoteSP
                 throw new WorkflowException(e.getMessage());
             }
         }
-        return getMessage("sp.configured", locale);
+        return getMessage("idp.configured", locale);
     }
 
     private void validateParameters(Map params)

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportSAML2MetaData.java,v 1.1 2008-01-15 06:44:20 veiming Exp $
+ * $Id: ImportSAML2MetaData.java,v 1.2 2008-01-31 04:08:02 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,6 +117,7 @@ public class ImportSAML2MetaData {
         }
 
         Element docElem = doc.getDocumentElement();
+        
         if ((!SAML2MetaConstants.ENTITY_DESCRIPTOR.equals(
             docElem.getLocalName())) ||
             (!SAML2MetaConstants.NS_METADATA.equals(

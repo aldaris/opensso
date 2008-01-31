@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteSPViewBean.java,v 1.3 2008-01-31 04:08:01 veiming Exp $
+ * $Id: CreateRemoteIDPViewBean.java,v 1.1 2008-01-31 04:08:01 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,16 +42,16 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Create remote service provider UI.
+ * Create remote identity provider UI.
  */
-public class CreateRemoteSPViewBean
+public class CreateRemoteIDPViewBean
     extends AMPrimaryMastHeadViewBean
 {
     private static final String TAG_TABLE =
         "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" title=\"\">";
 
     public static final String DEFAULT_DISPLAY_URL =
-        "/console/task/CreateRemoteSP.jsp";
+        "/console/task/CreateRemoteIDP.jsp";
     private static final String PAGETITLE = "pgtitle";
     private static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
     private static final String REALM = "tfRealm";
@@ -63,8 +63,8 @@ public class CreateRemoteSPViewBean
     private CCPageTitleModel ptModel;
     private AMPropertySheetModel propertySheetModel;
     
-    public CreateRemoteSPViewBean() {
-        super("CreateRemoteSP");
+    public CreateRemoteIDPViewBean() {
+        super("CreateRemoteIDP");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
         createPageTitleModel();
         createPropertyModel();
@@ -107,7 +107,7 @@ public class CreateRemoteSPViewBean
     private void createPropertyModel() {
         propertySheetModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/propertyCreateRemoteSP.xml"));
+            "com/sun/identity/console/propertyCreateRemoteIDP.xml"));
         propertySheetModel.clear();
     }
     
@@ -160,7 +160,7 @@ public class CreateRemoteSPViewBean
             "<span id=\"metadatafilename\"></span>" +
             html.substring(idx);
         
-        idx = html.indexOf("CreateRemoteSP.tfMetadataFileURL");
+        idx = html.indexOf("CreateRemoteIDP.tfMetadataFileURL");
         idx = html.indexOf("<div ", idx);
         html = html.substring(0, idx+5) + "id=\"metadataurlhelp\" " +
             html.substring(idx+5);

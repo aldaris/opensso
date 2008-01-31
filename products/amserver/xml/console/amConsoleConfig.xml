@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amConsoleConfig.xml,v 1.6 2008-01-15 22:26:13 jonnelson Exp $
+   $Id: amConsoleConfig.xml,v 1.7 2008-01-31 04:08:06 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,6 +26,13 @@
 
 <consoleconfig>
 <tabs>
+    <tab id="0" viewbean="com.sun.identity.console.task.HomeViewBean"
+        url="../task/Home"
+        label="tab.common.label"
+        tooltip="tab.common.tooltip"
+        status="tab.common.status"
+        permissions="sunAMRealmService" />
+
     <tab id="1" 
 	viewbean="com.sun.identity.console.realm.RMRealmViewBean"
 	url="../realm/RMRealm"

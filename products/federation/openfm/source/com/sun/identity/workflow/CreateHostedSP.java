@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDP.java,v 1.3 2008-01-31 04:08:02 veiming Exp $
+ * $Id: CreateHostedSP.java,v 1.1 2008-01-31 04:08:02 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,15 +34,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Creates Hosted Identity Provider.
+ * Creates Hosted Service Provider.
  */
-public class CreateHostedIDP
+public class CreateHostedSP
     extends Task {
-    public CreateHostedIDP() {
+    public CreateHostedSP() {
     }
     
     /**
-     * Creates hosted identity provider.
+     * Creates hosted service provider.
      *
      * @param locale Locale of the Request
      * @param params Map of creation parameters.
@@ -66,11 +66,11 @@ public class CreateHostedIDP
             String metaAlias = generateMetaAlias(
                 getString(params, ParameterKeys.P_REALM));
             Map map = new HashMap();
-            map.put(CreateSAML2HostedProviderTemplate.P_IDP, metaAlias);
-            map.put(CreateSAML2HostedProviderTemplate.P_IDP_E_CERT,
-                getString(params, ParameterKeys.P_IDP_E_CERT));
-            map.put(CreateSAML2HostedProviderTemplate.P_IDP_S_CERT,
-                getString(params, ParameterKeys.P_IDP_S_CERT));
+            map.put(CreateSAML2HostedProviderTemplate.P_SP, metaAlias);
+            map.put(CreateSAML2HostedProviderTemplate.P_SP_E_CERT,
+                getString(params, ParameterKeys.P_SP_E_CERT));
+            map.put(CreateSAML2HostedProviderTemplate.P_SP_S_CERT,
+                getString(params, ParameterKeys.P_SP_S_CERT));
                 
             try {
                 metadata =
@@ -97,7 +97,7 @@ public class CreateHostedIDP
                 throw new WorkflowException(e.getMessage());
             }
         }
-        return getMessage("idp.configured", locale) + "|||realm=" + realm;
+        return getMessage("sp.configured", locale) + "|||realm=" + realm;
     }
     
     private String generateMetaAlias(String realm)
@@ -109,7 +109,7 @@ public class CreateHostedIDP
                 mgr.getAllHostedIdentityProviderMetaAliases(realm));
             metaAliases.addAll(
                 mgr.getAllHostedServiceProviderMetaAliases(realm));
-            String metaAlias = (realm.equals("/")) ? "/idp" : realm + "/idp";
+            String metaAlias = (realm.equals("/")) ? "/sp" : realm + "/sp";
             int counter = 1;
 
             while (metaAliases.contains(metaAlias)) {

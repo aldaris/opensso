@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: FileUpload.jsp,v 1.1 2008-01-17 06:36:22 veiming Exp $
+   $Id: FileUpload.jsp,v 1.2 2008-01-31 04:08:05 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -31,20 +31,22 @@
     InputStream is = null;
 
     try {
+        StringBuffer buff = new StringBuffer();
         is = request.getInputStream();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(10000);
-        byte[] b = new byte[10000];
-        int len = is.read(b, 0, 10000);
-        while (len != -1) {
-            bos.write(b, 0 ,len);
-            len = is.read(b, 0, 10000);
+        BufferedReader bos = new BufferedReader(new InputStreamReader(is));
+        String line = bos.readLine();
+        while (line != null) {
+            buff.append(line).append("\n");
+            line = bos.readLine();
         }
-        String data = bos.toString();
+        String data = buff.toString();
         int idx = data.indexOf("filename=\"");
-        idx = data.indexOf("\r\n\r\n", idx);
+        idx = data.indexOf("\n\n", idx);
         data = data.substring(idx+2);
-        idx = data.lastIndexOf("\r\n-----------------");
+        idx = data.lastIndexOf("\n-----------------");
         data = data.substring(0, idx);
+        data = data.replace("<", "&lt;");
+        data = data.replace(">", "&gt;");
         out.println("<div id=\"data\">" + data + "</div>");
     } catch (IOException e) {
     } finally {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDPViewBean.java,v 1.3 2008-01-31 04:08:01 veiming Exp $
+ * $Id: CreateHostedSPViewBean.java,v 1.1 2008-01-31 04:08:01 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,13 +46,13 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Create hosted identity provider UI.
  */
-public class CreateHostedIDPViewBean
+public class CreateHostedSPViewBean
     extends AMPrimaryMastHeadViewBean
 {
     private static final String TAG_TABLE =
         "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" title=\"\">";
     public static final String DEFAULT_DISPLAY_URL =
-        "/console/task/CreateHostedIDP.jsp";
+        "/console/task/CreateHostedSP.jsp";
     private static final String PAGETITLE = "pgtitle";
     private static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
 
@@ -70,8 +70,8 @@ public class CreateHostedIDPViewBean
     private CCPageTitleModel ptModel;
     private AMPropertySheetModel propertySheetModel;
     
-    public CreateHostedIDPViewBean() {
-        super("CreateHostedIDP");
+    public CreateHostedSPViewBean() {
+        super("CreateHostedSP");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
         createPageTitleModel();
         createPropertyModel();
@@ -114,7 +114,7 @@ public class CreateHostedIDPViewBean
     private void createPropertyModel() {
         propertySheetModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/propertyCreateHostedIDP.xml"));
+            "com/sun/identity/console/propertyCreateHostedSP.xml"));
         propertySheetModel.clear();
     }
     

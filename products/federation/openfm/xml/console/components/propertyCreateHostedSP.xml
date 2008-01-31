@@ -1,0 +1,149 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: propertyCreateHostedSP.xml,v 1.1 2008-01-31 04:08:04 veiming Exp $
+
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
+
+<propertysheet>
+    <section name="question" defaultValue="configure.provider.section.setup">
+    <property span="true">
+        <cc name="txtDesc" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+            <attribute name="defaultValue" value="page.desc.configure.hosted.sp" />
+        </cc>
+    </property>
+    <property>
+	<label name="lblHasMetaData" defaultValue="configure.provider.label.hasMetaData" labelFor="tfHasMetaData" />
+	<cc name="radioHasMetaData" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
+	    <option label="configure.provider.option.hasMetaData.yes" value="yes" />
+	    <option label="configure.provider.option.hasMetaData.no" value="no" />
+	    <attribute name="layout" value="horizontal" />
+            <attribute name="onChange" value="metadataOptionSelect(this);" />
+	</cc>
+        <fieldhelp name="helpHasMetaData" defaultValue="configure.provider.help.hasMetaData" />
+    </property>
+    </section>
+
+    <section name="meta" defaultValue="configure.provider.section.meta">
+    <property>
+	<label name="lblMetaRadio" defaultValue="configure.provider.label.meta.question" labelFor="radioMeta" />
+	<cc name="radioMeta" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
+	    <option label="configure.provider.option.url" value="url" />
+	    <option label="configure.provider.option.uploadfile" value="file" />
+	    <attribute name="layout" value="horizontal" />
+            <attribute name="onChange" value="metaOptionSelect(this);" />
+	</cc>
+        <fieldhelp name="helpMetadataFile" defaultValue="configure.provider.help.metadata" />
+    </property>
+    <property required="true">
+	<label name="lblMetadataFile" defaultValue="configure.provider.label.metadata" labelFor="tfMetadataFileURL" />
+	<cc name="tfMetadataFileURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="localizeDisplayFieldValue" value="false" />
+	    <attribute name="size" value="70" />
+	</cc>
+        <cc name="btnMetadata"
+            tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
+            <attribute name="OnClick" value="openWindow('tfMetadataFile|metadatafilename'); return false;" />
+                <attribute name="defaultValue" value="button.upload" />
+        </cc>
+	<cc name="tfMetadataFile" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
+    </property>
+    <property>
+	<label name="lblExtendedDataRadio" defaultValue="configure.provider.label.extendeddata.question" labelFor="radioExtendedData" />
+	<cc name="radioExtendedData" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
+	    <option label="configure.provider.option.url" value="url" />
+	    <option label="configure.provider.option.uploadfile" value="file" />
+	    <attribute name="layout" value="horizontal" />
+            <attribute name="onChange" value="extendedOptionSelect(this);" />
+	</cc>
+        <fieldhelp name="helpExtendedFile" defaultValue="configure.provider.help.extendeddata" />
+    </property>
+    <property required="true">
+	<label name="lblExtendedFile" defaultValue="configure.provider.label.extendeddata" labelFor="tfExtendedFile" />
+	<cc name="tfExtendedFileURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="localizeDisplayFieldValue" value="false" />
+	    <attribute name="size" value="70" />
+	    <attribute name="onBlur" value="getCircleOfTrustFromExt();" />
+	</cc>
+        <cc name="btnExtendedFile"
+            tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
+            <attribute name="OnClick" value="openWindow('tfExtendedFile|extendedfilename|getCircleOfTrustFromExt()'); return false;" />
+                <attribute name="defaultValue" value="button.upload" />
+        </cc>
+	<cc name="tfExtendedFile" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
+    </property>
+
+    <property required="true">
+	<label name="lblRealm" defaultValue="configure.provider.label.realm" labelFor="tfRealm" />
+	<cc name="tfRealm" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+            <attribute name="onChange" value="realmSelect(this);" />
+        </cc>
+        <fieldhelp name="helpRealm" defaultValue="configure.provider.help.realm" />
+    </property>
+    <property required="true">
+	<label name="lblEntityId" defaultValue="configure.provider.label.entityId" labelFor="tfEntityId" />
+	<cc name="tfEntityId" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="localizeDisplayFieldValue" value="false" />
+	    <attribute name="size" value="75" />
+	</cc>
+        <fieldhelp name="helpEntityId" defaultValue="configure.provider.help.entityId" />
+    </property>
+    <property>
+	<label name="lblSigningKey" defaultValue="configure.provider.label.signing.key" labelFor="tfSigningKey" />
+	<cc name="tfSigningKey" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />
+        <fieldhelp name="helpSigningKey" defaultValue="configure.provider.help.signing.key" />
+    </property>
+    <property>
+	<label name="lblEncKey" defaultValue="configure.provider.label.encryption.key" labelFor="tfEncKey" />
+	<cc name="tfEncKey" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />
+        <fieldhelp name="helpEncKey" defaultValue="configure.provider.help.encryption.key" />
+    </property>
+    </section>
+    <section name="cot" defaultValue="configure.provider.section.cot">
+    <property span="true">
+        <cc name="txtCotDesc" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+            <attribute name="defaultValue" value="configure.provider.help.cot" />
+        </cc>
+    </property>
+    <property>
+	<label name="lblCOT" defaultValue="configure.provider.label.cot.question" labelFor="radioCOT" />
+	<cc name="radioCOT" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
+	    <option label="configure.provider.option.existing" value="yes" />
+	    <option label="configure.provider.option.new" value="no" />
+	    <attribute name="layout" value="horizontal" />
+            <attribute name="onChange" value="cotOptionSelect(this);" />
+	</cc>
+    </property>
+    <property required="true">
+	<label name="lblCOT" defaultValue="configure.provider.label.cot.existing" labelFor="choiceCOT" />
+	<cc name="choiceCOT" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />
+    </property>
+    <property required="true">
+	<label name="lblCOT" defaultValue="configure.provider.label.cot" labelFor="tfCOT" />
+	<cc name="tfCOT" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="localizeDisplayFieldValue" value="false" />
+	    <attribute name="size" value="25" />
+	</cc>
+    </property>
+    </section>
+</propertysheet>

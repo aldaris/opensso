@@ -18,16 +18,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteSP.jsp,v 1.3 2008-01-31 04:08:04 veiming Exp $
+   $Id: CreateRemoteIDP.jsp,v 1.1 2008-01-31 04:08:04 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-<%@ page info="CreateRemoteSP" language="java" %>
+<%@ page info="CreateRemoteIDP" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
 <jato:useViewBean
-    className="com.sun.identity.console.task.CreateRemoteSPViewBean"
+    className="com.sun.identity.console.task.CreateRemoteIDPViewBean"
     fireChildDisplayEvents="true" >
 
 <cc:i18nbundle baseName="amConsole" id="amConsole"
@@ -40,7 +40,7 @@
 <script language="javascript" src="../com_sun_web_ui/js/dynamic.js"></script>
 
 <div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:101%;">
-<cc:form name="CreateRemoteSP" method="post">
+<cc:form name="CreateRemoteIDP" method="post">
 <jato:hidden name="szCache" />
 <script language="javascript">
     function confirmLogout() {
@@ -56,14 +56,14 @@
 
     function metaOptionSelect(radio) {
         if (radio.value == 'url') {
-            frm.elements['CreateRemoteSP.tfMetadataFileURL'].style.display = '';
+            frm.elements['CreateRemoteIDP.tfMetadataFileURL'].style.display = '';
             document.getElementById('metadataurlhelp').style.display = '';
-            frm.elements['CreateRemoteSP.btnMetadata'].style.display = 'none';
+            frm.elements['CreateRemoteIDP.btnMetadata'].style.display = 'none';
             document.getElementById('metadatafilename').style.display = 'none';
         } else {
-            frm.elements['CreateRemoteSP.tfMetadataFileURL'].style.display = 'none';
+            frm.elements['CreateRemoteIDP.tfMetadataFileURL'].style.display = 'none';
             document.getElementById('metadataurlhelp').style.display = 'none';
-            frm.elements['CreateRemoteSP.btnMetadata'].style.display = '';
+            frm.elements['CreateRemoteIDP.btnMetadata'].style.display = '';
             document.getElementById('metadatafilename').style.display = '';
         }
     }
@@ -82,7 +82,7 @@
         if (ans == 'yes') {
             document.getElementById('cotchoice').style.display = 'block';
             document.getElementById('cottf').style.display = 'none';
-            frm.elements['CreateRemoteSP.tfCOT'].value = '';
+            frm.elements['CreateRemoteIDP.tfCOT'].value = '';
         } else {
             document.getElementById('cotchoice').style.display = 'none';
             document.getElementById('cottf').style.display = 'block';
@@ -90,8 +90,8 @@
     }
 
     function hideRealm() {
-        var frm = document.forms['CreateRemoteSP'];
-        var realmobj = frm.elements['CreateRemoteSP.tfRealm'];
+        var frm = document.forms['CreateRemoteIDP'];
+        var realmobj = frm.elements['CreateRemoteIDP.tfRealm'];
         if (realmobj.options.length < 2) {
             hideRealmObjs();
         }
@@ -114,7 +114,7 @@
 </table>
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
-<cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.configure.remote.sp" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+<cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.configure.remote.idp" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
 
 <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
 
@@ -131,10 +131,10 @@
     var msgConfigured = '<p>&nbsp;</p><input name="btnOK" type="submit" class="Btn1" value="<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
     var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
 
-    var frm = document.forms['CreateRemoteSP'];
-    var btn1 = frm.elements['CreateRemoteSP.button1'];
+    var frm = document.forms['CreateRemoteIDP'];
+    var btn1 = frm.elements['CreateRemoteIDP.button1'];
     btn1.onclick = submitPage;
-    var btn2 = frm.elements['CreateRemoteSP.button2'];
+    var btn2 = frm.elements['CreateRemoteIDP.button2'];
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject();
     var userLocale = "<% viewBean.getUserLocale().toString(); %>";
@@ -145,25 +145,25 @@
             msgConfiguring + '</center>';
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
-            '&class=com.sun.identity.workflow.CreateRemoteSP' + getData();
+            '&class=com.sun.identity.workflow.CreateRemoteIDP' + getData();
         ajaxPost(ajaxObj, url, params, configured);
         return false;
     }
 
     function getData() {
         var cot;
-        var cotRadio = getRadioVal(frm, 'CreateRemoteSP.radioCOT');
+        var cotRadio = getRadioVal(frm, 'CreateRemoteIDP.radioCOT');
         if (cotRadio == "yes") {
-            cot = frm.elements['CreateRemoteSP.choiceCOT'].value;
+            cot = frm.elements['CreateRemoteIDP.choiceCOT'].value;
         } else {
-            cot = frm.elements['CreateRemoteSP.tfCOT'].value;
+            cot = frm.elements['CreateRemoteIDP.tfCOT'].value;
         }
 
-        var realm = frm.elements['CreateRemoteSP.tfRealm'].value;
-        var metaRadio = getRadioVal(frm, 'CreateRemoteSP.radioMeta');
+        var realm = frm.elements['CreateRemoteIDP.tfRealm'].value;
+        var metaRadio = getRadioVal(frm, 'CreateRemoteIDP.radioMeta');
         var meta = (metaRadio == 'url') ?
-            frm.elements['CreateRemoteSP.tfMetadataFileURL'].value :
-            frm.elements['CreateRemoteSP.tfMetadataFile'].value;
+            frm.elements['CreateRemoteIDP.tfMetadataFileURL'].value :
+            frm.elements['CreateRemoteIDP.tfMetadataFile'].value;
 
         return "&metadata=" + escape(meta) +
             "&realm=" + escape(realm) +
@@ -207,21 +207,21 @@
                     document.getElementById('cotq').style.display = 'none';
                     document.getElementById('cotchoice').style.display = 'none';
                     document.getElementById('cottf').style.display = 'block';
-                    chooseRadio(frm, 'CreateRemoteSP.radioCOT', 'no');
+                    chooseRadio(frm, 'CreateRemoteIDP.radioCOT', 'no');
                 } else {
                     var cots = result.split('|');
-                    var choiceCOT = frm.elements['CreateRemoteSP.choiceCOT'];
+                    var choiceCOT = frm.elements['CreateRemoteIDP.choiceCOT'];
                     for (var i = 0; i < cots.length; i++) {
                         choiceCOT.options[i] = new Option(cots[i], cots[i]);
                     }
                     document.getElementById('cotq').style.display = 'block';
                     document.getElementById('cotchoice').style.display = 'block';
                     document.getElementById('cottf').style.display = 'none';
-                    chooseRadio(frm, 'CreateRemoteSP.radioCOT', 'yes');
+                    chooseRadio(frm, 'CreateRemoteIDP.radioCOT', 'yes');
                 }
                 focusMain();
                 if (presetcot) {
-                    selectOption(frm, 'CreateRemoteSP.choiceCOT', presetcot);
+                    selectOption(frm, 'CreateRemoteIDP.choiceCOT', presetcot);
                     presetcot = null;
                 }
             } else {
@@ -234,8 +234,8 @@
         }
     }
 
-    frm.elements['CreateRemoteSP.btnMetadata'].style.display = 'none';
-    var presetcot = frm.elements['CreateRemoteSP.tfCOT'].value;
+    frm.elements['CreateRemoteIDP.btnMetadata'].style.display = 'none';
+    var presetcot = frm.elements['CreateRemoteIDP.tfCOT'].value;
 
 <%
     String cot = request.getParameter("cot");

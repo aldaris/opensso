@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.37 2008-01-24 23:14:14 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.38 2008-01-31 04:08:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -461,6 +461,7 @@ public class AMSetupServlet extends HttpServlet {
              * integration that we had done.
              */
             createPasswordFiles(basedir, deployuri);
+            createDemoUser();
             createIdentitiesForWSSecurity(serverURL, deployuri);
             isConfiguredFlag = true;
             configured = true;
@@ -1414,6 +1415,33 @@ public class AMSetupServlet extends HttpServlet {
             return false;
         } catch (SMSException ex) {
             return false;
+        }
+    }
+
+    private static void createDemoUser() {
+        Map attributes = new HashMap();
+        Set setSN = new HashSet(2);
+        setSN.add("demo");
+        attributes.put("sn", setSN);
+        Set setCN = new HashSet(2);
+        setCN.add("demo");
+        attributes.put("cn", setCN);
+        Set setPwd = new HashSet(2);
+        setPwd.add("changeit");
+        attributes.put("userpassword", setPwd);
+        Set setStatus = new HashSet(2);
+        setStatus.add("Active");
+        attributes.put("inetuserstatus", setStatus);
+        try {
+            AMIdentityRepository amir = new AMIdentityRepository(
+                getAdminSSOToken(), "/");
+            amir.createIdentity(IdType.USER, "demo", attributes);
+        } catch (IdRepoException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.createDemoUser", e);
+        } catch (SSOException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.createDemoUser", e);
         }
     }
 

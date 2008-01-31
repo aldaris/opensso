@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.js,v 1.3 2008-01-15 06:44:18 veiming Exp $
+ * $Id: am.js,v 1.4 2008-01-31 04:08:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -158,5 +158,32 @@ function focusMain() {
     document.getElementById('dlg').style.display='none';
 }
 
+function chooseRadio(frm, name, value) {
+    var r = frm.elements[name];
+    for (var i = 0; i < r.length; i++) {
+        if (r[i].value == value) {
+            r[i].checked = true;
+        }
+    }
+}
 
+function getRadioVal(frm, name) {
+    var r = frm.elements[name];
+    for (var i = 0; i < r.length; i++) {
+        if (r[i].checked) {
+            return r[i].value;
+        }
+    }
+}
+
+function selectOption(frm, name, value) {
+    var selectObj = frm.elements[name];
+    var sz = selectObj.options.length;
+    for (var i = 0; i < sz; i++) {
+        if (selectObj.options[i].value == value) {
+            selectObj.options[i].selected = true;
+            return;
+        }
+    }
+}
 

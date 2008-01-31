@@ -18,16 +18,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedIDP.jsp,v 1.3 2008-01-31 04:08:04 veiming Exp $
+   $Id: CreateHostedSP.jsp,v 1.1 2008-01-31 04:08:03 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-<%@ page info="CreateHostedIDP" language="java" %>
+<%@ page info="CreateHostedSP" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
 <jato:useViewBean
-    className="com.sun.identity.console.task.CreateHostedIDPViewBean"
+    className="com.sun.identity.console.task.CreateHostedSPViewBean"
     fireChildDisplayEvents="true" >
 
 <cc:i18nbundle baseName="amConsole" id="amConsole"
@@ -41,7 +41,7 @@
 <script language="javascript" src="../com_sun_web_ui/js/dynamic.js"></script>
 
 <div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:101%;">
-<cc:form name="CreateHostedIDP" method="post">
+<cc:form name="CreateHostedSP" method="post">
 <jato:hidden name="szCache" />
 <script language="javascript">
     function confirmLogout() {
@@ -71,31 +71,31 @@
             infodiv.style.display = 'block';
             metadiv.style.display = 'none';
             document.getElementById('cotsection').style.display = 'display';
-            var realm = frm.elements['CreateHostedIDP.tfRealm'].value;
+            var realm = frm.elements['CreateHostedSP.tfRealm'].value;
             getCircleOfTrust(realm);
         }
     }
 
     function metaOptionSelect(radio) {
         if (radio.value == 'url') {
-            frm.elements['CreateHostedIDP.tfMetadataFileURL'].style.display = '';
-            frm.elements['CreateHostedIDP.btnMetadata'].style.display = 'none';
+            frm.elements['CreateHostedSP.tfMetadataFileURL'].style.display = '';
+            frm.elements['CreateHostedSP.btnMetadata'].style.display = 'none';
             document.getElementById('metadatafilename').style.display = 'none';
         } else {
-            frm.elements['CreateHostedIDP.tfMetadataFileURL'].style.display = 'none';
-            frm.elements['CreateHostedIDP.btnMetadata'].style.display = '';
+            frm.elements['CreateHostedSP.tfMetadataFileURL'].style.display = 'none';
+            frm.elements['CreateHostedSP.btnMetadata'].style.display = '';
             document.getElementById('metadatafilename').style.display = '';
         }
     }
 
     function extendedOptionSelect(radio) {
         if (radio.value == 'url') {
-            frm.elements['CreateHostedIDP.tfExtendedFileURL'].style.display = '';
-            frm.elements['CreateHostedIDP.btnExtendedFile'].style.display = 'none';
+            frm.elements['CreateHostedSP.tfExtendedFileURL'].style.display = '';
+            frm.elements['CreateHostedSP.btnExtendedFile'].style.display = 'none';
             document.getElementById('extendedfilename').style.display = 'none';
         } else {
-            frm.elements['CreateHostedIDP.tfExtendedFileURL'].style.display = 'none';
-            frm.elements['CreateHostedIDP.btnExtendedFile'].style.display = '';
+            frm.elements['CreateHostedSP.tfExtendedFileURL'].style.display = 'none';
+            frm.elements['CreateHostedSP.btnExtendedFile'].style.display = '';
             document.getElementById('extendedfilename').style.display = '';
         }
     }
@@ -114,7 +114,7 @@
         if (ans == 'yes') {
             document.getElementById('cotchoice').style.display = 'block';
             document.getElementById('cottf').style.display = 'none';
-            frm.elements['CreateHostedIDP.tfCOT'].value = '';
+            frm.elements['CreateHostedSP.tfCOT'].value = '';
         } else {
             document.getElementById('cotchoice').style.display = 'none';
             document.getElementById('cottf').style.display = 'block';
@@ -122,10 +122,10 @@
     }
 
     function getExtendedData() {
-        var extRadio = getRadioVal(frm, 'CreateHostedIDP.radioExtendedData');
+        var extRadio = getRadioVal(frm, 'CreateHostedSP.radioExtendedData');
         var extended = (extRadio == 'url') ?
-            frm.elements['CreateHostedIDP.tfExtendedFileURL'].value :
-            frm.elements['CreateHostedIDP.tfExtendedFile'].value;
+            frm.elements['CreateHostedSP.tfExtendedFileURL'].value :
+            frm.elements['CreateHostedSP.tfExtendedFile'].value;
         extended = extended.replace(/^\s+/, "");
         extended = extended.replace(/\s+$/, "");
         return extended;
@@ -148,8 +148,8 @@
     }
 
     function hideRealm() {
-        var frm = document.forms['CreateHostedIDP'];
-        var realmobj = frm.elements['CreateHostedIDP.tfRealm'];
+        var frm = document.forms['CreateHostedSP'];
+        var realmobj = frm.elements['CreateHostedSP.tfRealm'];
         if (realmobj.options.length < 2) {
             document.getElementById('realmlbl').style.display = 'none';
             document.getElementById('realmfld').style.display = 'none';
@@ -167,7 +167,7 @@
 </table>
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
-<cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.configure.hosted.idp" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+<cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.configure.hosted.sp" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
 
 <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
 
@@ -181,17 +181,17 @@
 
     var msgConfiguring = "<cc:text name="txtConfiguring" defaultValue="configure.provider.waiting" bundleID="amConsole" escape="false" />";
 
-    var msgConfigured = '<p>&nbsp;</p><cc:text name="txtConfigured" defaultValue="configure.provider.done" bundleID="amConsole" /><p><div class="TtlBtnDiv"><input name="yesSp" type="submit" class="Btn1" value="<cc:text name="txtYesBtn" defaultValue="ajax.yes.button" bundleID="amConsole" />" onClick="createRemoteSP();return false;" /> <input name="noSp" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.no.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
+    var msgConfigured = '<p>&nbsp;</p><cc:text name="txtConfigured" defaultValue="configure.sp.done" bundleID="amConsole" /><p><div class="TtlBtnDiv"><input name="yesSp" type="submit" class="Btn1" value="<cc:text name="txtYesBtn" defaultValue="ajax.yes.button" bundleID="amConsole" />" onClick="createRemoteIDP();return false;" /> <input name="noSp" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.no.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
 
     var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
 
     var msgGetCOTs = "<cc:text name="txtConfigured" defaultValue="configure.provider.get.cots" bundleID="amConsole" escape="false" />";
 
     var hasMetaData = 'no';
-    var frm = document.forms['CreateHostedIDP'];
-    var btn1 = frm.elements['CreateHostedIDP.button1'];
+    var frm = document.forms['CreateHostedSP'];
+    var btn1 = frm.elements['CreateHostedSP.button1'];
     btn1.onclick = submitPage;
-    var btn2 = frm.elements['CreateHostedIDP.button2'];
+    var btn2 = frm.elements['CreateHostedSP.button2'];
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject();
     var data = '';
@@ -205,7 +205,7 @@
                 if (hasMetaData) {
                     getCircleOfTrustFromExt();
                 } else {
-                    var realm = frm.elements['CreateHostedIDP.tfRealm'].value;
+                    var realm = frm.elements['CreateHostedSP.tfRealm'].value;
                     getCircleOfTrust(realm);
                 }
                 focusMain();
@@ -216,41 +216,41 @@
         msgConfiguring + '</center>';
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
-            '&class=com.sun.identity.workflow.CreateHostedIDP' + getData();
+            '&class=com.sun.identity.workflow.CreateHostedSP' + getData();
         ajaxPost(ajaxObj, url, params, configured);
         return false;
     }
 
     function getData() {
         var cot;
-        var cotRadio = getRadioVal(frm, 'CreateHostedIDP.radioCOT');
+        var cotRadio = getRadioVal(frm, 'CreateHostedSP.radioCOT');
         if (cotRadio == "yes") {
-            cot = frm.elements['CreateHostedIDP.choiceCOT'].value;
+            cot = frm.elements['CreateHostedSP.choiceCOT'].value;
         } else {
-            cot = frm.elements['CreateHostedIDP.tfCOT'].value;
+            cot = frm.elements['CreateHostedSP.tfCOT'].value;
         }
         if (hasMetaData == "yes") {
-            var metaRadio = getRadioVal(frm, 'CreateHostedIDP.radioMeta');
+            var metaRadio = getRadioVal(frm, 'CreateHostedSP.radioMeta');
             var meta = (metaRadio == 'url') ?
-                frm.elements['CreateHostedIDP.tfMetadataFileURL'].value :
-                frm.elements['CreateHostedIDP.tfMetadataFile'].value;
-            var extRadio = getRadioVal(frm, 'CreateHostedIDP.radioExtendedData');
+                frm.elements['CreateHostedSP.tfMetadataFileURL'].value :
+                frm.elements['CreateHostedSP.tfMetadataFile'].value;
+            var extRadio = getRadioVal(frm, 'CreateHostedSP.radioExtendedData');
             var extended = (extRadio == 'url') ?
-                frm.elements['CreateHostedIDP.tfExtendedFileURL'].value :
-                frm.elements['CreateHostedIDP.tfExtendedFile'].value;
+                frm.elements['CreateHostedSP.tfExtendedFileURL'].value :
+                frm.elements['CreateHostedSP.tfExtendedFile'].value;
 
             return "&metadata=" + escape(meta) +
                 "&extendeddata=" + escape(extended) +
                 "&cot=" + escape(cot);
         } else {
-            var realm = frm.elements['CreateHostedIDP.tfRealm'].value;
+            var realm = frm.elements['CreateHostedSP.tfRealm'].value;
             return "&entityId=" +
-            escape(frm.elements['CreateHostedIDP.tfEntityId'].value) +
+            escape(frm.elements['CreateHostedSP.tfEntityId'].value) +
             "&realm=" + escape(realm) +
-            "&idpecert=" +
-            escape(frm.elements['CreateHostedIDP.tfEncKey'].value) +
-            "&idpscert=" +
-            escape(frm.elements['CreateHostedIDP.tfSigningKey'].value) +
+            "&specert=" +
+            escape(frm.elements['CreateHostedSP.tfEncKey'].value) +
+            "&spscert=" +
+            escape(frm.elements['CreateHostedSP.tfSigningKey'].value) +
             "&cot=" + escape(cot);
         }
     }
@@ -277,17 +277,17 @@
                     document.getElementById('cotq').style.display = 'none';
                     document.getElementById('cotchoice').style.display = 'none';
                     document.getElementById('cottf').style.display = 'block';
-                    chooseRadio(frm, 'CreateHostedIDP.radioCOT', 'no');
+                    chooseRadio(frm, 'CreateHostedSP.radioCOT', 'no');
                 } else {
                     var cots = result.split('|');
-                    var choiceCOT = frm.elements['CreateHostedIDP.choiceCOT'];
+                    var choiceCOT = frm.elements['CreateHostedSP.choiceCOT'];
                     for (var i = 0; i < cots.length; i++) {
                         choiceCOT.options[i] = new Option(cots[i], cots[i]);
                     }
                     document.getElementById('cotq').style.display = 'block';
                     document.getElementById('cotchoice').style.display = 'block';
                     document.getElementById('cottf').style.display = 'none';
-                    chooseRadio(frm, 'CreateHostedIDP.radioCOT', 'yes');
+                    chooseRadio(frm, 'CreateHostedSP.radioCOT', 'yes');
                 }
                 focusMain();
             } else {
@@ -300,15 +300,15 @@
         }
     }
 
-    function createRemoteSP() {
+    function createRemoteIDP() {
         var cot;
-        var cotRadio = getRadioVal(frm, 'CreateHostedIDP.radioCOT');
+        var cotRadio = getRadioVal(frm, 'CreateHostedSP.radioCOT');
         if (cotRadio == "yes") {
-            cot = frm.elements['CreateHostedIDP.choiceCOT'].value;
+            cot = frm.elements['CreateHostedSP.choiceCOT'].value;
         } else {
-            cot = frm.elements['CreateHostedIDP.tfCOT'].value;
+            cot = frm.elements['CreateHostedSP.tfCOT'].value;
         }
-        document.location.replace('CreateRemoteSP?cot=' + cot + '&' + data);
+        document.location.replace('CreateRemoteIDP?cot=' + cot + '&' + data);
     }
 
     function configured() {
@@ -332,8 +332,8 @@
         }
     }
 
-    frm.elements['CreateHostedIDP.tfMetadataFileURL'].style.display = 'none';
-    frm.elements['CreateHostedIDP.tfExtendedFileURL'].style.display = 'none';
+    frm.elements['CreateHostedSP.tfMetadataFileURL'].style.display = 'none';
+    frm.elements['CreateHostedSP.tfExtendedFileURL'].style.display = 'none';
     getCircleOfTrust('/');
 </script>
 
