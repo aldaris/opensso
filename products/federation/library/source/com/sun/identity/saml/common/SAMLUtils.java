@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.5 2007-11-14 18:55:26 ww203982 Exp $
+ * $Id: SAMLUtils.java,v 1.6 2008-01-31 00:02:26 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1490,9 +1490,7 @@ public class SAMLUtils  extends SAMLUtilsCommon {
             } 
             key = result.toString();
         }           
-        String reqUrl = SAMLServiceManager.getServerURL() +
-            SystemConfigurationUtil.getProperty(Constants.
-            AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        String reqUrl = SAMLServiceManager.getServerURL();
         String redirectUrl = null;
         if (key == null || key.equals("")) {
             redirectUrl = reqUrl +"/UI/Login?goto=" +  
