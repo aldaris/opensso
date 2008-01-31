@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.14 2008-01-15 22:41:38 leiming Exp $
+# $Id: AMAgentConfiguration.template,v 1.15 2008-01-31 20:31:04 sean_brydon Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -430,7 +430,7 @@ com.sun.identity.agents.config.login.attempt.limit = 0
 # Valid Values: true, false  
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.sso.decode = true
+com.sun.identity.agents.config.sso.decode = false
 
 # SSO Cache Enable Flag:
 #   This property specifies if the SSO Cache is active for the agent. This cache
