@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyProvider.java,v 1.2 2006-11-30 05:47:38 qcheng Exp $
+ * $Id: KeyProvider.java,v 1.3 2008-01-31 00:01:45 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 
 package com.sun.identity.saml.xmlsig;
 
+import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
@@ -109,4 +110,10 @@ public interface KeyProvider {
      */
     public Certificate getCertificate (
 	    java.security.PublicKey publicKey);
+
+    /**
+     * Returns the keystore instance.
+     * @return the keystore instance.
+     */
+    public KeyStore getKeyStore();
 }
