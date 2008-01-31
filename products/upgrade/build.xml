@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2008-01-24 23:02:53 veiming Exp $
+   $Id: build.xml,v 1.5 2008-01-31 21:50:42 bina Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -127,6 +127,13 @@
     </target>
 
     <target name="copy-upgrade-dir">
+        <move todir="${upgrade.dist.dir}/upgrade/services">
+             <fileset dir="${upgrade.services.dir}">
+                 <include name="**/**/*.class"/>
+                 <exclude name="**/**/*.java"/>
+                 <exclude name="**/**/data/**"/>
+             </fileset>
+	</move>
         <copy todir="${upgrade.dist.dir}/upgrade/services">
              <fileset dir="${upgrade.services.dir}">
                  <exclude name="**/**/*.java"/>
