@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.2 2008-01-18 17:43:26 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.3 2008-02-01 23:56:23 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.agentconfig;
 
-import com.iplanet.jato.NavigationException;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.ChildDisplayEvent;
@@ -55,7 +54,6 @@ public class GenericAgentProfileViewBean
     extends AgentProfileViewBean {
     
     protected static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
-    private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
     static final String DEFAULT_DISPLAY_URL =
         "/console/agentconfig/GenericAgentProfile.jsp";
     private static final String TAB_GENERAL = "agentconfig-general";
@@ -112,7 +110,7 @@ public class GenericAgentProfileViewBean
         
         try {
             AgentPropertyXMLBuilder blder = new AgentPropertyXMLBuilder(
-                agentType, isGroup, tabName, model);
+                agentType, isGroup, is2dot2Agent(), tabName, model);
             attributeSchemas = blder.getAttributeSchemas();
             return new AMPropertySheetModel(blder.getXML(
                 inheritedPropertyNames));
@@ -158,9 +156,7 @@ public class GenericAgentProfileViewBean
     
     protected Map getFormValues()
         throws AMConsoleException, ModelControlException {
-        AgentsModel model = (AgentsModel)getModel();
         AMPropertySheet prop = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
-        String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
         return prop.getAttributeValues(getPropertyNames());
     }
     
@@ -201,8 +197,12 @@ public class GenericAgentProfileViewBean
             
         }
     }
+    
+    public boolean beginBtnInheritDisplay(ChildDisplayEvent event) {
+        return !is2dot2Agent();
+    }
 
-    /**
+     /**
      * Returns <code>true</code> if tab set has more than one tab.
      *
      * @param event Child Display Event.

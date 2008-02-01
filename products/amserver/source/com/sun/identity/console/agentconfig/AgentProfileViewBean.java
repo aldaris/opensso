@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.1 2007-12-17 19:42:44 veiming Exp $
+ * $Id: AgentProfileViewBean.java,v 1.2 2008-02-01 23:56:23 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.HREF;
 import com.iplanet.jato.view.html.OptionList;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMAdminConstants;
@@ -130,7 +131,7 @@ public abstract class AgentProfileViewBean
         if ((type != null) && (type.trim().length() > 0)) {
             AgentsModel model = (AgentsModel)getModel();
             String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
-            inheritedPropertyNames = (!isGroup) ?
+            inheritedPropertyNames = (!isGroup && !is2dot2Agent()) ?
                 model.getInheritedPropertyNames(universalId) :
                 Collections.EMPTY_SET;
             AMPropertySheetModel psModel = createPropertySheetModel(type);
@@ -221,7 +222,7 @@ public abstract class AgentProfileViewBean
         try {
             setDefaultValues(agentType);
             
-            if (!isGroup && isFirstTab()) {
+            if (!isGroup && !is2dot2Agent() && isFirstTab()) {
                 Set groups = new HashSet();
                 model.getAgentGroupNames(agentType, "*", groups);
                 CCDropDownMenu menu = (CCDropDownMenu)getChild(
@@ -287,7 +288,7 @@ public abstract class AgentProfileViewBean
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
         try {
             Map values = getFormValues();
-            if (!isGroup) {
+            if (!isGroup && !is2dot2Agent()) {
                 for (Iterator i = inheritedPropertyNames.iterator();
                     i.hasNext(); )
                 {
@@ -296,7 +297,7 @@ public abstract class AgentProfileViewBean
             }
             model.setAttributeValues(universalId, values);
 
-            if (!isGroup && isFirstTab()) {
+            if (!isGroup && !is2dot2Agent() && isFirstTab()) {
                 String agentGroup = getDisplayFieldStringValue(
                     CHILD_AGENT_GROUP);
                 model.setGroup(universalId, agentGroup);
@@ -384,6 +385,11 @@ public abstract class AgentProfileViewBean
         return PG_SESSION_AGENT_TAB;
     }
 
+    protected boolean is2dot2Agent() {
+        String agentType = (String) getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        return agentType.equals(AgentConfiguration.AGENT_TYPE_2_DOT_2_AGENT);
+    }
     
     protected abstract boolean isFirstTab();
         

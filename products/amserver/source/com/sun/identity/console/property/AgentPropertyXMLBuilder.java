@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentPropertyXMLBuilder.java,v 1.2 2008-01-27 06:59:44 veiming Exp $
+ * $Id: AgentPropertyXMLBuilder.java,v 1.3 2008-02-01 23:56:23 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,6 @@ import com.sun.identity.idm.IdConstants;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchemaManager;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,6 +48,7 @@ public class AgentPropertyXMLBuilder
 {
     private String agentType;
     private boolean bGroup;
+    private boolean olderAgentType;
     private String tabName;
 
     private static final String DUMMY_SECTION = "blank.header";
@@ -59,7 +59,9 @@ public class AgentPropertyXMLBuilder
      *
      * @param agentType Type of agent
      * @param bGroup <code>true</code> if this is for agent group.
-     * @param tab Tab name
+     * @param olderAgentType <code>true</code> if agent is older ones like
+     *        2.2 agent
+     * @param tab Tab name.
      * @param model Model for getting localized string and user locale.
      * @throws SMSException if attribute schema cannot obtained.
      * @throws SSOException if single sign on token is invalid.
@@ -67,12 +69,14 @@ public class AgentPropertyXMLBuilder
     public AgentPropertyXMLBuilder(
         String agentType,
         boolean bGroup,
+        boolean olderAgentType,
         String tab,
         AMModel model
     ) throws SMSException, SSOException {
         this.model = model;
         this.agentType = agentType;
         this.bGroup = bGroup;
+        this.olderAgentType = olderAgentType;
         tabName = tab;
         
         if (tab == null) {
@@ -127,7 +131,8 @@ public class AgentPropertyXMLBuilder
 
         xml.append(END_TAG);
         
-        if (!bGroup && tabMgr.isFirstTab(agentType, tabName)) {
+        if (!bGroup && !olderAgentType && tabMgr.isFirstTab(agentType, tabName)
+        ) {
             String buff = xml.toString();
             int idx = buff.indexOf("<property ");
             return buff.substring(0, idx) + GROUP_XML + buff.substring(idx);

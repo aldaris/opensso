@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.2 2007-12-19 22:25:13 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.3 2008-02-01 23:56:23 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.iplanet.jato.view.event.ChildDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.console.base.AMViewBeanBase;
 import com.sun.identity.console.base.AMViewConfig;
 import com.sun.identity.console.base.model.AMConsoleException;
@@ -64,7 +65,6 @@ import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.agentconfig.model.AgentsModelImpl;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.web.ui.model.CCNavNode;
-import com.sun.web.ui.model.CCTabsModel;
 import com.sun.web.ui.view.tabs.CCTabs;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -712,5 +712,40 @@ public class AgentsViewBean
             vbName = GENERIC_VIEW_BEAN;
         }
         return Thread.currentThread().getContextClassLoader().loadClass(vbName);
+    }
+
+    /**
+     * Returns <code>true</code> if agent type is not 2.2 agent.
+     * @param event Child display event.
+     * @return <code>true</code> if agent type is not 2.2 agent.
+     */
+    public boolean beginTblSearchGroupDisplay(ChildDisplayEvent event) {
+        return !is2dot2Agent();
+    }
+
+    /**
+     * Returns <code>true</code> if agent type is not 2.2 agent.
+     * @param event Child display event.
+     * @return <code>true</code> if agent type is not 2.2 agent.
+     */
+    public boolean beginBtnGroupSearchDisplay(ChildDisplayEvent event) {
+        return !is2dot2Agent();
+    }
+    
+
+    /**
+     * Returns <code>true</code> if agent type is not 2.2 agent.
+     * @param event Child display event.
+     * @return <code>true</code> if agent type is not 2.2 agent.
+     */
+    public boolean beginTfGroupFilterDisplay(ChildDisplayEvent event) {
+        return !is2dot2Agent();
+    }
+    
+    protected boolean is2dot2Agent() {
+        String agentType = (String) getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        return (agentType != null) && 
+            agentType.equals(AgentConfiguration.AGENT_TYPE_2_DOT_2_AGENT);
     }
 }

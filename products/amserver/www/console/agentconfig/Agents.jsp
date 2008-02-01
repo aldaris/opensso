@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Agents.jsp,v 1.1 2007-12-17 19:42:45 veiming Exp $
+   $Id: Agents.jsp,v 1.2 2008-02-01 23:56:24 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -81,7 +81,7 @@
 	<td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
 	<td nowrap><cc:textfield name="tfGroupFilter" defaultValue="*" /></td>
 	<td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
-	<td><cc:button name="btnSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
+	<td><cc:button name="btnGroupSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
     </tr>
 </table>
 

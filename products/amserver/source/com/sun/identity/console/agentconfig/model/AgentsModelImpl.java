@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.3 2008-01-07 20:38:49 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.4 2008-02-01 23:56:23 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,7 +45,6 @@ import com.sun.identity.sm.SMSException;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
