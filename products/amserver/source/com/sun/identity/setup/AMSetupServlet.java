@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.38 2008-01-31 04:08:05 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.39 2008-02-01 21:12:15 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1467,7 +1467,11 @@ public class AMSetupServlet extends HttpServlet {
         // Add WSC configuration
         config.put("sunIdentityServerDeviceStatus","Active");
         config.put("SecurityMech","urn:sun:wss:security:null:UserNameToken");
-        config.put("UserCredential","UserName:testuser|UserPassword:test");
+        config.put("UserCredential","UserName:test|UserPassword:test");
+        config.put("useDefaultStore","true");
+        config.put("privateKeyAlias","test");
+        config.put("publicKeyAlias","test");
+        config.put("isRequestSign","true");
         config.put("AgentType","WSCAgent");
         createAgent(idrepo, "wsc", "WSC", "", config);
 

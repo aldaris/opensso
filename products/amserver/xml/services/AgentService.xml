@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.28 2008-01-31 20:24:39 sean_brydon Exp $
+   $Id: AgentService.xml,v 1.29 2008-02-01 21:12:15 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2286,7 +2286,7 @@
                         syntax="string"
                         i18nKey="a315">
                         <DefaultValues>
-                            <Value>amclientWSC</Value>
+                            <Value>test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2295,7 +2295,7 @@
                         syntax="string"
                         i18nKey="a316">
                         <DefaultValues>
-                            <Value>amclientWSP</Value>
+                            <Value>test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2512,7 +2512,7 @@
                         syntax="string"
                         i18nKey="a315">
                         <DefaultValues>
-                            <Value>amclientWSP</Value>
+                            <Value>test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2530,7 +2530,7 @@
                         syntax="string"
                         i18nKey="a328">
                         <DefaultValues>
-                            <Value>amclientWSC</Value>
+                            <Value>test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2747,7 +2747,7 @@
                         syntax="string"
                         i18nKey="a315">
                         <DefaultValues>
-                            <Value>amclientWSC</Value>
+                            <Value>test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2756,7 +2756,7 @@
                         syntax="string"
                         i18nKey="a329">
                         <DefaultValues>
-                            <Value>amclientSTS</Value>
+                            <Value>test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -2832,7 +2832,7 @@
                         syntax="string"
                         i18nKey="a315">
                         <DefaultValues>
-                            <Value>amclient</Value>
+                            <Value>test</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
