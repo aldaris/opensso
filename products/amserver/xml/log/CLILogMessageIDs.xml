@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.17 2008-01-27 06:57:37 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.18 2008-02-01 23:58:01 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1874,7 +1874,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="SUCCEED_ADD_SUB_CONFIGURATIONT_TO_REALM" id="2321"
+    <logmessage name="SUCCEED_ADD_SUB_CONFIGURATION_TO_REALM" id="2321"
         loglevel="LL_INFO"
         description="Sub configuration is added to realm.">
         <datainfo>
@@ -1887,7 +1887,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="FAILED_ADD_SUB_CONFIGURATIONT_TO_REALM" id="2322"
+    <logmessage name="FAILED_ADD_SUB_CONFIGURATION_TO_REALM" id="2322"
         loglevel="LL_INFO"
         description="Unable to add sub configuration.">
         <datainfo>
@@ -1957,7 +1957,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="SUCCEED_DELETE_SUB_CONFIGURATIONT_TO_REALM" id="2341"
+    <logmessage name="SUCCEED_DELETE_SUB_CONFIGURATION_TO_REALM" id="2341"
         loglevel="LL_INFO"
         description="Sub configuration is deleted from realm.">
         <datainfo>
