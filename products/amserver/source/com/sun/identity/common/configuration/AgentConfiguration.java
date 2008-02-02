@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.14 2008-02-01 23:56:22 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.15 2008-02-02 17:21:51 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -777,13 +777,13 @@ public class AgentConfiguration {
                 if (key.startsWith(attrName)) {
                     String sKey = key.substring(lenAttrName);
                     Set set = (Set)attrValues.get(key);
-                    
-                    if (sKey.startsWith("[") && sKey.endsWith("]")) {
-                        results.add(sKey + "=" + set.iterator().next());
-                    } else if (attrName.equals(key)) {
-                        // this is for special case, where attribute can be
-                        // list and non list type
-                        if (!set.isEmpty()) {
+
+                    if (set != Collections.EMPTY_SET) {
+                        if (sKey.startsWith("[") && sKey.endsWith("]")) {
+                            results.add(sKey + "=" + set.iterator().next());
+                        } else if (attrName.equals(key)) {
+                            // this is for special case, where attribute can be
+                            // list and non list type
                             results.add(set.iterator().next());
                         }
                     }
