@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: FileUploader.jsp,v 1.3 2008-01-31 04:08:07 veiming Exp $
+   $Id: FileUploader.jsp,v 1.4 2008-02-02 03:32:16 veiming Exp $
    
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -42,7 +42,7 @@
 <script language="javascript">    
     var fileName = '';
     var failUpload = "<cc:text name="txtConfigured" defaultValue="ajax.upload.file.failed" bundleID="amConsole" escape="false" />";
-    var closeBtn = "<cc:text name="txtConfigured" defaultValue="ajax.close.button" bundleID="amConsole" escape="false" />";
+    var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
     function selectFile(data) {
         var idoc = document.getElementById('fileupload');
         var dataDiv = idoc.contentWindow.document.getElementById('data');

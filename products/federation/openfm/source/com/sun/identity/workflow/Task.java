@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Task.java,v 1.2 2008-01-17 06:36:25 veiming Exp $
+ * $Id: Task.java,v 1.3 2008-02-02 03:32:16 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -72,10 +73,10 @@ public abstract class Task
         return resBundle.getString(key);
     }
 
-    protected String getContent(String resName)
+    protected String getContent(String resName, Locale locale)
         throws WorkflowException {
         if (resName.startsWith("http://")) {
-            return getWebContent(resName);
+            return getWebContent(resName, locale);
         } else {
             return resName;
         }
@@ -98,7 +99,7 @@ public abstract class Task
         }
     }
     
-    private static String getWebContent(String url)
+    private String getWebContent(String url, Locale locale)
         throws WorkflowException {
         try {
             StringBuffer content = new StringBuffer();
@@ -123,11 +124,17 @@ public abstract class Task
             }
             return content.toString();
         } catch (ProtocolException e) {
-            throw new WorkflowException(e.getMessage());
+            Object[] param = {url};
+            throw new WorkflowException(MessageFormat.format(
+                getMessage("unable.to.reach.url", locale), param));
         } catch (MalformedURLException e) {
-            throw new WorkflowException(e.getMessage());
+            Object[] param = {url};
+            throw new WorkflowException(MessageFormat.format(
+                getMessage("malformedurl", locale), param));
         } catch (IOException e) {
-            throw new WorkflowException(e.getMessage());
+            Object[] param = {url};
+            throw new WorkflowException(MessageFormat.format(
+                getMessage("unable.to.reach.url", locale), param));
         }
     }
 

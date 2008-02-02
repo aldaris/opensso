@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedSPViewBean.java,v 1.1 2008-01-31 04:08:01 veiming Exp $
+ * $Id: CreateHostedSPViewBean.java,v 1.2 2008-02-02 03:32:15 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,6 @@ public class CreateHostedSPViewBean
     private static final String ENTITY_ID = "tfEntityId";
     private static final String META_DATA_FILE = "tfMetadataFile";
     private static final String EXT_DATA_FILE = "tfExtendedFile";
-    private static final String SIGN_KEY = "tfSigningKey";
     private static final String ENC_KEY = "tfEncKey";
     private static final String HAS_META_DATA = "radioHasMetaData";
     private static final String SELECT_COT  = "radioCOT";
@@ -233,8 +232,6 @@ public class CreateHostedSPViewBean
             OptionList optionList = createOptionList(keys);
             optionList.add(0, 
                 model.getLocalizedString("configure.provider.keys.none"), "");
-            CCDropDownMenu menuSignKeys = (CCDropDownMenu)getChild(SIGN_KEY);
-            menuSignKeys.setOptions(optionList);
             CCDropDownMenu menuEncKeys = (CCDropDownMenu)getChild(ENC_KEY);
             menuEncKeys.setOptions(optionList);
         } catch (AMConsoleException ex) {

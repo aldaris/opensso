@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetCircleOfTrusts.java,v 1.1 2008-01-17 06:36:25 veiming Exp $
+ * $Id: GetCircleOfTrusts.java,v 1.2 2008-02-02 03:32:16 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,7 +55,8 @@ public class GetCircleOfTrusts
             String extendedMetaData = getString(params,
                 ParameterKeys.P_EXENDED_DATA);
             if (extendedMetaData != null) {
-                realm = getRealmFromExtData(getContent(extendedMetaData));
+                realm = getRealmFromExtData(getContent(
+                    extendedMetaData, locale));
             }
         }
 

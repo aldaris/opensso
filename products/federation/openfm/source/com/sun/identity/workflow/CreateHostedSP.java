@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedSP.java,v 1.1 2008-01-31 04:08:02 veiming Exp $
+ * $Id: CreateHostedSP.java,v 1.2 2008-02-02 03:32:16 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,8 +59,8 @@ public class CreateHostedSP
         if (hasMetaData) {
             String extendedDataFile = getString(params,
                 ParameterKeys.P_EXENDED_DATA);
-            metadata = getContent(metadataFile);
-            extendedData = getContent(extendedDataFile);
+            metadata = getContent(metadataFile, locale);
+            extendedData = getContent(extendedDataFile, locale);
         } else {
             String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
             String metaAlias = generateMetaAlias(
@@ -69,13 +69,12 @@ public class CreateHostedSP
             map.put(CreateSAML2HostedProviderTemplate.P_SP, metaAlias);
             map.put(CreateSAML2HostedProviderTemplate.P_SP_E_CERT,
                 getString(params, ParameterKeys.P_SP_E_CERT));
-            map.put(CreateSAML2HostedProviderTemplate.P_SP_S_CERT,
-                getString(params, ParameterKeys.P_SP_S_CERT));
-                
+
             try {
                 metadata =
                     CreateSAML2HostedProviderTemplate.buildMetaDataTemplate(
                     entityId, map);
+                metadata = enableSigning(metadata);
                 extendedData =
                    CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
                     entityId, map);
@@ -98,6 +97,16 @@ public class CreateHostedSP
             }
         }
         return getMessage("sp.configured", locale) + "|||realm=" + realm;
+    }
+
+    private String enableSigning(String metadata) {
+        int idx = metadata.indexOf("WantAssertionsSigned=\"false\"");
+        if (idx != -1) {
+            metadata = metadata.substring(0, idx) +
+                "WantAssertionsSigned=\"true\"" +
+                metadata.substring(idx + 28);
+        }
+        return metadata;
     }
     
     private String generateMetaAlias(String realm)

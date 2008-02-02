@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteIDP.java,v 1.1 2008-01-31 04:08:02 veiming Exp $
+ * $Id: CreateRemoteIDP.java,v 1.2 2008-02-02 03:32:16 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,7 @@ public class CreateRemoteIDP
         validateParameters(params);
         String realm = getString(params, ParameterKeys.P_REALM);
         String metadataFile = getString(params, ParameterKeys.P_META_DATA);
-        String metadata = getContent(metadataFile);
+        String metadata = getContent(metadataFile, locale);
         String[] results = ImportSAML2MetaData.importData(
             realm, metadata, null);
 

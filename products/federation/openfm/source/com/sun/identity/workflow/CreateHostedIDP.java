@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDP.java,v 1.3 2008-01-31 04:08:02 veiming Exp $
+ * $Id: CreateHostedIDP.java,v 1.4 2008-02-02 03:32:15 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,8 +59,8 @@ public class CreateHostedIDP
         if (hasMetaData) {
             String extendedDataFile = getString(params,
                 ParameterKeys.P_EXENDED_DATA);
-            metadata = getContent(metadataFile);
-            extendedData = getContent(extendedDataFile);
+            metadata = getContent(metadataFile, locale);
+            extendedData = getContent(extendedDataFile, locale);
         } else {
             String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
             String metaAlias = generateMetaAlias(

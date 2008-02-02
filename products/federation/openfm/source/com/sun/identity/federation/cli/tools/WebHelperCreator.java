@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebHelperCreator.java,v 1.2 2007-07-25 08:09:36 veiming Exp $
+ * $Id: WebHelperCreator.java,v 1.3 2008-02-02 03:32:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,7 +116,7 @@ public class WebHelperCreator {
             .append("-->\", start);\n");
         buff.append("            if (end != -1) {\n");
         buff.append("                String exitCode = ")
-            .append("content.substring(start+20, end);\n");
+            .append("content.substring(start+20, end-1);\n");
         buff.append("                val = Integer.parseInt(exitCode);\n");
         buff.append("            }\n");
         buff.append("        }\n");

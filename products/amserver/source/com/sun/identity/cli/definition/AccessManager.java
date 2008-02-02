@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.54 2008-01-24 04:26:01 veiming Exp $
+ * $Id: AccessManager.java,v 1.55 2008-02-02 03:32:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1681,7 +1681,7 @@ public class AccessManager {
         description="Get server configuration XML from centralized data store",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://samples.com:8080/fam"},
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam"},
         optionAliases={},
         macro="authentication",
         optionalOptions={
@@ -1699,7 +1699,7 @@ public class AccessManager {
         description="Set server configuration XML to centralized data store",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://samples.com:8080/fam",
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam",
             "xmlfile|X|m|XML file that contains configuration."},
         optionAliases={},
         macro="authentication",
@@ -1995,7 +1995,7 @@ public class AccessManager {
         description="List server configuration.",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://samples.com:8080/fam"
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam"
         },
         optionAliases={},
         macro="authentication",
@@ -2014,7 +2014,7 @@ public class AccessManager {
         description="Update server configuration.",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://samples.com:8080/fam"
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam"
         },
         optionAliases={},
         macro="authentication",
@@ -2033,7 +2033,7 @@ public class AccessManager {
         description="Remove server configuration.",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://samples.com:8080/fam",
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam",
             "propertynames|a|m|Name of properties to be removed."},
         optionAliases={},
         macro="authentication",
@@ -2050,7 +2050,7 @@ public class AccessManager {
         description="Create a server instance.",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://samples.com:8080/fam",
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam",
             "serverconfigxml|X|s|Server Configuration XML file name."},
         optionAliases={},
         optionalOptions={
@@ -2069,7 +2069,7 @@ public class AccessManager {
         description="Delete a server instance.",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://samples.com:8080/fam"},
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam"},
         optionAliases={},
         optionalOptions={},
         macro="authentication",
@@ -2101,7 +2101,7 @@ public class AccessManager {
         webSupport="true",
         mandatoryOptions={
             "sitename|s|s|Site name, e.g. mysite",
-            "siteurl|i|s|Site's primary URL, e.g. http://site.samples.com:8080"},
+            "siteurl|i|s|Site's primary URL, e.g. http://www.example.com:8080"},
         optionAliases={},
         optionalOptions={"secondaryurls|a|m|Secondary URLs"},
         macro="authentication",
@@ -2163,7 +2163,7 @@ public class AccessManager {
         description="Add members to a site.",
         webSupport="true",
         mandatoryOptions={"sitename|s|s|Site name, e.g. mysite",
-            "servernames|e|m|Server names, e.g. http://samples.com:8080/fam"},
+            "servernames|e|m|Server names, e.g. http://www.example.com:8080/fam"},
         optionAliases={},
         optionalOptions={},
         macro="authentication",
@@ -2179,7 +2179,7 @@ public class AccessManager {
         description="Remove members from a site.",
         webSupport="true",
         mandatoryOptions={"sitename|s|s|Site name, e.g. mysite",
-            "servernames|e|m|Server names, e.g. http://samples.com:8080/fam"},
+            "servernames|e|m|Server names, e.g. http://www.example.com:8080/fam"},
         optionAliases={},
         optionalOptions={},
         macro="authentication",
@@ -2196,7 +2196,7 @@ public class AccessManager {
         webSupport="true",
         mandatoryOptions={
             "sitename|s|s|Site name, e.g. mysite",
-            "siteurl|i|s|Site's primary URL, e.g. http://site.samples.com:8080"},
+            "siteurl|i|s|Site's primary URL, e.g. http://site.www.example.com:8080"},
         optionAliases={},
         optionalOptions={},
         macro="authentication",

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedSP.jsp,v 1.1 2008-01-31 04:08:03 veiming Exp $
+   $Id: CreateHostedSP.jsp,v 1.2 2008-02-02 03:32:16 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -249,8 +249,6 @@
             "&realm=" + escape(realm) +
             "&specert=" +
             escape(frm.elements['CreateHostedSP.tfEncKey'].value) +
-            "&spscert=" +
-            escape(frm.elements['CreateHostedSP.tfSigningKey'].value) +
             "&cot=" + escape(cot);
         }
     }
