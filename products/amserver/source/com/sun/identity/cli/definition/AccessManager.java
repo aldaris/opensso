@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.55 2008-02-02 03:32:14 veiming Exp $
+ * $Id: AccessManager.java,v 1.56 2008-02-03 02:33:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -872,9 +872,9 @@ public class AccessManager {
             "subconfigid|b|s|ID of parent configuration(Sub Configuration shall be added to root configuration if this option is not provided).",
             "priority|p|s|Priority of the sub configuration."},
         resourceStrings={
-            "add-sub-configuration-succeed=Sub Configuration, {0} is added.",
+            "add-sub-configuration-succeed=Sub Configuration {1} was added.",
             "add-sub-configuration-priority-no-integer=Priority needs to be an integer.",
-            "add-sub-configuration-to-realm-succeed=Sub Configuration, {1} is added to realm, {0}",
+            "add-sub-configuration-to-realm-succeed=Sub Configuration {1} was added to realm {0}",
             "add-sub-configuration-no-global-config=There are no global configurations for service, {0}"})
     private String create_sub_cfg;
 
@@ -890,8 +890,8 @@ public class AccessManager {
         optionalOptions={
             "realm|e|s|Name of realm (Sub Configuration shall be added to global configuration if this option is not provided)."},
         resourceStrings={
-            "delete-sub-configuration-succeed=Sub Configuration, {0} is deleted.",
-            "delete-sub-configuration-to-realm-succeed=Sub Configuration, {1} is deleted from realm, {0}"})
+            "delete-sub-configuration-succeed=Sub Configuration {1} was deleted.",
+            "delete-sub-configuration-to-realm-succeed=Sub Configuration {1} was deleted from realm {0}"})
     private String delete_sub_cfg;
 
     @SubCommandInfo(

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteSubConfiguration.java,v 1.1 2006-05-31 21:50:00 veiming Exp $
+ * $Id: DeleteSubConfiguration.java,v 1.2 2008-02-03 02:33:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,7 +92,7 @@ public class DeleteSubConfiguration extends SchemaCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_DELETE_SUB_CONFIGURATION_TO_REALM", params);
             outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("delete-sub-configuration-succeed"),
+                getResourceString("delete-sub-configuration-to-realm-succeed"),
                     (Object[])params));
         } catch (SSOException e) {
             String[] args = {realmName, subConfigName, serviceName,

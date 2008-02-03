@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddSubConfiguration.java,v 1.5 2007-10-17 23:00:26 veiming Exp $
+ * $Id: AddSubConfiguration.java,v 1.6 2008-02-03 02:33:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,7 +127,7 @@ public class AddSubConfiguration extends SchemaCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_ADD_SUB_CONFIGURATION_TO_REALM", params);
             outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("add-sub-configuration-succeed"),
+                getResourceString("add-sub-configuration-to-realm-succeed"),
                 (Object[])params));
         } catch (SSOException e) {
             String[] args = {realmName, subConfigName, serviceName,
