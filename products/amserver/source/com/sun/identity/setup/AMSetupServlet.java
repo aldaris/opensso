@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.39 2008-02-01 21:12:15 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.40 2008-02-04 21:02:09 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import com.sun.identity.common.DebugPropertiesObserver;
 import com.sun.identity.common.configuration.ConfigurationObserver;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.common.configuration.UnknownPropertyNameException;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.AMIdentity;
@@ -114,6 +115,8 @@ public class AMSetupServlet extends HttpServlet {
 
     final static String BOOTSTRAP_EXTRA = "bootstrap";    
     final static String BOOTSTRAP_FILE_LOC = "bootstrap.file";
+
+    private static String errorMessage = null;
 
     /*
      * Initializes the servlet.
@@ -242,6 +245,10 @@ public class AMSetupServlet extends HttpServlet {
         ServicesDefaultValues.setServiceConfigValues(request);
         Map map = ServicesDefaultValues.getDefaultValues();
 
+        // used for site configuration later
+        Map siteMap = (Map)map.remove(
+            SetupConstants.CONFIG_VAR_SITE_CONFIGURATION);
+
         try {
 /*            Map bootstrapRes = createBootstrapResource(false);
             isConfiguredFlag = 
@@ -278,11 +285,39 @@ public class AMSetupServlet extends HttpServlet {
                         set.add(fileBootstrap); 
                     }
                     // this is to store the bootstrap location
+                    String serverInstanceName = 
+                        SystemProperties.getServerInstanceName(); 
+
                     SSOToken adminToken = (SSOToken)
                         AccessController.doPrivileged(
                         AdminTokenAction.getInstance());
                     ServerConfiguration.setServerInstance(adminToken,
-                        SystemProperties.getServerInstanceName(), mapBootstrap);
+                        serverInstanceName, mapBootstrap);
+
+                    // setup site configuration information
+                    if ((siteMap != null) && !siteMap.isEmpty()) {
+                        String site = (String)siteMap.get(
+                            SetupConstants.LB_SITE_NAME);
+                        String primaryURL = (String)siteMap.get(
+                            SetupConstants.LB_PRIMARY_URL);
+
+                        /* 
+                         * If primary url is null that means we are adding
+                         * to an existing site. we don't need to create it 
+                         * first.
+                         */
+                        if ((primaryURL != null) && (primaryURL.length() > 0)) {
+                            SiteConfiguration.createSite(adminToken,
+                                site, primaryURL, Collections.EMPTY_SET);
+                        } 
+
+                        if (!ServerConfiguration.belongToSite( 
+                            adminToken, serverInstanceName, site)) 
+                        {
+                            ServerConfiguration.addToSite(
+                                adminToken, serverInstanceName, site);
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -469,46 +504,60 @@ public class AMSetupServlet extends HttpServlet {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
             e.printStackTrace();
+            errorMessage = e.getMessage();
         } catch (ConfigurationException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
             e.printStackTrace();
+            errorMessage = e.getMessage();
         } catch (SecurityException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
             e.printStackTrace();
+            errorMessage = e.getMessage();
         } catch (LDAPServiceException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
             e.printStackTrace();
+            errorMessage = e.getMessage();
         } catch (IOException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
             e.printStackTrace();
+            errorMessage = e.getMessage();
         } catch (SMSException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
             e.printStackTrace();
+            errorMessage = e.getMessage();
         } catch (PolicyException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
             e.printStackTrace();
+            errorMessage = e.getMessage();
         } catch (ConfiguratorException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
             e.printStackTrace();
+            errorMessage = e.getMessage();
         } catch (SSOException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
             e.printStackTrace();
+            errorMessage = e.getMessage();
         } catch (IdRepoException idrepoe) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", idrepoe);
             idrepoe.printStackTrace();
+            errorMessage = idrepoe.getMessage();
         }
         return configured;
     }
     
+    public static String getErrorMessage() {
+        return (errorMessage != null) ? errorMessage : ""; 
+    }
+
     private static void appendLegacyProperties(Map prop) {
         ResourceBundle res = ResourceBundle.getBundle(LEGACY_PROPERTIES);
         for (Enumeration i = res.getKeys(); i.hasMoreElements(); ) {

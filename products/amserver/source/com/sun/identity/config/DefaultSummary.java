@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSummary.java,v 1.5 2008-01-18 22:15:34 jonnelson Exp $
+ * $Id: DefaultSummary.java,v 1.6 2008-02-04 20:57:19 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,13 +25,14 @@ package com.sun.identity.config;
 
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.config.util.TemplatedPage;
+import net.sf.click.Context;
 import net.sf.click.control.ActionLink;
+import net.sf.click.control.Button;
 import net.sf.click.control.Form;
 import net.sf.click.control.FieldSet;
 import net.sf.click.control.HiddenField;
 import net.sf.click.control.Label;
 import net.sf.click.control.PasswordField;
-import net.sf.click.Context;
 import net.sf.click.control.Submit;
 
 import com.sun.identity.setup.SetupConstants;
@@ -114,10 +115,15 @@ public class DefaultSummary extends AjaxPage {
         defaultForm.add(new HiddenField(SetupConstants.CONFIG_VAR_PLATFORM_LOCALE, 
             SetupConstants.DEFAULT_PLATFORM_LOCALE));
         
-        Submit submit = new Submit("save", getMessage("save"), this, "onSubmit" );
-        submit.setAttribute( "onclick", "submitDefaultSummaryForm(); return false;");
-        
+        Submit submit = new Submit(
+            "save", getMessage("save"), this, "onSubmit");
+        submit.setAttribute( 
+            "onclick", "submitDefaultSummaryForm(); return false;");
         defaultForm.add(submit);
+
+        Button cancel = new Button("cancel", getMessage("cancel"));
+        cancel.setOnClick("cancelDefaultSummary();");
+        defaultForm.add(cancel);
     }
 
     public boolean onSubmit() {            

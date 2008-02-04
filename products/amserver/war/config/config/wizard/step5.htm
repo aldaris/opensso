@@ -21,22 +21,45 @@
         $('nextTabButton').disabled = true;
     }
 
-    function loadBalancerValidated( body ) {
-        loadBalancerValid = true;
-        $('nextTabButton').disabled = false;
-        $('loadBalancerStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                                            '<small>' + body + '</small>';
-    }
-    function loadBalancerInvalidated( body ) {
-        loadBalancerValid = false;
-        $('nextTabButton').disabled = true;
-        $('loadBalancerStatus').innerHTML = body;
+
+
+    function urlValidated( body ) {
+        $('nextTabButton').disabled = eval(loadBalancerValid);
+        $('loadBalancerStatus').innerHTML = '<img class="pointer" src="$context/assets/images/ok.jpg">';
     }
 
-    function validateLoadBalancer() {
-        var params = "host=" + $('loadBalancerHostName').value + "&port=" + $('loadBalancerPort').value;
-        APP.call( "$context$path", "validate", params, loadBalancerValidated, loadBalancerInvalidated );
+    function urlInvalidated(body) {
+        loadBalancerValid = false;
+        $('nextTabButton').disabled = true;
+        $('loadBalancerStatus').innerHTML = '<img class="pointer" src="$context/assets/images/error.jpg"> ' + '<small>' + body + '</small>';
     }
+
+    function validatePrimaryURL() {
+        var params = "port=" + $('loadBalancerPort').value;
+        APP.call("$context$path", "validateURL", params, urlValidated, urlInvalidated);
+    }
+
+
+    <!--                     -->
+    <!-- site name callbacks -->
+    <!--                     -->
+    function siteNameValidated(body) {
+        $('nextTabButton').disabled = eval(loadBalancerValid);
+        $('siteNameStatus').innerHTML = '<img class="pointer" src="$context/assets/images/ok.jpg">';
+    }
+
+    function siteNameInvalidated(body) {
+        loadBalancerValid = false;
+        $('nextTabButton').disabled = true;
+        $('siteNameStatus').innerHTML = '<img class="pointer" src="$context/assets/images/error.jpg"> ' + '<small>' + body + '</small>';
+    }
+
+    function validateSiteName() {
+        var params = "host=" + $('loadBalancerHostName').value;
+        APP.call("$context$path", "validateSite", params, 
+            siteNameValidated, siteNameInvalidated);
+    }
+
 
     function wizardStep5Init() {
         YAHOO.util.Event.addListener('loadBalancerDisable', "click", disableLoadBalancer );
@@ -44,7 +67,8 @@
         if ( loadBalancerValid ) {
             $('nextTabButton').disabled = false;
             if( $('loadBalancerEnable').checked ) {
-                validateLoadBalancer();
+                validateSiteName();
+                validatePrimaryURL();
             }
         } else {
             $('nextTabButton').disabled = true;
@@ -56,25 +80,27 @@
 </script>
 
 <h1>Step 5: Load Balancing<img class="pointer" alt="info" src="$context/assets/images/message.gif"/></h1>
-<p>Will this instance be deployed behind a load balancer?</p>
+<p>Will this instance be deployed behind a load balancer as part of a site configuration?</p>
 <input type="radio" id="loadBalancerDisable" #if (!$host && !$port) checked="checked"#{end}/><span>&nbsp;No</span><br/>
 <input type="radio" id="loadBalancerEnable" #if ($host || $port) checked="checked"#{end}/><span>&nbsp;Yes</span>
 
 <div id="loadBalancerModule" style="width:500px;#if(!$host && !$port)display:none#{end}">
     <p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
     <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-	<div class="headerBox" style="margin-left:10px">Load Balancer Details</div>
-    <div class="bodyBox" style="height:150px;margin-left:10px">
-        <fieldset id="loadBalancerFieldset">
+	<div class="headerBox" style="margin-left:10px">Site Configuration Details</div>
+    <div class="bodyBox" style="height:100px;margin-left:10px">
+        This is the first instance of a new installation and there are no site configurations to use. You can create a new site by entering the name of the site and the URL of the load balancer below. 
+        <fieldset id="loadBalancerFieldset" style="padding:0px; margin-top:-40px">
             <ol>
                 <li>
-                    <label for="loadBalancerHostName">Load Balancer Host Name<em>*</em></label>
-                    <input id="loadBalancerHostName" name="loadBalancerHostName" type="text" value="#if($host)$host#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this,validateLoadBalancer)"/>
-                    <span id="loadBalancerStatus"></span>
+                    <label for="loadBalancerHostName">Site Name<em>*</em></label>
+                    <input id="loadBalancerHostName" name="loadBalancerHostName" type="text" value="#if($host)$host#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this, validateSiteName)"/>
+                    <span id="siteNameStatus"></span>
                 </li>
                 <li>
-                    <label for="loadBalancerPort">Port<em>*</em></label>
-                    <input id="loadBalancerPort" name="loadBalancerPort" type="text" value="#if($port)$port#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this,validateLoadBalancer)"/>
+                    <label for="loadBalancerPort">Primary URL<em>*</em></label>
+                    <input id="loadBalancerPort" name="loadBalancerPort" type="text" value="#if($port)$port#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this, validatePrimaryURL)"/>
+                    <span id="loadBalancerStatus"></span>
                 </li>
             </ol>
         </fieldset>

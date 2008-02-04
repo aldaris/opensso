@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.19 2008-01-24 19:58:40 goodearth Exp $
+ * $Id: SetupConstants.java,v 1.20 2008-02-04 21:02:10 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -367,6 +367,21 @@ public interface SetupConstants {
      * Configuration Variable for default shared secret key.
      */
     String CONFIG_VAR_DEFAULT_SHARED_KEY = "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
+
+    /**
+     * Configuration variable for storing site confiuration data.
+     */
+    String CONFIG_VAR_SITE_CONFIGURATION = "SITE_CONFIGURATION_MAP";
+    
+    /**
+     * Configuration variable for name of site configuration being created.
+     */
+    String LB_SITE_NAME = "wizardLoadBalancerSiteName";
+
+    /**
+     * Configuration variable for name of site configuration primary url.
+     */
+    String LB_PRIMARY_URL = "wizardLoadBalancerURL";
 
     /**
      * SDK Schema Option Flag.

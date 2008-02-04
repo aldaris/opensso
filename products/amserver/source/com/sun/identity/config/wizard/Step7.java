@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step7.java,v 1.2 2008-01-24 20:26:40 jonnelson Exp $
+ * $Id: Step7.java,v 1.3 2008-02-04 20:57:20 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,25 +51,23 @@ public class Step7 extends AjaxPage {
         
         LDAPStore configStore = (LDAPStore)getContext().getSessionAttribute(
             Step3.LDAP_STORE_SESSION_KEY);
-        add("configStore", configStore );
+        add("configStore", configStore);
 
         LDAPStore userStore = (LDAPStore)getContext().getSessionAttribute(
-            Step4.LDAP_STORE_SESSION_KEY );
-        add( "userStore", userStore );
+            Step4.LDAP_STORE_SESSION_KEY);
+        add( "userStore", userStore);
 
-        String loadBalancerHost = (String)getContext().getSessionAttribute( 
-            Step5.LOAD_BALANCER_HOST_SESSION_KEY );
-        add( "loadBalancerHost", loadBalancerHost );
-        Integer loadBalancerPort = (Integer)getContext().getSessionAttribute( 
-            Step5.LOAD_BALANCER_PORT_SESSION_KEY );
-        add( "loadBalancerPort", loadBalancerPort );
+        add("loadBalancerHost", 
+            (String)getContext().getSessionAttribute(SetupConstants.LB_SITE_NAME));
+        add("loadBalancerPort", 
+            (String)getContext().getSessionAttribute(SetupConstants.LB_PRIMARY_URL));
 
         super.onInit();
     }
 
-    protected void add( String key, Object value ) {
-        if ( value != null ) {
-            addModel( key, value );
+    protected void add(String key, Object value) {
+        if (value != null) {
+            addModel(key, value);
         }
     }
 }

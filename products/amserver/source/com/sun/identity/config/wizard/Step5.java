@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step5.java,v 1.5 2008-01-24 20:26:40 jonnelson Exp $
+ * $Id: Step5.java,v 1.6 2008-02-04 20:57:19 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,63 +25,82 @@ package com.sun.identity.config.wizard;
 
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.AMSetupServlet;
+import com.sun.identity.setup.SetupConstants;
 import net.sf.click.control.ActionLink;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 public class Step5 extends AjaxPage {
 
-    public static final String LOAD_BALANCER_HOST_SESSION_KEY = 
-        "wizardLoadBalancerHostName";
-    public static final String LOAD_BALANCER_PORT_SESSION_KEY = 
-        "wizardLoadBalancerPort";
-
-    public ActionLink clearLink = new ActionLink("clear", this, "clear");
-    public ActionLink validateLink = new ActionLink("validate",this,"validate");
+    public ActionLink clearLink = new ActionLink(
+        "clear", this, "clear");
+    public ActionLink validateLink = new ActionLink(
+        "validateURL",this,"validateURL");
+    public ActionLink validateSiteLink = new ActionLink(
+        "validateSite",this,"validateSite");
 
     public Step5() {}
 
     public void onInit() {
         String host = (String)getContext().getSessionAttribute(
-            LOAD_BALANCER_HOST_SESSION_KEY);
-        Integer port = (Integer)getContext().getSessionAttribute( 
-            LOAD_BALANCER_PORT_SESSION_KEY);
+            SetupConstants.LB_SITE_NAME);
+        String port = (String)getContext().getSessionAttribute(
+            SetupConstants.LB_PRIMARY_URL); 
         
-        if ( host != null ) {
+        if (host != null) {
             addModel("host", host);
         }
-        if ( port != null ) {
+        if (port != null) {
             addModel("port", port);
         }
         super.onInit();
     }
 
     public boolean clear() {
-        getContext().removeSessionAttribute(LOAD_BALANCER_HOST_SESSION_KEY);
-        getContext().removeSessionAttribute(LOAD_BALANCER_PORT_SESSION_KEY);
+        getContext().removeSessionAttribute(SetupConstants.LB_SITE_NAME);
+        getContext().removeSessionAttribute(SetupConstants.LB_PRIMARY_URL);
         setPath(null);
         return false;
     }
 
-    public boolean validate() {
-        String host = toString("host");
-        if (host == null) {
-            writeInvalid(getLocalizedString("missing.host.name"));
+    /** 
+     * host= site config name
+     * port = primary loadURL
+     */
+    public boolean validateURL() {
+        boolean returnVal = true;
+        String primaryURL = toString("port");
+        if (primaryURL == null) {
+            writeInvalid(getLocalizedString("missing.primary.url"));
         } else {
-            int port = toInt("port");
-            if (port > 65535) {
-                writeInvalid(getLocalizedString("invalid.port.number"));
-            } else {
-                // test host for access( host, port );
-                if (AMSetupServlet.canUseAsPort(host, port)) {
-                    writeValid("OK");
-                    getContext().setSessionAttribute( LOAD_BALANCER_HOST_SESSION_KEY, host );
-                    getContext().setSessionAttribute( LOAD_BALANCER_PORT_SESSION_KEY, Integer.valueOf( port ) );
-                } else {
-                    writeInvalid(getLocalizedString("contact.host.failed"));
-                }
+            try {
+                URL hostURL =  new URL(primaryURL);
+                getContext().setSessionAttribute( 
+                    SetupConstants.LB_PRIMARY_URL, primaryURL);
+                writeValid("OK"); 
+            } catch (MalformedURLException m) {
+                writeInvalid("Primary URL is not reachable");
+                returnVal = false;
             }
         }
 
         setPath(null);
-        return false;
+        return returnVal;
+    }
+
+    public boolean validateSite() {
+        boolean returnVal = true;
+        String siteName = toString("host");
+        if (siteName == null) {
+            writeInvalid(getLocalizedString("missing.site.name"));
+            returnVal = false;
+        } else {
+            getContext().setSessionAttribute( 
+                SetupConstants.LB_SITE_NAME, siteName);
+            writeValid(getLocalizedString("ok.label"));
+        }
+
+        setPath(null);
+        return returnVal;
     }
 }

@@ -81,8 +81,6 @@
     var passwordUpdateRequired = $passwordUpdateRequired;
     var configOption = 0;
 
-
-    
     
     function onDefaultSummarySuccess( response ) {
         var formError = (response != null && (response.getResponseHeader["formError"] != null));
@@ -95,6 +93,10 @@
         }
     }
     
+    function cancelDefaultSummary() {
+        YAHOO.sun.identity.config.options.defaultSummary.hide();
+    }
+
     function onDefaultSummaryFailure(response ) {
         YAHOO.sun.identity.config.options.defaultSummary.hide();
         alert("configuration failed");
@@ -323,7 +325,7 @@
 		$page.getLocalizedString("next.step.message");
                 <br/>
                 <p align="center" class="blueSmall">
-                    <a class="pointer" href="#" onclick="launchConsole(); return false">$page.getLocalizedString("go.to.login")</a>&nbsp;|&nbsp;<a class="pointer" href="#" onclick="startNewConfig(); return false">$page.getLocaliezdString("create.another.instance")</a>
+                    <a class="pointer" href="#" onclick="launchConsole(); return false">$page.getLocalizedString("go.to.login.screen")</a>
                 </div>
         </div>
     </div>

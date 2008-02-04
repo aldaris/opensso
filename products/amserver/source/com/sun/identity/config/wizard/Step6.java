@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.5 2008-01-24 20:26:40 jonnelson Exp $
+ * $Id: Step6.java,v 1.6 2008-02-04 20:57:20 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,11 +38,11 @@ public class Step6 extends AjaxPage {
     }
     
     public void onInit() {
-        addModel("encryptionKey", AMSetupServlet.getRandomString());
-        addModel("serverURL", getServerURL());
-        addModel("cookieDomain", getCookieDomain());
-        addModel("platformLocale", SetupConstants.DEFAULT_PLATFORM_LOCALE);
-        addModel("configDirectory", getBaseDir());
+        add("encryptionKey", AMSetupServlet.getRandomString());
+        add("serverURL", getServerURL());
+        add("cookieDomain", getCookieDomain());
+        add("platformLocale", SetupConstants.DEFAULT_PLATFORM_LOCALE);
+        add("configDirectory", getBaseDir());
         super.onInit();
     }   
 
@@ -51,6 +51,15 @@ public class Step6 extends AjaxPage {
         int portnum  = (int)getContext().getRequest().getServerPort();
         String protocol = (String)getContext().getRequest().getScheme();
         return protocol + "://" + hostname + ":" + portnum;
+    }
+
+    /**
+     * used to add the key to the page and to the session so it can 
+     * be retrieved when the final store is done
+     */
+    private void add(String key, String value) {
+        addModel(key, value);
+        getContext().setSessionAttribute(key, value);
     }
 
     public boolean validateInput() {

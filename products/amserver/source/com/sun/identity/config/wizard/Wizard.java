@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.3 2008-01-18 06:23:40 jonnelson Exp $
+ * $Id: Wizard.java,v 1.4 2008-02-04 20:57:20 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,9 @@ import com.sun.identity.setup.HttpServletRequestWrapper;
 import com.sun.identity.setup.HttpServletResponseWrapper;
 import com.sun.identity.setup.SetupConstants;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.io.File;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.click.control.ActionLink;
@@ -89,7 +91,6 @@ public class Wizard extends AjaxPage {
         LDAPStore config = (LDAPStore)getContext().getSessionAttribute( 
             Step2.LDAP_STORE_SESSION_KEY);       
         if (config != null) {                          
-            debug.error("using external configuration store.");
             hostName = config.getHostName();
             dataStore =  SetupConstants.SMS_DS_DATASTORE;
             port = config.getHostPort();
@@ -108,7 +109,9 @@ public class Wizard extends AjaxPage {
        
                 
         // user store repository
-        LDAPStore userStore = (LDAPStore)getContext().getSessionAttribute( Step4.LDAP_STORE_SESSION_KEY );
+        LDAPStore userStore = (LDAPStore)getContext().getSessionAttribute( 
+            Step4.LDAP_STORE_SESSION_KEY);
+
         if (userStore != null) {                       
             Map store = new HashMap();            
             store.put(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST,
@@ -121,52 +124,62 @@ public class Wizard extends AjaxPage {
             request.addParameter("UserStore", store);
         }
         
-        // site configuration
+        // site configuration is passed as a map of the site information 
+        Map siteConfig = new HashMap(5);
         String loadBalancerHost = (String)getContext().getSessionAttribute( 
-            Step5.LOAD_BALANCER_HOST_SESSION_KEY );
-              
+            SetupConstants.LB_SITE_NAME);
+        String primaryURL = (String)getContext().getSessionAttribute(
+            SetupConstants.LB_PRIMARY_URL);
+        if (loadBalancerHost != null) {
+            siteConfig.put(SetupConstants.LB_SITE_NAME, loadBalancerHost);
+            siteConfig.put(SetupConstants.LB_PRIMARY_URL, primaryURL);
+            request.addParameter(
+                SetupConstants.CONFIG_VAR_SITE_CONFIGURATION, siteConfig);
+        }
+
+
         // server properties
-        request.addParameter(SetupConstants.CONFIG_VAR_SERVER_HOST, getHostName());
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_SERVER_HOST, getHostName());
         request.addParameter(
             SetupConstants.CONFIG_VAR_SERVER_PORT, ""+req.getServerPort());
         request.addParameter(
             SetupConstants.CONFIG_VAR_SERVER_URI, req.getRequestURI());
         request.addParameter(
-            SetupConstants.CONFIG_VAR_SERVER_URL, req.getRequestURL().toString());        
+            SetupConstants.CONFIG_VAR_SERVER_URL, 
+            req.getRequestURL().toString());        
         request.addParameter(
             SetupConstants.CONFIG_VAR_ENCRYPTION_KEY, 
             AMSetupServlet.getRandomString());
 
-        String cookie = (String)getContext().getSessionAttribute("cookieDomain");
+        String cookie = 
+            (String)getContext().getSessionAttribute("cookieDomain");
         if (cookie == null) {
             cookie = getCookieDomain();
         }
         request.addParameter(SetupConstants.CONFIG_VAR_COOKIE_DOMAIN, cookie);       
         
-        String locale = (String)getContext().getSessionAttribute("platformLocale");
+        String locale = 
+            (String)getContext().getSessionAttribute("platformLocale");
         if (locale == null) {
             locale = SetupConstants.DEFAULT_PLATFORM_LOCALE;
         }
         request.addParameter(SetupConstants.CONFIG_VAR_PLATFORM_LOCALE, locale);
 
-        String base = (String)getContext().getSessionAttribute("configDirectory");
+        String base = 
+            (String)getContext().getSessionAttribute("configDirectory");
         if (base == null) {
             base = getBaseDir();
         }
         request.addParameter(SetupConstants.CONFIG_VAR_BASE_DIR, base);
                    
-       
-        debug.error("configuration map = " + request.getParameterMap());
-        
-        
         try {
             if (AMSetupServlet.processRequest(request, response)) {
                 writeToResponse("true");           
             } else {
-                writeToResponse("ERROR PROCESSING REQUEST");
+                writeToResponse(AMSetupServlet.getErrorMessage());
             }
         } catch (Exception e) {
-            debug.error("Exception from setup servlet", e);
             writeToResponse("Error during configuration. Consult debug files for more information");
         }
         

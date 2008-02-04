@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.9 2008-01-24 20:26:40 jonnelson Exp $
+ * $Id: AjaxPage.java,v 1.10 2008-02-04 20:57:19 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -206,7 +206,13 @@ public abstract class AjaxPage extends Page {
             }
             basedir = tmp;
         } 
-        
+
+        if (basedir.endsWith("/")) {
+            basedir = basedir + "opensso"; 
+        } else {
+            basedir = basedir + "/opensso";
+        }
+
         return basedir;
     }
     

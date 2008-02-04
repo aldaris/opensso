@@ -29,7 +29,7 @@
 
     function validate() {
 	var callUrl = "$context$path?actionLink=validateInput";
-	var key = "&key=" + $(field);
+	var key = "&key=" + field;
         var value = "&value=" + $(field).value;
         AjaxUtils.call(callUrl+key+value, fieldValidated);
     }
