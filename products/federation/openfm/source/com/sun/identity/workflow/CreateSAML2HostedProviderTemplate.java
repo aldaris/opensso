@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.3 2008-01-25 14:25:17 hengming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.4 2008-02-04 05:04:20 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -199,6 +199,11 @@ public class CreateSAML2HostedProviderTemplate {
             "        <Attribute name=\"" + SAML2Constants.IDP_ATTRIBUTE_MAPPER +
             "\">\n" +
             "            <Value>com.sun.identity.saml2.plugins.DefaultIDPAttributeMapper" +
+            "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"" + SAML2Constants.ASSERTION_ID_REQUEST_MAPPER +
+            "\">\n" +
+            "            <Value>com.sun.identity.saml2.plugins.DefaultAssertionIDRequestMapper" +
             "</Value>\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"" +
@@ -470,6 +475,11 @@ public class CreateSAML2HostedProviderTemplate {
             SAML2Constants.X509_SUBJECT_DATA_STORE_ATTR_NAME + "\">\n" +
             "            <Value></Value>\n" +
             "        </Attribute>\n" +
+            "        <Attribute name=\"" + SAML2Constants.ASSERTION_ID_REQUEST_MAPPER +
+            "\">\n" +
+            "            <Value>com.sun.identity.saml2.plugins.DefaultAssertionIDRequestMapper" +
+            "</Value>\n" +
+            "        </Attribute>\n" +
             "    </AttributeAuthorityConfig>\n"
         );
     }
@@ -518,6 +528,11 @@ public class CreateSAML2HostedProviderTemplate {
             "        <Attribute name=\"" +
             SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
             "            <Value>" + authnaECertAlias + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"" + SAML2Constants.ASSERTION_ID_REQUEST_MAPPER +
+            "\">\n" +
+            "            <Value>com.sun.identity.saml2.plugins.DefaultAssertionIDRequestMapper" +
+            "</Value>\n" +
             "        </Attribute>\n" +
             "    </AuthnAuthorityConfig>\n"
         );
@@ -762,6 +777,12 @@ public class CreateSAML2HostedProviderTemplate {
             "        <NameIDMappingService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
             "            Location=\"" + url + "/NIMSoap" + maStr + "\"/>\n" +
+            "        <AssertionIDRequestService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
+            "            Location=\"" + url + "/AIDReqSoap/" + SAML2Constants.IDP_ROLE + maStr + "\"/>\n" +
+            "        <AssertionIDRequestService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:URI\"\n" +
+            "            Location=\"" + url + "/AIDReqUri/" + SAML2Constants.IDP_ROLE + maStr + "\"/>\n" +
             "    </IDPSSODescriptor>\n"
         );
     }
@@ -930,6 +951,12 @@ public class CreateSAML2HostedProviderTemplate {
             "            Location=\"" + url + "/AttributeServiceSoap/" +
             SAML2Constants.X509_SUBJECT_ATTR_QUERY_PROFILE_ALIAS + maStr +
             "\"/>\n" +
+            "        <AssertionIDRequestService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
+            "            Location=\"" + url + "/AIDReqSoap/" + SAML2Constants.ATTR_AUTH_ROLE + maStr + "\"/>\n" +
+            "        <AssertionIDRequestService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:URI\"\n" +
+            "            Location=\"" + url + "/AIDReqUri/" + SAML2Constants.ATTR_AUTH_ROLE + maStr + "\"/>\n" +
             "        <AttributeProfile>" +
             SAML2Constants.BASIC_ATTRIBUTE_PROFILE + "</AttributeProfile>\n" +
             "    </AttributeAuthorityDescriptor>\n");
@@ -1062,6 +1089,12 @@ public class CreateSAML2HostedProviderTemplate {
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
             "            Location=\"" + url + "/AuthnQueryServiceSoap" +
             maStr + "\"/>\n" +
+            "        <AssertionIDRequestService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
+            "            Location=\"" + url + "/AIDReqSoap/" + SAML2Constants.AUTHN_AUTH_ROLE + maStr + "\"/>\n" +
+            "        <AssertionIDRequestService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:URI\"\n" +
+            "            Location=\"" + url + "/AIDReqUri/" + SAML2Constants.AUTHN_AUTH_ROLE + maStr + "\"/>\n" +
             "    </AuthnAuthorityDescriptor>\n");
     }
 

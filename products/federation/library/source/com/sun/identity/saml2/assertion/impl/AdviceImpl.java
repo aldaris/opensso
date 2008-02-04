@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdviceImpl.java,v 1.2 2007-04-23 03:34:07 hengming Exp $
+ * $Id: AdviceImpl.java,v 1.3 2008-02-04 04:59:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml2.assertion.Advice;
 import com.sun.identity.saml2.assertion.Assertion;
+import com.sun.identity.saml2.assertion.AssertionIDRef;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.EncryptedAssertion;
 import com.sun.identity.saml2.common.SAML2Constants;
@@ -141,8 +142,8 @@ public class AdviceImpl implements Advice {
                     if (SAML2Constants.ASSERTION_NAMESPACE_URI.equals(ns)) {
 
                         if (childName.equals(ASSERTION_ID_REF_ELEMENT)) {
-                            assertionIDRefs.add(
-                                XMLUtils.getElementValue((Element)child));
+                            assertionIDRefs.add(AssertionFactory.getInstance().
+                                createAssertionIDRef((Element)child));
                         } else if (childName.equals(
                             ASSERTION_URI_REF_ELEMENT)) {
                             assertionURIRefs.add(
@@ -225,7 +226,7 @@ public class AdviceImpl implements Advice {
      *  @return a list of <code>AssertionURIRef</code>
      */
     public List getAssertionURIRefs() {
-        return assertionIDRefs;
+        return assertionURIRefs;
     }
 
     /** 
@@ -315,11 +316,9 @@ public class AdviceImpl implements Advice {
         if (assertionIDRefs != null) {
             length = assertionIDRefs.size();
             for (int i = 0; i < length; i++) {
-                String str = (String)assertionIDRefs.get(i);
-                sb.append("<").append(appendNS).
-                    append(ASSERTION_ID_REF_ELEMENT).append(">").
-                    append(str).append("</").append(appendNS).
-                    append(ASSERTION_ID_REF_ELEMENT).append(">\n");
+                AssertionIDRef assertionIDRef =
+                    (AssertionIDRef)assertionIDRefs.get(i);
+                sb.append(assertionIDRef.toXMLString(includeNSPrefix, false));
             }
         }
         if (assertionURIRefs != null) {
@@ -386,6 +385,12 @@ public class AdviceImpl implements Advice {
                                               encryptedAssertions);
             }
             if (assertionIDRefs != null) {
+                int length = assertionIDRefs.size();
+                for (int i = 0; i < length; i++) {
+                    AssertionIDRef assertionIDRef =
+                        (AssertionIDRef)assertionIDRefs.get(i);
+                    assertionIDRef.makeImmutable();
+                }
                 assertionIDRefs = Collections.unmodifiableList(
                                               assertionIDRefs);
             }

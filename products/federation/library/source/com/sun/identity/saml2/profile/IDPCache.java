@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.9 2008-01-16 04:36:53 hengming Exp $
+ * $Id: IDPCache.java,v 1.10 2008-02-04 05:01:54 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,15 @@ public class IDPCache {
      */
     public static PeriodicCleanUpMap assertionCache = new PeriodicCleanUpMap(
         SPCache.interval * 1000, SPCache.interval * 1000); 
+
+    /**
+     * Cache saves the assertion objects.
+     * Key : assertion ID String
+     * Value : assertion object
+     */
+    public static PeriodicCleanUpMap assertionByIDCache =
+        new PeriodicCleanUpMap(SPCache.interval * 1000,
+        SPCache.interval * 1000); 
 
     /**
      * Cache saves the relay state strings.

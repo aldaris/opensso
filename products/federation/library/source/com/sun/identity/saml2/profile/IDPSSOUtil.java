@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.16 2008-01-25 14:22:21 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.17 2008-02-04 05:01:54 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -853,6 +853,8 @@ public class IDPSSOUtil {
             synchronized (assertions) {
                 assertions.add(assertion);
             }
+
+            IDPCache.assertionByIDCache.put(assertion.getID(), assertion);
         }
 
         return assertion;

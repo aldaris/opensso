@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.21 2008-01-25 14:20:01 hengming Exp $
+ * $Id: SAML2Constants.java,v 1.22 2008-02-04 05:00:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,6 +106,12 @@ public interface SAML2Constants {
      */
     public String HTTP_ARTIFACT =
                 "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact";
+
+    /**
+     * String used to represent URI Binding.
+     */
+    public String URI =
+                "urn:oasis:names:tc:SAML:2.0:bindings:URI";
 
     /**
      * String to represent Name Identifier Format name space
@@ -322,6 +328,11 @@ public interface SAML2Constants {
     public String LOGOUT_RESPONSE="LogoutResponse";
 
     /**
+     * Constant for AssertionIDRequest
+     */
+    public String ASSERTION_ID_REQUEST = "AssertionIDRequest";
+
+    /**
      * Constant for AttributeQuery
      */
     public String ATTRIBUTE_QUERY = "AttributeQuery";
@@ -332,14 +343,19 @@ public interface SAML2Constants {
     public String AUTHN_QUERY = "AuthnQuery";
 
     /**
-     * Constant for AttributeQuery
+     * Constant for NameIDMappingRequest
      */
     public String NAME_ID_MAPPING_REQUEST = "NameIDMappingRequest";
 
     /**
-     * Constant for AttributeQuery
+     * Constant for NameIDMappingResponse
      */
     public String NAME_ID_MAPPING_RESPONSE = "NameIDMappingResponse";
+
+    /**
+     * Constant for AssertionIDRef
+     */
+    public String ASSERTION_ID_REF = "AssertionIDRef";
 
     /**
      * Constant for Attribute
@@ -664,6 +680,12 @@ public interface SAML2Constants {
      */
     public String ATTRIBUTE_AUTHORITY_MAPPER = 
                         "attributeAuthorityMapper";
+
+    /**
+     * Assertion ID request mapper.
+     */
+    public String ASSERTION_ID_REQUEST_MAPPER = 
+                        "assertionIDRequestMapper";
 
     /**
      * RelayState Parameter
@@ -1045,6 +1067,10 @@ public interface SAML2Constants {
     // Default Attribute Authority mapper class name
     public static final String DEFAULT_ATTRIBUTE_AUTHORITY_MAPPER_CLASS =
         "com.sun.identity.saml2.plugins.DefaultAttributeAuthorityMapper";
+
+    // Default Assertion ID request mapper class name
+    public static final String DEFAULT_ASSERTION_ID_REQUEST_MAPPER_CLASS =
+        "com.sun.identity.saml2.plugins.DefaultAssertionIDRequestMapper";
 
     // Default IDP ECP Session mapper class name
     public static final String DEFAULT_IDP_ECP_SESSION_MAPPER_CLASS =

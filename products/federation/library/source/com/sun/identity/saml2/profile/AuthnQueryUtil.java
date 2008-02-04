@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnQueryUtil.java,v 1.2 2008-01-25 14:22:21 hengming Exp $
+ * $Id: AuthnQueryUtil.java,v 1.3 2008-02-04 05:01:54 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,7 +117,7 @@ public class AuthnQueryUtil {
 
         if (aad == null) {
             throw new SAML2Exception(
-                SAML2Utils.bundle.getString("authnQueryServiceNotFound"));
+                SAML2Utils.bundle.getString("authnAuthorityNotFound"));
         }
 
         if (binding == null) {
@@ -192,7 +192,7 @@ public class AuthnQueryUtil {
         if (aad == null) {
             return SAML2Utils.getErrorResponse(authnQuery,
                 SAML2Constants.REQUESTER, null,
-                SAML2Utils.bundle.getString("authnQueryServiceNotFound"), null);
+                SAML2Utils.bundle.getString("authnAuthorityNotFound"), null);
         }
 
         NameID nameID = getNameID(authnQuery.getSubject(), realm,
@@ -467,8 +467,8 @@ public class AuthnQueryUtil {
         }
 
         if (!authnAuthorityEntityID.equals(respIssuer.getValue())) {
-            throw new SAML2Exception(
-                SAML2Utils.bundle.getString("invalidIssuerInResponse"));
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "responseIssuerMismatch"));
         }
 
         if (!response.isSigned()) {

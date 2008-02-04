@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionFactory.java,v 1.1 2006-10-30 23:15:56 qcheng Exp $
+ * $Id: AssertionFactory.java,v 1.2 2008-02-04 04:59:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.saml2.assertion;
 
 import org.w3c.dom.Element;
 import com.sun.identity.saml2.assertion.impl.ActionImpl;
+import com.sun.identity.saml2.assertion.impl.AssertionIDRefImpl;
 import com.sun.identity.saml2.assertion.impl.AttributeImpl;
 import com.sun.identity.saml2.assertion.impl.EncryptedAttributeImpl;
 import com.sun.identity.saml2.assertion.impl.AttributeStatementImpl;
@@ -191,6 +192,64 @@ public class AssertionFactory {
             return new AssertionImpl(xml);
         } else {
             return (Assertion) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>AssertionIDRef</code>.
+     *
+     * @return a new instance of <code>AssertionIDRef</code>
+     * 
+     */
+    public AssertionIDRef createAssertionIDRef() {
+        Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.ASSERTION_ID_REF);
+        if (obj == null) {
+            return new AssertionIDRefImpl();
+        } else {
+            return (AssertionIDRef) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>AssertionIDRef</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>AssertionIDRef</code>
+     * @return a new instance of <code>AssertionIDRef</code>
+     * @throws SAML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public AssertionIDRef createAssertionIDRef(Element elem)
+        throws SAML2Exception {
+        Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.ASSERTION_ID_REF, elem);
+        if (obj == null) {
+            return new AssertionIDRefImpl(elem);
+        } else {
+            return (AssertionIDRef) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>AssertionIDRef</code>.
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>AssertionIDRef</code>
+     * @return a new instance of <code>AssertionIDRef</code>
+     * @throws SAML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public AssertionIDRef createAssertionIDRef(String xml)
+        throws SAML2Exception {
+        Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.ASSERTION_ID_REF, xml);
+        if (obj == null) {
+            return new AssertionIDRefImpl(xml);
+        } else {
+            return (AssertionIDRef) obj;
         }
     }
 

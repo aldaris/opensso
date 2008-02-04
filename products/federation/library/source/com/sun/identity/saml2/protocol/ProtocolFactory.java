@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProtocolFactory.java,v 1.3 2008-01-16 04:38:59 hengming Exp $
+ * $Id: ProtocolFactory.java,v 1.4 2008-02-04 05:02:49 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.protocol.impl.ArtifactImpl;
 import com.sun.identity.saml2.protocol.impl.ArtifactResolveImpl;
 import com.sun.identity.saml2.protocol.impl.ArtifactResponseImpl;
+import com.sun.identity.saml2.protocol.impl.AssertionIDRequestImpl;
 import com.sun.identity.saml2.protocol.impl.AttributeQueryImpl;
 import com.sun.identity.saml2.protocol.impl.AuthnQueryImpl;
 import com.sun.identity.saml2.protocol.impl.AuthnRequestImpl;
@@ -83,6 +84,63 @@ public class ProtocolFactory  {
         return protoInstance;
     }
     
+    /**
+     * Returns the <code>AssertionIDRequest</code> Object.
+     *
+     * @return the <code>AssertionIDRequest</code> object.
+     * @throws SAML2Exception if <code>AssertionIDRequest</code> cannot be
+     *     created.
+     */
+    public AssertionIDRequest createAssertionIDRequest() throws SAML2Exception {
+	Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.ASSERTION_ID_REQUEST);
+	if (obj == null) {
+            return new AssertionIDRequestImpl();
+	} else {
+            return (AssertionIDRequest) obj;
+	}
+    }
+    
+    /**
+     * Returns the <code>AssertionIDRequest</code> Object.
+     *
+     * @param value the Document Element of <code>AssertionIDRequest</code>
+     *     object.
+     * @return the <code>AssertionIDRequest</code> object.
+     * @throws SAML2Exception if <code>AssertionIDRequest</code> cannot be
+     *     created.
+     */
+    
+    public AssertionIDRequest createAssertionIDRequest(Element value)
+        throws SAML2Exception {
+	Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.ASSERTION_ID_REQUEST, value);
+	if (obj == null) {
+            return new AssertionIDRequestImpl(value);
+	} else {
+            return (AssertionIDRequest) obj;
+	}
+    }
+    
+    /**
+     * Returns the <code>AssertionIDRequest</code> Object.
+     *
+     * @param value <code>AssertionIDRequest</code> XML String.
+     * @return the <code>AssertionIDRequest</code> object.
+     * @throws SAML2Exception if <code>AssertionIDRequest</code> cannot be
+     *     created.
+     */
+    public AssertionIDRequest createAssertionIDRequest(String value)
+        throws SAML2Exception {
+	Object obj = SAML2SDKUtils.getObjectInstance(
+            SAML2SDKUtils.ASSERTION_ID_REQUEST, value);
+	if (obj == null) {
+            return new AssertionIDRequestImpl(value);
+	} else {
+            return (AssertionIDRequest) obj;
+	}
+    }
+
     /**
      * Returns the <code>AttributeQuery</code> Object.
      *

@@ -391,6 +391,7 @@ com/sun/identity/saml2/assertion/Action.class
 com/sun/identity/saml2/assertion/Advice.class
 com/sun/identity/saml2/assertion/Assertion.class
 com/sun/identity/saml2/assertion/AssertionFactory.class
+com/sun/identity/saml2/assertion/AssertionIDRef.class
 com/sun/identity/saml2/assertion/Attribute.class
 com/sun/identity/saml2/assertion/AttributeStatement.class
 com/sun/identity/saml2/assertion/AudienceRestriction.class
@@ -466,6 +467,7 @@ com/sun/identity/saml2/meta/SAML2MetaUtils.class
 com/sun/identity/saml2/protocol/Artifact.class
 com/sun/identity/saml2/protocol/ArtifactResolve.class
 com/sun/identity/saml2/protocol/ArtifactResponse.class
+com/sun/identity/saml2/protocol/AssertionIDRequest.java
 com/sun/identity/saml2/protocol/AttributeQuery.class
 com/sun/identity/saml2/protocol/AuthnQuery.class
 com/sun/identity/saml2/protocol/AuthnRequest.class
@@ -479,6 +481,9 @@ com/sun/identity/saml2/protocol/SubjectQueryAbstract.class
 com/sun/identity/saml2/protocol/impl/ArtifactImpl.class
 com/sun/identity/saml2/protocol/impl/ArtifactResolveImpl.class
 com/sun/identity/saml2/protocol/impl/ArtifactResponseImpl.class
+com/sun/identity/saml2/protocol/impl/AssertionIDRequestImpl.java
+com/sun/identity/saml2/protocol/impl/AttributeQueryImpl.class
+com/sun/identity/saml2/protocol/impl/AuthnQueryImpl.class
 com/sun/identity/saml2/protocol/impl/AuthnRequestImpl.class
 com/sun/identity/saml2/protocol/impl/ExtensionsImpl.class
 com/sun/identity/saml2/protocol/impl/GetCompleteImpl.class

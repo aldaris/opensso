@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SDKUtils.java,v 1.8 2008-01-16 04:34:08 hengming Exp $
+ * $Id: SAML2SDKUtils.java,v 1.9 2008-02-04 05:00:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,6 +85,8 @@ public class SAML2SDKUtils {
     public static final String ACTION = "Action"; 
     public static final String ADVICE = "Advice"; 
     public static final String ASSERTION = "Assertion";
+    public static final String ASSERTION_ID_REF = "AssertionIDRef";
+    public static final String ASSERTION_ID_REQUEST = "AssertionIDRequest";
     public static final String ATTRIBUTE = "Attribute"; 
     public static final String ATTRIBUTE_STATEMENT = "AttributeStatement";
     public static final String AUDIENCE_RESTRICTION = "AudienceRestriction"; 
@@ -151,9 +153,9 @@ public class SAML2SDKUtils {
      * customized implementation
      */
     private static String[] interfactNames = {
-        ACTION, ADVICE, ASSERTION, ATTRIBUTE, ATTRIBUTE_STATEMENT,
-        AUDIENCE_RESTRICTION, AUTHN_CONTEXT, AUTHN_STATEMENT, 
-        AUTHZ_DECISION_STATEMENT, BASEID, 
+        ACTION, ADVICE, ASSERTION, ASSERTION_ID_REF, ASSERTION_ID_REQUEST,
+        ATTRIBUTE, ATTRIBUTE_STATEMENT, AUDIENCE_RESTRICTION, AUTHN_CONTEXT,
+        AUTHN_STATEMENT, AUTHZ_DECISION_STATEMENT, BASEID, 
         CONDITION, CONDITIONS, ENCRYPTED_ASSERTION,
         ENCRYPTED_ATTRIBUTE, ENCRYPTED_ELEMENT, ENCRYPTEDID, EVIDENCE,
         ISSUER, KEYINFO_CONFIRMATION_DATA, NAMEID,

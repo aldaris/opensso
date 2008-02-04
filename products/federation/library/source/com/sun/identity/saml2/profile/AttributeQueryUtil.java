@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryUtil.java,v 1.3 2008-01-25 14:22:20 hengming Exp $
+ * $Id: AttributeQueryUtil.java,v 1.4 2008-02-04 05:01:54 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1002,8 +1002,8 @@ public class AttributeQueryUtil {
         }
 
         if (!attrAuthorityEntityID.equals(respIssuer.getValue())) {
-            throw new SAML2Exception(
-                SAML2Utils.bundle.getString("invalidIssuerInResponse"));
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "responseIssuerMismatch"));
         }
 
         if (!response.isSigned()) {
