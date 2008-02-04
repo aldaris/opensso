@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validate.jsp,v 1.1 2008-02-04 20:13:23 exu Exp $
+   $Id: validate.jsp,v 1.2 2008-02-04 22:20:52 exu Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -172,9 +172,9 @@ TOFIX: localize all the messages.
     <tr>
     <td valign="top" align="left">
     <% if(iAmIdp) { %>  
-    Following are the tests that can be performed on the Identity Provider:
+    The following tests can be performed on the Identity Provider:
     <% } else { %>  
-    Following are the tests that can be performed on the Service Provider:
+    The following tests can be performed on the Service Provider:
     <% } %>
     </td>
     </tr>
