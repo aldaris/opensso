@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCServiceProfileViewBean.java,v 1.3 2007-11-30 02:11:28 veiming Exp $
+ * $Id: SCServiceProfileViewBean.java,v 1.4 2008-02-05 22:58:41 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
+import com.sun.identity.console.base.model.AMAdminConstants; 
 
 public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
     public static final String DEFAULT_DISPLAY_URL =
@@ -326,11 +327,18 @@ public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
      * @param event Request invocation event
      */
     public void handleButton3Request(RequestInvocationEvent event) {
-            backTrail();
-        SCConfigViewBean vb = (SCConfigViewBean)getViewBean(
-            SCConfigGlobalViewBean.class);
-        passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());
+        backTrail();
+        try {
+            String name = (String) getPageSessionAttribute(
+                    AMAdminConstants.SAVE_VB_NAME);
+            SCConfigViewBean vb = (SCConfigViewBean) getViewBean(
+                    Class.forName(name));
+            passPgSessionMap(vb);
+            vb.forwardTo(getRequestContext()); 
+        } catch (ClassNotFoundException e) {
+            debug.warning("SCServiceProfileViewBean.handleButton3Request:", e);
+        }
+        
     }
 
 

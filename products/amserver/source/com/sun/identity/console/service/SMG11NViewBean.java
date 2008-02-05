@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMG11NViewBean.java,v 1.2 2007-10-17 23:00:38 veiming Exp $
+ * $Id: SMG11NViewBean.java,v 1.3 2008-02-05 22:59:21 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -568,10 +568,17 @@ public class SMG11NViewBean
         throws ModelControlException
     {        
         backTrail();
-        SCConfigConsoleViewBean vb = (SCConfigConsoleViewBean)
-            getViewBean(SCConfigConsoleViewBean.class);
-        passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());
+        try {
+            String name = (String) getPageSessionAttribute(
+                    AMAdminConstants.SAVE_VB_NAME);
+            SCConfigViewBean vb = (SCConfigViewBean) getViewBean(
+                    Class.forName(name));
+            passPgSessionMap(vb);
+            vb.forwardTo(getRequestContext()); 
+        } catch (ClassNotFoundException e) {
+            debug.warning("SMG11NViewBean.handleButton3Request:", e);
+        }
+        
     }
 
     protected String getBreadCrumbDisplayName() {

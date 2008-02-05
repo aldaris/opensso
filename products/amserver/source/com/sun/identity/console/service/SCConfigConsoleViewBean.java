@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCConfigConsoleViewBean.java,v 1.1 2007-10-17 23:00:35 veiming Exp $
+ * $Id: SCConfigConsoleViewBean.java,v 1.2 2008-02-05 22:57:25 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,12 +28,15 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.service.model.SCConfigModel;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPropertySheetModel;
+import com.sun.identity.console.base.model.AMAdminConstants; 
 import java.util.List;
 
 public class SCConfigConsoleViewBean extends SCConfigViewBean {
 
     public static final String DEFAULT_DISPLAY_URL =
         "/console/service/SCConfigConsole.jsp";
+    public static final String DEFAULT_VIEW_BEAN = 
+            "com.sun.identity.console.service.SCConfigConsoleViewBean";
 
     private static final String SEC_CONSOLE = SCConfigModel.SEC_CONSOLE;
     private static final String TBL_CONSOLE = "tblConsole";
@@ -63,6 +66,8 @@ public class SCConfigConsoleViewBean extends SCConfigViewBean {
 
     public void handleTblHrefConsoleRequest(RequestInvocationEvent event)
     {
+        setPageSessionAttribute(
+                AMAdminConstants.SAVE_VB_NAME, DEFAULT_VIEW_BEAN);
         String name = (String)getDisplayFieldValue(TBL_HREF_PREFIX + SEC_CONSOLE);
         forwardToProfile(name);
     }

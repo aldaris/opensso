@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCSAML2SOAPBindingViewBean.java,v 1.2 2008-01-29 18:48:14 asyhuang Exp $
+ * $Id: SCSAML2SOAPBindingViewBean.java,v 1.3 2008-02-05 22:56:10 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
+import com.sun.identity.console.base.model.AMAdminConstants; 
 
 public class SCSAML2SOAPBindingViewBean
     extends AMServiceProfileViewBeanBase {
@@ -294,11 +295,19 @@ public class SCSAML2SOAPBindingViewBean
         throws ModelControlException , AMConsoleException 
     {
         removePageSessionAttribute(PAGE_MODIFIED);
-        SCConfigGlobalViewBean vb =
-            (SCConfigGlobalViewBean) getViewBean(SCConfigGlobalViewBean.class);
         backTrail();
-        passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());
+        try {
+            String name = (String) getPageSessionAttribute(
+                    AMAdminConstants.SAVE_VB_NAME);
+            SCConfigViewBean vb = (SCConfigViewBean) getViewBean(
+                    Class.forName(name));
+            passPgSessionMap(vb);
+            vb.forwardTo(getRequestContext()); 
+        } catch (ClassNotFoundException e) {
+            debug.warning(
+                    "SCSAML2SOAPBindingViewBean.handleButton3Request:", e);
+        }
+        
     }
     
     /**

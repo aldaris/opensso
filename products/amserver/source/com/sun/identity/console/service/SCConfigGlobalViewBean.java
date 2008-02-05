@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCConfigGlobalViewBean.java,v 1.1 2007-10-17 23:00:35 veiming Exp $
+ * $Id: SCConfigGlobalViewBean.java,v 1.2 2008-02-05 22:57:49 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,11 +28,14 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.service.model.SCConfigModel;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPropertySheetModel;
+import com.sun.identity.console.base.model.AMAdminConstants; 
 import java.util.List;
 
 public class SCConfigGlobalViewBean extends SCConfigViewBean {
     public static final String DEFAULT_DISPLAY_URL =
         "/console/service/SCConfigGlobal.jsp";
+    public static final String DEFAULT_VIEW_BEAN = 
+            "com.sun.identity.console.service.SCConfigGlobalViewBean";
 
     private static final String SEC_GLOBAL = SCConfigModel.SEC_GLOBAL;
     private static final String TBL_GLOBAL = "tblGlobal";
@@ -61,6 +64,8 @@ public class SCConfigGlobalViewBean extends SCConfigViewBean {
     }
 
     public void handleTblHrefGlobalRequest(RequestInvocationEvent event) {
+        setPageSessionAttribute(
+                AMAdminConstants.SAVE_VB_NAME, DEFAULT_VIEW_BEAN);
         String name = (String)getDisplayFieldValue(
             TBL_HREF_PREFIX + SEC_GLOBAL);
         forwardToProfile(name);
