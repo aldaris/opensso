@@ -499,11 +499,28 @@ am_status_t  AgentProfileService::parseAgentResponse(const std::string xmlRespon
                             //append them with a separator ' '
                              while (element1.isValid()) {
                                  if(element1.isNamed("value")) {
-			                         std::string tmpValue;
+			             std::string tmpValue;
                                      if (element1.getValue(tmpValue)) {
+
+                                         // Process freeform properties
+                                         if(strcasecmp(propName.c_str(), 
+                                             AM_WEB_AGENT_FREEFORM_PROPERTY) == 0) {
+
+                                             size_t equals = tmpValue.find("=");
+                                             std::string ffPropName = tmpValue.substr(0, equals);
+                                             std::string ffPropValue = tmpValue.substr(equals + 1);
+                                             am_properties_set(properties, 
+                                                 ffPropName.c_str(), 
+                                                 ffPropValue.c_str());
+                                             Log::log(logModule, Log::LOG_DEBUG, 
+                                                 "agentAttributes() %s : %s  ",
+                                                 ffPropName.c_str(), ffPropValue.c_str()); 
+                                         }
+
                                          if(i > 0)
                                              propValue.append(" ");
-                                          propValue.append(tmpValue);
+                                   
+                                         propValue.append(tmpValue);
                                       } else {
                                           throw XMLTree::ParseException(
                                               "Attribute value missing ");

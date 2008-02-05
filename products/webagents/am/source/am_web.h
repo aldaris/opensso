@@ -166,6 +166,7 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY           AM_WEB_PROPERTY_PREFIX "repository.location"
 #define AGENT_PROPERTIES_LOCAL "local"
 #define AGENT_PROPERTIES_CENTRALIZED "centralized"
+#define AM_WEB_AGENT_FREEFORM_PROPERTY           "com.sun.identity.agents.config.freeformproperties"
 
 /*
  * Enough space to hold PRTime key in a string
