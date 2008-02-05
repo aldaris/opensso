@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.29 2008-02-01 21:12:15 mrudul_uchil Exp $
+   $Id: AgentService.xml,v 1.30 2008-02-05 20:53:21 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -851,9 +851,15 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.user.mapping.mode"
-                        type="single"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a114">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a10">USER_ID</ChoiceValue>
+                            <ChoiceValue i18nKey="a11">PROFILE_ATTRIBUTE</ChoiceValue>
+                            <ChoiceValue i18nKey="a12">HTTP_HEADER</ChoiceValue>
+                            <ChoiceValue i18nKey="a13">SESSION_PROPERTY</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>USER_ID</Value>
                         </DefaultValues>
@@ -936,18 +942,28 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.audit.accesstype"
-                        type="single"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a124">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a14">LOG_NONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a15">LOG_ALLOW</ChoiceValue>
+                            <ChoiceValue i18nKey="a16">LOG_DENY</ChoiceValue>
+                            <ChoiceValue i18nKey="a17">LOG_BOTH</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>LOG_NONE</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.log.disposition"
-                        type="single"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a125">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a18">REMOTE</ChoiceValue>
+                            <ChoiceValue i18nKey="a19">ALL</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>REMOTE</Value>
                         </DefaultValues>
@@ -1664,9 +1680,15 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.profile.attribute.fetch.mode"
-                        type="single"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a201">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a20">NONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a21">HTTP_HEADER</ChoiceValue>
+                            <ChoiceValue i18nKey="a22">REQUEST_ATTRIBUTE</ChoiceValue>
+                            <ChoiceValue i18nKey="a23">HTTP_COOKIE</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>NONE</Value>
                         </DefaultValues>
@@ -1683,9 +1705,15 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.session.attribute.fetch.mode"
-                        type="single"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a203">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a20">NONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a21">HTTP_HEADER</ChoiceValue>
+                            <ChoiceValue i18nKey="a22">REQUEST_ATTRIBUTE</ChoiceValue>
+                            <ChoiceValue i18nKey="a23">HTTP_COOKIE</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>NONE</Value>
                         </DefaultValues>
@@ -1702,9 +1730,15 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.response.attribute.fetch.mode"
-                        type="single"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a205">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a20">NONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a21">HTTP_HEADER</ChoiceValue>
+                            <ChoiceValue i18nKey="a22">REQUEST_ATTRIBUTE</ChoiceValue>
+                            <ChoiceValue i18nKey="a23">HTTP_COOKIE</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>NONE</Value>
                         </DefaultValues>
