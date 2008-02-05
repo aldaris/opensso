@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.33 2008-01-15 22:12:44 ww203982 Exp $
+ * $Id: LDAPv3Repo.java,v 1.34 2008-02-05 21:21:17 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2515,12 +2515,14 @@ public class LDAPv3Repo extends IdRepo {
         String dn = getDN(type, name);
         try {
             LDAPEntry foundEntry = ld.read(dn, getAttrs);
-            LDAPAttribute ldapAttr = foundEntry.getAttribute(nsRoleDNAttr);
-            if (ldapAttr != null) {
-                Enumeration enumVals = ldapAttr.getStringValues();
-                while ((enumVals != null) && enumVals.hasMoreElements()) {
-                    String roleDN = (String) enumVals.nextElement();
-                    roleDNs.add(roleDN);
+            if (foundEntry != null) {
+                LDAPAttribute ldapAttr = foundEntry.getAttribute(nsRoleDNAttr);
+                if (ldapAttr != null) {
+                    Enumeration enumVals = ldapAttr.getStringValues();
+                    while ((enumVals != null) && enumVals.hasMoreElements()) {
+                        String roleDN = (String) enumVals.nextElement();
+                        roleDNs.add(roleDN);
+                    }
                 }
             }
         } catch (LDAPException lde) {
