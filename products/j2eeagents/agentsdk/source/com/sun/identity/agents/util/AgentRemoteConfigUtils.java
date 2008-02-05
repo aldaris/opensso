@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentRemoteConfigUtils.java,v 1.1 2007-10-13 00:09:50 huacui Exp $
+ * $Id: AgentRemoteConfigUtils.java,v 1.2 2008-02-05 02:16:53 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,8 @@ public class AgentRemoteConfigUtils {
     static final String ATTRIBUTE = "attribute";
     static final String ATTRIBUTE_NAME = "name";
     static final String VALUE = "value";
+    static final String FREE_FORM_PROPERTY =
+                        "com.sun.identity.agents.config.freeformproperties";
     static final String ATTRIBUTE_SERVICE = "/xml/attributes?subjectid=";
     
     /**
@@ -141,6 +143,43 @@ public class AgentRemoteConfigUtils {
         if ((attrName == null) || (attrName.trim().length() == 0)) {
             return;
         }
+
+        if (attrName.trim().equals(FREE_FORM_PROPERTY)) {
+        /* 
+         This is a freeform property. Its value is in <property>=<value> format:
+         com.sun.identity.agents.config.freeformproperties=my.property=hello
+         com.sun.identity.agents.config.freeformproperties=my.list.property[0]=hello0
+         com.sun.identity.agents.config.freeformproperties=my.list.property[1]=hello1
+         The agent properties then are:
+         my.property=hello
+         my.list.property[0]=hello0
+         my.list.property[1]=hello1
+        
+         Thus needs further parsing.  
+        */
+            if (attrValue != null) {
+                attrValue = attrValue.trim();
+            }
+            int idx1 = -1;
+            int idx2 = -1;
+            if ((attrValue == null) || (attrValue.length() == 0)
+                || ((idx1 = attrValue.indexOf("=")) <= 0)) {
+                return;  // has no property to set
+            }
+            idx2 = attrValue.indexOf("["); 
+            if ((idx2 > 0) && (idx2 < idx1)) {
+                // "[" comes before the "="
+                // so it is something like: name[key]=value
+                attrName = attrValue.substring(0, idx2);
+                attrValue = attrValue.substring(idx2);
+            } else {
+                // "=" comes before the "[" or there is no "["
+                // so it is something like: name=value
+                attrName = attrValue.substring(0, idx1);
+                attrValue = attrValue.substring(idx1+1);
+            }
+                
+        }    
         if (attrValue == null) {
             attrValue = "";
         } else {
