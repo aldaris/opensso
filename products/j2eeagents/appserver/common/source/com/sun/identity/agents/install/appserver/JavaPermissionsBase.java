@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JavaPermissionsBase.java,v 1.2 2008-02-05 18:46:11 leiming Exp $
+ * $Id: JavaPermissionsBase.java,v 1.3 2008-02-05 20:59:00 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.agents.install.appserver;
 
-import com.sun.identity.agents.install.appserver.v81.IConfigKeys;
 import com.sun.identity.install.tools.configurator.IStateAccess;
 import com.sun.identity.install.tools.configurator.InstallConstants;
 import com.sun.identity.install.tools.util.ConfigUtil;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureLoginConfTask.java,v 1.1 2006-09-29 00:34:43 huacui Exp $
+ * $Id: UnconfigureLoginConfTask.java,v 1.2 2008-02-05 20:59:01 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,7 @@ import com.sun.identity.install.tools.util.Debug;
 import com.sun.identity.install.tools.configurator.IStateAccess;
 import com.sun.identity.install.tools.configurator.InstallException;
 import com.sun.identity.agents.install.appserver.UnconfigureLoginConfTaskBase;
-
+import com.sun.identity.agents.install.appserver.IConfigKeys;
 
 /**
  * The class used by the uninstaller to make changes in login.conf file

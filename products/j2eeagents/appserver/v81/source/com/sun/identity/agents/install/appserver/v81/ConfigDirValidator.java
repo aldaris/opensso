@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigDirValidator.java,v 1.1 2006-09-29 00:33:53 huacui Exp $
+ * $Id: ConfigDirValidator.java,v 1.2 2008-02-05 20:59:01 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.sun.identity.install.tools.configurator.ValidatorBase;
 import com.sun.identity.install.tools.util.Debug;
 import com.sun.identity.install.tools.util.FileUtils;
 import com.sun.identity.install.tools.util.LocalizedMessage;
+import com.sun.identity.agents.install.appserver.IConfigKeys;
 
 /**
  * The configuration directory validation class for installation
