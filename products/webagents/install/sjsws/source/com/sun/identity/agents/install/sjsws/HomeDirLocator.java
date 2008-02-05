@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HomeDirLocator.java,v 1.1 2007-01-17 23:15:25 subbae Exp $
+ * $Id: HomeDirLocator.java,v 1.2 2008-02-05 19:54:13 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,9 +45,26 @@ public class HomeDirLocator implements IServerHomeDirLocator,
     
     public String getServerDirectory(IStateAccess state)
         throws InstallException {
+        String sjswsHomeDir = null;
         String serverHomeDir = null;
         // Home dir
-        String sjswsHomeDir = (String)state.get(STR_KEY_SWS_HOME_DIR);
+        String sjswsConfigDir = (String)state.get(STR_KEY_SWS_INST_CONF_DIR);
+        if ((sjswsConfigDir != null) && (sjswsConfigDir.length() > 0)) {
+	   String sjswsObjFile = sjswsConfigDir 
+                                 + FILE_SEP 
+                                 + STR_SWS_OBJ_FILE;
+	   String sjswsMagnusFile = sjswsConfigDir 
+                                 + FILE_SEP 
+                                 + STR_SWS_MAGNUS_FILE;
+
+            if (FileUtils.isFileValid(sjswsObjFile) &&
+               FileUtils.isFileValid(sjswsMagnusFile)) {
+                   sjswsHomeDir = (new File (sjswsObjFile))
+                                            .getParentFile()
+                                            .getParentFile()
+                                            .getParent();
+            }
+        }
         if ((sjswsHomeDir != null) && (sjswsHomeDir.length() > 0)) {
             serverHomeDir = sjswsHomeDir;
         }

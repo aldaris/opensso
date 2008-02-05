@@ -122,21 +122,21 @@
                 <property name="CONFIG_FILENAME_AGENT_CONFIG"
                                       value="AMAgentConfiguration.properties"/>
             </task>
-            <task name="BACKUP_FILE">
+            <task name="BACKUP_OBJ_FILE">
            	 	<class name="BackupFileTask" type="system"/>
                 <property name="BACK_UP_FILE_LOOKUP_KEY" 
                           value="SWS_OBJ_FILE"/>
             </task>                                                         
-            <task name="BACKUP_FILE">
+            <task name="BACKUP_MAGNUS_FILE">
            	 	<class name="BackupFileTask" type="system"/>
                 <property name="BACK_UP_FILE_LOOKUP_KEY" 
                           value="SWS_MAGNUS_FILE"/>
             </task>                                                         
             <task name="CONFIGURE_MAGNUS_CONF">                  
- 	            <class name="ConfigureMagnusConfTask" type="custom"/>                                
+ 	            <class name="ConfigureMagnusConfTask" type="custom"/> 
             </task>                        
-            <task name="CONFIGURE_HTTPD_XML">                  
- 	            <class name="ConfigureObjConfTask" type="custom"/>                                
+            <task name="CONFIGURE_OBJ_CONF">                  
+ 	            <class name="ConfigureObjConfTask" type="custom"/> 
             </task>                        
 		</instance-tasks>
 	</install>
@@ -157,10 +157,57 @@
             </task>                        
 		</instance-tasks>
 	</uninstall>	
-	<migrate>
-		<common-interactions/>
-		<instance-interactions/>
-		<common-tasks/>
-		<instance-tasks/>
-	</migrate> 
+        <migrate>
+            <common-interactions/>
+            <instance-interactions/>
+            <common-tasks>
+                <task name="BACKUP_OBJ_FILE">
+                    <class name="BackupFileTask" type="system"/>
+                    <property name="BACK_UP_FILE_LOOKUP_KEY" 
+                              value="SWS_OBJ_FILE"/>
+                </task>                                             
+                <task name="BACKUP_MAGNUS_FILE">
+                    <class name="BackupFileTask" type="system"/>
+                    <property name="BACK_UP_FILE_LOOKUP_KEY" 
+                              value="SWS_MAGNUS_FILE"/>
+                </task> 
+                <task name="UNCONFIGURE_OBJ_CONF">
+                    <class name="UnconfigureObjConfTask" type="custom"/>				
+                </task>
+                <task name="UNCONFIGURE_MAGNUS_CONF">
+                    <class name="UnconfigureMagnusConfTask" type="custom"/>
+                </task>
+            </common-tasks>
+            <instance-tasks>
+                <task name="CREATE_LAYOUT">
+                    <class name="CreateLayoutTask" type="system"/>
+                </task>
+                <task name="GENERATE_AUDIT_LOGFILE_NAME">
+                    <class name="AuditLogFileNameTask" type="system"/>
+                    <property name="HOSTNAME_LOOKUP_KEY"
+                              value="AGENT_HOST"/>
+                    <property name="PORT_LOOKUP_KEY"
+                              value="AGENT_PREF_PORT"/>
+                    <property name="LOGFILE_NAME_OUTPUT_KEY"
+                              value="AUDIT_LOG_FILENAME"/>
+                </task>
+                <task name="CONFIGURE_AGENT_PROPS">
+                    <class name="MigrateConfigurePropertiesTask" type="system"/>    
+                    <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
+                              value="AMAgent.template"/>
+                    <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
+                              value="AMAgent.properties"/>
+                    <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
+                              value="AMAgentConfiguration.template"/>
+                    <property name="CONFIG_FILENAME_AGENT_CONFIG"
+                              value="AMAgentConfiguration.properties"/>
+                </task>
+                <task name="CONFIGURE_MAGNUS_CONF">
+                    <class name="ConfigureMagnusConfTask" type="custom"/> 
+                </task> 
+                <task name="CONFIGURE_OBJ_CONF">
+                    <class name="ConfigureObjConfTask" type="custom"/> 
+                </task> 
+            </instance-tasks>
+        </migrate>
 </configure>

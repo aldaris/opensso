@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConstants.java,v 1.1 2006-10-06 18:27:33 subbae Exp $
+ * $Id: IConstants.java,v 1.2 2008-02-05 19:55:07 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,4 +105,6 @@ public interface IConstants {
     public static final String STR_TRUE = "true";
     public static final String STR_FALSE = "false";
 
+    /** Field FILE_SEP **/
+    public static final String FILE_SEP = "/";
 }

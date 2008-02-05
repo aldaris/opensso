@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HomeDirLocator.java,v 1.1 2007-04-30 17:29:27 subbae Exp $
+ * $Id: HomeDirLocator.java,v 1.2 2008-02-05 19:55:58 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,10 +52,18 @@ public class HomeDirLocator implements IServerHomeDirLocator,
     public String getServerDirectory(IStateAccess state)
         throws InstallException {
         String serverHomeDir = null;
-        // Apache home dir
-        String apcHomeDir = (String)state.get(STR_KEY_APC22_HOME_DIR);
-        if ((apcHomeDir != null) && (apcHomeDir.length() > 0)) {
-            serverHomeDir = apcHomeDir;
+
+        String apacheConfigDir = (String)state.get(STR_KEY_APC22_INST_CONF_DIR);
+        if ((apacheConfigDir != null) && (apacheConfigDir.length() > 0)) {
+            String apcHttpdFile = apacheConfigDir + FILE_SEP +
+                                            STR_APC22_HTTPD_FILE;
+            String apcHomeDir = (new File(apcHttpdFile)).
+                                           getParentFile().getParent();
+            // Apache home dir
+            String apcHomeDir = (String)state.get(STR_KEY_APC22_HOME_DIR);
+            if ((apcHomeDir != null) && (apcHomeDir.length() > 0)) {
+                serverHomeDir = apcHomeDir;
+            }
         }
         
         if(!FileUtils.isDirValid(serverHomeDir)) {
