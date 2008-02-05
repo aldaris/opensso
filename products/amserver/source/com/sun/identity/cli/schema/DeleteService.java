@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteService.java,v 1.3 2006-10-09 17:57:34 veiming Exp $
+ * $Id: DeleteService.java,v 1.4 2008-02-05 18:21:32 kenwho Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,21 +115,16 @@ public class DeleteService extends AuthenticatedCommand {
         try {
             ServiceConfigManager scm = new ServiceConfigManager(
                 serviceName, adminSSOToken);
-            deletePolicyRule(rc, serviceName, adminSSOToken);
 
             if (scm.getGlobalConfig(null) != null) {
                 scm.removeGlobalConfiguration(null);
             }
 
-            if (serviceName.equalsIgnoreCase(CLIConstants.AUTH_CORE_SERVICE)) {
-                ssm.deleteService(serviceName);
-            } else {
-                Set versions = ssm.getServiceVersions(serviceName);
-                                                                                
-                for (Iterator iter = versions.iterator(); iter.hasNext(); ) {
-                    ssm.removeService(serviceName, (String)iter.next());
-                }
+            Set versions = ssm.getServiceVersions(serviceName);
+            for (Iterator iter = versions.iterator(); iter.hasNext(); ) {
+                ssm.removeService(serviceName, (String)iter.next());
             }
+            deletePolicyRule(rc, serviceName, adminSSOToken);
         } catch (SSOException e) {
             String[] args = {serviceName, e.getMessage()};
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
