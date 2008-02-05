@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.12 2007-11-08 06:17:21 goodearth Exp $
+ * $Id: SMSLdapObject.java,v 1.13 2008-02-05 01:19:01 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -636,7 +636,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             if (enableProxy) {
               dlayer.releaseConnection(conn, errorCode);
             } else {
-              smdlayer.releaseConnection(conn);
+              smdlayer.releaseConnection(conn, errorCode);
             }
         }
     }

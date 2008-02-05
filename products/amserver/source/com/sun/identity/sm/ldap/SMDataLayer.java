@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.9 2008-01-24 23:14:14 veiming Exp $
+ * $Id: SMDataLayer.java,v 1.10 2008-02-05 01:19:01 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -119,6 +119,39 @@ class SMDataLayer {
         }
 
         return conn;
+    }
+
+    /**
+     * Just call the pool method to release the connection so that the
+     * given connection is free for others to use
+     * @param conn connection in the pool to be released for others to use.
+     * @param ldapErrCode ldap exception error code used to determine 
+     *        failover.
+     * iPlanet-PUBLIC-METHOD
+     */
+    public void releaseConnection( LDAPConnection conn , int ldapErrCode)
+    {
+        if (_ldapPool == null || conn == null) return;
+
+        // reset the original constraints
+        // TODO: check with ldapjdk and see if this is appropriate
+        //       to restore the default constraints.
+        //
+        conn.setSearchConstraints(_defaultSearchConstraints);
+
+        // A soft close on the connection.
+        // Returns the connection to the pool and
+        // make it available.
+        if (debug.messageEnabled()) {
+           debug.message("SMDataLayer:releaseConnection()-"+
+               "Invoking _ldapPool.close(conn,ldapErrCode) : " +
+               conn + ":" + ldapErrCode);
+        }
+        _ldapPool.close( conn, ldapErrCode );
+        if (debug.messageEnabled()) {
+            debug.message("SMDataLayer:releaseConnection()-"+
+                "Released Connection:close(conn,ldapErrCode) : " + conn);
+        }
     }
 
     /**
