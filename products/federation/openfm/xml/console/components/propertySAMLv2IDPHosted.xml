@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPHosted.xml,v 1.7 2008-01-17 19:26:06 asyhuang Exp $
+   $Id: propertySAMLv2IDPHosted.xml,v 1.8 2008-02-05 19:17:21 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -527,4 +527,14 @@
             </property>
         </subsection>                
     </section>
+    <section name="localConfiguration" defaultValue="samlv2idp.attribute.label.localConfiguration">
+        <property>
+            <label name="lblAuthUrl" defaultValue="samlv2idp.attribute.label.authUrl" labelFor="AuthUrl" />
+            <cc name="AuthUrl" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>                
+    </section> 
 </propertysheet>

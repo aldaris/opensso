@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.9 2007-11-21 02:27:39 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.10 2008-02-05 19:16:48 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,6 +127,9 @@ public interface SAMLv2Model
         "discoveryBootstrappingEnabled";
     public static final String ARTIF_RESOLVE_SIGN =
         "wantArtifactResolveSigned";
+    public static final String AUTH_URL =
+        "AuthUrl";
+
     
     //SAML2 SP Extended Attributes
     public static final String SP_SIGN_CERT_ALIAS = "signingCertAlias";

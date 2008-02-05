@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.12 2008-01-17 20:59:51 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.13 2008-02-05 19:16:49 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,6 +98,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 Collections.EMPTY_SET);
         extendedMetaIdpMap.put(BOOT_STRAP_ENABLED, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ARTIF_RESOLVE_SIGN, Collections.EMPTY_SET);
+        extendedMetaIdpMap.put(AUTH_URL, Collections.EMPTY_SET);
         
         // ECP
         extendedMetaIdpMap.put(ATTR_IDP_ECP_SESSION_MAPPER, 
