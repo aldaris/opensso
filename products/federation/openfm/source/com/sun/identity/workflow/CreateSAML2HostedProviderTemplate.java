@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.4 2008-02-04 05:04:20 hengming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.5 2008-02-05 19:14:36 asyhuang Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -259,6 +259,9 @@ public class CreateSAML2HostedProviderTemplate {
             "        <Attribute name=\""+SAML2Constants.SAE_IDP_URL+"\">\n" +
             "            <Value>" + url + "/idpsaehandler/metaAlias" +
             idpAlias + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\""+SAML2Constants.AUTH_URL+"\">\n" +
+            "            <Value></Value>\n" +
             "        </Attribute>\n" +
             "    </IDPSSOConfig>\n"
         );
