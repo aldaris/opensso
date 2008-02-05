@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigKeys.java,v 1.1 2006-09-29 00:34:28 huacui Exp $
+ * $Id: IConfigKeys.java,v 1.2 2008-02-05 18:46:12 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,10 +73,22 @@ public interface IConfigKeys {
      */
      public static final String STR_AGENT_INSTANCE_NAME_KEY = "AGENT_INSTANCE_NAME";
     
+     /*
+     * Key to new agent instance name on the remote server instance.
+     */
+     public static final String STR_MIGRATE_AGENT_INSTANCE_NAME_KEY = 
+             "MIGRATE_AGENT_INSTANCE_NAME";
+     
     /*
      * Key to agent install directory on a remote instance 
      */
      public static final String STR_REMOTE_AGENT_INSTALL_DIR_KEY = "REMOTE_AGENT_INSTALL_DIR";
+    
+     /*
+     * Key to new agent install directory on a remote instance 
+     */
+     public static final String STR_MIGRATE_REMOTE_AGENT_INSTALL_DIR_KEY = 
+             "MIGRATE_REMOTE_AGENT_INSTALL_DIR";
     
     /*
      * Key to Agent and AM colocation field 

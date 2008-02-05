@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JavaPermissionsBase.java,v 1.1 2006-09-29 00:11:15 huacui Exp $
+ * $Id: JavaPermissionsBase.java,v 1.2 2008-02-05 18:46:11 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.agents.install.appserver;
 
+import com.sun.identity.agents.install.appserver.v81.IConfigKeys;
 import com.sun.identity.install.tools.configurator.IStateAccess;
 import com.sun.identity.install.tools.configurator.InstallConstants;
 import com.sun.identity.install.tools.util.ConfigUtil;
@@ -36,24 +37,18 @@ import com.sun.identity.install.tools.util.DeletePattern;
 /**
  * The class grants or removes Java Permissions to agent
  */
-public class JavaPermissionsBase implements InstallConstants {
+public class JavaPermissionsBase implements InstallConstants, IConfigKeys {
     
     public JavaPermissionsBase() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(LINE_SEP);
-        sb.append("grant codeBase \"file:").append(ConfigUtil.getLibPath());
-        sb.append("/*\" {").append(LINE_SEP);
-        sb.append("       permission java.security.AllPermission;");
-        sb.append(LINE_SEP);
-        sb.append("};");
-        setPermissions(sb.toString());
     }
     
     public boolean addToServerPolicy(IStateAccess stateAccess) {
         boolean status = false;        
         String serverPolicyFile = getServerPolicyFile(stateAccess); 
         try {
-            FileUtils.appendDataToFile(serverPolicyFile, getPermissions());
+            String libPath = getLibPath(stateAccess);
+            FileUtils.appendDataToFile(serverPolicyFile, 
+                    getPermissions(stateAccess));
             status = true;
         } catch (Exception e) {
             Debug.log("JavaPermissionsBase.addToServerPolicy() - Error " +
@@ -71,7 +66,8 @@ public class JavaPermissionsBase implements InstallConstants {
         
         boolean status = false;
         try {
-            DeletePattern pattern = new DeletePattern(ConfigUtil.getLibPath(),
+            String libPath = getLibPath(stateAccess);
+            DeletePattern pattern = new DeletePattern(libPath,
                 DeletePattern.INT_MATCH_OCCURRANCE, 2);
             status = fileEditor.deleteLines(pattern);
         } catch (Exception e) {            
@@ -82,11 +78,32 @@ public class JavaPermissionsBase implements InstallConstants {
         return status;
     }
     
+    protected String getLibPath(IStateAccess stateAccess) {
+        
+        String libPath  = ConfigUtil.getLibPath();
+        String remoteHomeDir = (String) stateAccess.get(
+                STR_REMOTE_AGENT_INSTALL_DIR_KEY);
+            // get the agent install directory on a remote instance
+	    if (remoteHomeDir != null && remoteHomeDir.trim().length() > 0) {
+	        libPath = remoteHomeDir + FILE_SEP + INSTANCE_LIB_DIR_NAME;
+            }
+        return libPath;
+    }
+    
     public String getServerPolicyFile(IStateAccess stateAccess) {
         return (String) stateAccess.get(STR_AS70_SERVER_POLICY_FILE_KEY);
     }
         
-    private String getPermissions() {
+    private String getPermissions(IStateAccess stateAccess) {
+         StringBuffer sb = new StringBuffer();
+        sb.append(LINE_SEP);
+        sb.append("grant codeBase \"file:").append(getLibPath(stateAccess));
+        sb.append("/*\" {").append(LINE_SEP);
+        sb.append("       permission java.security.AllPermission;");
+        sb.append(LINE_SEP);
+        sb.append("};");
+        _javaPermissions = sb.toString();
+        
         return _javaPermissions;
     }
     

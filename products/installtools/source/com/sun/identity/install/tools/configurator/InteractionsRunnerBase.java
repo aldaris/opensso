@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionsRunnerBase.java,v 1.1 2006-09-28 07:37:30 rarcot Exp $
+ * $Id: InteractionsRunnerBase.java,v 1.2 2008-02-05 18:46:11 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,14 +74,20 @@ abstract class InteractionsRunnerBase {
             // Check for first and last interactions. Check if multiple
             // interactions are skipped in a row
             while (skipInteraction(index)) {
-                index = (startFromLast) ? index-- : index++;
+                index = (startFromLast) ? --index : ++index;
             }
 
             do {
                 Debug.log("InteractionsRunnerBase: Running Interaction["
                         + index + "].");
+                if (index >= getAllInteractions().size()) {
+                    setFinalStatus(InteractionResultStatus.STATUS_CONTINUE);
+                    return;
+                }
+                
                 UserDataInteraction interaction = (UserDataInteraction) 
                     getAllInteractions().get(index);
+                
                 InteractionResult result = runInteraction(interaction, index);
 
                 status = result.getStatus();
@@ -156,6 +162,10 @@ abstract class InteractionsRunnerBase {
 
         Debug.log("InteractionsRunnerBase: Calling skipInteraction on: "
                 + index);
+        if (index >= getAllInteractions().size()) {
+        	return false;
+        }
+        
         InteractionInfo iinfo = ((UserDataInteraction) 
                 getAllInteractions().get(index)).getInteractionInfo();
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallConstants.java,v 1.5 2008-01-15 22:41:37 leiming Exp $
+ * $Id: InstallConstants.java,v 1.6 2008-02-05 18:46:11 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -129,6 +129,9 @@ public interface InstallConstants extends ICommonToolsConstants {
     public static final String STR_CONFIG_DIR_PREFIX_MIGRATE_TAG = 
         "PRODUCT_INSTANCE_CONFIG_MIGRATE_DIR";
     
+    /** Field STR_INSTANCE_NAME_MIGRATE_TAG **/
+    public static final String STR_INSTANCE_NAME_MIGRATE_TAG = 
+        "PRODUCT_INSTANCE_NAME_MIGRATE";
     
     /** Field STR_DEBUG_DIR_PREFIX **/
     public static final String STR_DEBUG_DIR_PREFIX_TAG = "DEBUG_LOGS_DIR";
@@ -143,6 +146,17 @@ public interface InstallConstants extends ICommonToolsConstants {
     public static final String STR_CONFIG_AGENT_CONFIG_FILE_PATH_TAG = 
         "AGENT_CONFIG_FILE_PATH";
     
+   /**
+    * Key to save new agent instance name on the remote server instance.
+    */
+    public static final String STR_SAVE_AGENT_INSTANCE_NAME_KEY = 
+             "SAVE_AGENT_INSTANCE_NAME";
+    
+    /**
+     * Key to save agent install directory on a remote instance before migration
+     */
+     public static final String STR_SAVE_REMOTE_AGENT_INSTALL_DIR_KEY = 
+             "SAVE_REMOTE_AGENT_INSTALL_DIR";
     
     // FORMATTING LINE FOR WELCOME AND EXIT MESSAGE, 80 chars
     public static final String STR_BEGIN_END_LINE_MARKER = "*************" +

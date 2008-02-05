@@ -275,7 +275,49 @@
 	</uninstall>	
         <migrate>
             <common-interactions/>
-            <instance-interactions/>
+            <instance-interactions>
+                <interaction lookupkey="INSTANCE_NAME">
+                    <skipIf key="REMOTE_INSTANCE_LOCAL_DAS" ignorecase="true">
+                        <value>false</value>
+                    </skipIf>
+                    <i18n key="INT_MIGRATE_INSTANCE_NAME" group="as81Tools"/>
+                    <default-value-finder>
+                        <class name="StaticDefaultValueFinder" type="system"/>
+                        <static value="server"/>
+                    </default-value-finder>
+                    <validations>
+                        <validation name="VALID_STRING">
+                            <class name="StringValidator" type="system"/>
+                        </validation>
+                    </validations>
+                </interaction>
+                <interaction lookupkey="MIGRATE_AGENT_INSTANCE_NAME">
+                    <skipIf key="REMOTE_INSTANCE_LOCAL_DAS" ignorecase="true">
+                        <value>false</value>
+                    </skipIf>
+                    <i18n key="INT_MIGRATE_AGENT_INSTANCE_NAME" group="as81Tools"/>
+                    <default-value-finder>
+                        <class name="StaticDefaultValueFinder" type="system"/>
+                        <static value=""/>
+                    </default-value-finder>
+                    <validations>
+                        <validation name="VALID_STRING">
+                            <class name="StringValidator" type="system"/>
+                        </validation>
+                    </validations>
+                </interaction>
+                <interaction lookupkey="MIGRATE_REMOTE_AGENT_INSTALL_DIR">
+                    <skipIf key="REMOTE_INSTANCE_LOCAL_DAS" ignorecase="true">
+                        <value>false</value>
+                    </skipIf>
+                    <i18n key="INT_MIGRATE_REMOTE_AGENT_INSTALL_DIR" group="as81Tools"/>
+                    <validations>
+                        <validation name="VALID_STRING">
+                            <class name="StringValidator" type="system"/>
+                        </validation>
+                    </validations>
+                </interaction>
+            </instance-interactions>
             <common-tasks>
                 <task name="BACKUP_FILE">
                     <class name="BackupFileTask" type="system"/>
@@ -291,7 +333,13 @@
                     <class name="UnconfigureLoginConfTask" type="custom"/>				
                 </task>
                 <task name="REMOVE_JAVA_PERMS">
-                    <class name="UnconfigureServerPolicyTask" type="custom"/>
+                    <class name="MigrateUnconfigureServerPolicyTask" type="custom"/>
+                </task>
+                <task name="CONFIGURE_LOGIN_CONF">                      
+                    <class name="ConfigureLoginConfTask" type="custom"/>
+                </task>            
+                <task name="GRANT_JAVA_PERMS">                  
+                    <class name="ConfigureServerPolicyTask" type="custom"/>                                
                 </task>
             </common-tasks>
             <instance-tasks>
@@ -301,7 +349,7 @@
                               value="AS_DOMAIN_XML_FILE"/>
                 </task>   
                 <task name="UNCONFIGURE_DOMAIN_XML">
-                    <class name="UnconfigureDomainXMLTask" type="custom"/>				
+                    <class name="MigrateUnconfigureDomainXMLTask" type="custom"/>				
                 </task>
                 
                 <task name="CREATE_LAYOUT">

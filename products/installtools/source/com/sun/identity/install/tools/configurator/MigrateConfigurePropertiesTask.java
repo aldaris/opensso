@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MigrateConfigurePropertiesTask.java,v 1.1 2008-01-15 22:49:08 leiming Exp $
+ * $Id: MigrateConfigurePropertiesTask.java,v 1.2 2008-02-05 18:46:11 leiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashSet;
 
 import com.sun.identity.install.tools.util.Debug;
 import com.sun.identity.install.tools.util.FileUtils;
@@ -42,6 +43,13 @@ import com.sun.identity.install.tools.util.FileUtils;
  */
 public class MigrateConfigurePropertiesTask extends ConfigurePropertiesTask {
     
+	// parameters not to be migrated from previous product
+	private static HashSet nonMigratedParameters = new HashSet();
+	static {
+		nonMigratedParameters.add("com.iplanet.services.debug.directory");
+		nonMigratedParameters.add("com.sun.identity.agents.config.local.logfile");
+	}
+	
     public boolean execute(String name, IStateAccess stateAccess, 
             Map properties)
     throws InstallException {
@@ -64,8 +72,18 @@ public class MigrateConfigurePropertiesTask extends ConfigurePropertiesTask {
             Debug.log("MigrateConfigurePropertiesTask.execute() - " +
                     "instance config file name: " + instanceConfigFile);
             
+            String configFile = (String) stateAccess
+            .get(STR_CONFIG_FILE_PATH_TAG);
+    
+            Debug.log("MigrateConfigurePropertiesTask.execute() - " +
+            "config file name: " + instanceConfigFile);
+    
+            
             try {
                 mergeConfigFiles(instanceConfigFileMigrate, instanceConfigFile);
+                status = true;
+                
+                mergeConfigFiles(instanceConfigFileMigrate, configFile);
                 status = true;
                 
             } catch (Exception e) {
@@ -90,6 +108,11 @@ public class MigrateConfigurePropertiesTask extends ConfigurePropertiesTask {
         BufferedReader br = null;
         PrintWriter pw = null;
         
+        Debug.log(
+                "MigrateConfigurePropertiesTask.mergeConfigFiles() - " +
+                "config file to migrate from: " + instanceConfigFileMigrate +
+                " config file to migrate to: " + instanceConfigFile);
+        
         try {
             FileReader fr = new FileReader(instanceConfigFile);
             br = new BufferedReader(fr);
@@ -111,6 +134,11 @@ public class MigrateConfigurePropertiesTask extends ConfigurePropertiesTask {
                 } else {
                     
                     keyValue = new KeyValue(lineData);
+                    
+                    if (nonMigratedParameters.contains(keyValue.getKey())) {
+                    	pw.println(lineData);
+                    	continue;
+                    }
                     
                     migrateLines = getMigrateLines(keyValue.getParameter(),
                             instanceConfigFileMigrate);

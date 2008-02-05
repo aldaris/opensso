@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureServerPolicyTask.java,v 1.1 2006-09-29 00:34:48 huacui Exp $
+ * $Id: UnconfigureServerPolicyTask.java,v 1.2 2008-02-05 18:46:12 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,12 +49,22 @@ public class UnconfigureServerPolicyTask extends RemoveJavaPermissionsTask
 	    Debug.log("Skipping UnconfigureServerPolicyTask.execute()");
 	    status = true;
 	} else {
+            preUnconfigureTasks(stateAccess);
+            
             status = removeFromServerPolicy(stateAccess);
+            
+            postUnconfigureTasks(stateAccess);
 	}
 
         return status;
     }
 
+     protected void preUnconfigureTasks(IStateAccess stateAccess) {
+     }
+     
+     protected void postUnconfigureTasks(IStateAccess stateAccess) {
+     }
+     
     private boolean skipTask(IStateAccess stateAccess) {
         boolean result = false;
         String isRemote = (String) stateAccess.get(STR_DAS_HOST_IS_REMOTE_KEY);

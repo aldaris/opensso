@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MigrateDriver.java,v 1.1 2008-01-15 22:49:08 leiming Exp $
+ * $Id: MigrateDriver.java,v 1.2 2008-02-05 18:46:11 leiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,9 +50,19 @@ public class MigrateDriver extends Driver {
      * @throws InstallException
      *
      */
-    public void executeMigrateTasks(
+    public void executeInteractionsAndTasks (
+    		InteractionsRunner iRunner,
             InstallLogger migrateLog)
             throws InstallException {
+    	
+    	boolean done = false;
+    	while (!done) {
+    		iRunner.runInteractions(false);
+    		if (iRunner.getFinalStatus().getIntValue() == 
+                InteractionResultStatus.INT_STATUS_CONTINUE) {
+    			done = true;
+    		}
+    	}
         
         DisplaySummaryHandler summaryHandler = new DisplaySummaryHandler(true);
         
@@ -62,7 +72,7 @@ public class MigrateDriver extends Driver {
         
         // Run the tasks (common & instance)
         TaskRunner taskRunner = new TaskRunner(getRunInfo(), getInstallState()
-        .getStateAccess(), migrateLog, isSilentMode(), false);
+        .getStateAccess(), migrateLog, isSilentMode(), true);
         taskRunner.runTasks();
         
     }

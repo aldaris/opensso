@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureDomainXMLTask.java,v 1.1 2006-09-29 00:34:38 huacui Exp $
+ * $Id: UnconfigureDomainXMLTask.java,v 1.2 2008-02-05 18:46:12 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,8 @@ public class UnconfigureDomainXMLTask extends DomainXMLBase
 	    Debug.log("Skipping UnconfigureDomainXMLTask.execute()");
 	    status = true;
         } else {
+            preUnconfigureTasks(stateAccess);
+            
             String serverXMLFile = getDomainXMLFile(stateAccess);
             String serverInstanceName = getServerInstanceName(stateAccess); 
             if (serverXMLFile != null && serverInstanceName != null) {        
@@ -77,10 +79,18 @@ public class UnconfigureDomainXMLTask extends DomainXMLBase
                     "server.xml file: " + serverXMLFile + " or server instance" +
                     " name: " + serverInstanceName);
             }
+            
+            postUnconfigureTasks(stateAccess);
         }
 
         return status;
     }
+    
+     protected void preUnconfigureTasks(IStateAccess stateAccess) {
+     }
+     
+     protected void postUnconfigureTasks(IStateAccess stateAccess) {
+     }
     
     public LocalizedMessage getExecutionMessage(IStateAccess stateAccess,
         Map properties) {

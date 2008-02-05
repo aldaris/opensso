@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainXMLBase.java,v 1.7 2007-12-10 21:40:48 huacui Exp $
+ * $Id: DomainXMLBase.java,v 1.8 2008-02-05 18:46:12 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -175,6 +175,7 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
             
             // Remove the Agent JVMOptions. If error occurs Exception is thrown
             removeAgentJVMOptions(javaConfig, stateAccess);
+            
         } else {
             Debug.log("DomainXMLBase.removeAgentClasspath() - Error:" + 
                 " Missing '" + STR_JAVA_CONFIG_ELEMENT + "' element.");
@@ -182,7 +183,7 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
                 
         return status;
     }
-    
+
     private String deleteAgentClasspath(String classpath, 
         IStateAccess stateAccess) {       
         StringBuffer sb = new StringBuffer(classpath);        
@@ -350,7 +351,7 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
         return _coexistFlag.booleanValue();
     }
     
-    private String[] getAgentClasspathEntries(IStateAccess stateAccess) {
+    protected String[] getAgentClasspathEntries(IStateAccess stateAccess) {
 
         if (_agentClasspathEntries == null) {                                          
             String homeDir = ConfigUtil.getHomePath();
@@ -418,13 +419,31 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
 	return instanceName;
     }
  
+    protected String getConfigDirPath() {
+        return ConfigUtil.getConfigDirPath();
+    }
+    
     private Set getAgentJVMOptions(IStateAccess stateAccess) {
         if (_agentJVMOptions == null) {
             _agentJVMOptions = new TreeSet(); // An Ordered set
             if (!getCoexistFlag(stateAccess)) {
-                String logConfigFileOption = STR_LOG_CONFIG_FILE_OPTION_PREFIX
-            		+ ConfigUtil.getConfigDirPath() + FILE_SEP
-            		+ STR_LOG_CONFIG_FILENAME;
+                String logConfigFileOption = null;
+                // check if remote instance.
+                String remoteHomeDir = (String) stateAccess.get(
+                        STR_REMOTE_AGENT_INSTALL_DIR_KEY);
+                // get the agent install directory on a remote instance
+                if (remoteHomeDir != null && 
+                        remoteHomeDir.trim().length() > 0) {
+                    logConfigFileOption = STR_LOG_CONFIG_FILE_OPTION_PREFIX +
+                            remoteHomeDir + FILE_SEP + 
+                            INSTANCE_CONFIG_DIR_NAME  + FILE_SEP + 
+                            STR_LOG_CONFIG_FILENAME;
+                } else {
+                    logConfigFileOption = STR_LOG_CONFIG_FILE_OPTION_PREFIX
+                            + getConfigDirPath() + FILE_SEP
+                            + STR_LOG_CONFIG_FILENAME;
+                }
+                
                 _agentJVMOptions.add(logConfigFileOption);
                 _agentJVMOptions.add(STR_LOG_COMPATMODE_OPTION);
             }
