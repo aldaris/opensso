@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.15 2008-02-02 17:21:51 jonnelson Exp $
+ * $Id: AgentConfiguration.java,v 1.16 2008-02-05 18:01:08 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,8 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.security.AccessController;
 import java.util.Collection;
 import java.util.Collections;
@@ -59,6 +61,11 @@ public class AgentConfiguration {
     public final static String AGENT_TYPE_WEB = "WebAgent";
     public final static String AGENT_TYPE_2_DOT_2_AGENT = "2.2_Agent";
     public final static String ATTR_NAME_PWD = "userpassword";
+    public final static String ATTR_NAME_FREE_FORM =
+        "com.sun.identity.agents.config.freeformproperties";
+    private static final Pattern patternArray =
+        Pattern.compile("(.+?\\[.*?\\]\\s*?)=(.*)");
+
   
     private AgentConfiguration() {
     }
@@ -840,8 +847,10 @@ public class AgentConfiguration {
                 String name = (String)i.next();
                 Set values = (Set)attrValues.get(name);
                 
-                if (values != null) {
-                    if (!asValidatorType.contains(name)) {
+                if ((values != null) && !values.isEmpty()) {
+                    if (name.equals(ATTR_NAME_FREE_FORM)) {
+                        handleFreeFormAttrValues(values, result);
+                    } else if (!asValidatorType.contains(name)) {
                         if (asListType.contains(name)) {
                             for (Iterator j = values.iterator(); j.hasNext();) {
                                 String val = (String) j.next();
@@ -872,6 +881,28 @@ public class AgentConfiguration {
         }
         
         return result;
+    }
+
+    private static void handleFreeFormAttrValues(Set values, Map result) {
+        for (Iterator i = values.iterator(); i.hasNext();) {
+            String val = (String)i.next();
+            Matcher m = patternArray.matcher(val);
+
+            // this is to handle the attribute value like
+            // my.new.map.property[cn=user1,o=xyz]=value1
+            if (m.find()) {
+                Set set = new HashSet(2);
+                set.add(m.group(2));
+                result.put(m.group(1), set);
+            } else {
+                int idx = val.indexOf("=");
+                if (idx != -1) {
+                    Set set = new HashSet(2);
+                    set.add(val.substring(idx+1));
+                    result.put(val.substring(0, idx), set);
+                }
+            }
+        }
     }
 
     /**
