@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.9 2008-01-22 23:50:00 rmisra Exp $
+ * $Id: SMSCommon.java,v 1.10 2008-02-06 19:06:38 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -864,4 +864,24 @@ public class SMSCommon extends TestCommon {
         exiting("isPluginConfigured");
         return isPluginConfigured;
     }
+  
+    /**
+     * This method checks whether a given type of datastore plugin is 
+     * configured at the selected realm using the existing admin 
+     * <code>SSOToken</code>.
+     * The supported type of pluings are :
+     *  - amSDK
+     *  - LDAVPv3forAMDS
+     *  - LDAPv3ForAD
+     *  - LDAPv3
+     *  - files
+     * @param pluginName Plugin name
+     * @param subRealmName subRealm name
+     * @return true if Plugin type to be checked is supported to the given realm
+     * 
+     */    
+    public boolean isPluginConfigured(String pluginName, String subRealmName) 
+    throws Exception {
+        return isPluginConfigured(admintoken, pluginName, subRealmName);
+    }    
 }
