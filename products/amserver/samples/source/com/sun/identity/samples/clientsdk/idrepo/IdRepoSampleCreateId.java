@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.8 2007-12-13 18:37:36 goodearth Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.9 2008-02-06 21:30:31 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,10 +32,11 @@ import com.iplanet.sso.SSOException;
 
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdType;
-import com.sun.identity.idm.IdSearchControl;
-import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdSearchControl;
+import com.sun.identity.idm.IdSearchOpModifier;
+import com.sun.identity.idm.IdSearchResults;
+import com.sun.identity.idm.IdType;
 
 
 /**
@@ -168,6 +169,13 @@ public class IdRepoSampleCreateId {
                     System.out.println("    Odd, no " +
                         idtype.getName() + "s found.");
                 }
+                IdSearchControl WSCcontrol = new IdSearchControl();
+                String providerName = idName;
+                WSCcontrol.setAllReturnAttributes(true);
+                IdSearchResults WSCresults = idRepo.searchIdentities(
+                    IdType.AGENTONLY, providerName, WSCcontrol);
+                Set agents = WSCresults.getSearchResults();
+                System.out.println("WSC Agents before removeMember: " + agents); 
                 if (idtype.equals(IdType.AGENTONLY) || 
                     idtype.equals(IdType.AGENTGROUP)) {
                     String POLLINT = "com.sun.am.policy.am.polling.interval";
@@ -190,6 +198,11 @@ public class IdRepoSampleCreateId {
                                 attrNameSet.add(key);
                                 System.out.println("Attribute to remove :"+key);
                                 tmpId.removeAttributes(attrNameSet);
+                            }
+                            if (key.equalsIgnoreCase("userpassword")) { 
+                                System.out.println("Value check for pwd " +
+                                    "userpassword =" + 
+                                    attrMap.get("userpassword"));
                             }
                         }
                     } else {
@@ -259,6 +272,33 @@ public class IdRepoSampleCreateId {
                         agroupIdentity.getMembers(IdType.AGENTONLY));
 
                 }
+                IdSearchControl WSCcnt = new IdSearchControl();
+                WSCcnt.setAllReturnAttributes(true);
+                IdSearchResults WSCres = idRepo.searchIdentities(
+                    IdType.AGENTONLY, providerName, WSCcnt);
+                Set wscagents = WSCres.getSearchResults();
+                System.out.println("WSC Agents after removeMember: " + 
+                    wscagents); 
+
+                // Test for avpairs filter while searching..
+                IdSearchControl avcontrol = new IdSearchControl();
+                avcontrol.setAllReturnAttributes(true);
+                avcontrol.setTimeOut(0);           
+                Map kvPairMap = new HashMap();
+                Set avset = new HashSet();
+                avset.add("WSCAgent");           
+                kvPairMap.put("AgentType", avset);
+
+                avcontrol.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
+
+                IdSearchResults avresults = 
+                    idRepo.searchIdentities(IdType.AGENTONLY,
+                        "*", avcontrol);
+                Set avagents = avresults.getSearchResults();
+                System.out.println("WSC Agents with avpairs as filter: " + 
+                    avagents); 
+
+
             }
         } catch (IdRepoException ire) {
             System.err.println("idRepoProcessing IdRepoException " +
