@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-authentication-testng.xml,v 1.3 2007-09-07 21:28:57 sridharev Exp $
+ $Id: ds_ds_sec-authentication-testng.xml,v 1.4 2008-02-06 18:59:23 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -326,26 +326,179 @@
             <class name="com.sun.identity.qatest.authentication.AuthTest"/>
         </classes>
     </test>
-    <test name="ChainTest">
+    <test name="ChainTestRequired">
+        <parameter name="testChainName" value="chain1"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.authentication.ChainTestFactory"/>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
         </classes>
     </test>
-    <test name="RedirectTest">
+    <test name="ChainTestRequisite">
+        <parameter name="testChainName" value="chain2"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.authentication.RedirectTestFactory"/>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
         </classes>
     </test>
+    <test name="ChainTestOneUsernamePassword">
+        <parameter name="testChainName" value="chain3"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="ChainTestOptional">
+        <parameter name="testChainName" value="chain4"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="ChainTestOptionalAuthFails">
+        <parameter name="testChainName" value="chain5"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="ChainTestSufficient">
+        <parameter name="testChainName" value="chain6"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="ChainTestSufficientFails">
+        <parameter name="testChainName" value="chain7"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="RedirectTestLDAPRootRealm">
+        <parameter name="testModule" value="ldap"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+     <test name="RedirectTestLDAPSubRealm">
+        <parameter name="testModule" value="ldap"/>
+        <parameter name="testRealm" value="blue"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+    <test name="RedirectTestNTRootRealm">
+        <parameter name="testModule" value="nt"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+     <test name="RedirectTestNTSubRealm">
+        <parameter name="testModule" value="nt"/>
+        <parameter name="testRealm" value="blue"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+    <test name="RedirectTestJDBCRootRealm">
+        <parameter name="testModule" value="jdbc"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+     <test name="RedirectTestJDBCSubRealm">
+        <parameter name="testModule" value="jdbc"/>
+        <parameter name="testRealm" value="blue"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test> 
+    <test name="RedirectTestADRootRealm">
+        <parameter name="testModule" value="ad"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+     <test name="RedirectTestADSubRealm">
+        <parameter name="testModule" value="ad"/>
+        <parameter name="testRealm" value="blue"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>    
     <test name="ProfileAttributesRequiredTest">
         <parameter name="testProfile" value="required"/>
         <groups>
