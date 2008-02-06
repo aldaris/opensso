@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.15 2008-01-04 02:39:17 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.16 2008-02-06 20:54:35 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,7 @@ import com.sun.identity.idm.RepoSearchResults;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
@@ -87,6 +88,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     private static final String agentGroupNode = "agentgroup";
     private static final String instancesNode = "ou=Instances,";
     private static final String labeledURI = "labeledURI";
+    private static final String hashAlgStr = "{SHA-1}";
 
     IdRepoListener repoListener = null;
 
@@ -204,6 +206,18 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             } 
         }
         try {
+            Set vals = (Set) attrMap.get("userpassword");
+            if (vals != null) {
+                Set hashedVals = new HashSet();
+                Iterator it = vals.iterator();
+                while (it.hasNext()) {
+                    String val = (String) it.next();
+                    hashedVals.add(hashAlgStr + Hash.hash(val));
+                }
+                attrMap.remove("userpassword");
+                attrMap.put("userpassword", hashedVals);
+            }
+
             if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
                 orgConfig = getOrgConfig(token);
                 aTypeConfig = orgConfig.getSubConfig(agentName);
@@ -342,7 +356,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     agentsAttrMap = getAgentAttrs(orgConfig, name);
 
                     String groupName = getGroupName(orgConfig, name);
-                    if (groupName != null) {
+                    if ((groupName != null) &&
+                        (groupName.trim().length() > 0)) {
                         agentGroupConfig = getAgentGroupConfig(token);
                         Map agentGroupMap = getAgentAttrs(agentGroupConfig, 
                             groupName);
@@ -826,7 +841,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             } else if (type.equals(IdType.AGENT)) {
                     agentRes.add(pattern);
             }
-            if (agentRes != null) {
+            if (agentRes != null && (!agentRes.isEmpty())) {
                 Iterator it = agentRes.iterator();
                 while (it.hasNext()) {
                     String agName = (String) it.next();
@@ -909,6 +924,21 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
                     "305", args);
             }
+
+            Set vals = (Set) attributes.get("userpassword");
+            if (vals != null) {
+                Set hashedVals = new HashSet();
+                Iterator it = vals.iterator();
+                while (it.hasNext()) {
+                    String val = (String) it.next();
+                    if (!val.startsWith(hashAlgStr)) {
+                        hashedVals.add(hashAlgStr + Hash.hash(val));
+                        attributes.remove("userpassword");
+                        attributes.put("userpassword", hashedVals);
+                    }
+                }
+            }
+
             if (aCfg != null) {
                 aCfg.setAttributes(attributes);
             } else {
@@ -1129,6 +1159,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                         .getPassword();
                 if (passwd != null) {
                     password = new String(passwd);
+                    password = hashAlgStr + Hash.hash(password);
                     if (debug.messageEnabled()) {
                         debug.message("AgentsRepo.authenticate() passwd "
                             + "present");
@@ -1158,7 +1189,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             pSet.add("userpassword");
             Map ansMap = new HashMap();
             String userPwd = null;
-            ansMap = getAttributes(adminToken, IdType.AGENTONLY, userid, pSet);
+            ansMap = getAttributes(adminToken, IdType.AGENTONLY, 
+                userid, pSet);
             Set userPwdSet = (Set) ansMap.get("userpassword"); 
             if ((userPwdSet != null) && (!userPwdSet.isEmpty())) {
                 userPwd = (String) userPwdSet.iterator().next();
