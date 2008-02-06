@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.10 2008-01-18 00:42:50 rmisra Exp $
+ * $Id: AuthTest.java,v 1.11 2008-02-06 18:50:22 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,12 +26,12 @@ package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.Reporter;
@@ -122,35 +122,38 @@ public class AuthTest extends TestCommon {
             user = (String)rb.getString(locTestModule + ".user");
             password = (String)rb.getString(locTestModule + ".password");
 
-            log(Level.FINEST, "setup", "module_servicename:" +
+            log(Level.FINEST, "setup", "module_servicename: " +
                         module_servicename);
-            log(Level.FINEST, "setup", "module_subconfigname:" +
+            log(Level.FINEST, "setup", "module_subconfigname: " +
                         module_subconfigname);
-            log(Level.FINEST, "setup", "module_subconfigid:" +
+            log(Level.FINEST, "setup", "module_subconfigid: " +
                         module_subconfigid);
 
-            log(Level.FINEST, "setup", "service_servicename:" +
+            log(Level.FINEST, "setup", "service_servicename: " +
                         service_servicename);
-            log(Level.FINEST, "setup", "service_subconfigname:" +
+            log(Level.FINEST, "setup", "service_subconfigname: " +
                         service_subconfigname);
-            log(Level.FINEST, "setup", "service_subconfigid:" +
+            log(Level.FINEST, "setup", "service_subconfigid: " +
                         service_subconfigid);
+            log(Level.FINEST, "setup", "module_subconfig_list: " + list);
 
-            log(Level.FINEST, "setup", "rolename:" + rolename);
-            log(Level.FINEST, "setup", "username:" + user);
-            log(Level.FINEST, "setup", "userpassword:" + password);
+            log(Level.FINEST, "setup", "rolename: " + rolename);
+            log(Level.FINEST, "setup", "username: " + user);
+            log(Level.FINEST, "setup", "userpassword: " + password);
 
-            Reporter.log("ModuleServiceName" + module_servicename);
-            Reporter.log("ModuleSubConfigName" + module_subconfigname);
-            Reporter.log("ModuleSubConfigId" + module_subconfigid);
+            Reporter.log("ModuleServiceName: " + module_servicename);
+            Reporter.log("ModuleSubConfigName: " + module_subconfigname);
+            Reporter.log("ModuleSubConfigId: " + module_subconfigid);
 
-            Reporter.log("ServiceServiceName" + service_servicename);
-            Reporter.log("ServiceSubConfigName" + service_subconfigname);
-            Reporter.log("ServiceSubConfigId" + service_subconfigid);
+            Reporter.log("ServiceServiceName: " + service_servicename);
+            Reporter.log("ServiceSubConfigName: " + service_subconfigname);
+            Reporter.log("ServiceSubConfigId: " + service_subconfigid);
 
-            Reporter.log("RoleName" + rolename);
-            Reporter.log("UserName" + user);
-            Reporter.log("UserPassword" + password);
+            Reporter.log("ModuleSubConfigList: " + list);
+           
+            Reporter.log("RoleName: " + rolename);
+            Reporter.log("UserName: " + user);
+            Reporter.log("UserPassword: " + password);
                 
             loginURL = protocol + ":" + "//" + host + ":" + port +
                         uri + "/UI/Login";
@@ -166,18 +169,31 @@ public class AuthTest extends TestCommon {
             FederationManager am = new FederationManager(amadmURL);
             WebClient webClient = new WebClient();
             consoleLogin(webClient, loginURL, adminUser, adminPassword);
-            am.createSubCfg(webClient, module_servicename,
-                        module_subconfigname, list, realm, module_subconfigid, "0");
-
+            log(Level.FINE, "setup", "Creating module sub-configuration " + 
+                    module_subconfigname + "...");
+            if (FederationManager.getExitCode(am.createSubCfg(webClient, 
+                    module_servicename, module_subconfigname, list, realm, 
+                    module_subconfigid, "0")) != 0) {
+                log(Level.SEVERE, "setup", 
+                        "createSubCfg (module) famadm command failed");
+                assert false;
+            }
+ 
             list.clear();
             String svcData = "iplanet-am-auth-configuration=" + 
                     "<AttributeValuePair><Value>" + module_subconfigname +
                     " REQUIRED</Value></AttributeValuePair>";
-            log(Level.FINEST, "setup", svcData);
+            log(Level.FINEST, "setup", "ServiceData: " + svcData);
             list.add(svcData);
-            am.createSubCfg(webClient, service_servicename,
-                    service_subconfigname, list, realm,
-                    service_subconfigid, "0");
+            log(Level.FINE, "setup", "Creating service sub-configuration " + 
+                    service_subconfigname + "...");            
+            if (FederationManager.getExitCode(am.createSubCfg(webClient, 
+                    service_servicename, service_subconfigname, list, realm,
+                    service_subconfigid, "0")) != 0) {
+                log(Level.SEVERE, "setup", 
+                        "createSubCfg (service) famadm command failed");
+                assert false;
+            }
 
             int iIdx = service_subconfigname.indexOf("/");
             svcName = service_subconfigname.substring(iIdx+1,
@@ -190,21 +206,60 @@ public class AuthTest extends TestCommon {
             list.add("userpassword=" + password);
             list.add("inetuserstatus=Active");
             list.add("iplanet-am-user-auth-config=" + svcName);
-            am.createIdentity(webClient, realm, user, "User", list);
+            log(Level.FINE, "setup", "Creating user " + user + " ...");
+            if (FederationManager.getExitCode(am.createIdentity(webClient, 
+                    realm, user, "User", list)) != 0) {
+                log(Level.SEVERE, "setup", 
+                        "createIdentity (User) famadm command failed");
+                assert false;
+            }
 
-            am.createIdentity(webClient, realm, rolename, "Role", null);
-            am.addMember(webClient, realm, user, "User", rolename, "Role");
-
-            list.clear();
-            list.add("iplanet-am-auth-configuration=" + svcName);
-            am.addSvcIdentity(webClient, realm, rolename, "Role",
-                    service_servicename, list);
+            if (ac.getSMSCommon().isPluginConfigured(
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {           
+                log(Level.FINE, "setup", "Creating role " + rolename + " ...");
+                if (FederationManager.getExitCode(am.createIdentity(webClient, 
+                        realm, rolename, "Role", null)) != 0) {
+                    log(Level.SEVERE, "setup", 
+                            "createIdentity (Role) famadm command failed");
+                    assert false;
+                }
+                log(Level.FINE, "setup", "Assigning the user " + user + 
+                        " to role " + rolename + " ...");
+                if (FederationManager.getExitCode(am.addMember(webClient, realm, 
+                        user, "User", rolename, "Role")) != 0) {
+                    log(Level.SEVERE, "setup", 
+                            "addMember famadm (User) call failed");
+                    assert false;
+                }
+                list.clear();
+                list.add("iplanet-am-auth-configuration=" + svcName);
+                log(Level.FINE, "setup", "Assigning the service " + 
+                        service_servicename + " to the role " + 
+                        rolename + "...");
+                if (FederationManager.getExitCode(am.addSvcIdentity(webClient, 
+                        realm, rolename, "Role", service_servicename, 
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", 
+                            "addSvcIdentity famadm command failed");
+                    assert false;
+                }                
+            } else {
+                log(Level.FINEST, "setup", 
+                        "Creation of a role, assignment of user to role, " +
+                        "and assignment of service to role skipped for non " +
+                        "amsdk plugin ...");
+            }
             consoleLogout(webClient, logoutURL);
+        } catch(AssertionError ae) {
+            log(Level.SEVERE, "setup", 
+                    "Calling cleanup due to failed famadm exit code ...");
+            cleanup();
+            throw ae;
         } catch(Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
-        }
+        } 
         exiting("setup");
     }
 
@@ -217,21 +272,19 @@ public class AuthTest extends TestCommon {
     throws Exception {
         entering("testLoginPositive", null);
         try {
-            String user = (String)rb.getString(locTestModule + ".user");
-            String password = (String)rb.getString(locTestModule + ".password");
+            String loginUser = (String)rb.getString(locTestModule + ".user");
+            String loginPassword = (String)rb.getString(locTestModule + 
+                    ".password");
             String mode = locTestMode;
             String modevalue = (String)rb.getString(locTestModule +
                     ".modevalue." + locTestMode);
             String msg = (String)rb.getString(locTestModule + ".passmsg");
-            String module_servicename =
-                        (String)rb.getString(locTestModule +
-                        ".module_servicename");
             WebClient wc = new WebClient();
             if (module_servicename.equals("iPlanetAMAuthAnonymousService"))
-                ac.testZeroPageLoginAnonymousPositive(wc, user, password, mode,
-                        modevalue, msg);
+                ac.testZeroPageLoginAnonymousPositive(wc, loginUser, 
+                        loginPassword, mode, modevalue, msg);
             else
-                ac.testZeroPageLoginPositive(wc, user, password, mode,
+                ac.testZeroPageLoginPositive(wc, loginUser, loginPassword, mode,
                         modevalue, msg);
             consoleLogout(wc, logoutURL);
         } catch (Exception e) {
@@ -251,21 +304,19 @@ public class AuthTest extends TestCommon {
     throws Exception {
         entering("testLoginNegative", null);
         try {
-            String user = (String)rb.getString(locTestModule + ".user");
-            String password = (String)rb.getString(locTestModule + ".password");
+            String loginUser = (String)rb.getString(locTestModule + ".user");
+            String loginPassword = (String)rb.getString(locTestModule + 
+                    ".password");
             String mode = locTestMode;
             String modevalue = (String)rb.getString(locTestModule +
                     ".modevalue." + locTestMode);
             String msg = (String)rb.getString(locTestModule + ".failmsg");
-            String module_servicename =
-                        (String)rb.getString(locTestModule +
-                        ".module_servicename");
             WebClient wc = new WebClient();
             if (module_servicename.equals("iPlanetAMAuthAnonymousService"))
-                ac.testZeroPageLoginAnonymousNegative(wc, user, password, mode,
-                        modevalue, msg);
+                ac.testZeroPageLoginAnonymousNegative(wc, loginUser, 
+                        loginPassword, mode, modevalue, msg);
             else
-                ac.testZeroPageLoginNegative(wc, user, password, mode,
+                ac.testZeroPageLoginNegative(wc, loginUser, loginPassword, mode,
                         modevalue, msg);
             consoleLogout(wc, logoutURL);
         } catch (Exception e) {
@@ -300,13 +351,13 @@ public class AuthTest extends TestCommon {
                     (String)rb.getString(locTestModule +
                     ".module_subconfigname");
 
-            log(Level.FINEST, "setup", "UserName:" + user);
-            log(Level.FINEST, "setup", "RoleName:" + rolename);
-            log(Level.FINEST, "setup", "service_servicename:" +
+            log(Level.FINEST, "cleanup", "UserName:" + user);
+            log(Level.FINEST, "cleanup", "RoleName:" + rolename);
+            log(Level.FINEST, "cleanup", "service_servicename:" +
                     service_servicename);
-            log(Level.FINEST, "setup", "module_subconfigname:" +
+            log(Level.FINEST, "cleanup", "module_subconfigname:" +
                     module_subconfigname);
-            log(Level.FINEST, "setup", "svcName:" + svcName);
+            log(Level.FINEST, "cleanup", "svcName:" + svcName);
 
             Reporter.log("UserName:" + user);
             Reporter.log("RoleName:" + rolename);
@@ -319,15 +370,43 @@ public class AuthTest extends TestCommon {
             consoleLogin(webClient, loginURL, adminUser, adminPassword);
             list = new ArrayList();
             list.add(user);
-            am.deleteIdentities(webClient, realm, list, "User");
+            log(Level.FINE, "cleanup", "Deleting user " + user + " ...");
+            if (FederationManager.getExitCode(am.deleteIdentities(webClient, 
+                    realm, list, "User")) != 0) {
+                log(Level.SEVERE, "cleanup", 
+                        "deleteIdentities (User) famadm command failed");
+            }
             list.clear();
             list.add(rolename);
-            am.deleteIdentities(webClient, realm, list, "Role");
-            am.deleteSubCfg(webClient, service_servicename,
-                    service_subconfigname, realm); 
+
+            if (ac.getSMSCommon().isPluginConfigured(
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {
+                log(Level.FINE, "cleanup", "Deleting role " + rolename + 
+                        " ...");
+                if (FederationManager.getExitCode(am.deleteIdentities(webClient, 
+                        realm, list, "Role")) !=0) {
+                    log(Level.SEVERE, "cleanup", 
+                            "deleteIdentities (Role) famadm command failed");
+                }
+            }
+
+            log(Level.FINE, "cleanup", "Deleting service sub-configuration " + 
+                    service_subconfigname + " ...");            
+            if (FederationManager.getExitCode(am.deleteSubCfg(webClient, 
+                    service_servicename, service_subconfigname, realm)) != 0 ) {
+                log(Level.SEVERE, "cleanup", 
+                        "deleteSubCfg (Service) famadm command failed");
+            }
             list.clear();
             list.add(module_subconfigname);
-            am.deleteAuthInstances(webClient, realm, list); 
+            
+            log(Level.FINE, "cleanup", "Deleting module instance(s) " + list + 
+                    " ...");               
+            if (FederationManager.getExitCode(
+                    am.deleteAuthInstances(webClient, realm, list)) != 0) {
+                log(Level.SEVERE, "cleanup", 
+                        "deleteAuthInstances famadm command failed");
+            }
             consoleLogout(webClient, logoutURL);
             Thread.sleep(5000);
         } catch (Exception e) {

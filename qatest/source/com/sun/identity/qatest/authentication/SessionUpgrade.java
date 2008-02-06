@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUpgrade.java,v 1.2 2007-08-30 17:56:19 sridharev Exp $
+ * $Id: SessionUpgrade.java,v 1.3 2008-02-06 18:50:22 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,7 +98,7 @@ public class SessionUpgrade extends TestCommon {
      * Set up the system for testing.Create authentication instances
      * create users before testing the session Upgrade feature
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec"})
+    @BeforeClass(groups={"ds_ds", "ds_ds_sec"})
     public void setup() 
     throws Exception {
         entering("setup", null);
@@ -122,19 +122,25 @@ public class SessionUpgrade extends TestCommon {
             log(Level.FINEST, "setup", "OrgName " + orgName);
             log(Level.FINEST, "setup", "FirstModuleName: " + FirstModuleName);
             log(Level.FINEST, "setup", "SecondModuleName: " + SecondModuleName);
-            log(Level.FINEST, "setup", "FirstModuleUserName: " + FirstModuleUserName);
-            log(Level.FINEST, "setup", "FirstModuleUserPass: " + FirstModulePassword);
-            log(Level.FINEST, "setup", "SecondModuleUserName: " + SecondModuleUserName);
-            log(Level.FINEST, "setup", "SecondModuleUserPass: " + SecondModulePassword);
-            Reporter.log("testModuleNames " + testModules);
-            Reporter.log("OrgName " + orgName);
+            log(Level.FINEST, "setup", "FirstModuleUserName: " + 
+                    FirstModuleUserName);
+            log(Level.FINEST, "setup", "FirstModuleUserPass: " + 
+                    FirstModulePassword);
+            log(Level.FINEST, "setup", "SecondModuleUserName: " + 
+                    SecondModuleUserName);
+            log(Level.FINEST, "setup", "SecondModuleUserPass: " + 
+                    SecondModulePassword);
+            Reporter.log("testModuleNames: " + testModules);
+            Reporter.log("OrgName: " + orgName);
             Reporter.log("FirstModuleName: " + FirstModuleName);
             Reporter.log("SecondModuleName: " + SecondModuleName);
             Reporter.log("FirstModuleUserName: " + FirstModuleUserName);
             Reporter.log("FirstModuleUserPass: " + FirstModulePassword);
             Reporter.log("SecondModuleUserName: " + SecondModuleUserName);
             Reporter.log("SecondModuleUserPass: " + SecondModulePassword);
-            StringTokenizer moduleTokens = new StringTokenizer(testModules, ",");
+            
+            StringTokenizer moduleTokens = new StringTokenizer(testModules, 
+                    ",");
             strVerify = SecondModuleName + "|" + FirstModuleName;
             List<String> moduleList = getListFromTokens(moduleTokens);
             for (String modName: moduleList) {
@@ -153,6 +159,11 @@ public class SessionUpgrade extends TestCommon {
                     createUser(userName, password);
                 }
             }
+        } catch (AssertionError ae) {
+            log(Level.SEVERE, "setup", 
+                    "Calling cleanup due to failed famadm exit code ...");
+            cleanup();
+            throw ae;            
         } catch(Exception e) {
             cleanup();
             log(Level.SEVERE, "setup", e.getMessage());
@@ -168,7 +179,7 @@ public class SessionUpgrade extends TestCommon {
      * Tests for SessionUpgrade by login into the system using correct
      * credentials for two different modules
      */
-    @Test(groups={"ds_ds","ds_ds_sec"})
+    @Test(groups={"ds_ds", "ds_ds_sec"})
     public void testSessionUpgrade()
     throws Exception {
         AuthContext lc = null;
@@ -242,7 +253,8 @@ public class SessionUpgrade extends TestCommon {
                 }
                 if (newlc.getStatus() == AuthContext.Status.SUCCESS) {
                     SSOToken upgradedToken = newlc.getSSOToken();
-                    assert (upgradedToken.getProperty("AuthType").equals(strVerify));
+                    assert (upgradedToken.getProperty("AuthType").
+                            equals(strVerify));
                 }
             } catch (Exception ex) {
                 log(Level.SEVERE, "testSessionUpgrade", ex.getMessage());
@@ -257,22 +269,36 @@ public class SessionUpgrade extends TestCommon {
      * Deletes the authentication instances and users created
      * by this test scenario
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec"})
+    @AfterClass(groups={"ds_ds", "ds_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
-        WebClient webClient = new WebClient();
+        if (webClient == null) {
+            webClient = new WebClient();
+        }
         try {
             log(Level.FINEST, "cleanup", url);
-            log(Level.FINEST, "cleanup", "Users:" + testUserList);
             List<String> listModInstance = new ArrayList<String>();
             listModInstance.add(moduleSubConfig);
-            log(Level.FINEST, "cleanup", "listModInstance" + listModInstance);
             consoleLogin(webClient, url, adminUser, adminPassword);
-            HtmlPage page = (HtmlPage)fm.deleteAuthInstances(webClient,
-                    realm, listModInstance);
-            log(Level.FINEST, "cleanup", "Page" + page.asXml());
-            fm.deleteIdentities(webClient, realm, testUserList, "User");
+
+            log(Level.FINE, "cleanup", "Deleting auth instance(s) " + 
+                    listModInstance + " ...");
+            if (FederationManager.getExitCode(fm.deleteAuthInstances(
+                    webClient, realm, listModInstance)) != 0) {
+                log(Level.SEVERE, "cleanup", 
+                        "deleteAuthInstances famadm command failed");
+            }
+
+            if (!testUserList.isEmpty()) { 
+                log(Level.FINE, "cleanup", "Deleting user(s) " + testUserList + 
+                        "...");                                
+                if (FederationManager.getExitCode(fm.deleteIdentities(webClient, 
+                        realm, testUserList, "User")) != 0) {
+                    log(Level.SEVERE, "cleanup", 
+                            "deleteIdentities famadm command failed");
+                }
+            }
         } catch(Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationAuthTest.java,v 1.1 2007-09-07 21:26:50 sridharev Exp $
+ * $Id: ApplicationAuthTest.java,v 1.2 2008-02-06 18:50:21 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,11 +83,11 @@ public class ApplicationAuthTest extends TestCommon {
     throws Exception {
         entering("createAgentProfile", null);
         try {
-            log(Level.FINEST, "createAgentProfile", "agentId : " + agentId);
-            log(Level.FINEST, "createAgentProfile", "agentPassword : " 
+            log(Level.FINEST, "createAgentProfile", "agentId: " + agentId);
+            log(Level.FINEST, "createAgentProfile", "agentPassword: " 
                     + agentPassword);
-            Reporter.log("createAgentProfile " + agentId);
-            Reporter.log("createAgentProfile " + agentPassword);
+            Reporter.log("AgentID: " + agentId);
+            Reporter.log("AgentPassword: " + agentPassword);
             Map map = new HashMap();
             Set set = new HashSet();
             set.add(agentPassword);
@@ -96,7 +96,9 @@ public class ApplicationAuthTest extends TestCommon {
             set.add("Active");
             map.put("sunIdentityServerDeviceStatus", set);
             admintoken = getToken(adminUser, adminPassword, basedn);
-            idmc.createIdentity(admintoken, realm, IdType.AGENT, agentId,  map);
+            log(Level.FINE, "createAgentProfile", 
+                    "Creating the agent identity " + agentId + " ...");
+            idmc.createIdentity(admintoken, realm, IdType.AGENT, agentId, map);
         } catch (Exception e) {
             log(Level.SEVERE, "createAgentProfile", e.getMessage());
             e.printStackTrace();
@@ -127,16 +129,22 @@ public class ApplicationAuthTest extends TestCommon {
             if (authContext.getStatus() == AuthContext.Status.SUCCESS) {
                 ssoToken = authContext.getSSOToken();
             }
-            if ((ssoToken.getTimeLeft() > Long.MAX_VALUE/100)){
-                assert true;
+            if (ssoToken != null) {
+                if ((ssoToken.getTimeLeft() > Long.MAX_VALUE/100)){
+                    assert true;
+                } else {
+                    assert false;
+                }
             } else {
+                log(Level.SEVERE, "testApplicationAuthPositive", 
+                        "SSOToken is null!");
                 assert false;
             }
         } catch (AuthLoginException ale) {
-            log(Level.SEVERE, "testApplicationAuth", ale.getMessage());
+            log(Level.SEVERE, "testApplicationAuthPositive", ale.getMessage());
             ale.printStackTrace();
         } catch (Exception e) {
-            log(Level.SEVERE, "testApplicationAuth", e.getMessage());
+            log(Level.SEVERE, "testApplicationAuthPositive", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -168,10 +176,10 @@ public class ApplicationAuthTest extends TestCommon {
                 assert true;
             }
         } catch (AuthLoginException ale) {
-            log(Level.SEVERE, "testApplicationAuth", ale.getMessage());
+            log(Level.SEVERE, "testApplicationAuthNegative", ale.getMessage());
             ale.printStackTrace();
         } catch (Exception e) {
-            log(Level.SEVERE, "testApplicationAuth", e.getMessage());
+            log(Level.SEVERE, "testApplicationAuthNegative", e.getMessage());
             e.printStackTrace();
             throw e;
         } 
@@ -186,7 +194,9 @@ public class ApplicationAuthTest extends TestCommon {
         entering("deleteAgentProfile", null);
         try {
             admintoken = getToken(adminUser, adminPassword, basedn);
-            idmc.deleteIdentity(admintoken, realm, IdType.AGENT, agentId);
+            log(Level.FINE, "deleteAgentProfile", 
+                    "Deleting the agent identity " + agentId + " ...");            
+            idmc.deleteIdentity(admintoken, realm, IdType.AGENT, agentId);           
         } catch (Exception e) {
             log(Level.SEVERE, "deleteAgentProfile", e.getMessage());
             e.printStackTrace();

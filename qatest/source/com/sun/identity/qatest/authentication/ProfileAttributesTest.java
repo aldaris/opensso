@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.4 2008-01-18 00:42:50 rmisra Exp $
+ * $Id: ProfileAttributesTest.java,v 1.5 2008-02-06 18:50:22 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,19 +25,15 @@
 package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.authentication.AuthTestsValidator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -109,27 +105,57 @@ public class ProfileAttributesTest extends TestCommon {
             locTestProfile = testProfile;
             testAttribute = "am-auth-" + locTestProfile ;
             testResources = ResourceBundle.getBundle("ProfileAttributesTest");
-            testModule = testResources.getString(testAttribute + "-test-module");
+            testModule = testResources.getString(testAttribute + 
+                    "-test-module");
             createUserProp = testResources.getString(testAttribute
                     + "-test-createUser");
             userExists = new Boolean(createUserProp).booleanValue();
-            testUser = testResources.getString(testAttribute + "-test-username");
+            testUser = testResources.getString(testAttribute + 
+                    "-test-username");
             testUser.trim();
             testUserpass = testResources.getString(testAttribute
                     + "-test-userpassword");
             testUserpass.trim();
-            testPassmsg = testResources.getString(testAttribute + "-test-passmsg");
+            testPassmsg = testResources.getString(testAttribute + 
+                    "-test-passmsg");
+            
+            log(Level.FINEST, "setup", "profileAttribute: " + locTestProfile);
+            log(Level.FINEST, "setup", "testModule: " + testModule);
+            log(Level.FINEST, "setup", "createUserProp: " + createUserProp);
+            log(Level.FINEST, "setup", "userExists: " + userExists);
+            log(Level.FINEST, "setup", "testUser: " + testUser);
+            log(Level.FINEST, "setup", "testUserPassword: " + testUserpass);
+            log(Level.FINEST, "setup", "testPassmsg: " + testPassmsg);
+            Reporter.log("profileAttribute: " + locTestProfile);
+            Reporter.log("testModule: " + testModule);
+            Reporter.log("createUserProp: " + createUserProp);
+            Reporter.log("userExists: " + userExists);
+            Reporter.log("testUser: " + testUser);
+            Reporter.log("testUserPassword: " + testUserpass);
+            Reporter.log("testPassmsg: " + testPassmsg);
+            
             createModule(testModule);
             testURL = url + "?module=" + moduleSubConfig;
             String attributeVal = getProfileAttribute(locTestProfile);
             attributevalues.add(attributeVal);
             consoleLogin(webClient, url, adminUser, adminPassword);
-            fm.setSvcAttrs(webClient, realm, servicename, attributevalues);
+            log(Level.FINE, "setup", "Setting profile attribute to " + 
+                    locTestProfile + " in the " + servicename + " service.");
+            if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm, 
+                    servicename, attributevalues)) != 0) {
+                log(Level.SEVERE, "setup", "setSvcAttrs famadm command failed");
+                assert false;
+            }
             if (!userExists) {
                 createUser(testUser, testUserpass);
             }
+        } catch (AssertionError ae) {
+            log(Level.SEVERE, "setup", 
+                    "Calling cleanup due to failed famadm exit code ...");
+            cleanup();
+            throw ae;            
         } catch(Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -164,20 +190,43 @@ public class ProfileAttributesTest extends TestCommon {
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
-        WebClient webClient = new WebClient();
+        if (webClient == null) {
+            webClient = new WebClient();
+        }
         try {
-            log(logLevel, "cleanup", url);
-            log(logLevel, "cleanup", "Users:" + testUserList);
+            log(Level.FINEST, "cleanup", url);
             List<String> listModInstance = new ArrayList<String>();
             listModInstance.add(moduleSubConfig);
-            log(logLevel, "cleanup", "listModInstance" + listModInstance);
             consoleLogin(webClient, url, adminUser, adminPassword);
-            HtmlPage page = (HtmlPage)fm.deleteAuthInstances(webClient,
-                    realm, listModInstance);
-            log(logLevel, "cleanup", "Page" + page.asXml());
-            fm.deleteIdentities(webClient, realm, testUserList, "User");
+            String attributeVal = getProfileAttribute("required");
+            attributevalues.clear();
+            attributevalues.add(attributeVal);
+            log(Level.FINE, "cleanup", "Resetting attribute value " + 
+                    attributeVal + " in service " + servicename + ".");
+            if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm, 
+                    servicename, attributevalues)) != 0) {
+                log(Level.SEVERE, "setup", "setSvcAttrs famadm command failed");
+            }
+            
+            log(Level.FINE, "cleanup", "Deleting authentication module(s) " +
+                    listModInstance + "...");
+            if (FederationManager.getExitCode(fm.deleteAuthInstances(webClient,
+                    realm, listModInstance)) != 0) {
+                log(Level.SEVERE, "cleanup", 
+                        "deleteAuthInstances famadm command failed");
+            }
+            
+            if (!testUserList.isEmpty()) {
+                log(Level.FINE, "cleanup", "Deleting user(s) " + testUserList + 
+                        " ...");
+                if (FederationManager.getExitCode(fm.deleteIdentities(webClient, 
+                        realm, testUserList, "User")) != 0) {
+                    log(Level.SEVERE, "cleanup", 
+                            "deleteIdentities famadm command failed");
+                }
+            }
         } catch(Exception e) {
-            log(Level.SEVERE, "cleanup", e.getMessage(), null);
+            log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -200,16 +249,10 @@ public class ProfileAttributesTest extends TestCommon {
             moduleSubConfig = moduleConfig.getModuleSubConfigName();
             moduleSubConfigId = moduleConfig.getModuleSubConfigId();
             moduleConfigData = moduleConfig.getListFromMap(modMap, mName);
-            log(logLevel, "createModule", "ModuleServiceName :" +
-                    moduleServiceName);
-            log(logLevel, "createModule", "ModuleSubConfig :" +
-                    moduleSubConfig);
-            log(logLevel, "createModule", "ModuleSubConfigId :" +
-                    moduleSubConfigId);
             moduleConfig.createModuleInstances(moduleServiceName,
                     moduleSubConfig, moduleConfigData, moduleSubConfigId);
         } catch(Exception e) {
-            log(Level.SEVERE, "createModule", e.getMessage(), null);
+            log(Level.SEVERE, "createModule", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -225,12 +268,17 @@ public class ProfileAttributesTest extends TestCommon {
         userList.add("cn=" + newUser);
         userList.add("userpassword=" + userpassword);
         userList.add("inetuserstatus=Active");
-        log(logLevel, "createUser", "userList " + userList);
+        log(Level.FINE, "createUser", "Creating user " + newUser + " ...");
         testUserList.add(newUser);
         try {
-            fm.createIdentity(webClient, realm, newUser, "User", userList);
+            if (FederationManager.getExitCode(fm.createIdentity(webClient, 
+                    realm, newUser, "User", userList)) != 0) {
+                log(Level.SEVERE, "createUser", 
+                        "createIdentity famadm command failed");
+                assert false;
+            }
         } catch(Exception e) {
-            log(Level.SEVERE, "createUser", e.getMessage(), null);
+            log(Level.SEVERE, "createUser", e.getMessage());
             e.printStackTrace();
         }
     }

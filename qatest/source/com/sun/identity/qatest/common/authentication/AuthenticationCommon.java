@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.5 2007-12-18 21:29:26 sridharev Exp $
+ * $Id: AuthenticationCommon.java,v 1.6 2008-02-06 18:48:27 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.TestCommon;
-import java.lang.String;
 import java.net.URL;
 import java.util.logging.Level;
 import com.iplanet.sso.SSOToken;
@@ -71,16 +70,16 @@ public class AuthenticationCommon extends TestCommon {
             HtmlPage page = (HtmlPage)wc.getPage( url );
             
             log(Level.FINEST, "testZeroPageLoginPositive", page.getTitleText());
-            // Tests for everything if mode is not set to role. If mode is set 
-            // to role, tests only if one of the configured plugin for the realm 
-            // under test is of type amsdk, as this feature is only supported 
-            // by this plugin
-            if (!mode.equalsIgnoreCase("role")) {             
+            // Tests for everything if mode is not set to "role" or the 
+            // configured plugin is of type amsdk. 
+            if (!mode.equalsIgnoreCase("role") || 
+                    smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(passMsg);
-            } else if (smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
-                assert page.getTitleText().equals(passMsg);
-            }    
+            } else {
+                log(Level.FINEST, "testZeroPageLoginPositive", 
+                        "Role based test is skipped for non amsdk plugin ...");
+            }   
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginPositive", e.getMessage(),
                     params);
@@ -107,18 +106,18 @@ public class AuthenticationCommon extends TestCommon {
             log(Level.FINEST, "testZeroPageLoginNegative", strTest);
             URL url = new URL(strTest);
             HtmlPage page = (HtmlPage)wc.getPage( url );
-            
             log(Level.FINEST, "testZeroPageLoginNegative", page.getTitleText());
-            // Tests for everything if mode is not set to role. If mode is set 
-            // to role, tests only if one of the configured plugin for the realm 
-            // under test is of type amsdk, as this feature is only supported 
-            // by this plugin
-            if (!mode.equalsIgnoreCase("role")) {
+            
+            // Tests for everything if mode is not set to "role" or the 
+            // configured plugin is of type amsdk. 
+            if (!mode.equalsIgnoreCase("role") || 
+                    smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(failMsg);
-            } else if (smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
-                assert page.getTitleText().equals(failMsg);
-            }
+            } else {
+                log(Level.FINEST, "testZeroPageLoginNegative", 
+                        "Role based test is skipped for non amsdk plugin ...");
+            } 
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginNegative", e.getMessage(),
                     params);
@@ -146,16 +145,16 @@ public class AuthenticationCommon extends TestCommon {
             HtmlPage page = (HtmlPage)wc.getPage( url );
             log(Level.FINEST, "testZeroPageLoginFailure", page.getTitleText());
             
-            // Tests for everything if mode is not set to role. If mode is set 
-            // to role, tests only if one of the configured plugin for the realm 
-            // under test is of type amsdk, as this feature is only supported 
-            // by this plugin
-            if (!mode.equalsIgnoreCase("role")) { 
+            // Tests for everything if mode is not set to "role" or the 
+            // configured plugin is of type amsdk. 
+            if (!mode.equalsIgnoreCase("role") || 
+                    smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(passMsg);
-            } else if (smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
-                assert page.getTitleText().equals(passMsg);
-            }
+            } else {
+                log(Level.FINEST, "testZeroPageLoginFailure", 
+                        "Role based test is skipped for non amsdk plugin ...");
+            } 
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginFailure", e.getMessage(),
                     params);
@@ -185,16 +184,16 @@ public class AuthenticationCommon extends TestCommon {
             log(Level.FINEST, "testZeroPageLoginAnonymousPositive",
                     page.getTitleText());
             
-            // Tests for everything if mode is not set to role. If mode is set 
-            // to role, tests only if one of the configured plugin for the realm 
-            // under test is of type amsdk, as this feature is only supported 
-            // by this plugin
-            if(!mode.equalsIgnoreCase("role")) {   
+            // Tests for everything if mode is not set to "role" or the 
+            // configured plugin is of type amsdk. 
+            if (!mode.equalsIgnoreCase("role") || 
+                    smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(passMsg);
-            } else if (smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
-                assert page.getTitleText().equals(passMsg);
-            }
+            } else {
+                log(Level.FINEST, "testZeroPageLoginAnonymousPositive", 
+                        "Role based test is skipped for non amsdk plugin ...");
+            } 
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginAnonymousPositive",
                     e.getMessage(),
@@ -225,16 +224,16 @@ public class AuthenticationCommon extends TestCommon {
             log(Level.FINEST, "testZeroPageLoginAnonymousNegative",
                     page.getTitleText());
             
-            // Tests for everything if mode is not set to role. If mode is set 
-            // to role, tests only if one of the configured plugin for the realm 
-            // under test is of type amsdk, as this feature is only supported 
-            // by this plugin
-            if (!mode.equalsIgnoreCase("role")) {
+            // Tests for everything if mode is not set to "role" or the 
+            // configured plugin is of type amsdk. 
+            if (!mode.equalsIgnoreCase("role") || 
+                    smsCommon.isPluginConfigured(ssoToken,
+                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(failMsg);
-            } else if (smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {
-                assert page.getTitleText().equals(failMsg);
-            }
+            } else {
+                log(Level.FINEST, "testZeroPageLoginAnonymousPositive", 
+                        "Role based test is skipped for non amsdk plugin ...");
+            } 
         } catch (Exception e) {
             log(Level.SEVERE, "testZeroPageLoginAnonymousNegative",
                     e.getMessage(),
@@ -244,4 +243,10 @@ public class AuthenticationCommon extends TestCommon {
         }
         exiting("testZeroPageLoginAnonymousNegative");
     }
+    
+    /**
+     * Retrieve the SMSCommon instance.
+     * @return <code>SMSCommon</code>
+     */
+    public SMSCommon getSMSCommon() { return smsCommon; }
 }

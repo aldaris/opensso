@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.6 2008-01-18 00:42:51 rmisra Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.7 2008-02-06 18:48:27 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,8 @@ public class AuthTestConfigUtil extends TestCommon {
     private String logoutURL;
     private String configInfo;
     private String testConfigRealm = "/";
+    private FederationManager am;
+    private WebClient webClient;
     
     /**
      * Default Contructor
@@ -66,6 +68,7 @@ public class AuthTestConfigUtil extends TestCommon {
         this.configdata =  ResourceBundle.getBundle(configInfo);
         url = protocol + ":" + "//" + host + ":" + port + uri;
         logoutURL = url + "/UI/Logout";
+        am = new FederationManager(url);
     }
     
     /**
@@ -114,7 +117,7 @@ public class AuthTestConfigUtil extends TestCommon {
                 mapModDataList.add(actualKey + "=" + value);
             }
         }
-        log(Level.FINEST, "getModuleDataAsList", "ModuleData:" +
+        log(Level.FINEST, "getModuleDataAsList", "ModuleData: " +
                 mapModDataList);
         return mapModDataList;
     }
@@ -160,7 +163,7 @@ public class AuthTestConfigUtil extends TestCommon {
         if (!(realmName.equals("/")))
             testConfigRealm = testConfigRealm + realmName;
     }
-    
+
     /**
      * Creates the module instances
      * @param moduleServicename
@@ -169,20 +172,108 @@ public class AuthTestConfigUtil extends TestCommon {
      * @param moduleConfigId
      */
     public void createModuleInstances(String modServname, String modSubconf,
-            List modConfdata, String modConfId) throws Exception {
-        log(Level.FINEST, "createModuleInstances", "moduleServicename:" +
-                modServname);
-        log(Level.FINEST, "createModuleInstances", "moduleServicename:" +
-                modSubconf);
-        log(Level.FINEST, "createModuleInstances", "moduleServicename:" +
+            List modConfdata, String modConfId) 
+    throws Exception {
+        createModuleInstances(realm, modServname, modSubconf, modConfdata, 
                 modConfId);
-        FederationManager am = new FederationManager(url);
-        WebClient webClient = new WebClient();
-        consoleLogin(webClient, url, adminUser, adminPassword);
-        am.createSubCfg(webClient, modServname,
-                modSubconf, modConfdata, realm, modConfId, "0");
-        consoleLogout(webClient, logoutURL);
+    }    
+    /**
+     * Creates the module instances
+     * @param realm
+     * @param moduleServicename
+     * @param moduleSubconfig
+     * @param moduleConfigdata
+     * @param moduleConfigId
+     */
+    public void createModuleInstances(String modRealm, String modServname, 
+            String modSubconf, List modConfdata, String modConfId) 
+    throws Exception {
+        try {
+            log(Level.FINEST, "createModuleInstances", "moduleServiceName: " +
+                    modServname);
+            log(Level.FINEST, "createModuleInstances", 
+                    "moduleSubconfiguration: " + modSubconf);
+            log(Level.FINEST, "createModuleInstances", "moduleConfigurationId: "
+                    + modConfId);
+            log(Level.FINEST, "createModuleInstances", "realm: " + modRealm);
+
+            webClient = new WebClient();
+            consoleLogin(webClient, url, adminUser, adminPassword);
+            String cmdRealm = modRealm;
+            if (!modRealm.equals("/")) {
+                cmdRealm = "/" + modRealm;
+            }            
+            log(Level.FINE, "createModuleInstances", 
+                    "Creating module sub-configuration " + modSubconf + 
+                    " in service " + modServname + " in realm " + cmdRealm + 
+                    " ...");
+            if (FederationManager.getExitCode(
+                    am.createSubCfg(webClient, modServname, modSubconf, 
+                    modConfdata, cmdRealm, modConfId, "0")) != 0) {
+                log(Level.SEVERE, "createModuleInstances", 
+                        "createSubCfg (Module) famadm command failed");
+                assert false;
+            }
+        } catch(Exception e) {
+            log(Level.SEVERE, "createModuleInstances", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(webClient, logoutURL);
+        }
     }
+    
+    /**
+     * Deletes the module instances
+     */
+    public void deleteModuleInstances(String modServname, String modSubconf)
+    throws Exception {
+        deleteModuleInstances(realm, modServname, modSubconf);
+    }
+    
+    /**
+     * Deletes the module instances
+     * @param modRealm
+     * @param moduleServicename
+     * @param moduleSubconfig
+     * @param moduleConfigId
+     */
+    public void deleteModuleInstances(String modRealm, String modServname, 
+            String modSubconf) 
+    throws Exception {
+        try {
+            log(Level.FINEST, "deleteModuleInstances", "moduleServiceName: " +
+                    modServname);
+            log(Level.FINEST, "deleteModuleInstances", 
+                    "moduleSubconfiguration: " + modSubconf);
+            log(Level.FINEST, "deleteModuleInstances", "realm: " + modRealm);
+
+            webClient = new WebClient();
+            consoleLogin(webClient, url, adminUser, adminPassword);
+            String cmdRealm = modRealm;
+            if (!modRealm.equals("/")) {
+                cmdRealm = "/" + modRealm;
+            }            
+            log(Level.FINE, "deleteModuleInstances", 
+                    "Deleting module sub-configuration " + modSubconf + 
+                    " in service " + modServname + " in realm " + cmdRealm + 
+                    " ...");
+            if (FederationManager.getExitCode(
+                    am.deleteSubCfg(webClient, modServname, modSubconf, 
+                    cmdRealm)) != 0) {
+                log(Level.SEVERE, "deleteModuleInstances", 
+                        "deleteSubCfg (Module) famadm command failed");
+                assert false;
+            }
+        } catch(Exception e) {
+            log(Level.SEVERE, "deleteModuleInstances", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(webClient, logoutURL);
+        }
+    }    
+    
     
     /**
      * Create Services
@@ -191,18 +282,33 @@ public class AuthTestConfigUtil extends TestCommon {
      */
     public void createServices(String chainname, List servData)
     throws Exception {
-        String servicename = "iPlanetAMAuthConfiguration";
-        String subconfigid = "NamedConfiguration";
-        String subconfigname = "Configurations/" + chainname;
-        log(Level.FINEST, "createServices", "servicename:" + servicename);
-        log(Level.FINEST, "createServices", "subconfig " + subconfigid);
-        log(Level.FINEST, "createServices", "subconfigname:" + subconfigname);
-        FederationManager am = new FederationManager(url);
-        WebClient webClient = new WebClient();
-        consoleLogin(webClient, url, adminUser, adminPassword);
-        am.createSubCfg(webClient, servicename, subconfigname, 
-                servData, realm, subconfigid, "0");
-        consoleLogout(webClient, logoutURL);
+        try {
+            String servicename = "iPlanetAMAuthConfiguration";
+            String subconfigid = "NamedConfiguration";
+            String subconfigname = "Configurations/" + chainname;
+            log(Level.FINEST, "createServices", "servicename: " + servicename);
+            log(Level.FINEST, "createServices", "subconfig: " + subconfigid);
+            log(Level.FINEST, "createServices", "subconfigname: " + 
+                    subconfigname);
+            webClient = new WebClient();
+            consoleLogin(webClient, url, adminUser, adminPassword);
+            log(Level.FINE, "createModuleInstances", 
+                    "Creating service sub-configuration " + subconfigname + 
+                    " ...");            
+            if (FederationManager.getExitCode(
+                    am.createSubCfg(webClient, servicename, subconfigname, 
+                    servData, realm, subconfigid, "0")) != 0) {
+                log(Level.SEVERE, "createServices", 
+                        "createSubCfg (Service) famadm command failed");
+                assert false;
+            }
+        } catch(Exception e) {
+            log(Level.SEVERE, "createServices", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(webClient, logoutURL);
+        }
     }
     
     /**
@@ -212,12 +318,24 @@ public class AuthTestConfigUtil extends TestCommon {
      */
     public void createUser(List userList, String uname)
     throws Exception{
-        FederationManager am = new FederationManager(url);
-        WebClient webClient = new WebClient();
-        consoleLogin(webClient, url, adminUser, adminPassword);
-        am.createIdentity(webClient, realm, uname, "User", userList);
-        log(Level.FINEST, "createUser", "User:" + userList);
-        consoleLogout(webClient, logoutURL);
+        try {
+            webClient = new WebClient();
+            consoleLogin(webClient, url, adminUser, adminPassword);
+            log(Level.FINE, "createUser", "Creating user " + uname + " ...");
+            if (FederationManager.getExitCode(
+                    am.createIdentity(webClient, realm, uname, "User", 
+                    userList)) != 0) {
+                log(Level.SEVERE, "createUser", 
+                        "createIdentity (User) famadm command failed");
+                assert false;
+            }
+        } catch(Exception e) {
+            log(Level.SEVERE, "createUser", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(webClient, logoutURL);
+        }
     }
     
     /**
@@ -226,12 +344,24 @@ public class AuthTestConfigUtil extends TestCommon {
      */
     public void createRealms(String realmName)
     throws Exception{
-        FederationManager am = new FederationManager(url);
-        WebClient webClient = new WebClient();
-        consoleLogin(webClient, url, adminUser, adminPassword);
-        am.createRealm(webClient, realmName);
-        log(Level.FINEST, "createRealms", "Realm:" + realmName);
-        consoleLogout(webClient, logoutURL);
+        try {
+            webClient = new WebClient();
+            consoleLogin(webClient, url, adminUser, adminPassword);
+            log(Level.FINE, "createRealms", "Creating realm " + realmName + 
+                    "...");
+            if (FederationManager.getExitCode(
+                    am.createRealm(webClient, realmName)) != 0) {
+                log(Level.SEVERE, "createRealms", 
+                        "createRealm famadm command failed");
+                assert false;
+            }
+        } catch(Exception e) {
+            log(Level.SEVERE, "createRealms", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(webClient, logoutURL);
+        }
     }
     
     /**
@@ -241,7 +371,7 @@ public class AuthTestConfigUtil extends TestCommon {
      * @param Map of users to be creared
      * @param moduleName
      */
-    public List getListFromMap(Map lMap, String moduleName){
+    public List getListFromMap(Map lMap, String moduleName) {
         Object escapeModServiceName = moduleName + ".module-service-name";
         Object escapeModSubConfigName = moduleName + ".module-subconfig-name";
         lMap.remove(escapeModServiceName);
@@ -259,8 +389,8 @@ public class AuthTestConfigUtil extends TestCommon {
             String uadd = userkey + "=" + userval;
             uadd.trim();
             list.add(uadd);
-            log(Level.FINEST, "getListFromMap", "UserList" + list);
         }
+        log(Level.FINEST, "getListFromMap", "List: " + list);        
         return list;
     }
 }
