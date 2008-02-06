@@ -12,6 +12,7 @@ com/sun/identity/common/ScheduleableAction.class
 com/sun/identity/common/ScheduleableGroupAction.class
 com/sun/identity/common/ShutdownListener.class
 com/sun/identity/common/ShutdownManager.class
+com/sun/identity/common/ShutdownPriority.class
 com/sun/identity/common/ShutdownServletContextListener.class
 com/sun/identity/common/SystemTimer*.class
 com/sun/identity/common/SystemTimerPool*.class
