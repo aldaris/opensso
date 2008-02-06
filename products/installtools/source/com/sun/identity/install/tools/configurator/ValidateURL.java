@@ -74,18 +74,11 @@ public class ValidateURL extends ValidatorBase {
             if (deploymentURI.length() > 0) {
                 Map tokens = state.getData();
                 
-                if (!tokens.containsKey("AM_SERVICES_PROTO")) {
-                    tokens.put("AM_SERVICES_PROTO", protocol);
-                }
-                if (!tokens.containsKey("AM_SERVICES_HOST")) {
-                    tokens.put("AM_SERVICES_HOST", hostName);
-                }
-                if (!tokens.containsKey("AM_SERVICES_PORT")) {
-                    tokens.put("AM_SERVICES_PORT", sPortNum);
-                }
-                if (!tokens.containsKey("AM_SERVICES_DEPLOY_URI")) {
-                    tokens.put("AM_SERVICES_DEPLOY_URI", deploymentURI);
-                }              
+                tokens.put("AM_SERVICES_PROTO", protocol);
+                tokens.put("AM_SERVICES_HOST", hostName);
+                tokens.put("AM_SERVICES_PORT", sPortNum);
+                tokens.put("AM_SERVICES_DEPLOY_URI", deploymentURI);
+
                 state.putData(tokens);               
 		// Establish the connection
 	        URLConnection urlConnect = serverUrl.openConnection();
@@ -162,15 +155,11 @@ public class ValidateURL extends ValidatorBase {
             }
             String sPortNum = new Integer(portNum).toString();           
             Map tokens = state.getData();
-            if (!tokens.containsKey("AGENT_PREF_PROTO")) {
-                tokens.put("AGENT_PREF_PROTO", protocol);
-            }
-            if (!tokens.containsKey("AGENT_HOST")) {
-                tokens.put("AGENT_HOST", hostName);
-            }
-            if (!tokens.containsKey("AGENT_PREF_PORT")) {
-                tokens.put("AGENT_PREF_PORT", sPortNum);
-            }
+
+            tokens.put("AGENT_PREF_PROTO", protocol);
+            tokens.put("AGENT_HOST", hostName);
+            tokens.put("AGENT_PREF_PORT", sPortNum);
+
             state.putData(tokens);
             validRes = ValidationResultStatus.STATUS_SUCCESS;
          } catch (MalformedURLException mfe) {
