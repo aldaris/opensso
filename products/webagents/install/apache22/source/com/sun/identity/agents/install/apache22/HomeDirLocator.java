@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HomeDirLocator.java,v 1.2 2008-02-05 19:55:58 madan_ranganath Exp $
+ * $Id: HomeDirLocator.java,v 1.3 2008-02-07 22:44:38 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.agents.install.apache22;
 
+import com.sun.identity.install.tools.configurator.InstallConstants;
 import com.sun.identity.install.tools.configurator.IStateAccess;
 import com.sun.identity.install.tools.configurator.InstallException;
 import com.sun.identity.install.tools.configurator.IServerHomeDirLocator;
@@ -38,7 +39,7 @@ import java.io.File;
  * Apache server instance's config directory at the time of agent setup. 
  */
 public class HomeDirLocator implements IServerHomeDirLocator,
-        IConfigKeys, IConstants {
+        IConfigKeys, IConstants, InstallConstants {
     
     private static String LOC_APC22_ERR_IN_VALID_HOME_DIR =
             "APC22_ERR_IN_VALID_HOME_DIR";
