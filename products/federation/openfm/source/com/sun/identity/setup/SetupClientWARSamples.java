@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientWARSamples.java,v 1.2 2007-11-19 20:38:41 mrudul_uchil Exp $
+ * $Id: SetupClientWARSamples.java,v 1.3 2008-02-07 01:29:03 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Properties;
 import javax.servlet.ServletContext;
@@ -78,6 +79,14 @@ public class SetupClientWARSamples {
             content += TRUST_ALL_CERTS;
         }
 
+        // Setup default client keystore path
+        URL url = 
+            servletContext.getResource("/WEB-INF/lib/openssoclientsdk.jar");
+        String keystoreLocation = (url.toString()).substring(5);
+        int index = keystoreLocation.indexOf("WEB-INF");
+        keystoreLocation = keystoreLocation.substring(0, index-1);
+        content = content.replaceAll("@" + "BASE_DIR" + "@", keystoreLocation);
+        
         BufferedWriter out = new BufferedWriter(new FileWriter(configFile));
         out.write(content);
         out.close();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderUtils.java,v 1.5 2007-11-29 08:25:22 mrudul_uchil Exp $
+ * $Id: ProviderUtils.java,v 1.6 2008-02-07 01:29:50 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,7 @@ public class ProviderUtils {
      
      public static List getAllSTSConfig() {
          List stsConfigs = new ArrayList();
-         stsConfigs.add(getLocalSTSConfig());
+         //stsConfigs.add(getLocalSTSConfig());
          //Set agentConfigAttribute = new HashSet();
          //agentConfigAttribute.add(AGENT_CONFIG_ATTR);
          try {

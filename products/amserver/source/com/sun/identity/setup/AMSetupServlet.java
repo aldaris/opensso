@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.40 2008-02-04 21:02:09 jonnelson Exp $
+ * $Id: AMSetupServlet.java,v 1.41 2008-02-07 01:25:56 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1521,6 +1521,7 @@ public class AMSetupServlet extends HttpServlet {
         config.put("privateKeyAlias","test");
         config.put("publicKeyAlias","test");
         config.put("isRequestSign","true");
+        config.put("keepSecurityHeaders","true");
         config.put("AgentType","WSCAgent");
         createAgent(idrepo, "wsc", "WSC", "", config);
 
@@ -1528,6 +1529,17 @@ public class AMSetupServlet extends HttpServlet {
         config.remove("AgentType");
         config.put("AgentType","WSPAgent");
         createAgent(idrepo, "wsp", "WSP", "", config);
+
+        // Add localSTS configuration
+        config.remove("AgentType");
+        config.put("AgentType","STSAgent");
+        config.remove("SecurityMech");
+        config.remove("UserCredential");
+        config.remove("keepSecurityHeaders");
+        config.put("SecurityMech","urn:sun:wss:security:null:X509Token");
+        config.put("STSEndpoint",serverURL + deployuri + "/sts");
+        config.put("STSMexEndpoint",serverURL + deployuri + "/sts/mex");
+        createAgent(idrepo, "localSTS", "STS", "", config);
 
         /*
         // Add UsernameToken profile
