@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConstants.java,v 1.3 2008-02-05 19:54:13 madan_ranganath Exp $
+ * $Id: IConstants.java,v 1.4 2008-02-07 18:00:17 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,9 +35,6 @@ public interface IConstants {
 
     /** Field STR_SWS_GROUP **/
     public static String STR_SWS_GROUP = "sjswsTools";
-    
-    /** Field FILE_SEP **/
-    public static final String FILE_SEP = "/";
     
     public static final String STR_SWS_MAGNUS_FILE = "magnus.conf";
     public static final String STR_SWS_OBJ_FILE = "obj.conf";

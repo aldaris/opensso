@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HomeDirLocator.java,v 1.2 2008-02-05 19:54:13 madan_ranganath Exp $
+ * $Id: HomeDirLocator.java,v 1.3 2008-02-07 18:00:17 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.agents.install.sjsws;
 
+import com.sun.identity.install.tools.admin.ICommonToolsConstants;
 import com.sun.identity.install.tools.configurator.IStateAccess;
 import com.sun.identity.install.tools.configurator.InstallException;
 import com.sun.identity.install.tools.configurator.IServerHomeDirLocator;
@@ -38,7 +39,7 @@ import java.io.File;
  * SWS server instance's config directory at the time of agent setup. 
  */
 public class HomeDirLocator implements IServerHomeDirLocator,
-        IConfigKeys, IConstants {
+        IConfigKeys, IConstants, ICommonToolsConstants {
     
     private static String LOC_SWS_ERR_IN_VALID_HOME_DIR =
             "SWS_ERR_IN_VALID_HOME_DIR";
