@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.16 2008-02-06 20:54:35 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.17 2008-02-07 17:10:25 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -534,11 +534,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         }
 
         // Memberships can be returned for agents.
-        if (!type.equals(IdType.AGENT) && !type.equals(IdType.AGENTONLY)) {
+        if (!type.equals(IdType.AGENT) && !type.equals(IdType.AGENTONLY) &&
+            !type.equals(IdType.AGENTGROUP)) {
             debug.message(
                 "AgentsRepo:getMemberships supported only for agents");
             Object args[] = { NAME };
-            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args));
+            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "225", args));
         }
 
         // Set to maintain the members
