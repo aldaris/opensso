@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtility.java,v 1.6 2007-12-20 22:55:57 cmwesley Exp $
+ * $Id: CLIUtility.java,v 1.7 2008-02-07 20:52:05 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,7 +47,8 @@ public class CLIUtility extends TestCommon {
     private int INITIAL_ARG_LIST_SIZE = 6;
     protected static String timeout;
     protected static String localeValue;
-    protected static String cliPath;       
+    protected static String cliPath; 
+    protected static String passwdFile;
     protected ArrayList<String> argList;
 
     static {
@@ -56,6 +57,7 @@ public class CLIUtility extends TestCommon {
             timeout = rbCLI.getString("command-timeout"); 
             localeValue = rbCLI.getString("locale");
             cliPath = rbCLI.getString("cli-path");
+            passwdFile = rbCLI.getString("password-file");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -329,7 +331,7 @@ public class CLIUtility extends TestCommon {
         
         while (tokenizer.hasMoreTokens()) {
             String searchToken = tokenizer.nextToken();
-            log(Level.FINE, "findStringsInOutput", "Searching for string \'" + 
+            log(Level.FINE, "findStringsInError", "Searching for string \'" + 
                     searchToken + "\' in command error.");      
             if (!findStringInError(searchToken)) {
                 stringsFound = false;

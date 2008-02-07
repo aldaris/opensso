@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.12 2008-01-18 15:04:31 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.13 2008-02-07 20:52:05 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,9 +53,6 @@ import java.util.logging.Level;
 public class FederationManagerCLI extends CLIUtility 
         implements CLIConstants, FederationManagerCLIConstants, 
         GlobalConstants, CLIExitCodes {
-
-    private String passwdFile;
-    private boolean usePasswdFile;
     private boolean useDebugOption;
     private boolean useVerboseOption;
     private boolean useLongOptions;
@@ -85,7 +82,6 @@ public class FederationManagerCLI extends CLIUtility
         useLongOptions = useLongOpts;
         try {
             addAdminUserArgs();
-            createPasswordFile();  
             addPasswordArgs();
             useDebugOption = useDebug;
             useVerboseOption = useVerbose;
@@ -193,31 +189,6 @@ public class FederationManagerCLI extends CLIUtility
         if (localeValue != null) {
             addLocaleArgs();
         }
-    }
-    
-    /**
-     * Creates a password file in the platform specific temporary directory.  
-     * The file is marked to be deleted on exit.
-     */
-    private void createPasswordFile() {
-        try {
-            ResourceBundle rb_amconfig = ResourceBundle.getBundle(
-                    TestConstants.TEST_PROPERTY_AMCONFIG);
-            String passFileDir = getBaseDir() + fileseparator + 
-                    rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME) + 
-                    fileseparator + "built" + fileseparator + "classes" + 
-                    fileseparator;
-            File passFile = File.createTempFile("passwd", ".txt", 
-                    new File(passFileDir)); 
-            passFile.deleteOnExit();
-            PrintWriter fileWriter = new PrintWriter(passFile);
-            fileWriter.print(adminPassword);
-            fileWriter.flush();
-            fileWriter.close();
-            setPasswordFile(passFile.getAbsolutePath());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
     }
     
     /**
