@@ -1,0 +1,187 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<!--
+ The contents of this file are subject to the terms
+ of the Common Development and Distribution License
+ (the License). You may not use this file except in
+ compliance with the License.
+
+ You can obtain a copy of the License at
+ https://opensso.dev.java.net/public/CDDLv1.0.html or
+ opensso/legal/CDDLv1.0.txt
+ See the License for the specific language governing
+ permission and limitations under the License.
+
+ When distributing Covered Code, include this CDDL
+ Header Notice in each file and include the License file
+ at opensso/legal/CDDLv1.0.txt.
+ If applicable, add the following below the CDDL Header,
+ with the fields enclosed by brackets [] replaced by
+ your own identifying information:
+ "Portions Copyrighted [year] [name of copyright owner]"
+
+ $Id: ff_ds-delegation-testng.xml,v 1.1 2008-02-08 09:03:46 kanduls Exp $
+
+ Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+
+<suite name="fs_ds-delegation" verbose="1">
+    <test name="DelegationTest1">
+        <parameter name="testNum" value="1"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest2">
+        <parameter name="testNum" value="2"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest3">
+        <parameter name="testNum" value="3"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest4">
+        <parameter name="testNum" value="4"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest5">
+        <parameter name="testNum" value="5"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest6">
+        <parameter name="testNum" value="6"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest7">
+        <parameter name="testNum" value="7"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest8">
+        <parameter name="testNum" value="8"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest9">
+        <parameter name="testNum" value="9"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest10">
+        <parameter name="testNum" value="10"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest11">
+        <parameter name="testNum" value="11"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest12">
+        <parameter name="testNum" value="12"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    <test name="DelegationTest13">
+        <parameter name="testNum" value="13"/>
+    	<parameter name="testName" value="DelegationTest"/>
+        <groups>
+            <run>
+                <include name="fs_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.delegation.DelegationTest"/>
+        </classes>
+    </test>
+    
+</suite>
