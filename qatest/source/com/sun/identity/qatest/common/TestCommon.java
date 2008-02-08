@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.35 2008-01-22 23:50:00 rmisra Exp $
+ * $Id: TestCommon.java,v 1.36 2008-02-08 08:25:19 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1033,5 +1033,39 @@ public class TestCommon implements TestConstants {
 
         // Time delay required by the jetty server process to die
         Thread.sleep(30000);
+    }
+    
+    /**
+     * Converts attrValPair into Map containing attrName as key
+     * and values as set.
+     * @param attrValPair Attribute value pair in the format 
+     * attrval1=val1,val2|attrval2=val11,val12
+     * @return Map containing attrName and values as set.
+     */
+    protected Map attributesToMap(String attrValPair) 
+    throws Exception {
+        Map attrMap = new HashMap();
+        if ((attrValPair != null) && (attrValPair.length() > 0)) {
+            StringTokenizer tokens = new StringTokenizer(attrValPair, "|");
+            while (tokens.hasMoreTokens()) {
+                StringTokenizer attrToken =
+                        new StringTokenizer(tokens.nextToken(), "=");
+                String attrName = attrToken.nextToken();
+                Set valSet = new HashSet();
+                StringTokenizer valueTokens =
+                        new StringTokenizer(attrToken.nextToken(), ",");
+                if (valueTokens.countTokens() <= 0) {
+                    valSet.add(attrToken.nextToken());
+                } else {
+                    while (valueTokens.hasMoreTokens()) {
+                        valSet.add(valueTokens.nextToken());
+                    }
+                }
+                attrMap.put(attrName, valSet);
+            }
+        } else {
+            throw new RuntimeException("Attributes value pair cannot be null");
+        }
+        return attrMap;
     }
 }
