@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.18 2008-02-08 17:51:46 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.19 2008-02-08 23:33:28 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -282,6 +282,21 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 agentGroupConfig = getAgentGroupConfig(token);
                 aCfg = agentGroupConfig.getSubConfig(name);
                 if (aCfg != null) {
+                    // AgentGroup deletion should clear the group memberships
+                    // of the agents that belong to this group.
+                    // Get the members that belong to this group and their
+                    // config and set the labeledURI to an empty string.
+                    Set members = getMembers(token, type, name,
+                        IdType.AGENTONLY);
+                    Iterator it = members.iterator();
+                    ServiceConfig memberCfg = null;
+                    while (it.hasNext()) {
+                        String agent = (String) it.next();
+                        memberCfg = orgConfig.getSubConfig(agent);
+                        if (memberCfg !=null) {
+                             memberCfg.setLabeledUri("");
+                        }
+                    }
                     agentGroupConfig.removeSubConfig(name);
                 } else {
                     // Agent not found, throw an exception
