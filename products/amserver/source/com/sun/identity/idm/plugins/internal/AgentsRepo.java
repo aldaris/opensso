@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.17 2008-02-07 17:10:25 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.18 2008-02-08 17:51:46 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -827,7 +827,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     agentRes.add(pattern);
                 } else {
                     aCfg = orgConfig;
-                    agentRes = getAgentPattern(aCfg, pattern);
+                    agentRes = getAgentPattern(aCfg, pattern, avPairs);
                 }
             } else if (type.equals(IdType.AGENTGROUP)) {
                 // Get the config from specified group.
@@ -837,7 +837,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     agentRes.add(pattern);
                 } else {
                     aCfg = agentGroupConfig;
-                    agentRes = getAgentPattern(aCfg, pattern);
+                    agentRes = getAgentPattern(aCfg, pattern, avPairs);
                 }
             } else if (type.equals(IdType.AGENT)) {
                     agentRes.add(pattern);
@@ -1363,7 +1363,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     }
 
 
-    private Set getAgentPattern(ServiceConfig aConfig, String pattern) 
+    private Set getAgentPattern(ServiceConfig aConfig, String pattern,
+        Map avPairs) 
         throws IdRepoException {
 
         if (debug.messageEnabled()) {
@@ -1372,6 +1373,17 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         Set agentRes = new HashSet(2);
         try {
             if (aConfig != null) {
+                // Support search through avpairs.. just for AgentType.
+                if (pattern.equals("*") && avPairs != null
+                    && !avPairs.isEmpty()) {
+                    Set atypeVals = (Set) avPairs.get(IdConstants.AGENT_TYPE);
+                    if (atypeVals != null && !atypeVals.isEmpty()) {
+                        pattern = (String) atypeVals.iterator().next();
+                    } else {
+                        return (agentRes);
+                    }
+                }
+
                 // If wild card is used for pattern, do a search else a lookup
                 if (pattern.indexOf('*') != -1) {
                     agentRes = aConfig.getSubConfigNames(pattern);
@@ -1382,10 +1394,30 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                         if (name.equalsIgnoreCase(pattern)) {
                             agentRes.add(pattern);
                             break;
+                        } else {
+                            // if pattern is AgentType, look for the AgentType
+                            // value in the profile and compare. If they are 
+                            // the same, add that Agent that belongs to that 
+                            // AgentType. 
+                            
+                            Map attrMap = getAgentAttrs(aConfig, name);
+                            if (attrMap != null && !attrMap.isEmpty()) {
+                                Set aSet = (HashSet) attrMap.get(
+                                    IdConstants.AGENT_TYPE);
+                                if ((aSet != null) && (!aSet.isEmpty()) &&
+                                    ((String) aSet.iterator().next()).
+                                    equalsIgnoreCase(pattern)) {
+                                    agentRes.add(name);
+                                }
+                            }
                         }
                     }
                 }
             }
+        } catch (SSOException sse) {
+            debug.error("AgentsRepo.getAgentPattern(): Error occurred while "
+                + "checking AgentName sent for pattern "+ pattern, sse);
+            throw new IdRepoException(sse.getMessage());
         } catch (SMSException sme) {
             debug.error("AgentsRepo.getAgentPattern(): Error occurred while "
                 + "checking AgentName sent for pattern "+ pattern, sme);
