@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.2 2006-06-16 19:36:48 rarcot Exp $
+ * $Id: Request.java,v 1.3 2008-02-08 02:47:28 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,6 +74,10 @@ class Request {
 
     // ldap server names
     private String _serverNames;
+
+    // ps search identifer.
+    private String _psIdKey;
+
     /**
      * Request object constructor (package private)
      */
@@ -81,7 +85,7 @@ class Request {
                  String filter, String[] attrs, int operations,
                  IdRepoListener listener, LDAPConnection connection,
                  long lastResponseTime, Map pluginConfig, LDAPv3Repo owner,
-                 String serverNames)
+                 String serverNames, String psIdKey)
     {
         _id = id;
         _reqID = reqID;
@@ -98,6 +102,7 @@ class Request {
         _owner = owner;
         _stop = false;
         _serverNames = serverNames;
+        _psIdKey = psIdKey;
     }
 
 
@@ -223,6 +228,14 @@ class Request {
 
     protected void setServerNames(String serverNames) {
         _serverNames = serverNames;
+    }
+
+    protected String getPsIdKey() {
+        return _psIdKey;
+    }
+
+    protected void setPsIdKey(String psIdKey) {
+        _psIdKey = psIdKey;
     }
 
     /*

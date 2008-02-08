@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.11 2007-01-05 00:38:56 kenwho Exp $
+ * $Id: LDAPv3EventService.java,v 1.12 2008-02-08 02:47:28 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -322,22 +322,22 @@ public class LDAPv3EventService implements Runnable {
         _requestList.clear();
     }
 
-    private Request findRequst(LDAPv3Repo target) {
+    private Request findRequst(String psIdKey) {
         if (debugger.messageEnabled()) {
             debugger.message("LDAPv3EventService.findRequest: requestSize="
-                    + _requestList.size() + " target=" + target);
+                    + _requestList.size() + " psIdKey =" + psIdKey);
         }
         Request owner = null;
         Collection requestObjs = _requestList.values();
         Iterator iter = requestObjs.iterator();
         while (iter.hasNext()) {
             Request request = (Request) iter.next();
-            LDAPv3Repo tmpOwner = request.getOwner();
+            String tmpOwner = request.getPsIdKey();
             if (debugger.messageEnabled()) {
-                debugger.message("LDAPv3EventService.findRequest: request="
+                debugger.message("LDAPv3EventService.findRequest: tmpOwner ="
                         + tmpOwner);
             }
-            if (tmpOwner == target) {
+            if (tmpOwner.equalsIgnoreCase(psIdKey)) {
                 owner = request;
                 debugger.message("LDAPv3EventService.findRequest. found it");
                 break;
@@ -346,16 +346,16 @@ public class LDAPv3EventService implements Runnable {
         return owner;
     }
 
-    public synchronized void removeListener(LDAPv3Repo target) {
+    public synchronized void removeListener(String psIdKey) {
         // get the request for this object.
         // set the request status to stop.
         // when the request count is 0. the thread should exit.
 
         if (debugger.messageEnabled()) {
-            debugger.message("LDAPv3EventService.removeListener: target="
-                    + target);
+            debugger.message("LDAPv3EventService.removeListener: psIdKey ="
+                    + psIdKey);
         }
-        Request myRequest = findRequst(target);
+        Request myRequest = findRequst(psIdKey);
         if (myRequest != null) {
             myRequest.setStopStatus(true);
             _requestList.remove(myRequest);
@@ -370,6 +370,7 @@ public class LDAPv3EventService implements Runnable {
         _monitorThread.interrupt();
     }
 
+
     /**
      * Adds a listener to the directory.
      *
@@ -377,7 +378,13 @@ public class LDAPv3EventService implements Runnable {
     public synchronized String addListener(SSOToken token,
             IdRepoListener listener, String base, int scope, String filter,
             int operations, Map pluginConfig, LDAPv3Repo pluginInstance,
-            String serverNames) throws LDAPException, IdRepoException {
+            String serverNames, String psIdKey) throws 
+            LDAPException, IdRepoException {
+
+        if (debugger.messageEnabled()) {
+            debugger.message("LDAPv3EventService.addListener() - base =" + base
+                    + " filter =" + filter + "; psIdKey=" + psIdKey);
+        }
 
         if (!pSearchSupported && !adNotificationSupported) {
             debugger.error("LDAPv3EventService.addListener: unable to " +
@@ -433,9 +440,10 @@ public class LDAPv3EventService implements Runnable {
         try {
             if (debugger.messageEnabled()) {
                 debugger.message("LDAPv3EventService.addListener() - " +
-                        "Submitting Persistent Search on: " + base + 
-                        " for listener: " + listener + " scope=" + scope +
-                        " randomID=" + randomID+ " serverNames=" + serverNames);
+                    "Submitting Persistent Search on: " + base + 
+                    " for listener: " + listener + " scope=" + scope +
+                    " randomID=" + randomID+ " serverNames=" 
+                    + serverNames + " psIdKey=" + psIdKey);
             }
 
             searchListener = lc.search(base, scope, filter, attrs, false, null,
@@ -454,7 +462,7 @@ public class LDAPv3EventService implements Runnable {
         long startTime = System.currentTimeMillis();
         Request request = new Request(id, reqID, token, base, scope, filter,
                 attrs, operations, listener, lc, startTime, pluginConfig,
-                pluginInstance, serverNames);
+                pluginInstance, serverNames, psIdKey);
         _requestList.put(reqID, request);
 
         // Add this search request to the m_msgQueue so it can be
@@ -471,7 +479,7 @@ public class LDAPv3EventService implements Runnable {
                         " on to message Queue. No. of current outstanding " + 
                         "requests = " + outstandingRequests.length + 
                         " randomID=" + randomID + " serverNames=" + 
-                        serverNames);
+                        serverNames  + " psIdKey=" + psIdKey);
             }
         }
 
@@ -702,7 +710,8 @@ public class LDAPv3EventService implements Runnable {
                                 .getListener(), request.getBaseDn(), request
                                 .getScope(), request.getFilter(), request
                                 .getOperations(), request.getPluginConfig(),
-                                request.getOwner(), request.getServerNames());
+                                request.getOwner(), request.getServerNames(),
+                                request.getPsIdKey());
                     }
                 }
                 return true;
@@ -749,26 +758,26 @@ public class LDAPv3EventService implements Runnable {
     }
 
     private void dispatchEventAllChanged(Request request) {
-        IdRepoListener el = request.getListener();
-        LDAPv3Repo myldapv3 = request.getOwner();
-        myldapv3.clearCache();
-        el.allObjectsChanged();
+        String psIdKey = request.getPsIdKey();
+        if (debugger.messageEnabled()) {
+            debugger.message("LDAPv3EventService.dispatchEventAllChanged() " 
+                + " psIdKey=" + psIdKey);
+        }
+        LDAPv3Repo.objectChanged(null, LDAPPersistSearchControl.MODIFY, request,
+            psIdKey, true, true);
     }
 
     /**
      * Dispatch naming event to all listeners
      */
     private void dispatchEvent(String dn, int changeType, Request request) {
-        IdRepoListener el = request.getListener();
-        Map configParams = el.getConfigMap();
+        String psIdKey = request.getPsIdKey();
         if (debugger.messageEnabled()) {
             debugger.message("LDAPv3EventService.dispatchEvent() - dn=" + dn
-                    + " changeType=" + changeType + " configParams="
-                    + configParams);
+                    + " changeType=" + changeType + "; psIdKey=" + psIdKey);
         }
-        LDAPv3Repo myldapv3 = request.getOwner();
-        myldapv3.objectChanged(dn, changeType);
-        el.objectChanged(dn, changeType, configParams);
+        LDAPv3Repo.objectChanged(dn, changeType, request,
+            psIdKey, false, false);
     }
 
     /**
@@ -780,10 +789,13 @@ public class LDAPv3EventService implements Runnable {
         Iterator iter = reqList.iterator();
         while (iter.hasNext()) {
             Request req = (Request) iter.next();
-            IdRepoListener el = req.getListener();
-            el.allObjectsChanged();
-            LDAPv3Repo myldapv3 = req.getOwner();
-            myldapv3.clearCache();
+            String psIdKey = req.getPsIdKey();
+            if (debugger.messageEnabled()) {
+                debugger.message("LDAPv3EventService.dispatchAllEntriesChangedEvent() " 
+                    + " psIdKey=" + psIdKey);
+            }
+            LDAPv3Repo.objectChanged(null, LDAPPersistSearchControl.MODIFY, req,
+                psIdKey, true, true);
         }
     }
 

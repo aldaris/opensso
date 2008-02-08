@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.34 2008-02-05 21:21:17 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.35 2008-02-08 02:47:28 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.StringTokenizer;
 
 import javax.security.auth.callback.Callback;
@@ -127,7 +128,7 @@ public class LDAPv3Repo extends IdRepo {
 
     private String orgDN = "";
 
-    private Debug debug;
+    private static Debug debug;
 
     private LDAPConnectionPool connPool;
 
@@ -190,7 +191,7 @@ public class LDAPv3Repo extends IdRepo {
     private String uniqueMemberAttr = null;
 
     private String memberURLAttr = null;
-    
+
     private String defaultGrpMem = null;
 
     private String isActiveAttrName = null;
@@ -241,10 +242,18 @@ public class LDAPv3Repo extends IdRepo {
 
     private final int DEFAULTPORT = 389;
 
+    private final int PS_OP = LDAPPersistSearchControl.ADD 
+                | LDAPPersistSearchControl.MODIFY
+                | LDAPPersistSearchControl.DELETE
+                | LDAPPersistSearchControl.MODDN;
+
     // access to the _eventsMgr and _eventsMgr needs to be sync.
     protected static Hashtable _eventsMgr = new Hashtable();
 
     protected static Hashtable _numRequest = new Hashtable();
+
+    protected static Map listOfPS = 
+        Collections.synchronizedMap(new HashMap());
 
     private boolean hasListener = false;
 
@@ -398,7 +407,7 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String LDAPv3Config_UNIQUEMEMBER = 
         "sun-idrepo-ldapv3-config-uniquemember";
-    
+
     private static final String LDAPv3Config_DEFAULTGROUPMEMBER = 
         "sun-idrepo-ldapv3-config-dftgroupmember";
 
@@ -438,6 +447,15 @@ public class LDAPv3Repo extends IdRepo {
     private static final String LDAPv3Config_LDAP_CACHESIZE =
         "sun-idrepo-ldapv3-config-cache-size";
 
+    private static final String LDAPv3Config_LDAP_NUM_RETRIES =
+        "sun-idrepo-ldapv3-config-numretires";
+
+    private static final String LDAPv3Config_LDAP_RETRY_INTERVAL =
+        "com.iplanet.am.ldap.connection.delay.between.retries";
+
+    private static final String LDAPv3Config_LDAP_ERROR_CODES =
+        "sun-idrepo-ldapv3-config-errorcodes";
+
     private static final String AUTH_USER = IdType.USER.getName();
 
     private static final String AUTH_AGENT = IdType.AGENT.getName();
@@ -470,7 +488,9 @@ public class LDAPv3Repo extends IdRepo {
 
 
     public LDAPv3Repo() {
-        debug = Debug.getInstance(LDAPv3Repo);
+        if (debug == null) {
+            debug = Debug.getInstance(LDAPv3Repo);
+        }
         loadSupportedOps();
     }
 
@@ -714,6 +734,7 @@ public class LDAPv3Repo extends IdRepo {
         }
         super.initialize(configParams);
         myConfigMap = configParams;
+
         String myServiceStr = getPropertyStringValue(configParams,
                 IdConstants.SERVICE_ATTRS);
         if (debug.messageEnabled()) {
@@ -1195,6 +1216,7 @@ public class LDAPv3Repo extends IdRepo {
             debug.message("LDAPv3Repo: removeListener called ");
         }
 
+        synchronized (listOfPS) {
         // keep a count with eventsMgr.ldapServerName of number of listener.
         // when the count reaches 0. remove the ldapServerName entry.
         // see if we already have an event service for this server.
@@ -1205,27 +1227,40 @@ public class LDAPv3Repo extends IdRepo {
             debug.error("LDAPv3Repo: removeListener failed. missing ldap " +
                     "server name.");
         }
-
         LDAPv3EventService eventService = (LDAPv3EventService) _eventsMgr
                 .get(ldapServerName);
         if (eventService != null) {
             if (hasListener) {
-                eventService.removeListener(this);
-                Integer requestNum = (Integer) _numRequest.get(ldapServerName);
-                if (requestNum != null) {
-                    int requestInt = requestNum.intValue();
-                    if (requestInt <= 1) {
-                        _eventsMgr.remove(ldapServerName);
-                        _numRequest.remove(ldapServerName);
-                    } else {
-                        _numRequest.remove(ldapServerName);
-                        _numRequest.put(ldapServerName, new Integer(
-                                requestInt - 1));
-                    }
-                    if (debug.messageEnabled()) {
-                        debug.message("LDAPv3Repo: removeListener. requestInt="
-                                        + requestInt);
-                    }
+                // find the listener idrepo.
+                // if this is the last, then remove the listener.
+                // if not, just remove teh idrepo from list.
+                // need to change findrequest.
+
+                String psIdKey = getPSKey(myConfigMap);
+                Map listOfRepo = (Map) listOfPS.get(psIdKey);
+                if (listOfRepo != null) { 
+                    HashSet listOfDS = (HashSet) listOfRepo.get("listOfDS");
+                    listOfDS.remove(this);
+                    if (listOfDS.isEmpty()) { 
+                        listOfPS.remove(psIdKey);
+                        eventService.removeListener(psIdKey);
+                        Integer requestNum = (Integer) _numRequest.get(ldapServerName);
+                        if (requestNum != null) {
+                            int requestInt = requestNum.intValue();
+                            if (requestInt <= 1) {
+                                _eventsMgr.remove(ldapServerName);
+                                _numRequest.remove(ldapServerName);
+                            } else {
+                                _numRequest.remove(ldapServerName);
+                                _numRequest.put(ldapServerName, new Integer(
+                                    requestInt - 1));
+                            }
+                            if (debug.messageEnabled()) {
+                                debug.message("LDAPv3Repo: removeListener. requestInt="
+                                    + requestInt);
+                            }
+                        }
+                   }
                 }
             } else { // listener was not added
                 Integer requestNum = (Integer) _numRequest.get(ldapServerName);
@@ -1234,8 +1269,9 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
         }
-
+        }
     }
+
 
     /*
      * (non-Javadoc)
@@ -1257,6 +1293,7 @@ public class LDAPv3Repo extends IdRepo {
                     + "; LDAPv3Config_LDAP_IDLETIMEOUT="
                     + configMap.get(LDAPv3Config_LDAP_IDLETIMEOUT));
         }
+        synchronized (listOfPS) {
         checkConnPool();
         // TODO Auto-generated method stub
         // listener.setConfigMap(configMap);
@@ -1267,8 +1304,8 @@ public class LDAPv3Repo extends IdRepo {
             ldapServerName = getLDAPServerName(myConfigMap);
         }
         if (ldapServerName == null) {
-            debug.error("LDAPv3Repo: addListener failed. missing ldap server " +
-                    "name.");
+            debug.error("LDAPv3Repo: addListener failed. missing ldap server " 
+                + "name.");
             return 0;
         }
 
@@ -1276,17 +1313,23 @@ public class LDAPv3Repo extends IdRepo {
                 LDAPv3Config_LDAP_PSEARCHBASE);
         if (searchBase == null) {
             debug.error("LDAPv3Repo: addListener failed. "
-                    + "missing persistence search base. Not " 
+                    + "missing persistence search base. Not "
                     + "starting persistent search.");
             return 0;
         }
 
+        // if the listener shares the same host, we tried to use the same
+        // event_service to minialize threads and polling and monitors.  
         LDAPv3EventService eventService = (LDAPv3EventService) _eventsMgr
                 .get(ldapServerName);
         if (eventService == null) {
             int idleTimeOut = getPropertyIntValue(myConfigMap,
                     LDAPv3Config_LDAP_IDLETIMEOUT, 0);
             try {
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPv3Repo.addListener: "  +
+                        "eventService is null. idleTimeOut=" +idleTimeOut);
+                }
                 if (idleTimeOut == 0) {
                     eventService = new LDAPv3EventService(myConfigMap,
                             ldapServerName);
@@ -1306,42 +1349,59 @@ public class LDAPv3Repo extends IdRepo {
                 throw ide;
             }
         }
-        String filter = getPropertyStringValue(myConfigMap,
-            LDAPv3Config_LDAP_PSEARCHFILTER, "(objectclass=*)");
-
-        int op = LDAPPersistSearchControl.ADD | LDAPPersistSearchControl.MODIFY
-                | LDAPPersistSearchControl.DELETE
-                | LDAPPersistSearchControl.MODDN;
-        try {
-            eventService.addListener(token, listener, searchBase,
-                    LDAPv3.SCOPE_SUB, filter, op, myConfigMap, this,
-                    ldapServerName);
-            Integer numRequest = (Integer) _numRequest.get(ldapServerName);
-            int requestNum;
-            if (numRequest == null) {
-                requestNum = 1;
-            } else {
-                requestNum = numRequest.intValue() + 1;
-            }
-            _numRequest.put(ldapServerName, new Integer(requestNum));
-        } catch (IdRepoException idrepoex) {
-            debug.error("LDAPv3Repo: addListener failed. persistant search " +
+        
+        String psIdKey = getPSKey(myConfigMap);
+        Map listOfRepo = (Map) listOfPS.get(psIdKey);
+        if (listOfRepo == null) { // no ps found for this host.
+            // add the ps/listener.
+            String filter = getPropertyStringValue(myConfigMap,
+                LDAPv3Config_LDAP_PSEARCHFILTER, "(objectclass=*)");
+            try {
+                // might have to change/add/delete params.  psIdKey
+                eventService.addListener(token, listener, searchBase,
+                    LDAPv3.SCOPE_SUB, filter, PS_OP, myConfigMap, this,
+                    ldapServerName, psIdKey);
+                Integer numRequest = (Integer) _numRequest.get(ldapServerName);
+                int requestNum;
+                if (numRequest == null) {
+                    requestNum = 1;
+                } else {
+                    requestNum = numRequest.intValue() + 1;
+                }
+                _numRequest.put(ldapServerName, new Integer(requestNum));
+            } catch (IdRepoException idrepoex) {
+                debug.error("LDAPv3Repo: addListener failed. persistant search " +
                     "not supported");
-        } catch (LDAPException ldapex) {
-            debug.error("LDAPv3Repo: addListener failed. " +
+            } catch (LDAPException ldapex) {
+                debug.error("LDAPv3Repo: addListener failed. " +
                              "eventService.addListener.LDAPException", ldapex);
-            Object[] args = { CLASS_NAME };
-            IdRepoException ide = new IdRepoException(
+                Object[] args = { CLASS_NAME };
+                IdRepoException ide = new IdRepoException(
                    IdRepoBundle.BUNDLE_NAME, "218", args);
-            ide.setLDAPErrorCode(Integer.toString(ldapex.getLDAPResultCode()));
-            throw ide;
+                ide.setLDAPErrorCode(Integer.toString(ldapex.getLDAPResultCode()));
+                throw ide;
+            }    
+                
+            // create an entry in the list.
+            HashSet listOfDS = new HashSet();
+            listOfDS.add(this);
+            listOfRepo = new HashMap();
+            listOfRepo.put("eventServices", eventService); 
+            listOfRepo.put("listOfDS", listOfDS);
+            listOfPS.put(psIdKey, listOfRepo);
+        } else {
+            //found a ps to this host with same characteristic. share it.
+            HashSet listOfDS = (HashSet) listOfRepo.get("listOfDS");
+            listOfDS.add(this);
         }
+        
         // probably should save the reqID with our listener.
         // once we have our listener we can get at our config listener.getconfig
         // will this id change? what happens it timeout and have to be
         // restarted.
         hasListener = true;
         return 0;
+        }
     }
 
     /*
@@ -4351,6 +4411,45 @@ public class LDAPv3Repo extends IdRepo {
         }
     }
 
+    /**
+     * find all the datastore that are interested in this change
+     * and notify its listener and update the data store's cache.
+     */
+    protected static void objectChanged(String dn, int changeType, 
+        Request request, String psIdKey, boolean allObjChanged, boolean clearCache) {
+        
+        if (debug.messageEnabled()) {
+            debug.message("LDAPv3Repo.objectChanged: dn=" + dn 
+                + "; changeType" + changeType + "; psIdKey=" + psIdKey 
+                + "; allObjChanged=" + allObjChanged + "; clearCache=" 
+                + clearCache);
+        }
+        synchronized (listOfPS) {
+        Map listOfRepo = (Map) listOfPS.get(psIdKey);
+        if (listOfRepo != null) { 
+            HashSet listOfDS = (HashSet) listOfRepo.get("listOfDS");
+            Iterator iter = listOfDS.iterator();
+            while (iter.hasNext()) {
+                LDAPv3Repo v3Repo = (LDAPv3Repo) iter.next();
+                if (allObjChanged) {
+                    clearCache = true;
+                    v3Repo.myListener.allObjectsChanged();
+                } else {
+                    v3Repo.objectChanged(dn, changeType);
+                    v3Repo.myListener.objectChanged(dn, changeType, v3Repo.myListener.getConfigMap());
+                }
+                if (clearCache) {
+                    v3Repo.clearCache();
+                }
+            }
+        } else {
+            if (debug.messageEnabled()) {
+                debug.message("LDAPv3Repo.objectChanged: "
+                    + "did not find any datastore for this ps.");
+            }
+        }
+        }
+    }
 
     /**
      * checks for  an LDAP v3 server whether the  control has returned
@@ -4907,6 +5006,46 @@ public class LDAPv3Repo extends IdRepo {
             dsType = LDAPv3Config_LDAPV3GENERIC;
         }
     }
+
+    private String getPSKey(Map configParams) {
+        String psearchBase = getPropertyStringValue(myConfigMap,
+                LDAPv3Config_LDAP_PSEARCHBASE);
+        String pfilter = getPropertyStringValue(myConfigMap,
+            LDAPv3Config_LDAP_PSEARCHFILTER);
+       
+        // the key is made up of ... 
+        // we might not need _idleTimeOut, _numRetries, _retryInterval
+        // and _retryErrorCodes since these values will likely be same 
+        // for a given host. might be true for ssl also.
+        String psIdKey = ldapServerName + orgDN + psearchBase + pfilter; 
+        return psIdKey;
+    }
+
+
+    private String getPropertyRetryErrorCodes(Map configParams, String key) {
+        TreeSet codes = new TreeSet();
+        Set retryErrorSet = (Set) configParams.get(key);
+        Iterator itr = retryErrorSet.iterator();
+        while (itr.hasNext()) {
+            codes.add(itr.next());
+        }
+        if (debug.messageEnabled()) {
+            debug.message("LDAPv3Repo.getPropertyRetryErrorCodes: "
+                    + key + "retryErrorSet=" + retryErrorSet 
+                    + " ; codes=" + codes);
+        }
+        String sortedCodes = "";
+        itr = codes.iterator();
+        while (itr.hasNext()) {
+            if (sortedCodes.length() == 0) {
+                sortedCodes = sortedCodes + (String) (itr.next());
+            } else {
+                sortedCodes = sortedCodes + "," + (String) (itr.next());
+            }
+        }
+        return sortedCodes;
+    }
+
 
     private int getPropertyIntValue(Map configParams, String key,
             int defaultValue) {

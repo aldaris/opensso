@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventServicePolling.java,v 1.2 2006-06-16 19:36:47 rarcot Exp $
+ * $Id: LDAPv3EventServicePolling.java,v 1.3 2008-02-08 02:47:28 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,21 +85,26 @@ public class LDAPv3EventServicePolling extends LDAPv3EventService {
 
     private final int IS_MESSAGE_PROCESSED = 0;
 
-    public synchronized void removeListener(LDAPv3Repo target) {
+
+    public synchronized void removeListener(String psIdKey) {
         // need to stop this process and the timeout monitor if no more request.
         if (debugger.messageEnabled()) {
-            debugger.message("LDAPv3EventServicePolling.removeListener called");
+            debugger.message("LDAPv3EventServicePolling.removeListener "
+                + " psIdKey=" +  psIdKey);
         }
-        super.removeListener(target);
+        super.removeListener(psIdKey);
         _timeOutThread.interrupt();
     }
+
 
     public synchronized String addListener(SSOToken token,
             IdRepoListener listener, String base, int scope, String filter,
             int operations, Map pluginConfig, LDAPv3Repo pluginInstance,
-            String serverNames) throws LDAPException, IdRepoException {
+            String serverNames, String psIdKey) 
+            throws LDAPException, IdRepoException {
         String requestID = super.addListener(token, listener, base, scope,
-                filter, operations, pluginConfig, pluginInstance, serverNames);
+            filter, operations, pluginConfig, pluginInstance, 
+            serverNames, psIdKey);
 
         startTimeOutThread();
         return requestID;
@@ -299,7 +304,7 @@ public class LDAPv3EventServicePolling extends LDAPv3EventService {
                         request.getBaseDn(), request.getScope(), request
                                 .getFilter(), request.getOperations(), request
                                 .getPluginConfig(), request.getOwner(), request
-                                .getServerNames());
+                                .getServerNames(), request.getPsIdKey());
                 // Remove request only after a new one was successStately added
                 _requestList.remove(request.getRequestID());
             }
