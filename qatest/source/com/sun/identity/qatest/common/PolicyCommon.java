@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.13 2008-01-31 22:06:27 rmisra Exp $
+ * $Id: PolicyCommon.java,v 1.14 2008-02-08 08:30:47 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -513,13 +513,33 @@ public class PolicyCommon extends TestCommon {
     }
     
     /**
-     * Create actual policy in the system.
+     * Create actual policy in the system using amadmin and amadminpassword and
+     *  default amadmin login url.
+     * @param fileName Policy file name.
+     * @param strLocRealm Realm in which policy has to be created.
      */
     public void createPolicy(String fileName, String strLocRealm)
     throws Exception {
+        createPolicy(fileName, strLocRealm, loginURL, adminUser, adminPassword);
+    }
+    
+    /**
+     * Create actual policy in the system using given username, password and 
+     * login url.
+     * @param fileName Policy file name.
+     * @param strLocRealm Realm in which policy has to be created.
+     * @param loginURL Login url
+     * @param userName User name to be used for famadm.jsp login
+     * @param userPassword password to be used for famadm.jsp login
+     */
+    public void createPolicy(String fileName, String strLocRealm, 
+            String loginURL, 
+            String userName, 
+            String userPassword)
+    throws Exception {
         try{
             webClient = new WebClient();
-            consoleLogin(webClient, loginURL, adminUser, adminPassword);
+            consoleLogin(webClient, loginURL, userName, userPassword);
             String absFileName = baseDir + fileName;
             String realm = strLocRealm;
             String policyXML;
@@ -590,9 +610,30 @@ public class PolicyCommon extends TestCommon {
     }
     
     /**
-     * Deletes the policies.
+     * Deletes the policies using 
+     * @param strLocRB Policy file name
+     * @param gPolIdx Policy index in policy file.
+     * @param strLocRealm realm from which policy need to be removed.
      */
     public void deletePolicies(String strLocRB, int gPolIdx, String strLocRealm)
+    throws Exception {
+        deletePolicies(strLocRB, gPolIdx, strLocRealm, loginURL, adminUser, 
+                adminPassword);
+    }
+    
+    /**
+     * Deletes the policies using 
+     * @param strLocRB Policy file name
+     * @param gPolIdx Policy index in policy file.
+     * @param strLocRealm realm from which policy need to be removed.
+     * @param loginURL Login URL
+     * @param userName Login user name
+     * @param userPassword Login user password
+     */
+    public void deletePolicies(String strLocRB, int gPolIdx, String strLocRealm,
+            String loginURL,
+            String userName, 
+            String userPassword)
     throws Exception {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
@@ -601,7 +642,7 @@ public class PolicyCommon extends TestCommon {
             String realm = strLocRealm;
             List list = new ArrayList();
             webClient = new WebClient();
-            consoleLogin(webClient, loginURL, adminUser, adminPassword);
+            consoleLogin(webClient, loginURL, userName, userPassword);
             String name;
             int noOfPolicies = new Integer(rb.getString(glbPolIdx +
                     ".noOfPolicies")).intValue();
@@ -1059,7 +1100,7 @@ public class PolicyCommon extends TestCommon {
             String serviceAction)
     throws Exception {
         try {
-            WebClient webClient = new WebClient();
+            webClient = new WebClient();
             consoleLogin(webClient, loginURL, adminUser, adminPassword);
             
             String action = serviceAction;

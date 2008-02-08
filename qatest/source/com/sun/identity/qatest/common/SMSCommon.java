@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.10 2008-02-06 19:06:38 cmwesley Exp $
+ * $Id: SMSCommon.java,v 1.11 2008-02-08 08:27:05 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -639,7 +639,8 @@ public class SMSCommon extends TestCommon {
             // Check the realm to make sure it exists before creating object
             // for ServiceConfig
             if (idmObj.searchRealms(admToken, gscRealm.
-                    substring(gscRealm.lastIndexOf(realm) + 1)).isEmpty()) {
+                    substring(gscRealm.lastIndexOf(realm) + 1),
+                    idmObj.getParentRealm(gscRealm)).isEmpty()) {
                 log(Level.SEVERE, "getServiceConfig", "Realm " + gscRealm +
                         " not found");
                 assert false;

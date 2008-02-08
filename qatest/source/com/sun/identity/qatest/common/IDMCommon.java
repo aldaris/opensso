@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.6 2007-10-18 21:11:51 bt199000 Exp $
+ * $Id: IDMCommon.java,v 1.7 2008-02-08 08:28:52 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,19 +27,20 @@ package com.sun.identity.qatest.common;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.qatest.idm.IDMConstants;
 import com.sun.identity.sm.OrganizationConfigManager;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 /**
@@ -67,7 +68,7 @@ public class IDMCommon extends TestCommon {
             IdType idType,
             String entityName,
             Map values)
-            throws Exception {
+    throws Exception {
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssoToken, parentRealm);
         AMIdentity amid = repo.createIdentity(idType, entityName, values);
@@ -81,7 +82,7 @@ public class IDMCommon extends TestCommon {
     public AMIdentity getRealmIdentity(
             SSOToken ssoToken,
             String parentRealm)
-            throws Exception {
+    throws Exception {
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssoToken, parentRealm);
         return (repo.getRealmIdentity());
@@ -94,7 +95,7 @@ public class IDMCommon extends TestCommon {
             SSOToken ssoToken,
             String serviceName,
             String attributeName)
-            throws Exception {
+    throws Exception {
         AMIdentity amid = new AMIdentity(ssoToken);
         Map attrValues = amid.getServiceAttributes(serviceName);
         log(logLevel, "getIdentityAttribute", "Attributes List" + attrValues);
@@ -129,7 +130,7 @@ public class IDMCommon extends TestCommon {
             String parentRealm,
             IdType idType,
             String entityName)
-            throws Exception {
+    throws Exception {
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssoToken, parentRealm);
         repo.deleteIdentities(getAMIdentity(
@@ -145,7 +146,7 @@ public class IDMCommon extends TestCommon {
             String parentRealm,
             List<IdType> idType,
             List entityName)
-            throws Exception {
+    throws Exception {
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssoToken, parentRealm);
         Iterator iterNameSet = entityName.iterator();
@@ -167,7 +168,7 @@ public class IDMCommon extends TestCommon {
             String name,
             IdType idType,
             String realm)
-            throws Exception {
+    throws Exception {
         Set<AMIdentity> set = new HashSet<AMIdentity>();
         set.add(new AMIdentity(ssoToken, name, idType, realm, null));
         return set;
@@ -182,7 +183,7 @@ public class IDMCommon extends TestCommon {
             String name,
             IdType idType,
             String realm)
-            throws Exception {
+    throws Exception {
         Set<AMIdentity> set = getAMIdentity(ssoToken, name, idType, realm);
         AMIdentity amid = null;
         for (Iterator itr = set.iterator(); itr.hasNext();) {
@@ -203,7 +204,7 @@ public class IDMCommon extends TestCommon {
             String parentRealm,
             String entityName,
             String suffix)
-            throws Exception {
+    throws Exception {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         putSetIntoMap("sn", map, "sn" + suffix);
         putSetIntoMap("cn", map, "cn" + suffix);
@@ -216,13 +217,24 @@ public class IDMCommon extends TestCommon {
     /**
      * Returns the parent realm
      */
-    public String getParentRealm(String realm)
+    public String getParentRealm(String realmName)
     throws Exception {
-        int idx = realm.lastIndexOf("/");
-        if (idx == -1) {
-            throw new RuntimeException("Incorrect Realm, " + realm);
+        if (realmName.lastIndexOf("/") == -1) {
+            throw new RuntimeException("Incorrect Realm, " + realmName);
         }
-        return (idx == 0) ? "/" : realm.substring(0, idx);
+        StringTokenizer tokens = new StringTokenizer(realmName, "/");
+        int noRealms = tokens.countTokens();
+        String parentRealm = realm;
+        if (noRealms == 1) {
+            return parentRealm;
+        } else {
+            for (int i = 1; i < noRealms; i++ ){
+                parentRealm = tokens.nextToken();
+            }
+        }
+        log(logLevel, "getParentRealm", "Parent realm for" + realmName + 
+                " is " + parentRealm );
+        return parentRealm;
     }
     
     /**
@@ -334,13 +346,28 @@ public class IDMCommon extends TestCommon {
      * This method searches and retrieves a list of realm
      * @param ssotoken SSO token object
      * @param pattern realm name or pattern
+     * @parm realm under which search has to be perfomed
+     * @return a set of realm name
+     */
+    public Set searchRealms(SSOToken ssotoken, String pattern, String realm)
+    throws Exception  {
+        entering("searchRealms", null);
+        Set realmNames = searchIdentities(ssotoken, pattern, IdType.REALM, 
+                realm);
+        exiting("searchRealms");
+        return realmNames;
+    }
+    
+     /**
+     * This method searches and retrieves a list of realm
+     * @param ssotoken SSO token object
+     * @param pattern realm name or pattern
      * @return a set of realm name
      */
     public Set searchRealms(SSOToken ssotoken, String pattern)
     throws Exception  {
         entering("searchRealms", null);
-        Set realmNames = searchIdentities(ssotoken, pattern, IdType.REALM, 
-                realm);
+        Set realmNames = searchRealms(ssotoken, pattern, realm);
         exiting("searchRealms");
         return realmNames;
     }
@@ -375,7 +402,7 @@ public class IDMCommon extends TestCommon {
         IdSearchResults results = repo.searchIdentities(type, pattern,
                 searchControl);
         log(Level.FINE, "searchIdentities", "Searching for " + type.getName() +
-                " " + pattern + "...");
+                " " + pattern + "... under realm "+realmName);
         Set idNames = results.getSearchResults();
         if ((idNames != null) && (!idNames.isEmpty())) {
             Iterator iter = idNames.iterator();
@@ -415,7 +442,7 @@ public class IDMCommon extends TestCommon {
             key = keyIter.next().toString();
             value = cfgMapTemp.get(key).toString();
             if (key.substring(0, prefixName.length()).equals(prefixName))
-                cfgMapNew.put(key,value);
+                cfgMapNew.put(key, value);
         }
         log(Level.FINEST, "getDataFromCfgFile", cfgMapNew.toString());
         if (cfgMapNew.isEmpty()) {
@@ -484,5 +511,297 @@ public class IDMCommon extends TestCommon {
         }
         exiting("isIdTypeSupported");
         return supportsIDType;
+    }
+    
+    /**
+     * This method addes an user member to an identity with identity name, type,
+     * and member name.
+     * @param idName identity name
+     * @param idType identity type
+     * @param memberName user member name
+     * @return true if member is added to an identity successfully
+     */
+    public boolean addMembers(String idName, String idType, String memberName,
+            SSOToken ssoToken,
+            String realmName)
+    throws Exception {
+        entering("addMembers", null);
+        boolean opSuccess = false;
+        log(Level.FINE, "addMembers", "Adding a user member name " +
+                memberName + " to " + idType + " " + idName + "...");
+        addUserMember(ssoToken, memberName, idName, getIdType(idType),
+                realmName);
+        AMIdentity memid = getFirstAMIdentity(ssoToken, memberName,
+                IdType.USER, realmName);
+        AMIdentity id = getFirstAMIdentity(ssoToken, idName, getIdType(idType),
+                realmName);
+        opSuccess = memid.isMember(id);
+        if (opSuccess) {
+            log(Level.FINE, "addMembers", "User member " + memberName +
+                    " is added to " + idType + " " + idName + " successfully");
+        } else {
+            log(Level.FINE, "addMembers", "Failed to add member");
+        }
+        exiting("addMembers");
+        return opSuccess;
+    }
+       
+    /**
+     * This method removes an user member from an identity with identity name,
+     * type, and member name.
+     * @param idName identity name
+     * @param idType identity type
+     * @param memberName user member name
+     * @return true if member is removed from an identity successfully
+     */
+    public boolean removeMembers(String idName, String idType,
+            String memberName,
+            SSOToken ssoToken,
+            String realmName)
+    throws Exception {
+        entering("removeMembers", null);
+        boolean opSuccess = false;
+        log(Level.FINE, "removeMembers", "Removing a user member name " +
+                memberName + " from " + idType + " " + idName + "...");
+        removeUserMember(ssoToken, memberName, idName, getIdType(idType),
+                realmName);
+        AMIdentity memid = getFirstAMIdentity(ssoToken, memberName,
+                IdType.USER, realmName);
+        AMIdentity id = getFirstAMIdentity(ssoToken, idName, getIdType(idType), 
+                realmName);
+        opSuccess = (!memid.isMember(id)) ? true : false;
+        if (opSuccess) {
+            log(Level.FINE, "removeMembers", "User member " + memberName +
+                    " is removed from " + idType + " " + idName + 
+                    " successfully");
+        } else {
+            log(Level.FINE, "removeMembers", "Failed to remove member");
+        }
+        exiting("removeMembers");
+        return opSuccess;
+    }
+    
+    /**
+     * This method creates a identity with given name and type and verifies
+     * that user exists.
+     * @param idName    identity name
+     * @param idType    identity type - user, group, role, filtered role, agent
+     * @param userAttr  identity attributes. If null, default attributes is used
+     * @param ssoToken  admin SSOtoken for creating identity
+     * @param realmName realm name in which identity has be created.
+     * @return true if the identity created successfully.
+     */
+    public boolean createID(String idName, String idType, String userAttr,
+            SSOToken ssoToken,
+            String realmName)
+    throws Exception {
+        entering("createID", null);
+        boolean opSuccess = false;
+        log(Level.FINE, "createID", "Creating identity " + idType +
+                " name " + idName + "...");
+        Map userAttrMap;
+        if (userAttr == null) {
+            userAttrMap = setDefaultIdAttributes(idType, idName);
+        } else {
+            userAttrMap = setIDAttributes(userAttr);
+        }
+        log(Level.FINEST, "createID", "realm = " + realmName
+                + " type = " + getIdType(idType).getName() +
+                " attributes = " + userAttrMap.toString());
+        createIdentity(ssoToken, realmName, getIdType(idType), idName,
+                userAttrMap);
+        opSuccess = (doesIdentityExists(idName, idType, ssoToken,
+                realmName)) ? true : false;
+        if (opSuccess) {
+            log(Level.FINE, "createID", idType + " " + idName +
+                    " is created successfully.");
+        } else {
+            log(Level.FINE, "createID", "Failed to create " + idType +
+                    " " + idName);
+        }
+        exiting("createID");
+        return (opSuccess);
+    }
+    
+    /**
+     * This method creates a map of identity attributes
+     */
+    public Map setIDAttributes(String idAttrList)
+    throws Exception {
+        log(Level.FINEST, "setIDAttributes", "Attributes string " + idAttrList);
+        Map tempAttrMap = new HashMap();
+        Map idAttrMap = getAttributeMap(idAttrList,
+                IDMConstants.IDM_KEY_SEPARATE_CHARACTER);
+        Set keys = idAttrMap.keySet();
+        Iterator keyIter = keys.iterator();
+        String key;
+        String value;
+        Set idAttrSet;
+        while (keyIter.hasNext()) {
+            key = (String)keyIter.next();
+            value = (String)idAttrMap.get(key);
+            putSetIntoMap(key, tempAttrMap, value);
+        }
+        return tempAttrMap;
+    }
+    
+    /**
+     * This method create a map with default identity attributes.  This map
+     * is used to create an identity
+     */
+    public Map setDefaultIdAttributes(String siaType, String idName)
+    throws Exception {
+        Map<String, Set<String>> tempMap = new HashMap<String, Set<String>>();
+        log(Level.FINEST, "setDefaultIdAttributes", "for " + idName);
+        if (siaType.equals("user")) {
+            putSetIntoMap("sn", tempMap, idName);
+            putSetIntoMap("cn", tempMap, idName);
+            putSetIntoMap("givenname", tempMap, idName);
+            putSetIntoMap("userpassword", tempMap, idName);
+            putSetIntoMap("inetuserstatus", tempMap, "Active");
+        } else if (siaType.equals("agent")) {
+            putSetIntoMap("userpassword", tempMap, idName);
+            putSetIntoMap("sunIdentityServerDeviceStatus", tempMap, "Active");
+        } else if (siaType.equals("filteredrole")) {
+            putSetIntoMap("cn", tempMap, idName);
+            putSetIntoMap("nsRoleFilter", tempMap,
+                    "(objectclass=inetorgperson)");
+        } else if (siaType.equals("role") || siaType.equals("group")) {
+            putSetIntoMap("description", tempMap, siaType + " description");
+        } else {
+            log(Level.SEVERE, "setIdAttributes", "Invalid identity type " +
+                    siaType);
+            assert false;
+        }
+        return tempMap;
+    }
+    
+    /**
+     * This method checks if an identity exists.  It accepts identity name and
+     * type from the arguments.
+     * @param idName identity name
+     * @param idType identity type - user, agent, role, filtered role, group
+     * @return true if identity exists
+     */
+    public boolean doesIdentityExists(String idName, String idType,
+            SSOToken ssoToken,
+            String realmName)
+    throws Exception {
+        return doesIdentityExists(idName, getIdType(idType), ssoToken,
+                realmName);
+    }
+    
+    /**
+     * This method checks if an identity exists.  It accepts identity name and
+     * type from the arguments.
+     * @param idName identity name
+     * @param idType Idtype of identity type
+     * @param ssoToken admin SSOToken
+     * @parm realmName realm Name in which identity present.
+     * @return true if identity exists
+     */
+    public boolean doesIdentityExists(String idName, IdType idType,
+            SSOToken ssoToken,
+            String realmName)
+    throws Exception {
+        entering("doesIdentityExists", null);
+        boolean idFound = false;
+        Set idRes = searchIdentities(ssoToken, idName, idType,
+                realmName);
+        Iterator iter = idRes.iterator();
+        AMIdentity amIdentity;
+        while (iter.hasNext()) {
+            amIdentity = (AMIdentity) iter.next();
+            if (amIdentity.getName().equals(idName)) {
+                idFound = true;
+                break;
+            }
+            log(Level.FINEST, "searchIdentities", "Search result - name: " +
+                    amIdentity.getName());
+        }
+        exiting("doesIdentityExists");
+        return (idFound);
+    }
+    
+    /**
+     * This method deletes one or multiple identities with identity name and
+     * type
+     * @param idName identity name
+     * @param idType identity type - user, agent, role, filtered role, group
+     * @param ssoToken admin SSOToken
+     * @param realmName realm Name from which identity has to be deleted.
+     * @return true if identity is deleted successfully
+     */
+    public boolean deleteID(String idName, String idType, SSOToken ssoToken,
+            String realmName)
+    throws Exception {
+        entering("deleteID", null);
+        boolean opSuccess = false;
+        if (idType == null) {
+            log(Level.FINE, "deleteID", "Failed to delete idType cannot be null" 
+                    + idType + " " + idName);
+            return false;
+        }
+        List idTypeList = getAttributeList(idType,
+                IDMConstants.IDM_KEY_SEPARATE_CHARACTER);
+        List idNameList = getAttributeList(idName,
+                IDMConstants.IDM_KEY_SEPARATE_CHARACTER);
+        log(Level.FINEST, "deleteID", idNameList.toString());
+        log(Level.FINE, "deleteID", "Deleting identity " + idType +
+                " name " + idName + "...");
+        Iterator iterName = idNameList.iterator();
+        Iterator iterType = idTypeList.iterator();
+        List newidTypeList = new ArrayList();
+        while (iterName.hasNext()) {
+            if (iterType.hasNext()) {
+                newidTypeList.add(getIdType((String)iterType.next()));
+            } else {
+                newidTypeList.add(getIdType(idType));
+            }
+            iterName.next();
+        }
+        deleteIdentity(ssoToken, realmName, newidTypeList, idNameList);
+        Iterator iterN = idNameList.iterator();
+        Iterator iterT = newidTypeList.iterator();
+        while (iterN.hasNext()) {
+            if (doesIdentityExists((String)iterN.next(),
+                    (IdType)iterT.next(), ssoToken, realmName)) {
+                opSuccess = false;
+                break;
+            } else{
+                opSuccess = true;
+            }
+        }
+        if (opSuccess) {
+            log(Level.FINE, "deleteID", idType + " " + idName +
+                    " is deleted successfully.");
+        } else {
+            log(Level.FINE, "deleteID", "Failed to delete " + idType +
+                    " " + idName);
+        }
+        exiting("deleteID");
+        return opSuccess;
+    }
+    
+    /**
+     * This method return type IdType of identity type
+     */
+    public IdType getIdType(String gidtType)
+    throws Exception {
+        if (gidtType.equals("user")) {
+            return IdType.USER;
+        } else if (gidtType.equals("role")) {
+            return IdType.ROLE;
+        } else if (gidtType.equals("filteredrole")) {
+            return IdType.FILTEREDROLE;
+        } else if (gidtType.equals("agent")) {
+            return IdType.AGENT;
+        } else if (gidtType.equals("group")) {
+            return IdType.GROUP;
+        } else {
+            log(Level.SEVERE, "getIdType", "Invalid id type " + gidtType);
+            assert false;
+            return null;
+        }
     }
 }
