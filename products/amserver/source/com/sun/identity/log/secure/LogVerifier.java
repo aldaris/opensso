@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogVerifier.java,v 1.4 2006-07-31 20:35:23 bigfatrat Exp $
+ * $Id: LogVerifier.java,v 1.5 2008-02-09 07:01:41 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,12 +26,14 @@
 package com.sun.identity.log.secure;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Date;
 import java.util.Vector;
 import java.util.logging.LogManager;
 
-import com.sun.identity.common.TimerFactory;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.LogReader;
@@ -50,7 +52,7 @@ public class LogVerifier{
     
     private static String PREFIX = "_secure.";
     private String curMAC = null;
-    private Timer verifyTimer;
+    private VerifyTask verifier;
     private String prevSignature = null;
     private boolean verified = true;
     private SecureLogHelper helper;
@@ -78,11 +80,18 @@ public class LogVerifier{
     }
     
     /**
-     *  Inner class which extends the abstract TimerTask class and impelements
-     *  the run method which is run periodically which does the actual 
-     *  verification.
+     *  Inner class which extends the abstract GeneralTaskRunnable class and
+     *  impelements the run method which is run periodically which does the
+     *  actual verification.
      */
-    class VerifyTask extends TimerTask {
+    class VerifyTask extends GeneralTaskRunnable {
+        
+        private long runPeriod;
+        
+        public VerifyTask(long runPeriod) {
+            this.runPeriod = runPeriod;
+        }
+        
         /**
          *  Method that runs at an interval as specified in the timer object.
          */
@@ -93,6 +102,45 @@ public class LogVerifier{
                 Debug.error(name+":Error running verifier thread", e);
             }
             verificationOn = false;
+        }
+        
+        /**
+         *  Methods that need to be implemented from GeneralTaskRunnable.
+         */
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
+        /**
+         *  Method that can be used to cancel the task from scheduled running.
+         */
+        
+        public void cancel() {
+            synchronized (this) {
+                if (headTask != null) {
+                    synchronized (headTask) {
+                        previousTask.setNext(nextTask);
+                        if (nextTask != null) {
+                            nextTask.setPrevious(previousTask);
+                        }
+                        nextTask = null;
+                    }
+                }
+                headTask = null;
+            }
         }
     }
     
@@ -108,11 +156,11 @@ public class LogVerifier{
         } else {
             interval = LogConstants.LOGVERIFY_PERIODINSECONDS_DEFAULT;
         }
-        interval *=1000;
-        if(verifyTimer == null){
-            verifyTimer = TimerFactory.getTimer();
-            verifyTimer.scheduleAtFixedRate(new VerifyTask(), 
-                interval, interval);
+        interval *= 1000;
+        if(verifier == null){
+            verifier = new VerifyTask(interval);
+            SystemTimer.getTimer().schedule(verifier, new Date(((
+                System.currentTimeMillis() + interval) / 1000) * 1000));
             if (Debug.messageEnabled()) {
                 Debug.message(name+":Verifier Thread Started");
             }
@@ -123,8 +171,10 @@ public class LogVerifier{
      *  Method to stop the log verifier thread if it is running
      */
     public void stopLogVerifier() {
-        if(verifyTimer != null)
-            verifyTimer.cancel();
+        if (verifier != null) {
+            verifier.cancel();
+            verifier = null;
+        }
     }
     
     /**

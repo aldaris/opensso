@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileHandler.java,v 1.6 2006-12-08 01:37:09 bigfatrat Exp $
+ * $Id: FileHandler.java,v 1.7 2008-02-09 07:01:41 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,15 +38,16 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
 import com.iplanet.log.NullLocationException;
-import com.sun.identity.common.TimerFactory;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.Logger;
@@ -83,7 +84,7 @@ public class FileHandler extends java.util.logging.Handler {
     private String fileName;
     private int recCountLimit;
     private ArrayList recordBuffer;
-    private Timer bufferTimer;
+    private TimeBufferingTask bufferTask;
     private boolean timeBufferingEnabled = false;
     private static String headerString = null;
     
@@ -543,9 +544,16 @@ public class FileHandler extends java.util.logging.Handler {
         }
     }
     
-    private class TimeBufferingTask extends TimerTask {
+    private class TimeBufferingTask extends GeneralTaskRunnable {
+        
+        private long runPeriod;
+        
+        public TimeBufferingTask(long runPeriod) {
+            this.runPeriod = runPeriod;
+        }
+        
         /**
-         * The method which implements the TimerTask.
+         * The method which implements the GeneralTaskRunnable.
          */
         public void run() {
             if (Debug.messageEnabled()) {
@@ -553,6 +561,45 @@ public class FileHandler extends java.util.logging.Handler {
                     ":FileHandler:TimeBufferingTask.run() called");
             }
             flush();
+        }
+        
+        /**
+         *  Methods that need to be implemented from GeneralTaskRunnable.
+         */
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
+        /**
+         *  Method that can be used to cancel the task from scheduled running.
+         */
+        
+        public void cancel() {
+            synchronized (this) {
+                if (headTask != null) {
+                    synchronized (headTask) {
+                        previousTask.setNext(nextTask);
+                        if (nextTask != null) {
+                            nextTask.setPrevious(previousTask);
+                        }
+                        nextTask = null;
+                    }
+                }
+                headTask = null;
+            }
         }
     }
     
@@ -564,12 +611,12 @@ public class FileHandler extends java.util.logging.Handler {
         } else {
             interval = LogConstants.BUFFER_TIME_DEFAULT;
         }
-        interval *=1000;
-        if(bufferTimer == null){
-            bufferTimer = TimerFactory.getTimer();
+        interval *= 1000;
+        if(bufferTask == null){
+            bufferTask = new TimeBufferingTask(interval);
             try {
-                bufferTimer.scheduleAtFixedRate(
-                    new TimeBufferingTask(), interval, interval);
+                SystemTimer.getTimer().schedule(bufferTask, new Date(((
+                    System.currentTimeMillis() + interval) / 1000) * 1000));
             } catch (IllegalArgumentException e) {
                 Debug.error (fileName + ":FileHandler:BuffTimeArg: " +
                     e.getMessage());
@@ -587,9 +634,9 @@ public class FileHandler extends java.util.logging.Handler {
     }
 
     private void stopBufferTimer() {
-        if(bufferTimer != null) {
-            bufferTimer.cancel();
-            bufferTimer = null;
+        if(bufferTask != null) {
+            bufferTask.cancel();
+            bufferTask = null;
             if (Debug.messageEnabled()) {
                 Debug.message(fileName + ":FileHandler: Buffer Timer Stopped");
             }

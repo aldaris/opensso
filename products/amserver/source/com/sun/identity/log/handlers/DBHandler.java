@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.6 2007-03-18 06:56:15 bigfatrat Exp $
+ * $Id: DBHandler.java,v 1.7 2008-02-09 07:01:40 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,11 +34,10 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -46,7 +45,10 @@ import java.util.logging.Level;
 import com.iplanet.log.ConnectionException;
 import com.iplanet.log.DriverLoadException;
 import com.iplanet.log.NullLocationException;
-import com.sun.identity.common.TimerFactory;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.log.AMLogException;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManager;
@@ -76,7 +78,7 @@ public class DBHandler extends Handler {
     private int recCountLimit;
     private int recMaxDBMem = 2;
     private ArrayList recordBuffer;
-    private Timer bufferTimer;
+    private TimeBufferingTask bufferTask;
     private boolean timeBufferingEnabled = false;
     //
     //  this is to keep track when the connection to the DB
@@ -1065,9 +1067,16 @@ public class DBHandler extends Handler {
         }
     }
     
-    private class TimeBufferingTask extends TimerTask {
+    private class TimeBufferingTask extends GeneralTaskRunnable {
+        
+        private long runPeriod;
+        
+        public TimeBufferingTask(long runPeriod) {
+            this.runPeriod = runPeriod;
+        }
+        
         /**
-         * The method which implements the TimerTask.
+         * The method which implements the GeneralTaskRunnable.
          */
         public void run() {
             if (Debug.messageEnabled()) {
@@ -1075,6 +1084,45 @@ public class DBHandler extends Handler {
                     ":DBHandler:TimeBufferingTask.run() called");
             }
             flush();
+        }
+        
+        /**
+         *  Methods that need to be implemented from GeneralTaskRunnable.
+         */
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
+        /**
+         *  Method that can be used to cancel the task from scheduled running.
+         */
+        
+        public void cancel() {
+            synchronized (this) {
+                if (headTask != null) {
+                    synchronized (headTask) {
+                        previousTask.setNext(nextTask);
+                        if (nextTask != null) {
+                            nextTask.setPrevious(previousTask);
+                        }
+                        nextTask = null;
+                    }
+                }
+                headTask = null;
+            }
         }
     }
     
@@ -1086,12 +1134,13 @@ public class DBHandler extends Handler {
         } else {
             interval = LogConstants.BUFFER_TIME_DEFAULT;
         }
-        interval *=1000;
-        if(bufferTimer == null){
-            bufferTimer = TimerFactory.getTimer();
+        interval *= 1000;
+        if(bufferTask == null){
+            bufferTask = new TimeBufferingTask(interval);
             try {
-                bufferTimer.scheduleAtFixedRate(
-                    new TimeBufferingTask(), interval, interval);
+                SystemTimer.getTimer().schedule(new TimeBufferingTask(interval),
+                    new Date(((System.currentTimeMillis() + interval) / 1000) *
+                    1000));
             } catch (IllegalArgumentException e) {
                 Debug.error (tableName + ":DBHandler:BuffTimeArg: " +
                     e.getMessage());
@@ -1109,9 +1158,9 @@ public class DBHandler extends Handler {
     }
 
     private void stopBufferTimer() {
-        if(bufferTimer != null) {
-            bufferTimer.cancel();
-            bufferTimer = null;
+        if(bufferTask != null) {
+            bufferTask.cancel();
+            bufferTask = null;
             if (Debug.messageEnabled()) {
                 Debug.message(tableName + ":DBHandler: Buffer Timer Stopped");
             }

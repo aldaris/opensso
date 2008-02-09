@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureFileHandler.java,v 1.4 2006-07-31 20:34:32 bigfatrat Exp $
+ * $Id: SecureFileHandler.java,v 1.5 2008-02-09 07:01:41 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,12 +36,11 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.security.AccessController;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.logging.Handler;
@@ -50,7 +49,10 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
 import com.iplanet.log.NullLocationException;
-import com.sun.identity.common.TimerFactory;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.LogQuery;
@@ -99,7 +101,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
     private int filesPerKeyStore;
     private String archiverClass;
     
-    private Timer signTimer = null;
+    private SignTask signTask = null;
     private long signInterval = 0;
     private static AMPassword logPassword = null;
     private static AMPassword verPassword = null;
@@ -376,7 +378,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
             Debug.error(logName +
                 ":SecureFileHandler: Could not close writer", ioe);
         }
-        if(signTimer != null) {
+        if(signTask != null) {
             stopPeriodicLogSigner();
             if (Debug.messageEnabled()) {
                 Debug.message(logName+":Stopped Log Signer");
@@ -927,10 +929,10 @@ public class SecureFileHandler extends java.util.logging.Handler {
      *  signature.
      */
     void startPeriodicLogSigner() {
-        if (signTimer == null){
-            signTimer = TimerFactory.getTimer();
-            signTimer.scheduleAtFixedRate(new SignTask(), 
-                                          signInterval, signInterval);
+        if (signTask == null){
+            signTask = new SignTask(signInterval);
+            SystemTimer.getTimer().schedule(signTask, new Date(((
+                    System.currentTimeMillis() + signInterval) / 1000) * 1000));
         }
     }
     
@@ -938,9 +940,10 @@ public class SecureFileHandler extends java.util.logging.Handler {
      *  Stops the log signing thread if it is running.
      */
     void stopPeriodicLogSigner(){
-        if(signTimer != null) {
+        if(signTask != null) {
             Debug.message(logName+"Sign Thread being stopped");
-            signTimer.cancel();
+            signTask.cancel();
+            signTask = null;
         }
     }
     
@@ -948,7 +951,14 @@ public class SecureFileHandler extends java.util.logging.Handler {
      *  Inner class which extends the abstract TimerTask class and impelements
      *  the run method which is run periodically which does the actual signing.
      */
-    class SignTask extends TimerTask {
+    class SignTask extends GeneralTaskRunnable {
+        
+        private long runPeriod;
+        
+        public SignTask(long runPeriod) {
+            this.runPeriod = runPeriod;
+        }
+        
         /**
          *  Runs the log signing method and generates the sign and writes 
          *  the sign to the log.
@@ -1015,6 +1025,45 @@ public class SecureFileHandler extends java.util.logging.Handler {
                 Logger.rwLock.readDone();
             }
         } // end of run()
+        
+        /**
+         *  Methods that need to be implemented from GeneralTaskRunnable.
+         */
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
+        /**
+         *  Method that can be used to cancel the task from scheduled running.
+         */
+        
+        public void cancel() {
+            synchronized (this) {
+                if (headTask != null) {
+                    synchronized (headTask) {
+                        previousTask.setNext(nextTask);
+                        if (nextTask != null) {
+                            nextTask.setPrevious(previousTask);
+                        }
+                        nextTask = null;
+                    }
+                }
+                headTask = null;
+            }
+        }
     }// end of class SignTask
 }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.8 2007-10-17 23:00:44 veiming Exp $
+ * $Id: RemoteHandler.java,v 1.9 2008-02-09 07:01:41 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,11 +27,10 @@ package com.sun.identity.log.handlers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -43,7 +42,10 @@ import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.naming.URLNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
-import com.sun.identity.common.TimerFactory;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.log.AMLogException;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManager;
@@ -71,7 +73,7 @@ public class RemoteHandler extends Handler {
     // It's to make remote loggging work properly when buffering is enabled 
     // and log request is directed to different Access Managers.
     private Map reqSetMap;
-    private Timer bufferTimer;
+    private TimeBufferingTask bufferTask;
     private boolean timeBufferingEnabled = false;
     private String logName;
     private URL logServURL;
@@ -274,15 +276,61 @@ public class RemoteHandler extends Handler {
         return loggingURL;
     }
     
-    private class TimeBufferingTask extends TimerTask {
+    private class TimeBufferingTask extends GeneralTaskRunnable {
+        
+        private long runPeriod;
+        
+        public TimeBufferingTask(long runPeriod) {
+            this.runPeriod = runPeriod;
+        }
+        
         /**
-         * The method which implements the TimerTask.
+         * The method which implements the GeneralTaskRunnable.
          */
         public void run() {
             if (Debug.messageEnabled()) {
                 Debug.message("RemoteHandler:TimeBufferingTask.run() called");
             }
             flush();
+        }
+        
+        /**
+         *  Methods that need to be implemented from GeneralTaskRunnable.
+         */
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
+        /**
+         *  Method that can be used to cancel the task from scheduled running.
+         */
+        
+        public void cancel() {
+            synchronized (this) {
+                if (headTask != null) {
+                    synchronized (headTask) {
+                        previousTask.setNext(nextTask);
+                        if (nextTask != null) {
+                            nextTask.setPrevious(previousTask);
+                        }
+                        nextTask = null;
+                    }
+                }
+                headTask = null;
+            }
         }
     }
     
@@ -294,12 +342,12 @@ public class RemoteHandler extends Handler {
         } else {
             interval = LogConstants.BUFFER_TIME_DEFAULT;
         }
-        interval *=1000;
-        if(bufferTimer == null){
-            bufferTimer = TimerFactory.getTimer();
+        interval *= 1000;
+        if(bufferTask == null){
+            bufferTask = new TimeBufferingTask(interval);
             try {
-                bufferTimer.scheduleAtFixedRate(
-                    new TimeBufferingTask(), interval, interval);
+                SystemTimer.getTimer().schedule(bufferTask, new Date(((
+                    System.currentTimeMillis() + interval) / 1000) * 1000));
             } catch (IllegalArgumentException e) {
                 Debug.error (logName + ":RemoteHandler:BuffTimeArg: " +
                     e.getMessage());
@@ -316,9 +364,9 @@ public class RemoteHandler extends Handler {
     }
 
     private void stopBufferTimer() {
-        if(bufferTimer != null) {
-            bufferTimer.cancel();
-            bufferTimer = null;
+        if(bufferTask != null) {
+            bufferTask.cancel();
+            bufferTask = null;
             if (Debug.messageEnabled()) {
                 Debug.message("RemoteHandler: Buffer Timer Stopped");
             }
