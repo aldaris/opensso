@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.17 2008-02-04 05:01:54 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.18 2008-02-09 04:28:55 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1921,7 +1921,7 @@ public class IDPSSOUtil {
         String classMethod = "IDPSSOUtil.getAuthenticationServiceURL: ";
         String authUrl = getAttributeValueFromIDPSSOConfig(
                 realm, hostEntityId, SAML2Constants.AUTH_URL);
-        if (authUrl == null) {
+        if ((authUrl == null) || (authUrl.trim().length() == 0)) {
             // need to get it from the request
             String uri = request.getRequestURI();
             String deploymentURI = uri;
