@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.27 2008-01-16 04:42:24 hengming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.28 2008-02-11 23:48:42 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1129,8 +1129,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             { WSFederationConstants.DISPLAY_NAME, idpAlias },
             { WSFederationConstants.UPN_DOMAIN, "" },
             { SAML2Constants.SIGNING_CERT_ALIAS, idpSCertAlias },
-            { SAML2Constants.AUTO_FED_ENABLED, "false" },
-            { SAML2Constants.AUTO_FED_ATTRIBUTE, "" },
             { SAML2Constants.ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE, "600" },
             { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
             { SAML2Constants.IDP_AUTHNCONTEXT_MAPPER_CLASS, 
@@ -1180,8 +1178,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                   url + "/RealmSelection" + maStr },
             { SAML2Constants.SIGNING_CERT_ALIAS, 
                   ( idpSCertAlias.length() > 0 ) ? idpSCertAlias : "" },
-            { SAML2Constants.AUTO_FED_ENABLED, "false" },
-            { SAML2Constants.AUTO_FED_ATTRIBUTE, "" },
             { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
             { SAML2Constants.SP_ACCOUNT_MAPPER, 
                   "com.sun.identity.wsfederation.plugins.DefaultADFSPartnerAccountMapper" },

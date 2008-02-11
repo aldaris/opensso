@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.1 2007-08-01 21:04:05 superpat7 Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.2 2008-02-11 23:48:42 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,11 +73,10 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
     /**
      * Returns the user's disntinguished name or the universal ID for the 
      * corresponding  <code>SAML</code> <code>Assertion</code>. This method
-     * will be invoked by the <code>SAML</code> framework while processing
-     * the <code>Assertion</code> and retrieves the identity information. 
-     * The implementation of this method checks for
+     * will be invoked by the <code>WS-Federation</code> framework while 
+     * processing the <code>Assertion</code> and retrieves the identity  
+     * information. The implementation of this method checks for
      * the user for the corresponding name identifier in the assertion.
-     * If not found, then it will check if this is an auto federation case. 
      *
      * @param assertion <code>SAML</code> <code>Assertion</code> that needs
      *        to be mapped to the user.
@@ -145,140 +144,8 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
                "DataStoreProviderException", dse);
             throw new WSFederationException(dse);
         }
-        if(userID != null) {
-            return userID;
-        }
 
-        //Check if this is an auto federation case.
-        return getAutoFedUser(realm, hostEntityID, assertion);
-    }
-
-    /**
-     * Returns user for the auto federate attribute.
-     *
-     * @param realm realm name.
-     * @param entityID hosted <code>EntityID</code>.
-     * @param <code>Assertion</code> from the identity provider.
-     * @return auto federation mapped user from the assertion
-     *         auto federation <code>AttributeStatement</code>.
-     *         null if the statement does not have the auto federation 
-     *         attribute.
-     */ 
-    protected String getAutoFedUser(String realm, 
-           String entityID, Assertion assertion) throws WSFederationException {
-        Set statements = assertion.getStatement();
-
-        if(statements == null || statements.size() == 0) {
-           if(debug.messageEnabled()) { 
-              debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
-              "Assertion does not have statements.");
-           }
-           return null;
-        }
-
-        String autoFedEnable = getAttribute(realm, 
-               entityID, SAML2Constants.AUTO_FED_ENABLED);
-
-        if(autoFedEnable == null || autoFedEnable.equals("false")) {
-           if(debug.messageEnabled()) { 
-              debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
-              "Auto federation is disabled.");
-           }
-           return null;
-        }
-       
-        String autoFedAttribute = getAttribute(realm, entityID,
-               SAML2Constants.AUTO_FED_ATTRIBUTE);
-
-        if(autoFedAttribute == null || autoFedAttribute.length() == 0) {
-           if(debug.messageEnabled()) { 
-              debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
-              "Auto federation attribute is not configured.");
-           }
-           return null;
-        }
-        
-        Set autoFedAttributeValue = null;
-        Iterator iter = statements.iterator();
-        while(iter.hasNext()) {
-           Statement statement = (Statement)iter.next();
-           if ( statement.getStatementType()==Statement.ATTRIBUTE_STATEMENT) {
-               autoFedAttributeValue = 
-                  getAttribute((AttributeStatement)statement, autoFedAttribute, 
-                  realm, entityID);
-               if(autoFedAttributeValue != null && 
-                  !autoFedAttributeValue.isEmpty()) {
-                  break;
-               }
-           }
-        }
-
-        if(autoFedAttributeValue == null ||
-           autoFedAttributeValue.isEmpty()) {
-           if(debug.messageEnabled()) {
-              debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
-              "Auto federation attribute is not specified in the assertion.");
-           }
-           return null;
-        }
-
-        DefaultSPAttributeMapper attributeMapper = 
-                   new DefaultSPAttributeMapper();
-        Map attributeMap = attributeMapper.getConfigAttributeMap(
-                   realm, entityID);
-        if(attributeMap == null && attributeMap.isEmpty()) {
-           if(debug.messageEnabled()) {
-              debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
-              "attribute map is not configured.");
-           }
-        }
-
-        String autoFedMapAttribute = (String)attributeMap.get(autoFedAttribute);
-
-        if(autoFedMapAttribute == null) {
-           if(debug.messageEnabled()) {
-              debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
-              "Auto federation attribute map is not specified in config.");
-           }
-           return null;
-        }
-
-        try {
-            Map map = new HashMap();
-            map.put(autoFedMapAttribute, autoFedAttributeValue);
-
-            if(debug.messageEnabled()) {
-               debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
-               "Search map: " + map);
-            }
-
-            String userId = dsProvider.getUserID(realm, map); 
-            if (userId != null && userId.length() != 0) {
-                return userId;
-            } else {
-                // check dynamic profile creation or ignore profile, if enabled,
-                // return auto-federation attribute value as uid 
-                if (isDynamicalOrIgnoredProfile(realm)) {
-                    if(debug.messageEnabled()) {
-                        debug.message(
-                            "DefaultLibrarySPAccountMapper: dynamical user " +
-                            "creation or ignore profile enabled : uid=" 
-                            + autoFedAttributeValue); 
-                    }
-                    // return the first value as uid
-                    return (String) autoFedAttributeValue.
-                           iterator().next();
-                }
-            } 
-        } catch (DataStoreProviderException dse) {
-
-            if(debug.warningEnabled()) {
-               debug.warning("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
-               "Datastore provider exception", dse);
-            }
-        }
-        return null;
-
+        return userID;
     }
 
     /**
