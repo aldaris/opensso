@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.41 2008-02-07 01:25:56 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.42 2008-02-11 06:50:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -164,9 +164,7 @@ public class AMSetupServlet extends HttpServlet {
                     }
                 }
             } catch (ConfiguratorException e) {
-                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                    "AMSetupServlet.checkConfigProperties: " +
-                    "Exception in getting bootstrap information", e);
+                //ignore, WAR may not be configured yet.
             } catch (Exception e) {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "AMSetupServlet.checkConfigProperties", e);
