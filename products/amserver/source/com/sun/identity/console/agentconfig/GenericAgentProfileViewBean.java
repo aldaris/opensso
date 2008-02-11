@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.3 2008-02-01 23:56:23 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.4 2008-02-11 06:52:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.console.agentconfig;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.ChildDisplayEvent;
-import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.console.base.AMPropertySheet;
@@ -199,7 +198,7 @@ public class GenericAgentProfileViewBean
     }
     
     public boolean beginBtnInheritDisplay(ChildDisplayEvent event) {
-        return !is2dot2Agent();
+        return super.beginBtnInheritDisplay(event) && !is2dot2Agent();
     }
 
      /**
