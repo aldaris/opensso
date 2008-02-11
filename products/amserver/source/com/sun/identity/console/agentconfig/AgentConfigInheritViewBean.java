@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfigInheritViewBean.java,v 1.1 2007-12-17 19:42:44 veiming Exp $
+ * $Id: AgentConfigInheritViewBean.java,v 1.2 2008-02-11 18:26:03 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.agentconfig.model.AgentsModelImpl;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.AMViewBeanBase;
+import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.components.view.html.SerializedField;
@@ -175,15 +176,13 @@ public class AgentConfigInheritViewBean
                 AgentProfileViewBean.UNIVERSAL_ID);
             String agentType = (String)getPageSessionAttribute(
                 AgentsViewBean.PG_SESSION_AGENT_TYPE);
-            String tabName = (String)getPageSessionAttribute(
-                GenericAgentProfileViewBean.PS_TABNAME);
             
             AgentsModel model = (AgentsModel)getModel();
             Set inheritedPropertyNames = model.getInheritedPropertyNames(
                 universalId);
             Map nameToSchemas = model.getAttributeSchemas(agentType,
                 propertyNames);
-            
+            removeNonInheritable(nameToSchemas);
             try {
                 ResourceBundle rb = AgentConfiguration.getServiceResourceBundle(
                     model.getUserLocale());
@@ -193,8 +192,6 @@ public class AgentConfigInheritViewBean
                 ArrayList cache = new ArrayList();
 
                 int counter = 0;
-                boolean first = false;
-                
                 for (Iterator i = propertyNames.iterator(); i.hasNext();
                     counter++) {
                     if (counter > 0) {
@@ -204,32 +201,34 @@ public class AgentConfigInheritViewBean
                     String name = (String)i.next();
                     AttributeSchema as = (AttributeSchema)nameToSchemas.get(
                         name);
-                    String displayName = rb.getString(as.getI18NKey());
-                    tblPropertyNamesModel.setValue(TBL_DATA_PROPERTY_NAME,
-                        displayName);
-                    
-                    try {
-                        String help = rb.getString(as.getI18NKey() + ".help");
-                        tblPropertyNamesModel.setValue(TBL_DATA_PROPERTY_HELP,
-                            help);
-                    } catch (MissingResourceException e) {
-                        //ignore if there are not help
-                    }
-                    
-                    Object oValue = groupValues.get(name);
-                    String value = "";
-                    if (oValue != null) {
-                        value = oValue.toString();
-                        if (value.length() >= 2) {
-                            value = value.substring(1, value.length()-1);
+                    if (as != null) {
+                        String displayName = rb.getString(as.getI18NKey());
+                        tblPropertyNamesModel.setValue(TBL_DATA_PROPERTY_NAME,
+                            displayName);
+
+                        try {
+                            String help = rb.getString(as.getI18NKey() + ".help");
+                            tblPropertyNamesModel.setValue(TBL_DATA_PROPERTY_HELP,
+                                help);
+                        } catch (MissingResourceException e) {
+                            //ignore if there are not help
                         }
+
+                        Object oValue = groupValues.get(name);
+                        String value = "";
+                        if (oValue != null) {
+                            value = oValue.toString();
+                            if (value.length() >= 2) {
+                                value = value.substring(1, value.length()-1);
+                            }
+                        }
+
+                        tblPropertyNamesModel.setValue(TBL_DATA_VALUE, value);
+                        tblPropertyNamesModel.setSelectionVisible(counter, true);
+                        tblPropertyNamesModel.setRowSelected(
+                            inheritedPropertyNames.contains(name));
+                        cache.add(name);
                     }
-                    
-                    tblPropertyNamesModel.setValue(TBL_DATA_VALUE, value);
-                    tblPropertyNamesModel.setSelectionVisible(counter, true);
-                    tblPropertyNamesModel.setRowSelected(
-                        inheritedPropertyNames.contains(name));
-                    cache.add(name);
                 }
                 szCache.setValue(cache);
             } catch (AMConsoleException e) {
@@ -320,5 +319,15 @@ public class AgentConfigInheritViewBean
     
     protected String getBackButtonLabel() {
         return getBackButtonLabel("page.title.agent.config");
+    }
+
+    private void removeNonInheritable(Map nameToSchema) {
+        for (Iterator i = nameToSchema.keySet().iterator(); i.hasNext(); ) {
+            String name = (String)i.next();
+            if (name.equalsIgnoreCase(AMAdminConstants.ATTR_USER_PASSWORD)) {
+                i.remove();
+                break;
+            }
+        }
     }
 }
