@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentConfigInherit.jsp,v 1.1 2007-12-17 19:42:45 veiming Exp $
+   $Id: AgentConfigInherit.jsp,v 1.2 2008-02-11 19:44:26 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -53,7 +53,7 @@
 </table>
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
-<cc:pagetitle name="pgtitleThreeBtns" bundleID="amConsole" pageTitleText="page.title.server.inheritance" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+<cc:pagetitle name="pgtitleThreeBtns" bundleID="amConsole" pageTitleText="page.title.agent.inheritance" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
 
 <cc:spacer name="spacer" height="10" newline="true" />
 
