@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureWSFed.java,v 1.4 2008-02-12 05:30:21 mrudulahg Exp $
+ * $Id: UnconfigureWSFed.java,v 1.5 2008-02-12 05:46:04 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -239,20 +239,11 @@ public class UnconfigureWSFed extends TestCommon {
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
                 if (FederationManager.getExitCode(spfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_SP_COT),
-<<<<<<< UnconfigureWSFed.java
                         configMap.get(TestConstants.KEY_SP_REALM))) != 0) {
                     log(Level.SEVERE, "UnconfigureWSFed", "Couldn't delete " +
                             "COT at SP side");
                     log(Level.SEVERE, "UnconfigureWSFed", "deleteCot famadm" +
                             " command failed");
-=======
-                        configMap.get(TestConstants.KEY_SP_REALM))) != 0) {
-                    log(Level.SEVERE, "UnconfigureWSFed", "Couldn't delete " +
-                            "COT at SP side");
-                    log(Level.SEVERE, "UnconfigureWSFed", "deleteCot famadm" +
-                            " command failed");
-                    assert false;
->>>>>>> 1.3
                 } else {
                     log(Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
                             "at SP side");                    
