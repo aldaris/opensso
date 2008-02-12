@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.11 2008-01-31 22:06:30 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.12 2008-02-12 05:32:58 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,11 +127,11 @@ public class SetupProduct extends TestCommon {
                             //successful
                             if (createDataStoreUsingfamadm(webClient, famadm,
                                     cfg1Data, 0, dCount)) {
-                                list.add(cfg1.getString(TestConstants.
+                                datastoreList.add(cfg1.getString(TestConstants.
                                         KEY_ATT_CONFIG_DEFDATASTORENAME));
                                 if (FederationManager.getExitCode(
                                         famadm.deleteDatastores(webClient,
-                                        realm, list)) != 0) {
+                                        realm, datastoreList)) != 0) {
                                     log(Level.SEVERE, "SetupProduct",
                                             "deleteDatastores famadm command" +
                                             " failed");
@@ -224,6 +224,7 @@ public class SetupProduct extends TestCommon {
                                     ":" + port + uri + "/UI/Logout";
                             String famadmURL = protocol + ":" + "//" + host +
                                     ":" + port + uri;
+                            List datastoreList = new ArrayList();
                             ResourceBundle cfg1Data =
                                     ResourceBundle.getBundle(
                                     "configGlobalData");
@@ -243,11 +244,11 @@ public class SetupProduct extends TestCommon {
                                 //is successful
                                 if (createDataStoreUsingfamadm(webClient,
                                         famadm, cfg1Data, 2, dCount)) {
-                                    list.add(cfg3.getString(TestConstants.
+                                    datastoreList.add(cfg3.getString(TestConstants.
                                             KEY_ATT_CONFIG_DEFDATASTORENAME));
                                     if (FederationManager.getExitCode(
                                             famadm.deleteDatastores(webClient,
-                                            realm, list)) != 0) {
+                                            realm, datastoreList)) != 0) {
                                         log(Level.SEVERE, "SetupProduct",
                                                 "deleteDatastores famadm" +
                                                 " command failed");
@@ -304,6 +305,7 @@ public class SetupProduct extends TestCommon {
                                     ":" + port + uri + "/UI/Logout";
                             String famadmURL = protocol + ":" + "//" + host +
                                     ":" + port + uri;
+                            List datastoreList = new ArrayList();
                             
                             int dCount = new Integer(cfg1Data.getString(
                                     SMSConstants.SMS_DATASTORE_PARAMS_PREFIX +
@@ -321,11 +323,11 @@ public class SetupProduct extends TestCommon {
                                 //is successful
                                 if (createDataStoreUsingfamadm(webClient,
                                         famadm, cfg1Data, 3, dCount)) {
-                                    list.add(cfg4.getString(TestConstants.
+                                    datastoreList.add(cfg4.getString(TestConstants.
                                             KEY_ATT_CONFIG_DEFDATASTORENAME));
                                     if (FederationManager.getExitCode(
                                             famadm.deleteDatastores(webClient,
-                                            realm, list)) != 0) {
+                                            realm, datastoreList)) != 0) {
                                         log(Level.SEVERE, "SetupProduct",
                                                 "deleteDatastores famadm" +
                                                 " command failed");

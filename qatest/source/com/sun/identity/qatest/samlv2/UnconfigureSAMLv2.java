@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2.java,v 1.7 2008-01-31 22:06:29 rmisra Exp $
+ * $Id: UnconfigureSAMLv2.java,v 1.8 2008-02-12 05:28:36 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -176,7 +176,6 @@ public class UnconfigureSAMLv2 extends TestCommon {
                             "COT at IDP side");
                     log(Level.SEVERE, "UnconfigureSAMLv2", "deleteCot famadm" +
                             " command failed");
-                    assert false;
                 } else {
                     log(Level.FINEST, "UnconfigureSAMLv2", "Deleted COT " +
                             "at IDP side");                    
@@ -246,7 +245,6 @@ public class UnconfigureSAMLv2 extends TestCommon {
                             "COT at SP side");
                     log(Level.SEVERE, "UnconfigureSAMLv2", "deleteCot famadm" +
                             " command failed");
-                    assert false;
                 } else {
                     log(Level.FINEST, "UnconfigureSAMLv2", "Deleted COT " +
                             "at SP side");                    

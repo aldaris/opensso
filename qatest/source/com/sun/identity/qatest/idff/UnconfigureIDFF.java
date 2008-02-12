@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureIDFF.java,v 1.6 2008-01-31 22:06:28 rmisra Exp $
+ * $Id: UnconfigureIDFF.java,v 1.7 2008-02-12 05:28:58 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -244,7 +244,6 @@ public class UnconfigureIDFF extends TestCommon {
                             "COT at SP side");
                     log(Level.SEVERE, "UnconfigureIDFF", "deleteCot famadm" +
                             " command failed");
-                    assert false;
                 } else {
                     log(Level.FINEST, "UnconfigureIDFF", "Deleted COT " +
                             "at SP side");                    
