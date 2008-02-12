@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: SAMLv2Base.java,v 1.5 2007-10-26 21:38:29 babysunil Exp $
+ * $Id: SAMLv2Base.java,v 1.6 2008-02-12 21:54:28 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,12 +29,13 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.federation.model.EntityModel;
 import com.sun.identity.console.federation.model.SAMLv2ModelImpl;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class SAMLv2Base extends EntityPropertiesBase {
@@ -42,17 +43,99 @@ public abstract class SAMLv2Base extends EntityPropertiesBase {
     protected static final String KEYNAMES = "128, 192, 256";
     protected static final String ALGORITHM = "AES, DESede";
     
+    protected static List AUTH_CONTEXT_REF_NAMES = new ArrayList();    
+    
+    public static final int AUTH_CONTEXT_REF_COUNT= 25;
+
+    public static final String InternetProtocol =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol";
+    public static final String InternetProtocolPassword =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocolPassword";
+    public static final String Kerberos =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:Kerberos";
+    public static final String MobileOneFactorUnregistered =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileOneFactorUnregistered";
+    public static final String MobileTwoFactorUnregistered =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorUnregistered";
+    public static final String MobileOneFactorContract =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileOneFactorContract";
+    public static final String MobileTwoFactorContract =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorContract";
+    public static final String Password =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:Password";
+    public static final String PasswordProtectedTransport =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
+    public static final String PreviousSession =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession";
+    public static final String X509 =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:X509";
+    public static final String PGP =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:PGP";
+    public static final String SPKI =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:SPKI";
+    public static final String XMLDSig =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:XMLDSig";
+    public static final String Smartcard =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard";
+    public static final String SmartcardPKI =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:SmartcardPKI";
+    public static final String SoftwarePKI =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:SoftwarePKI";
+    public static final String Telephony =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:Telephony";
+    public static final String NomadTelephony =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:NomadTelephony";
+    public static final String PersonalTelephony =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:PersonalTelephony";
+    public static final String AuthenticatedTelephony =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:AuthenticatedTelephony";
+    public static final String SecureRemotePassword =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:SecureRemotePassword";
+    public static final String TLSClient =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient";
+    public static final String TimeSyncToken =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:TimeSyncToken";
+    public static final String unspecified =
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified";
+    
+    static {
+        AUTH_CONTEXT_REF_NAMES.add(InternetProtocol);
+        AUTH_CONTEXT_REF_NAMES.add(InternetProtocolPassword);
+        AUTH_CONTEXT_REF_NAMES.add(Kerberos);
+        AUTH_CONTEXT_REF_NAMES.add(MobileOneFactorUnregistered);
+        AUTH_CONTEXT_REF_NAMES.add(MobileTwoFactorUnregistered);
+        AUTH_CONTEXT_REF_NAMES.add(MobileOneFactorContract);
+        AUTH_CONTEXT_REF_NAMES.add(MobileTwoFactorContract);
+        AUTH_CONTEXT_REF_NAMES.add(Password);
+        AUTH_CONTEXT_REF_NAMES.add(PasswordProtectedTransport);
+        AUTH_CONTEXT_REF_NAMES.add(PreviousSession);
+        AUTH_CONTEXT_REF_NAMES.add(X509);
+        AUTH_CONTEXT_REF_NAMES.add(PGP);
+        AUTH_CONTEXT_REF_NAMES.add(SPKI);
+        AUTH_CONTEXT_REF_NAMES.add(XMLDSig);
+        AUTH_CONTEXT_REF_NAMES.add(Smartcard);
+        AUTH_CONTEXT_REF_NAMES.add(SmartcardPKI);
+        AUTH_CONTEXT_REF_NAMES.add(SoftwarePKI);
+        AUTH_CONTEXT_REF_NAMES.add(Telephony);
+        AUTH_CONTEXT_REF_NAMES.add(NomadTelephony);
+        AUTH_CONTEXT_REF_NAMES.add(PersonalTelephony);
+        AUTH_CONTEXT_REF_NAMES.add(AuthenticatedTelephony);
+        AUTH_CONTEXT_REF_NAMES.add(SecureRemotePassword);
+        AUTH_CONTEXT_REF_NAMES.add(TLSClient);
+        AUTH_CONTEXT_REF_NAMES.add(TimeSyncToken);
+        AUTH_CONTEXT_REF_NAMES.add(unspecified);
+    }
+    
     public SAMLv2Base(String name) {
         super(name);
-    }    
+    }
     
     public void beginDisplay(DisplayEvent event)
-        throws ModelControlException 
-    {
+    throws ModelControlException {
         super.beginDisplay(event);
-
-    }
         
+    }
+    
     protected String getProfileName() {
         return EntityModel.SAMLV2;
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.5 2008-02-05 19:14:36 asyhuang Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.6 2008-02-12 21:55:46 asyhuang Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -189,7 +189,7 @@ public class CreateSAML2HostedProviderTemplate {
             "        <Attribute name=\"" +
             SAML2Constants.IDP_AUTHNCONTEXT_CLASSREF_MAPPING + "\">\n" +
             "            <Value>" +
-            SAML2Constants.CLASSREF_PASSWORD_PROTECTED_TRANSPORT + "</Value>\n"+
+            SAML2Constants.CLASSREF_PASSWORD_PROTECTED_TRANSPORT + "|||</Value>\n"+
             "        </Attribute>\n" +
             "        <Attribute name=\"" + SAML2Constants.IDP_ACCOUNT_MAPPER +
             "\">\n" +
@@ -340,7 +340,7 @@ public class CreateSAML2HostedProviderTemplate {
             "        <Attribute name=\""
             + SAML2Constants.SP_AUTH_CONTEXT_CLASS_REF_ATTR + "\">\n" +
             "            <Value>" +
-            SAML2Constants.SP_AUTHCONTEXT_CLASSREF_VALUE + "</Value>\n" +
+            SAML2Constants.SP_AUTHCONTEXT_CLASSREF_VALUE + "||</Value>\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"" +
             SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE + "\">\n" +

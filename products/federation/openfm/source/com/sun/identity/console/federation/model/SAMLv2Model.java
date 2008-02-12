@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.10 2008-02-05 19:16:48 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.11 2008-02-12 21:54:43 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.console.federation.model;
 
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;
+import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import java.util.Map;
 import java.util.List;
 import java.util.Set;
@@ -116,9 +117,11 @@ public interface SAMLv2Model
     public static final String IDP_MNI_RESP_SIGN = "wantMNIResponseSigned";
     public static final String ASSERT_EFFECT_TIME = "assertionEffectiveTime";
     public static final String IDP_ACCT_MAPPER = "idpAccountMapper";
-    public static final String IDP_AUTHN_CONT_MAPPER =
+    public static final String IDP_AUTHN_CONTEXT_MAPPER =
         "idpAuthncontextMapper";
-    public static final String IDP_AUTHN_CONTCLASS_REF_MAPPING =
+    public static final String IDP_AUTHN_CONTEXT_CLASS_REF_MAPPING_DEFAULT=
+        "idpDefaultAuthnContext";
+    public static final String IDP_AUTHN_CONTEXT_CLASS_REF_MAPPING =
         "idpAuthncontextClassrefMapping";
     public static final String IDP_ATTR_MAPPER = "idpAttributeMapper";
     public static final String ASSERT_NOT_BEFORE_TIMESKEW =
@@ -149,8 +152,10 @@ public interface SAMLv2Model
     public static final String SP_MNI_RESP_SIGN = "wantMNIResponseSigned";
     public static final String TRANSIENT_USER = "transientUser";
     public static final String SP_ACCT_MAPPER = "spAccountMapper";
-    public static final String SP_AUTHN_CONT_MAPPER = "spAuthncontextMapper";
+    public static final String SP_AUTHN_CONTEXT_MAPPER = "spAuthncontextMapper";
     public static final String SP_ATTR_MAPPER = "spAttributeMapper";
+    public static final String SP_AUTHN_CONTEXT_CLASS_REF_MAPPING_DEFAULT=
+        "spDefaultAuthnContext";
     public static final String SP_AUTHN_CONTEXT_CLASS_REF_MAPPING =
         "spAuthncontextClassrefMapping";
     public static final String SP_AUTHN_CONTEXT_COMPARISON =
@@ -463,4 +468,66 @@ public interface SAMLv2Model
         String location,
         Map attrValues
         ) throws AMConsoleException;
+    
+        
+    /**
+     * Returns the object of Auththentication Contexts in IDP.
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.
+     * @return SAMLv2AuthContexts contains IDP authContexts values.
+     * @throws AMConsoleException if unable to retrieve the IDP 
+     *         Authentication Contexts          
+     */
+    public SAMLv2AuthContexts getIDPAuthenticationContexts(
+        String realm,
+        String entityName       
+    ) throws AMConsoleException ;
+    
+    /**
+     * Returns  the object of Auththentication Contexts in SP.
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.    
+     * @return SAMLv2AuthContexts contains SP authContexts values.
+     * @throws AMConsoleException if unable to retrieve the SP
+     *         Authentication Contexts
+     */
+    public SAMLv2AuthContexts getSPAuthenticationContexts(
+        String realm,
+        String entityName       
+    ) throws AMConsoleException ;
+    
+     /**
+     * update IDP Authentication Contexts
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.         
+     * @param cxt SAMLv2AuthContexts object contains IDP 
+     *        Authentication Contexts values
+     * @throws AMConsoleException if fails to update IDP
+     *         Authentication Contexts.
+     */
+    public void updateIDPAuthenticationContexts(
+        String realm,
+        String entityName, 
+        SAMLv2AuthContexts cxt
+    ) throws AMConsoleException;
+    
+     /**
+     * update SP Authentication Contexts
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.       
+     * @param cxt SAMLv2AuthContexts object contains SP 
+     *        Authentication Contexts values
+     * @throws AMConsoleException if fails to update SP
+     *         Authentication Contexts.
+     */
+    public void updateSPAuthenticationContexts(
+        String realm,
+        String entityName, 
+        SAMLv2AuthContexts cxt
+    ) throws AMConsoleException;
+    
 }

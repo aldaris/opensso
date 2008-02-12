@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.13 2008-02-05 19:16:49 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.14 2008-02-12 21:54:44 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,7 @@ import com.sun.identity.saml2.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzServiceElement;
 import com.sun.identity.console.federation.model.EntityModel;
+import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import javax.xml.bind.JAXBException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,8 +91,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaIdpMap.put(IDP_MNI_RESP_SIGN, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ASSERT_EFFECT_TIME, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_ACCT_MAPPER, Collections.EMPTY_SET);
-        extendedMetaIdpMap.put(IDP_AUTHN_CONT_MAPPER, Collections.EMPTY_SET);
-        extendedMetaIdpMap.put(IDP_AUTHN_CONTCLASS_REF_MAPPING,
+        extendedMetaIdpMap.put(IDP_AUTHN_CONTEXT_MAPPER, Collections.EMPTY_SET);
+        extendedMetaIdpMap.put(IDP_AUTHN_CONTEXT_CLASS_REF_MAPPING,
                 Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_ATTR_MAPPER, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ASSERT_NOT_BEFORE_TIMESKEW,
@@ -128,7 +129,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaSpMap.put(SP_MNI_RESP_SIGN, Collections.EMPTY_SET);
         extendedMetaSpMap.put(TRANSIENT_USER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_ACCT_MAPPER, Collections.EMPTY_SET);
-        extendedMetaSpMap.put(SP_AUTHN_CONT_MAPPER, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(SP_AUTHN_CONTEXT_MAPPER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_ATTR_MAPPER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_AUTHN_CONTEXT_CLASS_REF_MAPPING,
                 Collections.EMPTY_SET);
@@ -938,6 +939,33 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         }
     }    
 
+           
+    /**
+     * Updates the BaseConfigElement.
+     *
+     * @param baseConfig is the BaseConfigType passed.
+     * @param attributeName is the attribute name
+     * @param list the list which contains the new values.
+     * @throws AMConsoleException if update of baseConfig object fails.
+     */
+    private void updateBaseConfig(
+        BaseConfigType baseConfig,
+        String attributeName,
+        List list
+        ) throws AMConsoleException {
+        List attrList = baseConfig.getAttribute();
+                
+        for (Iterator it = attrList.iterator(); it.hasNext(); ) {
+            AttributeElement avpnew = (AttributeElement)it.next();
+            String name = avpnew.getName();
+            if(name.equals(attributeName)){
+                avpnew.getValue().clear();
+                avpnew.getValue().addAll(list);
+            }
+        }
+     
+    }    
+    
     /**
      * Saves the NameIdFormat.
      *
@@ -1394,6 +1422,226 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         }
     }    
     
+     /**
+     * Returns the object of Auththentication Contexts in IDP.
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor. 
+     * @return SAMLv2AuthContexts contains IDP authContexts values.
+     * @throws AMConsoleException if unable to retrieve the IDP 
+     *         Authentication Contexts 
+     */
+    public SAMLv2AuthContexts getIDPAuthenticationContexts(
+        String realm,
+        String entityName       
+    ) throws AMConsoleException {        
+        SAMLv2AuthContexts cxt = new SAMLv2AuthContexts();
+        
+        try {
+            List tmpList = new ArrayList();
+            SAML2MetaManager  saml2MetaManager = getSAML2MetaManager();
+            Map map = new HashMap();
+            
+            BaseConfigType  idpConfig=
+                saml2MetaManager.getIDPSSOConfig(realm, entityName);
+            if (idpConfig != null){
+                map = SAML2MetaUtils.getAttributes(idpConfig) ;
+            } else {
+                throw new AMConsoleException("invalid.entity.name");
+            }
+            List list = (List) map.get(IDP_AUTHN_CONTEXT_CLASS_REF_MAPPING);           
+            
+            for (int i=0; i<list.size();i++) {
+                String tmp = (String) list.get(i);
+                int index = tmp.lastIndexOf("|");
+                boolean isDefault = false;
+                String defaultValue = tmp.substring(index+1);
+                if(defaultValue.equals("default")){
+                    isDefault = true;
+                }               
+                
+                tmp = tmp.substring(0, index);
+                index = tmp.lastIndexOf("|");
+                
+                String level = tmp.substring(index+1);
+                tmp = tmp.substring(0, index);
+                
+                index = tmp.indexOf("|");
+                String authScheme = tmp.substring(index + 1);
+                String name = tmp.substring(0,index);                
+                cxt.put(name, "true", authScheme, level, isDefault);
+            }
+            
+        } catch (SAML2MetaException e) {
+            throw new AMConsoleException(getErrorString(e));
+        } catch (AMConsoleException e) {
+            throw new AMConsoleException(getErrorString(e));
+        }
+        return (cxt != null) ? cxt : new SAMLv2AuthContexts();
+    }
+
+    /**
+     * Returns  the object of Auththentication Contexts in SP.
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor. 
+     * @return SAMLv2AuthContexts contains SP authContexts values.
+     * @throws AMConsoleException if unable to retrieve the SP
+     *         Authentication Contexts
+     */
+    public SAMLv2AuthContexts getSPAuthenticationContexts(
+        String realm,
+        String entityName        
+    ) throws AMConsoleException {
+        SAMLv2AuthContexts cxt = new SAMLv2AuthContexts();       
+        
+        try{
+            List tmpList = new ArrayList();
+            SAML2MetaManager  saml2MetaManager = getSAML2MetaManager();
+            Map map = new HashMap();
+            
+            BaseConfigType  spConfig=
+                saml2MetaManager.getSPSSOConfig(realm, entityName);
+            if (spConfig != null){
+                map = SAML2MetaUtils.getAttributes(spConfig) ;
+            } else {
+                throw new AMConsoleException("invalid.entity.name");
+            }
+            
+            List list = (List) map.get(SP_AUTHN_CONTEXT_CLASS_REF_MAPPING);
+           
+            for (int i=0; i<list.size(); i++){
+                String tmp = (String) list.get(i);
+                int index = tmp.lastIndexOf("|");
+                  
+                boolean isDefault = false;
+                String defaultValue = tmp.substring(index+1);
+                if(defaultValue.equals("default")){
+                    isDefault = true;
+                }               
+                tmp = tmp.substring(0, index);                
+                index = tmp.indexOf("|");
+                String level = tmp.substring(index + 1);
+                String name = tmp.substring(0,index);               
+                cxt.put(name, "true", level, isDefault);                        
+            }
+                    
+        } catch (SAML2MetaException e) {
+            throw new AMConsoleException(getErrorString(e));
+        } catch (AMConsoleException e) {
+            throw new AMConsoleException(getErrorString(e));
+        }
+        
+        return (cxt != null) ? cxt : new SAMLv2AuthContexts();
+        
+    }
+        
+    /**
+     * update IDP Authentication Contexts
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.     
+     * @param cxt SAMLv2AuthContexts object contains IDP
+     *        Authentication Contexts values
+     * @throws AMConsoleException if fails to update IDP
+     *         Authentication Contexts.
+     */
+    public void updateIDPAuthenticationContexts(
+        String realm,
+        String entityName,
+        SAMLv2AuthContexts cxt
+    ) throws AMConsoleException {        
+        List list = cxt.toIDPAuthContextInfo();        
+        String[] params = {realm, entityName,"SAMLv2", "IDP-updateIDPAuthenticationContexts"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
+        
+        try {
+            SAML2MetaManager saml2MetaManager = getSAML2MetaManager();
+            EntityConfigElement entityConfig =
+                saml2MetaManager.getEntityConfig(realm,entityName);
+            if (entityConfig == null) {
+                throw new AMConsoleException("invalid.entity.name");
+            }
+            
+            IDPSSOConfigElement	idpDecConfigElement =
+                saml2MetaManager.getIDPSSOConfig(realm, entityName);
+            if (idpDecConfigElement == null) {
+                throw new AMConsoleException("invalid.config.element");
+            } else {
+                updateBaseConfig(
+                    idpDecConfigElement,
+                    IDP_AUTHN_CONTEXT_CLASS_REF_MAPPING,
+                    list
+                    );
+            }
+            
+            //saves the attributes by passing the new entityConfig object
+            saml2MetaManager.setEntityConfig(realm,entityConfig);
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
+        } catch (SAML2MetaException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "IDP-updateIDPAuthenticationContexts", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        
+        return;
+    }
+    
+    /**
+     * update SP Authentication Contexts
+     *
+     * @param realm Realm of Entity
+     * @param entityName Name of Entity Descriptor.     
+     * @param cxt SAMLv2AuthContexts object contains SP
+     *        Authentication Contexts values
+     * @throws AMConsoleException if fails to update SP
+     *         Authentication Contexts.
+     */
+    public void updateSPAuthenticationContexts(
+        String realm,
+        String entityName,
+        SAMLv2AuthContexts cxt
+    ) throws AMConsoleException {        
+        List list = cxt.toSPAuthContextInfo();       
+        String[] params = {realm, entityName,"SAMLv2", "SP-updateSPAuthenticationContexts"};
+        logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
+        
+        try {
+            SAML2MetaManager saml2MetaManager = getSAML2MetaManager();
+            EntityConfigElement entityConfig =
+                saml2MetaManager.getEntityConfig(realm,entityName);
+            if (entityConfig == null) {
+                throw new AMConsoleException("invalid.entity.name");
+            }
+            
+            SPSSOConfigElement spDecConfigElement =
+                saml2MetaManager.getSPSSOConfig(realm, entityName);
+            if (spDecConfigElement == null) {
+                throw new AMConsoleException("invalid.config.element");
+            } else {
+                // update sp entity config
+                updateBaseConfig(
+                    spDecConfigElement,
+                    SP_AUTHN_CONTEXT_CLASS_REF_MAPPING,
+                    list
+                    );
+            }
+            
+            //saves the attributes by passing the new entityConfig object
+            saml2MetaManager.setEntityConfig(realm,entityConfig);
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
+        } catch (SAML2MetaException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "SP-updateSPAuthenticationContexts", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
+        }        
+        return;
+    }
+    
     /**
      * create Entity Config Object.(Extended Metadata)
      *
@@ -1514,5 +1762,5 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      */
     public Map getIDPEXDataMap() {
         return extendedMetaIdpMap;
-    }
+    } 
 }

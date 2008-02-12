@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SPViewBean.java,v 1.3 2007-10-26 21:40:20 babysunil Exp $
+ * $Id: SAMLv2SPViewBean.java,v 1.4 2008-02-12 21:54:29 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,11 +26,17 @@ package com.sun.identity.console.federation;
 
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.model.ModelControlException;
+import com.iplanet.jato.view.ContainerView;
 import com.iplanet.jato.view.event.DisplayEvent;
-import com.sun.identity.console.base.AMPropertySheet;
+import com.iplanet.jato.view.View;
+import com.sun.identity.console.base.AMPropertySheet; 
+import com.sun.identity.console.base.AMTableTiledView;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.federation.model.SAMLv2Model;
+import com.sun.identity.console.federation.SAMLv2AuthContexts;
+import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.table.CCActionTable;
 import com.sun.identity.console.base.model.AMConsoleException;
 import java.util.Map;
 import java.util.HashMap;
@@ -42,12 +48,51 @@ import java.util.ArrayList;
 public class SAMLv2SPViewBean extends SAMLv2Base {
     public static final String DEFAULT_DISPLAY_URL =
             "/console/federation/SAMLv2SP.jsp";
+        
+    public static final String CHILD_AUTH_CONTEXT_TILED_VIEW = "tableTiledView";
+    public static final String TBL_AUTHENTICATION_CONTEXTS =
+        "tblAuthenticationContext";
+    public static final String TBL_COL_SUPPORTED = "tblColSupported";
+    public static final String TBL_COL_CONTEXT_REFERENCE =
+        "tblColContextReference";
+    public static final String TBL_COL_LEVEL = "tblColLevel";
+    public static final String TBL_DATA_CONTEXT_REFERENCE =
+        "tblDataContextReference";
+    public static final String TBL_DATA_SUPPORTED = "tblDataSupported";
+    public static final String TBL_DATA_LABEL = "tblDataLabel";
+    public static final String TBL_DATA_LEVEL = "tblDataLevel";
     
+    protected CCActionTableModel tblAuthContextsModel;
+
     public SAMLv2SPViewBean() {
         super("SAMLv2SP");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
     }
+   
+    protected void registerChildren() {
+	super.registerChildren();
+        if(isHosted()){
+	    registerChild(CHILD_AUTH_CONTEXT_TILED_VIEW, 
+                AMTableTiledView.class);
+        }
+    }
     
+    protected View createChild(String name) {
+        View view = null;
+        if (isHosted() && (name.equals(CHILD_AUTH_CONTEXT_TILED_VIEW))) {
+            view = new AMTableTiledView(this, tblAuthContextsModel, name);
+        } else if (isHosted() && (name.equals(TBL_AUTHENTICATION_CONTEXTS))) {
+            CCActionTable child = new CCActionTable(
+                this, tblAuthContextsModel, name);
+            child.setTiledView((ContainerView)getChild(
+                CHILD_AUTH_CONTEXT_TILED_VIEW));
+            view = child;
+        } else {
+            view = super.createChild(name);
+        }
+        return view;
+    }
+        
     public void beginDisplay(DisplayEvent event)
     throws ModelControlException {
         super.beginDisplay(event);
@@ -58,6 +103,72 @@ public class SAMLv2SPViewBean extends SAMLv2Base {
         ps.setAttributeValues(getExtendedValues(), model);
         setDisplayFieldValue(model.TF_KEY_NAME, KEYNAMES);
         setDisplayFieldValue(model.TF_ALGORITHM, ALGORITHM);
+        
+         if (isHosted()) {
+            SAMLv2AuthContexts authContexts = null;
+            try {
+                authContexts = model.getSPAuthenticationContexts(
+                    realm,
+                    entityName);                
+            } catch (AMConsoleException e){               
+                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+            }            
+            populateAuthenticationContext(authContexts);
+        }
+    }
+         
+    private void populateAuthenticationContext(SAMLv2AuthContexts authContexts) {        
+        List names = AUTH_CONTEXT_REF_NAMES;
+        // We know that names from model contains 25 elements
+        int sz = names.size();
+        tblAuthContextsModel.clear();
+        for (int i = 0; i < sz; i++) {
+            String name = (String)names.get(i);
+            populateAuthenticationContext(name, authContexts, i);           
+        }
+    }
+    
+    private void populateAuthenticationContext(
+        String name,
+        SAMLv2AuthContexts authContexts,
+        int index
+        ) {
+        if (index != 0) {
+            tblAuthContextsModel.appendRow();
+        }
+        
+        SAMLv2Model model =
+            (SAMLv2Model)getModelInternal();
+        tblAuthContextsModel.setValue(TBL_DATA_CONTEXT_REFERENCE, name);
+        tblAuthContextsModel.setValue(TBL_DATA_LABEL,
+            model.getLocalizedString(getAuthContextI18nKey(name)));
+        
+        SAMLv2AuthContexts.SAMLv2AuthContext authContextObj = null;
+        if (authContexts != null) {
+            authContextObj = authContexts.get(name);
+        }
+        
+        if (authContextObj == null) {
+            tblAuthContextsModel.setValue(TBL_DATA_SUPPORTED, "");
+            tblAuthContextsModel.setValue(TBL_DATA_LEVEL, "0");
+        }else{
+            tblAuthContextsModel.setValue(TBL_DATA_SUPPORTED, 
+                authContextObj.supported);
+            tblAuthContextsModel.setValue(TBL_DATA_LEVEL, 
+                authContextObj.level);
+            if(authContextObj.isDefault){
+                setDisplayFieldValue(
+                    model.SP_AUTHN_CONTEXT_CLASS_REF_MAPPING_DEFAULT,
+                    authContextObj.name);
+            }
+        }        
+    }
+    
+    private String getAuthContextI18nKey(String name) {
+        int idx = name.lastIndexOf(":");
+        String key = (idx != -1) ? name.substring(idx+1) : name;
+        return "samlv2.authenticationContext." + key + ".label";
     }
     
     protected void createPropertyModel() {
@@ -66,11 +177,56 @@ public class SAMLv2SPViewBean extends SAMLv2Base {
             psModel = new AMPropertySheetModel(
                     getClass().getClassLoader().getResourceAsStream(
                     "com/sun/identity/console/propertySAMLv2SPHosted.xml"));
+            createAuthContextsModel();
+            psModel.setModel(TBL_AUTHENTICATION_CONTEXTS,
+                tblAuthContextsModel);
         } else {
             psModel = new AMPropertySheetModel(
                     getClass().getClassLoader().getResourceAsStream(
                     "com/sun/identity/console/propertySAMLv2SPRemote.xml"));
         }
+        psModel.clear();
+    }
+    
+    private void createAuthContextsModel() {
+        tblAuthContextsModel = new CCActionTableModel(
+            getClass().getClassLoader().getResourceAsStream(
+            "com/sun/identity/console/tblSAMLv2SPAuthenticationContext.xml"));
+        tblAuthContextsModel.setTitleLabel("label.items");
+        tblAuthContextsModel.setActionValue(TBL_COL_SUPPORTED,
+            "samlv2.sp.authenticationContext.table.name.supported.name");
+        tblAuthContextsModel.setActionValue(TBL_COL_CONTEXT_REFERENCE,
+            "samlv2.sp.authenticationContext.table.name.contextReference.name");
+        tblAuthContextsModel.setActionValue(TBL_COL_LEVEL,
+            "samlv2.sp.authenticationContext.table.name.level.name");
+    }
+    
+    private SAMLv2AuthContexts getAuthenticationContexts()
+        throws ModelControlException 
+    {
+        CCActionTable tbl = (CCActionTable)getChild(
+            TBL_AUTHENTICATION_CONTEXTS);
+        tbl.restoreStateData();
+                
+        SAMLv2AuthContexts authContexts = new SAMLv2AuthContexts();      
+        String defaultAuthnContext = 
+            (String)getDisplayFieldValue("spDefaultAuthnContext");  
+        for (int i = 0; i < AUTH_CONTEXT_REF_COUNT; i++) {
+            tblAuthContextsModel.setLocation(i);
+            String name = (String)tblAuthContextsModel.getValue(
+                TBL_DATA_CONTEXT_REFERENCE);
+            String supported = (String)tblAuthContextsModel.getValue(
+                TBL_DATA_SUPPORTED);
+            String level = (String)tblAuthContextsModel.getValue(
+                TBL_DATA_LEVEL);            
+            boolean isDefault = false;
+            if(name.equals(defaultAuthnContext)){
+                isDefault = true;               
+                supported = "true";
+            }                       
+            authContexts.put(name, supported, level, isDefault);
+        }          
+        return authContexts;
     }
     
     public void handleButton1Request(RequestInvocationEvent event)
@@ -96,6 +252,12 @@ public class SAMLv2SPViewBean extends SAMLv2Base {
             //save the extended metadata values for the Idp
             model.setSPExtAttributeValues(realm, entityName, spExtValues,
                     location);
+            
+            if (isHosted()) {
+                // update Authentication Contexts
+                model.updateSPAuthenticationContexts(realm, entityName, getAuthenticationContexts());
+            }
+            
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                     "samlv2.sp.property.updated");
         } catch (AMConsoleException e) {

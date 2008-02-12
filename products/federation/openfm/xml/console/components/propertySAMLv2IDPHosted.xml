@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPHosted.xml,v 1.8 2008-02-05 19:17:21 asyhuang Exp $
+   $Id: propertySAMLv2IDPHosted.xml,v 1.9 2008-02-12 21:53:18 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -409,44 +409,63 @@
             </ccgroup>
         </property>
     </section>   
-    <section name="authContext" defaultValue="samlv2idp.provider.section.title.authcont" >
+    <section name="authenticationContext" defaultValue="samlv2.entityDescriptor.provider.section.title.authenticationContext">
         <property>
-            <ccgroup>
-                <property>
-                    <label name="lblIdpAuthncontextMapper"
-                           defaultValue="samlv2idp.attribute.label.idpAuthncontextMapper"
-                           labelFor="idpAuthncontextMapper" />
-                    
-                    <cc name="idpAuthncontextMapper" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                </property>
-                
-                <property>
-                    <label name="lblIDPAuthncontextClassrefMapping"
-                           defaultValue=
-                           "samlv2idp.attribute.label.idpAuthncontextClassrefMapping" 
-                           labelFor="idpAuthncontextClassrefMapping" />
-                    <ccgroup>
-                        <property>
-                            <cc name="idpAuthncontextClassrefMapping" 
-                                tagclass=
-                                "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
-                                <attribute name="name" value="list" />
-                                <attribute name="listboxLabel" 
-                                           value="label.current.value" />
-                                <attribute name="textboxLabel"
-                                           value="label.new.value" />
-                            </cc>
-                        </property>
-                    </ccgroup>
-                </property>
-            </ccgroup>
-        </property>        
-    </section>
+            <label name="lblIdpAuthncontextMapper"
+                   defaultValue="samlv2.idp.attribute.label.idpAuthncontextMapper"
+                   labelFor="idpAuthncontextMapper" />
+            
+            <cc name="idpAuthncontextMapper" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property required="true">
+            <label name="lblDefaultAuthenticationContext" defaultValue="samlv2.entityDescriptor.provider.attribute.label.defaultAuthenticationContext" labelFor="singleChoiceDefaultAuthenticationContext" />
+            <cc name="idpDefaultAuthnContext" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
+                <option label="samlv2.authenticationContext.InternetProtocol.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol"/>
+                <option label="samlv2.authenticationContext.InternetProtocolPassword.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocolPassword"/>
+                <option label="samlv2.authenticationContext.Kerberos.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:Kerberos"/>
+                <option label="samlv2.authenticationContext.MobileOneFactorUnregistered.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:MobileOneFactorUnregistered"/>
+                <option label="samlv2.authenticationContext.MobileTwoFactorUnregistered.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorUnregistered"/>
+                <option label="samlv2.authenticationContext.MobileOneFactorContract.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:MobileOneFactorContract"/>
+                <option label="samlv2.authenticationContext.MobileTwoFactorContract.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorContract"/>
+                <option label="samlv2.authenticationContext.Password.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:Password"/>
+                <option label="samlv2.authenticationContext.PasswordProtectedTransport.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"/>
+                <option label="samlv2.authenticationContext.PreviousSession.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession"/>
+                <option label="samlv2.authenticationContext.X509.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:X509"/>
+                <option label="samlv2.authenticationContext.PGP.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:PGP"/>
+                <option label="samlv2.authenticationContext.SPKI.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:SPKI"/>
+                <option label="samlv2.authenticationContext.XMLDSig.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:XMLDSig"/>
+                <option label="samlv2.authenticationContext.Smartcard.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard"/>
+                <option label="samlv2.authenticationContext.SmartcardPKI.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:SmartcardPKI"/>
+                <option label="samlv2.authenticationContext.SoftwarePKI.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:SoftwarePKI"/>
+                <option label="samlv2.authenticationContext.Telephony.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:Telephony"/>
+                <option label="samlv2.authenticationContext.NomadTelephony.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:NomadTelephony"/>
+                <option label="samlv2.authenticationContext.PersonalTelephony.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:PersonalTelephony"/>
+                <option label="samlv2.authenticationContext.AuthenticatedTelephony.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:AuthenticatedTelephony"/>
+                <option label="samlv2.authenticationContext.SecureRemotePassword.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:SecureRemotePassword"/>
+                <option label="samlv2.authenticationContext.TLSClient.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient"/>
+                <option label="samlv2.authenticationContext.TimeSyncToken.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:TimeSyncToken"/>
+                <option label="samlv2.authenticationContext.unspecified.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified"/> 
+            </cc>
+        </property>          
+        <property span="true">
+            <cc name="tblAuthenticationContext" tagclass="com.sun.web.ui.taglib.table.CCActionTableTag" >
+                <attribute name="title" value="samlv2.entityDescriptor.provider.table.title.authenticationContexts" />
+                <attribute name="showPaginationControls" value="false" />
+                <attribute name="showAdvancedSortingIcon" value="false" />
+                <attribute name="showLowerActions" value="false" />
+                <attribute name="showPaginationControls" value="false" />
+                <attribute name="showPaginationIcon" value="false" />
+                <attribute name="showSelectionIcons" value="false" />
+                <attribute name="showSelectionSortIcon" value="false" />
+                <attribute name="showSortingRow" value="false" />
+            </cc>
+        </property>
+    </section>   
     <section name="bootstrap" defaultValue="samlv2idp.provider.section.title.bootstrap" >  
         <property>
             <label name="lblIDPdiscoveryBootstrappingEnabled"

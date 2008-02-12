@@ -1,0 +1,27 @@
+
+<!DOCTYPE table SYSTEM "table.dtd">
+
+<table>
+    <column name="tblColSupported" >
+        <cc name="tblDataSupported" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+    </column>
+    <column name="tblColContextReference">
+        <cc name="tblDataLabel" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" ><attribute name="bundleID" value="" /></cc>
+        <cc name="tblDataContextReference" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
+    </column>
+    <column name="tblColLevel" >
+        <cc name="tblDataLevel" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+            <option label="samlv2.authenticationContext.priority.option.0" value="0" />
+            <option label="samlv2.authenticationContext.priority.option.1" value="1" />
+            <option label="samlv2.authenticationContext.priority.option.2" value="2" />
+            <option label="samlv2.authenticationContext.priority.option.3" value="3" />
+            <option label="samlv2.authenticationContext.priority.option.4" value="4" />
+            <option label="samlv2.authenticationContext.priority.option.5" value="5" />
+            <option label="samlv2.authenticationContext.priority.option.6" value="6" />
+            <option label="samlv2.authenticationContext.priority.option.7" value="7" />
+            <option label="samlv2.authenticationContext.priority.option.8" value="8" />
+            <option label="samlv2.authenticationContext.priority.option.9" value="9" />
+            <option label="samlv2.authenticationContext.priority.option.10" value="10" />
+        </cc>
+    </column>
+</table>
