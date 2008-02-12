@@ -157,7 +157,7 @@ main (int argc, char *argv[])
 	}
     }
 
-    if (usage_error == B_TRUE) {
+    if (usage_error || (NULL==ssoTokenID && (NULL==org_name) && (NULL==user || NULL==password))) {
 	usage(argv);
 	exit(EXIT_FAILURE);
     }

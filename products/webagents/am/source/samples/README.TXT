@@ -69,7 +69,7 @@ Building Sample Program on UNIX platforms
 
    3. Under install directory>/is_csdk/lib, please do the following
 
-       ln -s libamsdk.so.2 libamsdk.so
+       ln -s libamsdk.so.3 libamsdk.so
        ln -s libxml2.so.2 libxml2.so
 
    4. Include directory>/is_csdk/lib in LD_LIBRARY_PATH
@@ -137,11 +137,19 @@ am_policy_test
    resource name, action.
 
    Usage: 
-      am_policy_test <init property file> <ssoToken> <resource name> <action>
+      am_policy_test <property file> <agent_config_file> <ssoToken> <resource name> <action>
 
-   <init property file> 
-       is the path to the AMAgent.properties file. For example:
+   <property file> 
+       is the path to the AMAgent.properties bootstrap file. For example:
        ../config/AMAgent.properties
+
+   <agent config file> 
+       is the path to the AMAgentConfiguration.properties file. Even if the
+       repository type is "centralized", the user still needs to provide
+       a value for this property (just a file name is enough). If the 
+       repository type is "local", user needs to provide a location of the
+       AMAgentConfiguration.properties.
+       For example: ../config/AMAgentConfiguration.properties
 
    <ssoToken> 
        is a valid SSO Token issued by Access Manager. You can get this
@@ -205,7 +213,7 @@ am_sso_test
    
 
    Usage: 
-      am_sso_test -u user -p password [-o org_name] [-f properties_file] [-s sso_token_id]
+      am_sso_test -u user -p password [-o org_name] [-f properties_file] [-s sso_token_id] [-m auth_module]
 
    Where:
 
@@ -226,6 +234,9 @@ am_sso_test
 
    <sso_token_id> 
        User SSO token id. 
+
+   <auth_module> 
+       Auth module to use
 
    Either "-u user -p password" or "-s sso_token_id" should be used.
 

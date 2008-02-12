@@ -246,6 +246,11 @@ am_policy_evaluate(am_policy_t policy_handle,
 		      am_map_t policy_response_map_ptr,
 		      am_policy_result_t *policy_res) {
 
+    
+    void* agent_config = am_web_get_agent_configuration();
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+		(AgentConfigurationRefCntPtr*) agent_config;
+
     return am_policy_evaluate_ignore_url_notenforced(policy_handle,
 		      sso_token,
 		      resource_name,
@@ -254,7 +259,7 @@ am_policy_evaluate(am_policy_t policy_handle,
 		      policy_response_map_ptr,
 		      policy_res,
 		      AM_FALSE,
-		      NULL);
+		      (*agentConfigPtr)->properties);
 }
 
 /*
