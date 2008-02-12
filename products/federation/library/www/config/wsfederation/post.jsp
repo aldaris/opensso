@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: post.jsp,v 1.1 2007-08-01 21:04:47 superpat7 Exp $
+   $Id: post.jsp,v 1.2 2008-02-12 19:52:57 superpat7 Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -36,11 +36,11 @@
     String wresult = 
         (String)request.getAttribute(WSFederationConstants.POST_WRESULT);
 %>
-<html xmlns="https://www.w3.org/1999/xhtml">"
+<html xmlns="https://www.w3.org/1999/xhtml">
   <head>
       <title>Access rights validated</title>
   </head>
-  <body Onload="document.forms[0].submit()">
+  <body onLoad="document.forms[0].submit()">
     <form method="POST" action="<%=targetURL%>">
       <input type="hidden" name="wa" value="<%=wa%>">
     <%
