@@ -17,27 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccountLockoutTest.java,v 1.3 2008-01-18 00:42:50 rmisra Exp $
- *
+ *$Id: AccountLockoutTest.java,v 1.4 2008-02-13 19:08:15 arunav Exp $*
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
-
 package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.authentication.AuthTestsValidator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -47,12 +42,12 @@ import org.testng.annotations.Test;
 /**
  * This class is called by the <code>AccountLockoutTest</code>.
  * Performs the tests for User Account Lockout and warnings
- * for the number of set login failure attempts, test cases covered
- * AccountLock_2,AccountLock_3,AccountLock_6,AccountLock_9,AccountLock_10
- * AccountLock_11,AccountLock_13,AccountLock_14
+ * for the number of set login failure attempts. Test cases covered
+ * AccountLock_2, AccountLock_3, AccountLock_4, AccountLock_6, AccountLock_9,
+ * AccountLock_10, AccountLock_11, AccountLock_13, AccountLock_14
  */
 public class AccountLockoutTest extends TestCommon {
-    
+
     private ResourceBundle testResources;
     private String testModule;
     private String cleanupFlag;
@@ -61,8 +56,20 @@ public class AccountLockoutTest extends TestCommon {
     private boolean userExists;
     private String lockUser;
     private String lockUserpass;
+    private String nslockUser;
+    private String nslockUserpass;
+    private String lockStatusUser;
+    private String lockStatusUserpass;
+    private String lockAttrUser;
+    private String lockAttrUserpass;
     private String warnUser;
     private String warnUserpass;
+    private String lockAttrName;
+    private String lockAttrValue;
+    private String lockStatusAttrName;
+    private String lockStatusAttrValue;
+    private String nslockAttrName;
+    private String nslockAttrValue;
     private String lockoutattempts;
     private String warnattempts;
     private String testURL;
@@ -82,7 +89,8 @@ public class AccountLockoutTest extends TestCommon {
     private String logoutURL;
     private String configrbName = "authenticationConfigData";
     private List<String> testUserList = new ArrayList<String>();
-    
+    private List<String> userAttrList;
+
     /**
      * Default Constructor
      **/
@@ -92,7 +100,7 @@ public class AccountLockoutTest extends TestCommon {
         logoutURL = url + "/UI/Logout";
         fm = new FederationManager(url);
     }
-    
+
     /**
      * Reads the necessary test configuration and prepares the system
      * for Account Lockout testing
@@ -101,8 +109,8 @@ public class AccountLockoutTest extends TestCommon {
      * - Sets the lockout attributes
      * - Create Users , If needed
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void setup()
+    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void setup() 
     throws Exception {
         entering("setup", null);
         webClient = new WebClient();
@@ -127,30 +135,81 @@ public class AccountLockoutTest extends TestCommon {
             warnUserpass = testResources.getString("am-auth-lockout-test-" +
                     testModule + "-warnuserpassword");
             warnUserpass.trim();
-            lockoutattempts =
-                    testResources.getString("am-auth-lockout-test-warning-attempts");
-            warnattempts =
-                    testResources.getString("am-auth-lockout-test-lockout-attempts");
+            lockoutattempts = testResources.getString(
+                    "am-auth-lockout-test-warning-attempts");
+            warnattempts = testResources.getString(
+                    "am-auth-lockout-test-lockout-attempts");
             warnPassmsg = testResources.getString("am-auth-lockout-test-" +
                     testModule + "-warn-passmsg");
             failpage = testResources.getString("am-auth-lockout-test-" +
                     testModule + "-fail-page");
-            int ilockattempts = Integer.parseInt(lockoutattempts);
-            int iwarnattempts = Integer.parseInt(warnattempts);
             testURL = url + "?module=" + testModule;
-            attributevalues.add("iplanet-am-auth-login-failure-lockout-mode=true");
-            attributevalues.add("iplanet-am-auth-lockout-warn-user="
+            attributevalues.
+                    add("iplanet-am-auth-login-failure-lockout-mode=true");
+            attributevalues.add("iplanet-am-auth-lockout-warn-user=" 
                     + warnattempts);
-            attributevalues.add("iplanet-am-auth-login-failure-count="
-                    + lockoutattempts);
+            attributevalues.add("iplanet-am-auth-login-failure-count=" +
+                    lockoutattempts);
             consoleLogin(webClient, url, adminUser, adminPassword);
-            fm.setSvcAttrs(webClient, realm, servicename, attributevalues);
-            if (!userExists) {
-                createUser(lockUser, lockUserpass);
-                createUser(warnUser, warnUserpass);
+            log(Level.FINE, "setup", "Setting the attributes " +
+                    attributevalues + " in the " + servicename +
+                    " service ...");
+            if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm,
+                    servicename, attributevalues)) != 0) {
+                log(Level.SEVERE, "setup", "setSvcAttrs famadm command failed");
+                assert false;
             }
-        } catch(Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+            if (!userExists) {
+                userAttrList = new ArrayList<String>();
+                createUser(lockUser, lockUserpass, userAttrList);
+                userAttrList = new ArrayList<String>();
+                createUser(warnUser, warnUserpass, userAttrList);
+            }
+            nslockUser = (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-nslockusername")).trim();
+            nslockUserpass =
+                    (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-nslockuserpassword")).trim();
+            nslockAttrName =
+                    (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-nslockoutattrname")).trim();
+            nslockAttrValue =
+                    (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-nslockoutattrvalue")).trim();
+            userAttrList = new ArrayList<String>();
+            userAttrList.add(nslockAttrName + "=" + nslockAttrValue);
+            createUser(nslockUser, nslockUserpass, userAttrList);
+            lockStatusUser = (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-lockstatususer")).trim();
+            lockStatusUserpass =
+                    (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-lockstatususerpass")).trim();
+            lockStatusAttrName =
+                    (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-lockstatusattrname")).trim();
+            lockStatusAttrValue =
+                    (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-lockstatusattrvalue")).trim();
+            userAttrList = new ArrayList<String>();
+            createUser(lockStatusUser, lockStatusUserpass, userAttrList);
+            lockAttrUser = (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-lockAttrUser")).trim();
+            lockAttrUserpass =
+                    (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-lockAttrUserpass")).trim();
+            lockAttrName = (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-lockoutattrname")).trim();
+            lockAttrValue = (testResources.getString("am-auth-lockout-test-" +
+                    testModule + "-lockoutattrvalue")).trim();
+            userAttrList = new ArrayList<String>();
+            createUser(lockAttrUser, lockAttrUserpass, userAttrList);
+        } catch (AssertionError ae) {
+            log(Level.SEVERE, "setup",
+                    "Calling cleanup due to failed famadm exit code ...");
+            cleanup();
+            throw ae;
+        } catch (Exception e) {
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -158,68 +217,217 @@ public class AccountLockoutTest extends TestCommon {
         }
         exiting("setup");
     }
-    
-    /*
+
+    /**
      * Validate the Account Lockout tests
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void validateAccountLockTest()
+    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void validateAccountLockTest() 
     throws Exception {
         entering("validateAccountLockTest", null);
         Map executeMap = new HashMap();
-        executeMap.put("Loginuser", lockUser);
-        executeMap.put("Loginpassword", lockUserpass);
-        executeMap.put("Loginattempts", lockoutattempts);
-        executeMap.put("Passmsg", lockoutPassmsg);
-        executeMap.put("loginurl", testURL);
-        executeMap.put("failpage",failpage);
-        AuthTestsValidator lockTestValidator =
-                new AuthTestsValidator(executeMap);
-        lockTestValidator.testAccountLockout();
+        try {
+            executeMap.put("Loginuser", lockUser);
+            executeMap.put("Loginpassword", lockUserpass);
+            executeMap.put("Loginattempts", lockoutattempts);
+            executeMap.put("Passmsg", lockoutPassmsg);
+            executeMap.put("loginurl", testURL);
+            executeMap.put("failpage", failpage);
+            AuthTestsValidator lockTestValidator =
+                    new AuthTestsValidator(executeMap);
+            lockTestValidator.testAccountLockout();
+        } catch (Exception e) {
+            log(Level.FINE, "setup", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            Reporter.log("Loginuser" + lockUser);
+            Reporter.log("TestCaseName: validateAccountLockTest");
+            Reporter.log("loginurl" + testURL);
+            Reporter.log("TestCaseDescription: This test is to verify the " +
+                    "basic account lockout functionality");
+        }
         exiting("validateAccountLockTest");
     }
-    
+
     /**
      * Validate the warning tests
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void validateWarningTest()
+    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void validateWarningTest() 
     throws Exception {
         entering("validateWarningTest", null);
         Map executeMap = new HashMap();
-        executeMap.put("Loginuser", warnUser);
-        executeMap.put("Loginpassword", warnUserpass);
-        executeMap.put("Loginattempts", warnattempts);
-        executeMap.put("Passmsg", warnPassmsg);
-        executeMap.put("loginurl", testURL);
-        executeMap.put("failpage",failpage);
-        AuthTestsValidator warnTestValidator =
-                new AuthTestsValidator(executeMap);
-        warnTestValidator.testAccountLockWarning();
+        try {
+            executeMap.put("Loginuser", warnUser);
+            executeMap.put("Loginpassword", warnUserpass);
+            executeMap.put("Loginattempts", warnattempts);
+            executeMap.put("Passmsg", warnPassmsg);
+            executeMap.put("loginurl", testURL);
+            executeMap.put("failpage", failpage);
+            AuthTestsValidator warnTestValidator =
+                    new AuthTestsValidator(executeMap);
+            warnTestValidator.testAccountLockWarning();
+        } catch (Exception e) {
+            log(Level.FINE, "validateWaringTest", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            Reporter.log("Loginuser" + lockUser);
+            Reporter.log("TestCaseName:validateWarningTest");
+            Reporter.log("loginurl" + testURL);
+            Reporter.log("TestCaseDescription: This test is to verify the " +
+                    "warnings after the authentication failure ");
+        }
         exiting("validateWarningTest");
     }
-    
+
+    /**
+     * Validate the inetuserstatus attribute value after the lockout
+     */
+    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void validateAccountLockUserStatusTest()
+    throws Exception {
+        entering("validateAccountLockUserStatusTest", null);
+        Map executeMap = new HashMap();
+        try {
+            executeMap.put("Loginuser", lockStatusUser);
+            executeMap.put("Loginpassword", lockStatusUserpass);
+            executeMap.put("Loginattempts", lockoutattempts);
+            executeMap.put("Passmsg", lockoutPassmsg);
+            executeMap.put("loginurl", testURL);
+            executeMap.put("failpage", failpage);
+            AuthTestsValidator physicalLockTestValidator =
+                    new AuthTestsValidator(executeMap);
+            physicalLockTestValidator.
+                    testAccountLockoutUserStatus(lockStatusUser);
+        } catch (Exception e) {
+            log(Level.FINE, "validateAccountLockUserStatusTest",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            Reporter.log("Loginuser" + lockUser);
+            Reporter.log("TestCaseName:validateAccountLockUserStatusTest ");
+            Reporter.log("loginurl" + testURL);
+            Reporter.log("TestCaseDescription: This test is to verify the " +
+                    "inetuserstatus attribute change after lockout ");
+        }
+        exiting("validateAccountLockUserStatusTest");
+    }
+
+    /**
+     * Validate the Custom attribute value change after the lockout
+     */
+    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void validateAccountLockUserAttrTest()
+    throws Exception {
+        entering("validateAccountLockUserAttrTest", null);
+        List modifyAttrs = new ArrayList();
+        modifyAttrs.add("iplanet-am-auth-lockout-attribute-name=" +
+                lockAttrName);
+        modifyAttrs.add("iplanet-am-auth-lockout-attribute-value=" +
+                lockAttrValue);
+        consoleLogin(webClient, url, adminUser, adminPassword);
+        if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm,
+                servicename, modifyAttrs)) != 0) {
+            log(Level.SEVERE, "cleanup", "fm.setSvcAttrs famadm command" +
+                    "failed");
+            assert false;
+        }
+        Map executeMap = new HashMap();
+        try {
+            executeMap.put("Loginuser", lockAttrUser);
+            executeMap.put("Loginpassword", lockAttrUserpass);
+            executeMap.put("Loginattempts", lockoutattempts);
+            executeMap.put("Passmsg", lockoutPassmsg);
+            executeMap.put("loginurl", testURL);
+            executeMap.put("failpage", failpage);
+            AuthTestsValidator lockTestValidator =
+                    new AuthTestsValidator(executeMap);
+            lockTestValidator.testAccountLockoutUserAttr(lockAttrUser,
+                    lockAttrName, lockAttrValue);
+        } catch (Exception e) {
+            log(Level.FINE, "validateAccountLockUserAttrTest", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            Reporter.log("Loginuser" + lockUser);
+            Reporter.log("TestCaseName:validateAccountLockUserAttrTest");
+            Reporter.log("loginurl" + testURL);
+            Reporter.log("TestCaseDescription: This test is to verify the " +
+                    "custom attribute change after lockout ");
+            consoleLogout(webClient, logoutURL);
+        }
+        exiting("validateAccountLockUserAttrTest");
+    }
+
+    /**
+     * Validate the nsaccountlock attribute will not change the value after 
+     * lock out
+     */
+    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void validateNsAccountLockTest()
+    throws Exception {
+        entering("validateNsAccountLockTest", null);
+        Map executeMap = new HashMap();
+        try {
+            executeMap.put("Loginuser", nslockUser);
+            executeMap.put("Loginpassword", nslockUserpass);
+            executeMap.put("Loginattempts", lockoutattempts);
+            executeMap.put("Passmsg", lockoutPassmsg);
+            executeMap.put("loginurl", testURL);
+            executeMap.put("failpage", failpage);
+            AuthTestsValidator lockTestValidator =
+                    new AuthTestsValidator(executeMap);
+            lockTestValidator.testAccountLockoutUserAttr(nslockUser,
+                    nslockAttrName, nslockAttrValue);
+        } catch (Exception e) {
+            log(Level.FINE, "validateNsAccountLockTest", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            Reporter.log("Loginuser" + lockUser);
+            Reporter.log("TestCaseName:validateNsAccountLockTest");
+            Reporter.log("loginurl" + testURL);
+            Reporter.log("TestCaseDescription: This test is to verify the " +
+                    "nsaccountlockout attribute change after lockout ");
+        }
+        exiting("validateNsAccountLockTest");
+    }
+
     /**
      * performs cleanup after tests are done.
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void cleanup()
+    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void cleanup() 
     throws Exception {
         entering("cleanup", null);
-        WebClient webClient = new WebClient();
+        webClient = new WebClient();
         try {
-            log(logLevel, "cleanup", url);
-            log(logLevel, "cleanup", "Users:" + testUserList);
+            log(Level.FINEST, "cleanup", url);
+            log(Level.FINE, "cleanup", "Users:" + testUserList);
             List<String> listModInstance = new ArrayList<String>();
             listModInstance.add(moduleSubConfig);
-            log(logLevel, "cleanup", "listModInstance" + listModInstance);
+            log(Level.FINE, "cleanup", "Deleting auth instance(s)" +
+                    listModInstance + "....");
             consoleLogin(webClient, url, adminUser, adminPassword);
-            HtmlPage page = (HtmlPage)fm.deleteAuthInstances(webClient,
-                    realm, listModInstance);
-            log(logLevel, "cleanup", "Page" + page.asXml());
-            fm.deleteIdentities(webClient, realm, testUserList, "User");
-        } catch(Exception e) {
-            log(Level.SEVERE, "cleanup", e.getMessage(), null);
+            if (FederationManager.getExitCode(fm.deleteAuthInstances(webClient,
+                    realm, listModInstance)) != 0) {
+                log(Level.SEVERE, "cleanup",
+                        "deleteAuthInstances famadm command failed");
+            }
+            if (!testUserList.isEmpty()) {
+                log(Level.FINEST, "cleanup", "Deleting user(s) " + 
+                        testUserList +  " ...");                       
+                if (FederationManager.getExitCode(fm.deleteIdentities(webClient,
+                        realm, testUserList, "User")) != 0) {
+                    log(Level.SEVERE, "cleanup",
+                            "deleteIdentities famadm command failed");
+                }
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -227,13 +435,14 @@ public class AccountLockoutTest extends TestCommon {
         }
         exiting("cleanup");
     }
-    
+
     /**
      * Call Authentication Utility class to create the module instances
      * for a given module instance name
      * @param moduleName
      */
-    private void createModule(String mName) {
+    private void createModule(String mName) 
+    throws Exception {
         try {
             AuthTestConfigUtil moduleConfig =
                     new AuthTestConfigUtil(configrbName);
@@ -242,38 +451,50 @@ public class AccountLockoutTest extends TestCommon {
             moduleSubConfig = moduleConfig.getModuleSubConfigName();
             moduleSubConfigId = moduleConfig.getModuleSubConfigId();
             moduleConfigData = moduleConfig.getListFromMap(modMap, mName);
-            log(logLevel, "createModule", "ModuleServiceName :" +
+            log(Level.FINE, "createModule", "ModuleServiceName :" +
                     moduleServiceName);
-            log(logLevel, "createModule", "ModuleSubConfig :" +
+            log(Level.FINE, "createModule", "ModuleSubConfig :" +
                     moduleSubConfig);
-            log(logLevel, "createModule", "ModuleSubConfigId :" +
+            log(Level.FINE, "createModule", "ModuleSubConfigId :" +
                     moduleSubConfigId);
             moduleConfig.createModuleInstances(moduleServiceName,
                     moduleSubConfig, moduleConfigData, moduleSubConfigId);
-        } catch(Exception e) {
-            log(Level.SEVERE, "createModule", e.getMessage(), null);
+        } catch (Exception e) {
+            log(Level.SEVERE, "createModule", e.getMessage());
             e.printStackTrace();
+        } finally {
+            Reporter.log("createModule: ModuleServiceName :" +
+                    moduleServiceName);
+            Reporter.log("createModule:ModuleSubConfig:" + moduleSubConfig);
         }
     }
-    
+
     /**
      * Creates the required test users on the system
      * @param username
      * @param password
+     * @param attribute list
      **/
-    private void createUser(String newUser, String userpassword) {
-        List<String> userList = new ArrayList<String>();
-        userList.add("sn=" + newUser);
-        userList.add("cn=" + newUser);
-        userList.add("userpassword=" + userpassword);
-        userList.add("inetuserstatus=Active");
-        log(logLevel, "createUser", "userList " + userList);
+    private void createUser(String newUser, String userpassword,
+            List attrList)
+    throws Exception {
+        attrList.add("sn=" + newUser);
+        attrList.add("cn=" + newUser);
+        attrList.add("userpassword=" + userpassword);
+        attrList.add("inetuserstatus=Active");
+        log(Level.FINE, "createUser", "UserattrList " + attrList);
         testUserList.add(newUser);
         try {
-            fm.createIdentity(webClient, realm, newUser, "User", userList);
-        } catch(Exception e) {
-            log(Level.SEVERE, "createUser", e.getMessage(), null);
+            log(Level.FINE, "createUser", "Creating user " + newUser + "...");
+            if (FederationManager.getExitCode(fm.createIdentity(webClient,
+                    realm, newUser, "User", attrList)) != 0) {
+                log(Level.SEVERE, "createUser",
+                        "createIdentity famadm command failed");
+                assert false;
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "createUser", e.getMessage());
             e.printStackTrace();
-        }
+        } 
     }
 }
