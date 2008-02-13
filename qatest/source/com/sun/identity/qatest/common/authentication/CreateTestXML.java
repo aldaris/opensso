@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateTestXML.java,v 1.5 2007-12-21 22:32:04 sridharev Exp $
+ * $Id: CreateTestXML.java,v 1.6 2008-02-13 19:15:45 arunav Exp $ 
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,9 +90,6 @@ public class CreateTestXML {
             int uIndex = testUserName.indexOf(":");
             tuser= testUserName.substring(0,uIndex);
             tpass = testUserName.substring(uIndex+1,uLength);
-            if (testNegative) {
-                tpass = tpass + "fail";
-            }
             out.write("<form name=\"Login\" IDButton=\"\" >");
             out.write(newline);
             out.write("<input name=\"IDToken1\" value=\"" + tuser + "\" />");
@@ -189,7 +186,7 @@ public class CreateTestXML {
             fileName = baseDirectory + strIdentifier + "-goto.xml";
         } else {
             fileName = baseDirectory  + strIdentifier + "-gotofail.xml";
-			password = password + "tofail";
+            password = password + "tofail";
         }
         PrintWriter out = new PrintWriter(new BufferedWriter
                 (new FileWriter(fileName)));
@@ -242,23 +239,23 @@ public class CreateTestXML {
         out.write("\">");
         out.write(newline);
         int formcount = 0;
-            for (int i=0; i < ilockattempts ; i ++) {
-                formcount = formcount + 1;
-                out.write("<form name=\"Login\" IDButton=\"\" >");
-                out.write(newline);
-                out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
-                out.write(newline);
-                out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
-                out.write(newline);
-                if(formcount == ilockattempts){
-                    out.write("<result text=\"" + Passmsg + "\" />");
-                    out.write(newline);
-                }
-                out.write("</form>");
-                out.write(newline);
-                out.write(" <form anchorpattern=\"/UI/Login?\" />");
+        for (int i=0; i < ilockattempts ; i ++) {
+            formcount = formcount + 1;
+            out.write("<form name=\"Login\" IDButton=\"\" >");
+            out.write(newline);
+            out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
+            out.write(newline);
+            out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
+            out.write(newline);
+            if(formcount == ilockattempts){
+                out.write("<result text=\"" + Passmsg + "\" />");
                 out.write(newline);
             }
+            out.write("</form>");
+            out.write(newline);
+            out.write(" <form anchorpattern=\"/UI/Login?\" />");
+            out.write(newline);
+        }
         out.write("</url>");
         out.write(newline);
         out.flush();
@@ -292,6 +289,43 @@ public class CreateTestXML {
         out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
         out.write(newline);
         out.write("<result text=\"" + Passmsg + "\" />");
+        out.write(newline);
+        out.write("</form>");
+        out.write(newline);
+        out.write("</url>");
+        out.write(newline);
+        out.flush();
+        out.close();
+        
+        return fileName;
+    }
+    
+    /**
+     * Creates the authentication form Login XML
+     * @param Map contains test related data
+     * @return xml file name
+     */
+    public String createAccountLoginXML(Map testMap)
+    throws Exception {
+        String userName = (String)testMap.get("username");
+        String password = (String)testMap.get("password");
+        String passmessage = (String)testMap.get("passmsg");
+        String redirectURL = (String)testMap.get("url");
+        String baseDirectory = (String)testMap.get("baseDir");
+        String strIdentifier = (String)testMap.get("uniqueIdentifier");
+        fileName = baseDirectory  + strIdentifier + "-createAccountLogin.xml";
+        PrintWriter out = new PrintWriter(new BufferedWriter
+                (new FileWriter(fileName)));
+        out.write("<url href=\"" + redirectURL);
+        out.write("\">");
+        out.write(newline);
+        out.write("<form name=\"Login\" IDButton=\"\" >");
+        out.write(newline);
+        out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
+        out.write(newline);
+        out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
+        out.write(newline);
+        out.write("<result text=\"" + passmessage + "\" />");
         out.write(newline);
         out.write("</form>");
         out.write(newline);
