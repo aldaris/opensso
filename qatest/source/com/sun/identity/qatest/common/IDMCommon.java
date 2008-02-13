@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.7 2008-02-08 08:28:52 kanduls Exp $
+ * $Id: IDMCommon.java,v 1.8 2008-02-13 19:12:29 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,10 +98,29 @@ public class IDMCommon extends TestCommon {
     throws Exception {
         AMIdentity amid = new AMIdentity(ssoToken);
         Map attrValues = amid.getServiceAttributes(serviceName);
-        log(logLevel, "getIdentityAttribute", "Attributes List" + attrValues);
+        log(Level.FINEST, "getIdentityAttribute", "Attributes List" + 
+                attrValues);
         return (Set)attrValues.get(attributeName);
     }
     
+     /**
+     * Returns Map with IdentityAttributes 
+     * based on realm and user name
+     */
+    public Map getIdentityAttributes(String userName, String realm)
+    throws Exception {
+        SSOToken admintoken = getToken(adminUser, adminPassword, basedn);
+        Set<AMIdentity> set = getAMIdentity(admintoken, userName, 
+                IdType.USER, realm);
+        AMIdentity amid = null;
+        for (Iterator itr = set.iterator(); itr.hasNext();) {
+            amid = (AMIdentity)itr.next();
+        }
+        Map attrMap = new HashMap();
+        attrMap = amid.getAttributes();        
+        return attrMap;
+    }
+
     /**
      * Modifies specified identity attributes
      */
@@ -232,7 +251,7 @@ public class IDMCommon extends TestCommon {
                 parentRealm = tokens.nextToken();
             }
         }
-        log(logLevel, "getParentRealm", "Parent realm for" + realmName + 
+        log(Level.FINEST, "getParentRealm", "Parent realm for" + realmName + 
                 " is " + parentRealm );
         return parentRealm;
     }
