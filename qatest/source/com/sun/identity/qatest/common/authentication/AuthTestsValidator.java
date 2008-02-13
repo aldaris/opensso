@@ -17,23 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestsValidator.java,v 1.3 2007-06-22 21:48:09 sridharev Exp $
+ * $Id: AuthTestsValidator.java,v 1.4 2008-02-13 19:17:52 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
-
 package com.sun.identity.qatest.common.authentication;
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.authentication.CreateTestXML;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
 import org.testng.annotations.Test;
 
 /**
@@ -44,185 +46,207 @@ import org.testng.annotations.Test;
  *
  */
 public class AuthTestsValidator extends TestCommon {
-    
+
     private Map mapValidate;
     private WebClient webClient;
     private String baseDir;
     private String testURL;
     private String testLogoutURL;
-    
+    private IDMCommon idmc;
+
     /**
      * Default constructor for AuthTestsValidator
      * @param map contains data that is required validate tests
      */
-    public AuthTestsValidator(Map testMap) throws Exception {
+    public AuthTestsValidator(Map testMap) 
+    throws Exception {
         super("AuthTestsValidator");
         mapValidate = testMap;
         testURL = protocol + ":" + "//" + host + ":" + port + uri;
         testLogoutURL = testURL + "/UI/Logout";
         baseDir = getTestBase();
-        log(logLevel,"AuthTestsValidator", "BaseDir:" + baseDir);
+        log(Level.FINEST, "AuthTestsValidator", "BaseDir:" + baseDir);
         mapValidate.put("url", testURL);
         mapValidate.put("baseDir", baseDir);
+        idmc = new IDMCommon();
     }
-    
+
     /**
      * Performs Positive Service based service Login
      */
-    public void testServicebasedPositive(){
+    public void testServicebasedPositive() 
+    throws Exception {
         try {
             boolean isNegative = false;
             CreateTestXML testXML = new CreateTestXML();
             String xmlFile = testXML.createServiceXML(mapValidate, isNegative);
-            log(logLevel, "testServicebasedPositive", xmlFile);
+            log(Level.FINEST, "testServicebasedPositive", 
+                    "testServicebasedPositive XML file:" + xmlFile);
             DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
             webClient = new WebClient();
-            Page page = task.execute(webClient);
-            consoleLogout(webClient, testLogoutURL);
+            Page page = task.execute(webClient);   
+            log(Level.FINEST, "testServicebasedPositive", 
+                    "testServicebasedPositive page after login" +
+                    page.getWebResponse().getContentAsString());  
         } catch (Exception e) {
-            log(logLevel.SEVERE,"testServicebasedPositive",
-                    e.getMessage(), null);
+            log(Level.SEVERE, "testServicebasedPositive", e.getMessage());
             e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
         }
     }
-    
+
     /**
      * Performs Negative Service based service Login
      */
-    public void testServicebasedNegative(){
+    public void testServicebasedNegative() 
+    throws Exception {
         try {
             boolean isNegative = true;
             CreateTestXML testXML = new CreateTestXML();
             String xmlFile = testXML.createServiceXML(mapValidate, isNegative);
-            log(logLevel, "testServicebasedNegative", xmlFile);
+            log(Level.FINEST, "testServicebasedNegative",
+                    "testServicebasedNegative XML file:" + xmlFile);
             webClient = new WebClient();
             DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
-            Page page = task.execute(webClient);
-            WebResponse wresponse = page.getWebResponse();
-            String resString = wresponse.getContentAsString();
-            log(logLevel, "testServicebasedNegative", resString);
-            consoleLogout(webClient, testLogoutURL);
+            Page page = task.execute(webClient);            
+            log(Level.FINEST, "testServicebasedNegative",
+                    "testServicebasedNegative page after login" + 
+                    page.getWebResponse().getContentAsString());            
         } catch (Exception e) {
-            log(logLevel.SEVERE, "testServicebasedNegative",
-                    e.getMessage(), null);
+            log(Level.SEVERE, "testServicebasedNegative", e.getMessage());
             e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
         }
     }
-    
+
     /**
      * Performs Module based Login with positive data
      */
-    public void testModulebasedPostive(){
+    public void testModulebasedPostive() 
+    throws Exception {
         try {
             boolean isNegative = false;
             CreateTestXML testXML = new CreateTestXML();
             String xmlFile = testXML.createModuleXML(mapValidate, isNegative);
-            log(logLevel, "testModulebasedPostive", xmlFile);
+            log(Level.FINEST, "testModulebasedPostive", 
+                    "testModulebasedPostive XML file:" + xmlFile);
             DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
             webClient = new WebClient();
-            Page page = task.execute(webClient);
-            consoleLogout(webClient, testLogoutURL);
+            Page page = task.execute(webClient);   
+            log(Level.FINEST, "testModulebasedPostive", 
+                    "testModulebasedPostive page after login" + 
+                    page.getWebResponse().getContentAsString());  
         } catch (Exception e) {
-            log(logLevel.SEVERE, "testModulebasedPostive",
-                    e.getMessage(), null);
+            log(Level.SEVERE, "testModulebasedPostive", e.getMessage());
             e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
         }
     }
-    
+
     /**
      * Performs Module based Login with negative data
      */
-    public void testModulebasedNegative(){
+    public void testModulebasedNegative() 
+    throws Exception {
         try {
             boolean isNegative = true;
             CreateTestXML testXML = new CreateTestXML();
             String xmlFile = testXML.createModuleXML(mapValidate, isNegative);
-            log(logLevel, "testModulebasedNegative", xmlFile);
+            log(Level.FINEST, "testModulebasedNegative",
+                    "testModulebasedNegative XML file:" + xmlFile);
             webClient = new WebClient();
             DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
-            Page page = task.execute(webClient);
-            WebResponse wresponse = page.getWebResponse();
-            String resString = wresponse.getContentAsString();
-            log(logLevel, "testModulebasedNegative", resString);
-            consoleLogout(webClient, testLogoutURL);
+            Page page = task.execute(webClient);            
+            log(Level.FINE, "testModulebasedNegative",
+                    "testModulebasedNegative page after login" +
+                    page.getWebResponse().getContentAsString());            
         } catch (Exception e) {
-            log(logLevel.SEVERE, "testModulebasedNegative",
-                    e.getMessage(), null);
+            log(Level.SEVERE, "testModulebasedNegative", e.getMessage());
             e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
         }
     }
-    
+
     /**
      * Performs Module based Login with goto param
      */
-    public void testModuleGoto(){
+    public void testModuleGoto() 
+    throws Exception {
         try {
             boolean isNegative = false;
             CreateTestXML testXML = new CreateTestXML();
-            String xmlFile = testXML.createModuleGotoXML(mapValidate, isNegative);
-            log(logLevel, "testModuleGoto", xmlFile);
+            String xmlFile = testXML.createModuleGotoXML(mapValidate,
+                    isNegative);
+            log(Level.FINEST, "testModuleGoto Xml file:", xmlFile);
             webClient = new WebClient();
             DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
-            Page page = task.execute(webClient);
-            WebResponse wresponse = page.getWebResponse();
-            String resString = wresponse.getContentAsString();
-            log(logLevel, "testModuleGoto", resString);
-            consoleLogout(webClient, testLogoutURL);
+            Page page = task.execute(webClient);            
+            log(Level.FINEST, "testModuleGoto",
+                    "testModuleGoto page after login" +
+                    page.getWebResponse().getContentAsString());
         } catch (Exception e) {
-            log(logLevel.SEVERE, "testModuleGoto",
-                    e.getMessage(), null);
+            log(Level.SEVERE, "testModuleGoto", e.getMessage());
             e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
         }
     }
-    
+
     /**
      * Performs Module based Login with gotoOnFail param
      */
-    public void testModuleGotoOnFail(){
+    public void testModuleGotoOnFail() 
+    throws Exception {
         try {
             boolean isNegative = true;
             CreateTestXML testXML = new CreateTestXML();
-            String xmlFile = testXML.createModuleGotoXML(mapValidate, isNegative);
-            log(logLevel, "testModuleGotoOnFail", xmlFile);
+            String xmlFile = testXML.createModuleGotoXML(mapValidate,
+                    isNegative);
+            log(Level.FINEST, "testModuleGotoOnFail",
+                    "testModuleGotoOnFail XML file:" + xmlFile);
             webClient = new WebClient();
             DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
-            Page page = task.execute(webClient);
-            WebResponse wresponse = page.getWebResponse();
-            String resString = wresponse.getContentAsString();
-            log(logLevel, "testModuleGotoOnFail", resString);
-            consoleLogout(webClient, testLogoutURL);
+            Page page = task.execute(webClient);           
+            log(Level.FINEST, "testModuleGotoOnFail", 
+                    "testModuleGotoOnFail after login" + 
+                    page.getWebResponse().getContentAsString());
         } catch (Exception e) {
-            log(logLevel.SEVERE, "testModuleGotoOnFail",
-                    e.getMessage(), null);
+            log(Level.SEVERE, "testModuleGotoOnFail", e.getMessage());
             e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
         }
     }
-    
+
     /**
      * Performs Account lockout tests
      */
-    public void testAccountLockout()
+    public void testAccountLockout() 
     throws Exception {
         webClient = new WebClient();
         try {
             boolean isWarn = true;
             CreateTestXML testXML = new CreateTestXML();
             String xmlFile = testXML.createLockoutXML(mapValidate, isWarn);
-            log(logLevel, "testAccountLockout", xmlFile);
+            log(Level.FINEST, "testAccountLockout", 
+                    "testAccountLockout XML file:" + xmlFile);
             DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
-            Page page = task.execute(webClient);
-            WebResponse wresponse = page.getWebResponse();
-            String resString = wresponse.getContentAsString();
-            log(logLevel, "testAccountLockout", resString);
+            Page page = task.execute(webClient);            
+            log(Level.FINEST, "testAccountLockout", 
+                    "testAccountLockout page after login" + 
+                    page.getWebResponse().getContentAsString());
         } catch (Exception e) {
-            log(logLevel.SEVERE, "testAccountLockout",
-                    e.getMessage(), null);
+            log(Level.SEVERE, "testAccountLockout", e.getMessage());
             e.printStackTrace();
         } finally {
             consoleLogout(webClient, testLogoutURL);
         }
     }
-    
+
     /**
      * Performs Accountlockout warning tests
      */
@@ -233,37 +257,203 @@ public class AuthTestsValidator extends TestCommon {
             boolean isWarn = false;
             CreateTestXML testXML = new CreateTestXML();
             String xmlFile = testXML.createLockoutXML(mapValidate, isWarn);
-            log(logLevel, "testAccountLockWarning", xmlFile);
+            log(Level.FINEST, "testAccountLockWarning",
+                    "testAccountLockWarning XML file:" + xmlFile);
             DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
-            Page page = task.execute(webClient);
-            WebResponse wresponse = page.getWebResponse();
-            String resString = wresponse.getContentAsString();
+            Page page = task.execute(webClient);            
+            log(Level.FINEST, "testAccountLockWarning",
+                    "testAccountLockWarning page after login" + 
+                    page.getWebResponse().getContentAsString());
         } catch (Exception e) {
-            log(logLevel.SEVERE, "testAccountLockWarning",
-                    e.getMessage(), null);
+            log(Level.SEVERE, "testAccountLockWarning", e.getMessage());
             e.printStackTrace();
         } finally {
             consoleLogout(webClient, testLogoutURL);
         }
     }
-    
+
+    /**
+     * Performs Account lockout and verifies the inetuser status after the
+     * lockout
+     */
+    public void testAccountLockoutUserStatus(String username)
+    throws Exception {
+        webClient = new WebClient();
+        Map attrMap = new HashMap();
+        try {
+            boolean isWarn = true;
+            CreateTestXML testXML = new CreateTestXML();
+            String xmlFile = testXML.createLockoutXML(mapValidate, isWarn);
+            log(Level.FINEST, "testAccountLockoutUserStatus", 
+                    "testAccountLockoutUserStatus XML file:" + xmlFile);
+            DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
+            Page page = task.execute(webClient);            
+            log(Level.FINEST, "testAccountLockoutUserStatus",
+                    "testAccountLockoutUserStatus page after Login" +
+                    page.getWebResponse().getContentAsString());
+            //now verify the user attibutes
+            attrMap = idmc.getIdentityAttributes(username, realm);
+            if (attrMap.containsKey("inetuserstatus")) {
+                Set userSet = (Set) attrMap.get("inetuserstatus");
+                for (Iterator itr = userSet.iterator(); itr.hasNext();) {
+                    String userStatus = (String) itr.next();
+                    if (userStatus.equals("Inactive")) {
+                        log(Level.FINE, "testAccountLockoutUserStatus",
+                                "ValidationPass" + userStatus);
+                        assert true;
+                    } else {
+                        log(Level.FINE, "testAccountLockoutUserStatus",
+                                "ValidationFail" + userStatus);
+                        assert false;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "testAccountLockoutUserStatus",
+                    e.getMessage());
+            e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
+        }
+    }
+
+    /**
+     * Performs Account lockout user and verifies the custom attributes
+     * after lockout
+     */
+    public void testAccountLockoutUserAttr(String username, String attrName,
+            String attrValue)
+    throws Exception {
+        webClient = new WebClient();
+        Map attrMap = new HashMap();
+        try {
+            boolean isWarn = true;
+            CreateTestXML testXML = new CreateTestXML();
+            String xmlFile = testXML.createLockoutXML(mapValidate, isWarn);
+            log(Level.FINEST, "testAccountLockoutUserAttribute",
+                    "testAccountLockoutUserAttribute XML file" + xmlFile);
+            DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
+            Page page = task.execute(webClient);           
+            log(Level.FINEST, "testAccountLockoutUserAttr page after login",
+                    "testAccountLockoutUserAttr After login" + 
+                    page.getWebResponse().getContentAsString());
+            //now verify the user attibutes
+            attrMap = idmc.getIdentityAttributes(username, realm);
+            if (attrMap.containsKey(attrName)) {
+                Set attrSet = (Set) attrMap.get(attrName);
+                for (Iterator itr = attrSet.iterator(); itr.hasNext();) {
+                    String attrVal = (String) itr.next();
+                    if (attrVal.equals(attrValue)) {
+                        log(Level.FINEST, "testAccountLockoutUserAttr",
+                                "ValidationPass" + attrVal);
+                        assert true;
+                    } else {
+                        log(Level.FINEST, "testAccountLockoutUserAttr",
+                                "ValidationFail" + attrVal);
+                        assert false;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "testAccountLockoutUserAttr", e.getMessage());
+            e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
+        }
+    }
+
+    /**
+     * Performs login with Authentication attributes and verifies the user
+     * attibutes. This is performed for the module based authenticaation
+     */
+    public void testUserLoginAuthAttribute(Map userAttrMap)
+    throws Exception {
+        webClient = new WebClient();
+        Map idmAttrMap = new HashMap();
+        boolean isNegative = false;
+        String userattrName;
+        Iterator attIterator;
+        String userattrVal;
+        Set idmattrSet;
+        String idmattrVal;
+        try {
+            CreateTestXML testXML = new CreateTestXML();
+            String userName = (String) mapValidate.get("userName");
+            String userPassword = (String) mapValidate.get("password");
+            String moduleSubConfig =
+                    (String) mapValidate.get("modulesubConfig");
+            String redirectURL = (String) mapValidate.get("url") + "?" +
+                    "module=" + moduleSubConfig;
+            mapValidate.put("redirectURL", redirectURL);
+
+            //now verify the user attibutes
+            idmAttrMap = idmc.getIdentityAttributes(userName, realm);
+            log(Level.FINEST, "testUserLoginAuthAttribute", "idmAttrMap" +
+                    idmAttrMap);
+            log(Level.FINEST, "testUserLoginAuthAttribute", "userAttrMap" +
+                    userAttrMap);
+            for (attIterator = userAttrMap.keySet().iterator();
+                    attIterator.hasNext();) {
+                userattrName = (String) attIterator.next();
+                if (userattrName.equals("userpassword")) {
+                    continue;
+                }
+                Set userattrSet = (Set) userAttrMap.get(userattrName);
+                for (Iterator iter = userattrSet.iterator(); iter.hasNext();) {
+                    userattrVal = (String) iter.next();
+                    if (idmAttrMap.containsKey(userattrName)) {
+                        idmattrSet = (Set) idmAttrMap.get(userattrName);
+                        for (Iterator itr = idmattrSet.iterator();
+                                itr.hasNext();) {
+                            idmattrVal = (String) itr.next();
+                            if (idmattrVal.equals(userattrVal)) {
+                                log(Level.FINE,
+                                        "testUserLoginAuthAttribute",
+                                        "ValidationPass" + userattrVal);
+                                assert true;
+                            } else {
+                                log(Level.FINE,
+                                        "testUserLoginAuthAttribute",
+                                        "ValidationFail" + userattrVal);
+                                assert false;
+                            }
+                        }
+                    }
+                }
+            }
+            String xmlFile = testXML.createModuleXML(mapValidate, isNegative);
+            log(Level.FINEST, "testUserLoginAuthAttribute",
+                    "testUserLoginAuthAttribute XML file" + xmlFile);
+            DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
+            Page page = task.execute(webClient);            
+            log(Level.FINEST, "testUserLoginAuthAttribute", 
+                    "testUserLoginAuthAttribute page after login" +
+                    page.getWebResponse().getContentAsString());
+        } catch (Exception e) {
+            log(Level.SEVERE, "testUserLoginAuthAttribute", e.getMessage());
+            e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
+        }
+    }
+
     /**
      * Performs Profile tests warning tests
      */
-    public void testProfile()
+    public void testProfile() 
     throws Exception {
         webClient = new WebClient();
         try {
             CreateTestXML testXML = new CreateTestXML();
             String xmlFile = testXML.createProfileXML(mapValidate);
-            log(logLevel, "testAccountLockWarning", xmlFile);
+            log(Level.FINEST, "testProfile", "testprofile XML file"
+                     + xmlFile);
             DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
-            Page page = task.execute(webClient);
-            WebResponse wresponse = page.getWebResponse();
-            String resString = wresponse.getContentAsString();
+            Page page = task.execute(webClient);           
+            log(Level.FINEST, "testProfile", "testProfile page after login" +
+                    page.getWebResponse().getContentAsString());
         } catch (Exception e) {
-            log(logLevel.SEVERE, "testProfile",
-                    e.getMessage(), null);
+            log(Level.SEVERE, "testProfile", e.getMessage());
             e.printStackTrace();
         } finally {
             consoleLogout(webClient, testLogoutURL);
