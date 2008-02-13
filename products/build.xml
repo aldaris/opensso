@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.25 2008-01-22 23:52:11 bina Exp $
+   $Id: build.xml,v 1.26 2008-02-13 04:52:24 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -47,6 +47,31 @@
         <antcall target="openfm-nightly" />
         <antcall target="upgrade-nightly" />
         <antcall target="remove-amserver-bits" />
+    </target>
+
+    <target name="server-tools">
+        <mkdir dir="${prd.nightly.dist.dir}" />
+        <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
+            target="tools" />
+        <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"
+            todir="${library.extlib.dir}"  />
+        <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
+            target="build" />
+        <copy todir="${fm.base.dir}/extlib">
+            <fileset file="${amserver.dist.dir}/opensso.jar" />
+            <fileset file="${sharedlib.dist.dir}/opensso-sharedlib.jar" />
+            <fileset file="${amserver.dist.dir}/amAdminTools.zip" />
+            <fileset file="${amserver.dist.dir}/amSessionTools.zip" />
+        </copy>
+        <!-- fake a copy to pass check-openfm-jars.xml -->
+        <copy file="${amserver.dist.dir}/opensso.jar" 
+            tofile="${fm.base.dir}/extlib/console.jar" />
+        <copy file="${amserver.dist.dir}/opensso.jar" 
+            tofile="${fm.base.dir}/extlib/opensso-test.jar" />
+        <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
+            target="tools" />
+        <delete file="${fm.base.dir}/extlib/opensso-test.jar" />
+        <delete file="${fm.base.dir}/extlib/console.jar" />
     </target>
 
     <target name="server-war">
@@ -226,6 +251,7 @@
         <echo message=" cvsdiff      : generates diffs under diffs subdirectory"/>
         <echo message=" nightly      : performs nightly builds for all products"/>
         <echo message=" server-war   : builds server war file"/>
+        <echo message=" server-tools : builds server tools zip file"/>
         <echo message=" server-nightly: performs nightly builds for server products"/>
         <echo message=" agents-nightly: performs nightly builds for agents products"/>
         <echo message=" srczip       : creates zip file containing the OpenSSO source code"/>
