@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.10 2008-01-02 23:57:21 veiming Exp $
+   $Id: build-tools.xml,v 1.11 2008-02-14 02:53:21 ykwon Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,17 +28,21 @@
 <project name="amadm" default="createZipFile" basedir=".">
     <description>OpenWebSingle Sign-On: Tools.zip Creation</description>
     <fail message="*** nightly build may be built from top level only ***">
-        <condition>
+      <condition>
             <or>
                 <not><isset property="amserver.warbase.dir"/></not>
             </or>
-        </condition>
+      </condition>
     </fail>
     <property file="${amserver.res.dir}/tools/amadm.properties"/>
     <property name="amadm.unix.scripts.dir"
         value="${amserver.basedir}/scripts/bin"/>
     <property name="amadm.unix.scripts.log.dir"
         value="${amserver.basedir}/scripts/log"/>
+    <property name="amadm.unix.scripts.tune.dir"
+        value="${amserver.basedir}/scripts/tune/unix"/>
+    <property name="amadm.unix.scripts.tune.locale.dir"
+        value="${amserver.res.dir}/po/locale"/>
     <property name="amadm.windows.scripts.dir"
         value="${amserver.basedir}/scripts/bin"/>
     <property name="amadm.windows.scripts.log.dir"
@@ -51,11 +55,13 @@
     <property name="amadm.windows.bin.dir" value="${amadm.windows.dir}/bin"/>
     <property name="amadm.unix.dir" value="${amadm.template.dir}/unix"/>
     <property name="amadm.unix.bin.dir" value="${amadm.unix.dir}/bin"/>
+    <property name="amadm.unix.bin.tune.dir" value="${amadm.unix.bin.dir}/amtune"/>
     <property name="amadm.classes.dir" value="${amadm.tools.dir}/classes"/>
     <property name="amadm.package.dir"
         value="${amadm.classes.dir}/${amadm.package.path}"/>
     <property name="amadm.tools.scripts.dir"
         value="${amserver.script.dir}/tools"/>
+    <property name="amadm.unix.tune.locale.dir" value="${amadm.tools.dir}/mo/locale"/>
     <target name="prepareBuild">
         <mkdir dir="${amadm.locale.dir}"/>
         <mkdir dir="${amadm.lib.dir}"/>
@@ -64,10 +70,26 @@
         <mkdir dir="${amadm.windows.bin.dir}"/>
         <mkdir dir="${amadm.unix.dir}"/>
         <mkdir dir="${amadm.unix.bin.dir}"/>
+        <mkdir dir="${amadm.unix.bin.tune.dir}"/>
+        <mkdir dir="${amadm.unix.tune.locale.dir}"/> 
         <mkdir dir="${amadm.classes.dir}"/>
         <mkdir dir="${amadm.package.dir}"/>
     </target>
-    <target name="makeJar" depends="prepareBuild">
+    <target name="convertPOtoMO" depends="prepareBuild">
+        <exec dir="${amadm.unix.scripts.tune.locale.dir}" executable="msgfmt" os="SunOS,Linux">
+            <arg line="${amadm.unix.scripts.tune.locale.dir}/amtune-as8.po
+                 ${amadm.unix.scripts.tune.locale.dir}/amtune-as91.po
+                 ${amadm.unix.scripts.tune.locale.dir}/amtune-directory.template.po
+                 ${amadm.unix.scripts.tune.locale.dir}/amtune-env.po
+                 ${amadm.unix.scripts.tune.locale.dir}/amtune-fam.po
+                 ${amadm.unix.scripts.tune.locale.dir}/amtune-os.po
+                 ${amadm.unix.scripts.tune.locale.dir}/amtune-prepareDSTuner.po
+                 ${amadm.unix.scripts.tune.locale.dir}/amtune-utils.po
+                 ${amadm.unix.scripts.tune.locale.dir}/amtune-ws61.po
+                 ${amadm.unix.scripts.tune.locale.dir}/amtune-ws7.po"/>
+        </exec>
+    </target>       
+    <target name="makeJar" depends="prepareBuild, convertPOtoMO">
         <copy todir="${amadm.package.dir}"
             overwrite="yes" encoding="UTF-8">
             <fileset dir="${amserver.built.dir}/classes/${amadm.package.path}"
@@ -120,6 +142,17 @@
                 includes="${amadm.unix.amverifyarchive.file}"/>
             <mapper type="glob" from="*" to="*.template"/>
         </copy>
+        <copy todir="${amadm.unix.bin.tune.dir}"
+              overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${amadm.unix.scripts.tune.dir}"
+                includes="amtune-*, remacis.ldif"/>
+            <mapper type="glob" from="*" to="*.template"/>
+        </copy>
+        <copy todir="${amadm.unix.tune.locale.dir}"
+              overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${amadm.unix.scripts.tune.locale.dir}"
+                includes="*.mo"/>
+        </copy>
         <antcall target="legacy-files" />
     </target>
 
@@ -137,7 +170,14 @@
         </copy>
     </target>
 
-    <target name="createZipFile" depends="copyNeededFiles">
+    <target name="deleteMOfiles" depends="copyNeededFiles">
+        <delete>
+            <fileset dir="${amadm.unix.scripts.tune.locale.dir}"
+                includes="*.mo"/>
+        </delete>
+    </target>
+ 
+    <target name="createZipFile" depends="copyNeededFiles, deleteMOfiles">
         <zip destfile="${amserver.dist.dir}/amAdminTools.zip"
             whenempty="create">
             <zipfileset dir="${amadm.tools.dir}"
@@ -151,6 +191,7 @@
                 <include name="lib/**/*"/>
                 <include name="locale/**/*"/>
                 <include name="template/**/*"/>
+                <include name="mo/**/*"/>
             </zipfileset>
         </zip>
         <checksum file="${amserver.dist.dir}/amAdminTools.zip"
