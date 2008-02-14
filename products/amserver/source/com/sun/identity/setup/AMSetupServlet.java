@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.42 2008-02-11 06:50:29 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.43 2008-02-14 02:06:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -363,7 +363,7 @@ public class AMSetupServlet extends HttpServlet {
                 isADServer = dataStore.equals(SetupConstants.SMS_AD_DATASTORE);
             }
 
-            if (embedded == true) {
+            if (embedded) {
                 // (i) install, configure and start an embedded instance.
                 // or
                 // (ii) install, configure, and replicate embedded instance
@@ -377,15 +377,16 @@ public class AMSetupServlet extends HttpServlet {
                         return false;
                     }
 
-                    // Determine if DITLoaded flag needs to be set : multi instance
+                    // Determine if DITLoaded flag needs to be set :
+                    // multi instance
                     if (EmbeddedOpenDS.isMultiServer(map)) {
                         // Replication 
                         // Temporary fix until OpenDS auto-loads schema
                         boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
                           SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
                           "sdkSchema") : false;
-                        List schemaFiles = getSchemaFiles(dataStore, 
-                                                           loadSDKSchema);
+                        List schemaFiles = getSchemaFiles(dataStore,
+                            loadSDKSchema);
                         writeSchemaFiles(basedir, schemaFiles);
                         EmbeddedOpenDS.setupReplication(map);
                         isDITLoaded = true;
@@ -446,12 +447,19 @@ public class AMSetupServlet extends HttpServlet {
                 updatePlatformServerList(serverURL + deployuri, hostname);
             } else {
                 try {
-                    ServerConfiguration.createDefaults(adminSSOToken);
-                    ServerConfiguration.createServerInstance(adminSSOToken, 
-                        serverInstanceName,
-                        ServerConfiguration.getPropertiesSet(
-                            strAMConfigProperties),
-                        strServerConfigXML);
+                    if (!isDITLoaded) {
+                        ServerConfiguration.createDefaults(adminSSOToken);
+                    }
+                    if (!isDITLoaded ||
+                        !ServerConfiguration.isServerInstanceExist(
+                            adminSSOToken, serverInstanceName)
+                    ) {
+                        ServerConfiguration.createServerInstance(adminSSOToken, 
+                            serverInstanceName,
+                            ServerConfiguration.getPropertiesSet(
+                                strAMConfigProperties),
+                            strServerConfigXML);
+                    }
                 } catch (UnknownPropertyNameException ex) {
                     // ignore, property names are valid because they are
                     // gotten from template.
@@ -464,7 +472,7 @@ public class AMSetupServlet extends HttpServlet {
             }
 
             // Embedded :get our serverid and configure embedded idRepo
-            if (embedded == true) {
+            if (embedded) {
                 try {
                     String serverID = WebtopNaming.getAMServerID();
                     String entry = 
@@ -483,11 +491,9 @@ public class AMSetupServlet extends HttpServlet {
                 }
            } 
             SystemProperties.setServerInstanceName(serverInstanceName);
-
-
             handlePostPlugins(adminSSOToken);
-
             postInitialize(adminSSOToken);
+
             /*
              * requiring the keystore.jks file in OpenSSO workspace. The
              * createIdentitiesForWSSecurity is for the JavaEE/NetBeans 
@@ -495,7 +501,9 @@ public class AMSetupServlet extends HttpServlet {
              */
             createPasswordFiles(basedir, deployuri);
             createDemoUser();
-            createIdentitiesForWSSecurity(serverURL, deployuri);
+            if (!isDITLoaded) {
+                createIdentitiesForWSSecurity(serverURL, deployuri);
+            }
             isConfiguredFlag = true;
             configured = true;
         } catch (FileNotFoundException e) {
