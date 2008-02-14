@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleSearchIds.java,v 1.1 2006-12-21 00:56:40 bigfatrat Exp $
+ * $Id: IdRepoSampleSearchIds.java,v 1.2 2008-02-14 21:32:12 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdSearchControl;
+import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdRepoException;
 
@@ -68,6 +69,18 @@ public class IdRepoSampleSearchIds {
                 idtype, pattern, isc);
             Set adResSet = adRes.getSearchResults();
             processType(idtype, adResSet);
+        IdSearchControl control = new IdSearchControl();           
+        control.setAllReturnAttributes(true);
+        control.setTimeOut(0);          
+        Map kvPairMap = new HashMap();
+        Set set = new HashSet();
+        set.add("STSAgent");           
+        kvPairMap.put("AgentType", set);
+        control.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
+        IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
+            "*", control);
+        Set agents = results.getSearchResults();      
+        System.out.println("Listing agents for STSAgent "+agents);
         } catch (IdRepoException ire) {
             System.err.println("idRepoProcessing: IdRepoException" +
                 " Searching Identities for '" +
@@ -79,6 +92,7 @@ public class IdRepoSampleSearchIds {
                 idtype + "' and pattern '" + pattern + "': " +
                 ssoe.getMessage());
         }
+
         return;
     }
 
