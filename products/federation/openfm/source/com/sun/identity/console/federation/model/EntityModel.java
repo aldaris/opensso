@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModel.java,v 1.7 2007-11-16 22:11:12 babysunil Exp $
+ * $Id: EntityModel.java,v 1.8 2008-02-14 23:11:17 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,9 @@ public interface EntityModel
     public static final String POLICY_ENFORCEMENT_POINT_DESCRIPTOR = "PEP";
     public static final String GENERAL = "General";
     public static final String AFFILIATE = "Affiliate";
+    public static final String SAML_ATTRAUTHORITY = "AttrAuthority";
+    public static final String SAML_ATTRQUERY = "AttrQuery";
+    public static final String SAML_AUTHNAUTHORITY = "AuthnAuthority";
         
    /**
      * Returns a map with all entities including data about

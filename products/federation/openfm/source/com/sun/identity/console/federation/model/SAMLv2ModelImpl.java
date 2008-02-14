@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.14 2008-02-12 21:54:44 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.15 2008-02-14 22:59:19 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,15 @@ import com.sun.identity.saml2.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzServiceElement;
 import com.sun.identity.console.federation.model.EntityModel;
+import com.sun.identity.saml2.jaxb.metadata.NameIDMappingServiceElement;
+import com.sun.identity.saml2.jaxb.metadata.AuthnAuthorityDescriptorElement;
+import com.sun.identity.saml2.jaxb.entityconfig.AuthnAuthorityConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.AttributeServiceElement;
+import com.sun.identity.saml2.jaxb.entityconfig.AttributeAuthorityConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.AttributeQueryConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AuthnQueryServiceElement;
+import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
 import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import javax.xml.bind.JAXBException;
 import java.util.ArrayList;
@@ -69,7 +78,7 @@ import java.util.Set;
 
 public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {    
     private SAML2MetaManager metaManager;
-    private static Map extendedMetaIdpMap = new HashMap(42);
+    private static Map extendedMetaIdpMap = new HashMap(46);
     private static Map extendedMetaSpMap = new HashMap(54);
     private static Map xacmlPDPExtendedMeta = new HashMap(18);
     private static Map xacmlPEPExtendedMeta = new HashMap(18);
@@ -100,6 +109,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaIdpMap.put(BOOT_STRAP_ENABLED, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ARTIF_RESOLVE_SIGN, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(AUTH_URL, Collections.EMPTY_SET);
+        extendedMetaIdpMap.put(ASSERTION_CACHE_ENABLED, 
+                Collections.EMPTY_SET);
         
         // ECP
         extendedMetaIdpMap.put(ATTR_IDP_ECP_SESSION_MAPPER, 
@@ -291,6 +302,17 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     map.put(MANAGE_NAMEID_SOAP_LOCATION,
                             returnEmptySetIfValueIsNull(
                             mniElem2.getLocation()));
+                }
+                
+                //retrieve nameid mapping service
+                List nameIDmappingList = 
+                        idpssoDescriptor.getNameIDMappingService();
+                if (!nameIDmappingList.isEmpty()) {
+                    NameIDMappingServiceElement namidElem1 =
+                        (NameIDMappingServiceElement)nameIDmappingList.get(0);
+                    map.put(NAME_ID_MAPPPING,
+                            returnEmptySetIfValueIsNull(
+                            namidElem1.getLocation()));
                 }
                 
                 //retrieve nameid format
@@ -603,6 +625,19 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     idpssoDescriptor.getManageNameIDService().add(mniElem1);
                     idpssoDescriptor.getManageNameIDService().add(mniElem2);
                 }
+                
+                //save nameid mapping
+                String nameIDmappingloc = getResult(
+                        idpStdValues, NAME_ID_MAPPPING);
+                List nameIDmappingList =
+                        idpssoDescriptor.getNameIDMappingService();
+                if (!nameIDmappingList.isEmpty()) {
+                    NameIDMappingServiceElement namidElem1 =
+                        (NameIDMappingServiceElement)nameIDmappingList.get(0);
+                    namidElem1.setLocation(nameIDmappingloc);
+                    idpssoDescriptor.getNameIDMappingService().clear();
+                    idpssoDescriptor.getNameIDMappingService().add(namidElem1);
+                } 
                 
                 //save nameid format
                 List NameIdFormatList = idpssoDescriptor.getNameIDFormat();
@@ -1721,6 +1756,282 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         } catch (SAML2MetaException e){
             throw new AMConsoleException(e);
         }
+    }
+    
+    /**
+     * Returns a map with standard AttributeAuthority attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with AttributeAuthority values.
+     * @throws AMConsoleException if unable to retrieve std AttributeAuthority
+     *       values based on the realm and entityName passed.
+     */
+    public Map getStandardAttributeAuthorityAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException {        
+        String[] params = {realm, entityName,"SAMLv2", "AttribAuthority-Std"};
+        logEvent("ATTEMPT_GET_ATTR_AUTH_ATTR_VALUES", params);
+        Map map = new HashMap();
+        AttributeAuthorityDescriptorElement attrauthDescriptor = null;
+        try {      
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            attrauthDescriptor = 
+                samlManager.getAttributeAuthorityDescriptor(realm,entityName);
+            if (attrauthDescriptor != null) {
+                List artServiceList = 
+                        attrauthDescriptor.getAttributeService();
+                if (!artServiceList.isEmpty()) {
+                    AttributeServiceElement key =
+                            (AttributeServiceElement)artServiceList.get(0);
+                    map.put(ATTR_SEFVICE_DEFAULT_LOCATION,
+                            returnEmptySetIfValueIsNull(key.getLocation()));
+                    AttributeServiceElement key2 =
+                            (AttributeServiceElement)artServiceList.get(1);
+                    map.put(SUPPORTS_X509,
+                            returnEmptySetIfValueIsNull(
+                                key2.isSupportsX509Query()));
+                    map.put(ATTR_SEFVICE_LOCATION,
+                            returnEmptySetIfValueIsNull(key2.getLocation()));
+                }
+                List attrProfileList = 
+                        attrauthDescriptor.getAttributeProfile();
+                if (!attrProfileList.isEmpty()) {
+                     String key =
+                            (String)attrProfileList.get(0);
+                    map.put(ATTRIBUTE_PROFILE,
+                            returnEmptySetIfValueIsNull(key));
+                   
+                }
+                
+            }
+                
+        logEvent("SUCCEED_GET_ATTR_AUTH_ATTR_VALUES", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+               ("SAMLv2ModelImpl.getStandardAttributeAuthorityAttributes:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+               {realm, entityName, "SAMLv2", "AttribAuthority-Std", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ATTR_AUTH_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        return map;       
+    }
+    
+    /**
+     * Returns a map with extended AttributeAuthority attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended AttributeAuthority values.
+     * @throws AMConsoleException if unable to retrieve ext AttributeAuthority
+     *     attributes based on the realm and entityName passed.
+     */
+    public Map getExtendedAttributeAuthorityAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException {        
+        String[] params = {realm, entityName, "SAMLv2", "AttribAuthority-Ext"};
+        logEvent("ATTEMPT_GET_ATTR_AUTH_ATTR_VALUES", params);
+        Map map = null;
+        AttributeAuthorityConfigElement attributeAuthorityConfig = null;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            attributeAuthorityConfig = 
+                    samlManager.getAttributeAuthorityConfig(
+                    realm,entityName);
+            if (attributeAuthorityConfig != null) {
+                BaseConfigType baseConfig = 
+                        (BaseConfigType)attributeAuthorityConfig;
+                map = SAML2MetaUtils.getAttributes(baseConfig);
+            }
+            logEvent("SUCCEED_GET_ATTR_AUTH_ATTR_VALUES", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+               ("SAMLv2ModelImpl.getExtendedAttributeAuthorityAttributes:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "AttribAuthority-Ext", strError};
+            logEvent("FEDERATION_EXCEPTION_ATTR_AUTH_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        return (map != null) ? map : Collections.EMPTY_MAP;
+    }
+    
+    /**
+     * Returns a map with standard AuthnAuthority attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with AuthnAuthority values.
+     * @throws AMConsoleException if unable to retrieve std AuthnAuthority 
+     *       values based on the realm and entityName passed.
+     */
+    public Map getStandardAuthnAuthorityAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException {
+        String[] params = {realm, entityName,"SAMLv2", "AuthnAuthority-Std"};
+        logEvent("ATTEMPT_GET_AUTHN_AUTH_ATTR_VALUES", params);
+        Map map = new HashMap();
+        AuthnAuthorityDescriptorElement authnauthDescriptor = null;
+        try {       
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            authnauthDescriptor = 
+                samlManager.getAuthnAuthorityDescriptor(realm,entityName);
+            if (authnauthDescriptor != null) {
+                List authQueryServiceList = 
+                        authnauthDescriptor.getAuthnQueryService();
+                if (!authQueryServiceList.isEmpty()) {
+                    AuthnQueryServiceElement key =
+                        (AuthnQueryServiceElement)authQueryServiceList.get(0);
+                    map.put(AUTHN_QUERY_SERVICE,
+                            returnEmptySetIfValueIsNull(key.getLocation()));
+                }
+               
+            } 
+        logEvent("SUCCEED_GET_AUTHN_AUTH_ATTR_VALUES", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+                ("SAMLv2ModelImpl.getStandardAuthnAuthorityAttributes:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "AuthnAuthority-Std", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_AUTHN_AUTH_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        return map;     
+        
+    }
+    
+    /**
+     * Returns a map with extended AuthnAuthority attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended AuthnAuthority values.
+     * @throws AMConsoleException if unable to retrieve ext AuthnAuthority
+     *     attributes based on the realm and entityName passed.
+     */
+    public Map getExtendedAuthnAuthorityAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "AuthnAuthority-Ext"};
+        logEvent("ATTEMPT_GET_AUTHN_AUTH_VALUES", params);
+        Map map = null;
+        AuthnAuthorityConfigElement authnAuthorityConfig = null;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            authnAuthorityConfig = samlManager.getAuthnAuthorityConfig(
+                    realm,entityName);
+            if (authnAuthorityConfig != null) {
+                BaseConfigType baseConfig = 
+                        (BaseConfigType)authnAuthorityConfig;
+                map = SAML2MetaUtils.getAttributes(baseConfig);
+            }
+            logEvent("SUCCEED_GET_AUTHN_AUTH_ATTR_VALUES", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+                ("SAMLv2ModelImpl.getExtendedAuthnAuthorityAttributes:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "AuthnAuthority-Ext", strError};
+            logEvent("FEDERATION_EXCEPTION_AUTHN_AUTH_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        return (map != null) ? map : Collections.EMPTY_MAP;
+    }
+    
+    /**
+     * Returns a map with standard AttrQuery attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with AttrQuery values.
+     * @throws AMConsoleException if unable to retrieve std AttrQuery 
+     *       values based on the realm and entityName passed.
+     */
+    public Map getStandardAttrQueryAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException  {
+        String[] params = {realm, entityName,"SAMLv2", "AttrQuery-Std"};
+        logEvent("ATTEMPT_GET_ATTR_QUERY_ATTR_VALUES", params);
+        Map map = new HashMap();
+        AttributeQueryDescriptorElement attrQueryDescriptor = null;
+        try {      
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            attrQueryDescriptor = 
+                samlManager.getAttributeQueryDescriptor(realm,entityName);
+            if (attrQueryDescriptor != null) {
+                //retrieve nameid format
+                List NameIdFormatList = attrQueryDescriptor.getNameIDFormat();
+                if (!NameIdFormatList.isEmpty()) {
+                    map.put(ATTR_NAMEID_FORMAT, returnEmptySetIfValueIsNull(
+                            convertListToSet(NameIdFormatList)));
+                }
+               
+            } 
+        logEvent("SUCCEED_GET_ATTR_QUERY_ATTR_VALUES", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+                ("SAMLv2ModelImpl.getStandardAttrQueryAttributes:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "AttrQuery-Std", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ATTR_QUERY_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        return map;     
+        
+    }
+    
+    /**
+     * Returns a map with extended AttrQuery attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended AttrQuery values.
+     * @throws AMConsoleException if unable to retrieve ext AttrQuery
+     *     attributes based on the realm and entityName passed.
+     */
+    public Map getExtendedAttrQueryAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "AttrQuery-Ext"};
+        logEvent("ATTEMPT_GET_ATTR_QUERY_VALUES", params);
+        Map map = null;
+        AttributeQueryConfigElement attrQueryConfig = null;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            attrQueryConfig = samlManager.getAttributeQueryConfig(
+                    realm,entityName);
+            if (attrQueryConfig != null) {
+                BaseConfigType baseConfig = 
+                        (BaseConfigType)attrQueryConfig;
+                map = SAML2MetaUtils.getAttributes(baseConfig);
+            }
+            logEvent("SUCCEED_GET_ATTR_QUERY_ATTR_VALUES", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+                ("SAMLv2ModelImpl.getExtendedAttrQueryAttributes:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx = 
+                {realm, entityName, "SAMLv2", "AttrQuery-Ext", strError};
+            logEvent("FEDERATION_EXCEPTION_ATTR_QUERY_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        return (map != null) ? map : Collections.EMPTY_MAP;
     }
 
     protected SAML2MetaManager getSAML2MetaManager() throws SAML2MetaException {

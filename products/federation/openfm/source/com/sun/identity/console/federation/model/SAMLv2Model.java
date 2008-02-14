@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.11 2008-02-12 21:54:43 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.12 2008-02-14 22:59:09 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,6 +66,8 @@ public interface SAMLv2Model
         "ssohttpLocation";
     public static final String SINGLE_SIGNON_SOAP_LOCATION =
         "ssosoapLocation";
+    public static final String NAME_ID_MAPPPING =
+        "NameIDMappingService";
     
     //SAMLv2 SP Standard attributes
     public static final String IS_AUTHN_REQ_SIGNED = "AuthnRequestsSigned";
@@ -132,6 +134,8 @@ public interface SAMLv2Model
         "wantArtifactResolveSigned";
     public static final String AUTH_URL =
         "AuthUrl";
+    public static final String ASSERTION_CACHE_ENABLED =
+        "assertionCacheEnabled";
 
     
     //SAML2 SP Extended Attributes
@@ -203,7 +207,15 @@ public interface SAMLv2Model
     // SAMLv2 Service Provider Adapter feature
      public static final String ATTR_SP_ADAPTER = "spAdapter";
      public static final String ATTR_SP_ADAPTER_ENV = "spAdapterEnv";
-
+     
+     //SAML AUTHORITY
+     public static final String ATTR_SEFVICE_DEFAULT_LOCATION = 
+             "attrSerdefaultLocation";
+     public static final String ATTR_SEFVICE_LOCATION = "attrSerLocation";
+     public static final String SUPPORTS_X509 = "supportsx";
+     public static final String ATTRIBUTE_PROFILE = "AttributeProfile";
+     public static final String AUTHN_QUERY_SERVICE = "authnQueryServLocation";
+     public static final String ATTR_NAMEID_FORMAT = "attrnameidlist";
 
     // XACML PDP/PEP
     public static final String ATTR_TXT_PROTOCOL_SUPPORT_ENUM =
@@ -529,5 +541,89 @@ public interface SAMLv2Model
         String entityName, 
         SAMLv2AuthContexts cxt
     ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with standard AttributeAuthority attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with AttributeAuthority values.
+     * @throws AMConsoleException if unable to retrieve the std
+     *      AttributeAuthority values based on the realm and entityName passed.
+     */
+    public Map getStandardAttributeAuthorityAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with extended AttributeAuthority attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended AttributeAuthority values.
+     * @throws AMConsoleException if unable to retrieve the  extended
+     *  AttributeAuthority attributes based on the realm and entityName passed.
+     */
+    public Map getExtendedAttributeAuthorityAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with standard AuthnAuthority attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with AuthnAuthority values.
+     * @throws AMConsoleException if unable to retrieve std AuthnAuthority 
+     *       values based on the realm and entityName passed.
+     */
+    public Map getStandardAuthnAuthorityAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with extended AuthnAuthority attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended AuthnAuthority values.
+     * @throws AMConsoleException if unable to retrieve ext AuthnAuthority
+     *     attributes based on the realm and entityName passed.
+     */
+    public Map getExtendedAuthnAuthorityAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with standard AttrQuery attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with AttrQuery values.
+     * @throws AMConsoleException if unable to retrieve std AttrQuery 
+     *       values based on the realm and entityName passed.
+     */
+    public Map getStandardAttrQueryAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with extended AttrQuery attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended AttrQuery values.
+     * @throws AMConsoleException if unable to retrieve ext AttrQuery
+     *     attributes based on the realm and entityName passed.
+     */
+    public Map getExtendedAttrQueryAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException;
     
 }

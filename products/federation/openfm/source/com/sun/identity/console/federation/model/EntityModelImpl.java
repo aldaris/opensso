@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.12 2007-11-16 22:11:03 babysunil Exp $
+ * $Id: EntityModelImpl.java,v 1.13 2008-02-14 23:11:40 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -427,6 +427,16 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 }
                 if (SAML2MetaUtils.getPolicyEnforcementPointDescriptor(d) != null) {
                     roles.add(POLICY_ENFORCEMENT_POINT_DESCRIPTOR);
+                }
+                if (SAML2MetaUtils.
+                        getAttributeAuthorityDescriptor(d) != null) {
+                    roles.add(SAML_ATTRAUTHORITY);
+                }
+                if (SAML2MetaUtils.getAuthnAuthorityDescriptor(d) != null) {
+                    roles.add(SAML_AUTHNAUTHORITY);
+                }
+                if (SAML2MetaUtils.getAttributeQueryDescriptor(d) != null) {
+                    roles.add(SAML_ATTRQUERY);
                 }
             }
         } catch (SAML2MetaException s) {
