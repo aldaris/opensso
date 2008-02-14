@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.19 2008-02-08 23:33:28 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.20 2008-02-14 21:32:44 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1462,79 +1462,123 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             if (agentIdTypeforNotificationSet == null) {
                 break;
             }
-            String modItem = null;
 
-            // To be consistent and for easy web agent parsing, the 
-            // notification set should start with 
-            // "AgentConfigChangeNotification"
-            StringBuffer xmlsb = new StringBuffer(1000);
-            xmlsb.append("<")
-                 .append(AGENT_NOTIFICATION)
-                 .append(" ")
-                 .append(AGENT_ID)
-                 .append("=\"")
-                 .append(agentNameforNotificationSet)
-                 .append("\"")
-                 .append(" ")
-                 .append(AGENT_IDTYPE)
-                 .append("=\"")
-                 .append(agentIdTypeforNotificationSet.getName())
-                 .append("\"/>");
-            
-                 modItem = xmlsb.toString();
-
-            if (debug.messageEnabled()) {
-                debug.message("AgentsRepo.sendNotificationSet():modItem " + 
-                    modItem);
-            }
-
-            // If notification URLs are present, send notifications
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-
-            Set nSet = new HashSet(2);
-            nSet.add(notificationURLname);
-            Map ansMap = new HashMap();
-            String nval = null;
             try {
-                ansMap = getAttributes(adminToken, 
-                    agentIdTypeforNotificationSet, 
-                    agentNameforNotificationSet, nSet);
-                Set nvalSet = (Set) ansMap.get(notificationURLname); 
-                if ((nvalSet != null) && (!nvalSet.isEmpty())) {
-                    nval = (String) nvalSet.iterator().next();
-                    try {
-                        URL url = new URL(nval);
-                        // Construct NotificationSet to be sent to Agents.
-                        Notification notification = new Notification(modItem);
-                        NotificationSet ns = 
-                            new NotificationSet(AGENT_CONFIG_SERVICE);
-                        ns.addNotification(notification);
-                        try {
-                            PLLServer.send(url, ns);
-                            if (debug.messageEnabled()) {
-                                debug.message("AgentsRepo:sendNotificationSet "
-                                    + "Sent Notification to "
-                                    + "URL: " + url + " Data: " + ns);
-                            }
-                        } catch (SendNotificationException ne) {
-                            if (debug.warningEnabled()) {
-                                debug.warning("AgentsRepo.sendNotificationSet: "
-                                    + "failed sending notification to: " 
-                                    + url, ne);
-                            }
+                String modItem = null;
+                Set aNameSet = new HashSet(2);
+                SSOToken adminToken = 
+                    (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+
+                if (debug.messageEnabled()) {
+                    debug.message("AgentsRepo.sendNotificationSet():" +
+                        " agentIdTypeforNotificationSet " + 
+                        agentIdTypeforNotificationSet);
+                    debug.message("AgentsRepo.sendNotificationSet():" +
+                        " agentNameforNotificationSet " + 
+                        agentNameforNotificationSet);
+                }
+
+                // This checks if the changes happened to an agentgroup. If  
+                // so,it gets all its members/agents and sends notifications 
+                // to all its members.
+                if (agentIdTypeforNotificationSet.equals(IdType.AGENTGROUP)) {
+                    Set members = 
+                        getMembers(adminToken, agentIdTypeforNotificationSet, 
+                        agentNameforNotificationSet, IdType.AGENTONLY);
+                     Iterator it = members.iterator();
+                     while (it.hasNext()) {
+                         String agent = (String) it.next();
+                         aNameSet.add(agent);
+                     }
+                } else {
+                    aNameSet.add(agentNameforNotificationSet);
+                }
+
+                if (debug.messageEnabled()) {
+                    debug.message("AgentsRepo.sendNotificationSet():" +
+                        " aNameSet " + aNameSet); 
+                }
+
+                if ((aNameSet != null) && (!aNameSet.isEmpty())) {
+                    Iterator itr = aNameSet.iterator();
+                    while (itr.hasNext()) {
+                        agentNameforNotificationSet = (String) itr.next();
+                        agentIdTypeforNotificationSet = IdType.AGENTONLY;
+
+                        // To be consistent and for easy web agent parsing,
+                        // the notification set should start with 
+                        // "AgentConfigChangeNotification"
+                        StringBuffer xmlsb = new StringBuffer(1000);
+                        xmlsb.append("<")
+                             .append(AGENT_NOTIFICATION)
+                             .append(" ")
+                             .append(AGENT_ID)
+                             .append("=\"")
+                             .append(agentNameforNotificationSet)
+                             .append("\"")
+                             .append(" ")
+                             .append(AGENT_IDTYPE)
+                             .append("=\"")
+                             .append(agentIdTypeforNotificationSet.getName())
+                             .append("\"/>");
+           
+                        modItem = xmlsb.toString();
+
+                        if (debug.messageEnabled()) {
+                            debug.message("AgentsRepo.sendNotificationSet():" +
+                                " modItem " + modItem);
                         }
-                    } catch (MalformedURLException e) {
-                        if (debug.warningEnabled()) {
-                            debug.warning("AgentsRepo.sendNotificationSet:(): "
-                                + " invalid URL: " , e);
+
+                        // If notification URLs are present,send notifications
+                        Set nSet = new HashSet(2);
+                        nSet.add(notificationURLname);
+                        Map ansMap = new HashMap();
+                        String nval = null;
+                        ansMap = getAttributes(adminToken, 
+                            agentIdTypeforNotificationSet, 
+                            agentNameforNotificationSet, nSet);
+                        Set nvalSet = (Set) ansMap.get(notificationURLname); 
+                        if ((nvalSet != null) && (!nvalSet.isEmpty())) {
+                            nval = (String) nvalSet.iterator().next();
+                            try {
+                                URL url = new URL(nval);
+                                // Construct NotificationSet to be sent to 
+                                // Agents.
+                                Notification notification = 
+                                    new Notification(modItem);
+                                NotificationSet ns = 
+                                    new NotificationSet(AGENT_CONFIG_SERVICE);
+                                ns.addNotification(notification);
+                                try {
+                                    PLLServer.send(url, ns);
+                                    if (debug.messageEnabled()) {
+                                        debug.message("AgentsRepo:"
+                                            + "sendNotificationSet "
+                                            + "Sent Notification to "
+                                            + "URL: " + url + " Data: " + ns);
+                                    }
+                                } catch (SendNotificationException ne) {
+                                    if (debug.warningEnabled()) {
+                                        debug.warning("AgentsRepo."
+                                            + "sendNotificationSet: failed"
+                                            + " sending notification to: " 
+                                            + url, ne);
+                                    }
+                                }
+                            } catch (MalformedURLException e) {
+                                if (debug.warningEnabled()) {
+                                    debug.warning("AgentsRepo." 
+                                        + "sendNotificationSet:(): "
+                                        + " invalid URL: " , e);
+                                }
+                            }
                         }
                     }
                 }
             } catch (IdRepoException idpe) {
-                debug.error("AgentsRepo.sendNotificationSet(): Unable to read "
-                    + "agent attributes ", idpe);
-                Object args[] = { NAME };
+                debug.error("AgentsRepo.sendNotificationSet(): "
+                    + "Unable to send notification due to " + idpe);
             } catch (SSOException ssoe) {
                 if (debug.warningEnabled()) {
                     debug.warning("AgentsRepo.sendNotificationSet(): "
