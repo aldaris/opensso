@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-as8,v 1.2 2008-02-14 02:15:06 ykwon Exp $
+# $Id: amtune-as91,v 1.1 2008-02-14 02:22:59 ykwon Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -28,26 +28,26 @@ deleteJVMOptionUsingASAdmin() {
     jvmOptionString=$1
 
     if [ "$jvmOptionString" = "<No value set>" ] || 
-        [ "$jvmOptionString" = "" ] || 
-        [ "$jvmOptionString" = "<Empty value>" ]; then
-    return
+                [ "$jvmOptionString" = "" ] || 
+                [ "$jvmOptionString" = "<Empty value>" ]; then
+        return
     fi
-    $ECHO
-    $ECHO `$gettext "Deleting JVM Option : "` "$jvmOptionString"
+        $ECHO
+        $ECHO `$gettext "Deleting JVM Option : "` "$jvmOptionString"
 
         #$ECHO $ASADMIN delete-jvm-options $ASADMIN_COMMON_PARAMS :"$jvmOptionString"
 
         error_message=`$ASADMIN delete-jvm-options $ASADMIN_COMMON_PARAMS :"$jvmOptionString"`
 
-    $ECHO $error_message
+        $ECHO $error_message
 }
 
 insertJVMOptionUsingASAdmin() {
     jvmOptionString=$1
 
     if [ "$jvmOptionString" != "" ]; then
-    $ECHO
-    $ECHO `$gettext "Inserting JVM Option : "` "$jvmOptionString"
+        $ECHO
+        $ECHO `$gettext "Inserting JVM Option : "` "$jvmOptionString"
 
         #$ECHO $ASADMIN create-jvm-options $ASADMIN_COMMON_PARAMS :"$jvmOptionString"
         $ASADMIN create-jvm-options $ASADMIN_COMMON_PARAMS :"$jvmOptionString"
@@ -63,11 +63,11 @@ createJvmOptionString()
      # Check for the case of -D<option>=<No value set>
      sub_jvmOptionString=`$ECHO $jvmOptionString | $CUT -f2 -d '='`
      if [ "$sub_jvmOptionString" = "<No value set>" ] || 
-        [ "$jvmOptionString" = "" ] || 
-        [ "$sub_jvmOptionString" = "<Empty value>" ]; then
+                [ "$jvmOptionString" = "" ] || 
+                [ "$sub_jvmOptionString" = "<Empty value>" ]; then
         $ECHO $jvmOptionMainString
      else
-    jvmOptionString=`$ECHO $jvmOptionString | $AWK ' BEGIN { FS = ":" ; ORS="" } {print ":"} { for (i = 1; i < NF; i++) { print $i; print "\\\:" } {print $i} }'`
+        jvmOptionString=`$ECHO $jvmOptionString | $AWK ' BEGIN { FS = ":" ; ORS="" } {print ":"} { for (i = 1; i < NF; i++) { print $i; print "\\\:" } {print $i} }'`
         $ECHO "$jvmOptionMainString$jvmOptionString" 
      fi
 }
@@ -78,13 +78,13 @@ tuneDomainXML() {
     $ECHO $LINE_SEP
     $ECHO `$gettext "Tuning Application Server Instance..."`
     $ECHO
-    $ECHO `$gettext "File                 : "` "$tune_file" `$gettext (using asadmin command line tool)"`
+    $ECHO `$gettext "File                 : "` "$tune_file (using asadmin command line tool)"
     $ECHO `$gettext "Parameter tuning     :"`
     $ECHO
 
-    acceptor_threads_string="server.http-service.http-listener.$ASADMIN_HTTPLISTENER.acceptor-threads"
-    count_threads_string="server.http-service.connection-pool.max-pending-count"
-    queue_size_string="server.http-service.connection-pool.queue-size-in-bytes"
+   acceptor_threads_string="server.http-service.http-listener.$ASADMIN_HTTPLISTENER.acceptor-threads"
+   count_threads_string="server.http-service.connection-pool.max-pending-count"
+   queue_size_string="server.http-service.connection-pool.queue-size-in-bytes"
 
     # Construct a parameter string to perform an asadmin get for acceptor-thread, queue-size, 
     # and count-thread parameters
@@ -212,7 +212,7 @@ tuneDomainXML() {
 
     $ECHO `$gettext "15.  OverrideDefaultLibthread (if Solaris 8)"`
     $ECHO `$gettext "Current Value        : "` "$asadmin_overrideDefaultLibthread"
-    $ECHO `$gettext "Recommended Value    : "` "$asadmin_new_overrideDefaultLibthrea"
+    $ECHO `$gettext "Recommended Value    : "` "$asadmin_new_overrideDefaultLibthread"
     $ECHO
 
     asadmin_useconcmarksweepgc=`getASJVMOption '-XX:+UseConcMarkSweepGC' 'flag' ','`
@@ -240,7 +240,7 @@ tuneDomainXML() {
 
         $ECHO `$gettext "18.  Parallel GC Threads"`
         $ECHO `$gettext "Current Value        : "` "$asadmin_parallel_gc_threads"
-        $ECHO `$gettext "Recommended Value    : "` "$asadmin_new_parallel_gc_threads"
+        $ECHO `$gettext "Recommended Value    : "` "$asadmin_new_parallel_gc_thread"
         $ECHO
     fi
 
@@ -330,9 +330,9 @@ tuneSecurityLimits() {
     tune_file="/etc/security/limits.conf"
 
     $ECHO $LINE_SEP
-    $ECHO `$gettext "Stack Size Tuning for AS 8.x..."`
+    $ECHO `$gettext "Stack Size Tuning for AS 9.1..."`
     $ECHO
-    $ECHO `$gettext "File                 : "` "$tune_file"
+    $ECHO `$gettext "File                 : $tune_file"`
     $ECHO `$gettext "Parameter tuning     :"`
     $ECHO
 
@@ -353,15 +353,15 @@ tuneSecurityLimits() {
         return
     fi
 
-    delete_line $tune_file "Start: AS8.x Federated Access Manager Tuning"
+    delete_line $tune_file "Start: AS9.1 Federated Access Manager Tuning"
     if [ "$curStackSizeString" != "" ]; then
        delete_line $tune_file "$curStackSizeString"
     fi
-    delete_line $tune_file "End: AS8.x Federated Access Manager Tuning"
+    delete_line $tune_file "End: AS9.1 Federated Access Manager Tuning"
 
-    add_to_end $tune_file "# Start: AS8.x Federated Access Manager Tuning : `date`"
+    add_to_end $tune_file "# Start: AS9.1 Federated Access Manager Tuning : `date`"
     add_to_end $tune_file "$newStackSizeString"
-    add_to_end $tune_file "# End: AS8.x Federated Access Manager Tuning : `date`"
+    add_to_end $tune_file "# End: AS9.1 Federated Access Manager Tuning : `date`"
 
 }
 
@@ -369,9 +369,9 @@ tuneSecurityLimits() {
 # Start of main program
 #############################################################################
 SCRIPT_LOCATION=`/usr/bin/dirname $0`
-AMTUNE_SCRIPT_RECORD_STRING="AMTUNE_AS8_SCRIPT"
+AMTUNE_SCRIPT_RECORD_STRING="AMTUNE_AS91_SCRIPT"
 TOOLS_HOME="@TOOLS_HOME@"
-TEXTDOMAIN=amtune-as8
+TEXTDOMAIN=amtune-as91
 TEXTDOMAINDIR=$TOOLS_HOME/locale
 export TEXTDOMAIN
 export TEXTDOMAINDIR
@@ -387,15 +387,14 @@ ECHO_MSG "`$gettext 'Federated Access Manager - Application Server Tuning Script
 
 $ECHO "$ASADMIN_PASSWORD_SYNTAX$ASADMIN_PASSWORD" > $ASADMIN_PASSFILE
 
-
 tuneDomainXML | eval $OUTPUT_TYPE
 
-if [ `getASVersionUsingASAdmin | $GREP "8." | $WC -l` -eq 1 ] &&
+if [ `getASVersionUsingASAdmin | $GREP "9.1" | $WC -l` -eq 1 ] &&
    [ "$OSTYPE" = "Linux" ]; then
    tuneSecurityLimits | eval $OUTPUT_TYPE                                  
 fi
 
-IF [ "$AMTUNE_MODE" = "CHANGE" ]; then
+if [ "$AMTUNE_MODE" = "CHANGE" ]; then
    $ECHO
    $ECHO "############################################################################"
    $ECHO `$gettext "Please restart the application server to have new configurations take effect"`
@@ -403,6 +402,6 @@ IF [ "$AMTUNE_MODE" = "CHANGE" ]; then
    $ECHO
 fi
 
-$RM $ASADMIN_PASSFILE                   
+$RM $ASADMIN_PASSFILE                                   
 
 ECHO_MSG $PARA_SEP                                               
