@@ -1,0 +1,210 @@
+#  The contents of this file are subject to the terms
+#  of the Common Development and Distribution License
+#  (the License). You may not use this file except in
+#  compliance with the License.
+#
+#  You can obtain a copy of the License at
+#  https://opensso.dev.java.net/public/CDDLv1.0.html or
+#  opensso/legal/CDDLv1.0.txt
+#  See the License for the specific language governing
+#  permission and limitations under the License.
+#
+#  When distributing Covered Code, include this CDDL
+#  Header Notice in each file and include the License file
+#  at opensso/legal/CDDLv1.0.txt.
+#  If applicable, add the following below the CDDL Header,
+#  with the fields enclosed by brackets [] replaced by
+#  your own identifying information:
+#  "Portions Copyrighted [year] [name of copyright owner]"
+#
+#  $Id: amtune-env.po,v 1.1 2008-02-14 02:39:17 ykwon Exp $
+#
+#  Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+#
+
+domain "amtune-env"
+msgid  " "
+msgstr " "
+
+msgid  "Password option is"
+msgstr "Password option is"
+
+msgid  "Usage:"
+msgstr "Usage:"
+
+msgid  "Run an amtune script "
+msgstr "Run an amtune script "
+
+msgid  "Mandatory Parameter for this script is:"
+msgstr "Mandatory Parameter for this script is:"
+
+msgid  "i.e. the sample password file is "
+msgstr "i.e. the sample password file is "
+
+msgid  "or"
+msgstr "or"
+
+msgid  "To display this help menu, enter"
+msgstr "To display this help menu, enter"
+
+msgid  " ? or help"
+msgstr " ? or help"
+
+msgid  "Please make sure to customize amtune-env to suit your deployment."
+msgstr "Please make sure to customize amtune-env to suit your deployment."
+
+msgid  "Please enter AM 6.x's or 7.x's installation directory."
+msgstr "Please enter AM 6.x's or 7.x's installation directory."
+
+msgid  "For AM 6.x and 7.x, it should be set to "
+msgstr "For AM 6.x and 7.x, it should be set to "
+
+msgid  "Please enter "
+msgstr "Please enter "
+
+msgid  "It should be set to "
+msgstr "It should be set to "
+
+msgid  "AM 6.x's or 7.x's amadmin is not found."
+msgstr "AM 6.x's or 7.x's amadmin is not found."
+
+msgid  "For AM 6.x and 7.x, please set amadmin's location to "
+msgstr "For AM 6.x and 7.x, please set amadmin's location to "
+
+msgid  "FAM server's famadm tool is not found."
+msgstr "FAM server's famadm tool is not found."
+
+msgid  "Please set famadm's location to FAMADM_LOCATION in amtune-env."
+msgstr "Please set famadm's location to FAMADM_LOCATION in amtune-env."
+
+msgid  "FAM server's URL not found."
+msgstr "FAM server's URL not found."
+
+msgid  "Please set FAM server's URL to FAMSERVER_URL in amtune-env."
+msgstr "Please set FAM server's URL to FAMSERVER_URL in amtune-env."
+
+msgid  "FAM server's admin user not found."
+msgstr "FAM server's admin user not found."
+
+msgid  "Please set famadm user to FAMADM_USER in amtune-env."
+msgstr "Please set famadm user to FAMADM_USER in amtune-env."
+
+msgid  "not configured."
+msgstr "not configured."
+
+msgid  "Current setting for"
+msgstr "Current setting for"
+
+msgid  "You may need to customize the following file appropriately: "
+msgstr "You may need to customize the following file appropriately: "
+
+msgid  "not configured correctly."
+msgstr "not configured correctly."
+
+msgid  "Cannot proceed."
+msgstr "Cannot proceed."
+
+msgid  "configuration file not found. "
+msgstr "configuration file not found. "
+
+msgid  "configuration file: "
+msgstr "configuration file: "
+
+msgid  "Command not found: "
+msgstr "Command not found: "
+
+msgid  "is not valid. "
+msgstr "is not valid. "
+
+msgid  "Current AMTUNE_MODE value: "
+msgstr "Current AMTUNE_MODE value: "
+
+msgid  "Host name not set. "
+msgstr "Host name not set. "
+
+msgid  "Domain name not set. "
+msgstr "Domain name not set. "
+
+msgid  "Web container not specified. "
+msgstr "Web container not specified. "
+
+msgid  "Wrong Web Container specified or wrong amtune script was executed. "
+msgstr "Wrong Web Container specified or wrong amtune script was executed. "
+
+msgid  "Current Web Container: "
+msgstr "Current Web Container: "
+
+msgid  "Current amtune script: "
+msgstr "Current amtune script: "
+
+msgid  "Web container specified not valid. Valid Web Containers are "
+msgstr "Web container specified not valid. Valid Web Containers are "
+
+msgid  "Web Container configuration directory not found. "
+msgstr "Web Container configuration directory not found. "
+
+msgid  "Web Container instance directory not found. "
+msgstr "Web Container instance directory not found. "
+
+msgid  "Current Web Container instance directory in "
+msgstr "Current Web Container instance directory in "
+
+msgid  "Please check this directory in your Web Container installation.  You may need to customize the parameter"
+msgstr "Please check this directory in your Web Container installation.  You may need to customize the parameter"
+
+msgid  "in the following file appropriately: "
+msgstr "in the following file appropriately: "
+
+msgid  "The format of Web Container instance directory is "
+msgstr "The format of Web Container instance directory is "
+
+msgid  "tool not found. "
+msgstr "tool not found. "
+
+msgid  "Directory Server password not found. "
+msgstr "Directory Server password not found. "
+
+msgid  "Directory Server password file not found. "
+msgstr "Directory Server password file not found. "
+
+msgid  "Initializing..."
+msgstr "Initializing..."
+
+msgid  "Checking System Environment..."
+msgstr "Checking System Environment..."
+
+msgid  "Checking User..."
+msgstr "Checking User..."
+
+msgid  "The tuning parameter will be calculated based on the Web Server 32-bit mode."
+msgstr "The tuning parameter will be calculated based on the Web Server 32-bit mode."
+
+msgid  "information..."
+msgstr "information..."
+
+msgid  "Detecting System Environment..."
+msgstr "Detecting System Environment..."
+
+msgid  "Number of logical CPUs in the system : "
+msgstr "Number of logical CPUs in the system : "
+
+msgid  "Number of CPUs in the system : "
+msgstr "Number of CPUs in the system : "
+
+msgid  "Unable to obtain available CPUs. "
+msgstr "Unable to obtain available CPUs. "
+
+msgid  "Unable to obtain available memory. "
+msgstr "Unable to obtain available memory. "
+
+msgid  "Unable to compute memory requirements. "
+msgstr "Unable to compute memory requirements. "
+
+msgid  "There is enough memory."
+msgstr "There is enough memory."
+
+msgid  "There is not enough memory."
+msgstr "There is not enough memory." 
+
+msgid  "Calculating Tuning Parameters..."
+msgstr "Calculating Tuning Parameters..."

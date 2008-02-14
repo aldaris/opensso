@@ -1,0 +1,114 @@
+#  The contents of this file are subject to the terms
+#  of the Common Development and Distribution License
+#  (the License). You may not use this file except in
+#  compliance with the License.
+#
+#  You can obtain a copy of the License at
+#  https://opensso.dev.java.net/public/CDDLv1.0.html or
+#  opensso/legal/CDDLv1.0.txt
+#  See the License for the specific language governing
+#  permission and limitations under the License.
+#
+#  When distributing Covered Code, include this CDDL
+#  Header Notice in each file and include the License file
+#  at opensso/legal/CDDLv1.0.txt.
+#  If applicable, add the following below the CDDL Header,
+#  with the fields enclosed by brackets [] replaced by
+#  your own identifying information:
+#  "Portions Copyrighted [year] [name of copyright owner]"
+#
+#  $Id: amtune-prepareDSTuner.po,v 1.1 2008-02-14 02:39:17 ykwon Exp $
+#
+#  Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+#
+
+domain "amtune-prepareDSTuner"
+msgid  " "
+msgstr " "
+
+msgid  "Preparing Directory Server Tuner..."
+msgstr "Preparing Directory Server Tuner..."
+
+msgid  "Determining Current Settings..."
+msgstr "Determining Current Settings..."
+
+msgid  "Creating Directory Server Tuner tar file: "
+msgstr "Creating Directory Server Tuner tar file: "
+
+msgid  "WARNING: Can't find Federated Access Manager Index file.  Using the default list in amtune-directory.template."
+msgstr "WARNING: Can't find Federated Access Manager Index file.  Using the default list in amtune-directory.template."
+
+msgid  "Directory Server Tuner tar file: "
+msgstr "Directory Server Tuner tar file: "
+
+msgid  "Steps to tune directory server:"
+msgstr "Steps to tune directory server:"
+
+msgid  "1.  Copy the DS Tuner tar to the DS System"
+msgstr "1.  Copy the DS Tuner tar to the DS System"
+
+msgid  "2.  Untar the DS Tuner in a temporary location"
+msgstr "2.  Untar the DS Tuner in a temporary location"
+
+msgid  "3.  Execute the following script in 'REVIEW' mode : amtune-directory"
+msgstr "3.  Execute the following script in 'REVIEW' mode : amtune-directory"
+
+msgid  "4.  Review carefully the recommended tunings for DS"
+msgstr "4.  Review carefully the recommended tunings for DS"
+
+msgid  "5.  If you are sure of applying these changes to DS, modify the following lines in amtune-directory"
+msgstr "5.  If you are sure of applying these changes to DS, modify the following lines in amtune-directory"
+
+msgid  "    or in amtune-directory.template before running this script."
+msgstr "    or in amtune-directory.template before running this script."
+
+msgid  "   a.  "
+msgstr "   a.  "
+
+msgid  "   These parameters can also be modified or left unchanged to use default values"
+msgstr "   These parameters can also be modified or left unchanged to use default values"
+
+msgid  "   b.  "
+msgstr "   b.  "
+
+msgid  "   c.  `"
+msgstr "   c.  "
+
+msgid  "   d.  "
+msgstr "   d.  "
+
+msgid  "   e.  "
+msgstr "   e.  "
+
+msgid  "   f.  "
+msgstr "   f.  "
+
+msgid  "   g.  "
+msgstr "   g.  "
+
+msgid  "   h.  "
+msgstr "   h.  "
+
+msgid  "   i.  "
+msgstr "   i.  "
+
+msgid  "   j.  "
+msgstr "   j.  "
+
+msgid  "   k.  "
+msgstr "   k.  "
+
+msgid  "   l.  "
+msgstr "   l.  "
+
+msgid  "   m.  "
+msgstr "   m.  "
+
+msgid  "It's highly recommended to run db2bak before running amtune-directory in case of Sun DS 5.x."
+msgstr "It's highly recommended to run db2bak before running amtune-directory in case of Sun DS 5.x."
+
+msgid  "or dsadm backup before running amtune-directory in case of Sun DS 6.x."
+msgstr "or dsadm backup before running amtune-directory in case of Sun DS 6.x."
+
+msgid  "Federated Access Manager - Directory Server Tuner Preparation Script"
+msgstr "Federated Access Manager - Directory Server Tuner Preparation Script"

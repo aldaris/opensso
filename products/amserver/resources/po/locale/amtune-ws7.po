@@ -1,0 +1,140 @@
+#  The contents of this file are subject to the terms
+#  of the Common Development and Distribution License
+#  (the License). You may not use this file except in
+#  compliance with the License.
+#
+#  You can obtain a copy of the License at
+#  https://opensso.dev.java.net/public/CDDLv1.0.html or
+#  opensso/legal/CDDLv1.0.txt
+#  See the License for the specific language governing
+#  permission and limitations under the License.
+#
+#  When distributing Covered Code, include this CDDL
+#  Header Notice in each file and include the License file
+#  at opensso/legal/CDDLv1.0.txt.
+#  If applicable, add the following below the CDDL Header,
+#  with the fields enclosed by brackets [] replaced by
+#  your own identifying information:
+#  "Portions Copyrighted [year] [name of copyright owner]"
+#
+#  $Id: amtune-ws7.po,v 1.1 2008-02-14 02:39:17 ykwon Exp $
+#
+#  Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+#
+
+domain "amtune-ws7"
+msgid  " "
+msgstr " "
+
+msgid  "Deleting JVM Option : "
+msgstr "Deleting JVM Option : "
+
+msgid  "Inserting JVM Option : "
+msgstr "Inserting JVM Option : "
+
+msgid  "Tuning Web Server Instance..."
+msgstr "Tuning Web Server Instance..."
+
+msgid  "File                 : "
+msgstr "File                 : "
+
+msgid  "Parameter tuning     :"
+msgstr "Parameter tuning     :"
+
+#  Do not localize this message
+msgid  "1.   Minimum Threads"
+msgstr "1.   Minimum Threads"
+
+msgid  "Current Value        : "
+msgstr "Current Value        : "
+
+msgid  "Recommended Value    : "
+msgstr "Recommended Value    : "
+
+#  Do not localize this message
+msgid  "2.   Maximum Threads" 
+msgstr "2.   Maximum Threads"
+
+#  Do not localize this message
+msgid  "3.   Queue Size" 
+msgstr "3.   Queue Size"
+
+#  Do not localize this message
+msgid  "4.   Native Stack Size" 
+msgstr "4.   Native Stack Size"
+
+#  Do not localize this message
+msgid  "5.   Acceptor Threads" 
+msgstr "5.   Acceptor Threads"
+
+#  Do not localize this message
+msgid  "6.   Statistic" 
+msgstr "6.   Statistic"
+
+#  Do not localize this message
+msgid  "7.   nativelibrarypathprefix" 
+msgstr "7.   nativelibrarypathprefix"
+
+#  Do not localize this message
+msgid  "8.   Max and Min Heap Size" 
+msgstr "8.   Max and Min Heap Size"   
+
+#  Do not localize this message
+msgid  "9.   LogGC Output"
+msgstr "9.   LogGC Output"
+
+#  Do not localize this message
+msgid  "10.   JVM in Server mode" 
+msgstr "10.   JVM in Server mode"
+
+#  Do not localize this message
+msgid  "11.   JVM Stack Size" 
+msgstr "11.   JVM Stack Size"
+
+#  Do not localize this message
+msgid  "12.  New Size" 
+msgstr "12.  New Size"
+
+#  Do not localize this message
+msgid  "13.  Max New Size" 
+msgstr "13.  Max New Size"
+
+#  Do not localize this message
+msgid  "14.  Disable Explicit GC" 
+msgstr "14.  Disable Explicit GC"
+
+#  Do not localize this message
+msgid  "15.  Use New Parallel GC"   
+msgstr "15.  Use New Parallel GC"
+
+#  Do not localize this message
+msgid  "16.  Print Class Histogram"
+msgstr "16.  Print Class Histogram"
+
+#  Do not localize this message
+msgid  "17.  Print GC Time Stamps"
+msgstr "17.  Print GC Time Stamps"
+
+#  Do not localize this message
+msgid  "18.  OverrideDefaultLibthread (if Solaris 8)"
+msgstr "18.  OverrideDefaultLibthread (if Solaris 8)" 
+
+#  Do not localize this message
+msgid  "19.  Enable Concurrent Mark Sweep GC"
+msgstr "19.  Enable Concurrent Mark Sweep GC"
+
+#  Do not localize this message
+msgid  "20.  Parallel GC Threads"
+msgstr "20.  Parallel GC Threads"
+
+msgid  "specific changes"
+msgstr "specific changes"
+
+msgid  "Include "
+msgstr "Include "
+
+msgid  "Server restart.  Please wait...."
+msgstr "Server restart.  Please wait...."
+
+msgid  "Federated Access Manager - Web Server Tuning Script"
+msgstr "Federated Access Manager - Web Server Tuning Script"
