@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.14 2008-01-16 00:55:50 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.15 2008-02-14 02:05:06 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.AlreadyRegisteredException;
 import com.iplanet.services.comm.client.PLLClient;
 import com.iplanet.services.naming.URLNotFoundException;
@@ -380,7 +381,7 @@ public class AgentConfiguration implements
     */
     static String getProperty(String id) {
         String result = null;
-        String value = System.getProperty(id);
+        String value = SystemProperties.get(id);
         if (value == null) {
             value = getPropertyInternal(id);
         }
@@ -400,10 +401,10 @@ public class AgentConfiguration implements
     */
     static Properties getAll() {
         Properties result = getAllInternal();
-        Iterator it = System.getProperties().keySet().iterator();
+        Iterator it = SystemProperties.getProperties().keySet().iterator();
         while (it.hasNext()) {
             String nextKey = (String) it.next();
-            result.put(nextKey, System.getProperty(nextKey));
+            result.put(nextKey, SystemProperties.get(nextKey));
         }
         return result;
     }
@@ -607,7 +608,7 @@ public class AgentConfiguration implements
                     if (!nextKey.startsWith(AGENT_CONFIG_PREFIX)) {
                         String nextValue = 
                                 getProperties().getProperty(nextKey);
-                        System.setProperty(nextKey, nextValue);
+                        SystemProperties.initializeProperties(nextKey, nextValue);
                         sysPropertyMap.put(nextKey, nextValue);
                     }
                 }
@@ -658,7 +659,7 @@ public class AgentConfiguration implements
                     if (!nextKey.startsWith(AGENT_CONFIG_PREFIX)) {
                         String nextValue = 
                                getProperties().getProperty(nextKey);
-                        System.setProperty(nextKey, nextValue);
+                        SystemProperties.initializeProperties(nextKey, nextValue);
                         //save in sysPropertyMap for upcoming log messages
                         sysPropertyMap.put(nextKey, nextValue);
                     }
@@ -1181,7 +1182,7 @@ public class AgentConfiguration implements
                 String nextKey = (String) it.next();
                 if (!nextKey.startsWith(AGENT_CONFIG_PREFIX)) {
                     String nextValue = getProperties().getProperty(nextKey);
-                    System.setProperty(nextKey, nextValue);
+                    SystemProperties.initializeProperties(nextKey, nextValue);
                 }
             }
             //set local copies of config property values stored by this class
