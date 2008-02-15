@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.2 2008-02-01 23:56:23 veiming Exp $
+ * $Id: AgentProfileViewBean.java,v 1.3 2008-02-15 01:54:36 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,6 +70,7 @@ public abstract class AgentProfileViewBean
     private static final String PG_SESSION_AGENT_TAB = "pgAgentConfigTab";
     
     static final String UNIVERSAL_ID = "universalId";
+    static final String IS_GROUP = "isGroup";
     static final String PROPERTY_UUID = "tfUUID";
     static final String CHILD_AGENT_GROUP = "agentgroup";
     static final String BTN_INHERIT = "btnInherit";
@@ -111,6 +112,11 @@ public abstract class AgentProfileViewBean
        
             if ((universalId != null) && (universalId.length() > 0)) {
                 isGroup = ((AgentsModel)getModel()).isAgentGroup(universalId);
+            }
+            if (isGroup) {
+                setPageSessionAttribute(IS_GROUP, "true");
+            } else {
+                setPageSessionAttribute(IS_GROUP, "false");
             }
             initialized = createPropertyModel();
 

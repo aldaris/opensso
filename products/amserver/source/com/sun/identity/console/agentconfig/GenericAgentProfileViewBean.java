@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.4 2008-02-11 06:52:34 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.5 2008-02-15 01:54:36 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,19 +51,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class GenericAgentProfileViewBean 
     extends AgentProfileViewBean {
-    
-    protected static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
     static final String DEFAULT_DISPLAY_URL =
         "/console/agentconfig/GenericAgentProfile.jsp";
-    private static final String TAB_GENERAL = "agentconfig-general";
-    private static final String TAB_GROUP = "agentconfig-group";
     static final String PS_TABNAME = "agentTabName";
     static final String TAB_PREFIX = "4600";
     static final int TAB_GENERAL_ID = 4600;
     static final int TAB_GROUP_ID = 4601;
 
-    private String pageName;
-    private String xmlFileName;
     private Set attributeSchemas;
     
     /**
@@ -182,18 +176,19 @@ public class GenericAgentProfileViewBean
                     String tabName = (String)tabs.get(i);
                     tabModel.addNode(new CCNavNode(
                         Integer.parseInt(TAB_PREFIX + i),
-                        model.getLocalizedServiceName(
+                    model.getLocalizedServiceName(
                         "tab.label." + agentType + "." + tabName), "", ""));
-                }
+                 }
             } else {
-                tabModel.addNode(new CCNavNode(TAB_GENERAL_ID, "tab.general",
+                 tabModel.addNode(new CCNavNode(TAB_GENERAL_ID,
+                    "tab.general", "", ""));
+            }
+
+            String group = (String)getPageSessionAttribute(IS_GROUP);
+            if ((group != null) && group.equals("true")) {
+                tabModel.addNode(new CCNavNode(TAB_GROUP_ID, "tab.group",
                     "", ""));
             }
-            
-            if (isGroup) {
-                tabModel.addNode(new CCNavNode(TAB_GROUP_ID, "tab.group", "", ""));
-            }
-            
         }
     }
     
