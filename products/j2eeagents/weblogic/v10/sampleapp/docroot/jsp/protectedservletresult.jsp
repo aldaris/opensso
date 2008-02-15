@@ -85,6 +85,7 @@ a:hover{text-decoration:underline}
 	    <a href="/agentsample/public/programmaticsecurity.html">J2EE Security API</a>
             <hr class="faint">
 	    <a href="/agentsample/public/urlpolicy.html">URL Policy Enforcement</a>
+            <hr class="faint"><a href="/agentsample/jsp/showHttpHeaders.jsp">Show HTTP Headers</a>
             <hr class="faint"> 
             </td>
           </tr>

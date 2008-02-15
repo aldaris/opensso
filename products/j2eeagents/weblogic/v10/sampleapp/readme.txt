@@ -189,7 +189,7 @@ To rebuild the entire application from scratch, follow these steps:
       JAVA_HOME/bin directory in your path.
 
    2. Replace 'APPSERV_LIB_DIR' in build.xml with the directory where 
-      weblogic.jar is located.  
+      weblogic.jar and api.jar are located.  
       For Example: Replace APPSERV_LIB_DIR with 
       /usr/local/bea/wlserver_10.0/server/lib where /usr/local/bea is 
       where you installed WebLogic BEA 10

@@ -8,9 +8,9 @@
     <target name="init">
 
         <!-- Replace APPSERV_LIB_DIR with the directory 
-             where weblogic.jar is located.
+             where weblogic.jar and api.jar are located.
         -->
-        <property name="appserv.lib.dir" value=" APPSERV_LIB_DIR"/>
+        <property name="appserv.lib.dir" value="APPSERV_LIB_DIR"/>
         <property name="docroot.dir" value="docroot"/>
         <property name="src.dir" value="src"/>
         <property name="servlet.src.dir" value="${src.dir}/servlet"/>
@@ -64,7 +64,7 @@
         <mkdir dir="${built.ejb.dir}"/>
         <mkdir dir="${built.ejb.dir}/META-INF"/>
         <path id="ejb.class.path">
-            <pathelement location="${appserv.lib.dir}\weblogic.jar"/>
+            <pathelement location="${appserv.lib.dir}\api.jar"/>
             <pathelement location="${built.ejb.dir}"/>
         </path>
         <property name="ejb.classpath" refid="ejb.class.path"/> 
@@ -91,7 +91,7 @@
         <mkdir dir="${built.web.dir}/WEB-INF"/>
         <mkdir dir="${built.web.dir}/WEB-INF/classes"/>
         <path id="web.class.path">
-            <pathelement location="${appserv.lib.dir}/weblogic.jar"/>
+            <pathelement location="${appserv.lib.dir}/api.jar"/>
             <pathelement location="${built.web.dir}/WEB-INF/classes"/>
             <pathelement location="${built.ejb.dir}"/>
         </path>
