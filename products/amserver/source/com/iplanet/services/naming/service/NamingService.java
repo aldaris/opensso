@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.7 2007-12-19 21:52:24 beomsuk Exp $
+ * $Id: NamingService.java,v 1.8 2008-02-15 01:02:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -341,7 +341,7 @@ public class NamingService implements RequestHandler, ServiceListener {
 
         // get the version from nreq and check old
         float reqVersion = Float.valueOf(nreq.getRequestVersion()).floatValue();
-        boolean limitNametable = (reqVersion > 1.0) ? true : false;
+        boolean limitNametable = (reqVersion > 1.0);
 
         // get the sesisonId from nreq
         String sessionId = nreq.getSessionId();
@@ -354,9 +354,12 @@ public class NamingService implements RequestHandler, ServiceListener {
                 tempHash = transferTable(NamingService
                         .getNamingTable(limitNametable));
                 Hashtable replacedTable = null;
-                URL url = usePreferredNamingURL(nreq);
+                URL url = usePreferredNamingURL(nreq, reqVersion);
                 if (url != null) {
-                    String uri = WebtopNaming.getURI(url);
+                    String uri = (reqVersion < 3.0) ?
+                        SystemProperties.get(
+                            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR)
+                        : WebtopNaming.getURI(url);
                     replacedTable = replaceTable(tempHash,
                                         url.getProtocol(),
                                         url.getHost(),
@@ -391,7 +394,7 @@ public class NamingService implements RequestHandler, ServiceListener {
         return new Response(nres.toXMLString());
     }
 
-    private URL usePreferredNamingURL(NamingRequest request)
+    private URL usePreferredNamingURL(NamingRequest request, float reqVersion)
         throws ServerEntryNotFoundException, MalformedURLException {
         String preferredNamingURL = null;
         URL preferredURL = null;
@@ -411,14 +414,14 @@ public class NamingService implements RequestHandler, ServiceListener {
         }
 
         URL url = new URL(request.getPreferredNamingURL());
-        String uri = WebtopNaming.getURI(url);
+        String uri = (reqVersion < 3.0) ?
+            SystemProperties.get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR) :
+            WebtopNaming.getURI(url);
         String serverID = WebtopNaming.getServerID(url.getProtocol(),
-                                            url.getHost(),
-                                            Integer.toString(url.getPort()),
-                                            uri);
-
+            url.getHost(), Integer.toString(url.getPort()), uri);
         SessionID sessionID = new SessionID(sessionid);
         String primary_id = sessionID.getExtension(SessionID.PRIMARY_ID);
+
         if (primary_id != null) {
             String secondarysites = WebtopNaming.getSecondarySites(primary_id);
 
