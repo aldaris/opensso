@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.5 2007-11-30 19:08:02 mrudul_uchil Exp $
+ * $Id: STSAgent.java,v 1.6 2008-02-15 19:55:08 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,10 @@ public class STSAgent extends STSConfig {
     // Initialize the Attributes names set
     private static Set attrNames = new HashSet();;
     
+    private static final String AGENT_PASSWORD_ATTR = "userpassword";
+    private static final String AGENT_DEVICE_STATUS_ATTR = 
+        "sunIdentityServerDeviceStatus";
+    private static final String AGENT_TYPE_ATTR = "AgentType";
     private static final String ENDPOINT = "STSEndpoint";
     private static final String MEX_ENDPOINT = "STSMexEndpoint";
     private static final String SEC_MECH = "SecurityMech";
@@ -197,38 +201,41 @@ public class STSAgent extends STSConfig {
         } else if(attr.equals(PUBLIC_KEY_ALIAS)) {
            this.publicKeyAlias = value;
         } else if(attr.equals(USER_CREDENTIAL)) {
-            if(usercredentials == null) {
-                usercredentials = new ArrayList();
-            }
-            StringTokenizer stVal = new StringTokenizer(value, ","); 
-            while(stVal.hasMoreTokens()) {
-                String tmpVal = (String)stVal.nextToken();
-                int index = tmpVal.indexOf("|");
-                if(index == -1) {
-                    return;
+            if ((value != null) && (value.length() != 0)) {
+                if(usercredentials == null) {
+                    usercredentials = new ArrayList();
                 }
-                String usertmp = tmpVal.substring(0, index);
-                String passwordtmp = tmpVal.substring(index+1, tmpVal.length()); 
+                StringTokenizer stVal = new StringTokenizer(value, ","); 
+                while(stVal.hasMoreTokens()) {
+                    String tmpVal = (String)stVal.nextToken();
+                    int index = tmpVal.indexOf("|");
+                    if(index == -1) {
+                        return;
+                    }
+                    String usertmp = tmpVal.substring(0, index);
+                    String passwordtmp = tmpVal.substring(index+1, 
+                        tmpVal.length()); 
 
-                String user = null;
-                String password = null;
-                StringTokenizer st = new StringTokenizer(usertmp, ":"); 
-                if(USER_NAME.equals(st.nextToken())) {
-                    if(st.hasMoreTokens()) {
-                        user = st.nextToken();
-                    }               
-                }
-                StringTokenizer st1 = new StringTokenizer(passwordtmp, ":"); 
-                if(USER_PASSWORD.equals(st1.nextToken())) {
-                    if(st1.hasMoreTokens()) {
-                        password = st1.nextToken();
-                    }              
-                }
+                    String user = null;
+                    String password = null;
+                    StringTokenizer st = new StringTokenizer(usertmp, ":"); 
+                    if(USER_NAME.equals(st.nextToken())) {
+                        if(st.hasMoreTokens()) {
+                            user = st.nextToken();
+                        }               
+                    }
+                    StringTokenizer st1 = new StringTokenizer(passwordtmp, ":"); 
+                    if(USER_PASSWORD.equals(st1.nextToken())) {
+                        if(st1.hasMoreTokens()) {
+                            password = st1.nextToken();
+                        }              
+                    }
 
-                if((user != null) && (password != null)) {
-                    PasswordCredential credential = 
-                        new PasswordCredential(user, password);
-                    usercredentials.add(credential);
+                    if((user != null) && (password != null)) {
+                        PasswordCredential credential = 
+                            new PasswordCredential(user, password);
+                        usercredentials.add(credential);
+                    }
                 }
             }
         }
@@ -258,7 +265,11 @@ public class STSAgent extends STSConfig {
     
     public void store() throws ProviderException {
         
-        Map config = new HashMap();
+        Map config = new HashMap(); 
+
+        config.put(AGENT_TYPE_ATTR, type);
+        config.put(AGENT_PASSWORD_ATTR, name);
+        config.put(AGENT_DEVICE_STATUS_ATTR, "Active");
         
         if(endpoint != null) {
            config.put(ENDPOINT, endpoint);

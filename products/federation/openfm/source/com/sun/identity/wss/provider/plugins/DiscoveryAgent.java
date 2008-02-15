@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryAgent.java,v 1.5 2007-11-30 19:08:02 mrudul_uchil Exp $
+ * $Id: DiscoveryAgent.java,v 1.6 2008-02-15 19:55:07 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,6 +60,10 @@ public class DiscoveryAgent extends DiscoveryConfig {
      // Initialize the Attributes names set
      private static Set attrNames = new HashSet();;
 
+     private static final String AGENT_PASSWORD_ATTR = "userpassword";
+     private static final String AGENT_DEVICE_STATUS_ATTR = 
+         "sunIdentityServerDeviceStatus";
+     private static final String AGENT_TYPE_ATTR = "AgentType";
      private static final String ENDPOINT = "DiscoveryEndpoint";
      private static final String KEY_ALIAS = "privateKeyAlias";
      private static final String AUTHN_ENDPOINT = "AuthNServiceEndpoint";
@@ -174,6 +178,10 @@ public class DiscoveryAgent extends DiscoveryConfig {
     public void store() throws ProviderException {
 
         Map config = new HashMap();
+
+        config.put(AGENT_TYPE_ATTR, type);
+        config.put(AGENT_PASSWORD_ATTR, name);
+        config.put(AGENT_DEVICE_STATUS_ATTR, "Active");
         
         if(authServiceEndpoint != null) { 
            config.put(AUTHN_ENDPOINT, authServiceEndpoint);
