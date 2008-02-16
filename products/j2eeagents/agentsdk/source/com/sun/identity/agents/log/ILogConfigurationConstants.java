@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ILogConfigurationConstants.java,v 1.1 2006-09-28 23:43:33 huacui Exp $
+ * $Id: ILogConfigurationConstants.java,v 1.2 2008-02-16 00:00:23 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,7 @@ public interface ILogConfigurationConstants extends
         "local.log.rotate";
     
     public static final String CONFIG_LOG_LOCAL_FILE_ROTATE_SIZE =
-        "local.log.rotate.size";
+        "local.log.size";
     
     public static final String CONFIG_REMOTE_LOG_FILE_NAME =
         "remote.logfile";
