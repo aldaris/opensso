@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
     The contents of this file are subject to the terms
     of the Common Development and Distribution License
@@ -19,26 +20,25 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: RADIUS.xml,v 1.1 2007-12-08 01:30:57 cbasha Exp $
+    $Id: RADIUS.xml,v 1.2 2008-02-18 10:19:08 mahesh_prasad_r Exp $
 
     Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
-
 
 <!DOCTYPE ModuleProperties PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
 	"jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
 
 
 <ModuleProperties moduleName="RADIUS" version="1.0" >
-    <Callbacks length="2" order="1" timeout="60" header="Ce serveur utilise l'authentification RADIUS" >
+    <Callbacks length="2" order="1" timeout="60" header="This server uses RADIUS Authentication" >
         <NameCallback>
-            <Prompt> RADIUS Id </Prompt>
+            <Prompt> ID RADIUS </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
             <Prompt> Mot de passe RADIUS </Prompt>
         </PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="2" timeout="60" header="Question/réponse pour la connexion RADIUS" >
+    <Callbacks length="1" order="2" timeout="60" header="RADIUS Login Challenge" >
         <PasswordCallback echoPassword="false" >
             <Prompt> Mot de passe question/réponse RADIUS </Prompt>
         </PasswordCallback>

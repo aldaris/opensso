@@ -19,10 +19,11 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: JDBC.xml,v 1.1 2007-12-08 01:34:04 cbasha Exp $
+    $Id: JDBC.xml,v 1.2 2008-02-18 10:19:51 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
+
 
 
 <!DOCTYPE ModuleProperties PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
@@ -30,7 +31,7 @@
 
 <ModuleProperties moduleName="JDBC" version="1.0" > 
     <Callbacks length="2" order="1" timeout="120" 
-        header="此服务器使用 JDBC 验证" >
+        header="This server uses JDBC Authentication" >
         <NameCallback> 
             <Prompt> 用户名 </Prompt> 
         </NameCallback>

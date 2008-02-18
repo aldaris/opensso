@@ -19,48 +19,46 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: LDAP.xml,v 1.1 2007-12-08 01:34:04 cbasha Exp $
+    $Id: LDAP.xml,v 1.2 2008-02-18 10:19:51 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 
-
-
 <!DOCTYPE ModuleProperties PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
-	"jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
+        "jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
 
 
 <ModuleProperties moduleName="LDAP" version="1.0" >
-    <Callbacks length="2" order="1" timeout="120" header="此服务器使用 LDAP 验证" >
+    <Callbacks length="2" order="1" timeout="120" header="This server uses LDAP Authentication" >
         <NameCallback>
-            <Prompt> 用户名： </Prompt>
+            <Prompt> 用户名: </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
             <Prompt> 密码: </Prompt>
         </PasswordCallback>
     </Callbacks>
-    <Callbacks length="4" order="2" timeout="120" header="更改密码&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
+    <Callbacks length="4" order="2" timeout="120" header="Change Password&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
         <PasswordCallback echoPassword="false" >
-            <Prompt>Old Password </Prompt>
+            <Prompt>旧密码 </Prompt>
         </PasswordCallback>
-	<PasswordCallback echoPassword="false" >
+        <PasswordCallback echoPassword="false" >
             <Prompt> 新密码 </Prompt>
         </PasswordCallback>
-	<PasswordCallback echoPassword="false" >
+        <PasswordCallback echoPassword="false" >
             <Prompt> 确认密码 </Prompt>
         </PasswordCallback>
-	<ConfirmationCallback>
+        <ConfirmationCallback>
             <OptionValues>
                 <OptionValue>
                     <Value> 提交 </Value>
-	        </OptionValue>
+                </OptionValue>
                 <OptionValue>
                     <Value> 取消 </Value>
                 </OptionValue>
             </OptionValues>
         </ConfirmationCallback>
     </Callbacks>
-    <Callbacks length="0" order="3" timeout="120" header=" 您的密码已过期。请联系服务台，重设您的密码" error="true" />
+    <Callbacks length="0" order="3" timeout="120" header=" Your password has expired. Please contact service desk to reset your password" error="true" />
     <Callbacks length="0" order="4" timeout="120" template="user_inactive.jsp" error="true"/>
 
 </ModuleProperties>

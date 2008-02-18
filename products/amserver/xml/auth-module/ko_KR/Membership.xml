@@ -19,18 +19,17 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: Membership.xml,v 1.1 2007-12-08 01:32:45 cbasha Exp $
+    $Id: Membership.xml,v 1.2 2008-02-18 10:19:35 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
-
 
 <!DOCTYPE ModuleProperties PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
         "jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
 
 <ModuleProperties moduleName="Membership" version="1.0" >
 
-    <Callbacks length="3" order="1" timeout="120" header="자동 등록 모듈" template="membership.jsp" >
+    <Callbacks length="3" order="1" timeout="120" header="Self Registration Module" template="membership.jsp" >
         <NameCallback>
             <Prompt> 사용자 이름: </Prompt>
         </NameCallback>
@@ -49,7 +48,7 @@
         </ConfirmationCallback>
     </Callbacks>
 
-    <Callbacks length="4" order="2" timeout="240" header="비밀번호 만료, 변경해야 함&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
+    <Callbacks length="4" order="2" timeout="240" header="Password Expiring Please Change&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
         <PasswordCallback echoPassword="false" >
             <Prompt> 현재 비밀번호: </Prompt>
         </PasswordCallback>
@@ -95,9 +94,9 @@
 
     <Callbacks length="0" order="14" timeout="120" template="invalidPassword.jsp" />
     
-    <Callbacks length="0" order="15" timeout="120" header="비밀번호가 만료되었습니다. 고객 지원 부서에 문의하여 비밀번호를 재설정하십시오." error="true" />
+    <Callbacks length="0" order="15" timeout="120" header="Your password has expired. Please contact service desk to reset your password" error="true" />
     
-    <Callbacks length="8" order="16" timeout="300" header="자동 등록" template="register.jsp" >
+    <Callbacks length="8" order="16" timeout="300" header="Self Registration" template="register.jsp" >
         <NameCallback isRequired="true" attribute="uid" >
             <Prompt> 사용자 이름: </Prompt>
         </NameCallback>
@@ -114,7 +113,7 @@
             <Prompt> 성: </Prompt>
         </NameCallback>
         <NameCallback isRequired="true" attribute="cn" >
-            <Prompt> 전체 이름 </Prompt>
+            <Prompt> 전체 이름: </Prompt>
         </NameCallback>
         <NameCallback attribute="mail" >
             <Prompt> 전자 메일 주소: </Prompt>
@@ -131,10 +130,9 @@
         </ConfirmationCallback>
     </Callbacks>
     
-    <Callbacks length="2" order="17" timeout="120" header="자동 등록" >
+    <Callbacks length="2" order="17" timeout="120" header="Self Registration" >
         <ChoiceCallback attribute="uid" >
-            <Prompt>입력한 사용자 이름을 사용하는&lt;BR&gt;사용자가 이미 있습니다.&lt;BR&gt;다음 사용자
-&lt;BR&gt;이름 중 하나를 선택하거나&lt;BR&gt;직접 작성하십시오.</Prompt>
+            <Prompt>입력한 사용자 이름을 가진&lt;BR&gt;사용자가 이미 있습니다.&lt;BR&gt;다음 사용자 이름 중 하나를 &lt;BR&gt;선택하거나 새로 &lt;BR&gt;만드십시오.</Prompt>
             <ChoiceValues>
               <ChoiceValue>
                   <Value>내 이름 만들기</Value>

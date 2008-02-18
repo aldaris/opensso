@@ -19,20 +19,19 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: Membership.xml,v 1.1 2007-12-08 01:34:04 cbasha Exp $
+    $Id: Membership.xml,v 1.2 2008-02-18 10:19:51 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
-
 
 <!DOCTYPE ModuleProperties PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
         "jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
 
 <ModuleProperties moduleName="Membership" version="1.0" >
 
-    <Callbacks length="3" order="1" timeout="120" header="自注册模块" template="membership.jsp" >
+    <Callbacks length="3" order="1" timeout="120" header="Self Registration Module" template="membership.jsp" >
         <NameCallback>
-            <Prompt> 用户名： </Prompt>
+            <Prompt> 用户名: </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
             <Prompt> 密码: </Prompt>    
@@ -49,15 +48,15 @@
         </ConfirmationCallback>
     </Callbacks>
 
-    <Callbacks length="4" order="2" timeout="240" header="密码到期，请更改&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
+    <Callbacks length="4" order="2" timeout="240" header="Password Expiring Please Change&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
         <PasswordCallback echoPassword="false" >
-            <Prompt> 当前密码： </Prompt>
+            <Prompt> 当前密码: </Prompt>
         </PasswordCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> 新密码： </Prompt>
+            <Prompt> 新密码: </Prompt>
         </PasswordCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> 确认新密码： </Prompt>
+            <Prompt> 确认新密码: </Prompt>
         </PasswordCallback>
         <ConfirmationCallback>
             <OptionValues>
@@ -95,29 +94,29 @@
 
     <Callbacks length="0" order="14" timeout="120" template="invalidPassword.jsp" />
     
-    <Callbacks length="0" order="15" timeout="120" header="您的密码已过期。请联系服务台，重设您的密码" error="true" />
+    <Callbacks length="0" order="15" timeout="120" header="Your password has expired. Please contact service desk to reset your password" error="true" />
     
-    <Callbacks length="8" order="16" timeout="300" header="自注册" template="register.jsp" >
+    <Callbacks length="8" order="16" timeout="300" header="Self Registration" template="register.jsp" >
         <NameCallback isRequired="true" attribute="uid" >
-            <Prompt> 用户名： </Prompt>
+            <Prompt> 用户名: </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" isRequired="true" attribute="userPassword" >
             <Prompt> 密码: </Prompt>    
         </PasswordCallback>
         <PasswordCallback echoPassword="false" isRequired="true" >
-            <Prompt> 确认密码： </Prompt>    
+            <Prompt> 确认密码: </Prompt>    
         </PasswordCallback>
         <NameCallback isRequired="true" attribute="givenname" >
-            <Prompt> 名字： </Prompt>
+            <Prompt> 名字: </Prompt>
         </NameCallback>
         <NameCallback isRequired="true" attribute="sn" >
-            <Prompt> 姓氏： </Prompt>
+            <Prompt> 姓氏: </Prompt>
         </NameCallback>
         <NameCallback isRequired="true" attribute="cn" >
-            <Prompt> 全名： </Prompt>
+            <Prompt> 全名: </Prompt>
         </NameCallback>
         <NameCallback attribute="mail" >
-            <Prompt> 电子邮件地址： </Prompt>
+            <Prompt> 电子邮件地址: </Prompt>
         </NameCallback>
         <ConfirmationCallback>
             <OptionValues>
@@ -131,10 +130,9 @@
         </ConfirmationCallback>
     </Callbacks>
     
-    <Callbacks length="2" order="17" timeout="120" header="自注册" >
+    <Callbacks length="2" order="17" timeout="120" header="Self Registration" >
         <ChoiceCallback attribute="uid" >
-            <Prompt>您输入的用户名&lt;BR&gt;已存在。&lt;BR&gt;请选择
-以下&lt;BR&gt;用户名之一，&lt;BR&gt;或创建自己的用户名：</Prompt>
+            <Prompt>您输入的用户名已&lt;BR&gt;有用户使用。&lt;BR&gt;请从以下用户名中&lt;BR&gt;选择一个，&lt;BR&gt;或创建您自己的用户名:</Prompt>
             <ChoiceValues>
               <ChoiceValue>
                   <Value>创建自己的用户名</Value>

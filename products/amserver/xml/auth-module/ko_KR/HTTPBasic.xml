@@ -19,22 +19,21 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: HTTPBasic.xml,v 1.1 2007-12-08 01:32:45 cbasha Exp $
+    $Id: HTTPBasic.xml,v 1.2 2008-02-18 10:19:35 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 
-
 <!DOCTYPE ModuleProperties PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
-	"jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
+        "jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
 
 
 <ModuleProperties moduleName="HTTPBasic" version="1.0" >
-    <Callbacks length="1" order="1" timeout="120" header="이 서버는 HTTP 기본 인증을 사용합니다.">
-	<HttpCallback>
-            <HttpHeader>Authorization</HttpHeader>
-            <Negotiation>WWW-Authenticate:BASIC realm="basic_realm"</Negotiation>
+    <Callbacks length="1" order="1" timeout="120" header="This server uses HTTPBasic Authentication">
+        <HttpCallback>
+            <HttpHeader>인증</HttpHeader>
+            <Negotiation>WWW-Authenticate:BASIC realm=&quot;basic_realm&quot;</Negotiation>
             <HttpErrorCode>401</HttpErrorCode>
-	</HttpCallback>
+        </HttpCallback>
     </Callbacks>
 </ModuleProperties>

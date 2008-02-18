@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!--
     The contents of this file are subject to the terms
     of the Common Development and Distribution License
@@ -19,21 +19,19 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: Membership.xml,v 1.1 2007-12-08 01:22:46 cbasha Exp $
+    $Id: Membership.xml,v 1.2 2008-02-18 10:18:39 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
-
-
 
 <!DOCTYPE ModuleProperties PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
         "jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
 
 <ModuleProperties moduleName="Membership" version="1.0" >
 
-    <Callbacks length="3" order="1" timeout="120" header="Modul für Selbstregistrierung" template="membership.jsp" >
+    <Callbacks length="3" order="1" timeout="120" header="Self Registration Module" template="membership.jsp" >
         <NameCallback>
-            <Prompt> Benutzername: </Prompt>
+            <Prompt> Benutzername </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
             <Prompt> Passwort: </Prompt>    
@@ -50,7 +48,7 @@
         </ConfirmationCallback>
     </Callbacks>
 
-    <Callbacks length="4" order="2" timeout="240" header="Passwort läuft ab, ändern Sie es&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
+    <Callbacks length="4" order="2" timeout="240" header="Password Expiring Please Change&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
         <PasswordCallback echoPassword="false" >
             <Prompt> Aktuelles Passwort: </Prompt>
         </PasswordCallback>
@@ -96,9 +94,9 @@
 
     <Callbacks length="0" order="14" timeout="120" template="invalidPassword.jsp" />
     
-    <Callbacks length="0" order="15" timeout="120" header="Ihr Passwort ist abgelaufen. Wenden Sie sich an das Service-Desk, um das Passwort zurückzusetzen" error="true" />
+    <Callbacks length="0" order="15" timeout="120" header="Your password has expired. Please contact service desk to reset your password" error="true" />
     
-    <Callbacks length="8" order="16" timeout="300" header="Selbstregistrierung" template="register.jsp" >
+    <Callbacks length="8" order="16" timeout="300" header="Self Registration" template="register.jsp" >
         <NameCallback isRequired="true" attribute="uid" >
             <Prompt> Benutzername: </Prompt>
         </NameCallback>
@@ -132,10 +130,9 @@
         </ConfirmationCallback>
     </Callbacks>
     
-    <Callbacks length="2" order="17" timeout="120" header="Selbstregistrierung" >
+    <Callbacks length="2" order="17" timeout="120" header="Self Registration" >
         <ChoiceCallback attribute="uid" >
-            <Prompt>Ein Benutzer mit&lt;BR&gt; dem eingegebenen Namen ist bereits vorhanden.&lt;BR&gt;Wählen Sie
-einen&lt;BR&gt;der folgenden Benutzernamen&lt;BR&gt;oder erstellen Sie einen neuen Namen:</Prompt>
+            <Prompt>Es ist bereits ein Benutzer mit dem von Ihnen&lt;BR&gt;eingegebenen Benutzernamen vorhanden.&lt;BR&gt;Wählen Sie einen der&lt;BR&gt;folgenden Benutzernamen aus,&lt;BR&gt;oder erstellen Sie einen eigenen:</Prompt>
             <ChoiceValues>
               <ChoiceValue>
                   <Value>Selbst erstellen</Value>
