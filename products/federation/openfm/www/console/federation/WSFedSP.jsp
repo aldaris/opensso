@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WSFedSP.jsp,v 1.1 2007-07-26 22:02:05 babysunil Exp $
+   $Id: WSFedSP.jsp,v 1.2 2008-02-19 23:48:02 babysunil Exp $
    
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -79,7 +79,7 @@
     showPageButtonsBottom="true" >
         
 <cc:propertysheet name="propertyAttributes"
-    bundleID="amConsole" showJumpLinks="false"/>
+    bundleID="amConsole" showJumpLinks="true" />
     
 </cc:pagetitle>
 

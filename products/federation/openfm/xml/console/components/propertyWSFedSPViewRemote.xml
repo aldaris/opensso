@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWSFedSPViewRemote.xml,v 1.2 2008-01-18 23:00:36 babysunil Exp $
+   $Id: propertyWSFedSPViewRemote.xml,v 1.3 2008-02-19 23:49:23 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,112 +26,105 @@
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
 
 <propertysheet>
-    <section name="WSFedSPRemote" defaultValue="">        
+        <section name="artrespsigned" defaultValue="wsfedsp.provider.section.title.artrespsigned">
+            <property>
+                <label name="lblSPArtificatResponseSigned"
+                       defaultValue=
+                       "wsfedsp.attribute.label.spartificatresponsesigned"
+                       labelFor="wantArtifactResponseSigned" />
+                <cc name="wantArtifactResponseSigned" 
+                    tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+            </property>
+        </section>
+        <section name="attrMap" defaultValue="wsfedidp.provider.section.title.attrMapper">
+            <property>
+                <label name="lblSPAttributeMapper"
+                       defaultValue="wsfedsp.attribute.label.spAttributeMapper"
+                       labelFor="spAttributeMapper" />
+                <cc name="spAttributeMapper" 
+                    tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                    <attribute name="size" value="75" />
+                    <attribute name="autoSubmit" value="false" />
+                    <attribute name="localizeDisplayFieldValue" value="false" />
+                </cc>
+            </property>
+            <property>
+                <label name="lblSPAttributeMap"
+                       defaultValue="wsfedsp.attribute.label.spattributeMap"
+                       labelFor="attributeMap" />
+                <ccgroup>
+                    <property>
+                        <cc name="attributeMap" 
+                            tagclass=
+                            "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                            <attribute name="name" value="list" />
+                            <attribute name="listboxLabel"
+                                       value="label.current.value" />
+                            <attribute name="textboxLabel"
+                                       value="label.new.value" />
+                        </cc>                    
+                    </property>
+                </ccgroup>
+            </property>
+        </section>
+        
+      
+        <section name="assertime" defaultValue="wsfedidp.provider.section.title.asserefftime">  
+            <property>
+                <label name="lblSPAssertionEffectiveTime"
+                       defaultValue=
+                       "wsfedsp.attribute.label.spassertionEffectiveTime"
+                       labelFor="assertionEffectiveTime" />
+                <cc name="assertionEffectiveTime" 
+                    tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                    <attribute name="size" value="5" />
+                    <attribute name="autoSubmit" value="false" />
+                    <attribute name="localizeDisplayFieldValue" value="false" />
+                </cc>
+            </property>
+        </section>
+        <section name="assertimesk" defaultValue="wsfedsp.provider.section.title.spassertimeskew"> 
+            <property>
+                <label name="lblSPassertionTimeSkew"
+                       defaultValue="wsfedsp.attribute.label.spassertionTimeSkew"
+                       labelFor="assertionTimeSkew" />
+                <cc name="assertionTimeSkew" 
+                    tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                    <attribute name="size" value="5" />
+                    <attribute name="autoSubmit" value="false" />
+                    <attribute name="localizeDisplayFieldValue" value="false" />
+                </cc>
+            </property>
+        </section>
+        <section name="defaultrelay" defaultValue="wsfedsp.provider.section.title.defaultrelaystate">  
+            <property>
+                <label name="lblSPDefaultRelayState"
+                       defaultValue="wsfedsp.attribute.label.spDefaultRelayState"
+                       labelFor="defaultRelayState" />
+                <cc name="defaultRelayState" 
+                    tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                    <attribute name="size" value="75" />
+                    <attribute name="autoSubmit" value="false" />
+                    <attribute name="localizeDisplayFieldValue" value="false" />
+                </cc>
+            </property>
+        </section>
+        <section name="homerealmdisc" defaultValue="wsfedsp.provider.section.title.sphomeRealmDisc">
+            <property>
+                <label name="lblHomeRealmDiscovery"
+                       defaultValue=
+                       "wsfedsp.attribute.label.sphomerealmdiscoveryservice"
+                       labelFor="HomeRealmDiscoveryService" />
+                <cc name="HomeRealmDiscoveryService" 
+                    tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                    <attribute name="size" value="80" />
+                    <attribute name="autoSubmit" value="false" />
+                    <attribute name="localizeDisplayFieldValue" value="false" />
+                </cc>
+            </property>
+        </section>
+        <section name="acctRealmSelection" defaultValue="wsfedsp.provider.section.title.spacctrealmselection">
         <property>
-            <label name="lblSPAutofedEnabled"
-                 defaultValue="wsfedsp.attribute.label.spautofedEnabled"
-                     labelFor="autofedEnabled" />
-            <cc name="autofedEnabled" 
-                tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />       
-        </property>
-        <property>
-            <label name="lblSPArtificatResponseSigned"
-                 defaultValue=
-                     "wsfedsp.attribute.label.spartificatresponsesigned"
-                 labelFor="wantArtifactResponseSigned" />
-            <cc name="wantArtifactResponseSigned" 
-                tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
-        </property>
-        <property>
-            <label name="lblSPAutofedAttribute"
-                 defaultValue="wsfedsp.attribute.label.spautofedAttribute"
-                     labelFor="autofedAttribute" />
-            <cc name="autofedAttribute" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>
-        <property>
-            <label name="lblSPAssertionEffectiveTime"
-                defaultValue=
-                   "wsfedsp.attribute.label.spassertionEffectiveTime"
-                    labelFor="assertionEffectiveTime" />
-            <cc name="assertionEffectiveTime" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="5" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>
-        <property>
-            <label name="lblSPAttributeMapper"
-                 defaultValue="wsfedsp.attribute.label.spAttributeMapper"
-                    labelFor="spAttributeMapper" />
-            <cc name="spAttributeMapper" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>
-        <property>
-            <label name="lblSPAttributeMap"
-                 defaultValue="wsfedsp.attribute.label.spattributeMap"
-                    labelFor="attributeMap" />
-            <ccgroup>
-                <property>
-                    <cc name="attributeMap" 
-                        tagclass=
-                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
-                        <attribute name="name" value="list" />
-                        <attribute name="listboxLabel"
-                                   value="label.current.value" />
-                        <attribute name="textboxLabel"
-                                   value="label.new.value" />
-                    </cc>                    
-                </property>
-            </ccgroup>
-        </property>
-        <property>
-            <label name="lblSPDefaultRelayState"
-                 defaultValue="wsfedsp.attribute.label.spDefaultRelayState"
-                    labelFor="defaultRelayState" />
-            <cc name="defaultRelayState" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>
-        <property>
-            <label name="lblSPassertionTimeSkew"
-                 defaultValue="wsfedsp.attribute.label.spassertionTimeSkew"
-                    labelFor="assertionTimeSkew" />
-            <cc name="assertionTimeSkew" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="5" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>
-         <property>
-            <label name="lblHomeRealmDiscovery"
-                 defaultValue=
-                     "wsfedsp.attribute.label.sphomerealmdiscoveryservice"
-                    labelFor="HomeRealmDiscoveryService" />
-            <cc name="HomeRealmDiscoveryService" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                <attribute name="size" value="75" />
-                <attribute name="autoSubmit" value="false" />
-                <attribute name="localizeDisplayFieldValue" value="false" />
-            </cc>
-        </property>
-        <property>
-            <label name="lblCookieOrAgent" 
-                defaultValue="authDomain.attribute.label.cookieoragent" 
-                labelFor="AccountRealmSelection"/>
                 &lt;table border="0" cellspacing="0" cellpadding="0">&lt;tr>
                 &lt;td nowrap="nowrap">
             <cc name="AccountRealmSelection" 
