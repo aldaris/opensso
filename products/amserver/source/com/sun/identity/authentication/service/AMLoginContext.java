@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.8 2008-01-15 22:31:20 pawand Exp $
+ * $Id: AMLoginContext.java,v 1.9 2008-02-19 18:13:56 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.identity.authentication.util.AMAuthUtils;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.locale.AMResourceBundleCache;
 import java.security.Principal;
 import java.text.MessageFormat;
@@ -1606,6 +1607,9 @@ public class AMLoginContext {
         }
         if (indexType == AuthContext.IndexType.COMPOSITE_ADVICE)  {
             debug.message("IndexType is COMPOSITE_ADVICE");
+                // Set the Composite Advice in Login State after decoding
+                String compositeAdvice = URLEncDec.decode(indexName);
+                loginState.setCompositeAdvice(compositeAdvice);
             // if is multiple modules are found then return
             // else continue with login process
             try {

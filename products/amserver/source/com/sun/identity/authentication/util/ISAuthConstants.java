@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.10 2008-01-15 22:31:48 pawand Exp $
+ * $Id: ISAuthConstants.java,v 1.11 2008-02-19 18:14:35 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -576,4 +576,8 @@ public interface ISAuthConstants {
     // Property to store the  User Attribute to Session Attribute Mapping
     public static final String USER_SESSION_MAPPING = 
         "sunAMUserAttributesSessionMapping";
+    
+     // Key in shared state for composite advice
+     public static final String COMPOSITE_ADVICE_XML =
+         "CompositeAdviceXML";
 }

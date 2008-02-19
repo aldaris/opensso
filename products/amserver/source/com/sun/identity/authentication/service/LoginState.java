@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.19 2008-01-15 22:31:19 pawand Exp $
+ * $Id: LoginState.java,v 1.20 2008-02-19 18:13:55 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -334,6 +334,7 @@ public class LoginState {
     private static String serverURL = null;
 
     int compositeAdviceType;
+    String compositeAdvice;
     String qualifiedOrgDN = null;
     
     static final int POSTPROCESS_SUCCESS = 1;
@@ -5976,6 +5977,26 @@ public class LoginState {
      */
     public int getCompositeAdviceType() {
         return compositeAdviceType;
+    }
+    
+    /**
+     * Sets the Composite Advice for this Authentication request.
+     *
+     * @param compositeAdvice Composite Advice for authentication.
+     *
+     */
+    public void setCompositeAdvice(String compositeAdvice) {
+       this.compositeAdvice = compositeAdvice;
+    }
+
+    /**
+     * Returns the Composite Advice for this Authentication request.
+     *
+     * @return String of Composite Advice.
+     *
+     */
+    public String getCompositeAdvice() {
+        return compositeAdvice;
     }
     
     /**

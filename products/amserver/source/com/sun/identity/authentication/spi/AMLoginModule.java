@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.7 2007-12-19 00:08:11 pawand Exp $
+ * $Id: AMLoginModule.java,v 1.8 2008-02-19 18:15:06 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -693,7 +693,17 @@ public abstract class AMLoginModule implements LoginModule {
             ISAuthConstants.SHARED_STATE_BEHAVIOR_PATTERN +
             " is set to " + sharedStateBehaviorPattern);
         }        
-        
+       
+        // Check for composite Advice
+        String compositeAdvice = loginState.getCompositeAdvice();
+        if (compositeAdvice != null) {
+            if (debug.messageEnabled()) {
+                debug.message("AMLoginModule.initialize: "
+                    + "Adding Composite Advice " + compositeAdvice);
+            }
+            sharedState.put(ISAuthConstants.COMPOSITE_ADVICE_XML,
+                compositeAdvice);
+        } 
         // call customer init method
         init(subject, sharedState, options);
     }
