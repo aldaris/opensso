@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     The contents of this file are subject to the terms
     of the Common Development and Distribution License
@@ -18,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: JDBC.xml,v 1.1 2006-08-29 07:52:07 veiming Exp $
+    $Id: JDBC.xml,v 1.2 2008-02-19 23:48:00 dillidorai Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->

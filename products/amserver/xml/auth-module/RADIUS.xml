@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     The contents of this file are subject to the terms
     of the Common Development and Distribution License
@@ -20,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: RADIUS.xml,v 1.1 2007-08-09 22:18:06 pawand Exp $
+    $Id: RADIUS.xml,v 1.2 2008-02-19 23:48:00 dillidorai Exp $
 
     Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
