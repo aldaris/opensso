@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.15 2007-11-14 01:43:35 veiming Exp $
+ * $Id: AuthUtils.java,v 1.16 2008-02-20 06:42:36 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,80 +25,39 @@
 
 package com.sun.identity.authentication.service;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.IOException;
-
-import java.util.List;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.HashSet;
-import java.util.Enumeration;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.net.MalformedURLException;
-import java.net.HttpURLConnection;
-
 import java.security.AccessController;
-import java.security.Principal;
 
-import javax.security.auth.Subject;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.callback.Callback;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
 
-import netscape.ldap.util.DN;
-
 import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.iplanet.sso.SSOException;
 
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
-import com.iplanet.dpro.session.share.SessionEncodeURL;
-import com.iplanet.dpro.session.service.SessionService;
-import com.sun.identity.session.util.SessionUtils;
 
 import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.AMClientDetector;
-import com.iplanet.am.util.Locale;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.Stats;
 import com.iplanet.am.util.Misc;
 import com.sun.identity.common.Constants;
 
-import com.iplanet.services.cdm.Client;
-import com.iplanet.services.cdm.AuthClient;
-import com.iplanet.services.cdm.ClientsManager;
-import com.iplanet.services.util.Crypt;
 import com.iplanet.services.util.CookieUtils;
-import com.iplanet.services.naming.WebtopNaming;
 
-import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.security.EncodeAction;
 
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.config.AMAuthLevelManager;
@@ -112,16 +71,10 @@ import com.sun.identity.authentication.client.AuthClientUtils;
 
 import com.sun.identity.common.ResourceLookup;
 import com.sun.identity.common.Constants;
-import com.sun.identity.common.DNUtils;
-import com.sun.identity.common.FQDNUtils;
-import com.sun.identity.common.RequestUtils;
-import com.sun.identity.common.ISLocaleContext;
 
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.DNMapper;
 
 import com.sun.identity.policy.PolicyUtils;
@@ -158,13 +111,15 @@ public class AuthUtils extends AuthClientUtils {
     private static Hashtable moduleService = new Hashtable();
     private static ResourceBundle bundle;
     static Debug utilDebug = Debug.getInstance("amAuthUtils");    
-   
-    public AuthUtils() {
-        utilDebug.message("AuthUtil: constructor");
+
+    /*
+     * Private constructor to prevent any instances being created
+     */
+    private AuthUtils() {
     }
     
     /* retrieve session */
-    public com.iplanet.dpro.session.service.InternalSession
+    public static com.iplanet.dpro.session.service.InternalSession
     getSession(AuthContextLocal authContext) {
         
         com.iplanet.dpro.session.service.InternalSession sess =
@@ -382,7 +337,7 @@ public class AuthUtils extends AuthClientUtils {
         return loginState;
     }       
    
-    public Hashtable getRequestParameters(AuthContextLocal authContext) {
+    public static Hashtable getRequestParameters(AuthContextLocal authContext) {
         LoginState loginState = getLoginState(authContext);
         if (loginState != null) {
             return loginState.getRequestParamHash();
@@ -428,7 +383,7 @@ public class AuthUtils extends AuthClientUtils {
      *@param cookieDomain the cookie domain for creating cookie
      * @return Cookie object.
      */
-    public Cookie getCookieString(AuthContextLocal ac,String cookieDomain) {
+    public static Cookie getCookieString(AuthContextLocal ac,String cookieDomain) {
         
         Cookie cookie=null;
         String cookieName = getCookieName();
@@ -458,7 +413,7 @@ public class AuthUtils extends AuthClientUtils {
      * @param cookieDomain the cookieDomain
      * @return Logout cookie .
      */
-    public Cookie getLogoutCookie(AuthContextLocal ac, String cookieDomain) {
+    public static Cookie getLogoutCookie(AuthContextLocal ac, String cookieDomain) {
         LoginState loginState = getLoginState(ac);
         SessionID sid = loginState.getSid();
         String logoutCookieString = getLogoutCookieString(sid);
@@ -468,7 +423,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     // returns true if request is new else false.    
-    public boolean isNewRequest(AuthContextLocal ac) {
+    public static boolean isNewRequest(AuthContextLocal ac) {
         
         LoginState loginState = getLoginState(ac);
         if (loginState.isNewRequest()) {
@@ -485,7 +440,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /* return the successful login url */
-    public String getLoginSuccessURL(AuthContextLocal authContext) {
+    public static String getLoginSuccessURL(AuthContextLocal authContext) {
         String successURL = null;
         LoginState loginState = getLoginState(authContext);
         if (loginState == null) {
@@ -497,7 +452,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /* return the failed login url */
-    public String getLoginFailedURL(AuthContextLocal authContext) {
+    public static String getLoginFailedURL(AuthContextLocal authContext) {
         
         try {
             LoginState loginState = getLoginState(authContext);
@@ -524,7 +479,7 @@ public class AuthUtils extends AuthClientUtils {
     /* return filename  - will use FileLookUp API
      * for UI only - this returns the relative path
      */
-    public String getFileName(AuthContextLocal authContext,String fileName) {
+    public static String getFileName(AuthContextLocal authContext,String fileName) {
         
         LoginState loginState = getLoginState(authContext);
         String relFileName = null;
@@ -539,7 +494,7 @@ public class AuthUtils extends AuthClientUtils {
         return relFileName;
     }
     
-    public boolean getInetDomainStatus(AuthContextLocal authContext) {
+    public static boolean getInetDomainStatus(AuthContextLocal authContext) {
         return getLoginState(authContext).getInetDomainStatus();
     }
     
@@ -557,7 +512,7 @@ public class AuthUtils extends AuthClientUtils {
         return false;
     }
     
-    public String encodeURL(String url,
+    public static String encodeURL(String url,
     AuthContextLocal authContext,
     HttpServletResponse response) {
         if (utilDebug.messageEnabled()) {
@@ -579,7 +534,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     // return the locale
-    public String getLocale(AuthContextLocal authContext) {
+    public static String getLocale(AuthContextLocal authContext) {
         // initialize auth service.
         AuthD ad = AuthD.getAuth();
         
@@ -605,7 +560,7 @@ public class AuthUtils extends AuthClientUtils {
         }
     }
     
-    public void destroySession(AuthContextLocal authContext) {
+    public static void destroySession(AuthContextLocal authContext) {
         if (authContext != null) {
             LoginState loginState = getLoginState(authContext);
             destroySession(loginState);
@@ -619,7 +574,7 @@ public class AuthUtils extends AuthClientUtils {
      * @param authContext the authentication context object for the request.
      * @return <code>true</code> if timed out else false.
      */
-    public boolean sessionTimedOut(AuthContextLocal authContext) {
+    public static boolean sessionTimedOut(AuthContextLocal authContext) {
         boolean timedOut = false;
         
         LoginState loginState = getLoginState(authContext);
@@ -647,28 +602,28 @@ public class AuthUtils extends AuthClientUtils {
     }    
    
     /* return the value of argument iPSPCookie entered on the URL */
-    public boolean isPersistentCookieOn(AuthContextLocal authContext) {
+    public static boolean isPersistentCookieOn(AuthContextLocal authContext) {
         return getLoginState(authContext).isPersistentCookieOn();
     }
     
     /* retrieve persistent cookie setting from core auth profile */
-    public boolean getPersistentCookieMode(AuthContextLocal authContext) {
+    public static boolean getPersistentCookieMode(AuthContextLocal authContext) {
         return getLoginState(authContext).getPersistentCookieMode();
     }
     
     /* return persistent cookie */
-    public Cookie getPersistentCookieString(AuthContextLocal authContext,
+    public static Cookie getPersistentCookieString(AuthContextLocal authContext,
     String cookieDomain ) {
         return null;
     }
     
     /* returns the username from the persistent cookie */
-    public String searchPersistentCookie(AuthContextLocal authContext) {
+    public static String searchPersistentCookie(AuthContextLocal authContext) {
         LoginState loginState = getLoginState(authContext);
         return loginState.searchPersistentCookie();
     }
     
-    public Cookie createPersistentCookie(AuthContextLocal authContext,
+    public static Cookie createPersistentCookie(AuthContextLocal authContext,
     String cookieDomain) throws AuthException {
         Cookie pCookie=null;
         try {
@@ -684,7 +639,7 @@ public class AuthUtils extends AuthClientUtils {
         }
     }
     
-    public Cookie createlbCookie(AuthContextLocal authContext,
+    public static Cookie createlbCookie(AuthContextLocal authContext,
     String cookieDomain, boolean persist) throws AuthException {
         Cookie lbCookie=null;
         try {
@@ -701,7 +656,7 @@ public class AuthUtils extends AuthClientUtils {
         
     }
     
-    public void setlbCookie(AuthContextLocal authContext,
+    public static void setlbCookie(AuthContextLocal authContext,
     HttpServletResponse response) throws AuthException {
         String cookieName = getlbCookieName();
         if (cookieName != null && cookieName.length() != 0) {
@@ -723,7 +678,7 @@ public class AuthUtils extends AuthClientUtils {
      * searchPersistentCookie is null
      * clear persistent cookie  in the request
      */
-    public Cookie clearPersistentCookie(String cookieDomain,
+    public static Cookie clearPersistentCookie(String cookieDomain,
     AuthContextLocal authContext) {
         String pCookieValue = LoginState.encodePCookie();
         int maxAge = 0;
@@ -735,7 +690,7 @@ public class AuthUtils extends AuthClientUtils {
     }    
    
     /* return the indexType for this request */
-    public int getCompositeAdviceType(AuthContextLocal authContext) {
+    public static int getCompositeAdviceType(AuthContextLocal authContext) {
         int type = 0;
         try {            
             LoginState loginState = getLoginState(authContext);            
@@ -755,7 +710,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /* return the indexType for this request */
-    public AuthContext.IndexType getIndexType(AuthContextLocal authContext) {
+    public static AuthContext.IndexType getIndexType(AuthContextLocal authContext) {
         
         try {
             AuthContext.IndexType indexType = null;
@@ -777,7 +732,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /* return the indexName for this request */
-    public String getIndexName(AuthContextLocal authContext) {
+    public static String getIndexName(AuthContextLocal authContext) {
         
         try {
             String indexName = null;
@@ -798,7 +753,7 @@ public class AuthUtils extends AuthClientUtils {
         }
     }
     
-    public Callback[] getRecdCallback(AuthContextLocal authContext) {
+    public static Callback[] getRecdCallback(AuthContextLocal authContext) {
         LoginState loginState = getLoginState(authContext);
         Callback[] recdCallback = null;
         if (loginState != null) {
@@ -827,7 +782,7 @@ public class AuthUtils extends AuthClientUtils {
      * @param fileName name of the file
      * @return Path to the resource.
      */
-    public String getDefaultFileName(
+    public static String getDefaultFileName(
         HttpServletRequest request,
         String fileName) {
         // initialize auth service.
@@ -856,7 +811,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /* returns the orgDN for the request */
-    public String getOrgDN(AuthContextLocal authContext) {
+    public static String getOrgDN(AuthContextLocal authContext) {
         String orgDN = null;
         LoginState loginState = getLoginState(authContext);
         if (loginState != null) {
@@ -1065,19 +1020,19 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /* return the previous authcontext */
-    public AuthContextLocal getPrevAuthContext(AuthContextLocal authContext) {
+    public static AuthContextLocal getPrevAuthContext(AuthContextLocal authContext) {
         LoginState loginState = getLoginState(authContext);
         AuthContextLocal oldAuthContext = loginState.getPrevAuthContext();
         return oldAuthContext;
     }
     
     /* return the LoginState for the authconext */
-    public LoginState getPrevLoginState(AuthContextLocal oldAuthContext) {
+    public static LoginState getPrevLoginState(AuthContextLocal oldAuthContext) {
         return getLoginState(oldAuthContext);
     }
     
     /* retreive the authcontext based on the req */
-    public AuthContextLocal getOrigAuthContext(SessionID sid)
+    public static AuthContextLocal getOrigAuthContext(SessionID sid)
     throws AuthException {
         AuthContextLocal authContext = null;
         // initialize auth service.
@@ -1115,7 +1070,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /* check if the session is active */
-    public boolean isSessionActive(AuthContextLocal oldAuthContext) {
+    public static boolean isSessionActive(AuthContextLocal oldAuthContext) {
         try {
             com.iplanet.dpro.session.service.InternalSession sess =
             getSession(oldAuthContext);
@@ -1139,7 +1094,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /* retreive session property */
-    public String getSessionProperty(String property,
+    public static String getSessionProperty(String property,
     AuthContextLocal oldAuthContext) {
         String value = null;
         try {
@@ -1155,7 +1110,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     /* return session upgrade - true or false */
-    public boolean isSessionUpgrade(AuthContextLocal authContext) {
+    public static boolean isSessionUpgrade(AuthContextLocal authContext) {
         boolean isSessionUpgrade = false;
         LoginState loginState =  getLoginState(authContext);
         if (loginState != null) {
@@ -1164,7 +1119,7 @@ public class AuthUtils extends AuthClientUtils {
         return isSessionUpgrade;
     }
     
-    public void setCookieSupported(AuthContextLocal ac, boolean flag) {
+    public static void setCookieSupported(AuthContextLocal ac, boolean flag) {
         LoginState loginState =  getLoginState(ac);
         if (loginState==null) {
             return;
@@ -1176,7 +1131,7 @@ public class AuthUtils extends AuthClientUtils {
         loginState.setCookieSupported(flag);
     }
     
-    public boolean isCookieSupported(AuthContextLocal ac) {
+    public static boolean isCookieSupported(AuthContextLocal ac) {
         LoginState loginState =  getLoginState(ac);
         if (loginState==null) {
             return false;
@@ -1184,7 +1139,7 @@ public class AuthUtils extends AuthClientUtils {
         return loginState.isCookieSupported();
     }
     
-    public boolean isCookieSet(AuthContextLocal ac) {
+    public static boolean isCookieSet(AuthContextLocal ac) {
         LoginState loginState =  getLoginState(ac);
         if (loginState==null) {
             return false;
@@ -1199,7 +1154,7 @@ public class AuthUtils extends AuthClientUtils {
      * @param ac authentication context.
      * @return <code>true</code> if cookies found in request.
      */
-    public boolean checkForCookies(HttpServletRequest req, AuthContextLocal ac){
+    public static boolean checkForCookies(HttpServletRequest req, AuthContextLocal ac){
         LoginState loginState =  getLoginState(ac);
         if (loginState!=null) {
             utilDebug.message("set cookieSet to false.");
@@ -1213,7 +1168,7 @@ public class AuthUtils extends AuthClientUtils {
         (CookieUtils.getCookieValueFromReq(req,getCookieName()) !=null));
     }    
    
-    public String getLoginURL(AuthContextLocal authContext) {
+    public static String getLoginURL(AuthContextLocal authContext) {
         LoginState loginState =  getLoginState(authContext);
         if (loginState==null) {
             return null;
@@ -1230,7 +1185,7 @@ public class AuthUtils extends AuthClientUtils {
     }  
     
     // Gets Callbacks per Page state
-    public Callback[] getCallbacksPerState(AuthContextLocal authContext, 
+    public static Callback[] getCallbacksPerState(AuthContextLocal authContext, 
                                            String pageState) {
         LoginState loginState = getLoginState(authContext);
         Callback[] recdCallback = null;
@@ -1252,7 +1207,7 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     // Sets (saves) Callbacks per Page state
-    public void setCallbacksPerState(AuthContextLocal authContext,
+    public static void setCallbacksPerState(AuthContextLocal authContext,
     String pageState, Callback[] callbacks) {
         LoginState loginState = getLoginState(authContext);
         
@@ -1284,7 +1239,7 @@ public class AuthUtils extends AuthClientUtils {
      * @param request is the HttpServletRequest object
      * @return returns the SessionID
      */
-    public SessionID getSidValue(AuthContextLocal authContext,
+    public static SessionID getSidValue(AuthContextLocal authContext,
     HttpServletRequest request) {
         SessionID sessionId = null;
         if (authContext != null)  {
@@ -1325,7 +1280,7 @@ public class AuthUtils extends AuthClientUtils {
      * @return boolean value indicating whether cookie is supported
      *	       or not.
      */
-    public boolean isCookieSupported(AuthContextLocal authContext,
+    public static boolean isCookieSupported(AuthContextLocal authContext,
     HttpServletRequest request) {
         boolean cookieSupported;
         if (authContext != null)  {
@@ -1347,7 +1302,7 @@ public class AuthUtils extends AuthClientUtils {
      * @param ac the is the AuthContextLocal instance.
      * @return AuthContext.IndexType.
      */
-    public AuthContext.IndexType getPrevIndexType(AuthContextLocal ac) {
+    public static AuthContext.IndexType getPrevIndexType(AuthContextLocal ac) {
         LoginState loginState = getLoginState(ac);
         if (loginState != null) {
             return loginState.getPreviousIndexType();
@@ -1488,7 +1443,7 @@ public class AuthUtils extends AuthClientUtils {
      * @param authContext authentication context for this request.
      * @return success URL.
      */
-    public String getSuccessURL(
+    public static String getSuccessURL(
         HttpServletRequest request,
         AuthContextLocal authContext) {
         String successURL = null;
@@ -1723,7 +1678,7 @@ public class AuthUtils extends AuthClientUtils {
      * @return the authentication service or chain configured for the
      * given organization.
      */
-    public String getOrgConfiguredAuthenticationChain(String orgDN) {
+    public static String getOrgConfiguredAuthenticationChain(String orgDN) {
         AuthD ad = AuthD.getAuth();
         return ad.getOrgConfiguredAuthenticationChain(orgDN);
     }
@@ -1733,7 +1688,7 @@ public class AuthUtils extends AuthClientUtils {
      *
      * @return the value of sunRemoteAuthSecurityEnabled attribute
      */
-     public String getRemoteSecurityEnabled() throws AuthException {
+     public static String getRemoteSecurityEnabled() throws AuthException {
          ServiceSchema schema = null;
          try {
              SSOToken dUserToken = (SSOToken) AccessController.doPrivileged (
@@ -1765,7 +1720,7 @@ public class AuthUtils extends AuthClientUtils {
       * @param req HttpServletRequest object
       * @return the boolean flag.
       */
-     public boolean isForwardSuccess(AuthContextLocal authContext,
+     public static boolean isForwardSuccess(AuthContextLocal authContext,
          HttpServletRequest req) {
          boolean isForward = forwardSuccessExists(req);
          if (!isForward) {
@@ -1784,7 +1739,7 @@ public class AuthUtils extends AuthClientUtils {
       * @param req HttpServletRequest object
       * @return <code>true</code> if this parameter is present.
       */
-     public boolean forwardSuccessExists(HttpServletRequest req) {
+     public static boolean forwardSuccessExists(HttpServletRequest req) {
          String forward = req.getParameter("forward");
          boolean isForward =
              (forward != null) && forward.equals("true");

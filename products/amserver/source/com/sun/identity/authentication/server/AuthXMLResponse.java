@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLResponse.java,v 1.4 2007-10-04 22:05:32 veiming Exp $
+ * $Id: AuthXMLResponse.java,v 1.5 2008-02-20 06:42:34 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,6 @@ public class AuthXMLResponse {
     boolean isException = false;
     SSOToken ssoToken = null;
     SSOTokenID ssoTokenID = null;
-    AuthUtils authUtils = null;
     String authIdentifier;
     String prevAuthIdentifier;
     Set moduleNames = new HashSet() ;
@@ -77,7 +76,6 @@ public class AuthXMLResponse {
     public AuthXMLResponse(int requestType)  {
         debug = com.sun.identity.shared.debug.Debug.getInstance("amXMLHandler");
         this.requestType = requestType;
-        authUtils = new AuthUtils();
     }
 
     /**
@@ -88,8 +86,8 @@ public class AuthXMLResponse {
     public void setErrorCode(String errorCode) {
       try {
         this.errorCode = errorCode;
-        authErrorMessage = authUtils.getErrorMessage(errorCode);
-        authErrorTemplate = authUtils.getErrorTemplate(errorCode);
+        authErrorMessage = AuthUtils.getErrorMessage(errorCode);
+        authErrorTemplate = AuthUtils.getErrorTemplate(errorCode);
         if (debug.messageEnabled()) {
                 debug.message("Auth error message " + authErrorMessage);
                 debug.message("Auth error template" + authErrorTemplate);
@@ -229,7 +227,7 @@ public class AuthXMLResponse {
                             .append(AuthXMLTags.QUOTE);
             }
         
-            successURL = authUtils.getLoginSuccessURL(authContext);
+            successURL = AuthUtils.getLoginSuccessURL(authContext);
 
             if (successURL != null) {
                 statusString.append(AuthXMLTags.SPACE)
@@ -257,7 +255,7 @@ public class AuthXMLResponse {
                         .append(serializedSubject)
                         .append(AuthXMLTags.SUBJECT_END);
         } else if (loginStatus == AuthContext.Status.FAILED) {
-            failureURL = authUtils.getLoginFailedURL(authContext);
+            failureURL = AuthUtils.getLoginFailedURL(authContext);
             if (failureURL != null) {
                 statusString.append(AuthXMLTags.SPACE)
                             .append(AuthXMLTags.FAILURE_URL)
@@ -309,12 +307,12 @@ public class AuthXMLResponse {
             case AuthXMLRequest.NewAuthContext:
                 if (loginStatus==AuthContext.Status.FAILED || isException) {
                     xmlString.append(createXMLErrorString());
-                    authUtils.destroySession(authContext);
+                    AuthUtils.destroySession(authContext);
                 } else if (loginStatus == AuthContext.Status.SUCCESS) {
                     xmlString.append(createLoginStatusString());
                     debug.message("destroying old session");
                     if (oldAuthContext != null) {
-                        authUtils.destroySession(oldAuthContext);
+                        AuthUtils.destroySession(oldAuthContext);
                     }
                 } else {
                     xmlString.append(createLoginStatusString());
@@ -336,7 +334,7 @@ public class AuthXMLResponse {
                     ) {
                         xmlString.append(createLoginStatusString());
                         xmlString.append(createXMLErrorString());
-                            authUtils.destroySession(authContext);
+                            AuthUtils.destroySession(authContext);
                     } else if (loginStatus == AuthContext.Status.SUCCESS) {
                         xmlString.append(createLoginStatusString());
                         if (oldAuthContext != null) {
@@ -344,7 +342,7 @@ public class AuthXMLResponse {
                                 debug.message("AuthXMLResponse.toXMLString : "
                                     +"destroying old session");
                             }
-                            authUtils.destroySession(oldAuthContext);
+                            AuthUtils.destroySession(oldAuthContext);
                         }
                     }
                 }

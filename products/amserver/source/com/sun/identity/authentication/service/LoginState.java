@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.20 2008-02-19 18:13:55 pawand Exp $
+ * $Id: LoginState.java,v 1.21 2008-02-20 06:42:36 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -325,7 +325,6 @@ public class LoginState {
     Map roleAttributeMap = null;
     Boolean foundPCookie =null;
     long pCookieTimeCreated;
-    static AuthUtils au = new AuthUtils();
     Set identityTypes = Collections.EMPTY_SET;
     Set userSessionMapping = Collections.EMPTY_SET;
     Hashtable idRepoHash = new Hashtable();
@@ -614,7 +613,7 @@ public class LoginState {
             inetDomainStatus = ad.getInetDomainStatus(getOrgDN());
             if (!inetDomainStatus) {
                 // org inactive
-                logFailed(au.getErrorVal(AMAuthErrorCode.AUTH_ORG_INACTIVE,
+                logFailed(AuthUtils.getErrorVal(AMAuthErrorCode.AUTH_ORG_INACTIVE,
                 AuthUtils.ERROR_MESSAGE),"ORGINACTIVE");
                 throw new AuthException(AMAuthErrorCode.AUTH_ORG_INACTIVE,null);
             }
@@ -1023,7 +1022,7 @@ public class LoginState {
      */
     public String getClientType() {
         return (servletRequest != null) ?
-            au.getClientType(servletRequest) : au.getDefaultClientType();
+            AuthUtils.getClientType(servletRequest) : AuthUtils.getDefaultClientType();
     }
     
     /**
@@ -1502,7 +1501,7 @@ public class LoginState {
             sid.toString().length() > 0) {
                 userOrg = sid.getSessionDomain();
             } else {
-                userOrg = au.getDomainNameByRequest(request,requestHash);
+                userOrg = AuthUtils.getDomainNameByRequest(request,requestHash);
             }
         }
         
@@ -1530,11 +1529,11 @@ public class LoginState {
         Hashtable requestHash
     ) throws AuthException {
         // Get / Construct the Original Login URL
-        this.loginURL = au.constructLoginURL(request);
+        this.loginURL = AuthUtils.constructLoginURL(request);
 
         // Get query param indicating a request "forward" after
         // successful authentication.
-        this.forwardSuccess = au.forwardSuccessExists(request);
+        this.forwardSuccess = AuthUtils.forwardSuccessExists(request);
 
         // set the locale
         setRequestLocale(request);
@@ -1577,8 +1576,8 @@ public class LoginState {
             debug.error("Exception creating session .. :", e);
             throw new AuthException(e);
         }
-        String cookieSupport = au.getCookieSupport(getClientType());
-        cookieDetect = au.getCookieDetect(cookieSupport);
+        String cookieSupport = AuthUtils.getCookieSupport(getClientType());
+        cookieDetect = AuthUtils.getCookieDetect(cookieSupport);
         if ((cookieSupport != null) && cookieSupport.equals("false")){
             cookieSupported = false;
         }
@@ -1793,7 +1792,7 @@ public class LoginState {
      * @return configured jsp file name
      */
     public String getFileName(String fileName) {
-        String templateFile = au.getFileName(fileName,getLocale(),getOrgDN(),
+        String templateFile = AuthUtils.getFileName(fileName,getLocale(),getOrgDN(),
         servletRequest,ad.getServletContext(),indexType,indexName);
         
         return templateFile;
@@ -2372,7 +2371,7 @@ public class LoginState {
                                 + userRoleFound);
                             }
                             if (!userRoleFound) {
-                                logFailed(au.getErrorVal(AMAuthErrorCode.
+                                logFailed(AuthUtils.getErrorVal(AMAuthErrorCode.
                                 AUTH_USER_NOT_FOUND,AuthUtils.ERROR_MESSAGE),
                                 "USERNOTFOUND");
                                 throw new AuthException(
@@ -2454,7 +2453,7 @@ public class LoginState {
                         if (indexType == AuthContext.IndexType.ROLE) {
                             userRoleFound = getUserRoleFound(userRoleFoundMap);
                             if (!userRoleFound) {
-                                logFailed(au.getErrorVal(AMAuthErrorCode.
+                                logFailed(AuthUtils.getErrorVal(AMAuthErrorCode.
                                 AUTH_USER_NOT_FOUND,AuthUtils.ERROR_MESSAGE),
                                 "USERNOTFOUND");
                                 throw new AuthException(
@@ -3335,7 +3334,7 @@ public class LoginState {
         if (arg != null && arg.length() != 0) {
             String encoded = servletRequest.getParameter("encoded");
             if (encoded != null && encoded.equals("true")) {
-                gotoURL = au.getBase64DecodedValue(arg);
+                gotoURL = AuthUtils.getBase64DecodedValue(arg);
             } else {
                 gotoURL = arg;
             }
@@ -3350,7 +3349,7 @@ public class LoginState {
         if (arg != null && arg.length() != 0) {
             String encoded = servletRequest.getParameter("encoded");
             if (encoded != null && encoded.equals("true")) {
-                gotoOnFailURL = au.getBase64DecodedValue(arg);
+                gotoOnFailURL = AuthUtils.getBase64DecodedValue(arg);
             } else {
                 gotoOnFailURL = arg;
             }
@@ -3382,7 +3381,7 @@ public class LoginState {
         (!currentGoto.equalsIgnoreCase("null"))) {
             String encoded = servletRequest.getParameter("encoded");
             if (encoded != null && encoded.equals("true")) {
-                currentGoto = au.getBase64DecodedValue(currentGoto);
+                currentGoto = AuthUtils.getBase64DecodedValue(currentGoto);
             }
             fqdnURL = ad.processURL(currentGoto, servletRequest);
         } else if ((fqdnURL == null) || (fqdnURL.length() == 0))  {
@@ -4270,7 +4269,7 @@ public class LoginState {
     public String getDomainNameByOrg(String orgName) {
         String orgDN = null;
         try {
-            orgDN = au.getOrganizationDN(orgName,false,null);
+            orgDN = AuthUtils.getOrganizationDN(orgName,false,null);
             
         } catch (Exception e) {
             if (messageEnabled) {
@@ -5164,7 +5163,7 @@ public class LoginState {
                     int i = url.indexOf(ISAuthConstants.PIPE_SEPARATOR);
                     if (i != -1) {
                         if (clientURL == null) {
-                            clientURL = au.getClientURLFromString(
+                            clientURL = AuthUtils.getClientURLFromString(
                                 url, i, servletRequest);
                         }
                     } else {

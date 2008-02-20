@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.11 2007-12-14 23:29:55 pawand Exp $
+ * $Id: LoginViewBean.java,v 1.12 2008-02-20 06:42:34 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -136,16 +136,16 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             return new StaticTextField(this, name, TextHeaderVal);
         } else if (name.equals(REDIRECT_URL)) { // Redirect URL for wireless
             String redirect = redirect_url;
-            redirect_url = acu.encodeURL(redirect, request, ac);
+            redirect_url = AuthClientUtils.encodeURL(redirect, request, ac);
             return new StaticTextField(this, name, redirect_url);
         } else if (name.equals(DEFAULT_LOGIN_URL)) {
-            String default_login_url = acu.encodeURL(LOGINURL, request, ac);
+            String default_login_url = AuthClientUtils.encodeURL(LOGINURL, request, ac);
             return new StaticTextField(this, name, default_login_url);
         } else if (name.equals(LOGIN_URL)) { // non-cookie support
             if ((loginURL==null)||(loginURL.length() == 0)) {
                 loginURL = LOGINURL;
             }
-            loginURL = acu.encodeURL(loginURL, request, ac);
+            loginURL = AuthClientUtils.encodeURL(loginURL, request, ac);
             return new StaticTextField(this, name, loginURL);
         } else if (name.equals(PAGE_STATE)) {
             return new StaticTextField(this, name, pageState);
@@ -259,16 +259,16 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-        response.setHeader("X-DSAMEVersion", acu.getDSAMEVersion());
+        response.setHeader("X-DSAMEVersion", AuthClientUtils.getDSAMEVersion());
         
         // get request ( GET ) parameters for 'login' process
-        reqDataHash = acu.parseRequestParameters(request);
+        reqDataHash = AuthClientUtils.parseRequestParameters(request);
         gotoUrl = request.getParameter("goto");
         gotoOnFailUrl = request.getParameter("gotoOnFail");
         String encoded = request.getParameter("encoded");
         if (encoded != null && encoded.equals("true")) {
-            gotoUrl = acu.getBase64DecodedValue(gotoUrl);
-            gotoOnFailUrl = acu.getBase64DecodedValue(gotoOnFailUrl);
+            gotoUrl = AuthClientUtils.getBase64DecodedValue(gotoUrl);
+            gotoOnFailUrl = AuthClientUtils.getBase64DecodedValue(gotoOnFailUrl);
         }
         
         if (loginDebug.messageEnabled()) {
@@ -288,18 +288,18 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             boolean isBackPost = false;
             // if the request is a GET then iPlanetAMDirectoryPro cookie
             // will be used to retrieve the session for session upgrade
-            SessionID sessionID = acu.getSessionIDFromRequest(request);
-            ssoToken = acu.getExistingValidSSOToken(sessionID);
+            SessionID sessionID = AuthClientUtils.getSessionIDFromRequest(request);
+            ssoToken = AuthClientUtils.getExistingValidSSOToken(sessionID);
             //Check for session Timeout
             if((ssoToken == null) && (sessionID != null) &&
               (sessionID.toString().length()!= 0)){
-                    if(acu.isTimedOut(sessionID)){
+                    if(AuthClientUtils.isTimedOut(sessionID)){
                         clearCookie();
                         errorCode = AMAuthErrorCode.AUTH_TIMEOUT;
-                        ErrorMessage = acu.getErrorVal(
+                        ErrorMessage = AuthClientUtils.getErrorVal(
                               AMAuthErrorCode.AUTH_TIMEOUT,
                               AuthClientUtils.ERROR_MESSAGE);
-                        errorTemplate = acu.getErrorVal(
+                        errorTemplate = AuthClientUtils.getErrorVal(
                               AMAuthErrorCode.AUTH_TIMEOUT,
                               AuthClientUtils.ERROR_TEMPLATE);
 
@@ -311,14 +311,14 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                         return;
                   }
             }
-            orgName = acu.getDomainNameByRequest(reqDataHash);
-            String authCookieValue = acu.getAuthCookieValue(request);
-            loginURL = acu.constructLoginURL(request);
+            orgName = AuthClientUtils.getDomainNameByRequest(reqDataHash);
+            String authCookieValue = AuthClientUtils.getAuthCookieValue(request);
+            loginURL = AuthClientUtils.constructLoginURL(request);
             if (ssoToken != null) {
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("Existing valid ssoToken = " + ssoToken);
                 }
-                if (acu.newSessionArgExists(reqDataHash)) {
+                if (AuthClientUtils.newSessionArgExists(reqDataHash)) {
                     clearCookie();
                     manager.destroyToken(ssoToken);
                 } else {
@@ -328,7 +328,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                         if (isPost) {
                             isBackPost = canGetOrigCredentials(ssoToken);
                         }
-                        sessionUpgrade = acu.checkSessionUpgrade(
+                        sessionUpgrade = AuthClientUtils.checkSessionUpgrade(
                         ssoToken,reqDataHash);
                     }
                 }
@@ -354,7 +354,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             
             if (newRequest) {
                 loginDebug.message("New request / New AuthContext created");
-                client_type = acu.getClientType(request);
+                client_type = AuthClientUtils.getClientType(request);
                 ISLocaleContext localeContext = new ISLocaleContext();
                 localeContext.setLocale(request);
                 locale = localeContext.getLocale();                
@@ -363,7 +363,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 session.setAttribute("LoginURL", loginURL);
                 session.setAttribute("OrgName", orgName);
                 session.setAttribute("AuthContext", ac);
-                cookieSupported = acu.isCookieSupported(request);
+                cookieSupported = AuthClientUtils.isCookieSupported(request);
             } else if ( (authCookieValue != null) &&
                     (authCookieValue.length() != 0) &&
                     (!authCookieValue.equalsIgnoreCase("LOGOUT")) ) {
@@ -373,8 +373,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 loginURL = getLoginURL();
                 ac = (AuthContext) session.getAttribute("AuthContext");
                 orgName = (String) session.getAttribute("OrgName");
-                if (acu.isCookieSet(request)) {
-                    if (acu.checkForCookies(request)) {
+                if (AuthClientUtils.isCookieSet(request)) {
+                    if (AuthClientUtils.checkForCookies(request)) {
                         loginDebug.message("Client support cookie");
                         cookieSupported = true;
                     } else {
@@ -397,7 +397,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             rb =  rbCache.getResBundle(bundleName, locale);
             
             processLogin();
-            if ((newRequest) && (acu.isCookieSupported(request))) {
+            if ((newRequest) && (AuthClientUtils.isCookieSupported(request))) {
                 setServerCookies();
                 setCookie();
                 setlbCookie();
@@ -449,7 +449,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         if ((redirect_url != null) && (redirect_url.length() != 0)) {
             // forward check for liberty federation, if the redirect_url
             // is the federation post login servlet, use forward instead
-            if (acu.isGenericHTMLClient(client_type)) {
+            if (AuthClientUtils.isGenericHTMLClient(client_type)) {
                 try {
                     if (loginDebug.messageEnabled()) {
                         loginDebug.message("Send Redirect to " + redirect_url);
@@ -506,7 +506,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 jsp_page = jsp_page + "?org=" + param;
             }
         }
-        return acu.encodeURL(jsp_page,request,ac);
+        return AuthClientUtils.encodeURL(jsp_page,request,ac);
     }
     
     
@@ -805,7 +805,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 callbacks = ac.getRequirements(true);
                 session.setAttribute("LoginCallbacks", callbacks);
                 addLoginCallbackMessage(callbacks);
-                //acu.setCallbacksPerState(ac, pageState, callbacks);
+                //AuthClientUtils.setCallbacksPerState(ac, pageState, callbacks);
             } else {
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message(
@@ -896,7 +896,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 callbacks =
                 (Callback[]) session.getAttribute("LoginCallbacks");
                 indexType =
-                acu.getIndexType((String) session.getAttribute("IndexType"));
+                AuthClientUtils.getIndexType((String) session.getAttribute("IndexType"));
                 indexName = (String) session.getAttribute("IndexName");
                 if (indexType != null &&
                 (indexType == AuthContext.IndexType.LEVEL ||
@@ -911,10 +911,10 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             }
              
             if ((page_state != null) && (page_state.length() != 0)) {
-                callbacks = acu.getCallbacksPerState(ac, page_state);
+                callbacks = AuthClientUtils.getCallbacksPerState(ac, page_state);
              
                 //Get Callbacks in order to set the page state
-                Callback[] callbacksForPageState = acu.getRecdCallback(ac);
+                Callback[] callbacksForPageState = AuthClientUtils.getRecdCallback(ac);
                 for (int i = 0; i < callbacksForPageState.length; i++) {
                     if (loginDebug.messageEnabled()) {
                         loginDebug.message(
@@ -935,7 +935,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                     }
                 }
             } else {
-                callbacks = acu.getRecdCallback(ac);
+                callbacks = AuthClientUtils.getRecdCallback(ac);
             }*/
             
             // Assign user specified values
@@ -1119,7 +1119,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                     callbacks = ac.getRequirements(true);
                     session.setAttribute("LoginCallbacks", callbacks);
                     addLoginCallbackMessage(callbacks);
-                    //acu.setCallbacksPerState(ac, pageState, callbacks);
+                    //AuthClientUtils.setCallbacksPerState(ac, pageState, callbacks);
                 } else {
                     if (loginDebug.messageEnabled()) {
                         loginDebug.message("No more Requirements : Status is : "
@@ -1274,7 +1274,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             String new_org = (String) reqDataHash.get("new_org");
             if ((new_org != null && new_org.equals("true")) &&
                 (encoded != null && encoded.equals("true"))){
-                indexName = acu.getBase64DecodedValue(reqModule);
+                indexName = AuthClientUtils.getBase64DecodedValue(reqModule);
             } else {
                 indexName = reqModule;
             }
@@ -1304,7 +1304,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             String orgName = ssoToken.getProperty("Organization");
             String orgParam = AuthClientUtils.getOrgParam(reqDataHash);
             String queryOrg = (orgParam != null)? orgParam : "/";
-            String newOrgName = acu.getDomainNameByRequest(reqDataHash);
+            String newOrgName = AuthClientUtils.getDomainNameByRequest(reqDataHash);
             if (loginDebug.messageEnabled()) {
                 loginDebug.message("original org is : " + orgName);
                 loginDebug.message("query org is : " + queryOrg);
@@ -1364,12 +1364,12 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     private void setCookie() {
         loginDebug.message("Set AM or AMAuth cookie");
         String cookieDomain = null;
-        Set cookieDomainSet = acu.getCookieDomains();
+        Set cookieDomainSet = AuthClientUtils.getCookieDomains();
 
         // No cookie domain specified in profile
         if (cookieDomainSet.isEmpty()) {
             try {
-                cookie = acu.getCookieString(ac, null);
+                cookie = AuthClientUtils.getCookieString(ac, null);
                 response.addCookie(cookie);
             } catch (Exception e) {
                 loginDebug.message("Cound not set AM or AMAuth Cookie!");
@@ -1378,7 +1378,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             Iterator iter = cookieDomainSet.iterator();
             while (iter.hasNext()) {
                 cookieDomain = (String)iter.next();
-                cookie = acu.getCookieString(ac, cookieDomain);
+                cookie = AuthClientUtils.getCookieString(ac, cookieDomain);
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("cookie for new request : " + cookie);
                 }
@@ -1399,7 +1399,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                     it.hasNext();){
                     Cookie cookie = (Cookie)it.next();
                     if (!cookie.getName().equals("JSESSIONID")){
-                        acu.setServerCookie(cookie, response);
+                        AuthClientUtils.setServerCookie(cookie, response);
                         String cookieName = cookie.getName();
                         if (!storeCookies.contains(cookieName)) {
                             storeCookies.add(cookieName);
@@ -1418,12 +1418,12 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         if (cookieSupported) {
             clearCookie(AuthClientUtils.getCookieName());
             clearHostUrlCookie(response);
-            acu.clearlbCookie(response);
+            AuthClientUtils.clearlbCookie(response);
             if (storeCookies != null && !storeCookies.isEmpty()) {
                 for (Iterator it = storeCookies.iterator();
                     it.hasNext();){
                     String cookieName = (String)it.next();
-                    acu.clearServerCookie(cookieName, response);
+                    AuthClientUtils.clearServerCookie(cookieName, response);
                 }
             }
         }
@@ -1435,12 +1435,12 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
      */
     private void clearCookie(String cookieName) {
         String cookieDomain = null;
-        Set cookieDomainSet = acu.getCookieDomains();
+        Set cookieDomainSet = AuthClientUtils.getCookieDomains();
 
         // No cookie domain specified in profile
         if (cookieDomainSet.isEmpty()) {
             try {
-                cookie = acu.createCookie(cookieName,LOGOUTCOOKIEVAULE, null);
+                cookie = AuthClientUtils.createCookie(cookieName,LOGOUTCOOKIEVAULE, null);
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
             } catch (Exception e) {
@@ -1450,7 +1450,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             Iterator iter = cookieDomainSet.iterator();
             while (iter.hasNext()) {
                 cookieDomain = (String)iter.next();
-                cookie = acu.createCookie(cookieName,LOGOUTCOOKIEVAULE,
+                cookie = AuthClientUtils.createCookie(cookieName,LOGOUTCOOKIEVAULE,
                 cookieDomain);
                 cookie.setMaxAge(0); // tell browser to expire DSAME Cookie
                 response.addCookie(cookie);
@@ -1460,7 +1460,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     
     private void setlbCookie(){
         try {
-            acu.setlbCookie(response);
+            AuthClientUtils.setlbCookie(response);
         } catch (Exception e) {
             loginDebug.message("Cound not set LB Cookie!");
         }
@@ -1484,7 +1484,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         if (ac != null) {
             errorTemplate = ac.getErrorTemplate();
         } else {
-            errorTemplate = acu.getErrorTemplate(errorCode);
+            errorTemplate = AuthClientUtils.getErrorTemplate(errorCode);
         }
         
         if (authErrorCode == null) {
@@ -1492,7 +1492,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 ErrorMessage = ac.getErrorMessage();
                 errorCode = ac.getErrorCode();
             } else {
-                ErrorMessage = acu.getErrorMessage(errorCode);
+                ErrorMessage = AuthClientUtils.getErrorMessage(errorCode);
             }
         }
         
@@ -1509,12 +1509,12 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     private String getFileName(String fileName) {
         String relativeFileName = null;
         if (ac != null) {
-            relativeFileName = acu.getFileName(
+            relativeFileName = AuthClientUtils.getFileName(
                 fileName, locale.toString(), orgName, request, servletContext,
                 indexType, indexName);
         } else {
             relativeFileName =
-            acu.getDefaultFileName(request,fileName,locale,servletContext);
+            AuthClientUtils.getDefaultFileName(request,fileName,locale,servletContext);
         }
         if (loginDebug.messageEnabled()) {
             loginDebug.message("fileName is : " + fileName);
@@ -1531,8 +1531,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         try {
             loginURL = ssoToken.getProperty("loginURL");
             orgName = ssoToken.getProperty("Organization");
-            indexType = acu.getIndexType(ssoToken.getProperty("IndexType"));
-            indexName = acu.getIndexName(ssoToken,indexType);
+            indexType = AuthClientUtils.getIndexType(ssoToken.getProperty("IndexType"));
+            indexName = AuthClientUtils.getIndexName(ssoToken,indexType);
             gotOrigCredentials = true;
         } catch (Exception e){
             loginDebug.message("Error in canGetOrigCredentials");

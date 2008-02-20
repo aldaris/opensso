@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequestParser.java,v 1.5 2007-11-05 17:57:45 ericow Exp $
+ * $Id: AuthXMLRequestParser.java,v 1.6 2008-02-20 06:42:34 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -203,8 +203,7 @@ public class AuthXMLRequestParser {
                     AuthContextLocal authContext = AuthUtils.getAuthContext(
                         servletReq, authIdentifier);
                     authXMLRequest.setAuthContext(authContext);
-                    AuthUtils authUtils = new AuthUtils();
-                    Callback[] callbacks = authUtils.getRecdCallback(
+                    Callback[] callbacks = AuthUtils.getRecdCallback(
                         authContext);
                     parseSubmitReqElements(
                         submitReqNode, authXMLRequest, callbacks);

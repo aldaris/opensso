@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAccountLockout.java,v 1.4 2008-01-15 22:31:19 pawand Exp $
+ * $Id: AMAccountLockout.java,v 1.5 2008-02-20 06:42:36 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,6 @@ class AMAccountLockout {
     private static final String LOGIN_STATUS_ATTR =
         "iplanet-am-user-login-status";
     private static final String NSACCOUNTLOCK_ATTR = "nsaccountlock";
-    static AuthUtils au = new AuthUtils();
     private AccountLockoutInfo acInfo = null;
     
     /**

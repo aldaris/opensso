@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthUtils.java,v 1.5 2007-01-21 10:34:28 mrudul_uchil Exp $
+ * $Id: AMAuthUtils.java,v 1.6 2008-02-20 06:42:35 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -386,8 +386,7 @@ public class AMAuthUtils {
                 + "the SSO Token");
         }
         long retTime = 0;
-        AuthUtils au = new AuthUtils();
-        AuthContext.IndexType indexType = au.getIndexType(authType);
+        AuthContext.IndexType indexType = AuthUtils.getIndexType(authType);
         if (indexType == AuthContext.IndexType.MODULE_INSTANCE) {
             Map moduleTimeMap = getModuleAuthTimeMap(ssoToken);
             String strDate = (String) moduleTimeMap.get(authValue);

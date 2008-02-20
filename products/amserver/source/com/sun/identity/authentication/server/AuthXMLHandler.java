@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.9 2007-12-14 00:51:51 pawand Exp $
+ * $Id: AuthXMLHandler.java,v 1.10 2008-02-20 06:42:34 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,6 @@ public class AuthXMLHandler implements RequestHandler {
     private Locale locale;
     
     static Debug debug;
-    private static AuthUtils au;
     private static String serviceURI;
     private static boolean messageEnabled = false;
     private boolean security = false;
@@ -93,7 +92,6 @@ public class AuthXMLHandler implements RequestHandler {
     static {
         debug = com.sun.identity.shared.debug.Debug.getInstance("amXMLHandler");
         messageEnabled = debug.messageEnabled();
-        au = new AuthUtils();
         serviceURI= SystemProperties.get(Constants.
             AM_SERVICES_DEPLOYMENT_DESCRIPTOR)+"/authservice";
     }
@@ -183,7 +181,7 @@ public class AuthXMLHandler implements RequestHandler {
         }
 
         if ((cookieURL != null) && (cookieURL.trim().length() != 0) && 
-            !(au.isLocalServer(cookieURL,serviceURI))) {
+            !(AuthUtils.isLocalServer(cookieURL,serviceURI))) {
             // Routing to the correct server, the looks like a mis-routed 
             // requested.
             HashMap cookieTable = new HashMap();
@@ -267,7 +265,7 @@ public class AuthXMLHandler implements RequestHandler {
         }
         String securityEnabled =  null;
         try {
-            securityEnabled =  au.getRemoteSecurityEnabled();
+            securityEnabled =  AuthUtils.getRemoteSecurityEnabled();
         } catch (AuthException auExp) {
             debug.error("Got Exception", auExp);
             setErrorCode(authResponse, auExp);
@@ -282,8 +280,8 @@ public class AuthXMLHandler implements RequestHandler {
             String indexNameLoc =  authXMLRequest.getIndexName();
             AuthContext.IndexType indexTypeLoc =  authXMLRequest.getIndexType();
             if (indexTypeLoc == null) {
-                indexTypeLoc = au.getIndexType(authContext);
-                indexNameLoc =   au.getIndexName(authContext);
+                indexTypeLoc = AuthUtils.getIndexType(authContext);
+                indexNameLoc =   AuthUtils.getIndexName(authContext);
             }
             if (debug.messageEnabled()) {
                 debug.message("Index Name Local : " + indexNameLoc);
@@ -318,8 +316,8 @@ public class AuthXMLHandler implements RequestHandler {
 
         // if index type is level and choice callback has a
         // selected choice then start module based authentication.
-        if ((au.getIndexType(authContext) == AuthContext.IndexType.LEVEL) ||
-            (au.getIndexType(authContext) ==
+        if ((AuthUtils.getIndexType(authContext) == AuthContext.IndexType.LEVEL) ||
+            (AuthUtils.getIndexType(authContext) ==
                 AuthContext.IndexType.COMPOSITE_ADVICE)
         ){
             Callback[] callbacks = authXMLRequest.getSubmittedCallbacks();
@@ -577,7 +575,7 @@ public class AuthXMLHandler implements RequestHandler {
         authResponse.setPrevAuthContext(prevAuthContext);
                     
         authResponse.setLoginStatus(AuthContext.Status.IN_PROGRESS);
-        au.setlbCookie(authContext, servletResponse);
+        AuthUtils.setlbCookie(authContext, servletResponse);
     }
 
     /*

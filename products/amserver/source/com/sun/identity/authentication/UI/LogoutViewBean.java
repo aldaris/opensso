@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.6 2007-11-02 01:40:50 ericow Exp $
+ * $Id: LogoutViewBean.java,v 1.7 2008-02-20 06:42:35 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,14 +108,14 @@ public class LogoutViewBean extends AuthViewBeanBase {
         
         try {
             sessionID = new SessionID(request);
-            ac = au.getAuthContext(request,response,sessionID,false,false,true);
+            ac = AuthUtils.getAuthContext(request,response,sessionID,false,false,true);
             
             // I18N get resource bundle
             locale = com.sun.identity.shared.locale.Locale.getLocale(
-                au.getLocale(ac));
+                AuthUtils.getLocale(ac));
             fallbackLocale = locale;
             rb = (ResourceBundle)  rbCache.getResBundle("amAuthUI", locale);
-            clientType = au.getClientType(request);
+            clientType = AuthUtils.getClientType(request);
             if (logoutDebug.messageEnabled()) {
                 logoutDebug.message("clienttype is : " + clientType);
             }
@@ -124,14 +124,14 @@ public class LogoutViewBean extends AuthViewBeanBase {
         }
         
         // Get the Login URL and query map
-        loginURL = au.getLoginURL(ac);
+        loginURL = AuthUtils.getLoginURL(ac);
         
         // set the cookie Value or set the logoutcookie string in
         // the case of URL rewriting otherwise set in the responsed
         // header
         
-        cookieSupported = au.isCookieSupported(ac,request);
-        SessionID sid  = au.getSidValue(ac,request);
+        cookieSupported = AuthUtils.isCookieSupported(ac,request);
+        SessionID sid  = AuthUtils.getSidValue(ac,request);
         
         if (cookieSupported) {
             logoutDebug.message("Cookie is supported");
@@ -149,7 +149,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
         // get the Logout JSP page path
         jsp_page = appendLogoutCookie(getFileName(LOGOUT_JSP));
         
-        if (ac != null && au.sessionTimedOut(ac)) {
+        if (ac != null && AuthUtils.sessionTimedOut(ac)) {
             try {
                 if (logoutDebug.messageEnabled()) {
                     logoutDebug.message("Goto Login URL : " + loginURL);
@@ -244,7 +244,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
                 }
             } else {
                 if (!isGotoSet()) {
-                    String originalRedirectURL = au.getOrigRedirectURL(
+                    String originalRedirectURL = AuthUtils.getOrigRedirectURL(
                         request,sessionID);
                     if (originalRedirectURL != null) {
                         try {
@@ -318,9 +318,9 @@ public class LogoutViewBean extends AuthViewBeanBase {
     private String getFileName(String fileName) {
         String relativeFileName = null;
         if (ac != null) {
-            relativeFileName = au.getFileName(ac,fileName);
+            relativeFileName = AuthUtils.getFileName(ac,fileName);
         } else {
-            relativeFileName = au.getDefaultFileName(request,fileName);
+            relativeFileName = AuthUtils.getDefaultFileName(request,fileName);
         }
         if (logoutDebug.messageEnabled()) {
             logoutDebug.message("fileName is : " + fileName);
@@ -331,7 +331,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
     }
     
     private void clearAllCookies(SessionID sid) {
-        Set cookieDomainSet =  au.getCookieDomains();
+        Set cookieDomainSet =  AuthUtils.getCookieDomains();
         if (cookieDomainSet.isEmpty()) { //No cookie domain specified in profile
             clearAllCookiesByDomain(sid, null);
         } else {
@@ -340,21 +340,21 @@ public class LogoutViewBean extends AuthViewBeanBase {
                 clearAllCookiesByDomain(sid, (String)iter.next());
             }
         }
-        au.clearlbCookie(response);
+        AuthUtils.clearlbCookie(response);
         clearHostUrlCookie(response);
     }
     
     private void clearAllCookiesByDomain(SessionID sid, String cookieDomain) {
         Cookie cookie;
         if (ac != null) {
-            cookie = au.getLogoutCookie(ac, cookieDomain);
+            cookie = AuthUtils.getLogoutCookie(ac, cookieDomain);
         } else {
-            cookie = au.getLogoutCookie(sid, cookieDomain);
+            cookie = AuthUtils.getLogoutCookie(sid, cookieDomain);
         }
         response.addCookie(cookie);
-        if (ac == null || au.getPersistentCookieMode(ac)) {
+        if (ac == null || AuthUtils.getPersistentCookieMode(ac)) {
             // clear Persistent Cookie
-            cookie = au.clearPersistentCookie(cookieDomain, ac);
+            cookie = AuthUtils.clearPersistentCookie(cookieDomain, ac);
             if (logoutDebug.messageEnabled()) {
                 logoutDebug.message("Clearing persistent cookie: "
                 + cookieDomain);
@@ -432,7 +432,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
     /* Checks if request should use sendRedirect */
     private boolean doSendRedirect(String redirectURL) {
         return        ((redirectURL != null) && (redirectURL.length() != 0)
-        && (au.isGenericHTMLClient(clientType))) ;
+        && (AuthUtils.isGenericHTMLClient(clientType))) ;
         
     }
     
@@ -551,7 +551,6 @@ public class LogoutViewBean extends AuthViewBeanBase {
     ////////////////////////////////////////////////////////////////////////////
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
-    public static AuthUtils au = new AuthUtils();
 
     /** Default page name */
     public static final String PAGE_NAME="Logout";

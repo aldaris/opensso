@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthExceptionViewBean.java,v 1.5 2007-01-21 10:34:12 mrudul_uchil Exp $
+ * $Id: AuthExceptionViewBean.java,v 1.6 2008-02-20 06:42:35 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,19 +94,19 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
         }
         
         try {
-            ac = au.getAuthContext(request,response,
-            au.getSessionIDFromRequest(request),false,false);
+            ac = AuthUtils.getAuthContext(request,response,
+            AuthUtils.getSessionIDFromRequest(request),false,false);
         } catch (Exception e) {
             if (e instanceof L10NMessage) {
                 java.util.Locale locale = 
                     com.sun.identity.shared.locale.Locale.getLocale(
-                        au.getLocale(ac));
+                        AuthUtils.getLocale(ac));
                 ResultVal = ((L10NMessage)e).getL10NMessage(locale);
             } else {
                 ResultVal = e.getMessage();
             }
         }
-        if ((ac==null)||au.sessionTimedOut(ac)) {
+        if ((ac==null)||AuthUtils.sessionTimedOut(ac)) {
             try {
                 if (exDebug.messageEnabled()) {
                     exDebug.message("Goto Login URL : " + LOGINURL);
@@ -135,13 +135,13 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
         }
         // I18N get resource bundle
         java.util.Locale locale =
-            com.sun.identity.shared.locale.Locale.getLocale(au.getLocale(ac));
-        String client = au.getClientType(request);
+            com.sun.identity.shared.locale.Locale.getLocale(AuthUtils.getLocale(ac));
+        String client = AuthUtils.getClientType(request);
         rb = (ResourceBundle)  rbCache.getResBundle("amAuthUI", locale);
         if (rb == null) {
-            return au.getFileName(ac, "Exception.jsp");
+            return AuthUtils.getFileName(ac, "Exception.jsp");
         } else {
-            return au.getFileName(ac, "authException.jsp");
+            return AuthUtils.getFileName(ac, "authException.jsp");
         }
     }
     
@@ -156,7 +156,7 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
         } else if (name.equals(TXT_GOTO_LOGIN_AFTER_FAIL)) {
             return new StaticTextField(this, name, "");
         } else if (name.equals(URL_LOGIN)) { // non-cookie support
-            String loginURL = au.encodeURL(LOGINURL, ac, response);
+            String loginURL = AuthUtils.encodeURL(LOGINURL, ac, response);
             return new StaticTextField(this, name, loginURL);
         } else if (name.equals(HTML_TITLE_AUTH_EXCEPTION)) {
             String exceptionTitle = rb.getString("htmlTitle_AuthException");
@@ -181,17 +181,17 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
         if (ad != null ) {
             try {
                 String cookieDomain = null;
-                Set cookieDomainSet = au.getCookieDomains();
+                Set cookieDomainSet = AuthUtils.getCookieDomains();
                 Cookie cookie;
                 setPageEncoding(request,response);
 
                 // No cookie domain specified in profile
                 if (cookieDomainSet.isEmpty()) {
-                    cookie = au.getLogoutCookie(ac, null);
+                    cookie = AuthUtils.getLogoutCookie(ac, null);
                     response.addCookie(cookie);
                     // clear Persistent Cookie
-                    if (au.getPersistentCookieMode(ac)) {
-                        cookie = au.clearPersistentCookie(null, ac);
+                    if (AuthUtils.getPersistentCookieMode(ac)) {
+                        cookie = AuthUtils.clearPersistentCookie(null, ac);
                         if (exDebug.messageEnabled()) {
                             exDebug.message(
                               "Clearing persistent cookie: null cookie domain");
@@ -203,11 +203,11 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
                     Iterator iter = cookieDomainSet.iterator();
                     while (iter.hasNext()) {
                         cookieDomain = (String)iter.next();
-                        cookie = au.getLogoutCookie(ac, cookieDomain);
+                        cookie = AuthUtils.getLogoutCookie(ac, cookieDomain);
                         response.addCookie(cookie);
                         // clear Persistent Cookie
-                        if (au.getPersistentCookieMode(ac)) {
-                            cookie = au.clearPersistentCookie(cookieDomain, ac);
+                        if (AuthUtils.getPersistentCookieMode(ac)) {
+                            cookie = AuthUtils.clearPersistentCookie(cookieDomain, ac);
                             if (exDebug.messageEnabled()) {
                                 exDebug.message("Clearing persistent cookie: "
                                 + cookieDomain);
@@ -217,7 +217,7 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
                         }
                     }
                 }
-                au.clearlbCookie(response);
+                AuthUtils.clearlbCookie(response);
                 ResultVal = rb.getString("uncaught_exception");
                 
             } catch (Exception e) {
@@ -311,7 +311,6 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
 
-    public static AuthUtils au = new AuthUtils();
     static AuthD ad = AuthD.getAuth();
 
     /**

@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.6 2008-02-20 00:49:51 superpat7 Exp $
+ * $Id: FMSessionProvider.java,v 1.7 2008-02-20 06:42:37 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,7 +96,6 @@ public class FMSessionProvider implements SessionProvider {
     private static final int SECRET_LENGTH = 20;
     private static Set secretSet = Collections.synchronizedSet(
         new HashSet(1000));
-    private AuthClientUtils acu = new AuthClientUtils();
     
     static {
         String urlRewriteEnabledStr = SystemPropertiesManager.
@@ -352,7 +351,7 @@ public class FMSessionProvider implements SessionProvider {
     public void setLoadBalancerCookie(HttpServletResponse response)
     {
         Cookie lbCookie = null;
-        Set cookieDomains = acu.getCookieDomains();
+        Set cookieDomains = AuthClientUtils.getCookieDomains();
         if (cookieDomains.size() == 0) {
             lbCookie = setlbCookie(null);
             if (lbCookie != null) {

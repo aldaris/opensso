@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.6 2007-12-14 23:29:05 pawand Exp $
+ * $Id: AuthClientUtils.java,v 1.7 2008-02-20 06:42:36 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -198,8 +198,11 @@ public class AuthClientUtils {
         serverURL = proto + "://" + host + ":" + port;
     }
 
-    public AuthClientUtils() {
-        utilDebug.message("AuthUtil: constructor");
+    /*
+     * Protected constructor to prevent any instances being created
+     * Needs to be protected to allow subclass AuthUtils
+     */
+    protected AuthClientUtils() {
     }        
 
     public static Hashtable parseRequestParameters(
@@ -238,7 +241,7 @@ public class AuthClientUtils {
      * @param cookieDomain Cookie domain.
      * @return logout cookie string.
      */
-    public Cookie getLogoutCookie(SessionID sid, String cookieDomain) {
+    public static Cookie getLogoutCookie(SessionID sid, String cookieDomain) {
         String logoutCookieString = getLogoutCookieString(sid);
         Cookie logoutCookie = createCookie(logoutCookieString,cookieDomain);
         logoutCookie.setMaxAge(0);
@@ -282,7 +285,7 @@ public class AuthClientUtils {
      * @param cookieDomain domain for which cookie will be set.
      * @return Cookie object.
      */
-    public Cookie createCookie(String cookieValue, String cookieDomain) {
+    public static Cookie createCookie(String cookieValue, String cookieDomain) {
         String cookieName = getCookieName();
         if (utilDebug.messageEnabled()) {
             utilDebug.message("cookieName : " + cookieName);
@@ -356,7 +359,7 @@ public class AuthClientUtils {
         }
     }
 
-    public void setlbCookie(
+    public static void setlbCookie(
         HttpServletResponse response) throws AuthException {
         String cookieName = getlbCookieName();
         if (cookieName != null && cookieName.length() != 0) {
@@ -382,7 +385,7 @@ public class AuthClientUtils {
      * @param cookieDomain Domain for which the cookie is to be set.
      * @return the cookie object.
      */
-    public Cookie createCookie(
+    public static Cookie createCookie(
         String cookieName,
         String cookieValue,
         String cookieDomain
@@ -411,7 +414,7 @@ public class AuthClientUtils {
         return (cookie);
     }    
 
-    public void clearlbCookie(HttpServletResponse response){
+    public static void clearlbCookie(HttpServletResponse response){
         String cookieName = getlbCookieName();
         if (cookieName != null && cookieName.length() != 0) {
             Set domains = getCookieDomains();
@@ -431,13 +434,13 @@ public class AuthClientUtils {
     }          
 
     /* return the the error message for the error code */
-    public String getErrorMessage(String errorCode) {
+    public static String getErrorMessage(String errorCode) {
         String errorMessage = getErrorVal(errorCode,ERROR_MESSAGE);
         return (errorMessage);
     }
 
     /* return the the error template for the error code */
-    public String getErrorTemplate(String errorCode) {
+    public static String getErrorTemplate(String errorCode) {
         String errorTemplate = getErrorVal(errorCode,ERROR_TEMPLATE);
         return (errorTemplate);
     } 
@@ -452,7 +455,7 @@ public class AuthClientUtils {
     }       
 
     // Get Original Redirect URL for Auth to redirect the Login request
-    public String getOrigRedirectURL(HttpServletRequest request,
+    public static String getOrigRedirectURL(HttpServletRequest request,
         SessionID sessID) {
         try {
             String sidString = null;
@@ -571,7 +574,7 @@ public class AuthClientUtils {
      * @param request HTTP Servlet Request.
      * @return Session ID for this request.
      */
-    public SessionID getSessionIDFromRequest(HttpServletRequest request) {
+    public static SessionID getSessionIDFromRequest(HttpServletRequest request) {
         boolean isGetRequest= (request !=null &&
             request.getMethod().equalsIgnoreCase("GET"));
         SessionID amCookieSid = new SessionID(request);
@@ -599,7 +602,7 @@ public class AuthClientUtils {
      * @param reqDataHash Request Data Hashtable.
      * returns <code>true</code> if this parameter is present.
      */
-    public boolean newSessionArgExists(Hashtable reqDataHash) {
+    public static boolean newSessionArgExists(Hashtable reqDataHash) {
         String arg = (String) reqDataHash.get("arg");
         boolean newSessionArgExists =
             (arg != null) && arg.equals("newsession");
@@ -610,7 +613,7 @@ public class AuthClientUtils {
     }
 
     // Get the AuthContext.IndexType given string index type value
-    public AuthContext.IndexType getIndexType(String strIndexType) {
+    public static AuthContext.IndexType getIndexType(String strIndexType) {
         AuthContext.IndexType indexType = null;
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getIndexType : strIndexType = " + strIndexType);
@@ -635,7 +638,7 @@ public class AuthClientUtils {
     }
 
     // Get the index name given index type from the existing valid session
-    public String getIndexName(SSOToken ssoToken,
+    public static String getIndexName(SSOToken ssoToken,
         AuthContext.IndexType indexType) {
         String indexName = "";
         try {
@@ -666,7 +669,7 @@ public class AuthClientUtils {
 
     // Get the first or latest index name from the string of index names
     // separated by "|".
-    private String getLatestIndexName(String indexName) {
+    private static String getLatestIndexName(String indexName) {
         String firstIndexName = indexName;
         if (indexName != null) {
             StringTokenizer st = new StringTokenizer(indexName,"|");
@@ -782,7 +785,7 @@ public class AuthClientUtils {
      * @param req HTTP Servlet Request.
      * @return client type.
      */
-    public String getClientType(HttpServletRequest req) {
+    public static String getClientType(HttpServletRequest req) {
         if (isClientDetectionEnabled() && (clientDetector != null)) {
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("clienttype = "
@@ -819,7 +822,7 @@ public class AuthClientUtils {
      * return the client Object associated with a clientType
      * default instance is returned if the instance could not be found
      */
-    private Client getClientInstance(String clientType) {
+    private static Client getClientInstance(String clientType) {
         if (!clientType.equals(getDefaultClientType())) {
             try {
                 return (AuthClient.getInstance(clientType,null));
@@ -837,7 +840,7 @@ public class AuthClientUtils {
      * @param property
      * @return the requested property from clientData.
      */
-    private String getProperty(String clientType, String property) {
+    private static String getProperty(String clientType, String property) {
 
         try {
             return (getClientInstance(clientType).getProperty(property));
@@ -854,7 +857,7 @@ public class AuthClientUtils {
     /**
      * return the requested property for default client
      */
-    public String getDefaultProperty(String property) {        
+    public static String getDefaultProperty(String property) {        
         try {
             return (defaultClient.getProperty(property));
         } catch (Exception ce) {
@@ -866,7 +869,7 @@ public class AuthClientUtils {
     /**
      * return the charset associated with the clientType
      */
-    public String getCharSet(String clientType,java.util.Locale locale) {
+    public static String getCharSet(String clientType,java.util.Locale locale) {
         String charset = Client.CDM_DEFAULT_CHARSET;
         try {
             charset = getClientInstance(clientType).getCharset(locale);
@@ -885,7 +888,7 @@ public class AuthClientUtils {
     /**
      * return the filePath associated with a clientType
      */
-    public String getFilePath(String clientType) {
+    public static String getFilePath(String clientType) {
         String filePath = getProperty(clientType,"filePath");
         if (filePath == null) {
             return (DEFAULT_FILE_PATH);
@@ -897,7 +900,7 @@ public class AuthClientUtils {
      * return the contentType associated with a clientType
      * if no contentType found then return the default
      */
-    public String getContentType(String clientType) {
+    public static String getContentType(String clientType) {
 
         String contentType = getProperty(clientType,"contentType");
         if (contentType == null) {
@@ -911,7 +914,7 @@ public class AuthClientUtils {
      * cookies are supported
      * RFE 4412286
      */
-    public String getCookieSupport(String clientType) {
+    public static String getCookieSupport(String clientType) {
         String cookieSup = getProperty(clientType,"cookieSupport");
         return (cookieSup);
     }
@@ -919,7 +922,7 @@ public class AuthClientUtils {
     /**
      * determine if this client is an html client
      */
-    public boolean isGenericHTMLClient(String clientType) {
+    public static boolean isGenericHTMLClient(String clientType) {
         String type = getProperty(clientType,"genericHTML");
         return(type == null) || type.equals("true");
     }    
@@ -928,7 +931,7 @@ public class AuthClientUtils {
      * mode has been detected .This is used to determine
      * whether cookie should be set in response or not.
      */
-    public boolean isSetCookie(String clientType) {
+    public static boolean isSetCookie(String clientType) {
         boolean setCookie =  setCookieVal(clientType,"true");
 
         if (utilDebug.messageEnabled()) {
@@ -941,7 +944,7 @@ public class AuthClientUtils {
     /* checks the cookieDetect , cookieSupport values to
      * determine if cookie should be rewritten or set.
      */
-    public boolean setCookieVal(String clientType,String value) {
+    public static boolean setCookieVal(String clientType,String value) {
 
         String cookieSupport = getCookieSupport(clientType);
         boolean cookieDetect = getCookieDetect(cookieSupport);
@@ -965,7 +968,7 @@ public class AuthClientUtils {
      *  @param cookieSupport , whether cookie is supported or not.
      *  @return true if cookieDetect mode else false
      */
-    public boolean getCookieDetect(String cookieSupport) {
+    public static boolean getCookieDetect(String cookieSupport) {
         boolean cookieDetect
             = ((cookieSupport == null) ||
             (cookieSupport.equalsIgnoreCase(
@@ -983,7 +986,7 @@ public class AuthClientUtils {
      * @param index is the position of delimiter "|"
      * @return Returns the client URL.
      */
-    public String getClientURLFromString(String urlString,int index,
+    public static String getClientURLFromString(String urlString,int index,
         HttpServletRequest request) {
         String clientURL = null;
         if (urlString != null) {
@@ -1006,7 +1009,7 @@ public class AuthClientUtils {
      * time). This determines whether url should be rewritten
      * or not.
      */
-    public boolean isUrlRewrite(String clientType) {
+    public static boolean isUrlRewrite(String clientType) {
 
         boolean rewriteURL = setCookieVal(clientType,"false");
         if (utilDebug.messageEnabled()) {
@@ -1051,7 +1054,7 @@ public class AuthClientUtils {
         return (loadBalanceCookieValue);
     }
 
-    public Set getCookieDomains() {
+    public static Set getCookieDomains() {
         Set cookieDomains = Collections.EMPTY_SET;
         try {
             SSOToken token = (SSOToken) AccessController.doPrivileged(
@@ -1105,7 +1108,7 @@ public class AuthClientUtils {
      * @param request is the HttpServletRequest object
      * @return A String which is the organization DN
      */
-    public String getOrganizationDN(String orgParam,boolean noQueryParam,
+    public static String getOrganizationDN(String orgParam,boolean noQueryParam,
         HttpServletRequest request) {
         String orgName = null;
         SSOToken token = (SSOToken) AccessController.doPrivileged(
@@ -1175,7 +1178,7 @@ public class AuthClientUtils {
      * @param requestHash Query Hashtable.
      * @return Organization DN.
      */
-    public String getDomainNameByRequest(
+    public static String getDomainNameByRequest(
         HttpServletRequest request,
         Hashtable requestHash) {
         boolean noQueryParam=false;
@@ -1231,7 +1234,7 @@ public class AuthClientUtils {
         return (orgParam);
     }
 
-    String stripPort(String in) {
+    static String stripPort(String in) {
         try {
             URL url = new URL(in);
             return(url.getProtocol() + "://" + url.getHost()+ url.getFile());
@@ -1352,7 +1355,7 @@ public class AuthClientUtils {
         return (urlString);
     }
 
-    public String constructLoginURL(HttpServletRequest request) {
+    public static String constructLoginURL(HttpServletRequest request) {
         StringBuffer loginURL = new StringBuffer(serviceURI);
         String qString = request.getQueryString();
         if ((qString != null) && (qString.length() != 0)) {
@@ -1363,7 +1366,7 @@ public class AuthClientUtils {
     }
 
     // Get Original Redirect URL for Auth to redirect the Login request
-    public SSOToken getExistingValidSSOToken(SessionID sessID) {
+    public static SSOToken getExistingValidSSOToken(SessionID sessID) {
         SSOToken ssoToken = null;
         try {
             if (sessID != null) {
@@ -1386,7 +1389,7 @@ public class AuthClientUtils {
 
     // Check for Session Timed Out
     // If Session is Timed Out Exception is thrown
-    public boolean isTimedOut(SessionID sessID) {
+    public static boolean isTimedOut(SessionID sessID) {
         boolean isTimedOut = false;
         try {
             if (sessID != null) {
@@ -1408,7 +1411,7 @@ public class AuthClientUtils {
         return isTimedOut;
     }
 
-    public String getErrorVal(String errorCode,String type) {
+    public static String getErrorVal(String errorCode,String type) {
         String errorMsg=null;
         String templateName=null;
         String resProperty = bundle.getString(errorCode);
@@ -1436,7 +1439,7 @@ public class AuthClientUtils {
         }
     }
 
-    public boolean isCookieSupported(HttpServletRequest req) {
+    public static boolean isCookieSupported(HttpServletRequest req) {
         boolean cookieSupported = true;
         String cookieSupport = getCookieSupport(getClientType(req));
         if ((cookieSupport != null) && cookieSupport.equals("false")) {
@@ -1445,7 +1448,7 @@ public class AuthClientUtils {
         return (cookieSupported);
     }
 
-    public boolean isCookieSet(HttpServletRequest req) {
+    public static boolean isCookieSet(HttpServletRequest req) {
         boolean cookieSet = false;
         String cookieSupport = getCookieSupport(getClientType(req));
         boolean cookieDetect = getCookieDetect(cookieSupport);
@@ -1471,7 +1474,7 @@ public class AuthClientUtils {
         return (pCookie);
     }
 
-    public Cookie createlbCookie(String cookieDomain) throws AuthException {
+    public static Cookie createlbCookie(String cookieDomain) throws AuthException {
         Cookie lbCookie = null;
         try {
             if (utilDebug.messageEnabled()) {
@@ -1500,7 +1503,7 @@ public class AuthClientUtils {
      * @param cookieDomain the cookie domain for creating cookie.
      * @return Cookie object.
      */
-    public Cookie getCookieString(AuthContext ac, String cookieDomain) {
+    public static Cookie getCookieString(AuthContext ac, String cookieDomain) {
         Cookie cookie = null;
         String cookieName = getAuthCookieName();
         String cookieValue = serverURL + serviceURI;
@@ -1533,7 +1536,7 @@ public class AuthClientUtils {
      * @param ac Authentication Context.
      * @return the encoded URL.
      */
-    public String encodeURL(
+    public static String encodeURL(
         String url,
         HttpServletRequest request,
         AuthContext ac) {
@@ -1564,7 +1567,7 @@ public class AuthClientUtils {
         return(encodedURL);
     }
 
-    private String encodeURL(String url,short encodingScheme,boolean escape,
+    private static String encodeURL(String url,short encodingScheme,boolean escape,
         String cookieName, String strSessionID) {
         String encodedURL = url;
         String cookieStr = 
@@ -1583,7 +1586,7 @@ public class AuthClientUtils {
      * @param servletContext Servlet Context for server
      * @return Path to the resource.
      */
-    public String getDefaultFileName(
+    public static String getDefaultFileName(
         HttpServletRequest request,
         String fileName,
         java.util.Locale locale, 
@@ -1615,7 +1618,7 @@ public class AuthClientUtils {
     }
 
     /* get the root suffix , eg. o= isp */
-    public String getRootSuffix() {
+    public static String getRootSuffix() {
         // rootSuffix is already normalized in SMSEntry
         return (rootSuffix);
     }
@@ -1623,7 +1626,7 @@ public class AuthClientUtils {
     /* get the root dir to start lookup from./<default org>
      * default is /default
      */
-    private String getFileRoot() {
+    private static String getFileRoot() {
         String fileRoot = ISAuthConstants.DEFAULT_DIR;
         String rootOrgName = DNUtils.DNtoName(rootSuffix);
         if (utilDebug.messageEnabled()) {
@@ -1636,7 +1639,7 @@ public class AuthClientUtils {
     }
 
     /* insert chartset in the filename */
-    private String getCharsetFileName(String fileName) {
+    private static String getCharsetFileName(String fileName) {
         ISLocaleContext localeContext = new ISLocaleContext();
         String charset = localeContext.getMIMECharset();
         if (fileName == null) {
@@ -1659,7 +1662,7 @@ public class AuthClientUtils {
     }
 
     /* retrieve the resource (file) using resource lookup */
-    public String getResourceLocation(String fileRoot, String localeName,
+    public static String getResourceLocation(String fileRoot, String localeName,
         String orgFilePath,String filePath,String filename,String templatePath,
         ServletContext servletContext,HttpServletRequest request) {
         String resourceName = null;
@@ -1690,7 +1693,7 @@ public class AuthClientUtils {
     /* constructs the filePath parameter for FileLookUp
      * filePath = indexName (service name) + clientPath (eg. html).
      */
-    public String getFilePath(HttpServletRequest request,
+    public static String getFilePath(HttpServletRequest request,
         AuthContext.IndexType indexType, String indexName) {
         String filePath = getFilePath(getClientType(request));
         String serviceName = null;
@@ -1730,7 +1733,7 @@ public class AuthClientUtils {
      * eg. if orgDN = o=org1,o=org11,o=org12,dc=iplanet,dc=com
      * then orgFilePath will be org12/org11/org1
      */
-    String getOrgFilePath(String orgDN) {
+    static String getOrgFilePath(String orgDN) {
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getOrgFilePath : orgDN is: " + orgDN);
         }
@@ -1776,7 +1779,7 @@ public class AuthClientUtils {
      * @param indexName index name associated with the index type.
      * @return File name of the resource.
      */
-    public String getFileName(
+    public static String getFileName(
         String fileName,
         String localeName,
         String orgDN,
@@ -1816,11 +1819,11 @@ public class AuthClientUtils {
         return (templateFile);
     }
 
-    public String getAuthCookieValue(HttpServletRequest req) {
+    public static String getAuthCookieValue(HttpServletRequest req) {
         return (CookieUtils.getCookieValueFromReq(req,getAuthCookieName()));
     }
 
-    public String getDomainNameByRequest(Hashtable requestHash) {
+    public static String getDomainNameByRequest(Hashtable requestHash) {
         String orgParam = getOrgParam(requestHash);
         if (utilDebug.messageEnabled()) {
             utilDebug.message("orgParam is.. :" + orgParam);
@@ -1842,7 +1845,7 @@ public class AuthClientUtils {
 
     // Check whether the request is coming to the server who created the
     // original Auth request or session
-    public boolean isLocalServer(String cookieURL, boolean isServer) {
+    public static boolean isLocalServer(String cookieURL, boolean isServer) {
         boolean local = false;
         try {
             String urlStr   = serverURL + serviceURI;
@@ -1884,7 +1887,7 @@ public class AuthClientUtils {
     // Check whether the request is coming to the server who created the
     // original Auth request or session
     // This method needs to be merged with the one above.
-    public boolean isLocalServer(String cookieURL, String inputURI) {
+    public static boolean isLocalServer(String cookieURL, String inputURI) {
         int uriIndex = cookieURL.indexOf(inputURI);
         String tmpCookieURL = cookieURL;
         if (uriIndex != -1) {
@@ -1905,7 +1908,7 @@ public class AuthClientUtils {
      * @return HashMap of the result data from the original server's response
      *
      */
-    public HashMap sendAuthRequestToOrigServer(HttpServletRequest request,
+    public static HashMap sendAuthRequestToOrigServer(HttpServletRequest request,
         HttpServletResponse response, String cookieURL) {
         HashMap origRequestData = new HashMap();
 
@@ -2030,7 +2033,7 @@ public class AuthClientUtils {
     }
 
     // Gets the request form data in the form of string
-    private String getFormData(HttpServletRequest request) {
+    private static String getFormData(HttpServletRequest request) {
         StringBuffer buffer = new StringBuffer();
         buffer.append("");
         Enumeration requestEnum = request.getParameterNames();
@@ -2049,7 +2052,7 @@ public class AuthClientUtils {
 
     // parses the cookies from the response header and adds them in
     // the HTTP response.
-    private void processCookies(Map headers, HttpServletResponse response) {
+    private static void processCookies(Map headers, HttpServletResponse response) {
         if (utilDebug.messageEnabled()) {
             utilDebug.message("processCookies : headers : " + headers);
         }
@@ -2104,7 +2107,7 @@ public class AuthClientUtils {
     }
 
     // Get cookies string from HTTP request object
-    private String getCookiesString(HttpServletRequest request) {
+    private static String getCookiesString(HttpServletRequest request) {
         Cookie cookies[] = request.getCookies();
         StringBuffer cookieStr = null;
         String strCookies = null;
@@ -2139,7 +2142,7 @@ public class AuthClientUtils {
     * @throws AuthException if it fails to create pcookie
     */
 
-    public void setServerCookie(Cookie aCookie, HttpServletResponse response)
+    public static void setServerCookie(Cookie aCookie, HttpServletResponse response)
     throws AuthException {
         String cookieName = aCookie.getName();
         String cookieValue = aCookie.getValue();
@@ -2167,7 +2170,7 @@ public class AuthClientUtils {
      * @param response <code>true</code> if it is persistent
      * @throws AuthException if it fails to create this cookie
      */
-    public void setRedirectBackServerCookie(String cookieName, 
+    public static void setRedirectBackServerCookie(String cookieName, 
         String cookieValue, HttpServletResponse response) 
         throws AuthException {
 
@@ -2192,7 +2195,7 @@ public class AuthClientUtils {
      * @param cookieName Cookie Name.
      * @param response HTTP Servlet Response.
      */
-    public void clearServerCookie(
+    public static void clearServerCookie(
         String cookieName,
         HttpServletResponse response) {
         if (utilDebug.messageEnabled()) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.9 2007-01-21 10:34:13 mrudul_uchil Exp $
+ * $Id: LoginViewBean.java,v 1.10 2008-02-20 06:42:35 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,16 +128,16 @@ public class LoginViewBean extends AuthViewBeanBase {
             return new StaticTextField(this, name, TextHeaderVal);
         } else if (name.equals(REDIRECT_URL)) { // Redirect URL for wireless
             String redirect = redirect_url;
-            redirect_url = au.encodeURL(redirect, ac, response);
+            redirect_url = AuthUtils.encodeURL(redirect, ac, response);
             return new StaticTextField(this, name, redirect_url);
         } else if (name.equals(DEFAULT_LOGIN_URL)) {
-            String default_login_url = au.encodeURL(LOGINURL, ac, response);
+            String default_login_url = AuthUtils.encodeURL(LOGINURL, ac, response);
             return new StaticTextField(this, name, default_login_url);
         } else if (name.equals(LOGIN_URL)) { // non-cookie support
             if ((loginURL==null)||(loginURL.length() == 0)) {
                 loginURL = LOGINURL;
             }
-            loginURL = au.encodeURL(loginURL, ac, response);
+            loginURL = AuthUtils.encodeURL(loginURL, ac, response);
             return new StaticTextField(this, name, loginURL);
         } else if (name.equals(PAGE_STATE)) {
             return new StaticTextField(this, name, pageState);
@@ -251,15 +251,15 @@ public class LoginViewBean extends AuthViewBeanBase {
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
         
-        response.setHeader("X-DSAMEVersion", au.getDSAMEVersion());
+        response.setHeader("X-DSAMEVersion", AuthUtils.getDSAMEVersion());
         
         // get request ( GET ) parameters for 'login' process
-        reqDataHash = au.parseRequestParameters(request);
+        reqDataHash = AuthUtils.parseRequestParameters(request);
         /*if (loginDebug.messageEnabled()) {
             loginDebug.message("request data hash : " + reqDataHash);
         }*/
         
-        client_type = au.getClientType(request);
+        client_type = AuthUtils.getClientType(request);
         // Set header for Misrouted server's usage
         response.setHeader("AM_CLIENT_TYPE", client_type);
         
@@ -276,15 +276,15 @@ public class LoginViewBean extends AuthViewBeanBase {
             boolean isBackPost = false;
             // if the request is a GET then iPlanetAMDirectoryPro cookie
             // will be used to retrieve the session for session upgrade
-            sessionID = au.getSessionIDFromRequest(request);
-            SSOToken ssoToken = au.getExistingValidSSOToken(sessionID);
-            AuthContextLocal origAC = au.getOrigAuthContext(sessionID);
+            sessionID = AuthUtils.getSessionIDFromRequest(request);
+            SSOToken ssoToken = AuthUtils.getExistingValidSSOToken(sessionID);
+            AuthContextLocal origAC = AuthUtils.getOrigAuthContext(sessionID);
             forceAuth = AuthUtils.forceAuthFlagExists(reqDataHash);
-            if ((origAC == null) && !au.newSessionArgExists(reqDataHash) &&
+            if ((origAC == null) && !AuthUtils.newSessionArgExists(reqDataHash) &&
                 !forceAuth){
                 // The Cookie might be create on the other Access Manager server
                 // and valid
-                String originalRedirectURL = au.getOrigRedirectURL(request,
+                String originalRedirectURL = AuthUtils.getOrigRedirectURL(request,
                 sessionID);
                 if (originalRedirectURL != null) {
                     if (loginDebug.messageEnabled()) {
@@ -299,9 +299,9 @@ public class LoginViewBean extends AuthViewBeanBase {
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("origAC = " + origAC);
                 }
-                if (au.newSessionArgExists(reqDataHash)) {
-                    au.destroySession(origAC);
-                } else if (au.isSessionActive(origAC)) {
+                if (AuthUtils.newSessionArgExists(reqDataHash)) {
+                    AuthUtils.destroySession(origAC);
+                } else if (AuthUtils.isSessionActive(origAC)) {
                     loginDebug.message("Old Session is Active.");
                     newOrgExist = checkNewOrg(origAC);
                     if (!newOrgExist) {
@@ -311,7 +311,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                         if  (forceAuth) {
                             sessionUpgrade = true;
                         } else {
-                            sessionUpgrade = au.checkSessionUpgrade(
+                            sessionUpgrade = AuthUtils.checkSessionUpgrade(
                                 ssoToken, reqDataHash);
                         }
                         if (loginDebug.messageEnabled()) {
@@ -322,14 +322,14 @@ public class LoginViewBean extends AuthViewBeanBase {
                 }
             }
             
-            ac = au.getAuthContext(
+            ac = AuthUtils.getAuthContext(
                 request, response, sessionID, sessionUpgrade, isBackPost);
             if (sessionUpgrade) {
                 ac.getLoginState().setForceAuth(forceAuth);
             }
             java.util.Locale locale =
                 com.sun.identity.shared.locale.Locale.getLocale(
-                    au.getLocale(ac));
+                    AuthUtils.getLocale(ac));
             fallbackLocale = locale;
             rb =  rbCache.getResBundle(bundleName, locale);
             if (loginDebug.messageEnabled()) {
@@ -339,27 +339,27 @@ public class LoginViewBean extends AuthViewBeanBase {
             // check session or new request
             // add cookie only if cookie is supported
             if (!isBackPost) {
-                loginURL = au.getLoginURL(ac);
+                loginURL = AuthUtils.getLoginURL(ac);
             }
             /*if (loginDebug.messageEnabled()) {
                 loginDebug.message("loginURL : " + loginURL);
             }*/
             
-            if (au.isNewRequest(ac)) {
+            if (AuthUtils.isNewRequest(ac)) {
                 loginDebug.message("New AuthContext created");
-                if (au.isCookieSupported(ac)) {
+                if (AuthUtils.isCookieSupported(ac)) {
                     setCookie();
                     setlbCookie();
                 }
             } else {
                 // check if client still have the cookie we set.
-                if (au.isCookieSet(ac)) {
-                    if (au.checkForCookies(request, ac)) {
+                if (AuthUtils.isCookieSet(ac)) {
+                    if (AuthUtils.checkForCookies(request, ac)) {
                         loginDebug.message("Client support cookie");
-                        au.setCookieSupported(ac, true);
+                        AuthUtils.setCookieSupported(ac, true);
                     } else {
                         loginDebug.message("Client do not support cookie");
-                        au.setCookieSupported(ac, false);
+                        AuthUtils.setCookieSupported(ac, false);
                     }
                 }
             }
@@ -373,10 +373,10 @@ public class LoginViewBean extends AuthViewBeanBase {
             return;
         }
         
-        if (au.sessionTimedOut(ac)) { //Session Timeout
+        if (AuthUtils.sessionTimedOut(ac)) { //Session Timeout
             // clear the cookie only if cookie supported
             loginDebug.message("Session timeout TRUE");
-            if (au.isSessionUpgrade(ac)) {
+            if (AuthUtils.isSessionUpgrade(ac)) {
                 try {
                     redirect_url = getPrevSuccessURLAndSetCookie();
                     clearGlobals();
@@ -403,7 +403,7 @@ public class LoginViewBean extends AuthViewBeanBase {
             // since AM Cookie is already set  and in
             // normal auth case since no valid session is
             // is there AM Cookie does not have to be set.
-        } else if (!au.getInetDomainStatus(ac)) {//domain inactive
+        } else if (!AuthUtils.getInetDomainStatus(ac)) {//domain inactive
             if ((errorTemplate==null)||(errorTemplate.length() == 0)) {
                 setErrorMessage(null);
             }
@@ -420,19 +420,19 @@ public class LoginViewBean extends AuthViewBeanBase {
         if ((redirect_url != null) && (redirect_url.length() != 0)) {
             // forward check for liberty federation, if the redirect_url
             // is the federation post login servlet, use forward instead
-            boolean doForward = au.isForwardSuccess(ac,request);
-            if (au.isGenericHTMLClient(client_type) || doForward) {
+            boolean doForward = AuthUtils.isForwardSuccess(ac,request);
+            if (AuthUtils.isGenericHTMLClient(client_type) || doForward) {
                 try {
                     if (loginDebug.messageEnabled()) {
                         loginDebug.message("Send Redirect to " + redirect_url);
                     }
                     
                     // destroy session if necessary.
-                    AuthContextLocal prevAC = au.getPrevAuthContext(ac);
+                    AuthContextLocal prevAC = AuthUtils.getPrevAuthContext(ac);
                     if (ac.getStatus() == AuthContext.Status.FAILED) {
                         loginDebug.message(
                             "forwardTo(): Auth failed - Destroy Session!");
-                        if (au.isSessionUpgrade(ac)) {
+                        if (AuthUtils.isSessionUpgrade(ac)) {
                             clearCookieAndDestroySession(ac);
                             loginDebug.message(
                                 "forwardTo(): Session upgrade - " +
@@ -446,7 +446,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                                 loginDebug.message(
                                     "Destroy existing/old valid session");
                                 clearCookie(prevAC);
-                                au.destroySession(prevAC);
+                                AuthUtils.destroySession(prevAC);
                             }
                         }
                         loginDebug.message(
@@ -461,14 +461,14 @@ public class LoginViewBean extends AuthViewBeanBase {
                             clearCookieAndDestroySession(ac);
                             ac = prevAC;
                         } else {
-                            if (au.isCookieSupported(ac)) {
+                            if (AuthUtils.isCookieSupported(ac)) {
                                 setCookie();
                                 clearCookie(AuthUtils.getAuthCookieName());
                             }
                             if (prevAC != null) {
                                 loginDebug.message(
                                     "Destroy existing/old valid session");
-                                au.destroySession(prevAC);
+                                AuthUtils.destroySession(prevAC);
                             }
                         }
                     }
@@ -528,7 +528,7 @@ public class LoginViewBean extends AuthViewBeanBase {
         jsp_page = getFileName(jsp_page);
         
         if (ac != null) {
-            AuthContextLocal prevAC = au.getPrevAuthContext(ac);
+            AuthContextLocal prevAC = AuthUtils.getPrevAuthContext(ac);
             if (loginDebug.messageEnabled()) {
                 loginDebug.message("Previous AC : " + prevAC);
             }
@@ -542,7 +542,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                     clearCookieAndDestroySession(ac);
                     ac = prevAC;
                 } else {
-                    if (au.isCookieSupported(ac)) {
+                    if (AuthUtils.isCookieSupported(ac)) {
                         setCookie();
                         clearCookie(AuthUtils.getAuthCookieName());
                     }
@@ -552,7 +552,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                                 loginDebug.message("Destroy the " +
                                 "original session Successful!");
                             }
-                            au.destroySession(prevAC);
+                            AuthUtils.destroySession(prevAC);
                         }
                     } catch (Exception e) {
                         if (loginDebug.messageEnabled()) {
@@ -565,7 +565,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("Destroy Session! for ac : " + ac);
                 }
-                if (au.isSessionUpgrade(ac)) {
+                if (AuthUtils.isSessionUpgrade(ac)) {
                     // clear cookie ,destroy failed session
                     clearCookieAndDestroySession(ac);
                     loginDebug.message(
@@ -581,7 +581,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                         loginDebug.message(
                             "Destroy existing/old valid session");
                         clearCookie(prevAC);
-                        au.destroySession(prevAC);
+                        AuthUtils.destroySession(prevAC);
                     }
                 }
                 loginDebug.message("Login failure, current session destroyed!");
@@ -595,7 +595,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                 jsp_page = jsp_page + "?org=" + param;
             }
         }
-        return au.encodeURL(jsp_page,ac,response);
+        return AuthUtils.encodeURL(jsp_page,ac,response);
         
     }
     
@@ -714,14 +714,14 @@ public class LoginViewBean extends AuthViewBeanBase {
         loginDebug.message("In processLogin()");
         
         try {
-            if (au.isSessionActive(ac)) {
+            if (AuthUtils.isSessionActive(ac)) {
                 loginDebug.message("Session is Valid / already authenticated");
                 bValidSession = true;
                 /*
                  * redirect to 'goto' parameter or SPI hook or default
                  * redirect URL.
                  */
-                redirect_url = au.getSuccessURL(request,ac);
+                redirect_url = AuthUtils.getSuccessURL(request,ac);
                 if (redirect_url == null) {
                     ResultVal = rb.getString("authentication.already.login");
                 }
@@ -786,8 +786,8 @@ public class LoginViewBean extends AuthViewBeanBase {
         
         // if pCookie exists and valid and not a session upgrade
         // case return.
-        if (!au.newSessionArgExists(reqDataHash) && isPersistentCookieValid()
-        && (!au.isSessionUpgrade(ac)))  {
+        if (!AuthUtils.newSessionArgExists(reqDataHash) && isPersistentCookieValid()
+        && (!AuthUtils.isSessionUpgrade(ac)))  {
             return;
         }
         
@@ -808,14 +808,14 @@ public class LoginViewBean extends AuthViewBeanBase {
             (ac.getStatus() == AuthContext.Status.ORG_MISMATCH)) {
                 loginDebug.message(
                     "getLoginDisplay(): Destroying current session!");
-                AuthContextLocal prevAC = au.getPrevAuthContext(ac);
-                if (au.isSessionUpgrade(ac)) {
+                AuthContextLocal prevAC = AuthUtils.getPrevAuthContext(ac);
+                if (AuthUtils.isSessionUpgrade(ac)) {
                     clearCookieAndDestroySession(ac);
                     loginDebug.message("getLoginDisplay(): Session upgrade - " +
                     " Restoring original Session!");
                     if (prevAC != null) {
                         ac = prevAC;
-                        String redirect_url = au.getSuccessURL(request,ac);
+                        String redirect_url = AuthUtils.getSuccessURL(request,ac);
                         if (loginDebug.messageEnabled()) {
                             loginDebug.message(
                                 "Session Upgrade - redirect_url : "
@@ -830,7 +830,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                         loginDebug.message(
                             "Destroy existing/old valid session");
                         clearCookie(prevAC);
-                        au.destroySession(prevAC);
+                        AuthUtils.destroySession(prevAC);
                     }
                     ac = null;
                     forwardTo(null);
@@ -905,7 +905,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                     processLoginDisplay();
                 } else {
                     addLoginCallbackMessage(callbacks);
-                    au.setCallbacksPerState(ac, pageState, callbacks);
+                    AuthUtils.setCallbacksPerState(ac, pageState, callbacks);
                 }
             } else {
                 if (loginDebug.messageEnabled()) {
@@ -917,10 +917,10 @@ public class LoginViewBean extends AuthViewBeanBase {
                     LoginSuccess = true;
                     ResultVal = rb.getString("authentication.successful");
                     
-                    if (au.getPersistentCookieMode(ac) &&
+                    if (AuthUtils.getPersistentCookieMode(ac) &&
                                                 // create new persistent cookie
-                        au.isPersistentCookieOn(ac) &&
-                        au.isCookieSupported(ac)
+                        AuthUtils.isPersistentCookieOn(ac) &&
+                        AuthUtils.isCookieSupported(ac)
                     ) {
                         addPersistentCookie();
                     }
@@ -929,7 +929,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                      * redirect to 'goto' parameter or SPI hook or default
                      * redirect URL.
                      */
-                    redirect_url = au.getLoginSuccessURL(ac);
+                    redirect_url = AuthUtils.getLoginSuccessURL(ac);
                     if ((redirect_url != null) && (redirect_url.length() != 0)){
                         if (loginDebug.messageEnabled()) {
                             loginDebug.message(
@@ -947,7 +947,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                      * redirect to 'goto' parameter or SPI hook or default
                      * redirect URL.
                      */
-                    redirect_url = au.getLoginFailedURL(ac);
+                    redirect_url = AuthUtils.getLoginFailedURL(ac);
                     if ((redirect_url != null) && (redirect_url.length() != 0)){
                         if (loginDebug.messageEnabled()) {
                             loginDebug.message(
@@ -960,7 +960,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                      * redirect to 'goto' parameter or SPI hook or default
                      * redirect URL.
                      */
-                    redirect_url = au.getLoginFailedURL(ac);
+                    redirect_url = AuthUtils.getLoginFailedURL(ac);
                     if (loginDebug.warningEnabled()) {
                         loginDebug.warning("Login Status is " + ac.getStatus() +
                         " - redirect to loginFailedURL : " + redirect_url);
@@ -1031,7 +1031,7 @@ public class LoginViewBean extends AuthViewBeanBase {
             }
             // Create Cookie
             try {
-                au.setRedirectBackServerCookie(
+                AuthUtils.setRedirectBackServerCookie(
                     rc.getRedirectBackUrlCookieName(), 
                     redirectBackServerCookieValue, 
                     response);
@@ -1057,7 +1057,7 @@ public class LoginViewBean extends AuthViewBeanBase {
         try {
             
             if (!onePageLogin){
-                if (au.isNewRequest(ac)) {
+                if (AuthUtils.isNewRequest(ac)) {
                     loginDebug.message(
                         "In processLoginDisplay() : Session New ");
                     getLoginDisplay();
@@ -1071,21 +1071,21 @@ public class LoginViewBean extends AuthViewBeanBase {
             }
             
             if ((page_state != null) && (page_state.length() != 0)) {
-                callbacks = au.getCallbacksPerState(ac, page_state);
+                callbacks = AuthUtils.getCallbacksPerState(ac, page_state);
 
                 if(callbacks == null) {
                 	errorCode = AMAuthErrorCode.AUTH_TIMEOUT;
-                	ErrorMessage = au.getErrorVal(
+                	ErrorMessage = AuthUtils.getErrorVal(
                               AMAuthErrorCode.AUTH_TIMEOUT,
                               AuthUtils.ERROR_MESSAGE);
-                	errorTemplate = au.getErrorVal(
+                	errorTemplate = AuthUtils.getErrorVal(
                               AMAuthErrorCode.AUTH_TIMEOUT,
                               AuthUtils.ERROR_TEMPLATE);
                 	return;
                 }            
                 
                 //Get Callbacks in order to set the page state
-                Callback[] callbacksForPageState = au.getRecdCallback(ac);
+                Callback[] callbacksForPageState = AuthUtils.getRecdCallback(ac);
                 for (int i = 0; i < callbacksForPageState.length; i++) {
                     if (loginDebug.messageEnabled()) {
                         loginDebug.message(
@@ -1106,10 +1106,10 @@ public class LoginViewBean extends AuthViewBeanBase {
                     }
                 }
             } else {
-                callbacks = au.getRecdCallback(ac);
+                callbacks = AuthUtils.getRecdCallback(ac);
             }
             
-            indexType = au.getIndexType(ac);
+            indexType = AuthUtils.getIndexType(ac);
             
             // Assign user specified values
             for (int i = 0; i < callbacks.length; i++) {
@@ -1257,7 +1257,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                     ac.setOrgDN(orgDN);
                 }
 
-                int type = au.getCompositeAdviceType(ac);
+                int type = AuthUtils.getCompositeAdviceType(ac);
                 
                 if (type == AuthUtils.MODULE) {
                     indexType = AuthContext.IndexType.MODULE_INSTANCE;
@@ -1266,7 +1266,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                 } else if (type == AuthUtils.REALM) {
                     indexType = AuthContext.IndexType.SERVICE;
                     orgDN = DNMapper.orgNameToDN(choice);
-                    indexName = au.getOrgConfiguredAuthenticationChain(orgDN);
+                    indexName = AuthUtils.getOrgConfiguredAuthenticationChain(orgDN);
                     ac.setOrgDN(orgDN);
                 } else {
                     indexType = AuthContext.IndexType.MODULE_INSTANCE;
@@ -1313,7 +1313,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                     }
                     
                     addLoginCallbackMessage(callbacks);
-                    au.setCallbacksPerState(ac, pageState, callbacks);
+                    AuthUtils.setCallbacksPerState(ac, pageState, callbacks);
                 } else {
                     if (loginDebug.messageEnabled()) {
                         loginDebug.message(
@@ -1325,10 +1325,10 @@ public class LoginViewBean extends AuthViewBeanBase {
                         ResultVal = rb.getString("authentication.successful");
                         
                         // set persistant cookie
-                        if (au.isCookieSupported(ac) &&
-                            au.isPersistentCookieOn(ac) &&
+                        if (AuthUtils.isCookieSupported(ac) &&
+                            AuthUtils.isPersistentCookieOn(ac) &&
                                                     //iPSPCookie value in URL
-                            au.getPersistentCookieMode(ac)
+                            AuthUtils.getPersistentCookieMode(ac)
                                         //persistent cookie setting in profile
                         ) {
                             addPersistentCookie();
@@ -1338,7 +1338,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                          * redirect to 'goto' parameter or SPI hook or default
                          * redirect URL.
                          */
-                        redirect_url = au.getLoginSuccessURL(ac);
+                        redirect_url = AuthUtils.getLoginSuccessURL(ac);
                         if ((redirect_url != null) &&
                             (redirect_url.length() != 0)
                         ) {
@@ -1357,7 +1357,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                          * redirect to 'goto' parameter or SPI hook or default
                          * redirect URL.
                          */
-                        redirect_url = au.getLoginFailedURL(ac);
+                        redirect_url = AuthUtils.getLoginFailedURL(ac);
                         if ((redirect_url != null) &&
                             (redirect_url.length() != 0)
                         ) {
@@ -1371,7 +1371,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                          * redirect to 'goto' parameter or SPI hook or default
                          * redirect URL.
                          */
-                        redirect_url = au.getLoginFailedURL(ac);
+                        redirect_url = AuthUtils.getLoginFailedURL(ac);
                         if (loginDebug.warningEnabled()) {
                             loginDebug.warning(
                                 "Login Status is " + ac.getStatus() +
@@ -1469,7 +1469,7 @@ public class LoginViewBean extends AuthViewBeanBase {
             String new_org = (String) reqDataHash.get("new_org");
             if ((new_org != null && new_org.equals("true")) &&
                 (encoded != null && encoded.equals("true"))){
-                indexName = au.getBase64DecodedValue(reqModule);
+                indexName = AuthUtils.getBase64DecodedValue(reqModule);
             } else {
                 indexName = reqModule;
             }
@@ -1496,10 +1496,10 @@ public class LoginViewBean extends AuthViewBeanBase {
         
         try {
             // always make sure the orgName is the same
-            String orgName = au.getSessionProperty("Organization", origAC);
+            String orgName = AuthUtils.getSessionProperty("Organization", origAC);
             String orgParam = AuthUtils.getOrgParam(reqDataHash);
             String queryOrg = AuthUtils.getQueryOrgName(request,orgParam);
-            String newOrgName = au.getOrganizationDN(queryOrg,true,request);
+            String newOrgName = AuthUtils.getOrganizationDN(queryOrg,true,request);
             if (loginDebug.messageEnabled()) {
                 loginDebug.message("original org is : " + orgName);
                 loginDebug.message("query org is : " + queryOrg);
@@ -1525,14 +1525,14 @@ public class LoginViewBean extends AuthViewBeanBase {
                 if ((strButton != null) && (strButton.length() != 0)) {
                     java.util.Locale locale =
                         com.sun.identity.shared.locale.Locale.getLocale(
-                            au.getLocale(origAC));
+                            AuthUtils.getLocale(origAC));
                     rb =  rbCache.getResBundle(bundleName, locale);
                     
                     if (strButton.trim().equals(rb.getString("Yes").trim())) {
                         loginDebug.message("Submit with YES. Destroy session.");
                         param = queryOrg;
                         clearCookie(origAC);
-                        au.destroySession(origAC);
+                        AuthUtils.destroySession(origAC);
                     } else if (!(strButton.trim().equals(rb.getString("No")
                         .trim()))
                     ) {
@@ -1561,10 +1561,10 @@ public class LoginViewBean extends AuthViewBeanBase {
     private void setCookie() {
         loginDebug.message("Set Auth or AM cookie");
         String cookieDomain = null;
-        Set cookieDomainSet = au.getCookieDomains();
+        Set cookieDomainSet = AuthUtils.getCookieDomains();
         if (cookieDomainSet.isEmpty()) { //No cookie domain specified in profile
             try {
-                cookie = au.getCookieString(ac, null);
+                cookie = AuthUtils.getCookieString(ac, null);
                 response.addCookie(cookie);
                 if ((cookie.getName()).equals(AuthUtils.getCookieName())) {
                     setHostUrlCookie(response);
@@ -1576,7 +1576,7 @@ public class LoginViewBean extends AuthViewBeanBase {
             Iterator iter = cookieDomainSet.iterator();
             while (iter.hasNext()) {
                 cookieDomain = (String)iter.next();
-                cookie = au.getCookieString(ac, cookieDomain);
+                cookie = AuthUtils.getCookieString(ac, cookieDomain);
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("cookie for new request : "
                     + cookie.toString());
@@ -1591,7 +1591,7 @@ public class LoginViewBean extends AuthViewBeanBase {
 
     private void setlbCookie(){
         try {
-            au.setlbCookie(ac, response);
+            AuthUtils.setlbCookie(ac, response);
         } catch (Exception e) {
             loginDebug.message("Cound not set LB Cookie!");
         }
@@ -1600,10 +1600,10 @@ public class LoginViewBean extends AuthViewBeanBase {
     /** Method to clear AM Cookie
      */
     private void clearCookie(AuthContextLocal ac) {
-        if (au.isCookieSupported(ac)) {
+        if (AuthUtils.isCookieSupported(ac)) {
             clearCookie(AuthUtils.getCookieName());
             clearHostUrlCookie(response);
-            au.clearlbCookie(response);
+            AuthUtils.clearlbCookie(response);
         }
     }
     
@@ -1614,16 +1614,16 @@ public class LoginViewBean extends AuthViewBeanBase {
      */
     private void clearCookie(String cookieName) {
         String cookieDomain = null;
-        Set cookieDomainSet = au.getCookieDomains();
+        Set cookieDomainSet = AuthUtils.getCookieDomains();
         if (cookieDomainSet.isEmpty()) {// No cookie domain specified in profile
-            cookie = au.createCookie(cookieName,LOGOUTCOOKIEVALUE, null);
+            cookie = AuthUtils.createCookie(cookieName,LOGOUTCOOKIEVALUE, null);
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         } else {
             Iterator iter = cookieDomainSet.iterator();
             while (iter.hasNext()) {
                 cookieDomain = (String)iter.next();
-                cookie = au.createCookie(cookieName,LOGOUTCOOKIEVALUE,
+                cookie = AuthUtils.createCookie(cookieName,LOGOUTCOOKIEVALUE,
                 cookieDomain);
                 cookie.setMaxAge(0); // tell browser to expire DSAME Cookie
                 response.addCookie(cookie);
@@ -1635,14 +1635,14 @@ public class LoginViewBean extends AuthViewBeanBase {
     private boolean isPersistentCookieValid() {
         if (loginDebug.messageEnabled()) {
             loginDebug.message("PCOOKIE setting in profile "
-            + au.getPersistentCookieMode(ac));
+            + AuthUtils.getPersistentCookieMode(ac));
             loginDebug.message("PCOOKIE setting in URL "
-            + au.isPersistentCookieOn(ac));
+            + AuthUtils.isPersistentCookieOn(ac));
         }
 
         // persistent cookie setting in profile
-        if (au.getPersistentCookieMode(ac)) {
-            String userName = au.searchPersistentCookie(ac);
+        if (AuthUtils.getPersistentCookieMode(ac)) {
+            String userName = AuthUtils.searchPersistentCookie(ac);
             
             if  (userName!=null) {  // persistent cookie exist!
                 if (loginDebug.messageEnabled()) {
@@ -1653,13 +1653,13 @@ public class LoginViewBean extends AuthViewBeanBase {
                     ac.login(AuthContext.IndexType.USER, userName, true);
                     // if came here and session upgrade
                     // case then return
-                    if (au.isSessionUpgrade(ac)) {
+                    if (AuthUtils.isSessionUpgrade(ac)) {
                         return true;
                     }
                     if (ac.getStatus() == AuthContext.Status.SUCCESS) {
                         LoginSuccess = true;
                         ResultVal = rb.getString("authentication.successful");
-                        redirect_url = au.getLoginSuccessURL(ac);
+                        redirect_url = AuthUtils.getLoginSuccessURL(ac);
                         loginDebug.message(
                             "Session activate by persistent cookie!");
                         addPersistentCookie();
@@ -1667,21 +1667,21 @@ public class LoginViewBean extends AuthViewBeanBase {
                     }
                 } catch (Exception e) {  // clear the invalid PCookie
                     String cookieDomain = null;
-                    Set cookieDomainSet = au.getCookieDomains();
+                    Set cookieDomainSet = AuthUtils.getCookieDomains();
 
                     // No cookie domain specified in profile
                     if (cookieDomainSet.isEmpty()) {
                         try {
-                            cookie = au.clearPersistentCookie(null, ac);
+                            cookie = AuthUtils.clearPersistentCookie(null, ac);
                             response.addCookie(cookie);
                         } catch (Exception ee) {
                             loginDebug.message("Cound not set DSAME Cookie!");
                         }
                     } else {
-                        Iterator iter = au.getCookieDomains().iterator();
+                        Iterator iter = AuthUtils.getCookieDomains().iterator();
                         while (iter.hasNext()) {
                             cookieDomain = (String)iter.next();
-                            Cookie cookie = au.clearPersistentCookie(
+                            Cookie cookie = AuthUtils.clearPersistentCookie(
                                 cookieDomain, ac);
                             response.addCookie(cookie);
                         }
@@ -1698,10 +1698,10 @@ public class LoginViewBean extends AuthViewBeanBase {
     // Method to add persistent cookie
     private void addPersistentCookie() {
         String cookieDomain = null;
-        Set cookieDomainSet = au.getCookieDomains();
+        Set cookieDomainSet = AuthUtils.getCookieDomains();
         if (cookieDomainSet.isEmpty()) { //No cookie domain specified in profile
             try {
-                cookie = au.createPersistentCookie(ac, null);
+                cookie = AuthUtils.createPersistentCookie(ac, null);
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("cookie for new request : "
                     + cookie.toString());
@@ -1716,7 +1716,7 @@ public class LoginViewBean extends AuthViewBeanBase {
             try {
                 while (iter.hasNext()) {
                     cookieDomain = (String)iter.next();
-                    cookie = au.createPersistentCookie(ac, cookieDomain);
+                    cookie = AuthUtils.createPersistentCookie(ac, cookieDomain);
                     if (loginDebug.messageEnabled()) {
                         loginDebug.message("cookie for new request : "
                         + cookie.toString());
@@ -1742,14 +1742,14 @@ public class LoginViewBean extends AuthViewBeanBase {
                 errorCode = authErrorCode;
                 ErrorMessage = l10nE.getL10NMessage(
                     com.sun.identity.shared.locale.Locale.getLocale(
-                        au.getLocale(ac)));
+                        AuthUtils.getLocale(ac)));
             }
         }
         
         if (ac != null) {
             errorTemplate = ac.getErrorTemplate();
         } else {
-            errorTemplate = au.getErrorTemplate(errorCode);
+            errorTemplate = AuthUtils.getErrorTemplate(errorCode);
         }
         
         if (authErrorCode == null) {
@@ -1757,7 +1757,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                 ErrorMessage = ac.getErrorMessage();
                 errorCode = ac.getErrorCode();
             } else {
-                ErrorMessage = au.getErrorMessage(errorCode);
+                ErrorMessage = AuthUtils.getErrorMessage(errorCode);
             }
         }
         
@@ -1774,9 +1774,9 @@ public class LoginViewBean extends AuthViewBeanBase {
     private String getFileName(String fileName) {
         String relativeFileName = null;
         if (ac != null) {
-            relativeFileName = au.getFileName(ac,fileName);
+            relativeFileName = AuthUtils.getFileName(ac,fileName);
         } else {
-            relativeFileName = au.getDefaultFileName(request,fileName);
+            relativeFileName = AuthUtils.getDefaultFileName(request,fileName);
         }
         if (loginDebug.messageEnabled()) {
             loginDebug.message("fileName is : " + fileName);
@@ -1793,10 +1793,10 @@ public class LoginViewBean extends AuthViewBeanBase {
      */
     String getPrevSuccessURLAndSetCookie() {
         loginDebug.message("Restoring original Session !");
-        AuthContextLocal prevAC = au.getPrevAuthContext(ac);
+        AuthContextLocal prevAC = AuthUtils.getPrevAuthContext(ac);
         clearCookieAndDestroySession(ac);
         ac = prevAC;
-        String redirect_url = au.getSuccessURL(request,ac);
+        String redirect_url = AuthUtils.getSuccessURL(request,ac);
         return redirect_url;
     }
     
@@ -1806,8 +1806,8 @@ public class LoginViewBean extends AuthViewBeanBase {
         boolean gotOrigCredentials = false;
         try {
             loginURL = ssoToken.getProperty("loginURL");
-            indexType = au.getIndexType(ssoToken.getProperty("IndexType"));
-            indexName = au.getIndexName(ssoToken,indexType);
+            indexType = AuthUtils.getIndexType(ssoToken.getProperty("IndexType"));
+            indexName = AuthUtils.getIndexName(ssoToken,indexType);
             gotOrigCredentials = true;
         } catch (Exception e){
             loginDebug.message("Error in canGetOrigCredentials");
@@ -1834,10 +1834,10 @@ public class LoginViewBean extends AuthViewBeanBase {
      */
     private void clearCookieAndDestroySession(AuthContextLocal ac) {
         // clear cookie, destroy orignal invalid session
-        if (au.isCookieSupported(ac)) {
-            clearCookie(au.getAuthCookieName());
+        if (AuthUtils.isCookieSupported(ac)) {
+            clearCookie(AuthUtils.getAuthCookieName());
         }
-        au.destroySession(ac);
+        AuthUtils.destroySession(ac);
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -2010,8 +2010,6 @@ public class LoginViewBean extends AuthViewBeanBase {
     ////////////////////////////////////////////////////////////////////////////
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
-    public static AuthUtils au = new AuthUtils();
-
     /** Page name for login */
     public static final String PAGE_NAME="Login";
     /** Result value */

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.4 2007-01-21 10:34:16 mrudul_uchil Exp $
+ * $Id: LoginServlet.java,v 1.5 2008-02-20 06:42:34 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,11 +91,9 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
             throw new CompleteRequestException();
         }
         
-        AuthClientUtils acu = new AuthClientUtils();
-        
         // Check whether this is the correct server to accept the client
         // response.
-        String authCookieValue = acu.getAuthCookieValue(request);
+        String authCookieValue = AuthClientUtils.getAuthCookieValue(request);
         if ((authCookieValue != null) && (authCookieValue.length() != 0) &&
             (!authCookieValue.equalsIgnoreCase("LOGOUT"))) {
             //if cookie server does not match to this local server then
@@ -105,11 +103,11 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
             }
             
             if ((authCookieValue != null) && (authCookieValue.length() != 0) &&
-                    (!acu.isLocalServer(authCookieValue, false))) {
+                    (!AuthClientUtils.isLocalServer(authCookieValue, false))) {
                 debug.message("Routing the request to Original Auth server");
                 try {
                     HashMap origRequestData =
-                        acu.sendAuthRequestToOrigServer(
+                        AuthClientUtils.sendAuthRequestToOrigServer(
                             request,response,authCookieValue);
 
                     if (debug.messageEnabled()) {
@@ -127,7 +125,7 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
                             (String)origRequestData.get("AM_CLIENT_TYPE");
                     }
                     if (((redirect_url != null) && !redirect_url.equals("")) &&
-                        acu.isGenericHTMLClient(clientType)) {
+                        AuthClientUtils.isGenericHTMLClient(clientType)) {
                         debug.message("Redirecting the response");
                         response.sendRedirect(redirect_url);
                     }

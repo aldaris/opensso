@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.4 2006-08-25 21:20:07 veiming Exp $
+ * $Id: LoginServlet.java,v 1.5 2008-02-20 06:42:35 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,8 +96,7 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
         
         // Check if the hostname in the URL is an FQDN else
         // redirect to the fqdn
-        AuthUtils au = new AuthUtils();
-        String client_type = au.getClientType(request);
+        String client_type = AuthUtils.getClientType(request);
         if (debug.messageEnabled()) {
             debug.message("Client Type = " + client_type);
         }
@@ -109,11 +108,11 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
                 if (debug.messageEnabled()) {
                     debug.message("FQDN = " + newHN);
                 }
-                if (au.isGenericHTMLClient(client_type)) {
+                if (AuthUtils.isGenericHTMLClient(client_type)) {
                     debug.message("This is HTML");
                     response.sendRedirect(newHN);
                 } else {
-                    String fileName = au.getDefaultFileName(
+                    String fileName = AuthUtils.getDefaultFileName(
                         request, REDIRECT_JSP);
                     if (debug.messageEnabled()) {
                         debug.message("Forward to : " + fileName);
@@ -130,7 +129,7 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
         
         // Check whether this is the correct server to accept the client
         // response.
-        String authCookieValue = au.getAuthCookieValue(request);
+        String authCookieValue = AuthUtils.getAuthCookieValue(request);
         if ((authCookieValue != null) && (authCookieValue.length() != 0) &&
             (!authCookieValue.equalsIgnoreCase("LOGOUT"))) {
             //if cookie server does not match to this local server then
@@ -152,11 +151,11 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
                 debug.message("cookieURL : " + cookieURL);
             }
             if ((cookieURL != null) && (cookieURL.length() != 0) &&
-                (!au.isLocalServer(cookieURL,true))) {
+                (!AuthUtils.isLocalServer(cookieURL,true))) {
                 debug.message("Routing the request to Original Auth server");
                 try {
                     HashMap origRequestData =
-                        au.sendAuthRequestToOrigServer(
+                        AuthUtils.sendAuthRequestToOrigServer(
                         request,response,cookieURL);                    
                     String redirect_url = null;
                     String clientType = null;
@@ -174,7 +173,7 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
                         debug.message("clientType : " + clientType);
                     }
                     if (((redirect_url != null) && !redirect_url.equals("")) &&
-                        (au.isGenericHTMLClient(clientType))
+                        (AuthUtils.isGenericHTMLClient(clientType))
                     ) {
                         debug.message("Redirecting the response");
                         response.sendRedirect(redirect_url);

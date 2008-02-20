@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthViewBeanBase.java,v 1.6 2007-09-21 23:13:54 pawand Exp $
+ * $Id: AuthViewBeanBase.java,v 1.7 2008-02-20 06:42:35 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,8 +85,8 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
     protected void setPageEncoding(HttpServletRequest request,
     HttpServletResponse response) {
         /** Set the codeset of the page **/
-        String client_type = acu.getClientType(request);
-        String content_type = acu.getContentType(client_type);
+        String client_type = AuthClientUtils.getClientType(request);
+        String content_type = AuthClientUtils.getContentType(client_type);
         
         accLocale = fallbackLocale;
         if (accLocale == null) {
@@ -95,7 +95,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
             accLocale = localeContext.getLocale();
         }
         
-        String charset = acu.getCharSet(client_type, accLocale);
+        String charset = AuthClientUtils.getCharSet(client_type, accLocale);
         response.setContentType(content_type+";charset="+charset);
         String jCharset = BrowserEncoding.mapHttp2JavaCharset(charset);
         if (loginDebug.messageEnabled()) {
@@ -129,7 +129,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
             
             // Create Cookie
             try {
-                Cookie cookie = acu.createCookie(hostUrlCookieName,
+                Cookie cookie = AuthClientUtils.createCookie(hostUrlCookieName,
                 hostUrlCookieValue, hostUrlCookieDomain);
                 response.addCookie(cookie);
             } catch (Exception e) {
@@ -144,7 +144,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
         if (isSessionHijackingEnabled) {
             // Create Cookie
             try {
-                Cookie cookie = acu.createCookie(hostUrlCookieName,
+                Cookie cookie = AuthClientUtils.createCookie(hostUrlCookieName,
                 LOGOUTCOOKIEVAULE, hostUrlCookieDomain);
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
@@ -314,10 +314,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
      * Resource bundle with <code>Locale</code>
      */
     public ResourceBundle rb = null;
-    /**
-     * AuthUtils object.
-     */
-    public static AuthClientUtils acu = new AuthClientUtils();
+
     
     private static boolean isSessionHijackingEnabled =
     Boolean.valueOf(SystemProperties.get(

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.9 2008-02-19 18:13:56 pawand Exp $
+ * $Id: AMLoginContext.java,v 1.10 2008-02-20 06:42:36 superpat7 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,6 @@ public class AMLoginContext {
     public static AuthThreadManager authThread  = null;
     private static final String bundleName = "amAuth";
     private static AuthD ad = AuthD.getAuth();
-    private static AuthUtils au = new AuthUtils();
     private static Debug debug = ad.debug;
     
     String configName; // jaas configuration name.
@@ -477,7 +476,7 @@ public class AMLoginContext {
                             loginState.updateSessionForFailover();
                             debug.message("login success");
                         } else {
-                            logFailedMessage = au.getErrorVal(AMAuthErrorCode.
+                            logFailedMessage = AuthUtils.getErrorVal(AMAuthErrorCode.
                             AUTH_MAX_SESSION_REACHED,AuthUtils.ERROR_MESSAGE);
                             logFailedError = "MAXSESSIONREACHED";
                             throw new AuthException(
@@ -1192,7 +1191,7 @@ public class AMLoginContext {
             } else if (compositeAdvice.getType() == AuthUtils.REALM) {                
                 this.orgDN = DNMapper.orgNameToDN(compositeAdvice.getModuleName());
                 loginState.setQualifiedOrgDN(this.orgDN);
-                this.indexName = au.getOrgConfiguredAuthenticationChain(this.orgDN);
+                this.indexName = AuthUtils.getOrgConfiguredAuthenticationChain(this.orgDN);
                 this.indexType = AuthContext.IndexType.SERVICE;
             }
             loginState.setIndexType(this.indexType);
@@ -1331,8 +1330,8 @@ public class AMLoginContext {
             if (debug.messageEnabled()) {
                 debug.message("resProperty is.. :" + resProperty);
             }
-            errorMsg = au.getErrorVal(errorCode,AuthUtils.ERROR_MESSAGE);
-            templateName = au.getErrorVal(errorCode,AuthUtils.ERROR_TEMPLATE);
+            errorMsg = AuthUtils.getErrorVal(errorCode,AuthUtils.ERROR_MESSAGE);
+            templateName = AuthUtils.getErrorVal(errorCode,AuthUtils.ERROR_TEMPLATE);
             
             if (debug.messageEnabled()) {
                 debug.message("Error Message : " + errorMsg);
@@ -1351,9 +1350,9 @@ public class AMLoginContext {
         loginState.setErrorCode(AMAuthErrorCode.AUTH_TIMEOUT);
         loginState.logFailed(bundle.getString("loginTimeout"),"LOGINTIMEOUT");
         loginState.setErrorMessage(
-            au.getErrorVal(
+            AuthUtils.getErrorVal(
                 AMAuthErrorCode.AUTH_TIMEOUT,AuthUtils.ERROR_MESSAGE));
-        return au.getErrorVal(
+        return AuthUtils.getErrorVal(
             AMAuthErrorCode.AUTH_TIMEOUT,AuthUtils.ERROR_TEMPLATE);
     }
     
@@ -1375,7 +1374,7 @@ public class AMLoginContext {
         
         String errorTemplate = null;
         if (loginState == null) {
-            errorTemplate = au.getErrorVal(AMAuthErrorCode.AUTH_ERROR,
+            errorTemplate = AuthUtils.getErrorVal(AMAuthErrorCode.AUTH_ERROR,
             AuthUtils.ERROR_TEMPLATE);
             return errorTemplate;
         }
@@ -1405,7 +1404,7 @@ public class AMLoginContext {
         String errorMsg = null;
         
         if (loginState == null) {
-            errorMsg = au.getErrorVal(AMAuthErrorCode.AUTH_ERROR,
+            errorMsg = AuthUtils.getErrorVal(AMAuthErrorCode.AUTH_ERROR,
             AuthUtils.ERROR_MESSAGE);
             return errorMsg;
         }
@@ -1588,7 +1587,7 @@ public class AMLoginContext {
                     String orgParam = AuthUtils.getOrgParam(requestHash);
                     String queryOrg = AuthUtils.getQueryOrgName(hreq, orgParam);
                     String newOrgDN = DNUtils.normalizeDN(
-				au.getOrganizationDN(queryOrg,true,hreq));
+				AuthUtils.getOrganizationDN(queryOrg,true,hreq));
                     if (debug.messageEnabled()){
                         debug.message("orgDN from existing auth context: " +
                         orgDN + ", orgDN from query string: " + newOrgDN);

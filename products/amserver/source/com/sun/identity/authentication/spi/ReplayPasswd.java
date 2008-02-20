@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReplayPasswd.java,v 1.2 2007-04-09 19:19:34 manish_rustagi Exp $
+ * $Id: ReplayPasswd.java,v 1.3 2008-02-20 06:42:37 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -144,8 +144,7 @@ public class ReplayPasswd implements AMPostAuthProcessInterface {
 	        // Set OWA Auth Cookie
 	        Cookie owaAuthCookie = new Cookie(OWA_AUTH_COOKIE, 
                                                   OWA_AUTH_COOKIE);
-	        AuthUtils authUtils = new AuthUtils();
-	        Set domains = authUtils.getCookieDomains();
+	        Set domains = AuthUtils.getCookieDomains();
 	        if (!domains.isEmpty()) {
 		    for (Iterator it = domains.iterator(); it.hasNext(); ) {
 		         String domain = (String)it.next();
