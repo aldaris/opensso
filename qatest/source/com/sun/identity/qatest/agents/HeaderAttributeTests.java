@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.4 2008-01-23 23:51:36 rmisra Exp $
+ * $Id: HeaderAttributeTests.java,v 1.5 2008-02-20 19:28:53 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -186,7 +186,7 @@ public class HeaderAttributeTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_RESPONSE_STATMULTIPLE : 30|20");
+                    "HTTP_RESPONSE_STATMULTIPLE : 20|30");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateNewMultiValuedStaticResponseAttribute",
@@ -348,7 +348,8 @@ public class HeaderAttributeTests extends TestCommon {
             log(Level.FINEST, "evaluateCustomSessionAttribute", "s3: " + s3);
 
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
-            usertoken = stMgr.createSSOToken(URLDecoder.decode(s3));
+            usertoken = stMgr.createSSOToken(s3);
+            //usertoken = stMgr.createSSOToken(URLDecoder.decode(s3));
             String strProperty;
             if (validateToken(usertoken)) {
                 log(Level.FINEST, "evaluateCustomSessionAttribute",
@@ -454,7 +455,7 @@ public class HeaderAttributeTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page
-                    , "HTTP_PROFILE_ALIAS : pauseralias2|pauseralias1");
+                    , "HTTP_PROFILE_ALIAS : pauseralias1|pauseralias2");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateNewMultiValuedProfileAttribute",
@@ -610,7 +611,7 @@ public class HeaderAttributeTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_ALIAS :" +
-                    " pauseralias2|pauseralias1");
+                    " pauseralias1|pauseralias2");
             assert (iIdx != -1);
 
             Map map = new HashMap();
@@ -676,8 +677,8 @@ public class HeaderAttributeTests extends TestCommon {
             iIdx = -1;
             strNsrole = "HTTP_PROFILE_NSROLE :" +
                     " cn=containerdefaulttemplaterole," + basedn +
-                    "|cn=parole1," + basedn + "|cn=parole2," + basedn +
-                    "|cn=filparole1," + basedn;
+                    "|cn=filparole1," + basedn +
+                    "|cn=parole1," + basedn + "|cn=parole2," + basedn;
             log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
                     "NSROLE: "+ strNsrole);
             iIdx = getHtmlPageStringIndex(page, strNsrole);
