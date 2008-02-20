@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsCommon.java,v 1.7 2008-01-31 22:06:27 rmisra Exp $
+ * $Id: AgentsCommon.java,v 1.8 2008-02-20 19:27:57 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -419,21 +419,28 @@ public class AgentsCommon extends TestCommon {
                     list = getAttributeList(strAttList, ",");
                 webClient = new WebClient();
                 consoleLogin(webClient, loginURL, adminUser, adminPassword);
-                if (list != null)
-                    if (FederationManager.getExitCode(fmadm.createIdentity(
-                    webClient, realm, name, type, list)) != 0) {
+		//fixed the properties files, now there is no identity with out an 
+		//attribute value
+                if (list != null){
+                    int retval = FederationManager.getExitCode(fmadm.createIdentity( 
+						webClient, realm, name, type, list));
+                    if ( retval != 0 ) {
                         log(Level.SEVERE, "createIdentities",
                                 "createIdentity (not null list) famadm" +
-                                " command failed");
+                                " command failed ");
                         assert false;
+                    	}
                     }
-                else
-                    if (FederationManager.getExitCode(fmadm.createIdentity(
-                    webClient, realm, name, type, null)) != 0) {
-                        log(Level.SEVERE, "createIdentities", "createIdentity" +
-                                " (null list) famadm command failed");
+				else
+		    		{
+                        log(Level.SEVERE, "createIdentities",
+                                "Identity attribute list cannot be null" +
+								"check your properties file, make sure " +
+								"all the identities have atleast one " +
+								"attribute defined");
                         assert false;
-                    }
+            		 }
+		
                 String isMemberOf = rb.getString(strPolIdx + ".identity" + i +
                         ".isMemberOf");
                 if (isMemberOf.equals("yes")) {
