@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SAML11RequestedSecurityToken.java,v 1.1 2007-08-01 21:04:41 superpat7 Exp $
+ * $Id: SAML11RequestedSecurityToken.java,v 1.2 2008-02-20 00:49:52 superpat7 Exp $
  * 
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,11 +40,14 @@ import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.common.WSFederationException;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
+import com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 import com.sun.identity.wsfederation.logging.LogUtil;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -145,7 +148,8 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
      * to form Assertion notBefore time.
      * @param effectiveTime length of time, in seconds, from Assertion's 
      * notBefore time to its notOnOrAfter time.
-     * @param certAlias alias of the signing certificate
+     * @param certAlias alias of the signing certificate. null means do not
+     * sign the assertion
      * @param authMethod mechanism by which the subject authenticated to the 
      * identity provider
      * @param authInstant time at which the subject authenticated to the 
@@ -202,7 +206,10 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
 
             String aIDString = assertion.getAssertionID();
 
-            assertion.signXML(certAlias);
+            if ( certAlias != null )
+            {
+                assertion.signXML(certAlias);
+            }
             
             if (LogUtils.isAccessLoggable(Level.FINER)) {
                 String[] data = { WSFederationUtils.bundle.
@@ -278,8 +285,9 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
     {
         StringBuffer buffer = new StringBuffer();
         
+        // Pass (true,true) to assertion.toString so we get namespace
         buffer.append("<wst:RequestedSecurityToken>")
-        .append(assertion.toString())
+        .append(assertion.toString(true,true))
         .append("</wst:RequestedSecurityToken>");
         
         return buffer.toString();
@@ -321,8 +329,27 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
                 WSFederationUtils.bundle.getString("untrustedIssuer"));
         }
 
-        if (!WSFederationUtils.isSignatureValid(assertion, realm, 
-            remoteEntityId)) {
+        SPSSOConfigElement spConfig = 
+            WSFederationMetaManager.getSPSSOConfig(realm, hostEntityId);
+        if ( spConfig == null )
+        {
+            debug.error(classMethod + "cannot find configuration for SP " 
+                + hostEntityId);
+            throw new WSFederationException("unableToFindSPConfiguration");
+        }
+        
+        String strWantAssertionSigned = 
+            WSFederationMetaUtils.getAttribute(spConfig, 
+            WSFederationConstants.WANT_ASSERTION_SIGNED);
+        
+        // By default, we want to sign assertions
+        boolean wantAssertionSigned = (strWantAssertionSigned != null)
+            ? Boolean.parseBoolean(strWantAssertionSigned)
+            : true;
+
+        if ( wantAssertionSigned &&
+            (!WSFederationUtils.isSignatureValid(assertion, realm, 
+            remoteEntityId))) {
             // isSignatureValid will log the error
             throw new WSFederationException(
                 WSFederationUtils.bundle.getString("invalidSignature"));

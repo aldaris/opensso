@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionProvider.java,v 1.4 2007-08-17 22:48:09 exu Exp $
+ * $Id: SessionProvider.java,v 1.5 2008-02-20 00:49:51 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -252,5 +252,15 @@ public interface SessionProvider {
      */
     public void addListener(Object session, SessionListener listener)
         throws UnsupportedOperationException, SessionException;
+    
+    /**
+     * Sets a load balancer cookie in the suppled HTTP response. The load
+     * balancer cookie's value is set per server instance and is used to
+     * support sticky load balancing.
+     * 
+     * @param response the <code>HttpServletResponse</code> that will be sent
+     *        to the user.
+     */
+    public void setLoadBalancerCookie(HttpServletResponse response);
 }
 

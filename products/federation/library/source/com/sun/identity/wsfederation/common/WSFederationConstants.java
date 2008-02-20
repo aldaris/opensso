@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationConstants.java,v 1.4 2008-01-11 19:23:52 superpat7 Exp $
+ * $Id: WSFederationConstants.java,v 1.5 2008-02-20 00:49:51 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,6 +99,12 @@ public final class WSFederationConstants {
      */ 
     public static final String HOME_REALM_DISCOVERY_SERVICE = 
         "HomeRealmDiscoveryService";
+
+    /**
+     * Configuration attribute - does the service provider require
+     * a signature on the assertion? Default is true.
+     */
+    public static final String WANT_ASSERTION_SIGNED = "wantAssertionSigned";
 
     /**
      * Configuration attribute for provider display name.

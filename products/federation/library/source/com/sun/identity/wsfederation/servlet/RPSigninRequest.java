@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninRequest.java,v 1.3 2007-10-06 00:57:08 superpat7 Exp $
+ * $Id: RPSigninRequest.java,v 1.4 2008-02-20 00:49:51 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -230,6 +230,10 @@ public class RPSigninRequest extends WSFederationAction {
             idp = WSFederationMetaManager.getEntityDescriptor(null,
                 idpEntityId);
         }
+        
+        // Set LB cookie here so it's done regardless of which redirect happens
+        // We want response to come back to this instance
+        WSFederationUtils.sessionProvider.setLoadBalancerCookie(response);
 
         // If we still don't know the IdP, redirect to home realm discovery
         if (idp == null) {

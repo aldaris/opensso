@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.5 2007-11-13 20:35:47 exu Exp $
+ * $Id: FMSessionProvider.java,v 1.6 2008-02-20 00:49:51 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,9 @@ import com.sun.identity.plugin.session.SessionException;
 
 import com.sun.identity.shared.Constants;
 
+import com.iplanet.dpro.session.Session;
+import com.iplanet.dpro.session.service.SessionService;
+
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
@@ -57,12 +60,10 @@ import com.sun.identity.shared.debug.Debug;
 
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.saml.common.SAMLConstants;
-import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
-import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.spi.AuthLoginException;
-import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSException;
@@ -87,15 +88,15 @@ public class FMSessionProvider implements SessionProvider {
     private static Debug debug = Debug.getInstance("fmSessionProvider");;
     private static String cookieName = SystemPropertiesManager.
         get(Constants.AM_COOKIE_NAME);
-    private static String lbcookieName = SystemPropertiesManager.
-        get(Constants.AM_LB_COOKIE_NAME);
-    private static String lbcookieValue = SystemPropertiesManager.
-        get(Constants.AM_LB_COOKIE_VALUE);
+    private static String lbcookieName = Session.lbCookieName;
+    private static String lbcookieValue = SessionService.getSessionService().
+        getLocalServerID();
     private static boolean urlRewriteEnabled = false;
     private static SecureRandom random = new SecureRandom();
     private static final int SECRET_LENGTH = 20;
     private static Set secretSet = Collections.synchronizedSet(
         new HashSet(1000));
+    private AuthClientUtils acu = new AuthClientUtils();
     
     static {
         String urlRewriteEnabledStr = SystemPropertiesManager.
@@ -338,6 +339,35 @@ public class FMSessionProvider implements SessionProvider {
             throw new SessionException(se);
         }
         return ssoToken;
+    }
+    
+    /**
+     * Sets a load balancer cookie in the suppled HTTP response. The load
+     * balancer cookie's value is set per server instance and is used to
+     * support sticky load balancing.
+     * 
+     * @param response the <code>HttpServletResponse</code> that will be sent
+     *        to the user.
+     */
+    public void setLoadBalancerCookie(HttpServletResponse response)
+    {
+        Cookie lbCookie = null;
+        Set cookieDomains = acu.getCookieDomains();
+        if (cookieDomains.size() == 0) {
+            lbCookie = setlbCookie(null);
+            if (lbCookie != null) {
+                response.addCookie(lbCookie);
+            }
+        } else {
+            Iterator it = cookieDomains.iterator();
+            while (it.hasNext()) {
+                String cookieDomain = (String) it.next();
+                lbCookie = setlbCookie(cookieDomain);
+                if (lbCookie != null) {
+                    response.addCookie(lbCookie);
+                }
+            }
+        }
     }
 
     /**

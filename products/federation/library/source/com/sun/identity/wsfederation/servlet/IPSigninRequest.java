@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPSigninRequest.java,v 1.4 2007-09-06 18:23:22 qcheng Exp $
+ * $Id: IPSigninRequest.java,v 1.5 2008-02-20 00:49:50 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.wsfederation.logging.LogUtil;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
@@ -160,16 +161,16 @@ public class IPSigninRequest extends WSFederationAction {
             // the user has not logged in yet, redirect to auth
             redirectAuthentication(idpEntityID, realm);
             return;
-        }
+        }        
         // TODO
         boolean sessionUpgrade = false;
 
         if (!sessionUpgrade) {
             // set session property for multi-federation protocol hub
             MultiProtocolUtils.addFederationProtocol(session,
-                         SingleLogoutManager.WS_FED);
-             sendResponse(session, idpEntityID, spEntityID, idpMetaAlias, 
-                 realm);
+                SingleLogoutManager.WS_FED);
+            sendResponse(session, idpEntityID, spEntityID, idpMetaAlias, 
+                realm);
         }
     }
 
@@ -231,6 +232,11 @@ public class IPSigninRequest extends WSFederationAction {
             debug.message(classMethod +
                 "New URL for authentication: " + newURL.toString());
         }
+        
+        // We want authentication request from browser to come back to this 
+        // instance
+        WSFederationUtils.sessionProvider.setLoadBalancerCookie(response);
+        
         // TODO: here we should check if the new URL is one
         //       the same web container, if yes, forward,
         //       if not, redirect
@@ -269,7 +275,20 @@ public class IPSigninRequest extends WSFederationAction {
         {
             debug.error(classMethod + "cannot find configuration for IdP " 
                 + idpEntityId);
-            throw new WSFederationException("unableToFindIDPConfiguration");
+            throw new WSFederationException(
+                WSFederationUtils.bundle.
+                getString("unableToFindIDPConfiguration"));
+        }
+
+        SPSSOConfigElement spConfig = 
+            WSFederationMetaManager.getSPSSOConfig(realm, spEntityId);
+        if ( spConfig == null )
+        {
+            debug.error(classMethod + "cannot find configuration for SP " 
+                + spEntityId);
+            throw new WSFederationException(
+                WSFederationUtils.bundle.
+                getString("unableToFindSPConfiguration"));
         }
 
         String authMethod = null;
@@ -324,29 +343,57 @@ public class IPSigninRequest extends WSFederationAction {
                 debug.error(classMethod +
                     "Failed to get not before skew from IDP SSO config: ", 
                     nfe);
+                throw new WSFederationException(nfe);
             }
         }
             
-            int effectiveTime = SAML2Constants.ASSERTION_EFFECTIVE_TIME;
-            String effectiveTimeStr = 
-                WSFederationMetaUtils.getAttribute(idpConfig,
-                SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE);
-            if (effectiveTimeStr != null) {
-                try {
-                    effectiveTime = Integer.parseInt(effectiveTimeStr);
-                    if (debug.messageEnabled()) {
-                        debug.message(classMethod +
-                            "got effective time from config:" + effectiveTime);
-                    }       
-                } catch (NumberFormatException nfe) {
-                    debug.error(classMethod +
-                        "Failed to get assertion effective time from " +
-                        "IDP SSO config: ", nfe);
-                }
+        int effectiveTime = SAML2Constants.ASSERTION_EFFECTIVE_TIME;
+        String effectiveTimeStr = 
+            WSFederationMetaUtils.getAttribute(idpConfig,
+            SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE);
+        if (effectiveTimeStr != null) {
+            try {
+                effectiveTime = Integer.parseInt(effectiveTimeStr);
+                if (debug.messageEnabled()) {
+                    debug.message(classMethod +
+                        "got effective time from config:" + effectiveTime);
+                }       
+            } catch (NumberFormatException nfe) {
+                debug.error(classMethod +
+                    "Failed to get assertion effective time from " +
+                    "IDP SSO config: ", nfe);
+                throw new WSFederationException(nfe);
             }
-            
+        }
+        
+        String strWantAssertionSigned = WSFederationMetaUtils.getAttribute(spConfig, 
+            WSFederationConstants.WANT_ASSERTION_SIGNED);
+        
+        // By default, we want to sign assertions
+        boolean wantAssertionSigned = (strWantAssertionSigned != null)
+            ? Boolean.parseBoolean(strWantAssertionSigned)
+            : true;
+        
         String certAlias = WSFederationMetaUtils.getAttribute(idpConfig, 
-            SAML2Constants.SIGNING_CERT_ALIAS);
+                SAML2Constants.SIGNING_CERT_ALIAS);
+        
+        if ( wantAssertionSigned && certAlias == null )
+        {
+            // SP wants us to sign the assertion, but we don't have a signing 
+            // cert
+            debug.error(classMethod +
+                    "SP wants signed assertion, but no signing cert is " +
+                    "configured");
+            throw new WSFederationException(
+                WSFederationUtils.bundle.getString("noIdPCertAlias"));
+        }
+        
+        if ( ! wantAssertionSigned )
+        {
+            // SP doesn't want us to sign the assertion, so pass null certAlias 
+            // to indicate no assertion signature required
+            certAlias =null;
+        }
         
         // generate a response for the authn request
         RequestSecurityTokenResponse rstr = 
