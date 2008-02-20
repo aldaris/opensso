@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.7 2008-01-15 22:38:15 jonnelson Exp $
+ * $Id: AMModelBase.java,v 1.8 2008-02-20 05:41:47 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdSearchResults;
@@ -102,6 +103,8 @@ public class AMModelBase
     private String rbName = AMAdminConstants.DEFAULT_RB;
 
     private ISLocaleContext localeContext = new ISLocaleContext();
+
+    private static int svcRevisionNumber;
 
     /**
      * Creates a simple model using default resource bundle. 
@@ -238,6 +241,15 @@ public class AMModelBase
             }
             ssoToken = AMAuthUtils.getSSOToken(req);
             getUserInfo(req);
+
+            ServiceSchemaManager idRepoServiceSchemaManager = 
+                new ServiceSchemaManager(ssoToken,
+                    IdConstants.REPO_SERVICE, "1.0");
+            svcRevisionNumber = 
+                idRepoServiceSchemaManager.getRevisionNumber();
+
+        } catch (SMSException smse) {
+            debug.warning("AMModelBase.initialize", smse);
         } catch (SSOException e) {
             debug.warning("AMModelBase.initialize", e);
         }
@@ -715,10 +727,19 @@ public class AMModelBase
 
             for (Iterator iter = supportedTypes.iterator(); iter.hasNext(); ) {
                 IdType type = (IdType)iter.next();
-                if (!type.equals(IdType.AGENTONLY) &&
-                    !type.equals(IdType.AGENTGROUP)
+                if ( (!type.equals(IdType.AGENTONLY) &&
+                    !type.equals(IdType.AGENTGROUP) &&
+                    !type.equals(IdType.AGENT) ) ||
+                    (type.equals(IdType.AGENT) && (svcRevisionNumber < 30))
                 ) {
-                    map.put(type.getName(), getLocalizedString(type.getName()));
+                    // add the "Agent" tab only if revision number of
+                    // sunIdentityRepository service is less than 30.
+                    // This is for backward compatibility to support 
+                    // this scenerio : FAM 8.0 server against AM 7.x 
+                    // existing DIT (Coexistence).
+
+                    map.put(type.getName(), 
+                        getLocalizedString(type.getName()));
                 }
             }
         } catch (IdRepoException e) {
